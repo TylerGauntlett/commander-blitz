@@ -31,12 +31,27 @@
  * It is its own node for exactly the reason the pivot is: it writes `transform`
  * on its own clock, and sharing a node with the layout animation would mean a
  * creature that lunges mid-flight snaps to wherever the strike left it.
+ *
+ * ## `data-stop`, and the thing it is careful not to be
+ *
+ * The outer node carries `data-stop`, which is where the focus ring is allowed
+ * to land. It is a **static prop derived from `oid`** -- this component does not
+ * subscribe to the cursor and never re-renders because the ring moved. That is
+ * not an optimisation, it is the design: a cursor in a store that thirty cards
+ * read re-renders all thirty on every step of a sweep, which measured 18.5fps
+ * under a 4x CPU throttle against 59.7fps for moving one attribute. See the
+ * header of `input/cursor.ts`.
+ *
+ * Keying it on the oid rather than on a position also means the ring survives a
+ * zone change for the same reason `layoutId` does: it stays on the card you
+ * were reading as it moves from hand to stack to battlefield.
  */
 
 import { type Transition, motion, useMotionValue } from "motion/react";
 import { type CSSProperties, useEffect, useLayoutEffect, useRef } from "react";
 import type { CardView } from "../../api/types";
 import { register } from "../../fx/actuators";
+import { stopId } from "../../input/stops";
 import { remember } from "../../logic/cardRects";
 import { bouncy, mechanical, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -63,6 +78,17 @@ export interface CardProps {
   dimmed?: boolean;
   /** Lift on hover. Off inside a fanned stack, where the fan does the lifting. */
   lift?: boolean;
+  /**
+   * Whether this card drives `hoveredOid` itself.
+   *
+   * Off inside the hand fan, where `.hand__slot` -- a fixed rectangle extended
+   * upward past the card -- owns both the lift and the hover. With both writing
+   * it there were two nested enter/leave pairs on one global scalar, and the
+   * order in which framer's gesture and the slot's DOM handler fire across a
+   * slot boundary is not defined: leaving A after entering B blanks the rail on
+   * the card you just moved onto.
+   */
+  ownsHover?: boolean;
   onActivate?: (card: CardView) => void;
   /** Called with the `data-dropzone` value of whatever it was dropped on. */
   onDropOn?: (card: CardView, zone: string) => void;
@@ -92,6 +118,7 @@ export function Card({
   selected = false,
   dimmed = false,
   lift = true,
+  ownsHover = true,
   onActivate,
   onDropOn,
   style,
@@ -141,6 +168,26 @@ export function Card({
     [oid, fxX, fxY, fxRotate, fxScale],
   );
 
+  /*
+   * The pointer left because the card stopped existing.
+   *
+   * `onHoverEnd` is a `pointerleave` gesture: it does not fire when the node
+   * unmounts, and it does not fire when framer moves a `layoutId` node to a new
+   * mount point -- which is exactly what casting a hovered card from the hand
+   * does. `hoveredOid` then names a card that is no longer anywhere, pinning
+   * the preview rail and leaving a `CardStack` member raised.
+   *
+   * The same guard `CommandZone` carries, for the same reason and with the same
+   * ownership test: clear it only if it is still *ours*, or a card unmounting
+   * behind a newly hovered one would blank the rail on the new one.
+   */
+  useEffect(() => {
+    if (!ownsHover) return;
+    return () => {
+      if (useUiStore.getState().hoveredOid === oid) useUiStore.getState().hover(null);
+    };
+  }, [oid, ownsHover]);
+
   const classes = [
     "card",
     variant === "big" ? "card--big" : "",
@@ -170,6 +217,7 @@ export function Card({
       data-oid={card.oid}
       data-testid={`card-${card.oid}`}
       data-card-name={card.name}
+      data-stop={stopId.card(card.oid)}
       transition={transition ?? settle}
       whileHover={lift ? { y: -10, scale: 1.04, zIndex: 30 } : undefined}
       whileTap={{ scale: 0.97 }}
@@ -186,8 +234,8 @@ export function Card({
         const zone = dropZoneAt(point.clientX, point.clientY);
         if (zone) onDropOn(card, zone);
       }}
-      onHoverStart={() => hover(card.oid)}
-      onHoverEnd={() => hover(null)}
+      onHoverStart={ownsHover ? () => hover(card.oid) : undefined}
+      onHoverEnd={ownsHover ? () => hover(null) : undefined}
       onClick={() => onActivate?.(card)}
       role={onActivate ? "button" : undefined}
       tabIndex={onActivate ? 0 : undefined}
@@ -227,7 +275,7 @@ export function Card({
         card is what routes into `Table.onBoardCard`.
       */}
       {hasAbility && (
-        <span className="rune" aria-hidden="true" title="Has an activated ability">
+        <span className="rune" aria-hidden="true" data-hint="Has an activated ability">
           &#8631;
         </span>
       )}

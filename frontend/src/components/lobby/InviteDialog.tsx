@@ -67,6 +67,7 @@ export function InviteDialog({ pod, onClose, onOpenChair }: Props) {
         className="inv"
         role="dialog"
         aria-modal="true"
+        data-modal-root
         aria-label="Invite a player"
         data-testid="invite-dialog"
       >

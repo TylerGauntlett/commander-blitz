@@ -8,7 +8,7 @@
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CardView, ManaView, UnplayableReason } from "../../api/types";
 import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { unplayableHint } from "../../logic/mana";
@@ -16,6 +16,7 @@ import { HAND_FAN_W, handStep } from "../../logic/zoomFit";
 import { bouncy, settle } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useCardBase } from "../../state/useCardBase";
+import { useHandLift } from "../../state/useHandLift";
 import { Card } from "./Card";
 
 /*
@@ -32,8 +33,24 @@ import { Card } from "./Card";
 
 /** Degrees between neighbouring cards. */
 const ARC = 2.6;
-/** How far the hovered card lifts, and how far its neighbours slide away. */
-const HOVER_LIFT = -46;
+/**
+ * How far the hovered card lifts, and how far its neighbours slide away.
+ *
+ * THE LIFT IS A TOKEN AND THIS READS IT, because two things have to agree about
+ * it and only one of them is here. `.hand__slot` in `board.css` is a fixed
+ * rectangle extended upward by exactly this much -- that padding is the whole
+ * fix for a jitter where raising a card took its own hit box out from under the
+ * pointer -- so the number lives in CSS and the motion value follows it. Two
+ * literals would drift, and the failure when they do is the jitter coming back.
+ *
+ * It is smaller on a handheld, and the reason is not taste. `.hand` sits 2px
+ * under the hint bar in the compact foot, so a 46px lift put the slot's top at
+ * y=580 against a hint bar spanning 583-610: the raised card drew straight
+ * over "Read" and "Back", and -- worse -- the slot's catchment covered the bar,
+ * so moving the pointer up off the hand never fired `mouseleave` and the card
+ * stayed raised. The ring and the preview rail already say which card is
+ * chosen; the lift is confirming it a third time.
+ */
 const NEIGHBOUR_PUSH = 26;
 /**
  * How far the outermost card sits below the middle one.
@@ -95,8 +112,39 @@ export function HandFan({
   onDropOn,
   disabled = false,
 }: Props) {
-  const [hovered, setHovered] = useState<number | null>(null);
+  /*
+   * WHICH CARD IS RAISED, BY OID -- never by index.
+   *
+   * It was an index, and an index into a list that changes under it is a bug
+   * waiting for a turn to happen. Cast the third card and index 2 is a
+   * different card: the wrong slot stays raised, with the preview rail reading
+   * a card the pointer is not on. Neither the slot's `mouseleave` nor framer's
+   * `onHoverEnd` fires for a node that unmounted, so nothing corrected it.
+   *
+   * By oid the whole class is gone with no effect to run: the card leaves the
+   * hand, `findIndex` returns -1, and the fan renders unraised on the very same
+   * commit. A drawn card shifts every slot along and the raised one is still
+   * the card the pointer is over, which is the behaviour an index got wrong in
+   * the other direction.
+   */
+  const [heldOid, setHeldOid] = useState<number | null>(null);
   const hover = useUiStore((s) => s.hover);
+  const lift = -useHandLift();
+
+  const hoveredIndex = heldOid === null ? -1 : cards.findIndex((c) => c.oid === heldOid);
+  const hovered = hoveredIndex === -1 ? null : hoveredIndex;
+
+  /*
+   * ...and the store is told when that happens.
+   *
+   * The local state self-corrects by construction; `hoveredOid` is a global
+   * somebody else has to write, and the card that left is still named in it.
+   */
+  useEffect(() => {
+    if (heldOid === null || cards.some((c) => c.oid === heldOid)) return;
+    setHeldOid(null);
+    if (useUiStore.getState().hoveredOid === heldOid) hover(null);
+  }, [cards, heldOid, hover]);
 
   // The one zone that cannot express its size as a CSS `calc()`: every slot is
   // positioned absolutely at `left: index * step`, and `step` derives from the
@@ -115,7 +163,25 @@ export function HandFan({
     : null;
 
   return (
-    <div className="hand" style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}>
+    /*
+     * A backstop leave on the whole hand, and it is not redundant.
+     *
+     * A slot is a fixed rectangle extended upward by the lift, so the catchment
+     * of the outermost slots reaches past the fan on three sides. A pointer that
+     * exits through that overhang -- upward into the hint bar is the easy one to
+     * do by accident -- leaves the slot's own `mouseleave` unfired, and the card
+     * stays raised with the preview rail pinned to it for the rest of the game.
+     * Leaving the hand outright cannot be ambiguous, so it is the honest place
+     * to reset both halves.
+     */
+    <div
+      className="hand"
+      style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}
+      onMouseLeave={() => {
+        setHeldOid(null);
+        hover(null);
+      }}
+    >
       <div className="hand__rail" style={{ width }}>
         <AnimatePresence initial={false}>
           {cards.map((card, index) => {
@@ -145,11 +211,11 @@ export function HandFan({
                 key={card.oid}
                 style={{ left: index * step, zIndex: isHovered ? 50 : index }}
                 onMouseEnter={() => {
-                  setHovered(index);
+                  setHeldOid(card.oid);
                   hover(card.oid);
                 }}
                 onMouseLeave={() => {
-                  setHovered((current) => (current === index ? null : current));
+                  setHeldOid((current) => (current === card.oid ? null : current));
                   hover(null);
                 }}
               >
@@ -159,7 +225,7 @@ export function HandFan({
                   animate={{
                     opacity: 1,
                     x: push,
-                    y: isHovered ? HOVER_LIFT : droop(distance, mid),
+                    y: isHovered ? lift : droop(distance, mid),
                     rotate: isHovered ? 0 : distance * ARC,
                     scale: isHovered ? 1.14 : 1,
                   }}
@@ -170,6 +236,7 @@ export function HandFan({
                     card={card}
                     variant="board"
                     lift={false}
+                    ownsHover={false}
                     draggable={!disabled}
                     playable={playableOids.has(card.oid)}
                     selected={selectedOid === card.oid}

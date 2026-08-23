@@ -61,6 +61,19 @@ import { SymbolText } from "./SymbolText";
  *              grows to fit the rules rather than clipping them, with absolute
  *              type sizes instead of ratios of `--card-w`.
  */
+/**
+ * How much of the card to draw.
+ *
+ * There is deliberately no `tile` variant for the handheld board, though there
+ * nearly was. At a 16px legibility floor a name like "Elvish Visionary" needs
+ * about 128px of card, and twelve permanents at 128px is 1536px of row on a
+ * 1280px screen -- so **the name cannot be on every board card at once**, and
+ * the handheld board drops it. But that is a consequence of the *layout*, which
+ * `[data-handheld]` already states, and adding a variant as well would be two
+ * ways to ask for one look with nothing keeping them in step. The rules live in
+ * `styles/handheld.css`; what *names* a card at that size is the read rail the
+ * ring is pointing at, which is the whole argument for the rail existing.
+ */
 export type CardVariant = "board" | "detail" | "big";
 
 interface Props {
@@ -147,7 +160,7 @@ export function CardFace({ card, variant = "board" }: Props) {
           />
         ))
       ) : (
-        <span className="watermark-none" title="Produces no colour">
+        <span className="watermark-none" data-hint="Produces no colour">
           &#9650;
         </span>
       )}
@@ -199,7 +212,7 @@ export function CardFace({ card, variant = "board" }: Props) {
       */}
       <div className="face__head">
         <div className="face__title">
-          <span className="face__glyph" title={typeLabel(card)} aria-hidden="true">
+          <span className="face__glyph" data-hint={typeLabel(card)} aria-hidden="true">
             {typeGlyph(card)}
           </span>
           <span className="face__name">
@@ -214,7 +227,7 @@ export function CardFace({ card, variant = "board" }: Props) {
               costs no space that was not already the name's.
             */}
             {card.is_commander && (
-              <span className="crown" title="Commander" aria-label="Commander">
+              <span className="crown" data-hint="Commander" aria-label="Commander">
                 &#9819;
               </span>
             )}
@@ -276,7 +289,7 @@ export function CardFace({ card, variant = "board" }: Props) {
           {stats && (
             <span
               className={hurt ? "face__stats face__stats--hurt" : "face__stats"}
-              title={hurt ? `${damage} damage marked` : undefined}
+              data-hint={hurt ? `${damage} damage marked` : undefined}
             >
               {stats}
             </span>
@@ -286,7 +299,7 @@ export function CardFace({ card, variant = "board" }: Props) {
 
       {/* The commander mark is the crown in the name above; see the note there. */}
       {card.summoning_sick && card.types.includes("Creature") && (
-        <span className="face__tag face__tag--sick" title="Summoning sick">
+        <span className="face__tag face__tag--sick" data-hint="Summoning sick">
           &#9203;
         </span>
       )}

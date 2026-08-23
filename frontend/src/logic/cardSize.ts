@@ -32,6 +32,20 @@ export const FALLBACK_BASE = 104;
 export const MIN_CARD_W = 52;
 
 /**
+ * The floor on a handheld, from `mockups/handheld/assert.js`'s `CARD_FLOOR`.
+ *
+ * Any card the focus ring can land on must be at least this wide. It is derived
+ * from a 7-inch panel at 40-50cm rather than from a DPI number: below about
+ * 96px a card's illustration stops identifying it and its stats stop being
+ * readable, which makes the board a list of rectangles.
+ *
+ * At 96 a full board will not always fit the viewport. That is a deliberate
+ * trade rather than a bug -- `.play__mine` already scrolls, and a board you
+ * have to scroll is worth more than a board you cannot read.
+ */
+export const HANDHELD_MIN_CARD_W = 96;
+
+/**
  * The widest, and the reason is a hierarchy rather than a limit.
  *
  * `.face--big` in `cards.css` pins the preview rail's card to 150px and says

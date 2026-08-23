@@ -66,7 +66,7 @@ describe("CardFace", () => {
     // under 3px. The crown scales with the name because it is part of it.
     const { container } = render(<CardFace card={card({ is_commander: true })} />);
     expect(container.querySelector(".face__name .crown")).not.toBeNull();
-    expect(container.querySelector(".crown")?.getAttribute("title")).toBe("Commander");
+    expect(container.querySelector(".crown")?.getAttribute("data-hint")).toBe("Commander");
   });
 
   it("crowns nothing else", () => {
@@ -277,7 +277,7 @@ describe("ActionPanel", () => {
     expect(document.querySelector('[data-action-id="a3-cast"]')?.hasAttribute("disabled")).toBe(
       true,
     );
-    expect(screen.getByTitle("Skip ahead")).toBeTruthy();
+    expect(document.querySelector('[data-hint="Skip ahead"]')).toBeTruthy();
   });
 
   it("shows the stops setting the engine is actually holding", () => {

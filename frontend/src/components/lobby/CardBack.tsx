@@ -32,7 +32,21 @@ export function CardBack({ mark, tone, testId = "card-back" }: Props) {
   const classes = tone ? `back back--${tone}` : "back";
   return (
     <div className={classes} data-testid={testId} data-tone={tone ?? "sealed"}>
-      <div className="back__mark">{mark}</div>
+      {/*
+        The mark on the back of the card, and it is a *pattern* rather than a
+        label: the same words repeated across every face-down seat, at the size
+        a card back's printing is. Nobody reads it and nothing depends on it.
+
+        `aria-hidden` says so out loud, which is worth doing for two reasons
+        beyond the obvious one: a screen reader announcing "Commander Blitz"
+        four times before reaching the first real seat is noise, and
+        `e2e/handheldAssert.ts` exempts hidden text from the 16px floor -- so
+        this is the honest way to be under it, rather than inflating decoration
+        to the size of information.
+      */}
+      <div className="back__mark" aria-hidden="true">
+        {mark}
+      </div>
     </div>
   );
 }

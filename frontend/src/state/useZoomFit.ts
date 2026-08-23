@@ -30,7 +30,13 @@
 
 import { type RefObject, useCallback, useEffect, useMemo, useState } from "react";
 import type { GameView } from "../api/types";
-import { CARD_SCALE, MAX_CARD_W, MIN_CARD_W, opponentCardScale } from "../logic/cardSize";
+import {
+  CARD_SCALE,
+  HANDHELD_MIN_CARD_W,
+  MAX_CARD_W,
+  MIN_CARD_W,
+  opponentCardScale,
+} from "../logic/cardSize";
 import {
   COMPACT_MAT,
   HAND_FAN_W,
@@ -61,6 +67,13 @@ const HAND_FRACTION = 0.26;
  */
 const FOOT_CHROME = 60;
 
+/**
+ * What the handheld foot adds: the hint bar, and the commit slab portalled
+ * beside it. Both are new rows under the hand, and the cascade in this file's
+ * header depends on the foot's height being definite before the board solves.
+ */
+const HANDHELD_FOOT_EXTRA = 56;
+
 /** `.play__opponents` gap between mats. */
 const POD_GAP = 10;
 
@@ -86,6 +99,20 @@ interface Measurements {
   mineH: number;
   podW: number;
   podLanesH: number;
+  /**
+   * `.mat`'s orb column, read from `--mat-side` rather than restated.
+   *
+   * Legal under this file's own discipline, and it is worth saying why: a fit
+   * solver may only take inputs the solve cannot move. `--mat-side` is a CSS
+   * constant resolved from the viewport -- the same class of input as
+   * `--pod-lanes-h` above -- so it cannot feed back off a card size this solve
+   * produces. What it replaces is `VIEWER_MAT.sideW`, a literal duplicating
+   * `board.css`, which is a number that could silently disagree with the
+   * layout it was packing cards into.
+   */
+  matSide: number;
+  /** The same for a compact mat, from `--mat-side-compact`. */
+  matSideCompact: number;
 }
 
 /**
@@ -138,11 +165,22 @@ export function useZoomFit(args: {
   /** Opponent seat ids, in display order. */
   opponents: number[];
   handCount: number;
+  /** The compact layout: a 96px card floor, no pod solve, a taller foot. */
+  handheld?: boolean;
   tableRef: RefObject<HTMLElement>;
   mineRef: RefObject<HTMLElement>;
   podRef: RefObject<HTMLElement>;
 }): ZoomFit {
-  const { state, actionableOids, opponents, handCount, tableRef, mineRef, podRef } = args;
+  const {
+    state,
+    actionableOids,
+    opponents,
+    handCount,
+    handheld = false,
+    tableRef,
+    mineRef,
+    podRef,
+  } = args;
   const base = useCardBase();
   const pinned = zoomLocked();
 
@@ -161,6 +199,8 @@ export function useZoomFit(args: {
       mineH: mine.clientHeight,
       podW: pod?.clientWidth ?? 0,
       podLanesH: readLengthVar("--pod-lanes-h", 228),
+      matSide: readLengthVar("--mat-side", VIEWER_MAT.sideW),
+      matSideCompact: readLengthVar("--mat-side-compact", COMPACT_MAT.sideW),
     };
     setMeasured((current) => {
       if (!current) return next;
@@ -191,6 +231,18 @@ export function useZoomFit(args: {
     if (pinned || !measured) return locked(opponents.length);
 
     /*
+     * The card floor.
+     *
+     * `HANDHELD_MIN_CARD_W` is `assert.js`'s `CARD_FLOOR`: any card the ring can
+     * land on has to be at least 96px, because below that its illustration and
+     * its stats stop being readable on a 7-inch panel at arm's length. At 96 the
+     * board will not always fit -- that is intended and not a regression:
+     * `.play__mine` already scrolls, and a board you have to scroll is better
+     * than a board you cannot read.
+     */
+    const floor = handheld ? HANDHELD_MIN_CARD_W : MIN_CARD_W;
+
+    /*
      * 1. The hand, first, because the foot's height is taken out of the board's row.
      *
      * Its ceiling is the ratio it was designed at, so the hand never *grows* into
@@ -203,8 +255,9 @@ export function useZoomFit(args: {
       handCount,
       Math.min(HAND_FAN_W, measured.tableW - FAN_INSET),
       {
-        heightPx: measured.tableH * HAND_FRACTION - FOOT_CHROME,
-        minCardW: MIN_CARD_W,
+        heightPx:
+          measured.tableH * HAND_FRACTION - FOOT_CHROME - (handheld ? HANDHELD_FOOT_EXTRA : 0),
+        minCardW: floor,
         maxCardW: handCeiling,
       },
     );
@@ -218,15 +271,39 @@ export function useZoomFit(args: {
      * out-size the zone whose whole job is to be readable.
      */
     const boardCeiling = handCeiling;
-    const viewerLanesW = lanesWidthIn(measured.mineW, VIEWER_MAT);
+    /*
+     * The mat chrome, with its one viewport-dependent field filled in from the
+     * stylesheet. Everything else about a mat -- its gaps, padding and border --
+     * is the same at every size, so only `sideW` is measured.
+     */
+    /*
+     * `labels: false` on a handheld, and the solver has to be told or the space
+     * is not actually recovered.
+     *
+     * `styles/handheld.css` drops the lane headings -- "CREATURES", "GLOBAL
+     * ARTIFACTS & ENCHANTMENTS", "LANDS" -- because on a 7-inch panel a row of
+     * creatures says "creatures" better than the word above it does, and the
+     * word was costing `labelAboveH` off every front band and `labelBesideW`
+     * (74px) off the lands. Hiding them in CSS alone would leave this solve
+     * still reserving both, so the board would keep packing cards into a box
+     * smaller than the one it now has -- the same class of model drift that
+     * `theme.css`'s rail tokens were introduced to end, and the opposite
+     * direction of the wrapped-label bug that started this pass.
+     *
+     * `COMPACT_MAT` has always said `labels: false` for exactly this, so this is
+     * the existing switch rather than a new one.
+     */
+    const viewerMat = { ...VIEWER_MAT, sideW: measured.matSide, labels: !handheld };
+    const compactMat = { ...COMPACT_MAT, sideW: measured.matSideCompact };
+    const viewerLanesW = lanesWidthIn(measured.mineW, viewerMat);
     const boardW = solveBoardCardWidth(
       bandsFor(footprintsFor(state, state.seat, actionableOids), viewerLanesW, {
         hideEmpty: false,
-        labels: VIEWER_MAT.labels,
+        labels: viewerMat.labels,
       }),
       {
-        heightPx: lanesHeightIn(measured.mineH, VIEWER_MAT),
-        minCardW: MIN_CARD_W,
+        heightPx: lanesHeightIn(measured.mineH, viewerMat),
+        minCardW: floor,
         maxCardW: boardCeiling,
       },
     );
@@ -254,26 +331,31 @@ export function useZoomFit(args: {
     // each mat is really *wider* than this -- so the solve is conservative there
     // rather than wrong, which is the direction to be wrong in.
     const podMatW = (measured.podW - (count - 1) * POD_GAP) / count;
-    const podLanesW = lanesWidthIn(podMatW, COMPACT_MAT);
-    const podW = opponents.length
-      ? Math.min(
-          ...opponents.map((pid) =>
-            solveBoardCardWidth(
-              bandsFor(footprintsFor(state, pid, actionableOids), podLanesW, {
-                hideEmpty: true,
-                labels: COMPACT_MAT.labels,
-              }),
-              // `--pod-lanes-h` *is* the lanes' box, so it is the budget as it
-              // stands -- no mat chrome to subtract.
-              {
-                heightPx: measured.podLanesH,
-                minCardW: MIN_CARD_W,
-                maxCardW: podCeiling,
-              },
+    const podLanesW = lanesWidthIn(podMatW, compactMat);
+    const podW = handheld
+      ? // No lanes are drawn for an opponent at this size -- their mat is an orb
+        // and a summary line -- so there is nothing to pack and three shelf
+        // solves per resize would be spent on a box with no cards in it.
+        podCeiling
+      : opponents.length
+        ? Math.min(
+            ...opponents.map((pid) =>
+              solveBoardCardWidth(
+                bandsFor(footprintsFor(state, pid, actionableOids), podLanesW, {
+                  hideEmpty: true,
+                  labels: compactMat.labels,
+                }),
+                // `--pod-lanes-h` *is* the lanes' box, so it is the budget as it
+                // stands -- no mat chrome to subtract.
+                {
+                  heightPx: measured.podLanesH,
+                  minCardW: MIN_CARD_W,
+                  maxCardW: podCeiling,
+                },
+              ),
             ),
-          ),
-        )
-      : podCeiling;
+          )
+        : podCeiling;
 
     // Returned as multiples of the base, because that is what `cardWidthVar` and
     // `cardWidthPx` both take -- one coefficient per zone, read by both languages.

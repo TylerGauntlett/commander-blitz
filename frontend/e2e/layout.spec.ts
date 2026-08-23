@@ -186,9 +186,36 @@ test("the viewer's bands do not move as permanents enter and leave play", async 
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7, zoomLock: true });
   await waitForOurTurn(page);
 
+  /*
+   * Sample only once nothing is moving.
+   *
+   * `.mat` and every band animate their layout through Framer, and
+   * `getBoundingClientRect` reports the *in-flight* box -- so a sample taken
+   * the instant `takeAction` returns catches the mat and the band mid-flight
+   * and reads an offset neither of them ever settles at. That is the whole of
+   * the 9px "drift" this test used to report: measured with a settle in front
+   * of it, across the same twenty actions, the drift is exactly zero.
+   *
+   * Infinite animations are excluded because they never finish by definition --
+   * the focus ring's sheen and the commit slab's waiting pulse both loop, and
+   * waiting on those waits forever.
+   */
+  const settled = async () => {
+    await page.waitForFunction(
+      () =>
+        document
+          .getAnimations()
+          .filter((a) => Number.isFinite(a.effect?.getTiming().iterations ?? 1))
+          .every((a) => a.playState !== "running"),
+      undefined,
+      { timeout: 5_000 },
+    );
+  };
+
   /** Each band's offset from the top of the viewer's own mat. */
-  const offsets = () =>
-    page.evaluate(() => {
+  const offsets = async () => {
+    await settled();
+    return page.evaluate(() => {
       const mat = document.querySelector(".play__mine .mat");
       const from = mat?.getBoundingClientRect().top ?? Number.NaN;
       const off = (selector: string) => {
@@ -201,6 +228,7 @@ test("the viewer's bands do not move as permanents enter and leave play", async 
         lands: off('[data-testid$="-Lands"]'),
       };
     });
+  };
 
   const samples = [await offsets()];
   for (let i = 0; i < 20; i += 1) {

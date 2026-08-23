@@ -112,7 +112,7 @@ export function NewGameScreen({
                   key={color}
                   code={color}
                   className={`pip--${color}`}
-                  title={COLOR_NAMES[color] ?? color}
+                  data-hint={COLOR_NAMES[color] ?? color}
                 />
               ))}
               <span className="deck__count">{deck.card_count} cards</span>
@@ -172,7 +172,7 @@ export function NewGameScreen({
                   option === agent ? "segmented__btn segmented__btn--on" : "segmented__btn"
                 }
                 onClick={() => setAgent(option)}
-                title={
+                data-hint={
                   option === "heuristic"
                     ? "Plays to a real evaluation: removal, blocks, curve"
                     : "Uniformly random legal actions"

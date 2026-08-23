@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { GameView } from "../../api/types";
+import { stopId } from "../../input/stops";
 import { lossReason } from "../../logic/labels";
 import { bouncy, ease } from "../../motion/springs";
 
@@ -28,6 +29,17 @@ export function GameOverScreen({ state, onRematch, onQuit }: Props) {
         >
           <motion.div
             className={`over over--${draw ? "draw" : won ? "win" : "loss"}`}
+            /*
+              A full-screen surface that owns the whole screen, so it owns the
+              ring too -- and it was the case the design round found first: the
+              game-over screen opened with the cursor still on an opponent's
+              seat, because the board comes first in the markup. It had no
+              dialog role either, which is the same omission said twice.
+            */
+            role="dialog"
+            aria-modal="true"
+            aria-label={headline}
+            data-modal-root
             data-testid="game-over"
             data-result={draw ? "draw" : won ? "win" : "loss"}
             initial={{ opacity: 0, y: 40, scale: 0.9 }}
@@ -70,10 +82,20 @@ export function GameOverScreen({ state, onRematch, onQuit }: Props) {
             </ul>
 
             <div className="over__buttons">
-              <button type="button" className="btn btn--primary" onClick={onRematch}>
+              <button
+                type="button"
+                className="btn btn--primary"
+                data-stop={stopId.tool("rematch")}
+                onClick={onRematch}
+              >
                 Rematch
               </button>
-              <button type="button" className="btn btn--ghost" onClick={onQuit}>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                data-stop={stopId.tool("quit-over")}
+                onClick={onQuit}
+              >
                 Main menu
               </button>
             </div>

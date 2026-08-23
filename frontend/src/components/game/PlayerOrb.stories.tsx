@@ -10,7 +10,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
-import { APP_BOX } from "../../testing/appGeometry";
+import { APP_VAR } from "../../testing/appGeometry";
 import { expectMountedLike } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { gameView, player } from "../../testing/fixtures";
@@ -57,7 +57,7 @@ export const Viewer: Story = {
      * chain it spans whatever it is given, which is a different design wearing
      * the same class names, and is exactly what this story used to show.
      */
-    expectMountedLike(orb, { width: APP_BOX.matSide });
+    expectMountedLike(orb, { width: APP_VAR.matSide });
 
     const life = await canvas.findByTestId("life-0");
     expect(life.textContent).toContain("40");
@@ -85,7 +85,7 @@ export const Opponent: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expectMountedLike(await canvas.findByTestId("player-0"), {
-      width: APP_BOX.matSideCompact,
+      width: APP_VAR.matSideCompact,
     });
   },
 };
@@ -198,3 +198,40 @@ export const TwoCommanders: Story = {
 
 /** Input gated while narration plays. */
 export const Locked: Story = { args: { ...seat(), locked: true } };
+
+/**
+ * An opponent, with the summary line that is most of what you read them by.
+ *
+ * `threatOf` answers the two questions actually being asked across a table --
+ * can they kill me, can they stop me -- so the row is worth having at any size.
+ * On a handheld it is the whole seat, because their lanes are clipped there.
+ */
+export const OpponentWithSpine: Story = {
+  args: (() => {
+    const base = seat();
+    return {
+      ...base,
+      player: base.state.players[1],
+      isViewer: false,
+      compact: true,
+    };
+  })(),
+  parameters: { automtg: { mount: "matSideCompact" } },
+  play: async ({ canvasElement }) => {
+    const spine = canvasElement.querySelector(".orb__spine");
+    // Present, and saying something rather than rendering an empty row: an
+    // opponent with nothing on board is exactly when the line matters most.
+    if (!spine) throw new Error("the opponent spine is missing");
+    if (!spine.textContent?.trim()) throw new Error("the spine rendered empty");
+  },
+};
+
+/** Your own seat draws no spine: your board is right in front of you. */
+export const ViewerHasNoSpine: Story = {
+  args: seat(),
+  play: async ({ canvasElement }) => {
+    if (canvasElement.querySelector(".orb__spine")) {
+      throw new Error("the viewer should not be summarising their own board");
+    }
+  },
+};

@@ -1,0 +1,2158 @@
+/*
+ * The handheld layout, the focus ring, and the controller hints.
+ *
+ * Three separate ideas share this file because they share one thing: none of
+ * them may cost a desktop mouse player anything. So everything here is behind
+ * either the handheld media query or an `html[data-input]` attribute, and at
+ * 1600x950 with a mouse this stylesheet resolves to nothing at all.
+ *
+ * THE QUERY IS STATED IN TWO PLACES ON PURPOSE, and `tests/breakpoints.test.ts`
+ * asserts they match. `logic/breakpoints.ts` owns the definition; this file
+ * repeats it because CSS cannot ask a module. Any layout breakpoint added here
+ * must be the same string, or that test fails -- which is the point.
+ */
+
+/* ==========================================================================
+   The focus ring
+   ==========================================================================
+
+   Two mechanisms, and both are needed.
+
+   1. `[data-cursor]` carries the outline ITSELF. That makes the ring correct
+      the instant the attribute moves, correct over a modal with no z-index
+      arithmetic, and correct even if the spring never runs. It is also what
+      `e2e/handheldAssert.ts` measures, because a gate that measures a separate
+      halo div would pass while the thing the player sees is missing.
+
+   2. `#ring` / `#ringtrail` are the TRAVEL -- two fixed boxes driven by the
+      spring in `input/ring.ts`. At rest they sit exactly on the outline and
+      read as one ring.
+   ========================================================================== */
+
+:root {
+  /* The ring's colour is used for NOTHING else. The moment it also means
+     "warning" or "commander", the one mark that says where you are stops
+     being unambiguous. */
+  --focus: #ffe08a;
+  --focus-glow: rgba(255, 224, 138, 0.5);
+  /* Above `--z-modal` (500): the ring is chrome, and a ring hidden behind the
+     dialog it is inside is worse than no ring. */
+  --z-ring: 520;
+}
+
+[data-cursor] {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--focus-glow), 0 8px 24px rgba(0, 0, 0, 0.6);
+  /* The ring must never be clipped by the scroll container it sits in. */
+  z-index: 2;
+}
+
+/*
+ * THE `:not()` IS LOAD-BEARING. A bare `:focus { outline: none }` matches the
+ * cursor at equal specificity and wins on source order, leaving the rule above
+ * with `outline-width: 3px` and `outline-style: none` -- a ring that computes
+ * healthily and draws nothing. `tests/focusOutline.test.ts` fails the build if
+ * an unqualified one appears anywhere in `src/styles/`.
+ *
+ * Native focus is still suppressed, because the cursor calls `.focus()` to keep
+ * assistive tech in step and two rings would be worse than either.
+ */
+:focus:not([data-cursor]),
+:focus-visible:not([data-cursor]) {
+  outline: none;
+}
+
+/* A mouse player has a pointer to say where they are and does not need this. */
+html[data-input="mouse"] [data-cursor] {
+  outline: none;
+  box-shadow: none;
+}
+
+#ring,
+#ringtrail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-ring);
+  border-radius: 10px;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, width, height;
+}
+
+#ring.ring--on {
+  opacity: 1;
+  box-shadow: 0 0 0 2px var(--focus-glow), 0 0 18px 4px var(--focus-glow);
+}
+
+/* Opacity is written by the spring from its own speed, so the trail exists
+   only while the ring is actually moving. */
+#ringtrail {
+  box-shadow: 0 0 0 2px var(--focus-glow);
+  filter: blur(2px);
+}
+
+html[data-input="mouse"] #ring,
+html[data-input="mouse"] #ringtrail {
+  display: none;
+}
+
+/* ==========================================================================
+   Controller hints
+   ==========================================================================
+
+   The whole answer to "mouse users must not see controller hints" is that the
+   input mode is an attribute on <html> and this is a CSS question. No component
+   subscribes to it, so a mouse moving across the board costs zero React work.
+   ========================================================================== */
+
+.glyph {
+  display: none;
+}
+
+html[data-input="pad"] .glyph--pad,
+html[data-input="keyboard"] .glyph--key {
+  display: inline-grid;
+}
+
+/* ==========================================================================
+   The handheld layout
+   ==========================================================================
+
+   The rails are tokens (`theme.css`), so this file changes their values rather
+   than restating any grid. At desktop they resolve to the numbers `board.css`
+   has always used, which is what makes this whole change additive.
+   ========================================================================== */
+
+@media (max-width: 1366px), (max-height: 820px) {
+  :root {
+    /*
+     * The four tracks, re-valued. `board.css` restates no grid -- it reads
+     * these -- so this block is the whole of the "fluid rails" change.
+     *
+     * `--rail-l: 0px` retires the left rail: the stack moves to the top of the
+     * right rail and the log becomes an overlay on View. At 1280px the two
+     * rails were 536px of 1280 -- 42% of the screen -- against a board that
+     * has to hold three lanes and a hand.
+     *
+     * `--mat-side-compact` is deliberately NOT zeroed. An opponent's info
+     * column is the half of their mat that survives here -- their *lanes* are
+     * what goes, because 112px of orb plus a row of cards cannot both be
+     * legible at this width. So an opponent becomes their orb plus a summary
+     * line, and their board is one R2 hold away at a readable size. The compact
+     * mat's grid is re-shaped below rather than its column being collapsed:
+     * a zero-width column does not remove an element, it only makes its
+     * contents unreadable while they still claim the height.
+     */
+    --rail-l: 0px;
+    --rail-r: clamp(224px, 19vw, 280px);
+    --mat-side: clamp(132px, 12vw, 190px);
+    /*
+     * One opponent, capped. See `--pod-seat-h`'s registration in `theme.css`
+     * for why this exists and what it measured before it did.
+     *
+     * 96px holds a 52px portrait beside a name, a threat line and a row of
+     * 44px pile targets, which is everything an opponent is at this size. Their
+     * board is one R2 hold away at a readable size, which is the trade the
+     * whole compact layout is built on.
+     */
+    --pod-seat-h: 96px;
+
+    /*
+     * Half the lift. See `HandFan`'s constant for what 46px did here: the slot
+     * reached 3px above the hint bar's top, so a raised card drew over "Read"
+     * and "Back" and the bar stopped being able to receive a `mouseleave`.
+     */
+    --hand-lift: 24px;
+  }
+}
+
+/*
+ * The structural half, keyed on the attribute React stamps rather than on the
+ * query, because these rules exist to match markup that only exists in the
+ * handheld tree. Keeping them off the media query means a story can show the
+ * handheld board at any canvas size by setting the attribute.
+ */
+[data-handheld] .table__body {
+  grid-template-columns: minmax(0, 1fr) var(--rail-r);
+  gap: 8px;
+  /*
+   * Six, not eight. The board has to fit an 800px panel with no scrollbar --
+   * that is the posture this layout exists for, not a nice-to-have -- and every
+   * pixel of shell padding is a pixel the viewer's mat does not get.
+   */
+  padding: 6px;
+}
+
+/* The left rail is gone from the grid, so its children must not claim a track. */
+[data-handheld] .rail--left {
+  display: none;
+}
+
+/*
+ * Two columns, so the board is 1 and the rail is 2.
+ *
+ * `board.css` assigns all three by name; this re-states the two that move. It
+ * has to be said rather than left to auto-placement: the left rail is
+ * `display: none` here, so in the app the board fell into column 1 by luck --
+ * and nowhere else did. Storybook's mount layers render these wrappers with no
+ * siblings, so the board auto-placed into column 2 and fifty-odd card stories
+ * drew their mat at the right rail's width with the cards hanging off the
+ * screen.
+ */
+[data-handheld] .table__body > .play {
+  grid-column: 1;
+}
+
+[data-handheld] .table__body > .rail--right {
+  grid-column: 2;
+}
+
+/*
+ * An opponent is a summary, not a board.
+ *
+ * The orb takes the whole mat, and the lanes give up their row entirely.
+ *
+ * Their lanes are NOT removed with `display: none`, and that is load-bearing:
+ * `FxLayer` resolves damage numerals and exit ghosts by looking up `[data-oid]`
+ * in the live DOM when a beat plays, and a card that is not laid out has no box
+ * to fly from -- an opponent's creature dying would draw nothing at all. They
+ * are clipped to zero height instead, so every anchor stays real while costing
+ * no space. The `R2` overlay is where an opponent's board is actually read.
+ */
+[data-handheld] .mat--compact {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 0;
+  min-width: 0;
+  padding: 5px 7px;
+}
+
+[data-handheld] .mat--compact .mat__lanes {
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/*
+ * The opponents' row is capped in pixels rather than as a percentage.
+ *
+ * IT WAS UNCAPPED, AND THAT WAS THE SINGLE LARGEST LAYOUT DEFECT AT THIS SIZE.
+ * This block used to say `grid-template-rows: auto` with the reasoning that
+ * "with no lanes there is nothing for a percentage cap to protect against".
+ * That is exactly backwards. `board.css:55-66` calls `fit-content(58%)`
+ * load-bearing because "every pixel of height in this column is a pixel taken
+ * off the viewer's own board" -- and with the lanes clipped to zero the ORB is
+ * the column. Measured at 1200x800 against a seat holding nothing at all:
+ *
+ *     opponent mat        220px      (of an 800px screen)
+ *     viewer's own mat    301px, overflowing its row by 104px
+ *
+ * The viewer's graveyard and library counts were simply below the fold, and
+ * `.mat__side`'s `overflow-y: auto` further down turned that into a silent
+ * scroll rather than a visible failure.
+ *
+ * `fit-content()` and not `max-height`, for the reason `board.css` gives: a
+ * hard cap on the row clips the mats instead of shrinking them. The mat's own
+ * `max-height` below is what makes its min-content small enough for
+ * `fit-content` to bite -- a grid row never shrinks below min-content, so
+ * capping the row alone would have done nothing at all.
+ */
+[data-handheld] .play__opponents {
+  align-items: start;
+  /*
+   * The 4px `board.css` reserves under the row is gutter for a horizontal
+   * scrollbar the compact row cannot have -- the mats shrink to fit rather
+   * than scrolling. Left on, it put the row 4px past its own cap.
+   */
+  padding-bottom: 0;
+}
+
+[data-handheld] .mat--compact {
+  max-height: var(--pod-seat-h);
+}
+
+[data-handheld] .mat--compact .orb {
+  flex-direction: row;
+}
+
+[data-handheld] .play {
+  grid-template-rows: fit-content(var(--pod-seat-h)) minmax(0, 1fr);
+  gap: 4px;
+}
+
+/*
+ * The foot carries the hand, the hints and the commit slab together.
+ *
+ * IT SAID THIS BEFORE IT WAS TRUE. `.foot__slab` was styled here and rendered
+ * nowhere -- `grep` found this rule and nothing else -- while `useZoomFit`'s
+ * `HANDHELD_FOOT_EXTRA` already reserved 56px for "the commit slab portalled
+ * beside it". So the hand paid for a slab that was not there and the slab went
+ * on occupying 65px of the right rail, full width, while the action list under
+ * it clipped its own rows. `ActionPanel` portals into the host now.
+ *
+ * Areas rather than source order, because the host is the foot's first child
+ * (the ring walks it before the hand, which is the order a thumb wants) and the
+ * eye wants it last on the row.
+ */
+[data-handheld] .table__foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  /*
+   * The slab spans both rows, in the gutter the fan was never using.
+   *
+   * Its own row cost 44px of foot -- and the foot's height comes straight off
+   * the board, so the seat cap had just bought the viewer's mat 128px and this
+   * handed 44 of them back. The hand is a centred fan 922px wide in a 1180px
+   * row: there is a ~130px gutter down each side holding nothing. The slab goes
+   * in the right one and the foot does not grow at all.
+   */
+  /*
+   * THE HAND IS ABOVE THE STRIP, and that order is what makes the lift free.
+   *
+   * A hovered card rises out of `.hand` -- the slot is a fixed rectangle
+   * extended upward, which is the whole fix for a jitter where raising a card
+   * moved its hit box off the pointer -- so whatever sits directly above the
+   * hand gets drawn on. With the hint bar there, a raised card covered "Read"
+   * and "Back", and worse, the slot's catchment covered the bar so moving the
+   * pointer up off the hand never fired `mouseleave` and the card stayed up.
+   *
+   * Padding `.hand` to contain the lift was the first fix and it was wrong: the
+   * box is `border-box`, so 24px of top padding came straight out of the
+   * `calc(var(--card-w) * 1.4 + 44px)` that reserves room for the arc's droop
+   * and the outermost cards' rotation -- and the foot began overflowing by 7px
+   * with the bottom of the fan clipped. Growing the min-height instead would
+   * have taken those pixels off the board, which is the thing this whole pass
+   * is buying back.
+   *
+   * Below the hand there is nothing to collide with: the overhang goes up into
+   * the board's bottom padding, which is exactly what it does on a desktop and
+   * has never been a problem there. The strip also reads better at the bottom
+   * edge -- it is chrome, and the hand is the thing being played.
+   */
+  grid-template-areas:
+    "hand hand slab"
+    "tools hints slab";
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 10px;
+}
+
+/*
+ * The utility strip, on the row it can actually fit on.
+ *
+ * `nowrap` is the entire point: in the rail these wrapped to three rows because
+ * five 44px targets need 313px and the column had 200. Here the row is 1180px
+ * wide and they are one line, which is both smaller and easier to hit than what
+ * they replaced.
+ */
+[data-handheld] .foot__tools {
+  grid-area: tools;
+}
+
+[data-handheld] .foot__tools .tools {
+  flex-wrap: nowrap;
+  padding-top: 0;
+  border-top: 0;
+}
+
+[data-handheld] .hints {
+  grid-area: hints;
+}
+
+[data-handheld] .hand {
+  grid-area: hand;
+}
+
+/*
+ * The targeting row shares the hint row's cell.
+ *
+ * It is the third child of a two-row grid and used to land in an implicit
+ * third row, pushing the hand down mid-decision -- which moves every drop
+ * target on the board at the moment the player is aiming at one.
+ */
+[data-handheld] .choices {
+  grid-area: hints;
+}
+
+/* The foot's own gutters, for the reason `.table__body`'s were cut. */
+[data-handheld] .table__foot {
+  padding: 2px 8px 4px;
+}
+
+[data-handheld] .foot__slab {
+  grid-area: slab;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+/*
+ * The slab, as a pill rather than as a rail-wide plaque.
+ *
+ * `ui.css` gives it `padding: 17px 22px` around a 21px label, and the 16px
+ * floor takes its keycap from 11px to 16px on top -- 65px tall and as wide as
+ * whatever contains it. That is the right shape for a 304px column on a
+ * 950px-tall desktop and the wrong one for a row it now shares. `width: auto`
+ * is the load-bearing half: `.commit` is `width: 100%` precisely so it cannot
+ * scale past its column, and in a flex row that reads as "take everything".
+ */
+[data-handheld] .foot__slab .commit {
+  width: auto;
+  min-height: 44px;
+  padding: 6px 18px;
+}
+
+[data-handheld] .foot__slab .commit__main {
+  font-size: 18px;
+}
+
+/* The alternatives travel with it, still on their own row beneath. */
+[data-handheld] .foot__slab .commit-dock {
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   The card face at 1280x800
+   ==========================================================================
+
+   THE FLOOR IS 16px AND NOTHING CARRYING INFORMATION MAY GO UNDER IT. That is
+   not a style preference -- it comes from a 7-inch panel at arm's length, and
+   the design round found 2.11px text that had looked fine in screenshots for
+   months. `e2e/handheldAssert.ts` fails the run on a single element below it.
+
+   What follows from that is the whole `tile` variant: the clamps below have
+   16px lower bounds, and anything that then does not fit is DROPPED rather than
+   shrunk. On a board card the thing dropped is the name -- see the header of
+   `CardFace.tsx` for why that is the right thing to lose.
+   ========================================================================== */
+
+[data-handheld] .face {
+  --fs-nm: clamp(16px, calc(var(--card-w) * 0.085), 19px);
+  --fs-tp: clamp(16px, calc(var(--card-w) * 0.062), 18px);
+  --fs-tx: clamp(16px, calc(var(--card-w) * 0.053), 18px);
+  --fs-pt: clamp(16px, calc(var(--card-w) * 0.092), 21px);
+  --fs-chip: clamp(16px, calc(var(--card-w) * 0.062), 18px);
+}
+
+/*
+ * A board card drops its name, its type line and its keyword chip, and keeps
+ * everything that still reads at 16px: the illustration, the type glyph, the
+ * cost, the stats and the badges.
+ *
+ * Scoped to the lanes, so the hand keeps its names -- the hand is where you
+ * choose, and a hand of seven anonymous rectangles is unplayable. The preview
+ * rail and every dialog are untouched for the same reason.
+ *
+ * HIDDEN, NOT UNRENDERED. The DOM is identical either way, so `data-card-name`,
+ * the accessibility tree, `FxLayer`'s `[data-oid]` anchors and every existing
+ * query keep working, and the node the ring lands on is the same node.
+ */
+[data-handheld] .mat__lanes .face__name,
+[data-handheld] .mat__lanes .face__type,
+[data-handheld] .mat__lanes .face__kwline {
+  display: none;
+}
+
+/*
+ * THE TYPE LINE GOES FROM EVERY SMALL CARD, not only from the lanes.
+ *
+ * The rule above was written for board cards and the reasoning generalises to
+ * every card the app draws at card size: at the 16px floor,
+ * "Creature — Vampire Soldier" needs about 200px and a card is 96 to 150 wide,
+ * so it truncated everywhere it appeared -- the hand, the deck catalogue, the
+ * pod seats, the exit ghosts. Measured across Storybook: the type line
+ * overflowed its box by 21-68px on 40-odd stories, and the keyword line with
+ * it. That is not smaller text, it is a half-word, and the card's own
+ * illustration and type glyph already say what kind of thing it is.
+ *
+ * THE NAME STAYS, outside the lanes. It is the one thing a small card cannot be
+ * read without, it wraps to two lines rather than truncating, and it is why the
+ * hand is exempt from the rule above -- a hand of seven anonymous rectangles is
+ * unplayable.
+ *
+ * Keyed on `.face` and not on `.card`, because the deck catalogue, the dossier
+ * and the pod seats render `CardFace` on its own with no card wrapper around
+ * it -- which is where a first pass at this rule missed thirty-odd stories.
+ */
+[data-handheld] .face__type,
+[data-handheld] .face__kwline {
+  display: none;
+}
+
+/*
+ * ...except on the two surfaces whose whole job is reading one card.
+ *
+ * A prompt owns the screen while it is up and `.opt--card` gives itself
+ * 210-264px for exactly this reason (see the block further down, and the round
+ * that found a discard prompt truncating a rule mid-sentence). The zone viewer
+ * is the same kind of surface. Both have the width, so both keep the line --
+ * and the card preview keeps it by being `.card--big` already.
+ *
+ * After the drop, so the tie on specificity falls this way.
+ */
+[data-handheld] .preview .face__type,
+[data-handheld] .preview .face__kwline,
+[data-handheld] .opt--card .face__type,
+[data-handheld] .opt--card .face__kwline,
+[data-handheld] .peek__slot .face__type,
+[data-handheld] .peek__slot .face__kwline {
+  display: revert;
+  /*
+   * ...and it WRAPS on those three, rather than truncating.
+   *
+   * "Legendary Creature — Human Wizard" is about 280px at 16px and none of
+   * these is that wide, so re-enabling the line without this just moves the
+   * truncation somewhere the player was deliberately sent to read. These are
+   * the surfaces whose card is free to grow -- the preview's `big` variant is
+   * "as tall as its rules text needs" by design, and a prompt owns the screen --
+   * so a second line costs nothing here and costs a whole card everywhere else.
+   */
+  white-space: normal;
+}
+
+/*
+ * NOT `.card--big` as a whole, which was the first attempt and was wrong.
+ *
+ * `card--big` is a variant, not a width: the deck dossier draws one at
+ * `clamp(150px, 22vh, 214px)`, where the type line overflowed by 74px -- and
+ * unlike the three above, that card IS aspect-locked, so wrapping would have
+ * pushed its own rules text out of the bottom instead. The dossier keeps the
+ * name and the rules; what kind of card it is, it says in the rules.
+ */
+
+[data-handheld] .mat__lanes .face__head,
+[data-handheld] .mat__lanes .face__foot {
+  padding: 3px 4px;
+}
+
+/* With the name gone the glyph is what says "creature", so it earns the room. */
+[data-handheld] .mat__lanes .face__glyph {
+  font-size: var(--fs-pt);
+}
+
+/*
+ * THE LANE HEADINGS GO. A row of creatures says "creatures".
+ *
+ * "CREATURES", "GLOBAL ARTIFACTS & ENCHANTMENTS", "LANDS" -- three headings
+ * naming three things that are drawn directly beneath them, on the screen with
+ * the least room to spare. This is the drop rule the round already settled on
+ * and then applied only to the opponents: *dropping is for a label whose
+ * subject is still on screen*. Nowhere is a subject more on screen than the
+ * cards immediately under its own heading.
+ *
+ * What it is worth is more than the words: the front band gives up
+ * `LANE_CHROME.labelAboveH` of height, and the lands band gives up
+ * `labelBesideW` -- a 74px column, on the row that holds the most cards.
+ *
+ * An earlier version of this block truncated these to one line instead, to fix
+ * a real bug: at 16px "GLOBAL ARTIFACTS & ENCHANTMENTS" no longer fitted the
+ * 239px lane it sat over, wrapped to two lines, and `zoomFit` went on modelling
+ * it as one -- so the solver targeted a board 21px shorter than it was drawing
+ * and the viewer's mat overflowed. Dropping the headings outright removes the
+ * bug and the workaround together.
+ *
+ * `state/useZoomFit.ts` passes `labels: false` to match. IT HAS TO: hiding
+ * these in CSS alone would leave the solver reserving room for them, and the
+ * board would keep sizing its cards for a box smaller than the one it has.
+ */
+[data-handheld] .play__mine .lane__label {
+  display: none;
+}
+
+/*
+ * ...and the column it was sitting in goes with it.
+ *
+ * `.lane` is `74px minmax(0, 1fr)`. Hiding the label empties that track and
+ * does not remove it, so the lands band would have kept a 74px blank gutter --
+ * which is the whole of what dropping the heading was supposed to buy, handed
+ * straight back. `.band--front .lane` already collapses to one column, so this
+ * only bites on the lands row, which is the row that holds the most cards.
+ */
+[data-handheld] .play__mine .lane {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* ==========================================================================
+   The opponent spine
+   ==========================================================================
+
+   Drawn at every size -- see `logic/threat.ts` -- but on a handheld it *is* the
+   opponent, so it is what the row is built around.
+   ========================================================================== */
+
+/*
+ * ONE LINE, ALWAYS, WHATEVER IT SAYS.
+ *
+ * This wrapped, and `e2e/layout.spec.ts` caught it immediately: an opponent
+ * playing their third creature grew the line from "0 creatures" to
+ * "3 creatures - 2 untapped - 6 power", which wrapped to a second row, grew the
+ * compact mat, grew the `align-items: stretch` opponent row, and **moved the
+ * viewer's whole board down by 35px** -- taking every drop target on it along.
+ *
+ * That is the exact failure `--pod-lanes-h` was introduced to end, arriving
+ * again through a new door. So the spine is a fixed single line: `nowrap` with
+ * an ellipsis, and a reserved height so an empty one occupies the same row as a
+ * full one.
+ *
+ * Clipping the tail is safe because `threatParts` emits in order of what
+ * matters -- creatures, untapped, power, fliers, open mana -- so what falls off
+ * the end is always the least decision-changing clause.
+ */
+.orb__spine {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 3px 8px;
+  min-height: 1.3em;
+  padding: 3px 6px;
+  border-radius: 6px;
+  background: var(--pane-well);
+  color: var(--text-dim);
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orb__spine > span {
+  flex: 0 0 auto;
+}
+
+.orb__spine b {
+  color: var(--text);
+  font-weight: 700;
+}
+
+[data-handheld] .orb__spine {
+  font-size: 16px;
+}
+
+/* ==========================================================================
+   The hint bar
+   ==========================================================================
+
+   Renders spans, never controls -- see `components/game/HintBar.tsx`. It takes
+   no layout at all for a mouse player, which is what keeps the desktop foot the
+   exact row it has always been.
+   ========================================================================== */
+
+.hints {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 4px 12px 2px;
+  font-size: 12px;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+html[data-input="pad"] .hints,
+html[data-input="keyboard"] .hints {
+  display: flex;
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.hint__verb {
+  color: var(--text);
+}
+
+/* The constant half sits apart from the verbs, which change every step. */
+.hints__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+  opacity: 0.72;
+}
+
+.glyph {
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 5px;
+  background: var(--void-2);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+}
+
+/* A keyboard label is a word, not a letter, so it may not be forced square. */
+.glyph--key {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/*
+ * An opponent, as a strip rather than a column.
+ *
+ * The compact orb is a vertical stack built for a 112px column: portrait,
+ * name, life, mana, piles, one under another. Given the full width of a mat it
+ * does not compact -- it *stretches*, and the commander plinth is the reason.
+ * It is a 2:1 banner crop, so at 454px wide it is 264px tall, and two of those
+ * took 484px of an 800px screen to say almost nothing.
+ *
+ * So the same information is laid out along the row instead: the portrait as a
+ * fixed thumbnail, and the name, the summary and the mana beside it. Nothing is
+ * dropped -- this is a re-flow, not a cut.
+ */
+[data-handheld] .mat--compact .orb__body {
+  display: grid;
+  /*
+   * THREE COLUMNS, NOT THREE ROWS. The foot moves beside the name instead of
+   * under it, and that one change is most of the 220px.
+   *
+   * Stacked, the right-hand column came to head 21 + spine 27 + foot 144, and
+   * the foot was two thirds of the seat: a mana plate, a commander-damage plate
+   * and a row of piles, each on its own line, each with a plate's padding, in a
+   * column 776px wide holding a handful of glyphs. It was not dense -- it was a
+   * column layout given a row's worth of width and stretching to fill it, which
+   * is the same mistake the block above this one already fixed once for the
+   * portrait.
+   *
+   * Side by side they cost the height of the tallest, which is the piles at
+   * 44px, and the width is free: even four seats have more of it than a column
+   * layout can spend.
+   */
+  /*
+   * `minmax` on the portrait, so the commander's name gets the width it needs
+   * when there is width and gives it back when there is not.
+   *
+   * WHICH COMMANDER is the most decision-changing fact about a seat whose board
+   * is not drawn, and at a fixed 104px the label read "Aesi, Tyra..." beside
+   * 700px of empty column -- the information was being withheld next to the
+   * room to show it. A `fr` track claims leftover space only after the fixed
+   * ones reach their max, so the portrait fills to 216px at one or two seats
+   * and shrinks toward 96px at four, which is the order the space should go in.
+   */
+  grid-template-columns: minmax(96px, 216px) minmax(0, 1fr) auto;
+  grid-template-areas:
+    "art head foot"
+    "art spine foot";
+  align-content: start;
+  align-items: center;
+  gap: 2px 10px;
+  padding: 2px;
+}
+
+/*
+ * The portrait, capped for real this time.
+ *
+ * `.cmdplinth__frame { height: 46px }` below caps the banner of a commander
+ * that is ON the battlefield. A commander still in the command zone renders
+ * `.cmdslot--waiting` instead, which that rule does not touch -- so the art
+ * column measured **107px** in the state every game opens in, and it was the
+ * tallest thing in the seat once the foot was dealt with. Capping the column
+ * itself catches both, and `overflow: hidden` is what keeps a slot that does
+ * not want to shrink from pushing the cap open.
+ */
+[data-handheld] .mat--compact .cmdzone {
+  /*
+   * Wide enough to read the name, which is the only reason the portrait is
+   * here at all.
+   *
+   * A first pass took this to 56px to buy height and got the trade backwards:
+   * the art shrank, the name under it truncated to "Aesi, Tyra...", and the
+   * column was still 107px because the height was never the art's -- see below.
+   * WHICH COMMANDER an opponent has is the most decision-changing fact about a
+   * seat whose board is not drawn, so it gets the width it needs and the height
+   * comes from the two things under it that were not carrying anything.
+   */
+  width: 100%;
+  max-height: calc(var(--pod-seat-h) - 12px);
+  overflow: hidden;
+}
+
+[data-handheld] .mat--compact .cmdslot {
+  padding: 3px;
+}
+
+/*
+ * "In command", dropped -- the plinth's position already says it.
+ *
+ * Exactly the same judgement as `.cmdplinth__tag` in the drop list further
+ * down, and it is here rather than there because of what it was costing: an
+ * opponent's `.cmdplinth__frame { height: 46px }` cap below caps the BANNER,
+ * and a commander still in the command zone renders a name (19px) and this
+ * word (21px) beneath it in normal flow, which a capped banner does nothing
+ * about. That is the trap the frame rule's own comment warns of, one level out,
+ * and it is why the art column measured 107px against a 46px cap.
+ *
+ * THE WORD AND NOT THE STRIP. The strip also carries the commander's cost, and
+ * on the viewer's own plinth the cost is the number that decides whether this
+ * turn can recast them -- `CommandZone` already drops it for an opponent, where
+ * it is not actionable. Hiding the container would have taken both, which on
+ * the viewer's side reads as the same class of mistake `.pile__label` was.
+ */
+[data-handheld] .cmdplinth__word,
+[data-handheld] .cmdplinth__glyph {
+  display: none;
+}
+
+/*
+ * The foot, along the row.
+ *
+ * `align-items: center` rather than `stretch`: the three plates are different
+ * heights by nature and a stretched mana plate holding one glyph reads as an
+ * empty box.
+ */
+[data-handheld] .mat--compact .orb__foot {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* ==========================================================================
+   An opponent's zone counts, as marks rather than as labelled piles
+   ==========================================================================
+
+   Four or five zones, each drawn as a leaf stack with its count on the top leaf
+   and its name spelled out underneath, is a column layout. On the viewer's own
+   190px side column that is right and it stays. On an opponent's strip it was
+   the densest thing on the board and the first to overflow: five stacks at 44px
+   plus five 16px words is 300px of a 291px mat, so it wrapped, and the wrap is
+   what pushed the seat past its cap with a count hidden under the crop.
+
+   The resolution is the one the round already reached for the 142 native
+   tooltips: DROP THE WORD, KEEP THE MARK, AND PUT THE NAME ONE INPUT AWAY.
+   Every pile already carries an `aria-label` reading "GY: 3" -- added when the
+   handheld layout first hid these labels -- so the name is not being invented
+   here, only surfaced. It comes back on hover for a pointer and on the ring for
+   a pad, which between them is every way anyone touches this app.
+
+   What makes a mark readable without its word is that the marks differ, and
+   they now do: `logic/zones.ts` gives the hand its own kind, so library and
+   hand are no longer the same purple stack. Colour, stack height and count.
+   ========================================================================== */
+
+[data-handheld] .mat--compact .pile {
+  position: relative;
+  flex-direction: row;
+  gap: 0;
+}
+
+[data-handheld] .mat--compact .pile__label {
+  display: none;
+}
+
+/*
+ * The count gets a chip to sit in, and this is the actual formatting bug.
+ *
+ * `.pile__stack` is 28px wide and the compact orb narrows it to 16 -- which was
+ * fine when the number on the top leaf was 10px, and stopped being fine the
+ * moment the 16px floor raised it. A two-digit library count is about 20px of
+ * glyph in a 16px box, so "90" rendered clipped and off-centre and a
+ * three-digit one had nowhere to go at all. Nothing measured it, because the
+ * font size was correct and the box it overflowed was decorative.
+ *
+ * With the word gone the leaf stack has no job left either: it was a second,
+ * lower-resolution encoding of the same number, and it is what made these
+ * 44x44 targets look like tiny floating marks. So the top leaf becomes the
+ * whole chip -- zone colour, one number, room for three digits -- and the
+ * decorative leaves under it go.
+ *
+ * The viewer's own 190px column keeps its stacks: it has the room, and the
+ * comparative height of a drawn-down library next to a grown graveyard is a
+ * real thing to notice there.
+ */
+[data-handheld] .mat--compact .pile__stack {
+  display: grid;
+  place-items: center;
+  width: auto;
+}
+
+[data-handheld] .mat--compact .pile__leaf:not(.pile__leaf--top) {
+  display: none;
+}
+
+[data-handheld] .mat--compact .pile__leaf--top {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  height: 28px;
+  margin: 0;
+  padding: 0 6px;
+  border-radius: 7px;
+  font-size: 16px;
+}
+
+/*
+ * An empty plate says nothing, so it is not drawn.
+ *
+ * `.orb__none` is an em dash standing in for "no mana open" -- which the spine
+ * beside it already says by omitting its "N open" clause, and which the plate's
+ * own heading would have said if the 16px pass had not dropped it. On a strip
+ * this narrow it was 24px of punctuation between two things that are numbers.
+ */
+[data-handheld] .mat--compact .orb__none {
+  display: none;
+}
+
+[data-handheld] .mat--compact .orb__panel:not(:has(> :not(.orb__none))) {
+  display: none;
+}
+
+/*
+ * The name, on hover and on the ring.
+ *
+ * `attr(aria-label)` and not a second hand-written string: the accessible name
+ * and the visible name cannot then disagree, which is the failure mode a
+ * duplicated label always eventually reaches.
+ *
+ * `[data-cursor]` covers the pad and the keyboard; `:hover` covers the pointer,
+ * which on a Deck is the trackpads and the touchscreen. A `title` would have
+ * covered only the last of those, which is why there are none left in this app.
+ */
+[data-handheld] .mat--compact .pile::after {
+  content: attr(aria-label);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  z-index: var(--z-ring);
+  padding: 3px 8px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 6px;
+  background: var(--void-2);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%) translateY(3px);
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) ease;
+  pointer-events: none;
+}
+
+[data-handheld] .mat--compact .pile:hover::after,
+[data-handheld] .mat--compact .pile[data-cursor]::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* No transition where the OS has asked for none -- it appears, or it does not. */
+@media (prefers-reduced-motion: reduce) {
+  [data-handheld] .mat--compact .pile::after {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Two seats and up, where the strip runs out of row
+   ==========================================================================
+
+   The one-line strip above is right for ONE opponent and cannot be made to fit
+   more. Measured at 1200x800 with a four-seat pod: each mat gets 309px, and
+   `art 96 + name + spine + mana + commander damage + four 44px pile targets`
+   needs about 420. What the seat actually drew was the portrait, a clipped
+   "LIB", half of "HAND", and **115px of everything else hidden under the cap**
+   -- no seat name, no threat line, no graveyard. A cap that hides content
+   instead of re-arranging it is not a cap, it is a crop.
+
+   TWO, NOT THREE, and finding that out is worth recording. This block was
+   keyed on the third seat, because a four-seat pod is the case that obviously
+   breaks and it was the case being tested -- `deckfit.spec.ts` covers one
+   opponent and three. Two opponents fell straight through the gap between
+   them: each mat gets ~470px, which is not enough for the one-line strip
+   either, so the foot wrapped and every two-player-plus-one seat sat 16px over
+   its cap. It was a Storybook sweep that caught it, on an `FxLayer` story that
+   happens to deal two opponents.
+
+   So the arrangement changes with the density, which is the only honest lever
+   left once the 16px floor and the 44px targets are fixed. Counting seats with
+   `:has()` rather than a React attribute keeps this a property of the layout,
+   where the rest of this file's decisions live. The extra narrowing below --
+   a 44px portrait, no commander name, a shorter cap -- still waits for the
+   third seat, because at two there is room for all of it.
+   ========================================================================== */
+
+/*
+ * A shorter cap at this density, because nothing here needs the extra.
+ *
+ * The 96px the one- and two-seat strip uses is sized for a portrait with the
+ * commander's name under it. That name is dropped below, so the art column only
+ * has to hold a 46px banner -- and the twelve pixels go to the viewer's own
+ * mat, which is what overflows first in a four-seat pod.
+ */
+
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .orb__body {
+  /*
+   * The name and the threat line share a row, and the piles get the one below.
+   *
+   * 27px + 44px + a gap is 73 of the 74 the cap allows, against the 92 the
+   * three-row version needs -- and the row they share is the pair a player
+   * reads together anyway: who this is, and what they have.
+   *
+   * The art column is 44px and not 52, and those eight pixels are load-bearing:
+   * a seat can show FIVE piles, not four. Exile appears the moment anything is
+   * exiled, and five 44px targets plus their gaps need 236px of the 291 a mat
+   * has at four seats. At 52 the row came to 233 and the fifth pile wrapped to
+   * a second line, which put the seat 47px over its cap with the count hidden
+   * under it -- found by `deckfit.spec.ts` on a pod that had reached turn six,
+   * which is exactly the state a fixed four-pile assumption survives to.
+   */
+  /*
+   * The portrait keeps real width here and gives it up at four seats.
+   *
+   * A two-seat mat is ~470px, which is room for the commander's name under the
+   * art -- and that name is the most decision-changing fact about a seat whose
+   * board is not drawn, so it is the last thing to go. 44px was the four-seat
+   * number and applying it here truncated "Aesi, Tyrant of Gyre Strait" to
+   * "Ae..." beside 300px of empty row, which is the withholding-next-to-the-room
+   * mistake the one-seat block already had to fix once.
+   */
+  grid-template-columns: minmax(96px, 160px) auto minmax(0, 1fr);
+  grid-template-areas:
+    "art head spine"
+    "art foot foot";
+}
+
+/* Five piles on one line, so the gap gives way before the targets do. */
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .piles {
+  flex-wrap: nowrap;
+  gap: 3px;
+  padding: 1px;
+}
+
+/*
+ * The last eight pixels, taken from the seat's own gutters.
+ *
+ * A four-seat strip wants 92px: 27 for the name-and-threat row, 44 for the pile
+ * targets, and 21 of padding, border and gaps around them. The cap is 84, and
+ * lowering it further only moved the overflow rather than removing it -- which
+ * is the tell that the content, not the cap, was the thing to change. The 44px
+ * targets and the 16px text are untouchable by definition, so what is left is
+ * the space between them, and at this density there is more of it than the
+ * layout can afford.
+ */
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) {
+  --pod-seat-h: 84px;
+}
+
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) > .mat--compact {
+  padding: 2px 6px;
+}
+
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__body {
+  gap: 1px 6px;
+  padding: 1px;
+}
+
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__spine {
+  padding: 1px 6px;
+}
+
+/*
+ * The portrait becomes a thumbnail, and the commander's NAME is dropped.
+ *
+ * This is the one real cut in the compact layout and it should be argued for
+ * rather than slipped in. At one or two seats the art track flexes out to 216px
+ * so the name reads in full, because it is the most decision-changing fact
+ * about a seat whose board is not drawn. At four seats there are 291px for
+ * everything and the name alone wants 183 of them -- the first attempt at this
+ * block left it `auto` and the track took exactly that, which crushed the
+ * threat line to 32px and wrapped the piles to three rows under a 96px cap.
+ *
+ * So at this density the name goes and the art stays: the illustration is still
+ * recognisably that commander, the seat is still named by `.orb__name`, and R2
+ * draws the whole mat with the name on it. Losing a label is recoverable in a
+ * press; losing the threat line and the graveyard count is not.
+ */
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .cmdplinth__name {
+  display: none;
+}
+
+/* With the name gone the portrait is a thumbnail, and the row needs the width
+   for a fifth pile. */
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__body {
+  grid-template-columns: 44px auto minmax(0, 1fr);
+}
+
+/*
+ * Mana and commander damage move to the R2 reader at this density.
+ *
+ * The mana plate is the easy one: `logic/threat.ts` already puts open mana in
+ * the spine as "N open", so inline it is the same fact twice and the spine's is
+ * the one that survives a narrow column.
+ *
+ * Commander damage is a real drop and worth naming as one. It is a progress
+ * number rather than a threat number -- it does not change what an opponent can
+ * do to you this turn, which is what the rest of this strip is for -- and the
+ * viewer's OWN orb still shows every seat's damage against them, which is the
+ * direction that decides a game. R2 has the full mat.
+ */
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .orb__mana,
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(2)) .orb__cmd {
+  display: none;
+}
+
+/* The portrait gives up the width it was allowed with one or two seats. */
+[data-handheld] .play__opponents:has(> .mat--compact:nth-child(3)) .orb__body {
+  gap: 2px 6px;
+}
+
+[data-handheld] .mat--compact .orb__head {
+  grid-area: head;
+}
+[data-handheld] .mat--compact .orb__spine {
+  grid-area: spine;
+}
+[data-handheld] .mat--compact .orb__foot {
+  grid-area: foot;
+  gap: 4px;
+}
+
+/*
+ * The leaf stack, trimmed to the three leaves that say "stack".
+ *
+ * A library of 91 draws 91/10 leaves at 4px each and came out **75px** -- the
+ * tallest thing in the foot, taller than the 44px hit target it sits inside,
+ * and taller than the whole seat is now allowed to be. The leaves are
+ * decoration: `.pile__leaf--top` is a card back with the exact count printed on
+ * it, so what is dropped here is resolution on a graphic and never a number.
+ *
+ * `:nth-last-child` and not `max-height`, because the top leaf is the LAST
+ * child -- clipping the box would have hidden the one leaf carrying the count
+ * and left the decoration behind, which is the wrong half of the trade.
+ */
+[data-handheld] .pile__leaf:nth-last-child(n + 4) {
+  display: none;
+}
+
+/*
+ * The plinth, capped in HEIGHT rather than in width.
+ *
+ * Capping the width would leave the banner crop to decide the height from
+ * whatever the art is; capping the height and letting the crop fill it keeps
+ * every seat the same size, which is what makes the row scannable.
+ */
+[data-handheld] .mat--compact .cmdzone {
+  grid-area: art;
+  align-self: start;
+}
+
+/*
+ * The BANNER is capped, not the plinth.
+ *
+ * The plinth is a banner with a name and a state strip under it, in normal
+ * flow. Capping the outer box does not shorten those -- it leaves them spilling
+ * out of the bottom and overlapping whatever the next row is, which here was
+ * the mana panel. Capping the art gives the height back and keeps the plinth
+ * a plinth.
+ */
+[data-handheld] .mat--compact .cmdplinth__frame {
+  height: 46px;
+}
+
+/* The piles keep their counts but stop reserving a labelled column each. */
+[data-handheld] .mat--compact .piles {
+  gap: 4px;
+}
+
+/*
+ * Your own info column, compacted for the same reason theirs was.
+ *
+ * At 800px tall the viewer's orb wants 430px and its row has 331, so the piles
+ * ran under the hand and the graveyard count was simply not on screen.
+ *
+ * The plinth is deliberately NOT capped here, unlike an opponent's. `--mat-side`
+ * is already clamped to 132-190px, so its banner comes out around 68px on its
+ * own -- and capping it anyway is what made the commander's name overlap the
+ * mana panel, because the name sits below the banner in normal flow and a
+ * capped box does not shorten it. What is left to save is the gaps, and the
+ * column scrolls if a long loss line still overruns.
+ */
+[data-handheld] .play__mine .orb__foot {
+  gap: 3px;
+}
+
+[data-handheld] .play__mine .orb__body {
+  gap: 4px;
+}
+
+/*
+ * The viewer's own plates and piles, tightened for the four-seat case.
+ *
+ * At four seats this column carries the most it ever will: commander damage
+ * from three opponents, which wraps to two rows of chips, and FIVE piles once
+ * anything is exiled, which wraps to two rows of 44px targets in a 144px
+ * column. Measured in a turn-six pod, that put `.play__mine` 9-17px past its
+ * row -- and `.play__mine`'s `overflow-y: auto` turned it into a scrollbar
+ * rather than into a visible failure, which on a Deck means the graveyard count
+ * is simply not on screen.
+ *
+ * The room comes from the gaps between plates rather than from any of the
+ * plates, because every one of them is a number a player reads. Nothing here
+ * touches the 44px targets themselves.
+ */
+[data-handheld] .play__mine .piles {
+  gap: 2px;
+  padding: 2px;
+}
+
+[data-handheld] .play__mine .orb__panel {
+  padding: 1px 4px;
+}
+
+/*
+ * ...and if it still does not fit, it scrolls rather than being cut off.
+ *
+ * A short viewport with a long loss line or a fourth commander-damage chip can
+ * still overrun the column, and the failure mode this replaces is the worst
+ * kind: the graveyard pile was *behind the hand*, so it was neither visible nor
+ * clickable and nothing said it was there.
+ */
+[data-handheld] .mat__side {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  /*
+   * `min-height: 0` is what makes the `overflow` above do anything at all.
+   *
+   * A grid item's default `min-height: auto` is its content, so a column that
+   * is too tall grows its row rather than scrolling inside it -- and the row it
+   * grew ran under the hand. The whole chain down from the row has to say it,
+   * or the innermost one still cannot shrink.
+   */
+  min-height: 0;
+}
+
+[data-handheld] .play__mine,
+[data-handheld] .play__mine .mat {
+  min-height: 0;
+}
+
+/*
+ * The viewer's mat keeps its border and gives up padding.
+ *
+ * `logic/zoomFit.ts` reads this as `VIEWER_MAT.padY`, so it is not free to
+ * change here alone -- the solver would pack cards into a lane box that no
+ * longer exists, which is the exact drift `theme.css`'s rail tokens were
+ * introduced to end. Left at 8px deliberately; the room came from the shell.
+ */
+
+/*
+ * The opponent strip gives up the gaps a column needed.
+ *
+ * `.orb__foot`'s plates were stacked with a column's spacing between them and
+ * are now three short rows on one line's worth of gap. This is the last ~40px
+ * per seat, and at two seats it is the difference between the viewer's lands
+ * fitting and not.
+ */
+[data-handheld] .mat--compact .orb__panel {
+  padding: 1px 4px;
+}
+
+/*
+ * The compact piles are NOT scaled down.
+ *
+ * They were, to buy back ~40px per seat -- and it silently defeated the 44px
+ * hit floor two blocks below, because `.mat--compact .piles` is two classes and
+ * outranks `[data-handheld] .piles`. The targets measured 38x38: exactly 44
+ * times 0.86. A transform is invisible to a min-height, which is what made it
+ * hard to see.
+ */
+
+/* ==========================================================================
+   The log, as an overlay
+   ==========================================================================
+
+   The left rail leaves the grid on a handheld, and the log goes with it. It
+   comes back on `View` (or the wheel's Log spoke) as a panel over the board,
+   because it is reference you consult rather than something you watch --
+   unlike the stack, which moves to the top of the right rail because it is a
+   thing you need mid-decision.
+
+   `data-modal-root` so the ring is trapped inside it while it is up: a log you
+   can open but cannot close without a mouse is worse than no log.
+   ========================================================================== */
+
+.logover {
+  position: fixed;
+  inset: auto 12px 12px 12px;
+  z-index: var(--z-modal);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-height: 52vh;
+  border: 1px solid var(--rail-line);
+  border-radius: 12px;
+  background: var(--void-1);
+  box-shadow: var(--pane-shadow), 0 18px 60px rgb(0 0 0 / 0.6);
+}
+
+.logover__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rail-line);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.logover .ticker {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   Reading an opponent's board
+   ==========================================================================
+
+   Held on R2. Owns the screen while it is up, which is why it can afford a
+   generous card size and why it is outside the zoom solver entirely.
+   ========================================================================== */
+
+.oppboard {
+  position: fixed;
+  inset: 8px 8px 8px 8px;
+  z-index: var(--z-modal);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 14px;
+  background: rgb(11 10 22 / 0.97);
+  box-shadow: 0 24px 80px rgb(0 0 0 / 0.7);
+  overflow: auto;
+  /* A hold is not a control: it must never eat the press that ends it. */
+  pointer-events: none;
+}
+
+.oppboard__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 18px;
+}
+
+.oppboard__who {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.oppboard__life {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+/* Inside the reader the mat is a plain board: no scroll box, no pinned lanes. */
+.oppboard .mat__lanes {
+  height: auto;
+  min-height: 0;
+}
+
+/* ==========================================================================
+   FILL IS FOCUS
+   ==========================================================================
+
+   The one colour rule the controller layer adds, and it exists because a ring
+   alone is not enough on a 7-inch panel: a 3px outline read from arm's length
+   on a board of illustrations is a hairline, and the eye has to hunt for it.
+
+   So a control is an OUTLINE until the ring is on it, and then it FILLS. Tier
+   lives on the edge -- gold for the commit slab, green for a castable card, red
+   for anything destructive -- and never on the fill, so "what kind of thing is
+   this" and "am I on it" are two channels that cannot be confused for each
+   other. That separation is why `--playable` keeps meaning exactly "this card
+   can be cast right now", which the desktop board already relies on.
+
+   Scoped to the input modes that have a ring at all. A mouse player's board is
+   untouched.
+   ========================================================================== */
+
+html[data-input="pad"] [data-cursor].btn,
+html[data-input="keyboard"] [data-cursor].btn,
+html[data-input="pad"] [data-cursor].tool,
+html[data-input="keyboard"] [data-cursor].tool,
+html[data-input="pad"] [data-cursor].act,
+html[data-input="keyboard"] [data-cursor].act,
+html[data-input="pad"] [data-cursor].opt,
+html[data-input="keyboard"] [data-cursor].opt {
+  background: var(--focus);
+  border-color: var(--focus);
+  color: #1a1405;
+}
+
+/*
+ * The sheen.
+ *
+ * A slow gradient crossing the focused card. It carries further than the
+ * outline does -- movement is visible in peripheral vision where a hairline is
+ * not -- and it costs no layout and no state: one pseudo-element and one
+ * keyframe. This is the texture that makes the ring feel like it is *on* the
+ * card rather than drawn near it.
+ */
+html[data-input="pad"] [data-cursor] .face::after,
+html[data-input="keyboard"] [data-cursor] .face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 224 138 / 0.18) 48%,
+    transparent 66%
+  );
+  background-size: 260% 100%;
+  animation: ring-sheen 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ring-sheen {
+  from {
+    background-position: 140% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+/*
+ * The focused card lifts, matched to the ring's own arrival.
+ *
+ * 120ms against the spring's 117ms to within 2px, so the card and the ring
+ * settle together rather than one chasing the other.
+ */
+html[data-input="pad"] [data-cursor].card,
+html[data-input="keyboard"] [data-cursor].card {
+  transition: transform 120ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-input="pad"] [data-cursor] .face::after,
+  html[data-input="keyboard"] [data-cursor] .face::after {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   Cards you are asked to read
+   ==========================================================================
+
+   The 16px floor is not free, and this is where it costs something.
+
+   `.opt--card` is 172px, which was sized for 9px rules text. Raise the floor to
+   16px without raising the card and the rules box holds 90px of a 214px
+   paragraph: the sentence stops mid-word, and the type line above it collapses
+   to 8px and reads as struck through. That is worse than small text, because
+   small text is legibly small and a truncated rule is silently wrong -- the
+   player is choosing what to discard from a card whose ability they cannot
+   finish reading.
+
+   The floor is right and the card was wrong. A prompt is a reading surface: it
+   owns the whole screen while it is up, so it can afford the width, and fewer
+   cards per row is the correct trade for cards you can actually read.
+
+   The same applies to the zone viewer, which is the other place cards are laid
+   out to be read rather than played.
+   ========================================================================== */
+
+[data-handheld] .opt--card,
+[data-handheld] .peek__slot {
+  --card-w: clamp(210px, 24vw, 264px);
+}
+
+/*
+ * ...and a prompt that has to show a WHOLE HAND takes that back.
+ *
+ * The paragraph above is right about one card and wrong about seven. At 264px
+ * a dialog fits three per row, so a discard-to-hand-size prompt with nine
+ * options came to three rows of 415px inside a 624px scroller -- **668px of
+ * overflow**, measured. The player scrolls two screens to see cards they are
+ * being asked to compare, which is a worse failure than the truncated rules
+ * text the width was bought to fix: a rule you cannot finish reading is on the
+ * card in front of you, and a card you have to scroll to is not there at all.
+ *
+ * 180px fits six per row and a nine-card hand in two rows with no scroll. The
+ * rules box degrades honestly at that width -- `.face__rules` fades rather than
+ * cutting at a line boundary -- and the name, cost, type and stats, which are
+ * what a discard decision is actually made on, are all still at 16px.
+ *
+ * The zone viewer keeps the bigger card: it shows one zone at a time and
+ * scrolling a graveyard is what a graveyard is for.
+ */
+[data-handheld] .opt--card {
+  --card-w: clamp(140px, 14vw, 180px);
+}
+
+[data-handheld] .opt__caption {
+  max-width: none;
+  font-size: 16px;
+}
+
+/*
+ * ...and if a card still cannot fit its own rules, it says so rather than
+ * stopping mid-word. `overflow: hidden` with a fade is an honest "there is more
+ * here"; a hard cut at a line boundary is indistinguishable from the card
+ * simply not having the rest of the sentence.
+ */
+[data-handheld] .face__rules {
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 14px), transparent 100%);
+}
+
+/*
+ * The hint bar sits above the modal layer.
+ *
+ * It lives in the foot, which is under every dialog's backdrop -- so the one
+ * moment it was hidden was the one moment it is most needed. A prompt is
+ * exactly where a player does not yet know what `A` and `B` do, and the bar's
+ * whole job is answering that.
+ *
+ * This is a narrower version of the problem `docs/mockup-fidelity.md` records
+ * as open defect #3: the tool strip is visible but unreachable behind a
+ * backdrop. The bar is not a control, so lifting it costs nothing and cannot
+ * make anything clickable that should not be.
+ */
+html[data-input="pad"] .hints,
+html[data-input="keyboard"] .hints {
+  position: relative;
+  z-index: calc(var(--z-modal) + 1);
+}
+
+/* ==========================================================================
+   The right rail's budget
+   ==========================================================================
+
+   514px on a 1280x800 screen, and four things want it: the stack, the card you
+   are reading, the list of things you can do, and the commit slab.
+
+   Measured mid-combat before this block existed: preview 272 + stack 71 +
+   dock 104 left the action list **41px holding 197px of content**. The
+   "Declare attackers" prompt, the defender chips and the "All attack" row were
+   all inside that 41px, crushed into each other and clipped -- and the list is
+   where the turn actually happens. Moving the stack into this rail is what
+   tipped it over, so this is the cost of that decision being paid properly
+   rather than being left for the player to discover.
+
+   The list gets the slack; everything else is capped. That ordering is the
+   whole point: a preview you have to scroll is a mild annoyance, and an action
+   list you cannot see is the game not being playable.
+   ========================================================================== */
+
+[data-handheld] .rail--right .preview {
+  /*
+   * 272px -> 152px. Still a whole card at a readable size, and it is the one
+   * panel here whose content is a picture rather than a decision.
+   *
+   * The second cut is the tools' fault and is worth saying so. The 44px hit
+   * floor wraps five utility controls to three rows in a 200px column -- 101px,
+   * pinned, in a 255px panel -- so the list came out at 93px holding 144px of
+   * choices. The ordering `docs/handheld-playtest.md` sets is that the list is
+   * the turn and everything else gives way, and at rest this panel is holding
+   * the words "Hover a card to read it."
+   */
+  height: clamp(140px, 19vh, 200px);
+}
+
+[data-handheld] .rail--right .stackpanel {
+  /* Two items and a scroll, rather than growing without limit. Capped rather
+     than hidden-when-empty: an empty stack that vanishes and reappears moves
+     the two panels under it several times a turn, which is exactly the jumping
+     `board.css` spends four paragraphs eliminating everywhere else. */
+  max-height: 84px;
+  overflow-y: auto;
+  flex: 0 0 auto;
+}
+
+[data-handheld] .rail--right .acts {
+  /* The list takes what is left, and never less than enough to read a decision
+     and its first two choices. */
+  flex: 1 1 auto;
+  min-height: 132px;
+}
+
+[data-handheld] .acts__list {
+  overflow-y: auto;
+  /*
+   * The floor stays. `board.css` gives this list a 74px minimum and
+   * `e2e/layout.spec.ts` measures it, because on a short viewport this is the
+   * first thing a flex parent flattens to zero -- which is exactly what
+   * happened when this rule briefly said `min-height: 0`: the decision's
+   * prompt text took all 137px and the list holding the actual choices came
+   * out **2px tall**. Scrolling is the right answer here, not shrinking.
+   */
+  min-height: 74px;
+}
+
+/*
+ * ...and the prompt above it gives way first.
+ *
+ * "Declare attackers" plus its help line wraps to four rows in a 280px rail at
+ * 16px, and it is the least useful thing in the panel once you have read it
+ * once. The list underneath is the turn.
+ */
+[data-handheld] .acts__ask,
+[data-handheld] .acts__hint {
+  flex: 0 1 auto;
+  overflow: hidden;
+}
+
+/*
+ * An action row names ONE thing at this width, and it is the card.
+ *
+ * `.act` is name + type + cost on one line. At 10.5px that fits a 304px rail
+ * comfortably; at the 16px floor in a 228px one it does not come close, and
+ * both halves ellipsised together -- measured in the live rail as
+ * "Th... Creat...", "Rhystic... Encha...", "For... Basic Land — ...". Two
+ * truncated strings side by side are worse than one whole one: the type is the
+ * *category* of a thing whose name is right beside it, and the preview rail
+ * draws the entire card the moment the row is focused or hovered.
+ *
+ * So the type goes and the name gets the row. Same drop rule as the lane
+ * headings, one panel over -- and this is the list the turn is actually spent
+ * in, so it is the last place that should be showing half-words.
+ */
+[data-handheld] .act__type {
+  display: none;
+}
+
+/* ==========================================================================
+   THE 16px FLOOR
+   ==========================================================================
+
+   The rule the design round states flatly, and the reason it is a CI gate
+   rather than a preference:
+
+     > Do not ship a controller mode without the 16px floor asserted in CI.
+
+   It is derived from a 7-inch panel at 40-50cm, not from a DPI number. Measured
+   on the running board before this block existed: **123 elements under the
+   floor, the smallest at 6.5px** -- zone labels, commander-damage chips, phase
+   step names, the action panel's own rows. Every one of them looked fine in a
+   screenshot, which is exactly the trap: a reviewer already knows what the
+   label says.
+
+   Two treatments, and which one applies is a judgement about the *information*,
+   not about the pixels:
+
+     RAISED -- anything carrying a name, a number or a verb. These are what the
+       player reads to make a decision, and they get 16px even where that costs
+       layout elsewhere.
+
+     DROPPED -- labels that name a thing already identified by its own shape,
+       position or count. "Lib" under a stack of cards, "P0" before a
+       commander-damage number, "Mana" over the mana row. At 6.5px they were
+       decoration pretending to be information; at 16px they would push the
+       thing they label off the column. So they go, and the icon and the number
+       stay.
+
+   Dropping is the round's own instruction -- *anything that does not fit at
+   16px is dropped rather than shrunk* -- and it is only safe because what is
+   dropped is a label whose subject is still on screen.
+   ========================================================================== */
+
+/* --- raised: names, numbers, verbs ------------------------------------- */
+
+[data-handheld] .track__turn-round,
+[data-handheld] .track__who,
+[data-handheld] .ph__name,
+[data-handheld] .orb__name,
+[data-handheld] .orb__none,
+[data-handheld] .dial__n,
+[data-handheld] .cmdplinth__name,
+[data-handheld] .cmdplinth__word,
+[data-handheld] .mana-grp__n,
+[data-handheld] .cmd-pip__n,
+[data-handheld] .pile__leaf,
+[data-handheld] .lane__count,
+[data-handheld] .cardstack__count,
+[data-handheld] .rail__title,
+[data-handheld] .rail__empty,
+[data-handheld] .preview__idle,
+[data-handheld] .acts__prompt,
+[data-handheld] .act__key,
+[data-handheld] .act__name,
+[data-handheld] .act__aim,
+[data-handheld] .act__pt,
+[data-handheld] .commit__key,
+[data-handheld] .aim,
+[data-handheld] .tool,
+[data-handheld] .hints,
+[data-handheld] .hint__verb,
+[data-handheld] .glyph,
+/* The lane's own name -- "Creatures", "Lands". Kept rather than dropped: the
+   bands are in a fixed order but an empty one has nothing else to say what it
+   is, and an empty lane is exactly when you need to know. */
+  [data-handheld]
+  .lane__label,
+/* "All attack" / "No attacks" beside the commit slab. These are decisions. */
+  [data-handheld]
+  .commit-alt,
+[data-handheld] .commit-dock button,
+/*
+ * The action panel's own rows, found by the CI gate rather than by looking --
+ * a card's type line inside a play row was 10.5px, and "CPU 3 - main 1" (which
+ * is the only thing on screen saying why nothing is happening) was 11px.
+ */
+  [data-handheld]
+  .act__type,
+[data-handheld] .acts__thinking,
+[data-handheld] .acts__none,
+/* Modal choices. "Mulligan" and "Keep" were 14px -- the two most consequential
+   words in the opening of every game. */
+  [data-handheld]
+  .opt__label,
+[data-handheld] .opt__caption,
+/* The lobby, which had no floor at all until `data-handheld` moved to <html>. */
+  [data-handheld]
+  .brand__mark,
+[data-handheld] .brand__sub,
+[data-handheld] .link,
+[data-handheld] .hero__line,
+[data-handheld] .or,
+[data-handheld] .join__go,
+[data-handheld] .door__cap,
+[data-handheld] .door__cap *,
+/* The zone viewer's own chrome: its Close button and its empty-state line. */
+  [data-handheld]
+  .peek__hidden,
+[data-handheld] .btn--ghost {
+  font-size: 16px;
+}
+
+/* --- dropped: labels whose subject is still on screen -------------------- */
+
+/*
+ * "MANA", "CMD DMG" over their own rows -- a heading for a row of one kind of
+ * thing, immediately above that thing.
+ */
+[data-handheld] .orb__lab,
+/* The plinth's "IN COMMAND" strip, which the plinth's own position says. */
+  [data-handheld]
+  .cmdplinth__tag,
+/* The em dash standing in for an empty lane, next to the lane's own name. */
+  [data-handheld]
+  .lane__empty {
+  display: none;
+}
+
+/*
+ * TWO DROPS TAKEN BACK, because the first pass got the classification wrong.
+ *
+ * The rule is "drop what is decoration, keep what is information", and these
+ * two were filed as decoration on a bad argument:
+ *
+ *   `.pile__label` -- "Lib", "Hand", "GY", "CMD". The argument was that the
+ *   piles are in a fixed order with distinct graphics. Looking at the result
+ *   settles it: the orb became the bare row "82 4 5 1" and there is no way to
+ *   tell a library count from a graveyard count. The order only helps somebody
+ *   who already knows it.
+ *
+ *   `.track__step-label` -- the argument was that the live step is the one lit.
+ *   It is, but the pill then reads "COMBAT" with an unlabelled bar in it, and
+ *   *which* combat step you are in is the difference between declaring
+ *   attackers and taking damage.
+ *
+ * So they are raised rather than dropped, and the space comes from wrapping.
+ * Dropping is for labels whose subject is still on screen; a count is not its
+ * own name.
+ */
+[data-handheld] .pile__label,
+[data-handheld] .track__step-label,
+[data-handheld] .cmd-pip__who {
+  display: revert;
+  font-size: 16px;
+}
+
+/* The piles wrap to two rows so five 44px targets and their names both fit. */
+[data-handheld] .pile {
+  flex-direction: column;
+  gap: 1px;
+}
+
+/* ==========================================================================
+   THE 44px HIT FLOOR
+   ==========================================================================
+
+   A Steam Deck has a touchscreen, and these are the controls a finger goes for.
+   Measured before: 21 controls under the floor, the worst 14x29.
+
+   The piles cannot all sit in one row at 44px -- five of them is 220px against
+   a 154px column -- so they WRAP. That is the honest resolution: two rows of
+   real targets beats one row of targets nobody can hit.
+   ========================================================================== */
+
+[data-handheld] .pile,
+[data-handheld] .aim,
+[data-handheld] .tool,
+/* The commit slab's alternatives -- "All attack", "No attacks". They are
+   decisions with consequences, not affordances, so a finger has to be able to
+   land on them as reliably as on the slab itself. */
+  [data-handheld]
+  .commit-alt
+  button,
+[data-handheld] .commit-alt > *,
+/* Modal options and action rows: the two controls a turn is actually spent on. */
+  [data-handheld]
+  .opt,
+[data-handheld] .act,
+[data-handheld] .link,
+[data-handheld] .btn--ghost {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+[data-handheld] .piles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  /* The scale-down from the strip block above would defeat the floor. */
+  transform: none;
+}
+
+[data-handheld] .tools {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+/*
+ * What the focused element says about itself -- where the native tooltips went.
+ *
+ * Quieter than a verb and italic, so the bar reads as "do this / this is that"
+ * rather than as one run-on line.
+ */
+.hint--says {
+  color: var(--text-dim);
+  font-style: italic;
+  max-width: 42ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * The phase ribbon: the live step gets the room, the rest become markers.
+ *
+ * At 16px a fixed six-column step track truncates every label -- "Atta",
+ * "Dam...", "End ..." -- and a truncated word is a legibility failure the font
+ * floor does not catch, because the *size* is fine. Which combat step you are
+ * in is the difference between declaring attackers and taking damage, so the
+ * one that matters is the one that gets the width.
+ *
+ * The others keep their pill, so the shape of the phase and your position in it
+ * still read at a glance; they just stop pretending to be words.
+ */
+/*
+ * The ribbon's room comes back out of its padding, not out of its words.
+ *
+ * At 16px the six combat steps need ~400px and the middle grid track had ~400,
+ * so the row was permanently one gap short and everything in it truncated to
+ * one or two characters. The 16px floor is not negotiable and the words are the
+ * whole content, so the only honest place left is the chrome: the track's own
+ * gutters, the gaps between pills, and the padding inside them. That is ~90px
+ * across the row, which is more than the deficit -- measured after, no step in
+ * any phase truncates at 1200x800.
+ */
+[data-handheld] .track {
+  gap: 8px;
+  padding: 6px 10px;
+}
+
+[data-handheld] .ph {
+  gap: 6px;
+  padding: 4px 8px;
+}
+
+[data-handheld] .track__step {
+  padding: 2px 6px;
+}
+
+[data-handheld] .ph--now .ph__steps {
+  /*
+   * A FLEX ROW, NOT SIX `auto` GRID TRACKS -- which is what this said, and it
+   * did not do the job. `auto` tracks in a container narrower than their content
+   * all shrink together, so measured mid-combat at 1200x800 every step came out
+   * at exactly 55px and the ribbon read "Co... A Bl... 1s... Da... En...". The
+   * live step was the *worst* of them, showing a single letter, which is the
+   * opposite of what this block is for.
+   *
+   * Flex can say "this one does not shrink and the rest do", which grid cannot
+   * express without knowing which child is live. `flex: 0 0 auto` on the live
+   * step is the whole fix; `min-width: 0` on the others is what lets them give
+   * up the room, since a flex item will not shrink below min-content without it.
+   */
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: start;
+  gap: 4px;
+}
+
+[data-handheld] .ph--now .track__step {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+[data-handheld] .ph--now .track__step--now {
+  flex: 0 0 auto;
+}
+
+[data-handheld] .track__step--now .track__step-label {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+/*
+ * The steps that are not live keep their words, truncated.
+ *
+ * An earlier version blanked them to markers, on the argument that a truncated
+ * word is worse than no word. Measuring it settled the other way: the live step
+ * is what needs to be exact, and "Dam…" next to it still tells you damage comes
+ * after blocks -- which is most of what the ribbon is for. All thirteen labels
+ * also have to stay in the document, because `e2e/smoke.spec.ts` counts them
+ * and the marker's `layoutId` animation runs across them.
+ */
+
+/* ==========================================================================
+   THE FLOOR, EVERYWHERE ELSE
+   ==========================================================================
+
+   The block above raised the board's own type by hand. Then the CI gate was
+   pointed at the front door, the pod lobby, the deck catalogue and the zone
+   viewer, and found 33 more violations in the lobby alone -- down to 6.5px.
+
+   Enumerating them by hand was the wrong tool at that point, so this list is
+   GENERATED: every selector in `board.css`, `ui.css` and `lobby.css` whose
+   font-size is a literal under 16px. There are 144 of them, which is the
+   honest size of the problem and the reason it needed a gate rather than a
+   careful read.
+
+   Two selectors are deliberately absent: `.orb__lab` and `.cmdplinth__tag`
+   are DROPPED above rather than raised, and re-listing them here would undo
+   that decision.
+
+   16px is a floor, not a size. Everything already above it keeps its own
+   value, so the type hierarchy survives -- it is compressed at the bottom,
+   which is exactly what a floor does.
+   ========================================================================== */
+
+[data-handheld] .act,
+[data-handheld] .act--nested,
+[data-handheld] .act__aim,
+[data-handheld] .act__key,
+[data-handheld] .act__type,
+[data-handheld] .actgroup__head,
+[data-handheld] .actgroup__kw,
+[data-handheld] .actgroup__none,
+[data-handheld] .acts__hint,
+[data-handheld] .acts__none,
+[data-handheld] .acts__prompt,
+[data-handheld] .acts__stakes,
+[data-handheld] .acts__thinking,
+[data-handheld] .aim,
+[data-handheld] .badge,
+[data-handheld] .bar--tiny .bar__label,
+[data-handheld] .bar__label,
+[data-handheld] .brand__badge,
+[data-handheld] .brand__mark,
+[data-handheld] .brand__sub,
+[data-handheld] .btn,
+[data-handheld] .btn--primary,
+[data-handheld] .cat__browsing,
+[data-handheld] .cat__for,
+[data-handheld] .chip,
+[data-handheld] .chip--tiny,
+[data-handheld] .choices__label,
+[data-handheld] .cmd-pip__n,
+[data-handheld] .cmd-pip__who,
+[data-handheld] .cmdplinth__art--none span,
+[data-handheld] .cmdplinth__glyph,
+[data-handheld] .cmdplinth__name,
+[data-handheld] .cmdplinth__word,
+[data-handheld] .cmdslot__tax,
+[data-handheld] .codechip__l,
+[data-handheld] .codechip__v,
+[data-handheld] .commit-alt button,
+[data-handheld] .commit__key,
+[data-handheld] .count,
+[data-handheld] .curve__n,
+[data-handheld] .curve__none,
+[data-handheld] .deal,
+[data-handheld] .deal--lg,
+[data-handheld] .deck__badge,
+[data-handheld] .deck__cmd,
+[data-handheld] .deck__count,
+[data-handheld] .deck__engine,
+[data-handheld] .deck__notes,
+[data-handheld] .door__cap,
+[data-handheld] .dos__artist,
+[data-handheld] .dos__h,
+[data-handheld] .dos__p,
+[data-handheld] .dos__p--foot,
+[data-handheld] .empty,
+[data-handheld] .fgroup__l,
+[data-handheld] .field__label,
+[data-handheld] .filters__n,
+[data-handheld] .fx-ghost__cause,
+[data-handheld] .fx-spotlight__kind,
+[data-handheld] .ghost,
+[data-handheld] .hand__hint,
+[data-handheld] .hero__line,
+[data-handheld] .ibtn,
+[data-handheld] .import__hint,
+[data-handheld] .import__hint--inline,
+[data-handheld] .import__label,
+[data-handheld] .import__notes,
+[data-handheld] .import__report,
+[data-handheld] .import__title,
+[data-handheld] .inv__l,
+[data-handheld] .inv__linkv,
+[data-handheld] .inv__note,
+[data-handheld] .inv__t,
+[data-handheld] .join__go,
+[data-handheld] .join__in,
+[data-handheld] .lane__count,
+[data-handheld] .lane__label,
+[data-handheld] .link,
+[data-handheld] .lock,
+[data-handheld] .lock--on,
+[data-handheld] .mana-grp__n,
+[data-handheld] .mana-grp__spend,
+[data-handheld] .mat--compact .cmdplinth__name,
+[data-handheld] .mat--compact .cmdplinth__word,
+[data-handheld] .note,
+[data-handheld] .opt,
+[data-handheld] .opt__caption,
+[data-handheld] .or,
+[data-handheld] .orb--compact .cmd-pip__n,
+[data-handheld] .orb--compact .cmd-pip__who,
+[data-handheld] .orb--compact .mana-grp__n,
+[data-handheld] .orb--compact .mana-grp__spend,
+[data-handheld] .orb--compact .pile__label,
+[data-handheld] .orb--compact .pile__leaf--top,
+[data-handheld] .orb__loss,
+[data-handheld] .orb__none,
+[data-handheld] .over__player,
+[data-handheld] .over__why,
+[data-handheld] .peek__count,
+[data-handheld] .peek__note,
+[data-handheld] .ph,
+[data-handheld] .ph__name,
+[data-handheld] .pick__confirm-q,
+[data-handheld] .pick__n,
+[data-handheld] .pick__s,
+[data-handheld] .pick__tick,
+[data-handheld] .pile__label,
+[data-handheld] .pile__leaf--top,
+[data-handheld] .pile__revealed,
+[data-handheld] .plate__deck,
+[data-handheld] .plate__n,
+[data-handheld] .plate__name,
+[data-handheld] .plate__tag,
+[data-handheld] .podrail__guest,
+[data-handheld] .podrail__why,
+[data-handheld] .preview__facts,
+[data-handheld] .preview__idle,
+[data-handheld] .prompt__hint,
+[data-handheld] .rail__badge,
+[data-handheld] .rail__empty,
+[data-handheld] .rail__title,
+[data-handheld] .search__g,
+[data-handheld] .search__i,
+[data-handheld] .seg__b,
+[data-handheld] .segmented__btn,
+[data-handheld] .sel,
+[data-handheld] .sig__n,
+[data-handheld] .sig__why,
+[data-handheld] .slot__no,
+[data-handheld] .slot__x,
+[data-handheld] .stackpile__ghost,
+[data-handheld] .stackpile__tag,
+[data-handheld] .tablewrap__h,
+[data-handheld] .tablewrap__l,
+[data-handheld] .ticker__line,
+[data-handheld] .toast,
+[data-handheld] .tool,
+[data-handheld] .tool--wide,
+[data-handheld] .track__step,
+[data-handheld] .track__turn-round,
+[data-handheld] .track__who,
+[data-handheld] .turned__l,
+[data-handheld] .verdict,
+[data-handheld] .xstep__hint {
+  font-size: 16px;
+}
+
+/*
+ * ...and the hit floor, on the lobby's controls.
+ *
+ * Same reasoning as the fonts and the same discovery route: the gate found 12
+ * controls under 44px on the pod lobby, the smallest a 25px-tall name field.
+ * A Steam Deck has a touchscreen and these are the controls a finger goes for.
+ */
+[data-handheld] .btn,
+[data-handheld] .ghost,
+[data-handheld] .lock,
+[data-handheld] .deal,
+[data-handheld] .ibtn,
+[data-handheld] .seg__b,
+[data-handheld] .segmented__btn,
+[data-handheld] .sel,
+[data-handheld] .search__i,
+[data-handheld] .join__in,
+[data-handheld] .join__go,
+[data-handheld] .field__input,
+[data-handheld] .plate__name {
+  min-height: 44px;
+}
+
+/*
+ * The last of the floors, all found by pointing the gate at surfaces the board
+ * work never touched: the deck catalogue's chrome and the zone viewer's.
+ */
+[data-handheld] .cat__x,
+[data-handheld] .cbtn,
+[data-handheld] .peek__x,
+[data-handheld] .peek button,
+[data-handheld] .cat button,
+[data-handheld] .dos button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 16px;
+}
+
+/*
+ * The commander crown, which is a mark and not a letter.
+ *
+ * It sits inside the card's name at 0.92em, so a 16px name made it 14.72px --
+ * under the floor by a quarter of a pixel of arithmetic rather than by any
+ * decision. It carries a real fact (`aria-label="Commander"`), so it is raised
+ * to match the name it lives in rather than exempted.
+ */
+[data-handheld] .crown {
+  font-size: 1em;
+}
+
+/*
+ * The log's own collapse toggle, inside the overlay.
+ *
+ * A full-width 23px strip: comfortably wide, and half the height a finger needs.
+ * The last one the gate found, on a surface that only exists in this layout.
+ */
+[data-handheld] .rail__title--button {
+  min-height: 44px;
+}

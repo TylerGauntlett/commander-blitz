@@ -34,7 +34,13 @@ export type SoundName =
   // player, which is most of what "responsive" means.
   | "pickup"
   | "drop"
-  | "deny";
+  | "deny"
+  // Ring voices. These answer a *cursor*, which is a different job again: they
+  // fire far more often than anything above (up to twenty-six times a second
+  // on a held direction), so they have to be short enough to layer over
+  // themselves without turning into a drone.
+  | "move"
+  | "back";
 
 type Ctx = AudioContext & {
   _master?: GainNode;
@@ -255,6 +261,22 @@ const VOICES: Record<SoundName, (c: Ctx) => void> = {
   /** Tapping a permanent for mana: a small dry click. */
   tap: (c) => {
     noise(c, { duration: 0.035, gain: 0.3, type: "highpass", frequency: 2600 });
+  },
+  /*
+   * The ring stepping one stop.
+   *
+   * Deliberately the quietest and shortest voice in the file. At a full stick
+   * deflection this fires every 38ms, so anything with a tail becomes a
+   * continuous tone -- and anything at `tap`'s level becomes exhausting inside
+   * one turn. 8ms of filtered noise at a third of a tap reads as texture rather
+   * than as a sound, which is exactly what a cursor wants.
+   */
+  move: (c) => {
+    noise(c, { duration: 0.008, gain: 0.1, type: "highpass", frequency: 3800 });
+  },
+  /** Unwinding one level: the same tick, pitched down, so back reads as back. */
+  back: (c) => {
+    noise(c, { duration: 0.014, gain: 0.12, type: "lowpass", frequency: 900 });
   },
   /** Cards moving in bulk: draws, mills, shuffles. */
   shuffle: (c) => {

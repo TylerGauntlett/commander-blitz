@@ -4,10 +4,18 @@
  * The lane is also a drop target: `data-dropzone` is what `Card`'s drag-end
  * hit test reads. Dropping is only ever a shortcut for choosing a legal action,
  * so the lane highlights when, and only when, the server has offered one.
+ *
+ * A **vacant** lane is additionally a focus stop, and only a vacant one. A pad
+ * has no drag, so the ring has to be able to reach the destination itself --
+ * but a lane with cards in it is already reachable through those cards, and
+ * making it a stop as well would put a ring around the whole band on the way
+ * past every card in it. So the stop exists exactly when there is nothing else
+ * there to land on, which is also exactly when the player needs it.
  */
 
 import { motion } from "motion/react";
 import type { CardView } from "../../api/types";
+import { stopId } from "../../input/stops";
 import { cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { splitActionable, stackCards } from "../../logic/stacking";
 import { LANE_LABELS, type Lane as LaneName } from "../../logic/zoneGrouping";
@@ -86,13 +94,16 @@ export function Lane({
         .filter(Boolean)
         .join(" ")}
       data-dropzone={`lane:${pid}:${lane}`}
+      data-stop={draggable && cards.length === 0 ? stopId.lane(pid, lane) : undefined}
       data-testid={`lane-${pid}-${lane.replace(/\W+/g, "-")}`}
       layout
       transition={settle}
       style={{ ["--card-w" as string]: cardWidthVar(cardScale) }}
     >
       <div className="lane__label">
-        <span>{LANE_LABELS[lane]}</span>
+        {/* Named so the handheld sheet can truncate the word without touching
+            the count beside it -- see `.band--front .lane__label` there. */}
+        <span className="lane__name">{LANE_LABELS[lane]}</span>
         <span className="lane__count tabular">{cards.length}</span>
       </div>
       <div className="lane__cards">

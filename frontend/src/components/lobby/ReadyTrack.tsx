@@ -29,7 +29,7 @@ export function ReadyTrack({ pod }: { pod: PodView }) {
               key={pod.seats[index].index}
               className={`turned__s turned__s--${segment}`}
               data-state={segment}
-              title={
+              data-hint={
                 segment === "none"
                   ? `Seat ${index + 1} · empty`
                   : `${label.title} · ${segment === "on" ? "ready" : label.sub}`

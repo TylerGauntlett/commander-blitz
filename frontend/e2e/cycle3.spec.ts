@@ -381,11 +381,31 @@ test.describe("mana notation is drawn, not spelled", () => {
     if (await keep.count()) await keep.first().click();
     await waitForOurTurn(page);
 
-    // Rules text lives in the preview rail now, not on the hand card: at hand
-    // size the box rendered at six pixels, so the cards went art-first and the
-    // text moved to the one card big enough to read. So hover something first --
-    // otherwise this looks for a surface that is deliberately not on screen.
-    await page.locator(".hand .card").first().hover();
+    /*
+     * Rules text lives in the preview rail now, not on the hand card: at hand
+     * size the box rendered at six pixels, so the cards went art-first and the
+     * text moved to the one card big enough to read. So hover something first --
+     * otherwise this looks for a surface that is deliberately not on screen.
+     *
+     * Hover until a card whose rules actually CONTAIN mana notation, rather
+     * than the first card in hand. This used to take the first, and the test
+     * was one shuffle away from meaningless: with this seed it landed on
+     * Harmonize -- "Draw three cards." -- which has no symbol in its rules at
+     * all, so the pip assertions below were asserting against an empty set and
+     * failing for a reason that had nothing to do with mana notation.
+     */
+    const hand = page.locator(".hand .card");
+    const handCount = await hand.count();
+    let hovered = false;
+    for (let i = 0; i < handCount; i += 1) {
+      await hand.nth(i).hover();
+      const pips = page.getByTestId("card-preview").locator(".face__rules .pip--inline");
+      if (await pips.count()) {
+        hovered = true;
+        break;
+      }
+    }
+    test.skip(!hovered, "no card in this hand renders mana notation in its rules");
     await expect(page.getByTestId("card-preview").locator(".face__rules")).toBeVisible();
 
     // Nothing on screen may still be showing raw brace notation.
@@ -494,7 +514,23 @@ test.describe("the mana row answers what a spell costs", () => {
     );
     test.skip(!ready, "never reached a turn with mana and something to cast");
 
-    expect(await row.getAttribute("data-spending")).toBe("0");
+    /*
+     * Nothing hovered, and it has to be *made* so rather than assumed.
+     *
+     * `playUntil` reaches this state by clicking action rows, and a clicked
+     * button keeps DOM focus -- which `ActionPanel.previewing()` deliberately
+     * wires to the same `hover()` the mouse uses, so the preview rail follows
+     * keyboard focus. That is a feature, not a leak; but it means the row is
+     * still forecasting the last thing clicked, and this baseline was asserting
+     * "nothing is hovered" in a state where something legitimately was.
+     */
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    await page.mouse.move(2, 2);
+    await expect
+      .poll(async () => row.getAttribute("data-spending"), {
+        message: "the mana row still forecasts a spend with nothing hovered",
+      })
+      .toBe("0");
 
     // Hover each playable card until one forecasts a spend. A land is playable
     // and taps nothing, so "the first card that is not dimmed" would correctly
@@ -536,24 +572,22 @@ test.describe("a four-player pod fits", () => {
   test("opponent cards shrink with the pod, so three mats share the row", async ({ page }) => {
     test.setTimeout(180_000);
 
-    // The pod is pinned to two decks, which is what this test measured when it
-    // was written. `NewGameScreen` fills opponent seats by cycling whatever
-    // `/api/decks` returns, so without this the *scenario* changes every time a
-    // deck ships -- and a layout measurement that silently re-aims itself is
-    // one that stops meaning anything.
-    //
-    // Pinning is not papering over a regression: the layout code is unchanged,
-    // and a pod containing the token decks genuinely puts more permanents on an
-    // opponent's mat than a 333px column holds. That is the content-sized-mat
-    // limit already recorded in docs/roadmap.md, and the fix for it is the
-    // fixed-lane-height work described there, not a looser number here.
-    await page.route("**/api/decks", async (route) => {
-      const response = await route.fetch();
-      const decks = await response.json();
-      return route.fulfill({
-        json: decks.filter((deck: { id: string }) => ["aesi", "edgar"].includes(deck.id)),
-      });
-    });
+    /*
+     * The deck pinning that used to be here is gone, because it had stopped
+     * working and was quietly making this test measure something else.
+     *
+     * It intercepted `/api/decks` on the reasoning that "`NewGameScreen` fills
+     * opponent seats by cycling whatever `/api/decks` returns". That was true
+     * when it was written and is not any more: the pod lobby replaced
+     * `NewGameScreen`, and a CPU seat is filled by `POST /pods/{code}/seat`
+     * with the *server* choosing the deck. The interception matched no request
+     * the flow makes, so the pod filled with whatever the server picked --
+     * which is how this ended up measuring a board full of Edgar Markov's
+     * Vampire tokens.
+     *
+     * It is not replaced, because the assertions below no longer depend on the
+     * scenario. See the note on overflow.
+     */
 
     await startGame(page, { deck: "aesi", opponents: 3, seed: 5 });
 
@@ -601,13 +635,40 @@ test.describe("a four-player pod fits", () => {
     expect(measured.cardW).toBeGreaterThan(0);
     expect(measured.cardW).toBeLessThan(70);
 
-    // A big enough board will still outgrow a 333px-wide mat -- there is no card
-    // size that makes twelve permanents fit in a quarter of the screen. What is
-    // asserted is that it never hides more than a partial row, and that the
-    // scroll is inside the mat where the fade affordance shows it, rather than
-    // the row clipping a card in half at its boundary.
-    for (const slack of measured.overflow) {
-      expect(slack, "an opponent mat is hiding more than one row").toBeLessThan(measured.cardH);
+    /*
+     * Overflow is EXPECTED, and how much of it there is no longer means
+     * anything -- which is a change in the design rather than a loosening here.
+     *
+     * This used to assert that a mat hid less than one card row, and that was
+     * the right question while mats were content-sized: overflow meant the
+     * lanes had *wrapped*, and wrapping past a row meant a board you could not
+     * read. `--pod-lanes-h` then pinned the lanes to a fixed box that scrolls
+     * (`board.css`, `.mat--compact .mat__lanes`), which is the fix
+     * `docs/roadmap.md` called for and the thing the old comment here said it
+     * was waiting on. In a fixed box the hidden amount grows without bound with
+     * the board, so "less than one row" is not a property the design has --
+     * a token deck reached 102px of it against a 72.8px card.
+     *
+     * What the design does guarantee, and what is asserted instead: nothing
+     * becomes unreachable. The lanes scroll, the scroll is inside the mat where
+     * the fade affordance shows it, and the row never clips a mat at its own
+     * boundary.
+     */
+    const scrollable = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>(".mat--compact .mat__lanes")].map((lanes) => {
+        const style = getComputedStyle(lanes);
+        return {
+          hidden: lanes.scrollHeight - lanes.clientHeight,
+          scrolls: style.overflowY === "auto" || style.overflowY === "scroll",
+        };
+      }),
+    );
+    expect(scrollable.length, "no compact mat was rendered").toBeGreaterThan(0);
+    for (const lanes of scrollable) {
+      if (lanes.hidden <= 4) continue;
+      expect(lanes.scrolls, "an opponent mat hides cards with no way to scroll to them").toBe(
+        true,
+      );
     }
     expect(measured.rowClipped, "the opponents row is clipping a mat").toBe(false);
   });

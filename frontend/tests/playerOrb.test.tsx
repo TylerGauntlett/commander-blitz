@@ -401,7 +401,7 @@ describe("the zone piles", () => {
     });
     const pile = getByTestId("pile-0-library");
     expect(pile.getAttribute("data-revealed")).toBe("Sol Ring");
-    expect(pile.getAttribute("title")).toBe("Top of library, revealed: Sol Ring");
+    expect(pile.getAttribute("data-hint")).toBe("Top of library, revealed: Sol Ring");
     expect(pile.hasAttribute("data-top-private")).toBe(false);
   });
 
@@ -415,7 +415,9 @@ describe("the zone piles", () => {
       library_top_public: false,
     });
     const pile = getByTestId("pile-0-library");
-    expect(pile.getAttribute("title")).toBe("Top of library, only you can see it: Sol Ring");
+    expect(pile.getAttribute("data-hint")).toBe(
+      "Top of library, only you can see it: Sol Ring",
+    );
     expect(pile.hasAttribute("data-top-private")).toBe(true);
   });
 
@@ -503,7 +505,7 @@ describe("commander damage is tracked before it arrives", () => {
     const chip = getByTestId("cmddmg-0").querySelector('.cmd-pip[data-from="2"]');
     expect(chip?.querySelector(".cmd-pip__who")?.textContent).toBe("P2");
     expect(chip?.querySelector(".cmd-pip__n")?.textContent).toBe("7");
-    expect(chip?.getAttribute("title")).toBe("7 of 21 commander damage from Rakdos");
+    expect(chip?.getAttribute("data-hint")).toBe("7 of 21 commander damage from Rakdos");
   });
 
   it("warns well before 21, and fills the meter by the fraction of it", () => {

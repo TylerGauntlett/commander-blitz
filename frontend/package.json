@@ -15,7 +15,8 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "audit:stories": "node scripts/story-layout-audit.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.51.0",

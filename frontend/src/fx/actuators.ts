@@ -60,6 +60,23 @@ export interface Actuator {
   shudder(power: number): void;
   /** A quick squash-and-swell, for something happening *to* the card. */
   pulse(power?: number): void;
+  /**
+   * Step forward toward a point and HOLD there until released.
+   *
+   * Every other verb here is a transient: it plays a curve and settles back.
+   * This one does not, and that is the whole point of it. A staged attacker is
+   * a *state*, not an event -- it stays declared until the player unstages it
+   * or commits the attack -- so the card has to stay leaning.
+   *
+   * Today that state is drawn entirely by a static amber rim, which says "this
+   * is selected" but not "this is about to hit you". `CombatArrows` already
+   * draws the line; the lean is what makes the board look like it is winding
+   * up rather than merely annotated.
+   *
+   * Released by `rest()`, exactly like a transient, so nothing has to remember
+   * that this one is different.
+   */
+  lean(toward: Point, opts?: { reach?: number; ms?: number }): void;
   /** Cancel whatever is running and return to rest. */
   rest(): void;
 }
@@ -67,6 +84,9 @@ export interface Actuator {
 const channels = new Map<number, CardChannel>();
 /** Cancels for whatever each oid is currently doing, so effects do not stack. */
 const running = new Map<number, () => void>();
+
+/** How far a staged attacker steps out of line, in pixels. */
+const LEAN_REACH = 14;
 
 /** How far a lunge travels, as a fraction of the distance to its target. */
 const REACH = 0.42;
@@ -142,6 +162,39 @@ function makeActuator(oid: number, channel: CardChannel): Actuator {
         channel.rotate.set(tilt * k);
         channel.scale.set(1 + 0.06 * k);
         if (t >= 1) settle(channel);
+      });
+      begin(oid, () => {
+        cancel();
+        settle(channel);
+      });
+    },
+
+    lean(toward, opts = {}) {
+      if (reduced()) return;
+      const el = document.querySelector(`[data-oid="${oid}"]`);
+      if (!el) return;
+      const box = el.getBoundingClientRect();
+      const board = el.closest<HTMLElement>("[data-fx-origin]");
+      const origin = board?.getBoundingClientRect();
+      const dx = toward.x + (origin?.left ?? 0) - (box.left + box.width / 2);
+      const dy = toward.y + (origin?.top ?? 0) - (box.top + box.height / 2);
+      const distance = Math.hypot(dx, dy) || 1;
+      // Much shorter than a lunge. A lunge is a blow that lands; this is a
+      // creature stepping out of the line, and a big translation here reads as
+      // the card having already left rather than as it being ready to.
+      const reach = Math.min(opts.reach ?? LEAN_REACH, distance * 0.12);
+      const nx = (dx / distance) * reach;
+      const ny = (dy / distance) * reach;
+      const tilt = Math.max(-6, Math.min(6, (dx / distance) * 6));
+
+      const cancel = overTime(opts.ms ?? 220, (t) => {
+        // Ease in and STAY. No return leg, and `settle` is deliberately not
+        // called at the end -- the hold is the state.
+        const k = t * t * (3 - 2 * t);
+        channel.x.set(nx * k);
+        channel.y.set(ny * k);
+        channel.rotate.set(tilt * k);
+        channel.scale.set(1 + 0.03 * k);
       });
       begin(oid, () => {
         cancel();

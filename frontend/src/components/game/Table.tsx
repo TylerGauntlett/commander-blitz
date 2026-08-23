@@ -13,10 +13,13 @@
  */
 
 import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CardView, GameView } from "../../api/types";
 import { type SoundName, play } from "../../audio/sfx";
-import { restAll } from "../../fx/actuators";
+import { drive, restAll } from "../../fx/actuators";
+import { getCursor, setCursor, setCursorContext } from "../../input/cursor";
+import { onAny as onAnyPad, on as onPad, onFrame as onPadFrame } from "../../input/pad";
+import { stopId } from "../../input/stops";
 import {
   actionsForCard,
   availableAttackers,
@@ -27,18 +30,23 @@ import {
 import { reset as forgetCardRects } from "../../logic/cardRects";
 import { sourcesSpentBy } from "../../logic/mana";
 import { removalsByOid } from "../../logic/removals";
+import { parseStop } from "../../logic/verbs";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
 import { LANES, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
+import { useHandheldLayout } from "../../state/useHandheld";
 import { useZoomFit } from "../../state/useZoomFit";
 import { ActionPanel } from "./ActionPanel";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
 import { EventTicker } from "./EventTicker";
+import { useCursorResolve } from "./FocusRing";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { GameOverScreen } from "./GameOverScreen";
 import { HandFan } from "./HandFan";
+import { HintBar } from "./HintBar";
+import { OpponentBoard } from "./OpponentBoard";
 import { ParticleLayer, clearParticles } from "./ParticleLayer";
 import { PhaseTrack } from "./PhaseTrack";
 import { PlayerMat } from "./PlayerMat";
@@ -90,6 +98,8 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const stageBlock = useUiStore((s) => s.stageBlock);
   const unstageBlock = useUiStore((s) => s.unstageBlock);
   const setPeek = useUiStore((s) => s.setPeek);
+  const logOverlay = useUiStore((s) => s.logOverlay);
+  const toggleLogOverlay = useUiStore((s) => s.toggleLogOverlay);
   const peek = useUiStore((s) => s.peek);
   const hover = useUiStore((s) => s.hover);
   const hoveredOid = useUiStore((s) => s.hoveredOid);
@@ -101,6 +111,14 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const { x: shakeX, y: shakeY } = useScreenShake(narration.current);
   const viewer = state.players[state.seat];
   const names = useMemo(() => state.players.map((p) => p.name), [state.players]);
+
+  // Memoised because `useZoomFit` keys its solve on it: a fresh array every render
+  // would re-run the fit on every render rather than when the board changes.
+  const opponents = useMemo(
+    () => seatOrder(state).filter((pid) => pid !== state.seat),
+    [state],
+  );
+
   // How every card in a graveyard or exile pile got there, for the zone modal.
   // Folded from the accumulated log rather than the view, which carries no
   // history; recomputed wholesale so an undo simply un-tells the story.
@@ -108,6 +126,16 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const decisionKind = state.pending?.player === state.seat ? state.pending.kind : null;
   const inCombatDecision = decisionKind !== null && COMBAT_DECISIONS.has(decisionKind);
   const locked = busy || narration.busy;
+
+  /*
+   * Which layout this viewport wants.
+   *
+   * Viewport-driven and nothing else: a desktop player who picks up a
+   * controller keeps the wide board and gains the ring, and a Deck user with no
+   * pad gets the compact board and no glyphs. The two signals are deliberately
+   * independent -- see `input/inputMode.ts`.
+   */
+  const handheld = useHandheldLayout();
 
   // Card positions are remembered globally, by oid, and oids restart with each
   // game. Leaving them behind would let the first death of a new table fly out
@@ -614,6 +642,191 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     ],
   );
 
+  // ------------------------------------------------------------ controller
+
+  /**
+   * B: a strict unwind, and it never quits from the top.
+   *
+   * The order is the order things were put on top of each other, so pressing B
+   * repeatedly always ends at the board rather than at a dialog you cannot
+   * remember opening. Quitting is a deliberate act in the tool strip -- a back
+   * button that eventually leaves the game is how somebody loses a match.
+   */
+  const back = useCallback(() => {
+    /*
+     * One level per press, outermost first, and each level says so.
+     *
+     * The voice is not decoration: `B` at the bottom of the stack does nothing
+     * at all, and without a sound the player cannot tell "nothing was open"
+     * from "the button did not register" -- which on a controller is the
+     * difference between trusting the input and hammering it.
+     */
+    const unwind = () => {
+      // The log overlay is the outermost thing that can be open, and it traps
+      // the ring while it is. A panel you can open with one button and cannot
+      // close with the button that means "back" is worse than no panel: the
+      // ring is inside it and every direction is a wall.
+      if (handheld && logOverlay) {
+        toggleLogOverlay();
+        return true;
+      }
+      if (peek) {
+        setPeek(null);
+        return true;
+      }
+      if (targetingActionIds.length > 0) {
+        endTargeting();
+        return true;
+      }
+      if (selectedOid !== null) {
+        select(null);
+        return true;
+      }
+      return false;
+    };
+    if (unwind()) cue("back");
+  }, [
+    handheld,
+    logOverlay,
+    toggleLogOverlay,
+    peek,
+    setPeek,
+    targetingActionIds,
+    endTargeting,
+    selectedOid,
+    select,
+    cue,
+  ]);
+
+  /**
+   * X: the secondary verb, which is context's business rather than a fixed one.
+   *
+   * On a staged attacker it re-aims -- the pod case, where `defendersFor` has
+   * several seats and the mouse re-aims by clicking a different orb. Elsewhere
+   * it activates an ability on a card whose primary press casts it.
+   */
+  const secondary = useCallback(() => {
+    const ref = parseStop(getCursor());
+    if (ref.kind !== "card" || ref.id === null) return;
+    const oid = ref.id;
+    if (decisionKind === "declare_attackers" && stagedAttacks[oid] !== undefined) {
+      const defenders = defendersFor(actions, oid);
+      if (defenders.length < 2) return;
+      const next = defenders[(defenders.indexOf(stagedAttacks[oid]) + 1) % defenders.length];
+      stageAttack(oid, next);
+      return;
+    }
+    const ability = actions.find((a) => a.source_oid === oid && a.kind === "activate");
+    if (ability) onBarAct(ability.id);
+  }, [decisionKind, stagedAttacks, actions, stageAttack, onBarAct]);
+
+  /**
+   * Which opponent is being read, while `R2` is held.
+   *
+   * A hold rather than a toggle: a toggle needs a second press to put away and
+   * leaves the board covered if you forget, whereas letting go is not something
+   * you can forget to do. `onFrame` because a trigger is analog and has no
+   * press event -- 0.5 is past any resting value and well short of the click.
+   *
+   * The seat is whichever one the ring is on, falling back to the first
+   * opponent, so "look at them" needs no separate act of choosing.
+   */
+  const [reading, setReading] = useState<number | null>(null);
+  const readingRef = useRef<number | null>(null);
+  readingRef.current = reading;
+
+  useEffect(() => {
+    if (!handheld) return;
+    return onPadFrame((frame) => {
+      const held = frame.r2 > 0.5;
+      if (!held) {
+        if (readingRef.current !== null) setReading(null);
+        return;
+      }
+      if (readingRef.current !== null) return;
+      const ref = parseStop(getCursor());
+      const onSeat = ref.kind === "orb" && ref.id !== null && ref.id !== state.seat;
+      setReading(onSeat ? ref.id : (opponents[0] ?? null));
+    });
+  }, [handheld, opponents, state.seat]);
+
+  /*
+   * A staged attacker leans toward the seat it is aimed at, and holds.
+   *
+   * The amber rim says "selected"; the lean says "aimed at *them*", which in a
+   * pod is a different fact and the one that matters -- three creatures staged
+   * at three different players look identical under a rim alone.
+   *
+   * Driven from an effect rather than from the click handler because staging
+   * has four entry points (the card, the panel row, the defender chip, and
+   * undo), and one of them is the server sending a state where nothing is
+   * staged any more. Reconciling from the current staging covers all four.
+   */
+  useEffect(() => {
+    const staged = Object.entries(stagedAttacks);
+    if (staged.length === 0) return;
+    const board = boardRef.current?.getBoundingClientRect();
+    if (!board) return;
+    for (const [oid, defender] of staged) {
+      const seat = document.querySelector(`[data-player="${defender}"]`);
+      if (!seat) continue;
+      const box = seat.getBoundingClientRect();
+      drive(Number(oid))?.lean({
+        x: box.left + box.width / 2 - board.left,
+        y: box.top + box.height / 2 - board.top,
+      });
+    }
+    // Released on unstage, on commit, and on unmount -- `rest` is the same
+    // cancel path every transient uses, so the hold needs no special teardown.
+    return () => {
+      for (const [oid] of staged) drive(Number(oid))?.rest();
+    };
+  }, [stagedAttacks]);
+
+  /*
+   * The cursor re-derives after every commit *this* component makes.
+   *
+   * `Screen` mounts the ring itself, but React only runs layout effects for
+   * components that re-render -- and the board re-renders on every engine push
+   * without its wrapper doing so. Without this the ring would go out the first
+   * time a card it was sitting on left play and never come back, because
+   * navigation starts from `[data-cursor]`.
+   */
+  useCursorResolve();
+
+  /*
+   * ...and the context, which decides whether the ring flies or teleports. A
+   * dialog opening is a new context: springing 600px from a board card to a
+   * modal button is a spring between two things that were never on screen
+   * together, which reads as a glitch rather than as movement.
+   */
+  useEffect(() => {
+    setCursorContext(`game|${peek?.zone ?? ""}|${state.pending?.kind ?? ""}`);
+  }, [peek?.zone, state.pending?.kind]);
+
+  useEffect(() => {
+    const unbind = [
+      onPad("b", back),
+      onPad("x", secondary),
+      // `View` is the log and `Menu` jumps the ring to the tool strip. Neither
+      // renders a control of its own: they flip a flag an existing surface
+      // already reads, or move the ring to a button that already exists. That
+      // is what keeps `data-action-id` and `data-testid` unique for free.
+      onPad("view", toggleLogOverlay),
+      onPad("menu", () => {
+        setCursor(stopId.tool("mute"));
+      }),
+      // Any press while the queue is draining means "get on with it", which is
+      // the same rule the keyboard has followed since narration was written.
+      onAnyPad(() => {
+        if (narration.busy) skipAll();
+      }),
+    ];
+    return () => {
+      for (const off of unbind) off();
+    };
+  }, [back, secondary, toggleLogOverlay, narration.busy, skipAll]);
+
   // ------------------------------------------------------------- keyboard
 
   useEffect(() => {
@@ -621,11 +834,15 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       const target = event.target as HTMLElement | null;
       if (target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
 
-      if (event.key === "Escape") {
-        endTargeting();
-        setPeek(null);
-        return;
-      }
+      /*
+       * `Escape` is handled as the pad's `B` rather than here.
+       *
+       * It used to cancel targeting and close the zone viewer in one go. `B` is
+       * a strict unwind instead -- peek, then targeting, then selection -- which
+       * is the behaviour a back button needs in order to be predictable, and
+       * which is now the same code whether the player pressed Escape,
+       * Backspace, or B on a controller. One button, one implementation.
+       */
       if (narration.busy && event.key !== "Escape") {
         skipAll();
         return;
@@ -652,13 +869,20 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         }
         return;
       }
-      if (event.key === "Enter") {
-        const confirm = actions.find((a) =>
-          ["keep", "yes", "finish_declaration"].includes(a.kind),
-        );
-        if (confirm) act(confirm.id);
-        return;
-      }
+      /*
+       * `Enter` is deliberately not handled here any more.
+       *
+       * It is bound to the pad's `A`, which presses whatever the ring is on --
+       * and the ring rests on the commit slab whenever a decision is pending,
+       * so the same keystroke still confirms. Keeping this branch as well made
+       * one press post two actions: this one took the first `keep`/`yes`/
+       * `finish_declaration` in the list while `confirm()` posted the button
+       * under the ring.
+       *
+       * It is also strictly better than what it replaced. The old branch could
+       * only ever confirm those three kinds; `A` presses the control the player
+       * is actually looking at, which is every kind.
+       */
       if (event.key.toLowerCase() === "u") {
         undoMutate();
         return;
@@ -687,13 +911,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   // ---------------------------------------------------------------- render
 
-  // Memoised because `useZoomFit` keys its solve on it: a fresh array every render
-  // would re-run the fit on every render rather than when the board changes.
-  const opponents = useMemo(
-    () => seatOrder(state).filter((pid) => pid !== state.seat),
-    [state],
-  );
-
   /*
    * How big the cards are, solved against the room they actually have.
    *
@@ -708,6 +925,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     actionableOids,
     opponents,
     handCount: viewer.hand?.length ?? 0,
+    handheld,
     tableRef,
     mineRef,
     podRef,
@@ -725,6 +943,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       data-zoom-pod={zoom.pod.toFixed(3)}
       data-zoom-hand={zoom.hand.toFixed(3)}
       data-zoom-locked={zoom.locked || undefined}
+      data-handheld={handheld || undefined}
     >
       <PhaseTrack state={state} />
 
@@ -740,10 +959,27 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         data-fx-origin
         style={{ x: shakeX, y: shakeY }}
       >
-        <aside className="rail rail--left">
-          <StackPanel state={state} />
-          <EventTicker state={state} events={events} cardName={game.cardName} />
-        </aside>
+        {/*
+          The left rail, and where its two panels go when there is no room for
+          it.
+
+          At 1280px the two rails were 536px of the screen -- 42% -- against a
+          board that has to hold three lanes and a hand, so the left one leaves
+          the grid. Its contents do not: the stack moves to the top of the right
+          rail, because what is resolving is a thing you need *during* a
+          decision, and the log becomes an overlay on `View`, because it is
+          reference you consult rather than watch.
+
+          One instance either way. Rendering both and hiding one would put two
+          `data-testid="stack-panel"`s in the document, which Playwright's
+          strict mode fails on in a confusingly distant place.
+        */}
+        {!handheld && (
+          <aside className="rail rail--left">
+            <StackPanel state={state} />
+            <EventTicker state={state} events={events} cardName={game.cardName} />
+          </aside>
+        )}
 
         <main className="play">
           <div className="play__opponents" ref={podRef}>
@@ -821,6 +1057,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           the hand alone.
         */}
         <aside className="rail rail--right">
+          {handheld && <StackPanel state={state} />}
           <CardPreview state={state} />
           <ActionPanel
             state={state}
@@ -846,6 +1083,34 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       </motion.div>
 
       <div className="table__foot">
+        {/*
+          Where the commit slab and the tool strip go on a handheld. Hosts, not
+          the controls themselves.
+
+          What goes in them depends on `ActionPanel`'s own decision state --
+          which mode it is in, whether combat is declarable, what X is -- so
+          rebuilding either here would be a second implementation of the one
+          control the turn is waiting on. `ActionPanel` finds these by class and
+          portals its real dock and tool row into them, so there is exactly one
+          of each in the document and every `data-action-id`, `data-testid` and
+          ring stop travels with it.
+
+          Rendered only on a handheld. On a desktop both stay in the rail, where
+          304px of width and a 950px-tall screen make them the right shape.
+        */}
+        {handheld && <div className="foot__slab" />}
+        {handheld && <div className="foot__tools" />}
+
+        {/*
+          What the buttons do, for whoever is holding one.
+
+          `display: none` unless `html[data-input]` says a pad or a keyboard is
+          driving, so a mouse player's foot is exactly the row it has always
+          been -- no extra height, no reserved space, nothing to read. See
+          `components/ui/Glyph.tsx`.
+        */}
+        <HintBar state={state} actions={actions} />
+
         {/*
           One hint, never a second copy of the actions.
 
@@ -911,6 +1176,25 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       {stalled && (
         <div className="toast toast--warn" data-testid="stall-toast">
           The game stopped progressing. Try Undo, or start a new game.
+        </div>
+      )}
+
+      {handheld && <OpponentBoard state={state} pid={reading} names={names} />}
+
+      {handheld && logOverlay && (
+        <div className="logover" data-modal-root data-testid="log-overlay">
+          <div className="logover__head">
+            <span>Log</span>
+            <button
+              type="button"
+              className="btn btn--ghost"
+              data-stop={stopId.tool("close-log")}
+              onClick={toggleLogOverlay}
+            >
+              Close
+            </button>
+          </div>
+          <EventTicker state={state} events={events} cardName={game.cardName} />
         </div>
       )}
 

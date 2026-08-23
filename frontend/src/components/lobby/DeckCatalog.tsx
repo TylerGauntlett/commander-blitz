@@ -117,6 +117,7 @@ export function DeckCatalog({
       className="cat"
       role="dialog"
       aria-modal="true"
+      data-modal-root
       aria-label="Deck catalogue"
       data-testid="deck-catalog"
     >
@@ -161,7 +162,7 @@ export function DeckCatalog({
                 key={code}
                 className={on ? "cbtn cbtn--on" : "cbtn"}
                 onClick={() => toggleColour(code)}
-                title={name}
+                data-hint={name}
                 aria-label={name}
                 aria-pressed={on}
                 data-testid={`colour-${code}`}
@@ -322,7 +323,7 @@ function DeckPick({
         <button
           type="button"
           className="ibtn"
-          title="Deck details"
+          data-hint="Deck details"
           aria-label={`Details for ${deck.name}`}
           onClick={() => onDossier(deck.id)}
           data-testid={`deck-${deck.id}-info`}
@@ -357,7 +358,7 @@ function DeckPick({
             <button
               type="button"
               className="ibtn ibtn--danger"
-              title="Remove this deck"
+              data-hint="Remove this deck"
               aria-label={`Remove ${deck.name}`}
               onClick={() => setConfirming(true)}
               data-testid={`deck-${deck.id}-remove`}

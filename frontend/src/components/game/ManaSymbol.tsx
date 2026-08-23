@@ -47,7 +47,7 @@ export function ManaSymbol({ code, className, fallback, title }: Props) {
 
   if (!hasSymbol(code)) {
     return (
-      <span className={`${classes} pip--text`} data-symbol={code} title={title ?? label}>
+      <span className={`${classes} pip--text`} data-symbol={code} data-hint={title ?? label}>
         {fallback ?? code}
       </span>
     );
@@ -60,7 +60,7 @@ export function ManaSymbol({ code, className, fallback, title }: Props) {
       // these, and none of them know where they are in a URL.
       src={`/symbols/${symbolFile(code)}.svg`}
       alt={label}
-      title={title ?? label}
+      data-hint={title ?? label}
       data-symbol={code}
       draggable={false}
     />

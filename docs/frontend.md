@@ -831,6 +831,215 @@ The Playwright suite boots uvicorn and vite itself and plays the real UI:
 native `<dialog>` element, which needs an imperative `showModal()` and cannot be driven by
 `AnimatePresence` exit animations.
 
+## Playing with a controller
+
+The client is playable end to end on a gamepad, at a Steam Deck's 1280x800. Two
+signals drive it and they are **deliberately independent**:
+
+| signal | comes from | decides |
+|---|---|---|
+| `<html data-input="mouse\|keyboard\|pad">` | the last input actually used | whether the focus ring and the button glyphs are drawn |
+| `<html data-handheld>` | the viewport, via `logic/breakpoints.ts` | the compact layout |
+
+So a desktop player who picks up a controller gets the ring and the glyphs on
+the unchanged three-column board, and a Deck user with no pad gets the compact
+board and no glyphs. Neither implies the other.
+
+`data-input` is **last-input-wins** rather than "is a pad plugged in", because a
+Deck in desktop mode has both attached at once. `pointermove` is throttled to one
+write per 200ms so a mouse resting on a desk cannot steal the mode back
+mid-navigation.
+
+### Reading the pad: never `getGamepads()[0]`
+
+`navigator.getGamepads()` is **sparse and indexed by slot**, so the nulls in it
+are empty slots rather than padding to trim. "The first non-null entry" is a
+convincing wrong answer to "which pad is the player holding", and on an ordinary
+Windows desktop it is wrong often: Steam publishes a virtual pad beside the
+physical one, a wheel or a flight stick occupies a slot, and a controller that
+reconnects comes back at a higher index.
+
+Read that way the held pad is never looked at, every button comes back neutral,
+the mode never leaves `mouse`, and **nothing at all happens** — which is
+indistinguishable from the polling loop being dead, and sends the next person to
+debug the loop. So `input/pad.ts` reads *every* connected pad, OR-ing the buttons
+and letting the stick pushed hardest win. An idle second device costs nothing and
+cannot shadow the real one.
+
+Two more things a real pad does that a synthetic one does not:
+
+- **`mapping` is not always `"standard"`.** The W3C indices in `buttons.ts` mean
+  something only when the browser says so. When it cannot vouch for a pad — an
+  Xbox pad over Bluetooth that XInput did not claim, most third-party pads — it
+  hands over the raw HID report order instead, where the d-pad is a **hat axis**
+  rather than buttons 12–15 and the face buttons sit at 0/1/3/4 with gaps. `HID`
+  in `pad.ts` is that fallback; without it such a pad has no working directions
+  at all.
+- **A rAF handle is not proof the loop is alive.** No browser runs rAF for a
+  hidden, minimised or occluded window, so a handle taken just before the window
+  went away outlives the loop that owns it. `wake()` trusts a handle only while
+  the loop has ticked inside `STALL_MS`, which is what lets it recover a stalled
+  loop instead of returning early from the one call that exists to do so.
+
+### When the controller does nothing, ask the browser first
+
+`window.__AUTOMTG_RING.pad()` reports `supported`, `secure`, `focused` and the
+raw `pads` list beside the loop's own state, because the three commonest
+failures are not in this code and all three look identical from inside it — an
+empty `pads`:
+
+- the Gamepad API is **secure-context only**, so the app served over plain http
+  to anything but localhost has no `getGamepads` at all (`supported: false`);
+- no browser hands out a pad until it has seen a button pressed **while the page
+  was focused** (`focused: false`);
+- on Windows a running Steam client with a desktop layout bound to the
+  controller swallows it before any browser sees it (`pads: []` while the pad is
+  plainly working elsewhere).
+
+### The cursor is an attribute, not state
+
+> The cursor wants to live as an attribute on ONE element, not as state thirty
+> components read.
+
+This is the single most important thing in `input/`. A cursor in zustand that
+every `Card` subscribes to re-renders all thirty on every step of a sweep, which
+the design round measured at **18.5fps under a 4x CPU throttle** against 59.7fps
+for moving one attribute. The React version of the mistake looks nothing like
+the vanilla one and arrives at the same number.
+
+So `input/cursor.ts` holds one string, stamps `data-cursor` on one node
+imperatively, and **no component subscribes**. `Card`, `Lane`, `PlayerOrb` and
+the rest render `data-stop` as a static prop derived from their own props. The
+two exceptions are `HintBar` and the read rail, both single leaves at the edge
+of the tree, and the rail's write is debounced by `RAIL_SETTLE` so a twelve-step
+sweep costs two rebuilds rather than twelve.
+
+**Stops are a string namespace, never an index** — `card:<oid>`, `orb:<pid>`,
+`act:<actionId>`, `tool:<name>`, `pile:<pid>:<zone>`, `lane:<pid>:<lane>`. Keyed
+on the oid, so the ring survives a card moving from hand to stack to
+battlefield, for the same reason `layoutId` does.
+
+Outside the board, a **native focusable is a stop**. The lobby declares none:
+everything interactive there is already a control, and the fallback means a
+button added next year is reachable without anybody remembering this layer
+exists.
+
+### Two rules that keep it honest
+
+**`A` is a click.** Not "A does what a click does" — `useCursorNav` dispatches
+`element.click()` on the focused stop. There is no second routing table, no
+branch per stop kind, and no way for a pad to reach an action a pointer cannot.
+
+**Every `data-action-id` is emitted with its stop.** `actionAttrs(id)` returns
+both, so `ActionPanel`'s "every legal action is a button, exactly once" and the
+ring's "every one of them is reachable" are equal *by construction*.
+`tests/stops.test.tsx` fails the build if a bare `data-action-id` reappears.
+
+### The focus trap
+
+`stopRoot()` is nine lines and every consumer asks it: whatever is on top owns
+the ring. Six surfaces mark themselves `data-modal-root`. The half worth knowing
+is `:not([data-closing])` — every dialog animates out through `AnimatePresence`,
+so an *exiting* one is still in the DOM and would trap the ring in a panel that
+is fading away.
+
+### The ring's spring
+
+`input/ring.ts` integrates the **closed form of a damped oscillator**, not
+`v += (k*dx - d*v)*dt`. The naive one is frame-rate dependent — the same spring
+overshoots 1.6px at 60fps and 4.5px at 144fps — and goes unstable at large `dt`,
+which is exactly what a throttled tab hands you. The closed form is exact at any
+`dt` and resolves a dropped second to "the ring is where the cursor is".
+
+`w 36, z 0.78` is 142ms of settling and 2% of overshoot. `longHop` shortens
+anything past 420px, because a spring's settling time is distance-independent —
+a 1000px zone jump would otherwise fly at ~13,000 px/s and strobe.
+
+### The floors, and why they are a CI gate
+
+> Do not ship a controller mode without the 16px floor asserted in CI.
+
+`e2e/handheldAssert.ts` runs at 1280x800 in its own Playwright project and
+asserts: **16px** on anything carrying information, **96px** on any card the
+ring can land on, **44px** on any control, a ring at least 3px *and not
+`outline-style: none`*, at most one cursor, zero unreachable stops, zero
+`title` tooltips.
+
+Every one of those numbers caught something real. The full record is in
+[handheld-playtest.md](handheld-playtest.md); the short version is that the app
+had **123 elements under the floor at 6.5px, 142 native tooltips, and a card
+floor being missed by a card the ring could sit on** — none of which is visible
+in a screenshot, because a reviewer already knows what the label says.
+
+`title` is banned outright (`tests/noTooltips.test.ts`): it opens on hover and
+on nothing else, so on a controller it is information that cannot be reached.
+The 43 sites became `data-hint`, which the hint bar reads off the focused
+element — and which mouse players get immediately rather than after 500ms.
+
+### What the compact layout gives up
+
+At 1280px the two rails were 536px — 42% of the screen. So the left rail leaves
+the grid: the stack moves to the top of the right rail (it is needed *during* a
+decision) and the log becomes an overlay on **View** (it is reference). An
+opponent becomes their orb and a summary line from `logic/threat.ts`, with their
+board one **R2** hold away at a readable size.
+
+Their lanes are clipped to `height: 0` rather than removed, and that is
+load-bearing: `FxLayer` anchors damage numerals and exit ghosts by looking up
+`[data-oid]` in the live DOM, so a card that is not laid out has no box to fly
+from.
+
+**The lane headings go.** "CREATURES", "GLOBAL ARTIFACTS & ENCHANTMENTS",
+"LANDS" name three things drawn directly beneath them. Dropping them buys the
+front band a line of height and the lands band a 74px column —
+`state/useZoomFit.ts` passes `labels: false` to match, and it has to: hiding
+them in CSS alone would leave the solver reserving room for them.
+
+**An opponent's zone counts are marks, not labelled piles.** Each is a
+colour-coded chip carrying one number inside a 44px target, with the zone's name
+returning as a popover on `:hover` and on `[data-cursor]` — the same "drop the
+word, put the name one input away" trade the 142 tooltips took. `logic/zones.ts`
+gives the hand its own `PileKind` so it is not the same purple as the library.
+
+**The commit slab and the tools strip live in the foot**, portalled out of the
+right rail by `ActionPanel` into hosts `Table` renders. Portalled and not
+duplicated: it is the same node, so every `data-action-id`, `data-testid` and
+ring stop travels with it, and the panel's one-control-per-action invariant
+holds. The slab spans both foot rows, in the gutter the centred hand fan does
+not use, so the foot does not grow to hold it.
+
+### Everything on screen at once
+
+A Deck is held at one angle in two hands. There is no second position, so a
+board you have to scroll is a board whose bottom half does not exist — and that
+is a stronger claim than the floors make. Three tokens carry it:
+
+| token | what it bounds |
+|---|---|
+| `--pod-seat-h` | one opponent's whole seat, orb and all |
+| `--hand-lift` | how far a hovered hand card rises, and the room reserved for it |
+| `--mat-side` | the viewer's info column |
+
+`e2e/deckfit.spec.ts` is the gate, and it is a separate project because it runs
+at **1200x800 as well as 1280x800**: same height, ~36px less rail, and enough
+findings appeared at exactly one of the two widths that they are not
+interchangeable. It asserts `scrollHeight === clientHeight` on every container
+in a game played in to turn six, two-player and four-seat.
+
+`e2e/handheldAssert.ts` gained `overflowing[]` and `overBudget[]` for the same
+reason. The floors it already checked answer "is this big enough"; neither of
+them can answer "and does it still fit", which is how a 220px opponent seat
+holding an empty board passed every gate in the suite. See
+`docs/handheld-playtest.md` Loop 6.
+
+### Not built
+
+Rumble is best-effort — `vibrationActuator` is Chrome-only, so every rumble is
+redundant with something visible. The four back grips (L4/R4/L5/R5) are
+deliberately unused: Steam Input maps them before the page sees anything.
+Whether Game Mode passes the pad to a non-Steam browser shortcut at all is the
+one thing here that cannot be verified without the hardware.
+
 ## Not built
 
 WebSockets — multiplayer uses versioned long-polling instead, and
