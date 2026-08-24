@@ -115,3 +115,60 @@ describe("the stage scale", () => {
     expect(bigger.RAISE).toBe(DOOR_TUNE.RAISE);
   });
 });
+
+/**
+ * The row grew a fourth card, and the arithmetic was written for three.
+ *
+ * Both terms that had to change are identities at three -- which is why every
+ * test above still calls `poseOf` the way it always did, and why they are the
+ * real guard here. These cover what only exists at four.
+ */
+describe("a row of four", () => {
+  const pose4 = (i: number, s: number) => poseOf(i, s, DOOR_TUNE, 4);
+
+  it("is centred on the row rather than on index 1", () => {
+    /*
+     * `x` was `(i - 1) * STEP`, which centres a row of three and shifts a row of
+     * four half a step right -- the whole menu off-centre in its pool of light,
+     * with nothing in the suite looking at absolute position.
+     */
+    const outer = pose4(0, 1.5).x + pose4(3, 1.5).x;
+    expect(Math.abs(outer)).toBeLessThan(0.001);
+    const inner = pose4(1, 1.5).x + pose4(2, 1.5).x;
+    expect(Math.abs(inner)).toBeLessThan(0.001);
+  });
+
+  it("keeps the row in order when an end card is selected", () => {
+    /*
+     * THE BUNCH CLAMP. `far` was unbounded, so at three places from the
+     * selection a card took `BUNCH * 2` of pull-back and slid clean THROUGH the
+     * neighbour it was supposed to hide behind, inverting the stack. A row of
+     * three never reaches three places, which is why it went unnoticed.
+     */
+    for (const sel of [0, 1, 2, 3]) {
+      const xs = [0, 1, 2, 3].map((i) => pose4(i, sel).x);
+      for (let i = 1; i < xs.length; i += 1) {
+        expect(xs[i], `card ${i} overtook ${i - 1} with ${sel} selected`).toBeGreaterThan(
+          xs[i - 1],
+        );
+      }
+    }
+  });
+
+  it("still lifts exactly the selected card", () => {
+    for (const sel of [0, 1, 2, 3]) {
+      const scales = [0, 1, 2, 3].map((i) => pose4(i, sel).scale);
+      expect(scales[sel]).toBeCloseTo(1 + DOOR_TUNE.RAISE, 6);
+      for (const i of [0, 1, 2, 3].filter((n) => n !== sel)) {
+        expect(scales[i]).toBeLessThan(scales[sel]);
+      }
+    }
+  });
+
+  it("agrees with the three-card row when asked for one", () => {
+    // The default is three, and every existing case relies on it.
+    for (const i of [0, 1, 2]) {
+      expect(poseOf(i, 1, DOOR_TUNE, 3)).toEqual(poseOf(i, 1, DOOR_TUNE));
+    }
+  });
+});

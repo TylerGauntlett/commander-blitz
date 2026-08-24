@@ -26,11 +26,20 @@
  */
 
 import { useUiStore } from "../state/uiStore";
+import { setGroup } from "./groups";
 import { getInputMode, subscribeInputMode } from "./inputMode";
 import { type Dir, unreachableStops } from "./nav";
 import { padDiagnostics } from "./pad";
 import { followRing, retargetRing, ringNudge, ringTargetFor } from "./ring";
-import { candidatesIn, navigate, stopElement, stopIdOf, stopRoot, stopsIn } from "./stops";
+import {
+  candidatesIn,
+  escapeGroup,
+  navigate,
+  stopElement,
+  stopIdOf,
+  stopRoot,
+  stopsIn,
+} from "./stops";
 
 /** The stop the ring is on. Not React state; see the header. */
 let cursor: string | null = null;
@@ -459,15 +468,42 @@ export function restampCursor(): void {
 /** Move the ring, or draw the wall it could not cross. */
 export function moveCursor(dir: Dir): boolean {
   const next = navigate(cursor, dir);
-  if (!next) {
-    // A wall you can see. The nudge, the deny voice and the rumble are three
-    // channels for one fact, because a handheld is routinely played muted and
-    // `vibrationActuator` does not exist in every browser.
-    ringNudge(dir);
-    return false;
+  if (next) {
+    setCursor(next);
+    return true;
   }
-  setCursor(next);
-  return true;
+  /*
+   * Nowhere to go inside the region means out of the region -- see
+   * `escapeGroup`, which refuses for a modal so this cannot walk out from under
+   * a dialog. Without it a controller with no shoulder buttons, which is what a
+   * Steam Deck in gaming mode is, was locked in one region for the whole game.
+   */
+  const out = escapeGroup(cursor, dir);
+  if (out) {
+    /*
+     * THE REGION HAS TO BE RELEASED BEFORE THE CURSOR MOVES, and leaving that
+     * out made the whole escape a no-op that looked like it worked.
+     *
+     * `setCursor` resolves its target through `stopElement`, which defaults to
+     * `activeRoot()` -- and `activeRoot()` is still the region we are trying to
+     * leave. So the stop `escapeGroup` had just found, outside that region, was
+     * not findable from inside it: `setCursor` returned false and the ring sat
+     * exactly where it was. Every unit test passed, because they call
+     * `escapeGroup` directly and it was returning the right answer all along.
+     *
+     * Clearing the group first widens `activeRoot` back to the board for the one
+     * call that needs it. `Table`'s reconciler then reads the new cursor and
+     * sets the region it actually landed in, which is why nothing here has to
+     * work out what that region is.
+     */
+    setGroup(null);
+    if (setCursor(out)) return true;
+  }
+  // A wall you can see. The nudge, the deny voice and the rumble are three
+  // channels for one fact, because a handheld is routinely played muted and
+  // `vibrationActuator` does not exist in every browser.
+  ringNudge(dir);
+  return false;
 }
 
 /** Put the ring on a named stop, if it is currently reachable. */

@@ -15,7 +15,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { resetInputMode } from "../src/input/inputMode";
+import { getInputMode, resetInputMode } from "../src/input/inputMode";
 import { on, padDiagnostics, resetPad, startPad } from "../src/input/pad";
 
 type Slot = Gamepad | null;
@@ -357,5 +357,51 @@ describe("diagnostics", () => {
     vi.advanceTimersByTime(300);
     expect(padDiagnostics().supported).toBe(false);
     expect(padDiagnostics().pads).toEqual([]);
+  });
+});
+
+/**
+ * Analog motion is input, even before it becomes a direction.
+ *
+ * The mode was noted on a button EDGE only, which missed the two things a player
+ * does most: nudging a stick short of the fire threshold, and HOLDING a trigger.
+ * A hold produces no edges at all for as long as it lasts, so keeping the region
+ * dial up left the hint bar advertising `Enter` and `Esc` to somebody visibly
+ * holding a controller.
+ */
+describe("what counts as using the pad", () => {
+  it("notices a stick pushed short of the fire threshold", () => {
+    const one = pad();
+    slots[0] = one;
+    startPad();
+    vi.advanceTimersByTime(20);
+    expect(getInputMode()).toBe("mouse");
+
+    // Past the deadzone, well short of `STICK.fire` -- so no direction fires and
+    // the edge path never runs.
+    axis(one, 0, 0.4);
+    vi.advanceTimersByTime(40);
+    expect(getInputMode()).toBe("pad");
+  });
+
+  it("notices a trigger held, which produces no edges at all", () => {
+    const one = pad();
+    slots[0] = one;
+    startPad();
+    vi.advanceTimersByTime(20);
+    resetInputMode();
+
+    press(one, 6);
+    vi.advanceTimersByTime(40);
+    expect(getInputMode()).toBe("pad");
+  });
+
+  it("says nothing about a pad sitting at rest", () => {
+    // A controller in the room is not a controller in your hands -- the whole
+    // reason the mode is last-input-wins rather than is-one-plugged-in.
+    slots[0] = pad();
+    startPad();
+    vi.advanceTimersByTime(200);
+    expect(getInputMode()).toBe("mouse");
   });
 });

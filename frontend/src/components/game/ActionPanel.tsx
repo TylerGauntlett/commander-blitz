@@ -59,6 +59,7 @@ import { bouncy, ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useHandheldLayout } from "../../state/useHandheld";
 import { ActionIcon } from "../ui/ActionIcon";
+import { SchemePicker } from "../ui/SchemePicker";
 import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
 
@@ -945,6 +946,25 @@ export function ActionPanel({
                     </span>
                     Undo
                   </button>
+                  {/*
+                    THE ONE SETTING THAT CAN MAKE THE MENU UNREACHABLE, so it is
+                    reachable from inside it.
+
+                    The full diagnosis -- which pads the browser can see, and
+                    which of the three environment causes is stopping it -- lives
+                    on the front door's Settings card, where there is room for
+                    prose. What has to be here is the half a player needs
+                    MID-GAME: a Deck whose controller arrives as a keyboard shows
+                    "Enter" and "Esc" on every hint, and quitting to the lobby to
+                    fix that is a bad answer during somebody's turn.
+
+                    The picker is the same component the door renders, so the two
+                    surfaces cannot drift.
+                  */}
+                  <div className="settings__scheme" data-testid="settings-scheme">
+                    <span className="settings__label">Controls</span>
+                    <SchemePicker />
+                  </div>
                   <button
                     type="button"
                     role="menuitem"

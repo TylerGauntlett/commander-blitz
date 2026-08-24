@@ -1595,3 +1595,55 @@ fieldset.speed {
   font-size: 18px;
   line-height: 1;
 }
+
+/*
+ * The control-scheme picker, folded into the settings menu.
+ *
+ * The menu's own `min-width` is 148px, which is a column of three words and not
+ * a row of four buttons -- so this section widens the menu rather than wrapping
+ * "Keyboard" onto two lines. 2x2 rather than 1x4 because a 4-wide row of
+ * 44px-tall targets is wider than the board's tool strip has to give.
+ */
+.settings__scheme {
+  display: grid;
+  gap: 6px;
+  min-width: 208px;
+  margin-top: 4px;
+  padding: 8px 6px 6px;
+  border-top: 1px solid var(--edge);
+}
+
+.settings__label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.settings__scheme .scheme__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+/*
+ * Under the 44px floor ON PURPOSE, and this is the one place that is allowed.
+ *
+ * `e2e/handheldAssert.ts` gates the floor on what is on screen, and this menu is
+ * a popover that only exists while it is open -- the same trade every row in it
+ * already makes at `min-height: 30px`. The front door's copy of this picker is
+ * the one a Deck player uses, and that one is a full 44.
+ */
+.settings__scheme .scheme__opt {
+  min-width: 0;
+  min-height: 30px;
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 7px;
+}
+
+.settings__scheme .scheme__now {
+  font-size: 11px;
+  line-height: 1.4;
+}

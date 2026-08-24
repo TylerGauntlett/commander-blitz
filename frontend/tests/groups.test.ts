@@ -26,7 +26,7 @@ import {
   setGroup,
   subscribeGroup,
 } from "../src/input/groups";
-import { activeRoot } from "../src/input/stops";
+import { activeRoot, escapeGroup } from "../src/input/stops";
 
 /** jsdom reports a zero box for everything; a stop needs one to count. */
 function boxed(el: Element, w = 100, h = 40): void {
@@ -329,5 +329,91 @@ describe("activeRoot", () => {
     document.documentElement.setAttribute("data-input", "pad");
     setGroup("hand");
     expect(activeRoot()).toBe(document.querySelector(".table"));
+  });
+});
+
+/**
+ * The soft half of the region trap.
+ *
+ * THE TRAP WAS A ONE-WAY DOOR ON A STEAM DECK, and that is the case these
+ * exist for. In gaming mode Steam hands the browser a KEYBOARD rather than a
+ * gamepad, so `L1`/`R1`/`L2` -- the only three exits a region had -- emit
+ * nothing. A region is entered automatically by `Table`'s cursor reconciler, so
+ * the first direction press of the game locked the ring in one region for the
+ * rest of it and the pad appeared to die halfway down the screen.
+ *
+ * The rule now is the one a console scroll pane uses: a direction with somewhere
+ * to go inside the region is the region's, and a direction with nowhere to go
+ * leaves it. The two things worth pinning are that it lets you out of a REGION,
+ * and that it does not let you out of a MODAL.
+ */
+describe("escapeGroup", () => {
+  /** Stack the regions vertically so "up" and "down" mean something. */
+  function stacked(): void {
+    board(["hand", "acts"]);
+    const at = (el: Element, top: number, height: number, left = 0, width = 200) => {
+      el.getBoundingClientRect = () =>
+        ({
+          x: left,
+          y: top,
+          width,
+          height,
+          top,
+          left,
+          right: left + width,
+          bottom: top + height,
+          toJSON() {
+            return this;
+          },
+        }) as DOMRect;
+    };
+    at(document.querySelector(".table") as Element, 0, 800, 0, 1280);
+    // The hand at the bottom, the action rail above it, as on the real board.
+    at(document.querySelector('[data-stop="card:1"]') as Element, 600, 100);
+    at(document.querySelector('[data-stop="act:a1"]') as Element, 200, 100);
+    document.documentElement.setAttribute("data-input", "pad");
+  }
+
+  it("leaves the region when the region has nowhere left to go", () => {
+    stacked();
+    setGroup("hand");
+    // The hand holds one stop, so "up" inside it is a wall -- and that wall is
+    // the region's edge rather than the board's.
+    expect(escapeGroup("card:1", "up")).toBe("act:a1");
+  });
+
+  it("refuses when no region is trapping the ring", () => {
+    /*
+     * A wall on the open board is a REAL wall, and softening it would mean the
+     * ring never reports one -- which is what draws the nudge, plays the deny
+     * voice and rumbles. Silence at the edge of the screen is worse than a wall.
+     */
+    stacked();
+    expect(getGroup()).toBeNull();
+    expect(escapeGroup("card:1", "up")).toBeNull();
+  });
+
+  it("refuses inside a dialog, so the ring cannot walk out from under one", () => {
+    /*
+     * THE MODAL TRAP STAYS HARD. This is the guard that makes the soft trap
+     * safe: a group narrows the board for comfort, a modal narrows it for
+     * correctness, and only the first may give way at its edge.
+     */
+    stacked();
+    setGroup("hand");
+    const dialog = document.createElement("div");
+    dialog.setAttribute("data-modal-root", "");
+    dialog.innerHTML = '<button data-stop="act:ok"></button>';
+    (document.querySelector(".table") as Element).append(dialog);
+    boxed(dialog, 400, 200);
+    boxed(dialog.firstElementChild as Element);
+    expect(escapeGroup("card:1", "up")).toBeNull();
+  });
+
+  it("refuses for a mouse, which is never trapped in the first place", () => {
+    stacked();
+    setGroup("hand");
+    document.documentElement.setAttribute("data-input", "mouse");
+    expect(escapeGroup("card:1", "up")).toBeNull();
   });
 });
