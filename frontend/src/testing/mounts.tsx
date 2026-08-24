@@ -263,17 +263,11 @@ export const MOUNTS = {
     where: "the pod's bottom rail",
     layers: [...pod, { className: "podrail", style: { gridRow: 3 } }],
   },
-  door: { where: "the front door", layers: [SCREEN_CENTER, { className: "door" }] },
-  homeFan: {
-    where: "the fan of card backs on the front door",
-    layers: [
-      SCREEN_CENTER,
-      { className: "door" },
-      { className: "door__mid" },
-      { className: "hero" },
-      { className: "fan" },
-    ],
-  },
+  /* The front door is a full-bleed room, so it stands on a bare `screen` rather
+     than on `screenCenter`: 24px of padding would put its stage scale at 0.94
+     and shrink the row off the numbers the mockup round measured. There is no
+     `homeFan` any more -- the fan of four card backs it mounted was the old
+     door's decoration, and the cards are the menu now. */
 
   /* ---- the two full-screen lobby overlays ---- */
   catalog: { where: "the deck catalogue", layers: catalog },

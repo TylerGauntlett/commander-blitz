@@ -40,8 +40,8 @@ frontend/src/
     │            PlayerOrb, PhaseTrack, CombatPanel, CombatArrows, ActionBar,
     │            PromptDialog, StackPanel, CardPreview, FxLayer, EventTicker,
     │            ZonePeek, GameOverScreen
-    ├── lobby/   HomeScreen, PodLobby, PodSeat, DeckCatalog, DeckDossier,
-    │            InviteDialog, CommanderCard, CardBack, ReadyTrack
+    ├── lobby/   HomeScreen, doorArt, PodLobby, PodSeat, DeckCatalog,
+    │            DeckDossier, InviteDialog, CommanderCard, CardBack, ReadyTrack
     ├── screen/  Screen                     - the per-route motion wrapper
     └── menu/    DeckImport
 ```
@@ -400,11 +400,14 @@ unmounting on hover would destroy each card's `layoutId` identity.
 
 ## The lobby
 
-Three screens before the table, ported from `mockups/flow/02-face-up.html`:
+Three screens before the table, ported from `mockups/flow/02-face-up.html` —
+except the front door, which is `mockups/door/01-the-hand.html`:
 
 | File | What it is |
 |---|---|
-| `components/lobby/HomeScreen.tsx` | The front door. Two actions: create a pod, or join one with a code |
+| `components/lobby/HomeScreen.tsx` | The front door: a menu of three cards — Decks, Play, Join |
+| `components/lobby/doorArt.tsx` | The door's drawn hall, card frame and three illustrations |
+| `logic/doorRow.ts` | The row's arithmetic: one number in, three poses out |
 | `components/lobby/PodLobby.tsx` | Four seats as a hand of cards, and the rail under them |
 | `components/lobby/PodSeat.tsx` | One seat: the card, the stamp, the plate, the per-kind actions |
 | `components/lobby/DeckCatalog.tsx` | Full-screen takeover: search, colour filter, source, sort, the import row |
@@ -717,7 +720,7 @@ two that disagree by an `s`.
 
 | Path | Screen |
 |---|---|
-| `/` | the front door. `?join=CODE` prefills the code field |
+| `/` | the front door. `?join=CODE` prefills the code field *and opens the hold it lives in* |
 | `/pods/:code` | the lobby, when this tab holds a token for that pod |
 | `/games/:gameId` | "Dealing…" until the seat resolves, then the table |
 | `/decks` | the catalogue, browsing for nobody |

@@ -69,8 +69,11 @@ export function HomeRoute() {
     );
   };
 
+  // Not `center`: `.screen--center` adds 24px of padding, which would put the
+  // door's `--du` at 0.94 on a Deck and every number the mockup round measured
+  // out by six percent. The door fills the screen itself.
   return (
-    <Screen center>
+    <Screen>
       <HomeScreen
         initialCode={params.get("join") ?? ""}
         deckCount={decks.data?.length ?? 0}

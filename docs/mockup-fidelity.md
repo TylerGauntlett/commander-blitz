@@ -52,14 +52,96 @@ nth CPU, `start-game` still deals. `e2e/helpers.ts:startGame` was rewritten once
 and eleven of the thirteen spec files needed no edit at all. See "Two specs did
 need editing" below for the two that did.
 
-### The lobby's front door is not `01-front-door.html`
+### ~~The lobby's front door is not `01-front-door.html`~~ — superseded
 
-The lobby ports `mockups/flow/02-face-up.html`, whose home screen is a fan of four
-card backs and two actions: create a pod, or join with a code. `01-front-door.html`
-is a different direction and is not what shipped. Nothing on the shipped door
-configures a game — deck, opponents, AI difficulty — because those are decisions
-you make *with* the people you are playing against, and there is no reason to make
-them before they arrive.
+**This entry is closed. The front door is `mockups/door/01-the-hand.html` now.**
+It used to read: the lobby ports `mockups/flow/02-face-up.html`, whose home screen
+is a fan of four card backs and two actions.
+
+What replaced it is a main menu made of three selectable cards — Decks, Play,
+Join — and the reason is the one `mockups/door/README.md` opens with: on the old
+door, the one card-shaped object was a fan of four `.back` plates you could not
+select, press or reach with a pad, so **the only thing on the screen that looked
+like a game was the only thing that did nothing** — and what those plates were
+drawn as is the hatch `cards.css` uses for a card with *no printing*, four times.
+Everything you could actually use was a web control: a button, a text input, an
+underlined link, walked between on a pad *through* the text field.
+
+The actions did not change. Create a pod, join by code and browse the catalogue
+are the same three things, and nothing on the door configures a game — deck,
+opponents, AI difficulty — because those are decisions you make *with* the people
+you are playing against. What changed is that all three are now the same kind of
+object, at the same weight, in one row.
+
+Ported at 1:1 against the mockup at 1280×800: `.door__title`, `.door__row` and
+every card box measure identically, which is checked by driving both and
+comparing `getBoundingClientRect`. The five divergences below are the whole list.
+
+### The front door scales rather than being a scaled 1280×800 deck
+
+The mockup fixes a 1280×800 deck and `transform: scale()`s it to whatever window
+is open, which is right for a review surface and wrong for an application: at
+1600×950 that is a blurry 1280 in a letterbox.
+
+The shipped door is full-bleed and only the *furniture* scales, off one number —
+`--du`, written by `HomeScreen` from `stageScale()` in
+[`logic/doorRow.ts`](../frontend/src/logic/doorRow.ts). It is **exactly 1 at
+1280×800**, which is what keeps the port pixel-identical on a Deck; it grows to
+1.45 and shrinks to 0.72. Type does not follow it down — every size on the screen
+is `max(16px, calc(N * var(--du)))` — because the 16px floor is a CI gate and a
+card that shrank its copy would clear the layout by failing the thing the layout
+is for.
+
+That scaling also forced the drawing's one structural change. The floor sigil is
+its own layer, sized in `--du` and hung off the row, rather than part of the
+full-bleed ground: `preserveAspectRatio="slice"` scales the ground 2× at
+2560×1440 while the cards only scale 1.45×, so the ring on the floor grew wider
+than the row standing in it. The sky, the beams and the vignette still slice,
+because stretching a gradient is what a gradient is for.
+
+### The door keeps the app's focus ring, which the mockup has no concept of
+
+In the mockup the selected card *is* the cursor: nothing else on the screen says
+where you are. In the app, `[data-cursor]` draws a ring on whatever the pad is
+on, everywhere, and `e2e/handheldAssert.ts` fails a run where it is missing. So
+on the door the ring is drawn on top of the card's own five channels — the lift,
+the scale, the rim, the sheen and the room's colour.
+
+Kept rather than suppressed. A screen that quietly dropped the one indicator the
+rest of the client is consistent about would be teaching a player that the ring
+is unreliable, which is worse than a doubled affordance on one screen. It costs
+nothing on a mouse: `html[data-input="mouse"]` hides the ring already, so the
+default view is exactly the mockup's.
+
+### The code field is behind the Join card, and `join-pod` names the card
+
+This is the mockup's design, not a divergence from it, but it moves a test id and
+that is worth stating plainly. `join-pod` is the **card that opens the hold** and
+`join-go` is the **confirm inside it**; `pod-code` is on the field, wherever the
+field is. A suite that drives `join-pod` is starting a join; one that drives
+`join-go` is finishing one. `e2e/pod.spec.ts`'s `join()` helper and two of its
+tests were updated for the extra press, and `browse-decks` — a test id the old
+door never had, so `e2e/routing.spec.ts` was matching the string "Browse them" —
+now exists on the Decks card.
+
+One addition the mockup does not make: **an invite link opens the hold itself**.
+`?join=CODE` and a cold `/pods/CODE` both land with the field on screen and
+filled, because the link has already asked the question the hold exists to ask,
+and burying a prefilled field behind a card somebody would have to know to press
+is worse than the old door, not better.
+
+### The cold state and the build stamp did not come across
+
+The mockup opens on a "press any button" caption, because Chrome hides gamepads
+behind a user gesture and `navigator.getGamepads()` returns four nulls until the
+first press — the most honest first frame a *file://* console mockup can have.
+The client has `input/inputMode.ts` and shows a controller legend only once a pad
+or a key has spoken, which answers the same question without a caption every
+mouse player would see and have to dismiss.
+
+`Build 0.9 · offline` goes with it. The bottom-left corner is where a console
+game puts the build, and what the client actually has to say there is the deck
+count the old door's footer carried — real, and the same shape of line.
 
 ### The seat rail keeps a seed field the mockup does not have
 
