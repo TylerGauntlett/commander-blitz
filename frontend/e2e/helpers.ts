@@ -105,11 +105,15 @@ export async function pickDeck(page: Page, deckId: string): Promise<void> {
   await expect(page.getByTestId("deck-catalog")).toBeHidden();
 }
 
-/** Open the catalogue from the front door, without joining a pod. */
+/**
+ * Open the catalogue on its own, without joining a pod.
+ *
+ * BY ADDRESS, because the front door no longer carries a Decks card. The
+ * catalogue is still a screen of the app and `/decks` is still its address --
+ * what went away is a menu item that started nothing, not the route.
+ */
 export async function browseDecks(page: Page): Promise<void> {
-  await page.goto("/");
-  await page.getByTestId("home").waitFor();
-  await page.getByTestId("browse-decks").click();
+  await page.goto("/decks");
   await page.getByTestId("deck-catalog").waitFor();
 }
 
