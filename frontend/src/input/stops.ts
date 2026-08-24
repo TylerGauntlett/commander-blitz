@@ -368,6 +368,51 @@ export function navigate(
 }
 
 /**
+ * Where `dir` goes when the REGION has no answer -- the soft half of the trap.
+ *
+ * THE TRAP WAS A ONE-WAY DOOR ON ANY CONTROLLER MISSING A SHOULDER BUTTON, and
+ * that is not a hypothetical: a Steam Deck in gaming mode hands the page a
+ * KEYBOARD rather than a gamepad, so `L1`/`R1`/`L2` -- the only three exits a
+ * region had -- emit nothing at all. A region is entered automatically, by the
+ * cursor reconciler and by the decision auto-jump in `Table`, so the first
+ * direction press of the game locked the ring inside one region for the rest of
+ * it. From the player's side the pad simply stopped working halfway down the
+ * screen.
+ *
+ * So the group trap is now SOFT: a direction with somewhere to go inside the
+ * region is the region's, and a direction with nowhere to go leaves it. That is
+ * the rule every console UI uses for a scroll pane, it needs no button and no
+ * mode, and it is strictly better for the players who *do* have shoulders --
+ * walking into the edge of a region used to just deny, which reads as broken.
+ *
+ * THE MODAL TRAP STAYS HARD, and the two guards below are the whole safety of
+ * this. A modal trap exists so the ring cannot press things underneath a dialog;
+ * softening that would be a bug rather than a convenience. So this returns null
+ * unless the thing that blocked the move was specifically a *group* narrowing of
+ * the board -- `activeRoot` differing from `stopRoot`, with `stopRoot` still
+ * being the board itself.
+ *
+ * No `setGroup` call: `Table` reconciles the group from the cursor already, so
+ * arriving in a new region is what puts the ring in it.
+ */
+export function escapeGroup(
+  from: string | null,
+  dir: Dir,
+  doc: Document = document,
+): string | null {
+  const board = stopRoot(doc);
+  // Something is on top -- its trap is not ours to soften.
+  if (board !== doc.querySelector<HTMLElement>(".table")) return null;
+  // Nothing narrowed the board, so the wall the caller hit is a real one.
+  if (activeRoot(doc) === board) return null;
+  const candidates = candidatesIn(board);
+  if (candidates.length === 0) return null;
+  const current = from ? candidates.find((c) => c.id === from) : undefined;
+  if (!current) return null;
+  return pickStop(current.rect, candidates, dir, from ?? undefined);
+}
+
+/**
  * How near a pointer has to be to catch a stop.
  *
  * The Deck's trackpads and touchscreen arrive as ordinary mouse events via

@@ -102,6 +102,18 @@ export const KEYS: Record<string, PadButton> = {
   v: "r2",
   Tab: "view",
   "\\": "menu",
+  /*
+   * The two Steam sends when nobody has chosen a layout.
+   *
+   * A Steam Deck in gaming mode hands a browser a KEYBOARD rather than a
+   * gamepad, and the stock browser template puts the shoulders on PageUp and
+   * PageDown. Nothing in this app has any other use for them, so binding them
+   * costs nothing and means the region step -- the one thing a trapped ring
+   * needs -- works on an unconfigured Deck. The bracket keys stay the
+   * advertised primary; see `KEY_LABEL`.
+   */
+  PageUp: "l1",
+  PageDown: "r1",
 };
 
 /**

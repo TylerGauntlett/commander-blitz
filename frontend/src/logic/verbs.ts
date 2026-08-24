@@ -252,8 +252,10 @@ export function verbsFor(
  * on at full size. `L1` stands for the pair because two glyphs for one idea is
  * what the bar is short of room for, and the direction is the obvious half.
  *
- * `tests/hintsBound.test.tsx` fails the build if a button named here loses its
- * listener, which is the cheap way to stop this happening a second time.
+ * `tests/hintsBound.test.ts` fails the build if a button named here loses its
+ * listener, which is the cheap way to stop this happening a second time. It
+ * reads the binding sites rather than mounting the board -- see its header for
+ * what that does and does not prove.
  */
 export const NAVIGATION_HINTS = [
   { btn: "dpad", label: "Move" },

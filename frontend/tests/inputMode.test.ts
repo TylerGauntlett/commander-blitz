@@ -17,10 +17,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { KEYS, KEY_LABEL } from "../src/input/buttons";
 import {
   getInputMode,
+  getScheme,
   isPadConnected,
   noteInput,
   notePadConnected,
   resetInputMode,
+  setScheme,
   startInputMode,
   subscribeInputMode,
 } from "../src/input/inputMode";
@@ -36,14 +38,45 @@ const root = () => document.documentElement;
  */
 const pointer = (type: string) => new Event(type);
 
+/**
+ * jsdom has no `matchMedia`, and the `auto` heuristic asks it a question.
+ *
+ * Stated rather than stubbed globally: the answer is the whole difference
+ * between "a Deck" and "a desktop", so each test that cares says which it is.
+ * `undefined` -- the jsdom default -- is also a case worth having, and
+ * `padShaped` treats it as "not a handheld", which is the safe way to be wrong.
+ */
+function viewport(handheld: boolean | null): void {
+  if (handheld === null) {
+    // biome-ignore lint/performance/noDelete: restoring jsdom's own absence.
+    delete (window as { matchMedia?: unknown }).matchMedia;
+    return;
+  }
+  (window as unknown as { matchMedia: unknown }).matchMedia = () => ({ matches: handheld });
+}
+
+/** Three arrows, which is what `NAV_STREAK` asks for. */
+function arrows(n = 3): void {
+  for (let i = 0; i < n; i += 1) {
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+  }
+}
+
 beforeEach(() => {
   resetInputMode();
+  viewport(null);
+  try {
+    localStorage.clear();
+  } catch {
+    // No storage under some environments; the default is `auto` regardless.
+  }
   vi.useFakeTimers();
 });
 
 afterEach(() => {
   vi.useRealTimers();
   resetInputMode();
+  viewport(null);
 });
 
 describe("startInputMode", () => {
@@ -165,5 +198,119 @@ describe("the keyboard fallback", () => {
   it("maps each key to exactly one intent", () => {
     const keys = Object.keys(KEYS);
     expect(new Set(keys).size).toBe(keys.length);
+  });
+});
+
+/**
+ * A Steam Deck in gaming mode is a controller that arrives as a keyboard.
+ *
+ * Steam Input grabs the pad, publishes no gamepad, and sends arrow keys and
+ * Enter -- so every signal this module had said "keyboard", and the hint bar
+ * told somebody holding a controller to press Enter and Esc. These pin the
+ * heuristic that fixes that, and, more importantly, the guard that stops it
+ * firing for a desktop keyboard user who has no A button to press.
+ */
+describe("the auto heuristic", () => {
+  it("calls a handheld driven by arrows alone a pad", () => {
+    viewport(true);
+    startInputMode();
+    arrows();
+    expect(getInputMode()).toBe("pad");
+    expect(root().getAttribute("data-input")).toBe("pad");
+  });
+
+  it("waits for the streak rather than guessing off one press", () => {
+    viewport(true);
+    startInputMode();
+    arrows(2);
+    expect(getInputMode()).toBe("keyboard");
+    arrows(1);
+    expect(getInputMode()).toBe("pad");
+  });
+
+  it("never guesses at desktop size, where there is no A button to press", () => {
+    /*
+     * THE VIEWPORT GATE IS THE WHOLE SAFETY OF THIS. Somebody arrowing around a
+     * menu on a 1920x1080 desktop is at a keyboard, and telling them to press
+     * "A" names hardware they are not holding.
+     */
+    viewport(false);
+    startInputMode();
+    arrows(6);
+    expect(getInputMode()).toBe("keyboard");
+  });
+
+  it("is disqualified for good by a single character key", () => {
+    // Somebody typed. They have a keyboard, and no later run of arrows undoes
+    // that -- a pod code is exactly the sequence that would otherwise re-arm it.
+    viewport(true);
+    startInputMode();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "g" }));
+    arrows(6);
+    expect(getInputMode()).toBe("keyboard");
+  });
+
+  it("does not treat a modifier as typing", () => {
+    // Shift is neither a character nor a navigation, and counting it as the
+    // former would disqualify a pad whose Steam layout happens to send one.
+    viewport(true);
+    startInputMode();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Shift" }));
+    arrows();
+    expect(getInputMode()).toBe("pad");
+  });
+});
+
+describe("the scheme preference", () => {
+  it("outranks everything, which is the point of having one", () => {
+    viewport(false);
+    startInputMode();
+    setScheme("pad");
+    expect(getInputMode()).toBe("pad");
+    // ...and a real mouse move cannot take it back.
+    window.dispatchEvent(pointer("pointerdown"));
+    expect(getInputMode()).toBe("pad");
+  });
+
+  it("hands control back to the heuristic on auto", () => {
+    viewport(false);
+    startInputMode();
+    setScheme("keyboard");
+    expect(getInputMode()).toBe("keyboard");
+    setScheme("auto");
+    expect(getInputMode()).toBe("mouse");
+  });
+
+  it("survives a reload", () => {
+    startInputMode();
+    setScheme("pad");
+    resetInputMode();
+    expect(getScheme()).toBe("auto");
+    startInputMode();
+    expect(getScheme()).toBe("pad");
+  });
+});
+
+describe("the pointer grace", () => {
+  it("does not let a trackpad thumb kill the ring mid-game", () => {
+    /*
+     * THE DECK'S RIGHT STICK AND TRACKPADS ARE MOUSE EVENTS. A thumb resting on
+     * one emits `pointermove` forever, and one of those used to flip the mode to
+     * `mouse` -- which hides the ring, blanks every glyph and drops the region
+     * trap. The controller appeared to die for touching the device it is part of.
+     */
+    startInputMode();
+    noteInput("pad");
+    // Past the 200ms move throttle, so only the grace can be what saves it.
+    vi.advanceTimersByTime(400);
+    window.dispatchEvent(pointer("pointermove"));
+    expect(getInputMode()).toBe("pad");
+  });
+
+  it("still yields to a deliberate press, which is never ambiguous", () => {
+    startInputMode();
+    noteInput("pad");
+    window.dispatchEvent(pointer("pointerdown"));
+    expect(getInputMode()).toBe("mouse");
   });
 });

@@ -81,7 +81,7 @@
 
 import { BTN, KEYS, type PadButton, REPEATS, SWALLOW } from "./buttons";
 import { noteInput, notePadConnected } from "./inputMode";
-import { type Dir, deadzone, pushOf, repeatMs, sector } from "./repeat";
+import { type Dir, STICK, deadzone, pushOf, repeatMs, sector } from "./repeat";
 
 export interface PadFrame {
   lstick: { x: number; y: number };
@@ -371,6 +371,27 @@ function frame(now: number): void {
    * button takes. The keyboard writes here only so that a held key has a
    * direction to be, which `repeat.ts` documents.
    */
+  /*
+   * ANALOG MOTION IS INPUT, even before it becomes a direction.
+   *
+   * `fire` below notes the mode on a button EDGE, which meant two things a
+   * player does constantly did not: pushing a stick short of the fire threshold,
+   * and holding `L2` to keep the region dial up. Both left the hint bar
+   * advertising `Enter`/`Esc` to somebody visibly holding a controller -- and
+   * the second is worse than it sounds, because a hold produces no edges at all
+   * for as long as it lasts.
+   *
+   * Cheap: `noteInput` returns immediately unless the resolved mode changes.
+   */
+  if (isLive) {
+    const moving =
+      Math.hypot(live.lx, live.ly) > STICK.dead ||
+      Math.hypot(live.rx, live.ry) > STICK.dead ||
+      live.l2 > TRIGGER_ON ||
+      live.r2 > TRIGGER_ON;
+    if (moving) noteInput("pad");
+  }
+
   latched = isLive ? sector(live.lx, live.ly, latched) : null;
   if (!latched) {
     for (const dir of REPEATS) {
@@ -750,8 +771,10 @@ export function on(button: PadButton, handler: Handler): () => void {
  * that the bar is not to be trusted, and nothing in the suite could see it,
  * because the bar renders spans and a span cannot fail to work.
  *
- * `tests/hintsBound.test.tsx` mounts the board and compares this against every
- * button `NAVIGATION_HINTS` names and `verbsFor` can return.
+ * `tests/hintsBound.test.ts` compares every button `NAVIGATION_HINTS` names and
+ * `verbsFor` can return against the bindings in the source. It would rather ask
+ * this function, and cannot: `Table` is not mountable in that suite. See its
+ * header.
  */
 export function boundButtons(): PadButton[] {
   return [...handlers.entries()].filter(([, set]) => set.size > 0).map(([button]) => button);
