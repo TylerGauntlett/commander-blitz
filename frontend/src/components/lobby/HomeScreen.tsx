@@ -76,14 +76,18 @@ import { DoorCardArt, DoorCardFrame } from "./doorArt";
 const MAX_CODE_LENGTH = 14;
 
 /**
- * THE COPY IS ONE LINE AND THE SAME SHAPE THREE TIMES.
+ * A CARD IS A PICTURE AND A WORD. THERE IS NO THIRD THING ON IT.
  *
- * These were sentences, written for a panel with room. On a 200px card they
- * came to six lines and ran out of the bottom of it. The right fix is not a
- * smaller font or a taller card: a menu item explains itself in a phrase or it
- * is not a menu item, and three items that describe themselves in three
- * different shapes read as three unrelated things. One clause each, a noun and
- * a promise, no marketing.
+ * Each of these carried a line of copy under its name -- "Four seats. Deal a
+ * new table.", and three like it. That line was the last survivor of a panel
+ * with room: first a paragraph, then one clause, and one clause is still one
+ * clause too many here. The illustration already says what is behind the card
+ * (`doorArt.tsx` draws the thing itself rather than an icon of it) and the name
+ * says it again in a word, so the sentence was a third statement of the same
+ * fact, in the smallest type on the screen, on the card furthest from the eye.
+ *
+ * `verb` stays and is not copy: it is the second half of the `aria-label`, the
+ * only place a screen reader hears what pressing this does.
  *
  * `hue` is the colour the room takes when that card is selected. Decks makes
  * the hall cold and green, Play warm, Join violet -- all six out of
@@ -95,7 +99,6 @@ const DOOR_CARDS = [
     label: "Settings",
     verb: "Set up your controller",
     testId: "open-settings",
-    line: "Say what you are holding.",
     hue: ["#5c7a99", "#2b3f5a"] as Hue,
   },
   {
@@ -103,7 +106,6 @@ const DOOR_CARDS = [
     label: "Decks",
     verb: "Browse the catalogue",
     testId: "browse-decks",
-    line: null,
     hue: ["#3f9e93", "#2b5a86"] as Hue,
   },
   {
@@ -111,7 +113,6 @@ const DOOR_CARDS = [
     label: "Play",
     verb: "Create a pod",
     testId: "create-pod",
-    line: null,
     hue: ["#d8a63c", "#8a3a2e"] as Hue,
   },
   {
@@ -119,7 +120,6 @@ const DOOR_CARDS = [
     label: "Join",
     verb: "Enter a pod code",
     testId: "join-pod",
-    line: "Take a chair somebody held open.",
     hue: ["#7d6bd8", "#2b5a86"] as Hue,
   },
 ] as const;
@@ -211,7 +211,7 @@ export function HomeScreen({
   const stopRef = useRef<(() => void) | null>(null);
   /** What was last written to each slot, so a frame in the middle of a slide
       touches three transforms and nothing else. */
-  const wroteRef = useRef<{ t: string; z: number; ink: string }[]>([]);
+  const wroteRef = useRef<{ t: string; z: number }[]>([]);
 
   /*
    * ONE STRING PER MOVING THING, AND NOTHING WRITTEN THAT HAS NOT CHANGED.
@@ -227,7 +227,7 @@ export function HomeScreen({
     for (let i = 0; i < DOOR_CARDS.length; i += 1) {
       const el = slotRefs.current[i];
       if (!el) continue;
-      wroteRef.current[i] ??= { t: "", z: 0, ink: "" };
+      wroteRef.current[i] ??= { t: "", z: 0 };
       const was = wroteRef.current[i];
       const p = poseOf(i, s, tune, DOOR_CARDS.length);
       const t = `translate(calc(-50% + ${p.x.toFixed(2)}px), ${p.y.toFixed(2)}px) rotate(${p.rot.toFixed(2)}deg) scale(${p.scale.toFixed(4)})`;
@@ -238,11 +238,6 @@ export function HomeScreen({
       if (p.z !== was.z) {
         el.style.zIndex = String(p.z);
         was.z = p.z;
-      }
-      const ink = p.ink.toFixed(3);
-      if (ink !== was.ink) {
-        el.style.setProperty("--ink", ink);
-        was.ink = ink;
       }
     }
   }, []);
@@ -452,22 +447,6 @@ export function HomeScreen({
     };
   }, [openHold, closeHold]);
 
-  /*
-   * A CARD'S LINE COMES FROM THE CARD.
-   *
-   * This was a parallel array indexed by row POSITION, which is the exact shape
-   * that breaks the moment the row grows -- adding Settings at the head would
-   * have given it the Decks copy, Decks the Play copy, and Play the Join copy,
-   * with nothing to catch it. Only two of the four depend on state, so those
-   * two are resolved here and the rest are written on the card itself.
-   */
-  const lineFor = (id: string): string => {
-    if (id === "decks")
-      return `${deckCount} deck${deckCount === 1 ? "" : "s"}, and anything you import.`;
-    if (id === "play") return busy ? "Dealing the table…" : "Four seats. Deal a new table.";
-    return DOOR_CARDS[indexOf(id)].line ?? "";
-  };
-
   return (
     <Room hue={DOOR_CARDS[sel].hue} className="door" testId="home" onScale={rescale}>
       {/* The mark appears ONCE, at this screen's largest brand moment, which is
@@ -546,7 +525,6 @@ export function HomeScreen({
                 <DoorCardArt id={card.id} />
               </span>
               <span className="door__name">{card.label}</span>
-              <span className="door__line">{lineFor(card.id)}</span>
               <span className="sheen" />
             </button>
           </div>

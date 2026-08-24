@@ -4,6 +4,9 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import { App } from "./App";
 import "./theme.css";
+// Before `board.css` and `room.css`, so either can tune the shared drifting
+// layers it defines. The board dims its mote field; the lobby does not.
+import "./styles/ambience.css";
 import "./styles/cards.css";
 import "./styles/board.css";
 // After `board.css`: the seat re-shapes `.mat--compact`, which board.css
