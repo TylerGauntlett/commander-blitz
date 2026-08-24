@@ -104,9 +104,11 @@ const TABLE_BODY: Layer = { className: "table__body", style: { gridRow: 2 } };
 const PLAY: Layer = { className: "play" };
 const MAT: Layer = { className: "mat" };
 const MAT_COMPACT: Layer = { className: "mat mat--compact" };
-const POD: Layer = { className: "pod" };
-const TABLEWRAP: Layer = { className: "tablewrap", style: { gridRow: 2 } };
-const CAT: Layer = { className: "cat" };
+/* The three menu screens are `.room` first -- see `styles/room.css`. The room
+   owns `--du`, `--card-w` and the light, so a component mounted without it
+   resolves every size against a fallback and measures nothing real. */
+const POD: Layer = { className: "room pod" };
+const SHELF: Layer = { className: "room shelf" };
 const DOS: Layer = { className: "dos" };
 
 /*
@@ -140,9 +142,9 @@ const matSideCompact = [...playOpponents, MAT_COMPACT, { className: "mat__side" 
 const matLanes = [...playMine, MAT, { className: "mat__lanes", style: { gridColumn: 2 } }];
 const matLanesCompact = [...playOpponents, MAT_COMPACT, { className: "mat__lanes" }];
 const pod = [SCREEN, POD];
-const podHand = [...pod, TABLEWRAP, { className: "podhand", style: { gridRow: 2 } }];
-const catalog = [SCREEN, CAT];
-const catalogBody = [...catalog, { className: "cat__body", style: { gridRow: 3 } }];
+const podHand = [...pod, { className: "pod__row" }];
+const catalog = [SCREEN, SHELF, { className: "shelf__stage" }];
+const catalogBody = [...catalog, { className: "shelf__body", style: { gridRow: 3 } }];
 const dossier = [SCREEN, DOS];
 const dossierBody = [...dossier, { className: "dos__body", style: { gridRow: 2 } }];
 
@@ -257,11 +259,11 @@ export const MOUNTS = {
   podHand: { where: "the row of seats", layers: podHand },
   podSlot: {
     where: "one seat's card",
-    layers: [...podHand, { className: "slot" }, { className: "slot__card" }],
+    layers: [...podHand, { className: "chair" }, { className: "chair__card" }],
   },
   podRail: {
     where: "the pod's bottom rail",
-    layers: [...pod, { className: "podrail", style: { gridRow: 3 } }],
+    layers: [...pod, { className: "pod__rail" }],
   },
   /* The front door is a full-bleed room, so it stands on a bare `screen` rather
      than on `screenCenter`: 24px of padding would put its stage scale at 0.94
@@ -276,14 +278,14 @@ export const MOUNTS = {
     where: "one deck's tile in the catalogue",
     layers: [
       ...catalogBody,
-      { className: "rack" },
-      { className: "pick" },
-      { className: "pick__card" },
+      { className: "shelf__grid" },
+      { className: "tile" },
+      { className: "tile__card" },
     ],
   },
   catalogFoot: {
     where: "the catalogue's footer strip",
-    layers: [...catalog, { className: "cat__foot", style: { gridRow: 4 } }],
+    layers: [...catalog, { className: "shelf__foot", style: { gridRow: 4 } }],
   },
   dossier: { where: "the deck dossier", layers: dossier },
   dossierBody: { where: "the dossier's scrolling body", layers: dossierBody },

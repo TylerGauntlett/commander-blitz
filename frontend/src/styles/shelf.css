@@ -1,0 +1,588 @@
+/*
+ * The deck catalogue, standing in the same room.
+ *
+ * A four-band stage over a full-bleed hall: a bar, a filter strip, a scrolling
+ * grid, and the import row at the foot. The grid is the only band that gives,
+ * which is what keeps the controls where the player left them however many
+ * decks are in the list.
+ *
+ * As with `pod.css`: every size is `calc(N * var(--du))`, every font-size is
+ * `max(16px, ...)`, and every class name is new. See `room.css`'s header for
+ * both arguments.
+ *
+ * THE GRID SCROLLS AND THE RING GOES WITH IT. `stops.ts:onScreen` used to drop
+ * any stop an ancestor had clipped, which is right for the board's zero-height
+ * lanes and wrong for a scroller: a deck eleven rows down was not a stop at
+ * all, so Down did nothing and the catalogue ended at the fold. It now tells
+ * the two cases apart -- `auto`/`scroll` with real overflow is somewhere you
+ * can GO -- and `cursor.ts:keepInView` brings the box along on arrival.
+ */
+
+.shelf {
+  --card-w: clamp(122px, calc(150px * var(--du)), 172px);
+  /* Re-derived rather than inherited: `--card-r` is declared on `:root` as a
+     ratio of `--card-w`, and an unregistered custom property is substituted
+     *where it is declared*, so a container that changes the width and not the
+     radius gets the board's corners on a card of a different size. */
+  --card-r: calc(var(--card-w) * 0.055);
+}
+
+.shelf__stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  padding: calc(16px * var(--du)) calc(24px * var(--du)) calc(14px * var(--du));
+  z-index: 5;
+}
+
+/* ==========================================================================
+   The bar
+   ========================================================================== */
+
+.shelf__bar {
+  display: flex;
+  align-items: center;
+  gap: calc(14px * var(--du));
+  padding-bottom: calc(12px * var(--du));
+}
+
+.shelf__t {
+  flex: none;
+  color: var(--focus);
+  font-size: max(16px, calc(19px * var(--du)));
+}
+
+/* The way out is the quietest control on the screen, not the loudest. It was
+   the FIRST stop the ring landed on when the catalogue opened -- see the
+   component's header -- and looking like the primary control as well would have
+   been the same mistake twice. */
+.shelf__bar .key--mark {
+  border-color: transparent;
+  background: none;
+  color: var(--text-dim);
+}
+
+.shelf__bar .key--mark:hover {
+  color: var(--text);
+  border-color: var(--edge);
+}
+
+.shelf__gap {
+  flex: 1;
+}
+
+.shelf__n {
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--text-faint);
+}
+
+.shelf__find {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--du));
+  flex: none;
+  width: min(300px, 26vw);
+  min-height: 44px;
+  padding: 0 calc(12px * var(--du));
+  border: 1px solid var(--edge);
+  border-radius: calc(9px * var(--du));
+  background: rgb(8 7 18 / 0.6);
+  transition: border-color var(--t-fast) ease;
+}
+
+.shelf__find:focus-within {
+  border-color: var(--focus);
+}
+
+.shelf__glass {
+  flex: none;
+  font-size: max(16px, calc(17px * var(--du)));
+  color: var(--text-faint);
+}
+
+/*
+ * The FIELD carries the hit floor, not the box around it.
+ *
+ * `.shelf__find` is 44px tall and the input inside it was 23 -- which looks
+ * right, is right to a finger, and fails `e2e/handheldAssert.ts` for a reason
+ * worth keeping: the gate measures controls, and a control whose own box is
+ * half the target is one a screen reader, a focus ring and a hit test all
+ * disagree about. Stretching the input to fill its wrapper costs nothing and
+ * makes the three agree.
+ */
+.shelf__findin {
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: max(16px, calc(16px * var(--du)));
+}
+
+.shelf__findin::placeholder {
+  color: var(--text-faint);
+}
+
+/* ==========================================================================
+   The filter strip
+   ========================================================================== */
+
+.shelf__filters {
+  display: flex;
+  align-items: center;
+  gap: calc(12px * var(--du));
+  padding-bottom: calc(14px * var(--du));
+  border-bottom: 1px solid rgb(255 255 255 / 0.07);
+}
+
+.shelf__group {
+  display: flex;
+  gap: calc(6px * var(--du));
+}
+
+/*
+ * A colour filter, which is a pip and not a word.
+ *
+ * `.cbtn` did this before and lived in the list `handheld.css` raises to the
+ * hit floor; the floor is spent here instead so the control is the right size
+ * in one place. The unselected state is desaturated rather than dimmed --
+ * `lobby.css` records why: W and B desaturate to the same pale grey, so the two
+ * ends of the row become indistinguishable, and the fill has to carry it.
+ */
+.pip-key {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--edge);
+  border-radius: calc(9px * var(--du));
+  background: rgb(8 7 18 / 0.5);
+  cursor: pointer;
+  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+}
+
+/*
+ * An unselected pip is DIMMED, not desaturated.
+ *
+ * `lobby.css` records why greying is the wrong lever here: W and B desaturate
+ * to the same pale disc, so the two ends of the row stop being tellable apart
+ * -- and the pip's colour is the only thing identifying it. Opacity keeps the
+ * hue and takes the emphasis, which is the fact the off state carries.
+ */
+.pip-key .pip {
+  opacity: 0.5;
+  transition: opacity var(--t-fast) ease;
+}
+
+.pip-key:hover .pip,
+.pip-key[data-cursor] .pip,
+.pip-key--on .pip {
+  opacity: 1;
+}
+
+.pip-key--on {
+  border-color: var(--focus);
+  background: rgb(255 224 138 / 0.12);
+}
+
+/* The source switch. `.seg`/`.seg__b` are `lobby.css`'s and are deliberately
+   reused: they are already on `handheld.css`'s floor list, so they arrive at
+   16px and 44px without this sheet restating either. Only the skin moves. */
+.shelf .seg {
+  border-color: var(--edge);
+  background: rgb(8 7 18 / 0.5);
+  border-radius: calc(9px * var(--du));
+  overflow: hidden;
+}
+
+.shelf .seg__b--on {
+  background: rgb(255 224 138 / 0.14);
+  color: var(--focus);
+}
+
+.shelf__sort {
+  min-height: 44px;
+  padding: 0 calc(12px * var(--du));
+  border: 1px solid var(--edge);
+  border-radius: calc(9px * var(--du));
+  background: rgb(8 7 18 / 0.5);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: max(16px, calc(16px * var(--du)));
+  cursor: pointer;
+}
+
+.shelf__note {
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--text-faint);
+}
+
+/* ==========================================================================
+   The grid
+   ========================================================================== */
+
+.shelf__body {
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  padding: calc(16px * var(--du)) calc(4px * var(--du)) calc(12px * var(--du));
+}
+
+.shelf__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-w) + 26px), 1fr));
+  gap: calc(20px * var(--du)) calc(14px * var(--du));
+  justify-items: center;
+}
+
+.shelf__empty {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-size: max(16px, calc(17px * var(--du)));
+  color: var(--text-faint);
+}
+
+.tile {
+  display: grid;
+  justify-items: center;
+  gap: calc(6px * var(--du));
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  transition: transform var(--t-fast) ease;
+}
+
+html[data-input="pad"] .tile:has([data-cursor]),
+html[data-input="keyboard"] .tile:has([data-cursor]) {
+  transform: translateY(calc(-4px * var(--du)));
+}
+
+.tile__card {
+  position: relative;
+  width: var(--card-w);
+  border-radius: var(--card-r);
+  cursor: pointer;
+  transition: box-shadow var(--t-fast) ease;
+}
+
+.tile__card:hover,
+.tile__card[data-cursor] {
+  box-shadow: 0 0 32px var(--lit-soft, rgb(63 158 147 / 0.36));
+}
+
+/* The deck this chair is already holding. A ring around the card rather than a
+   badge beside it: the card is the control, so the state belongs on the
+   control. */
+.tile--on .tile__card::after {
+  content: "";
+  position: absolute;
+  inset: calc(-4px * var(--du));
+  border: 2px solid var(--focus);
+  border-radius: calc(var(--card-r) + 4px);
+  pointer-events: none;
+}
+
+.tile__tick {
+  position: absolute;
+  top: calc(-9px * var(--du));
+  right: calc(-9px * var(--du));
+  display: grid;
+  place-items: center;
+  width: calc(26px * var(--du));
+  height: calc(26px * var(--du));
+  border-radius: 50%;
+  background: var(--focus);
+  color: #1b0f05;
+  font-size: calc(15px * var(--du));
+  font-weight: 900;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.6);
+}
+
+.tile__n {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: max(16px, calc(16px * var(--du)));
+  font-weight: 700;
+  color: var(--text);
+}
+
+/*
+ * The meta row, and what is NOT in it.
+ *
+ * It carried the commander names, a Precon/Yours badge and up to three tags on
+ * top of what is here -- five lines of caption under a picture of the card
+ * whose name is directly above it. The commanders are the card's own art, the
+ * source is the segmented filter three rows up, and the tags were never
+ * filtered on. What is left is the colour identity, the one caveat a deck can
+ * carry, and the two controls.
+ */
+/*
+ * ONE TIGHT ROW, CENTRED.
+ *
+ * It was pips on the left, a spacer, then the marks on the right -- three
+ * groups spread across the width of a card, which reads as a toolbar rather
+ * than as a caption. A tile is one object; everything under its name belongs to
+ * it and sits together.
+ */
+.tile__meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(2px * var(--du));
+  width: 100%;
+  min-height: 44px;
+}
+
+.tile__pips {
+  display: flex;
+  gap: calc(3px * var(--du));
+  /* Sitting against the marks, with the row's own gap between them. */
+  margin-right: calc(4px * var(--du));
+}
+
+/*
+ * The one caveat a deck can carry: how many of its cards the engine had to
+ * simplify. A number rather than "12 simplified", because the row it sits in is
+ * 150px wide and the word was most of it -- the `aria-label` on the tile's card
+ * and the dossier both spell it out, and the number is what a player scans for.
+ */
+.tile__badge {
+  display: grid;
+  place-items: center;
+  min-width: calc(24px * var(--du));
+  padding: 0 calc(6px * var(--du));
+  border-radius: 999px;
+  background: rgb(216 166 60 / 0.16);
+  color: var(--gold);
+  font-size: max(16px, calc(16px * var(--du)));
+  white-space: nowrap;
+}
+
+/*
+ * `i` and `✕` ARE MARKS, AND A MARK IS A TARGET RATHER THAN A SIZE.
+ *
+ * They were 44px discs with a drawn ring, which is the hit floor honoured
+ * literally -- and a row of two 44px circles under a 150px card is the loudest
+ * thing on the tile. Six decks came out as six cards over twelve empty rings,
+ * and the rings read as controls that had failed to load rather than as
+ * punctuation.
+ *
+ * `handheld.css` had already found the same thing on `.ibtn` and written down
+ * the rule: **the floor is a TARGET, not a size.** So the box stays 44x44 for a
+ * finger and the drawn thing shrinks to a glyph -- no chrome at rest, a soft
+ * plate under it only while it is hovered or wearing the ring, which is exactly
+ * when a player needs to know it is pressable.
+ */
+.tile__i,
+.tile__x,
+.tile__yes {
+  position: relative;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  font-size: max(16px, calc(16px * var(--du)));
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  transition: color var(--t-fast) ease;
+}
+
+/* The plate is the pseudo-element and the glyph is the button's own text, so
+   the two can be sized independently -- 26px of lit ground under a 16px mark. */
+.tile__i::before,
+.tile__x::before,
+.tile__yes::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(26px * var(--du));
+  height: calc(26px * var(--du));
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: none;
+  transition: background var(--t-fast) ease;
+}
+
+.tile__i:hover,
+.tile__i[data-cursor],
+.tile__yes:hover,
+.tile__yes[data-cursor] {
+  color: var(--focus);
+}
+
+.tile__i:hover::before,
+.tile__i[data-cursor]::before,
+.tile__yes:hover::before,
+.tile__yes[data-cursor]::before {
+  background: rgb(255 224 138 / 0.16);
+}
+
+.tile__x:hover,
+.tile__x[data-cursor] {
+  color: var(--danger);
+}
+
+.tile__x:hover::before,
+.tile__x[data-cursor]::before {
+  background: rgb(224 90 90 / 0.16);
+}
+
+.tile__confirm {
+  display: flex;
+  align-items: center;
+  gap: calc(4px * var(--du));
+}
+
+.tile__q {
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--danger);
+}
+
+/* ==========================================================================
+   The foot
+   ========================================================================== */
+
+.shelf__foot {
+  display: flex;
+  align-items: center;
+  gap: calc(12px * var(--du));
+  padding-top: calc(12px * var(--du));
+  border-top: 1px solid rgb(255 255 255 / 0.07);
+  /* The controller legend lives in the bottom-right corner of the room, so the
+     import row stops short of it. */
+  padding-right: calc(180px * var(--du));
+}
+
+/*
+ * The import row is `lobby.css`'s `DeckImport variant="row"`, re-skinned rather
+ * than rebuilt: it is the same component the front door used to carry, and its
+ * own file argues for keeping one of it.
+ *
+ * What is undone here is the PANEL it arrived wearing -- a bordered box with a
+ * centred IMPORT title, 120px tall at the foot of a screen whose whole job is
+ * the grid above it. A footer is a strip.
+ */
+.shelf__foot .import {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  /* `.import` is a COLUMN in its panel chrome, and `.import--row` only undoes
+     the wrapping. Both have to be restated or the label keeps its own line and
+     the footer stays 92px tall. */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: calc(10px * var(--du));
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.shelf__foot .import__row {
+  flex: 1;
+  min-width: 0;
+  gap: calc(8px * var(--du));
+}
+
+.shelf__foot .import__label {
+  flex: none;
+  white-space: nowrap;
+}
+
+.shelf__foot .import__input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  font-size: max(16px, calc(16px * var(--du)));
+}
+
+.shelf__foot .import__label {
+  font-size: max(16px, calc(16px * var(--du)));
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+}
+
+.shelf__foot .import__hint--inline {
+  max-width: 34ch;
+  font-size: max(16px, calc(16px * var(--du)));
+  line-height: 1.3;
+}
+
+/* ==========================================================================
+   The dossier
+
+   NOT REBUILT, RE-SKINNED, and the line is worth stating because it is the
+   line this whole change tries to hold: the dossier's LAYOUT was never the
+   problem -- a card, a column of prose, five rating bars and a curve is the
+   right shape for reading a deck. What made it read as a different application
+   from the screen it opens over was its chrome: a grey `.ghost` beside a gold
+   `.deal--lg`, a bare `✕`, and a panel edge with no light on it.
+
+   So the controls are the kit's (`DeckDossier` now emits `.key`, `.key--commit`
+   and `.key--mark`) and this puts the room's light on the panel. Everything
+   `lobby.css` says about the body stands.
+   ========================================================================== */
+
+/*
+ * ABOVE THE CATALOGUE, and this is a layering fact rather than a taste.
+ *
+ * The dossier opens FROM the catalogue -- the `i` on a tile is what raises it --
+ * and the catalogue became a full-bleed room in its own right, which
+ * `room.css` stacks at 600 so it covers the pod behind it. The dossier's own
+ * 460 was set when the catalogue was a panel, so the slide-out opened
+ * underneath the grid it was launched from: present in the DOM, holding the
+ * ring, and completely invisible. `stopRoot` takes the LAST modal root for the
+ * same pair, so the two rules have to agree about which is on top.
+ */
+.dos,
+.veil--dossier {
+  z-index: 700;
+}
+
+.dos {
+  border-left: 1px solid rgb(216 166 60 / 0.24);
+  box-shadow: -30px 0 80px rgb(0 0 0 / 0.6);
+}
+
+.dos__head {
+  border-bottom-color: rgb(255 255 255 / 0.07);
+}
+
+.dos__n {
+  color: var(--focus);
+}
+
+.dos__x {
+  border-color: transparent;
+  background: none;
+  color: var(--text-dim);
+}
+
+.dos__x:hover {
+  color: var(--text);
+  border-color: var(--edge);
+}
+
+.dos__foot {
+  gap: 12px;
+  border-top-color: rgb(255 255 255 / 0.07);
+}
+
+.dos__take {
+  flex: 1;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

@@ -45,17 +45,17 @@
  * gamepad loop here would be a second set of ramp bugs.
  */
 
-import type { CSSProperties } from "react";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { prefersReducedMotion } from "../../fx/reducedMotion";
 import { onFrame } from "../../fx/scheduler";
 import { refollowCursor, setCursor } from "../../input/cursor";
 import { on, rumble } from "../../input/pad";
 import { springStep } from "../../input/ring";
-import { DOOR_TUNE, type DoorTune, poseOf, scaleTune, stageScale } from "../../logic/doorRow";
+import { DOOR_TUNE, type DoorTune, poseOf, scaleTune } from "../../logic/doorRow";
 import { looksLikeCode, normaliseCode } from "../../logic/lobby";
 import { Glyph } from "../ui/Glyph";
-import { DoorCardArt, DoorCardFrame, DoorFloor, DoorGround } from "./doorArt";
+import { type Hue, Room } from "./Room";
+import { DoorCardArt, DoorCardFrame } from "./doorArt";
 
 /**
  * The longest code the server can issue: `BRAMBLE-123456` -- a seven-letter
@@ -85,21 +85,21 @@ const DOOR_CARDS = [
     label: "Decks",
     verb: "Browse the catalogue",
     testId: "browse-decks",
-    hue: ["#3f9e93", "#2b5a86"],
+    hue: ["#3f9e93", "#2b5a86"] as Hue,
   },
   {
     id: "play",
     label: "Play",
     verb: "Create a pod",
     testId: "create-pod",
-    hue: ["#d8a63c", "#8a3a2e"],
+    hue: ["#d8a63c", "#8a3a2e"] as Hue,
   },
   {
     id: "join",
     label: "Join",
     verb: "Enter a pod code",
     testId: "join-pod",
-    hue: ["#7d6bd8", "#2b5a86"],
+    hue: ["#7d6bd8", "#2b5a86"] as Hue,
   },
 ] as const;
 
@@ -128,21 +128,6 @@ const SLIDE = { w: 22, z: 0.82 } as const;
 /** Settled, for the hover guard and for stopping the loop. */
 const REST_X = 0.004;
 const REST_V = 0.02;
-
-/** Sixteen specks drifting upward -- `fx/presets.ts:225`'s ambient count, near
-    enough. Fixed rather than random so two screenshots of this screen compare. */
-const MOTES = Array.from({ length: 16 }, (_, i) => ({
-  left: 6 + ((i * 79) % 88),
-  dur: 11 + ((i * 7) % 9),
-  delay: (i * 13) % 11,
-  drift: ((i % 5) - 2) * 22,
-}));
-
-/** A hex to `rgb(r g b / a)`, so one token can be both a line and a glow. */
-function soft(hex: string, alpha: number): string {
-  const n = Number.parseInt(hex.slice(1), 16);
-  return `rgb(${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255} / ${alpha})`;
-}
 
 interface Props {
   /** Prefilled from `?join=CODE` when somebody followed an invite link. */
@@ -180,7 +165,6 @@ export function HomeScreen({
       row React knows about. */
   const [sel, setSel] = useState(DEFAULT_INDEX);
 
-  const rootRef = useRef<HTMLDivElement>(null);
   const slotRefs = useRef<(HTMLDivElement | null)[]>([]);
   const codeRef = useRef<HTMLInputElement>(null);
 
@@ -291,53 +275,28 @@ export function HomeScreen({
   );
 
   /*
-   * THE STAGE SCALES; THE MOCKUP'S DECK DOES NOT.
+   * The row's tune, at the stage scale `Room` resolved.
    *
-   * The mockup is a fixed 1280x800 scaled to the window, which is right for a
-   * review surface and wrong here. `--du` is the same number applied to the
-   * furniture instead, so the room is full-bleed at any size and the row is the
-   * shape it was measured at. Written straight to the element, because the
-   * paint loop reads the tune from a ref and a re-render would be a frame late.
+   * The room is full-bleed and only the furniture scales, which is `Room`'s
+   * job; what is left here is the half only this screen knows -- the mockup's
+   * px terms in `DOOR_TUNE` are numbers the paint loop reads out of a ref, so
+   * they are converted once per resize rather than once per frame. Every cached
+   * transform string is in the old scale's pixels and has to go with them.
    */
-  useLayoutEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const fit = () => {
-      const du = stageScale(el.clientWidth, el.clientHeight);
-      el.style.setProperty("--du", String(du));
+  const rescale = useCallback(
+    (du: number) => {
       tuneRef.current = scaleTune(DOOR_TUNE, du);
-      // Every cached string is in the old scale's pixels.
       wroteRef.current = [];
       paint();
-    };
-    fit();
-    /* jsdom has no `ResizeObserver`, which is the same hole `useZoomFit.ts:365`
-       guards. A window listener is the honest fallback rather than a no-op: the
-       stage IS the window here, so the two only differ when something else on
-       the page reflows, which on this screen is nothing. */
-    if (typeof ResizeObserver === "undefined") {
-      window.addEventListener("resize", fit);
-      return () => window.removeEventListener("resize", fit);
-    }
-    const observer = new ResizeObserver(fit);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [paint]);
+    },
+    [paint],
+  );
 
-  /* The room, off the selection. Written to the stage rather than to `:root`,
-     so the tint is a property of this screen and not of the document. */
+  /* The ring is on a card that is about to slide 248px. `HandFan` makes the
+     same call for the same reason: the effect runs on the commit that STARTS
+     the animation, when the element has not moved a pixel, so the ring needs
+     telling to watch rather than to re-measure once. */
   useLayoutEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
-    const hue = DOOR_CARDS[sel].hue;
-    el.style.setProperty("--lit", hue[0]);
-    el.style.setProperty("--lit-soft", soft(hue[0], 0.36));
-    el.style.setProperty("--lit2-soft", soft(hue[1], 0.24));
-    el.style.setProperty("--lit-beam", soft(hue[0], 0.13));
-    /* The ring is on a card that is about to slide 248px. `HandFan` makes the
-       same call for the same reason: the effect runs on the commit that STARTS
-       the animation, when the element has not moved a pixel, so the ring needs
-       telling to watch rather than to re-measure once. */
     refollowCursor();
   }, [sel]);
 
@@ -433,28 +392,7 @@ export function HomeScreen({
   ];
 
   return (
-    <div className="door" data-testid="home" ref={rootRef}>
-      <DoorGround />
-      <DoorFloor />
-      <div className="door__wash" aria-hidden="true" />
-
-      <div className="door__motes" aria-hidden="true">
-        {MOTES.map((m) => (
-          <span
-            key={`${m.left}-${m.dur}-${m.delay}`}
-            className="door__mote"
-            style={
-              {
-                left: `${m.left}%`,
-                animationDuration: `${m.dur}s`,
-                animationDelay: `-${m.delay}s`,
-                "--drift": `${m.drift}px`,
-              } as CSSProperties
-            }
-          />
-        ))}
-      </div>
-
+    <Room hue={DOOR_CARDS[sel].hue} className="door" testId="home" onScale={rescale}>
       {/* The mark appears ONCE, at this screen's largest brand moment, which is
           `Mark.tsx`'s own rule and the one the shipped door broke. It is not
           `<Mark/>` because this copy takes the room's colour and drops the
@@ -514,7 +452,7 @@ export function HomeScreen({
           >
             <button
               type="button"
-              className="door__card"
+              className={i === sel ? "plank plank--on door__card" : "plank door__card"}
               data-testid={card.testId}
               aria-label={`${card.label}. ${card.verb}`}
               onFocus={() => select(i)}
@@ -532,7 +470,7 @@ export function HomeScreen({
               </span>
               <span className="door__name">{card.label}</span>
               <span className="door__line">{lines[i]}</span>
-              <span className="door__sheen" />
+              <span className="sheen" />
             </button>
           </div>
         ))}
@@ -542,7 +480,7 @@ export function HomeScreen({
         <b className="tabular">{deckCount}</b> deck{deckCount === 1 ? "" : "s"} in the catalogue
       </p>
 
-      <div className="door__hints" aria-hidden="true">
+      <div className="room__hints" aria-hidden="true">
         <span className="hint">
           <Glyph btn="a" />
           <span className="hint__verb">Select</span>
@@ -603,19 +541,38 @@ export function HomeScreen({
                 Join
               </button>
             </div>
-            {error ? (
+            {error && (
               <p className="door__err" data-testid="home-error">
                 {error.message.replace(/^\d+:\s*/, "")}
               </p>
-            ) : (
-              <p className="door__holdhint">
-                <Glyph btn="b" />
-                Back
-              </p>
             )}
+            {/*
+              A REAL CONTROL, NOT A LEGEND.
+
+              This was a `<p>` carrying the B glyph and the word Back -- a hint,
+              in the shape of a button, in the place a button goes. On a mouse
+              it did nothing when clicked; with a ring it could not be reached
+              at all, because a paragraph is not a stop. Somebody walking the
+              hold with a pad found two stops, neither of them the way out, and
+              the one thing on screen that looked like the exit.
+
+              Escape and B still close the hold and always did -- that is the
+              half that worked, and it is why the paragraph survived review.
+              This is the third of the three ways out every overlay in this
+              client owes, and the only one you can point at.
+            */}
+            <button
+              type="button"
+              className="door__back"
+              data-testid="join-back"
+              onClick={closeJoin}
+            >
+              <Glyph btn="b" />
+              Back
+            </button>
           </section>
         </div>
       )}
-    </div>
+    </Room>
   );
 }

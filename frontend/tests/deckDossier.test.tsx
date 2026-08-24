@@ -153,7 +153,7 @@ describe("an imported deck, which has none of the editorial half", () => {
   it("admits it has no write-up and no tags", async () => {
     await open(imported);
     expect(screen.getByText(/whatever you built/)).toBeTruthy();
-    expect(screen.getByText(/Tags are written by hand/)).toBeTruthy();
+    expect(screen.getByText(/Untagged/)).toBeTruthy();
   });
 
   it("still draws the curve, because that is derived and not authored", async () => {

@@ -75,6 +75,62 @@ export function setCursorContext(next: string): void {
 }
 
 /**
+ * Bring a stop that is merely scrolled away back into view.
+ *
+ * `stops.ts:onScreen` deliberately lets the ring travel to a stop inside a
+ * scrollable box that is currently past its edge -- a deck eleven rows down the
+ * catalogue is somewhere you can go, unlike a card in a clipped lane. This is
+ * the other half of that: having gone there, the box has to follow, or the ring
+ * is drawn at a position nobody can see and the screen looks frozen.
+ *
+ * `el.focus({ preventScroll: true })` is what makes this necessary rather than
+ * free. That flag is right on the board -- the scroll there is the fit solver's
+ * business and a browser scroll fights it -- so the scroll is put back
+ * deliberately, only for boxes that are genuinely scrollers, and never for the
+ * board's own root.
+ *
+ * The minimum move, and only the first scroller: a stop already inside its box
+ * does not move it at all, or the catalogue would jump a row every time the
+ * ring stepped sideways. See `SCROLLS` for why this does the arithmetic itself
+ * rather than calling `scrollIntoView`.
+ */
+function keepInView(el: HTMLElement): void {
+  const box = el.getBoundingClientRect();
+  if (box.width <= 0 && box.height <= 0) return;
+  for (let a = el.parentElement; a; a = a.parentElement) {
+    if (a.classList.contains("table")) return;
+    const style = getComputedStyle(a);
+    const scrollsY = SCROLLS.has(style.overflowY) && a.scrollHeight > a.clientHeight;
+    const scrollsX = SCROLLS.has(style.overflowX) && a.scrollWidth > a.clientWidth;
+    if (!scrollsY && !scrollsX) continue;
+    const view = a.getBoundingClientRect();
+    if (scrollsY) a.scrollTop += overshoot(box.top, box.bottom, view.top, view.bottom);
+    if (scrollsX) a.scrollLeft += overshoot(box.left, box.right, view.left, view.right);
+    return;
+  }
+}
+
+/**
+ * Only `auto` and `scroll`, and never `hidden`.
+ *
+ * `Element.scrollIntoView` was the obvious way to write `keepInView` and is the
+ * wrong one: it scrolls EVERY scrollable ancestor up to the viewport, and an
+ * `overflow: hidden` box is still programmatically scrollable. `.room` is
+ * `overflow: hidden` -- it is a full-bleed stage that must never move -- so
+ * opening the catalogue and putting the ring on a deck scrolled the whole hall
+ * 121px up its own box and took the header off the top of the screen with it.
+ * Nothing in the DOM looked wrong; the room had simply been scrolled.
+ */
+const SCROLLS = new Set(["auto", "scroll", "overlay"]);
+
+/** How far to move a scroller so `[near, far]` sits inside `[low, high]`. */
+function overshoot(near: number, far: number, low: number, high: number): number {
+  if (near < low) return near - low;
+  if (far > high) return far - high;
+  return 0;
+}
+
+/**
  * Put `data-cursor` on exactly one element and take it off every other.
  *
  * The query is document-wide rather than scoped to the trapped root, because
@@ -90,6 +146,7 @@ function stamp(el: HTMLElement | null, focus = true): void {
   }
   if (!el) return;
   el.setAttribute("data-cursor", "");
+  keepInView(el);
   /*
    * Move real DOM focus too, when the element can take it.
    *
@@ -171,13 +228,155 @@ function clearStamp(): void {
  * exists. What replaces it is that everything reading the cursor to *build*
  * markup reads it on the next tick, through `subscribeCursor`.
  */
+/**
+ * Where the ring was standing before each overlay opened, innermost last.
+ *
+ * THE BUG THIS EXISTS FOR IS THE ONE THAT ENDS A CONTROLLER SESSION.
+ *
+ * Press A on a deck in the catalogue: the catalogue closes, the cursor names a
+ * tile that no longer exists, and the fallback below -- "the first stop of
+ * whatever is on top" -- put the ring on the first control in the pod's header,
+ * which is the `Copy` button. Every A press that dismissed anything threw the
+ * player back to the top-left of the screen, so choosing a deck and then
+ * locking in was two full walks of the lobby with a wrong turn in the middle.
+ * The player's word for it was that the pad "doesn't work".
+ *
+ * A return address is the honest fix, because closing an overlay is not a
+ * navigation: the ring was somewhere before it opened, that place is still
+ * there, and going back to it is what the screen behind the overlay means. It
+ * is a stack rather than a single slot because the catalogue can open a dossier
+ * over itself, and backing out of that must land on the tile rather than at the
+ * catalogue's own front.
+ *
+ * Keyed by the ROOT ELEMENT rather than by a name, so nothing has to be told
+ * about a new dialog for this to cover it -- `stopRoot` already answers "which
+ * surface owns the ring", and a change in that answer is exactly the event this
+ * has to see.
+ */
+const returns: { root: HTMLElement; stop: string | null }[] = [];
+let lastRoot: HTMLElement | null = null;
+
+/**
+ * Notice a change of surface, and say what the ring was on last time we were
+ * standing on this one.
+ *
+ * Returns null in the ordinary case -- same surface as the last resolve, or a
+ * surface we have never been on. Only backing OUT of an overlay produces an
+ * address, which is the only case where "put the ring back" is what a player
+ * means.
+ */
+/**
+ * Called from `setCursor` too, and that is not belt-and-braces.
+ *
+ * An overlay that puts the ring somewhere sensible on the way in -- which the
+ * deck catalogue does, landing on a deck rather than on its own ✕ -- calls
+ * `setCursor` from a layout effect, BEFORE the `MutationObserver` gets round to
+ * re-resolving. So by the time `resolveCursor` noticed the surface had changed,
+ * the cursor it filed as the return address was already the tile inside the new
+ * surface. Closing the catalogue then had an address that no longer existed,
+ * fell through to nearest-to-where-you-were, and measured from the middle of
+ * the grid to the pod behind it: the header's first button, every time.
+ *
+ * Noting the change from both entry points is what makes the address the stop
+ * the player was ACTUALLY standing on when the overlay opened.
+ */
+function noteRoot(): void {
+  trackRoot(stopRoot());
+}
+
+/**
+ * What happened to the surface the ring is on, between one resolve and the next.
+ *
+ *   same    nothing moved; a stop may still have been rebuilt under the ring
+ *   enter   a surface we have not been on before is now on top
+ *   return  we have backed out to one we left, and `stop` is where we left it
+ */
+type RootMove = { kind: "same" | "enter" } | { kind: "return"; stop: string | null };
+
+function trackRoot(root: HTMLElement): RootMove {
+  if (root === lastRoot) return { kind: "same" };
+  const known = returns.findIndex((entry) => entry.root === root);
+  if (known >= 0) {
+    const stop = returns[known].stop;
+    // Everything deeper than the surface we came back to is gone for good; an
+    // overlay that reopens gets a fresh address rather than a stale one.
+    returns.length = known;
+    lastRoot = root;
+    return { kind: "return", stop };
+  }
+  if (lastRoot?.isConnected) returns.push({ root: lastRoot, stop: cursor });
+  lastRoot = root;
+  return { kind: "enter" };
+}
+
+/**
+ * The stop nearest to where the ring was, for when its own stop is gone and
+ * there is no overlay to back out of.
+ *
+ * The case is a control that rebuilt itself into something else: pressing
+ * "Add a CPU" replaces that whole chair with a CPU's, so the button the ring
+ * was on ceases to exist while the screen around it barely moves. Jumping to
+ * the first stop on the surface there is just as wrong as it was for the
+ * overlay, and there is no address to return to -- but there IS a position, and
+ * the thing that took the old control's place is almost always the thing under
+ * it. Nearest-to-where-you-were is the answer a player never has to think
+ * about.
+ *
+ * Distances are between box centres and measured in the same sweep `navigate`
+ * already makes on every press, so this costs nothing that was not already
+ * being spent.
+ */
+function nearestTo(all: HTMLElement[], from: DOMRect): number {
+  const fx = from.left + from.width / 2;
+  const fy = from.top + from.height / 2;
+  let best = -1;
+  let bestD = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < all.length; i += 1) {
+    const rect = all[i].getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) continue;
+    const dx = rect.left + rect.width / 2 - fx;
+    const dy = rect.top + rect.height / 2 - fy;
+    const d = dx * dx + dy * dy;
+    if (d < bestD) {
+      bestD = d;
+      best = i;
+    }
+  }
+  return best;
+}
+
+/** The last box the ring was aimed at, for `nearestTo`. */
+let lastAim: DOMRect | null = null;
+
 export function resolveCursor(): void {
   const root = stopRoot();
+  const move = trackRoot(root);
   const all = stopsIn(root);
-  // Fall back to the first stop of whatever surface is on top. Deliberately
-  // the topmost surface's first stop and not the document's, or opening a
-  // dialog would leave the ring on the board behind it.
   let index = cursor === null ? -1 : all.findIndex((node, i) => stopIdOf(node, i) === cursor);
+  // Backing out of an overlay: the ring goes to the control that opened it.
+  if (index < 0 && move.kind === "return" && move.stop !== null) {
+    const back = move.stop;
+    index = all.findIndex((node, i) => stopIdOf(node, i) === back);
+  }
+  /*
+   * A stop that rebuilt itself into something else: the ring stays where it was
+   * standing rather than walking to the front of the screen.
+   *
+   * ONLY WHEN THE SURFACE ITSELF DID NOT CHANGE, and that clause is the whole
+   * difference between this and a bug. A dialog opening over the board is not a
+   * stop being replaced -- it is a new screen -- and measuring from where the
+   * ring stood BEHIND it is measuring across two things that were never on
+   * screen together. The mulligan prompt found it: the ring had been on a hand
+   * card at the bottom of the board, so the nearest option in the new panel was
+   * whichever one happened to sit lowest, and the prompt opened on its second
+   * option for reasons nothing on screen could explain.
+   */
+  if (index < 0 && move.kind === "same" && lastAim && all.length > 0) {
+    index = nearestTo(all, lastAim);
+  }
+  // And only then the first stop of whatever surface is on top -- deliberately
+  // the topmost surface's first and not the document's, or opening a dialog
+  // would leave the ring on the board behind it.
   if (index < 0) index = 0;
   let el: HTMLElement | null = all[index] ?? null;
   if (!el) {
@@ -220,6 +419,9 @@ export function resolveCursor(): void {
  */
 function aimRing(el: HTMLElement): void {
   const target = ringTargetFor(el);
+  // Kept for `nearestTo`, which needs to know where the ring WAS after the
+  // element it was on has already left the document.
+  lastAim = el.getBoundingClientRect();
   retargetRing(target.rect, context, target.angle, () => ringTargetFor(el));
 }
 
@@ -270,6 +472,7 @@ export function moveCursor(dir: Dir): boolean {
 
 /** Put the ring on a named stop, if it is currently reachable. */
 export function setCursor(id: string | null): boolean {
+  noteRoot();
   if (id === null) {
     cursor = null;
     clearStamp();
@@ -425,6 +628,9 @@ export function resetCursor(): void {
   lastStep = 0;
   cursor = null;
   context = "";
+  lastAim = null;
+  lastRoot = null;
+  returns.length = 0;
   listeners.clear();
   if (typeof document !== "undefined") {
     for (const el of document.querySelectorAll<HTMLElement>("[data-cursor]")) {

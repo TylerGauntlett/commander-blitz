@@ -1,0 +1,559 @@
+/*
+ * The pod lobby, standing in the room the front door lit.
+ *
+ * Everything here is `calc(N * var(--du))` and every font-size is
+ * `max(16px, ...)` -- see the header of `room.css` for why both, and for why
+ * these class names are new rather than the shipped sheet's. Short version:
+ * `handheld.css` carries a flat `font-size: 16px` list naming `.plate__n`,
+ * `.slot__no`, `.podrail__why` and forty others, it loads last, and it would
+ * beat every `max()` in this file. A recycled class name inherits every rule
+ * anybody ever wrote for it.
+ *
+ * THE SCREEN IS THREE BANDS AND THEY ARE PINNED, not stacked.
+ *
+ * The room is full-bleed, so the furniture is positioned against the stage
+ * rather than flowing down it: a bar at the top, a row of chairs across the
+ * middle, a rail at the foot. That is what lets the floor sigil sit under the
+ * chairs at 34% at every window size -- a grid would put it wherever the rows
+ * happened to resolve to.
+ */
+
+.pod {
+  /*
+   * The chair's card, and the two numbers derived from it.
+   *
+   * 196 x 4 chairs + 26 x 3 gaps is 862px at `--du: 1`, inside a 1280 stage
+   * with room to breathe either side. `--card-r` is restated because it is
+   * declared on `:root` as a ratio of `--card-w`, and an unregistered custom
+   * property is substituted *where it is declared* -- so a container that
+   * changes the card width and does not restate the radius gets the board's
+   * ~5px corners on a card of a completely different size. `.podhand` and
+   * `.dos__top` both learned this the same way.
+   */
+  --card-w: calc(208px * var(--du));
+  --card-h: calc(var(--card-w) * 1.4);
+  --card-r: calc(var(--card-w) * 0.055);
+  --chair-gap: calc(22px * var(--du));
+  --tag-h: calc(22px * var(--du));
+
+  /* The plate's rows, pinned so the four chairs line up ACROSS as well as down
+     -- a plate is read across (whose seat, which deck, what colours) and that
+     only works if the same row is at the same height in all four. Your own
+     chair carries a name FIELD where the others carry a label, and a field is
+     the taller box; pinning is what stops every row under it stepping down by a
+     seat. `PodLobby.stories.tsx` asserts it. */
+  --who-h: 44px;
+  --deck-h: calc(26px * var(--du));
+  --act-h: 44px;
+}
+
+/* ==========================================================================
+   The bar
+   ========================================================================== */
+
+.pod__id {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 0;
+}
+
+.pod__bar {
+  position: absolute;
+  left: calc(24px * var(--du));
+  right: calc(24px * var(--du));
+  top: calc(18px * var(--du));
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--du));
+  z-index: 5;
+}
+
+.pod__gap {
+  flex: 1;
+}
+
+/* The code, which is the one string on this screen somebody reads out loud. It
+   is therefore the largest thing in the bar and the only thing in the room's
+   gold. */
+.pod__code {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--du));
+  padding: 0 calc(6px * var(--du)) 0 calc(14px * var(--du));
+  min-height: 44px;
+  border: 1px solid rgb(216 166 60 / 0.3);
+  border-radius: calc(9px * var(--du));
+  background: rgb(10 8 20 / 0.55);
+}
+
+.pod__codev {
+  font-size: max(16px, calc(19px * var(--du)));
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--focus);
+}
+
+.pod__copy {
+  border-color: transparent;
+  background: none;
+}
+
+/* ==========================================================================
+   The row of chairs
+   ========================================================================== */
+
+.pod__row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(88px * var(--du));
+  bottom: calc(104px * var(--du));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--chair-gap);
+  padding: 0 calc(24px * var(--du));
+}
+
+/*
+ * EVERY CHAIR IS THE SAME BOX BY CONSTRUCTION, not by coincidence.
+ *
+ * The rows were `auto auto auto`, which is right until two chairs disagree
+ * about their contents by a fraction of a pixel -- a chair carrying the
+ * host's ✕ resolved its tag row 0.4px taller than one without, `align-items:
+ * center` split the difference, and the four plates came out at two different
+ * heights. Stating all three tracks removes the question: a chair is a tag, a
+ * card and a plate, at those heights, whatever is in them.
+ */
+.chair {
+  display: grid;
+  grid-template-rows: var(--tag-h) var(--card-h) auto;
+  gap: calc(8px * var(--du));
+  width: var(--card-w);
+  /*
+   * A LIFT ON THE CHAIR THE RING IS SOMEWHERE INSIDE.
+   *
+   * `:has()` rather than a class React writes, because the ring is
+   * `data-cursor` on ONE element written imperatively -- see `input/cursor.ts`,
+   * whose whole argument is that a cursor in React state re-renders thirty
+   * components per step and measured 18.5fps doing it. A selector asks the same
+   * question for free and re-renders nothing.
+   *
+   * The chair moves and the ring's own box does not, which is the split
+   * `.hand__slot`/`.hand__lift` makes on the board: the ring follows the
+   * element it is on through `refollowCursor`, so a 6px rise it can track is
+   * fine where a moving HIT BOX under a stationary pointer would not be.
+   */
+  transition: transform var(--t-fast) ease;
+}
+
+/*
+ * SCOPED TO THE RING'S OWN INPUT MODES, which is `stops.ts:activeRoot`'s rule
+ * for the group trap and is here for the same reason: a mouse player has no
+ * ring on screen at all. The cursor still resolves in every mode -- it has to
+ * be ready the moment somebody picks up a controller -- so without this a chair
+ * sits 6px proud of its neighbours for a player who has never pressed a
+ * direction, and the row of four stops lining up for no visible cause.
+ */
+html[data-input="pad"] .chair:has([data-cursor]),
+html[data-input="keyboard"] .chair:has([data-cursor]) {
+  transform: translateY(calc(-6px * var(--du)));
+}
+
+.chair__tag {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(8px * var(--du));
+}
+
+.chair__no {
+  font-size: max(16px, calc(16px * var(--du)));
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.chair__no--you {
+  color: var(--focus);
+}
+
+/* Emptying a chair is a mark beside the seat number, not a corner tag (which
+   widened the slot and painted over its neighbour) and not a plate button
+   (which gave emptying a seat the same voice as the action you came to the
+   plate for). The box is at the hit floor; the glyph inside it is not. */
+.chair__x {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: calc(-11px * var(--du)) 0;
+  border: 0;
+  background: none;
+  color: var(--text-faint);
+  font-size: max(16px, calc(16px * var(--du)));
+  line-height: 1;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity var(--t-fast) ease, color var(--t-fast) ease;
+}
+
+.chair:hover .chair__x,
+.chair__x:focus-visible,
+.chair__x[data-cursor] {
+  opacity: 1;
+}
+
+.chair__x:hover {
+  color: var(--danger);
+}
+
+/* ---- the card ---------------------------------------------------------- */
+
+.chair__card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: var(--card-r);
+  transition: transform var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.chair__card[data-act] {
+  cursor: pointer;
+}
+
+.chair__card[data-act]:hover,
+.chair__card[data-cursor] {
+  box-shadow: 0 0 34px var(--lit-soft, rgb(255 224 138 / 0.28));
+}
+
+/*
+ * The card back, re-printed.
+ *
+ * `.back` shipped as a 135-degree hatch over #443e34, which `lobby.css` is
+ * honest about: it is the plate `cards.css` draws for a card with NO printing.
+ * A placeholder is the right object for a placeholder and the wrong one for
+ * half the seats in the game's second screen -- three brown rectangles in a lit
+ * hall read as three things that failed to load.
+ *
+ * So inside the room it takes the door's own field: the plum stock, the gold
+ * rule and the fine lattice that `DoorCardFrame` prints. The dashed variants
+ * keep their dashes, because "nobody is here" and "somebody is coming" are
+ * facts the border carries and the fill does not.
+ */
+.room .back {
+  border-color: rgb(216 166 60 / 0.3);
+  background: linear-gradient(160deg, #332747 0%, #241b32 55%, #171021 100%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 10px 24px rgb(0 0 0 / 0.45);
+}
+
+.room .back::after {
+  border-color: rgb(255 224 138 / 0.16);
+}
+
+.room .back__mark {
+  /* The floor is 16px like everything else, but this is `aria-hidden`
+     decoration -- a pattern rather than a caption -- so it is exempt by the
+     gate's own rule and sized to the card instead. */
+  font-size: calc(var(--card-w) * 0.07);
+  color: rgb(255 224 138 / 0.34);
+}
+
+.room .back--open {
+  border-style: dashed;
+  border-color: rgb(255 224 138 / 0.34);
+}
+
+.room .back--empty {
+  border-style: dashed;
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(13 12 28 / 0.4);
+}
+
+.room .back--empty .back__mark {
+  color: var(--text-faint);
+}
+
+/* ---- the plate --------------------------------------------------------- */
+
+/*
+ * THE THREE ROWS ARE PINNED, AND SO IS WHAT SITS IN THEM.
+ *
+ * Pinning the grid's TRACKS is only half of it: `align-items: center` then
+ * centres a short box inside a tall track, so the name row was 44px on your own
+ * chair (a field), 22px on a player's (a label) and 0 on an empty one -- three
+ * different tops for one row, which is the exact defect the pinning exists to
+ * prevent and which `PodLobby.stories.tsx` measures. The tracks are fixed and
+ * every row STRETCHES to fill its track; the centring happens inside each row.
+ */
+.chair__plate {
+  grid-template-rows: var(--who-h) var(--deck-h) var(--act-h);
+  align-items: stretch;
+  gap: calc(4px * var(--du));
+  padding: calc(6px * var(--du)) calc(10px * var(--du)) calc(10px * var(--du));
+  background: linear-gradient(180deg, rgb(36 27 50 / 0.92), rgb(20 15 30 / 0.92));
+  border-color: rgb(216 166 60 / 0.22);
+  box-shadow: 0 10px 26px rgb(0 0 0 / 0.5);
+}
+
+.chair__who {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+/*
+ * The label is the field's box without the field.
+ *
+ * Same width, same height, same depth for the text inside -- `line-height`
+ * rather than flex centring, because a label has to be able to ellipsize and
+ * `text-overflow` needs a block box. An `<input>` centres its own value
+ * vertically, so the field only needs the height.
+ */
+.chair__name,
+.chair__field {
+  width: 100%;
+  height: 100%;
+}
+
+.chair__name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: var(--who-h);
+  font-size: max(16px, calc(17px * var(--du)));
+  font-weight: 750;
+  color: var(--text);
+}
+
+/* Your own name is a field, and it has to be the same box as the label beside
+   it or the four plates stop lining up. It reads as text until it is touched --
+   a control that looks like a form field on a menu screen is the widget the eye
+   goes to, and it is not the thing you came here to do. */
+.chair__field {
+  min-height: 44px;
+  padding: 0 calc(8px * var(--du));
+  border: 1px solid transparent;
+  border-radius: calc(7px * var(--du));
+  background: none;
+  color: var(--focus);
+  font: inherit;
+  font-size: max(16px, calc(17px * var(--du)));
+  font-weight: 750;
+  text-align: center;
+  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+}
+
+.chair__field:hover:not(:disabled),
+.chair__field:focus,
+.chair__field[data-cursor] {
+  border-color: rgb(255 224 138 / 0.34);
+  background: rgb(8 7 18 / 0.5);
+}
+
+.chair__field::placeholder {
+  color: var(--text-faint);
+  font-weight: 650;
+}
+
+.chair__deck {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(8px * var(--du));
+  min-width: 0;
+}
+
+.chair__deckname {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--text-dim);
+}
+
+.chair__deckname--none {
+  color: var(--text-faint);
+}
+
+.chair__pips {
+  display: flex;
+  flex: none;
+  gap: calc(3px * var(--du));
+}
+
+.chair__act {
+  display: grid;
+  align-items: center;
+}
+
+.chair__key {
+  width: 100%;
+  padding: 0 calc(8px * var(--du));
+}
+
+/* ==========================================================================
+   The rail
+   ========================================================================== */
+
+.pod__rail {
+  position: absolute;
+  left: calc(24px * var(--du));
+  right: calc(24px * var(--du));
+  bottom: calc(18px * var(--du));
+  display: flex;
+  align-items: center;
+  gap: calc(18px * var(--du));
+  z-index: 5;
+}
+
+.pod__lock {
+  min-width: calc(150px * var(--du));
+}
+
+/* Committing is heavier than reconsidering: locked in, the control drops to the
+   quietest tier it can while still being a control, because three other people
+   are waiting on the thing it would undo. */
+.pod__lock--on {
+  border-color: rgb(255 224 138 / 0.5);
+  background: rgb(255 224 138 / 0.08);
+  color: var(--focus);
+}
+
+.pod__state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(14px * var(--du));
+  min-width: 0;
+}
+
+.pod__why {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--text-dim);
+}
+
+.pod__deal {
+  min-width: calc(150px * var(--du));
+  font-size: max(16px, calc(17px * var(--du)));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pod__guest {
+  min-width: calc(150px * var(--du));
+  text-align: right;
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--text-faint);
+}
+
+/*
+ * The controller legend sits ABOVE the rail, not in the corner.
+ *
+ * `room.css` puts it in the bottom-right, which is where a console game puts it
+ * and is exactly where this screen's gold control is. The two drew on top of
+ * each other: "Deal" with `Enter Select` printed across it. The band between
+ * the chairs and the rail is empty on every pod size, so the legend goes there
+ * and stays out of the one control the screen exists for.
+ */
+.pod .room__hints {
+  bottom: calc(74px * var(--du));
+}
+
+/*
+ * ONE STACKING ORDER FOR THE WHOLE LOBBY, stated in one place.
+ *
+ *   the room's own furniture   5
+ *   a room over a room         600   (`room.css` -- the catalogue over the pod)
+ *   the dossier                700   (`shelf.css` -- it opens FROM the catalogue)
+ *   the invite                 710
+ *
+ * `lobby.css` set the last two at 460 and 470, back when the catalogue was a
+ * panel rather than a hall. Both then opened UNDERNEATH it: present in the DOM,
+ * holding the ring, and invisible. The numbers are restated here rather than
+ * edited there because the thing that moved is the CATALOGUE, and a reader
+ * asking "why 700" should find the room it has to clear.
+ */
+.inv,
+.veil--invite {
+  z-index: 710;
+}
+
+/* ==========================================================================
+   The ready pips
+   ========================================================================== */
+
+.pips {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--du));
+  flex: none;
+}
+
+.pips__row {
+  display: flex;
+  gap: calc(4px * var(--du));
+}
+
+.pips__s {
+  width: calc(26px * var(--du));
+  height: calc(5px * var(--du));
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.12);
+  transition: background var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.pips__s--wait {
+  background: rgb(255 224 138 / 0.3);
+}
+
+.pips__s--on {
+  background: var(--focus);
+  box-shadow: 0 0 10px rgb(255 224 138 / 0.5);
+}
+
+.pips__n {
+  font-size: max(16px, calc(16px * var(--du)));
+  font-weight: 750;
+  color: var(--text-dim);
+}
+
+/* ==========================================================================
+   The stamp
+
+   Locking in is the loudest object on the screen. It rides in the art band
+   rather than at the middle of the card: the head is a 26% scrim and the foot
+   grows upward with the rules, so dead centre is text on a wordy commander, and
+   wax over a paragraph is not legible.
+   ========================================================================== */
+
+.pod .stamp {
+  font-size: max(16px, calc(var(--card-w) * 0.1));
+}
+
+/* ==========================================================================
+   A narrow window
+
+   Below about 1080 the four chairs and their plates stop fitting side by side
+   at a card size worth looking at. The plates keep their rows and the cards
+   give, which is the right way round: a plate is information and a card at this
+   size is a picture of one.
+   ========================================================================== */
+
+@media (max-width: 1080px) {
+  .pod {
+    --card-w: calc(160px * var(--du));
+    --chair-gap: calc(16px * var(--du));
+  }
+}
