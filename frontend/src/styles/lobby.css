@@ -174,36 +174,17 @@
   color: var(--gain);
 }
 
-/* The door ---------------------------------------------------------------- */
+/* The wordmark ------------------------------------------------------------
 
-.door {
-  position: relative;
-  height: 100%;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  overflow: hidden;
-}
+   THE FRONT DOOR IS NOT IN THIS FILE ANY MORE. `.door`, `.door__top/mid/bot`,
+   `.hero*`, `.fan`, `.big`, `.or`, `.join*` and `.door__cap` were the shipped
+   door -- a fan of four card backs you could not select, a gold button, a text
+   field and an 11px footer link -- and all of it is replaced by the row of three
+   selectable cards in `styles/door.css`, ported from
+   `mockups/door/01-the-hand.html`.
 
-.door__top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 28px;
-}
-
-.door__mid {
-  display: grid;
-  place-items: center;
-  min-height: 0;
-  padding: 0 28px;
-}
-
-.door__bot {
-  padding: 0 28px 24px;
-  display: grid;
-  justify-items: center;
-  gap: 9px;
-}
+   What is left is the lockup the POD LOBBY's header draws, which is the only
+   other place the mark appears. */
 
 .brand {
   display: flex;
@@ -244,253 +225,19 @@
   letter-spacing: 0.04em;
 }
 
-.hero {
-  display: grid;
-  justify-items: center;
-  text-align: center;
-  max-width: 660px;
-}
-
-/* The fan is four card backs: the pod, before anybody has chosen anything. */
-.fan {
-  /* Height-driven, with a width ceiling -- the same two-axis shape as
-     `.hero__mark`, and here for the same reason. A tall phone has plenty of
-     `vh` and no `vw`, so the clamp alone hands a 390px screen 126px cards; four
-     of those, rotated, reach fourteen pixels past both edges and `.door`'s
-     `overflow: hidden` shears the outer two. The rotation is why the ceiling
-     is not simply the layout width over four: a card turned 11 degrees is
-     wider than its box by half again its own width across the fan. */
-  --card-w: min(clamp(104px, 15vh, 148px), 27vw);
-  display: flex;
-  justify-content: center;
-  /* Was 30px. The lockup below it grew by a mark and a line, and `.door`'s
-     middle row is `minmax(0, 1fr)` -- on a 720px screen the hero is what
-     overflows. */
-  margin-bottom: clamp(14px, 2.4vh, 26px);
-  height: calc(var(--card-w) * 1.5);
-}
-
-.fan .back {
-  margin: 0 -14px;
-  transform-origin: 50% 100%;
-}
-
-.fan .back:nth-child(1) {
-  transform: rotate(-11deg) translateY(9px);
-}
-.fan .back:nth-child(2) {
-  transform: rotate(-4deg);
-}
-.fan .back:nth-child(3) {
-  transform: rotate(4deg);
-}
-.fan .back:nth-child(4) {
-  transform: rotate(11deg) translateY(9px);
-}
-.fan .back:nth-child(2),
-.fan .back:nth-child(3) {
-  z-index: 2;
-}
-
-/* The lockup: mark, then COMMANDER over BLITZ.
+/*
+ * The narrow breakpoint, and one rule is all that is left of it.
  *
- * Two lines because fifteen uppercase characters at 0.14em do not fit the
- * hero's 660px, and stacking them is better than shrinking them -- nine over
- * five is a pyramid, and the second line reads as a deliberate second line.
- *
- * `line-height: 0.92` rather than 1: at display size the default leading opens
- * a gap the two words visibly float in, and the pair stops being one mark. */
-.hero__mark {
-  margin: 0;
-  display: grid;
-  justify-items: center;
-  /* Two axes, because the mark is now long enough to care about both. The
-     clamp is the height-driven size the hero has always used; the `vw` term is
-     a ceiling that only ever bites on a narrow screen, where nine tracked
-     uppercase characters are wider than the column. Without it "COMMANDER"
-     runs off both edges of a phone, and `.door`'s `overflow: hidden` crops it
-     rather than scrolling. */
-  font-size: min(clamp(38px, 6.2vh, 66px), 8.6vw);
-  font-weight: 800;
-  line-height: 0.92;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--gold);
-  text-shadow: 0 0 40px rgb(255 212 121 / 0.2);
-}
-
-/* Tracking is trailing space on the last letter of a line, so centred text sits
-   half a letter-space left of true. Pushing each line back by the tracking is
-   what makes the stack look centred rather than measured. */
-.hero__word {
-  text-indent: 0.14em;
-}
-
-.hero__badge {
-  width: clamp(34px, 5vh, 46px);
-  height: clamp(34px, 5vh, 46px);
-  margin-bottom: clamp(12px, 1.8vh, 20px);
-  /* Inherited by the bolt and the frame hairline through `currentColor`. */
-  color: var(--gold);
-  filter: drop-shadow(0 0 22px rgb(255 212 121 / 0.28));
-}
-
-/* The front door on a phone.
- *
- * Three things sized for a desk stop fitting at once, and all three are width
- * problems on a layout whose every other measurement is driven by height:
- * the header's tagline, the fan's four overlapping cards, and the wordmark
- * (handled by the `vw` ceiling on `.hero__mark`, which needs no breakpoint).
- *
- * The fan overlaps harder rather than shrinking. `--card-w`'s 104px floor is
- * what keeps the mark on a card back legible, and a fan of four unreadable
- * cards is worse than a tighter fan of four readable ones. */
+ * It used to answer three width problems on the front door -- the header's
+ * tagline, the fan of four overlapping card backs, and the wordmark. The door
+ * is a full-bleed room now and answers all three with `--du`, so what remains is
+ * the pod lobby's own subtitle, which has the same problem for the same reason:
+ * "Pod lobby" beside a tracked wordmark is the first thing to run out of room.
+ */
 @media (max-width: 560px) {
   .brand__sub {
-    /* The hero repeats the pitch forty pixels below it. */
     display: none;
   }
-
-  .fan .back {
-    margin: 0 -26px;
-  }
-}
-
-.hero__line {
-  margin: 16px 0 0;
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--text-dim);
-  max-width: 46ch;
-}
-
-.hero__acts {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 22px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.big {
-  padding: 16px 34px;
-  border: 0;
-  border-radius: 12px;
-  flex: none;
-  cursor: pointer;
-  background: linear-gradient(180deg, #ffd98c, #e0a63f 55%, #b87c1c);
-  color: #1b0f05;
-  font: inherit;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  box-shadow: 0 4px 0 #7d5310, 0 0 30px rgb(224 166 63 / 0.26);
-}
-
-.big:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 0 #7d5310, 0 0 30px rgb(224 166 63 / 0.26);
-}
-
-.big:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  box-shadow: 0 4px 0 #4a3a18;
-}
-
-.or {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-}
-
-.join {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--edge);
-  border-radius: 10px;
-  background: rgb(8 7 18 / 0.72);
-  overflow: hidden;
-}
-
-.join__in {
-  width: 150px;
-  padding: 14px;
-  border: 0;
-  background: none;
-  color: var(--text);
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.join__in::placeholder {
-  color: var(--text-faint);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-}
-
-/*
- * `:not([data-cursor])` on every focus suppression in this file.
- *
- * The focus ring is `outline: 3px solid` on `[data-cursor]`, which is one
- * attribute selector -- so a *class*-qualified `:focus { outline: none }`
- * outranks it and wins. The result is the nastiest kind of broken: the ring's
- * `outline-width` still computes to 3px and only `outline-style` goes to
- * `none`, so it looks applied in devtools and draws nothing at all.
- *
- * Found by driving the front door with a controller, where the ring simply did
- * not appear on the pod-code field. `tests/focusOutline.test.ts` now fails on
- * any selector ending in `:focus` that does not carry this.
- */
-.join__in:focus:not([data-cursor]) {
-  outline: none;
-}
-
-.join:focus-within {
-  border-color: var(--gold);
-}
-
-.join__go {
-  padding: 14px 18px;
-  border: 0;
-  border-left: 1px solid var(--edge);
-  background: none;
-  color: var(--text-dim);
-  cursor: pointer;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.join__go:hover:not(:disabled) {
-  color: var(--text);
-  background: rgb(143 127 232 / 0.1);
-}
-
-.join__go:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.door__cap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
-  color: var(--text-faint);
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.door__cap b {
-  color: var(--text-dim);
-  font-weight: 750;
 }
 
 .link {

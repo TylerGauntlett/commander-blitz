@@ -32,6 +32,7 @@ import "../src/styles/reader.css";
 import "../src/styles/groups.css";
 import "../src/styles/ui.css";
 import "../src/styles/lobby.css";
+import "../src/styles/door.css";
 import "../src/styles/handheld.css";
 
 import { setReducedMotionOverride } from "../src/fx/reducedMotion";

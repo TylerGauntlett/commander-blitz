@@ -31,7 +31,10 @@ test.describe("the catalogue is a place", () => {
     await setInstant(page);
     await page.goto("/");
     await page.getByTestId("home").waitFor();
-    await page.getByRole("button", { name: "Browse them" }).click();
+    // The footer link is a card now. `browse-decks` is one of the four test ids
+    // the front door's redesign had to carry across, and it is what a suite
+    // should be driving rather than a string of copy.
+    await page.getByTestId("browse-decks").click();
     await expect(page).toHaveURL(/\/decks$/);
     await page.goBack();
     await expect(page).toHaveURL(/\/$/);

@@ -1668,16 +1668,15 @@ html[data-input="keyboard"] .hints {
   [data-handheld]
   .opt__label,
 [data-handheld] .opt__caption,
-/* The lobby, which had no floor at all until `data-handheld` moved to <html>. */
+/* The lobby, which had no floor at all until `data-handheld` moved to <html>.
+   Six of these went with the old front door -- `.hero__line`, `.or`,
+   `.join__go`, `.join__in` and `.door__cap` were its pitch, its separator, its
+   Join button, its code field and its footer. The door is written at the floor
+   now (`styles/door.css`) and has nothing for this list to reach. */
   [data-handheld]
   .brand__mark,
 [data-handheld] .brand__sub,
 [data-handheld] .link,
-[data-handheld] .hero__line,
-[data-handheld] .or,
-[data-handheld] .join__go,
-[data-handheld] .door__cap,
-[data-handheld] .door__cap *,
 /* The zone viewer's own chrome: its Close button and its empty-state line. */
   [data-handheld]
   .peek__hidden,
@@ -1962,9 +1961,18 @@ html[data-input="keyboard"] .hints {
 
    Enumerating them by hand was the wrong tool at that point, so this list is
    GENERATED: every selector in `board.css`, `ui.css` and `lobby.css` whose
-   font-size is a literal under 16px. There are 144 of them, which is the
+   font-size is a literal under 16px. There were 144 of them, which is the
    honest size of the problem and the reason it needed a gate rather than a
    careful read.
+
+   IT IS 139 NOW, AND THE FIVE THAT LEFT ARE THE POINT. `.hero__line`, `.or`,
+   `.join__go`, `.join__in` and `.door__cap` were the front door, authored at
+   11-14px and repaired here. The door was rebuilt from
+   `mockups/door/01-the-hand.html` and `styles/door.css` is written at the floor
+   -- every size on it is `max(16px, ...)` -- so there is nothing left on that
+   screen for this list to reach. Shrinking this list by rewriting a screen is
+   the only way it is meant to shrink; adding to it is the other way to pass the
+   gate, and it is the one that leaves the problem where it was.
 
    Two selectors are deliberately absent: `.orb__lab` and `.cmdplinth__tag`
    are DROPPED above rather than raised, and re-listing them here would undo
@@ -2021,7 +2029,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .deck__count,
 [data-handheld] .deck__engine,
 [data-handheld] .deck__notes,
-[data-handheld] .door__cap,
 [data-handheld] .dos__artist,
 [data-handheld] .dos__h,
 [data-handheld] .dos__p,
@@ -2035,7 +2042,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .ghost,
 [data-handheld] .hand__empty,
 [data-handheld] .hand__hint,
-[data-handheld] .hero__line,
 [data-handheld] .ibtn,
 [data-handheld] .import__hint,
 [data-handheld] .import__hint--inline,
@@ -2047,8 +2053,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .inv__linkv,
 [data-handheld] .inv__note,
 [data-handheld] .inv__t,
-[data-handheld] .join__go,
-[data-handheld] .join__in,
 [data-handheld] .lane__count,
 [data-handheld] .lane__label,
 [data-handheld] .link,
@@ -2059,7 +2063,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .note,
 [data-handheld] .opt,
 [data-handheld] .opt__caption,
-[data-handheld] .or,
 [data-handheld] .orb__loss,
 [data-handheld] .orb__none,
 [data-handheld] .over__player,
@@ -2130,8 +2133,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .segmented__btn,
 [data-handheld] .sel,
 [data-handheld] .search__i,
-[data-handheld] .join__in,
-[data-handheld] .join__go,
 [data-handheld] .field__input {
   min-height: 44px;
 }
