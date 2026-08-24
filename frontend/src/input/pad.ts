@@ -81,7 +81,7 @@
 
 import { BTN, KEYS, type PadButton, REPEATS, SWALLOW } from "./buttons";
 import { noteInput, notePadConnected } from "./inputMode";
-import { STICK, type Dir, deadzone, pushOf, repeatMs, sector } from "./repeat";
+import { type Dir, STICK, deadzone, pushOf, repeatMs, sector } from "./repeat";
 
 export interface PadFrame {
   lstick: { x: number; y: number };
