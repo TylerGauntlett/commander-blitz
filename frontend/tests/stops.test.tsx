@@ -20,7 +20,7 @@
 
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { PromptDialog } from "../src/components/game/PromptDialog";
@@ -162,8 +162,26 @@ describe("rendered surfaces", () => {
       />,
     );
     const { stops } = stopsAndIds(container);
-    for (const tool of ["mute", "full-control", "manual-mana", "undo", "quit"]) {
+    for (const tool of ["settings", "full-control", "manual-mana"]) {
       expect(stops).toContain(`tool:${tool}`);
+    }
+
+    /*
+     * ...and the three inside the menu, once it is open.
+     *
+     * They used to be three permanent buttons in the strip. They are the same
+     * three controls with the same stop ids -- the ring reaches them exactly as
+     * it did -- but only while the menu holding them is open, which is what
+     * this half is here to hold. A rewrite that quietly dropped one would
+     * otherwise pass, because the strip it left is still full of stops.
+     */
+    for (const tool of ["mute", "undo", "quit"]) {
+      expect(stops).not.toContain(`tool:${tool}`);
+    }
+    fireEvent.click(screen.getByTestId("settings"));
+    const opened = stopsAndIds(container).stops;
+    for (const tool of ["mute", "undo", "quit"]) {
+      expect(opened).toContain(`tool:${tool}`);
     }
   });
 });

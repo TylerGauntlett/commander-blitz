@@ -336,7 +336,9 @@ test.describe("combat has one surface", () => {
     test.skip(!reached, "never reached a declare-blockers decision with a blocker");
 
     const all = page.getByTestId("combat-all");
-    await expect(all).toHaveText(/All defend/);
+    // The name is on `aria-label`: the button is a mark now, and its word lives
+    // where the hint bar and a screen reader can both reach it. See `.commit-mark`.
+    await expect(all).toHaveAttribute("aria-label", /All defend/);
 
     // The button is disabled precisely when every available block is a chump --
     // which is a real answer, not a broken button.

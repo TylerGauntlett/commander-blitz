@@ -183,14 +183,31 @@ describe("verbsFor", () => {
   });
 
   describe("play mode", () => {
-    it("names a single cast, and offers X when the card also has an ability", () => {
+    it("says the verb and not the card's name, and offers X when it also has an ability", () => {
+      /*
+       * `base_label` is "Cast Bear", and the bar is one line shared with the
+       * navigation half -- a real card name wrapped it. The ring is on the card
+       * and the reader is showing the card, so the name is the half the hint
+       * does not have to carry.
+       */
       const state = gameView({ battlefield: [creature(1)] });
       const cast = action({ id: "c", kind: "cast", source_oid: 1, base_label: "Cast Bear" });
-      expect(verbsFor(state, [cast], "card:1").a).toBe("Cast Bear");
+      expect(verbsFor(state, [cast], "card:1").a).toBe("Cast");
       expect(verbsFor(state, [cast], "card:1").x).toBeUndefined();
 
       const withAbility = [cast, action({ id: "b", kind: "activate", source_oid: 1 })];
       expect(verbsFor(state, withAbility, "card:1").x).toBe("Activate");
+    });
+
+    it("keeps Play for a land, because playing one is not casting one", () => {
+      const state = gameView({ battlefield: [creature(1)] });
+      const land = action({
+        id: "l",
+        kind: "play_land",
+        source_oid: 1,
+        base_label: "Play Blood Crypt",
+      });
+      expect(verbsFor(state, [land], "card:1").a).toBe("Play");
     });
 
     it("does not promise one ability's name when a permanent offers several", () => {

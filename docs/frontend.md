@@ -67,7 +67,8 @@ A ribbon across the top, **two** columns, and the hand under the left one.
   a single chip cannot say.
 - **Middle** — opponents on a row that sizes to its content, then your own mat.
   Your mat's first column is your info panel (`PlayerOrb`): commander, life dial,
-  mana, zone piles. **An opponent's is an `OpponentSeat`** — a 332x96 summary of
+  mana, zone piles — on a handheld the same markup skinned as
+  `mockups/handheld-board/`'s plinth. **An opponent's is an `OpponentSeat`** — a 332x96 summary of
   what they have on the battlefield, because none of an orb's controls is yours
   on somebody else's seat and a pod was three control panels for controls nobody
   could press. Card size is **solved against the space each area actually has**
@@ -163,7 +164,7 @@ landscape; a stack of basics is one box; a host carries its auras), so it is exa
 rather than an estimate. `CARD_SCALE.own`, `CARD_SCALE.hand` and `opponentCardScale`
 are still here but they are now **ceilings the solve may not exceed**, not sizes.
 
-Three things about it are worth knowing before touching it:
+Four things about it are worth knowing before touching it:
 
 - **A fit solver reads the layout and then changes it**, so only measurements that
   cannot move are allowed as inputs: lane *width* (grid tracks, hence
@@ -172,6 +173,32 @@ Three things about it are worth knowing before touching it:
   the pod's lane box is pinned so `.play`'s `fit-content(58%)` row cannot depend on
   the pod card size it is being used to solve. `useZoomFit`'s header has the full
   argument.
+- **The pod's box is count-aware**, and the difference was a third of an opponent's
+  card. `--pod-lanes-h` used to *be* the budget, and it is `clamp(140px, 15vh,
+  220px)` — measured at 1600×950 against a **four-seat** pod where nothing fits at
+  any size and the viewer deliberately wins. That is the right answer to the
+  question it was asked. It was then applied at every seat count, and a compact
+  two-band mat costs `2.8·cw + 36` — so 142px could not hold even the 52px floor,
+  `solveBoardCardWidth` fell through its scan, and a 1v1 rendered its opponent at
+  `MIN_CARD_W` next to half an empty table. `solvePodLanesHeight` takes the clamp
+  as a **floor** and raises it to a share of the viewport: 0.20 of `tableH` at one
+  opponent, 0.16 at two, **nothing at three or more**, capped at 320px. `Table`
+  writes the answer back out as `--pod-lanes-h`, so the box CSS draws is the budget
+  the cards were packed into. `share(3+) = 0` is what keeps `deckfit.spec.ts`,
+  `cycle3.spec.ts`'s `rowClipped` guard and `legibility.spec.ts`'s 50.7px
+  measurement byte-identical, and the shares below that are priced against
+  `layout.spec.ts`'s "the zoom uses the room a big display has", which wants the
+  viewer at `MAX_CARD_W` on a 2560×1278 panel with about 105px of slack to spare.
+- **The pod box must be a function of the viewport alone — a stronger rule than
+  "independent of the card size".** `layout.spec.ts` states it outright, and it is
+  easy to break while believing you have not: the first cut of the fix above solved
+  against `.play`'s *measured* height, which no card size can move, and it was still
+  wrong. `.table__body`'s second row is the foot, and the foot's height moves with
+  the hand — so playing a card would resize the foot, resize `.play`, resize the pod
+  box, and translate the viewer's whole board, once per card played. No gate pins
+  that directly: "the viewer's bands do not move" measures *inside* the mat, not the
+  mat's own height. `solvePodLanesHeight` takes `tableH`, the CSS floor and a seat
+  count, and its signature is the argument.
 - **The board height is not monotone in card width.** A tapped permanent is shorter
   but wider, so growing the cards can push a tall card onto the next row and leave a
   short row behind, making a lane *shorter*. The solver scans downward rather than
@@ -317,13 +344,24 @@ Two cases the count has to carry that a repeated mark carried for free:
   leave me with" the way the hollow pips did. Which sources those are is still the
   engine's solved payment and never arithmetic here.
 
-Both the mana panel and the commander-damage panel are **permanent**. They were
-conditional rows in `orb__body`'s `space-between` slack, so they floated in the
-middle of the column and re-spaced the whole interior each time one appeared or
-emptied — several times a turn. They sit on a plate with the zone piles in
-`.orb__foot` now, which puts all the slack in one gap under the plinth. An empty
-mana panel says `—`; a commander-damage chip exists for every other seat from turn
-one, at zero, carrying the seat and a meter of its progress toward 21.
+The mana panel is **permanent**. It was a conditional row in `orb__body`'s
+`space-between` slack, so it floated in the middle of the column and re-spaced
+the whole interior each time it appeared or emptied — several times a turn. It
+sits on a plate with the zone piles in `.orb__foot` now, which puts all the
+slack in one gap under the plinth. An empty mana panel says `—`.
+
+**Commander damage is not on this panel.** It used to be a second plate here —
+one chip per opposing seat with a meter of its progress toward 21 — which
+answered "how close is each of them to killing me" and nothing about the other
+direction, at the cost of the loudest object in the column. Both directions are
+two small arrows on each opponent's own life gauge now (`OpponentSeat`, and
+`docs/mockup-fidelity.md` for the whole argument).
+
+On a handheld this whole column is re-skinned to `mockups/handheld-board/`'s
+plinth: a 148x128 portrait rather than a 2:1 banner, a 64px conic life ring
+rather than a 52px brass seal, and the five zones as coloured chips rather than
+leaf stacks. Markup is identical either way — it is CSS in `handheld.css` and
+nothing else.
 
 Text over an unknown illustration is the one thing here that can fail silently, so
 it is guarded by number: `tests/palette.test.ts` asserts both scrims are gradients
@@ -432,6 +470,26 @@ yet. `SeatName` in `PodSeat.tsx` keeps a local draft and commits on blur and Ent
 pod re-renders on every long-poll return, so a controlled field would reset itself
 mid-word, and a PATCH per keystroke would bump the pod's version for every letter and
 wake three other browsers out of their polls to be told you are still typing.
+
+### Four plates, one row
+
+A plate is read *across* as much as down — whose seat, which deck, what colours — and
+that only holds while the same line is at the same height in all four slots. The name
+field above is exactly what broke it: your chair carries a **field** where the other
+three carry a label, and a field is the taller box. `.plate` is a grid, so every row
+under it inherited the difference and the deck names, the mana and the buttons all
+stepped down on your seat alone — 6px on the desktop plate, 23px on the handheld one,
+where the hit floor raises every control to 44px.
+
+So the two rows whose content differs by seat are **given** a height rather than taking
+one from whatever is in them: `--name-h` and `--meta-h` in `lobby.css`, restated once
+for the handheld floor. `PodLobby.stories.tsx` measures the row tops across all four
+slots at both sizes.
+
+The same floor caught the details glyph. `min-height: 44px` with no `min-width` turned a
+17px circle into a 17x44 pill, and giving it the other half is no better — a 44px disc
+in a row of 14px mana pips is the loudest object on the plate. **A hit floor is a target,
+not a size**: the circle is drawn on `.ibtn::before` at 22px and only the box is 44.
 
 ### One card, two boxes
 
@@ -940,6 +998,30 @@ Outside the board, a **native focusable is a stop**. The lobby declares none:
 everything interactive there is already a control, and the fallback means a
 button added next year is reachable without anybody remembering this layer
 exists.
+
+### The cursor may not take focus off you
+
+`stamp()` calls `.focus()` so assistive tech follows the same object the ring is
+on. `resolveCursor()` runs after **every commit** — that is what puts the ring
+back on a card the engine has just replaced. Put those two together on a screen
+made of text fields and you get the bug a player reports as *"the seed box only
+takes one digit"*: a controlled input commits on every keystroke, so the resolve
+re-focused the first control on the screen and the caret left the field.
+
+Two rules, and both halves are needed:
+
+- **A commit is not a request to move focus.** `resolveCursor` re-stamps without
+  focusing when something else already holds it. It still focuses when the
+  cursor genuinely *moved* — a dialog opening over the board must take focus
+  with it, or the trap is only a picture of one — and when nothing holds focus
+  at all, which is the case it exists for.
+- **Where a stop can hold focus, the ring follows it.** Off the board the cursor
+  and DOM focus are two names for one thing, so clicking into a field moves the
+  ring there rather than leaving it on a button nobody is using. Deliberately
+  *not* "follow focus" in general: a board card is a div and cannot hold focus,
+  so there the focused element is merely whatever was pressed last, and
+  following it would drag the ring off the card on every engine push.
+  `focusHolder` is the one function that draws that line.
 
 ### Two rules that keep it honest
 

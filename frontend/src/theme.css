@@ -243,6 +243,26 @@
      hue rather than borrowing the castable green. */
   --ability: #c39bff;
 
+  /*
+   * Zone chips. One hue per zone, dark ink on top.
+   *
+   * The handheld orb draws its five zones as coloured chips rather than as leaf
+   * stacks -- five shapes in five colours, at the sizes where a stack of leaves
+   * is height the column does not have. `--chip-ink` is the one ink all five
+   * carry, so a chip's contrast is a property of the set rather than of each
+   * hue. See `mockups/handheld-board/`.
+   */
+  --zone-lib: #7d6bd8;
+  --zone-hand: #3f9e93;
+  --zone-gy: #6f6a86;
+  --zone-ex: #58637a;
+  --zone-cmd: #c69a3a;
+  --chip-ink: #0d0c1a;
+
+  /* The gold a meter fills with, a step down from `--gold` so a numeral can
+     sit on it. */
+  --gold-deep: #d8a63c;
+
   /* Text -- re-tinted off the violet ground rather than the green one. */
   --text: #e6e3f5;
   --text-dim: #a09bc4;
@@ -322,6 +342,26 @@
    * hold still, while an opponent's lanes already scroll behind a fade
    * affordance that `.mat--compact .mat__lanes` draws, and their seat carries
    * the summary that made reading those cards optional.
+   */
+  /*
+   * AND IT IS THE FLOOR NOW, NOT THE BOX.
+   *
+   * Everything above stands, and it answers the four-seat question. The bug is
+   * that it was also answering the two-seat one: `solveBoardCardWidth` needs
+   * `2.8*cw + 36` for a two-band compact mat, so 142px cannot hold even the 52px
+   * card floor, and a 1v1 rendered its opponent at `MIN_CARD_W` beside half an
+   * empty table. The sweep never saw that because the sweep was a four-seat pod,
+   * where no card size fits and the floor is the honest answer.
+   *
+   * `logic/zoomFit.ts`'s `solvePodLanesHeight` takes this as a floor and raises
+   * it to a share of the viewport, at one and two opponents only. `Table` writes
+   * the result back over this declaration as an inline style, so the box CSS
+   * draws is the budget the cards were packed into. At three or more opponents
+   * it returns this value untouched and the table above still holds.
+   *
+   * It is still a function of the viewport and nothing else, which is the
+   * property `e2e/layout.spec.ts` requires by name -- what changed is that it
+   * now also knows how many opponents are sharing the row.
    */
   --pod-lanes-h: clamp(140px, 15vh, 220px);
 

@@ -41,7 +41,6 @@ function Board({ state }: { state: GameView }) {
             key={pid}
             state={state}
             player={state.players[pid]}
-            names={state.players.map((p) => p.name)}
             compact
             // Their lands against their own edge, so the creature bands meet in
             // the middle -- which is also where the arrows have to cross.
@@ -54,7 +53,6 @@ function Board({ state }: { state: GameView }) {
       <PlayerMat
         state={state}
         player={state.players[state.seat]}
-        names={state.players.map((p) => p.name)}
         cardScale={CARD_SCALE.own}
         actionableOids={new Set()}
       />

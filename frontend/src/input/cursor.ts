@@ -29,7 +29,7 @@ import { useUiStore } from "../state/uiStore";
 import { getInputMode, subscribeInputMode } from "./inputMode";
 import { type Dir, unreachableStops } from "./nav";
 import { padDiagnostics } from "./pad";
-import { retargetRing, ringNudge, ringTargetFor } from "./ring";
+import { followRing, retargetRing, ringNudge, ringTargetFor } from "./ring";
 import { candidatesIn, navigate, stopElement, stopIdOf, stopRoot, stopsIn } from "./stops";
 
 /** The stop the ring is on. Not React state; see the header. */
@@ -83,7 +83,7 @@ export function setCursorContext(next: string): void {
  * `e2e/handheldAssert.ts` fails the run on more than one cursor, and this is
  * the function that makes that assertion true.
  */
-function stamp(el: HTMLElement | null): void {
+function stamp(el: HTMLElement | null, focus = true): void {
   const doc = el?.ownerDocument ?? document;
   for (const other of doc.querySelectorAll<HTMLElement>("[data-cursor]")) {
     if (other !== el) other.removeAttribute("data-cursor");
@@ -102,8 +102,50 @@ function stamp(el: HTMLElement | null): void {
    * This is precisely why `:focus:not([data-cursor])` in `handheld.css` has to
    * carry that `:not()`: we are deliberately creating a focused element that
    * must not also draw the native outline.
+   *
+   * `focus` is how a caller says this stamp is not a move the player asked for
+   * -- see `resolveCursor`, which runs after every commit and must not be able
+   * to take a field away from somebody typing in it.
    */
-  if (el.tabIndex >= 0) el.focus({ preventScroll: true });
+  if (focus && el.tabIndex >= 0) el.focus({ preventScroll: true });
+}
+
+/**
+ * Whether somebody else is holding real focus.
+ *
+ * `<body>` is not somebody: it is what the browser falls back to when the
+ * focused element is removed, which is the case `resolveCursor` exists to
+ * repair.
+ */
+function heldElsewhere(el: HTMLElement): boolean {
+  const doc = el.ownerDocument;
+  const active = doc.activeElement;
+  if (!active || active === el) return false;
+  return active !== doc.body && active !== doc.documentElement;
+}
+
+/**
+ * THE RING FOLLOWS FOCUS THE PLAYER MOVED THEMSELVES.
+ *
+ * Off the board every stop is a native control (see `stopsIn`), so the cursor
+ * and DOM focus are two names for one thing and they have to agree. They did
+ * not: clicking into the seed field put focus there and left the cursor on the
+ * first control in the header -- and because `resolveCursor` runs after *every*
+ * commit, the next keystroke re-stamped that control, `focus()`d it, and threw
+ * the caret out of the field. One character typed, then nothing: the pod's
+ * `Copy` button wearing the ring while you were typing a seed.
+ *
+ * Returns the index of the focused stop, or -1 when focus says nothing useful.
+ * It says nothing when the stop the ring is on cannot take focus at all, which
+ * is the board's whole surface -- cards are divs, so there the focused element
+ * is merely whatever control was pressed last, and following it would drag the
+ * ring off the card the player just walked it onto.
+ */
+function focusHolder(all: HTMLElement[], current: HTMLElement): number {
+  if (current.tabIndex < 0) return -1;
+  const active = current.ownerDocument.activeElement as HTMLElement | null;
+  if (!active || active === current) return -1;
+  return all.indexOf(active);
 }
 
 /** Remove the cursor from wherever it is, and stand the ring down. */
@@ -131,16 +173,13 @@ function clearStamp(): void {
  */
 export function resolveCursor(): void {
   const root = stopRoot();
-  let el = cursor ? stopElement(cursor, root) : null;
-  let index = 0;
-  if (!el) {
-    // Fall back to the first stop of whatever surface is on top. Deliberately
-    // the topmost surface's first stop and not the document's, or opening a
-    // dialog would leave the ring on the board behind it.
-    el = stopsIn(root)[0] ?? null;
-  } else {
-    index = stopsIn(root).indexOf(el);
-  }
+  const all = stopsIn(root);
+  // Fall back to the first stop of whatever surface is on top. Deliberately
+  // the topmost surface's first stop and not the document's, or opening a
+  // dialog would leave the ring on the board behind it.
+  let index = cursor === null ? -1 : all.findIndex((node, i) => stopIdOf(node, i) === cursor);
+  if (index < 0) index = 0;
+  let el: HTMLElement | null = all[index] ?? null;
   if (!el) {
     if (cursor !== null) {
       cursor = null;
@@ -149,20 +188,58 @@ export function resolveCursor(): void {
     clearStamp();
     return;
   }
+  const taken = focusHolder(all, el);
+  if (taken >= 0) {
+    index = taken;
+    el = all[index];
+  }
   // `stopIdOf`, not `dataset.stop`: outside the board a stop is a native
   // focusable with no declared id, and reading the attribute directly gave
   // every lobby control an id of `undefined` -- so the ring mounted, resolved
   // to nothing, and the entire lobby was unreachable by controller.
-  const next = stopIdOf(el, Math.max(0, index));
+  const next = stopIdOf(el, index);
   const moved = next !== cursor;
   cursor = next;
-  stamp(el);
-  const target = ringTargetFor(el);
-  retargetRing(target.rect, context, target.angle);
+  // A commit is not a request to move focus. The exception is a cursor that
+  // genuinely moved -- a dialog opening over the board resolves the ring into
+  // it, and focus has to come along or the trap is only a picture of one.
+  stamp(el, moved || !heldElsewhere(el));
+  aimRing(el);
   if (moved) {
     announce();
     hoverFor(next);
   }
+}
+
+/**
+ * Point the ring at an element, and tell it how to keep re-reading that element.
+ *
+ * The closure is the second half and it is the one that matters: `ringTargetFor`
+ * is a snapshot, and a stop can change shape without the cursor going anywhere.
+ * See `measure` in `input/ring.ts` for the case that found it.
+ */
+function aimRing(el: HTMLElement): void {
+  const target = ringTargetFor(el);
+  retargetRing(target.rect, context, target.angle, () => ringTargetFor(el));
+}
+
+/**
+ * The thing the ring is on has started moving; go with it.
+ *
+ * Distinct from `restampCursor`, and deliberately much cheaper: nothing about
+ * *which* stop the cursor is on has changed, so there is no reason to re-derive
+ * it or to sweep `stopsIn`. This only wakes the spring, which then follows the
+ * element frame by frame until it comes to rest.
+ *
+ * `HandFan` calls it, because raising a card is the one animation that reshapes
+ * a stop the ring may already be sitting on.
+ */
+export function refollowCursor(): void {
+  if (cursor === null) return;
+  const el = stopElement(cursor);
+  if (!el) return;
+  aimRing(el);
+  followRing();
 }
 
 /**
@@ -203,8 +280,7 @@ export function setCursor(id: string | null): boolean {
   if (!el) return false;
   cursor = id;
   stamp(el);
-  const target = ringTargetFor(el);
-  retargetRing(target.rect, context, target.angle);
+  aimRing(el);
   announce();
   hoverFor(id);
   return true;

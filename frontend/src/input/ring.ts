@@ -158,6 +158,8 @@ const RING = {
   ctx: "",
   /** The tilt of the thing the ring is around, in degrees. See `paint`. */
   angle: 0,
+  /** `performance.now()` until which the loop keeps running to watch. See `followRing`. */
+  until: 0,
   raf: 0,
   last: 0,
   speed: 0,
@@ -165,6 +167,27 @@ const RING = {
 
 const vel = (a: Axis): "vx" | "vy" | "vw" | "vh" => `v${a}` as const;
 const tgt = (a: Axis): "tx" | "ty" | "tw" | "th" => `t${a}` as const;
+
+/**
+ * How to re-read the thing the ring is around, while that thing is moving.
+ *
+ * THE TARGET WAS A SNAPSHOT, AND THE HAND MOVES UNDER IT. `retargetRing` is
+ * called when the *cursor* moves, and nothing else -- so a stop that changes
+ * shape without the cursor going anywhere left the ring wherever it last
+ * measured. The hand fan does exactly that on every hover: the raised card
+ * un-rotates, scales 1.14 and lifts, so a pointer coming to rest on the card
+ * the ring is already on left a tilted 102x140 box standing beside an upright
+ * 109x153 card. Measured: ring at (452, 360) rotate 3.9deg, card at (442, 314),
+ * both at rest, for the remainder of the turn.
+ *
+ * So while the loop is running the target is re-read from the element rather
+ * than trusted. It costs one `getBoundingClientRect` and a bounded style walk
+ * per frame -- only for the ~140ms a flight lasts, and only while something is
+ * actually moving, because a target that stops changing lets the loop settle
+ * exactly as it always did.
+ */
+type Measure = () => { rect: RingRect; angle: number };
+let measure: Measure | null = null;
 
 /** `swift` while the game is playing back at `instant`; otherwise `full`. */
 let profile: keyof typeof SPRING = "full";
@@ -187,6 +210,9 @@ export function resetRing(): void {
   RING.placed = false;
   RING.ctx = "";
   RING.speed = 0;
+  RING.angle = 0;
+  RING.until = 0;
+  measure = null;
   if (RING.raf) cancelAnimationFrame(RING.raf);
   RING.raf = 0;
   RING.last = 0;
@@ -226,6 +252,43 @@ function snap(): void {
   paint();
 }
 
+/**
+ * Re-read the target from the element, and say whether it actually changed.
+ *
+ * The epsilon is what stops the loop from running forever: a `clamp()` over a
+ * `vh` lands on fractions and `getBoundingClientRect` reports them, so an exact
+ * comparison would find a tenth of a pixel of disagreement every frame and the
+ * rAF would never idle. Half a pixel is under what the ring can draw.
+ */
+function followTarget(): boolean {
+  if (!measure) return false;
+  const next = measure();
+  const tx = next.rect.left - PAD;
+  const ty = next.rect.top - PAD;
+  const tw = next.rect.width + PAD * 2;
+  const th = next.rect.height + PAD * 2;
+  const still =
+    Math.abs(tx - RING.tx) < 0.5 &&
+    Math.abs(ty - RING.ty) < 0.5 &&
+    Math.abs(tw - RING.tw) < 0.5 &&
+    Math.abs(th - RING.th) < 0.5 &&
+    Math.abs(next.angle - RING.angle) < 0.05;
+  if (still) return false;
+  RING.tx = tx;
+  RING.ty = ty;
+  RING.tw = tw;
+  RING.th = th;
+  /*
+   * The angle is written straight through rather than sprung, for the same
+   * reason `paint` gives: the position is already travelling and a second
+   * spring on the rotation reads as a wobble. Following the element's own
+   * rotation exactly is also the only way the two ever agree at rest, which is
+   * the whole point of the follow.
+   */
+  RING.angle = next.angle;
+  return true;
+}
+
 function frame(now: number): void {
   RING.raf = 0;
   // The first frame after a wake has no previous timestamp to subtract. No
@@ -233,8 +296,17 @@ function frame(now: number): void {
   const dt = RING.last ? (now - RING.last) / 1000 : 1 / 60;
   RING.last = now;
 
+  // Where the stop is NOW, not where it was when the cursor arrived. See
+  // `measure`: the hand fan reshapes the card the ring is already on.
+  const moved = followTarget();
+
   const s = SPRING[profile];
-  let moving = false;
+  // `until` is the watch window, and it is why this is not just `moved`. A
+  // reshape is ANNOUNCED before it happens -- the effect that calls
+  // `followRing` runs on the commit that starts the animation, when the element
+  // has not moved a pixel yet -- so a loop that idled on the first still frame
+  // would stop before the spring it is there to watch had begun.
+  let moving = moved || now < RING.until;
   for (const a of AXES) {
     const next = springStep(RING[a], RING[vel(a)], RING[tgt(a)], s.w, s.z, dt);
     RING[a] = next.x;
@@ -382,15 +454,26 @@ const PAD = 3;
  * the lobby to a card on the board is 600px of travel between two things that
  * were never on screen together, and it reads as a glitch rather than as
  * movement. Same context, spring; new context, teleport.
+ *
+ * `track` is how to re-read this same stop on later frames -- see `measure`.
+ * Optional so that a caller with a bare rectangle and no element behind it (a
+ * test, a story) still gets exactly the behaviour it always had.
  */
-export function retargetRing(rect: RingRect | null, context: string, angle = 0): void {
+export function retargetRing(
+  rect: RingRect | null,
+  context: string,
+  angle = 0,
+  track: Measure | null = null,
+): void {
   const ring = document.getElementById("ring");
   if (!ring) return;
   if (!rect) {
     ring.classList.remove("ring--on");
     RING.placed = false;
+    measure = null;
     return;
   }
+  measure = track;
   RING.angle = angle;
   RING.tx = rect.left - PAD;
   RING.ty = rect.top - PAD;
@@ -434,6 +517,31 @@ export function retargetRing(rect: RingRect | null, context: string, angle = 0):
   // freshly mounted `#ring` has no inline geometry, and one frame of a
   // full-opacity ring at 0,0 is a flash in the corner on every mount.
   paint();
+  wake();
+}
+
+/**
+ * How long to keep watching after something says the ring's stop is reshaping.
+ *
+ * `bouncy` -- the hand's lift -- is stiffness 520, damping 22, mass 0.7: a
+ * natural frequency of 27.3 rad/s at a damping ratio of 0.577, so 4/(zw) is a
+ * 254ms settling time and framer holds the animation open a while past that for
+ * its own rest thresholds. 600ms covers it with room, and it is a ceiling
+ * rather than a duration: `followTarget` stops reporting movement the moment
+ * the element comes to rest, and the loop idles on the next frame after that.
+ */
+export const WATCH = 600;
+
+/**
+ * The thing the ring is on is about to move; watch it until it stops.
+ *
+ * Separate from `retargetRing` because nothing about the *target* has changed
+ * -- the caller is saying "this is going to reshape under you", which is a
+ * statement about the next 250ms and not about where the cursor is.
+ */
+export function followRing(ms = WATCH): void {
+  if (!RING.placed || !measure) return;
+  RING.until = performance.now() + ms;
   wake();
 }
 

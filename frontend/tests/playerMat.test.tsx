@@ -29,7 +29,6 @@ function renderMat(
     <PlayerMat
       state={state}
       player={player()}
-      names={["You", "AI 1"]}
       cardScale={1}
       actionableOids={NO_OIDS}
       {...props}

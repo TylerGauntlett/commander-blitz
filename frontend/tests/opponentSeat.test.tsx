@@ -79,7 +79,6 @@ function renderSeat(state: GameView, props: Record<string, unknown> = {}) {
     <OpponentSeat
       state={state}
       player={state.players[1]}
-      names={state.players.map((p) => p.name)}
       isActive={false}
       hasPriority={false}
       targetable={false}
@@ -212,42 +211,60 @@ describe("the lethal gauge", () => {
     expect(gauge.style.getPropertyValue("--fill")).toBe("100%");
   });
 
-  it("stacks the damage ticks so the track reads as one bar", () => {
+  it("draws one arrow per direction, each at its own fraction of 21", () => {
     /*
-     * Each tick is offset by the width of the ticks outside it. Drawn at
-     * `right: 0` they would sit on top of each other and three sources would
-     * look like one.
+     * The two facts a Commander player actually watches, and they are about
+     * different pairs of people: what YOUR commander has done to this seat, and
+     * what THIS SEAT's commander has done to you. The bar used to carry neither
+     * -- it drew the worst damage this seat had taken from anybody.
      */
-    const state = view([], { commander_damage_taken: { "0": 7, "2": 7 } }, 1);
-    const { container } = renderSeat(state);
-    const ticks = [...container.querySelectorAll<HTMLElement>(".tick")];
+    const state = view([], { commander_damage_taken: { "0": 7 } });
+    state.players[0].commander_damage_taken = { "1": 14 };
+    const { getByTestId } = renderSeat(state);
+    const track = getByTestId("cmddmg-1");
 
-    expect(ticks).toHaveLength(2);
-    // 7 of 21 is a third of the track each.
-    expect(ticks[0].style.getPropertyValue("--w")).toBe(`${(7 / 21) * 100}%`);
-    expect(ticks[0].style.right).toBe("0%");
-    expect(ticks[1].style.right).toBe(`${(7 / 21) * 100}%`);
+    const dealt = track.querySelector<HTMLElement>('[data-cmddmg="dealt"]');
+    const taken = track.querySelector<HTMLElement>('[data-cmddmg="taken"]');
+    expect(dealt?.style.getPropertyValue("--at")).toBe(`${(7 / 21) * 100}%`);
+    expect(taken?.style.getPropertyValue("--at")).toBe(`${(14 / 21) * 100}%`);
+    expect(track.getAttribute("data-dealt")).toBe("7");
+    expect(track.getAttribute("data-taken")).toBe("14");
   });
 
-  it("draws no tick for a seat that has dealt nothing", () => {
-    // Unlike the orb's plate, which reserves a chip per seat at zero: there the
-    // reflow moves a whole column, here it moves nothing.
+  it("never parks an arrow past the end of the track", () => {
+    const state = view([], { commander_damage_taken: { "0": 26 } });
+    const { getByTestId } = renderSeat(state);
+    expect(
+      getByTestId("cmddmg-1")
+        .querySelector<HTMLElement>('[data-cmddmg="dealt"]')
+        ?.style.getPropertyValue("--at"),
+    ).toBe("100%");
+  });
+
+  it("draws no arrow in a direction nothing has happened in", () => {
+    // Zero costs no layout here -- the arrows are absolutely positioned -- so
+    // the reflow argument that keeps the other cells at zero does not apply,
+    // and two marks parked on the left edge would be two marks saying nothing.
     const state = view([], { commander_damage_taken: { "0": 0 } });
-    expect(renderSeat(state).container.querySelectorAll(".tick")).toHaveLength(0);
+    const { getByTestId } = renderSeat(state);
+    expect(getByTestId("cmddmg-1").querySelectorAll(".cmdarrow")).toHaveLength(0);
   });
 
   it("warns from fifteen, which is one hit short of lethal", () => {
     const state = view([], { commander_damage_taken: { "0": 15 } });
-    const { container } = renderSeat(state);
-
-    expect(container.querySelector(".tick--warn")).not.toBeNull();
-    expect(container.querySelector(".gauge__dmg--warn")).not.toBeNull();
+    const { getByTestId } = renderSeat(state);
+    expect(getByTestId("cmddmg-1").querySelector('[data-cmddmg="dealt"]')?.className).toContain(
+      "cmdarrow--warn",
+    );
   });
 
-  it("names the worst source rather than the last one", () => {
-    const state = view([], { commander_damage_taken: { "0": 4, "2": 12 } }, 1);
+  it("puts both numbers on the gauge's hint, since the row cannot hold them", () => {
+    const state = view([], { commander_damage_taken: { "0": 4 } });
+    state.players[0].commander_damage_taken = { "1": 12 };
     const { container } = renderSeat(state);
-    expect(container.querySelector(".gauge__dmg")?.textContent).toContain("12");
+    const hint = container.querySelector(".gauge")?.getAttribute("data-hint") ?? "";
+    expect(hint).toContain("you have dealt 4 of 21 commander damage to Edgar");
+    expect(hint).toContain("Edgar has dealt 12 of 21 commander damage to you");
   });
 });
 

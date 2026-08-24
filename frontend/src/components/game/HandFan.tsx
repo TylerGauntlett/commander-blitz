@@ -10,6 +10,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import type { CardView, ManaView, UnplayableReason } from "../../api/types";
+import { refollowCursor } from "../../input/cursor";
 import { CARD_SCALE, cardWidthPx, cardWidthVar } from "../../logic/cardSize";
 import { unplayableHint } from "../../logic/mana";
 import { HAND_FAN_W, handStep } from "../../logic/zoomFit";
@@ -155,6 +156,25 @@ export function HandFan({
     setHeldOid(null);
     if (useUiStore.getState().hoveredOid === heldOid) hover(null);
   }, [cards, heldOid, hover]);
+
+  /*
+   * THE RING IS ON A CARD THIS IS ABOUT TO RESHAPE.
+   *
+   * Raising a card un-rotates it, scales it 1.14 and lifts it 24-46px, and the
+   * ring's target is a snapshot taken when the *cursor* last moved. A pointer
+   * coming to rest on the card the ring is already on -- which is exactly what
+   * happens when a keyboard player's hand is still on the mouse -- left a
+   * tilted 102x140 box standing beside an upright 109x153 card, at rest, until
+   * the next press. Both neighbours move too, so it is not only the raised one.
+   *
+   * One call rather than a subscription: this wakes the ring's own loop, which
+   * then follows the element frame by frame for as long as the spring runs. See
+   * `measure` in `input/ring.ts`.
+   */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `hovered` is a trigger, not a read; see above.
+  useEffect(() => {
+    refollowCursor();
+  }, [hovered]);
 
   // The one zone that cannot express its size as a CSS `calc()`: every slot is
   // positioned absolutely at `left: index * step`, and `step` derives from the

@@ -21,7 +21,10 @@
  * 3. **The opponent row's height used to depend on the opponents' card size**, via
  *    `.play`'s `fit-content(58%)` reading their content. Solving their card size
  *    against that row would have been solving a value against a box it defines.
- *    `--pod-lanes-h` pins the box, which is why that change had to land first.
+ *    The box is pinned instead, and pinned to the *viewport* -- `tableH` and the
+ *    seat count, and nothing else that a game can move. See
+ *    `solvePodLanesHeight`, which also records why "independent of every card
+ *    size" was not a strong enough test to pin it by.
  *
  * The discipline in one line: *observe elements, but consume only the dimension
  * proven independent of the zoom.* Never observe `.play__mine .mat`, a
@@ -47,6 +50,7 @@ import {
   lanesWidthIn,
   solveBoardCardWidth,
   solveHandCardWidth,
+  solvePodLanesHeight,
 } from "../logic/zoomFit";
 import { useCardBase } from "./useCardBase";
 
@@ -149,6 +153,15 @@ export interface ZoomFit {
    * `fanOverflow` against a real engine.
    */
   fanW: number;
+  /**
+   * The height an opponent's lanes were solved inside, in px.
+   *
+   * `Table` writes it back out as `--pod-lanes-h`, so the box CSS draws and the
+   * budget the cards were packed into are the same number rather than two
+   * numbers that agree today. `null` on the pinned path, which leaves the
+   * stylesheet's own clamp in force -- that is what "pinned" means.
+   */
+  podLanesH: number | null;
   /** True when the zoom is pinned to the sizes that shipped before it existed. */
   locked: boolean;
 }
@@ -176,6 +189,14 @@ interface Measurements {
   mineW: number;
   mineH: number;
   podW: number;
+  /**
+   * `--pod-lanes-h`, which is now the FLOOR of the pod box rather than the box.
+   *
+   * The box itself is `solvePodLanesHeight(tableH, ...)`, and `tableH` is
+   * already up there. Nothing measured is read for it, deliberately -- see that
+   * function on why "does not depend on a card size" was not a strong enough
+   * test.
+   */
   podLanesH: number;
   /**
    * `.mat`'s orb column, read from `--mat-side` rather than restated.
@@ -209,6 +230,9 @@ function locked(opponents: number): ZoomFit {
     hand: CARD_SCALE.hand,
     // The designed width, which is what a pinned board is pinned to.
     fanW: HAND_FAN_W,
+    // Nothing written, so `theme.css`'s clamp stands. e2e and jsdom both take
+    // this path and both were written against that box.
+    podLanesH: null,
     locked: true,
   };
 }
@@ -275,6 +299,27 @@ export function useZoomFit(args: {
     const pod = podRef.current;
     const foot = footRef.current;
     if (!table || !mine) return;
+    /*
+     * THE SCROLLBAR GUTTER, PUBLISHED, because two panels have to agree about it.
+     *
+     * `.play__mine` reserves a permanent gutter (`scrollbar-gutter: stable`) so
+     * that `mineW` below is a number that does not move when the board starts
+     * scrolling -- that reservation is the whole reason this measurement is
+     * trustworthy. What it costs is that the mat inside it stops short of the
+     * column's right edge, while `.table__foot` -- a sibling, which does not
+     * scroll and cannot be given a gutter without clipping the hand card as it
+     * rises -- runs the full width. Two bordered panels, one above the other,
+     * eight pixels out of line.
+     *
+     * The width is the browser's own and no stylesheet can ask for it, so it is
+     * measured HERE, where the element is already in hand, and handed to CSS as
+     * `--sbw`. `board.css` spends it on `.table__foot`'s right margin and
+     * nowhere else.
+     */
+    document.documentElement.style.setProperty(
+      "--sbw",
+      `${mine.offsetWidth - mine.clientWidth}px`,
+    );
     const next: Measurements = {
       tableW: table.clientWidth,
       tableH: table.clientHeight,
@@ -297,6 +342,7 @@ export function useZoomFit(args: {
       mineW: mine.clientWidth,
       mineH: mine.clientHeight,
       podW: pod?.clientWidth ?? 0,
+      /** `--pod-lanes-h`, which is now the FLOOR of the pod box rather than the box. */
       podLanesH: readLengthVar("--pod-lanes-h", 228),
       matSide: readLengthVar("--mat-side", VIEWER_MAT.sideW),
       matSideCompact: readLengthVar("--mat-side-compact", COMPACT_MAT.sideW),
@@ -407,7 +453,7 @@ export function useZoomFit(args: {
     );
 
     /*
-     * 3. The opponents, inside the box `--pod-lanes-h` pins for them.
+     * 3. The opponents, inside the box solved for them.
      *
      * Their ceiling is the viewer's solved width times the seat ratio, so they
      * scale *with* the viewer's zoom and keep the proportion the board was designed
@@ -421,6 +467,18 @@ export function useZoomFit(args: {
      * rather than as differently-full boards, so the fullest opponent sets the size
      * the row renders at -- which is also the only shape `Table` can express, since
      * one `cardScale` goes to every compact mat.
+     *
+     * THE BOX IS SOLVED NOW, NOT READ. `--pod-lanes-h` used to be the budget
+     * outright, and it is a `vh` clamp measured against a four-seat pod -- which
+     * at one opponent left a two-band board needing 181.6px to hold even a 52px
+     * card inside 142px, so the scan fell through to the floor beside half an
+     * empty table. `solvePodLanesHeight` takes the clamp as a FLOOR and grows it
+     * into `playH` where the seat count says the room is going spare; above two
+     * opponents it returns the clamp unchanged, so the measured trade and the
+     * gates that pin it are untouched. `Table` writes the answer back out as
+     * `--pod-lanes-h` so CSS sizes the box with the same number the cards were
+     * packed into -- one value, both languages, exactly as `cardWidthVar` and
+     * `cardWidthPx` already share one `scale`.
      */
     const count = Math.max(1, opponents.length);
     const podCeiling = boardW * opponentCardScale(opponents.length);
@@ -430,6 +488,22 @@ export function useZoomFit(args: {
     // rather than wrong, which is the direction to be wrong in.
     const podMatW = (measured.podW - (count - 1) * POD_GAP) / count;
     const podLanesW = lanesWidthIn(podMatW, compactMat);
+    /*
+     * Not on a handheld, where an opponent has no lanes to give room to.
+     *
+     * `handheld.css` clips `.mat--compact .mat__lanes` to `height: 0` outright,
+     * so growing this would be writing a variable that the cascade throws away
+     * two files later -- and the `podW` branch below does not consult it at
+     * this size either. `null` leaves `theme.css`'s clamp in force, which is
+     * what a handheld had before and still wants.
+     */
+    const podLanesH = handheld
+      ? null
+      : solvePodLanesHeight({
+          tableH: measured.tableH,
+          cssFloor: measured.podLanesH,
+          opponents: opponents.length,
+        });
     const podW = handheld
       ? // No lanes are drawn for an opponent at this size -- their mat is an orb
         // and a summary line -- so there is nothing to pack and three shelf
@@ -446,7 +520,9 @@ export function useZoomFit(args: {
                 // `--pod-lanes-h` *is* the lanes' box, so it is the budget as it
                 // stands -- no mat chrome to subtract.
                 {
-                  heightPx: measured.podLanesH,
+                  // Non-null here by construction: this arm is the `!handheld`
+                  // one, and only a handheld leaves the box unsolved.
+                  heightPx: podLanesH ?? measured.podLanesH,
                   minCardW: MIN_CARD_W,
                   maxCardW: podCeiling,
                 },
@@ -462,6 +538,7 @@ export function useZoomFit(args: {
       pod: podW / base,
       hand: handW / base,
       fanW,
+      podLanesH,
       locked: false,
     };
   }, [pinned, measured, base, state, actionableOids, opponents, handCount]);

@@ -30,6 +30,7 @@ import {
   laneHeight,
   solveBoardCardWidth,
   solveHandCardWidth,
+  solvePodLanesHeight,
   wrapRows,
 } from "../src/logic/zoomFit";
 
@@ -204,6 +205,125 @@ describe("boardHeight", () => {
       { lanes: [lane([...plain(1, { tapped: true }), ...plain(2)], 400)] },
     ];
     expect(boardHeight(bands, 161)).toBeGreaterThan(boardHeight(bands, 162));
+  });
+});
+
+describe("solvePodLanesHeight", () => {
+  /* `theme.css`'s clamp, which is what the hook hands in as the floor. */
+  const cssFloor = (tableH: number) => Math.min(220, Math.max(140, tableH * 0.15));
+  const solve = (opponents: number, tableH: number) =>
+    solvePodLanesHeight({ tableH, cssFloor: cssFloor(tableH), opponents });
+
+  /**
+   * THE NON-REGRESSION PIN, and the reason the share table has a hole in it.
+   *
+   * `theme.css` records a sweep at 1600x950 with a four-seat pod which concluded
+   * that no card size fits three opponents' boards and the viewer's, and that
+   * the viewer wins. `e2e/deckfit.spec.ts`, `cycle3.spec.ts`'s `rowClipped` guard
+   * and `legibility.spec.ts`'s 50.7px measurement all sit on that conclusion. So
+   * at three or more this function is required to be the identity on its floor.
+   */
+  it("returns the CSS floor untouched at three or more opponents", () => {
+    for (const tableH of [700, 800, 950, 1278, 1440, 2000]) {
+      expect(solve(3, tableH)).toBe(cssFloor(tableH));
+      expect(solve(4, tableH)).toBe(cssFloor(tableH));
+    }
+  });
+
+  /**
+   * THE CONTRACT, and the one this function got wrong once already.
+   *
+   * `e2e/layout.spec.ts` states it in as many words: "the opponent row's height
+   * has to be a function of the viewport alone". The first cut solved against
+   * `.play`'s measured height -- which is independent of every card size, and
+   * still wrong, because `.table__body`'s second row is the foot and the foot
+   * moves with the hand. Playing a card would have resized the foot, which
+   * resizes `.play`, which would have resized this box and translated the
+   * viewer's whole board -- once per card played, all game.
+   *
+   * The signature is the proof: `tableH`, `cssFloor` and a seat count are all it
+   * can see, and none of the three moves during a game. This test is here so
+   * that adding a fourth argument has to argue with something.
+   */
+  it("depends on the viewport and the seat count and nothing else", () => {
+    expect(Object.keys({ tableH: 0, cssFloor: 0, opponents: 0 })).toEqual([
+      "tableH",
+      "cssFloor",
+      "opponents",
+    ]);
+    // Same viewport, same seats, same answer -- whatever else is going on.
+    const a = solve(1, 1278);
+    const b = solve(1, 1278);
+    expect(a).toBe(b);
+  });
+
+  it("grows past the clamp at one and two opponents, once there is room", () => {
+    // 1278 tall, which is `layout.spec.ts`'s big-display case.
+    expect(solve(1, 1278)).toBeGreaterThan(cssFloor(1278));
+    expect(solve(2, 1278)).toBeGreaterThan(cssFloor(1278));
+    // ...and one opponent, with a whole row to itself, gets more than two do.
+    expect(solve(1, 1278)).toBeGreaterThan(solve(2, 1278));
+  });
+
+  it("never returns less than the floor, at any size or seat count", () => {
+    for (const opponents of [0, 1, 2, 3, 4]) {
+      for (const tableH of [0, 320, 600, 800, 950, 1278, 1440, 2400]) {
+        expect(solve(opponents, tableH)).toBeGreaterThanOrEqual(cssFloor(tableH));
+      }
+    }
+  });
+
+  /**
+   * The viewer's ceiling is what the share was measured against.
+   *
+   * `layout.spec.ts`'s "the zoom uses the room a big display has" wants the
+   * viewer at `MAX_CARD_W` on a 2560x1278 panel, and prices that at ~475px of
+   * content against ~580px of budget -- about 105px of slack. Taking all of it
+   * put that test at 1.182 against a floor of 1.2, so the growth here has to
+   * stay meaningfully inside it.
+   */
+  it("leaves the viewer's slack alone on a big display", () => {
+    const grabbed = solve(1, 1278) - cssFloor(1278);
+    expect(grabbed).toBeGreaterThan(40); // enough to matter
+    expect(grabbed).toBeLessThan(90); // and not all of the ~105px of slack
+  });
+
+  it("stops growing at a ceiling, so a tall display cannot make the pod the biggest thing on screen", () => {
+    expect(solve(1, 4000)).toBe(solve(1, 8000));
+  });
+
+  it("is monotone in the room available", () => {
+    const heights = [400, 700, 950, 1100, 1278, 1440].map((h) => solve(1, h));
+    for (let i = 1; i < heights.length; i += 1) {
+      expect(heights[i]).toBeGreaterThanOrEqual(heights[i - 1]);
+    }
+  });
+
+  /**
+   * The defect, as arithmetic.
+   *
+   * A two-band compact mat costs `2.8*cw + 36`, so 52px -- `MIN_CARD_W` -- needs
+   * 181.6px, and `--pod-lanes-h` is 140-220. Below a ~1211px viewport the scan
+   * therefore never finds a fitting size and falls through to the floor, which
+   * is what "the opponent's cards stay the smallest" was.
+   */
+  it("gives a one-opponent two-band board room to clear the floor", () => {
+    const bands: BandFit[] = [
+      { lanes: [lane(plain(3), 600)] },
+      { lanes: [lane(plain(4), 600)] },
+    ];
+    const budget = { minCardW: 52, maxCardW: 118 };
+    const at = (h: number) => solveBoardCardWidth(bands, { ...budget, heightPx: h });
+
+    // A 1600x950 laptop, which is where the defect was lived with: the clamp is
+    // 142.5px against the 181.6px this board needs to hold even a 52px card, so
+    // the scan finds nothing and returns the floor verbatim.
+    expect(at(cssFloor(950))).toBe(52);
+    expect(at(solve(1, 950))).toBeGreaterThan(52);
+
+    // And on the big display, where the room was there all along.
+    expect(at(cssFloor(1278))).toBeLessThan(56);
+    expect(at(solve(1, 1278))).toBeGreaterThan(75);
   });
 });
 

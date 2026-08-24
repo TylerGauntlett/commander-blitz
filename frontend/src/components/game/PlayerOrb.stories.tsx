@@ -81,20 +81,19 @@ export const Viewer: Story = {
 export const LowLife: Story = { args: seat({ life: 3 }) };
 
 /**
- * Fifteen from one opponent: past the warning line, six short of lethal.
+ * Fifteen taken from one opponent, and this panel says nothing about it.
  *
- * Keyed by the *player* who dealt it, unlike `commander_tax` next to it -- see
- * the note on `PlayerView.commander_damage_taken`. A fixture keyed by commander
- * oid renders a row of honest zeroes and looks completely fine.
+ * It used to carry a chip per opposing seat with a meter under it: the loudest
+ * object in the column, answering only "how close is each of them to killing
+ * me" and nothing about the other direction. Both directions are two arrows on
+ * that opponent's own life bar now -- see `OpponentSeat`.
  */
 export const CommanderDamage: Story = {
   args: seat({ commander_damage_taken: { "1": 15 } }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const panel = await canvas.findByTestId("cmddmg-0");
-    const pip = panel.querySelector('[data-from="1"]') as HTMLElement;
-    expect(pip.dataset.amount).toBe("15");
-    expect(pip.className, "15 of 21 should be reading as a warning").toContain("cmd-pip--warn");
+    await canvas.findByTestId("player-0");
+    expect(canvasElement.querySelector('[data-testid="cmddmg-0"]')).toBeNull();
   },
 };
 

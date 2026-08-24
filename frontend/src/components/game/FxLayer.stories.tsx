@@ -59,7 +59,6 @@ function Stage({ beat, seed = [] }: { beat: LiveBeat | null; seed?: number[] }) 
             key={pid}
             state={state}
             player={state.players[pid]}
-            names={state.players.map((p) => p.name)}
             compact
             mirrored
             cardScale={opponentCardScale(opponents.length)}
@@ -70,7 +69,6 @@ function Stage({ beat, seed = [] }: { beat: LiveBeat | null; seed?: number[] }) 
       <PlayerMat
         state={state}
         player={state.players[state.seat]}
-        names={state.players.map((p) => p.name)}
         cardScale={CARD_SCALE.own}
         actionableOids={new Set()}
       />

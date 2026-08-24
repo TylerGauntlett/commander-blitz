@@ -129,6 +129,51 @@ describe("resolveCursor", () => {
     expect(getCursor()).toBe("act:a1");
   });
 
+  it("does not take a field away from somebody typing in it", () => {
+    /*
+     * The pod lobby, and the bug a player would describe as "the seed box only
+     * accepts one digit". `resolveCursor` runs after EVERY commit, and a
+     * controlled input commits on every keystroke -- so the resolve that was
+     * meant to repair a ring whose element had been replaced was instead
+     * re-focusing the header's first button, one character in.
+     */
+    const table = document.createElement("div");
+    table.className = "screen";
+    table.innerHTML = `<button id="copy">Copy</button><input id="seed" aria-label="Seed" />`;
+    document.body.append(table);
+    resolveCursor();
+    expect(getCursor()).toBe("ui:#copy");
+
+    const seed = document.getElementById("seed") as HTMLInputElement;
+    seed.focus();
+    resolveCursor();
+
+    expect(document.activeElement).toBe(seed);
+    // And the ring went to the field rather than staying on a button nobody is
+    // using: off the board a stop IS a focusable, so the two cannot disagree.
+    expect(getCursor()).toBe("ui:#seed");
+    expect(document.querySelectorAll("[data-cursor]").length).toBe(1);
+    expect(seed.hasAttribute("data-cursor")).toBe(true);
+  });
+
+  it("keeps the ring on the card it is on when focus is elsewhere", () => {
+    /*
+     * The other half of the rule above, and the reason it is not simply "follow
+     * focus". A board card is a div: it cannot hold focus, so the focused
+     * element there is whatever control was last pressed. Following that would
+     * drag the ring off the card the player just walked it onto, on every push
+     * the engine makes.
+     */
+    board(`<button data-stop="tool:undo"></button><div data-stop="card:1"></div>`);
+    const undo = document.querySelector("button") as HTMLButtonElement;
+    undo.focus();
+    setCursor("card:1");
+    resolveCursor();
+
+    expect(getCursor()).toBe("card:1");
+    expect(document.activeElement).toBe(undo);
+  });
+
   it("stands the ring down when there is nothing to point at", () => {
     board(`<div data-stop="card:1"></div>`);
     setCursor("card:1");

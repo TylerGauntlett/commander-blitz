@@ -32,7 +32,6 @@ import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
 import { type ImageMap, artState, artUrlFor, artistOf } from "../../logic/cardArt";
 import { isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
-import { unplayableHint } from "../../logic/mana";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -74,16 +73,11 @@ function cardStatus(card: CardView): string {
  * **The fact list is dropped.** Keywords are in the rules text, status is the
  * tap state and the lane it is in, the controller is whose mat it is on, and
  * the artist is not why anybody opens this at 1280x800.
+ *
+ * **So is the unplayable reason**, which used to be the last row. See the note
+ * on `.reader__rules` below.
  */
-function CompressedBody({
-  card,
-  images,
-  why,
-}: {
-  card: CardView;
-  images: ImageMap;
-  why: string | null;
-}) {
+function CompressedBody({ card, images }: { card: CardView; images: ImageMap }) {
   const art = artUrlFor(images, card);
   const pips = manaPips(card.mana_cost);
   const pt =
@@ -132,23 +126,24 @@ function CompressedBody({
             panel that has to be readable in full. */}
         <div className="reader__tl">{card.type_line}</div>
 
+        {/*
+          The rules text, and it is what the rest of this panel exists to make
+          room for.
+
+          IT USED TO SHARE THE COLUMN WITH "Needs {4}{G}{G}{G} -- you have {G}".
+          That sentence is two lines at the 16px floor and it is `flex: none`,
+          so it took its height out of the one box here that is allowed to give
+          -- and on a card with real rules text the result was Elder Deep-Fiend
+          cut 75px into its own paragraph, mid-word, with no scrollbar drawn.
+          The reason a card is dim is a fact about the hand, not about the card,
+          and `HandFan` already draws it there as `.hand__hint`; it is no longer
+          suppressed on a handheld, so nothing was lost by moving it back.
+        */}
         {card.oracle_text && (
           <div className="reader__rules">
             <SymbolText text={card.oracle_text} />
           </div>
         )}
-
-        {/*
-          Why you cannot cast it.
-
-          `HandFan` draws this under the hand as `.hand__hint`, which is
-          hover-only and, on a handheld, in the wrong place -- the reader is
-          already where a player is looking to find out what a card is. The
-          hand's copy is suppressed there so the same sentence is not on screen
-          twice; on a desktop both stay, because the hand has the room and the
-          hint sits where the pointer already is.
-        */}
-        {why && <div className="reader__why">{why}</div>}
       </div>
     </>
   );
@@ -224,21 +219,6 @@ export function CardPreview({ state }: Props) {
   const artist = card ? artistOf(images, card.card_id) : null;
 
   /*
-   * The unplayable reason, derived rather than passed in.
-   *
-   * `hand_reasons` is the viewer's own and covers hand cards only, and this
-   * component already takes `state` -- so asking for it here costs no new prop
-   * and no drilling through `Table`. Guarded on the card actually being in the
-   * viewer's hand, because the map is keyed by oid and an opponent's permanent
-   * could collide with one.
-   */
-  const viewer = state.players[state.seat];
-  const why =
-    card && card.zone === "hand" && card.controller === state.seat
-      ? unplayableHint(card, viewer?.hand_reasons?.[String(card.oid)], viewer?.mana)
-      : null;
-
-  /*
    * The panel is a fixed height, whether it is holding a card or not.
    *
    * It used to size to its content, which meant the whole action panel below it
@@ -263,7 +243,7 @@ export function CardPreview({ state }: Props) {
             transition={ease}
           >
             {compressed ? (
-              <CompressedBody card={card} images={images} why={why} />
+              <CompressedBody card={card} images={images} />
             ) : (
               <FullBody card={card} state={state} artist={artist} />
             )}

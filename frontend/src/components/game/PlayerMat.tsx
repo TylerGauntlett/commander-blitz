@@ -30,7 +30,6 @@ const BACK_BAND: readonly LaneName[] = ["Lands"];
 interface Props {
   state: GameView;
   player: PlayerView;
-  names: string[];
   compact?: boolean;
   /** Lands on top instead of underneath: this mat faces the viewer. */
   mirrored?: boolean;
@@ -95,7 +94,6 @@ interface Props {
 export function PlayerMat({
   state,
   player,
-  names,
   compact = false,
   mirrored = false,
   cardScale,
@@ -183,7 +181,6 @@ export function PlayerMat({
             <OpponentSeat
               state={state}
               player={player}
-              names={names}
               isActive={player.pid === state.active_player}
               hasPriority={state.priority_player === player.pid}
               targetable={playerTargetable}
@@ -199,7 +196,6 @@ export function PlayerMat({
               isViewer={player.pid === state.seat}
               isActive={player.pid === state.active_player}
               hasPriority={state.priority_player === player.pid}
-              names={names}
               targetable={playerTargetable}
               onSelect={onSelectPlayer}
               spending={spending}

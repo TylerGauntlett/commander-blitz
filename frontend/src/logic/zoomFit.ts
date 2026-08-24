@@ -325,6 +325,75 @@ export function boardHeight(
 }
 
 /**
+ * How much of the VIEWPORT an opponent row may grow into, by how many opponents
+ * there are -- and it is a ceiling on the growth, not a reservation.
+ *
+ * `--pod-lanes-h` is `clamp(140px, 15vh, 220px)`, and `theme.css` records the
+ * sweep that produced it: 1600x950, a FOUR-seat pod, where three opponents'
+ * boards and the viewer's will not fit together at any card size and the viewer
+ * deliberately wins. That is the right answer to the question it was asked. It
+ * was then applied at every seat count, and at one opponent it is the wrong
+ * answer to a different question -- a `2.8*cw + 36` two-band compact mat needs
+ * 181.6px to hold even a 52px card, so `solveBoardCardWidth` fell through its
+ * scan and returned the floor beside half an empty table. That is the defect.
+ *
+ * So: no growth at all above two opponents, which keeps the measured trade and
+ * every gate that pins it byte-identical, and a bigger slice of the viewport
+ * below that -- where the room is provably going spare.
+ *
+ * MEASURED AGAINST THE VIEWER'S OWN CEILING, not chosen. `layout.spec.ts`'s "the
+ * zoom uses the room a big display has" wants the viewer at `MAX_CARD_W` on a
+ * 2560x1278 panel, which its own comment prices at ~475px of content against
+ * ~580px of budget. That is about 105px of slack, so 0.20 -- 256px at 1278
+ * against the clamp's 192 -- spends about two thirds of it and leaves the rest.
+ * Taking the lot is what the first cut of this did, and it put that test at
+ * 1.182 against a floor of 1.2.
+ */
+const POD_LANES_SHARE: Record<number, number> = { 1: 0.2, 2: 0.16 };
+
+/**
+ * The most the lanes may take however much room there is.
+ *
+ * Past about this an opponent's cards would approach the viewer's own and the
+ * hierarchy `opponentCardScale` exists to state would stop being visible. It
+ * rarely binds -- `podCeiling` usually stops the solve first -- and it is here
+ * so that a very tall display cannot make the pod the biggest thing on screen.
+ */
+const POD_LANES_MAX = 320;
+
+/**
+ * The height budget an opponent's lanes get, and therefore the height of the box.
+ *
+ * **A FUNCTION OF THE VIEWPORT AND THE SEAT COUNT, AND OF NOTHING ELSE.** That
+ * is not a simplification, it is the contract: `e2e/layout.spec.ts` states it in
+ * as many words ("the opponent row's height has to be a function of the viewport
+ * alone"), and it is what makes the viewer's own solve well-posed. Anything that
+ * moves during a game is disqualified, and that is a stronger test than "not
+ * derived from a card size" -- the first cut of this solved against `.play`'s
+ * measured height, which is independent of every card size and *still* wrong.
+ * `.table__body`'s second row is the foot, and the foot's height moves with the
+ * hand: playing a card would have resized the foot, which resizes `.play`, which
+ * would have resized this box and with it the whole viewer's board, once per
+ * card played. Nothing in the suite pins that directly -- "the viewer's bands do
+ * not move" measures inside the mat, not the mat's own height -- which is
+ * exactly why the rule is stated here rather than left to a gate.
+ *
+ * `cssFloor` -- today's `--pod-lanes-h` -- is a FLOOR and never a ceiling, so
+ * this can only ever return what shipped or more.
+ */
+export function solvePodLanesHeight(args: {
+  /** The table's own height: the viewport, less nothing that moves. */
+  tableH: number;
+  cssFloor: number;
+  opponents: number;
+}): number {
+  const { tableH, cssFloor, opponents } = args;
+  const share = POD_LANES_SHARE[opponents] ?? 0;
+  if (share === 0 || tableH <= 0) return cssFloor;
+  return Math.max(cssFloor, Math.min(tableH * share, POD_LANES_MAX));
+}
+
+/**
  * Granularity of the search, in px. Half a pixel of card width is invisible, and
  * a 52..150 range is ~200 evaluations of some arithmetic over a dozen groups --
  * cheap enough to do on a state change and not worth being clever about.

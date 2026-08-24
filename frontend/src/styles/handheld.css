@@ -393,6 +393,28 @@ html[data-input="keyboard"] .glyph--key {
  * one button. It is the same ordering `docs/handheld-playtest.md` sets for
  * everything else in this rail.
  */
+/*
+ * NO PANE AROUND THE READER OR THE LIST.
+ *
+ * `mockups/handheld-board/` puts it plainly: the rows are already bordered
+ * rectangles, and a well around the only content in a 243px column is a frame
+ * around a frame. Three nested boxes is also what the rail looked like -- pane,
+ * pane, dock -- where the mockup has two open regions and one well, and the
+ * well is the one that means something (the dock does not scroll with the
+ * list, and the border is what makes that visible rather than merely true).
+ *
+ * It is worth 26px of list width and 22px of list height, which on this rail is
+ * a row. Desktop keeps its panes: `e2e/action-panel.spec.ts` measures `.acts`
+ * against the stack pane opposite it, and on a desktop there still is one.
+ */
+[data-handheld] .rail--right .preview,
+[data-handheld] .rail--right .acts {
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
 [data-handheld] .rail--right .commit-dock {
   flex: 0 0 auto;
   gap: 4px;
@@ -432,15 +454,6 @@ html[data-input="keyboard"] .glyph--key {
   min-width: 26px;
   height: 26px;
   border-radius: 6px;
-  line-height: 1;
-}
-
-[data-handheld] .commit__key {
-  display: inline-grid;
-  place-items: center;
-  min-width: 26px;
-  height: 26px;
-  padding: 0 6px;
   line-height: 1;
 }
 
@@ -738,6 +751,372 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .play__mine .orb__foot {
   gap: 3px;
+}
+
+/* ==========================================================================
+   THE VIEWER'S ORB IS `mockups/handheld-board/`'s PLINTH
+   ==========================================================================
+
+   `mockups/self/03-plinth.html` argued for this panel and `handheld-board/`
+   drew it beside the three seats it has to belong with: the commander's art as
+   the panel's ground, the portrait as the button that casts them, life as a
+   dial stamped over the portrait's corner, and the zones as chips the same
+   size an opponent's are.
+
+   What shipped was the same idea at desktop proportions -- a 2:1 banner about
+   68px tall, a 52px brass seal, and five leaf stacks -- and at 1280x800 that
+   is not the fourth seat at the table, it is a control panel with a thumbnail
+   on it. The rules below are the mockup's numbers, scoped to the viewer's own
+   column on a handheld and nowhere else: the desktop orb has 190px of width
+   and 518 of height to spend and its own reasons for spending them, and
+   `e2e/orb.spec.ts` still measures those.
+
+   Everything here is a SKIN. No markup moved to get it, which is deliberate:
+   the surface is covered by `tests/playerOrb.test.tsx`, `e2e/orb.spec.ts` and
+   `tests/commandZone.test.tsx`, and a layout round that also rewrites the DOM
+   cannot say which half a regression came out of. */
+
+/* Three pixels, like the mockup's `.orb`. Eight was a desktop panel's padding
+   and it is 16px of a 154px column. */
+[data-handheld] .play__mine .orb__body {
+  gap: 3px;
+  padding: 3px;
+}
+
+/*
+ * `display: contents`, so the head stops being a row.
+ *
+ * The name is already dropped further down -- the strip six pixels above names
+ * you twice -- which leaves a flex row whose only child is absolutely
+ * positioned: an empty line plus a gap, at the top of the tightest column on
+ * the screen. Dissolving it also lets the priority tick position against
+ * `.orb`, which is what it wants anyway; it hangs off the panel's top edge.
+ */
+[data-handheld] .play__mine .orb__head {
+  display: contents;
+}
+
+/*
+ * WHOSE TURN IT IS AND WHO HOLDS PRIORITY ARE TWO DIFFERENT FACTS -- AND ON
+ * YOUR OWN SEAT THE SECOND ONE IS ALREADY SAID IN WORDS.
+ *
+ * This was a 36x4 violet tick hung off the panel's top edge, borrowed from
+ * `.seat__pri` so that the pod would say one thing one way. On an opponent it
+ * lands on their own bar; here `.orb__head` is `display: contents` and the
+ * plinth starts 3px down, so it landed ON THE COMMANDER'S PORTRAIT -- a purple
+ * line across the top of the painting, at the one seat where it is not needed:
+ * the action panel opposite is already headed "You have priority" in full, and
+ * the turn is the panel's own inset ring below.
+ *
+ * Hidden rather than removed from the DOM: it is the viewer's column that is
+ * crowded, `tests/playerOrb.test.tsx` and `e2e/orb.spec.ts` still read the
+ * element, and every other seat keeps its tick.
+ */
+[data-handheld] .play__mine .orb__priority {
+  display: none;
+}
+
+/* ...and the turn is the ring, inset so it reads as the panel's own edge
+   rather than as a second border outside the one already there. */
+[data-handheld] .play__mine .orb--active {
+  border-color: var(--edge);
+  box-shadow: inset 0 0 0 2px var(--astral-hi);
+}
+
+/* No box around the portrait. The picture has a ring of its own and the panel
+   has a border of its own; a third rectangle between them is a frame around a
+   frame, and it is padding this column cannot spend. */
+[data-handheld] .play__mine .cmdslot {
+  gap: 3px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/*
+ * 1.16:1, and the crop mostly refunds itself.
+ *
+ * `art_crop` is 626x457, or 1.37:1. The desktop banner is 2:1, which keeps the
+ * width and throws most of the height away; plinth's own 0.59:1 portrait keeps
+ * the height and shows about 40% of the painting. 148x128 is 1.16:1, so
+ * `cover` keeps roughly 84% of the width -- and 128px of picture rather than
+ * 68 is the whole difference between a portrait and a thumbnail.
+ *
+ * The 22px is the dial's overhang, RESERVED rather than clipped: 34% of a 64px
+ * disc, the same share the desktop seal hangs off its banner.
+ */
+[data-handheld] .play__mine .cmdplinth__frame {
+  margin-bottom: 22px;
+  aspect-ratio: 1.16;
+}
+
+[data-handheld] .play__mine .cmdplinth__art {
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+}
+
+/* A LIFT, NOT A LOOK. `art_crop` is printed to be read through a card's text
+   box; on a dark panel at this size it comes out muddy without it. */
+[data-handheld] .play__mine .cmdplinth__art img {
+  filter: saturate(1.18) contrast(1.04) brightness(1.14);
+}
+
+/*
+ * The price strip, on the picture and at the TOP of it.
+ *
+ * The mockup records why it is not at the bottom: the dial hangs over the
+ * bottom-right corner and covered the tax and the state word. Opaque rather
+ * than a scrim, because a scrim over a painting is legible on some paintings.
+ *
+ * `.cmdslot` is `position: relative` already and the frame is its first child
+ * at zero offset, so this lands on the art without the strip moving in the DOM.
+ */
+[data-handheld] .play__mine .cmdplinth__strip {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  left: 0;
+  flex-wrap: wrap;
+  align-content: center;
+  min-height: 21px;
+  padding: 0 4px;
+  border-radius: 8px 8px 0 0;
+  background: rgb(9 8 20 / 0.82);
+  line-height: 20px;
+}
+
+/*
+ * It wraps rather than ellipsising, and that is the point of the `flex-wrap`
+ * above.
+ *
+ * At the 16px floor the longest word this can carry is about 130px and the
+ * strip is 136 -- so "In command" beside a three-symbol cost is nine pixels
+ * over, every time a commander is sitting in the zone waiting to be cast.
+ * `text-overflow` made that "In comm...", which is the shape of the bug
+ * `board.css` records against the desktop plinth at 74px and is not worth
+ * repeating here. A second 20px line costs 20px of a 117px picture in one
+ * state; a clipped word costs the word in the state where it matters most.
+ */
+[data-handheld] .play__mine .cmdplinth__word {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/*
+ * ...AND THE STATE WORD COMES BACK, now that there is a strip to hold it.
+ *
+ * It is dropped further down on the grounds that the plinth's position says
+ * it. That is true of an opponent's 46px banner and it is not true here: this
+ * portrait is the button that casts your commander, and "In play" against
+ * "Ready" against "Need 8" is the difference between a picture and a control.
+ * The mockup calls it `.win__st` and gives it the strip's right end.
+ */
+[data-handheld] .play__mine .cmdplinth__word {
+  display: block;
+  margin-left: auto;
+  color: var(--text-dim);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+[data-handheld] .play__mine .cmdslot--ready .cmdplinth__word {
+  color: var(--playable);
+}
+
+/* A cost only exists in the command zone, so it and the word never compete for
+   the width -- and it lands directly above the mana groups that pay it, which
+   is the adjacency the commander moved into this panel for. */
+[data-handheld] .play__mine .cmdplinth__cost {
+  order: -1;
+  margin-left: 0;
+}
+
+/* Two lines and then an ellipsis, at the floor. Full width, because the dial's
+   overhang is reserved above this rather than indented around it. */
+[data-handheld] .play__mine .cmdplinth__name {
+  line-height: 18px;
+}
+
+/* ---- The dial: a ring you can read the life total off -------------------
+ *
+ * Desktop's brass disc is a seal -- an object, and deliberately not a meter.
+ * At 64px on a 128px portrait the mockup spends the extra area on the one
+ * thing the disc could not say: a conic gradient to `--fill` turns "34" into
+ * "34 of the 40 you started with" without adding a character.
+ *
+ * `::before` is the ring and `::after` is the hole punched out of it, which is
+ * why the numeral has to claim a stacking context of its own -- an absolutely
+ * positioned pseudo-element paints over static content. */
+[data-handheld] .play__mine .dial {
+  --seal-w: 64px;
+  width: 64px;
+  background: none;
+  box-shadow: 0 0 0 3px var(--void-0);
+}
+
+[data-handheld] .play__mine .dial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--gold) 0 var(--fill, 0%),
+    rgb(255 255 255 / 0.09) var(--fill, 0%) 100%
+  );
+}
+
+[data-handheld] .play__mine .dial::after {
+  inset: 5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--void-1);
+}
+
+[data-handheld] .play__mine .dial__n {
+  position: relative;
+  z-index: 1;
+  color: var(--text);
+  font-size: 28px;
+  text-shadow: none;
+}
+
+/* Flush with the portrait's right edge, hanging a third of itself below it --
+   the 22px `.cmdplinth__frame` reserves above. */
+[data-handheld] .play__mine .cmdplinth__frame .dial {
+  right: 0;
+  bottom: -22px;
+}
+
+/* ---- Mana: one mark per KIND, two to a row ------------------------------
+ *
+ * The panel already counts rather than repeating -- a symbol per mana wrapped
+ * a ten-land board to three rows. What the mockup adds is that the groups are
+ * a GRID: four sources make two tidy rows of two rather than a centred run
+ * that re-flows every time a land taps. */
+[data-handheld] .play__mine .orb__mana {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: 0;
+  background: none;
+}
+
+[data-handheld] .play__mine .mana-grp {
+  justify-content: center;
+  height: 26px;
+  border-radius: 5px;
+  background: var(--pane-well);
+  box-shadow: inset 0 0 0 1px var(--edge);
+}
+
+[data-handheld] .play__mine .mana-grp--spent {
+  box-shadow: inset 0 0 0 1px var(--staged);
+}
+
+/* One group and nothing to pair it with takes the row rather than half of one:
+   a lone chip in the left column reads as a missing right column. */
+[data-handheld] .play__mine .mana-grp:only-child,
+[data-handheld] .play__mine .orb__none {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+/* ---- Zones: a chip per zone, three then two -----------------------------
+ *
+ * The five zones were leaf stacks, and the stack is already reduced to its top
+ * leaf here because the leaves are height this column does not have. What was
+ * left is a count in a card-back-coloured box, five of them, told apart by an
+ * icon's hue -- which is one channel, and it is the one `e2e/greyscale.spec.ts`
+ * takes away.
+ *
+ * The mockup's answer is the chip an opponent's seat already draws: the zone's
+ * own colour as the GROUND with one dark ink on all five, so a chip is a
+ * shape and a colour and a number. And which of them you can press is drawn
+ * rather than learned -- a lit top edge and a dropped bottom one on the four
+ * that open a peek, a recessed and desaturated face on the library, which is
+ * hidden information and never a control.
+ *
+ * TWO TO A ROW, AND NOT THE MOCKUP'S THREE. The mockup splits its five 3 + 2
+ * inside a 148px `.orb`; this column is 136px of content at 1280 and 126 at
+ * 1200, and three 44px targets with two gaps between them is 138. There is no
+ * arithmetic that fits three of them and clears the floor, so the floor wins
+ * and the row does not -- which is the same trade `handheld.css` already made
+ * when the piles started wrapping, and `expectHandheldFloors` is the gate that
+ * refuses to let it be made the other way. */
+[data-handheld] .play__mine .piles {
+  gap: 3px;
+  padding: 0;
+  background: none;
+}
+
+[data-handheld] .play__mine .pile {
+  flex: 1 1 calc(50% - 2px);
+  min-width: 0;
+  height: 44px;
+  border-radius: 6px;
+  background: var(--zone-gy);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.34), inset 0 -1px 0 rgb(0 0 0 / 0.34);
+  color: var(--chip-ink);
+}
+
+[data-handheld] .play__mine .pile:has(.pile__leaf--lib) {
+  background: var(--zone-lib);
+}
+
+[data-handheld] .play__mine .pile:has(.pile__leaf--hand) {
+  background: var(--zone-hand);
+}
+
+[data-handheld] .play__mine .pile:has(.pile__leaf--gy) {
+  background: var(--zone-gy);
+}
+
+[data-handheld] .play__mine .pile:has(.pile__leaf--ex) {
+  background: var(--zone-ex);
+}
+
+[data-handheld] .play__mine .pile:has(.pile__leaf--cmd) {
+  background: var(--zone-cmd);
+}
+
+/* Hidden information, and so never a control: recessed and desaturated rather
+   than lit. Relief, not colour, so it survives greyscale. */
+[data-handheld] .play__mine .pile--static {
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.6);
+  filter: saturate(0.55);
+}
+
+/* The count, now that the chip under it is the card back. */
+[data-handheld] .play__mine .pile__leaf--top {
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--chip-ink);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* One ink on all five, because the chip's own colour is what says which zone
+   this is now -- the mark is there to say it a second way. */
+[data-handheld] .play__mine .pile .ico {
+  width: 14px;
+  height: 14px;
+  color: var(--chip-ink);
+}
+
+[data-handheld] .play__mine .pile--empty {
+  opacity: 0.55;
+}
+
+[data-handheld] .play__mine .pile--empty .pile__leaf--top {
+  opacity: 1;
+}
+
+[data-handheld] .play__mine .pile:hover:not(.pile--static) {
+  filter: brightness(1.12);
 }
 
 [data-handheld] .play__mine .orb__body {
@@ -1249,7 +1628,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .cmdplinth__name,
 [data-handheld] .cmdplinth__word,
 [data-handheld] .mana-grp__n,
-[data-handheld] .cmd-pip__n,
 [data-handheld] .pile__leaf,
 [data-handheld] .lane__count,
 [data-handheld] .cardstack__count,
@@ -1261,7 +1639,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .act__name,
 [data-handheld] .act__aim,
 [data-handheld] .act__pt,
-[data-handheld] .commit__key,
 [data-handheld] .aim,
 [data-handheld] .tool,
 [data-handheld] .hints,
@@ -1272,9 +1649,10 @@ html[data-input="keyboard"] .hints {
    is, and an empty lane is exactly when you need to know. */
   [data-handheld]
   .lane__label,
-/* "All attack" / "No attacks" beside the commit slab. These are decisions. */
+/* The commit bar's two marks, and the line that carries the count the slab's
+   label used to. These are decisions. */
   [data-handheld]
-  .commit-alt,
+  .commit-note,
 [data-handheld] .commit-dock button,
 /*
  * The action panel's own rows, found by the CI gate rather than by looking --
@@ -1344,8 +1722,7 @@ html[data-input="keyboard"] .hints {
  * Dropping is for labels whose subject is still on screen; a count is not its
  * own name.
  */
-[data-handheld] .track__step-label,
-[data-handheld] .cmd-pip__who {
+[data-handheld] .track__step-label {
   display: revert;
   font-size: 16px;
 }
@@ -1445,13 +1822,15 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .pile,
 [data-handheld] .aim,
 [data-handheld] .tool,
-/* The commit slab's alternatives -- "All attack", "No attacks". They are
-   decisions with consequences, not affordances, so a finger has to be able to
-   land on them as reliably as on the slab itself. */
+/* The settings menu's rows. They are one press away from quitting the game, so
+   they are the last controls that may be hard to land on. */
   [data-handheld]
-  .commit-alt
-  button,
-[data-handheld] .commit-alt > *,
+  .settings__item,
+/* The commit bar's "all" and "none" marks. They are decisions with
+   consequences, not affordances, so a finger has to be able to land on them as
+   reliably as on the slab between them. */
+  [data-handheld]
+  .commit-mark,
 /* Modal options and action rows: the two controls a turn is actually spent on. */
   [data-handheld]
   .opt,
@@ -1623,8 +2002,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .chip,
 [data-handheld] .chip--tiny,
 [data-handheld] .choices__label,
-[data-handheld] .cmd-pip__n,
-[data-handheld] .cmd-pip__who,
 [data-handheld] .cmdplinth__art--none span,
 [data-handheld] .cmdplinth__glyph,
 [data-handheld] .cmdplinth__name,
@@ -1632,8 +2009,8 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .cmdslot__tax,
 [data-handheld] .codechip__l,
 [data-handheld] .codechip__v,
-[data-handheld] .commit-alt button,
-[data-handheld] .commit__key,
+[data-handheld] .commit-mark,
+[data-handheld] .commit-note,
 [data-handheld] .count,
 [data-handheld] .curve__n,
 [data-handheld] .curve__none,
@@ -1715,6 +2092,7 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .seg__b,
 [data-handheld] .segmented__btn,
 [data-handheld] .sel,
+[data-handheld] .settings__item,
 [data-handheld] .sig__n,
 [data-handheld] .sig__why,
 [data-handheld] .slot__no,
@@ -1748,15 +2126,44 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .ghost,
 [data-handheld] .lock,
 [data-handheld] .deal,
-[data-handheld] .ibtn,
 [data-handheld] .seg__b,
 [data-handheld] .segmented__btn,
 [data-handheld] .sel,
 [data-handheld] .search__i,
 [data-handheld] .join__in,
 [data-handheld] .join__go,
-[data-handheld] .field__input,
-[data-handheld] .plate__name {
+[data-handheld] .field__input {
+  min-height: 44px;
+}
+
+/*
+ * The two on a seat plate, which the list above cannot simply be given -- there
+ * a height is also an ALIGNMENT.
+ *
+ * `.plate__name` is a control and the label on the other three plates is not,
+ * so raising the field on its own stepped your entire plate 23px down the slot
+ * and the row of four stopped lining up. The floor is spent on the plate's row
+ * height instead, which gives the field its 44px and gives the label beside it
+ * the same box. See `--name-h` in `lobby.css`.
+ *
+ * `.ibtn` was in the list and got half a floor: `min-height` with no
+ * `min-width` turns a 17px circle into a 17x44 pill. Giving it the other half
+ * is not the answer either -- a 44px disc in a row of 14px mana pips is the
+ * loudest object on the plate, and this is the quietest control on it. The
+ * floor is a TARGET, not a size, so the target grows and the mark does not:
+ * `lobby.css` draws the circle on `.ibtn::before`, and only the box is 44px.
+ */
+[data-handheld] .plate {
+  --name-h: 44px;
+  --meta-h: 44px;
+}
+
+[data-handheld] .ibtn {
+  /* A shade larger than the desktop's 17px, because the pips and the type
+     beside it grew too -- but nothing like the box it is centred in. */
+  --ibtn-dot: 22px;
+
+  min-width: 44px;
   min-height: 44px;
 }
 

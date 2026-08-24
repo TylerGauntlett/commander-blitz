@@ -829,81 +829,6 @@
   font-size: 10px;
 }
 
-/* Commander damage ------------------------------------------------------- */
-
-/*
- * One chip per opponent, present from turn one at zero.
- *
- * The chip was a bare number, which in a four-player pod is three identical
- * numbers and no way to tell whose is whose without hovering each. It carries the
- * seat and a meter now: 21 is the number that decides the game, so "13" wants to
- * read as most of the way there rather than as a number to compare against a
- * threshold you have to remember.
- */
-.cmd-pip {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 1px 4px 2px;
-  border: 1px solid var(--rail-line);
-  border-radius: 4px;
-  background: var(--pane-well);
-  color: var(--text-dim);
-}
-
-.cmd-pip__head {
-  display: flex;
-  align-items: baseline;
-  gap: 3px;
-}
-
-.cmd-pip__who {
-  color: var(--text-faint);
-  font-size: 7.5px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.cmd-pip__n {
-  font-size: 11px;
-  font-weight: 700;
-}
-
-/* The fraction of 21, as a length. Length reads with the hue taken away, which is
-   the same reason `--warn` below spends a border weight rather than only a red. */
-.cmd-pip__meter {
-  position: relative;
-  overflow: hidden;
-  height: 3px;
-  border-radius: 2px;
-  background: rgb(255 255 255 / 0.12);
-}
-
-.cmd-pip__meter::after {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--fill, 0%);
-  border-radius: 2px;
-  background: var(--danger);
-}
-
-/* Untouched. Dimmed so three seats at zero read as the background they are, and
-   the one seat that has hit you is what the eye lands on. */
-.cmd-pip--zero {
-  opacity: 0.45;
-}
-
-/* The heavier rule is not decoration. Red is the only thing separating this from
-   its neighbour, and red is exactly what `e2e/greyscale.spec.ts` takes away --
-   a 2px border survives that and a hue does not. */
-.cmd-pip--warn {
-  border-width: 2px;
-  border-color: var(--danger);
-  background: #331616;
-  color: #ffb3b3;
-}
-
 /* Mana panel ------------------------------------------------------------ */
 
 /*
@@ -1140,16 +1065,24 @@
 }
 
 /*
- * The global zone reads as a separate area, not as the right-hand end of the
- * creature row -- an inset panel rather than a border, because `.lane` spends
- * its border on the drop highlight below and a second one there would fight it.
+ * THE GLOBAL ZONE HAS NO WASH OF ITS OWN, AND IT USED TO.
  *
- * Declared above `.lane--active` on purpose: a lane being dragged into has to
- * win the background, and both selectors carry the same specificity.
+ * It was `background: rgb(255 255 255 / 0.028)` -- an inset panel, on the
+ * argument that the zone should read as a separate area rather than as the
+ * right-hand end of the creature row. It does read as one, and that is the
+ * problem: at 2.8% white over `--void-1` it is a pale rectangle sitting on the
+ * board for the whole first turn of every game, before anybody has an artifact
+ * or an enchantment to put in it, and an empty lit box is a stronger mark than
+ * anything actually on the board beside it.
+ *
+ * The split already says it. `.band--front` is `2fr 1fr` with a 10px gap and
+ * each lane carries its own label, so the boundary is stated by the layout
+ * rather than painted -- and artifacts and enchantments still land in exactly
+ * the same place. What goes is only the paint.
+ *
+ * `.lane--global` stays on the element: `Lane` writes it from `LANE_SLUG` for
+ * every lane, and it is the hook anything scoped to this zone would need.
  */
-.lane--global {
-  background: rgb(255 255 255 / 0.028);
-}
 
 .lane--active {
   border-color: var(--playable);
@@ -1800,6 +1733,23 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  /*
+   * The scrollbar gutter `.play__mine` reserves, paid a second time here so the
+   * two bordered panels in this column line up.
+   *
+   * `.play__mine` scrolls and reserves its gutter permanently, which is what
+   * makes the width `state/useZoomFit.ts` solves against hold still -- but the
+   * reservation sits inside its content box, so the mat it holds stops eight
+   * pixels short of the column's right edge while this panel runs the full
+   * width. This one does not scroll and must not: an `overflow` of any kind
+   * here clips the hand card as it rises. So it steps back by the same amount
+   * instead, and the two right edges are flush at every width.
+   *
+   * `--sbw` is written by `useZoomFit`'s measure, because the number is the
+   * browser's own and no stylesheet can ask for it. The fallback is Chromium's,
+   * for the first paint before the observer has fired.
+   */
+  margin-right: var(--sbw, 8px);
   padding: 6px 10px 10px;
   border: 1px solid var(--rail-line);
   border-radius: 10px;
