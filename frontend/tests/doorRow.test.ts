@@ -57,11 +57,6 @@ describe("the row at rest", () => {
     expect(pose(1, 0).z).toBeGreaterThan(pose(2, 0).z);
     expect(pose(0, 0).z).toBeGreaterThan(pose(1, 0).z);
   });
-
-  it("keeps the copy on a card one place out and takes it off one two places out", () => {
-    expect(pose(0, 1).ink).toBe(1);
-    expect(pose(2, 0).ink).toBe(0);
-  });
 });
 
 describe("the row in flight", () => {

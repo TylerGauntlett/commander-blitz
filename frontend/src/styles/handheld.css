@@ -642,11 +642,24 @@ html[data-input="keyboard"] .glyph--key {
    exact row it has always been.
    ========================================================================== */
 
+/*
+ * ONE ROW, NEVER TWO -- `flex-wrap: nowrap` is the load-bearing line.
+ *
+ * This wrapped, and a second row here does not just add 16px: `.table__foot`
+ * is a grid whose bottom track holds the tools, the Regions button and this,
+ * so a wrapped hint bar grows the track and lifts every tool button off the
+ * place the thumb last found it -- mid-decision, because the verbs change on
+ * every step of the ring. The unbounded string that made it wrap is gone (see
+ * `components/game/HintBar.tsx`); this is what keeps it from coming back the
+ * next time a verb gets long.
+ */
 .hints {
   display: none;
   align-items: center;
   gap: 14px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow: hidden;
   padding: 4px 12px 2px;
   font-size: 12px;
   color: var(--text-dim);
@@ -1866,21 +1879,6 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .tools {
   flex-wrap: wrap;
   row-gap: 4px;
-}
-
-/*
- * What the focused element says about itself -- where the native tooltips went.
- *
- * Quieter than a verb and italic, so the bar reads as "do this / this is that"
- * rather than as one run-on line.
- */
-.hint--says {
-  color: var(--text-dim);
-  font-style: italic;
-  max-width: 42ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /*

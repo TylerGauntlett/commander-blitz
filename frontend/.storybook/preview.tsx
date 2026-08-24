@@ -25,6 +25,10 @@ import { MotionConfig } from "motion/react";
 import { useLayoutEffect, useState } from "react";
 
 import "../src/theme.css";
+// Before `board.css` and `room.css`, so either can tune the shared drifting
+// layers it defines -- the same order `main.tsx` loads these in, which is the
+// only reason a story looks like the app.
+import "../src/styles/ambience.css";
 import "../src/styles/cards.css";
 import "../src/styles/board.css";
 import "../src/styles/seat.css";

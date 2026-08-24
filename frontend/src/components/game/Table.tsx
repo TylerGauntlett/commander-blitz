@@ -51,6 +51,7 @@ import type { GameSession, useGame } from "../../state/useGame";
 import { useHandheldLayout } from "../../state/useHandheld";
 import { useZoomFit } from "../../state/useZoomFit";
 import { Glyph } from "../ui/Glyph";
+import { Motes } from "../ui/Motes";
 import { ActionPanel } from "./ActionPanel";
 import { CardHold } from "./CardHold";
 import { CardPreview } from "./CardPreview";
@@ -1298,6 +1299,31 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           : ({ "--pod-lanes-h": `${Math.round(zoom.podLanesH)}px` } as React.CSSProperties)
       }
     >
+      {/*
+        THE AIR, and it is the first child for a reason.
+
+        The board was one static radial gradient with no `@keyframes` anywhere
+        on it, standing next to a lobby with a lit hall, drifting light and
+        sixteen motes in it -- so pressing PLAY took the player out of a room
+        and into a wallpaper. This is the least the board can do about that: a
+        wash that drifts on a 64s cycle, a vignette, and a thin field of the
+        lobby's own motes. `styles/ambience.css` owns all three.
+
+        IT SITS OUTSIDE `.table__body`, which is the load-bearing placement.
+        That div carries the screen-shake `x`/`y` and is the `data-fx-origin`
+        every effect coordinate is measured from -- ambience inside it would
+        shake with the board on every hit, and would move the origin's contents
+        without moving the origin. Here it is a sibling under both of them,
+        pinned to `.table` and pointer-transparent.
+      */}
+      <div className="table__air" aria-hidden="true">
+        <div className="table__wash" />
+        <div className="table__vig" />
+        {/* Ten rather than the lobby's sixteen: there are up to four seats, a
+            hand and a stack on this screen already. */}
+        <Motes count={10} />
+      </div>
+
       <PhaseTrack state={state} />
 
       {/*

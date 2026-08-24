@@ -134,8 +134,16 @@
   will-change: transform;
 }
 
+/*
+ * TWO ROWS, NOT THREE. The third held the line of copy and the copy is gone --
+ * see `DOOR_CARDS` in `HomeScreen.tsx`. Left as `auto 1fr` the name would have
+ * stayed pinned under the window with the vacated row as dead space below it,
+ * which is a card with its title in the wrong place rather than a card with
+ * less on it. `1fr` plus the `align-self: center` below puts the word in the
+ * middle of the plate under the picture.
+ */
 .door__card {
-  grid-template-rows: calc(132px * var(--du)) auto 1fr;
+  grid-template-rows: calc(132px * var(--du)) 1fr;
   gap: calc(10px * var(--du));
   width: 100%;
   height: 100%;
@@ -167,8 +175,7 @@
 }
 
 .door__win,
-.door__name,
-.door__line {
+.door__name {
   position: relative;
   z-index: 1;
 }
@@ -221,9 +228,12 @@
  *
  * `justify-self: center` rather than the grid item's default stretch: a
  * full-width box reports the CARD's rectangle, which is mostly empty.
+ * `align-self` is the same argument in the other axis, and is what centres the
+ * word in the plate the line of copy used to share.
  */
 .door__name {
   justify-self: center;
+  align-self: center;
   font-size: max(16px, calc(20px * var(--du)));
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -231,21 +241,6 @@
   color: rgb(255 224 138 / 0.72);
   text-shadow: 0 2px 10px rgb(0 0 0 / 0.7);
   transition: color var(--t-room) ease;
-}
-
-/*
- * `.door__line` -- anything on a card that is NOT its name.
- *
- * Opacity rather than `display`, because the fade has to track the slide: a
- * line that vanished at a threshold would pop, and the card is moving
- * continuously. See `ink` in `logic/doorRow.ts` for why it fades at all.
- */
-.door__line {
-  align-self: center;
-  font-size: max(16px, calc(16px * var(--du)));
-  line-height: 1.4;
-  color: var(--text-dim);
-  opacity: var(--ink, 1);
 }
 
 /* ==========================================================================

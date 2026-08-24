@@ -1,0 +1,190 @@
+/* ==========================================================================
+   AMBIENCE
+
+   The layers that move when nothing is happening, and the one thing the lobby
+   and the board have to agree on.
+
+   The lobby invented these: a hall with light in it, specks drifting up through
+   the beam, a card that catches a sheen. The board had none of it -- one static
+   radial gradient, no `@keyframes` anywhere on `.table` -- so pressing PLAY
+   took the player out of a lit room and into a flat one, which is exactly the
+   complaint `components/lobby/Room.tsx` records about the pod lobby before it
+   was extracted. This sheet is the extraction repeated one level up: what was
+   `.room__mote` is `.mote`, it is defined once, and both surfaces hang it.
+
+   LOADS BEFORE `board.css` AND `room.css`, so either can tune what it gets --
+   the board dims its field, the room does not.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Motes
+
+   `fx/presets.ts:225` is the app's own `motes()`; this is that preset in CSS
+   because a canvas would be a second particle system running beside the real
+   one for the sake of ambience. Markup and positions are in
+   `components/ui/Motes.tsx`.
+   -------------------------------------------------------------------------- */
+
+.motes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Sixteen elements on their own infinite animations. Contained, or every
+     mote's repaint takes the room behind it with it. */
+  contain: strict;
+}
+
+.mote {
+  position: absolute;
+  /* `bottom: 0`, not `-14px`. Starting a mote just under the screen so it
+     drifts up into view is the obvious way to write this and puts an element
+     outside the stage for the first moment of every cycle. The fade-in at 12%
+     does that job with no box leaving the stage. */
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--lit, rgb(255 224 138 / 0.75));
+  box-shadow: 0 0 8px var(--lit, rgb(255 224 138 / 0.55));
+  transition: background var(--t-room, 320ms) ease, box-shadow var(--t-room, 320ms) ease;
+  animation: ambient-mote linear infinite;
+}
+
+/*
+ * `-100vh` is the viewport, not the container, and that is deliberate.
+ *
+ * Both surfaces that hang motes are full-screen -- `.room` is the stage and
+ * `.table` is `height: 100%` of it -- so the two are the same number here, and
+ * a viewport unit costs no layout read to resolve. A shorter container would
+ * need this re-based on its own height; there isn't one, and a comment is
+ * cheaper than a `--mote-rise` nobody varies.
+ */
+@keyframes ambient-mote {
+  from {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(-100vh) translateX(var(--drift, 20px));
+    opacity: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   The board's air
+
+   Three layers over `.table`'s own gradient and under everything on it: a wash
+   that drifts, a vignette that does not, and a thin mote field. Mounted by
+   `components/game/Table.tsx` OUTSIDE `.table__body`, because that div carries
+   the screen-shake and ambience that shakes with the board is a bug.
+   -------------------------------------------------------------------------- */
+
+.table__air {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+  /*
+   * The board's light, in one token, for the same reason the room writes one:
+   * `.mote` and anything else hung here take their colour from it. Indigo
+   * rather than the lobby's gold -- `--astral` is the board's own accent and a
+   * gold speck on a board reads as a trigger going off.
+   */
+  --lit: rgb(143 127 232 / 0.5);
+}
+
+/*
+ * THE ONE THING ON THIS SCREEN THAT MOVES BY ITSELF.
+ *
+ * Two soft pools, oversized and slid slowly across each other. `inset: -18%`
+ * is what buys the travel: the layer is bigger than the box it is clipped to,
+ * so it can drift without ever showing an edge.
+ *
+ * The animation is `transform` ONLY. Animating `background-position` on a
+ * gradient this size repaints a full-screen surface every frame, which on a
+ * seven-inch battery-powered machine is the difference between ambience and a
+ * fan spinning up. 64s and `alternate` so it never loops visibly -- a player
+ * who notices the cycle is a player watching the wallpaper.
+ */
+.table__wash {
+  position: absolute;
+  inset: -18%;
+  background: radial-gradient(50% 38% at 34% 22%, rgb(143 127 232 / 0.2) 0%, transparent 66%),
+    radial-gradient(46% 34% at 72% 84%, rgb(90 190 220 / 0.13) 0%, transparent 64%);
+  /* Promoted, and it is the ONLY layer here that is. See `.table__vig`. */
+  will-change: transform;
+  animation: air-drift 64s ease-in-out infinite alternate;
+}
+
+@keyframes air-drift {
+  from {
+    transform: translate3d(-3%, 1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, -1.5%, 0) scale(1.08);
+  }
+}
+
+/*
+ * The corners, taken down.
+ *
+ * Same job as `#d-vig` in `components/lobby/doorArt.tsx`: it is what makes a
+ * flat dark rectangle read as a lit space rather than as a background colour,
+ * and it is why the board's edges stop competing with the hand.
+ *
+ * IT IS MUCH WEAKER THAN THE DOOR'S, and the reason is `--pane-bg`: every panel
+ * on this screen is `rgb(20 19 40 / 0.6)`, so 40% of whatever is under it comes
+ * through. The door's 72% vignette falls on bare floor; the same number here
+ * lands on the mats, the rail and the foot as well and simply turns the board
+ * down. 38% at the corners is what shapes the frame without dimming the game
+ * inside it -- if this is ever raised, check the panels and not the gutters.
+ *
+ * DELIBERATELY NOT `will-change`. `room.css` records what that cost on a static
+ * backdrop -- promoting one throws away the raster cache that was already doing
+ * the job, and it took half the frame rate of a mockup round to find. The wash
+ * above moves and is promoted; this does not and is not.
+ */
+.table__vig {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 92% at 50% 42%, transparent 54%, rgb(0 0 0 / 0.38) 100%);
+}
+
+/* The board is busy in a way the lobby is not, so its flecks sit further back:
+   half the count, and dimmer than the room's -- and dimmer again wherever a
+   panel is over them, which is most of the screen at `--pane-bg`'s 0.6. */
+.table__air .mote {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   REDUCED MOTION TAKES THE TEXTURE AND LEAVES THE FACTS
+
+   `fx/presets.ts` and `ParticleLayer.burst` draw this line already: reduced
+   motion drops "how it felt" and keeps every channel that carries information.
+   Nothing in this file carries any, so all of it goes -- the vignette stays,
+   because a vignette is not motion.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .motes {
+    display: none;
+  }
+
+  .table__wash {
+    animation: none;
+    /* Un-promote it too: a still layer on its own compositor tile is the exact
+       waste the note on `.table__vig` is about. */
+    will-change: auto;
+    transform: none;
+  }
+}
