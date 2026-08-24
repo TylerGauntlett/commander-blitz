@@ -1,0 +1,776 @@
+/*
+ * The front door, as a main menu made of three cards.
+ *
+ * Ported from `mockups/door/01-the-hand.html` -- `_door.css` plus that file's
+ * own overrides -- and the round's README is the argument for it. Short
+ * version: the shipped door's one card-shaped object was a fan of four `.back`
+ * plates you could not select, press or reach with a pad, so **the only thing
+ * on the screen that looked like a game was the only thing that did nothing**;
+ * and every piece of text on it except the wordmark was authored at 11-15px and
+ * dragged to the floor by `handheld.css`'s override list.
+ *
+ * Three cards -- Decks, Play, Join -- are the whole menu. The one you are on
+ * squares up, lifts and lights the room; the other two tilt away and stack.
+ *
+ * ---------------------------------------------------------------------------
+ * WHAT CHANGED IN THE PORT, and both are the same change.
+ *
+ * The mockup is a fixed 1280x800 deck scaled to whatever window is open, which
+ * is right for a review surface and wrong for an application: at 1600x950 that
+ * is a blurry 1280 in a letterbox. Here the room is FULL-BLEED and only the
+ * furniture scales, off one number -- `--du`, written by `HomeScreen` from
+ * `stageScale()` and exactly 1 at 1280x800. Positions are percentages of the
+ * stage; sizes are `calc(<the mockup's px> * var(--du))`.
+ *
+ * And TYPE DOES NOT FOLLOW `--du` DOWNWARD. Every font-size here is
+ * `max(16px, calc(N * var(--du)))`. The 16px floor is a CI gate
+ * (`e2e/handheld.spec.ts`, "the front door"), and nothing on this screen is
+ * under it to begin with -- which is the point. There is no override list to
+ * add to.
+ */
+
+/*
+ * The stage.
+ *
+ * `HomeRoute` renders a `<Screen>` without `center`, so `.screen` is a bare
+ * `height: 100%` and this fills it. It may not be `.screen--center`: that adds
+ * 24px of padding, which would put `--du` at 0.94 on a Deck and every measured
+ * number in the round out by six percent.
+ */
+.door {
+  --du: 1;
+  --card-w: calc(200px * var(--du));
+  --card-h: calc(280px * var(--du));
+
+  /* handheld.css:36-37. The rings own gold, which is NOT `--gold`: the ring is
+     a lighter, hotter tone precisely so "you are on it" cannot be confused with
+     "this is the commit tier". */
+  --focus: #ffe08a;
+
+  /* How long the room takes to change colour. Longer than the slide on purpose:
+     the card arrives in 179ms and the light follows it. A room that changed
+     faster than the thing changing it reads as a flash, and one that changed at
+     the same speed reads as a single hard cut. Trailing it slightly is what
+     makes the light feel like a consequence of the move rather than part of it. */
+  --t-room: 320ms;
+
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #07060e;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ==========================================================================
+   The room
+   ========================================================================== */
+
+.door__ground {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Deliberately NOT `will-change`. On a static backdrop, promoting to a
+     compositor layer throws away the raster cache that was already doing the
+     job -- which cost the mockup round half its frame rate before it was
+     found. That is the opposite of the usual advice and worth writing down. */
+}
+
+/*
+ * THE FLOOR THE ROW STANDS ON, sized in the same unit as the cards.
+ *
+ * `1280x800 * --du`, hung off the ROW's top rather than off the stage: the
+ * layer's origin is put where the design's origin would be if the row were at
+ * 322px, so the sigil's own y of 585 lands `(585 - 322) * --du` under the top of
+ * the row at every size. At 1280x800 that is `inset: 0` exactly and the port is
+ * pixel-identical to the mockup; at 2560x1440 the ring on the floor is still the
+ * same size relative to a card, which `slice` on the full-bleed ground could
+ * never be. See `DoorFloor` for the failure that forced the split.
+ */
+.door__floor {
+  position: absolute;
+  left: 50%;
+  top: 40.25%;
+  width: calc(1280px * var(--du));
+  height: calc(800px * var(--du));
+  transform: translate(-50%, calc(-322px * var(--du)));
+  pointer-events: none;
+}
+
+/*
+ * THE ROOM'S COLOUR, and it is one declaration doing the work of a repaint.
+ *
+ * `stroke` is inherited, and inheritance crosses into a `<use>`'s shadow tree,
+ * so this recolours every ring, spoke and square of the floor sigil at once --
+ * and because it is a CSS property rather than a presentation attribute it can
+ * transition, which is what makes the room CHANGE colour rather than cut to it.
+ */
+.door__sigil {
+  stroke: var(--lit, #ffd479);
+  opacity: 0.34;
+  transition: stroke var(--t-room) ease;
+}
+
+.door__sigil--glow {
+  opacity: 0.16;
+  filter: blur(3px);
+}
+
+.door__beam {
+  fill: var(--lit-beam, rgb(195 182 255 / 0.12));
+  transition: fill var(--t-room) ease;
+}
+
+/* The pool of light the row stands in. Over the drawn floor rather than in it,
+   because a `background` transitions more cheaply than a gradient stop inside
+   an SVG, and this one moves on every selection. */
+.door__wash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      40% 30% at 50% 73%,
+      var(--lit-soft, transparent) 0%,
+      transparent 72%
+    ), radial-gradient(88% 40% at 50% 106%, var(--lit2-soft, transparent) 0%, transparent 66%);
+  transition: background var(--t-room) ease;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Ambient motes
+   ==========================================================================
+
+   `fx/presets.ts:225` is the app's own `motes()` -- gold and white specks
+   drifting upward, the one preset in the vocabulary that is ambience rather
+   than an event. Re-expressed as CSS because a canvas here would be a second
+   particle system on a screen with no board to anchor it to, and dropped
+   entirely under reduced motion, which is what `burst()` itself does.
+   ========================================================================== */
+
+.door__motes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Sixteen elements on their own infinite animations. Contained, or every
+     mote's repaint takes the room behind it with it. */
+  contain: strict;
+}
+
+.door__mote {
+  position: absolute;
+  /* `bottom: 0`, not `-14px`. Starting a mote just under the screen so it
+     drifts up into view is the obvious way to write this and puts an element
+     outside the stage for the first moment of every cycle. The fade-in at 12%
+     does that job with no box leaving the stage. */
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--lit, rgb(255 224 138 / 0.75));
+  box-shadow: 0 0 8px var(--lit, rgb(255 224 138 / 0.55));
+  transition: background var(--t-room) ease, box-shadow var(--t-room) ease;
+  animation: door-mote linear infinite;
+}
+
+@keyframes door-mote {
+  from {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(-100vh) translateX(var(--drift, 20px));
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   The wordmark
+   ==========================================================================
+
+   WHAT A HOME SCREEN IS NOT: A HERO.
+
+   The shipped door carried the wordmark TWICE -- once small at the top left and
+   again at up to 66px in the middle -- with a line of pitch under it. That is a
+   landing page: it tells somebody who has already bought, installed and
+   launched the game what the game is, above the controls they came for, in the
+   largest type on the screen.
+
+   So the mark appears ONCE, which is `Mark.tsx`'s own stated rule; the pitch is
+   gone, because three cards already say what can be done here and each says it
+   in a verb; and the menu is the biggest object on the screen, because the menu
+   is what the screen is for.
+   ========================================================================== */
+
+.door__title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10.5%;
+  display: grid;
+  justify-items: center;
+  gap: calc(16px * var(--du));
+  pointer-events: none;
+}
+
+.door__badge {
+  width: calc(44px * var(--du));
+  height: calc(44px * var(--du));
+  color: var(--lit, var(--gold));
+  filter: drop-shadow(0 0 22px var(--lit-soft, rgb(255 212 121 / 0.3)));
+  transition: color var(--t-room) ease, filter var(--t-room) ease;
+}
+
+.door__word {
+  margin: 0;
+  font-size: max(24px, calc(36px * var(--du)));
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--gold);
+  /* Tracking is trailing space on the last letter, so centred tracked text sits
+     half a letter-space left of true. `lobby.css:325-327` makes the same
+     correction on the shipped hero. */
+  text-indent: 0.36em;
+  text-shadow: 0 2px 30px rgb(0 0 0 / 0.85);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   THE ROW
+   ==========================================================================
+
+   Three cards; the selected one squares up and lifts; the other two slide away
+   from it; and the two on the same side of the selection OVERLAP each other
+   rather than spreading evenly. All of it is derived from one continuous number
+   by `logic/doorRow.ts` -- see that file for the arithmetic and for why the
+   bunch term is the only new idea in it.
+   ========================================================================== */
+
+.door__row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40.25%;
+  height: var(--card-h);
+  /* No `overflow` of its own, deliberately: a card that runs off the row must
+     run off the STAGE, where it is visible as a bug rather than clipped into
+     looking correct. */
+}
+
+/*
+ * THE SLOT IS THE BOX AND THE CARD IS THE PICTURE, and the split is
+ * `board.css:1816-1826`'s -- the same one `.hand__slot` / `.hand__lift` makes,
+ * for the same recorded reason: transform the thing the pointer is inside and a
+ * lifted card leaves the pointer, `mouseleave` fires, it drops, `mouseenter`
+ * fires, forever.
+ *
+ * Here the box genuinely has to move -- sliding IS the design -- so the loop is
+ * cut on the other side instead: a hover is ignored while the row is still
+ * moving, and a hover never DE-selects. Selection therefore only ever moves
+ * toward the pointer and cannot oscillate. See `HomeScreen`.
+ */
+.door__slot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  /* The transform is written by the paint loop as one string, not assembled
+     here out of four custom properties -- eighteen custom-property
+     invalidations a frame is what that cost. The `-50%` stays part of what it
+     writes. */
+  transform: translateX(-50%);
+  transform-origin: 50% 118%;
+  /* Its own compositor layer. Three cards, a room, and a sheen that loops
+     forever on whichever card is selected -- without this the whole stage is
+     re-rastered every frame of every slide. */
+  will-change: transform;
+}
+
+.door__card {
+  position: relative;
+  display: grid;
+  grid-template-rows: calc(132px * var(--du)) auto 1fr;
+  gap: calc(10px * var(--du));
+  width: 100%;
+  height: 100%;
+  padding: calc(13px * var(--du)) calc(14px * var(--du)) calc(16px * var(--du));
+  overflow: hidden;
+  border-radius: calc(11px * var(--du));
+  border: 2px solid rgb(216 166 60 / 0.34);
+  background: #241b32;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 30px rgb(0 0 0 / 0.55);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.door__card:disabled {
+  cursor: progress;
+}
+
+/*
+ * The printed field, under everything, filling the card.
+ *
+ * `z-index: 0` with the content above it at 1, and the reason is a trap worth
+ * naming: a POSITIONED element paints in a later phase than in-flow content,
+ * whatever the document order. So this SVG -- first child, absolutely
+ * positioned -- covered the card's own words. It did not cover all of them,
+ * which is what made it confusing: the window and the name paint as positioned
+ * for their own reasons, and the one plain in-flow element, the line of copy,
+ * was the only thing that vanished -- silently, still there and still opaque.
+ */
+.door__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.door__win,
+.door__name,
+.door__line {
+  position: relative;
+  z-index: 1;
+}
+
+/* The illustration window. A vector at any size, so there is no crop ceiling to
+   design around -- the one thing this screen can do that a photograph could
+   not. */
+.door__win {
+  border-radius: calc(6px * var(--du));
+  overflow: hidden;
+  background: linear-gradient(180deg, #0d0a16 0%, #17122a 100%);
+  box-shadow: inset 0 0 0 1px rgb(255 224 138 / 0.16);
+}
+
+/* The window takes the room's colour too, faintly, so a card reads as lit by
+   the same light as the floor it is standing on. */
+.door__win::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    90% 70% at 50% 0%,
+    var(--lit-soft, transparent) 0%,
+    transparent 70%
+  );
+  transition: background var(--t-room) ease;
+}
+
+.door__art {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * The name, in flow under the illustration rather than pinned to the foot, so
+ * the card reads as a printed thing with a title.
+ *
+ * IT DOES NOT TRAVEL, and that is this direction's one departure from the
+ * shared row. The mockup's other four slide each name to the edge facing away
+ * from the selection, because a name pinned to the foot of a stacked card is
+ * half under its neighbour. Here the names are short and high on the card --
+ * the widest is 88px against a 155px sliver -- so all three clear their
+ * covering card standing still. What the travel cost was the thing the eye
+ * actually catches: the row slides and the words slide too, in the opposite
+ * direction, so PLAY, JOIN and DECKS crab across their own plates on every
+ * selection change. A card is a printed object here; the frame, the window and
+ * the name are one piece and the only honest way for them to move is together.
+ *
+ * `justify-self: center` rather than the grid item's default stretch: a
+ * full-width box reports the CARD's rectangle, which is mostly empty.
+ */
+.door__name {
+  justify-self: center;
+  font-size: max(16px, calc(20px * var(--du)));
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(255 224 138 / 0.72);
+  text-shadow: 0 2px 10px rgb(0 0 0 / 0.7);
+  transition: color var(--t-room) ease;
+}
+
+/*
+ * `.door__line` -- anything on a card that is NOT its name.
+ *
+ * Opacity rather than `display`, because the fade has to track the slide: a
+ * line that vanished at a threshold would pop, and the card is moving
+ * continuously. See `ink` in `logic/doorRow.ts` for why it fades at all.
+ */
+.door__line {
+  align-self: center;
+  font-size: max(16px, calc(16px * var(--du)));
+  line-height: 1.4;
+  color: var(--text-dim);
+  opacity: var(--ink, 1);
+}
+
+/* ==========================================================================
+   SELECTED
+   ==========================================================================
+
+   Two rules, both lifted rather than invented, because the board already spent
+   the argument on them.
+
+   FILL IS FOCUS, TIER IS THE EDGE (`handheld.css:1315-1345`). "Am I on it" is
+   carried by the fill; what kind of thing it is stays on the border.
+
+   THE SHEEN (`handheld.css:1347-1398`). A slow gradient crossing the selected
+   card. Its own comment is the argument: movement carries into peripheral
+   vision where a 3px hairline does not, and it costs one pseudo-element and one
+   keyframe.
+
+   ONE CHANGE FROM THE BOARD: there the sheen is scoped to `[data-cursor]`, so a
+   mouse player never sees it. Here it is on the selected card whatever moved
+   the selection, because on this screen the selection IS the state and there is
+   nothing else for the sheen to be about.
+   ========================================================================== */
+
+.door__slot--on .door__card {
+  border-color: var(--lit, var(--focus));
+  box-shadow: 0 0 0 3px rgb(255 224 138 / 0.16), 0 0 44px
+    var(--lit-soft, rgb(255 224 138 / 0.24)), 0 18px 46px rgb(0 0 0 / 0.6);
+}
+
+.door__slot--on .door__name {
+  color: var(--focus);
+}
+
+.door__sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 224 138 / 0.18) 48%,
+    transparent 66%
+  );
+  background-size: 260% 100%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.door__slot--on .door__sheen {
+  opacity: 1;
+  animation: door-sheen 2.4s ease-in-out infinite;
+}
+
+@keyframes door-sheen {
+  from {
+    background-position: 140% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+/* The press squeeze. `ring.ts:567` does this to the focus ring on A -- a short
+   impulse into the box's own origin so it reads as taking the press rather than
+   as moving. 90ms, because that is under the 120ms `--t-fast` calls fast and a
+   press has to feel like it landed before anything else happens.
+
+   On the card and not on the slot: the slot carries the row's arithmetic in its
+   own `transform`, and an animation on the same property would fight it. */
+.door__slot--press .door__card {
+  animation: door-press 90ms ease-out;
+}
+
+@keyframes door-press {
+  50% {
+    transform: scale(0.965);
+  }
+}
+
+/* ==========================================================================
+   The two corners
+   ==========================================================================
+
+   What a console game puts at the edges: which build this is, and what the
+   buttons do. The hints are `.hints` / `.hint` / `Glyph`, so they obey
+   `html[data-input]` like every other hint in the app -- a mouse player never
+   sees a controller legend, and neither the position nor the wording is
+   reinvented here.
+   ========================================================================== */
+
+/*
+ * NOT `.door__cap`, which is what the old footer was called and is still in two
+ * sheets. `lobby.css:481` would have kept lending it `display: flex` and
+ * `justify-content: center`, and -- worse -- `handheld.css`'s 16px override list
+ * names it, so on a Deck a flat `font-size: 16px` from the last stylesheet loaded
+ * would have beaten this line's `max(16px, calc(16px * var(--du)))` and stopped
+ * it scaling. A recycled class name inherits every rule anyone ever wrote for it.
+ */
+.door__count {
+  position: absolute;
+  left: calc(24px * var(--du));
+  bottom: calc(22px * var(--du));
+  margin: 0;
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--text-faint);
+}
+
+.door__count b {
+  color: var(--text-dim);
+  font-weight: 750;
+}
+
+/*
+ * ITS OWN CLASS, NOT `.hints`, and the reason is a specificity collision worth
+ * naming. `handheld.css:1479-1483` lifts the board's hint bar over an open
+ * prompt with `html[data-input="pad"] .hints { position: relative }` -- which is
+ * (0,2,0), the same weight as `.door .hints`, and loads later. The door's bar
+ * came out `position: relative` at the top-left corner of the screen, half of it
+ * above the viewport, with every declaration in this block still "applied".
+ *
+ * The `.hint` row, the verb and `Glyph` are shared unchanged, so a mouse player
+ * still never sees a controller legend and the pad/keyboard labels still swap
+ * off `html[data-input]` with no React work.
+ */
+.door__hints {
+  position: absolute;
+  right: calc(24px * var(--du));
+  bottom: calc(22px * var(--du));
+  display: none;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-dim);
+  font-size: max(16px, calc(16px * var(--du)));
+  z-index: 300;
+}
+
+html[data-input="pad"] .door__hints,
+html[data-input="keyboard"] .door__hints {
+  display: flex;
+}
+
+/* ==========================================================================
+   The join hold
+   ==========================================================================
+
+   THE CODE FIELD IS NOT ON A CARD.
+
+   It used to fill the Join card, and that made one of three cards a form. Two
+   illustrations and a text input is not a menu, it is a menu with a widget
+   stuck in it, and the widget is where your eye goes. So the card is clean and
+   says what it does, and the field opens when you press it -- which is also the
+   truer flow: you press Join because you have a code, and the code is the next
+   question rather than a thing sitting on screen whether or not you have one.
+
+   `data-modal-root` so `input/stops.ts` traps the ring inside it while it is
+   up. Three ways out, which is what every overlay in this client owes: the
+   control, outside the panel, and Escape.
+   ========================================================================== */
+
+.door__hold {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 600;
+}
+
+.door__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgb(6 5 14 / 0.72);
+  animation: door-hold-in 160ms ease-out;
+}
+
+.door__panel {
+  position: relative;
+  width: min(420px, calc(100% - 48px));
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid var(--lit, var(--edge-hi));
+  border-radius: 14px;
+  background: linear-gradient(180deg, #1b1730 0%, #100d1c 100%);
+  box-shadow: 0 0 60px var(--lit-soft, rgb(255 224 138 / 0.18)), 0 30px 70px rgb(0 0 0 / 0.7);
+  animation: door-hold-rise 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes door-hold-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes door-hold-rise {
+  from {
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.door__h {
+  margin: 0;
+  font-size: max(16px, calc(20px * var(--du)));
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--focus);
+}
+
+.door__p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.door__holdrow {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/*
+ * 44px minimum on both, which the shipped pair only reached through
+ * `handheld.css:2125-2137`'s override list. A Steam Deck has a touchscreen and
+ * these are the controls a finger goes for.
+ */
+.door__code {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: rgb(8 7 18 / 0.72);
+  overflow: hidden;
+}
+
+.door__code:focus-within {
+  border-color: var(--focus);
+}
+
+.door__codein {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.door__codein::placeholder {
+  color: var(--text-faint);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+/*
+ * `:not([data-cursor])`, and the bug it records is nastier than it looks: the
+ * ring is `outline: 3px solid` on an ATTRIBUTE selector, so a class-qualified
+ * `:focus { outline: none }` outranks it, and only `outline-style` goes to
+ * `none` -- the width still computes to 3px, so devtools shows the ring applied
+ * and nothing is drawn. `tests/focusOutline.test.ts` fails the build over it.
+ */
+.door__codein:focus:not([data-cursor]) {
+  outline: none;
+}
+
+.door__go {
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(180deg, #ffd98c, #e0a63f 55%, #b87c1c);
+  color: #1b0f05;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 3px 0 #7d5310;
+}
+
+.door__go:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #7d5310;
+}
+
+.door__go:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: 0 3px 0 #4a3a18;
+}
+
+.door__holdhint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-faint);
+}
+
+/* The error goes wherever the player just pressed: inside the hold when the
+   hold is what failed, at the foot of the room otherwise. Never both, and
+   always `home-error` -- `e2e/pod.spec.ts` drives it by that id. */
+.door__err {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(84px * var(--du));
+  margin: 0;
+  padding: 0 24px;
+  text-align: center;
+  font-size: 16px;
+  color: var(--danger);
+  z-index: 400;
+}
+
+.door__panel .door__err {
+  position: static;
+  padding: 0;
+  text-align: left;
+}
+
+/* ==========================================================================
+   REDUCED MOTION TAKES THE TEXTURE AND LEAVES THE FACTS
+   ==========================================================================
+
+   `fx/presets.ts` and `ParticleLayer.burst` draw the same line: reduced motion
+   drops "how it felt" and keeps every channel carrying information. So the
+   sheen and the ambient motes stop; the card still MOVES, because where the
+   selection is is the one thing this screen exists to say. `HomeScreen` snaps
+   the spring rather than stilling it.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .door__slot--on .door__sheen {
+    animation: none;
+  }
+
+  .door__slot--press .door__card {
+    animation: none;
+  }
+
+  .door__motes {
+    display: none;
+  }
+}

@@ -50,10 +50,18 @@ async function host(page: Page, name: string): Promise<string> {
   return code as string;
 }
 
+/**
+ * The code field is behind the Join card now, so joining is two presses: the
+ * card opens the hold, the hold takes the code. `join-pod` is the card and
+ * `join-go` is the confirm inside it, which is the split the front door's own
+ * markup makes -- a suite that drives `join-pod` is starting a join, and one
+ * that drives `join-go` is finishing one.
+ */
 async function join(page: Page, code: string, name: string): Promise<void> {
   await page.goto("/");
-  await page.getByTestId("pod-code").fill(code);
   await page.getByTestId("join-pod").click();
+  await page.getByTestId("pod-code").fill(code);
+  await page.getByTestId("join-go").click();
   await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
   await rename(page, name);
 }
@@ -333,9 +341,12 @@ test.describe("a pod with two people in it", () => {
     const guestPage = await open(guestContext);
 
     const code = await host(hostPage, "Tyler");
+    // An invite link has already asked the question the hold exists to ask, so
+    // the hold opens itself with the code in it rather than making somebody
+    // press a card to see what they already typed into their address bar.
     await guestPage.goto(`/?join=${code}`);
     await expect(guestPage.getByTestId("pod-code")).toHaveValue(code);
-    await guestPage.getByTestId("join-pod").click();
+    await guestPage.getByTestId("join-go").click();
     await guestPage.getByTestId("new-game").waitFor({ timeout: 15_000 });
     await expect(guestPage).toHaveURL(new RegExp(`/pods/${code}$`));
 
@@ -435,9 +446,14 @@ test.describe("a pod with two people in it", () => {
   test("a bad code says so rather than opening an empty pod", async ({ page }) => {
     await setInstant(page);
     await page.goto("/");
-    await page.getByTestId("pod-code").fill("GYRE-0000");
     await page.getByTestId("join-pod").click();
+    await page.getByTestId("pod-code").fill("GYRE-0000");
+    await page.getByTestId("join-go").click();
+    // In the hold, where the press was, and the hold stays up: a rejected code
+    // is a code to correct, and closing the panel to report it would take the
+    // field away from somebody who has one character wrong.
     await expect(page.getByTestId("home-error")).toBeVisible();
+    await expect(page.getByTestId("join-hold")).toBeVisible();
     await expect(page.getByTestId("home")).toBeVisible();
   });
 });
