@@ -8,32 +8,36 @@
  * gesture the whole game is built on, so the front door teaches the board's one
  * verb before the board exists.
  *
- * Nothing on the screen is new work for the player. Create a pod, join by code
- * and browse the catalogue are the same three things the shipped door offered;
- * this is what they look like when the most important one is not a `.big` in
- * the middle, the second is a text field beside it, and the third is an 11px
- * underlined link in the footer that a pad could only reach by walking through
- * the text field.
+ * Nothing on the screen is new work for the player. Create a pod and join by
+ * code are what the shipped door already offered; this is what they look like
+ * when the more important one is not a `.big` in the middle and the second is
+ * not a text field beside it. Settings is the third card and the one addition,
+ * because a pad sometimes has to be told it is a pad.
+ *
+ * THE CATALOGUE IS NOT ON THE DOOR. It was a fourth card, and before that an
+ * 11px underlined link in the footer that a pad could only reach by walking
+ * through the text field. Browsing decks from the door starts nothing and ends
+ * nowhere -- the place you actually choose a deck is a seat, and a seat has its
+ * own way into the same catalogue. `/decks` still answers to anybody who types
+ * it. What is left on the row is three things you would come here to do.
  *
  * ---------------------------------------------------------------------------
  * ## Why Play is the default card
  *
- * The brief asked for "Play, Join, Decks" and asked that the middle card be
- * selected by default, and those only agree one way: a menu whose default
- * selection is not its default action has picked the wrong default. So Play was
- * the middle and the list order gave. Join stays to Play's right, which is the
- * shipped door's own reading order -- "Create a pod", or, a code -- and Decks
- * comes up out of the footer to the left, where the least-committing thing
- * belongs. Looking at your decks costs nothing and starts nothing.
+ * The brief asked that the middle card be selected by default, and that only
+ * agrees with itself one way: a menu whose default selection is not its default
+ * action has picked the wrong default. So Play is the middle. Join stays to
+ * Play's right, which is the shipped door's own reading order -- "Create a pod",
+ * or, a code -- and Settings goes to the left, where the least-committing thing
+ * belongs. The row runs from least committing to most, and changing a control
+ * scheme starts nothing at all.
  *
- * SETTINGS MADE THE ROW EVEN, so Play is no longer literally the middle -- and
- * that was always the weaker half of the argument. What mattered is that the
- * default selection and the default action are the same card, and they still
- * are: `DEFAULT_INDEX` looks Play up by name rather than trusting a literal 1,
- * which is what silently broke when the row grew. Settings goes to the far left
- * on the same ordering the paragraph above states -- the row runs from least
- * committing to most, and changing a control scheme starts even less than
- * browsing does.
+ * THE ROW HAS BEEN THREE, THEN FOUR, AND IS THREE AGAIN, which is why nothing
+ * here reads a literal index. `DEFAULT_INDEX` looks Play up by name; the literal
+ * 1 it replaced was right for the first row and silently wrong the moment a card
+ * was added at the head, and nothing in the suite asserts a default by name.
+ * That Play is once again the true middle card is an accident of the count, and
+ * none of the arithmetic below depends on it.
  *
  * ## The row is one number
  *
@@ -76,17 +80,21 @@ import { DoorCardArt, DoorCardFrame } from "./doorArt";
 const MAX_CODE_LENGTH = 14;
 
 /**
- * THE COPY IS ONE LINE AND THE SAME SHAPE THREE TIMES.
+ * A CARD IS A PICTURE AND A WORD. THERE IS NO THIRD THING ON IT.
  *
- * These were sentences, written for a panel with room. On a 200px card they
- * came to six lines and ran out of the bottom of it. The right fix is not a
- * smaller font or a taller card: a menu item explains itself in a phrase or it
- * is not a menu item, and three items that describe themselves in three
- * different shapes read as three unrelated things. One clause each, a noun and
- * a promise, no marketing.
+ * Each of these carried a line of copy under its name -- "Four seats. Deal a
+ * new table.", and three like it. That line was the last survivor of a panel
+ * with room: first a paragraph, then one clause, and one clause is still one
+ * clause too many here. The illustration already says what is behind the card
+ * (`doorArt.tsx` draws the thing itself rather than an icon of it) and the name
+ * says it again in a word, so the sentence was a third statement of the same
+ * fact, in the smallest type on the screen, on the card furthest from the eye.
  *
- * `hue` is the colour the room takes when that card is selected. Decks makes
- * the hall cold and green, Play warm, Join violet -- all six out of
+ * `verb` stays and is not copy: it is the second half of the `aria-label`, the
+ * only place a screen reader hears what pressing this does.
+ *
+ * `hue` is the colour the room takes when that card is selected. Settings makes
+ * the hall cold and blue, Play warm, Join violet -- all six out of
  * `theme.css`'s own palette.
  */
 const DOOR_CARDS = [
@@ -95,23 +103,13 @@ const DOOR_CARDS = [
     label: "Settings",
     verb: "Set up your controller",
     testId: "open-settings",
-    line: "Say what you are holding.",
     hue: ["#5c7a99", "#2b3f5a"] as Hue,
-  },
-  {
-    id: "decks",
-    label: "Decks",
-    verb: "Browse the catalogue",
-    testId: "browse-decks",
-    line: null,
-    hue: ["#3f9e93", "#2b5a86"] as Hue,
   },
   {
     id: "play",
     label: "Play",
     verb: "Create a pod",
     testId: "create-pod",
-    line: null,
     hue: ["#d8a63c", "#8a3a2e"] as Hue,
   },
   {
@@ -119,7 +117,6 @@ const DOOR_CARDS = [
     label: "Join",
     verb: "Enter a pod code",
     testId: "join-pod",
-    line: "Take a chair somebody held open.",
     hue: ["#7d6bd8", "#2b5a86"] as Hue,
   },
 ] as const;
@@ -132,10 +129,10 @@ function indexOf(id: string): number {
 /**
  * The card the row opens on, and the one A presses if nothing is touched.
  *
- * BY NAME, because it used to be the literal 1 and the row used to be three
- * cards long. Adding Settings to the head of the list would silently have made
- * the default Decks -- the menu would open on the wrong card, and nothing in the
- * suite asserts the default by name.
+ * BY NAME, because it used to be the literal 1 and the row has changed length
+ * twice. Adding a card at the head of the list silently moved the default one
+ * place -- the menu opened on the wrong card, and nothing in the suite asserts
+ * the default by name.
  */
 const DEFAULT_INDEX = indexOf("play");
 
@@ -170,7 +167,6 @@ interface Props {
   onJoin: (code: string) => void;
   busy: boolean;
   error: Error | null;
-  onBrowse: () => void;
 }
 
 export function HomeScreen({
@@ -180,7 +176,6 @@ export function HomeScreen({
   onJoin,
   busy,
   error,
-  onBrowse,
 }: Props) {
   // Initialised, not synced: `initialCode` comes from `?join=` and is read once
   // at boot. A `useEffect` that pushed it into state later would arrive after
@@ -211,7 +206,7 @@ export function HomeScreen({
   const stopRef = useRef<(() => void) | null>(null);
   /** What was last written to each slot, so a frame in the middle of a slide
       touches three transforms and nothing else. */
-  const wroteRef = useRef<{ t: string; z: number; ink: string }[]>([]);
+  const wroteRef = useRef<{ t: string; z: number }[]>([]);
 
   /*
    * ONE STRING PER MOVING THING, AND NOTHING WRITTEN THAT HAS NOT CHANGED.
@@ -227,7 +222,7 @@ export function HomeScreen({
     for (let i = 0; i < DOOR_CARDS.length; i += 1) {
       const el = slotRefs.current[i];
       if (!el) continue;
-      wroteRef.current[i] ??= { t: "", z: 0, ink: "" };
+      wroteRef.current[i] ??= { t: "", z: 0 };
       const was = wroteRef.current[i];
       const p = poseOf(i, s, tune, DOOR_CARDS.length);
       const t = `translate(calc(-50% + ${p.x.toFixed(2)}px), ${p.y.toFixed(2)}px) rotate(${p.rot.toFixed(2)}deg) scale(${p.scale.toFixed(4)})`;
@@ -238,11 +233,6 @@ export function HomeScreen({
       if (p.z !== was.z) {
         el.style.zIndex = String(p.z);
         was.z = p.z;
-      }
-      const ink = p.ink.toFixed(3);
-      if (ink !== was.ink) {
-        el.style.setProperty("--ink", ink);
-        was.ink = ink;
       }
     }
   }, []);
@@ -340,9 +330,9 @@ export function HomeScreen({
    * THE RING OPENS ON PLAY, and it has to be said out loud.
    *
    * `resolveCursor` falls back to the first stop in document order, which here
-   * is Decks -- and because focus drives the row, that would slide the menu off
-   * its own default on the first frame. The default selection and the default
-   * action have to be the same card or one of them is wrong.
+   * is Settings -- and because focus drives the row, that would slide the menu
+   * off its own default on the first frame. The default selection and the
+   * default action have to be the same card or one of them is wrong.
    */
   useLayoutEffect(() => {
     setCursor(`ui:${DOOR_CARDS[DEFAULT_INDEX].testId}`);
@@ -369,11 +359,10 @@ export function HomeScreen({
        */
       const id = DOOR_CARDS[i].id;
       if (id === "play") onCreate();
-      else if (id === "decks") onBrowse();
       else if (id === "join") setJoinOpen(true);
       else if (id === "settings") setSettingsOpen(true);
     },
-    [busy, onCreate, onBrowse],
+    [busy, onCreate],
   );
 
   const submit = useCallback(() => {
@@ -414,8 +403,8 @@ export function HomeScreen({
    * still the dialog, so `stopElement("ui:join-pod")` -- a card behind it -- is
    * not found and the call does nothing. React then removes the panel, the
    * cursor is naming a field that no longer exists, and `resolveCursor` falls
-   * back to the first stop on the screen: Decks. Pressing B on the Join hold
-   * slid the whole row two places left.
+   * back to the first stop on the screen -- the leftmost card. Pressing B on the
+   * Join hold slid the whole row across.
    */
   const wasOpen = useRef<"join" | "settings" | null>(openHold);
   useLayoutEffect(() => {
@@ -430,7 +419,9 @@ export function HomeScreen({
        * BY NAME, not by index. This was `DOOR_CARDS[2]` -- correct while Join
        * was the third of three cards, and silently the Play card the moment a
        * fourth was added at the head. Closing the hold would have slid the row
-       * one place and left the ring on a card nobody pressed.
+       * one place and left the ring on a card nobody pressed. The row is three
+       * again and the 2 would work again, which is exactly the accident that
+       * makes an index look safe; it stays a name.
        */
       setCursor(`ui:${DOOR_CARDS[indexOf(wasOpen.current)].testId}`);
     }
@@ -451,22 +442,6 @@ export function HomeScreen({
       offB();
     };
   }, [openHold, closeHold]);
-
-  /*
-   * A CARD'S LINE COMES FROM THE CARD.
-   *
-   * This was a parallel array indexed by row POSITION, which is the exact shape
-   * that breaks the moment the row grows -- adding Settings at the head would
-   * have given it the Decks copy, Decks the Play copy, and Play the Join copy,
-   * with nothing to catch it. Only two of the four depend on state, so those
-   * two are resolved here and the rest are written on the card itself.
-   */
-  const lineFor = (id: string): string => {
-    if (id === "decks")
-      return `${deckCount} deck${deckCount === 1 ? "" : "s"}, and anything you import.`;
-    if (id === "play") return busy ? "Dealing the table…" : "Four seats. Deal a new table.";
-    return DOOR_CARDS[indexOf(id)].line ?? "";
-  };
 
   return (
     <Room hue={DOOR_CARDS[sel].hue} className="door" testId="home" onScale={rescale}>
@@ -546,7 +521,6 @@ export function HomeScreen({
                 <DoorCardArt id={card.id} />
               </span>
               <span className="door__name">{card.label}</span>
-              <span className="door__line">{lineFor(card.id)}</span>
               <span className="sheen" />
             </button>
           </div>

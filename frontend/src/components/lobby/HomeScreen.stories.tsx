@@ -1,16 +1,16 @@
 /**
- * The front door: four cards, and Play is the one it opens on.
+ * The front door: three cards, and Play is the one it opens on.
  *
  * Mounted on a bare `screen` rather than `screenCenter`, which is what the route
  * does: `.screen--center`'s 24px of padding would put the stage scale at 0.94
  * and shrink the row off the numbers the mockup round measured.
  *
- * Three ways in -- make a pod, join one by code, or look at your decks -- and an
- * invite link fills the
- * code in for you *and opens the hold it lives in*. That prefill is read once at
- * boot and deliberately not synced afterwards: an effect that pushed it in later
- * would arrive after the field had mounted empty, and would fight anybody
- * typing.
+ * Two ways in -- make a pod or join one by code -- and a third card that is not
+ * a way in at all: Settings, where a Steam Deck gets told it is a Steam Deck. An
+ * invite link fills the code in for you *and opens the hold it lives in*. That
+ * prefill is read once at boot and deliberately not synced afterwards: an effect
+ * that pushed it in later would arrive after the field had mounted empty, and
+ * would fight anybody typing.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -27,7 +27,6 @@ const meta = {
     error: null,
     onCreate: fn(),
     onJoin: fn(),
-    onBrowse: fn(),
   },
 } satisfies Meta<typeof HomeScreen>;
 
@@ -105,11 +104,13 @@ export const TheHoldsWayOutIsPressable: Story = {
   },
 };
 
-/** Decks and Join, so the two stacked states are both reviewable. */
-export const OnDecks: Story = {
+/** Settings selected, so the row's other stacked state is reviewable too. */
+export const OnSettings: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByTestId("browse-decks"));
+    // Focus, not a click: pressing this card opens the hold over the row, and
+    // what this story is for is the row with an END card selected.
+    (await canvas.findByTestId("open-settings")).focus();
   },
 };
 

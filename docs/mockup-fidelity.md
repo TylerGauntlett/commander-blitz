@@ -122,7 +122,15 @@ field is. A suite that drives `join-pod` is starting a join; one that drives
 `join-go` is finishing one. `e2e/pod.spec.ts`'s `join()` helper and two of its
 tests were updated for the extra press, and `browse-decks` — a test id the old
 door never had, so `e2e/routing.spec.ts` was matching the string "Browse them" —
-now exists on the Decks card.
+existed for a while on the Decks card.
+
+**`browse-decks` is gone again, and so is the card under it.** The door carries
+Settings, Play and Join; the catalogue is reached from a seat, which is the only
+place choosing a deck means anything, and `/decks` still answers to anybody who
+types it. `e2e/helpers.ts`'s `browseDecks` and the back-button test in
+`e2e/routing.spec.ts` navigate to the address instead — the claim either one
+makes was never about the way in, it is that the catalogue is a real route with
+real history behind it.
 
 One addition the mockup does not make: **an invite link opens the hold itself**.
 `?join=CODE` and a cold `/pods/CODE` both land with the field on screen and
@@ -336,8 +344,7 @@ halo rather than getting redder, because `--taken` is red already and hue has
 nothing left to say.
 
 The numbers are on the gauge's `data-hint` and `aria-label` and nowhere else: a
-22px row will not hold two more numerals at the 16px floor, and the hint bar
-surfaces them from the cursor as well as from the pointer. `--dealt` is
+22px row will not hold two more numerals at the 16px floor. `--dealt` is
 deliberately not gold — the life fill under it is.
 
 Zero draws nothing, unlike every other cell on the seat. The reflow argument
