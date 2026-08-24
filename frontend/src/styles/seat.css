@@ -214,34 +214,6 @@
   opacity: 0.5;
 }
 
-/*
- * A hatch, not a flat fill.
- *
- * The ticks sit on the same track as the life fill, and two flat colours on one
- * bar read as a single stacked chart rather than as two things meeting. The
- * hatch says "this end is being taken away".
- */
-.tick {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 1;
-  width: var(--w, 0%);
-  background: repeating-linear-gradient(
-    135deg,
-    rgb(255 255 255 / 0.28) 0 3px,
-    rgb(255 255 255 / 0.08) 3px 6px
-  );
-}
-
-.tick--warn {
-  background: repeating-linear-gradient(
-    135deg,
-    rgb(255 92 92 / 0.75) 0 3px,
-    rgb(255 92 92 / 0.3) 3px 6px
-  );
-}
-
 .seat__life {
   position: relative;
   z-index: 2;
@@ -253,29 +225,83 @@
   text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
 }
 
-.gauge__dmg {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: 2px;
-  margin-left: auto;
-  color: var(--gold);
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 20px;
-  text-shadow: 0 1px 3px rgb(0 0 0 / 0.9);
+/*
+ * COMMANDER DAMAGE, AS TWO ARROWS ON ONE TRACK.
+ *
+ * Two clocks run per opponent and they point in opposite directions: how close
+ * your commander is to killing them, and how close theirs is to killing you.
+ * This bar used to carry neither -- it drew the worst damage this seat had
+ * taken from *anybody*, which in a pod is usually a number about two other
+ * players -- and the viewer's own panel carried a chip per seat for the second
+ * one, at the cost of the loudest plate in a 154px column.
+ *
+ * So: one arrow riding the top edge for what you have dealt, one riding the
+ * bottom for what they have dealt, each parked at its own fraction of 21.
+ * Three channels and only one of them is hue -- the edge it hangs off, the
+ * direction it points, and the distance it has travelled -- so the pair
+ * survives `e2e/greyscale.spec.ts` and so does the difference between them.
+ *
+ * The track is inset by the arrow's half-width because `.gauge` clips: a
+ * source at 21 has to park its point *on* the end of the bar, and "lethal" is
+ * the last mark that should be cut in half.
+ */
+.cmdarrows {
+  position: absolute;
+  z-index: 3;
+  inset: 0 5px;
+  pointer-events: none;
 }
 
-.gauge__dmg--warn {
-  color: var(--danger);
+.cmdarrow {
+  position: absolute;
+  left: var(--at, 0%);
+  width: 0;
+  height: 0;
+  margin-left: -5px;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  filter: drop-shadow(0 0 2px rgb(0 0 0 / 0.9));
 }
 
-/* Zero is drawn, not hidden: a plate that appears on the first hit is a reflow
-   at the worst possible moment. Dimmed is enough to say "nothing yet". */
-.gauge__dmg--zero {
-  color: var(--text-faint);
+/*
+ * Yours, hanging off the top edge and pointing down into their bar.
+ *
+ * `--playable` and not `--gold`: the life fill under it IS gold, and a gold
+ * mark on a gold bar is a mark you have to hunt for. Green and red is also the
+ * grammar the rest of the board already uses for "good for me" against "bad
+ * for me", which is exactly what the two directions mean.
+ */
+.cmdarrow--dealt {
+  top: 0;
+  border-top: 6px solid var(--playable);
+}
+
+/* Theirs, hanging off the bottom edge and pointing up. */
+.cmdarrow--taken {
+  bottom: 0;
+  border-bottom: 6px solid var(--attacking);
+}
+
+/*
+ * At 15 the next connection ends it.
+ *
+ * A bigger arrow with a light rim, not a redder one: `--taken` is already red,
+ * so hue has nothing left to say here -- and `e2e/greyscale.spec.ts` takes hue
+ * away anyway. Size and a halo are what is left, and both survive it.
+ */
+.cmdarrow--warn {
+  margin-left: -7px;
+  border-right-width: 7px;
+  border-left-width: 7px;
+  filter: drop-shadow(0 0 2px rgb(255 255 255 / 0.85));
+}
+
+.cmdarrow--dealt.cmdarrow--warn {
+  border-top-width: 9px;
+}
+
+.cmdarrow--taken.cmdarrow--warn {
+  border-bottom-width: 9px;
 }
 
 /* --- The marks ----------------------------------------------------------- */

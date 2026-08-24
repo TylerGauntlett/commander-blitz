@@ -148,7 +148,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // through React would re-render the whole board sixty times a second.
   const { x: shakeX, y: shakeY } = useScreenShake(narration.current);
   const viewer = state.players[state.seat];
-  const names = useMemo(() => state.players.map((p) => p.name), [state.players]);
 
   // Memoised because `useZoomFit` keys its solve on it: a fresh array every render
   // would re-run the fit on every render rather than when the board changes.
@@ -1107,8 +1106,12 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       // already reads, or move the ring to a button that already exists. That
       // is what keeps `data-action-id` and `data-testid` unique for free.
       onPad("view", toggleLogOverlay),
+      // The strip's first stop, which is the settings menu now that sound, undo
+      // and quit live inside it. It was `tool:mute`, and a stop that only
+      // exists while a menu is open is a jump that does nothing four times out
+      // of five.
       onPad("menu", () => {
-        setCursor(stopId.tool("mute"));
+        setCursor(stopId.tool("settings"));
       }),
       /*
        * `L2` was advertised by the hint bar and bound to nothing -- `Menu` was
@@ -1119,7 +1122,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
        * before the dial is worth looking at.
        */
       onPad("l2", () => {
-        setCursor(stopId.tool("mute"));
+        setCursor(stopId.tool("settings"));
       }),
       /*
        * Any press ends a hold and puts a held card down.
@@ -1267,6 +1270,20 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       data-zoom-hand={zoom.hand.toFixed(3)}
       data-zoom-locked={zoom.locked || undefined}
       data-handheld={handheld || undefined}
+      /*
+        The box an opponent's lanes were solved inside, handed back to CSS.
+
+        `theme.css` still declares `--pod-lanes-h` and it is still the floor;
+        this only ever raises it, and only where the seat count says the room is
+        going spare. Written here rather than on `.play` because the property is
+        registered `inherits: true` and `.mat--compact` is several levels down.
+        `null` on the pinned path leaves the stylesheet's clamp alone.
+      */
+      style={
+        zoom.podLanesH === null
+          ? undefined
+          : ({ "--pod-lanes-h": `${Math.round(zoom.podLanesH)}px` } as React.CSSProperties)
+      }
     >
       <PhaseTrack state={state} />
 
@@ -1323,7 +1340,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 key={pid}
                 state={state}
                 player={state.players[pid]}
-                names={names}
                 compact
                 // Their lands against their own edge of the screen, so the two
                 // creature bands meet across the middle of the table.
@@ -1410,7 +1426,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
                 variant="side"
                 state={state}
                 player={viewer}
-                names={names}
                 cardScale={zoom.board}
                 actionableOids={actionableOids}
                 playerTargetable={targetablePids.has(state.seat)}
@@ -1427,7 +1442,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
               variant={viewing !== null ? "lanes" : "full"}
               state={state}
               player={viewing !== null ? state.players[viewing] : viewer}
-              names={names}
               cardScale={zoom.board}
               actionableOids={actionableOids}
               hasAbility={(card) => abilityOids.has(card.oid)}
@@ -1612,7 +1626,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         </div>
       )}
 
-      {handheld && <OpponentBoard state={state} pid={reading} names={names} />}
+      {handheld && <OpponentBoard state={state} pid={reading} />}
 
       {/*
         The two holds.

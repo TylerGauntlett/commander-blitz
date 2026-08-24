@@ -83,8 +83,6 @@ const MAX_PIPS = 8;
 interface Props {
   state: GameView;
   player: PlayerView;
-  /** Seat names, for saying whose commander damage a tick is. */
-  names: string[];
   /** It is this player's turn. */
   isActive: boolean;
   /** This player holds priority, which is a different fact from the above. */
@@ -215,7 +213,6 @@ function zonesOf(player: PlayerView): SeatZone[] {
 export function OpponentSeat({
   state,
   player,
-  names,
   isActive,
   hasPriority,
   targetable,
@@ -241,41 +238,48 @@ export function OpponentSeat({
   const art = commander ? artUrl(images, commander.card_id) : undefined;
 
   /*
-   * Commander damage, as ticks that close the gauge from the right.
+   * Commander damage, as two arrows riding this seat's own life bar.
    *
-   * Each is offset by the width of the ticks outside it, so the track reads as
-   * one bar eaten from both ends rather than as three overlapping bars. Only
-   * seats that have actually dealt damage draw a tick -- unlike the orb's
-   * plate, which reserves a chip per seat at zero, because there the reflow
-   * would move a whole column and here it moves nothing.
+   * A Commander player watches two clocks per opponent and they run in
+   * opposite directions: how close *their* commander is to killing *you*, and
+   * how close *yours* is to killing *them*. What this seat used to draw was
+   * neither -- it was the worst damage this seat had taken from *anybody*,
+   * which in a pod is most often a number about two other players.
+   *
+   * So one arrow per direction, each parked at its own fraction of 21 along
+   * the track: yours pointing down off the top edge, theirs pointing up off
+   * the bottom. Distance travelled is progress toward lethal, and a length
+   * survives `e2e/greyscale.spec.ts` where a hue does not -- the edge and the
+   * direction are a second and third channel on top of it.
+   *
+   * The numbers themselves are on the gauge's `data-hint`, for the same reason
+   * everything else in this component puts them there: a 22px row cannot hold
+   * two more numerals at the 16px floor, and the hint bar surfaces them from
+   * the cursor as well as from the pointer.
    */
-  const sources = state.players
-    .filter((seat) => seat.pid !== player.pid)
-    .map((seat) => ({
-      pid: seat.pid,
-      amount: player.commander_damage_taken[String(seat.pid)] ?? 0,
-      who: names[seat.pid] ?? seat.name ?? `Player ${seat.pid}`,
-    }));
+  const viewer = state.players.find((seat) => seat.pid === state.seat);
+  /** What the viewer's commander has done to this seat. */
+  const dealt = player.commander_damage_taken[String(state.seat)] ?? 0;
+  /** What this seat's commander has done to the viewer. */
+  const taken = viewer?.commander_damage_taken[String(player.pid)] ?? 0;
 
-  let offset = 0;
-  const ticks = sources
-    .filter((source) => source.amount > 0)
-    .map((source) => {
-      const width = (Math.min(source.amount, COMMANDER_LETHAL) / COMMANDER_LETHAL) * 100;
-      const tick = { ...source, width, right: offset };
-      offset += width;
-      return tick;
-    });
-
-  const worst = [...sources].sort((a, b) => b.amount - a.amount)[0] ?? {
-    amount: 0,
-    who: "nobody",
-  };
+  const arrows = [
+    {
+      key: "dealt",
+      amount: dealt,
+      label: `you have dealt ${dealt} of ${COMMANDER_LETHAL} commander damage to ${player.name}`,
+    },
+    {
+      key: "taken",
+      amount: taken,
+      label: `${player.name} has dealt ${taken} of ${COMMANDER_LETHAL} commander damage to you`,
+    },
+  ];
 
   const gaugeLabel = `${player.life} life of ${STARTING_LIFE} — ${
-    worst.amount === 0
-      ? "no commander damage yet"
-      : `worst commander damage ${worst.amount} of ${COMMANDER_LETHAL} from ${worst.who}`
+    dealt === 0 && taken === 0
+      ? "no commander damage either way"
+      : `${arrows[0].label}; ${arrows[1].label}`
   }`;
 
   const classes = [
@@ -363,27 +367,47 @@ export function OpponentSeat({
         aria-label={gaugeLabel}
         data-hint={gaugeLabel}
       >
-        {ticks.map((tick) => (
-          <span
-            key={tick.pid}
-            className={`tick${tick.amount >= COMMANDER_WARN ? " tick--warn" : ""}`}
-            style={{ "--w": `${tick.width}%`, right: `${tick.right}%` } as CSSProperties}
-            data-from={tick.pid}
-            data-amount={tick.amount}
-            aria-hidden="true"
-          />
-        ))}
         <span className="seat__life tabular" data-testid={`life-${player.pid}`}>
           {player.has_lost ? "OUT" : player.life}
         </span>
+        {/*
+          The two arrows, in their own inset track.
+
+          Inset by the arrow's half-width so a source at 21 parks its point on
+          the end of the bar rather than half outside it -- `.gauge` clips, and
+          a mark that says "lethal" is the last one that should be cut in half.
+
+          Zero draws nothing. An absolutely positioned mark costs no layout, so
+          the reflow argument that keeps the seat's other cells at zero does not
+          apply, and two arrows stacked on the left edge at the start of every
+          game would be two marks saying nothing.
+        */}
         <span
-          className={`gauge__dmg${worst.amount >= COMMANDER_WARN ? " gauge__dmg--warn" : ""}${
-            worst.amount === 0 ? " gauge__dmg--zero" : ""
-          }`}
+          className="cmdarrows"
           data-testid={`cmddmg-${player.pid}`}
+          data-dealt={dealt}
+          data-taken={taken}
+          aria-hidden="true"
         >
-          <SeatIcon name="crown" />
-          <span className="tabular">{worst.amount}</span>
+          {arrows.map((arrow) =>
+            arrow.amount > 0 ? (
+              <span
+                key={arrow.key}
+                className={`cmdarrow cmdarrow--${arrow.key}${
+                  arrow.amount >= COMMANDER_WARN ? " cmdarrow--warn" : ""
+                }`}
+                style={
+                  {
+                    "--at": `${
+                      (Math.min(arrow.amount, COMMANDER_LETHAL) / COMMANDER_LETHAL) * 100
+                    }%`,
+                  } as CSSProperties
+                }
+                data-cmddmg={arrow.key}
+                data-amount={arrow.amount}
+              />
+            ) : null,
+          )}
         </span>
       </span>
 

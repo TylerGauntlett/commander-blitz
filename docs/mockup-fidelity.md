@@ -197,11 +197,140 @@ divergence from `docs/frontend.md`'s earlier "cards are text-only" position, and
 it is worth stating plainly: at hand size a rules box renders at 6–8px, which is
 not text. The rules live on the rail card, which is now big enough to hold them.
 
-### A life dial and zone piles, not a number and chips
+### A life dial and zone piles, not a number and chips — **half reversed**
 
 The mockup shows life as a plain numeral with a row of mana dots, and the zones as
 text chips (`Lib 84`, `Hand 4`, `GY 6`). The client uses a brass dial and stacked
 piles. Predates this sweep; `e2e/acceptance.spec.ts` asserts both.
+
+**On a handheld both halves went the mockup's way, and the reasoning that
+survives is about size rather than about taste.**
+
+- The dial is still a dial, but it is a **64px conic ring** instead of a 52px
+  brass disc: at that size there is area to spare, and a ring to `--fill` says
+  "34 of the 40 you started with" without adding a character. Desktop keeps the
+  disc, which is a seal and deliberately not a meter.
+- The piles are **chips**. The leaf stack was already reduced to its top leaf
+  here, because the leaves are height a 154px column does not have — so what
+  was left was five identical card-back boxes told apart by the hue of a 15px
+  icon, which is one channel and it is the one `e2e/greyscale.spec.ts` takes
+  away. `mockups/handheld-board/` puts the zone's own colour on the *ground*
+  with one dark ink over it, and draws which of them you can press as relief: a
+  lit top edge on the four that open a peek, a recessed and desaturated face on
+  the library, which is hidden information and never a control.
+
+**Two of the mockup's numbers did not survive contact.** It splits five chips
+3 + 2 inside a 148px `.orb`; this column is 136px of content at 1280 and 126 at
+1200, and three 44px targets with two gaps is 138. So they are two to a row.
+`expectHandheldFloors` is the gate that found it, on the first run, and is why
+the split is stated in `handheld.css` rather than left to look right.
+
+### Commander damage is two arrows on an opponent's own life bar
+
+Superseded: the orb's `.orb__cmd` plate and the seat's hatched `.tick`s and
+crown chip. All three are gone.
+
+The client used to draw commander damage twice and answer neither question a
+player actually has. The viewer's orb carried a chip per opposing seat with a
+meter under it — the loudest object in a 154px column — which said *how close is
+each of them to killing me*. An opponent's seat carried `worstSource(seat)`,
+which is the worst damage **that seat** has taken **from anybody**: in a pod
+that is usually a number about two other players, and `mockups/handheld-board/`
+records it as the direction's one open hole.
+
+There are exactly two facts, they are about the same pair of people, and they
+run in opposite directions. So each opponent's 40-life gauge carries two small
+arrows, each parked at its own fraction of 21:
+
+| | edge | direction | colour | what it is |
+|---|---|---|---|---|
+| `.cmdarrow--dealt` | top | down | `--playable` | what **your** commander has done to them |
+| `.cmdarrow--taken` | bottom | up | `--attacking` | what **their** commander has done to you |
+
+Distance travelled is progress toward lethal. Four channels and only one is
+hue — edge, direction, colour, distance — so the pair survives greyscale and so
+does the difference between the two. At 15 the arrow grows and takes a light
+halo rather than getting redder, because `--taken` is red already and hue has
+nothing left to say.
+
+The numbers are on the gauge's `data-hint` and `aria-label` and nowhere else: a
+22px row will not hold two more numerals at the 16px floor, and the hint bar
+surfaces them from the cursor as well as from the pointer. `--dealt` is
+deliberately not gold — the life fill under it is.
+
+Zero draws nothing, unlike every other cell on the seat. The reflow argument
+that keeps those at zero does not apply to an absolutely positioned mark, and
+two arrows parked on the left edge at the start of every game are two marks
+saying nothing.
+
+### The commit dock is a bar of three, not a slab over two pills
+
+`ui.css`'s dock was a full-width `.commit` slab with a `.commit-alt` row of two
+outlined 12px pills under it. That spends a whole second row on the two answers
+nobody presses and reads as one button with a caption.
+
+`mockups/handheld-board/` draws the relationship the three controls actually
+have — every legal choice, the decision, none of them — as **a filled and an
+empty of one shape flanking the slab**, on one row, inside a `--pane-well`. All
+three clear the 44px floor in the height the slab alone was taking, and the
+well is what makes "this does not scroll with the list" visible rather than
+merely true.
+
+Three things came off the button with it:
+
+- **The count.** `Attack with 0` → `Attack with 10` is a label that changes
+  width, so the button re-centres under the thumb every time a creature is
+  staged — which is exactly while you are aiming at it. It is `.commit-note`
+  above the bar now, which is also where a block forecast wants to sit.
+- **The marks' words.** The marks carry their names on `aria-label` and
+  `data-hint` only. A `title` would reach the mouse and nothing else, and this
+  bar is driven by a controller at least as often.
+- **`.commit__key`.** The keycap chip is gone; `HintBar` already advertises the
+  same binding from the foot, and Loop 8.4 is about what happens when two
+  surfaces claim the same thing.
+
+`combat-all`, `combat-skip`, `combat-confirm` and `commit` are all still the
+same `data-testid`s on the same handlers. Three e2e assertions read the count
+off `aria-label` rather than out of the label; `cycle3.spec.ts` reads "All
+defend" the same way.
+
+**Not taken: the mockup's hint line inside the well.** `mockups/handheld-board/`
+puts `13 power · A Send` under its bar. The client has a `HintBar` spanning the
+foot that renders from `NAVIGATION_HINTS`, and a second hint surface in the
+rail is the exact shape of the bug Loop 8.4 found.
+
+### Amended after playtest: the marks are drawn, and the dock never moves
+
+Two things about this bar shipped as the mockup drew them and came back.
+
+**`▣` and `▢` are gone.** Filled and empty of one square *is* the
+relationship between "every legal choice" and "none of them", and that is an
+argument you can only make in a document somebody has read. On screen they are
+two squares in one box that nobody can tell apart, on a bar where one of them
+ends the declaration. `components/ui/ActionIcon.tsx` draws them now — select-all
+(three rows and a tick) and skip-to-end (a triangle against a bar) — following
+`SeatIcon`'s pattern and its argument: **a glyph in a font is a different
+picture on every machine**, and a mark that has to be *recognised* has to be
+drawn. Everything else is untouched: same `data-testid`s, same handlers, same
+names on `aria-label` and `data-hint`, so the three e2e assertions above and
+`cycle3.spec.ts`'s "All defend" still read what they always read.
+
+**The well was only ever the right height when it had something in it.** The
+dock was always mounted and its contents were conditional, so between decisions
+it collapsed to its own 18px of padding and sprang back to 66 or 90 when an
+action arrived — and the bottom of the rail moved with it, every time a turn
+passed. The count's row was a second mover: it existed only in combat, so
+entering `declare_attackers` added 25px on top of the bar changing.
+`ActionPanel` now renders the note in every mode (a non-breaking space when it
+has nothing to say, `min-height: 1lh` to hold the line) and falls back to an
+idle slab carrying the panel's own `.acts__dot` waiting mark — quiet, not gold,
+because gold means "this is what the turn is waiting on". `.preview` above it
+had already been given a fixed height for exactly this reason; `board.css`
+spends four paragraphs on why. The idle slab is a `div` and not a disabled
+`<button>`: there is nothing to press even in principle, it carries no
+`data-action-id` and no `data-stop`, and a disabled control is a promise that it
+will become pressable. `ActionPanel.stories.tsx`'s `expectStableDock` is the
+gate, called from the emptiest state and the fullest one alike.
 
 ### Counted mana symbols on a plate, not a row of loose dots
 
@@ -391,6 +520,22 @@ Ranked by severity. None of these block anything; they are the queue.
   written), so hovering a commander you had just cast blanked the rail. Both
   functions search the stack first now; `frontend/tests/zoneGrouping.test.ts`
   pins the ordering.
+
+### The focus ring cannot see a transform on a descendant — low
+
+- **App**: `input/ring.ts`'s `ringTargetFor` walks *ancestors* accumulating
+  rotation and scale, which is why the hand fan works — its rotation is on
+  `.hand__lift`, above the card. The tap rotation is on `.card__pivot` and the
+  staged-attacker lean is on `.card__actor`, both *below* the node the ring is
+  drawn around, so `degrees` stays 0 and the ring is the axis-aligned envelope.
+- **Why it matters**: only for a pad or keyboard player. `handheld.css` hides
+  `#ring` and the `[data-cursor]` outline for the mouse, so the `::after` rim is
+  the whole of the selection glow there — and that half is fixed (see above:
+  the rim moved onto `.card__actor`, inside both transforms).
+- **Fix direction**: a descendant walk, or having the actuators publish their
+  held transform where the ring can read it. Needs its own gate either way.
+- **Test status**: none. `Card.StagedAndTapped` pins the rim's half of this and
+  says nothing about the ring.
 
 ### 5. The command-zone card is cramped — **resolved**, by not drawing a card
 

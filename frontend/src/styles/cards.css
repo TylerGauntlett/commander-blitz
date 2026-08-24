@@ -45,8 +45,25 @@
  * descendants -- so `.card--tapped .card__pivot`, which centres itself with
  * `inset: 0; margin: auto`, would resolve against a zero-sized box and collapse
  * every tapped card the first time anything lunged.
+ *
+ * THE RIM AND THE PIN LIVE ON THIS NODE, not on `.card`, and that is the whole
+ * of the "the glow does not go round the card" defect.
+ *
+ * `lean` (`fx/actuators.ts`) eases in and *stays*, so a staged attacker holds a
+ * translate, a tilt of up to 6deg and a 1.03 scale on this element for as long
+ * as it is declared. A transform on a child cannot move a pseudo-element of its
+ * parent, so while the rim was `.card::after` the card stepped out from under
+ * its own halo -- and the pin stayed behind with it. Painting both here puts
+ * them inside the transform instead of above it.
+ *
+ * `position: relative` so `inset: -3px` resolves against this box. It is the
+ * same box as `.card` at rest (100% of it, tapped or not, which is what makes
+ * the move geometry-neutral), and making it a containing block unconditionally
+ * rather than only-while-transformed is what the paragraph above already
+ * wanted.
  */
 .card__actor {
+  position: relative;
   width: 100%;
   height: 100%;
 }
@@ -878,7 +895,13 @@
 
 /* Interaction rims ----------------------------------------------------- */
 
-.card::after {
+/*
+ * Every rim below is painted on `.card__actor` and every state that turns one on
+ * is a class on `.card`. That split is deliberate: the classes belong to the
+ * card as a thing, and the paint belongs inside the transform the card is
+ * currently under. See the note on `.card__actor` above for why.
+ */
+.card .card__actor::after {
   content: "";
   position: absolute;
   inset: -3px;
@@ -888,12 +911,12 @@
   opacity: 0;
 }
 
-.card--playable::after {
+.card--playable .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 2px var(--playable), 0 0 16px rgb(92 224 138 / 0.45);
 }
 
-.card--targetable::after {
+.card--targetable .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 2px var(--targetable), 0 0 18px rgb(88 182 255 / 0.5);
 }
@@ -910,7 +933,7 @@
  * something already on the board are different moves, and one rim colour for
  * both would say they are the same.
  */
-.card--ability::after {
+.card--ability .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 2px var(--ability), 0 0 18px rgb(195 155 255 / 0.5);
 }
@@ -1008,22 +1031,22 @@
   pointer-events: none;
 }
 
-.card--staged::after {
+.card--staged .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 3px var(--staged), 0 0 20px rgb(255 193 77 / 0.5);
 }
 
-.card--selected::after {
+.card--selected .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 3px #fff, 0 0 22px rgb(255 255 255 / 0.4);
 }
 
-.card--attacking::after {
+.card--attacking .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 2px var(--attacking), 0 0 18px rgb(255 107 94 / 0.5);
 }
 
-.card--blocking::after {
+.card--blocking .card__actor::after {
   opacity: 1;
   box-shadow: 0 0 0 2px var(--blocking), 0 0 18px rgb(107 168 255 / 0.5);
 }
@@ -1045,6 +1068,8 @@
   background: rgb(8 16 12 / 0.22);
 }
 
+/* On `.card__actor`, beside the rim and for the same reason: a staged card
+   leans, and a pin left behind on `.card` marks where the card used to be. */
 .card__pin {
   position: absolute;
   top: -6px;

@@ -85,7 +85,6 @@ function seat(state: GameView) {
   return {
     state,
     player: state.players[1],
-    names: state.players.map((p) => p.name),
     isActive: false,
     hasPriority: false,
     targetable: false,
@@ -181,23 +180,50 @@ export const MoreCreaturesThanPips: Story = {
 };
 
 /**
- * Life from the left, commander damage from the right, on one track.
+ * Life from the left, commander damage as two arrows on the same track.
  *
- * Two different clocks, and a Commander player watches both -- what is left in
- * the middle is how much room there is.
+ * Three clocks, and a Commander player watches all of them: their life, how
+ * close your commander is to killing them (the arrow off the top edge), and
+ * how close theirs is to killing you (the arrow off the bottom). The seat used
+ * to draw the worst damage *this seat* had taken from anybody, which in a pod
+ * is most often a number about two other players.
  */
 export const UnderPressure: Story = {
   args: seat(
     view([creature()], {
       life: 12,
-      commander_damage_taken: { "0": 16, "2": 3 },
+      commander_damage_taken: { "0": 16 },
     }),
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("player-1");
-    expect(canvasElement.querySelectorAll(".tick")).toHaveLength(2);
-    expect(canvasElement.querySelector(".tick--warn")).not.toBeNull();
+    const dealt = canvasElement.querySelector('[data-cmddmg="dealt"]') as HTMLElement;
+    expect(dealt.dataset.amount).toBe("16");
+    expect(dealt.className, "16 of 21 should be reading as a warning").toContain(
+      "cmdarrow--warn",
+    );
+  },
+};
+
+/**
+ * The race, which is the fact both arrows exist to carry.
+ *
+ * Nine dealt against fourteen taken: their commander is ahead of yours, and
+ * the two arrows say so by where they sit rather than by a pair of numbers
+ * somebody has to compare. Neither is at the warning line yet, so this is also
+ * the state that shows the two directions apart by colour.
+ */
+export const CommanderRace: Story = {
+  args: (() => {
+    const state = view([creature()], { life: 26, commander_damage_taken: { "0": 9 } });
+    state.players[0].commander_damage_taken = { "1": 14 };
+    return seat(state);
+  })(),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("player-1");
+    expect(canvasElement.querySelectorAll(".cmdarrow")).toHaveLength(2);
   },
 };
 

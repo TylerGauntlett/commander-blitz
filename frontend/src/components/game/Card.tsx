@@ -250,6 +250,14 @@ export function Card({
         The force layer. Sits at rest at identity and costs nothing until an
         actuator pushes it -- `fx/actuators.ts` writes these four values
         directly, so nothing here re-renders during a strike.
+
+        THE RIM AND THE PIN ARE INSIDE IT. `cards.css` paints every interaction
+        rim as `.card__actor::after`, and the pin is a child here rather than of
+        `.card`, because `lean` holds a transform on this node for as long as an
+        attacker is declared -- and a transform on a child cannot carry a
+        pseudo-element of its parent with it. Anything that must travel with the
+        card belongs at this level or below; anything that must stay put (the
+        `[data-oid]` box the arrows and the death ghost measure) belongs above.
       */}
       <motion.div
         className="card__actor"
@@ -262,8 +270,10 @@ export function Card({
         >
           <CardFace card={card} variant={variant} />
         </motion.div>
+        {/* Outside `.card__pivot` on purpose: the pin is a marker, so it rides
+            the lean but must not take the quarter turn with a tapped card. */}
+        {staged && <span className="card__pin" />}
       </motion.div>
-      {staged && <span className="card__pin" />}
       {/*
         An activated ability had no presence on the card at all: the only
         surface was a sentence-shaped button in the action bar's overflow, so

@@ -201,11 +201,15 @@ export const ReaderIdle: Story = {
 };
 
 /**
- * A card in hand you cannot cast, and why.
+ * A card in hand you cannot cast -- and the reader does NOT say why.
  *
- * `hand_reasons` is the viewer's own and hand-only, so the reader derives it
- * from `state` rather than taking a prop. On a handheld the hand's own copy of
- * this sentence is suppressed, so it is not on screen twice.
+ * It used to. "Needs {4}{G}{G}{G} -- you have {G}" is two lines at the 16px
+ * floor and it was `flex: none`, so the height came out of the rules box, which
+ * is the half of this panel a player opened it for: Elder Deep-Fiend was cut
+ * 75px into its own paragraph. The sentence is a fact about the hand rather
+ * than about the card, and `HandFan` draws it there as `.hand__hint` -- no
+ * longer suppressed on a handheld. This story is the one that would notice it
+ * coming back.
  */
 export const ReaderUnplayable: Story = {
   args: { state: scenarios.openingHand().state },

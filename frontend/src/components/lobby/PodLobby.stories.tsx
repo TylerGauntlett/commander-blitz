@@ -30,6 +30,37 @@ function lobby(pod = pods.filling(), overrides = {}) {
   };
 }
 
+/**
+ * The four plates are one row, not four stacks.
+ *
+ * A plate is read ACROSS as much as down: whose seat, which deck, what colours.
+ * That only works if the same row is at the same height in all four slots, and
+ * it was not -- your own chair carries a name *field* where the others carry a
+ * label, and a field is the taller box. Every row under it inherited the
+ * difference, so the deck names, the mana and the buttons all stepped down by a
+ * seat. The rows are pinned to one height in `styles/lobby.css`; this is what
+ * says so, for whichever pod the story it is called from poses.
+ */
+function expectPlateRowsLineUp(canvasElement: HTMLElement): void {
+  const tops = (selector: string) =>
+    [...canvasElement.querySelectorAll<HTMLElement>(selector)].map((el) =>
+      Math.round(el.getBoundingClientRect().top),
+    );
+  // Every slot has a name line whatever is in it, so this is also the check
+  // that the selectors below are still finding anything at all.
+  expect(tops(".slot .plate__who").length).toBe(4);
+  for (const row of [".plate__who", ".plate__deck", ".plate__meta", ".plate__acts"]) {
+    const found = tops(`.slot ${row}`);
+    expect(new Set(found).size, `${row} tops: ${found.join(", ")}`).toBeLessThanOrEqual(1);
+  }
+  // The name itself, not merely the box around it: a field and a label of the
+  // same height whose text sits at different depths is the same defect.
+  const names = [...canvasElement.querySelectorAll<HTMLElement>(".plate__name, .plate__n")].map(
+    (el) => Math.round(el.getBoundingClientRect().top),
+  );
+  expect(new Set(names).size, `name tops: ${names.join(", ")}`).toBeLessThanOrEqual(1);
+}
+
 const meta = {
   title: "Lobby/PodLobby",
   component: PodLobby,
@@ -50,6 +81,8 @@ export const EmptyPod: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("ready-track");
+    // Three chairs nobody has taken, and they line up with the one you are in.
+    expectPlateRowsLineUp(canvasElement);
   },
 };
 
@@ -81,6 +114,9 @@ export const AllReady: Story = {
     const canvas = within(canvasElement);
     const start = await canvas.findByTestId("start-game");
     expect(start.hasAttribute("disabled")).toBe(false);
+    // Four seats all showing the same things: the plainest case, and the one a
+    // row height that came from the content would happen to get right anyway.
+    expectPlateRowsLineUp(canvasElement);
   },
 };
 
@@ -123,6 +159,54 @@ export const SeedEntry: Story = {
     const field = await canvas.findByLabelText("Seed");
     await userEvent.type(field, "7");
     expect(args.onSeedChange).toHaveBeenCalled();
+  },
+};
+
+/**
+ * The mix that drifted: four seats of four different kinds -- yours, a player
+ * who has not locked in, a CPU, and an open chair.
+ */
+export const PlatesLineUp: Story = {
+  args: lobby(pods.filling()),
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByTestId("ready-track");
+    expectPlateRowsLineUp(canvasElement);
+  },
+};
+
+/**
+ * The same row, at a Steam Deck's panel -- where it is furthest out.
+ *
+ * The handheld layout raises every control to a 44px hit floor, and the name
+ * field is a control while the label beside it is not. That is a 25px step
+ * rather than the desktop's six, and it also caught the details glyph: a
+ * `min-height` with no `min-width` turned a 17px circle into a 17x44 pill.
+ */
+export const PlatesLineUpHandheld: Story = {
+  args: lobby(pods.filling()),
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByTestId("ready-track");
+    expectPlateRowsLineUp(canvasElement);
+
+    /*
+     * The target is 44px and the mark is not, which is the only way both the
+     * hit floor and a plate the size of a playing card can be right. The circle
+     * is `::before`, so it is measured through the cascade rather than through
+     * a box -- a pseudo-element has no `getBoundingClientRect`.
+     */
+    for (const glyph of canvasElement.querySelectorAll<HTMLElement>(".ibtn")) {
+      const box = glyph.getBoundingClientRect();
+      expect(Math.round(box.width), "the details target is square").toBe(
+        Math.round(box.height),
+      );
+      expect(Math.round(box.width)).toBeGreaterThanOrEqual(44);
+
+      const mark = getComputedStyle(glyph, "::before");
+      expect(mark.width, "the drawn circle is round").toBe(mark.height);
+      expect(Number.parseFloat(mark.width)).toBeLessThan(30);
+    }
   },
 };
 

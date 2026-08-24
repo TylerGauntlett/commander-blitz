@@ -186,8 +186,19 @@ export function verbsFor(
   const own = actions.filter((action) => action.source_oid === oid);
   const casts = own.filter((action) => action.kind === "cast" || action.kind === "play_land");
   if (casts.length > 0) {
+    /*
+     * THE VERB ONLY, AND NOT THE CARD'S NAME.
+     *
+     * This was `base_label`, which is "Cast Vicious Conquistador" -- and the
+     * hint bar is one line shared with the navigation half, so a long name
+     * pushed `Region` and `Jump` onto a second row and the bar grew under the
+     * hand. The name is not what the hint is for either: the ring is already on
+     * the card, the reader beside it is already showing the card, and every
+     * other stop here says a bare verb. `A` on a land is still `Play`, because
+     * playing a land and casting a spell are different moves.
+     */
     return {
-      a: casts.length === 1 ? (casts[0].base_label ?? "Play") : "Play",
+      a: casts.every((action) => action.kind === "play_land") ? "Play" : "Cast",
       x: own.some((action) => action.kind === "activate") ? "Activate" : undefined,
       y: "Read",
       b: "Back",

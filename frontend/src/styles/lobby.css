@@ -736,23 +736,58 @@
   background: rgb(255 92 92 / 0.12);
 }
 
+/*
+ * FOUR PLATES, ONE ROW. The heights below are what make that true.
+ *
+ * A plate is read across as much as down -- whose seat, which deck, what
+ * colours -- and that only works while the same line is at the same height in
+ * all four slots. It was not. Your own chair carries a name FIELD where the
+ * other three carry a label, and a field is the taller box: 6px taller on the
+ * desktop plate, 23px on the handheld one, where the hit floor raises every
+ * control to 44px. Because `.plate` is a grid, that difference was inherited by
+ * every row under it -- the deck name, the mana, the button all stepped down on
+ * your seat alone.
+ *
+ * So the two rows whose content differs by seat are given a height rather than
+ * taking one from whatever is in them, and it is stated once here rather than
+ * on each of the elements that has to match. Everything below them then lines
+ * up by construction instead of by coincidence.
+ */
 .plate {
+  /* The name line: a field on your plate, a label on everybody else's. */
+  --name-h: 24px;
+  /* The meta line: mana pips and a details glyph on a seat whose deck is
+     readable, a sentence on one whose is not. */
+  --meta-h: 20px;
+  /* Named because an empty chair's buttons have to step by the same amount --
+     see `.plate__fill`, which stands in for two of these rows at once. */
+  --plate-gap: 7px;
+
   width: 100%;
   min-width: 0;
   display: grid;
-  gap: 7px;
+  gap: var(--plate-gap);
   text-align: center;
 }
 
+/* Centred rather than baseline-aligned: the name and the label are now the same
+   box, so a baseline is the one thing left that a field and a span can still
+   disagree about -- an input centres its own text in a tall box and a span does
+   not. */
 .plate__who {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   gap: 7px;
   min-width: 0;
+  min-height: var(--name-h);
 }
 
 .plate__n {
+  height: var(--name-h);
+  /* The height IS the line box, which is what centres the text without making
+     this a flex or grid container -- either would break the ellipsis below. */
+  line-height: var(--name-h);
   font-size: 14px;
   font-weight: 800;
   white-space: nowrap;
@@ -768,6 +803,8 @@
   flex: 0 1 auto;
   min-width: 0;
   width: 100%;
+  /* The same box as the label beside it. See `--name-h`. */
+  height: var(--name-h);
   padding: 2px 6px;
   border: 1px solid transparent;
   border-radius: 7px;
@@ -823,6 +860,9 @@
   justify-content: center;
   gap: 5px;
   flex-wrap: wrap;
+  /* Held, so a seat showing pips and a seat showing "readable once they lock
+     in" leave the button under them at the same height. See `--meta-h`. */
+  min-height: var(--meta-h);
 }
 
 .plate__acts {
@@ -833,10 +873,14 @@
 }
 
 /* An empty slot's actions live under its card back, so every slot has the same
-   anatomy whatever is in it. */
+   anatomy whatever is in it -- and, because there are two of them, they stand
+   in for the meta row AND the acts row of a slot that is filled. That is why
+   the gap is the plate's own: with any other value the second button lands a
+   pixel or two off the "Change deck" beside it, which is the drift this whole
+   set of row heights exists to stop. */
 .plate__fill {
   display: grid;
-  gap: 6px;
+  gap: var(--plate-gap);
   width: 100%;
 }
 
@@ -1745,14 +1789,19 @@
    its block no row of its own, and it doubles as the hint that the card above
    it is clickable. */
 .ibtn {
-  width: 17px;
-  height: 17px;
+  /* The mark. The BOX is separate and may be bigger -- see `.ibtn::before`. */
+  --ibtn-dot: 17px;
+
+  position: relative;
+  width: var(--ibtn-dot);
+  height: var(--ibtn-dot);
   flex: 0 0 auto;
+  padding: 0;
+  border: 0;
   border-radius: 999px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--edge-hi);
-  background: rgb(9 8 20 / 0.5);
+  background: none;
   cursor: pointer;
   font-size: 10px;
   font-weight: 800;
@@ -1761,12 +1810,48 @@
   color: var(--text-faint);
 }
 
+/*
+ * THE CIRCLE IS DRAWN, NOT THE BUTTON'S OWN BOX, and that separation is the
+ * whole point: a touchscreen wants a 44px target and the plate wants a mark the
+ * size of the mana pips beside it. Those are only in conflict while the thing
+ * you press and the thing you see are the same rectangle.
+ *
+ * So the box grows for the finger (`handheld.css`) and the circle stays put for
+ * the eye. Every state below paints this element rather than the button, which
+ * is what keeps the two layouts one set of rules.
+ */
+.ibtn::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--ibtn-dot);
+  height: var(--ibtn-dot);
+  transform: translate(-50%, -50%);
+  /* Behind the letter, not over it. A positioned pseudo-element paints AFTER
+     its parent's inline content, so without this the circle's half-opaque fill
+     sits on top of the `i` and takes a quarter of its contrast. */
+  z-index: -1;
+  border: 1px solid var(--edge-hi);
+  border-radius: 999px;
+  background: rgb(9 8 20 / 0.5);
+}
+
 .ibtn:hover {
-  border-color: var(--gold);
   color: var(--gold);
 }
 
-.ibtn:focus-visible {
+.ibtn:hover::before {
+  border-color: var(--gold);
+}
+
+/* On the circle rather than on the box, for the same reason the border is: a
+   ring around a 44px target with a 22px mark in it points at nothing. Nothing
+   turns the box's own outline off here -- `handheld.css` already suppresses
+   native focus everywhere except on the cursor, and doing it again by name is
+   exactly the rule `tests/focusOutline.test.ts` bans, because it would outrank
+   the ring and blank it on this control alone. */
+.ibtn:focus-visible::before {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
@@ -1776,11 +1861,14 @@
    tiles each carrying a permanently red glyph reads as a rack of warnings, and
    the thing this button destroys is one deck, not the evening. */
 .ibtn--danger:hover {
-  border-color: var(--danger);
   color: var(--danger);
 }
 
-.ibtn--danger:focus-visible {
+.ibtn--danger:hover::before {
+  border-color: var(--danger);
+}
+
+.ibtn--danger:focus-visible::before {
   outline-color: var(--danger);
 }
 

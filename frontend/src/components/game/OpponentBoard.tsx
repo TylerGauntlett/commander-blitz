@@ -29,7 +29,6 @@ interface Props {
   state: GameView;
   /** The seat being read, or null when nothing is held. */
   pid: number | null;
-  names: string[];
 }
 
 /**
@@ -40,7 +39,7 @@ interface Props {
  */
 const CARD_SCALE = 1.35;
 
-export function OpponentBoard({ state, pid, names }: Props) {
+export function OpponentBoard({ state, pid }: Props) {
   if (pid === null) return null;
   const player = state.players[pid];
   if (!player) return null;
@@ -82,7 +81,6 @@ export function OpponentBoard({ state, pid, names }: Props) {
         variant="lanes"
         state={state}
         player={player}
-        names={names}
         cardScale={CARD_SCALE}
         actionableOids={EMPTY}
         playableOids={EMPTY}

@@ -18,7 +18,8 @@ handheld/                 a Steam Deck board, driven by a real pad
 seat/                     an opponent's seat at 332x84, three densities, six directions
 rail/                     the action rail at 243x514, one direction across three decisions
 self/                     your own orb at 154x518 — and what to take off it
-handheld-board/           the latest: the whole 1280x800 screen, at full fidelity
+handheld-board/           the whole 1280x800 screen, at full fidelity
+door/                     the latest: the front door as a game menu, three cards on a Deck
 ```
 
 These five are about the **board**. [`cards/`](cards/README.md) is a separate,
@@ -51,6 +52,37 @@ an opponent's, and a portrait crop — can be looked at rather than reasoned abo
 the crop, which was that direction's one stated price at 40% of the painting's
 width, comes back to 84% because this layout's foot is 122px taller and the
 portrait is the elastic member.
+
+[`door/`](door/README.md) is the most recent, and the only round whose subject is
+a **control** rather than a layout. It takes the front door -- a wordmark, a gold
+button, a text field and a footer of 11px links -- and makes a Steam Deck main
+menu out of the one game-shaped object already on it: the fan of four card backs
+at [`HomeScreen.tsx:78-87`](../frontend/src/components/lobby/HomeScreen.tsx#L78-L87),
+which today is decoration. Three cards, Decks / Play / Join, sliding apart from
+the selected one and stacking on the far side, driven by a real `Gamepad` build
+lifted whole from `handheld/`.
+
+Being about a control rather than a layout is what makes it the first round with
+**two drivers**. `measure.mjs` walks each file through all three selections,
+because the pose it opens on is the one pose in which nothing is stacked;
+`drive.mjs` presses things, because "three cards that are actually selectable" is
+a claim a still cannot check -- and it earned its place immediately by finding a
+tile that passed every layout gate in the round while being unclickable, its Join
+field sitting in the plate's centre and swallowing the click it had to swallow to
+be typeable.
+
+Its own gate is **`labelClear`**: the brief asks two cards to overlap, and
+overlap's failure mode is a card covering the one thing that says what the card
+under it *is*. From it fall the round's three portable findings -- **the stack
+depth is bounded by the longest label** (a name has to fit the sliver its card has
+left, which is why 02's spine is worth more than it looks); **a stacked card's
+name must sit on its outer edge**, which costs the launcher direction the
+left-aligned title it most wanted; and **the stack costs a card everything except
+its name**, so a direction whose idea lives in the body of the card is a direction
+the stack argues against. It is also the first surface in this folder authored *at*
+the 16px and 44px floors rather than repaired to them: eight of the shipped door's
+own text sizes are named in `handheld.css`'s generated 144-selector override list,
+which is every word on that screen bar the wordmark.
 
 [`self/`](self/README.md) is the round before it and the only one whose subject is
 **the viewer**. It started as "draw your own orb in the grammar `seat/` settled"

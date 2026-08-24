@@ -61,9 +61,6 @@ import { CommandZone } from "./CommandZone";
 import { ManaSymbol } from "./ManaSymbol";
 import { SeatIcon, type SeatIconName } from "./SeatIcon";
 
-/** Commander damage becomes lethal here; warn well before it does. */
-const COMMANDER_LETHAL = 21;
-
 /**
  * What a mana group says on hover, in the one form that fits every case.
  *
@@ -82,6 +79,9 @@ function groupTitle(group: ManaGroupView): string {
   }
   return `${group.count} ${what}${where}`;
 }
+
+/** Starting life, and so what the handheld dial's ring is a fraction of. */
+const STARTING_LIFE = 40;
 
 const EMPTY: ReadonlySet<number> = new Set();
 
@@ -238,8 +238,6 @@ interface Props {
   isViewer: boolean;
   isActive: boolean;
   hasPriority: boolean;
-  /** Names by pid, for the commander-damage tooltips. */
-  names: string[];
   /** A legal action could point at this player: attack target, spell target. */
   targetable?: boolean;
   onSelect?: (pid: number) => void;
@@ -263,7 +261,6 @@ export function PlayerOrb({
   isViewer,
   isActive,
   hasPriority,
-  names,
   targetable = false,
   onSelect,
   spending,
@@ -307,19 +304,6 @@ export function PlayerOrb({
     });
   }, [player.life, controls]);
 
-  /*
-   * Every other seat, in seating order -- not the seats that have already dealt
-   * commander damage.
-   *
-   * `commander_damage_taken` only carries seats that have connected, so building
-   * the row from its keys made the plate appear on the first hit. Reading it as a
-   * lookup against the seating instead means the chips are all there from turn
-   * one, at zero, and the panel never changes size.
-   */
-  const opponents = state.players
-    .filter((seat) => seat.pid !== player.pid)
-    .map((seat) => seat.pid);
-
   const pips = markSpent(manaRow(player.mana), spending ?? EMPTY);
   const spentCount = pips.filter((pip) => pip.spent).length;
   const groups = manaGroups(pips);
@@ -348,6 +332,17 @@ export function PlayerOrb({
   // already, so nothing about it changes but its validity.
   const dial = (
     <span
+      /*
+        The fraction of a starting life total, for the handheld dial's ring.
+        Desktop's brass disc ignores it -- it is a seal, not a meter -- but the
+        value is cheap and being on the element means the two treatments differ
+        in CSS alone rather than in what the component emits.
+      */
+      style={
+        {
+          "--fill": `${(Math.min(Math.max(player.life, 0), STARTING_LIFE) / STARTING_LIFE) * 100}%`,
+        } as CSSProperties
+      }
       className={[
         "dial",
         isViewer ? "dial--mine" : "dial--foe",
@@ -457,9 +452,15 @@ export function PlayerOrb({
           which the reserved-height slot this replaces was an awkward way of
           buying.
 
-          Commander tax is deliberately not here -- it rides on the plinth above,
-          beside the mana cost it modifies, which is the only arrangement in
-          which a surcharge means anything.
+          Commander damage is deliberately not here at all any more. It was a
+          chip per opposing seat with a meter under it -- the loudest object in
+          the column, answering "how close is each of them to killing me" and
+          nothing about the other direction. It is two arrows on each
+          opponent's own life bar now: see `OpponentSeat`.
+
+          Commander tax is deliberately not here either -- it rides on the
+          plinth above, beside the mana cost it modifies, which is the only
+          arrangement in which a surcharge means anything.
         */}
         <div className="orb__foot">
           {/*
@@ -528,58 +529,6 @@ export function PlayerOrb({
                 </span>
               ))
             )}
-          </div>
-
-          {/*
-            Commander damage, for every other seat rather than only the ones that
-            have connected. Built from the seating rather than from the keys of
-            `commander_damage_taken`, so the plate reads `0` from turn one
-            instead of appearing the moment someone hits you -- which is both a
-            reflow and the worst possible moment to move the panel.
-
-            The chip carries who and how far. It was a bare number whose source
-            lived only in a `title`, which in a four-player pod is three
-            identical numbers and a hunt; and 21 is the number that matters, so
-            the meter under it is the fraction of 21 rather than decoration.
-          */}
-          <div className="orb__panel orb__cmd" data-testid={`cmddmg-${player.pid}`}>
-            <span className="orb__lab">Cmd dmg</span>
-            {opponents.map((pid) => {
-              const amount = player.commander_damage_taken[String(pid)] ?? 0;
-              return (
-                <span
-                  key={pid}
-                  className={[
-                    "cmd-pip",
-                    amount >= COMMANDER_LETHAL - 6 ? "cmd-pip--warn" : "",
-                    amount === 0 ? "cmd-pip--zero" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  data-from={pid}
-                  data-amount={amount}
-                  data-hint={`${amount} of ${COMMANDER_LETHAL} commander damage from ${
-                    names[pid] ?? `Player ${pid}`
-                  }`}
-                >
-                  <span className="cmd-pip__head">
-                    {/* Seat number, not an initial: seats default to
-                        `Player {i}` (server/sessions.py), so every initial is
-                        "P". The name itself stays one hover away. */}
-                    <span className="cmd-pip__who">P{pid}</span>
-                    <span className="cmd-pip__n tabular">{amount}</span>
-                  </span>
-                  <span
-                    className="cmd-pip__meter"
-                    style={
-                      {
-                        "--fill": `${Math.min(amount / COMMANDER_LETHAL, 1) * 100}%`,
-                      } as CSSProperties
-                    }
-                  />
-                </span>
-              );
-            })}
           </div>
 
           {/*
