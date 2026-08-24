@@ -28,6 +28,7 @@ import {
   action,
   card,
   combat,
+  decisionOption,
   gameEvent,
   gameView,
   pending,
@@ -667,6 +668,57 @@ export function chooseMode(): Scenario {
         choice: 2,
       }),
     ],
+    events: [],
+  };
+}
+
+/**
+ * Herald's Horn: choose a creature type, from every type in the pool.
+ *
+ * The real list, lifted out of `data/cards/` rather than invented -- 199 of
+ * them here and up to `MAX_TYPE_CHOICES` (400) in a full pool. The engine sends
+ * this as an ordinary `choose_mode` with one option per type, which is exactly
+ * why the client decides on the *shape* of a decision rather than its kind: no
+ * discriminator distinguishes this from a three-mode charm.
+ */
+export const CREATURE_TYPES = `
+  Advisor Aetherborn Alien Ally Andorian Angel Antelope Ape Archer Artificer Assassin
+  Astartes Avatar Badger Barbarian Basilisk Bat Bear Beast Berserker Bird Boar Caitian
+  Camel Cat Centaur Chimera Citizen Cleric Cockatrice Construct Crab Crocodile Cyclops
+  Dauthi Demon Devil Dinosaur Djinn Doctor Dog Dragon Drake Drone Druid Dryad Dwarf Efreet
+  Elder Eldrazi Elemental Elephant Elf Elk Faerie Fish Forest Fox Frog Fungus Gamma
+  Gargoyle Giant Gnome Goat Goblin God Golem Gorgon Gorn Gremlin Griffin Hag Harpy Hero
+  Hippo Hippogriff Homunculus Horror Horse Human Hydra Hyena Illusion Imp Insect Jackal
+  Jellyfish Kavu Kirin Kithkin Klingon Knight Kobold Kor Kraken Kree Lammasu Leech Lemur
+  Leviathan Lizard Mercenary Merfolk Minion Minotaur Mole Mongoose Monk Monkey Moonfolk
+  Mutant Myr Mystic Nightmare Nightstalker Ninja Noble Nomad Nymph Octopus Officer Ogre
+  Ooze Orc Orgg Otter Ox Pangolin Peasant Pegasus Performer Phyrexian Pilot Pirate Plant
+  Praetor Rabbit Ranger Rat Rebel Rhino Robot Rogue Sable Salamander Saproling Satyr
+  Scarecrow Scientist Scorpion Scout Seal Serpent Shaman Shapeshifter Shark Sheep Siren
+  Skeleton Sliver Sloth Slug Snake Soldier Soltari Sorcerer Sphinx Spider Spirit Spy
+  Squirrel Surrakar Symbiote Thalakos Thopter Thrull Treefolk Troll Turtle Tyranid Unicorn
+  Vampire Vedalken Villain Vulcan Wall Walrus Warlock Warrior Weasel Werewolf Whale Wizard
+  Wolf Wraith Wurm Yeti Zombie
+`
+  .trim()
+  .split(/\s+/);
+
+export function chooseType(): Scenario {
+  const state = gameView({
+    players: [you({ hand: [] })],
+    pending: pending({
+      kind: "choose_mode",
+      prompt: "Choose a creature type",
+      options: CREATURE_TYPES.map((label, i) => decisionOption({ label, value: i })),
+      context: { source: 960, source_name: "Herald's Horn" },
+    }),
+  });
+
+  return {
+    state,
+    actions: CREATURE_TYPES.map((label, i) =>
+      action({ id: `a${i}-choose`, kind: "choose", label, base_label: label, choice: i }),
+    ),
     events: [],
   };
 }

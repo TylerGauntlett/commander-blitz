@@ -1051,6 +1051,111 @@
   text-align: center;
 }
 
+/*
+ * A DECISION WITH HUNDREDS OF OPTIONS, as a combobox rather than a wall.
+ *
+ * `ChoiceCombo`. The list on the left, the Choose button on the right -- and
+ * the geometry is the navigation: a right press from any row reaches the
+ * button, which under the list would be four hundred rows away.
+ */
+.combo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+  min-height: 0;
+}
+
+.combo__pick {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.search--combo {
+  width: 100%;
+}
+
+/*
+ * THE HALF ROW IS LOAD-BEARING.
+ *
+ * `candidatesIn` drops any stop an ancestor has clipped away, so a row entirely
+ * below the fold is not somewhere the ring can go. At a whole number of rows
+ * the row under the last visible one is exactly that, and a down press on the
+ * last row would report a wall with three hundred options still beneath it.
+ * Half a row always shows, so the next stop always intersects; the scroll
+ * padding then keeps a whole one in view once the highlight has scrolled.
+ */
+.combo__list {
+  --combo-row: 40px;
+  --combo-gap: 2px;
+  --combo-pad: 4px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--combo-gap);
+  /*
+   * Eight and a half ROWS OF PITCH, not of row -- the gap and the padding are
+   * part of where the fold lands, and a height of `8.5 * row` put the fold
+   * flush against the eighth row's bottom edge with the ninth clipped away
+   * entirely. That is the exact geometry this is written to avoid, and the
+   * `ChooseTypeOnPad` story measures the straddle rather than trusting it.
+   */
+  max-height: calc(8.5 * (var(--combo-row) + var(--combo-gap)) + 2 * var(--combo-pad));
+  padding: var(--combo-pad);
+  overflow-y: auto;
+  scroll-padding-block: var(--combo-row);
+  scrollbar-gutter: stable;
+  border: 1px solid var(--rail-line);
+  border-radius: 10px;
+  background: var(--pane-well);
+}
+
+.combo__opt {
+  flex: 0 0 auto;
+  min-height: var(--combo-row);
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.combo__opt:hover:not(:disabled) {
+  border-color: var(--playable);
+}
+
+/* The highlight, which is the row the Choose button is bound to. Fill as well
+   as border: on a handheld in daylight a hairline on its own is not a
+   difference anybody can see. */
+.combo__opt--on {
+  border-color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+
+.combo__rail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 240px;
+}
+
+.combo__n {
+  color: var(--text-dim);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+/* The label carries the highlighted option's name, so it wraps rather than
+   stretching the dialog to the width of the longest creature type. */
+.combo__go {
+  white-space: normal;
+}
+
 .peek__slot {
   position: relative;
   /* The note sits under the card rather than over it: a graveyard is read as a

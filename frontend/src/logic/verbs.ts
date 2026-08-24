@@ -24,7 +24,16 @@ import { blockableBy, defendersFor } from "./actionMatch";
 import { findCard } from "./zoneGrouping";
 
 /** The kinds of thing the ring can be resting on. See `input/stops.ts`. */
-export type StopKind = "card" | "orb" | "act" | "tool" | "pile" | "lane" | "commit" | "unknown";
+export type StopKind =
+  | "card"
+  | "orb"
+  | "act"
+  | "tool"
+  | "pile"
+  | "lane"
+  | "commit"
+  | "combo"
+  | "unknown";
 
 export interface StopRef {
   kind: StopKind;
@@ -53,6 +62,7 @@ export function parseStop(stop: string | null): StopRef {
     case "tool":
     case "pile":
     case "lane":
+    case "combo":
       return { kind: head, id: null, raw: stop };
     case "commit":
       return { kind: "commit", id: null, raw: stop };
@@ -121,6 +131,18 @@ export function verbsFor(
   }
 
   if (ref.kind === "tool") return { a: "Toggle", b: "Back" };
+
+  /*
+   * The combobox a long decision opens with, and the two things in it.
+   *
+   * A row is a HIGHLIGHT, not a commitment: only the Choose button beside the
+   * list submits, and it is an `act:` stop that answers with the action's own
+   * label. Saying "Choose" over a row would promise a press that does not
+   * happen, which is the one failure this whole file exists to prevent.
+   */
+  if (ref.kind === "combo") {
+    return ref.raw === "combo:filter" ? { a: "Type", b: "Back" } : { a: "Select", b: "Back" };
+  }
   if (ref.kind === "pile") return { a: "Look", b: "Back" };
   if (ref.kind === "lane") return { a: "Play here", b: "Back" };
 

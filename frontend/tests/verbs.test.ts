@@ -37,6 +37,33 @@ const staging = (overrides: Partial<Staging> = {}): Staging => ({
   ...overrides,
 });
 
+/**
+ * The combobox a long decision opens with.
+ *
+ * A row is a HIGHLIGHT and the Choose button beside the list is the only thing
+ * that acts, so the two stops say different things -- and neither says
+ * "Toggle", which is what a `tool:` stop would have made the bar promise over a
+ * text field.
+ */
+describe("a combobox's stops", () => {
+  it("offers typing at the field and selecting at a row", () => {
+    const state = gameView({ pending: pending({ kind: "choose_mode" }) });
+    expect(verbsFor(state, [], "combo:filter").a).toBe("Type");
+    expect(verbsFor(state, [], "combo:opt:a3-choose").a).toBe("Select");
+  });
+
+  it("names the action itself at the Choose button, as any act stop does", () => {
+    const state = gameView({ pending: pending({ kind: "choose_mode" }) });
+    const choose = action({
+      id: "a3-choose",
+      kind: "choose",
+      label: "Vampire",
+      base_label: "Vampire",
+    });
+    expect(verbsFor(state, [choose], "act:a3-choose").a).toBe("Vampire");
+  });
+});
+
 describe("parseStop", () => {
   it("reads back the kind and payload of every namespace", () => {
     expect(parseStop("card:42")).toMatchObject({ kind: "card", id: 42 });
@@ -44,6 +71,8 @@ describe("parseStop", () => {
     expect(parseStop("commit")).toMatchObject({ kind: "commit" });
     expect(parseStop("tool:mute")).toMatchObject({ kind: "tool" });
     expect(parseStop("pile:0:graveyard")).toMatchObject({ kind: "pile" });
+    expect(parseStop("combo:filter")).toMatchObject({ kind: "combo" });
+    expect(parseStop("combo:opt:a12-choose")).toMatchObject({ kind: "combo" });
   });
 
   it("survives an action id containing a colon, which they do", () => {
@@ -61,7 +90,15 @@ describe("parseStop", () => {
 describe("verbsFor", () => {
   it("always produces a verb for A, whatever the ring is on", () => {
     const state = gameView();
-    for (const stop of ["card:1", "orb:1", "commit", "tool:mute", "pile:0:graveyard", "junk"]) {
+    for (const stop of [
+      "card:1",
+      "orb:1",
+      "commit",
+      "tool:mute",
+      "pile:0:graveyard",
+      "combo:filter",
+      "junk",
+    ]) {
       expect(verbsFor(state, [], stop).a.length).toBeGreaterThan(0);
     }
   });
