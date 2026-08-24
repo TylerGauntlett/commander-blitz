@@ -12,7 +12,6 @@
  *     rot    clamp(d, -TILT, TILT) * ARC
  *     scale  1 + RAISE*max(0, 1-|d|)
  *     z      100 - round(|d|*10)
- *     ink    1 - clamp((|d| - 1) / 0.6)
  *
  * `ARC`, the push-away and the parabolic droop are `HandFan.tsx:37-83`'s, which
  * is the same mechanic on the board and already tuned. **THE `BUNCH` TERM IS
@@ -23,13 +22,14 @@
  * does when you pull one out of it. A hand of seven has no far side, which is
  * why `HandFan` has no such term.
  *
- * `ink` is the round's second finding rather than a nicety. One place from the
- * selection a card is on top of everything and can carry whatever it likes; TWO
- * places and it is under its own neighbour, so everything except the outer
- * sliver is gone -- and a sentence that runs into a covering card does not read
- * as hidden, it reads as TRUNCATED, which is worse, because a truncated line
- * looks like a bug in the copy. So the stack costs a card everything except its
- * name, and the line under the name fades out with it.
+ * THERE WAS AN `ink` TERM and it is worth saying why there is not one now. It
+ * faded out the line of copy under a card's name as the stack buried it, on the
+ * finding that a sentence running into a covering card reads as TRUNCATED
+ * rather than as hidden -- which looks like a bug in the copy. The cards carry
+ * no copy any more (see `DOOR_CARDS` in `HomeScreen.tsx`), and the names that
+ * are left are short enough to clear their covering card standing still, which
+ * `SLIVER` above is the measurement of. The finding stands; nothing on the row
+ * still triggers it.
  */
 
 export interface DoorTune {
@@ -97,11 +97,7 @@ export interface DoorPose {
   rot: number;
   scale: number;
   z: number;
-  /** How much of this card is still worth printing on: 1 clear, 0 buried. */
-  ink: number;
 }
-
-const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n);
 
 /**
  * Card `i`'s pose when the selection is at `s`, in a row of `count`.
@@ -138,7 +134,6 @@ export function poseOf(i: number, s: number, tune: DoorTune, count = 3): DoorPos
     rot: tilt * tune.ARC,
     scale: 1 + tune.RAISE * Math.max(0, 1 - a),
     z: 100 - Math.round(a * 10),
-    ink: 1 - clamp01((a - 1) / 0.6),
   };
 }
 

@@ -336,8 +336,7 @@ halo rather than getting redder, because `--taken` is red already and hue has
 nothing left to say.
 
 The numbers are on the gauge's `data-hint` and `aria-label` and nowhere else: a
-22px row will not hold two more numerals at the 16px floor, and the hint bar
-surfaces them from the cursor as well as from the pointer. `--dealt` is
+22px row will not hold two more numerals at the 16px floor. `--dealt` is
 deliberately not gold — the life fill under it is.
 
 Zero draws nothing, unlike every other cell on the seat. The reflow argument

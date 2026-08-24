@@ -1172,8 +1172,12 @@ in a screenshot, because a reviewer already knows what the label says.
 
 `title` is banned outright (`tests/noTooltips.test.ts`): it opens on hover and
 on nothing else, so on a controller it is information that cannot be reached.
-The 43 sites became `data-hint`, which the hint bar reads off the focused
-element — and which mouse players get immediately rather than after 500ms.
+The 43 sites became `data-hint`. It is the app's accessible-name and
+description carrier now rather than a second thing on screen: the hint bar used
+to echo it off the focused element and no longer does, because the string was
+the one unbounded item in that row and wrapped it onto a second line, growing
+the foot and lifting every tool button mid-decision. The bar names buttons; an
+element says what it is through `aria-label` and `data-hint`.
 
 ### What the compact layout gives up
 

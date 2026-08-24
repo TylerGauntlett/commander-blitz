@@ -165,58 +165,10 @@
   pointer-events: none;
 }
 
-/* ==========================================================================
-   Ambient motes
-
-   `fx/presets.ts:225` is the app's own `motes()` -- gold and white specks
-   drifting upward, the one preset in the vocabulary that is ambience rather
-   than an event. Re-expressed as CSS because a canvas here would be a second
-   particle system on a screen with no board to anchor it to, and dropped
-   entirely under reduced motion, which is what `burst()` itself does.
-   ========================================================================== */
-
-.room__motes {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  /* Sixteen elements on their own infinite animations. Contained, or every
-     mote's repaint takes the room behind it with it. */
-  contain: strict;
-}
-
-.room__mote {
-  position: absolute;
-  /* `bottom: 0`, not `-14px`. Starting a mote just under the screen so it
-     drifts up into view is the obvious way to write this and puts an element
-     outside the stage for the first moment of every cycle. The fade-in at 12%
-     does that job with no box leaving the stage. */
-  bottom: 0;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--lit, rgb(255 224 138 / 0.75));
-  box-shadow: 0 0 8px var(--lit, rgb(255 224 138 / 0.55));
-  transition: background var(--t-room) ease, box-shadow var(--t-room) ease;
-  animation: room-mote linear infinite;
-}
-
-@keyframes room-mote {
-  from {
-    transform: translateY(0) translateX(0);
-    opacity: 0;
-  }
-  12% {
-    opacity: 0.85;
-  }
-  80% {
-    opacity: 0.5;
-  }
-  to {
-    transform: translateY(-100vh) translateX(var(--drift, 20px));
-    opacity: 0;
-  }
-}
+/* The motes are `styles/ambience.css` now -- `.motes` / `.mote`, mounted by
+   `components/ui/Motes.tsx`, taking their colour from this room's `--lit` the
+   same way they always did. They moved out when the board wanted them too, and
+   two definitions of one drifting speck is how two screens stop matching. */
 
 /* ==========================================================================
    THE FURNITURE KIT
@@ -492,17 +444,14 @@ html[data-input="keyboard"] .room__hints {
 
    `fx/presets.ts` and `ParticleLayer.burst` draw the same line: reduced motion
    drops "how it felt" and keeps every channel carrying information. So the
-   sheen and the ambient motes stop; anything that says WHERE THE SELECTION IS
-   still moves, because that is the one thing a menu exists to say.
+   sheen stops -- and the motes with it, in `ambience.css`, which owns them now.
+   Anything that says WHERE THE SELECTION IS still moves, because that is the
+   one thing a menu exists to say.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .plank--on > .sheen,
   .plank[data-cursor] > .sheen {
     animation: none;
-  }
-
-  .room__motes {
-    display: none;
   }
 }

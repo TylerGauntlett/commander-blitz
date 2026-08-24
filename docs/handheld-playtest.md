@@ -275,9 +275,11 @@ not be reached, and they were carrying real things — which card is revealed on
 top of a library, how much commander damage is from whom, what a mode toggle
 changes.
 
-All 43 sites became `data-hint`, which the hint bar reads off the focused
-element. Mouse players get it too, immediately, instead of after the browser's
-~500ms delay. `tests/noTooltips.test.ts` keeps it at zero. Where `title` had
+All 43 sites became `data-hint`. The hint bar echoed it off the focused
+element for a while and stopped: the string is unbounded and it was the thing
+that wrapped that row onto a second line, which grows the foot and moves every
+tool button while a decision is open. `tests/noTooltips.test.ts` keeps `title`
+at zero regardless. Where `title` had
 been supplying an element's accessible name — the zone piles, whose labels the
 handheld layout hides — an explicit `aria-label` replaces it.
 

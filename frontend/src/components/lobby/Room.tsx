@@ -18,7 +18,9 @@
  *      hands in a two-tone hue and everything from the floor sigil to the motes
  *      to a selected card's glow follows it, through CSS inheritance rather
  *      than through React.
- *   3. The drawn hall, the floor sigil, the pool of light and the motes.
+ *   3. The drawn hall, the floor sigil, the pool of light, and the motes --
+ *      which are `components/ui/Motes.tsx` now, because the board wanted them
+ *      too and one drifting speck defined twice is how two screens drift apart.
  *   4. `data-du`, so a test can read the scale the screen actually resolved to
  *      rather than recomputing it and asserting against its own arithmetic.
  *
@@ -32,18 +34,8 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useLayoutEffect, useRef } from "react";
 import { stageScale } from "../../logic/doorRow";
+import { Motes } from "../ui/Motes";
 import { RoomFloor, RoomGround } from "./doorArt";
-
-/**
- * Sixteen specks drifting upward -- `fx/presets.ts:225`'s ambient count, near
- * enough. Fixed rather than random so two screenshots of a screen compare.
- */
-const MOTES = Array.from({ length: 16 }, (_, i) => ({
-  left: 6 + ((i * 79) % 88),
-  dur: 11 + ((i * 7) % 9),
-  delay: (i * 13) % 11,
-  drift: ((i % 5) - 2) * 22,
-}));
 
 /** A hex to `rgb(r g b / a)`, so one token can be both a line and a glow. */
 export function soft(hex: string, alpha: number): string {
@@ -149,22 +141,10 @@ export function Room({ hue, className, testId, floorY, washY, children, onScale 
       <RoomFloor />
       <div className="room__wash" aria-hidden="true" />
 
-      <div className="room__motes" aria-hidden="true">
-        {MOTES.map((m) => (
-          <span
-            key={`${m.left}-${m.dur}-${m.delay}`}
-            className="room__mote"
-            style={
-              {
-                left: `${m.left}%`,
-                animationDuration: `${m.dur}s`,
-                animationDelay: `-${m.delay}s`,
-                "--drift": `${m.drift}px`,
-              } as CSSProperties
-            }
-          />
-        ))}
-      </div>
+      {/* Sixteen, the full field: a menu screen has nothing else moving on it.
+          They take `--lit` from this element, so they change colour with the
+          room. See `components/ui/Motes.tsx`. */}
+      <Motes />
 
       {children}
     </div>

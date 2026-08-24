@@ -171,9 +171,20 @@ const CARD_FRAME = `
  * the picture makes the same statement as the word under it, and a player who
  * cannot read the word still knows which is which.
  *
- * All three in one grammar: a gold line on a dark ground, one lit accent, no
+ * All four in one grammar: a gold line on a dark ground, one lit accent, no
  * fills that compete with the frame, and the same viewBox so they sit
  * identically in the window.
+ *
+ * A SHARED VIEWBOX IS NOT A SHARED COMPOSITION, which is the trap this file
+ * fell into. `.door__art` centres the *viewBox* in the window, so four drawings
+ * with different bounding boxes inside the same 200x150 sit at four different
+ * heights on four otherwise identical cards -- and the eye reads that as the
+ * cards being misaligned rather than as the pictures being. Decks and Join both
+ * centre on y=79; Play was at 83 and Settings at 97, with 44 units of dead space
+ * above it and none below. The two that were out are wrapped in a `<g
+ * transform>` rather than redrawn, so the coordinates below still say what the
+ * drawing IS and the transform says where it sits. **Anything added here is
+ * centred on y=79** -- measure the bounding box, do not eyeball it.
  */
 const CARD_ART: Record<string, string> = {
   /* Four seats around a table, the near one yours and lit, a deal in the
@@ -185,6 +196,8 @@ const CARD_ART: Record<string, string> = {
       <stop offset="1" stop-color="#ffd479" stop-opacity=".02"/>
     </radialGradient>
   </defs>
+  <!-- Centred on y=79 with Decks and Join; see the note above. -->
+  <g transform="translate(0 -4)">
   <ellipse cx="100" cy="78" rx="72" ry="42" fill="url(#p-table)"
            stroke="#ffd479" stroke-opacity=".5" stroke-width="1.5"/>
   <ellipse cx="100" cy="78" rx="56" ry="31" fill="none"
@@ -206,6 +219,7 @@ const CARD_ART: Record<string, string> = {
     <rect x="82" y="62" width="17" height="24" rx="2" transform="rotate(-12 90 74)"/>
     <rect x="92" y="58" width="17" height="24" rx="2" transform="rotate(6 100 70)"/>
     <rect x="102" y="62" width="17" height="24" rx="2" transform="rotate(20 110 74)"/>
+  </g>
   </g>
 `,
 
@@ -236,14 +250,13 @@ const CARD_ART: Record<string, string> = {
   </g>
 `,
 
-  /* A shelf of decks, faced with their art windows and edged in colour. The gap
-     on the right is dashed, and dashed means not-here: a deck you have not
-     imported is the purest not-here there is. */
   /* A controller, seen flat on. The card is nominally "settings" and is in
      practice about the pad -- the control scheme lives here, and so does the
      answer to "why has my Deck not been detected". So it draws the thing it is
      for rather than a cog, which would have been a picture of a menu. */
   settings: `
+  <!-- Centred on y=79 with Decks and Join; see the note above. -->
+  <g transform="translate(0 -18)">
   <g stroke-width="1.5">
     <!-- The body: two grips under one deck, in the room's cold blue. -->
     <path d="M62 52h76c16 0 27 11 30 26l10 44c4 17-6 28-20 28-10 0-16-5-22-13l-9-12H73l-9 12c-6 8-12 13-22 13-14 0-24-11-20-28l10-44c3-15 14-26 30-26z"
@@ -269,7 +282,12 @@ const CARD_ART: Record<string, string> = {
     <path d="M74 50c-6-6-14-8-22-5"/>
     <path d="M126 50c6-6 14-8 22-5"/>
   </g>
+  </g>
 `,
+
+  /* A shelf of decks, faced with their art windows and edged in colour. The gap
+     on the right is dashed, and dashed means not-here: a deck you have not
+     imported is the purest not-here there is. */
   decks: `
   <g stroke-width="1.5">
     <rect x="26" y="34" width="26" height="94" rx="3" fill="#1f3a34" stroke="#9bd3ab" stroke-opacity=".6"/>
