@@ -1,11 +1,17 @@
 /**
  * One chair.
  *
- * The seat is the lobby's hidden-information rule made visible: a face-down card
- * is one picture for three different facts -- an empty chair, a chair held for
- * somebody who has not arrived, and a real deck somebody has not revealed yet.
- * They must look similar and must never *test* the same, which is why `CardBack`
- * takes a `testId`.
+ * The chair is the lobby's hidden-information rule made visible: a face-down
+ * card is one picture for three different facts -- an empty chair, a chair held
+ * for somebody who has not arrived, and a real deck somebody has not revealed
+ * yet. They must look similar and must never *test* the same, which is why
+ * `CardBack` takes a `testId`.
+ *
+ * The second property these stories carry is newer and is about the pad rather
+ * than about secrecy: **a chair offers at most one button.** It used to offer
+ * two, and the second said "Invite a player" on all three empty chairs -- the
+ * same words the header carries, three more times, on the screen with the least
+ * room for them and one more stop each to walk past.
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
@@ -24,11 +30,8 @@ function seat(pod = filling, index = 0, youAreHost = true) {
     youAreHost,
     onChooseDeck: fn(),
     onAddCpu: fn(),
-    onOpenChair: fn(),
     onClear: fn(),
-    onInvite: fn(),
     onDossier: fn(),
-    onRename: fn(),
   };
 }
 
@@ -61,12 +64,12 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Your own chair: the only one you may rename, and the only deck you can see. */
+/** Your own chair: the only deck you can see before anybody locks in. */
 export const You: Story = {
   args: seat(filling, 0),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByDisplayValue("You");
+    await canvas.findByText("You");
   },
 };
 
@@ -121,6 +124,66 @@ export const HostControls: Story = {
 };
 
 /**
+ * ONE BUTTON, WHATEVER IS IN THE CHAIR.
+ *
+ * The count is the assertion, not the label: four chairs used to add up to
+ * eight buttons on an empty pod, and a row a thumb has to walk is a row where
+ * every extra control is a wrong turn. Inviting is one control in the header;
+ * reading a deck is the card itself.
+ */
+export const AtMostOneButton: Story = {
+  args: seat(filling, 0),
+  play: async ({ canvasElement }) => {
+    for (const index of [0, 1, 2, 3]) {
+      const one = filling.seats[index];
+      expect(one, `seat ${index} exists`).toBeTruthy();
+    }
+    const acts = canvasElement.querySelectorAll(".chair__act button");
+    expect(acts.length).toBeLessThanOrEqual(1);
+  },
+};
+
+/**
+ * Every control is named, and that is a navigation requirement rather than a
+ * testing one.
+ *
+ * `stopIdOf` falls back to accessible-name-plus-INDEX for a control with no id,
+ * so "Add a CPU" in seat 3 was `ui:Add a CPU:9` -- and the moment seat 2 became
+ * a CPU the whole list re-indexed, every id changed at once, and the ring fell
+ * back to the first control on the screen. A chair has to be the same stop
+ * before and after the pod changes under it.
+ */
+export const EveryControlIsNamed: Story = {
+  args: seat(pods.empty(), 1),
+  play: async ({ canvasElement }) => {
+    const controls = canvasElement.querySelectorAll("button, input");
+    expect(controls.length).toBeGreaterThan(0);
+    for (const control of controls) {
+      expect(
+        control.getAttribute("data-testid"),
+        `${control.textContent || control.tagName} carries no id`,
+      ).toBeTruthy();
+    }
+  },
+};
+
+/**
+ * Your own chair before you have chosen says CHOOSE, not SEALED.
+ *
+ * "Sealed" is what everybody else's unchosen chair says -- "somebody is here
+ * and you may not see what they brought". Printing it on your own told you your
+ * own deck was being kept from you.
+ */
+export const YourChairBeforeYouChoose: Story = {
+  args: seat(pods.fresh(), 0),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const back = await canvas.findByTestId("card-back");
+    expect(back.textContent).toMatch(/Choose/i);
+  },
+};
+
+/**
  * The same empty chair, seen by a guest.
  *
  * Host-only controls are *absent*, not disabled -- a greyed-out button invites
@@ -129,24 +192,26 @@ export const HostControls: Story = {
 export const GuestSeesNoControls: Story = {
   args: seat(guest, 3, false),
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(canvas.queryByText(/Add CPU/i)).toBeNull();
+    expect(canvasElement.querySelectorAll(".chair__act button").length).toBe(0);
   },
 };
 
-/** Renaming your own chair. */
-export const RenamingYourself: Story = {
+/**
+ * NOBODY TYPES A NAME, AND THE ABSENCE IS THE POINT.
+ *
+ * Your chair carried a text field here. Typing into it with a controller is a
+ * virtual keyboard, a d-pad and about twenty presses to replace "Player 1" with
+ * something nobody at the table needs -- and it was the last text box on the
+ * pod, which made it the last place a ring could get stuck. The server names
+ * every chair after its seat, so the row still reads as four distinct people.
+ */
+export const NoNameField: Story = {
   args: seat(filling, 0),
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const field = await canvas.findByDisplayValue("You");
-    await userEvent.clear(field);
-    await userEvent.type(field, "Tyler");
-    // A local draft, not a controlled read: the pod re-renders on every
-    // long-poll return and a field that reset itself mid-word is unusable.
-    expect((field as HTMLInputElement).value).toBe("Tyler");
-    await userEvent.tab();
-    expect(args.onRename).toHaveBeenCalledWith("Tyler");
+    await canvas.findByText("You");
+    expect(canvas.queryByTestId("your-name")).toBeNull();
+    expect(canvasElement.querySelectorAll("input").length).toBe(0);
   },
 };
 

@@ -13,8 +13,13 @@ import "./styles/reader.css";
 import "./styles/groups.css";
 import "./styles/ui.css";
 import "./styles/lobby.css";
-// After `lobby.css`: the front door replaces that sheet's `.door` shell.
+// After `lobby.css`, all four: `room.css` and the three screens standing in it
+// replace that sheet's `.door`, `.pod` and `.cat` shells. `room.css` first,
+// because the other three are written as additions to its kit.
+import "./styles/room.css";
 import "./styles/door.css";
+import "./styles/pod.css";
+import "./styles/shelf.css";
 import "./styles/handheld.css";
 
 // The engine is authoritative and every mutation returns fresh state, so there

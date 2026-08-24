@@ -91,11 +91,26 @@ export function stopRoot(doc: Document = document): HTMLElement {
     doc.querySelector<HTMLElement>(".table") ??
     doc.querySelector<HTMLElement>(".screen") ??
     doc.body;
-  return (
-    app.querySelector<HTMLElement>(".wheelwrap") ??
-    app.querySelector<HTMLElement>("[data-modal-root]:not([data-closing])") ??
-    app
-  );
+  const wheel = app.querySelector<HTMLElement>(".wheelwrap");
+  if (wheel) return wheel;
+  /*
+   * THE LAST MODAL, NOT THE FIRST, and one overlay opening over another is the
+   * whole reason.
+   *
+   * `querySelector` returns document order, which for a single dialog over a
+   * board is also the top of the stack -- so this read correctly right up until
+   * the deck catalogue got a dossier openable from inside it. Both are children
+   * of the pod lobby and the catalogue is written first, so the ring stayed
+   * trapped in the catalogue *behind* the dossier: A pressed a deck tile nobody
+   * could see, and B closed the wrong thing.
+   *
+   * Document order is the stacking order here because every overlay in this
+   * client is rendered by the surface it opens over, after it. That is a real
+   * invariant rather than a coincidence -- a portal would break it -- and it is
+   * why this is a `.pop()` rather than a z-index sort nothing could keep true.
+   */
+  const modals = app.querySelectorAll<HTMLElement>("[data-modal-root]:not([data-closing])");
+  return modals[modals.length - 1] ?? app;
 }
 
 /**
@@ -137,11 +152,29 @@ export function activeRoot(doc: Document = document): HTMLElement {
 /**
  * What counts as focusable when nothing has declared itself a stop.
  *
- * Excludes `[tabindex="-1"]` and disabled controls: a control the player cannot
- * press is not somewhere the ring should be able to rest.
+ * `[tabindex="-1"]` is excluded, because that is an element saying out loud
+ * that it is not a stop.
+ *
+ * A DISABLED CONTROL IS NOT. It used to be, on the reasoning that "a control
+ * the player cannot press is not somewhere the ring should be able to rest",
+ * and that reasoning is wrong twice over.
+ *
+ * It is wrong about the board, which already disagrees: every action button
+ * carries a declared `data-stop`, disabled ones included, deliberately -- "a
+ * decision always HAS a surface" is the panel's stated invariant, and walking
+ * onto a greyed-out action to read why it is greyed out is how a player finds
+ * out. The lobby was the only surface where that was not true.
+ *
+ * And it is wrong about what happens when a control becomes disabled UNDER the
+ * ring. Every button in the pod goes `disabled` for the round-trip of any
+ * mutation, so pressing "Add a CPU" deleted every stop on the screen except the
+ * three in the header for about 200ms -- the ring had nowhere near to fall back
+ * to, landed on the first header button, and stayed there when the pod came
+ * back. From the player's side, adding a CPU threw the ring to the top-left
+ * corner. Nothing was broken at either end of that; the stop list simply
+ * emptied out for a fifth of a second.
  */
-const FOCUSABLE =
-  'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 /**
  * Every stop inside `root`, in document order.
@@ -233,18 +266,43 @@ function clips(style: CSSStyleDeclaration): boolean {
   return CLIPS.has(style.overflowX) || CLIPS.has(style.overflowY) || CLIPS.has(style.overflow);
 }
 
+/**
+ * Whether an ancestor is a box somebody can SCROLL, as opposed to one that
+ * simply cuts its content off.
+ *
+ * The distinction is the difference between "you cannot see this" and "you
+ * cannot see this YET", and the ring has to treat them oppositely. A deck
+ * eleven rows down `.cat__body` is a perfectly good place for the ring to go --
+ * `keepInView` brings it into view on arrival -- whereas a card inside the
+ * board's `height: 0` opponent lanes is not, and `onScreen`'s whole existence
+ * is that second case.
+ *
+ * `auto`/`scroll` only, never `hidden` or `clip`: a zero-height box with
+ * content in it reports `scrollHeight > clientHeight` too, so asking about the
+ * overflow *amount* alone would let every clipped lane back in and undo the bug
+ * this file's header describes. And `clientHeight > 0`, because a scroller with
+ * no height is not one.
+ */
+function scrollable(a: Element, style: CSSStyleDeclaration): { x: boolean; y: boolean } {
+  const CAN = new Set(["auto", "scroll", "overlay"]);
+  return {
+    x: CAN.has(style.overflowX) && a.clientWidth > 0 && a.scrollWidth > a.clientWidth,
+    y: CAN.has(style.overflowY) && a.clientHeight > 0 && a.scrollHeight > a.clientHeight,
+  };
+}
+
 function onScreen(el: Element, rect: DOMRect): boolean {
   if (rect.width <= 0 || rect.height <= 0) return false;
   for (let a = el.parentElement; a; a = a.parentElement) {
-    if (!clips(getComputedStyle(a))) continue;
+    const style = getComputedStyle(a);
+    if (!clips(style)) continue;
     const clip = a.getBoundingClientRect();
     if (clip.width <= 0 || clip.height <= 0) return false;
-    const intersects =
-      rect.right > clip.left &&
-      rect.left < clip.right &&
-      rect.bottom > clip.top &&
-      rect.top < clip.bottom;
-    if (!intersects) return false;
+    const scroll = scrollable(a, style);
+    const acrossX = rect.right > clip.left && rect.left < clip.right;
+    const acrossY = rect.bottom > clip.top && rect.top < clip.bottom;
+    if (!(acrossX || scroll.x)) return false;
+    if (!(acrossY || scroll.y)) return false;
   }
   return true;
 }

@@ -138,7 +138,13 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
           {deck && deck.simplified > 0 && (
             <span className="badge badge--partial">{deck.simplified} simplified</span>
           )}
-          <button type="button" className="dos__x" aria-label="Close" onClick={onClose}>
+          <button
+            type="button"
+            className="key key--mark dos__x"
+            aria-label="Close"
+            data-testid="dossier-close"
+            onClick={onClose}
+          >
             ✕
           </button>
         </div>
@@ -174,9 +180,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
                       ))}
                     </div>
                   ) : (
-                    <p className="dos__p dos__p--none">
-                      Nothing tagged. Tags are written by hand and an imported deck has none.
-                    </p>
+                    <p className="dos__p dos__p--none">Untagged.</p>
                   )}
 
                   {ratings ? (
@@ -243,10 +247,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
                   does nothing.
                 </div>
               ) : (
-                <div className="note">
-                  Every card in this deck is implemented and tested. Real oracle text, real art,
-                  nothing inert.
-                </div>
+                <div className="note">Every card implemented and tested.</div>
               )}
             </>
           )}
@@ -256,7 +257,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
           {canTake && (
             <button
               type="button"
-              className="deal deal--lg"
+              className="key key--commit dos__take"
               data-testid="dossier-take"
               disabled={!deck}
               onClick={() => deck && onTake(deck.id)}
@@ -264,7 +265,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
               Take this deck
             </button>
           )}
-          <button type="button" className="ghost" onClick={onClose}>
+          <button type="button" className="key key--quiet" onClick={onClose}>
             Close
           </button>
         </div>

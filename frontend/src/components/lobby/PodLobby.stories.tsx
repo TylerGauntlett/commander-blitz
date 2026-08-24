@@ -18,8 +18,6 @@ function lobby(pod = pods.filling(), overrides = {}) {
     busy: false,
     starting: false,
     error: null,
-    seed: "",
-    onSeedChange: fn(),
     onUpdateSeat: fn(),
     onAdminSeat: fn(),
     onSetSeatDeck: fn(),
@@ -34,30 +32,30 @@ function lobby(pod = pods.filling(), overrides = {}) {
  * The four plates are one row, not four stacks.
  *
  * A plate is read ACROSS as much as down: whose seat, which deck, what colours.
- * That only works if the same row is at the same height in all four slots, and
+ * That only works if the same row is at the same height in all four chairs, and
  * it was not -- your own chair carries a name *field* where the others carry a
  * label, and a field is the taller box. Every row under it inherited the
  * difference, so the deck names, the mana and the buttons all stepped down by a
- * seat. The rows are pinned to one height in `styles/lobby.css`; this is what
- * says so, for whichever pod the story it is called from poses.
+ * seat. The rows are pinned in `styles/pod.css` (`--who-h`, `--deck-h`,
+ * `--act-h`); this is what says so, for whichever pod calls it.
  */
 function expectPlateRowsLineUp(canvasElement: HTMLElement): void {
   const tops = (selector: string) =>
     [...canvasElement.querySelectorAll<HTMLElement>(selector)].map((el) =>
       Math.round(el.getBoundingClientRect().top),
     );
-  // Every slot has a name line whatever is in it, so this is also the check
+  // Every chair has a name line whatever is in it, so this is also the check
   // that the selectors below are still finding anything at all.
-  expect(tops(".slot .plate__who").length).toBe(4);
-  for (const row of [".plate__who", ".plate__deck", ".plate__meta", ".plate__acts"]) {
-    const found = tops(`.slot ${row}`);
+  expect(tops(".chair .chair__who").length).toBe(4);
+  for (const row of [".chair__who", ".chair__deck", ".chair__act"]) {
+    const found = tops(`.chair ${row}`);
     expect(new Set(found).size, `${row} tops: ${found.join(", ")}`).toBeLessThanOrEqual(1);
   }
   // The name itself, not merely the box around it: a field and a label of the
   // same height whose text sits at different depths is the same defect.
-  const names = [...canvasElement.querySelectorAll<HTMLElement>(".plate__name, .plate__n")].map(
-    (el) => Math.round(el.getBoundingClientRect().top),
-  );
+  const names = [
+    ...canvasElement.querySelectorAll<HTMLElement>(".chair__field, .chair__name"),
+  ].map((el) => Math.round(el.getBoundingClientRect().top));
   expect(new Set(names).size, `name tops: ${names.join(", ")}`).toBeLessThanOrEqual(1);
 }
 
@@ -100,10 +98,11 @@ export const ThreeHanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const track = await canvas.findByTestId("ready-track");
-    // The denominator is the filled seats, not four.
-    // Whitespace is normalised because the label is typeset with
-    // non-breaking spaces.
-    expect(track.textContent?.replace(/\s+/g, " ")).toContain("of 3");
+    // The denominator is the filled seats, not four. The words that used to
+    // sit in front of it -- "Cards face up" -- are off the screen now and live
+    // on the `aria-label`, which is the only reader they were ever for.
+    expect(track.textContent?.replace(/\s+/g, " ")).toContain("/3");
+    expect(track.getAttribute("aria-label")).toContain("of 3");
   },
 };
 
@@ -149,16 +148,28 @@ export const GuestView: Story = {
   },
 };
 
-/** A seed makes a game reproducible, which is how a bug report gets repeated. */
-export const SeedEntry: Story = {
+/**
+ * NOTHING ON THIS SCREEN IS TYPED INTO.
+ *
+ * Two fields went, for the same reason from opposite ends. The host-only
+ * "Seed" box was a debugging tool standing between a player and the Deal
+ * button; the seat-name box cost a virtual keyboard and about twenty presses to
+ * replace a name the server already writes. Between them the pod becomes the
+ * first screen in the app with nothing on it a ring can get stuck in -- and
+ * that is worth an assertion of its own, because the next field somebody adds
+ * here will look perfectly reasonable.
+ *
+ * The specs pin the shuffle through `window.__AUTOMTG_SEED` instead; see
+ * `e2e/helpers.ts:pinSeed`.
+ */
+export const NothingToTypeInto: Story = {
   args: lobby(pods.ready()),
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // Labelled rather than placeheld: the placeholder is "random", which is what
-    // an empty seed means rather than what the field is.
-    const field = await canvas.findByLabelText("Seed");
-    await userEvent.type(field, "7");
-    expect(args.onSeedChange).toHaveBeenCalled();
+    await canvas.findByTestId("ready-track");
+    expect(canvas.queryByLabelText("Seed")).toBeNull();
+    expect(canvas.queryByTestId("your-name")).toBeNull();
+    expect(canvasElement.querySelectorAll("input, textarea").length).toBe(0);
   },
 };
 
@@ -177,10 +188,11 @@ export const PlatesLineUp: Story = {
 /**
  * The same row, at a Steam Deck's panel -- where it is furthest out.
  *
- * The handheld layout raises every control to a 44px hit floor, and the name
- * field is a control while the label beside it is not. That is a 25px step
- * rather than the desktop's six, and it also caught the details glyph: a
- * `min-height` with no `min-width` turned a 17px circle into a 17x44 pill.
+ * The floors are met by `pod.css` itself rather than by `handheld.css`'s
+ * override list, which is the whole point of the new class names: every control
+ * here is authored at 44px and every string at `max(16px, ...)`, so there is
+ * nothing for a later sheet to have to repair and nothing that can drift from
+ * it. This asserts both, on the layout where they bite.
  */
 export const PlatesLineUpHandheld: Story = {
   args: lobby(pods.filling()),
@@ -190,23 +202,87 @@ export const PlatesLineUpHandheld: Story = {
     await within(canvasElement).findByTestId("ready-track");
     expectPlateRowsLineUp(canvasElement);
 
-    /*
-     * The target is 44px and the mark is not, which is the only way both the
-     * hit floor and a plate the size of a playing card can be right. The circle
-     * is `::before`, so it is measured through the cascade rather than through
-     * a box -- a pseudo-element has no `getBoundingClientRect`.
-     */
-    for (const glyph of canvasElement.querySelectorAll<HTMLElement>(".ibtn")) {
-      const box = glyph.getBoundingClientRect();
-      expect(Math.round(box.width), "the details target is square").toBe(
+    for (const control of canvasElement.querySelectorAll<HTMLElement>(
+      ".chair button, .chair input, .pod__rail button, .pod__bar button",
+    )) {
+      const box = control.getBoundingClientRect();
+      if (box.width === 0 && box.height === 0) continue;
+      expect(
         Math.round(box.height),
-      );
-      expect(Math.round(box.width)).toBeGreaterThanOrEqual(44);
-
-      const mark = getComputedStyle(glyph, "::before");
-      expect(mark.width, "the drawn circle is round").toBe(mark.height);
-      expect(Number.parseFloat(mark.width)).toBeLessThan(30);
+        `${control.dataset.testid ?? control.textContent} is under the hit floor`,
+      ).toBeGreaterThanOrEqual(44);
+      expect(Number.parseFloat(getComputedStyle(control).fontSize)).toBeGreaterThanOrEqual(16);
     }
+  },
+};
+
+/**
+ * THE POD STANDS IN THE SAME ROOM AS THE FRONT DOOR.
+ *
+ * This is the whole reason the screen was rebuilt, so it is worth an assertion
+ * rather than a screenshot: the hall, the floor sigil, the pool of light and
+ * the motes are `Room`'s, and the pod is one of three screens standing in it.
+ * Pressing PLAY on a menu that looks like a game and landing on a grey panel is
+ * not experienced as "one screen has had its pass" -- it is experienced as the
+ * game being over a second after it started.
+ */
+export const StandsInTheRoom: Story = {
+  args: lobby(pods.filling()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const pod = await canvas.findByTestId("new-game");
+    expect(pod.classList.contains("room")).toBe(true);
+    expect(pod.querySelector(".room__ground")).not.toBeNull();
+    expect(pod.querySelector(".room__floor")).not.toBeNull();
+    expect(pod.querySelectorAll(".room__mote").length).toBe(16);
+    // And it is lit, which is what carries the room's colour into the sigil,
+    // the motes and every selected card's glow.
+    expect(pod.style.getPropertyValue("--lit")).toBeTruthy();
+  },
+};
+
+/**
+ * ONE GOLD CONTROL PER SCREEN.
+ *
+ * `room.css` offers three tiers and no more -- `.key`, `.key--commit`,
+ * `.key--quiet` -- because the shipped pod had five button classes doing four
+ * jobs, and a screen with five button weights has told the player nothing about
+ * which one to press. Dealing is the thing this screen exists for, so dealing
+ * is the gold one and nothing else is.
+ */
+export const OneCommitControl: Story = {
+  args: lobby(pods.ready()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("start-game");
+    const gold = canvasElement.querySelectorAll(".key--commit");
+    expect(gold.length).toBe(1);
+    expect((gold[0] as HTMLElement).dataset.testid).toBe("start-game");
+    // Every other control on the screen is one of the other two tiers, so
+    // nothing is styled by hand next to them.
+    for (const control of canvasElement.querySelectorAll(
+      ".pod__bar button, .pod__rail button",
+    )) {
+      expect(control.classList.contains("key"), control.textContent ?? "").toBe(true);
+    }
+  },
+};
+
+/**
+ * The row of chairs owns the screen, and the caption above it is gone.
+ *
+ * It said "The pod", and beside it "A card turns face up when its seat picks a
+ * deck, and stamps when the seat locks in" -- a rule the screen demonstrates
+ * the moment anybody touches it, set in the widest line of text in the app, 42
+ * vertical pixels the row needed more on a 7-inch panel.
+ */
+export const NoCaptionAboveTheRow: Story = {
+  args: lobby(pods.filling()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("ready-track");
+    expect(canvas.queryByText(/A card turns face up/)).toBeNull();
+    expect(canvasElement.querySelector(".tablewrap")).toBeNull();
   },
 };
 

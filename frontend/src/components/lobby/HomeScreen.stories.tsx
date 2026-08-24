@@ -73,6 +73,37 @@ export const JoinFromTheCard: Story = {
   },
 };
 
+/**
+ * THE WAY OUT IS A CONTROL, NOT A LEGEND.
+ *
+ * It was a `<p>` carrying the B glyph and the word Back -- a hint, in the shape
+ * of a button, in the place a button goes. Clicking it did nothing; a ring
+ * could not reach it at all, because a paragraph is not a stop. So somebody
+ * walking the hold with a pad found two stops, neither of them the exit, and
+ * the one thing on screen that looked like it.
+ *
+ * Escape and B still close the hold and always did -- that is the half that
+ * worked, and it is why the paragraph survived review. Every overlay in this
+ * client owes three ways out: the control, outside the panel, and Escape. This
+ * is the one you can point at.
+ */
+export const TheHoldsWayOutIsPressable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByTestId("join-pod"));
+    await canvas.findByTestId("join-hold");
+
+    const back = await canvas.findByTestId("join-back");
+    expect(back.tagName).toBe("BUTTON");
+    // At the hit floor, because a Steam Deck has a touchscreen and this is one
+    // of the two controls a finger goes for in this panel.
+    expect(Math.round(back.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+
+    await userEvent.click(back);
+    expect(canvas.queryByTestId("join-hold")).toBeNull();
+  },
+};
+
 /** Decks and Join, so the two stacked states are both reviewable. */
 export const OnDecks: Story = {
   play: async ({ canvasElement }) => {
