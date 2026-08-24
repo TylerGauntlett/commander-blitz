@@ -462,7 +462,8 @@ export function HomeScreen({
    * two are resolved here and the rest are written on the card itself.
    */
   const lineFor = (id: string): string => {
-    if (id === "decks") return `${deckCount} deck${deckCount === 1 ? "" : "s"}, and anything you import.`;
+    if (id === "decks")
+      return `${deckCount} deck${deckCount === 1 ? "" : "s"}, and anything you import.`;
     if (id === "play") return busy ? "Dealing the table…" : "Four seats. Deal a new table.";
     return DOOR_CARDS[indexOf(id)].line ?? "";
   };

@@ -123,8 +123,8 @@ export function ControllerPanel() {
         working can still finish a game.
       */}
       <p className="ctrl__foot">
-        The d-pad, Enter and Esc alone can reach everything, so the game stays
-        playable even when the pad is not detected.
+        The d-pad, Enter and Esc alone can reach everything, so the game stays playable even
+        when the pad is not detected.
       </p>
     </div>
   );

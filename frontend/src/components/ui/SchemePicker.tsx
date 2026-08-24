@@ -21,9 +21,9 @@
 
 import { useSyncExternalStore } from "react";
 import {
+  type SchemePref,
   getInputMode,
   getScheme,
-  type SchemePref,
   setScheme,
   subscribeInputMode,
 } from "../../input/inputMode";
@@ -46,7 +46,11 @@ const OPTIONS: { id: SchemePref; label: string; hint: string }[] = [
 export function SchemePicker() {
   // Both are module state; this is the supported way to read a value React does
   // not own without tearing during a concurrent render.
-  const scheme = useSyncExternalStore(subscribeInputMode, getScheme, () => "auto" as SchemePref);
+  const scheme = useSyncExternalStore(
+    subscribeInputMode,
+    getScheme,
+    () => "auto" as SchemePref,
+  );
   const mode = useSyncExternalStore(subscribeInputMode, getInputMode, () => "mouse" as const);
 
   return (
