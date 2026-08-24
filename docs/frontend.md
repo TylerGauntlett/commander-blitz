@@ -445,7 +445,7 @@ except the front door, which is `mockups/door/01-the-hand.html`:
 
 | File | What it is |
 |---|---|
-| `components/lobby/HomeScreen.tsx` | The front door: a menu of three cards — Decks, Play, Join |
+| `components/lobby/HomeScreen.tsx` | The front door: a menu of three cards — Settings, Play, Join |
 | `components/lobby/doorArt.tsx` | The door's drawn hall, card frame and three illustrations |
 | `logic/doorRow.ts` | The row's arithmetic: one number in, three poses out |
 | `components/lobby/PodLobby.tsx` | Four seats as a hand of cards, and the rail under them |

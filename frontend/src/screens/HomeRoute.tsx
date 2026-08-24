@@ -85,7 +85,6 @@ export function HomeRoute() {
           (joinPod.error as Error | null) ??
           (decks.error as Error | null)
         }
-        onBrowse={() => navigate("/decks")}
       />
     </Screen>
   );

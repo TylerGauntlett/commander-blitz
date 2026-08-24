@@ -31,10 +31,12 @@ test.describe("the catalogue is a place", () => {
     await setInstant(page);
     await page.goto("/");
     await page.getByTestId("home").waitFor();
-    // The footer link is a card now. `browse-decks` is one of the four test ids
-    // the front door's redesign had to carry across, and it is what a suite
-    // should be driving rather than a string of copy.
-    await page.getByTestId("browse-decks").click();
+    // NAVIGATED, not clicked. The door used to carry a Decks card and before
+    // that a footer link; it carries neither now, and the claim under test was
+    // never about the way in. It is that the catalogue is a real address with
+    // real history behind it -- that Back from it returns to the door rather
+    // than leaving the browser where it started.
+    await page.goto("/decks");
     await expect(page).toHaveURL(/\/decks$/);
     await page.goBack();
     await expect(page).toHaveURL(/\/$/);
