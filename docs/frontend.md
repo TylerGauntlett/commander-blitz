@@ -966,7 +966,64 @@ board and no glyphs. Neither implies the other.
 `data-input` is **last-input-wins** rather than "is a pad plugged in", because a
 Deck in desktop mode has both attached at once. `pointermove` is throttled to one
 write per 200ms so a mouse resting on a desk cannot steal the mode back
-mid-navigation.
+mid-navigation, and a *move* additionally loses outright to any key or pad input
+in the last 1500ms — the Deck's right stick and trackpads arrive as mouse events,
+so without that grace a thumb resting on the device it is built into hid the
+ring, the glyphs and the hint bar mid-game.
+
+### The Deck sends a keyboard, not a gamepad
+
+In **gaming mode** Steam Input applies a controller layout to every non-Steam
+shortcut, recognises browsers, and picks a keyboard-and-mouse template for them.
+Under that template Steam takes the pad exclusively and publishes no gamepad at
+all: `getGamepads()` is empty while the d-pad arrives as arrow keys and A arrives
+as Enter. Every signal above says `keyboard`, and the hint bar tells a player
+holding a controller to press Enter and Esc.
+
+Three things answer that, and `docs/steamdeck.md` is the player-facing version:
+
+- **A scheme preference.** `auto | pad | keyboard | mouse`, persisted, set from
+  the front door's **Settings** card or in-game from the settings menu (both
+  render `components/ui/SchemePicker.tsx`, so they cannot drift). Anything but
+  `auto` pins `data-input` outright. `?input=pad` is the un-persisted escape
+  hatch.
+- **A heuristic under `auto`.** A session that has produced three navigation keys
+  and *not one character key*, at handheld viewport size, is treated as a pad.
+  The viewport gate is the safety: a desktop keyboard user arrowing around a menu
+  must never be told to press "A". A single character key disqualifies it
+  permanently — somebody who typed has a keyboard.
+- **A diagnosis.** `padDiagnostics()` already computed `supported`/`secure`/
+  `focused`, and was dev-only behind `window.__AUTOMTG_RING` — no use to somebody
+  on a Deck with no devtools. `components/ui/ControllerPanel.tsx` puts it on
+  screen with the fix for each cause. Note **secure context first**: the Gamepad
+  API does not exist over plain http to anything but localhost, so a Deck pointed
+  at a LAN dev server has no `getGamepads` to fail and no Steam-side fix helps.
+
+Analog motion counts as pad input as well as button edges, because a *held*
+trigger produces no edges at all for as long as it lasts.
+
+### The region trap is soft
+
+`L1`/`R1`/`L2` step between the board's five regions, and a region traps the ring
+inside itself so a thumb-flick cannot throw it across the screen. That trap was a
+**one-way door** on any controller missing a shoulder button — which is exactly
+what a Deck in gaming mode is. A region is entered automatically, so the first
+direction press of the game locked the ring in one region for the rest of it.
+
+So `stops.ts:escapeGroup` makes it soft: a direction with somewhere to go inside
+the region is the region's, a direction with nowhere to go **leaves** it. The
+whole board is now reachable from the d-pad alone. Two things make that safe:
+
+- **The modal trap stays hard.** A group narrows the board for comfort; a modal
+  narrows it for correctness, and only the first may give way at its edge.
+- **The group is released before the cursor moves.** `setCursor` resolves through
+  `activeRoot()`, which is still the region being left — so without
+  `setGroup(null)` first, the escape target is not findable and the ring silently
+  does not move. Every unit test passed while that was broken, because they call
+  `escapeGroup` directly; `e2e/pad.spec.ts` is what caught it.
+
+The dial also has a **Regions** button in the foot now, because holding `L2` was
+the only way to open it.
 
 ### Reading the pad: never `getGamepads()[0]`
 

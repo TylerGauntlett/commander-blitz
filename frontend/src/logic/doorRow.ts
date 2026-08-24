@@ -1,5 +1,5 @@
 /**
- * The front door's row of three cards, as arithmetic.
+ * The front door's row of cards, as arithmetic.
  *
  * Ported from `mockups/door/_door.js`. One continuous number in -- `s`, where
  * the selection currently is in card-index space -- and one pose per card out.
@@ -103,18 +103,37 @@ export interface DoorPose {
 
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n);
 
-/** Card `i`'s pose when the selection is at `s`. */
-export function poseOf(i: number, s: number, tune: DoorTune): DoorPose {
+/**
+ * Card `i`'s pose when the selection is at `s`, in a row of `count`.
+ *
+ * `count` DEFAULTS TO THREE because that is the row this arithmetic was authored
+ * and measured against, and defaulting keeps `tests/doorRow.test.ts` -- which
+ * pins the original composition to the pixel -- calling it the way it always
+ * did. Both terms that depend on it below are identities at three.
+ */
+export function poseOf(i: number, s: number, tune: DoorTune, count = 3): DoorPose {
   const d = i - s;
   const a = Math.abs(d);
   const sign = d < 0 ? -1 : d > 0 ? 1 : 0;
   const near = Math.min(a, 1);
-  const far = Math.max(0, a - 1);
+  /*
+   * CLAMPED, and it was not, which was a bug waiting for a fourth card.
+   *
+   * `BUNCH` pulls a far card back OVER its neighbour, and its docstring above
+   * measures the readable strip that leaves -- at one place out. In a row of
+   * three nothing is ever more than one place out from a selected end, so the
+   * unbounded form was correct by accident. At four, a card three places from
+   * the selection took `BUNCH * 2` of pull-back and slid clean through the card
+   * it was supposed to hide behind, inverting the stack.
+   */
+  const far = Math.min(1, Math.max(0, a - 1));
   const tilt = Math.max(-tune.TILT, Math.min(tune.TILT, d));
   return {
-    // Centred on index 1, so the middle card sits at x = 0 when it is the one
-    // selected and the arithmetic is written about a row rather than an edge.
-    x: (i - 1) * tune.STEP + sign * (tune.PUSH * near - tune.BUNCH * far),
+    // Centred on the row's middle -- index 1 of three, 1.5 of four -- so the
+    // selected card sits at x = 0 and the arithmetic is written about a row
+    // rather than an edge. An even row has no middle CARD, which is fine: it
+    // has a middle, and that is all this needs.
+    x: (i - (count - 1) / 2) * tune.STEP + sign * (tune.PUSH * near - tune.BUNCH * far),
     y: tune.DROOP * Math.min(a, tune.TILT) - tune.LIFT * Math.max(0, 1 - a),
     rot: tilt * tune.ARC,
     scale: 1 + tune.RAISE * Math.max(0, 1 - a),

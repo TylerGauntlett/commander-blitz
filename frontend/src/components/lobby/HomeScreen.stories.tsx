@@ -1,11 +1,12 @@
 /**
- * The front door: three cards, and the middle one is Play.
+ * The front door: four cards, and Play is the one it opens on.
  *
  * Mounted on a bare `screen` rather than `screenCenter`, which is what the route
  * does: `.screen--center`'s 24px of padding would put the stage scale at 0.94
  * and shrink the row off the numbers the mockup round measured.
  *
- * Two ways in -- make a pod, or join one by code -- and an invite link fills the
+ * Three ways in -- make a pod, join one by code, or look at your decks -- and an
+ * invite link fills the
  * code in for you *and opens the hold it lives in*. That prefill is read once at
  * boot and deliberately not synced afterwards: an effect that pushed it in later
  * would arrive after the field had mounted empty, and would fight anybody
@@ -124,3 +125,31 @@ export const WithError: Story = {
 
 /** No decks at all, which is what a fresh install looks like. */
 export const NoDecks: Story = { args: { deckCount: 0 } };
+
+/**
+ * The Settings hold, which is where a Steam Deck gets told it is a Steam Deck.
+ *
+ * The card exists because the control scheme cannot always be inferred: in
+ * gaming mode Steam hands the browser a KEYBOARD, so the app's own signals say
+ * "keyboard" while the player is holding a controller. This is the surface that
+ * lets them say otherwise, and the one that explains why the pad was not found.
+ */
+export const SettingsHold: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByTestId("open-settings"));
+    const panel = await canvas.findByTestId("controller-panel");
+    expect(panel).toBeVisible();
+
+    // The four schemes are native buttons, so the ring reaches them for free --
+    // a control-scheme setting you need a working control scheme to reach is
+    // furniture.
+    for (const id of ["auto", "pad", "keyboard", "mouse"]) {
+      expect(await canvas.findByTestId(`scheme-${id}`)).toBeVisible();
+    }
+
+    // Storybook runs without a gamepad, which is the case worth drawing: the
+    // panel has to name the causes rather than just report the symptom.
+    expect(await canvas.findByTestId("controller-status")).toBeVisible();
+  },
+};

@@ -1,5 +1,5 @@
 /**
- * The front door: a main menu made of three cards.
+ * The front door: a main menu made of cards.
  *
  * Ported from `mockups/door/01-the-hand.html`, the direction that round
  * converged on. **THE MENU IS A HAND OF CARDS AND YOU ARE ALREADY HOLDING IT** --
@@ -16,15 +16,24 @@
  * the text field.
  *
  * ---------------------------------------------------------------------------
- * ## Why Play is the middle card
+ * ## Why Play is the default card
  *
  * The brief asked for "Play, Join, Decks" and asked that the middle card be
  * selected by default, and those only agree one way: a menu whose default
- * selection is not its default action has picked the wrong default. So Play is
- * the middle and the list order gives. Join stays to Play's right, which is the
+ * selection is not its default action has picked the wrong default. So Play was
+ * the middle and the list order gave. Join stays to Play's right, which is the
  * shipped door's own reading order -- "Create a pod", or, a code -- and Decks
  * comes up out of the footer to the left, where the least-committing thing
  * belongs. Looking at your decks costs nothing and starts nothing.
+ *
+ * SETTINGS MADE THE ROW EVEN, so Play is no longer literally the middle -- and
+ * that was always the weaker half of the argument. What mattered is that the
+ * default selection and the default action are the same card, and they still
+ * are: `DEFAULT_INDEX` looks Play up by name rather than trusting a literal 1,
+ * which is what silently broke when the row grew. Settings goes to the far left
+ * on the same ordering the paragraph above states -- the row runs from least
+ * committing to most, and changing a control scheme starts even less than
+ * browsing does.
  *
  * ## The row is one number
  *
@@ -53,6 +62,7 @@ import { on, rumble } from "../../input/pad";
 import { springStep } from "../../input/ring";
 import { DOOR_TUNE, type DoorTune, poseOf, scaleTune } from "../../logic/doorRow";
 import { looksLikeCode, normaliseCode } from "../../logic/lobby";
+import { ControllerPanel } from "../ui/ControllerPanel";
 import { Glyph } from "../ui/Glyph";
 import { type Hue, Room } from "./Room";
 import { DoorCardArt, DoorCardFrame } from "./doorArt";
@@ -81,10 +91,19 @@ const MAX_CODE_LENGTH = 14;
  */
 const DOOR_CARDS = [
   {
+    id: "settings",
+    label: "Settings",
+    verb: "Set up your controller",
+    testId: "open-settings",
+    line: "Say what you are holding.",
+    hue: ["#5c7a99", "#2b3f5a"] as Hue,
+  },
+  {
     id: "decks",
     label: "Decks",
     verb: "Browse the catalogue",
     testId: "browse-decks",
+    line: null,
     hue: ["#3f9e93", "#2b5a86"] as Hue,
   },
   {
@@ -92,6 +111,7 @@ const DOOR_CARDS = [
     label: "Play",
     verb: "Create a pod",
     testId: "create-pod",
+    line: null,
     hue: ["#d8a63c", "#8a3a2e"] as Hue,
   },
   {
@@ -99,12 +119,25 @@ const DOOR_CARDS = [
     label: "Join",
     verb: "Enter a pod code",
     testId: "join-pod",
+    line: "Take a chair somebody held open.",
     hue: ["#7d6bd8", "#2b5a86"] as Hue,
   },
 ] as const;
 
-/** The card the row opens on, and the one A presses if nothing is touched. */
-const DEFAULT_INDEX = 1;
+/** Where a card is, by name. */
+function indexOf(id: string): number {
+  return DOOR_CARDS.findIndex((card) => card.id === id);
+}
+
+/**
+ * The card the row opens on, and the one A presses if nothing is touched.
+ *
+ * BY NAME, because it used to be the literal 1 and the row used to be three
+ * cards long. Adding Settings to the head of the list would silently have made
+ * the default Decks -- the menu would open on the wrong card, and nothing in the
+ * suite asserts the default by name.
+ */
+const DEFAULT_INDEX = indexOf("play");
 
 /**
  * w 22, z 0.82: 98% of the gap in 179ms -- eleven frames at 60Hz -- overshooting
@@ -161,6 +194,7 @@ export function HomeScreen({
    * to know to press.
    */
   const [joinOpen, setJoinOpen] = useState(() => normaliseCode(initialCode).length > 0);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   /** Where the selection is GOING. An integer, always, and the only part of the
       row React knows about. */
   const [sel, setSel] = useState(DEFAULT_INDEX);
@@ -195,7 +229,7 @@ export function HomeScreen({
       if (!el) continue;
       wroteRef.current[i] ??= { t: "", z: 0, ink: "" };
       const was = wroteRef.current[i];
-      const p = poseOf(i, s, tune);
+      const p = poseOf(i, s, tune, DOOR_CARDS.length);
       const t = `translate(calc(-50% + ${p.x.toFixed(2)}px), ${p.y.toFixed(2)}px) rotate(${p.rot.toFixed(2)}deg) scale(${p.scale.toFixed(4)})`;
       if (t !== was.t) {
         el.style.transform = t;
@@ -327,10 +361,17 @@ export function HomeScreen({
         el.classList.add("door__slot--press");
       }
       rumble(70, 0.3);
+      /*
+       * EXHAUSTIVE, and it was an `else`. With three cards the fallthrough was
+       * Join and read fine; with a fourth it would have made Settings open the
+       * pod-code hold. A menu whose last branch is "whatever is left" acquires a
+       * bug every time somebody adds an item.
+       */
       const id = DOOR_CARDS[i].id;
       if (id === "play") onCreate();
       else if (id === "decks") onBrowse();
-      else setJoinOpen(true);
+      else if (id === "join") setJoinOpen(true);
+      else if (id === "settings") setSettingsOpen(true);
     },
     [busy, onCreate, onBrowse],
   );
@@ -340,6 +381,23 @@ export function HomeScreen({
   }, [code, onJoin]);
 
   const closeJoin = useCallback(() => setJoinOpen(false), []);
+  const closeSettings = useCallback(() => setSettingsOpen(false), []);
+
+  /**
+   * Which hold is up, as one value.
+   *
+   * The two are mutually exclusive by construction -- both are opened only from
+   * `press`, which can only press one card -- and collapsing them to a single
+   * value is what lets one effect own the ring for both. Two effects, each
+   * watching its own flag, would each hand the ring back on close and the second
+   * would hand it back from a card the first had already left.
+   */
+  const openHold: "join" | "settings" | null = joinOpen
+    ? "join"
+    : settingsOpen
+      ? "settings"
+      : null;
+  const closeHold = joinOpen ? closeJoin : closeSettings;
 
   /*
    * A HOLD OWNS THE INPUT WHILE IT IS UP, AND HANDS IT BACK WHEN IT GOES.
@@ -359,37 +417,55 @@ export function HomeScreen({
    * back to the first stop on the screen: Decks. Pressing B on the Join hold
    * slid the whole row two places left.
    */
-  const wasOpen = useRef(joinOpen);
+  const wasOpen = useRef<"join" | "settings" | null>(openHold);
   useLayoutEffect(() => {
-    if (joinOpen) {
+    if (openHold === "join") {
       setCursor("ui:pod-code");
       codeRef.current?.focus({ preventScroll: true });
+    } else if (openHold === "settings") {
+      // The first option of the scheme picker, which is what the panel is for.
+      setCursor("ui:scheme-auto");
     } else if (wasOpen.current) {
-      setCursor(`ui:${DOOR_CARDS[2].testId}`);
+      /*
+       * BY NAME, not by index. This was `DOOR_CARDS[2]` -- correct while Join
+       * was the third of three cards, and silently the Play card the moment a
+       * fourth was added at the head. Closing the hold would have slid the row
+       * one place and left the ring on a card nobody pressed.
+       */
+      setCursor(`ui:${DOOR_CARDS[indexOf(wasOpen.current)].testId}`);
     }
-    wasOpen.current = joinOpen;
-  }, [joinOpen]);
+    wasOpen.current = openHold;
+  }, [openHold]);
 
   /* Three ways out, which is what every overlay in this client owes: the
      control, outside the panel, and Escape -- which arrives as B on a pad. */
   useEffect(() => {
-    if (!joinOpen) return;
+    if (!openHold) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeJoin();
+      if (event.key === "Escape") closeHold();
     };
     window.addEventListener("keydown", onKey);
-    const offB = on("b", closeJoin);
+    const offB = on("b", closeHold);
     return () => {
       window.removeEventListener("keydown", onKey);
       offB();
     };
-  }, [joinOpen, closeJoin]);
+  }, [openHold, closeHold]);
 
-  const lines: string[] = [
-    `${deckCount} deck${deckCount === 1 ? "" : "s"}, and anything you import.`,
-    busy ? "Dealing the table…" : "Four seats. Deal a new table.",
-    "Take a chair somebody held open.",
-  ];
+  /*
+   * A CARD'S LINE COMES FROM THE CARD.
+   *
+   * This was a parallel array indexed by row POSITION, which is the exact shape
+   * that breaks the moment the row grows -- adding Settings at the head would
+   * have given it the Decks copy, Decks the Play copy, and Play the Join copy,
+   * with nothing to catch it. Only two of the four depend on state, so those
+   * two are resolved here and the rest are written on the card itself.
+   */
+  const lineFor = (id: string): string => {
+    if (id === "decks") return `${deckCount} deck${deckCount === 1 ? "" : "s"}, and anything you import.`;
+    if (id === "play") return busy ? "Dealing the table…" : "Four seats. Deal a new table.";
+    return DOOR_CARDS[indexOf(id)].line ?? "";
+  };
 
   return (
     <Room hue={DOOR_CARDS[sel].hue} className="door" testId="home" onScale={rescale}>
@@ -446,7 +522,7 @@ export function HomeScreen({
              * and has nowhere to oscillate to.
              */
             onMouseEnter={() => {
-              if (joinOpen || moving()) return;
+              if (openHold || moving()) return;
               select(i);
             }}
           >
@@ -469,7 +545,7 @@ export function HomeScreen({
                 <DoorCardArt id={card.id} />
               </span>
               <span className="door__name">{card.label}</span>
-              <span className="door__line">{lines[i]}</span>
+              <span className="door__line">{lineFor(card.id)}</span>
               <span className="sheen" />
             </button>
           </div>
@@ -491,7 +567,7 @@ export function HomeScreen({
         </span>
       </div>
 
-      {error && !joinOpen && (
+      {error && !openHold && (
         <p className="door__err" data-testid="home-error">
           {error.message.replace(/^\d+:\s*/, "")}
         </p>
@@ -566,6 +642,42 @@ export function HomeScreen({
               className="door__back"
               data-testid="join-back"
               onClick={closeJoin}
+            >
+              <Glyph btn="b" />
+              Back
+            </button>
+          </section>
+        </div>
+      )}
+
+      {/*
+        The same shell as the join hold, and deliberately the same shell: scrim,
+        `data-modal-root` so `stops.ts` traps the ring inside it, and the three
+        ways out every overlay in this client owes -- the Back control, the scrim,
+        and Escape-as-B. The ring handling for both lives in the one layout effect
+        above, for the reason its comment gives.
+      */}
+      {settingsOpen && (
+        <div className="door__hold">
+          <div className="door__scrim" onClick={closeSettings} aria-hidden="true" />
+          <section
+            className="door__panel door__panel--wide"
+            role="dialog"
+            aria-modal="true"
+            data-modal-root
+            aria-label="Settings"
+            data-testid="settings-hold"
+          >
+            <h2 className="door__h">Settings</h2>
+            <p className="door__p">
+              Which controls the game draws, and whether it can see your pad.
+            </p>
+            <ControllerPanel />
+            <button
+              type="button"
+              className="door__back"
+              data-testid="settings-back"
+              onClick={closeSettings}
             >
               <Glyph btn="b" />
               Back
