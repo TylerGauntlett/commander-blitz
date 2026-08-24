@@ -12,7 +12,7 @@
  * and a refresh forgot which pod you were in.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router";
 import { ApiError } from "../api/client";
 import { PodLobby } from "../components/lobby/PodLobby";
@@ -23,6 +23,34 @@ import { useDecks } from "../state/useGame";
 import { usePod } from "../state/usePod";
 import { linkGame, usePodSession } from "../state/usePodSession";
 
+/**
+ * The shuffle a test pinned, or nothing.
+ *
+ * EVERY DEAL A PLAYER MAKES IS RANDOM, AND THERE IS NO CONTROL FOR IT.
+ *
+ * There was a "Seed" field on the pod rail, host-only, and it was wrong twice
+ * over. A reproducible shuffle is a debugging tool -- it is on the screen the
+ * moment before a match starts, it asks a question nobody arriving to play has,
+ * and every reader of the rail had to skip past it. It was also one of the two
+ * text fields the focus ring could walk into and, before `pad.ts:fieldKeeps`,
+ * never walk out of.
+ *
+ * The specs still need determinism, so it is a window flag set by
+ * `page.addInitScript` -- exactly the seam `__AUTOMTG_ZOOM_LOCK` already uses,
+ * and for the same stated reason: `localStorage` would survive into a real
+ * player's browser and silently pin their shuffle with nothing on screen to
+ * point at, whereas a window global cannot outlive the page it was injected
+ * into.
+ *
+ * Non-finite values are dropped rather than sent, because an empty seed means
+ * "surprise me" and must reach the server as no seed at all -- 0 is a perfectly
+ * good seed and would deal the same game every time.
+ */
+function pinnedSeed(): number | undefined {
+  const pinned = (window as { __AUTOMTG_SEED?: unknown }).__AUTOMTG_SEED;
+  return typeof pinned === "number" && Number.isFinite(pinned) ? pinned : undefined;
+}
+
 export function PodRoute() {
   const navigate = useNavigate();
   const raw = useParams().code ?? "";
@@ -30,7 +58,6 @@ export function PodRoute() {
   const { session, forget } = usePodSession(code || undefined);
   const lobby = usePod(session);
   const decks = useDecks();
-  const [seed, setSeed] = useState("");
 
   const pod = lobby.pod;
   const gameId = pod?.status === "in_game" ? pod.game_id : null;
@@ -91,22 +118,12 @@ export function PodRoute() {
         busy={lobby.busy}
         starting={lobby.start.isPending || pod.status !== "open"}
         error={lobby.error}
-        seed={seed}
-        onSeedChange={setSeed}
         onUpdateSeat={(body) => lobby.updateSeat.mutate(body)}
         onAdminSeat={(index, action) => lobby.adminSeat.mutate({ index, action })}
         onSetSeatDeck={(index, deckId) =>
           lobby.adminSeat.mutate({ index, action: "set_deck", deck_id: deckId })
         }
-        onStart={() => {
-          // An empty field means "surprise me", which is a *different* game
-          // every deal -- so it must reach the server as no seed at all rather
-          // than as 0, which is a perfectly good seed.
-          const parsed = Number(seed.trim());
-          lobby.start.mutate(
-            seed.trim() !== "" && Number.isFinite(parsed) ? parsed : undefined,
-          );
-        }}
+        onStart={() => lobby.start.mutate(pinnedSeed())}
         onLeave={leave}
         onDecksChanged={() => decks.refetch()}
       />

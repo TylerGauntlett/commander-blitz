@@ -184,6 +184,135 @@ describe("resolveCursor", () => {
   });
 });
 
+describe("coming back out of an overlay", () => {
+  /*
+   * THE BUG A PLAYER DESCRIBES AS "THE PAD DOESN'T WORK".
+   *
+   * Press A on a deck in the catalogue: the catalogue closes, the cursor names
+   * a tile that no longer exists, and the old fallback -- "the first stop of
+   * whatever is on top" -- put the ring on the first control in the pod's
+   * header. Every A press that dismissed anything threw the player back to the
+   * top-left of the screen, so choosing a deck and then locking in was two full
+   * walks of the lobby with a wrong turn in the middle.
+   */
+  /*
+   * ONE `.screen` ELEMENT, REWRITTEN -- not a new one each time.
+   *
+   * The addresses are keyed by the root ELEMENT rather than by a name, which is
+   * what lets a dialog nobody told this module about be covered for free. It
+   * also means a helper that blows away `document.body` between steps is
+   * testing a route change rather than an overlay opening: every step would get
+   * a fresh `.screen`, no address would ever match, and the test would fail for
+   * a reason the app never has. React keeps one `.screen` per route mounted
+   * across an overlay opening and closing, so this does too.
+   */
+  function screen(html: string): HTMLElement {
+    let root = document.querySelector<HTMLElement>(".screen");
+    if (!root) {
+      root = document.createElement("div");
+      root.className = "screen";
+      document.body.append(root);
+    }
+    root.innerHTML = html;
+    return root;
+  }
+
+  const POD = `<button data-testid="copy"></button><button data-testid="change-deck"></button>`;
+  const CATALOG = `<div data-modal-root><button data-testid="close"></button><button data-testid="deck-a"></button></div>`;
+
+  it("puts the ring back on the control that opened it", () => {
+    screen(POD);
+    resolveCursor();
+    setCursor("ui:change-deck");
+    expect(getCursor()).toBe("ui:change-deck");
+
+    // The catalogue opens and lands the ring on a deck, which is what
+    // `DeckCatalog` does from a layout effect.
+    screen(POD + CATALOG);
+    setCursor("ui:deck-a");
+    expect(getCursor()).toBe("ui:deck-a");
+
+    // Taking that deck closes it.
+    screen(POD);
+    resolveCursor();
+    expect(getCursor()).toBe("ui:change-deck");
+  });
+
+  it("does not fall back to the first control on the screen", () => {
+    // The failing shape, stated as its own assertion: `ui:copy` is `all[0]`,
+    // and landing there is the whole defect rather than an incidental detail.
+    screen(POD);
+    resolveCursor();
+    setCursor("ui:change-deck");
+    screen(POD + CATALOG);
+    resolveCursor();
+    screen(POD);
+    resolveCursor();
+    expect(getCursor()).not.toBe("ui:copy");
+  });
+
+  it("backs out of a dossier onto the tile, not to the catalogue's front", () => {
+    /*
+     * Two overlays deep, which is why the addresses are a stack rather than one
+     * slot: the dossier opens over the catalogue, and closing it must land on
+     * the tile that opened it rather than at the catalogue's own first stop.
+     *
+     * The dossier is appended and removed rather than re-written in, for the
+     * same reason `screen` keeps one root: React leaves the catalogue mounted
+     * underneath, so its element has to survive the dossier opening or the
+     * address keyed to it is a different element by the time we come back.
+     */
+    const root = screen(POD + CATALOG);
+    setCursor("ui:deck-a");
+
+    const dossier = document.createElement("div");
+    dossier.setAttribute("data-modal-root", "");
+    dossier.innerHTML = `<button data-testid="dossier-close"></button>`;
+    root.append(dossier);
+    resolveCursor();
+    expect(getCursor()).toBe("ui:dossier-close");
+
+    dossier.remove();
+    resolveCursor();
+    expect(getCursor()).toBe("ui:deck-a");
+  });
+
+  it("opens a NEW surface at its own front, not near where the ring was", () => {
+    /*
+     * THE HALF THAT MAKES THE NEAREST-STOP FALLBACK SAFE.
+     *
+     * A dialog opening over the board is not a stop being replaced -- it is a
+     * new screen -- so measuring from where the ring stood behind it measures
+     * across two things that were never on screen together. The mulligan prompt
+     * is where it showed: the ring had been on a hand card at the bottom of the
+     * board, so the nearest option in the new panel was whichever one happened
+     * to sit lowest, and the prompt opened on Keep instead of on Mulligan for
+     * reasons nothing on screen could explain.
+     */
+    screen(POD);
+    resolveCursor();
+    setCursor("ui:change-deck");
+    screen(POD + CATALOG);
+    resolveCursor();
+    expect(getCursor()).toBe("ui:close");
+  });
+
+  it("keeps a disabled control as somewhere the ring may stand", () => {
+    /*
+     * Every button in the pod goes `disabled` for the round-trip of any
+     * mutation. While `stopsIn` skipped disabled controls that emptied the
+     * screen of stops for about 200ms, the ring had nowhere near to fall back
+     * to, and it never came home. The board has always allowed this -- a
+     * disabled action still carries `data-stop`, because "a decision always HAS
+     * a surface" -- and the lobby was the only surface that disagreed.
+     */
+    screen(
+      `<button data-testid="copy" disabled></button><button data-testid="deal" disabled></button>`,
+    );
+    expect(stopsIn().map((el) => el.dataset.testid)).toEqual(["copy", "deal"]);
+  });
+});
+
 describe("setCursor", () => {
   it("keeps exactly one cursor in the document", () => {
     board(`<div data-stop="card:1"></div><div data-stop="card:2"></div>`);

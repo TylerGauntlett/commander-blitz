@@ -26,6 +26,23 @@ export async function setInstant(page: Page): Promise<void> {
 }
 
 /**
+ * Pin the shuffle, which the lobby no longer has a control for.
+ *
+ * The seed field is gone from the pod rail: a reproducible game is a debugging
+ * tool rather than a question a player arriving to play has, and it was one of
+ * two text boxes the focus ring could walk into and not out of. Determinism is
+ * a window flag now, injected before the app boots -- the same seam
+ * `lockZoom` uses, and for the reason stated there: a persisted preference
+ * would survive into a real player's browser with nothing on screen to point
+ * at, and a window global cannot outlive the page it was injected into.
+ */
+export async function pinSeed(page: Page, seed: number): Promise<void> {
+  await page.addInitScript((value) => {
+    (window as { __AUTOMTG_SEED?: number }).__AUTOMTG_SEED = value;
+  }, seed);
+}
+
+/**
  * Pin the card zoom to the sizes that shipped before it existed.
  *
  * Progressive zoom re-solves the card size against the space available, so a spec
@@ -61,6 +78,7 @@ export async function startGame(
 ): Promise<void> {
   await setInstant(page);
   if (options.zoomLock) await lockZoom(page);
+  if (options.seed !== undefined) await pinSeed(page, options.seed);
   await page.goto("/");
 
   await page.getByTestId("create-pod").click();
@@ -74,10 +92,6 @@ export async function startGame(
 
   await pickDeck(page, options.deck ?? "aesi");
 
-  if (options.seed !== undefined) {
-    await page.getByPlaceholder("random").fill(String(options.seed));
-  }
-
   await page.getByTestId("lock-in").click();
   await page.getByTestId("start-game").click();
   await page.getByTestId("table").waitFor({ timeout: 30_000 });
@@ -87,7 +101,7 @@ export async function startGame(
 export async function pickDeck(page: Page, deckId: string): Promise<void> {
   await page.getByTestId("change-deck").click();
   await page.getByTestId("deck-catalog").waitFor();
-  await page.getByTestId(`deck-${deckId}`).locator(".pick__card").click();
+  await page.getByTestId(`deck-${deckId}-take`).click();
   await expect(page.getByTestId("deck-catalog")).toBeHidden();
 }
 
@@ -95,7 +109,7 @@ export async function pickDeck(page: Page, deckId: string): Promise<void> {
 export async function browseDecks(page: Page): Promise<void> {
   await page.goto("/");
   await page.getByTestId("home").waitFor();
-  await page.getByRole("button", { name: "Browse them" }).click();
+  await page.getByTestId("browse-decks").click();
   await page.getByTestId("deck-catalog").waitFor();
 }
 

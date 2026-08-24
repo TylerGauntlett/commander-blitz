@@ -477,25 +477,116 @@ function wake(): void {
   raf = requestAnimationFrame(frame);
 }
 
-/**
- * Whether a key event is somebody typing rather than somebody playing.
- *
- * The deck-import textarea and the seat-name field are real surfaces, and
- * `Table.tsx` has guarded them since it was written. Ported rather than
- * referenced, because this listener runs first.
- */
-function isTyping(target: EventTarget | null): boolean {
+/** The four keys a text field and the ring both have a claim on. */
+const ARROWS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
+
+/** Anything with a caret in it, which is the only thing `fieldKeeps` bargains with. */
+function isField(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;
   if (!el || !el.tagName) return false;
-  if (["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) return true;
-  return el.isContentEditable === true;
+  return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable === true;
+}
+
+/**
+ * Whether a field keeps this key for itself, or hands it to the ring.
+ *
+ * THE OLD ANSWER WAS "A FIELD KEEPS EVERYTHING", AND IT WAS A ONE-WAY DOOR.
+ *
+ * A field is a stop like any other off the board, so the ring walks onto the
+ * seat-name box, the search box or the code box in the ordinary course of
+ * moving around -- and once there, every arrow went to the caret and none of
+ * them to navigation. On a desktop Tab is the way out; on a Deck there is no
+ * Tab, so the ring was in the field for the rest of the session and the screen
+ * was over. `docs/handheld-playtest.md` has no word for this because no loop
+ * ever got past it.
+ *
+ * The rule is the one every console text field uses, and it needs no mode and
+ * no extra button: **a direction is the caret's while the caret has somewhere
+ * to go in that direction, and the ring's at the end of the line.** Left with
+ * the caret mid-word moves the caret; left again from column zero leaves the
+ * field. Up and Down only ever belong to a textarea, and only while there is
+ * another line that way.
+ *
+ * Everything that is not a direction is still the field's without asking:
+ * letters, Enter, Escape, Backspace. `w`/`a`/`s`/`d` are directions to the pad
+ * layer and letters here, which is the whole reason this asks about the key
+ * rather than about the element.
+ */
+function fieldKeeps(target: EventTarget | null, key: string): boolean {
+  const el = target as HTMLElement | null;
+  if (!el || !el.tagName) return false;
+  // A select's arrows change the option, and there is no "end of the list" to
+  // read -- the native control wraps. It keeps them; `B` is the way out.
+  if (el.tagName === "SELECT") return true;
+  const typed = el.tagName === "INPUT" || el.tagName === "TEXTAREA";
+  if (!typed && el.isContentEditable !== true) return false;
+  if (!ARROWS.has(key)) return true;
+  // No caret arithmetic to do on a contenteditable, and nothing in this client
+  // is one; keeping the old behaviour there is the conservative half.
+  if (!typed) return true;
+
+  const field = el as HTMLInputElement | HTMLTextAreaElement;
+  let at: number | null = null;
+  let end: number | null = null;
+  try {
+    // `selectionStart` throws on an `<input type="number">` in some engines and
+    // is null on several other types. Either way we have no caret to reason
+    // about, so the ring takes the key rather than the field trapping it.
+    at = field.selectionStart;
+    end = field.selectionEnd;
+  } catch {
+    return false;
+  }
+  if (at === null || end === null) return false;
+  // A range somebody is extending with Shift: collapsing it is the field's job.
+  if (at !== end) return true;
+
+  if (key === "ArrowLeft") return at > 0;
+  if (key === "ArrowRight") return at < field.value.length;
+  // Only a textarea has another line to reach, and only on the side it has one.
+  if (el.tagName !== "TEXTAREA") return false;
+  return key === "ArrowUp"
+    ? field.value.slice(0, at).includes("\n")
+    : field.value.slice(at).includes("\n");
 }
 
 function onKeyDown(event: KeyboardEvent): void {
-  if (isTyping(event.target)) return;
+  if (fieldKeeps(event.target, event.key)) return;
   const name = KEYS[event.key];
   if (!name) return;
-  if (SWALLOW.has(event.key)) event.preventDefault();
+  if (SWALLOW.has(event.key)) {
+    /*
+     * THE CAPTURE PHASE IS THE POINT, AND `Enter` IS WHY.
+     *
+     * `useCursorNav` implements A as "click the element the ring is on", which
+     * is what stops the pad from ever drifting from the mouse. Several stops
+     * are divs wearing `role="button"` -- a board card, a chair's card, a deck
+     * tile -- because a `<button>` may not contain the divs a card face is made
+     * of, and each carries its own `Enter`/`Space` handler so a keyboard can
+     * press it. With the ring mounted on every screen those are two paths to
+     * one action, and they run in order: React's handler fires first and takes
+     * the deck, the ring re-resolves onto the control that opened the
+     * catalogue, and our click a frame later presses THAT. One Enter chose a
+     * deck and reopened the catalogue on top of the result.
+     *
+     * Listening in the capture phase and stopping propagation is what makes the
+     * ring's path the only path -- for those three divs, for the native
+     * activation a real `<button>` would have done, and for any control added
+     * later that reaches for the same shortcut. It costs nothing anybody wanted:
+     * `fieldKeeps` has already returned for anything with a caret in it, so
+     * Enter still commits a name and still submits a pod code.
+     */
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  /*
+   * An arrow the ring took off a field must not also move the caret.
+   *
+   * Without this the last press does both: focus leaves for the next stop and
+   * the caret jumps to the other end of the text on the way out, so coming
+   * back to the field finds it in a place nobody put it.
+   */
+  if (ARROWS.has(event.key) && isField(event.target)) event.preventDefault();
   // The OS autorepeat would race our own ramp and win, so the ramp would never
   // be what the player is feeling.
   if (event.repeat) return;
@@ -542,7 +633,8 @@ function onFocus(): void {
 export function startPad(): void {
   if (listening || typeof window === "undefined") return;
   listening = true;
-  window.addEventListener("keydown", onKeyDown);
+  // Capture, so the swallowed keys never reach a React handler. See `onKeyDown`.
+  window.addEventListener("keydown", onKeyDown, true);
   window.addEventListener("keyup", onKeyUp);
   /*
    * Bound because it is free, NOT because anything depends on it.
@@ -562,7 +654,7 @@ export function startPad(): void {
 export function stopPad(): void {
   if (!listening) return;
   listening = false;
-  window.removeEventListener("keydown", onKeyDown);
+  window.removeEventListener("keydown", onKeyDown, true);
   window.removeEventListener("keyup", onKeyUp);
   window.removeEventListener("gamepadconnected", wake);
   window.removeEventListener("gamepaddisconnected", wake);
@@ -602,6 +694,17 @@ export function padDiagnostics(): {
   secure: boolean;
   focused: boolean;
   pads: string[];
+  /**
+   * How many listeners each button carries.
+   *
+   * Published because a DOUBLED listener is invisible from the outside and
+   * behaves like a completely different bug: two `A` handlers make one press
+   * two clicks, and the second lands on whatever the first click moved the ring
+   * onto -- so pressing "Choose a deck" opened the catalogue AND took the first
+   * deck in it, which reads as the catalogue flickering rather than as anything
+   * to do with input. One number would have found it in a minute.
+   */
+  bound: Record<string, number>;
 } {
   return {
     listening,
@@ -610,6 +713,9 @@ export function padDiagnostics(): {
     supported: typeof navigator !== "undefined" && !!navigator.getGamepads,
     secure: typeof window === "undefined" || window.isSecureContext !== false,
     focused: typeof document !== "undefined" && document.hasFocus(),
+    bound: Object.fromEntries(
+      [...handlers.entries()].map(([button, set]) => [button, set.size]),
+    ),
     pads: livePads().map(
       (pad) =>
         `#${pad.index} ${pad.id} [${pad.mapping || "non-standard"}] ` +

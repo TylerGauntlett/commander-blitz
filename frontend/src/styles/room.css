@@ -1,0 +1,508 @@
+/*
+ * THE ROOM: the lit hall every menu screen stands in.
+ *
+ * Lifted out of `door.css` when the second screen needed it, and the lift is
+ * the point rather than a tidy-up. The front door was ported from
+ * `mockups/door/01-the-hand.html` and came out looking like a game; the pod
+ * lobby and the deck catalogue behind it were still the flat grey panels that
+ * shipped, so pressing PLAY took you from a game to a settings dialog. A player
+ * does not experience those as two screens with different budgets -- they
+ * experience it as the game ending one second after it started.
+ *
+ * So the hall, the floor sigil, the wash, the motes, the stage scale and the
+ * room's colour are ONE implementation, and the three menu screens are three
+ * things standing in it. `.door`, `.pod` and `.shelf` are `.room` first.
+ *
+ * ---------------------------------------------------------------------------
+ * THE TWO RULES THE WHOLE SHEET IS BUILT ON, both inherited from the door:
+ *
+ * 1. EVERY SIZE IS `calc(N * var(--du))`, where `--du` is `stageScale()` and is
+ *    exactly 1 at 1280x800 -- a Steam Deck's panel. The room is full-bleed and
+ *    only the furniture scales, so nothing is letterboxed and nothing is a
+ *    blurry upscale.
+ *
+ * 2. TYPE DOES NOT FOLLOW `--du` DOWNWARD. Every font-size is
+ *    `max(16px, calc(N * var(--du)))`. The 16px floor is a CI gate
+ *    (`e2e/handheldAssert.ts`) and these sheets are written to clear it on
+ *    their own -- there is no override list in `handheld.css` for any class
+ *    defined here, and there must never be one. That is also why the class
+ *    names here are new rather than recycled: `handheld.css` names `.plate__n`,
+ *    `.pick__n`, `.slot__no` and a hundred others in a flat `font-size: 16px`
+ *    block that loads last and would beat every `max()` in this file.
+ */
+
+/* ==========================================================================
+   The stage
+   ========================================================================== */
+
+.room {
+  --du: 1;
+  --card-w: calc(200px * var(--du));
+  --card-h: calc(280px * var(--du));
+
+  /* The rings' own gold, which is NOT `--gold`: the ring is a lighter, hotter
+     tone precisely so "you are on it" cannot be confused with "this is the
+     commit tier". `handheld.css:36-37`. */
+  --focus: #ffe08a;
+
+  /* How long the room takes to change colour. Longer than any selection move on
+     purpose: the thing arrives and the light follows it. A room that changed
+     faster than the thing changing it reads as a flash. */
+  --t-room: 320ms;
+
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #07060e;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/*
+ * A ROOM INSIDE A ROOM IS AN OVERLAY.
+ *
+ * The catalogue is a full-bleed hall in its own right and it opens over the
+ * pod, which is another one -- so the inner one has to leave the flow or it
+ * lands underneath its host's furniture with whatever height the flow gave it.
+ * (It gave it 21px: every one of the pod's own children is absolutely
+ * positioned, so the catalogue was laid out against an empty box.)
+ *
+ * A descendant selector rather than a modifier class, because "this is on top"
+ * is a fact about where the screen was rendered rather than a decision the
+ * screen makes about itself -- `DecksRoute` mounts the same component as a
+ * route of its own, and it must not have to say so.
+ */
+.room .room {
+  position: absolute;
+  inset: 0;
+  z-index: 600;
+  animation: room-open 180ms ease-out;
+}
+
+@keyframes room-open {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+ * The hall itself.
+ *
+ * Deliberately NOT `will-change`. On a static backdrop, promoting to a
+ * compositor layer throws away the raster cache that was already doing the job
+ * -- which cost the mockup round half its frame rate before it was found. That
+ * is the opposite of the usual advice and worth writing down.
+ */
+.room__ground {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * THE FLOOR THE FURNITURE STANDS ON, sized in the same unit as the cards.
+ *
+ * `1280x800 * --du`, hung off the anchor line rather than off the stage: the
+ * layer's origin is put where the design's origin would be if the content were
+ * at `--floor-y`, so the sigil's own y of 585 lands at a fixed distance under
+ * it at every size. At 1280x800 with the door's 40.25% that is `inset: 0`
+ * exactly. `slice` on the full-bleed ground could never hold that -- at
+ * 2560x1440 it scales the ground 2x while the cards scale 1.45x, and the ring
+ * on the floor grows wider than the row standing in it.
+ */
+.room__floor {
+  position: absolute;
+  left: 50%;
+  top: var(--floor-y, 40.25%);
+  width: calc(1280px * var(--du));
+  height: calc(800px * var(--du));
+  transform: translate(-50%, calc(-322px * var(--du)));
+  pointer-events: none;
+}
+
+/*
+ * THE ROOM'S COLOUR, and it is one declaration doing the work of a repaint.
+ *
+ * `stroke` is inherited, and inheritance crosses into a `<use>`'s shadow tree,
+ * so this recolours every ring, spoke and square of the floor sigil at once --
+ * and because it is a CSS property rather than a presentation attribute it can
+ * transition, which is what makes the room CHANGE colour rather than cut to it.
+ */
+.room__sigil {
+  stroke: var(--lit, #ffd479);
+  opacity: 0.34;
+  transition: stroke var(--t-room) ease;
+}
+
+.room__sigil--glow {
+  opacity: 0.16;
+  filter: blur(3px);
+}
+
+.room__beam {
+  fill: var(--lit-beam, rgb(195 182 255 / 0.12));
+  transition: fill var(--t-room) ease;
+}
+
+/* The pool of light the furniture stands in. Over the drawn floor rather than
+   in it, because a `background` transitions more cheaply than a gradient stop
+   inside an SVG, and this one moves on every selection. */
+.room__wash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      40% 30% at 50% var(--wash-y, 73%),
+      var(--lit-soft, transparent) 0%,
+      transparent 72%
+    ), radial-gradient(88% 40% at 50% 106%, var(--lit2-soft, transparent) 0%, transparent 66%);
+  transition: background var(--t-room) ease;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Ambient motes
+
+   `fx/presets.ts:225` is the app's own `motes()` -- gold and white specks
+   drifting upward, the one preset in the vocabulary that is ambience rather
+   than an event. Re-expressed as CSS because a canvas here would be a second
+   particle system on a screen with no board to anchor it to, and dropped
+   entirely under reduced motion, which is what `burst()` itself does.
+   ========================================================================== */
+
+.room__motes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Sixteen elements on their own infinite animations. Contained, or every
+     mote's repaint takes the room behind it with it. */
+  contain: strict;
+}
+
+.room__mote {
+  position: absolute;
+  /* `bottom: 0`, not `-14px`. Starting a mote just under the screen so it
+     drifts up into view is the obvious way to write this and puts an element
+     outside the stage for the first moment of every cycle. The fade-in at 12%
+     does that job with no box leaving the stage. */
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--lit, rgb(255 224 138 / 0.75));
+  box-shadow: 0 0 8px var(--lit, rgb(255 224 138 / 0.55));
+  transition: background var(--t-room) ease, box-shadow var(--t-room) ease;
+  animation: room-mote linear infinite;
+}
+
+@keyframes room-mote {
+  from {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(-100vh) translateX(var(--drift, 20px));
+    opacity: 0;
+  }
+}
+
+/* ==========================================================================
+   THE FURNITURE KIT
+
+   What the door invented once and the other two screens would otherwise each
+   invent differently: a printed card, a sheen, a press squeeze, a bar of
+   controls, a button in each of the three tiers, and the hint legend. Defined
+   here so "consistent" is a fact about one stylesheet rather than a promise
+   made in three.
+   ========================================================================== */
+
+/*
+ * A PRINTED CARD.
+ *
+ * The frame, the field and the rules are `DoorCardFrame`'s -- an SVG under the
+ * content, `z-index: 0` with the content at 1. That layering is a trap worth
+ * naming: a POSITIONED element paints in a later phase than in-flow content
+ * whatever the document order, so the frame covered the card's own words, and
+ * only the plain in-flow ones -- silently, still there and still opaque.
+ */
+.plank {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border-radius: calc(11px * var(--du));
+  border: 2px solid rgb(216 166 60 / 0.34);
+  background: #241b32;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.5), 0 12px 30px rgb(0 0 0 / 0.55);
+  text-align: center;
+  transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.plank__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.plank > *:not(.plank__frame) {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * SELECTED: fill is focus, tier is the edge (`handheld.css:1315-1345`).
+ *
+ * "Am I on it" is carried by the fill and the light; what kind of thing it is
+ * stays on the border. Driven by `[data-cursor]` AND by an explicit `--on`,
+ * because the pod's chairs are selected by the ring while the door's row is
+ * selected by its own spring.
+ */
+.plank--on,
+.plank[data-cursor] {
+  border-color: var(--lit, var(--focus));
+  box-shadow: 0 0 0 3px rgb(255 224 138 / 0.16), 0 0 44px
+    var(--lit-soft, rgb(255 224 138 / 0.24)), 0 18px 46px rgb(0 0 0 / 0.6);
+}
+
+/*
+ * THE SHEEN. A slow gradient crossing the selected card.
+ *
+ * `handheld.css:1347-1398`'s own argument: movement carries into peripheral
+ * vision where a 3px hairline does not, and it costs one pseudo-element and one
+ * keyframe. One change from the board's copy -- there it is scoped to
+ * `[data-cursor]` so a mouse player never sees it; here it is on whatever is
+ * selected however the selection was made, because on a menu the selection IS
+ * the state and there is nothing else for the sheen to be about.
+ */
+.sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgb(255 224 138 / 0.18) 48%,
+    transparent 66%
+  );
+  background-size: 260% 100%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.plank--on > .sheen,
+.plank[data-cursor] > .sheen {
+  opacity: 1;
+  animation: room-sheen 2.4s ease-in-out infinite;
+}
+
+@keyframes room-sheen {
+  from {
+    background-position: 140% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+/* The press squeeze. `ring.ts:567` does this to the focus ring on A -- a short
+   impulse into the box's own origin so it reads as taking the press rather than
+   as moving. 90ms, because that is under the 120ms `--t-fast` calls fast and a
+   press has to feel like it landed before anything else happens. */
+@keyframes room-press {
+  50% {
+    transform: scale(0.965);
+  }
+}
+
+/* ==========================================================================
+   Type
+   ========================================================================== */
+
+/* A screen's name, in the wordmark's voice but a tier below it: the mark itself
+   appears once per app, on the door. */
+.room__word {
+  margin: 0;
+  font-size: max(16px, calc(20px * var(--du)));
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  /* Tracking is trailing space on the last letter, so tracked text sits half a
+     letter-space right of true. */
+  text-indent: 0.22em;
+  text-shadow: 0 2px 20px rgb(0 0 0 / 0.8);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Controls
+
+   Three tiers and no more, which is the whole reason they are here: the pod
+   had five button classes doing four jobs, and a screen with five button
+   weights has told the player nothing about which one to press.
+
+     .key            the ordinary control
+     .key--commit    the one thing this screen exists to do (gold, one per screen)
+     .key--quiet     leaving, cancelling, undoing a commitment
+
+   Every one clears 44px on its own. `handheld.css` has a list of controls it
+   raises to the hit floor; nothing here is on it, and nothing here should be.
+   ========================================================================== */
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(8px * var(--du));
+  min-height: 44px;
+  padding: 0 calc(16px * var(--du));
+  border: 1px solid var(--edge-hi, rgb(255 224 138 / 0.22));
+  border-radius: calc(9px * var(--du));
+  background: linear-gradient(180deg, rgb(58 46 82 / 0.9), rgb(32 25 48 / 0.9));
+  color: var(--text);
+  font: inherit;
+  font-size: max(16px, calc(16px * var(--du)));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+}
+
+.key:hover:not(:disabled) {
+  border-color: var(--lit, var(--focus));
+}
+
+.key:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+/* The one gold control. `door__go`'s gradient and its 3px plinth, so pressing
+   Deal and pressing Join feel like the same act. */
+.key--commit {
+  border: 0;
+  background: linear-gradient(180deg, #ffd98c, #e0a63f 55%, #b87c1c);
+  color: #1b0f05;
+  font-weight: 800;
+  box-shadow: 0 3px 0 #7d5310;
+}
+
+.key--commit:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #7d5310;
+}
+
+.key--commit:disabled {
+  box-shadow: 0 3px 0 #4a3a18;
+}
+
+.key--quiet {
+  border-color: transparent;
+  background: none;
+  color: var(--text-dim);
+  font-weight: 650;
+}
+
+.key--quiet:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--edge);
+}
+
+/* A control that is a mark rather than a word -- copy, close, remove. Square,
+   at the hit floor, so a row of them reads as one strip of chrome. */
+.key--mark {
+  min-width: 44px;
+  padding: 0;
+  font-size: max(16px, calc(17px * var(--du)));
+}
+
+/*
+ * `:not([data-cursor])`, and the bug it records is nastier than it looks: the
+ * ring is `outline: 3px solid` on an ATTRIBUTE selector, so a class-qualified
+ * `:focus { outline: none }` outranks it, and only `outline-style` goes to
+ * `none` -- the width still computes to 3px, so devtools shows the ring applied
+ * and nothing is drawn. `tests/focusOutline.test.ts` fails the build over it,
+ * and it reads the selector as written: an extra `:not(:focus-visible)` tacked
+ * on the end put a bare `:focus-visible` at the end of the selector and tripped
+ * the guard, which was right to fire. The cursor IS focus on these screens, so
+ * the qualified form is the whole rule.
+ */
+.room :focus:not([data-cursor]) {
+  outline: none;
+}
+
+/* ==========================================================================
+   The corners
+
+   What a console game puts at the edges: what the buttons do. `.hint` and
+   `Glyph` are shared, so this obeys `html[data-input]` like every other hint in
+   the app and a mouse player never sees a controller legend.
+
+   ITS OWN CLASS, NOT `.hints`: `handheld.css:1479-1483` lifts the board's hint
+   bar over an open prompt with `html[data-input="pad"] .hints`, which is (0,2,0)
+   -- the same weight as `.room .hints` -- and loads later. The door's bar came
+   out `position: relative` at the top-left corner of the screen with every
+   declaration in its block still "applied".
+   ========================================================================== */
+
+.room__hints {
+  position: absolute;
+  right: calc(24px * var(--du));
+  bottom: calc(18px * var(--du));
+  display: none;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-dim);
+  font-size: max(16px, calc(16px * var(--du)));
+  z-index: 300;
+}
+
+html[data-input="pad"] .room__hints,
+html[data-input="keyboard"] .room__hints {
+  display: flex;
+}
+
+/* The one line a screen is allowed for something that went wrong. Never two
+   places at once, and always `home-error`/`pod-error` -- the specs drive them
+   by id. */
+.room__err {
+  margin: 0;
+  text-align: center;
+  font-size: max(16px, calc(16px * var(--du)));
+  color: var(--danger);
+}
+
+/* ==========================================================================
+   REDUCED MOTION TAKES THE TEXTURE AND LEAVES THE FACTS
+
+   `fx/presets.ts` and `ParticleLayer.burst` draw the same line: reduced motion
+   drops "how it felt" and keeps every channel carrying information. So the
+   sheen and the ambient motes stop; anything that says WHERE THE SELECTION IS
+   still moves, because that is the one thing a menu exists to say.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .plank--on > .sheen,
+  .plank[data-cursor] > .sheen {
+    animation: none;
+  }
+
+  .room__motes {
+    display: none;
+  }
+}

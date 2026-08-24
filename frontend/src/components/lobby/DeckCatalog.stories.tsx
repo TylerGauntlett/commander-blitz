@@ -81,9 +81,70 @@ export const WithImportedDeck: Story = {
 export const PickDeck: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const tile = await canvas.findByTestId("deck-edgar");
-    await userEvent.click(tile.querySelector('[role="button"]') as HTMLElement);
+    // `deck-{id}-take` rather than a `[role=button]` inside `deck-{id}`: the
+    // card is the control, and a control the ring has to be able to name needs
+    // an id of its own -- see the header.
+    await userEvent.click(await canvas.findByTestId("deck-edgar-take"));
     expect(args.onPick).toHaveBeenCalledWith("edgar");
+  },
+};
+
+/**
+ * THE RING OPENS ON A DECK, NOT ON THE WAY OUT.
+ *
+ * `resolveCursor` falls back to the first stop of whatever surface is on top,
+ * which here is the ✕ -- so opening the catalogue with a pad put the ring on
+ * the control that leaves the screen the player had just asked for. One line in
+ * a layout effect fixes it, and this is what says so.
+ */
+export const RingOpensOnADeck: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("deck-catalog");
+    const ringed = canvasElement.querySelector("[data-cursor]");
+    expect(ringed?.getAttribute("data-testid")).toBe(`deck-${pods.DECKS[0].id}-take`);
+  },
+};
+
+/**
+ * ...and on the deck you already hold, when you hold one.
+ *
+ * "Change my deck" and "choose a deck" are the same control and only one of
+ * them starts from nothing; landing on the current pick is what makes the
+ * second press a comparison rather than a search.
+ */
+export const RingOpensOnTheDeckYouHold: Story = {
+  args: { chosen: "edgar" },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("deck-catalog");
+    expect(canvasElement.querySelector("[data-cursor]")?.getAttribute("data-testid")).toBe(
+      "deck-edgar-take",
+    );
+  },
+};
+
+/**
+ * The grid scrolls, and a deck past the fold is still somewhere the ring can go.
+ *
+ * `stops.ts:onScreen` used to drop any stop an ancestor had clipped, which is
+ * right for the board's zero-height opponent lanes and wrong for a scroller: a
+ * deck eleven rows down was not a stop at all, so Down did nothing and the
+ * catalogue ended at the fold. `cursor.ts:keepInView` brings the box along on
+ * arrival -- and does the arithmetic itself rather than calling
+ * `scrollIntoView`, which would also scroll the `overflow: hidden` room and
+ * take the header off the top of the screen.
+ */
+export const TheGridScrolls: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("deck-catalog");
+    const body = canvasElement.querySelector(".shelf__body") as HTMLElement;
+    expect(getComputedStyle(body).overflowY).toBe("auto");
+    // And the room around it never scrolls, whatever the grid does.
+    const room = canvasElement.querySelector(".shelf") as HTMLElement;
+    expect(getComputedStyle(room).overflow).toBe("hidden");
+    expect(room.scrollTop).toBe(0);
   },
 };
 

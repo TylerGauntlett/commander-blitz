@@ -204,7 +204,16 @@ test.describe("importing a Moxfield deck", () => {
     // screen to assert against.
     const tile = page.getByTestId(`deck-${DECK.id}`);
     await expect(tile).toBeVisible();
-    await expect(tile).toContainText("Yours");
+    /*
+     * WHICH DECKS ARE YOURS IS THE ✕, not a "Yours" badge.
+     *
+     * The badge said what the Precons/Yours filter three rows up already says,
+     * on every tile, in a caption row 150px wide that also has to hold the
+     * colour identity and two controls. What it left behind is the better
+     * signal anyway: only an import can be thrown away, so only an import has a
+     * ✕ -- and that mark is a thing you can act on rather than a label.
+     */
+    await expect(page.getByTestId(`deck-${DECK.id}-remove`)).toBeVisible();
     // The honesty requirement, on the tile itself and not only in the dialog.
     await expect(page.getByTestId(`deck-${DECK.id}-simplified`)).toContainText("74");
 
