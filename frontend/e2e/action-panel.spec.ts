@@ -598,7 +598,10 @@ test.describe("the tools footer", () => {
     expect(above, "the settings menu opened downwards").toBe(true);
 
     // A press outside puts it away again.
-    await page.locator(".acts__list").click({ position: { x: 5, y: 5 } }).catch(() => {});
+    await page
+      .locator(".acts__list")
+      .click({ position: { x: 5, y: 5 } })
+      .catch(() => {});
     await expect(page.getByTestId("settings-menu")).toHaveCount(0);
 
     // The speed selector used to be checked here too. It is gone: it took a
