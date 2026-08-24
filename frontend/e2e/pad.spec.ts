@@ -448,3 +448,103 @@ test.describe("a second gamepad in front of the real one", () => {
     await expect.poll(() => cursor(page), { timeout: 4_000 }).not.toBe(before);
   });
 });
+
+/**
+ * The Steam Deck case: a controller that arrives as a keyboard.
+ *
+ * In gaming mode Steam Input grabs the pad, publishes no gamepad, and sends
+ * arrow keys and Enter instead -- so `withFakePad` is deliberately NOT used
+ * here. Everything below is what the app can see on a real Deck with a stock
+ * browser layout: keystrokes, at 1280x800, and no `getGamepads` result at all.
+ *
+ * Two things had to be true and neither was. The hints have to name the buttons
+ * the player is actually holding, and the whole board has to be reachable from
+ * the only inputs Steam is sending.
+ */
+test.describe("a controller disguised as a keyboard", () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+
+  test("shows pad glyphs once arrows are the only thing driving", async ({ page }) => {
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+
+    // Three arrows and not one character key, on a handheld-sized screen. A
+    // real keyboard session types; this one cannot.
+    for (let i = 0; i < 3; i += 1) {
+      await page.keyboard.press("ArrowDown");
+      await page.waitForTimeout(60);
+    }
+
+    await expect(page.locator("html")).toHaveAttribute("data-input", "pad");
+
+    const shown = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>(".glyph")]
+        .filter((el) => getComputedStyle(el).display !== "none")
+        .map((el) => el.textContent ?? ""),
+    );
+    expect(shown.length).toBeGreaterThan(0);
+    expect(
+      shown.some((label) => label === "A"),
+      `expected an A glyph, got ${JSON.stringify(shown)}`,
+    ).toBe(true);
+    expect(
+      shown.some((label) => label === "Enter"),
+      "a player holding a controller is still being told to press Enter",
+    ).toBe(false);
+  });
+
+  test("can leave a region with the d-pad alone", async ({ page }) => {
+    /*
+     * THE LOCKOUT, and it is the reason a Deck could not play this at all.
+     *
+     * A region is entered automatically -- by the cursor reconciler and by the
+     * decision auto-jump -- and until `escapeGroup` the only ways out were
+     * `L1`/`R1`/`L2`. A stock Steam keyboard layout emits none of the three, so
+     * the first direction press of the game trapped the ring in one region for
+     * the rest of it.
+     *
+     * Asserted as "arrows alone visit more than one region", which is the
+     * player-facing shape of the bug rather than an internal flag: with the trap
+     * hard, this set never grows past one however far you walk.
+     */
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+
+    // The mulligan is a MODAL, and a modal trap is deliberately still hard --
+    // so the region question only exists once it is gone.
+    const keep = actionsOfKind(page, "keep");
+    if (await keep.count()) await keep.first().click();
+    await waitForOurTurn(page);
+
+    /** Which of the five regions the ring is in, by the app's own selectors. */
+    const region = () =>
+      page.evaluate(() => {
+        const SELS = [
+          ".hand",
+          ".rail--right",
+          ".play__opponents",
+          ".play__mine .mat__side",
+          ".play__mine .mat__lanes",
+        ];
+        const cur = document.querySelector("[data-cursor]");
+        if (!cur) return null;
+        const at = SELS.findIndex((sel) => document.querySelector(sel)?.contains(cur));
+        return at < 0 ? null : SELS[at];
+      });
+
+    const seen = new Set<string>();
+    // Up and down rather than one direction: the point is that the ring crosses
+    // region boundaries, and a single direction runs out of board.
+    for (const key of ["ArrowUp", "ArrowDown", "ArrowUp", "ArrowDown"]) {
+      for (let i = 0; i < 8; i += 1) {
+        await page.keyboard.press(key);
+        await page.waitForTimeout(45);
+        const at = await region();
+        if (at) seen.add(at);
+      }
+    }
+
+    expect(
+      seen.size,
+      `the ring never left its region; saw only ${[...seen].join(", ") || "nothing"}`,
+    ).toBeGreaterThan(1);
+  });
+});

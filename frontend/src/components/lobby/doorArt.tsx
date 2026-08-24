@@ -239,6 +239,37 @@ const CARD_ART: Record<string, string> = {
   /* A shelf of decks, faced with their art windows and edged in colour. The gap
      on the right is dashed, and dashed means not-here: a deck you have not
      imported is the purest not-here there is. */
+  /* A controller, seen flat on. The card is nominally "settings" and is in
+     practice about the pad -- the control scheme lives here, and so does the
+     answer to "why has my Deck not been detected". So it draws the thing it is
+     for rather than a cog, which would have been a picture of a menu. */
+  settings: `
+  <g stroke-width="1.5">
+    <!-- The body: two grips under one deck, in the room's cold blue. -->
+    <path d="M62 52h76c16 0 27 11 30 26l10 44c4 17-6 28-20 28-10 0-16-5-22-13l-9-12H73l-9 12c-6 8-12 13-22 13-14 0-24-11-20-28l10-44c3-15 14-26 30-26z"
+          fill="#1e2f44" stroke="#9fc6ea" stroke-opacity=".6"/>
+    <!-- The d-pad, left, drawn as the cross a Deck actually has. -->
+    <path d="M62 88h10V78h12v10h10v12H84v10H72v-10H62z"
+          fill="#0f1b28" stroke="#9fc6ea" stroke-opacity=".5"/>
+  </g>
+  <!-- The four face buttons, right, lettered the way this app labels them. -->
+  <g fill="#0f1b28" stroke="#ffd479" stroke-opacity=".55" stroke-width="1.5">
+    <circle cx="139" cy="80" r="7"/>
+    <circle cx="126" cy="93" r="7"/>
+    <circle cx="152" cy="93" r="7"/>
+    <circle cx="139" cy="106" r="7"/>
+  </g>
+  <!-- Both sticks, resting centred. -->
+  <g fill="#25384f" stroke="#9fc6ea" stroke-opacity=".45" stroke-width="1.5">
+    <circle cx="82" cy="118" r="9"/>
+    <circle cx="118" cy="118" r="9"/>
+  </g>
+  <!-- The shoulders, which are the buttons a Steam Deck most often loses. -->
+  <g stroke="#9fc6ea" stroke-opacity=".4" stroke-width="2" fill="none">
+    <path d="M74 50c-6-6-14-8-22-5"/>
+    <path d="M126 50c6-6 14-8 22-5"/>
+  </g>
+`,
   decks: `
   <g stroke-width="1.5">
     <rect x="26" y="34" width="26" height="94" rx="3" fill="#1f3a34" stroke="#9bd3ab" stroke-opacity=".6"/>

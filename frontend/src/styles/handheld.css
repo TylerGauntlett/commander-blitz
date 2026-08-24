@@ -330,11 +330,26 @@ html[data-input="keyboard"] .glyph--key {
 [data-handheld] .table__foot {
   display: grid;
   grid-template-areas:
-    "hand hand"
-    "tools hints";
-  grid-template-columns: auto minmax(0, 1fr);
+    "hand hand hand"
+    "tools regions hints";
+  /*
+   * The middle track is for the Regions button, and it collapses to nothing
+   * when that button is not shown -- which is every mouse session, because the
+   * button is `display: none` there and a `display: none` grid item takes no
+   * track at all. So a mouse player's foot is the two-column row it always was.
+   *
+   * IT NEEDED A TRACK AT ALL for the reason `.choices` below needed one: an
+   * un-placed child of a two-row grid lands in an IMPLICIT third row and pushes
+   * the hand down. Here that put `.table__foot` 14px over the height budget
+   * `e2e/handheldAssert.ts` gates, which is how it was caught.
+   */
+  grid-template-columns: auto auto minmax(0, 1fr);
   align-items: center;
   gap: 2px 10px;
+}
+
+[data-handheld] .foot__regions {
+  grid-area: regions;
 }
 
 /*
@@ -2218,4 +2233,47 @@ html[data-input="keyboard"] .hints {
  */
 [data-handheld] .rail__title--button {
   min-height: 44px;
+}
+
+/*
+ * The way into the region dial that is not a shoulder button.
+ *
+ * Sits in the foot beside the hint bar and, like the hints, only exists when a
+ * pad or a keyboard is driving -- a mouse player reaches every region by
+ * pointing at it and has no use for a jump. Clears the 44px hit floor because
+ * unlike the settings popover this is on screen for the whole game and
+ * `e2e/handheldAssert.ts` grades it.
+ */
+.foot__regions {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--edge);
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.03);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+html[data-input="pad"] .foot__regions,
+html[data-input="keyboard"] .foot__regions {
+  display: inline-flex;
+}
+
+/* The desktop foot is a flex COLUMN, and a stretched button there would run the
+   full width of the hand. */
+.table__foot > .foot__regions {
+  align-self: flex-start;
+}
+
+.foot__regions:hover,
+.foot__regions[data-cursor] {
+  border-color: var(--edge-hi);
+  color: var(--text);
 }

@@ -58,6 +58,7 @@ import { EventTicker } from "./EventTicker";
 import { useCursorResolve } from "./FocusRing";
 import { FxLayer, useScreenShake } from "./FxLayer";
 import { GameOverScreen } from "./GameOverScreen";
+import { Glyph } from "../ui/Glyph";
 import { GroupDial } from "./GroupDial";
 import { HandFan } from "./HandFan";
 import { HintBar } from "./HintBar";
@@ -985,10 +986,23 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * threshold is crossed and released before the dial has anything to pick
    * from -- see the `l2` binding below.
    */
+  const l2Held = useRef(false);
   useEffect(() => {
     return onPadFrame((frame) => {
       const held = frame.l2 > 0.5;
-      setDialOpen((open) => (open === held ? open : held));
+      /*
+       * ON THE TRIGGER'S EDGE, NOT ON ITS LEVEL.
+       *
+       * This wrote `dialOpen = held` every frame, which is correct while `L2` is
+       * the only thing that opens the dial and wrong the moment anything else
+       * does: the button in the foot would set it true, the very next frame
+       * would read a resting trigger and set it straight back to false, and the
+       * dial would appear not to open at all. A press and a release are events;
+       * a trigger at rest is not one.
+       */
+      if (held === l2Held.current) return;
+      l2Held.current = held;
+      setDialOpen(held);
     });
   }, []);
 
@@ -1538,6 +1552,33 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           the three a 200px column wrapped them to.
         */}
           {handheld && <div className="foot__tools" />}
+
+          {/*
+          THE DIAL NEEDED A BUTTON, because holding `L2` was the only way in.
+
+          A Steam Deck in gaming mode hands the page a keyboard rather than a
+          gamepad, so `L2` -- and `z`, its keyboard stand-in -- arrive as nothing
+          at all. The region dial was therefore unreachable on the one device it
+          was designed for. The ring can now walk out of a region at its edge
+          (`input/stops.ts:escapeGroup`), so this is a shortcut rather than the
+          only road, but a jump the hint bar advertises should have a surface.
+
+          A `tool:` stop and no `data-action-id`: it flips a flag on a surface
+          that already exists, which is what keeps the panel's "every legal
+          action is a button, exactly once" invariant free.
+        */}
+          <button
+            type="button"
+            className="foot__regions"
+            onClick={() => setDialOpen(true)}
+            aria-label="Jump to a region"
+            data-stop={stopId.tool("regions")}
+            data-testid="regions"
+            data-hint="Jump to a region of the board"
+          >
+            <Glyph btn="l2" />
+            Regions
+          </button>
 
           {/*
           What the buttons do, for whoever is holding one.

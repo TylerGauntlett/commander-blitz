@@ -539,3 +539,164 @@
     animation: none;
   }
 }
+
+/* ==========================================================================
+   The settings hold: control scheme, and why the pad is not detected
+   ==========================================================================
+
+   Wider than the join hold because this one carries prose. A pod code is eight
+   characters and the panel is a slot to type it into; this is a diagnosis, and
+   three causes at 420px come to a column of ragged two-word lines.
+
+   Every size here obeys the 16px floor `e2e/handheldAssert.ts` gates, and every
+   control clears the 44px hit floor -- the panel exists to be used on a Deck by
+   somebody whose pointer is a trackpad, which is the worst case for both.
+   ========================================================================== */
+
+.door__panel--wide {
+  width: min(620px, calc(100% - 48px));
+  /* A long list of causes must not push Back off the bottom of a 800px panel. */
+  max-height: min(78vh, 720px);
+  overflow-y: auto;
+}
+
+.scheme {
+  display: grid;
+  gap: 10px;
+}
+
+.scheme__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.scheme__opt {
+  flex: 1 1 auto;
+  min-width: 92px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.03);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 120ms, color 120ms, background 120ms;
+}
+
+.scheme__opt:hover,
+.scheme__opt[data-cursor] {
+  border-color: var(--lit, var(--edge-hi));
+  color: var(--text);
+}
+
+.scheme__opt--on {
+  border-color: var(--focus);
+  background: rgb(255 224 138 / 0.1);
+  color: var(--focus);
+}
+
+.scheme__now {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-dim);
+}
+
+.scheme__now b {
+  color: var(--text);
+}
+
+.ctrl {
+  display: grid;
+  gap: 16px;
+}
+
+.ctrl__h {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.ctrl__status {
+  padding-top: 14px;
+  border-top: 1px solid var(--edge);
+}
+
+.ctrl__pads,
+.ctrl__causes {
+  margin: 0;
+  padding: 0 0 0 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.ctrl__pad {
+  font-size: 16px;
+  /* A pad id is a long opaque string with an index and a button count in it;
+     monospace is what makes two of them comparable at a glance. */
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.ctrl__none {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--warn, #f9aa8f);
+}
+
+.ctrl__causes {
+  counter-reset: cause;
+}
+
+.ctrl__cause {
+  display: grid;
+  gap: 3px;
+  padding-left: 26px;
+  position: relative;
+}
+
+.ctrl__cause::before {
+  counter-increment: cause;
+  content: counter(cause);
+  position: absolute;
+  left: 0;
+  top: 1px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--edge-hi);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+
+.ctrl__causeh {
+  font-size: 16px;
+  color: var(--text);
+}
+
+.ctrl__causeb {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.ctrl__foot {
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--edge);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
