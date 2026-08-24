@@ -16,6 +16,7 @@
  *   pile:<pid>:<zone>     a zone chip on the orb
  *   lane:<pid>:<lane>     an empty lane -- a destination with nothing in it yet
  *   commit                the commit slab
+ *   combo:<what>          the filter field and rows of a long decision's combobox
  *
  * ONE RULE TIES THIS TO THE ACTION PANEL'S INVARIANT: every element carrying
  * `data-action-id` also carries `data-stop="act:<id>"`. That is one derived
@@ -51,6 +52,16 @@ export const stopId = {
   tool: (name: string) => `tool:${name}`,
   pile: (pid: number, zone: string) => `pile:${pid}:${zone}`,
   lane: (pid: number, lane: string) => `lane:${pid}:${lane}`,
+  /*
+   * A combobox row, or its filter field.
+   *
+   * Deliberately NOT `act:`. Walking the ring onto a row of `ChoiceCombo`
+   * highlights it; only the Choose button commits, and that button is the one
+   * control in the dialog carrying `data-action-id`. Giving the rows an action
+   * namespace would make four hundred of them look like four hundred legal
+   * actions to everything that counts them.
+   */
+  combo: (what: string) => `combo:${what}`,
   commit: "commit",
 } as const;
 

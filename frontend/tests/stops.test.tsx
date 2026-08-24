@@ -25,6 +25,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { PromptDialog } from "../src/components/game/PromptDialog";
 import { actionAttrs, candidatesIn, stopId } from "../src/input/stops";
+import { chooseType } from "../src/testing/scenarios";
 import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);
@@ -117,6 +118,31 @@ describe("rendered surfaces", () => {
     const { ids, stops } = stopsAndIds(container);
     expect(ids).toContain("p1");
     for (const id of ids) expect(stops).toContain(`act:${id}`);
+  });
+
+  it("keeps a wall of options reachable, as one action and many rows", () => {
+    /*
+     * The combobox a long decision opens with changes what is in the document
+     * and must not change what is TRUE of it: one action id, wearing its
+     * matching `act:` stop, and every row and control reachable by the ring.
+     *
+     * The rows deliberately do not carry action ids -- selecting a row is not
+     * acting on it -- so the count here is 1 rather than 199, and that is the
+     * assertion worth pinning: the alternative reads to every counter in the
+     * app as two hundred simultaneous legal actions.
+     */
+    const { state, actions } = chooseType();
+    const { container } = render(
+      <PromptDialog state={state} actions={actions} onAct={noop} disabled={false} />,
+    );
+    const { ids, stops } = stopsAndIds(container);
+
+    expect(ids.length).toBe(1);
+    for (const id of ids) expect(stops).toContain(`act:${id}`);
+    expect(stops).toContain("combo:filter");
+    expect(stops).toContain(`combo:opt:${actions[0].id}`);
+    expect(stops.filter((stop) => stop?.startsWith("combo:opt:")).length).toBe(actions.length);
+    expect(new Set(stops).size).toBe(stops.length);
   });
 
   it("never renders the same stop twice", () => {
