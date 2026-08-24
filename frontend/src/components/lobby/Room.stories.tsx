@@ -39,7 +39,7 @@ export const Empty: Story = {
     expect(room.querySelector(".room__ground")).not.toBeNull();
     expect(room.querySelector(".room__floor")).not.toBeNull();
     expect(room.querySelector(".room__wash")).not.toBeNull();
-    expect(room.querySelectorAll(".room__mote").length).toBe(16);
+    expect(room.querySelectorAll(".mote").length).toBe(16);
   },
 };
 

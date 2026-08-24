@@ -234,7 +234,7 @@ export const StandsInTheRoom: Story = {
     expect(pod.classList.contains("room")).toBe(true);
     expect(pod.querySelector(".room__ground")).not.toBeNull();
     expect(pod.querySelector(".room__floor")).not.toBeNull();
-    expect(pod.querySelectorAll(".room__mote").length).toBe(16);
+    expect(pod.querySelectorAll(".mote").length).toBe(16);
     // And it is lit, which is what carries the room's colour into the sigil,
     // the motes and every selected card's glow.
     expect(pod.style.getPropertyValue("--lit")).toBeTruthy();
