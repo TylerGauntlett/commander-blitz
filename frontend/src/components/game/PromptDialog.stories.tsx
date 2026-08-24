@@ -12,8 +12,8 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
-import { settled } from "../../testing/asserts";
-import { expectUniqueActionIds } from "../../testing/asserts";
+import { noteInput, resetInputMode } from "../../input/inputMode";
+import { expectHandheldFloors, expectUniqueActionIds, settled } from "../../testing/asserts";
 import { action, gameView, pending } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { PromptDialog } from "./PromptDialog";
@@ -175,6 +175,142 @@ export const CommanderZoneChange: Story = {
     ],
   },
   play: submits("commander_zone_change", "Command zone", "a0-choose"),
+};
+
+/* ------------------------------------------------------------------ */
+/* A decision too long to draw as buttons                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Herald's Horn: choose a creature type, out of every type in the pool.
+ *
+ * The wall this replaced was 199 buttons here and up to 400 in a full pool --
+ * unreadable with a mouse and *unreachable* with a pad past the eighth row,
+ * because `candidatesIn` drops stops an ancestor has clipped and the ring
+ * focuses with `preventScroll`.
+ *
+ * One action id in the document, not 199: the rows select, the Choose button
+ * acts. `expectUniqueActionIds` would pass either way -- it is the count that
+ * says which surface this is.
+ */
+export const ChooseType: Story = {
+  args: { state: scenarios.chooseType().state, actions: scenarios.chooseType().actions },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const dialog = await canvas.findByTestId("prompt-dialog");
+    expect(dialog.dataset.decisionKind).toBe("choose_mode");
+    expectUniqueActionIds(canvasElement);
+    expect(canvasElement.querySelectorAll("[data-action-id]").length).toBe(1);
+
+    await userEvent.type(canvas.getByTestId("combo-filter"), "vam");
+    const rows = canvas.getAllByRole("option");
+    expect(rows.map((row) => row.textContent)).toEqual(["Vampire"]);
+
+    // Enter commits the highlighted row, which is what the button beside the
+    // list is bound to -- typing and pressing return never touches the mouse.
+    await userEvent.keyboard("{Enter}");
+    expect(args.onAct).toHaveBeenCalledWith(
+      scenarios.chooseType().actions.find((a) => a.label === "Vampire")?.id,
+    );
+  },
+};
+
+/**
+ * A query that matches nothing.
+ *
+ * The one prompt story that deliberately does not submit, in a file whose whole
+ * rule is that each one does -- the point here is that Choose goes dead rather
+ * than committing something arbitrary, and that there is a way back.
+ */
+export const ChooseTypeEmpty: Story = {
+  args: { state: scenarios.chooseType().state, actions: scenarios.chooseType().actions },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("prompt-dialog");
+    await userEvent.type(canvas.getByTestId("combo-filter"), "zzzz");
+
+    expect(canvas.queryAllByRole("option")).toEqual([]);
+    expect(canvas.getByTestId("combo-empty")).toBeTruthy();
+    expect((canvas.getByTestId("combo-go") as HTMLButtonElement).disabled).toBe(true);
+    expect(canvasElement.querySelectorAll("[data-action-id]").length).toBe(0);
+
+    await userEvent.click(canvas.getByTestId("combo-clear"));
+    expect(canvas.getAllByRole("option").length).toBeGreaterThan(0);
+    expect(args.onAct).not.toHaveBeenCalled();
+  },
+};
+
+/**
+ * The same prompt, held on a controller.
+ *
+ * No autofocus: a focused field deadens the arrow keys that stand in for the
+ * d-pad (`pad.ts:isTyping`), so taking the caret would break the only
+ * navigation a pad player has. The ring still resolves onto the field, because
+ * it is the dialog's first stop.
+ *
+ * `beforeEach` as well as the global: the decorator stamps `data-input` on
+ * `<html>`, which is what the CSS reads, but `getInputMode()` is module state
+ * and nothing else writes it -- without this the story would assert nothing.
+ */
+export const ChooseTypeOnPad: Story = {
+  args: { state: scenarios.chooseType().state, actions: scenarios.chooseType().actions },
+  globals: { input: "pad" },
+  /*
+   * Real motion, and measured after it settles.
+   *
+   * The dialog opens at `scale: 0.96`, and every box inside a transformed
+   * ancestor reports scaled -- so a story that measures the fold, or the touch
+   * floor, against an unsettled dialog is measuring a 4% smaller screen than
+   * the player ever sees. `OptionOnHover` opted into real motion for the same
+   * reason, one lift lower down.
+   */
+  parameters: { automtg: { mount: "screen", motion: "real" } },
+  beforeEach: () => {
+    noteInput("pad");
+    return resetInputMode;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dialog = await canvas.findByTestId("prompt-dialog");
+    await settled(dialog);
+    const field = canvas.getByTestId("combo-filter");
+    expect(document.activeElement).not.toBe(field);
+
+    /*
+     * THE ROW BELOW THE FOLD IS STILL A STOP.
+     *
+     * `.combo__list` is sized at eight and a half rows precisely so the next one
+     * is half visible: fully clipped, it would not be a candidate, and a down
+     * press on the last visible row would report a wall with two hundred
+     * options still beneath it.
+     */
+    const list = canvasElement.querySelector(".combo__list") as HTMLElement;
+    const rows = canvas.getAllByRole("option");
+    const box = list.getBoundingClientRect();
+    const peeking = rows.filter((row) => {
+      const r = row.getBoundingClientRect();
+      return r.top < box.bottom && r.bottom > box.bottom;
+    });
+    expect(peeking.length, "no row straddles the fold, so the ring hits a wall").toBe(1);
+  },
+};
+
+/** And on a handheld, where the rows have to clear the touch floor. */
+export const ChooseTypeHandheld: Story = {
+  args: { state: scenarios.chooseType().state, actions: scenarios.chooseType().actions },
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "screen", motion: "real" } },
+  beforeEach: () => {
+    noteInput("pad");
+    return resetInputMode;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dialog = await canvas.findByTestId("prompt-dialog");
+    await settled(dialog);
+    expectHandheldFloors(canvasElement);
+  },
 };
 
 /* ------------------------------------------------------------------ */

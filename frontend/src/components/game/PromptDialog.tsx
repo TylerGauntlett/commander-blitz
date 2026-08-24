@@ -16,14 +16,21 @@
  * to a row of names with no way to tell what you were choosing between. The
  * server now attaches the face to the option itself (serialize._pending), and
  * that is what this prefers.
+ *
+ * THE ONE SHAPE A ROW OF BUTTONS CANNOT CARRY is a decision with hundreds of
+ * options in it. `op_choose_type` asks for a creature type by listing every
+ * subtype in the pool, and four hundred buttons is not a choice -- see
+ * `ChoiceCombo`, which this hands those decisions to.
  */
 
 import { AnimatePresence, motion } from "motion/react";
-import type { GameView, LegalAction } from "../../api/types";
+import type { CardView, GameView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
+import { COMBO_MIN } from "../../logic/promptFilter";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
 import { StaticCard } from "./Card";
+import { type Choice, ChoiceCombo } from "./ChoiceCombo";
 
 /** Decisions that have their own richer surface elsewhere. */
 const HANDLED_ELSEWHERE = new Set([
@@ -61,9 +68,87 @@ interface Props {
   disabled: boolean;
 }
 
+/** One option, with whatever the server gave us to draw it as. */
+interface Row {
+  action: LegalAction;
+  card: CardView | null;
+  playerName: string | null;
+  /** The label the option itself carries, when it is not the action's own. */
+  optionLabel: string | null;
+}
+
+/**
+ * The options, resolved once.
+ *
+ * `choice` is the index into `pending.options`, so the face the server attached
+ * is reachable directly. `findCard` stays as the fallback for any action that
+ * names an object without being one of the enumerated choices.
+ */
+function rowsFor(state: GameView, actions: LegalAction[]): Row[] {
+  const pending = state.pending;
+  return actions.map((action) => {
+    const option =
+      pending === null || action.choice === null ? undefined : pending.options[action.choice];
+    const ref = option?.ref ?? action.targets[0];
+    const card =
+      option?.card ?? (ref && ref.kind === "object" ? findCard(state, ref.id) : null);
+    const playerName =
+      ref?.kind === "player" ? (state.players[ref.id]?.name ?? `P${ref.id}`) : null;
+    return {
+      action,
+      card,
+      playerName,
+      optionLabel: option && option.label !== action.label ? option.label : null,
+    };
+  });
+}
+
+/**
+ * Whether this decision is a list to search rather than a row to read.
+ *
+ * Two conditions, and the second is the one that keeps the change small: a
+ * decision whose options are CARDS keeps the grid of faces however many there
+ * are, because a card face is not a combobox row and looking at your board is
+ * the whole reason those are drawn as cards. Only walls of bare labels move.
+ */
+function isWall(rows: Row[]): boolean {
+  return rows.length > COMBO_MIN && rows.every((row) => row.card === null);
+}
+
+function choiceOf({ action, optionLabel }: Row): Choice {
+  return {
+    id: action.id,
+    kind: action.kind,
+    label: action.label,
+    text: optionLabel ? `${action.label} ${optionLabel}` : action.label,
+  };
+}
+
+/**
+ * The enumerated options, and everything else.
+ *
+ * `Done` is the everything else, and it is why this split exists: a decision
+ * that takes several picks sends it alongside the options, and dropping it into
+ * an alphabetical list of two hundred creature types would make finishing look
+ * like one more type to choose. `choice` is the engine's own distinction --
+ * it is the index into `pending.options` -- so nothing here has to guess.
+ */
+function partition(rows: Row[]): { options: Row[]; extras: Row[] } {
+  return {
+    options: rows.filter((row) => row.action.choice !== null),
+    extras: rows.filter((row) => row.action.choice === null),
+  };
+}
+
 export function PromptDialog({ state, actions, onAct, disabled }: Props) {
   const pending = state.pending;
   const open = isModalDecision(state) && actions.length > 0;
+  // Only while it is up: `findCard` walks the zones per action, and `Table`
+  // re-renders on every engine push with the whole priority action list in
+  // hand. Resolving faces for a dialog nobody can see is work per push for
+  // nothing.
+  const rows = open ? rowsFor(state, actions) : [];
+  const { options, extras } = partition(rows);
 
   return (
     <AnimatePresence>
@@ -101,24 +186,22 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
               )}
             </header>
 
-            <div className="prompt__options">
-              {actions.map((action) => {
-                // `choice` is the index into `pending.options`, so the face the
-                // server attached is reachable directly. `findCard` stays as the
-                // fallback for any action that names an object without being one
-                // of the enumerated choices.
-                const option =
-                  action.choice === null ? undefined : pending.options[action.choice];
-                const ref = option?.ref ?? action.targets[0];
-                const card =
-                  option?.card ??
-                  (ref && ref.kind === "object" ? findCard(state, ref.id) : null);
-                const isPlayerRef = ref?.kind === "player";
-                const playerName = isPlayerRef
-                  ? (state.players[ref.id]?.name ?? `P${ref.id}`)
-                  : null;
-
-                return (
+            {isWall(options) ? (
+              /*
+               * Keyed by the decision, so a new question arrives with an empty
+               * field and the first row highlighted. Without it the query typed
+               * at the last prompt would still be narrowing this one.
+               */
+              <ChoiceCombo
+                key={`${pending.kind}:${pending.prompt}`}
+                choices={options.map(choiceOf)}
+                extras={extras.map(choiceOf)}
+                onAct={onAct}
+                disabled={disabled}
+              />
+            ) : (
+              <div className="prompt__options">
+                {rows.map(({ action, card, playerName }) => (
                   <motion.button
                     type="button"
                     key={action.id}
@@ -142,9 +225,9 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
                       </span>
                     )}
                   </motion.button>
-                );
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

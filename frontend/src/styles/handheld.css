@@ -2022,6 +2022,8 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .count,
 [data-handheld] .curve__n,
 [data-handheld] .curve__none,
+[data-handheld] .combo__n,
+[data-handheld] .combo__opt,
 [data-handheld] .deal,
 [data-handheld] .deal--lg,
 [data-handheld] .deck__badge,
@@ -2126,6 +2128,7 @@ html[data-input="keyboard"] .hints {
  * A Steam Deck has a touchscreen and these are the controls a finger goes for.
  */
 [data-handheld] .btn,
+[data-handheld] .combo__opt,
 [data-handheld] .ghost,
 [data-handheld] .lock,
 [data-handheld] .deal,
@@ -2135,6 +2138,18 @@ html[data-input="keyboard"] .hints {
 [data-handheld] .search__i,
 [data-handheld] .field__input {
   min-height: 44px;
+}
+
+/*
+ * ...and the combobox's own row metric has to agree with that floor.
+ *
+ * `.combo__list` sizes itself at eight and a half rows precisely so the ninth
+ * is half visible and therefore still a stop the ring can reach. With the rows
+ * raised to the touch floor and the metric left at 40px, that arithmetic is
+ * describing a row height the list no longer has.
+ */
+[data-handheld] .combo__list {
+  --combo-row: 44px;
 }
 
 /*
