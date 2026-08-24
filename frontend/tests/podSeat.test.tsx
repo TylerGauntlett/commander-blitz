@@ -36,11 +36,8 @@ function seatAt(pod: ReturnType<typeof podView>, index: number, props = {}) {
       youAreHost={pod.you_are_host}
       onChooseDeck={noop}
       onAddCpu={noop}
-      onOpenChair={noop}
       onClear={noop}
-      onInvite={noop}
       onDossier={noop}
-      onRename={noop}
       {...props}
     />,
   );
@@ -54,7 +51,10 @@ describe("an empty seat", () => {
     seatAt(pod, 1);
     expect(screen.getByTestId("card-back").getAttribute("data-tone")).toBe("empty");
     expect(screen.getByTestId("opponents-1")).toBeTruthy();
-    expect(screen.getByTestId("invite-1")).toBeTruthy();
+    // ONE button per chair. There were two, and the second said "Invite a
+    // player" on all three empty chairs -- the same words the header carries,
+    // three more times, on the screen with the least room for them.
+    expect(screen.queryByTestId("invite-1")).toBeNull();
   });
 
   it("numbers the CPU button by the pod size it would produce", () => {
@@ -87,7 +87,10 @@ describe("an open chair", () => {
     seatAt(pod, 1);
     expect(screen.getByTestId("card-back").getAttribute("data-tone")).toBe("open");
     expect(screen.getByText("Open chair")).toBeTruthy();
-    expect(screen.getByText(/Pod GYRE-8412/)).toBeTruthy();
+    // The chair says WAITING on its back and nothing else: "Pod GYRE-8412"
+    // under it repeated the code chip in the bar, and "Anyone with the code"
+    // repeated the word "open" in the tag above it.
+    expect(screen.queryByText(/Pod GYRE-8412/)).toBeNull();
   });
 
   it("wears no stamp, because there is nothing face up to stamp", () => {
@@ -104,8 +107,10 @@ describe("another player's seat", () => {
     const pod = podView([{ ...me, deck: deckSummary() }, unlocked]);
     seatAt(pod, 1);
     expect(screen.getByTestId("card-back").getAttribute("data-tone")).toBe("sealed");
-    expect(screen.getByText("Deck sealed")).toBeTruthy();
-    expect(screen.getByText(/Readable once they lock in/)).toBeTruthy();
+    // The back says SEALED. "Deck sealed" and "Readable once they lock in"
+    // under it were two captions for a picture that had already said it.
+    expect(screen.queryByText(/Readable once they lock in/)).toBeNull();
+    expect(screen.queryByTestId("seat-1-deck")).toBeNull();
   });
 
   it("turns face up and stamps once they do", () => {
@@ -145,9 +150,9 @@ describe("another player's seat", () => {
       { kind: "human", name: "Priya", deck: deckSummary(), locked: true, ready: true },
     ]);
     const { container } = seatAt(pod, 1);
-    expect(container.querySelector(".plate__acts")).toBeNull();
+    expect(container.querySelector(".chair__act button")).toBeNull();
     // Not even for the host: that deck is theirs, and the server refuses it.
-    expect(container.querySelector(".slot__x")).toBeNull();
+    expect(container.querySelector(".chair__x")).toBeNull();
   });
 });
 
@@ -180,7 +185,7 @@ describe("a CPU seat", () => {
     const { container } = seatAt(pod, 1, { onChooseDeck: chooseDeck, onClear: clear });
     fireEvent.click(screen.getByTestId("cpu-deck-1"));
     expect(chooseDeck).toHaveBeenCalledWith(1);
-    fireEvent.click(container.querySelector(".slot__x") as Element);
+    fireEvent.click(container.querySelector(".chair__x") as Element);
     expect(clear).toHaveBeenCalledWith(1);
   });
 
@@ -192,61 +197,33 @@ describe("a CPU seat", () => {
     ]);
     const { container } = seatAt(pod, 1, { youAreHost: false });
     expect(screen.queryByTestId("cpu-deck-1")).toBeNull();
-    expect(container.querySelector(".slot__x")).toBeNull();
+    expect(container.querySelector(".chair__x")).toBeNull();
   });
 });
 
-describe("your own name", () => {
-  it("is a field on your own plate and a label on everybody else's", () => {
+describe("nobody types a name", () => {
+  /*
+   * THE FIELD IS GONE, AND ITS ABSENCE IS THE ASSERTION.
+   *
+   * Typing a name with a controller is a virtual keyboard, a d-pad and about
+   * twenty presses to replace "Player 1" with something nobody at the table
+   * needs. The server names every chair after its seat, so the row still reads
+   * as four distinct people -- and this was the last text box on the pod, which
+   * makes it the last place a ring could get stuck.
+   */
+  it("labels your own chair exactly like everybody else's", () => {
     const pod = podView([
       { ...me, name: "Tyler", deck: deckSummary() },
       { kind: "human", name: "Priya", deck: deckSummary(), locked: true, ready: true },
     ]);
-    seatAt(pod, 0);
-    expect(screen.getByTestId("your-name").getAttribute("value")).toBe("Tyler");
+    const { container } = seatAt(pod, 0);
+    expect(screen.queryByTestId("your-name")).toBeNull();
+    expect(container.querySelectorAll("input").length).toBe(0);
+    expect(screen.getByText("You")).toBeTruthy();
     cleanup();
 
     seatAt(pod, 1);
-    expect(screen.queryByTestId("your-name")).toBeNull();
     expect(screen.getByText("Priya")).toBeTruthy();
-  });
-
-  it("commits the trimmed value on blur", () => {
-    const rename = vi.fn();
-    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
-    const field = screen.getByTestId("your-name");
-    fireEvent.change(field, { target: { value: "  Priya  " } });
-    fireEvent.blur(field);
-    expect(rename).toHaveBeenCalledWith("Priya");
-  });
-
-  it("commits on Enter", () => {
-    const rename = vi.fn();
-    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
-    const field = screen.getByTestId("your-name");
-    fireEvent.change(field, { target: { value: "Priya" } });
-    fireEvent.keyDown(field, { key: "Enter" });
-    fireEvent.blur(field);
-    expect(rename).toHaveBeenCalledWith("Priya");
-  });
-
-  it("says nothing when the name has not changed", () => {
-    // A PATCH per blur would bump the pod version and wake three other
-    // browsers out of their long polls to be told nothing happened.
-    const rename = vi.fn();
-    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
-    fireEvent.blur(screen.getByTestId("your-name"));
-    expect(rename).not.toHaveBeenCalled();
-  });
-
-  it("restores the stored name when the field is emptied", () => {
-    const rename = vi.fn();
-    seatAt(podView([{ ...me, name: "Tyler" }]), 0, { onRename: rename });
-    const field = screen.getByTestId("your-name");
-    fireEvent.change(field, { target: { value: "   " } });
-    fireEvent.blur(field);
-    expect((field as HTMLInputElement).value).toBe("Tyler");
-    expect(rename).not.toHaveBeenCalled();
   });
 });
 
@@ -268,19 +245,22 @@ describe("your own seat", () => {
 
   it("has no ✕ -- a host who emptied it could not get back in", () => {
     const { container } = seatAt(podView([{ ...me, deck: deckSummary() }]), 0);
-    expect(container.querySelector(".slot__x")).toBeNull();
+    expect(container.querySelector(".chair__x")).toBeNull();
   });
 
-  it("opens the dossier from the card and from the glyph", () => {
+  it("opens the dossier from the card, which is the only way in", () => {
+    // There was a second door -- an `i` glyph in the plate's meta row -- and it
+    // was a second stop for the ring to walk through on every chair to reach
+    // the one button underneath. The card is already the size and shape of a
+    // thing you pick up; a caption-sized duplicate of it is not a second
+    // affordance, it is a second thing to get past.
     const pod = podView([{ ...me, deck: deckSummary() }]);
     const dossier = vi.fn();
     const { container } = seatAt(pod, 0, { onDossier: dossier });
 
-    fireEvent.click(container.querySelector(".slot__card") as Element);
+    fireEvent.click(container.querySelector(".chair__card") as Element);
     expect(dossier).toHaveBeenCalledWith("aesi", 0);
-
-    fireEvent.click(container.querySelector(".ibtn") as Element);
-    expect(dossier).toHaveBeenCalledTimes(2);
+    expect(container.querySelector(".ibtn")).toBeNull();
   });
 
   it("opens the dossier from the keyboard too", () => {
@@ -290,7 +270,7 @@ describe("your own seat", () => {
     const pod = podView([{ ...me, deck: deckSummary() }]);
     const dossier = vi.fn();
     const { container } = seatAt(pod, 0, { onDossier: dossier });
-    fireEvent.keyDown(container.querySelector(".slot__card") as Element, { key: "Enter" });
+    fireEvent.keyDown(container.querySelector(".chair__card") as Element, { key: "Enter" });
     expect(dossier).toHaveBeenCalledWith("aesi", 0);
   });
 
@@ -301,7 +281,7 @@ describe("your own seat", () => {
     ]);
     const dossier = vi.fn();
     const { container } = seatAt(pod, 1, { onDossier: dossier });
-    fireEvent.click(container.querySelector(".slot__card") as Element);
+    fireEvent.click(container.querySelector(".chair__card") as Element);
     expect(dossier).not.toHaveBeenCalled();
   });
 });

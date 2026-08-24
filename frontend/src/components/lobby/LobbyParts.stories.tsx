@@ -74,7 +74,12 @@ export const ReadyTrackComplete: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const track = await canvas.findByTestId("ready-track");
-    expect(track.textContent?.replace(/\s+/g, " ")).toContain("4 of 4");
+    // The words that stood in front of the number -- "Cards face up" -- are off
+    // the screen and on the `aria-label`, which is the only reader they were
+    // ever for: the pips sit directly under four cards, half of which are
+    // visibly face up.
+    expect(track.textContent?.replace(/\s+/g, " ")).toContain("4/4");
+    expect(track.getAttribute("aria-label")).toBe("4 of 4 cards face up");
   },
 };
 
@@ -86,7 +91,8 @@ export const ReadyTrackThreeHanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const track = await canvas.findByTestId("ready-track");
-    expect(track.textContent?.replace(/\s+/g, " ")).toContain("of 3");
+    expect(track.textContent?.replace(/\s+/g, " ")).toContain("/3");
+    expect(track.getAttribute("aria-label")).toContain("of 3");
   },
 };
 
@@ -132,8 +138,8 @@ export const InviteOpensAChair: Story = {
  *
  * `CommanderCard` has no width of its own: it inherits `--card-w` from whichever
  * container it lands in, and the three differ by more than a factor of two --
- * a seat is `clamp(152px, 25vh, 296px)`, a catalogue tile `clamp(122px, 15vh,
- * 168px)`, the dossier `clamp(150px, 22vh, 214px)`. One story at the 104px
+ * a chair is `208px * --du`, a catalogue tile `clamp(122px, 150px * --du,
+ * 172px)`, the dossier `clamp(150px, 22vh, 214px)`. One story at the 104px
  * `@property` fallback showed a size the app never draws.
  */
 export const CommanderInASeat: Story = {

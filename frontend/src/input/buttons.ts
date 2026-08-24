@@ -108,11 +108,30 @@ export const KEYS: Record<string, PadButton> = {
  * Keys the browser would otherwise act on itself.
  *
  * `Tab` moves focus, which would fight the cursor for which element is focused.
- * `Backspace` is a history step in some contexts and is not recoverable. Every
- * other key in the map is allowed to bubble, because suppressing keys nobody
- * asked us to suppress is how a text field stops working.
+ * `Backspace` is a history step in some contexts and is not recoverable.
+ *
+ * `Enter` IS THE ONE THAT COST A SESSION. `useCursorNav` implements A as "click
+ * the element the ring is on", which is the rule that stops the pad from ever
+ * drifting from the mouse -- and `cursor.ts` puts real DOM focus on that same
+ * element so screen readers follow it. Between them the browser ALSO activates
+ * it, natively, at the end of the keydown. So one Enter did the thing twice:
+ * the native activation ran first and opened the deck catalogue, the ring moved
+ * into the catalogue as it opened, and our synthetic click a frame later landed
+ * on whatever it had moved onto -- so "Choose a deck" opened the catalogue and
+ * took the first deck in it, in one press. Neither half is wrong on its own,
+ * which is why it survived: the second click is always a real click on a real
+ * control the player really is on.
+ *
+ * The one path wins, and it is ours: a native activation cannot squeeze the
+ * ring, cannot rumble, and does not exist at all for the board's cards, which
+ * are divs.
+ *
+ * Not swallowed while somebody is typing -- `pad.ts:fieldKeeps` returns before
+ * this is consulted, so Enter still commits a name and still submits a code.
+ * Every other key in the map is allowed to bubble, because suppressing keys
+ * nobody asked us to suppress is how a text field stops working.
  */
-export const SWALLOW = new Set(["Tab", "Backspace"]);
+export const SWALLOW = new Set(["Tab", "Backspace", "Enter"]);
 
 /** Human labels, for the hint bar's keyboard mode. */
 export const KEY_LABEL: Partial<Record<PadButton, string>> = {

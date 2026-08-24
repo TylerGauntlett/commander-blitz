@@ -11,7 +11,7 @@
  *
  * ## The room takes the selected card's colour
  *
- * `.door__sigil` is `stroke: var(--lit)` and carries NO `stroke` attribute of
+ * `.room__sigil` is `stroke: var(--lit)` and carries NO `stroke` attribute of
  * its own. A presentation attribute beats an inherited value, so a sigil with a
  * stroke could never be recoloured by the page around it; leaving it unset lets
  * `stroke` inherit -- and inheritance crosses into a `<use>`'s shadow tree, so
@@ -70,9 +70,9 @@ const GROUND = `
   <!-- Three shafts of light from somewhere above the frame, skewed rather than
        vertical so the room has a direction. -->
   <g mask="url(#d-beammask)">
-    <path class="door__beam" d="M300 0 L470 0 L620 800 L230 800Z" opacity=".62"/>
-    <path class="door__beam" d="M900 0 L1010 0 L1100 800 L770 800Z" opacity=".44"/>
-    <path class="door__beam" d="M596 0 L684 0 L742 800 L538 800Z" opacity=".5"/>
+    <path class="room__beam" d="M300 0 L470 0 L620 800 L230 800Z" opacity=".62"/>
+    <path class="room__beam" d="M900 0 L1010 0 L1100 800 L770 800Z" opacity=".44"/>
+    <path class="room__beam" d="M596 0 L684 0 L742 800 L538 800Z" opacity=".5"/>
   </g>
 
   <rect width="1280" height="800" fill="url(#d-vig)"/>
@@ -91,7 +91,7 @@ const GROUND = `
  *
  * So this layer is sized `1280x800 * --du` and hung off the ROW's top rather
  * than off the stage, which puts the sigil the same distance under the cards at
- * every size -- see `.door__floor` in `door.css` for the two-line arithmetic.
+ * every size -- see `.room__floor` in `room.css` for the two-line arithmetic.
  * Twice: a line, and a fat soft copy under it that reads as the glow it is
  * throwing onto the floor.
  */
@@ -111,10 +111,10 @@ const FLOOR = `
       <rect x="-106" y="-106" width="212" height="212" stroke-width="1"/>
     </g>
   </defs>
-  <g class="door__sigil door__sigil--glow" transform="translate(640 585) scale(1.12 .3)" stroke-width="7">
+  <g class="room__sigil room__sigil--glow" transform="translate(640 585) scale(1.12 .3)" stroke-width="7">
     <use href="#d-sigil"/>
   </g>
-  <g class="door__sigil" transform="translate(640 585) scale(1.12 .3)">
+  <g class="room__sigil" transform="translate(640 585) scale(1.12 .3)">
     <use href="#d-sigil"/>
   </g>
 `;
@@ -269,10 +269,10 @@ const CARD_ART: Record<string, string> = {
  * compositor layer throws away the raster cache that was already doing the job,
  * which cost the mockup round half its frame rate before it was found.
  */
-export function DoorGround() {
+export function RoomGround() {
   return (
     <svg
-      className="door__ground"
+      className="room__ground"
       viewBox="0 0 1280 800"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
@@ -287,10 +287,10 @@ export function DoorGround() {
  * The floor the row stands on. Sized off `--du` rather than off the stage, so
  * the sigil is the same size relative to a card at 1280x800 and at 2560x1440.
  */
-export function DoorFloor() {
+export function RoomFloor() {
   return (
     <svg
-      className="door__floor"
+      className="room__floor"
       viewBox="0 0 1280 800"
       aria-hidden="true"
       focusable="false"
@@ -300,11 +300,11 @@ export function DoorFloor() {
   );
 }
 
-/** The printed field, under everything, filling the card. */
+/** The printed field, under everything, filling a `.plank`. */
 export function DoorCardFrame() {
   return (
     <svg
-      className="door__frame"
+      className="plank__frame"
       viewBox="0 0 200 280"
       preserveAspectRatio="none"
       aria-hidden="true"

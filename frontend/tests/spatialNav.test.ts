@@ -117,6 +117,50 @@ describe("pickStop", () => {
   });
 });
 
+describe("a row is a thing you walk along", () => {
+  /*
+   * THE POD'S RAIL, WHICH IS EVERY TOOLBAR IN THE APP.
+   *
+   * Lock in on the left, Deal on the right, and a thousand pixels of status
+   * between them with nothing focusable in it. Pressing Right from Lock in went
+   * UP, to the nearest chair's button, because 195px sideways plus a 166px
+   * drift scores better under `PERP` than 1082px straight along the row.
+   *
+   * `PERP` ranks a drift against distance travelled and cannot rank a drift
+   * against *being on the same line*, which is a different question and the one
+   * a player is actually asking. So an aligned candidate wins outright.
+   */
+  const RAIL_L = { id: "lock", rect: box(24, 738, 150, 44) };
+  const RAIL_R = { id: "deal", rect: box(1106, 738, 150, 44) };
+  const CHAIR = { id: "chair", rect: box(886, 572, 196, 44) };
+
+  it("crosses the whole rail rather than stepping up to a nearer neighbour", () => {
+    expect(pickStop(RAIL_L.rect, [RAIL_R, CHAIR], "right")).toBe("deal");
+  });
+
+  it("does the same coming back the other way", () => {
+    expect(pickStop(RAIL_R.rect, [RAIL_L, CHAIR], "left")).toBe("lock");
+  });
+
+  it("still leaves the row by the direction that leaves it", () => {
+    // The rule is about which candidate wins WITHIN a direction, not about
+    // trapping anything: Up from the rail is still the row above.
+    expect(pickStop(RAIL_R.rect, [RAIL_L, CHAIR], "up")).toBe("chair");
+  });
+
+  it("falls back to the diagonal when the row is empty in that direction", () => {
+    // Nothing beside it, so the drift-tolerant score is the only answer left --
+    // and it is the right one. A rule that refused would be a wall the player
+    // could walk into with somewhere obvious to go.
+    expect(pickStop(RAIL_L.rect, [CHAIR], "right")).toBe("chair");
+  });
+
+  it("prefers the nearest one IN the row, not merely any of them", () => {
+    const near = { id: "near", rect: box(300, 738, 150, 44) };
+    expect(pickStop(RAIL_L.rect, [RAIL_R, near, CHAIR], "right")).toBe("near");
+  });
+});
+
 describe("nearestStop", () => {
   it("measures to the rect rather than to its centre", () => {
     /*

@@ -80,6 +80,20 @@ const centre = (r: NavRect): { x: number; y: number } => ({
  * Exported because the story renders it: seeing *why* a stop lost is worth more
  * than seeing which one won.
  */
+/**
+ * Whether two boxes line up on the axis `dir` does NOT travel along.
+ *
+ * Overlapping extents mean the candidate really is above, below or beside this
+ * one rather than merely somewhere in that half-plane. Pulled out of
+ * `scoreStop` because `pickStop` needs the same answer for a different reason
+ * -- see the row rule there.
+ */
+export function alignedWith(from: NavRect, to: NavRect, dir: Dir): boolean {
+  return dir === "left" || dir === "right"
+    ? from.top < to.top + to.height && to.top < from.top + from.height
+    : from.left < to.left + to.width && to.left < from.left + from.width;
+}
+
 export function scoreStop(from: NavRect, to: NavRect, dir: Dir): number | null {
   const a = centre(from);
   const b = centre(to);
@@ -89,13 +103,7 @@ export function scoreStop(from: NavRect, to: NavRect, dir: Dir): number | null {
   const horizontal = dir === "left" || dir === "right";
   const perp = horizontal ? Math.abs(dy) : Math.abs(dx);
   if (along <= ALONG_MIN) return null;
-  // Does it line up at all? Overlapping extents on the perpendicular axis mean
-  // the candidate really is above/below/beside this one rather than merely
-  // somewhere in that half-plane.
-  const aligned = horizontal
-    ? from.top < to.top + to.height && to.top < from.top + from.height
-    : from.left < to.left + to.width && to.left < from.left + from.width;
-  if (!aligned && perp > along * DRIFT_LIMIT) return null;
+  if (!alignedWith(from, to, dir) && perp > along * DRIFT_LIMIT) return null;
   return along + perp * PERP;
 }
 
@@ -118,6 +126,8 @@ export function pickStop(
 ): string | null {
   let best: string | null = null;
   let bestScore = Number.POSITIVE_INFINITY;
+  let inRow: string | null = null;
+  let inRowScore = Number.POSITIVE_INFINITY;
   for (const candidate of candidates) {
     if (candidate.id === exclude) continue;
     const score = scoreStop(from, candidate.rect, dir);
@@ -126,8 +136,30 @@ export function pickStop(
       bestScore = score;
       best = candidate.id;
     }
+    if (alignedWith(from, candidate.rect, dir) && score < inRowScore) {
+      inRowScore = score;
+      inRow = candidate.id;
+    }
   }
-  return best;
+  /*
+   * THE ROW WINS OUTRIGHT, however far along it the nearest one is.
+   *
+   * `PERP` ranks a sideways drift against distance travelled; it cannot rank a
+   * drift against *being on the same line*, and those are different questions.
+   * The pod's rail is the case that named it: Lock in on the left, Deal on the
+   * right, a thousand pixels of status between them -- and pressing Right from
+   * Lock in went UP, to the nearest chair's button, because 195px sideways plus
+   * a 166px drift scores better than 1082px straight along the row. Every rail,
+   * toolbar and button strip in a menu has that shape, and every one of them
+   * would have had that bug.
+   *
+   * It is also the rule a player already believes: a row is a thing you walk
+   * along, and you leave it by pressing the direction that leaves it. So an
+   * aligned candidate -- one whose box genuinely overlaps this one on the other
+   * axis -- always beats a diagonal, and the diagonal is what you get when
+   * there is nothing on your line at all.
+   */
+  return inRow ?? best;
 }
 
 /**

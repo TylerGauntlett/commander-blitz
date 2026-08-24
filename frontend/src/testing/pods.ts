@@ -53,6 +53,19 @@ export function empty(): PodView {
 }
 
 /**
+ * The very first frame of a pod: your chair with nothing in it yet.
+ *
+ * Distinct from `empty()`, which hands you a deck already -- convenient for
+ * every story about the OTHER three chairs, and useless for the one question
+ * only this state can ask: what your own chair says before you have chosen. It
+ * says CHOOSE. It used to say SEALED, which is what everybody else's unchosen
+ * chair says, so your own deck looked like it was being kept from you.
+ */
+export function fresh(): PodView {
+  return podView([{ kind: "human", name: "You", is_you: true, is_host: true, deck: null }]);
+}
+
+/**
  * Filling up: you, a guest who has locked in, a CPU, and one chair still open.
  *
  * The guest's deck is `null` on purpose -- the lobby's hidden-information rule
