@@ -398,6 +398,46 @@ Forest never hides behind a tapped one.
 bury a choice. Every member stays mounted even when hidden behind the top card —
 unmounting on hover would destroy each card's `layoutId` identity.
 
+## A decision too long to draw as buttons
+
+`PromptDialog` draws one button per legal action, which is right for a mulligan, a modal
+spell or a sacrifice — and wrong for `choose_type`, where the engine asks "choose a
+creature type" by listing every subtype in the loaded pool: 199 in this repo's decks, up
+to 400 (`MAX_TYPE_CHOICES`) in a full one. That prompt was a wall of buttons nobody could
+read with a mouse, and it was strictly *worse* with a controller: the ring focuses with
+`preventScroll` and `candidatesIn` drops any stop an ancestor has clipped, so every option
+past the fold of the scroller was unreachable rather than merely awkward.
+
+Above `COMBO_MIN` (12) options, and only when no option carries a card face,
+`ChoiceCombo` takes over: a filter field over one vertical A–Z list, with a Choose button
+in a rail beside it. A card-bearing prompt keeps its grid of faces however long it is —
+choosing what to sacrifice should look like looking at your board, and a face is not a
+combobox row.
+
+Three things about it are load-bearing:
+
+- **The rows select; only the Choose button acts.** It is the one control in the dialog
+  carrying `data-action-id`, bound to whatever row is highlighted, so the panel's
+  invariant reads 1 action rather than 199 — and `full-game.spec.ts`, which drives a whole
+  game by clicking legal actions, answers the prompt with the first type rather than
+  stalling on a decision with no clickable surface. The first visible row starts
+  highlighted for exactly that reason.
+- **`onFocus` on a row is what highlights it.** `cursor.stamp` focuses the stop the ring
+  lands on, so walking the ring down the list moves the highlight and relabels the button
+  — no second pad listener to keep in step with `useCursorNav`. The rail sits to the
+  *right* of the list so a right press reaches Choose from any row; underneath, it would
+  be four hundred rows away.
+- **The fold always cuts a row in half.** `.combo__list` is sized at eight and a half rows
+  of *pitch* (row + gap, plus its padding), because a whole number of rows leaves the next
+  one clipped to nothing — and a stop clipped to nothing is a wall the ring cannot cross
+  with three hundred options still beneath it. `ChooseTypeOnPad` measures the straddle
+  rather than trusting the arithmetic.
+
+Typing filters (`logic/promptFilter.ts`: fold case and diacritics, AND across terms, rank
+exact → prefix → substring so `Enter` commits Elf and not Elf Warrior). The field is not
+autofocused in pad mode: a focused `<input>` deadens the arrow keys that stand in for the
+d-pad, since both `pad.ts:isTyping` and `Table.tsx` bail while one holds focus.
+
 ## The lobby
 
 Three screens before the table, ported from `mockups/flow/02-face-up.html` —

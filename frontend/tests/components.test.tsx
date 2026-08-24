@@ -4,6 +4,8 @@ import type { PendingDecision } from "../src/api/types";
 import { ActionPanel } from "../src/components/game/ActionPanel";
 import { CardFace } from "../src/components/game/CardFace";
 import { PromptDialog } from "../src/components/game/PromptDialog";
+import { noteInput, resetInputMode } from "../src/input/inputMode";
+import { chooseType } from "../src/testing/scenarios";
 import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);
@@ -490,5 +492,163 @@ describe("PromptDialog", () => {
       />,
     );
     expect(screen.getByText(/1–3/)).toBeTruthy();
+  });
+});
+
+/**
+ * The wall, and the combobox that replaced it.
+ *
+ * `op_choose_type` asks with every creature type in the pool as an option, and
+ * the surface has to change shape for that without changing shape for the
+ * three-option charm beside it. Both halves are tested here, because a
+ * threshold is only correct with respect to what falls on each side of it.
+ */
+describe("PromptDialog with a wall of options", () => {
+  const mount = (disabled = false) => {
+    const { state, actions } = chooseType();
+    const onAct = vi.fn();
+    const view = render(
+      <PromptDialog state={state} actions={actions} onAct={onAct} disabled={disabled} />,
+    );
+    return { ...view, onAct, actions };
+  };
+
+  const field = () => screen.getByTestId("combo-filter") as HTMLInputElement;
+  const rows = () => screen.getAllByRole("option");
+  const go = () => screen.getByTestId("combo-go") as HTMLButtonElement;
+
+  it("leaves a short decision exactly as it was", () => {
+    render(
+      <PromptDialog
+        state={gameView({ pending: pending({ kind: "choose_mode", prompt: "Choose one" }) })}
+        actions={[0, 1, 2].map((i) =>
+          action({ id: `a${i}-choose`, kind: "choose", label: `Mode ${i}` }),
+        )}
+        onAct={noop}
+        disabled={false}
+      />,
+    );
+    expect(screen.queryByTestId("choice-combo")).toBeNull();
+    expect(document.querySelectorAll(".opt").length).toBe(3);
+  });
+
+  it("keeps drawing card options as cards however many there are", () => {
+    // A card face is not a combobox row: choosing what to sacrifice should look
+    // like looking at your board, and that stays true past the threshold.
+    const battlefield = Array.from({ length: 20 }, (_, i) =>
+      card({ oid: 500 + i, name: `Creature ${i}` }),
+    );
+    render(
+      <PromptDialog
+        state={gameView({
+          pending: pending({ kind: "choose_objects", prompt: "Sacrifice one" }),
+          battlefield,
+        })}
+        actions={battlefield.map((c, i) =>
+          action({
+            id: `a${i}-choose`,
+            kind: "choose",
+            label: c.name,
+            targets: [{ kind: "object", id: c.oid }],
+          }),
+        )}
+        onAct={noop}
+        disabled={false}
+      />,
+    );
+    expect(screen.queryByTestId("choice-combo")).toBeNull();
+    expect(document.querySelectorAll(".opt--card").length).toBe(20);
+  });
+
+  it("offers the combobox instead of one button per type", () => {
+    const { actions } = mount();
+    expect(screen.getByTestId("choice-combo")).toBeTruthy();
+    expect(rows().length).toBe(actions.length);
+    expect(screen.getByTestId("combo-count").textContent).toBe(
+      `${actions.length} of ${actions.length}`,
+    );
+    // The whole point: one action id in the document, not two hundred.
+    expect(document.querySelectorAll("[data-action-id]").length).toBe(1);
+  });
+
+  it("highlights the first row, so the Choose button is never dead", () => {
+    const { onAct, actions } = mount();
+    expect(rows()[0].getAttribute("aria-selected")).toBe("true");
+    expect(go().textContent).toBe(`Choose ${actions[0].label}`);
+    expect(go().disabled).toBe(false);
+    fireEvent.click(go());
+    expect(onAct).toHaveBeenCalledWith(actions[0].id);
+  });
+
+  it("narrows to what was typed, and rebinds Choose to the best match", () => {
+    const { onAct, actions } = mount();
+    fireEvent.change(field(), { target: { value: "vam" } });
+    expect(rows().map((row) => row.textContent)).toEqual(["Vampire"]);
+    expect(go().textContent).toBe("Choose Vampire");
+    fireEvent.click(go());
+    expect(onAct).toHaveBeenCalledWith(actions.find((a) => a.label === "Vampire")?.id);
+  });
+
+  it("commits the highlighted row on Enter", () => {
+    const { onAct, actions } = mount();
+    fireEvent.change(field(), { target: { value: "vampire" } });
+    fireEvent.keyDown(field(), { key: "Enter" });
+    expect(onAct).toHaveBeenCalledWith(actions.find((a) => a.label === "Vampire")?.id);
+  });
+
+  it("moves the highlight with the arrows without taking the caret", () => {
+    const { onAct, actions } = mount();
+    fireEvent.keyDown(field(), { key: "ArrowDown" });
+    fireEvent.keyDown(field(), { key: "ArrowDown" });
+    expect(rows()[2].getAttribute("aria-selected")).toBe("true");
+    expect(document.activeElement).toBe(field());
+    fireEvent.keyDown(field(), { key: "ArrowUp" });
+    fireEvent.keyDown(field(), { key: "Enter" });
+    expect(onAct).toHaveBeenCalledWith(actions[1].id);
+  });
+
+  it("follows the ring: focusing a row is what highlights it", () => {
+    // The one wire between the global cursor and this component. `cursor.stamp`
+    // focuses the stop it lands on, and this is what makes that a selection.
+    const { actions } = mount();
+    fireEvent.focus(rows()[4]);
+    expect(rows()[4].getAttribute("aria-selected")).toBe("true");
+    expect(go().getAttribute("data-action-id")).toBe(actions[4].id);
+  });
+
+  it("clears the query on Escape rather than answering the prompt", () => {
+    const { onAct, actions } = mount();
+    fireEvent.change(field(), { target: { value: "vam" } });
+    fireEvent.keyDown(field(), { key: "Escape" });
+    expect(field().value).toBe("");
+    expect(rows().length).toBe(actions.length);
+    expect(onAct).not.toHaveBeenCalled();
+  });
+
+  it("says so when nothing matches, and disables Choose", () => {
+    mount();
+    fireEvent.change(field(), { target: { value: "zzzz" } });
+    expect(screen.queryAllByRole("option")).toEqual([]);
+    expect(screen.getByTestId("combo-empty")).toBeTruthy();
+    expect(go().disabled).toBe(true);
+    expect(document.querySelectorAll("[data-action-id]").length).toBe(0);
+    fireEvent.click(screen.getByTestId("combo-clear"));
+    expect(screen.getAllByRole("option").length).toBeGreaterThan(0);
+  });
+
+  it("takes the caret for a mouse, and leaves it alone for a pad", () => {
+    /*
+     * A focused field deadens the arrow keys that stand in for the d-pad
+     * (`pad.ts:isTyping`), so autofocusing one on a controller would break the
+     * only navigation that player has.
+     */
+    const first = mount();
+    expect(document.activeElement).toBe(field());
+    first.unmount();
+
+    noteInput("pad");
+    mount();
+    expect(document.activeElement).not.toBe(field());
+    resetInputMode();
   });
 });
