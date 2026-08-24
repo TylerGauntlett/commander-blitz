@@ -1225,7 +1225,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     gateInput,
     narration,
     skipAll,
-    endTargeting,
     setPeek,
     playFromHand,
     viewer.hand,

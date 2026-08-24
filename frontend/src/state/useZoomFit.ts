@@ -541,5 +541,5 @@ export function useZoomFit(args: {
       podLanesH,
       locked: false,
     };
-  }, [pinned, measured, base, state, actionableOids, opponents, handCount]);
+  }, [pinned, measured, base, state, actionableOids, opponents, handCount, handheld]);
 }
