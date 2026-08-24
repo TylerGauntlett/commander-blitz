@@ -1,0 +1,2852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>02 The Cut — the front door, 1280×800</title>
+<style>
+/* <<< BEGIN _door.css >>> */
+/*
+ * The front door, at 1280x800, and the grammar all five directions share.
+ *
+ * NOT LINKED. `inline.py` splices this between each file's BEGIN and END
+ * `_door.css` markers, so every file opens standalone from file://.
+ *
+ * ---------------------------------------------------------------------------
+ * WHAT THIS ROUND IS. The shipped front door is a web page: a wordmark, a
+ * paragraph, a gold button, a text field with a button beside it, and a footer
+ * of 11px grey links. The one card-shaped object on it -- the fan of four
+ * `.back` plates at `HomeScreen.tsx:78-87` -- is decoration. Nothing on the
+ * screen can be selected, and the only thing that looks like a game object is
+ * the only thing that does nothing.
+ *
+ * These five make the menu out of that object: THREE CARDS, Decks / Play /
+ * Join, which slide apart from the selected one and stack on the far side.
+ *
+ * WHAT IS IN HERE: the bezel and the deck, the card plate itself, the row and
+ * the arithmetic that lays it out, the sheen, the cold state, and the two
+ * floors. All five files get exactly this.
+ *
+ * WHAT IS NOT: any card FACE, any ground, any detail region. That is what a
+ * direction is. `../rail/`s rule, kept for `../rail/`s reason -- the row is the
+ * thesis, so a file that restyled the row would be disproving the claim it
+ * exists to make.
+ */
+
+/* Tokens ------------------------------------------------------------------
+   `frontend/src/theme.css`, unchanged, plus the focus tokens out of
+   `frontend/src/styles/handheld.css:32-49`. Any drift here is a mockup lying
+   about what it would look like. */
+
+:root {
+  --void-0: #0b0a16;
+  --void-1: #141328;
+  --void-2: #1d1b38;
+  --edge: rgba(150, 140, 255, 0.16);
+  --edge-hi: rgba(170, 160, 255, 0.32);
+  --astral: #8f7fe8;
+  --astral-hi: #c3b6ff;
+
+  --pane-bg: rgba(20, 19, 40, 0.62);
+  --pane-well: rgba(13, 12, 28, 0.8);
+  --pane-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 8px 26px rgba(0, 0, 0, 0.45);
+
+  --mana-W: #fffbd5;
+  --mana-U: #aae0fa;
+  --mana-B: #cbc2bf;
+  --mana-R: #f9aa8f;
+  --mana-G: #9bd3ab;
+  --mana-C: #d0cbc4;
+
+  --playable: #5ce08a;
+  --targetable: #58b6ff;
+  --staged: #ffc14d;
+  --danger: #ff5c5c;
+  --gold: #ffd479;
+  --gold-deep: #d8a63c;
+  --ability: #c39bff;
+
+  --text: #e6e3f5;
+  --text-dim: #a09bc4;
+  --text-faint: #837da8;
+
+  /* handheld.css:36-37. The rings own gold, which is NOT `--gold`: the ring is
+     a lighter, hotter tone precisely so "you are on it" cannot be confused with
+     "this is the commit tier". */
+  --focus: #ffe08a;
+  --focus-glow: rgba(255, 224, 138, 0.5);
+
+  /*
+   * THE TWO FLOORS, and this round is the first surface in the folder that is
+   * authored at them rather than repaired to them.
+   *
+   * `frontend/src/styles/handheld.css:1978-2116` is a GENERATED block of 144
+   * selectors forced to `font-size: 16px`, and its own comment calls that "the
+   * honest size of the problem". EIGHT of the door's own are in it --
+   * `.brand__sub`, `.or` and `.door__cap` at 11px, `.link` at 11.5, `.join__go`
+   * at 13, `.join__in` at 14, `.brand__mark` and `.hero__line` at 15 -- which is
+   * every piece of text on the shipped front door except the hero wordmark. Two
+   * of its controls are forced up to 44px the same way. The screen is written at
+   * 11-15px and patched at the Deck, and the patch is why it passes CI.
+   *
+   * Nothing here is under the floor to begin with, so there is nothing for an
+   * override list to reach.
+   */
+  --fs-floor: 16px;
+  --fs-lead: 20px;
+  --fs-big: 30px;
+  --fs-mark: 44px;
+
+  --hit-floor: 44px;
+
+  /*
+   * THE CARD, AND WHY IT IS 200px.
+   *
+   * The shipped doors fan is `min(clamp(104px, 15vh, 148px), 27vw)`
+   * (`lobby.css:263`) -- two axes of clamp, for a window that could be a phone.
+   * On a panel that is always 1280x800 both terms resolve to one number and the
+   * machinery buys nothing, so this round states the number.
+   *
+   * 200 is what three cards can have. The rows widest state is the one where a
+   * card is selected at an END, which pushes the far pair outward; `assert.js`
+   * measures that extent in all three states and fails the file if it leaves
+   * the stage. See `rowFits`. 200x280 also clears the 96px card floor
+   * `../handheld/assert.js` set by more than double, which matters because
+   * these are the only cards on the screen and they are the whole menu.
+   */
+  --card-w: 200px;
+  --card-h: 280px;
+  --card-r: 11px;
+
+  --t-fast: 110ms;
+  --t-base: 220ms;
+  /*
+   * How long the room takes to change colour.
+   *
+   * Longer than the slide on purpose. The card arrives in 179ms and the light
+   * follows it -- a room that changed colour faster than the thing changing it
+   * reads as a flash, and one that changed at the same speed reads as a single
+   * hard cut. Trailing it slightly is what makes the light feel like a
+   * consequence of the move rather than part of it.
+   */
+  --t-room: 320ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* `<small>` is a SIZE instruction and this round cannot afford one: 0.83em of
+   16px body copy is 13.3px, under the floor, in markup that reads as
+   reasonable. Same removal as `../handheld-board/_board.css`. */
+small { font-size: inherit; }
+
+html, body { height: 100%; margin: 0; overflow: hidden; }
+
+body {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(80% 60% at 50% 34%, #14122a 0%, #05040c 72%);
+  color: var(--text);
+  font: var(--fs-floor)/1.35 "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+
+/* ==========================================================================
+   The bezel and the deck
+   ==========================================================================
+
+   A 1280x800 screen, scaled to whatever window is open, so a mockup reviewed on
+   a 2560px monitor is still reviewed at Deck density. `_door.js` writes the
+   transform; nothing here may change the decks own pixel size, or every number
+   the gate prints is wrong in the direction that flatters the design.
+
+   `.bezel` is fixed and full-viewport rather than sized to `1280 * scale`, and
+   that is `../handheld-board/_board.css`s arrangement for its reason: a grid
+   item that overflows its own declared width is not centred by what it
+   overflows, which put the deck 48px right of centre the first time.
+   ========================================================================== */
+
+.bezel { position: fixed; inset: 0; display: grid; place-items: center; }
+
+.deck {
+  position: relative;
+  width: 1280px;
+  height: 800px;
+  flex: none;
+  overflow: hidden;
+  transform-origin: center center;
+  border-radius: 14px;
+  color: var(--text);
+  box-shadow: 0 0 0 8px #0d0c18, 0 0 0 10px #262338, 0 30px 90px rgba(0, 0, 0, 0.8);
+  /* The default ground -- `theme.css:426-428`, the apps own lit-table wash. A
+     direction may replace it (05 does) but it may not go missing: a transparent
+     deck borrows the bezels and the shots stop comparing. */
+  background:
+    radial-gradient(60% 44% at 50% 6%, rgba(143, 127, 232, 0.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgba(90, 190, 220, 0.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+}
+
+.bezel__tag {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  color: var(--text-faint);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+.bezel__tag b { color: var(--astral-hi); font-weight: 600; }
+.bezel__tag i { color: var(--danger); font-style: normal; }
+
+/* ==========================================================================
+   THE ROW
+   ==========================================================================
+
+   The brief, restated as arithmetic: three cards; the selected one squares up
+   and lifts; the other two slide away from it; and the two on the same side of
+   the selection OVERLAP each other rather than spreading evenly.
+
+   Everything is derived from ONE continuous number, `s` -- where the selection
+   currently is, in card-index space -- which the spring in `_door.js` moves
+   between 0, 1 and 2. Nothing here is keyframed and nothing is a discrete
+   state, so a card mid-flight is at a real position rather than at a tween
+   between two poses. That is what makes `travelMs` a number the gate can read.
+
+   `d = i - s` for card `i`. Then, in `_door.js`:
+
+     x      i*STEP + sign(d) * (PUSH*min(|d|,1) - BUNCH*max(0,|d|-1))
+     rot    clamp(d, -1.6, 1.6) * ARC
+     y      DROOP*min(|d|,1.6) - LIFT*max(0, 1-|d|)
+     scale  1 + RAISE*max(0, 1-|d|)
+     z      100 - round(|d|*10)
+
+   THE BUNCH TERM IS THE BRIEFS STACKING and it is the only new idea in the
+   arithmetic. `PUSH` alone spreads the row evenly, which is a fan. Subtracting
+   `BUNCH` once a card is more than one place from the selection pulls the far
+   card back OVER its neighbour, so selecting an end leaves a clear card and a
+   pair -- which is what the brief describes and what a hand of cards actually
+   does when you pull one out of it.
+
+   `../../frontend/src/components/game/HandFan.tsx:36-83` is where `ARC`, the
+   push-away and the parabolic droop come from. It has no bunch term, because a
+   hand of seven has no far side.
+   ========================================================================== */
+
+/*
+ * THE SLOT IS THE BOX AND THE CARD IS THE PICTURE, and the split is not
+ * cosmetic. `board.css:1816-1826` records why: transform the thing the pointer
+ * is inside and a lifted card leaves the pointer, `mouseleave` fires, it drops,
+ * `mouseenter` fires, forever.
+ *
+ * Here the box genuinely has to move -- sliding IS the design -- so the loop is
+ * cut on the other side instead: `_door.js` ignores a hover while the row is
+ * still moving, and a hover never DE-selects. Selection therefore only ever
+ * moves toward the pointer and cannot oscillate. See `DOOR.hover`.
+ */
+.row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--card-h);
+  /* No `overflow` of its own, deliberately: a card that runs off the row must
+     run off the DECK, where `assert.js`s escape check can see it. A clip here
+     would hide exactly the failure `rowFits` exists to catch. */
+}
+
+.slot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  /* THE TRANSFORM IS WRITTEN BY `paint()`, as one string, and is deliberately
+     not assembled here out of four custom properties. See the note over
+     `DOOR.paint` for what that cost per frame. The `-50%` stays part of what it
+     writes, so `poseOf` is written about a row's centre rather than its left
+     edge. */
+  transform: translateX(-50%);
+  transform-origin: 50% 118%;
+  /* Its own compositor layer. Three cards, a wall, and a sheen that loops
+     forever on whichever card is selected -- without this the whole deck is
+     re-rastered every frame of every slide, which is what put 05 at 30fps. */
+  will-change: transform;
+}
+
+/* The plate: `frontend/src/styles/lobby.css:23-57`, ported. The 135-degree
+   hatch over #443e34, the 2px warm border, the inset hairline at 9%. This is
+   the object the brief points at -- and it is already the repos one picture for
+   "you do not get to know this yet", which is why every direction starts from
+   it even where it ends up somewhere else. */
+.mcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--card-r);
+  border: 2px solid rgba(120, 110, 90, 0.5);
+  background:
+    repeating-linear-gradient(135deg, rgba(0, 0, 0, 0.24) 0 8px, transparent 8px 16px),
+    #443e34;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 26px rgba(0, 0, 0, 0.45);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
+}
+
+.mcard::after {
+  content: "";
+  position: absolute;
+  inset: 9%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  pointer-events: none;
+}
+
+/*
+ * THE LABEL, AND IT IS THE ONE THING THE GATE PROTECTS.
+ *
+ * `labelClear` measures this box against every card drawn on top of it, in all
+ * three selection states, and fails the file if any of it is covered. The brief
+ * asks for overlap and overlaps failure mode is a card hiding the one thing
+ * that says what it is -- a menu item nobody can name is not a menu item.
+ *
+ * It is pinned to the foot because the foot is the part of a stacked card that
+ * survives: a card overlapped from the right loses its right-hand edge, one
+ * overlapped from the left loses its left, and the bottom band outlives both.
+ * It is also where the printing on a real card back sits.
+ */
+.mcard__label {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  /* `--lab` is the travel `paint()` computes: an offset from wherever this
+     label naturally sits toward the edge that is still showing, plus a turn
+     toward a spine. The `-50%` is the natural centring and stays in CSS, so a
+     direction that anchors its name somewhere else (04) overrides this one rule
+     and the JS needs to know nothing about it. */
+  transform: translateX(-50%) var(--lab, translate(0, 0));
+  transform-origin: 50% 50%;
+  /* NO `left: 0; right: 0`, and that is the whole of the fix `labelClear`
+     forced. A full-width block reports the CARD's box to
+     `getBoundingClientRect`, so a right-aligned label measured as covered
+     whenever anything overlapped the card's left edge -- the gate was reading a
+     box with nothing in most of it. Shrink-to-fit makes the measured rectangle
+     the words, which is what the gate is actually about. */
+  font-size: var(--fs-lead);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+/*
+ * THE LABEL SIDE, AND `labelClear` IS WHAT FOUND IT.
+ *
+ * With the row bunched, `z` falls with distance from the selection -- so of the
+ * two stacked cards the NEARER one is drawn on top, and the further one loses
+ * the half of itself that faces the selection. A centred label is therefore
+ * half-covered in exactly the state the brief asks for, and covered by a card
+ * that looks perfectly correct.
+ *
+ * The fix is what a fanned hand does anyway: each card reads on the edge facing
+ * AWAY from the selection, because that outer sliver is the only part of it
+ * guaranteed to be uncovered. `_door.js` writes `data-side` off `sign(i - s)`.
+ */
+/* `data-side` no longer positions anything -- `--lab` does, continuously. It is
+   still written, because a direction may want to know which way a card leans
+   for something that is not a position. */
+
+/*
+ * `.ink` -- anything on a card that is NOT its name.
+ *
+ * See `poseOf` in `_door.js` for the argument. Short version: a card two places
+ * from the selection is under its own neighbour, so all it has left is the
+ * outer sliver its name sits in, and a sentence running under a covering card
+ * reads as truncated rather than as hidden. Whatever a direction prints below
+ * the name marks itself `.ink` and goes with the card.
+ *
+ * Opacity rather than `display`, because the fade has to track the slide -- a
+ * line that vanished at a threshold would pop, and the card is moving
+ * continuously. `assert.js` measures the settled states, where this is 1 or 0.
+ */
+.ink { opacity: var(--ink, 1); }
+
+/* The card backs own printing, which is a PATTERN and not a label: the same
+   words on every card, at the size printing on a card back is. `aria-hidden`
+   says so out loud, and it is what lets it sit under the floor honestly --
+   `CardBack.tsx:35-46` makes exactly this argument, and `assert.js` exempts
+   hidden text for exactly this reason. */
+.mcard__mark {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 28%;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.24);
+  line-height: 1.8;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   SELECTED
+   ==========================================================================
+
+   Two rules, both lifted rather than invented, and the reason for taking them
+   whole is that the board already spent the argument on them.
+
+   FILL IS FOCUS, TIER IS THE EDGE (`handheld.css:1315-1345`). "Am I on it" is
+   carried by the fill; what kind of thing it is stays on the border; the two
+   never trade places. On the board that keeps `--playable` meaning exactly
+   "castable"; here it keeps the selected card readable as selected on a screen
+   where every card is the same kind of thing.
+
+   THE SHEEN (`handheld.css:1347-1398`). A slow gradient crossing the selected
+   card. Its own comment is the argument: movement carries into peripheral
+   vision where a 3px hairline does not, and it costs one pseudo-element and one
+   keyframe. This is the effect the brief asks for by name.
+
+   ONE CHANGE FROM THE APP: there it is scoped to `[data-cursor] .face::after`,
+   so a mouse player never sees it. Here it is on the selected card whatever
+   moved the selection, because on this screen the selection IS the state and
+   there is nothing else for the sheen to be about.
+   ========================================================================== */
+
+.slot--on .mcard {
+  border-color: var(--focus);
+  box-shadow:
+    0 0 0 3px rgba(255, 224, 138, 0.22),
+    0 0 34px rgba(255, 224, 138, 0.24),
+    0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+.slot--on .mcard__label {
+  color: var(--focus);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+
+.sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 224, 138, 0.18) 48%,
+    transparent 66%
+  );
+  background-size: 260% 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.slot--on .sheen {
+  opacity: 1;
+  animation: door-sheen 2.4s ease-in-out infinite;
+}
+
+@keyframes door-sheen {
+  from { background-position: 140% 0; }
+  to   { background-position: -40% 0; }
+}
+
+/* The press squeeze. `ring.ts:567` does this to the focus ring on A -- a short
+   impulse into the boxs own origin so it reads as taking the press rather than
+   as moving. 90ms, because that is under the 110ms the app calls fast and a
+   press has to feel like it landed before anything else happens.
+
+   On `.mcard` and not on `.slot`: the slot carries the rows arithmetic in its
+   own `transform`, and an animation on the same property would fight it. */
+.slot--press .mcard { animation: door-press 90ms ease-out; }
+
+@keyframes door-press {
+  50% { transform: scale(0.965); }
+}
+
+/*
+ * REDUCED MOTION TAKES THE TEXTURE AND LEAVES THE FACTS.
+ *
+ * `fx/presets.ts` and `ParticleLayer.burst` draw the same line -- reduced
+ * motion drops "how it felt" and keeps every channel carrying information. So
+ * the sheen and the ambient motes stop; the card still moves, because WHERE THE
+ * SELECTION IS is the one thing this screen exists to say. `_door.js` snaps the
+ * spring rather than stilling it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .slot--on .sheen { animation: none; }
+  .slot--press .mcard { animation: none; }
+  .motes { display: none; }
+}
+
+/* ==========================================================================
+   The cold state
+   ==========================================================================
+
+   Chrome hides gamepads behind a user gesture, so `navigator.getGamepads()`
+   returns four nulls until the first button press even though the API is there
+   on file:// -- `../handheld/_handheld.js:282-314` measured that before any of
+   this was written. Every file therefore OPENS on "press any button" rather
+   than pretending to be connected, which is also the most honest first frame a
+   console menu can have.
+
+   It is a caption, not a curtain: the menu is live behind it and a mouse works
+   immediately. What it says is "a pad has not spoken yet", which is a true
+   statement about the pad and not an instruction to the player.
+   ========================================================================== */
+
+.cold {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  min-height: var(--hit-floor);
+  border: 1px solid var(--edge);
+  border-radius: 999px;
+  background: rgba(13, 12, 28, 0.72);
+  color: var(--text-dim);
+  font-size: var(--fs-floor);
+  letter-spacing: 0.04em;
+  z-index: 400;
+}
+
+.cold[hidden] { display: none; }
+
+.cold__dot {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--text-faint);
+  animation: door-breathe 1.8s ease-in-out infinite;
+}
+
+@keyframes door-breathe {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 1; }
+}
+
+/* The glyph. Drawn as a lettered disc rather than fetched, because the round
+   opens from file:// with no network -- and because the Decks face buttons are
+   literally lettered A B X Y in that layout. `../handheld/_handheld.js:596`. */
+.glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--edge-hi);
+  background: rgba(30, 28, 56, 0.9);
+  color: var(--text);
+  font-size: var(--fs-floor);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.glyph--key {
+  width: auto;
+  min-width: 24px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+/* ==========================================================================
+   The hint bar
+   ==========================================================================
+
+   What the buttons that exist do. Every direction has one and they are all the
+   same, because a direction that invented its own control legend would be
+   comparing legends.
+   ========================================================================== */
+
+/* ==========================================================================
+   Holds -- anything that opens over the row
+   ==========================================================================
+
+   One at a time, dimming what is behind it, owning the input while it is up.
+   See `DOOR.openHold`. The scrim is a real element rather than a shadow so a
+   click anywhere outside the panel can close it, which is one of the three ways
+   out `../menu/` requires of every overlay in this folder: the control, outside,
+   and Escape.
+   ========================================================================== */
+
+.hold {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 600;
+  background: rgba(6, 5, 14, 0.72);
+  animation: hold-in 160ms ease-out;
+}
+
+.hold[hidden] { display: none; }
+
+@keyframes hold-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hold__panel {
+  position: relative;
+  width: 420px;
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid var(--lit, var(--edge-hi));
+  border-radius: 14px;
+  background: linear-gradient(180deg, #1b1730 0%, #100d1c 100%);
+  box-shadow: 0 0 60px var(--lit-soft, rgba(255, 224, 138, 0.18)),
+    0 30px 70px rgba(0, 0, 0, 0.7);
+  animation: hold-rise 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes hold-rise {
+  from { transform: translateY(10px) scale(0.98); }
+  to { transform: none; }
+}
+
+.hold__h {
+  margin: 0;
+  font-size: var(--fs-lead);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--focus);
+}
+
+.hold__p {
+  margin: 0;
+  font-size: var(--fs-floor);
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.hold__row { display: flex; gap: 12px; align-items: stretch; }
+
+.hold .code { flex: 1; }
+.hold .code__in { width: 100%; }
+
+.hold__go {
+  min-height: var(--hit-floor);
+  padding: 0 22px;
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(180deg, #ffd98c, #e0a63f 55%, #b87c1c);
+  color: #1b0f05;
+  font-size: var(--fs-floor);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 3px 0 #7d5310;
+}
+
+.hold__go:active { transform: translateY(2px); box-shadow: 0 1px 0 #7d5310; }
+
+.hold__hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-floor);
+  color: var(--text-faint);
+}
+
+.hints {
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--text-dim);
+  font-size: var(--fs-floor);
+  z-index: 300;
+}
+
+.hint { display: flex; align-items: center; gap: 8px; }
+
+/* ==========================================================================
+   Shared furniture: the wordmark and the bolt
+   ==========================================================================
+
+   `Mark.tsx` is an inline SVG and stays one, so the five draw the shipped logo
+   rather than five approximations of it. Where it goes is a directions to
+   decide; what it looks like is not.
+   ========================================================================== */
+
+.brand { display: flex; align-items: center; gap: 12px; }
+
+.brand__badge { width: 30px; height: 30px; flex: none; color: var(--gold); }
+
+.brand__mark {
+  font-size: var(--fs-floor);
+  font-weight: 800;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.brand__sub {
+  font-size: var(--fs-floor);
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+}
+
+/* ==========================================================================
+   The pod code field
+   ==========================================================================
+
+   Where it lives is the sharpest difference between the five, so the FIELD is
+   shared and the placement is not. It carries `pod-code` and `join-pod`, two of
+   the four test ids that have to survive the port.
+
+   44px minimum on both, which the shipped pair only reaches through
+   `handheld.css:2125-2139`s override list. A Steam Deck has a touchscreen and
+   these are the controls a finger goes for.
+   ========================================================================== */
+
+.code {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: rgba(8, 7, 18, 0.72);
+  overflow: hidden;
+}
+
+.code__in {
+  width: 190px;
+  min-height: var(--hit-floor);
+  padding: 0 14px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--fs-floor);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.code__in::placeholder { color: var(--text-faint); font-weight: 600; letter-spacing: 0.1em; }
+
+/*
+ * `:not([data-cursor])` on the focus suppression, which is `lobby.css:438-453`
+ * and is here because the bug it records is nastier than it looks: the ring is
+ * `outline: 3px solid` on an ATTRIBUTE selector, so a class-qualified
+ * `:focus { outline: none }` outranks it, and only `outline-style` goes to
+ * `none`. The width still computes to 3px, so devtools shows the ring applied
+ * and nothing is drawn. It was found by driving the front door with a
+ * controller, on this exact field.
+ */
+.code__in:focus:not([data-cursor]) { outline: none; }
+
+.code:focus-within { border-color: var(--focus); }
+
+.code__go {
+  min-width: 78px;
+  min-height: var(--hit-floor);
+  padding: 0 18px;
+  border-left: 1px solid var(--edge);
+  color: var(--text-dim);
+  font-size: var(--fs-floor);
+  font-weight: 700;
+}
+
+.code__go:hover:not(:disabled) { color: var(--text); background: rgba(143, 127, 232, 0.12); }
+.code__go:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ==========================================================================
+   Ambient motes
+   ==========================================================================
+
+   `fx/presets.ts:225` is the apps own `motes()` -- 12 gold and white specks
+   drifting upward, the one preset in the vocabulary that is ambience rather
+   than an event. Re-expressed as CSS because the round has no canvas, and
+   dropped entirely under reduced motion, which is what `burst()` itself does.
+
+   Available to every direction; taken up by 05, where it is the point.
+   ========================================================================== */
+
+.motes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* Fourteen elements on their own infinite animations, over a blurred ground.
+     Contained, or every mote's repaint takes the wall behind it with it. */
+  contain: strict;
+}
+
+.mote {
+  position: absolute;
+  /* `bottom: 0`, not `-14px`. Starting a mote just under the screen so it drifts
+     up into view is the obvious way to write this and puts an element outside
+     the deck for the first moment of every cycle -- which `assert.js` caught
+     twice, at y 779 and 782 against a stage ending at 780. The fade-in at 12%
+     does that job with no box leaving the stage. */
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 224, 138, 0.75);
+  box-shadow: 0 0 8px rgba(255, 224, 138, 0.55);
+  animation: door-mote linear infinite;
+}
+
+@keyframes door-mote {
+  from { transform: translateY(0) translateX(0); opacity: 0; }
+  12%  { opacity: 0.85; }
+  80%  { opacity: 0.5; }
+  /* 780 and not 830. A mote starts 14px below the deck and `.motes` clips it,
+     so 830 puts the end of its travel 16px ABOVE the screen -- which is an
+     element outside the deck for the last fraction of a second of every cycle,
+     and `assert.js`'s escape check is not fooled by it being invisible. It is a
+     fair catch: a decorative layer that leaves the stage is exactly how the
+     check would be trained to ignore a real one. */
+  to   { transform: translateY(-780px) translateX(var(--drift, 20px)); opacity: 0; }
+}
+
+/* ==========================================================================
+   The commit plate
+   ==========================================================================
+
+   `../menu/README.md` sets the rule every interactive mockup in this folder
+   follows: pressing the commit control "commits visibly and does nothing
+   else". A mockup that navigated would be claiming to be the application, and
+   the one thing a prototype must never do is answer a question it has not
+   built the answer to.
+   ========================================================================== */
+
+.commit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 18px 30px;
+  min-height: var(--hit-floor);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--focus);
+  border-radius: 12px;
+  background: rgba(13, 12, 28, 0.94);
+  color: var(--focus);
+  font-size: var(--fs-lead);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 40px rgba(255, 224, 138, 0.22), 0 20px 50px rgba(0, 0, 0, 0.7);
+  z-index: 500;
+  animation: door-commit 1.4s ease-out forwards;
+}
+
+@keyframes door-commit {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.94); }
+  12%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  78%  { opacity: 1; }
+  to   { opacity: 0; }
+}
+/* <<< END _door.css >>> */
+
+/* ==========================================================================
+   02 — THE CUT
+   ==========================================================================
+
+   THE TWO CARDS YOU DID NOT PICK ARE STILL IN THE DECK.
+
+   01 draws three peers that fan. This one says the row is a DECK, and that
+   moving the selection is cutting it: the cards you are not on collapse into a
+   tight pile and the one you are on is the card you have cut to.
+
+   Two ideas, and they are separable from each other and from the skin.
+
+   1. STACKING IS THE AFFORDANCE, NOT THE LEFTOVER. In 01 the overlap is what
+      is left over after two cards slide out of the way, and the design has to
+      work around it -- which is what the label-side rule in `_door.css` is. Here
+      the overlap is the point: `BUNCH` goes to 178, the pile closes to a 70px
+      sliver, and THE FAR CARD'S NAME IS PRINTED UP ITS SPINE, because that is
+      what a deck box does and a 70px sliver is a spine. `../menu/02-deck-rack`
+      argued the same thing about precons and this is that idea at menu scale.
+
+      It is also the answer to `labelClear` that costs nothing: a vertical label
+      is about 26px wide whatever it says, so the constraint that bounds 01's
+      stack depth -- the sliver has to be wider than the longest word -- stops
+      binding at all. The pile can be as tight as it likes.
+
+   2. EXPAND IN PLACE. There is no modal and no second screen. What the card you
+      are on actually offers unfolds into the LEDGER below the row, in the room
+      the pile leaves. A modal exists to stop you losing your place, and you
+      cannot lose your place in a row of three.
+
+      That is the real trade against 01, and it is a trade rather than a win. 01
+      puts everything on the card and pays for it in width: a 200px card gives
+      its sentence five lines and its code field 168px. The ledger is 760px, so
+      the sentence is one line and the code field is the shipped one at its real
+      size -- and the cost is a second region on a screen that had one.
+
+   ---------------------------------------------------------------------------
+   WHAT IT OVERRIDES: `BUNCH` only, from 112 to 178, which `assert.js` prints in
+   the `tune` block so the README table is measured. Everything else about the
+   row is the shared arithmetic.
+   ========================================================================== */
+
+/* The spine.
+   ---------------------------------------------------------------------------
+   IT TURNS, IT DOES NOT SNAP. The first version was `writing-mode: vertical-rl`
+   behind a `.slot--spine` class, which is a property with no in-between: the
+   name flipped through ninety degrees and jumped to the middle of the card in a
+   single frame, measured at 35% of the card's height. The turn is now a
+   fraction supplied by `spin()` below and composed into the shared `--lab`
+   transform, so the name rolls onto its side as the pile closes.
+
+   All three names take the brighter tone rather than only the turned one, for
+   the same reason: a colour that changes at a threshold is one more thing
+   popping mid-slide, and the pile reads perfectly well without it. */
+.mcard__label { color: rgba(255, 255, 255, 0.72); }
+
+/* A pile has thickness. The near card of a stacked pair gets a hard edge on the
+   side the far card is under, so the two read as one object seen at an angle
+   rather than as two cards that happen to be close. */
+.slot--near .mcard { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 10px 26px rgba(0, 0, 0, 0.6); }
+
+.mcard__mark { top: 22%; }
+
+/* The repeated mark and a turned name fight over the same 73px strip, and the
+   name is the one carrying information. `--ink` already fades with the card, so
+   marking the pattern `.ink` is the whole of it. */
+
+/* The ledger ---------------------------------------------------------------
+   Everything the selected card offers, in the room the pile left. Fixed
+   height, because a panel that resized with its contents would move the hint
+   bar every time the selection changed. */
+.ledger {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 556px;
+  width: 760px;
+  height: 118px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 26px;
+  padding: 20px 26px;
+  border: 1px solid var(--edge);
+  border-radius: 14px;
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
+}
+
+.ledger__l { min-width: 0; display: grid; gap: 8px; text-align: left; }
+
+.ledger__verb {
+  font-size: var(--fs-lead);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--focus);
+}
+
+.ledger__line { font-size: var(--fs-floor); color: var(--text-dim); }
+
+.ledger__r { display: flex; align-items: center; gap: 14px; }
+
+.ledger__stat {
+  font-size: var(--fs-floor);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* The chrome: a header strip, because the ledger already owns the foot. */
+.top {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--edge);
+  background: rgba(11, 10, 22, 0.5);
+}
+
+.top__spacer { flex: 1; }
+
+.top__cap { font-size: var(--fs-floor); color: var(--text-dim); }
+.top__cap b { color: var(--text); font-weight: 750; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// <<< BEGIN _door.js >>>
+/*
+ * The content, the input layer and the row every door mockup shares.
+ *
+ * NOT LOADED BY THE MOCKUPS. Each .html must open standalone from file://, so
+ * this file is inlined into each one rather than linked. Same contract as
+ * `../handheld-board/_board.js` and the same tooling: `inline.py` splices it
+ * between the BEGIN/END markers each file carries, so the master and the five
+ * cannot drift by hand.
+ *
+ *     python inline.py          # re-inline the masters into all five
+ *     python inline.py --check  # fail if any file is stale (CI-shaped)
+ *
+ * Five things live here:
+ *
+ *   1. CARDS   -- the three menu cards, their copy and their real destinations.
+ *   2. PAD     -- the gamepad layer, lifted from `../handheld/_handheld.js`.
+ *   3. SPRING  -- the closed-form damped oscillator the row is moved by.
+ *   4. ROW     -- the arithmetic that turns one number into three transforms.
+ *   5. DOOR    -- mount, render, select, press, fit; and the two seams
+ *                 `measure.mjs` drives, `DOOR.select(i, true)` and
+ *                 `DOOR.travelMs()`.
+ *
+ * A file supplies its own `face()` and its own `chrome()` and nothing else.
+ */
+
+/* ===========================================================================
+   1. THE THREE CARDS
+   ---------------------------------------------------------------------------
+   WHY PLAY IS IN THE MIDDLE, because the brief has two constraints that only
+   agree one way.
+
+   It asks for "Play, Join, Decks" and it asks that "the middle card should be
+   placed and selected by default". A menu whose default selection is not its
+   default action is a menu that has picked the wrong default, so Play is the
+   middle card and the list order is the one thing that gives.
+
+   Which of the other two goes left is then a real choice and this is the
+   argument for it. The shipped door already reads Play, then Join -- "Create a
+   pod", OR, a code field -- with "Browse them" demoted to an 11px link in the
+   footer. Keeping Join to Play's right preserves that adjacency and that
+   reading order; Decks comes up out of the footer to the left, which is also
+   where the least-committing thing on the screen belongs. Looking at your decks
+   costs nothing and starts nothing.
+
+   Flipping the row is one constant, `CARDS.reverse()`, and nothing else in the
+   round depends on the order.
+   ======================================================================== */
+
+/*
+ * THE COPY IS ONE LINE AND THE SAME SHAPE THREE TIMES.
+ *
+ * These were sentences -- "Six precons and anything you have imported. Read a
+ * list before you sit down with it." -- written for a panel with room. Put on a
+ * 200px card they came to six lines, ran out of the bottom of it, and
+ * `cardSpill` failed the file seven times over.
+ *
+ * The right fix is not a smaller font or a taller card. A menu item explains
+ * itself in a phrase or it is not a menu item, and three items that describe
+ * themselves in three different shapes read as three unrelated things. So: one
+ * clause each, a noun and a promise, no marketing.
+ */
+const CARDS = [
+  {
+    id: "decks",
+    label: "Decks",
+    verb: "Browse the catalogue",
+    /* The real number `useDecks()` hands `HomeScreen` today, and the real split
+       the catalogue draws. `/decks`. */
+    line: "Six decks, and anything you import.",
+    stat: "6 decks · 2 yours",
+    glyph: "▤",
+    testid: "browse-decks",
+    to: "/decks",
+    /* The colour identity the screen takes when this card is selected. 05 is
+       the direction that spends it; the others carry it unused, so the tint is
+       one direction's idea and not four files' worth of dead tokens. */
+    hue: ["#3f9e93", "#2b5a86"],
+    art: "chulane-teller-of-tales",
+  },
+  {
+    id: "play",
+    label: "Play",
+    verb: "Create a pod",
+    line: "Four seats. Deal a new table.",
+    stat: "Four seats · one is yours",
+    glyph: "◆",
+    /* `HomeScreen.tsx:106`. One of the four test ids that has to survive the
+       port, and it moves from a `.big` button onto this card. */
+    testid: "create-pod",
+    to: "/pods/:code",
+    hue: ["#d8a63c", "#8a3a2e"],
+    art: "edgar-markov",
+  },
+  {
+    id: "join",
+    label: "Join",
+    verb: "Enter a pod code",
+    line: "Take a chair somebody held open.",
+    stat: "BRAMBLE-123456",
+    glyph: "◎",
+    testid: "join-pod",
+    to: "/pods/:code",
+    hue: ["#7d6bd8", "#2b5a86"],
+    art: "aesi-tyrant-of-gyre-strait",
+  },
+];
+
+/** The card the row opens on. Asserted rather than eyeballed -- see
+    `defaultCentre` in `assert.js`. */
+const DEFAULT_INDEX = 1;
+
+const BRAND = "Commander Blitz";
+
+/* The logo, byte-for-byte `frontend/src/components/lobby/Mark.tsx` -- a bolt on
+   a card back, taking `currentColor` so a gold header tints it and the two can
+   never disagree. Inlined rather than fetched because file:// has no network,
+   which happens to be the same reason the component inlines it too. */
+const MARK =
+  '<svg class="brand__badge" viewBox="0 0 64 64" aria-hidden="true" focusable="false">' +
+  '<rect width="64" height="64" rx="10" fill="var(--void-0)"/>' +
+  '<rect x="5.8" y="5.8" width="52.4" height="52.4" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1.4"/>' +
+  '<path d="M37.2 11.2 L20.4 34 H29.2 L26.8 52.8 L43.6 29.6 H34.8 Z" fill="currentColor"/>' +
+  "</svg>";
+
+const esc = (s) =>
+  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* The slug `../art/manifest.json` uses. Only 05 reads art, but the helper is
+   shared so a second direction that wants a crop cannot invent a second naming
+   rule. */
+const ART = (slug) => "../art/" + slug + ".jpg";
+
+/* ===========================================================================
+   2. THE PAD
+   ---------------------------------------------------------------------------
+   Lifted from `../handheld/_handheld.js:282-594`, which is where the round that
+   designed this input layer left it. Trimmed to what a menu uses -- the four
+   directions, the four face buttons, rumble -- and otherwise unchanged, because
+   a second implementation of a DAS/ARR ramp is a second set of ramp bugs.
+
+   STEAM DECK -> STANDARD GAMEPAD. The Deck reports itself as a Standard
+   Gamepad, so the W3C indices hold and are what this maps:
+
+       0 A     1 B     2 X     3 Y
+       4 L1    5 R1    6 L2    7 R2
+       8 View  9 Menu  10 L3   11 R3
+       12 Up   13 Down 14 Left 15 Right
+       axes 0,1 left stick   axes 2,3 right stick
+
+   The four back grips are DELIBERATELY UNUSED: Steam Input maps them to other
+   buttons by default and a player may have rebound them, so a design that needs
+   them is a design that breaks on somebody's machine.
+
+   `navigator.getGamepads()` is [SecureContext] and file:// is a
+   potentially-trustworthy origin, so the API is there -- but Chrome hides pads
+   behind a user gesture, so it returns four nulls until the first button press.
+   That is why every file opens on the cold state rather than pretending to be
+   connected.
+
+   KEYBOARD FALLBACK so these can be reviewed without a controller:
+
+       arrows / AD     left and right      Enter or J    A
+       Backspace / K   B                   U / I         X / Y
+   ======================================================================== */
+
+const PAD = (() => {
+  const BTN = {
+    a: 0, b: 1, x: 2, y: 3, l1: 4, r1: 5, l2: 6, r2: 7,
+    view: 8, menu: 9, l3: 10, r3: 11, up: 12, down: 13, left: 14, right: 15,
+  };
+  const KEYS = {
+    ArrowUp: "up", ArrowDown: "down", ArrowLeft: "left", ArrowRight: "right",
+    w: "up", s: "down", a: "left", d: "right",
+    Enter: "a", j: "a", Backspace: "b", k: "b", Escape: "b", u: "x", i: "y",
+    q: "l1", e: "r1", Tab: "view", "\\": "menu",
+  };
+  const DEAD = 0.3;      // Deck sticks rest noisily; 0.30 is past the noise
+  const FIRE = 0.55;     // a direction is meant once the stick crosses this
+  const RELEASE = 0.35;  // ...and is not meant again until it drops below this
+
+  /* THE THUMB IS AN ANALOG INPUT AND A FIXED REPEAT RATE THROWS THAT AWAY.
+     `push` is how far past FIRE the stick is, rescaled to 0..1, and it picks
+     the interval; `run` eases it down a further 28% over the first seven
+     repeats. A d-pad and the keyboard have no analog to read and stand at
+     KEY_T -- the middle of the range, because a digital press means "one step"
+     and should not inherit the sweep.
+
+     REPEAT_FIRST_FAST is the number `travelMs` is gated against: it is when a
+     held direction fires for the SECOND time, and a row that has not arrived by
+     then is a row you are steering blind. */
+  const REPEAT_FIRST_SLOW = 360;
+  const REPEAT_FIRST_FAST = 180;
+  const REPEAT_SLOW = 155;
+  const REPEAT_FAST = 46;
+  const REPEAT_FLOOR = 38;
+  const KEY_T = 0.5;
+  const ACCEL_OVER = 7;
+  const ACCEL_FLOOR = 0.72;
+
+  let handlers = {};
+  let prev = {};
+  let held = {};
+  let run = {};
+  let latched = null;
+  let connected = false;
+  let raf = 0;
+  const keyDown = new Set();
+  /*
+   * THE KEYBOARD IS COUNTED, NOT LATCHED, AND THE DIFFERENCE IS TWO BUGS.
+   *
+   * A poll cannot see a key tapped faster than a frame: keydown and keyup both
+   * land inside one 16ms gap and `keyDown` is empty again by the time anything
+   * looks. A pad cannot do this to you because it IS the poll, which is why
+   * this only ever bites the fallback -- and why it would have been blamed on
+   * the key map rather than found.
+   *
+   * The first fix was a latch: hold the name until exactly one frame has
+   * observed it. That catches the fast tap and loses the fast SECOND tap, two
+   * different ways. A Set cannot tell one press from two, so two taps inside a
+   * frame fire once. And worse, a tap arriving after a frame has fired but
+   * before the release is observed leaves the poll looking at an unbroken hold:
+   * `isDown` is true, `prev` is true, no edge, and the press is gone. The row
+   * moved one place when you asked for two, on two of five files, depending on
+   * how long that file's frame took.
+   *
+   * A COUNTER HAS NEITHER PROBLEM. Every keydown increments; every frame fires
+   * exactly that many and resets. A tap is a tap whether or not a frame saw the
+   * key down, and two taps are two. The hold-and-repeat path below reads the
+   * physical state instead, which is the thing it was always actually about.
+   *
+   * Found by a driver that had been RELYING on the drop -- it pressed left
+   * twice, asserted the row had moved one place, and passed.
+   */
+  const keyTaps = Object.create(null);
+  const listeners = new Set();
+
+  const REPEATS = new Set(["up", "down", "left", "right"]);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
+
+  function pads() {
+    return navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
+  }
+  function axis(p, i) {
+    return p.axes.length > i ? p.axes[i] : 0;
+  }
+  /** Physically held right now. Taps are counted separately -- see `keyTaps`. */
+  function down(name) {
+    return keyDown.has(name) || padDown(name);
+  }
+  function padDown(name) {
+    const p = pads()[0];
+    if (!p) return false;
+    const i = BTN[name];
+    if (i === undefined) return false;
+    const b = p.buttons[i];
+    if (b && (b.pressed || b.value > 0.5)) return true;
+    // Sticks stand in for the d-pad, so a direction is either. The latch is
+    // what makes that bearable: a stick held toward a corner sits near the
+    // boundary of two sectors and, without hysteresis, chatters between them.
+    return latched === name;
+  }
+  /** Which of the four sectors the left stick is in, with hysteresis: a new
+      direction only latches past FIRE, and nothing new latches until the stick
+      falls back inside RELEASE. */
+  function sector(p) {
+    const x = axis(p, 0);
+    const y = axis(p, 1);
+    const m = Math.hypot(x, y);
+    if (m < RELEASE) return null;
+    if (latched && m < FIRE) return latched;
+    if (m < FIRE) return null;
+    return Math.abs(x) > Math.abs(y) ? (x < 0 ? "left" : "right") : (y < 0 ? "up" : "down");
+  }
+  /** ONLY A DIRECTION COMING FROM THE STICK IS ANALOG, and it takes three
+      checks to be sure of that rather than one. `latched` is the direction
+      whatever its source, because the keyboard fallback writes into it too --
+      so with a pad plugged in and the keyboard driving, reading the stick's
+      magnitude here would measure a stick at rest and hand every key press the
+      slowest rate on the ramp. */
+  function pushOf(name) {
+    if (keyDown.has(name) || keyTaps[name]) return KEY_T;
+    const p = pads()[0];
+    if (!p || latched !== name) return KEY_T;
+    const m = Math.hypot(axis(p, 0), axis(p, 1));
+    if (m < RELEASE) return KEY_T;
+    return clamp01((m - FIRE) / (1 - FIRE));
+  }
+  function repeatMs(name, first) {
+    const t = pushOf(name);
+    if (first) return lerp(REPEAT_FIRST_SLOW, REPEAT_FIRST_FAST, t);
+    const accel = Math.max(ACCEL_FLOOR, 1 - ((run[name] || 0) / ACCEL_OVER) * (1 - ACCEL_FLOOR));
+    return Math.max(REPEAT_FLOOR, lerp(REPEAT_SLOW, REPEAT_FAST, t) * accel);
+  }
+
+  function frame(now) {
+    // The array getGamepads() hands back is a SNAPSHOT. Caching the Gamepad
+    // object gives you buttons frozen at the moment you cached it, which is the
+    // single most common way to write a gamepad loop that half-works.
+    const live = pads();
+    const isLive = live.length > 0;
+    if (isLive !== connected) {
+      connected = isLive;
+      listeners.forEach((f) => f(connected));
+    }
+    latched = live[0] ? sector(live[0]) : null;
+    if (!latched) {
+      for (const d of REPEATS) if (keyDown.has(d) || keyTaps[d]) latched = d;
+    }
+    for (const name of Object.keys(BTN)) {
+      const taps = keyTaps[name] || 0;
+      const isDown = down(name);
+      const was = prev[name];
+      if (taps > 0) {
+        /* Discrete presses, however many arrived and whatever the poll can see
+           of the key now. This branch is the keyboard's and is not an edge. */
+        for (let n = 0; n < taps; n += 1) fire(name);
+        if (REPEATS.has(name)) { run[name] = 0; held[name] = now + repeatMs(name, true); }
+      } else if (isDown && !was) {
+        fire(name);
+        if (REPEATS.has(name)) { run[name] = 0; held[name] = now + repeatMs(name, true); }
+      } else if (isDown && was && REPEATS.has(name) && now >= held[name]) {
+        fire(name);
+        run[name] = (run[name] || 0) + 1;
+        held[name] = now + repeatMs(name, false);
+      } else if (!isDown) {
+        delete held[name];
+        delete run[name];
+      }
+      /* A tapped key counts as down for one frame so a hold that begins with
+         this frame does not fire twice. */
+      prev[name] = isDown || taps > 0;
+    }
+    // Every tap this frame has now been fired.
+    for (const name of Object.keys(keyTaps)) delete keyTaps[name];
+    raf = requestAnimationFrame(frame);
+  }
+
+  function fire(name) {
+    const h = handlers[name];
+    if (h) h();
+    if (handlers.any) handlers.any(name);
+  }
+
+  /* Rumble, for exactly one thing here: walking into the end of the row. THE
+     RULE IS THAT RUMBLE IS ALWAYS REDUNDANT WITH SOMETHING VISIBLE -- Firefox
+     in the Deck's desktop mode has no `vibrationActuator`, so haptics can never
+     be the only channel carrying a fact. The visible half is `DOOR.nudge`. */
+  function rumble(ms = 90, strong = 0.4) {
+    const p = pads()[0];
+    const act = p && p.vibrationActuator;
+    if (!act || !act.playEffect) return;
+    try {
+      act.playEffect("dual-rumble", { duration: ms, strongMagnitude: strong, weakMagnitude: strong * 0.6 });
+    } catch { /* a pad that does not do haptics is not an error */ }
+  }
+
+  return {
+    BTN,
+    rumble,
+    REPEAT_FIRST_FAST,
+    REPEAT_FLOOR,
+    start(h) {
+      handlers = h || {};
+      addEventListener("keydown", (ev) => {
+        const name = KEYS[ev.key];
+        if (!name) return;
+        /*
+         * A code field is a text field and the keyboard fallback must not eat
+         * its letters. `d` is "right" on the pad map and also the fourth letter
+         * of BRAMBLE, so without this the fallback silently steers the menu
+         * while somebody types a pod code.
+         *
+         * ESCAPE IS THE EXCEPTION, because Escape is never text. Swallowing it
+         * here means a player who has opened the join dialog, put their cursor
+         * in the field and changed their mind has no way out except the mouse:
+         * B is Escape, Escape is going to the input, and the input does nothing
+         * with it. A driver caught it -- the hold opened, would not close, and
+         * every key after that landed on an invisible field.
+         */
+        const t = ev.target;
+        const typing = t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA");
+        if (typing && ev.key !== "Escape") return;
+        // Tab and Backspace both navigate the page otherwise, and Backspace on
+        // file:// is a history step you cannot get back from.
+        ev.preventDefault();
+        if (ev.repeat) return;  // the OS autorepeat would race our own DAS/ARR
+        keyDown.add(name);
+        keyTaps[name] = (keyTaps[name] || 0) + 1;
+      });
+      addEventListener("keyup", (ev) => {
+        const name = KEYS[ev.key];
+        if (name) keyDown.delete(name);
+      });
+      addEventListener("gamepadconnected", () => {});
+      raf = requestAnimationFrame(frame);
+      return this;
+    },
+    stop() { cancelAnimationFrame(raf); },
+    onConnection(f) { listeners.add(f); f(connected); },
+    connected() { return connected; },
+  };
+})();
+
+/* ===========================================================================
+   3. THE SPRING
+   ---------------------------------------------------------------------------
+   TUNED IN TIME, NOT IN STIFFNESS, because time is the thing being judged.
+   `frontend/src/input/ring.ts:18-35` makes this argument for the focus ring and
+   it is the same argument here: `w` is the natural frequency in rad/s and `z`
+   the damping ratio, so the two numbers a review cares about fall straight out
+   of them.
+
+       settling time ~= 4 / (z*w)      overshoot = e^(-pi*z / sqrt(1 - z^2))
+
+   `SLIDE` is w 22, z 0.82: the card covers 98% of the gap in 179ms -- eleven
+   frames at 60Hz -- overshoots by 1.1%, which is 2.7px on a 248px hop, and is
+   permanently inside 2px at 294ms. What you perceive is a 180ms move; the rest
+   is a drift narrower than a hairline.
+
+   ---------------------------------------------------------------------------
+   IT WAS w 38, z 0.62, AND THE GATE THAT LET THAT THROUGH WAS THE PROBLEM.
+
+   Those numbers are a 169ms settle and 8.4% of overshoot, which on paper reads
+   fine -- 169 is comfortably inside the 180ms budget the gate asked for. What
+   they actually did was cross the entire row IN FOUR FRAMES and then ring for
+   fourteen more, 21px each way, decaying. Sampled per frame the sequence is
+
+       0.85  0.55  0.27  0.07  -0.04  -0.08  -0.08  -0.05  -0.03  -0.01 ...
+
+   a cut, followed by a wobble. That is what "jerky" was, and no still could
+   have shown it.
+
+   THE GATE REWARDED THE FAILURE IT EXISTED TO PREVENT. `travelMs <= 180` is
+   one-sided, and the cheapest way to satisfy a ceiling on a duration is to make
+   the animation violent. An animation needs a FLOOR as much as a ceiling, so
+   `assert.js` asks for both now -- at least 100ms of traverse or it is not a
+   move, no more than 320ms of settle or it is a wait -- and caps the overshoot,
+   because a big one after a fast traverse is the ring that read as jitter.
+
+   The 1.1% is still deliberate and is still the difference between this and the
+   focus ring's 2%: a ring is an outline and should read as ARRIVING, a card has
+   weight and should read as LANDING. 2.7px is a card settling onto a table.
+   21px was a card being thrown at one.
+
+   Closed form rather than `v += (k*dx - d*v) * dt`, and `ring.ts:71` records
+   why: the naive integrator overshoots 1.6px at 60fps and 4.5px at 144fps and
+   goes unstable at a large `dt`, so a mockup reviewed on a 144Hz monitor would
+   not be the mockup that was tuned. This is exact at any `dt`.
+   ======================================================================== */
+
+const SLIDE = { w: 22, z: 0.82 };
+
+function springStep(x, v, target, w, z, dt) {
+  const A = x - target;
+  const wd = w * Math.sqrt(Math.max(1e-6, 1 - z * z));
+  const B = (v + z * w * A) / wd;
+  const e = Math.exp(-z * w * dt);
+  const c = Math.cos(wd * dt);
+  const s = Math.sin(wd * dt);
+  const pos = e * (A * c + B * s);
+  return {
+    x: target + pos,
+    v: e * (-z * w * (A * c + B * s) + wd * (B * c - A * s)),
+  };
+}
+
+/* ===========================================================================
+   4. THE ROW
+   ---------------------------------------------------------------------------
+   One continuous number in, three transforms out. See the long note over
+   `.row` in `_door.css` for what each term is and where it comes from.
+
+   THE BUNCH TERM IS THE BRIEF'S STACKING. `PUSH` alone spreads the row evenly,
+   which is a fan; subtracting `BUNCH` once a card is more than one place from
+   the selection pulls the far card back OVER its neighbour, so selecting an end
+   leaves one clear card and a pair.
+
+   THE LABEL SIDE FLIPS, and it was `labelClear` that found it. With the row
+   bunched, the nearer of the two stacked cards is drawn ON TOP of the further
+   one -- `z` falls with distance -- so the further card loses the half of
+   itself that faces the selection. A centred label is therefore half-covered in
+   exactly the state the brief asks for. The fix is the thing a fanned hand does
+   anyway: each card's label hugs the edge that faces AWAY from the selection,
+   so what you read is the outer sliver, which is the only part guaranteed to be
+   uncovered. `data-side` carries it and `_door.css` aligns off it.
+
+   A direction may override any of these five and must say which and why in its
+   own header; `assert.js` prints the tune, so the README table is measured
+   rather than claimed. 02 is the only one that does.
+   ======================================================================== */
+
+const TUNE = {
+  STEP: 248,    // px between neighbouring cards at rest
+  PUSH: 36,     // px a neighbour slides away from the selected card
+  /*
+   * THE STACK DEPTH IS NOT A TASTE, IT IS BOUNDED BY THE LONGEST LABEL.
+   *
+   * Of two cards on the same side of the selection the nearer is drawn on top,
+   * so what is left of the further one is a strip `STEP - BUNCH` wide. Its
+   * label has to fit in that strip or it cannot be read at any alignment.
+   *
+   * 140 was the first number here and `labelClear` came back at 15% covered:
+   * 248 - 140 leaves a 108px sliver, the widest label is 102px, and 16px of
+   * inset plus 2 of border does not fit in the six that were left. 112 leaves
+   * 136 and clears it with room for a tilt. `assert.js` reports both numbers so
+   * a direction that lengthens a label finds out here rather than on a Deck.
+   */
+  BUNCH: 112,   // px the FAR card is pulled back over its neighbour
+  ARC: 4.5,     // degrees of tilt per place from the selection
+  LIFT: 26,     // px the selected card rises
+  DROOP: 14,    // px an unselected card sits below it
+  RAISE: 0.1,   // fraction the selected card grows
+  TILT: 1.6,    // places at which the tilt stops growing
+};
+
+/*
+ * WHERE THE NAME SLIDES TO ITS OUTER EDGE, AND WHY IT IS A RAMP.
+ *
+ * The first version of this was a switch: under half a place from the
+ * selection the label centred, past that it jumped to the edge that was still
+ * showing. Every measurement in the round passed, because every measurement in
+ * the round looks at a SETTLED row -- and settled, both poses are correct.
+ *
+ * In motion it is a teleport. A driver sampling every frame across all six
+ * moves measured the name jumping 20% of its own card's width in a single
+ * frame on 01, 03 and 05, 35% on 02 and 50% on 04, four times per move. The
+ * cards were sliding perfectly smoothly and the writing on them was snapping
+ * about, which is exactly what "jerky" describes and what no still could show.
+ *
+ * So the label travels. It starts moving at 0.45 places out -- before anything
+ * can cover it -- and is at the edge by 1.05, which is the first moment
+ * anything does. Between those it is somewhere in between, every frame.
+ */
+const LEAN_IN = 0.45;
+const LEAN_OUT = 1.05;
+
+/** How close a name may come to the edge of its own card. */
+const LAB_INSET = 16;
+
+function poseOf(i, s, tune) {
+  const t = tune;
+  const d = i - s;
+  const a = Math.abs(d);
+  const sign = d < 0 ? -1 : d > 0 ? 1 : 0;
+  const near = Math.min(a, 1);
+  const far = Math.max(0, a - 1);
+  const tilt = Math.max(-t.TILT, Math.min(t.TILT, d));
+  return {
+    /* Centred on index 1, so the middle card sits at x = 0 when it is the one
+       selected and the arithmetic is written about a row rather than an edge. */
+    x: (i - 1) * t.STEP + sign * (t.PUSH * near - t.BUNCH * far),
+    y: t.DROOP * Math.min(a, t.TILT) - t.LIFT * Math.max(0, 1 - a),
+    rot: tilt * t.ARC,
+    scale: 1 + t.RAISE * Math.max(0, 1 - a),
+    z: 100 - Math.round(a * 10),
+    /* Which way the label leans, and it is a RAMP rather than a side.
+       See `LEAN_IN` for why this stopped being `a < 0.5 ? "c" : ...`. */
+    side: a < 0.5 ? "c" : d < 0 ? "l" : "r",
+    lean: (d < 0 ? -1 : 1) * Math.max(0, Math.min(1, (a - LEAN_IN) / (LEAN_OUT - LEAN_IN))),
+    /*
+     * HOW MUCH OF THIS CARD IS WORTH PRINTING ON, and it is the round's second
+     * finding rather than a nicety.
+     *
+     * One place from the selection a card is on top of everything and can carry
+     * whatever it likes. TWO places and it is under its own neighbour, so
+     * everything except the outer sliver is gone -- and a sentence that runs
+     * into a covering card does not read as hidden, it reads as TRUNCATED,
+     * which is worse, because a truncated line looks like a bug in the copy.
+     *
+     * `assert.js` found this on 04, whose whole idea is a live state line on the
+     * plate: the name had already been moved to the outer edge and passed
+     * `labelClear` while "6 in the catalogue - 2 yours" was being cut in half
+     * beside it. So THE STACK COSTS A CARD EVERYTHING EXCEPT ITS NAME, and
+     * anything a direction prints below the name fades out as the card goes
+     * under. Elements opt in with `.ink`; `_door.css` does the rest.
+     */
+    ink: 1 - Math.max(0, Math.min(1, (a - 1) / 0.6)),
+    /* Whether anything is actually drawn ON TOP of this card, which is a
+       different question from which side of the selection it is on. At exactly
+       one place away a card is the near half of a pile and covers rather than
+       is covered, so it may keep its own grammar; past that it is underneath.
+       `data-side` moves the NAME early because a name repositioning mid-slide is
+       invisible at 169ms; this moves everything else, and only when it must. */
+    covered: a > 1.45,
+  };
+}
+
+/* ===========================================================================
+   5. DOOR
+   ======================================================================== */
+
+const DOOR = {
+  spec: null,
+  /** Where the selection IS, continuously. The spring moves it; everything on
+      screen is derived from it. */
+  s: DEFAULT_INDEX,
+  v: 0,
+  /** Where the selection is GOING. An integer, always. */
+  target: DEFAULT_INDEX,
+  raf: 0,
+  last: 0,
+  scale: 1,
+
+  mount(spec) {
+    DOOR.spec = Object.assign(
+      {
+        title: "door",
+        note: "",
+        face: () => "",
+        chrome: () => "",
+        rowTop: 232,
+        tune: TUNE,
+        onSelect: null,
+        onPress: null,
+        /* Which test id goes on the CARD. Almost always the card's own, but a
+           direction that puts a real control inside a card has to move the id
+           onto that control -- see 04. `assert.js` checks the four ids exist
+           somewhere, not that they are on a card. */
+        testid: null,
+        /* 0..1, how far this card's name has turned toward its spine, as a
+           function of `|i - s|`. Only 02 supplies one. It is a fraction rather
+           than a class for the reason `LEAN_IN` gives: a name that snapped
+           through ninety degrees mid-slide measured a 35% jump in a frame. */
+        spin: null,
+        /*
+         * Whether the name STAYS PUT instead of leaning to its outer edge.
+         *
+         * The lean was written for a name pinned to the foot of the card, where
+         * the only guaranteed-clear part of a stacked card is the outer sliver
+         * and a centred name is therefore half under its neighbour. A direction
+         * that prints the name IN FLOW, high on the card and with the widest
+         * label narrower than the sliver, does not have that problem -- and the
+         * lean then costs it something real: the words slide sideways under a
+         * card that is itself sliding, which reads as the type coming loose from
+         * the plate it is printed on. Only 01 sets this, and `labelClear` still
+         * has to pass with it set, which is the whole check on the claim above.
+         */
+        steady: false,
+      },
+      spec
+    );
+    DOOR.s = DEFAULT_INDEX;
+    DOOR.target = DEFAULT_INDEX;
+    DOOR.v = 0;
+    DOOR.render();
+    addEventListener("resize", () => {
+      DOOR.fit();
+      /* The readings above are taken through the deck's scale, so a resized
+         window invalidates every one of them. */
+      DOOR.measureLabels();
+      DOOR.prev = [];
+      DOOR.paint();
+    });
+    PAD.start({
+      left: () => DOOR.step(-1),
+      right: () => DOOR.step(1),
+      a: () => DOOR.press(),
+      b: () => DOOR.back(),
+      any: () => DOOR.warm(),
+    });
+    /* `onConnection` calls its listener IMMEDIATELY with the current state, so
+       `() => DOOR.warm()` retired the caption on the frame it mounted -- the
+       cold state was in the markup, in the shots, and never once on screen.
+       Only an actual connection warms. */
+    PAD.onConnection((on) => { if (on) DOOR.warm(); });
+    /* Every label offset is derived from a measured width, so a reading taken
+       against the fallback face is wrong by however much the real one differs.
+       Cheap, once, and it repaints from the numbers it just took. */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        DOOR.measureLabels();
+        DOOR.prev = [];
+        DOOR.paint();
+      });
+    }
+  },
+
+  /* The cold state, retired. Retired by ANY input -- a pad button, a key, a
+     click -- and not only by a gamepad connecting, because what the caption
+     claims is "nothing has spoken to this yet" and a mouse speaks. */
+  warm() {
+    const el = document.getElementById("cold");
+    if (el && !el.hidden) el.hidden = true;
+  },
+
+  render() {
+    const spec = DOOR.spec;
+    document.getElementById("root").innerHTML =
+      '<div class="bezel">' +
+      '<div class="deck" data-testid="home">' +
+      spec.chrome(spec) +
+      '<div class="row" id="row" style="top:' + spec.rowTop + 'px">' +
+      CARDS.map(
+        (c, i) =>
+          '<div class="slot" id="slot-' + c.id + '" data-slot="' + i + '">' +
+          '<button class="mcard" type="button" data-testid="' +
+          (spec.testid ? spec.testid(c) : c.testid) + '" ' +
+          'data-card="' + c.id + '" aria-label="' + esc(c.label + ". " + c.verb) + '">' +
+          spec.face(c, i) +
+          '<span class="sheen"></span>' +
+          "</button>" +
+          "</div>"
+      ).join("") +
+      "</div>" +
+      '<div class="cold" id="cold">' +
+      '<span class="cold__dot"></span>' +
+      "<span>Press any button, or use the arrow keys</span>" +
+      "</div>" +
+      '<div class="hints">' +
+      '<span class="hint"><span class="glyph">A</span>Select</span>' +
+      '<span class="hint"><span class="glyph glyph--key">&#8592;</span>' +
+      '<span class="glyph glyph--key">&#8594;</span>Move</span>' +
+      "</div>" +
+      "</div>" +
+      '<div class="bezel__tag" id="tag"></div>' +
+      "</div>";
+
+    DOOR.wire();
+    if (spec.wire) spec.wire(document.querySelector(".deck"));
+    DOOR.measureLabels();
+    /* `measureLabels` clears `--lab`, so anything the cache thinks it wrote is
+       no longer on the element. */
+    DOOR.prev = [];
+    DOOR.paint();
+    DOOR.tag();
+    DOOR.fit();
+  },
+
+  wire() {
+    for (const el of document.querySelectorAll(".slot")) {
+      const i = +el.dataset.slot;
+      /*
+       * HOVER SELECTS, AND THE FEEDBACK LOOP IS CUT ON THE OTHER SIDE.
+       *
+       * `board.css:1816-1826` cuts it by keeping the hit box still while only
+       * the picture moves, because in a hand the card is lifted BY the hover.
+       * That is not available here: sliding is the design, so the box has to
+       * move with it.
+       *
+       * Two rules make it safe instead. A hover is ignored while the row is
+       * still moving, so a card arriving under a stationary pointer cannot
+       * re-trigger anything; and a hover never DE-selects, so the selection
+       * only ever moves toward the pointer and has nowhere to oscillate to.
+       */
+      el.addEventListener("mouseenter", () => {
+        DOOR.warm();
+        if (DOOR.hold || DOOR.moving()) return;
+        DOOR.select(i);
+      });
+      el.querySelector(".mcard").addEventListener("click", () => {
+        DOOR.warm();
+        if (DOOR.hold) return;
+        if (i !== DOOR.target) { DOOR.select(i); return; }
+        DOOR.press();
+      });
+    }
+  },
+
+  /**
+   * Where each card's name sits when nothing has moved it, and how big it is.
+   *
+   * Measured rather than declared, once, BEFORE the first paint -- which is the
+   * only moment no pose has been applied and a label is therefore at its
+   * natural place. That one reading is what lets the travel below be a single
+   * formula for every direction: 01, 02, 03 and 05 centre their name and 04
+   * puts it at the plate's top left, and neither has to say so.
+   *
+   * Re-run when the webfont lands. A label measured against the fallback face
+   * is a few pixels out, and every offset here is derived from its width.
+   */
+  labels: [],
+  measureLabels() {
+    /*
+     * PUT EVERY LABEL BACK BEFORE READING IT.
+     *
+     * "Before the first paint" was true of the call at mount and false of the
+     * two that matter more -- the one after the webfont lands and the one after
+     * a resize -- both of which run when `--lab` has already moved every label
+     * to its edge. Those re-measured the MOVED position as the natural one, so
+     * the travel compounded on itself and the second reading was junk: a name
+     * whose natural centre is the middle of the card came back at 134 of 200.
+     *
+     * Clearing first makes the reading mean the same thing whenever it is
+     * taken, which is what a measurement has to do to be worth caching.
+     */
+    for (const c of CARDS) {
+      const lab = document.querySelector("#slot-" + c.id + " .mcard__label");
+      if (lab) lab.style.removeProperty("--lab");
+    }
+    DOOR.labels = CARDS.map((c) => {
+      const slot = document.getElementById("slot-" + c.id);
+      const card = slot && slot.querySelector(".mcard");
+      const lab = slot && slot.querySelector(".mcard__label");
+      if (!card || !lab) return null;
+      const cb = card.getBoundingClientRect();
+      const lb = lab.getBoundingClientRect();
+      /*
+       * DIVIDED BY THE CARD'S OWN SCALE, and getting this wrong is instructive.
+       *
+       * The deck is a fixed 1280x800 scaled to whatever window is open, so a
+       * rect is in SCREEN pixels and the offsets computed from it are written
+       * back as CSS pixels. Measured at 95% and written at 100%, every label
+       * landed 5% short of the edge it was travelling to -- which `labelClear`
+       * caught at 4% covered on three files and 60% on the one whose title
+       * starts at an edge rather than at the middle.
+       *
+       * The factor is read off the card itself rather than from `DOOR.scale`,
+       * because it is the product of every transform above this element and
+       * `fit()` has not necessarily run yet when this is called.
+       */
+      const k = cb.width / (card.offsetWidth || 1) || 1;
+      return {
+        cardW: cb.width / k,
+        cardH: cb.height / k,
+        w: lb.width / k,
+        h: lb.height / k,
+        /* Both relative to the card, so the slot's own position cancels. */
+        cx: ((lb.left + lb.right) / 2 - cb.left) / k,
+        cy: ((lb.top + lb.bottom) / 2 - cb.top) / k,
+      };
+    });
+  },
+
+  moving() {
+    return Math.abs(DOOR.s - DOOR.target) > 0.004 || Math.abs(DOOR.v) > 0.02;
+  },
+
+  /*
+   * ===========================================================================
+   * HOLDS -- anything that opens over the row.
+   * ===========================================================================
+   *
+   * `../handheld-board/` calls these holds and this is the same idea at menu
+   * scale: one thing at a time is on top, and while it is, IT OWNS THE INPUT.
+   * That is not politeness, it is the focus-trap rule `input/stops.ts` spends
+   * its longest comment on -- with an overlay open, every stop behind it is
+   * still in the document, so a resolver that does not exclude them puts the
+   * ring on a control the player cannot see.
+   *
+   * A hold is `{ el, confirm }`. While one is set the row ignores directions and
+   * A goes to the hold instead; B closes it. Nothing else in the round needs
+   * one, but a direction that puts a control behind a card rather than on it
+   * needs somewhere to put the control, and this is it.
+   */
+  hold: null,
+
+  openHold(el, confirm) {
+    DOOR.hold = { el, confirm };
+    el.hidden = false;
+    const first = el.querySelector("input, button");
+    if (first) first.focus();
+  },
+
+  /*
+   * CLOSING GIVES THE ROW ITS FOCUS BACK, and that is not a nicety.
+   *
+   * `PAD.start` ignores a keydown whose target is an input, because the
+   * fallback maps `a`, `d`, `s` and `w` to directions and BRAMBLE has a `d` in
+   * it. Hide a hold while its field still holds focus and every key after that
+   * lands on an invisible input: the row stops responding to the keyboard
+   * entirely and there is nothing on screen to say why.
+   *
+   * Found by a driver that opened the hold, closed it, and could not open it
+   * again. Restoring focus to the card that opened it is also just what a dialog
+   * owes the thing behind it -- `input/cursor.ts` puts the ring back for the
+   * same reason.
+   */
+  closeHold() {
+    if (!DOOR.hold) return;
+    DOOR.hold.el.hidden = true;
+    DOOR.hold = null;
+    const card = document.querySelector('[data-slot="' + DOOR.target + '"] .mcard');
+    if (card) card.focus({ preventScroll: true });
+  },
+
+  /** B, and Escape, which the key map sends here as the same intent. */
+  back() {
+    DOOR.warm();
+    if (DOOR.hold) DOOR.closeHold();
+  },
+
+  /** Move one place, or refuse at the end of the row. */
+  step(delta) {
+    DOOR.warm();
+    /* The row is not what the player is looking at. */
+    if (DOOR.hold) return;
+    const next = DOOR.target + delta;
+    if (next < 0 || next >= CARDS.length) {
+      DOOR.nudge(delta);
+      PAD.rumble(55, 0.22);
+      return;
+    }
+    DOOR.select(next);
+  },
+
+  /*
+   * THE WALL, DRAWN. `ring.ts:549` gives the focus ring a 340px/s impulse into
+   * a wall rather than doing nothing, and the reason generalises: a control
+   * that ignores a press is indistinguishable from a control that is broken.
+   * Here the impulse goes into the spring the row already has, so the row leans
+   * into the end and comes back -- no second animation, no state.
+   *
+   * It is also the visible half of the rumble. Haptics may never be the only
+   * channel carrying a fact, because the Deck's desktop-mode Firefox has no
+   * `vibrationActuator` at all.
+   */
+  nudge(delta) {
+    DOOR.v += delta * 2.4;
+    DOOR.wake();
+  },
+
+  /**
+   * Point the row at a card.
+   *
+   * `instant` snaps the spring and repaints in the same tick, which is the seam
+   * `measure.mjs` drives: a gate that had to wait out an animation would be
+   * timing the spring instead of measuring the layout, and a screenshot taken
+   * mid-flight is a screenshot of no state at all.
+   */
+  select(i, instant) {
+    const next = Math.max(0, Math.min(CARDS.length - 1, i | 0));
+    DOOR.target = next;
+    if (instant) {
+      DOOR.s = next;
+      DOOR.v = 0;
+      cancelAnimationFrame(DOOR.raf);
+      DOOR.raf = 0;
+      DOOR.paint();
+    } else {
+      DOOR.wake();
+    }
+    if (DOOR.spec && DOOR.spec.onSelect) DOOR.spec.onSelect(CARDS[next], next);
+    DOOR.tag();
+  },
+
+  press() {
+    if (DOOR.hold) {
+      if (DOOR.hold.confirm) DOOR.hold.confirm();
+      return;
+    }
+    const card = CARDS[DOOR.target];
+    const slot = document.querySelector('[data-slot="' + DOOR.target + '"]');
+    if (slot) {
+      slot.classList.remove("slot--press");
+      // Reading `offsetWidth` is what restarts a CSS animation that is already
+      // on the element: without it a second press inside the 90ms does nothing
+      // and the control reads as having missed the input.
+      void slot.offsetWidth;
+      slot.classList.add("slot--press");
+    }
+    PAD.rumble(70, 0.3);
+    if (DOOR.spec && DOOR.spec.onPress) DOOR.spec.onPress(card, DOOR.target);
+  },
+
+  wake() {
+    if (DOOR.raf) return;
+    DOOR.last = 0;
+    DOOR.raf = requestAnimationFrame(DOOR.frame);
+  },
+
+  /*
+   * THE LOOP STOPS WHEN IT SETTLES, which is `ring.ts:10-13`'s rule and is here
+   * for its reason: this is a battery-powered seven-inch computer and a rAF
+   * that never stops costs play time for nothing. A menu is also the screen a
+   * Deck sits on longest -- somebody who opens the game and walks away leaves
+   * it here, not on a board.
+   */
+  frame(now) {
+    const dt = DOOR.last ? Math.min(0.05, (now - DOOR.last) / 1000) : 1 / 60;
+    DOOR.last = now;
+    const out = springStep(DOOR.s, DOOR.v, DOOR.target, SLIDE.w, SLIDE.z, dt);
+    DOOR.s = out.x;
+    DOOR.v = out.v;
+    DOOR.paint();
+    if (DOOR.moving()) {
+      DOOR.raf = requestAnimationFrame(DOOR.frame);
+    } else {
+      DOOR.s = DOOR.target;
+      DOOR.v = 0;
+      DOOR.paint();
+      DOOR.raf = 0;
+    }
+  },
+
+  /*
+   * ONE STRING PER MOVING THING, AND NOTHING WRITTEN THAT HAS NOT CHANGED.
+   *
+   * This used to set six custom properties per card per frame and let CSS
+   * assemble `translate(calc(-50% + var(--x)), var(--y)) rotate(var(--rot))
+   * scale(var(--scale))` out of them -- eighteen property writes a frame, each
+   * one a custom-property invalidation, plus an attribute write and a class
+   * toggle that invalidate the whole subtree's style. `z-index` was rewritten
+   * sixty times a second to the same number it already held.
+   *
+   * The transform is now assembled here and written once. The discrete
+   * things -- the stacking order, the classes, the attributes -- are compared
+   * against what was last written and skipped when they match, so a frame in
+   * the middle of a slide touches three transforms and nothing else.
+   */
+  prev: [],
+  paint() {
+    const tune = DOOR.spec ? DOOR.spec.tune : TUNE;
+    const spinOf = DOOR.spec && DOOR.spec.spin;
+    const steady = !!(DOOR.spec && DOOR.spec.steady);
+    for (let i = 0; i < CARDS.length; i += 1) {
+      const el = document.getElementById("slot-" + CARDS[i].id);
+      if (!el) continue;
+      const was = DOOR.prev[i] || (DOOR.prev[i] = {});
+      const p = poseOf(i, DOOR.s, tune);
+
+      const t =
+        "translate(calc(-50% + " + p.x.toFixed(2) + "px), " + p.y.toFixed(2) + "px) " +
+        "rotate(" + p.rot.toFixed(2) + "deg) scale(" + p.scale.toFixed(4) + ")";
+      if (t !== was.t) { el.style.transform = t; was.t = t; }
+
+      if (p.z !== was.z) { el.style.zIndex = String(p.z); was.z = p.z; }
+
+      const ink = p.ink.toFixed(3);
+      if (ink !== was.ink) { el.style.setProperty("--ink", ink); was.ink = ink; }
+
+      /*
+       * THE NAME TRAVELS TO ITS OUTER EDGE INSTEAD OF JUMPING THERE.
+       *
+       * `lean` is the ramp; the offset is the distance from where this label
+       * naturally sits to where it has to end up, which is why the natural
+       * place had to be measured. `spin` turns it toward a spine, and when it
+       * is turned its effective half-width is its own HEIGHT -- which is the
+       * whole reason a spine can live in a sliver a horizontal name cannot.
+       *
+       * `steady` switches the travel off and leaves the name where the card
+       * printed it. See `mount()` for when that is allowed.
+       */
+      const m = DOOR.labels[i];
+      if (m) {
+        const lab = el.querySelector(".mcard__label");
+        const spin = spinOf ? spinOf(Math.abs(i - DOOR.s)) : 0;
+        const half = (m.w / 2) * (1 - spin) + (m.h / 2) * spin;
+        const edge = p.lean < 0 ? LAB_INSET + half : m.cardW - LAB_INSET - half;
+        const x = steady ? 0 : p.lean * (edge - m.cx) * (p.lean < 0 ? -1 : 1);
+        /* Turned on its side, a name belongs up the middle of the strip it is
+           in rather than along the foot of a card it no longer fits. */
+        const y = spin * (m.cardH / 2 - m.cy);
+        const lt =
+          "translate(" + x.toFixed(2) + "px, " + y.toFixed(2) + "px) " +
+          "rotate(" + (spin * 90).toFixed(2) + "deg)";
+        if (lt !== was.lt) { lab.style.setProperty("--lab", lt); was.lt = lt; }
+      }
+
+      if (p.side !== was.side) { el.dataset.side = p.side; was.side = p.side; }
+      if (p.covered !== was.covered) {
+        if (p.covered) el.dataset.covered = "1";
+        else delete el.dataset.covered;
+        was.covered = p.covered;
+      }
+      const on = i === DOOR.target;
+      if (on !== was.on) { el.classList.toggle("slot--on", on); was.on = on; }
+    }
+    if (DOOR.spec && DOOR.spec.paint) DOOR.spec.paint(CARDS[DOOR.target], DOOR.s);
+  },
+
+  /**
+   * The three numbers that describe a one-card hop.
+   *
+   *   traverse   when the card has covered 98% of the gap -- what the eye calls
+   *              the move, and the number a FLOOR is asked of
+   *   settle     when it is permanently within 2px -- the tail, and the number a
+   *              CEILING is asked of. "Permanently" and not "first": an
+   *              underdamped spring passes through its target on the way to
+   *              overshooting it, and the first crossing would report a card
+   *              that has not arrived as having arrived
+   *   overshoot  how far past it goes, in px
+   *
+   * Simulated rather than measured off the DOM, for the reason `ring.ts:18-35`
+   * gives for tuning in time: a number read off a live animation is a number
+   * about the reviewer's monitor. This is the same closed-form step the row
+   * itself runs, walked at 1ms, so all three are properties of the spring and
+   * of `STEP` -- which is what a README table should be reporting.
+   *
+   * All three and not only the settle, because the settle on its own is exactly
+   * what let a four-frame cut through. See the note over `SLIDE`.
+   */
+  springProfile() {
+    const tune = DOOR.spec ? DOOR.spec.tune : TUNE;
+    const D = tune.STEP;
+    let x = D;
+    let v = 0;
+    let traverse = 0;
+    let settle = 0;
+    let over = 0;
+    for (let ms = 1; ms <= 2000; ms += 1) {
+      const next = springStep(x, v, 0, SLIDE.w, SLIDE.z, 0.001);
+      x = next.x;
+      v = next.v;
+      if (!traverse && Math.abs(x) <= D * 0.02) traverse = ms;
+      if (Math.abs(x) > 2) settle = ms;
+      if (x < 0) over = Math.max(over, -x);
+    }
+    return {
+      traverseMs: traverse,
+      settleMs: settle + 1,
+      overshootPx: Math.round(over * 10) / 10,
+      /* What the eye gets, at 60Hz. Four is a cut; eleven is a move. */
+      frames: Math.round(traverse / 16.7),
+    };
+  },
+
+  /*
+   * The deck is 1280x800 whatever window is open.
+   *
+   * Scaled rather than resized, so every number `assert.js` reads is a real
+   * device pixel. A mockup that reflows to the reviewer's monitor is being
+   * reviewed at the wrong density, and it is always wrong in the direction that
+   * flatters the design.
+   */
+  fit() {
+    const el = document.querySelector(".deck");
+    if (!el) return;
+    DOOR.scale = Math.max(
+      0.3,
+      Math.min(2, Math.min((innerWidth - 26) / 1280, (innerHeight - 40) / 800))
+    );
+    el.style.transform = "scale(" + DOOR.scale + ")";
+  },
+
+  tag(extra) {
+    const tag = document.getElementById("tag");
+    if (!tag || !DOOR.spec) return;
+    tag.innerHTML =
+      "<b>" + esc(DOOR.spec.title) + "</b> · 1280×800 @ " +
+      Math.round(DOOR.scale * 100) + "%" +
+      " · on: <b>" + esc(CARDS[DOOR.target].label) + "</b>" +
+      " · keys: <b>&#8592; &#8594;</b> move · <b>Enter</b> select · " +
+      "<b>DOOR_ASSERT()</b> in the console" +
+      (extra || "");
+  },
+};
+
+/* A brief, visible commitment and nothing else. `../menu/README.md` sets the
+   rule for every interactive mockup in this folder: "press Play, which commits
+   visibly and does nothing else". A mockup that navigated would be claiming to
+   be the application. */
+function commitPlate(text) {
+  const old = document.getElementById("commit");
+  if (old) old.remove();
+  const el = document.createElement("div");
+  el.className = "commit";
+  el.id = "commit";
+  el.textContent = text;
+  const deck = document.querySelector(".deck");
+  if (deck) deck.appendChild(el);
+  setTimeout(() => el.remove(), 1400);
+}
+
+/* The motes, as markup. Twelve, which is `fx/presets.ts:225`'s own count for
+   the ambient preset -- not a number picked here. Positions and periods are
+   fixed rather than random, because a mockup whose screenshot differs between
+   runs cannot be compared with its own earlier shot. */
+function motesHTML(n) {
+  const count = n || 12;
+  let out = '<div class="motes" aria-hidden="true">';
+  for (let i = 0; i < count; i += 1) {
+    const left = 6 + ((i * 79) % 88);
+    const dur = 11 + ((i * 7) % 9);
+    const delay = (i * 13) % 11;
+    const drift = ((i % 5) - 2) * 22;
+    out +=
+      '<span class="mote" style="left:' + left + "%;animation-duration:" + dur +
+      "s;animation-delay:-" + delay + "s;--drift:" + drift + 'px"></span>';
+  }
+  return out + "</div>";
+}
+
+if (typeof window !== "undefined") {
+  window.DOOR = DOOR;
+  window.CARDS = CARDS;
+  window.TUNE = TUNE;
+  window.poseOf = poseOf;
+}
+// <<< END _door.js >>>
+
+// <<< BEGIN assert.js >>>
+/*
+ * The gates, as numbers.
+ *
+ * Inlined into every file by `inline.py`, so opening any mockup and typing
+ * `DOOR_ASSERT()` in the console works with no server and no paste -- `fetch()`
+ * is blocked on file://, so a page cannot load its own checker off disk.
+ *
+ *     copy(JSON.stringify(DOOR_ASSERT(), null, 2))
+ *
+ * ---------------------------------------------------------------------------
+ * IT DRIVES THE SCREEN RATHER THAN LOOKING AT IT.
+ *
+ * Every earlier round in this folder measured one pose. This one cannot: the
+ * whole subject is what happens when the selection moves, and the two failures
+ * that matter both live at the ENDS of the row, which is a state you never see
+ * unless you go there. So the gate walks all three selections through
+ * `DOOR.select(i, true)`, measures each, and puts the row back where it found
+ * it. A screenshot of the default state is a screenshot of the one state where
+ * nothing is stacked.
+ *
+ * ---------------------------------------------------------------------------
+ * FOUR ARE INHERITED. The 16px type floor, the 44px target floor, the 96px card
+ * floor and the escape check come from `../handheld/assert.js` and
+ * `../handheld-board/assert.js` unchanged, and are asked of the whole 1280x800
+ * stage rather than of a component. `../handheld/` measured 444 of 635 elements
+ * below 12px on the shipped board, the smallest at 2.11px, which is where the
+ * type floor came from and why it is a number and not a preference.
+ *
+ * THREE ARE THIS ROUND'S OWN.
+ *
+ * `labelClear` -- THE THESIS GATE. The brief asks the two unselected cards to
+ * overlap, and overlap's failure mode is a card covering the one thing that
+ * says what the card under it is. A menu item nobody can name is not a menu
+ * item, and this is invisible to every other check here: the covered card is
+ * the right size, at the right place, in the right font, fully inside the
+ * stage, and unreadable. It is also what found the label-side rule -- see
+ * `poseOf` in `_door.js`.
+ *
+ * `inkClear` -- the same question asked of everything else on the card, and it
+ * exists because `labelClear` passed 04 while the plate's live state line was
+ * being sliced in half beside the name it had just protected. A sentence
+ * running under a covering card reads as truncated rather than as hidden, which
+ * is worse: a truncated line looks like a bug in the copy. Its answer is not to
+ * un-stack but to stop printing what cannot be read -- see `.ink`.
+ *
+ * `rowFits` -- the overlap arithmetic, as a number. The row is laid out by
+ * `poseOf` rather than declared, and its widest state is not the one it opens
+ * on. `.deck` is `overflow: hidden`, so a row that runs off the stage reports
+ * no page overflow at all and the only symptom is a card that is quietly not
+ * there. That is the board round's own lesson -- WHERE A VISUAL PROPERTY
+ * REDUCES TO A NUMBER, ASSERT THE NUMBER -- pointed at the one piece of layout
+ * here that is computed.
+ *
+ * `slideReads` -- THE ANIMATION HAS A FLOOR AS WELL AS A CEILING, and it has
+ * one because the first version of this gate did not.
+ *
+ * That version asked a single question: is a hop permanently within 2px of its
+ * target inside 180ms, the moment a held direction fires again. The spring that
+ * passed it crossed the entire row in FOUR FRAMES and then rang for fourteen
+ * more, 21px each way. `0.85 0.55 0.27 0.07 -0.04 -0.08 ...`, sampled per
+ * frame: a cut followed by a wobble, which is what the screen was reported as
+ * -- jerky -- while every number in this file said the file was fine.
+ *
+ * A one-sided ceiling on a duration is satisfied most cheaply by making the
+ * animation violent, so it rewards the failure it exists to prevent. Three
+ * numbers now, from `DOOR.springProfile()`:
+ *
+ *   traverseMs   >= 100   fewer than six frames is a cut, not a move
+ *   settleMs     <= 320   past a third of a second a menu is making you wait
+ *   overshootPx  <= 8     a big overshoot after a fast traverse IS the jitter
+ *
+ * All three are simulated from the same closed-form step the row runs rather
+ * than timed off the DOM, so they are properties of the spring and not of the
+ * reviewer's monitor.
+ */
+
+function DOOR_ASSERT() {
+  const DECK = document.querySelector(".deck");
+  if (!DECK) return { PASS: false, why: "no .deck" };
+  if (typeof DOOR === "undefined") return { PASS: false, why: "no DOOR" };
+
+  const FS_FLOOR = 16;
+  const HIT_FLOOR = 44;
+  const CARD_FLOOR = 96;
+
+  const round = (n) => Math.round(n * 100) / 100;
+
+  /*
+   * On screen, not merely laid out -- AND IT HAS TO LOOK UP THE TREE.
+   *
+   * `visibility` is inherited so the computed value on the element is already
+   * the whole answer; `opacity` is NOT. A `<span>` inside a faded parent
+   * computes `opacity: 1` and reports a full-size box, which is how `inkClear`
+   * came back at 31% on 04 for a state line that had already been faded out
+   * with the card -- the wrapper was invisible and the words inside it were
+   * not, as far as the gate could see.
+   *
+   * The same walk is in the shipped `e2e/handheldAssert.ts:183-204`, for the
+   * clipping version of the same trap, and its comment is the reason to bother:
+   * a gate that reports something that is not wrong sends you fixing it, and
+   * the fix is always worse than the thing.
+   */
+  const vis = (el) => {
+    for (let a = el; a; a = a.parentElement) {
+      const s = getComputedStyle(a);
+      if (s.display === "none" || s.visibility === "hidden") return false;
+      if (+s.opacity === 0) return false;
+      if (a.classList && a.classList.contains("deck")) break;
+    }
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+  };
+
+  /* The bezel caption is a note to whoever is reviewing. It is not on the
+     Deck's screen and holding it to the Deck's floors is measuring the wrong
+     thing -- which is why the scope is `.deck` and not `body`. */
+  const scale = DECK.getBoundingClientRect().width / (DECK.offsetWidth || 1) || 1;
+  const px = (n) => Math.round(n / scale);
+
+  const faults = [];
+
+  /* =======================================================================
+     Walk all three selections
+     =======================================================================
+
+     `select(i, true)` snaps the spring and repaints in the same tick, so this
+     measures three settled layouts rather than three moments of one animation.
+     The row is restored at the end, because a gate that leaves the screen
+     somewhere else has changed the thing the next reviewer looks at.
+     ==================================================================== */
+
+  const wasOn = DOOR.target;
+  const deckBox = DECK.getBoundingClientRect();
+
+  const states = [];
+  for (let sel = 0; sel < CARDS.length; sel += 1) {
+    DOOR.select(sel, true);
+
+    const slots = [...DECK.querySelectorAll(".slot")].filter(vis);
+
+    /* --- The thesis gate: is every label readable in this state? --------
+       Each label against every card drawn ON TOP of it, by z-index. The
+       rectangles are axis-aligned bounding boxes of rotated elements, so this
+       OVER-reports slightly -- a tilted card's box is wider than the card. That
+       is the right direction for a gate to be wrong in, and the 2% floor below
+       is what keeps a tilt from failing a file on its own bounding box. */
+    let worstPct = 0;
+    let worstOn = null;
+    for (const slot of slots) {
+      const label = slot.querySelector(".mcard__label");
+      if (!label || !vis(label)) continue;
+      const lb = label.getBoundingClientRect();
+      const area = lb.width * lb.height;
+      if (area <= 0) continue;
+      const z = +getComputedStyle(slot).zIndex || 0;
+      let covered = 0;
+      for (const other of slots) {
+        if (other === slot) continue;
+        if ((+getComputedStyle(other).zIndex || 0) <= z) continue;
+        const ob = other.querySelector(".mcard").getBoundingClientRect();
+        const w = Math.max(0, Math.min(lb.right, ob.right) - Math.max(lb.left, ob.left));
+        const h = Math.max(0, Math.min(lb.bottom, ob.bottom) - Math.max(lb.top, ob.top));
+        covered += w * h;
+      }
+      const pct = Math.round((covered / area) * 100);
+      if (pct > worstPct) {
+        worstPct = pct;
+        worstOn = slot.querySelector(".mcard").dataset.card;
+      }
+    }
+
+    /* --- `inkClear`: is anything else on a card being CUT rather than hidden?
+       `labelClear` guards the name and only the name, which is enough for a
+       card that carries nothing else. It is not enough for a direction whose
+       idea lives in the body of the card: 04 passed `labelClear` with its live
+       state line sliced down the middle by the plate on top of it, and a
+       sentence that runs under a covering card reads as truncated -- like a bug
+       in the copy -- rather than as hidden.
+
+       So every visible piece of text inside a card is measured the same way the
+       label is. The design answer is not to un-stack, it is to STOP PRINTING
+       what cannot be read: `.ink` in `_door.css` fades it out with the card, and
+       an element at zero opacity is not visible, so it leaves this count. */
+    let inkWorst = 0;
+    let inkWorstOn = null;
+    for (const slot of slots) {
+      const z = +getComputedStyle(slot).zIndex || 0;
+      const covering = slots.filter(
+        (o) => o !== slot && (+getComputedStyle(o).zIndex || 0) > z
+      );
+      if (!covering.length) continue;
+      const inks = [...slot.querySelectorAll(".mcard *")].filter(
+        (el) =>
+          !el.closest('[aria-hidden="true"]') &&
+          vis(el) &&
+          [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+      );
+      for (const el of inks) {
+        const eb = el.getBoundingClientRect();
+        const area = eb.width * eb.height;
+        if (area <= 0) continue;
+        let covered = 0;
+        for (const o of covering) {
+          const ob = o.querySelector(".mcard").getBoundingClientRect();
+          const w = Math.max(0, Math.min(eb.right, ob.right) - Math.max(eb.left, ob.left));
+          const h = Math.max(0, Math.min(eb.bottom, ob.bottom) - Math.max(eb.top, ob.top));
+          covered += w * h;
+        }
+        const pct = Math.round((covered / area) * 100);
+        if (pct > inkWorst) {
+          inkWorst = pct;
+          inkWorstOn = slot.querySelector(".mcard").dataset.card;
+        }
+      }
+    }
+
+    /* --- `cardSpill`: text falling off its own card ----------------------
+       The escape check measures against the DECK and skips the row, because a
+       tilted card's bounding box grazes the stage edge and failing a file on
+       that is the check crying wolf. That left a hole one level down, and 04
+       fell straight into it: a specificity collision let the shared centring
+       rule survive an override, the selected plate's title moved half its own
+       width off the left edge, and `overflow: hidden` on the card ate it. The
+       screen read "ECKS". Nothing else here could see it -- `silentClips` asks
+       whether an element clips ITSELF, and this element was being clipped by
+       its parent.
+
+       Two pixels of tolerance, for the sub-pixel rounding a scaled stage and a
+       rotated box both introduce. */
+    let spill = 0;
+    for (const slot of slots) {
+      const card = slot.querySelector(".mcard");
+      const cb = card.getBoundingClientRect();
+      const inside = [...card.querySelectorAll("*")].filter(
+        (el) => vis(el) && [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+      );
+      for (const el of inside) {
+        const eb = el.getBoundingClientRect();
+        if (eb.left < cb.left - 2 || eb.right > cb.right + 2 ||
+            eb.top < cb.top - 2 || eb.bottom > cb.bottom + 2) {
+          spill += 1;
+          if (spill <= 4) faults.push({ el, why: "spills its card on " + CARDS[sel].id });
+        }
+      }
+    }
+
+    /* --- The sliver: how much of a stacked card is left showing? --------
+       THE STACK DEPTH IS SET BY THE LONGEST LABEL, and this is the measurement
+       that says so. Of two cards on the same side of the selection the nearer
+       is drawn on top, so what is left of the further one is the strip between
+       their right edges -- `STEP - BUNCH` in `poseOf`'s terms. A label wider
+       than that strip cannot be read however it is aligned, which is the same
+       fact `labelClear` reports as a percentage and this reports as the two
+       numbers a designer can act on. */
+    let sliver = Infinity;
+    let widestLabel = 0;
+    const byX = slots
+      .map((el) => ({ el, b: el.querySelector(".mcard").getBoundingClientRect() }))
+      .sort((a, b) => a.b.left - b.b.left);
+    for (let k = 0; k < byX.length - 1; k += 1) {
+      const gap = byX[k + 1].b.left - byX[k].b.left;
+      if (gap < byX[k].b.width) sliver = Math.min(sliver, px(gap));
+    }
+    for (const slot of slots) {
+      const label = slot.querySelector(".mcard__label");
+      if (label && vis(label)) widestLabel = Math.max(widestLabel, px(label.getBoundingClientRect().width));
+    }
+
+    /* --- The arithmetic gate: does the row stay on the stage? -----------
+       Measured off the CARDS and not off `.row`, which is a full-width box that
+       always fits by construction and would report every file as passing. */
+    let left = Infinity;
+    let right = -Infinity;
+    for (const slot of slots) {
+      const b = slot.querySelector(".mcard").getBoundingClientRect();
+      left = Math.min(left, b.left);
+      right = Math.max(right, b.right);
+    }
+
+    states.push({
+      sel,
+      on: CARDS[sel].id,
+      labelWorstPct: worstPct,
+      labelWorstOn: worstOn,
+      cardSpill: spill,
+      inkWorstPct: inkWorst,
+      inkWorstOn,
+      sliverPx: Number.isFinite(sliver) ? sliver : null,
+      widestLabelPx: widestLabel,
+      rowLeftPx: px(left - deckBox.left),
+      rowRightPx: px(deckBox.right - right),
+      rowWidthPx: px(right - left),
+    });
+  }
+
+  DOOR.select(wasOn, true);
+
+  /* 2% rather than 0: see the bounding-box note above. Anything a reader would
+     actually call covered is tens of percent, and the two states that failed
+     while this was being built came in at 41% and 46%. */
+  const labelClear = states.every((s) => s.labelWorstPct <= 2);
+  /* 25 rather than 2. A name has to be wholly readable or it is not a name; a
+     line of body copy has a paragraph's tolerance and its own left edge to
+     start from, and holding it to the label's bar would fail a card whose
+     descender happens to graze the neighbour's rounded corner. What this is
+     for is a line being CUT, and a cut line is half gone. */
+  const inkClear = states.every((s) => s.inkWorstPct <= 25);
+  const rowFits = states.every((s) => s.rowLeftPx >= 0 && s.rowRightPx >= 0);
+  for (const s of states) {
+    if (s.inkWorstPct > 25) {
+      faults.push({
+        el: document.getElementById("slot-" + s.inkWorstOn),
+        why: "body " + s.inkWorstPct + "% cut on " + s.on,
+      });
+    }
+    if (s.labelWorstPct > 2) {
+      faults.push({
+        el: document.getElementById("slot-" + s.labelWorstOn),
+        why: "label " + s.labelWorstPct + "% covered on " + s.on,
+      });
+    }
+  }
+
+  /* =======================================================================
+     The standing floors, in the state the reviewer left the screen in
+     ==================================================================== */
+
+  const all = [...DECK.querySelectorAll("*")].filter(vis);
+
+  /* --- The type floor ---------------------------------------------------
+     Only elements that OWN text: walking every element counts a wrapper at its
+     inherited size and reports failures that are not on screen. `aria-hidden`
+     is skipped, which is the honest line between a font-size floor and a
+     font-size ban -- the gate is about TEXT SOMEBODY READS. The mark repeated
+     across a card back is a pattern rather than a label and is hidden for that
+     reason, which `CardBack.tsx:35-46` already argues in the shipped app. */
+  const textOwners = all.filter(
+    (el) =>
+      !el.closest('[aria-hidden="true"]') &&
+      [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+  );
+  const sizes = textOwners.map((el) => ({
+    el,
+    /* A font size is a CSS pixel and the bezel's `transform: scale()` does not
+       change it -- only boxes are read through the scale. Dividing here reports
+       a 16px floor as 17.9 and passes type that fails on the device.
+       `../seat/assert.js` learned this the hard way. */
+    px: round(parseFloat(getComputedStyle(el).fontSize)),
+    text: el.textContent.trim().slice(0, 32),
+  }));
+  const belowFloor = sizes.filter((s) => s.px < FS_FLOOR).sort((a, b) => a.px - b.px);
+  for (const s of belowFloor.slice(0, 8)) faults.push({ el: s.el, why: s.px + "px" });
+
+  /* --- The target floor -------------------------------------------------
+     Every real control. A Steam Deck has a touchscreen and these are the
+     controls a finger goes for -- which is the same argument
+     `handheld.css:2118-2139` makes when it raises twelve of the shipped
+     lobby's, the smallest a 25px name field. */
+  const stops = [...DECK.querySelectorAll("button, input, [data-stop]")].filter(vis);
+  /*
+   * `offsetWidth`, NOT `getBoundingClientRect`, and this round is the first one
+   * in the folder where the difference decides anything.
+   *
+   * Every card here carries a rotation, and a rect is the AXIS-ALIGNED BOUNDING
+   * BOX of a rotated element -- a 200x280 card at 7 degrees measures 233 wide.
+   * That is a number about the tilt and not about the target, and it flatters
+   * every direction by up to 16%. `offsetWidth` is the untransformed layout box
+   * and is the conservative reading, which is the direction a floor should be
+   * wrong in. The same trap in reverse is `../seat/assert.js`'s, which divided a
+   * FONT size by the bezel scale and reported a 16px floor as 17.9.
+   */
+  const hits = stops.map((el) => ({ el, w: el.offsetWidth, h: el.offsetHeight }));
+  const smallHits = hits.filter((h) => h.w < HIT_FLOOR || h.h < HIT_FLOOR);
+  for (const h of smallHits.slice(0, 8)) faults.push({ el: h.el, why: h.w + "x" + h.h });
+
+  /* --- The card floor ----------------------------------------------------
+     Read off the rendered card rather than off the token, because the token is
+     what the design INTENDED and the box is what the player got. The floor is
+     `../handheld/assert.js`'s 96px; the shipped board's own figure at this size
+     is 73.6px, which is where the floor came from. The layout box again, for the
+     reason above -- and it is the right reading twice over here, because a
+     selected card is scaled to 1.10 and a floor that counted the raise would
+     pass a card that is only wide enough while you are already on it. */
+  const cards = [...DECK.querySelectorAll(".mcard")].filter(vis);
+  const cardW = cards.map((el) => ({ el, w: el.offsetWidth }));
+  const smallCards = cardW.filter((c) => c.w < CARD_FLOOR);
+  for (const c of smallCards.slice(0, 4)) faults.push({ el: c.el, why: c.w + "px card" });
+
+  /* --- Escape ------------------------------------------------------------
+     Measured against THE DECK. `overflow: hidden` on it hides this completely:
+     the page reports `scrollHeight === clientHeight` while content visibly runs
+     off the screen, which is the lesson the board round drew.
+     `getBoundingClientRect` still reports the true position of a clipped box.
+
+     The row's own slots are excluded and `rowFits` covers them instead, because
+     a slot is a full-height box carrying a rotation and its bounding box grazes
+     the stage edge in the wide states by a pixel or two of tilt. Failing a file
+     on the AABB of a card that is entirely on screen is the check crying wolf;
+     `rowFits` measures the CARDS, which is the fact anybody cares about. */
+  let escaped = 0;
+  for (const el of all) {
+    if (el.closest(".row")) continue;
+    const b = el.getBoundingClientRect();
+    if (
+      b.left < deckBox.left - 1 || b.right > deckBox.right + 1 ||
+      b.top < deckBox.top - 1 || b.bottom > deckBox.bottom + 1
+    ) {
+      escaped += 1;
+      if (escaped <= 4) faults.push({ el, why: "escapes" });
+    }
+  }
+
+  /* --- Silent clipping ---------------------------------------------------
+     A box cutting its own content with no ellipsis to say so. An ellipsised
+     name is an honest trade and is only counted; a `nowrap` strip 20px too long
+     for its own box looks exactly like one that fits, which is how a control
+     legend loses its last item with nothing on screen saying so.
+
+     Asked only of elements that OWN text: `scrollWidth` counts absolutely
+     positioned descendants, so every card would report as clipping -- a
+     `.mcard` is `overflow: hidden` with a label pinned inside it, which is the
+     card working. `../handheld-board/assert.js` records the same correction. */
+  const clipCandidates = textOwners.filter((el) => {
+    if (getComputedStyle(el).overflowX === "visible") return false;
+    return el.scrollWidth > el.clientWidth + 1;
+  });
+  const ellipsised = clipCandidates.filter(
+    (el) => getComputedStyle(el).textOverflow === "ellipsis"
+  );
+  const silent = clipCandidates.filter(
+    (el) => getComputedStyle(el).textOverflow !== "ellipsis"
+  );
+  for (const el of silent.slice(0, 4)) faults.push({ el, why: "silent clip" });
+
+  /* A region that flattened to nothing. `e2e/layout.spec.ts` measures this on
+     the shipped panel because at 950px the action list silently went to 2px
+     while every assertion about the buttons still passed. */
+  const collapsed = all.filter((el) => {
+    const r = el.getBoundingClientRect();
+    return r.height < 1 || r.width < 1;
+  }).length;
+
+  /* Scrollers with no reserved gutter: the reflow-on-hover bug waiting to
+     happen, invisible until content crosses the line. */
+  const scrollEls = all.filter((el) => {
+    const s = getComputedStyle(el);
+    return s.overflowY === "auto" || s.overflowY === "scroll";
+  });
+  const unguttered = scrollEls.filter(
+    (el) => getComputedStyle(el).scrollbarGutter.indexOf("stable") < 0
+  );
+  for (const el of unguttered.slice(0, 4)) faults.push({ el, why: "no gutter" });
+
+  /* Duplicate test ids: Playwright fails on these, and the four this round has
+     to carry are the reason the check is here rather than in a spec. */
+  const ids = [...DECK.querySelectorAll("[data-testid]")].map((el) => el.dataset.testid);
+  const dupes = [...new Set(ids.filter((id, i) => ids.indexOf(id) !== i))];
+
+  const imgs = [...DECK.querySelectorAll("img")];
+  const brokenImages = imgs.filter((im) => im.complete && im.naturalWidth === 0).length;
+
+  /* The four ids that have to survive the port. Every direction puts them on
+     the node a click lands on, which is what makes the port mechanical --
+     `../menu/README.md:316-324` sets the rule and this is it, checked. */
+  const REQUIRED = ["home", "create-pod", "join-pod", "browse-decks"];
+  const missingIds = REQUIRED.filter(
+    (id) => !document.querySelector('[data-testid="' + id + '"]')
+  );
+
+  /* The brief's own item, asserted rather than eyeballed. */
+  const defaultCentre = DEFAULT_INDEX === 1 && CARDS.length === 3;
+
+  const spring = DOOR.springProfile();
+  const slideReads =
+    spring.traverseMs >= 100 && spring.settleMs <= 320 && spring.overshootPx <= 8;
+  const tune = DOOR.spec ? DOOR.spec.tune : TUNE;
+
+  const out = {
+    screen: innerWidth + "x" + innerHeight,
+    scalePct: Math.round(scale * 100),
+
+    /* The round's own three */
+    labelClear,
+    labelWorstPct: Math.max(...states.map((s) => s.labelWorstPct)),
+    inkClear,
+    inkWorstPct: Math.max(...states.map((s) => s.inkWorstPct)),
+    cardSpill: states.reduce((n, s) => n + s.cardSpill, 0),
+    /* The narrowest strip of a stacked card left showing, anywhere, and the
+       widest label that has to fit in one. The first must exceed the second
+       plus the label's own inset or `labelClear` fails, which is the round's
+       one derived constraint rather than a taste. */
+    sliverPx: Math.min(...states.map((s) => s.sliverPx).filter((n) => n !== null)),
+    widestLabelPx: Math.max(...states.map((s) => s.widestLabelPx)),
+    rowFits,
+    rowWidthPx: Math.max(...states.map((s) => s.rowWidthPx)),
+    rowMarginPx: Math.min(...states.flatMap((s) => [s.rowLeftPx, s.rowRightPx])),
+    slideReads,
+    traverseMs: spring.traverseMs,
+    traverseFrames: spring.frames,
+    settleMs: spring.settleMs,
+    overshootPx: spring.overshootPx,
+    defaultCentre,
+    defaultOn: CARDS[DEFAULT_INDEX].label,
+
+    /* What the row is tuned to, so the README table is measured and a direction
+       that moved a constant cannot do it quietly. */
+    tune: {
+      step: tune.STEP, push: tune.PUSH, bunch: tune.BUNCH,
+      arc: tune.ARC, lift: tune.LIFT, raise: tune.RAISE,
+    },
+    states,
+
+    /* The standing floors */
+    cards: cards.length,
+    minCardPx: cardW.length ? Math.min(...cardW.map((c) => c.w)) : null,
+    smallCards: smallCards.length,
+
+    minFontPx: sizes.length ? Math.min(...sizes.map((s) => s.px)) : null,
+    textNodes: sizes.length,
+    belowFloor: belowFloor.length,
+    belowFloorWorst: belowFloor.slice(0, 6).map((s) => ({ px: s.px, text: s.text })),
+
+    stops: stops.length,
+    minHitPx: hits.length ? Math.min(...hits.map((h) => Math.min(h.w, h.h))) : null,
+    smallHits: smallHits.length,
+    smallHitsWorst: smallHits.slice(0, 6).map((h) => ({ w: h.w, h: h.h })),
+
+    escaped,
+    collapsedRegions: collapsed,
+    scrollers: scrollEls.length,
+    unguttered: unguttered.length,
+    ellipsised: ellipsised.length,
+    silentClips: silent.length,
+
+    /* A native tooltip opens on hover and on nothing else, so on a controller it
+       is information that cannot be reached at all. The shipped client had 45
+       and has none left; a mockup that grows one has moved a channel out of
+       reach without saying so. */
+    titleAttrs: DECK.querySelectorAll("[title]").length,
+    duplicateTestIds: dupes,
+    missingTestIds: missingIds,
+    brokenImages,
+
+    faults,
+  };
+
+  out.PASS =
+    out.labelClear &&
+    out.inkClear &&
+    out.cardSpill === 0 &&
+    out.rowFits &&
+    out.slideReads &&
+    out.defaultCentre &&
+    out.belowFloor === 0 &&
+    out.smallHits === 0 &&
+    out.smallCards === 0 &&
+    out.escaped === 0 &&
+    out.collapsedRegions === 0 &&
+    out.titleAttrs === 0 &&
+    out.unguttered === 0 &&
+    out.silentClips === 0 &&
+    out.duplicateTestIds.length === 0 &&
+    out.missingTestIds.length === 0 &&
+    out.brokenImages === 0;
+
+  return out;
+}
+
+if (typeof window !== "undefined") window.DOOR_ASSERT = DOOR_ASSERT;
+// <<< END assert.js >>>
+
+/* ---------------------------------------------------------------------------
+   02's own face, ledger and tune.
+   ------------------------------------------------------------------------ */
+
+/* The one constant this direction moves, and the reason it may.
+   `_door.js`'s note derives 112 from "the sliver has to be wider than the
+   longest label". A spine label is 26px wide however long the word is, so that
+   derivation does not apply to this file and the pile can close to 70px. */
+const CUT_TUNE = Object.assign({}, TUNE, { BUNCH: 178 });
+
+DOOR.mount({
+  title: "02 the cut",
+  rowTop: 214,
+  tune: CUT_TUNE,
+
+  face(c) {
+    return (
+      '<span class="mcard__mark ink" aria-hidden="true">' + esc(BRAND) + "</span>" +
+      '<span class="mcard__label">' + esc(c.label) + "</span>"
+    );
+  },
+
+  chrome() {
+    return (
+      '<div class="top">' + MARK +
+      '<span class="brand__mark">' + esc(BRAND) + "</span>" +
+      '<span class="top__spacer"></span>' +
+      '<span class="top__cap"><b>6</b> decks in the catalogue</span>' +
+      "</div>" +
+      '<div class="ledger" id="ledger"></div>'
+    );
+  },
+
+  /*
+   * Which card is the far one, and it is a question about `s` rather than about
+   * the selection index -- so the spine turns as the pile closes rather than
+   * snapping when the selection changes. 1.4 rather than 1.5 so the label has
+   * turned before the card it belongs to is actually covered.
+   */
+  /*
+   * How far a name has rolled onto its side, as a fraction. Nothing happens
+   * inside one place of the selection, because nothing is covering the card
+   * yet; by 1.5 it is fully a spine, which is where the pile has closed.
+   */
+  spin: (a) => Math.max(0, Math.min(1, (a - 1.05) / 0.45)),
+
+  paint(sel, s) {
+    for (let i = 0; i < CARDS.length; i += 1) {
+      const el = document.getElementById("slot-" + CARDS[i].id);
+      if (!el) continue;
+      const a = Math.abs(i - s);
+      el.classList.toggle("slot--near", a > 0.6 && a <= 1.4);
+    }
+  },
+
+  /* The ledger is rebuilt rather than mutated, because Join's half of it is a
+     control and the other two are a sentence -- and a panel that swapped an
+     input in and out by hand is a panel with two code paths in it. */
+  onSelect(c) {
+    const el = document.getElementById("ledger");
+    if (!el) return;
+    const right =
+      c.id === "join"
+        ? '<span class="code">' +
+          '<input class="code__in" id="code" data-testid="pod-code" type="text" maxlength="14" ' +
+          'spellcheck="false" placeholder="Pod code" aria-label="Pod code">' +
+          '<button class="code__go" type="button" id="go">Join</button>' +
+          "</span>"
+        : '<span class="ledger__stat">' + esc(c.stat) + "</span>";
+    el.innerHTML =
+      '<span class="ledger__l">' +
+      '<span class="ledger__verb">' + esc(c.verb) + "</span>" +
+      '<span class="ledger__line">' + esc(c.line) + "</span>" +
+      "</span>" +
+      '<span class="ledger__r">' + right + "</span>";
+    const go = document.getElementById("go");
+    if (go) go.addEventListener("click", () => DOOR.press());
+  },
+
+  wire() {
+    /* The ledger has never been built when `render()` runs -- `onSelect` is what
+       fills it and nothing has selected anything yet. Painting it once here is
+       what makes the first frame agree with every frame after it. */
+    DOOR.spec.onSelect(CARDS[DOOR.target], DOOR.target);
+  },
+
+  onPress(c) {
+    if (c.id === "join") {
+      const v = (document.getElementById("code") || {}).value || "";
+      commitPlate(v.trim() ? "Joining " + v.trim().toUpperCase() + "…" : "Type a pod code first");
+      return;
+    }
+    commitPlate(c.id === "play" ? "Dealing the table…" : "Opening the catalogue…");
+  },
+});
+</script>
+</body>
+</html>

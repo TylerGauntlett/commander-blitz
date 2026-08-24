@@ -154,7 +154,7 @@ export function PodLobby({
           className={locked ? "lock lock--on" : "lock"}
           data-testid="lock-in"
           disabled={busy || starting || !you?.deck}
-          title={you?.deck ? undefined : "Choose a deck first"}
+          data-hint={you?.deck ? undefined : "Choose a deck first"}
           onClick={() => onUpdateSeat({ locked: !locked })}
         >
           {locked ? "Unlock my card" : "Lock in my seat"}

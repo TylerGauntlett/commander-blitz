@@ -9,22 +9,46 @@
   place-items: center;
   padding: 24px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
+/*
+ * TWO ROWS, not three. The foot is inside the body now.
+ *
+ * It used to be the third row here, spanning the full width beneath both rails
+ * -- which is why the right rail stopped where the hand started. At 1280x800
+ * that rail was 514px, and the action list, the rows a turn is actually spent
+ * in, got 172 of them. Running the rail to the bottom edge instead makes it
+ * 748 and the list 363-398; `mockups/handheld-board/measure.mjs` prints both.
+ *
+ * The cost is that the hand no longer has the whole width. Retiring the left
+ * rail is what pays for it -- see `.table__body`.
+ */
 .table {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
   background: radial-gradient(120% 80% at 50% 0%, var(--felt-1) 0%, var(--felt-0) 70%),
     var(--felt-0);
 }
 
+/*
+ * The board and the rail, and the foot underneath the board alone.
+ *
+ * ONE COLUMN LESS THAN IT HAD. The left rail held the stack and the log; the
+ * log is an overlay on `View` (which a handheld already did, and no desktop
+ * ever needed a permanent 232px column for reference material) and the stack
+ * floats over the board when there is one. That returns 232px of board at every
+ * size, which is most of what the foot costs by moving into this grid.
+ *
+ * `--rail-r` is a token rather than a literal because the handheld layout
+ * narrows it; on a desktop it resolves to the 304px that was written here.
+ */
 .table__body {
   position: relative;
   display: grid;
-  /* The right rail widened from 268px to hold the action bar as well as the
-     card preview; the bar's buttons need the room the hand has taken back. */
-  grid-template-columns: 232px minmax(0, 1fr) 304px;
+  grid-template-columns: minmax(0, 1fr) var(--rail-r);
+  grid-template-rows: minmax(0, 1fr) auto;
   gap: 10px;
   min-height: 0;
   padding: 10px;
@@ -103,7 +127,10 @@
 
 .mat {
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
+  /* A token, for the reason `.table__body` gives. `logic/zoomFit.ts` reads this
+     same value to know how much lane width it is packing cards into, so a
+     literal here is a literal that has to be copied there too -- and was. */
+  grid-template-columns: var(--mat-side) minmax(0, 1fr);
   gap: 10px;
   padding: 8px;
   border: 1px solid var(--rail-line);
@@ -131,7 +158,7 @@
   min-width: 288px;
   /* 96px was sized for a column of text chips. The piles are graphics with
      labels under them and wrap to two rows below about 112px. */
-  grid-template-columns: 112px minmax(0, 1fr);
+  grid-template-columns: var(--mat-side-compact) minmax(0, 1fr);
   gap: 6px;
   padding: 6px;
 }
@@ -465,38 +492,6 @@
   color: var(--text-dim);
 }
 
-/* Opponents ---------------------------------------------------------------
- *
- * Reference only -- you never cast from one -- so the plinth gives up
- * everything that is not identity and state. The eyebrow goes (a gold-framed
- * portrait under a life total is not ambiguous), the cost goes (you are not
- * paying it), and the portrait shrinks well below the column width.
- *
- * This is load-bearing, not tidiness: `.play` caps the opponent row with
- * `fit-content(58%)`, which never shrinks below the row's min-content, so every
- * pixel of height in this column is a pixel taken off the viewer's own board.
- * `cycle3.spec.ts`'s `rowClipped` guard is what catches it going wrong. */
-.mat--compact .cmdslot {
-  gap: 1px;
-  padding: 3px;
-}
-
-.mat--compact .cmdplinth__name {
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  font-size: 8.5px;
-  text-align: center;
-}
-
-.mat--compact .cmdplinth__strip {
-  justify-content: center;
-}
-
-.mat--compact .cmdplinth__word {
-  font-size: 7.5px;
-  letter-spacing: 0.02em;
-}
-
 /* A narrow pod mat can still outgrow the row it sits in once a board gets big.
    Scroll inside the mat rather than letting `.play__opponents` clip a card in
    half at the boundary.
@@ -567,10 +562,6 @@
   border: 1px solid var(--rail-line);
   border-radius: 10px;
   background: var(--pane-well);
-}
-
-.orb--compact {
-  --seal-w: clamp(30px, 3.8vh, 42px);
 }
 
 /*
@@ -838,81 +829,6 @@
   font-size: 10px;
 }
 
-/* Commander damage ------------------------------------------------------- */
-
-/*
- * One chip per opponent, present from turn one at zero.
- *
- * The chip was a bare number, which in a four-player pod is three identical
- * numbers and no way to tell whose is whose without hovering each. It carries the
- * seat and a meter now: 21 is the number that decides the game, so "13" wants to
- * read as most of the way there rather than as a number to compare against a
- * threshold you have to remember.
- */
-.cmd-pip {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 1px 4px 2px;
-  border: 1px solid var(--rail-line);
-  border-radius: 4px;
-  background: var(--pane-well);
-  color: var(--text-dim);
-}
-
-.cmd-pip__head {
-  display: flex;
-  align-items: baseline;
-  gap: 3px;
-}
-
-.cmd-pip__who {
-  color: var(--text-faint);
-  font-size: 7.5px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.cmd-pip__n {
-  font-size: 11px;
-  font-weight: 700;
-}
-
-/* The fraction of 21, as a length. Length reads with the hue taken away, which is
-   the same reason `--warn` below spends a border weight rather than only a red. */
-.cmd-pip__meter {
-  position: relative;
-  overflow: hidden;
-  height: 3px;
-  border-radius: 2px;
-  background: rgb(255 255 255 / 0.12);
-}
-
-.cmd-pip__meter::after {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--fill, 0%);
-  border-radius: 2px;
-  background: var(--danger);
-}
-
-/* Untouched. Dimmed so three seats at zero read as the background they are, and
-   the one seat that has hit you is what the eye lands on. */
-.cmd-pip--zero {
-  opacity: 0.45;
-}
-
-/* The heavier rule is not decoration. Red is the only thing separating this from
-   its neighbour, and red is exactly what `e2e/greyscale.spec.ts` takes away --
-   a 2px border survives that and a hue does not. */
-.cmd-pip--warn {
-  border-width: 2px;
-  border-color: var(--danger);
-  background: #331616;
-  color: #ffb3b3;
-}
-
 /* Mana panel ------------------------------------------------------------ */
 
 /*
@@ -1056,6 +972,16 @@
   font-weight: 800;
 }
 
+/* Teal, and deliberately the furthest thing here from the library's purple:
+   these two sit next to each other and are the two counts most often compared. */
+.pile__leaf--hand {
+  background: linear-gradient(150deg, #1d4a46, #0f2523);
+}
+
+.pile__leaf--top.pile__leaf--hand {
+  border-color: rgb(90 200 190 / 0.45);
+}
+
 .pile__leaf--gy {
   background: linear-gradient(150deg, #4a3323, #241a12);
 }
@@ -1112,94 +1038,6 @@
   color: #fff;
 }
 
-/* An opponent's column is 112px wide and has five piles to fit across it, on
-   ONE row -- the same shape the viewer's column has, because two rows here read
-   as a different component rather than a narrower one.
- *
- * The binding constraint is not the stack, it is the *label*: `.pile` is a
- * centred flex column, so each pile is as wide as its widest child, and "HAND"
- * at 8px is wider than a 20px stack. So the budget is spent on the labels.
- *
- * Measured in the browser rather than reasoned about, because the numbers land
- * close together: at 112px, 2px of border plus 10px of `.orb__body` padding plus
- * 4px of plate padding leave 96px inside. A pile is as wide as
- * `max(stack, label)`, so at a 16px stack the five come to
- * 16 + 18.5 + 16 + 16 + 16 = 82.5, and four 2px gaps to 8. About five spare --
- * checked with the *exile* pile present, since that is the conditional fifth and
- * therefore the case that has to fit. */
-.orb--compact .orb__body {
-  padding: 8px 5px;
-}
-
-/* The foot's two upper panels at pod width.
- *
- * The label goes first: it is the widest thing on either plate and the least
- * load-bearing, and `.orb__cmd` already dropped it here before this. What is left
- * has to fit 94px inside -- 112px less 10px of body padding and 8px of plate
- * padding -- which for commander damage is three chips of about 26px plus two
- * gaps, and for mana is four groups of a 10px symbol and a numeral.
- *
- * Both plates may wrap here, unlike the piles below them: a wrapped pile row
- * stops reading as a row of comparable stacks, while a second line of mana chips
- * is just a second line of mana chips. */
-.orb--compact .orb__lab {
-  display: none;
-}
-
-.orb--compact .orb__panel {
-  gap: 3px;
-  padding: 2px 3px;
-}
-
-.orb--compact .orb__mana {
-  --pip: 10px;
-  gap: 2px 4px;
-}
-
-.orb--compact .mana-grp__n {
-  font-size: 8.5px;
-}
-
-.orb--compact .mana-grp__spend {
-  font-size: 8px;
-}
-
-.orb--compact .cmd-pip {
-  padding: 0 2px 1px;
-}
-
-.orb--compact .cmd-pip__who {
-  font-size: 6.5px;
-  letter-spacing: 0;
-}
-
-.orb--compact .cmd-pip__n {
-  font-size: 9px;
-}
-
-.orb--compact .piles {
-  /* Never two rows. A wrapped pile row reads as a different component rather
-     than a narrower one, and the comparative read the piles exist for is
-     between stacks standing side by side on one baseline. */
-  flex-wrap: nowrap;
-  gap: 2px;
-  padding: 4px 2px 3px;
-}
-
-.orb--compact .pile__stack {
-  width: 16px;
-}
-
-.orb--compact .pile__leaf--top {
-  height: 16px;
-  font-size: 8.5px;
-}
-
-.orb--compact .pile__label {
-  font-size: 6.5px;
-  letter-spacing: 0;
-}
-
 /* Lanes ---------------------------------------------------------------- */
 
 /*
@@ -1227,16 +1065,24 @@
 }
 
 /*
- * The global zone reads as a separate area, not as the right-hand end of the
- * creature row -- an inset panel rather than a border, because `.lane` spends
- * its border on the drop highlight below and a second one there would fight it.
+ * THE GLOBAL ZONE HAS NO WASH OF ITS OWN, AND IT USED TO.
  *
- * Declared above `.lane--active` on purpose: a lane being dragged into has to
- * win the background, and both selectors carry the same specificity.
+ * It was `background: rgb(255 255 255 / 0.028)` -- an inset panel, on the
+ * argument that the zone should read as a separate area rather than as the
+ * right-hand end of the creature row. It does read as one, and that is the
+ * problem: at 2.8% white over `--void-1` it is a pale rectangle sitting on the
+ * board for the whole first turn of every game, before anybody has an artifact
+ * or an enchantment to put in it, and an empty lit box is a stronger mark than
+ * anything actually on the board beside it.
+ *
+ * The split already says it. `.band--front` is `2fr 1fr` with a 10px gap and
+ * each lane carries its own label, so the boundary is stated by the layout
+ * rather than painted -- and artifacts and enchantments still land in exactly
+ * the same place. What goes is only the paint.
+ *
+ * `.lane--global` stays on the element: `Lane` writes it from `LANE_SLUG` for
+ * every lane, and it is the hook anything scoped to this zone would need.
  */
-.lane--global {
-  background: rgb(255 255 255 / 0.028);
-}
 
 .lane--active {
   border-color: var(--playable);
@@ -1323,12 +1169,44 @@
 
 /* Rails ---------------------------------------------------------------- */
 
+/*
+ * The body's three tracks, assigned by name rather than by source order.
+ *
+ * Auto-placement got this right for as long as there was exactly one layout and
+ * every sibling was always rendered. Neither is true now: the handheld body has
+ * TWO columns, and `testing/mounts.tsx` renders these wrappers one at a time
+ * with no siblings at all. Both of those turn "the second child" into a
+ * different column, silently, and the result looks entirely plausible -- which
+ * is the exact trap `mounts.tsx`'s own header warns about, arriving through the
+ * door it was not watching. Fifty-odd card stories drew their mat at the right
+ * rail's width with the cards hanging off the screen.
+ *
+ * Stated here, `styles/handheld.css` re-states only what its two-column body
+ * changes, and a lone wrapper in a story lands where the app puts it.
+ */
+.table__body > .play {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.table__body > .table__foot {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+/* The rail spans both rows, which is the whole point of the restructure. */
+.table__body > .rail--right {
+  grid-column: 2;
+  grid-row: 1 / -1;
+}
+
 .rail {
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 /* The right rail holds the card preview and the action bar. The rail itself
@@ -1386,6 +1264,70 @@
   color: var(--text-faint);
   font-size: 12px;
   font-style: italic;
+}
+
+/*
+ * THE STACK FLOATS OVER THE BOARD.
+ *
+ * It used to be the top panel of a left rail, which meant a 232px column stood
+ * open all game for a thing that is empty for most of a turn -- and urgent the
+ * moment it is not. So it is absolutely positioned over the top-left of the
+ * play area, drawn only when there is something on it, and it grows DOWN over
+ * the viewer's own panel as it deepens. That overlap is deliberate: a stack
+ * three deep is a thing you should be unable to ignore.
+ *
+ * The visual is unchanged -- `StackPanel` already drew plies at a 26px offset,
+ * each peeking out by its own name strip. Only where it hangs is different.
+ *
+ * `pointer-events` on the plies and not on the panel: it sits over the board,
+ * and a transparent 260px box that swallowed clicks on the lanes underneath is
+ * the "button that had quietly stopped being clickable" failure this codebase
+ * has already hit twice.
+ */
+.stackpanel {
+  /*
+   * A GRID ITEM SHARING THE VIEWER'S CELL, not an absolutely positioned box.
+   *
+   * Two grid items are allowed to occupy one cell, which is all this needs --
+   * and it avoids the two problems the absolute version had: it wanted a
+   * positioned ancestor (the body, whose top-left is the OPPONENTS' row on a
+   * desktop, so the pile covered somebody's name and life), and inside
+   * `.play__mine` it would have scrolled off the top with the mat.
+   */
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: start;
+  align-self: start;
+  z-index: 6;
+  margin: 10px 0 0 10px;
+  max-height: calc(100% - 20px);
+  pointer-events: none;
+  /*
+   * OPAQUE, unlike the panels it shares a rule with below.
+   *
+   * `--pane-bg` is 60% and that is right for a panel with felt behind it. This
+   * one has the player's own commander behind it, so at 60% the stack's header
+   * and the orb's name read as one interleaved string. A thing that floats over
+   * content has to stop the content.
+   */
+  background: var(--void-1);
+}
+
+/*
+ * The pile has to be TOLD its width, for the same reason it is told its height.
+ *
+ * Every ply is absolutely positioned, so the container has no intrinsic size on
+ * either axis -- `StackPanel` already computes the height in JS and says so.
+ * The width came out near zero, and with the panel clipping to it the cards
+ * were sliced to about a third. `--card-w` is on this element, so the answer is
+ * one line rather than a second number crossing the language boundary.
+ */
+.stackpile {
+  width: var(--card-w);
+}
+
+.stackpanel > * {
+  pointer-events: auto;
 }
 
 .stackpanel,
@@ -1468,6 +1410,7 @@
 
 .ticker__lines {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   max-height: 34vh;
   margin-top: 6px;
 }
@@ -1777,13 +1720,41 @@
 
 /* Hand ----------------------------------------------------------------- */
 
+/*
+ * The foot is a panel now, not a band.
+ *
+ * It used to span the full width under both rails, so a rule across the top and
+ * a near-black wash read as the edge of the screen. Inside the board's column
+ * it is a box beside the rail, and the old treatment read as a green block
+ * against an indigo table -- a leftover from the felt palette that nothing else
+ * on the board still uses.
+ */
 .table__foot {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  /*
+   * The scrollbar gutter `.play__mine` reserves, paid a second time here so the
+   * two bordered panels in this column line up.
+   *
+   * `.play__mine` scrolls and reserves its gutter permanently, which is what
+   * makes the width `state/useZoomFit.ts` solves against hold still -- but the
+   * reservation sits inside its content box, so the mat it holds stops eight
+   * pixels short of the column's right edge while this panel runs the full
+   * width. This one does not scroll and must not: an `overflow` of any kind
+   * here clips the hand card as it rises. So it steps back by the same amount
+   * instead, and the two right edges are flush at every width.
+   *
+   * `--sbw` is written by `useZoomFit`'s measure, because the number is the
+   * browser's own and no stylesheet can ask for it. The fallback is Chromium's,
+   * for the first paint before the observer has fired.
+   */
+  margin-right: var(--sbw, 8px);
   padding: 6px 10px 10px;
-  border-top: 1px solid var(--rail-line);
-  background: rgb(6 14 11 / 0.9);
+  border: 1px solid var(--rail-line);
+  border-radius: 10px;
+  background: var(--pane-bg);
+  box-shadow: var(--pane-shadow);
 }
 
 /* The hand owns the whole foot now that the action bar has moved to the right
@@ -1844,8 +1815,8 @@
  */
 .hand__slot {
   position: absolute;
-  top: -46px;
-  padding-top: 46px;
+  top: calc(-1 * var(--hand-lift));
+  padding-top: var(--hand-lift);
   transition: left var(--t-zoom) ease;
 }
 
@@ -2234,4 +2205,36 @@
 }
 .fx-banner--loss .fx-banner__text {
   color: var(--danger);
+}
+
+/*
+ * Priority, when it is not the same fact as the turn.
+ *
+ * `.track__who` says whose turn it is. On somebody else's turn, holding your
+ * own priority is the whole of a Commander player's job -- and the ribbon used
+ * to run the two together into one highlighted name, so the moment that matters
+ * most looked exactly like the moment that does not.
+ *
+ * The astral hue rather than the gold: gold is `--active`, which is the turn,
+ * and this is deliberately a different kind of thing.
+ */
+/* The ribbon's third cell: whose turn it is, and who holds priority. */
+.track__end {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.track__pri {
+  flex: none;
+  padding: 3px 10px;
+  border: 1px solid var(--astral);
+  border-radius: 999px;
+  background: rgb(143 127 232 / 0.16);
+  color: var(--astral-hi);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }

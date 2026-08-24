@@ -15,8 +15,28 @@ touched. Open any `.html` directly — no build, no server, no network.
 _orb.js                  the shared state; kept readable, inlined per file
 ```
 
-These five are about the **orb**. [`../`](../README.md) is the board
-exploration, [`../cards/`](../cards/README.md) the card face,
+These five are about the **orb** on a desktop 190px column, and they are
+**superseded by [`../self/`](../self/README.md)**, which takes the same panel to
+the 1280x800 handheld the client is now designed around.
+
+One of the three port items left open at the bottom of this file is built there
+-- the seat-shaped component that would kill `.orb--compact` is `02-banner`, and
+it turns out to need only 74px rather than a seat's 96. THE 21-NOTCH DAMAGE
+GAUGE, PORT ITEM 1, IS CLOSED RATHER THAN BUILT: that round moves commander
+damage off the viewer's panel altogether, on the grounds that the pod already
+draws it on the opponents' seats and a second copy six pixels below is the reader
+doing the deduplicating. The gauge is still the right answer -- on their card,
+not on yours.
+
+`.orb--compact` may not survive either: with commander damage gone the viewer's
+orb stops varying with the number of opponents at all. Read this round for the
+reasoning and that one for the frame.
+
+[`../seat/`](../seat/README.md) is the round between the two and takes the same component to a
+1280x800 handheld, where an opponent gets 332x84 and the two things this round
+left open -- the 21-notch damage gauge and the seat-shaped component that would
+kill `.orb--compact` -- come back as the whole problem. [`../`](../README.md) is
+the board exploration, [`../cards/`](../cards/README.md) the card face,
 [`../menu/`](../menu/README.md) the main menu and [`../flow/`](../flow/README.md)
 the setup flow; all five rounds share `../art/` and its one `manifest.json`.
 

@@ -14,7 +14,12 @@ fetch_art.py              pulls art/ (mockup 5 only)
 _state.js                 the shared board state, kept readable; inlined per file
 cards/                    a later, narrower exploration: the card face itself
 menu/                     a later exploration: the new-game screen
-handheld/                 the latest: a Steam Deck board, driven by a real pad
+handheld/                 a Steam Deck board, driven by a real pad
+seat/                     an opponent's seat at 332x84, three densities, six directions
+rail/                     the action rail at 243x514, one direction across three decisions
+self/                     your own orb at 154x518 — and what to take off it
+handheld-board/           the whole 1280x800 screen, at full fidelity
+door/                     the latest: the front door as a game menu, three cards on a Deck
 ```
 
 These five are about the **board**. [`cards/`](cards/README.md) is a separate,
@@ -24,8 +29,115 @@ instead of the letter-on-a-disc pips. It picks up three problems these mockups
 did not look at: the name colliding with its own mana cost, the invented mana
 symbols, and lands all being one tan rectangle.
 
-[`handheld/`](handheld/README.md) is the most recent, and the only one that is
-about **input** rather than about looks: five ways a Steam Deck's sticks, d-pad
+[`handheld-board/`](handheld-board/README.md) is the most recent, and the only
+round that draws **the whole 1280x800 screen** rather than one component over a
+sketch of one. It puts `seat/06-muster.html`'s opponent card, `self/03-plinth.html`'s
+player orb and `rail/`'s action panel on the same Deck, on the layout 06
+sketched, with the real board state and real art — three files, one game, one
+turn apart, differing only in what the rail is deciding. Its reason for existing
+is that every earlier round made claims its own mockup could not check: a strip
+saying "3 lands, 2 untapped" over a dashed sketch is unfalsifiable, and a row
+saying "Bloodghast 2/1" beside a grey rectangle is not the design it will be
+beside Bloodghast. So the round's own gate is **`seatsAgree`** — the seat's five
+counts, derived three independent ways, must match — and the type and target
+floors are asked of the whole screen instead of one panel. Running the rail to
+the foot of the screen the way 06 sketched it takes it from 514px to **748**, and
+the action list from the shipped board's 172px to 363–398: seven or eight rows
+without scrolling, with the card reader back off its hold. Six findings, of which
+the sharpest is that the hand overflowed its own row by 79px and sat on top of a
+button, invisibly, because the deck is `overflow: hidden` and nothing was
+asserting the number. It is also the first screen on which `self/`'s
+three visual arguments — a fourth seat joining the pod, zone chips sized against
+an opponent's, and a portrait crop — can be looked at rather than reasoned about;
+the crop, which was that direction's one stated price at 40% of the painting's
+width, comes back to 84% because this layout's foot is 122px taller and the
+portrait is the elastic member.
+
+[`door/`](door/README.md) is the most recent, and the only round whose subject is
+a **control** rather than a layout. It takes the front door -- a wordmark, a gold
+button, a text field and a footer of 11px links -- and makes a Steam Deck main
+menu out of the one game-shaped object already on it: the fan of four card backs
+at [`HomeScreen.tsx:78-87`](../frontend/src/components/lobby/HomeScreen.tsx#L78-L87),
+which today is decoration. Three cards, Decks / Play / Join, sliding apart from
+the selected one and stacking on the far side, driven by a real `Gamepad` build
+lifted whole from `handheld/`.
+
+Being about a control rather than a layout is what makes it the first round with
+**two drivers**. `measure.mjs` walks each file through all three selections,
+because the pose it opens on is the one pose in which nothing is stacked;
+`drive.mjs` presses things, because "three cards that are actually selectable" is
+a claim a still cannot check -- and it earned its place immediately by finding a
+tile that passed every layout gate in the round while being unclickable, its Join
+field sitting in the plate's centre and swallowing the click it had to swallow to
+be typeable.
+
+Its own gate is **`labelClear`**: the brief asks two cards to overlap, and
+overlap's failure mode is a card covering the one thing that says what the card
+under it *is*. From it fall the round's three portable findings -- **the stack
+depth is bounded by the longest label** (a name has to fit the sliver its card has
+left, which is why 02's spine is worth more than it looks); **a stacked card's
+name must sit on its outer edge**, which costs the launcher direction the
+left-aligned title it most wanted; and **the stack costs a card everything except
+its name**, so a direction whose idea lives in the body of the card is a direction
+the stack argues against. It is also the first surface in this folder authored *at*
+the 16px and 44px floors rather than repaired to them: eight of the shipped door's
+own text sizes are named in `handheld.css`'s generated 144-selector override list,
+which is every word on that screen bar the wordmark.
+
+[`self/`](self/README.md) is the round before it and the only one whose subject is
+**the viewer**. It started as "draw your own orb in the grammar `seat/` settled"
+and turned into a round about **subtraction**: the first pass passed every gate
+and was still busy, because a uniformity gate only proves the noise is evenly
+spaced. Two channels came off — the viewer's commander damage, which the pod
+already carries on the opponents' seats six pixels above, and the board counts,
+which re-state the 841×518 of lanes beside them. Ten cells where there were
+nineteen. And then a second correction the gates were just as blind to: with the
+room freed, the viewer's zone chips had grown to 68px beside identical 20px chips
+on the seats six pixels above, which is a component shouting at its neighbour.
+They are a seat's size again, inside transparent 44px targets — **the target is
+bigger than the ink**.
+
+It is also the only round whose ghosts are on the *other* side: the three
+opponents are real muster seats and the lanes are the dashed rectangles, since
+the question is not whether the orb is good but whether it says anything that
+seat already says. Its findings: **no gate can see redundancy** — that one has to
+be noticed; the seat's decision to demote its zone marks is a cost of 96px rather
+than a fact about zones; the commander's portrait is a control and every
+direction draws its three states (`In play` / green `Ready` / amber `Need 8`)
+rather than implying them; and once commander damage goes, **the orb stops
+varying with how many opponents are at the table at all**, which removes the last
+reason `.orb--compact` exists.
+
+[`rail/`](rail/README.md) is the round before that, and the only one that is **one
+direction drawn three times** rather than five compared: the right rail at
+243×514, answering declare-attackers, declare-blockers and the main phase out of
+the same parts. Its question is not which shape looks best but whether one shape
+survives all three decisions, so the shared master carries the grammar and a file
+may add only its own list — 01 adds no CSS at all. It starts from a fraction
+rather than a look: `handheld.css` gives the rail's four panels 514px and the
+rows that the turn is actually spent in get **172 of them**, so the round's own
+gate is `listShare` and it fails a file under half. All three come out at 78–86%.
+It also carries three findings that hold whichever direction wins — the numeral
+chip's off-centre-at-16px bug exists a second time in the hint bar's `.glyph`,
+the enlarged card's rules box has the same reflow-on-scrollbar defect as the
+action list, and **a mana cost and a card name do not both fit a 243px row at the
+16px floor**, which nothing currently says out loud.
+
+[`seat/`](seat/README.md) is the round before it, and the narrowest: **one opponent's
+seat on the handheld board**, where three of them share 1017px and the shipped
+strip answers that by deleting a channel. It is the only round with a
+*uniformity* gate — it counts the distinct paddings, gutters and cell geometries
+on the component, because "nothing lines up" turns out to be the number seven —
+and it carries three findings that hold whichever direction wins: an opponent's
+hand is a 44px button into a panel that says "Hidden"; every zone count lost its
+label at 16px with nothing put in its place; and **an opponent's seat does not
+show their board.** It shows their zones. Lands are not in the payload at all
+and the noncreature-permanent count is in it and rendered by nothing, so "how
+many lands and enchantments have they got" is unanswerable from the strip at any
+density. The round's sixth file is the first one that answers it.
+
+[`handheld/`](handheld/README.md) is the round both of those sit inside, and the only one that
+is about **input** rather than about looks: five ways a Steam Deck's sticks, d-pad
 and face buttons could drive a Commander board, each a live `Gamepad` API build
 with a keyboard fallback. It starts from a measurement taken on the board these
 five designed — at 1280x800, `shots/05-planar-art.png`'s layout puts **444 of

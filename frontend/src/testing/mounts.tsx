@@ -4,19 +4,28 @@
  * A story that renders a component bare, or in a generic full-height box, is not
  * showing you the component -- it is showing you the component somewhere the app
  * never puts it. `PlayerOrb` declares no width at all; in the game it is whatever
- * `.mat__side`'s 190px grid column gives it, and full-bleed across a canvas it is
- * a different design wearing the same class names.
+ * `.mat__side`'s `--mat-side` grid column gives it, and full-bleed across a
+ * canvas it is a different design wearing the same class names.
  *
  * So a mount is the app's own wrapper chain, by class name, and every size comes
  * out of the app's stylesheets rather than being restated here. **A layer may not
  * state a size.** There are exactly two things a layer is allowed to say for
  * itself:
  *
- *   1. Grid placement. Every layout container here is a grid whose tracks are
- *      filled by siblings a story does not render, so a lone child auto-places
- *      into track 1 -- `.table__body` is `232px | 1fr | 304px`, and a right rail
- *      that forgot to say `gridColumn: 3` renders at 232px, silently, looking
- *      entirely plausible. That is the trap this whole file exists to avoid.
+ *   1. Grid placement, and ONLY where the app has no name for it. Every layout
+ *      container here is a grid whose tracks are filled by siblings a story does
+ *      not render, so a lone child auto-places into track 1 and renders at some
+ *      other component's width -- silently, and looking entirely plausible.
+ *      That is the trap this whole file exists to avoid.
+ *
+ *      A hard-won corollary: **a track number is a size in disguise.** The body's
+ *      three columns were written here as literals, and the handheld layout has
+ *      two -- so `gridColumn: 2` moved the board into the right rail and every
+ *      card story drew a 243px mat with its cards off the screen. Anything that
+ *      differs between layouts has to come from the stylesheet, so `board.css`
+ *      now assigns those tracks by class (`.table__body > .play`) and this file
+ *      says nothing about them. What is left here is placement the app really
+ *      does state inline, and it is the same in both layouts.
  *   2. A value the app itself sets from JavaScript, which no stylesheet holds.
  *      `--card-w` on `.lane` is the only one, and it is set by calling the same
  *      `cardWidthVar(CARD_SCALE.own)` that `Lane.tsx` calls.
@@ -43,6 +52,19 @@ interface Layer {
   style?: CSSProperties;
   /** An empty stand-in sibling whose box this component is sized against. */
   fill?: string;
+  /**
+   * A stand-in sibling rendered AFTER the children, with optional children of
+   * its own.
+   *
+   * `fill` covers a neighbour above; this covers one below, and it exists for
+   * one specific thing: the handheld foot. `ActionPanel` portals its commit
+   * slab and its tool strip into `.foot__slab` and `.foot__tools`, so a story
+   * that renders the panel with no foot shows both still sitting in the rail --
+   * an arrangement the handheld app does not have. Supplying the foot is
+   * supplying the neighbour, exactly as `fill` does; the portal then puts them
+   * where the game puts them, and the story is the game again.
+   */
+  after?: { className: string; style?: CSSProperties; children?: string[] };
 }
 
 interface Mount {
@@ -64,7 +86,22 @@ const SCREEN_CENTER: Layer = { ...SCREEN, className: "screen screen--center" };
 
 const TABLE: Layer = { className: "table" };
 const TABLE_BODY: Layer = { className: "table__body", style: { gridRow: 2 } };
-const PLAY: Layer = { className: "play", style: { gridColumn: 2 } };
+/*
+ * No `gridColumn` here, and that is the fix rather than an omission.
+ *
+ * It said `gridColumn: 2`, which is the board's column on a DESKTOP. The
+ * handheld body has two tracks, not three, so the same literal put the board in
+ * the right rail -- a 243px mat with its cards hanging off the screen, across
+ * every Card, Lane, CardStack, CardFace and PlayerMat story. A number that is
+ * right in one layout and wrong in the other is precisely the kind of restated
+ * size this file's header forbids; it was allowed in as "placement" and turned
+ * out to be a size in disguise.
+ *
+ * `board.css` assigns all three tracks by class now (`.table__body > .play`
+ * and friends) and `handheld.css` re-states the two that move, so placement
+ * comes out of the app's stylesheet like every other dimension here.
+ */
+const PLAY: Layer = { className: "play" };
 const MAT: Layer = { className: "mat" };
 const MAT_COMPACT: Layer = { className: "mat mat--compact" };
 const POD: Layer = { className: "pod" };
@@ -72,19 +109,36 @@ const TABLEWRAP: Layer = { className: "tablewrap", style: { gridRow: 2 } };
 const CAT: Layer = { className: "cat" };
 const DOS: Layer = { className: "dos" };
 
+/*
+ * The board with the foot standing in beside it.
+ *
+ * The `after` hangs off `.table__body` and not off `.table`: the foot moved
+ * inside the body when the right rail was given the full height, so a sibling
+ * of the table is a sibling of the wrong thing. It states no grid track for the
+ * reason the header gives -- `board.css` places it by class, and a number here
+ * would be a size in disguise.
+ *
+ * Only mounts whose component portals into the foot need this; everything else
+ * would be paying for an empty row it never looks at.
+ */
+const TABLE_BODY_WITH_FOOT: Layer = {
+  ...TABLE_BODY,
+  after: {
+    className: "table__foot",
+    children: ["foot__slab", "foot__tools"],
+  },
+};
+
 const board = [SCREEN, TABLE];
 const tableBody = [...board, TABLE_BODY];
+const tableBodyWithFoot = [...board, TABLE_BODY_WITH_FOOT];
 const play = [...tableBody, PLAY];
 const playMine = [...play, { className: "play__mine", style: { gridRow: 2 } }];
 const playOpponents = [...play, { className: "play__opponents" }];
 const matSide = [...playMine, MAT, { className: "mat__side" }];
 const matSideCompact = [...playOpponents, MAT_COMPACT, { className: "mat__side" }];
 const matLanes = [...playMine, MAT, { className: "mat__lanes", style: { gridColumn: 2 } }];
-const matLanesCompact = [
-  ...playOpponents,
-  MAT_COMPACT,
-  { className: "mat__lanes", style: { gridColumn: 2 } },
-];
+const matLanesCompact = [...playOpponents, MAT_COMPACT, { className: "mat__lanes" }];
 const pod = [SCREEN, POD];
 const podHand = [...pod, TABLEWRAP, { className: "podhand", style: { gridRow: 2 } }];
 const catalog = [SCREEN, CAT];
@@ -102,18 +156,32 @@ export const MOUNTS = {
 
   /* ---- the board ---- */
   trackRow: { where: "the phase ribbon's row of .table", layers: board },
-  tableBody: { where: "the board's three-column body", layers: tableBody },
+  tableBody: { where: "the board's body: the board, the foot and the rail", layers: tableBody },
+  /*
+   * The foot is a child of the BODY now, not of the table, and it states no
+   * track at all.
+   *
+   * `board.css` and `handheld.css` place it by class, and a number written here
+   * is a size in disguise -- which is the trap this file's own header is about,
+   * and the one that once drew fifty card stories at the right rail's width.
+   */
   tableFoot: {
-    where: "the foot, under the board",
-    layers: [...board, { className: "table__foot", style: { gridRow: 3 } }],
+    where: "the foot, under the board and beside the rail",
+    layers: [...tableBody, { className: "table__foot" }],
   },
-  railLeft: {
-    where: "the left rail (232px)",
-    layers: [...tableBody, { className: "rail rail--left", style: { gridColumn: 1 } }],
-  },
+  /*
+   * There is no `railLeft`. The left rail is retired at every size: the log is
+   * an overlay on `View` and the stack floats over the board. A story that
+   * wants either mounts `tableBody` and lets it place itself.
+   */
   railRight: {
-    where: "the right rail (304px)",
-    layers: [...tableBody, { className: "rail rail--right", style: { gridColumn: 3 } }],
+    where: "the right rail, running the full height beside the board",
+    layers: [...tableBody, { className: "rail rail--right" }],
+  },
+  /* The log, where it now lives at every size: a panel over the board. */
+  logOverlay: {
+    where: "the log overlay, over the board",
+    layers: [...board, { className: "logover" }],
   },
   /*
    * The right rail with the card preview above it, as a stand-in.
@@ -126,10 +194,18 @@ export const MOUNTS = {
    */
   railRightUnderPreview: {
     where: "the right rail, under the card preview",
-    layers: [
-      ...tableBody,
-      { className: "rail rail--right", style: { gridColumn: 3 }, fill: "preview" },
-    ],
+    layers: [...tableBody, { className: "rail rail--right", fill: "preview" }],
+  },
+  /*
+   * The same rail, plus the foot the handheld layout portals into.
+   *
+   * `ActionPanel` is the only component that renders into two places at once,
+   * so it is the only mount that needs a foot. On a desktop the foot stands
+   * empty and the panel looks exactly as it always did.
+   */
+  railRightUnderPreviewWithFoot: {
+    where: "the right rail, under the preview, with the foot below",
+    layers: [...tableBodyWithFoot, { className: "rail rail--right", fill: "preview" }],
   },
   play: { where: "the middle column", layers: play },
   playMine: { where: "your half of the middle column", layers: playMine },
@@ -137,14 +213,13 @@ export const MOUNTS = {
 
   /* ---- one player's mat ---- */
   matSide: { where: "your mat's info column (190px)", layers: matSide },
-  matSideCompact: { where: "an opponent's info column (112px)", layers: matSideCompact },
+  matSideCompact: {
+    where: "an opponent's seat, the full width of their mat",
+    layers: matSideCompact,
+  },
   orbBody: {
     where: "inside your player orb",
     layers: [...matSide, { className: "orb" }, { className: "orb__body" }],
-  },
-  orbBodyCompact: {
-    where: "inside an opponent's player orb",
-    layers: [...matSideCompact, { className: "orb orb--compact" }, { className: "orb__body" }],
   },
   matLanes: { where: "your mat's battlefield column", layers: matLanes },
   bandFront: {
@@ -239,6 +314,13 @@ export function Mounted({ mount, children }: { mount: MountId; children: ReactNo
       <div key={`${depth}-${layer.className}`} className={layer.className} style={layer.style}>
         {layer.fill ? <div className={layer.fill} aria-hidden="true" /> : null}
         {inner}
+        {layer.after ? (
+          <div className={layer.after.className} style={layer.after.style}>
+            {(layer.after.children ?? []).map((c) => (
+              <div key={c} className={c} />
+            ))}
+          </div>
+        ) : null}
       </div>
     ),
     children,

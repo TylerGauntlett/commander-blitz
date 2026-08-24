@@ -23,6 +23,24 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
       return;
     await takeAction(page, ["keep", "play_land", "cast", "pass"]);
   }
+
+  /*
+   * Leave the board reachable, not merely built.
+   *
+   * A modal decision -- discarding to hand size is the one that bites -- takes
+   * more presses to answer than a step budget of twelve has left, so this used
+   * to return with a prompt still up. `.prompt-backdrop` is
+   * `position: fixed; inset: 0`, so every later `hover()` on a board card
+   * waited out the whole test timeout against a surface it could never reach,
+   * and the failure named the hover rather than the dialog behind it.
+   */
+  for (let i = 0; i < 12; i += 1) {
+    const dialog = page.getByTestId("prompt-dialog");
+    if (!(await dialog.isVisible().catch(() => false))) return;
+    const choice = dialog.locator("[data-action-id]:not([disabled])").first();
+    if (!(await choice.count())) return;
+    await choice.click();
+  }
 }
 
 /*

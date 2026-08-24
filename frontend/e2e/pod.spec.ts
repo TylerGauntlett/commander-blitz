@@ -405,6 +405,33 @@ test.describe("a pod with two people in it", () => {
     await guestContext.close();
   });
 
+  test("typing a seed leaves the caret in the seed field", async ({ page }) => {
+    /*
+     * A `fill()` would never have caught this, which is why the rest of the
+     * suite did not: the bug lives between keystrokes.
+     *
+     * The ring re-derives itself after every commit -- that is what keeps it on
+     * a card the engine has just replaced -- and a controlled input commits on
+     * every character. So the resolve was re-focusing the first control on the
+     * screen, and a seed typed one digit at a time arrived as one digit, with
+     * the pod's `Copy` button wearing the ring.
+     */
+    await setInstant(page);
+    await page.goto("/");
+    await page.getByTestId("create-pod").click();
+    await page.getByTestId("new-game").waitFor({ timeout: 15_000 });
+
+    const seed = page.getByLabel("Seed");
+    await seed.click();
+    await seed.pressSequentially("2451", { delay: 40 });
+
+    await expect(seed).toHaveValue("2451");
+    await expect(seed).toBeFocused();
+    // And the ring is on the field rather than on a button nobody is using:
+    // off the board a stop *is* a focusable, so the two cannot disagree.
+    await expect(seed).toHaveAttribute("data-cursor", "");
+  });
+
   test("a bad code says so rather than opening an empty pod", async ({ page }) => {
     await setInstant(page);
     await page.goto("/");

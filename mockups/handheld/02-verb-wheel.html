@@ -1382,12 +1382,46 @@ const Pad = (() => {
   const DEAD = 0.30;          // Deck sticks rest noisily; 0.30 is past the noise
   const FIRE = 0.55;          // a direction is meant once the stick crosses this
   const RELEASE = 0.35;       // ...and is not meant again until it drops below this
-  const REPEAT_FIRST = 400;   // ms a direction must be held before it repeats
-  const REPEAT_NEXT = 95;     // ms between repeats after that
+
+  /* THE THUMB IS AN ANALOG INPUT AND A FIXED REPEAT RATE THROWS THAT AWAY.
+   *
+   * This was `REPEAT_FIRST = 400`, `REPEAT_NEXT = 95`, and the number was the
+   * same whether the stick was barely past the fire line or buried in the
+   * corner. That is a d-pad wearing a stick: the only thing the extra 45% of
+   * travel bought you was nothing.
+   *
+   * Every console UI that feels good does it the other way round. A nudge steps
+   * ONE, deliberately, because a nudge is what you use when you know exactly
+   * where you are going. A shove sweeps, because a shove is what you use when
+   * you are crossing thirty permanents to reach the lands. The thumb already
+   * knows which one it is doing; the loop just has to read it.
+   *
+   * Two knobs, both here, both linear and both honest:
+   *
+   *   push        how far past FIRE the stick is, rescaled to 0..1. It picks
+   *               the interval between REPEAT_SLOW and REPEAT_FAST.
+   *   run         how many repeats this hold has already fired. It eases the
+   *               interval down a further 28% over the first seven, which is
+   *               what stops a long lane feeling like a metronome you are
+   *               waiting on.
+   *
+   * A d-pad and the keyboard have no analog to read, so they stand at KEY_T --
+   * deliberately the middle of the range rather than either end, because a
+   * digital press means "one step" and should not inherit the sweep.
+   */
+  const REPEAT_FIRST_SLOW = 360;  // ms before the first repeat, at a nudge
+  const REPEAT_FIRST_FAST = 180;  // ...and at a full shove
+  const REPEAT_SLOW = 155;        // ms between repeats, at a nudge
+  const REPEAT_FAST = 46;         // ...and at a full shove
+  const REPEAT_FLOOR = 38;        // never faster than this, however long the hold
+  const KEY_T = 0.5;              // where a digital direction sits on that ramp
+  const ACCEL_OVER = 7;           // repeats the run-in takes to reach...
+  const ACCEL_FLOOR = 0.72;       // ...this multiple of the interval
 
   let handlers = {};
   let prev = {};              // button name -> was down last frame
   let held = {};              // direction -> ms the next repeat is due
+  let run = {};               // direction -> repeats fired without releasing
   let latched = null;         // the stick's current sector, or null while centred
   let connected = false;
   let raf = 0;
@@ -1477,6 +1511,34 @@ const Pad = (() => {
 
   const REPEATS = new Set(["up", "down", "left", "right"]);
 
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
+
+  /** Where this direction sits on the ramp, 0 = a nudge, 1 = a full shove.
+      ONLY A DIRECTION COMING FROM THE STICK IS ANALOG, and it takes three
+      checks to be sure of that rather than one. `latched` is the direction
+      whatever its source, because the keyboard fallback writes into it too --
+      so with a pad plugged in and the keyboard driving, reading the stick's
+      magnitude here measures a stick sitting at rest and hands every key press
+      the SLOWEST rate on the ramp. A d-pad press has the same shape. Both are
+      digital, both mean "one step", and both stand at KEY_T. */
+  function pushOf(name) {
+    if (keyDown.has(name) || keyLatch.has(name)) return KEY_T;
+    const p = pads()[0];
+    if (!p || latched !== name) return KEY_T;
+    const m = Math.hypot(axis(p, 0), axis(p, 1));
+    if (m < RELEASE) return KEY_T;          // the stick is centred: this is the d-pad
+    return clamp01((m - FIRE) / (1 - FIRE));
+  }
+
+  /** The interval before the next repeat of a held direction, in ms. */
+  function repeatMs(name, first) {
+    const t = pushOf(name);
+    if (first) return lerp(REPEAT_FIRST_SLOW, REPEAT_FIRST_FAST, t);
+    const accel = Math.max(ACCEL_FLOOR, 1 - ((run[name] || 0) / ACCEL_OVER) * (1 - ACCEL_FLOOR));
+    return Math.max(REPEAT_FLOOR, lerp(REPEAT_SLOW, REPEAT_FAST, t) * accel);
+  }
+
   function frame(now) {
     // The array getGamepads() hands back is a SNAPSHOT. Caching the Gamepad
     // object gives you buttons frozen at the moment you cached it, which is the
@@ -1496,12 +1558,14 @@ const Pad = (() => {
       const was = prev[name];
       if (isDown && !was) {
         fire(name);
-        if (REPEATS.has(name)) held[name] = now + REPEAT_FIRST;
+        if (REPEATS.has(name)) { run[name] = 0; held[name] = now + repeatMs(name, true); }
       } else if (isDown && was && REPEATS.has(name) && now >= held[name]) {
         fire(name);
-        held[name] = now + REPEAT_NEXT;
+        run[name] = (run[name] || 0) + 1;
+        held[name] = now + repeatMs(name, false);
       } else if (!isDown) {
         delete held[name];
+        delete run[name];
       }
       prev[name] = isDown;
     }
@@ -1540,6 +1604,21 @@ const Pad = (() => {
     rumble,
     presses: () => presses,
     resetPresses: () => { presses = 0; },
+    /* What the ramp is doing right now. A control the player cannot feel the
+       edges of is a control they will not trust, so 06 prints this on the
+       bezel while a direction is held -- the rate is a number, and the number
+       moves with the thumb. The bezel and not the screen, because it is a note
+       to whoever is reviewing this and not part of the Deck's own UI. */
+    sweep() {
+      const dir = latched;
+      if (!dir || !REPEATS.has(dir) || held[dir] === undefined) return { dir: null, push: 0, ms: 0, run: 0 };
+      const t = pushOf(dir);
+      const accel = Math.max(ACCEL_FLOOR, 1 - ((run[dir] || 0) / ACCEL_OVER) * (1 - ACCEL_FLOOR));
+      return {
+        dir, push: t, run: run[dir] || 0,
+        ms: Math.round(Math.max(REPEAT_FLOOR, lerp(REPEAT_SLOW, REPEAT_FAST, t) * accel)),
+      };
+    },
     start(h) {
       handlers = h || {};
       addEventListener("keydown", (ev) => {
@@ -2043,6 +2122,36 @@ function HANDHELD_ASSERT() {
       curRect.right <= innerWidth + 1 && curRect.bottom <= innerHeight + 1
     : false;
 
+  /* THE RING WENT OUT WITHOUT ANYTHING SAYING SO.
+     A cursor drawn from an attribute is a cursor that fails SILENTLY when the
+     node carrying it is replaced -- and 06 was doing exactly that on the two
+     regions it rebuilds incrementally, one of which holds the commit slab. The
+     symptom on screen is no ring at all, and the symptom in this file was
+     `cursors: 0`, which cannot be failed on its own because 02 and 04 rest
+     there on purpose.
+
+     What CAN be failed is the disagreement: the state names a stop, the stop is
+     on screen, and it is not wearing the cursor. That is never intentional in
+     any of the six, and it is the difference between "nothing is selected" and
+     "something is selected and you cannot see it".
+
+     ASKED INSIDE THE FOCUS ROOT, WHICH IS THE SAME QUESTION THE APP ASKS. With
+     an overlay up, the stop `S.cur` names is usually still in the document,
+     sitting behind the veil -- and the card reader is a surface with no stops
+     at all, so its correct state is a live `S.cur` and no ring anywhere. Asking
+     this of the whole stage instead of the topmost layer failed the reader for
+     doing exactly the right thing, which is the gate enforcing a rule the
+     design does not have. Same three-line rule as `stopRoot()`: whatever is on
+     top owns the ring, and the gate has to agree about what "on top" means. */
+  const FOCUS_ROOT = ROOT.querySelector(".wheelwrap") || ROOT.querySelector(".veil") || ROOT;
+  let ringLost = false;
+  try {
+    if (typeof S !== "undefined" && S && S.cur) {
+      const owner = FOCUS_ROOT.querySelector(`[data-stop="${CSS.escape(S.cur)}"]`);
+      ringLost = !!owner && !owner.hasAttribute("data-cursor");
+    }
+  } catch { /* a file without an `S.cur` is not being asked this question */ }
+
   /* Read the STYLE as well as the width. `outline-width: 3px` with
      `outline-style: none` computes as a perfectly healthy 3, and draws nothing
      -- which is exactly what a bare `:focus { outline: none }` does to the
@@ -2086,6 +2195,7 @@ function HANDHELD_ASSERT() {
 
     cursors: cursors.length,
     cursorOnScreen: curOnScreen,
+    ringLost,
     ringWidthPx: ringW,
     ringStyle,
 
@@ -2117,6 +2227,7 @@ function HANDHELD_ASSERT() {
     (out.minCardPx === null || out.minCardPx >= CARD_FLOOR) &&
     out.smallHits === 0 &&
     out.cursors <= 1 &&
+    out.ringLost === false &&
     (out.cursors === 0 || (out.cursorOnScreen && out.ringWidthPx >= RING_FLOOR)) &&
     out.spilledElements === 0 &&
     out.collapsedRegions === 0 &&

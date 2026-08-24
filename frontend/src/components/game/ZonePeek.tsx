@@ -87,6 +87,7 @@ export function ZonePeek({ state, reasons }: Props) {
             className="peek"
             role="dialog"
             aria-modal="true"
+            data-modal-root
             data-testid="zone-peek"
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

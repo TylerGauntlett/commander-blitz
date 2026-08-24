@@ -68,12 +68,66 @@ export default defineConfig({
             provider: "playwright",
             instances: [{ browser: "chromium" }],
             /*
-             * Fixed on purpose. The zoom solver reads `clientWidth`/
-             * `clientHeight`, so a canvas that varied with the machine would
-             * make `data-zoom-board` vary with it -- and the stories that
-             * assert on card geometry would pass or fail by monitor.
+             * DECLARED, AND NOT WHAT THE STORIES ACTUALLY GET. Worth knowing.
+             *
+             * The tester is an iframe that Storybook's Vitest addon sizes to
+             * 1200x900 per story, and it wins: `browser.viewport`,
+             * `instances[].viewport`, a `--window-size` launch arg and a
+             * `page.viewport()` call from `beforeEach` were all measured, and
+             * every one of them was reset before the play function ran.
+             *
+             * That was harmless for as long as nothing branched on the
+             * viewport. It stopped being harmless the moment something did:
+             * `HANDHELD_QUERY` is `(max-width: 1366px)`, so at 1200 EVERY story
+             * matched it and the compact body rendered in the project whose job
+             * is the desktop one.
+             *
+             * So the layout is decided by the toolbar rather than by the canvas
+             * -- `preview.tsx` stamps `data-desktop` or `data-handheld`, and
+             * both `styles/handheld.css` and `state/useHandheld.ts` treat an
+             * explicit choice as beating the query. This value stays because it
+             * is what the suite MEANS, and because the zoom solver reads
+             * `clientWidth`, so a canvas that varied by machine would make
+             * `data-zoom-board` vary with it.
              */
             viewport: { width: 1600, height: 950 },
+          },
+        },
+      },
+      /*
+       * The same stories, at a Steam Deck's panel.
+       *
+       * A THIRD PROJECT RATHER THAN A SECOND VIEWPORT ON THE SECOND, which is
+       * the split `playwright.config.ts` already argues for: the desktop
+       * numbers every existing story asserts must never move, and they would
+       * move the instant this canvas did. Running the whole suite at 1280x800
+       * would also fail dozens of stories that are *correctly* designed for a
+       * wider board.
+       *
+       * So it is opt-in by tag. A story tagged `handheld` runs in both, and has
+       * to hold at both -- which is the honest statement of what the compact
+       * layout promises.
+       *
+       * The size matters and is not decorative: `handheld.css` re-values
+       * `--rail-r`, `--mat-side`, `--pod-seat-h` and `--hand-lift` inside a
+       * MEDIA QUERY, so a canvas at 1600 gets the handheld structure (the
+       * attribute) with the desktop tokens -- a board that exists nowhere. Only
+       * a real 1280x800 canvas exercises both halves at once.
+       */
+      {
+        extends: true,
+        plugins: [storybookTest({ configDir: ".storybook", tags: { include: ["handheld"] } })],
+        test: {
+          name: "storybook-handheld",
+          setupFiles: [".storybook/vitest.setup.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: "playwright",
+            instances: [{ browser: "chromium" }],
+            // See the note above: declared, and the toolbar is what actually
+            // decides the layout. These stories carry `handheld: "on"`.
+            viewport: { width: 1280, height: 800 },
           },
         },
       },

@@ -6,8 +6,14 @@ import { App } from "./App";
 import "./theme.css";
 import "./styles/cards.css";
 import "./styles/board.css";
+// After `board.css`: the seat re-shapes `.mat--compact`, which board.css
+// declares. Same reason `handheld.css` loads last.
+import "./styles/seat.css";
+import "./styles/reader.css";
+import "./styles/groups.css";
 import "./styles/ui.css";
 import "./styles/lobby.css";
+import "./styles/handheld.css";
 
 // The engine is authoritative and every mutation returns fresh state, so there
 // is nothing to refetch in the background.

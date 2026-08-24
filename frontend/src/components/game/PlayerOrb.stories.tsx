@@ -10,7 +10,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
-import { APP_BOX } from "../../testing/appGeometry";
+import { APP_VAR } from "../../testing/appGeometry";
 import { expectMountedLike } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { gameView, player } from "../../testing/fixtures";
@@ -57,7 +57,7 @@ export const Viewer: Story = {
      * chain it spans whatever it is given, which is a different design wearing
      * the same class names, and is exactly what this story used to show.
      */
-    expectMountedLike(orb, { width: APP_BOX.matSide });
+    expectMountedLike(orb, { width: APP_VAR.matSide });
 
     const life = await canvas.findByTestId("life-0");
     expect(life.textContent).toContain("40");
@@ -78,35 +78,22 @@ export const Viewer: Story = {
   },
 };
 
-/** An opponent's, in the 112px column a compact mat gives it. */
-export const Opponent: Story = {
-  args: { ...seat(), isViewer: false, isActive: false, hasPriority: false, compact: true },
-  parameters: { automtg: { mount: "matSideCompact" } },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expectMountedLike(await canvas.findByTestId("player-0"), {
-      width: APP_BOX.matSideCompact,
-    });
-  },
-};
-
 export const LowLife: Story = { args: seat({ life: 3 }) };
 
 /**
- * Fifteen from one opponent: past the warning line, six short of lethal.
+ * Fifteen taken from one opponent, and this panel says nothing about it.
  *
- * Keyed by the *player* who dealt it, unlike `commander_tax` next to it -- see
- * the note on `PlayerView.commander_damage_taken`. A fixture keyed by commander
- * oid renders a row of honest zeroes and looks completely fine.
+ * It used to carry a chip per opposing seat with a meter under it: the loudest
+ * object in the column, answering only "how close is each of them to killing
+ * me" and nothing about the other direction. Both directions are two arrows on
+ * that opponent's own life bar now -- see `OpponentSeat`.
  */
 export const CommanderDamage: Story = {
   args: seat({ commander_damage_taken: { "1": 15 } }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const panel = await canvas.findByTestId("cmddmg-0");
-    const pip = panel.querySelector('[data-from="1"]') as HTMLElement;
-    expect(pip.dataset.amount).toBe("15");
-    expect(pip.className, "15 of 21 should be reading as a warning").toContain("cmd-pip--warn");
+    await canvas.findByTestId("player-0");
+    expect(canvasElement.querySelector('[data-testid="cmddmg-0"]')).toBeNull();
   },
 };
 
@@ -198,3 +185,21 @@ export const TwoCommanders: Story = {
 
 /** Input gated while narration plays. */
 export const Locked: Story = { args: { ...seat(), locked: true } };
+
+/**
+ * This column is the viewer's, and nobody else's.
+ *
+ * It used to draw for opponents too, at two-thirds the size, with a summary
+ * line where the viewer got nothing -- so a pod was three control panels for
+ * controls nobody could press. An opponent is an `OpponentSeat` now, which
+ * answers what have they got on the battlefield instead of offering a commander
+ * you cannot cast. The spine went with them.
+ */
+export const NoSpineAnywhere: Story = {
+  args: seat(),
+  play: async ({ canvasElement }) => {
+    if (canvasElement.querySelector(".orb__spine")) {
+      throw new Error("the summary line belongs to OpponentSeat now");
+    }
+  },
+};

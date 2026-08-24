@@ -1,5 +1,5 @@
 /**
- * The hovered card, full size, with its rules text readable.
+ * The hovered card, with its rules text readable.
  *
  * The old client wrote `hoveredOid` into its store and nothing ever read it;
  * oracle text lived only in a native `title` tooltip. On a board of 104px
@@ -7,18 +7,38 @@
  *
  * Rendered with `StaticCard`, never `Card`: a second `layoutId` for the same
  * oid would make framer try to animate the board card into the preview.
+ *
+ * ## Two bodies, one component
+ *
+ * A 1280px board gives this rail 243px, and a card frame at that width is 116px
+ * across -- SMALLER than the board card it is supposed to be helping you read,
+ * with `object-fit: cover` throwing away most of the painting to get there. So
+ * the compressed variant is not a smaller card: it is a **landscape window**
+ * onto the same `art_crop`, which is 626x457. `mockups/handheld-board/`
+ * measures 227x84 as keeping the painting's full width for a third of the
+ * height, and the 78px that hands back is what the rules text is made of.
+ *
+ * ONE COMPONENT AND NOT TWO, because a second one would be a second subscriber
+ * to `hoveredOid` and a second `findCard` per hover -- and `input/cursor.ts` is
+ * explicit that what cost this app its frame rate was components subscribing to
+ * what the pointer is on.
+ *
+ * `useHandheldLayout` and not `useHandheld`: this swaps a NODE, so it has to
+ * agree with the stylesheet in Storybook, where the Layout toolbar sets the
+ * attribute without resizing anything.
  */
 
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
-import { artistOf } from "../../logic/cardArt";
-import { isWounded, keywordLabel } from "../../logic/cardStyle";
+import { type ImageMap, artState, artUrlFor, artistOf } from "../../logic/cardArt";
+import { isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
+import { useHandheldLayout } from "../../state/useHandheld";
 import { StaticCard } from "./Card";
-
-/** Ratio of `--card-w-base`; see logic/cardSize.ts. */
+import { ManaSymbol } from "./ManaSymbol";
+import { SymbolText } from "./SymbolText";
 
 interface Props {
   state: GameView;
@@ -35,9 +55,166 @@ function cardStatus(card: CardView): string {
   return notes.length > 0 ? `On the battlefield, ${notes.join(", ")}` : "On the battlefield";
 }
 
+/**
+ * The compressed body: a landscape window, and the text that fits under it.
+ *
+ * Three findings from `mockups/handheld-board/` are encoded here.
+ *
+ * **The P/T goes on the art, not on the type line.** The first draft put
+ * "Legendary Creature — Serpent · 5/5" on one 227px line; it ellipsised, and
+ * the half it dropped was the number.
+ *
+ * **The panel is a fixed height and the RULES are what give.** Content-sized it
+ * comes to 179px on "Trample." and 260 on three clauses, so the action list
+ * below would grow and shrink and every row would slide under the cursor
+ * mid-turn -- which is the thing `.preview`'s own height note already exists to
+ * stop on a desktop.
+ *
+ * **The fact list is dropped.** Keywords are in the rules text, status is the
+ * tap state and the lane it is in, the controller is whose mat it is on, and
+ * the artist is not why anybody opens this at 1280x800.
+ *
+ * **So is the unplayable reason**, which used to be the last row. See the note
+ * on `.reader__rules` below.
+ */
+function CompressedBody({ card, images }: { card: CardView; images: ImageMap }) {
+  const art = artUrlFor(images, card);
+  const pips = manaPips(card.mana_cost);
+  const pt =
+    card.power !== null && card.toughness !== null ? `${card.power}/${card.toughness}` : null;
+
+  return (
+    <>
+      {/*
+        `undefined` draws NOTHING, and that is not the same as `null`.
+
+        `undefined` means the image map has not been fetched yet; `null` means
+        this printing genuinely has no art. Drawing the plate for both would
+        flash a hatch across the panel for the first second of every game, on
+        every card the pointer crossed. See `logic/cardArt.ts`, which documents
+        the two states looking identical on screen as its own small finding.
+      */}
+      {art !== undefined && (
+        <div
+          className={art === null ? "reader__art reader__art--empty" : "reader__art"}
+          data-art-state={artState(images, card.card_id)}
+        >
+          {art !== null && <img className="reader__img" src={art} alt="" aria-hidden="true" />}
+          {pt && <span className="reader__pt tabular">{pt}</span>}
+        </div>
+      )}
+
+      <div className="reader__body">
+        <div className="reader__nm">
+          {card.is_commander && (
+            <span className="crown" aria-label="Commander">
+              &#9819;
+            </span>
+          )}
+          <span className="reader__nm-text">{card.name}</span>
+          {pips.length > 0 && (
+            <span className="reader__cost">
+              {pips.map((pip) => (
+                <ManaSymbol code={pip.symbol} className={`pip--${pip.tone}`} key={pip.key} />
+              ))}
+            </span>
+          )}
+        </div>
+
+        {/* Ellipsised rather than wrapped: a type line that wrapped would take
+            its height out of the rules box, which is the one thing on this
+            panel that has to be readable in full. */}
+        <div className="reader__tl">{card.type_line}</div>
+
+        {/*
+          The rules text, and it is what the rest of this panel exists to make
+          room for.
+
+          IT USED TO SHARE THE COLUMN WITH "Needs {4}{G}{G}{G} -- you have {G}".
+          That sentence is two lines at the 16px floor and it is `flex: none`,
+          so it took its height out of the one box here that is allowed to give
+          -- and on a card with real rules text the result was Elder Deep-Fiend
+          cut 75px into its own paragraph, mid-word, with no scrollbar drawn.
+          The reason a card is dim is a fact about the hand, not about the card,
+          and `HandFan` already draws it there as `.hand__hint`; it is no longer
+          suppressed on a handheld, so nothing was lost by moving it back.
+        */}
+        {card.oracle_text && (
+          <div className="reader__rules">
+            <SymbolText text={card.oracle_text} />
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+/**
+ * The desktop rail's card and fact list, unchanged.
+ *
+ * Kept as it was so `orb.spec.ts` ("hovering a commander fills the preview
+ * rail"), `art.spec.ts` ("credits the illustrator") and `acceptance.spec.ts`
+ * keep passing against a surface this round did not set out to change.
+ */
+function FullBody({
+  card,
+  state,
+  artist,
+}: {
+  card: CardView;
+  state: GameView;
+  artist: string | null;
+}) {
+  return (
+    <>
+      {/*
+        The `big` variant, which is the one card on screen that is not a 1.4
+        portrait: it is as wide as the rail and as tall as its rules text needs,
+        with absolute type sizes. Scaling the portrait card up instead -- what
+        this did -- left the rules box squeezed by the card's own aspect ratio
+        and clipped after a line or two, on the one surface whose entire job is
+        showing that text.
+
+        It sets its own `--card-w`, so there is deliberately no inline width
+        here to fight with it.
+      */}
+      <StaticCard card={card} variant="big" />
+      <dl className="preview__facts">
+        {card.keywords.length > 0 && (
+          <>
+            <dt>Keywords</dt>
+            <dd>{card.keywords.map(keywordLabel).join(", ")}</dd>
+          </>
+        )}
+        {isWounded(card) && (
+          <>
+            <dt>Damage</dt>
+            <dd className="preview__hurt">{card.damage} marked</dd>
+          </>
+        )}
+        {/* What this permanent is *doing* right now, which the frame cannot
+            show and is the first thing you look for mid-combat. */}
+        <dt>Status</dt>
+        <dd>{cardStatus(card)}</dd>
+        <dt>Controller</dt>
+        <dd>{state.players[card.controller]?.name ?? card.controller}</dd>
+        {/* Crediting the illustrator is the one thing the rail was missing once
+            it started showing their work. */}
+        {artist && (
+          <>
+            <dt>Art</dt>
+            <dd>{artist}</dd>
+          </>
+        )}
+      </dl>
+    </>
+  );
+}
+
 export function CardPreview({ state }: Props) {
   const hoveredOid = useUiStore((s) => s.hoveredOid);
   const images = useUiStore((s) => s.images);
+  const compressed = useHandheldLayout();
   const card = hoveredOid === null ? null : findCard(state, hoveredOid);
   const artist = card ? artistOf(images, card.card_id) : null;
 
@@ -51,7 +228,10 @@ export function CardPreview({ state }: Props) {
    * glanced at something. See `.rail--right .preview` in board.css.
    */
   return (
-    <section className="preview pane" data-testid="card-preview">
+    <section
+      className={compressed ? "preview preview--reader pane" : "preview pane"}
+      data-testid="card-preview"
+    >
       <AnimatePresence mode="wait">
         {card ? (
           <motion.div
@@ -62,46 +242,11 @@ export function CardPreview({ state }: Props) {
             exit={{ opacity: 0, y: -8 }}
             transition={ease}
           >
-            {/*
-              The `big` variant, which is the one card on screen that is not a
-              1.4 portrait: it is as wide as the rail and as tall as its rules
-              text needs, with absolute type sizes. Scaling the portrait card up
-              instead -- what this did -- left the rules box squeezed by the
-              card's own aspect ratio and clipped after a line or two, on the
-              one surface whose entire job is showing that text.
-
-              It sets its own `--card-w`, so there is deliberately no inline
-              width here to fight with it.
-            */}
-            <StaticCard card={card} variant="big" />
-            <dl className="preview__facts">
-              {card.keywords.length > 0 && (
-                <>
-                  <dt>Keywords</dt>
-                  <dd>{card.keywords.map(keywordLabel).join(", ")}</dd>
-                </>
-              )}
-              {isWounded(card) && (
-                <>
-                  <dt>Damage</dt>
-                  <dd className="preview__hurt">{card.damage} marked</dd>
-                </>
-              )}
-              {/* What this permanent is *doing* right now, which the frame
-                  cannot show and is the first thing you look for mid-combat. */}
-              <dt>Status</dt>
-              <dd>{cardStatus(card)}</dd>
-              <dt>Controller</dt>
-              <dd>{state.players[card.controller]?.name ?? card.controller}</dd>
-              {/* Crediting the illustrator is the one thing the rail was
-                  missing once it started showing their work. */}
-              {artist && (
-                <>
-                  <dt>Art</dt>
-                  <dd>{artist}</dd>
-                </>
-              )}
-            </dl>
+            {compressed ? (
+              <CompressedBody card={card} images={images} />
+            ) : (
+              <FullBody card={card} state={state} artist={artist} />
+            )}
           </motion.div>
         ) : (
           <motion.p
@@ -112,7 +257,7 @@ export function CardPreview({ state }: Props) {
             exit={{ opacity: 0 }}
             transition={ease}
           >
-            Hover a card to read it.
+            {compressed ? "Point at a card to read it." : "Hover a card to read it."}
           </motion.p>
         )}
       </AnimatePresence>

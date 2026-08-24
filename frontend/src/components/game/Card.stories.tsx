@@ -60,9 +60,10 @@ export const Tapped: Story = {
     expect(box.width).toBeGreaterThan(box.height);
 
     /*
-     * And the box is *on* the card. The rims are `.card::after` on this outer
-     * box, so a box that has the right shape in the wrong place draws a border
-     * beside the card rather than round it.
+     * And the box is *on* the card. The rims are `.card__actor::after`, and
+     * `.card__actor` is 100% of this outer box, so a box that has the right
+     * shape in the wrong place draws a border beside the card rather than round
+     * it.
      *
      * Here the card is a flex item -- `laneCards` ends in `.lane__cards`, which
      * is `display: flex` -- and that is a formatting context root, so this was
@@ -76,6 +77,78 @@ export const Tapped: Story = {
         `the rim's ${edge} edge is not on the tapped card's ${edge} edge`,
       ).toBeLessThan(1);
     }
+  },
+};
+
+/**
+ * THE RIM IS INSIDE THE TRANSFORM, WHICH IS THE FIX FOR "THE GLOW DOES NOT GO
+ * ROUND THE CARD".
+ *
+ * `fx/actuators.ts`'s `lean` eases in and *stays*: a staged attacker holds a
+ * translate, a tilt of up to 6deg and a 1.03 scale on `.card__actor` for as long
+ * as it is declared. While the rim was a pseudo-element of `.card` -- the
+ * PARENT of the node carrying that transform -- the card stepped out from under
+ * its own halo, and the pin stayed behind with it. Both are painted on
+ * `.card__actor` now.
+ *
+ * The lean itself is driven from `Table`, so this poses the geometry rather than
+ * the actuator: it writes the transform this story's subject would be holding
+ * and asserts what has to be true of it. Tapped as well as staged, because the
+ * two compose -- the outer box swaps to landscape, the pivot turns inside it,
+ * and the rim has to end up round the result either way.
+ */
+export const StagedAndTapped: Story = {
+  args: { card: pool.grizzlyBears({ tapped: true }), staged: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Grizzly Bears");
+    const card = canvasElement.querySelector(".card") as HTMLElement;
+    const actor = canvasElement.querySelector(".card__actor") as HTMLElement;
+
+    // 1. The rim is on the actor, and is not on the outer box any more. A
+    //    pseudo-element has no rect to measure, so this is the only direct
+    //    reading of *which element it is painted on* available.
+    expect(
+      getComputedStyle(actor, "::after").content,
+      "the rim should be on .card__actor",
+    ).toBe('""');
+    expect(
+      getComputedStyle(card, "::after").content,
+      "the rim should no longer be on .card",
+    ).toBe("none");
+
+    // 2. And it is lit: `.card--staged` is a class on `.card`, so the state and
+    //    the paint are on different elements and the selector has to bridge them.
+    await waitFor(() =>
+      expect(
+        getComputedStyle(actor, "::after").boxShadow,
+        "a staged card should carry the amber rim",
+      ).not.toBe("none"),
+    );
+
+    // 3. The pin travels with the card rather than staying on the outer box.
+    const pin = canvasElement.querySelector(".card__pin") as HTMLElement;
+    expect(pin, "a staged card has a pin").toBeTruthy();
+    expect(actor.contains(pin), "the pin belongs inside .card__actor").toBe(true);
+
+    /*
+     * 4. The actual defect: a transform written where `lean` writes it moves the
+     *    rim with the card. `.card__actor`'s rect *is* the rim's rect inset by
+     *    3px, so its moving is the rim's moving -- and `.card` holding still is
+     *    what the arrows and the death ghost depend on, since they measure
+     *    `[data-oid]` on the outer box.
+     */
+    const before = { card: card.getBoundingClientRect(), actor: actor.getBoundingClientRect() };
+    actor.style.transform = "translate(14px, -9px) rotate(6deg) scale(1.03)";
+    await waitFor(() =>
+      expect(actor.getBoundingClientRect().top).not.toBeCloseTo(before.actor.top, 1),
+    );
+    const after = { card: card.getBoundingClientRect(), actor: actor.getBoundingClientRect() };
+    expect(after.card.top, "the layout box must not move with the lean").toBeCloseTo(
+      before.card.top,
+      1,
+    );
+    expect(after.card.left).toBeCloseTo(before.card.left, 1);
   },
 };
 

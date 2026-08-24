@@ -177,6 +177,16 @@
   }
 }
 
+/* A dot that pulses forever is the one thing on this panel that never stops, so
+   it is also the one most worth turning off. Held at the dim end rather than at
+   full: the mark still has to read as "waiting", not as "here is a decision". */
+@media (prefers-reduced-motion: reduce) {
+  .acts__dot {
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
 .acts__hint {
   margin: 0;
   flex: 0 0 auto;
@@ -191,6 +201,7 @@
   gap: 6px;
   flex: 1 1 auto;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   /* A floor as well as a ceiling. On a short viewport this list is the first
      thing a flex parent squeezes, and it flattens to 0 without any content
      changing -- so the decision surface disappears while every assertion about
@@ -577,6 +588,92 @@
   color: var(--astral-hi);
 }
 
+/* The settings menu ------------------------------------------------------
+ *
+ * Sound, undo and quit live in here. See `settingsOpen` in `ActionPanel.tsx`
+ * for the argument; what follows is only how it is drawn.
+ *
+ * IT OPENS UPWARDS, and that is not a preference. This strip is the last row of
+ * the foot on a handheld and the last row of the panel on a desktop -- below it
+ * is the screen edge in one case and the commit slab in the other, and a menu
+ * that opened downwards would either be off screen or over the one button the
+ * turn is waiting on. Above it is the action list, which is exactly the thing a
+ * player is not reading at the moment they reach for the gear.
+ */
+.settings {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.settings__menu {
+  position: absolute;
+  z-index: 40;
+  /* `bottom: 100%` is the upward half: the menu's bottom edge is the button's
+     top edge, so it grows away from the screen edge however many rows it has. */
+  bottom: calc(100% + 6px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 148px;
+  padding: 4px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 9px;
+  background: var(--pane-bg);
+  box-shadow: 0 -10px 28px rgb(0 0 0 / 0.55);
+}
+
+/*
+ * A row, and it keeps its word.
+ *
+ * The three controls in here were bare glyphs in the strip, which was the right
+ * trade when they were competing for 280px of rail. Inside a menu the width is
+ * the menu's own, so the glyph goes back to being a hint about the word beside
+ * it rather than the whole label -- and "Quit game" is not a thing anybody
+ * should have to recognise from a cross.
+ */
+.settings__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 30px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.settings__item:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.06);
+  color: var(--text);
+}
+
+.settings__item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Leaving the game is the one row in here that is not recoverable, so it is the
+   one row that says so. Colour only -- it is not promoted, moved or enlarged,
+   because "loud" and "last resort" are different things. */
+.settings__item--danger {
+  color: var(--danger);
+}
+
+/* Sized in `em` rather than px so it follows the row it labels -- the handheld
+   floor raises `.settings__item` to 16px and the glyph has to come with it.
+   `aria-hidden`, so the font floor does not measure it as text. */
+.settings__glyph {
+  width: 1.2em;
+  text-align: center;
+}
+
 /* Full control keeps a word rather than a glyph: it is a mode with consequences
    for how the whole game plays, and an icon for that would be a puzzle. It is
    also the only tool wide enough to matter to the budget above, so it is the one
@@ -601,86 +698,215 @@
   background: rgb(12 34 54 / 0.6);
 }
 
-/* The commit dock: one large control for the thing the turn is waiting on, and
-   the alternatives demoted to a row beneath it.
-
-   It sits *outside* the panel, as a sibling. The option list scrolls and this
-   must not scroll with it: the button the turn is waiting on is the one control
-   that can never be one flick of a wheel away. */
+/* The commit dock ---------------------------------------------------------
+ *
+ * EVERY CHOICE, THE DECISION, NO CHOICE -- one row, in that order.
+ *
+ * This was a full-width slab with two outlined 12px pills under it: a whole
+ * second row spent on the two answers nobody presses, and a dock that read as
+ * one button with a caption. `mockups/handheld-board/` draws the relationship
+ * those three controls actually have -- all of a set, the set, none of it --
+ * as a filled and an empty of one shape flanking the thing you came here to
+ * press. That puts all three at the 44px floor inside the height the slab was
+ * taking on its own.
+ *
+ * It sits *outside* the scrolling pane, as a sibling: the option list scrolls
+ * and the button the turn is waiting on can never be one flick of a wheel
+ * away. The well around it is what makes that separation visible rather than
+ * merely true. */
+/*
+ * ONE NOTE ROW AND ONE BAR, IN EVERY STATE.
+ *
+ * The well was always in the document and its contents were not, so between
+ * decisions it collapsed to its own 18px of padding and sprang back to 66 or 90
+ * when an action arrived -- and the rail moved with it every time a turn
+ * passed. `ActionPanel` now renders the note unconditionally and falls back to
+ * an idle slab, so the height below is content-derived and constant rather than
+ * content-derived and not.
+ *
+ * `flex: 0 0 auto` stays load-bearing: the dock must never take slack from
+ * `.acts__list` above it, because the list is the decision and this is one
+ * button.
+ */
 .commit-dock {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   flex: 0 0 auto;
+  padding: 8px;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: var(--pane-well);
+  box-shadow: var(--pane-shadow);
 }
 
-/* The slab is `width: 100%` of the rail, which is why it lifts on hover but does
-   not scale: a full-width element scaled to 1.02 is 2% wider than the column it
-   is in, so the button grew past its own panel and out over the rail's edge every
-   time the pointer crossed it. Anything else here can scale; this cannot. */
+.bar {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  width: 100%;
+}
+
+/*
+ * What the count used to be doing on the button.
+ *
+ * "Attack with 0" -> "Attack with 10" is a label that changes width, so the
+ * button re-centres under the thumb every time a creature is staged -- while
+ * you are aiming at it. The number is on its own line now, which is also the
+ * line a block forecast wants.
+ */
+.commit-note {
+  margin: 0;
+  /* It renders a non-breaking space outside combat, so it needs a line box to
+     reserve whether or not there is a glyph in it. `1lh` rather than a px
+     literal because the handheld floor raises this element's font size. */
+  min-height: 1lh;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--edge);
+  color: var(--text-dim);
+  font-size: 12px;
+  text-align: center;
+}
+
+/*
+ * The slab, now the middle of a row rather than the whole of one.
+ *
+ * `width: 100%` is gone with the row -- it lifts on hover and does not scale,
+ * because a flex child scaled to 1.02 grew past its own well every time the
+ * pointer crossed it.
+ */
 .commit {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  width: 100%;
-  padding: 17px 22px;
-  border-radius: 14px;
-}
-
-.commit__main {
-  font-size: 21px;
-  font-weight: 900;
-}
-
-/* The key that already does this. Enter has committed a declaration since the
-   keyboard handler in Table.tsx was written; nothing said so. */
-.commit__key {
-  padding: 3px 9px;
-  border-radius: 6px;
-  background: rgb(0 0 0 / 0.2);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.commit:disabled .commit__key {
-  background: rgb(0 0 0 / 0.14);
-}
-
-.commit-alt {
-  display: flex;
   gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 10px;
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffd479, #e8ac3c);
+  color: var(--dial-ink);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  transition: filter var(--t-fast);
+}
+
+.commit:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* Nothing staged is not a failure state, so this is a quiet button and not a
+   red one -- but it is also not the gold one, because gold here means "this is
+   what the turn is waiting on" and with nothing staged it is not. */
+.commit:disabled,
+.commit[data-empty="true"] {
+  border-color: var(--edge);
+  background: rgb(255 255 255 / 0.05);
+  color: var(--text-faint);
+  cursor: not-allowed;
 }
 
 /*
- * Two real choices, not two pieces of dim text.
+ * Nothing to press yet.
  *
- * These were `.btn--ghost`, whose border is transparent and whose colour is
- * `--text-faint` -- the tier meant for utilities you almost never press. But
- * "All attack" and "No attacks" are two of the three answers to the question on
- * screen, and rendering them as bare text made the dock look like one button
- * with a caption. An outline is enough to say they are pressable without
- * competing with the slab above them.
+ * Deliberately the same box as `.commit`, in the same quiet treatment
+ * `:disabled` already defines -- gold means "this is what the turn is waiting
+ * on", and while the engine is playing out somebody else's turn it is not. What
+ * makes it read as waiting rather than as broken is the mark inside it, which
+ * is the panel's own: `.acts__dot` is what `.acts__thinking` uses in the head.
  */
-.commit-alt button {
-  flex: 1;
-  padding: 8px 10px;
-  border: 1px solid var(--edge);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-dim);
-  font-size: 12px;
-  font-weight: 600;
-  text-align: center;
-  transition: border-color var(--t-fast), color var(--t-fast);
+.commit--idle {
+  border-color: var(--edge);
+  background: rgb(255 255 255 / 0.05);
+  color: var(--text-faint);
+  cursor: default;
 }
 
-.commit-alt button:hover:not(:disabled) {
-  border-color: var(--edge-hi);
+.commit__dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Staggered, so the three read as one travelling pulse rather than as three
+   things blinking in unison. `.acts__dot` carries the animation itself; this
+   only offsets it. The `prefers-reduced-motion` block beside `@keyframes pulse`
+   stops all three together. */
+.commit__dots .acts__dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.commit__dots .acts__dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.commit__main {
+  overflow: hidden;
+  font-size: 18px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * All and none, as marks.
+ *
+ * `.commit-mark`, not `.mark`: `lobby.css` has owned `.mark` since the brand
+ * lockup was written, and the two screens never being on-screen together is
+ * exactly the argument for renaming rather than relying on it.
+ *
+ * DROP THE WORD, KEEP THE MARK, PUT THE NAME ONE INPUT AWAY. The name is on
+ * `aria-label` and `data-hint`, which the hint bar surfaces from the cursor as
+ * well as from the pointer -- a `title` would have reached the mouse and
+ * nothing else, and this bar is driven by a controller at least as often.
+ *
+ * THE MARKS ARE DRAWN, NOT TYPED. They were `▣` and `▢`, filled and empty of
+ * one square -- which is the true relationship (every legal choice, or none of
+ * them) and an unreadable picture of it. Playtest found two squares in the same
+ * box that nobody could tell apart, on a bar where one of them ends the
+ * declaration. `components/ui/ActionIcon.tsx` draws them now, which is the
+ * conclusion `SeatIcon` had already reached about characters that have to be
+ * recognised rather than read.
+ */
+.commit-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  /* Stretch rather than `height`, so the three controls share one edge
+     whichever of them is tallest -- the handheld 44px floor raises this box's
+     `min-height` and would otherwise leave it 4px short of the slab. */
+  align-self: stretch;
+  width: 44px;
+  min-height: 48px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.03);
+  color: var(--text-dim);
+  line-height: 1;
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+
+/*
+ * `.ico` is 14px and nudged up 2px, because `seat.css` sizes it against a
+ * numeral's baseline in a seat row. Neither applies in a grid-centred 44px
+ * button, where 14px reads as a mistake rather than as a mark. `handheld.css`
+ * already overrides `.ico` per context for the same reason.
+ */
+.commit-mark .ico--mark {
+  width: 20px;
+  height: 20px;
+  vertical-align: 0;
+}
+
+.commit-mark:hover:not(:disabled) {
+  border-color: var(--astral);
+  background: rgb(255 255 255 / 0.06);
   color: var(--text);
 }
 
-.commit-alt button:disabled {
+.commit-mark:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -775,6 +1001,7 @@
   flex-wrap: wrap;
   gap: 12px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   padding: 4px;
 }
 
@@ -1137,6 +1364,7 @@
   margin: 0;
   padding: 0 0 0 2px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   list-style: none;
 }
 

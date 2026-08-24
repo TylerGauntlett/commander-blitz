@@ -292,6 +292,20 @@ function arrival(source: number | null): TimedFx[] {
   return [
     { at: 0, kind: "emit", preset: "dust", at_point: { kind: "object", oid: source } },
     { at: 0, kind: "actuate", oid: source, move: "pulse", power: 0.8 },
+    /*
+     * A permanent hitting the table is the single most frequent thing that
+     * happens in a game of Magic, and until now it made no sound and threw no
+     * light -- a puff of dust and a scale pulse, both of which are easy to miss
+     * on a busy board and impossible to notice if you happened to be reading
+     * your hand.
+     *
+     * `thump` already exists for exactly this ("a card landing on the table:
+     * low, dull, over immediately") and was never wired to an arrival. The
+     * flash is the same beat in the visual channel, for a player with sound off
+     * -- which on a handheld is most of them.
+     */
+    { at: 0, kind: "sound", sound: "thump" },
+    { at: 20, kind: "flash", at_point: { kind: "object", oid: source }, tone: "neutral" },
   ];
 }
 

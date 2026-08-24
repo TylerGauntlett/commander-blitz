@@ -1,0 +1,271 @@
+/* ==========================================================================
+   The reader: the card you are pointing at, compressed
+   ==========================================================================
+
+   `mockups/handheld-board/`'s `.reader`, and it is the compact half of
+   `components/game/CardPreview.tsx` rather than a component of its own.
+
+   THE PICTURE IS A LANDSCAPE WINDOW AND NOT A SMALL CARD, which is the whole
+   argument. `art_crop` is 626x457 -- landscape, 1.37:1 -- and a card frame is
+   1:1.4. A card-shaped reader at this width is 116px across, which is SMALLER
+   than the board card it is supposed to be helping you read, and `cover` throws
+   away most of the painting to get there. A 227x84 window keeps the full width
+   and trims only the top and bottom margins, where an `art_crop` keeps its
+   background: more of the picture in a third of the height, and the 78px it
+   hands back is what the rules text is made of.
+   ========================================================================== */
+
+/*
+ * A FIXED HEIGHT, AND THE RULES ARE WHAT GIVE.
+ *
+ * Content-sized this is 179px on "Trample." and 260px on Aesi's three clauses,
+ * so the action list below it would grow and shrink and every row would slide
+ * under the cursor mid-turn. That is the same failure `.preview`'s own height
+ * note records on a desktop, arriving at a third of the size.
+ *
+ * 236px was `mockups/handheld-board/measure.mjs`'s number, and it was
+ * affordable for the first time because the rail runs the full height of the
+ * screen -- 748px rather than 514 -- and still left the list 363-398.
+ *
+ * IT IS 296 NOW. Forty of that went to the picture, which grew 84 -> 124, and
+ * the last twenty to the rules box, because with the picture at its floor the
+ * wordiest card in an opening hand was still half a line short. Neither came
+ * out of the text: a card you are looking up is a card whose text you are
+ * reading, and a bigger picture bought with two fewer lines of rules is a bad
+ * trade on the one surface whose job is reading. What gives instead is
+ * `.acts__list`, which is a scroller by design and by gate -- see `SCROLLERS`
+ * in `e2e/handheldAssert.ts` -- and which still clears its 74px floor by a
+ * wide margin at the shortest viewport the layout supports.
+ */
+[data-handheld] .rail--right .preview--reader {
+  height: 296px;
+  padding: 6px;
+}
+
+[data-handheld] .preview--reader .preview__body {
+  gap: 4px;
+  align-items: stretch;
+}
+
+/* --- The window ---------------------------------------------------------- */
+
+/*
+ * 124px, and the aspect is the argument.
+ *
+ * `art_crop` is 626x457 -- 1.37:1. At 84px on a 216px rail the window was
+ * 2.57:1, so `cover` kept the full width and threw away 47% of the painting's
+ * height: the top of a creature's head and the ground it is standing on, which
+ * between them are most of what makes one card recognisable from another at a
+ * glance. 124px is 1.74:1 and keeps about 79% -- still a landscape window
+ * rather than a small card (see the note at the top of this file for why that
+ * distinction is the whole design), but a window you can actually read a
+ * painting through.
+ *
+ * The 40px comes out of the panel's own height, not out of `.reader__rules`.
+ */
+/*
+ * ...AND IT IS THE THING THAT GIVES, on a card with more words than the box.
+ *
+ * `flex: 0 0 auto` here meant the picture was inviolable and the rules box
+ * absorbed every shortfall on its own -- Elder Deep-Fiend at 107px of a 166px
+ * paragraph, stopping mid-word. That is the wrong priority twice over. A
+ * picture at 76px is still a picture; a rule cut in half is not a rule. And the
+ * text below the fold is not merely inconvenient to reach, it is UNREACHABLE
+ * with a mouse: this panel draws whatever the pointer is on, so moving the
+ * pointer onto it to scroll clears the very card being read.
+ *
+ * THE SHRINK FACTOR IS 200, and the size of it is the point. Flexbox splits a
+ * shortfall in proportion to `basis x shrink`, so anything modest here splits
+ * it -- at 6 the picture gave 6/7 of each pixel and the text still came up
+ * short, and raising the panel then mostly grew the picture back rather than
+ * the paragraph. At 200 the art absorbs essentially the whole shortfall until
+ * it reaches its floor, and only what is left over after that touches the
+ * words. That is the rule stated as a number: the picture gives first, and it
+ * gives all of it.
+ *
+ * The floor is 76px -- 2.8:1, the widest this window can be and still read as
+ * a window onto a painting rather than as a stripe.
+ *
+ * A card whose text fits keeps the whole 124px, which is every land, every
+ * vanilla creature and most of a deck.
+ */
+.reader__art {
+  position: relative;
+  flex: 0 200 auto;
+  width: 100%;
+  height: 124px;
+  min-height: 76px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--pane-well);
+}
+
+.reader__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px var(--edge-hi);
+}
+
+/*
+ * `object-position: 50% 38%` and a lift, not a look.
+ *
+ * An `art_crop` puts its subject a little above centre and keeps background at
+ * the bottom, so trimming evenly loses the face. The filter is the same one the
+ * seat's window uses: the panel behind it is dark enough that an untouched crop
+ * reads as muddy at 84px.
+ */
+.reader__img {
+  /*
+   * `block`, because an inline image sits on a baseline and reserves the
+   * descender under it -- four pixels of nothing inside an 84px window, which
+   * `npm run audit:stories` reported as `.reader__art` clipping on five
+   * stories. The window is `overflow: hidden`, so the only symptom was the
+   * bottom of the painting quietly missing.
+   */
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 38%;
+  filter: saturate(1.12) contrast(1.03) brightness(1.08);
+}
+
+.reader__art--empty {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(155deg, #2c2740, #14111f);
+}
+
+/*
+ * The P/T lives on the picture.
+ *
+ * The first draft put "Legendary Creature — Serpent · 5/5" on one 227px line.
+ * It ellipsised, and the half it dropped was the number -- which is backwards:
+ * a type line is a thing you skim and a P/T is a thing you are looking up.
+ */
+.reader__pt {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  z-index: 2;
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: rgb(9 8 20 / 0.86);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.22);
+  color: #f7f4ea;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+/* --- The text ------------------------------------------------------------ */
+
+.reader__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+}
+
+/*
+ * `flex: none` on both of these, and it is a fix rather than a tidy.
+ *
+ * They are flex items in a column with a fixed height, so their default
+ * `flex-shrink: 1` made them negotiable -- and on a card with more rules text
+ * than the box could hold, the browser took the shortfall out of them.
+ * Measured: `.reader__tl` rendered 11px tall around a 20px line, so "Legendary
+ * Creature - Octopus Horror" was a strip of clipped letterforms with the rules
+ * text apparently sitting on top of it. The rules box is the one thing here
+ * that is allowed to give; it already says so with `min-height: 0`, and these
+ * two now say the opposite as plainly.
+ */
+.reader__nm {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.reader__nm-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* An inline-flex wrapper, so a cost can never break across two lines. */
+.reader__cost {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.reader__tl {
+  flex: none;
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*
+ * The part that gives, and it reserves its scrollbar.
+ *
+ * A styled `::-webkit-scrollbar` is a classic bar rather than an overlay, so it
+ * takes its width the instant it appears -- and re-wraps every line under it.
+ * On the one surface whose job is reading, text that reflows as it grows is the
+ * worst possible place for that. `e2e/handheldAssert.ts`'s `unguttered` gate
+ * fails any scroller that has not reserved it.
+ */
+.reader__rules {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 3px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge-hi) transparent;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/*
+ * ...and it says so when there is more.
+ *
+ * `scrollbar-color` alone resolved to a thumb at 0.3 alpha on a dark panel,
+ * which is invisible at arm's length -- so a paragraph that ran past the box
+ * simply stopped mid-word and read as broken rather than as scrolled. The
+ * gutter is already reserved (above), so a visible thumb costs no reflow and
+ * appears exactly when, and only when, there is something below the fold.
+ */
+.reader__rules::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reader__rules::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgb(170 160 255 / 0.55);
+}
+
+.reader__rules::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/*
+ * WHY A CARD IS DIM IS THE HAND'S FACT, AND IT IS TOLD IN THE HAND.
+ *
+ * `.hand__hint` used to be suppressed here, because the reader drew the same
+ * sentence as `.reader__why` and one sentence belongs in one place. The reader
+ * no longer draws it: two lines of "Needs {4}{G}{G}{G} -- you have {G}" were
+ * two lines taken out of the rules box, which is the half of that panel a
+ * player actually opened it for. So the hint comes back, where the pointer
+ * already is and where the dimming it explains is.
+ */

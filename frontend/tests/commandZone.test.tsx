@@ -56,7 +56,6 @@ function viewWith(cards: CardView[], view: Partial<GameView> = {}): GameView {
 
 interface Options {
   playable?: number[];
-  compact?: boolean;
   disabled?: boolean;
   seal?: React.ReactNode;
 }
@@ -68,7 +67,6 @@ function renderZone(cards: CardView[], options: Options = {}, view: Partial<Game
       state={viewWith(cards, view)}
       pid={0}
       playableOids={new Set(options.playable ?? [])}
-      compact={options.compact}
       disabled={options.disabled}
       seal={options.seal}
       onHover={(oid) => hovered.push(oid)}
@@ -97,10 +95,10 @@ describe("hovering a plinth fills the preview rail", () => {
     expect(hovered).toEqual([99, null]);
   });
 
-  it("reports the hover on an opponent's compact plinth", () => {
+  it("reports the hover on a plinth that cannot be cast from", () => {
     // You never cast from one, so it was permanently disabled -- and reading an
     // opponent's commander is most of why you look at their panel at all.
-    const { getByTestId, hovered } = renderZone([commander()], { compact: true });
+    const { getByTestId, hovered } = renderZone([commander()]);
     fireEvent.mouseEnter(getByTestId("commander-99"));
     expect(hovered).toEqual([99]);
   });

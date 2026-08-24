@@ -122,7 +122,33 @@ interface UiState {
    */
   images: ImageMap;
 
+  /** The log section in the left rail is expanded. Desktop only. */
   logOpen: boolean;
+  /**
+   * The log is up as an overlay over the board. Handheld only.
+   *
+   * A separate flag from `logOpen` rather than a reuse of it, because the two
+   * mean genuinely different things and want opposite defaults. In the rail,
+   * "open" is a section that is expanded and costs the player nothing, so it
+   * starts open. As an overlay it covers the board, so arriving at the table
+   * with it up would hide the game behind its own history -- it starts closed.
+   */
+  logOverlay: boolean;
+  /**
+   * Whose board is drawn in the viewer's lane area, or `null` for your own.
+   *
+   * At 1280x800 an opponent is a 96px seat and their cards are not drawn at
+   * all, so "let me actually look at that board" needs an answer -- and the one
+   * a pod wants is not a peek but a *place*: you go and stand at their seat,
+   * read it, and come back. Pressing a seat latches it here.
+   *
+   * IN THE STORE AND NOT IN `Table`, because four things read it: the unwind on
+   * `B`, `PlayerMat` (which mat draws lanes), `OpponentSeat` (which seat wears
+   * the ring), and the strip that says whose board you are looking at. The R2
+   * hold is deliberately NOT here -- a hold has no meaning across a re-render,
+   * and a hold kept in a store is a hold that can get stuck.
+   */
+  viewingPid: number | null;
   peek: PeekTarget | null;
   error: string | null;
   speed: Speed;
@@ -151,6 +177,9 @@ interface UiState {
   setImages: (images: ImageMap) => void;
   openStackGroup: (key: string | null) => void;
   toggleLog: () => void;
+  toggleLogOverlay: () => void;
+  /** Look at a seat's board, or `null` to come back to your own. */
+  setViewing: (pid: number | null) => void;
   setPeek: (peek: PeekTarget | null) => void;
   setError: (message: string | null) => void;
   toggleMuted: () => void;
@@ -165,6 +194,8 @@ export const useUiStore = create<UiState>((set) => ({
   openStack: null,
   images: null,
   logOpen: true,
+  logOverlay: false,
+  viewingPid: null,
   peek: null,
   error: null,
   speed: storedSpeed(),
@@ -206,6 +237,8 @@ export const useUiStore = create<UiState>((set) => ({
 
   openStackGroup: (key) => set({ openStack: key }),
   toggleLog: () => set((s) => ({ logOpen: !s.logOpen })),
+  toggleLogOverlay: () => set((s) => ({ logOverlay: !s.logOverlay })),
+  setViewing: (pid) => set({ viewingPid: pid }),
   setImages: (images) => set({ images }),
   setPeek: (peek) => set({ peek }),
   setError: (message) => set({ error: message }),

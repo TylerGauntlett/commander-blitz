@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Regions: the trap, the dial, and the card hold
+   ==========================================================================
+
+   `L1`/`R1` step between the board's five regions and trap the ring inside the
+   one it is in, because directional navigation crosses a 96px seat strip, three
+   lanes, a fanned hand and a 243px rail one card at a time.
+   `docs/handheld-playtest.md` Loop 1 records walking the board as "a bad way to
+   ask can you reach everything": reachable and reachable-in-under-a-second are
+   different properties, and only the second is playable.
+
+   See `input/groups.ts` for the model and `input/stops.ts` for how the group
+   trap composes with the modal one.
+   ========================================================================== */
+
+/*
+ * A TRAP YOU CANNOT SEE IS A WALL YOU CANNOT EXPLAIN.
+ *
+ * Without a mark, pressing a direction into the edge of a region simply does
+ * nothing and the player concludes the stick has stopped working. So the region
+ * holding the ring keeps its contrast and the others give some up.
+ *
+ * A dim and not a scrim: the other regions are still information -- how much
+ * life an opponent has is a thing you read while deciding what to do in the
+ * hand -- so they must stay legible. Which is also why the dim is skipped
+ * entirely under `prefers-reduced-motion` sibling `prefers-contrast`, below.
+ *
+ * Scoped to `html[data-group]`, so a board nobody has jumped around in looks
+ * exactly as it always did.
+ */
+[data-group] .play__opponents,
+[data-group] .play__mine .mat__side,
+[data-group] .play__mine .mat__lanes,
+[data-group] .rail--right,
+[data-group] .hand {
+  transition: opacity var(--t-fast, 110ms) ease;
+  opacity: 0.72;
+}
+
+[data-group="seats"] .play__opponents,
+[data-group="orb"] .play__mine .mat__side,
+[data-group="board"] .play__mine .mat__lanes,
+[data-group="acts"] .rail--right,
+[data-group="hand"] .hand {
+  opacity: 1;
+}
+
+/* A player who has asked for maximum contrast is not asking for a hint drawn
+   by taking contrast away. The ring is still the answer to "where am I". */
+@media (prefers-contrast: more) {
+  [data-group] .play__opponents,
+  [data-group] .play__mine .mat__side,
+  [data-group] .play__mine .mat__lanes,
+  [data-group] .rail--right,
+  [data-group] .hand {
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------- the dial */
+
+/*
+ * `.wheelwrap` is not a new name.
+ *
+ * `input/stops.ts`'s focus trap has preferred `.wheelwrap` over every other
+ * candidate since it was written, and nothing in this repo has ever rendered
+ * one -- it was the prototype's name for exactly this control, carried into the
+ * trap and then not built. So the class IS the contract: the ring is inside the
+ * dial the moment it opens, with no change to the trap at all.
+ */
+.wheelwrap {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  background: rgb(6 5 14 / 0.72);
+}
+
+.wheel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 520px;
+  padding: 16px;
+  border: 1px solid var(--edge-hi);
+  border-radius: 16px;
+  background: var(--void-1);
+  box-shadow: var(--pane-shadow), 0 24px 80px rgb(0 0 0 / 0.7);
+}
+
+/*
+ * Every spoke clears the 44px hit floor by its own padding rather than by a
+ * min-height on the text, because the label is one word and a 44px line box
+ * around a 16px word puts the word at the top of it. `place-items: center`
+ * inside a grid is what keeps it in the middle.
+ */
+.wheel__spoke {
+  display: grid;
+  place-items: center;
+  min-width: 116px;
+  min-height: var(--hit-floor, 44px);
+  padding: 10px 18px;
+  border: 1px solid var(--edge);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.04);
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wheel__spoke:hover {
+  border-color: var(--edge-hi);
+  background: rgb(255 255 255 / 0.08);
+}
+
+/* Where you already are, so the dial says what it is jumping FROM as well as
+   what it is offering. */
+.wheel__spoke--here {
+  border-color: var(--astral-hi);
+  color: var(--astral-hi);
+}
+
+/* ---------------------------------------------------------- the card hold */
+
+/*
+ * The card you are pointing at, as big as the screen will allow.
+ *
+ * The rail's reader carries name, cost, type, P/T and rules at 16px, which is
+ * what a player needs most of the time. This is the deeper read: a card with
+ * six lines of rules, or one whose ART is how you will recognise it next turn.
+ *
+ * `pointer-events: none` on the backdrop -- there is nothing in here to press,
+ * and a full-screen box that swallowed the click which put it away would be the
+ * "button that had quietly stopped being clickable" failure again.
+ */
+.hold {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  background: rgb(6 5 14 / 0.86);
+  pointer-events: none;
+}
+
+/*
+ * 330px, which is `mockups/handheld-board/`'s number for this hold.
+ *
+ * The roadmap's rule for the whole round is that the card sizes are fine as
+ * they are and what changes is which one is used where -- so this is the same
+ * `variant="big"` the desktop rail draws, at the width a 800px-tall screen can
+ * give it without the rules box scrolling.
+ */
+.hold--card .card--big {
+  --card-w: 330px;
+}
+
+.hold__card {
+  max-width: min(330px, 90vw);
+  max-height: 92vh;
+  overflow: hidden;
+}

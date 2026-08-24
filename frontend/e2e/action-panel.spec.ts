@@ -98,14 +98,20 @@ test.describe("choosing attackers", () => {
     const first = rows.first();
     await first.click();
     await expect(first).toHaveAttribute("data-staged", "true");
-    await expect(page.getByTestId("combat-confirm")).toContainText("Attack with 1");
+    await expect(page.getByTestId("combat-confirm")).toHaveAttribute(
+      "aria-label",
+      "Attack with 1",
+    );
     await expect(page.getByTestId("combat-confirm")).toBeEnabled();
     expect(posts, "staging posted to the server; it must stay local").toEqual([]);
 
     // 3. Clicking again releases it.
     await first.click();
     await expect(first).not.toHaveAttribute("data-staged", "true");
-    await expect(page.getByTestId("combat-confirm")).toContainText("Attack with 0");
+    await expect(page.getByTestId("combat-confirm")).toHaveAttribute(
+      "aria-label",
+      "Attack with 0",
+    );
     await expect(page.getByTestId("combat-confirm")).toBeDisabled();
   });
 
@@ -189,9 +195,15 @@ test.describe("choosing a defender in a pod", () => {
     test.skip(!(await multi.count()), "no creature had more than one legal defender");
     const chips = multi.locator(".aim");
     await chips.nth(0).click();
-    await expect(page.getByTestId("combat-confirm")).toContainText("Attack with 1");
+    await expect(page.getByTestId("combat-confirm")).toHaveAttribute(
+      "aria-label",
+      "Attack with 1",
+    );
     await chips.nth(1).click();
-    await expect(page.getByTestId("combat-confirm")).toContainText("Attack with 1");
+    await expect(page.getByTestId("combat-confirm")).toHaveAttribute(
+      "aria-label",
+      "Attack with 1",
+    );
     await expect(chips.nth(1)).toHaveAttribute("aria-pressed", "true");
     await expect(chips.nth(0)).toHaveAttribute("aria-pressed", "false");
   });
@@ -265,7 +277,10 @@ test.describe("choosing blocks", () => {
     // 12. One click. No pick-blocker-then-pick-attacker step.
     await rows.first().click();
     await expect(rows.first()).toHaveAttribute("data-staged", "true");
-    await expect(page.getByTestId("combat-confirm")).toContainText("Confirm 1 block");
+    await expect(page.getByTestId("combat-confirm")).toHaveAttribute(
+      "aria-label",
+      "Confirm 1 block",
+    );
     await expect(page.getByTestId("combat-confirm")).toBeEnabled();
 
     // 13. One blocker, one attacker: choosing a second under the same creature
@@ -274,7 +289,10 @@ test.describe("choosing blocks", () => {
       await rows.nth(1).click();
       await expect(rows.nth(1)).toHaveAttribute("data-staged", "true");
       await expect(rows.first()).not.toHaveAttribute("data-staged", "true");
-      await expect(page.getByTestId("combat-confirm")).toContainText("Confirm 1 block");
+      await expect(page.getByTestId("combat-confirm")).toHaveAttribute(
+        "aria-label",
+        "Confirm 1 block",
+      );
     }
 
     // 15. And every pair is still reachable exactly once.
@@ -555,10 +573,36 @@ test.describe("the tools footer", () => {
     expect(inside.panes).toBeLessThanOrEqual(3);
 
     // 22. Moving markup is exactly the change that silently unhooks a handler.
+    //     Sound, undo and quit live behind the gear now -- three controls
+    //     pressed at most once a game, at the same weight as the two modes
+    //     beside them that change how every priority window behaves. The
+    //     handler test is the same one; only the route to the button moved.
+    await expect(page.getByTestId("settings-menu")).toHaveCount(0);
+    await page.getByTestId("settings").click();
+    await expect(page.getByTestId("settings-menu")).toBeVisible();
+
     const mute = page.getByTestId("mute");
     const before = await mute.getAttribute("aria-pressed");
     await mute.click();
     await expect(mute).not.toHaveAttribute("aria-pressed", before ?? "");
+
+    // It opens UPWARDS: this strip is the last row of the panel on a desktop
+    // and of the foot on a handheld, so a menu that opened downwards would land
+    // on the commit slab or off the screen.
+    const above = await page.evaluate(() => {
+      const menu = document.querySelector(".settings__menu");
+      const button = document.querySelector('[data-testid="settings"]');
+      if (!menu || !button) return null;
+      return menu.getBoundingClientRect().bottom <= button.getBoundingClientRect().top + 1;
+    });
+    expect(above, "the settings menu opened downwards").toBe(true);
+
+    // A press outside puts it away again.
+    await page
+      .locator(".acts__list")
+      .click({ position: { x: 5, y: 5 } })
+      .catch(() => {});
+    await expect(page.getByTestId("settings-menu")).toHaveCount(0);
 
     // The speed selector used to be checked here too. It is gone: it took a
     // third of the strip's width, which is what pushed quit off the end, and a
@@ -605,7 +649,9 @@ test.describe("panel styling", () => {
 
   test("gives the commit alternates a real outline", async ({ page }) => {
     // They were `.btn--ghost` -- transparent border, `--text-faint` -- so two of
-    // the three answers to the question on screen rendered as bare text.
+    // the three answers to the question on screen rendered as bare text. They
+    // are `.commit-mark` now, flanking the slab rather than sitting under it,
+    // and the outline is still what says they are pressable.
     test.setTimeout(600_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
     test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers");

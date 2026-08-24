@@ -29,9 +29,20 @@ test("a game can be played from deal to result, with every re-themed surface wor
   for (const pid of [0, 1]) {
     await expect(page.getByTestId(`life-${pid}`)).toHaveText("40");
   }
-  expect(await page.locator(".dial").count()).toBe(2);
+  /*
+   * ONE DIAL, and it is the viewer's.
+   *
+   * There were two, one per seat, because an opponent used to render the same
+   * `PlayerOrb` column at two-thirds the size. An opponent is an `OpponentSeat`
+   * now, and their life is a GAUGE -- life filling from the left, commander
+   * damage closing from the right on the same track -- because what a seat is
+   * for is "how close are they to dying", not "what is their number".
+   * `life-<pid>` still reads as a bare number on both, which is what
+   * `e2e/helpers.ts` parses.
+   */
+  expect(await page.locator(".dial").count()).toBe(1);
   await expect(page.locator(".dial--mine")).toHaveCount(1);
-  await expect(page.locator(".dial--foe")).toHaveCount(1);
+  await expect(page.locator(".gauge")).toHaveCount(1);
 
   // The zone piles, with the library showing a full deck.
   const library = page.getByTestId("pile-0-library");

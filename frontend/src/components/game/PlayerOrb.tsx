@@ -1,5 +1,12 @@
 /**
- * A player: their commander, life, mana, and the zones you can look into.
+ * THE VIEWER: their commander, life, mana, and the zones they can look into.
+ *
+ * Only ever the viewer's. An opponent used to render this same column at
+ * two-thirds the size, which meant a pod was three control panels for controls
+ * nobody could press -- they are `OpponentSeat` now, and the `compact` variant
+ * and the `!isViewer` summary line that existed for them are gone with them.
+ * `isViewer` survives because the dial still names itself, and because a
+ * spectator view would put this column on somebody else's seat.
  *
  * Three things here are physical rather than textual, and they read better than
  * what they replace:
@@ -36,6 +43,7 @@
 import { motion, useAnimationControls } from "motion/react";
 import { type CSSProperties, useEffect, useRef } from "react";
 import type { CardView, GameView, PlayerView } from "../../api/types";
+import { stopId } from "../../input/stops";
 import { artUrl } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import {
@@ -51,9 +59,7 @@ import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import { CommandZone } from "./CommandZone";
 import { ManaSymbol } from "./ManaSymbol";
-
-/** Commander damage becomes lethal here; warn well before it does. */
-const COMMANDER_LETHAL = 21;
+import { SeatIcon, type SeatIconName } from "./SeatIcon";
 
 /**
  * What a mana group says on hover, in the one form that fits every case.
@@ -73,6 +79,9 @@ function groupTitle(group: ManaGroupView): string {
   }
   return `${group.count} ${what}${where}`;
 }
+
+/** Starting life, and so what the handheld dial's ring is a fraction of. */
+const STARTING_LIFE = 40;
 
 const EMPTY: ReadonlySet<number> = new Set();
 
@@ -145,6 +154,22 @@ function ZonePile({
           {count}
         </span>
       </span>
+      {/*
+        THE MARK IS WHAT THE WORD WAS FOR.
+        
+        Loop 3 dropped `.pile__label` at the 16px floor and took it back the
+        same day: the column became the bare row "82 4 5 1" and there was no way
+        to tell a library count from a graveyard count. The note it left is the
+        right one -- **the order only helps somebody who already knows it** --
+        and so is the conclusion, that a count is not its own name.
+        
+        A shape is, though, and does not have to be taught: a headstone is a
+        graveyard, a fan of three is a hand, a face-down card is a library.
+        `mockups/handheld-board/` reaches for exactly this, and `SeatIcon` is
+        the set. So the word can go where the room is tight without the row
+        becoming anonymous again -- see `styles/handheld.css`.
+      */}
+      <SeatIcon name={kind as SeatIconName} />
       <span className="pile__label">{label}</span>
       {topCard && <span className="pile__revealed">{topCard.name}</span>}
     </>
@@ -164,11 +189,26 @@ function ZonePile({
     "data-count": count,
     "data-revealed": topCard?.name,
     "data-top-private": topCard && !topCardPublic ? "" : undefined,
-    title: topCard
+    /*
+     * `data-hint` rather than `title`.
+     *
+     * A native tooltip opens on hover and on nothing else, so on a controller
+     * it is information that cannot be reached at all -- and this pile's hint
+     * is the only place the revealed top card is named. The hint bar and the
+     * read rail surface it from the focused element, which also means a mouse
+     * player gets it immediately instead of after a 500ms delay.
+     */
+    "data-hint": topCard
       ? topCardPublic
         ? `Top of library, revealed: ${topCard.name}`
         : `Top of library, only you can see it: ${topCard.name}`
       : (title ?? `${label}: ${count}`),
+    /*
+     * ...and an accessible name, which `title` had been supplying as a last
+     * resort. The handheld layout hides `.pile__label`, so without this the
+     * button would have no name at all there -- the one place it is most needed.
+     */
+    "aria-label": `${label}: ${count}`,
   };
 
   if (zone === null) {
@@ -180,7 +220,12 @@ function ZonePile({
     );
   }
   return (
-    <button type="button" {...shared} onClick={() => setPeek({ pid, zone })}>
+    <button
+      type="button"
+      {...shared}
+      data-stop={stopId.pile(pid, zone)}
+      onClick={() => setPeek({ pid, zone })}
+    >
       {body}
     </button>
   );
@@ -193,9 +238,6 @@ interface Props {
   isViewer: boolean;
   isActive: boolean;
   hasPriority: boolean;
-  /** Names by pid, for the commander-damage tooltips. */
-  names: string[];
-  compact?: boolean;
   /** A legal action could point at this player: attack target, spell target. */
   targetable?: boolean;
   onSelect?: (pid: number) => void;
@@ -219,8 +261,6 @@ export function PlayerOrb({
   isViewer,
   isActive,
   hasPriority,
-  names,
-  compact = false,
   targetable = false,
   onSelect,
   spending,
@@ -264,26 +304,12 @@ export function PlayerOrb({
     });
   }, [player.life, controls]);
 
-  /*
-   * Every other seat, in seating order -- not the seats that have already dealt
-   * commander damage.
-   *
-   * `commander_damage_taken` only carries seats that have connected, so building
-   * the row from its keys made the plate appear on the first hit. Reading it as a
-   * lookup against the seating instead means the chips are all there from turn
-   * one, at zero, and the panel never changes size.
-   */
-  const opponents = state.players
-    .filter((seat) => seat.pid !== player.pid)
-    .map((seat) => seat.pid);
-
   const pips = markSpent(manaRow(player.mana), spending ?? EMPTY);
   const spentCount = pips.filter((pip) => pip.spent).length;
   const groups = manaGroups(pips);
 
   const classes = [
     "orb",
-    compact ? "orb--compact" : "",
     isViewer ? "orb--viewer" : "",
     isActive ? "orb--active" : "",
     player.has_lost ? "orb--out" : "",
@@ -306,6 +332,17 @@ export function PlayerOrb({
   // already, so nothing about it changes but its validity.
   const dial = (
     <span
+      /*
+        The fraction of a starting life total, for the handheld dial's ring.
+        Desktop's brass disc ignores it -- it is a seal, not a meter -- but the
+        value is cheap and being on the element means the two treatments differ
+        in CSS alone rather than in what the component emits.
+      */
+      style={
+        {
+          "--fill": `${(Math.min(Math.max(player.life, 0), STARTING_LIFE) / STARTING_LIFE) * 100}%`,
+        } as CSSProperties
+      }
       className={[
         "dial",
         isViewer ? "dial--mine" : "dial--foe",
@@ -334,6 +371,7 @@ export function PlayerOrb({
     <motion.div
       className={classes}
       data-player={player.pid}
+      data-stop={stopId.orb(player.pid)}
       data-testid={`player-${player.pid}`}
       layout
       transition={bouncy}
@@ -363,9 +401,21 @@ export function PlayerOrb({
       )}
 
       <div className="orb__body">
+        {/*
+          Your own name, and on a handheld it is the one thing here that says
+          nothing.
+
+          `mockups/handheld-board/` calls this its single deviation from the
+          plinth direction and argues it: the information strip six pixels above
+          names you, and unlike the three seats beside it there is never any
+          doubt whose panel this is. It is worth 21px of a 250px column and not
+          of a 128px one. The row stays in the DOM so the priority tick has
+          somewhere to live and `orb.spec.ts` keeps its anchor; `handheld.css`
+          drops the NAME.
+        */}
         <div className="orb__head">
           <span className="orb__name">{player.name}</span>
-          {hasPriority && <span className="orb__priority" title="Has priority" />}
+          {hasPriority && <span className="orb__priority" data-hint="Has priority" />}
         </div>
 
         {/*
@@ -379,7 +429,6 @@ export function PlayerOrb({
           state={state}
           pid={player.pid}
           playableOids={playableOids ?? EMPTY}
-          compact={compact}
           onActivate={onCastCommander}
           onHover={onHoverCard}
           disabled={locked}
@@ -403,9 +452,15 @@ export function PlayerOrb({
           which the reserved-height slot this replaces was an awkward way of
           buying.
 
-          Commander tax is deliberately not here -- it rides on the plinth above,
-          beside the mana cost it modifies, which is the only arrangement in
-          which a surcharge means anything.
+          Commander damage is deliberately not here at all any more. It was a
+          chip per opposing seat with a meter under it -- the loudest object in
+          the column, answering "how close is each of them to killing me" and
+          nothing about the other direction. It is two arrows on each
+          opponent's own life bar now: see `OpponentSeat`.
+
+          Commander tax is deliberately not here either -- it rides on the
+          plinth above, beside the mana cost it modifies, which is the only
+          arrangement in which a surcharge means anything.
         */}
         <div className="orb__foot">
           {/*
@@ -430,13 +485,13 @@ export function PlayerOrb({
             data-testid={`mana-${player.pid}`}
             data-mana={formatManaRow(pips)}
             data-spending={spentCount}
-            title={
+            data-hint={
               spentCount > 0
                 ? `${pips.length} available; this spell taps ${spentCount}`
                 : `${pips.length} available: ${formatManaRow(pips)}`
             }
           >
-            {!compact && <span className="orb__lab">Mana</span>}
+            <span className="orb__lab">Mana</span>
             {groups.length === 0 ? (
               <span className="orb__none">—</span>
             ) : (
@@ -454,7 +509,7 @@ export function PlayerOrb({
                   data-tone={group.tone}
                   data-count={group.count}
                   data-spent={group.spent}
-                  title={groupTitle(group)}
+                  data-hint={groupTitle(group)}
                 >
                   {/* No `pip--text` fallback here: a three-colour source has no
                       published mark, and cycle3.spec.ts asserts that fallback
@@ -477,58 +532,6 @@ export function PlayerOrb({
           </div>
 
           {/*
-            Commander damage, for every other seat rather than only the ones that
-            have connected. Built from the seating rather than from the keys of
-            `commander_damage_taken`, so the plate reads `0` from turn one
-            instead of appearing the moment someone hits you -- which is both a
-            reflow and the worst possible moment to move the panel.
-
-            The chip carries who and how far. It was a bare number whose source
-            lived only in a `title`, which in a four-player pod is three
-            identical numbers and a hunt; and 21 is the number that matters, so
-            the meter under it is the fraction of 21 rather than decoration.
-          */}
-          <div className="orb__panel orb__cmd" data-testid={`cmddmg-${player.pid}`}>
-            {!compact && <span className="orb__lab">Cmd dmg</span>}
-            {opponents.map((pid) => {
-              const amount = player.commander_damage_taken[String(pid)] ?? 0;
-              return (
-                <span
-                  key={pid}
-                  className={[
-                    "cmd-pip",
-                    amount >= COMMANDER_LETHAL - 6 ? "cmd-pip--warn" : "",
-                    amount === 0 ? "cmd-pip--zero" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  data-from={pid}
-                  data-amount={amount}
-                  title={`${amount} of ${COMMANDER_LETHAL} commander damage from ${
-                    names[pid] ?? `Player ${pid}`
-                  }`}
-                >
-                  <span className="cmd-pip__head">
-                    {/* Seat number, not an initial: seats default to
-                        `Player {i}` (server/sessions.py), so every initial is
-                        "P". The name itself stays one hover away. */}
-                    <span className="cmd-pip__who">P{pid}</span>
-                    <span className="cmd-pip__n tabular">{amount}</span>
-                  </span>
-                  <span
-                    className="cmd-pip__meter"
-                    style={
-                      {
-                        "--fill": `${Math.min(amount / COMMANDER_LETHAL, 1) * 100}%`,
-                      } as CSSProperties
-                    }
-                  />
-                </span>
-              );
-            })}
-          </div>
-
-          {/*
             Bottom-aligned, so the piles' heights read comparatively: a library
             that has been drawn down to nothing is visibly a short stack next to
             a graveyard that has grown, which is a thing you want to notice
@@ -542,7 +545,7 @@ export function PlayerOrb({
               kind="lib"
               label="Lib"
               count={player.library_count}
-              title="Cards in library"
+              data-hint="Cards in library"
               topCard={player.library_top}
               topCardPublic={player.library_top_public}
             />
@@ -550,10 +553,10 @@ export function PlayerOrb({
               pid={player.pid}
               zone="hand"
               name="hand"
-              kind="lib"
+              kind="hand"
               label="Hand"
               count={player.hand_count}
-              title={isViewer ? "Your hand" : "Hidden"}
+              data-hint={isViewer ? "Your hand" : "Hidden"}
             />
             <ZonePile
               pid={player.pid}
@@ -580,7 +583,7 @@ export function PlayerOrb({
               kind="cmd"
               label="CMD"
               count={player.command.length}
-              title="Command zone"
+              data-hint="Command zone"
             />
           </div>
         </div>

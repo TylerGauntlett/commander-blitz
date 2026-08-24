@@ -17,7 +17,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
-import { APP_BOX } from "../../testing/appGeometry";
+import { APP_VAR } from "../../testing/appGeometry";
 import {
   expectMountedLike,
   expectUniqueActionIds,
@@ -32,7 +32,7 @@ import { ActionPanel } from "./ActionPanel";
 const meta = {
   title: "Game/ActionPanel",
   component: ActionPanel,
-  parameters: { automtg: { mount: "railRightUnderPreview" } },
+  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot" } },
   args: {
     onAct: fn(),
     onStage: fn(),
@@ -57,6 +57,35 @@ const from = (scenario: Pick<Scenario, "state" | "actions">) => ({
   state: scenario.state,
   actions: scenario.actions,
 });
+
+/**
+ * THE DOCK IS THE SAME SHAPE IN EVERY STATE.
+ *
+ * The well was always in the document and its contents were not, so between
+ * decisions it collapsed to its own 18px of padding and sprang back to 66 or 90
+ * when an action arrived -- and the bottom of the rail moved every time a turn
+ * passed. `.preview` above it holds a constant height for exactly this reason.
+ *
+ * Asserted as a SHAPE and not as a pixel total, deliberately. A number here
+ * would have to be either a literal duplicating `ui.css` -- which
+ * `testing/appGeometry.ts`'s header is about not doing -- or the resolved `1lh`
+ * of a font size the handheld floor raises. What actually has to hold is that
+ * both movers are pinned: exactly one note row, exactly one bar, and neither of
+ * them zero. Every state's `play` calls this, so a state that grows a second
+ * row or drops one fails here rather than on a screenshot.
+ */
+const expectStableDock = (dock: HTMLElement) => {
+  expect(dock).toBeTruthy();
+  expect(dock.querySelectorAll(".commit-note")).toHaveLength(1);
+  expect(dock.querySelectorAll(".bar")).toHaveLength(1);
+  const note = dock.querySelector(".commit-note") as HTMLElement;
+  const bar = dock.querySelector(".bar") as HTMLElement;
+  // The note keeps its line with a non-breaking space when it has nothing to
+  // say; a zero here is the old "the row appears when combat starts" bug.
+  expect(note.getBoundingClientRect().height).toBeGreaterThan(0);
+  // `.commit` and `.commit-mark` are both `min-height: 48px`.
+  expect(bar.getBoundingClientRect().height).toBeGreaterThanOrEqual(48);
+};
 
 /* ------------------------------------------------------------------ */
 /* Play mode                                                           */
@@ -147,11 +176,21 @@ export const CommitSlabOnHover: Story = {
   args: from(scenarios.earlyBoard()),
   // Real motion, because the scale *is* the bug: with `reducedMotion` on, the
   // transform never applies and this assertion passed against the defect.
-  parameters: { automtg: { mount: "railRightUnderPreview", motion: "real" } },
+  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const slab = await canvas.findByTestId("commit");
-    const rail = canvasElement.querySelector(".rail") as HTMLElement;
+    /*
+     * The slab's own container, not `.rail` by name.
+     *
+     * What this story protects is that a `width: 100%` element does not scale
+     * out of the column it is in -- and on a handheld that column is the foot,
+     * because `ActionPanel` portals the dock there. Naming the rail asserted the
+     * desktop arrangement as well as the invariant, and failed the moment the
+     * story runner's viewport was short enough to be a handheld.
+     */
+    const rail = (slab.closest(".commit-dock")?.parentElement ??
+      canvasElement.querySelector(".rail")) as HTMLElement;
 
     await userEvent.hover(slab);
 
@@ -187,12 +226,34 @@ export const FillsTheRail: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("action-panel");
     const rail = canvasElement.querySelector(".rail") as HTMLElement;
-    expectMountedLike(rail, { width: APP_BOX.railRight });
+    expectMountedLike(rail, { width: APP_VAR.railRight });
   },
 };
 
+/**
+ * THE ANTI-JUMP GATE. Nothing is actionable, and the dock is the same height it
+ * is when something is.
+ *
+ * The dock used to render an empty well between decisions -- 18px of padding
+ * where 66 or 90 had been -- so the bottom of the rail moved every time a turn
+ * passed, and moved back when the buttons returned. `.preview` above it holds a
+ * constant height for exactly this reason; this asserts the dock now does too.
+ *
+ * Measured against `Attackers`, which is the *tallest* state (a note with a
+ * count in it, and a bar of three), because a floor that only matches the
+ * shortest state is not a floor at all.
+ */
 export const NothingToDo: Story = {
   args: from({ ...scenarios.earlyBoard(), actions: [] }),
+  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("action-panel");
+    // The idle slab stands in for the button, so the well is never visibly empty.
+    await canvas.findByTestId("commit-idle");
+    const dock = canvasElement.querySelector(".commit-dock") as HTMLElement;
+    expectStableDock(dock);
+  },
 };
 
 /* ------------------------------------------------------------------ */
@@ -235,11 +296,18 @@ export const StagingAnAttacker: Story = {
 export const ConfirmingAttacks: Story = {
   args: from(scenarios.combatDeclareAttackers()),
   parameters: {
-    automtg: { mount: "railRightUnderPreview", ui: { stagedAttacks: { 301: 1, 302: 2 } } },
+    automtg: {
+      mount: "railRightUnderPreviewWithFoot",
+      ui: { stagedAttacks: { 301: 1, 302: 2 } },
+    },
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("combat-panel");
+    // The other side of `NothingToDo`'s gate: the fullest the dock ever gets --
+    // a note with a count in it and a bar of three -- is the same shape as the
+    // emptiest.
+    expectStableDock(canvasElement.querySelector(".commit-dock") as HTMLElement);
     await userEvent.click(await canvas.findByTestId("combat-confirm"));
     expect(args.onDeclare).toHaveBeenCalledWith("attackers", [
       [301, 1],
@@ -315,7 +383,7 @@ export const Narrating: Story = {
     await canvas.findByTestId("action-panel");
     const cast = canvasElement.querySelector('[data-action-id="a1-cast"]');
     expect(cast?.hasAttribute("disabled")).toBe(true);
-    expect(await canvas.findByTitle("Skip ahead")).toBeTruthy();
+    expect(canvasElement.querySelector('[data-hint="Skip ahead"]')).toBeTruthy();
   },
 };
 
@@ -334,9 +402,15 @@ export const WaitingForOpponent: Story = {
     scenario.state.pending = pending({ player: 1 });
     return from({ ...scenario, actions: [] });
   })(),
+  parameters: { automtg: { mount: "railRightUnderPreviewWithFoot" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect((await canvas.findByTestId("prompt")).textContent).toContain("Waiting for AI 1");
+    // The other half of `NothingToDo`'s gate: it is somebody else's turn, which
+    // is most of the wall-clock of a four-player game, and the rail holds still
+    // for all of it.
+    await canvas.findByTestId("commit-idle");
+    expectStableDock(canvasElement.querySelector(".commit-dock") as HTMLElement);
   },
 };
 
@@ -368,12 +442,29 @@ export const FullControlOn: Story = {
   },
 };
 
-export const MuteToggle: Story = {
+/**
+ * Sound, undo and quit live behind the gear now.
+ *
+ * The three of them were permanent buttons in the strip at the same weight as
+ * the two modes beside them, which is a row of five equally likely things when
+ * two are flipped mid-turn and three are pressed once a game. The menu opens
+ * UPWARDS: this strip is the last row of the panel, and below it is the commit
+ * slab.
+ */
+export const SettingsMenu: Story = {
   args: from(scenarios.earlyBoard()),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    // Closed by default -- the whole point is that it costs no glance.
+    expect(canvas.queryByTestId("settings-menu")).toBeNull();
+    await userEvent.click(await canvas.findByTestId("settings"));
+    expect(await canvas.findByTestId("settings-menu")).toBeTruthy();
+
     const before = useUiStore.getState().muted;
     await userEvent.click(await canvas.findByTestId("mute"));
     expect(useUiStore.getState().muted).toBe(!before);
+    // A toggle is the one row that leaves the menu open: what you most often
+    // want after flipping it is to flip it back.
+    expect(canvas.queryByTestId("settings-menu")).not.toBeNull();
   },
 };

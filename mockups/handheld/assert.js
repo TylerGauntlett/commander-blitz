@@ -93,6 +93,36 @@ function HANDHELD_ASSERT() {
       curRect.right <= innerWidth + 1 && curRect.bottom <= innerHeight + 1
     : false;
 
+  /* THE RING WENT OUT WITHOUT ANYTHING SAYING SO.
+     A cursor drawn from an attribute is a cursor that fails SILENTLY when the
+     node carrying it is replaced -- and 06 was doing exactly that on the two
+     regions it rebuilds incrementally, one of which holds the commit slab. The
+     symptom on screen is no ring at all, and the symptom in this file was
+     `cursors: 0`, which cannot be failed on its own because 02 and 04 rest
+     there on purpose.
+
+     What CAN be failed is the disagreement: the state names a stop, the stop is
+     on screen, and it is not wearing the cursor. That is never intentional in
+     any of the six, and it is the difference between "nothing is selected" and
+     "something is selected and you cannot see it".
+
+     ASKED INSIDE THE FOCUS ROOT, WHICH IS THE SAME QUESTION THE APP ASKS. With
+     an overlay up, the stop `S.cur` names is usually still in the document,
+     sitting behind the veil -- and the card reader is a surface with no stops
+     at all, so its correct state is a live `S.cur` and no ring anywhere. Asking
+     this of the whole stage instead of the topmost layer failed the reader for
+     doing exactly the right thing, which is the gate enforcing a rule the
+     design does not have. Same three-line rule as `stopRoot()`: whatever is on
+     top owns the ring, and the gate has to agree about what "on top" means. */
+  const FOCUS_ROOT = ROOT.querySelector(".wheelwrap") || ROOT.querySelector(".veil") || ROOT;
+  let ringLost = false;
+  try {
+    if (typeof S !== "undefined" && S && S.cur) {
+      const owner = FOCUS_ROOT.querySelector(`[data-stop="${CSS.escape(S.cur)}"]`);
+      ringLost = !!owner && !owner.hasAttribute("data-cursor");
+    }
+  } catch { /* a file without an `S.cur` is not being asked this question */ }
+
   /* Read the STYLE as well as the width. `outline-width: 3px` with
      `outline-style: none` computes as a perfectly healthy 3, and draws nothing
      -- which is exactly what a bare `:focus { outline: none }` does to the
@@ -136,6 +166,7 @@ function HANDHELD_ASSERT() {
 
     cursors: cursors.length,
     cursorOnScreen: curOnScreen,
+    ringLost,
     ringWidthPx: ringW,
     ringStyle,
 
@@ -167,6 +198,7 @@ function HANDHELD_ASSERT() {
     (out.minCardPx === null || out.minCardPx >= CARD_FLOOR) &&
     out.smallHits === 0 &&
     out.cursors <= 1 &&
+    out.ringLost === false &&
     (out.cursors === 0 || (out.cursorOnScreen && out.ringWidthPx >= RING_FLOOR)) &&
     out.spilledElements === 0 &&
     out.collapsedRegions === 0 &&

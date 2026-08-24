@@ -45,7 +45,6 @@ function renderOrb(
       isViewer
       isActive
       hasPriority
-      names={["You", "Them"]}
       {...props}
     />,
   );
@@ -304,12 +303,23 @@ describe("the life dial", () => {
     expect(container.querySelector(".dial .dial__n")).not.toBeNull();
   });
 
-  it("marks an opponent's dial differently from the viewer's", () => {
-    // Desaturated copper: legible, but plainly reference material rather than
-    // the number you are managing.
-    const { container } = renderOrb({}, { isViewer: false });
-    expect(container.querySelector(".dial--foe")).not.toBeNull();
-    expect(container.querySelector(".dial--mine")).toBeNull();
+  it("names the dial after whose it is", () => {
+    /*
+     * `--foe` is reachable only through the prop now. Nothing in the game
+     * renders this column for anybody but the viewer -- an opponent is an
+     * `OpponentSeat`, whose life lives in a gauge rather than a dial -- but the
+     * distinction is kept because a spectator view would need it, and because a
+     * dial that could not say whose it was would be the bug this test names.
+     */
+    const mine = renderOrb({}, { isViewer: true }).container;
+    expect(mine.querySelector(".dial--mine")).not.toBeNull();
+    expect(mine.querySelector(".dial--foe")).toBeNull();
+
+    cleanup();
+
+    const theirs = renderOrb({}, { isViewer: false }).container;
+    expect(theirs.querySelector(".dial--foe")).not.toBeNull();
+    expect(theirs.querySelector(".dial--mine")).toBeNull();
   });
 
   it("marks whose turn it is on the dial", () => {
@@ -401,7 +411,7 @@ describe("the zone piles", () => {
     });
     const pile = getByTestId("pile-0-library");
     expect(pile.getAttribute("data-revealed")).toBe("Sol Ring");
-    expect(pile.getAttribute("title")).toBe("Top of library, revealed: Sol Ring");
+    expect(pile.getAttribute("data-hint")).toBe("Top of library, revealed: Sol Ring");
     expect(pile.hasAttribute("data-top-private")).toBe(false);
   });
 
@@ -415,7 +425,9 @@ describe("the zone piles", () => {
       library_top_public: false,
     });
     const pile = getByTestId("pile-0-library");
-    expect(pile.getAttribute("title")).toBe("Top of library, only you can see it: Sol Ring");
+    expect(pile.getAttribute("data-hint")).toBe(
+      "Top of library, only you can see it: Sol Ring",
+    );
     expect(pile.hasAttribute("data-top-private")).toBe(true);
   });
 
@@ -466,11 +478,17 @@ describe("what the piles did not replace", () => {
   });
 });
 
-describe("commander damage is tracked before it arrives", () => {
-  /** A four-seat pod, which is where three identical chips have to tell apart. */
-  function renderPod(taken: Record<string, number> = {}) {
-    const seat = player({ pid: 0, commander_damage_taken: taken });
-    return render(
+describe("commander damage is not this panel's job any more", () => {
+  /*
+   * It used to be a chip per opposing seat with a meter under it -- the
+   * loudest object in a 154px column, and it answered only half the question:
+   * how close is each of them to killing me, and nothing about the other
+   * direction. Both halves are two arrows on each opponent's own life bar now;
+   * see `OpponentSeat`.
+   */
+  it("draws no commander-damage plate, however much has been taken", () => {
+    const seat = player({ pid: 0, commander_damage_taken: { "1": 15 } });
+    const { container } = render(
       <PlayerOrb
         state={gameView({
           players: [seat, player({ pid: 1 }), player({ pid: 2 }), player({ pid: 3 })],
@@ -480,47 +498,10 @@ describe("commander damage is tracked before it arrives", () => {
         isViewer
         isActive
         hasPriority
-        names={["You", "Jace", "Rakdos", "Karn"]}
       />,
     );
-  }
 
-  it("shows a chip for every other seat, at zero, from turn one", () => {
-    // Built from the seating, not from the keys of `commander_damage_taken` --
-    // which only carries seats that have connected, so the plate used to appear
-    // on the first hit and reflow the panel at the worst possible moment.
-    const { getByTestId } = renderPod();
-    const chips = [...getByTestId("cmddmg-0").querySelectorAll(".cmd-pip")];
-    expect(chips.map((c) => c.getAttribute("data-from"))).toEqual(["1", "2", "3"]);
-    expect(chips.map((c) => c.getAttribute("data-amount"))).toEqual(["0", "0", "0"]);
-    expect(chips.every((c) => c.className.includes("cmd-pip--zero"))).toBe(true);
-  });
-
-  it("names the seat on the chip rather than only in a tooltip", () => {
-    // Three bare numbers in a pod is a hunt. Seat number, not initial: seats
-    // default to `Player {i}` server-side, so every initial is "P".
-    const { getByTestId } = renderPod({ "2": 7 });
-    const chip = getByTestId("cmddmg-0").querySelector('.cmd-pip[data-from="2"]');
-    expect(chip?.querySelector(".cmd-pip__who")?.textContent).toBe("P2");
-    expect(chip?.querySelector(".cmd-pip__n")?.textContent).toBe("7");
-    expect(chip?.getAttribute("title")).toBe("7 of 21 commander damage from Rakdos");
-  });
-
-  it("warns well before 21, and fills the meter by the fraction of it", () => {
-    const { getByTestId } = renderPod({ "1": 15 });
-    const chip = getByTestId("cmddmg-0").querySelector('.cmd-pip[data-from="1"]');
-    expect(chip?.className).toContain("cmd-pip--warn");
-    expect(chip?.className).not.toContain("cmd-pip--zero");
-    // 15 of 21, as a length: the channel that survives greyscale.
-    const meter = chip?.querySelector<HTMLElement>(".cmd-pip__meter");
-    expect(meter?.style.getPropertyValue("--fill")).toBe(`${(15 / 21) * 100}%`);
-  });
-
-  it("never overfills the meter once damage passes lethal", () => {
-    const { getByTestId } = renderPod({ "1": 26 });
-    const meter = getByTestId("cmddmg-0").querySelector<HTMLElement>(
-      '.cmd-pip[data-from="1"] .cmd-pip__meter',
-    );
-    expect(meter?.style.getPropertyValue("--fill")).toBe("100%");
+    expect(container.querySelector('[data-testid="cmddmg-0"]')).toBeNull();
+    expect(container.querySelector(".cmd-pip")).toBeNull();
   });
 });

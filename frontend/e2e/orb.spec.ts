@@ -113,41 +113,42 @@ test.describe("the orb fills its column", () => {
     expect(new Set(bottoms).size, `pile bottoms: ${bottoms.join(", ")}`).toBe(1);
   });
 
-  test("an opponent's piles share that one row too, exile included", async ({ page }) => {
-    // The pod column is 112px and a pile is as wide as `max(stack, label)`, so
-    // this is decided by five short words and it is decided by about five pixels.
-    // A wrapped row reads as a different component rather than a narrower one.
-    //
-    // Exile is conditional in `PlayerOrb`, and it is the fifth -- so it is
-    // inserted here rather than waited for. A spec that only ever sees four piles
-    // is not testing the case that overflows.
+  test("an opponent's zone marks share one row, exile included", async ({ page }) => {
+    /*
+     * This used to measure PILES on an opponent's orb. There is no opponent orb
+     * any more -- a seat is a summary rather than a control panel, and its
+     * zones are 20px marks rather than leaf stacks, because a seat can spare
+     * one row of a 96px budget and a 44px pile target does not fit in it.
+     *
+     * What survives unchanged is the question: five marks or four, sharing one
+     * row, none of them clipped. Exile is conditional and it is the fifth, so
+     * it is inserted rather than waited for -- a spec that only ever sees four
+     * is not testing the case that overflows.
+     */
     test.setTimeout(240_000);
     await openPod(page, 3);
 
     const rows = await page.evaluate(() => {
-      const piles = document.querySelector('[data-testid="player-1"] .piles');
-      if (!piles) return null;
-      const last = piles.children[piles.children.length - 1];
-      const fifth = last.cloneNode(true) as HTMLElement;
-      const label = fifth.querySelector(".pile__label");
-      if (label) label.textContent = "Exile";
-      piles.insertBefore(fifth, last);
+      const zones = document.querySelector('[data-testid="player-1"] .seat__zones');
+      if (!zones) return null;
+      const last = zones.children[zones.children.length - 1];
+      zones.insertBefore(last.cloneNode(true), last);
 
-      const kids = [...piles.children] as HTMLElement[];
+      const kids = [...zones.children] as HTMLElement[];
       return {
         count: kids.length,
         rows: new Set(kids.map((k) => Math.round(k.getBoundingClientRect().bottom))).size,
-        clipped: [...piles.querySelectorAll<HTMLElement>(".pile__label")]
-          .filter((l) => l.scrollWidth > l.clientWidth + 1)
-          .map((l) => l.textContent),
-        overflow: Math.round(piles.scrollWidth - piles.clientWidth),
+        clipped: kids
+          .filter((k) => k.scrollWidth > k.clientWidth + 1)
+          .map((k) => k.textContent),
+        overflow: Math.round(zones.scrollWidth - zones.clientWidth),
       };
     });
 
     expect(rows?.count).toBe(5);
-    expect(rows?.rows, "the opponent's piles wrapped to a second row").toBe(1);
-    expect(rows?.clipped, "these pile labels are clipped").toEqual([]);
-    expect(rows?.overflow, "the pile row overflows its plate").toBeLessThanOrEqual(0);
+    expect(rows?.rows, "the seat's zone marks wrapped to a second row").toBe(1);
+    expect(rows?.clipped, "these zone marks are clipped").toEqual([]);
+    expect(rows?.overflow, "the zone row overflows the seat").toBeLessThanOrEqual(0);
   });
 });
 
@@ -224,15 +225,24 @@ test.describe("hovering a commander fills the preview rail", () => {
   });
 
   test("works for an opponent's commander, which you can never cast", async ({ page }) => {
-    // Reading an opponent's commander is most of why you look at their panel.
+    /*
+     * Reading an opponent's commander is most of why you look at their panel --
+     * "what is that deck about" is one card's text.
+     *
+     * It used to be a `.cmdslot` plinth, because an opponent rendered the same
+     * column the viewer does. An opponent is an `OpponentSeat` now and its
+     * commander is the 72x43 window, so the affordance moved rather than went:
+     * hover the window and the reader fills, exactly as before. `Y` does the
+     * same for a controller, at full size.
+     */
     test.setTimeout(180_000);
     await openPod(page, 3);
 
-    const slot = page.getByTestId("command-zone-1").locator(".cmdslot").first();
-    const name = (await slot.locator(".cmdplinth__name").textContent())?.trim() ?? "";
-    expect(name).not.toBe("");
+    const seat = page.getByTestId("player-1");
+    const name = (await seat.locator(".seat__cmdr").textContent())?.trim() ?? "";
+    expect(name, "the seat should name its commander").not.toBe("");
 
-    await slot.hover();
+    await seat.locator(".seat__win").hover();
     await expect(page.getByTestId("card-preview")).toContainText(name);
   });
 
@@ -256,12 +266,23 @@ test.describe("the commander is the panel's ground", () => {
     test.setTimeout(240_000);
     await openPod(page, 3);
 
-    const washes = await page
-      .locator(".orb__wash")
+    /*
+     * Four seats, four paintings -- drawn by two components now.
+     *
+     * The viewer keeps `.orb__wash`; an opponent is an `OpponentSeat` and its
+     * ground is `.seat__ground`. The claim is unchanged and is the one that
+     * matters: every seat is told apart by its own commander's art rather than
+     * by a name in 12px type, and DISTINCT URLS is the machine-checkable form
+     * of "they look different".
+     */
+    const grounds = await page
+      .locator(".orb__wash, .seat__ground")
       .evaluateAll((nodes) => nodes.map((n) => (n as HTMLElement).style.backgroundImage));
-    expect(washes.length).toBe(4);
-    expect(washes.every((w) => w.includes("/art/"))).toBe(true);
-    expect(new Set(washes).size, `washes: ${washes.join(" | ")}`).toBe(4);
+    expect(await page.locator(".orb__wash").count(), "one orb, and it is yours").toBe(1);
+    expect(await page.locator(".seat__ground").count(), "one ground per opponent").toBe(3);
+    expect(grounds.length).toBe(4);
+    expect(grounds.every((w) => w.includes("/art/"))).toBe(true);
+    expect(new Set(grounds).size, `grounds: ${grounds.join(" | ")}`).toBe(4);
   });
 
   test("the wash reuses the plinth's art rather than asking for a second crop", async ({

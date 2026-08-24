@@ -12,17 +12,112 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
 | `tests/server/` | 287 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 594 | The client's pure logic modules, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 246 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see |
+| `frontend/tests/` | 1005 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 328 + 18 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
 | `frontend/e2e/` | 112 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
-`scripts/verify.py` runs 14 stages in dependency order and stops at the first failure:
+`scripts/verify.py` runs 15 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
 160-game arena, **a real uvicorn process playing full games at 2 players, 4 players and
 one pod driven entirely through the lobby**, then the frontend build, lint and tests,
-the Storybook build, and the story interaction tests.
+the Storybook build, and the story interaction tests **twice** — once at the desktop
+canvas and once at a Steam Deck's.
+
+> **The handheld story project is the only place the floors are gated by CI.**
+> 16px of type, 44px of target and 96px of card have been asserted by
+> `e2e/handheldAssert.ts` since Loop 3 — and Playwright is not run here, so
+> nothing ever stopped a change putting a label back under the floor. It found
+> `.hand__empty` at 14px the first time it ran: one selector missing from an
+> alphabetical list of eighty, in a state the e2e suite never reaches because it
+> never has an empty hand.
+
+> **The tester canvas is 1200x900 whatever the project declares.** Storybook's
+> Vitest addon sizes the iframe per story and wins: `browser.viewport`,
+> `instances[].viewport`, a `--window-size` launch arg and a `page.viewport()`
+> call from `beforeEach` were each measured and each reset before the play
+> function ran. That was harmless until something branched on the viewport —
+> `HANDHELD_QUERY` is `(max-width: 1366px)`, so at 1200 **every story matched
+> it**, and the first component to render a different NODE on that query rendered
+> its compact body in the project whose job is the desktop one. So the layout is
+> decided by the toolbar rather than by the canvas: `preview.tsx` stamps
+> `data-desktop` or `data-handheld`, and both `styles/handheld.css` and
+> `state/useHandheld.ts` treat an explicit choice as beating the query.
 
 Playwright's own suite is still invoked separately (`cd frontend && npx playwright test`).
+
+It runs as **two projects at two viewports**, and the split is the safety
+argument for the handheld work rather than a convenience:
+
+```bash
+npx playwright test --project=chromium   # 1600x950 -- the desktop board
+npx playwright test --project=handheld   # 1280x800 -- a Steam Deck's panel
+```
+
+`chromium` ignores the handheld specs and `handheld` matches only them. Running
+the compact specs at 1600x950 would test the wide layout while claiming to test
+the other one.
+
+### Re-taking a desktop baseline
+
+The desktop project's numbers used to be "what proves the wide board is
+unchanged, and they may never move". The full-height rail moved them
+deliberately — the foot is inside the board's column now at every size — so the
+rule needs restating rather than quoting:
+
+> A change may move desktop **geometry**. It may not move desktop
+> **invariants**. Every assertion that encodes a RELATIONSHIP — nothing under
+> the foot, no panel flattens, action ids are unique, the bands run creatures →
+> globals → lands, the dial overlaps the portrait — stays byte-identical and
+> **must still pass**. Every assertion that is a bare NUMBER is re-taken once,
+> in one commit, with the old value, the new value and a one-line reason in the
+> diff. **A failing relationship assertion is a regression, not a baseline.**
+
+Two chromium assertions were rewritten rather than re-taken, because the surface
+they measured stopped existing: `acceptance.spec.ts`'s two life dials (an
+opponent's life is a gauge on their seat now, not a dial) and `orb.spec.ts`'s
+opponent pile row (a seat's zones are 20px marks, because a seat can spare one
+row of a 96px budget and a 44px pile target does not fit in it).
+
+The handheld project runs `e2e/handheld.spec.ts`, which asserts
+`e2e/handheldAssert.ts` at every reachable state: **16px** on anything carrying
+information, **96px** on any card the ring can land on, **44px** on any control,
+a ring at least 3px *and not `outline-style: none`*, at most one cursor, zero
+unreachable stops and zero `title` tooltips. Duplicate `data-testid`s are
+counted and reported but deliberately not failed -- scoping a query to its
+container, as `e2e/pod.spec.ts` does, makes a shared id on a repeated component
+correct.
+
+Three things about that gate are worth knowing before changing it, because each
+one cost a confusing loop to find:
+
+- **It walks clipping ancestors.** `getBoundingClientRect` reports an element's
+  own box even when an ancestor has clipped it to nothing, and the handheld
+  layout clips an opponent's lanes to `height: 0` deliberately — their cards
+  must stay in the document for `FxLayer` to anchor to. Without the walk it
+  reported 22 cards under the floor that nobody can see.
+- **It waits for animations, but only finite ones.** Dialogs animate in from
+  `scale: 0.96` and the scaled box fails the hit floor; the ring's sheen loops
+  forever and waiting on it never returns.
+- **It only demands a ring where a ring exists.** A mouse player has none by
+  design.
+
+`e2e/pad.spec.ts` drives a synthetic gamepad — Playwright cannot produce a real
+one, so `navigator.getGamepads` is overridden through `addInitScript` and a
+`gamepadconnected` event is dispatched.
+
+Two of its cases exist because a synthetic pad is *too well behaved*, and both
+were failures a real controller met on a desktop while the whole suite passed:
+"a controller plugged in later" (a real pad is invisible until its first
+gesture, so it is never there on the first frame) and "a second gamepad in front
+of the real one" (`getGamepads()` is indexed by slot, and on Windows slot zero is
+routinely a device nobody is touching).
+
+`tests/pad.test.ts` covers the polling loop itself in jsdom — multiple pads, a
+non-standard HID layout with its d-pad on a hat axis, analog triggers whose
+driver never sets `pressed`, and a loop recovering after rAF stopped running.
+It exists because the controller work was play-tested entirely through the
+keyboard fallback, which shares everything *below* the button map and therefore
+exercises none of the code that reads an actual gamepad.
 
 ## Where the four frontend suites divide
 
@@ -151,6 +246,39 @@ simultaneous deals produce exactly one 200, one 409 and one `GameSession`; a gue
 unlocking while the host deals never yields a game with an unready seat. Every
 `.result()` carries a timeout, because a deadlock is the failure mode the file exists
 to catch and a hung test that never reports is not a caught deadlock.
+
+**A summary that cannot be checked against the thing it summarises.**
+`mockups/seat/README.md` names this as the failure mode its whole family of
+components had: five of six directions could not be WRONG about the board,
+because lands were never in the payload, so nothing could contradict them.
+`OpponentSeat` is the shipped answer, so `handheldAssert`'s `seatsDisagree`
+re-derives all five counts from a different source — the rendered `.perm` cells
+against a walk over that seat's own lanes — and fails the board if any two
+disagree. It cannot import `musterOf`: `page.evaluate` sends the gate's source
+alone, which is exactly what makes the two derivations independent. Two that
+agreed by construction would be a gate agreeing with itself.
+
+It counts `data-stack-count` rather than boxes, because the board collapses
+duplicates — seven Forests are one card with a x7 on it — and a gate that
+counted nodes would report six missing lands on every developed board.
+
+**A row that runs past its box in silence.** `fanOverflow` measures every
+`[data-fan]` — the lanes and the hand — for horizontal overflow. The mockup
+round hit it: six cards at 176px is 1056px in the 947 the foot had, the hand ran
+79px past it onto the commit panel's first control, and `overflow: hidden` meant
+the page reported no overflow anywhere. **The only symptom was a button that had
+quietly stopped being clickable.** `unguttered` is its sibling: a styled
+scrollbar is a classic bar rather than an overlay, so it takes its width the
+instant it appears and re-wraps every line under it.
+
+**A stop the ring can reach and nobody can see.** `candidatesIn` dropped only
+zero-SIZED stops, and an opponent's lanes are `height: 0; overflow: hidden` so
+their cards stay in the document for `FxLayer` — a clipped card still reports its
+own full box. So the ring could land there, and no gate disagreed, because
+`handheldAssert`'s `unreachable` calls that very function. The ancestor-clip walk
+existed in the gate and not in the navigation, and **the two being different is
+what let it hide**. If a gate and the thing it grades share a helper, share the
+helper; if they cannot, expect them to drift.
 
 ## Determinism
 

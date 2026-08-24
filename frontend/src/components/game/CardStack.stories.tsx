@@ -101,9 +101,10 @@ export const FansOnHover: Story = {
  * A pile of tapped lands, which is what a spent turn looks like.
  *
  * And the one tier that can state where a tapped card's *box* is. The rims --
- * playable, targetable, staged, attacking -- are `.card::after` on the outer
- * box, so "the border surrounds the card" is exactly the claim that the outer
- * box and the rotated face share their four edges.
+ * playable, targetable, staged, attacking -- are `.card__actor::after`, and
+ * `.card__actor` is 100% of the outer box, so "the border surrounds the card"
+ * is exactly the claim that the outer box and the rotated face share their four
+ * edges.
  *
  * It has to be asserted *here* rather than in `Card.stories.Tapped`, because the
  * two mount the card into different formatting contexts and only this one is the

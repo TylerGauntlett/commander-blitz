@@ -46,6 +46,28 @@
      tax · commander damage · the mana meter · the tool strip and what each
      tool MEANS · undo · concede · all eleven decision kinds · game over.
 
+   AND THEN HOW IT MOVES, WHICH IS THE OTHER HALF OF THE ARGUMENT. Everything
+   above is about what the pad can REACH. None of it is about what the pad
+   FEELS like, and a control scheme is judged on the second one by anybody who
+   picks it up. Four things, all of them found by holding a direction down
+   rather than tapping it -- see `README.md`, "Pass four":
+
+     THE RAMP     how hard you push the stick picks the repeat rate, 155ms at a
+                  nudge down to 46ms at a shove. The other 45% of the stick's
+                  travel used to buy nothing at all.
+     THE SPRING   the ring is a damped oscillator in closed form, not four CSS
+                  transitions -- so a held sweep is one arc instead of eight
+                  collisions, it is the same ring at 30, 60 and 144fps, and it
+                  can bounce off a wall, squeeze under a press and leave a
+                  trail. It stops its own rAF when it settles.
+     THE SETTLE   the ring is instant and the READER waits for you to stop. A
+                  twelve-step sweep rebuilds the card face twice, not twelve
+                  times.
+     THREE BUGS   that only a held direction finds, all three older than this
+                  pass and verified against HEAD -- the worst of them being
+                  that the ring went out on the commit slab AND COULD NOT GET
+                  OFF IT. `assert.js` gained `ringLost` so it cannot come back.
+
    THE FRAME. Fixed 1280x800, scaled to the window, with the scale printed on
    the bezel. See `_handheld.css` -- reviewing a Deck design in a desktop-sized
    window is how you talk yourself into text that is too small.
@@ -980,6 +1002,18 @@ body {
    came to 575px in a 570px rail, and the action button -- the only thing in
    there you can press -- was the part that fell off the bottom. */
 .readp .face { --card-w: 152px; --face-fs: var(--fs-min); }
+/* THE RAIL SETTLES BEHIND THE RING.
+   Sweeping a lane at 40ms a step used to rebuild this panel forty times a
+   second -- a 152px card face, art and all, cut to a new one every other frame.
+   It is unreadable by construction, and it is the single noisiest thing on the
+   screen while you are moving. So the ring stays instant and the READER waits
+   for you to stop: see `settleRail()`. This is the arrival. */
+@keyframes railin { from { opacity: 0; translate: 0 5px; } to { opacity: 1; translate: 0 0; } }
+.readp--in { animation: railin 130ms cubic-bezier(.2,.9,.3,1); }
+/* ...and this is the panel admitting it is a step behind, which is the whole
+   reason the delay reads as deliberate rather than as lag. */
+.rail--sweeping .readp { opacity: 0.5; }
+.rail--sweeping .readp, .readp { transition: opacity 90ms ease; }
 .deck[data-wide="yes"] .readp .face { --card-w: 236px; --face-fs: 17px; }
 .readp__n { align-self: stretch; font-size: var(--fs-body); font-weight: 600; line-height: 1.2; }
 .readp__tl { align-self: stretch; font-size: var(--fs-min); color: var(--text-dim); }
@@ -1019,6 +1053,11 @@ body {
 .foot { display: flex; align-items: center; gap: 13px; height: 54px; padding: 0 12px; flex: none; border-top: 1px solid var(--edge); background: var(--pane-well); font-size: var(--fs-min); color: var(--text-dim); }
 .foot b.on { color: var(--focus); font-weight: 600; }
 .foot .sp { flex: 1; }
+/* `display: contents` so the two halves of the foot are still ONE flex row --
+   the gap and the `.sp` spacer have to keep working across the seam. The seam
+   exists so the hint spans can be rebuilt on a cursor move without taking the
+   commit slab, and its animation, down with them. */
+.foot__hints, .foot__slab { display: contents; }
 .foot__name { min-width: 190px; max-width: 250px; padding-right: 11px; border-right: 1px solid var(--edge); font-size: var(--fs-body); font-weight: 600; color: var(--focus); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* --- Overlays ------------------------------------------------------------ */
@@ -1043,17 +1082,43 @@ body {
    behind it is drawn dead, never moved and never removed. */
 .wheelwrap { position: absolute; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(6, 5, 14, 0.8); backdrop-filter: blur(3px); }
 .wheel { position: relative; width: 460px; height: 460px; }
-.spoke { position: absolute; left: 50%; top: 50%; width: 152px; min-height: var(--hit); margin: -23px 0 0 -76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 10px; border-radius: 11px; border: 1px solid var(--edge); background: rgba(18, 16, 38, 0.97); font-size: var(--fs-min); text-align: center; transition: transform var(--t-fast) ease; }
+.spoke { position: absolute; left: 50%; top: 50%; width: 152px; min-height: var(--hit); margin: -23px 0 0 -76px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 10px; border-radius: 11px; border: 1px solid var(--edge); background: rgba(18, 16, 38, 0.97); font-size: var(--fs-min); text-align: center; transition: scale var(--t-fast) ease, background var(--t-fast) ease, box-shadow var(--t-fast) ease; }
 .spoke b { font-size: var(--fs-body); }
 .spoke small { color: var(--text-faint); }
 .spoke--dead { opacity: 0.3; }
-.spoke--on { background: var(--focus); border-color: var(--focus); color: #241d05; transform: scale(1.08); box-shadow: 0 0 0 5px var(--focus-glow); }
+/* `scale`, NOT `transform: scale()`. The polar placement is an inline
+   `transform` and inline wins, so this rule spent the whole round being
+   overridden by it -- the selected spoke never grew once. The independent
+   transform properties compose instead of fighting, which is also what lets
+   `translate` carry the lean in `wheelLean()` without touching either. */
+.spoke--on { background: var(--focus); border-color: var(--focus); color: #241d05; scale: 1.08; box-shadow: 0 0 0 5px var(--focus-glow); }
 .spoke--on small { color: #4a3c10; }
 .hub { position: absolute; left: 50%; top: 50%; width: 162px; height: 162px; margin: -81px 0 0 -81px; border-radius: 999px; display: grid; place-content: center; justify-items: center; gap: 4px; text-align: center; padding: 12px; background: rgba(12, 11, 26, 0.98); border: 1px solid var(--edge-hi); }
 .hub b { font-size: var(--fs-lead); }
 .hub small { font-size: var(--fs-min); color: var(--text-faint); line-height: 1.25; }
-.needle { position: absolute; left: 50%; top: 50%; width: 5px; height: 168px; margin: -168px 0 0 -2.5px; transform-origin: 50% 100%; border-radius: 3px; background: linear-gradient(180deg, var(--focus), transparent); opacity: 0; }
+.needle { position: absolute; left: 50%; top: 50%; width: 5px; height: 168px; margin: -168px 0 0 -2.5px; transform-origin: 50% 100%; border-radius: 3px; background: linear-gradient(180deg, var(--focus), transparent); opacity: 0; transition: opacity 90ms ease; }
 .needle--live { opacity: 1; }
+
+/* THE WHEEL IS EIGHT PLACES AND AN ANALOG STICK, AND IT ONLY EVER USED THE
+   EIGHT. Between sectors nothing moved at all: the needle swung, the spokes
+   sat still, and the 45 degrees either side of a spoke were dead travel you
+   could feel but not see. `wheelLean()` gives that travel back -- every spoke
+   leans toward the thumb by how close the thumb is to it, so the wheel is
+   already reaching for the one you are going to pick before you commit to it.
+   The lean is written straight onto `translate` every frame and is therefore
+   NOT transitioned; the stick is the animation. */
+@keyframes wheelin { from { scale: 0.9; opacity: 0; } to { scale: 1; opacity: 1; } }
+.wheel { animation: wheelin 150ms cubic-bezier(.2,.95,.3,1); }
+.hub { transition: scale var(--t-fast) ease, border-color var(--t-fast) ease; }
+.hub--aimed { scale: 1.06; border-color: var(--focus); }
+
+/* A PRESS PUSHES THE THING YOU PRESSED.
+   The one piece of feedback every physical button has and no web control does:
+   it goes down. 160ms, `scale` so it composes with the lift on a focused card
+   rather than overwriting it, and it fires on the element under the ring
+   whatever that element is -- a card, a chip, the commit slab. */
+@keyframes push { 0% { scale: 1; } 34% { scale: 0.955; } 100% { scale: 1; } }
+.pushed { animation: push 160ms cubic-bezier(.3,.9,.35,1); }
 
 /* The reel: every question the engine can ask, at a size you can read. */
 .reel { display: flex; align-items: center; justify-content: center; gap: 15px; height: 100%; }
@@ -1291,12 +1356,32 @@ body {
    that MOVES is one your eye follows, and following it is free -- you already
    know where it went because you watched it go. It is the single cheapest thing
    that separates "a website with a focus outline" from "a console game", and it
-   costs one absolutely-positioned div and a transition.
+   costs two absolutely-positioned divs and a spring.
 
    The outline on `[data-cursor]` stays: it is what makes the ring survive a
    render, what the accessibility tree sees, and what `assert.js` measures. The
    halo is the part that moves, and it is decoration over the top of a cursor
    that is already correct.
+
+   A TRANSITION IS NOT A TRAVEL, AND THIS IS THE ROUND'S SECOND-BEST FINDING.
+
+   The ring used to be four CSS transitions -- `left`, `top`, `width`, `height`,
+   150ms, one easing curve. That is fine for ONE move and wrong for the thing a
+   pad actually does, which is hold a direction and fire eight of them in a row.
+   Each new move RESTARTS the curve from wherever the last one had got to, so a
+   held sweep is eight eased starts and eight eased stops stacked on top of each
+   other: the ring lurches, and the faster you sweep the worse it gets. It is
+   the exact motion signature of a menu that was never held down.
+
+   A spring has no such seam, because it has no start and no end -- only a
+   position, a velocity and a target. Retarget it mid-flight and the velocity
+   it already had is carried into the new leg, which is why a swept ring reads
+   as ONE continuous movement across the board and a transitioned one never
+   can. See `RING` in the script: semi-implicit Euler, slightly underdamped so
+   it arrives with a little overshoot, and it STOPS ITS OWN RAF when it settles
+   -- an idle loop is a battery cost, and this is a handheld.
+
+   Everything below is what the spring writes into, and nothing here animates.
 ======================================================================== */
 .halo {
   position: absolute;
@@ -1305,18 +1390,29 @@ body {
   pointer-events: none;
   opacity: 0;
   box-shadow: 0 0 0 3px var(--focus), 0 0 26px 6px var(--focus-glow);
-  transition:
-    left 150ms cubic-bezier(.22,.9,.3,1),
-    top 150ms cubic-bezier(.22,.9,.3,1),
-    width 150ms cubic-bezier(.22,.9,.3,1),
-    height 150ms cubic-bezier(.22,.9,.3,1),
-    opacity 120ms ease;
+  transition: opacity 120ms ease;
 }
 .halo--on { opacity: 1; }
 
+/* THE TRAIL. A second ring on a softer spring, so it is always a few frames
+   behind the first one -- which is the whole of why the eye can follow a fast
+   sweep. Its opacity is the ring's SPEED, so it does not exist at rest and it
+   costs nothing to look at when nothing is moving. */
+.halo__trail {
+  position: absolute;
+  z-index: 54;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 0 0 2px var(--focus-glow), 0 0 30px 10px var(--focus-glow);
+}
+
 /* A focused card rises. Physical, and it also lifts the card clear of its
-   neighbours so the ring is never half-hidden behind the next one along. */
-.slot { transition: transform 140ms cubic-bezier(.22,.9,.3,1); }
+   neighbours so the ring is never half-hidden behind the next one along.
+   120ms, matched to the ring's own 117ms arrival, so the card and the ring
+   land TOGETHER -- two things moving to the same place on two different
+   timings is the difference between one gesture and two events. */
+.slot { transition: transform 120ms cubic-bezier(.22,.9,.3,1); }
 .slot[data-cursor] { transform: translateY(-7px); z-index: 6; }
 
 /* A SHEEN ACROSS THE CARD UNDER THE RING.
@@ -1627,7 +1723,7 @@ body {
   </div>
 </div>
 <div class="bezel__tag">Steam Deck · 1280×800 · shown at <b>100%</b></div>
-<div class="lamp" id="lamp"><i></i><span>input: <b id="pcount">0</b> presses · cue <b id="cue">—</b></span></div>
+<div class="lamp" id="lamp"><i></i><span>input: <b id="pcount">0</b> presses · cue <b id="cue">—</b> · sweep <b id="rate">idle</b></span></div>
 
 <script>
 // <<< BEGIN _handheld.js >>>
@@ -1961,12 +2057,46 @@ const Pad = (() => {
   const DEAD = 0.30;          // Deck sticks rest noisily; 0.30 is past the noise
   const FIRE = 0.55;          // a direction is meant once the stick crosses this
   const RELEASE = 0.35;       // ...and is not meant again until it drops below this
-  const REPEAT_FIRST = 400;   // ms a direction must be held before it repeats
-  const REPEAT_NEXT = 95;     // ms between repeats after that
+
+  /* THE THUMB IS AN ANALOG INPUT AND A FIXED REPEAT RATE THROWS THAT AWAY.
+   *
+   * This was `REPEAT_FIRST = 400`, `REPEAT_NEXT = 95`, and the number was the
+   * same whether the stick was barely past the fire line or buried in the
+   * corner. That is a d-pad wearing a stick: the only thing the extra 45% of
+   * travel bought you was nothing.
+   *
+   * Every console UI that feels good does it the other way round. A nudge steps
+   * ONE, deliberately, because a nudge is what you use when you know exactly
+   * where you are going. A shove sweeps, because a shove is what you use when
+   * you are crossing thirty permanents to reach the lands. The thumb already
+   * knows which one it is doing; the loop just has to read it.
+   *
+   * Two knobs, both here, both linear and both honest:
+   *
+   *   push        how far past FIRE the stick is, rescaled to 0..1. It picks
+   *               the interval between REPEAT_SLOW and REPEAT_FAST.
+   *   run         how many repeats this hold has already fired. It eases the
+   *               interval down a further 28% over the first seven, which is
+   *               what stops a long lane feeling like a metronome you are
+   *               waiting on.
+   *
+   * A d-pad and the keyboard have no analog to read, so they stand at KEY_T --
+   * deliberately the middle of the range rather than either end, because a
+   * digital press means "one step" and should not inherit the sweep.
+   */
+  const REPEAT_FIRST_SLOW = 360;  // ms before the first repeat, at a nudge
+  const REPEAT_FIRST_FAST = 180;  // ...and at a full shove
+  const REPEAT_SLOW = 155;        // ms between repeats, at a nudge
+  const REPEAT_FAST = 46;         // ...and at a full shove
+  const REPEAT_FLOOR = 38;        // never faster than this, however long the hold
+  const KEY_T = 0.5;              // where a digital direction sits on that ramp
+  const ACCEL_OVER = 7;           // repeats the run-in takes to reach...
+  const ACCEL_FLOOR = 0.72;       // ...this multiple of the interval
 
   let handlers = {};
   let prev = {};              // button name -> was down last frame
   let held = {};              // direction -> ms the next repeat is due
+  let run = {};               // direction -> repeats fired without releasing
   let latched = null;         // the stick's current sector, or null while centred
   let connected = false;
   let raf = 0;
@@ -2056,6 +2186,34 @@ const Pad = (() => {
 
   const REPEATS = new Set(["up", "down", "left", "right"]);
 
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
+
+  /** Where this direction sits on the ramp, 0 = a nudge, 1 = a full shove.
+      ONLY A DIRECTION COMING FROM THE STICK IS ANALOG, and it takes three
+      checks to be sure of that rather than one. `latched` is the direction
+      whatever its source, because the keyboard fallback writes into it too --
+      so with a pad plugged in and the keyboard driving, reading the stick's
+      magnitude here measures a stick sitting at rest and hands every key press
+      the SLOWEST rate on the ramp. A d-pad press has the same shape. Both are
+      digital, both mean "one step", and both stand at KEY_T. */
+  function pushOf(name) {
+    if (keyDown.has(name) || keyLatch.has(name)) return KEY_T;
+    const p = pads()[0];
+    if (!p || latched !== name) return KEY_T;
+    const m = Math.hypot(axis(p, 0), axis(p, 1));
+    if (m < RELEASE) return KEY_T;          // the stick is centred: this is the d-pad
+    return clamp01((m - FIRE) / (1 - FIRE));
+  }
+
+  /** The interval before the next repeat of a held direction, in ms. */
+  function repeatMs(name, first) {
+    const t = pushOf(name);
+    if (first) return lerp(REPEAT_FIRST_SLOW, REPEAT_FIRST_FAST, t);
+    const accel = Math.max(ACCEL_FLOOR, 1 - ((run[name] || 0) / ACCEL_OVER) * (1 - ACCEL_FLOOR));
+    return Math.max(REPEAT_FLOOR, lerp(REPEAT_SLOW, REPEAT_FAST, t) * accel);
+  }
+
   function frame(now) {
     // The array getGamepads() hands back is a SNAPSHOT. Caching the Gamepad
     // object gives you buttons frozen at the moment you cached it, which is the
@@ -2075,12 +2233,14 @@ const Pad = (() => {
       const was = prev[name];
       if (isDown && !was) {
         fire(name);
-        if (REPEATS.has(name)) held[name] = now + REPEAT_FIRST;
+        if (REPEATS.has(name)) { run[name] = 0; held[name] = now + repeatMs(name, true); }
       } else if (isDown && was && REPEATS.has(name) && now >= held[name]) {
         fire(name);
-        held[name] = now + REPEAT_NEXT;
+        run[name] = (run[name] || 0) + 1;
+        held[name] = now + repeatMs(name, false);
       } else if (!isDown) {
         delete held[name];
+        delete run[name];
       }
       prev[name] = isDown;
     }
@@ -2119,6 +2279,21 @@ const Pad = (() => {
     rumble,
     presses: () => presses,
     resetPresses: () => { presses = 0; },
+    /* What the ramp is doing right now. A control the player cannot feel the
+       edges of is a control they will not trust, so 06 prints this on the
+       bezel while a direction is held -- the rate is a number, and the number
+       moves with the thumb. The bezel and not the screen, because it is a note
+       to whoever is reviewing this and not part of the Deck's own UI. */
+    sweep() {
+      const dir = latched;
+      if (!dir || !REPEATS.has(dir) || held[dir] === undefined) return { dir: null, push: 0, ms: 0, run: 0 };
+      const t = pushOf(dir);
+      const accel = Math.max(ACCEL_FLOOR, 1 - ((run[dir] || 0) / ACCEL_OVER) * (1 - ACCEL_FLOOR));
+      return {
+        dir, push: t, run: run[dir] || 0,
+        ms: Math.round(Math.max(REPEAT_FLOOR, lerp(REPEAT_SLOW, REPEAT_FAST, t) * accel)),
+      };
+    },
     start(h) {
       handlers = h || {};
       addEventListener("keydown", (ev) => {
@@ -2966,6 +3141,36 @@ function HANDHELD_ASSERT() {
       curRect.right <= innerWidth + 1 && curRect.bottom <= innerHeight + 1
     : false;
 
+  /* THE RING WENT OUT WITHOUT ANYTHING SAYING SO.
+     A cursor drawn from an attribute is a cursor that fails SILENTLY when the
+     node carrying it is replaced -- and 06 was doing exactly that on the two
+     regions it rebuilds incrementally, one of which holds the commit slab. The
+     symptom on screen is no ring at all, and the symptom in this file was
+     `cursors: 0`, which cannot be failed on its own because 02 and 04 rest
+     there on purpose.
+
+     What CAN be failed is the disagreement: the state names a stop, the stop is
+     on screen, and it is not wearing the cursor. That is never intentional in
+     any of the six, and it is the difference between "nothing is selected" and
+     "something is selected and you cannot see it".
+
+     ASKED INSIDE THE FOCUS ROOT, WHICH IS THE SAME QUESTION THE APP ASKS. With
+     an overlay up, the stop `S.cur` names is usually still in the document,
+     sitting behind the veil -- and the card reader is a surface with no stops
+     at all, so its correct state is a live `S.cur` and no ring anywhere. Asking
+     this of the whole stage instead of the topmost layer failed the reader for
+     doing exactly the right thing, which is the gate enforcing a rule the
+     design does not have. Same three-line rule as `stopRoot()`: whatever is on
+     top owns the ring, and the gate has to agree about what "on top" means. */
+  const FOCUS_ROOT = ROOT.querySelector(".wheelwrap") || ROOT.querySelector(".veil") || ROOT;
+  let ringLost = false;
+  try {
+    if (typeof S !== "undefined" && S && S.cur) {
+      const owner = FOCUS_ROOT.querySelector(`[data-stop="${CSS.escape(S.cur)}"]`);
+      ringLost = !!owner && !owner.hasAttribute("data-cursor");
+    }
+  } catch { /* a file without an `S.cur` is not being asked this question */ }
+
   /* Read the STYLE as well as the width. `outline-width: 3px` with
      `outline-style: none` computes as a perfectly healthy 3, and draws nothing
      -- which is exactly what a bare `:focus { outline: none }` does to the
@@ -3009,6 +3214,7 @@ function HANDHELD_ASSERT() {
 
     cursors: cursors.length,
     cursorOnScreen: curOnScreen,
+    ringLost,
     ringWidthPx: ringW,
     ringStyle,
 
@@ -3040,6 +3246,7 @@ function HANDHELD_ASSERT() {
     (out.minCardPx === null || out.minCardPx >= CARD_FLOOR) &&
     out.smallHits === 0 &&
     out.cursors <= 1 &&
+    out.ringLost === false &&
     (out.cursors === 0 || (out.cursorOnScreen && out.ringWidthPx >= RING_FLOOR)) &&
     out.spilledElements === 0 &&
     out.collapsedRegions === 0 &&
@@ -3124,6 +3331,7 @@ const S = {
      is deliberately session-only -- a prototype somebody opens twice should
      teach twice, where a shipped game would put this in `localStorage`. */
   seen: {},
+  push: null,    // { id, at } -- the press feedback, so it survives a re-render
   fit: "deck",   // deck | window -- see fitMode()
 };
 
@@ -3181,7 +3389,9 @@ function nav(dir) {
 
 function move(dir) {
   const to = nav(dir);
-  if (!to) { cue("ui.deny"); Pad.rumble(55, 0.22); return; }
+  // A wall you can see. The sound and the rumble were both already here and
+  // both are channels a handheld is routinely played without.
+  if (!to) { cue("ui.deny"); Pad.rumble(55, 0.22); ringNudge(dir); return; }
   cue("ui.move");
   S.cur = to.dataset.stop;
   renderCursor();                                  // NOT render() -- see above
@@ -3220,6 +3430,7 @@ function bind() {
     menu: () => { S.overlay = S.overlay === "tools" ? null : "tools"; S.cur = null; render(); },
     l3: () => { S.overlay = "question"; S.qi = 0; S.question = QUESTIONS[QUESTION_ORDER[0]]; render(); },
     frame: (f) => {
+      paintRate();
       // L2 is the wheel and it is a HOLD -- a toggle needs a second press to put
       // away, and leaves the board hidden if you forget.
       const held = f.l2 > 0.4;
@@ -3234,8 +3445,9 @@ function bind() {
       }
       if (S.overlay === "wheel") {
         const aim = sectorOf(stick.x, stick.y);
-        if (aim !== S.wheelAim) { S.wheelAim = aim; S.cur = "spoke"; return render(); }
-        needleOnly();
+        if (aim !== S.wheelAim) wheelAim(aim);
+        needleOnly();          // the lean is continuous; the aim is not
+        return;
       }
       // R2 expands the focused opponent, also a hold.
       const zoom = f.r2 > 0.4;
@@ -3286,7 +3498,12 @@ function jumpZone(d) {
   for (let k = 1; k <= BOARD_ZONES.length; k++) {
     const z = BOARD_ZONES[(Math.max(0, here) + d * k + BOARD_ZONES.length * 4) % BOARD_ZONES.length];
     const first = [...app.querySelectorAll("[data-stop]")].find((e) => e.dataset.zone === z);
-    if (first) { S.cur = first.dataset.stop; return render(); }
+    /* `renderCursor`, not `render`. A zone jump is a CURSOR MOVE -- nothing
+       about the board changed -- and rebuilding the whole stage for one
+       restarts every animation on it, including the commit slab's pulse and
+       the sheen on whatever the ring lands on. Same rule as `move()`; this was
+       the one place that had not been told. */
+    if (first) { S.cur = first.dataset.stop; return renderCursor(); }
   }
   Pad.rumble(55, 0.22);
 }
@@ -3297,6 +3514,7 @@ function jumpZone(d) {
 
 function confirm() {
   if (skipBeat()) return;              // an impatient press is never wasted
+  pushCursor();                        // ...and every press is felt
   const id = S.cur || "";
   if (S.overlay === "tools") return toolPress(id);
   if (S.overlay === "over") {
@@ -3478,20 +3696,17 @@ function renderCursor() {
   if (old === el) { paint(); return; }
   if (old) old.removeAttribute("data-cursor");
   el.setAttribute("data-cursor", "");
+  applyPush(el);
   if (el.tabIndex >= 0) el.focus({ preventScroll: true });
 
   /* The only two regions whose CONTENT depends on the cursor -- and the rail is
      the expensive one, because it builds a 152px card face with an image in it.
      Walking along a lane of seven Forests shows the SAME card seven times, so
-     keying on what it would draw skips six of those rebuilds outright. */
-  const key = railKey();
-  if (key !== LAST_RAIL) {
-    const rail = document.getElementById("rail");
-    if (rail) rail.innerHTML = railInner();
-    LAST_RAIL = key;
-  }
-  const foot = document.getElementById("foot");
-  if (foot) foot.innerHTML = footInner();
+     keying on what it would draw skips six of those rebuilds outright, and
+     `settleRail` skips the rest of them while the thumb is still moving. */
+  settleRail();
+  paintFoot();
+  restampCursor();          // the foot holds the commit slab -- see below
 
   // Arrows are anchored to permanents, and a cursor move does not move a
   // permanent -- so rebuilding the SVG on every press was pure cost.
@@ -3500,7 +3715,93 @@ function renderCursor() {
   paintCoach();
 }
 
-let LAST_RAIL = null;
+/* ===========================================================================
+   THE RAIL SETTLES BEHIND THE RING
+   ---------------------------------------------------------------------------
+   With the analog ramp in, a full shove crosses a lane at ~40ms a step. The
+   rail was rebuilding on every one of those: a 152px card face with an <img>
+   in it, cut to a different card twenty-five times a second. Nobody can read
+   that, and it is the loudest thing on the screen at exactly the moment you
+   are trying to look somewhere else.
+
+   Consoles solved this a decade ago and the rule is the same everywhere: the
+   CURSOR is instant, the DETAIL waits for you to stop. Steam's own library
+   does it, so does every storefront on every set-top box. A step taken after a
+   pause is deliberate, so the rail answers immediately; a step taken 40ms
+   after the last one is part of a sweep, so the rail dims a little and waits
+   out the sweep. Dimming is what makes the delay read as the panel deferring
+   rather than as the panel lagging -- an unannounced 110ms is a bug and an
+   announced one is a decision.
+
+   The drawn key lives on the element as `data-k`, not in a module variable.
+   The old `LAST_RAIL` global could disagree with what was actually in the DOM
+   -- and did, which is why `paint()` had to blank it defensively on every
+   call. An element that stamps what it is showing cannot drift from itself.
+======================================================================== */
+const RAIL_SETTLE = 110;
+let RAIL_T = 0;
+let LAST_MOVE = 0;
+
+function settleRail() {
+  const rail = document.getElementById("rail");
+  if (!rail) return;
+  const now = performance.now();
+  const sweeping = now - LAST_MOVE < RAIL_SETTLE;
+  LAST_MOVE = now;
+  clearTimeout(RAIL_T);
+  if (!sweeping || reduced()) return paintRail();
+  rail.classList.add("rail--sweeping");
+  RAIL_T = setTimeout(paintRail, RAIL_SETTLE);
+}
+
+function paintRail() {
+  const rail = document.getElementById("rail");
+  if (!rail) return;
+  rail.classList.remove("rail--sweeping");
+  const key = railKey();
+  if (rail.dataset.k === key) return;
+  rail.innerHTML = railInner();
+  rail.dataset.k = key;
+  const p = rail.querySelector(".readp");
+  if (p && !reduced()) p.classList.add("readp--in");
+
+  restampCursor();
+}
+
+/* ===========================================================================
+   THE RING WENT OUT, AND ON THE ONE CONTROL THAT MATTERS MOST
+   ---------------------------------------------------------------------------
+   `renderCursor()` rebuilds two regions, and BOTH OF THEM CONTAIN STOPS. The
+   stack items live in the rail. The commit slab -- "Attack with 3 → Duelist ·
+   13 dmg", the button the whole turn is waiting on -- lives in the foot. So
+   the sequence was: stamp `data-cursor` on the element, then replace the
+   innerHTML of the region that element is inside, then draw a ring from an
+   attribute on a node that no longer exists in the document.
+
+   The ring simply went out. And because `nav()` starts from
+   `[data-cursor]`, it then returned null for every direction -- so the ring
+   was not merely invisible on the commit slab, IT WAS STUCK THERE. Walk onto
+   the attack button with the stick and the pad stops working. Verified against
+   `HEAD` before this pass touched anything, so it is the round's, not this
+   pass's; a pointer never found it because a pointer sets the cursor from
+   where it already is.
+
+   This is what "the cursor is state, not `document.activeElement`" is worth
+   when it is followed all the way: the fix is to re-derive the attribute from
+   the state after anything rebuilds markup, and it is the same three lines
+   wherever markup gets rebuilt. `assert.js` gained `ringLost` for it, because
+   `cursors: 0` on its own is a legitimate position that two of the five
+   directions take deliberately.
+======================================================================== */
+function restampCursor() {
+  if (!S.cur || app.querySelector("[data-cursor]")) return;
+  const back = stopRoot().querySelector(`[data-stop="${CSS.escape(S.cur)}"]`);
+  if (!back) return;
+  back.setAttribute("data-cursor", "");
+  applyPush(back);
+  if (back.tabIndex >= 0) back.focus({ preventScroll: true });
+  paintHalo();
+}
 
 /* What the rail would draw, as a cheap string. */
 function railKey() {
@@ -3537,6 +3838,7 @@ function render(again) {
     S.cur = el.dataset.stop;
     if (moved && !again) return render(true);
     el.setAttribute("data-cursor", "");
+    applyPush(el);
     if (el.tabIndex >= 0) el.focus({ preventScroll: true });
   }
   paint();
@@ -3545,23 +3847,373 @@ function render(again) {
 function needleOnly() {
   const n = app.querySelector(".needle");
   if (!n) return render();
-  n.style.transform = `rotate(${Math.atan2(S.needle.x, -S.needle.y) * 180 / Math.PI}deg)`;
+  const ang = Math.atan2(S.needle.x, -S.needle.y);
+  n.style.transform = `rotate(${ang * 180 / Math.PI}deg)`;
   n.classList.toggle("needle--live", S.needle.live);
+  wheelLean(ang, Math.hypot(S.needle.x, S.needle.y));
 }
 
-/* Move the halo onto whatever the ring is on, in Deck coordinates. Called after
-   every render; the transition does the rest. */
+/* THE 45 DEGREES EITHER SIDE OF A SPOKE WERE DEAD TRAVEL.
+   `sectorOf()` quantises the stick to eight places, which is right -- eight
+   fixed places is the whole reason the wheel is learnable. But quantising the
+   PICK does not mean the picture has to be quantised too, and it was: between
+   sectors the only thing that moved was the needle. So every spoke leans out
+   toward the thumb by how near the thumb is to it, squared so the lean is
+   concentrated on the one or two you are actually choosing between. The wheel
+   reaches for the answer before you commit to it, and the dead travel becomes
+   the part where you can see yourself deciding.
+
+   Written to `translate`, which composes with the polar `transform` and the
+   selected spoke's `scale` instead of overwriting either -- and NOT
+   transitioned, because the thumb is already the animation. */
+/* MOVING THE AIM IS NOT REBUILDING THE WHEEL.
+   Rotating the stick through eight sectors used to call `render()` eight times,
+   and `render()` replaces `#app` -- so `.wheel` was a new element on every one
+   of them, and its `wheelin` scale-in replayed from zero each time. Turning the
+   stick made the wheel flinch. Nothing about the wheel changes when the aim
+   moves except which spoke is lit, so that is all this touches: three class
+   toggles, the stop, and the hub's text.
+
+   Leaving the ring's own move to `paintHalo()` is what makes it worth doing
+   twice over -- with the spring behind it, the ring now ARCS from spoke to
+   spoke around the wheel instead of being rebuilt in place at each one. */
+function wheelAim(aim) {
+  const wrap = app.querySelector(".wheelwrap");
+  if (!wrap) return render();
+  S.wheelAim = aim;
+  S.cur = aim ? "spoke" : null;
+  const spokes = wrap.querySelectorAll(".spoke");
+  SPOKES.forEach((s, i) => {
+    const el = spokes[i];
+    if (!el) return;
+    const on = s.id === aim;
+    el.classList.toggle("spoke--on", on);
+    if (on) { el.setAttribute("data-stop", "spoke"); el.setAttribute("data-cursor", ""); el.tabIndex = 0; }
+    else { el.removeAttribute("data-stop"); el.removeAttribute("data-cursor"); el.removeAttribute("tabindex"); }
+  });
+  const hub = wrap.querySelector(".hub");
+  if (hub) {
+    hub.innerHTML = aim
+      ? `<b>${SPOKES.find((s) => s.id === aim).n}</b><small>let go of L2</small>`
+      : `<b>Shortcuts</b><small>flick the right stick, then let go of L2</small>`;
+  }
+  paintHalo();
+}
+
+const LEAN = 16;
+function wheelLean(ang, mag) {
+  const spokes = app.querySelectorAll(".spoke");
+  if (!spokes.length) return;
+  const m = reduced() ? 0 : Math.min(1, mag);
+  spokes.forEach((el, i) => {
+    const sa = (i * Math.PI) / 4;
+    const d = Math.abs(((ang - sa + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+    const near = Math.max(0, 1 - d / (Math.PI / 2));
+    const k = near * near * m * LEAN;
+    el.style.translate = `${(Math.sin(sa) * k).toFixed(2)}px ${(-Math.cos(sa) * k).toFixed(2)}px`;
+  });
+  const hub = app.querySelector(".hub");
+  if (hub) hub.classList.toggle("hub--aimed", m > 0.5);
+}
+
+/* THE RAMP IS A CONTROL, SO IT IS ON SCREEN. A player cannot feel the edges of
+   a rate curve they have never been shown a number for, and neither can a
+   reviewer. Held direction: the interval it is repeating at and how far the
+   thumb is pushing. This is review chrome on the bezel, outside `.deck`. */
+function paintRate() {
+  const el = document.getElementById("rate");
+  if (!el) return;
+  const s = Pad.sweep();
+  const txt = s.dir ? `${s.ms}ms · ${Math.round(s.push * 100)}% push` : "idle";
+  if (el.textContent !== txt) el.textContent = txt;
+}
+
+/* A press is felt on the thing pressed as well as on the ring. The class is
+   stamped from STATE and re-applied by the renderer, because A almost always
+   re-renders and the element it landed on will not exist a tick later. */
+const PUSH_MS = 180;
+let pushClearT = 0;
+
+function pushCursor() {
+  ringPress();
+  if (reduced()) return;
+  S.push = { id: S.cur, at: performance.now() };
+  const el = app.querySelector("[data-cursor]");
+  if (el) applyPush(el);
+  /* Take the class back off. A finished animation is inert, but a class left
+     on an element for the rest of the session is a class that will eventually
+     be found by a selector written months from now and misread as state. */
+  clearTimeout(pushClearT);
+  pushClearT = setTimeout(() => {
+    S.push = null;
+    app.querySelectorAll(".pushed").forEach((n) => n.classList.remove("pushed"));
+  }, PUSH_MS + 60);
+}
+
+function applyPush(el) {
+  if (!S.push || S.push.id !== el.dataset.stop) return;
+  if (performance.now() - S.push.at > PUSH_MS) return;
+  el.classList.add("pushed");
+}
+
+/* ===========================================================================
+   THE RING IS A SPRING
+   ---------------------------------------------------------------------------
+   Four numbers and their velocities, integrated on one rAF, in Deck pixels.
+   `paintHalo()` no longer MOVES anything -- it only tells the spring where the
+   cursor went, and the spring is what arrives.
+
+   Why that is not the same as a transition, in one sentence: a transition
+   restarts from zero velocity on every retarget, and a pad retargets eight
+   times a second, so a held sweep under transitions is eight collisions
+   between an ease-out that has not finished and an ease-in that just started.
+   The spring simply keeps its velocity, and eight legs become one arc.
+
+   It also buys three things a transition cannot:
+
+     THE BOUNCE OFF A WALL. `nav()` returning nothing used to be a rumble and a
+     sound and no picture at all. Now the ring gets an impulse into the wall it
+     could not cross and the spring pulls it back -- the edge of the board is a
+     thing you can SEE, which on a handheld you may be playing muted is the
+     only channel that was carrying it.
+
+     THE PRESS. A is an impulse on the ring's SIZE, so the ring squeezes and
+     recovers. It survives the re-render that A almost always triggers, because
+     it lives in this object rather than in a class on an element that is about
+     to be replaced.
+
+     THE TRAIL. One softer follower, opacity driven by speed, which is what
+     makes a fast sweep legible instead of a strobe.
+
+   THE LOOP STOPS WHEN IT SETTLES. This is a battery-powered 7-inch computer;
+   a rAF that never stops is a rAF that costs you play time for nothing.
+======================================================================== */
+const RING = {
+  x: 0, y: 0, w: 0, h: 0,            // where it is
+  vx: 0, vy: 0, vw: 0, vh: 0,        // and how fast that is changing
+  tx: 0, ty: 0, tw: 0, th: 0,        // where it is going
+  gx: 0, gy: 0, gw: 0, gh: 0,        // the trail, following at its own pace
+  placed: false,                     // false until the first cursor is measured
+  ctx: "",                           // screen+overlay; a change means teleport
+  raf: 0, last: 0, speed: 0,
+};
+
+/* TUNED IN TIME, NOT IN STIFFNESS, BECAUSE TIME IS THE THING BEING JUDGED.
+   `w` is the natural frequency in rad/s and `z` the damping ratio, so the two
+   numbers a review actually cares about fall straight out of them:
+
+     settling time ≈ 4 / (z·w)        overshoot = e^(-πz/√(1-z²))
+
+   full  = w 36, z 0.78: a 142ms settling time, 2.0% of overshoot, and -- the
+           number that actually matters, because it is when the eye calls it
+           arrived -- WITHIN 2px OF TARGET IN 117ms ON A 200px HOP. That is a
+           hair quicker than the 150ms transition it replaces, so the ring is
+           not slower than the thing it is better than, and the 2% is what
+           makes it read as LANDING rather than as stopping.
+   swift = w 52, z 0.85: 90ms settling, 100ms to within 2px, for the animation
+           setting that halves every other wait in the game.
+   reduced = no spring at all; the ring is simply where the cursor is. */
+const SPRING = { full: { w: 36, z: 0.78 }, swift: { w: 52, z: 0.85 }, reduced: null };
+const TRAIL_TAU = 0.062;   // the trail's follow time constant, seconds
+const NUDGE = 340;         // px/s impulse when a direction has nowhere to go
+const AXES = [["x", "vx", "tx"], ["y", "vy", "ty"], ["w", "vw", "tw"], ["h", "vh", "th"]];
+
+/* THE ANALYTIC STEP, AND WHY IT IS NOT `v += (k*dx - d*v) * dt`.
+ *
+ * The obvious integrator is one line and it is wrong in two ways that both
+ * matter on this hardware. It is FRAME-RATE DEPENDENT: the same spring
+ * overshoots 1.6px at 60fps and 4.5px at 144fps, so the ring is a different
+ * ring on a monitor than it is on the Deck's 60Hz panel -- measured, not
+ * assumed. And it goes UNSTABLE at large dt, which is exactly what a
+ * backgrounded or thermally-throttled tab hands you: this window throttled rAF
+ * to 2fps while the round was being measured, and dt clamps are a patch over
+ * that rather than an answer to it.
+ *
+ * The closed form of a damped harmonic oscillator has neither problem. It is
+ * six lines, it is EXACT for any dt, and at a huge dt the decay term goes to
+ * zero all by itself -- so a dropped second resolves to "the ring is where the
+ * cursor is", which is the correct picture rather than a launch across the
+ * screen.
+ */
+function springStep(x, v, target, w, z, dt) {
+  const wd = w * Math.sqrt(1 - z * z);
+  const A = x - target;
+  const B = (v + z * w * A) / wd;
+  const e = Math.exp(-z * w * dt);
+  const c = Math.cos(wd * dt);
+  const s = Math.sin(wd * dt);
+  const body = A * c + B * s;
+  return { x: target + e * body, v: e * (wd * (B * c - A * s) - z * w * body) };
+}
+
+/* Start the loop if it is not already running. `last` is cleared HERE and only
+   here, because this is the only place that knows the loop was idle -- a
+   continuing flight must keep its previous timestamp or `dt` collapses to the
+   nominal 1/60 on every frame and the whole point of the closed form goes with
+   it. `ringFrame` re-queues itself directly for exactly that reason. */
+function ringWake() {
+  if (RING.raf) return;
+  RING.last = 0;
+  RING.raf = requestAnimationFrame(ringFrame);
+}
+
+/* The ring is at rest, exactly on target, and so is everything that follows it.
+   One function because every caller that wants this wants ALL of it: a partial
+   snap that leaves a velocity behind is how the trail gets stranded. */
+function ringSnap() {
+  for (const [p, v, t] of AXES) { RING[p] = RING[t]; RING[v] = 0; }
+  RING.gx = RING.x; RING.gy = RING.y; RING.gw = RING.w; RING.gh = RING.h;
+  RING.speed = 0;
+  ringPaint();
+}
+
+function ringFrame(now) {
+  RING.raf = 0;
+  // The first frame after a wake has no previous timestamp to subtract. No
+  // clamp is needed on the rest: the closed form is exact at any dt.
+  const dt = RING.last ? (now - RING.last) / 1000 : 1 / 60;
+  RING.last = now;
+
+  const s = SPRING[MOTION] || SPRING.full;
+  let moving = false;
+  for (const [p, v, t] of AXES) {
+    const n = springStep(RING[p], RING[v], RING[t], s.w, s.z, dt);
+    RING[p] = n.x;
+    RING[v] = n.v;
+    if (Math.abs(RING[t] - RING[p]) > 0.3 || Math.abs(RING[v]) > 4) moving = true;
+  }
+  if (!moving) for (const [p, v, t] of AXES) { RING[p] = RING[t]; RING[v] = 0; }
+
+  const follow = 1 - Math.exp(-dt / TRAIL_TAU);
+  RING.gx += (RING.x - RING.gx) * follow;
+  RING.gy += (RING.y - RING.gy) * follow;
+  RING.gw += (RING.w - RING.gw) * follow;
+  RING.gh += (RING.h - RING.gh) * follow;
+
+  RING.speed = Math.hypot(RING.vx, RING.vy);
+  ringPaint();
+  // Re-queued here rather than through `ringWake()`, which would clear `last`.
+  if (moving) RING.raf = requestAnimationFrame(ringFrame);
+  else RING.last = 0;
+}
+
+function ringPaint() {
+  const halo = document.getElementById("halo");
+  if (!halo) return;
+  halo.style.left = RING.x.toFixed(1) + "px";
+  halo.style.top = RING.y.toFixed(1) + "px";
+  halo.style.width = Math.max(0, RING.w).toFixed(1) + "px";
+  halo.style.height = Math.max(0, RING.h).toFixed(1) + "px";
+  const trail = document.getElementById("halotrail");
+  if (!trail) return;
+  trail.style.left = RING.gx.toFixed(1) + "px";
+  trail.style.top = RING.gy.toFixed(1) + "px";
+  trail.style.width = Math.max(0, RING.gw).toFixed(1) + "px";
+  trail.style.height = Math.max(0, RING.gh).toFixed(1) + "px";
+  trail.style.opacity = Math.min(0.5, RING.speed / 2600).toFixed(3);
+}
+
+/* ===========================================================================
+   A LONG HOP IS NOT A LONG FLIGHT
+   ---------------------------------------------------------------------------
+   `L1`/`R1` jump zones, and a zone jump can be most of the screen: the stack in
+   the right rail to a creature on the far left is ~1000px. Two obvious ways to
+   handle that and both are wrong.
+
+   TELEPORT loses the only thing the travel was for. A jump is exactly when you
+   most need to be told where the ring went, because you did not walk it there
+   and your eye has no reason to be looking at the destination.
+
+   FLY IT loses it a different way. A spring's settling time does not depend on
+   how far it has to go -- that is the nice property -- so a 1000px hop arrives
+   in the same ~140ms as a 200px one, at a peak of something like 13,000 px/s.
+   At 60Hz that is 220px between one frame and the next: four frames of a
+   rectangle appearing in unrelated places, which is a teleport with extra
+   steps and a worse one, because it also strobes across everything between.
+
+   So: cut the distance, keep the direction. Anything further than one screen-
+   quarter starts its travel from a point exactly that far out along the line it
+   would have come in on. Every hop, at any distance, gets the same arrival and
+   the same readable entry from the correct side -- and the trail, which is
+   speed-driven, draws the line the eye needs.
+======================================================================== */
+const LONG_HOP = 420;
+
+function longHop() {
+  const dx = RING.tx - RING.x;
+  const dy = RING.ty - RING.y;
+  const d = Math.hypot(dx, dy);
+  if (d <= LONG_HOP || !d) return;
+  const k = LONG_HOP / d;
+  RING.x = RING.tx - dx * k;
+  RING.y = RING.ty - dy * k;
+  // The size comes with it. A ring that is still the width of the card it left
+  // would spend the whole hop being the wrong shape for both ends of it.
+  RING.w = RING.tw - (RING.tw - RING.w) * k;
+  RING.h = RING.th - (RING.th - RING.h) * k;
+  RING.gx = RING.x; RING.gy = RING.y; RING.gw = RING.w; RING.gh = RING.h;
+}
+
+/* An impulse into a wall the ring cannot cross. */
+function ringNudge(dir) {
+  if (reduced() || !RING.placed) return;
+  if (dir === "left") RING.vx -= NUDGE;
+  else if (dir === "right") RING.vx += NUDGE;
+  else if (dir === "up") RING.vy -= NUDGE;
+  else if (dir === "down") RING.vy += NUDGE;
+  ringWake();
+}
+
+/* An impulse on the SIZE: the ring squeezes onto what you pressed and recovers.
+   Written as velocity rather than as a class so that the re-render A is about
+   to cause cannot interrupt it. */
+function ringPress() {
+  if (reduced() || !RING.placed) return;
+  /* Width and height are measured from the TOP-LEFT, so shrinking them alone
+     squeezes the ring toward its own left edge -- which looks like the ring
+     slipping rather than like the thing being pushed. Half the impulse goes
+     into the origin so the squeeze is centred on the card. */
+  RING.vw -= 300; RING.vx += 150;
+  RING.vh -= 300; RING.vy += 150;
+  ringWake();
+}
+
+/* Tell the spring where the cursor went. Called after every render; everything
+   else about the ring is the spring's business. */
 function paintHalo() {
   const halo = document.getElementById("halo");
   const cur = app.querySelector("[data-cursor]");
   if (!halo) return;
-  if (!cur) { halo.classList.remove("halo--on"); return; }
+  if (!cur) { halo.classList.remove("halo--on"); RING.placed = false; return; }
   const r = deckRect(cur.getBoundingClientRect());
-  halo.style.left = (r.left - 3) + "px";
-  halo.style.top = (r.top - 3) + "px";
-  halo.style.width = (r.right - r.left + 6) + "px";
-  halo.style.height = (r.bottom - r.top + 6) + "px";
+  RING.tx = r.left - 3;
+  RING.ty = r.top - 3;
+  RING.tw = r.right - r.left + 6;
+  RING.th = r.bottom - r.top + 6;
+
+  /* A SPRING ACROSS A SCREEN CHANGE IS A SPRING ACROSS NOTHING. Flying the ring
+     from a seat in the pod to a card on the board is 600px of travel between
+     two things that were never on screen together, and it reads as a glitch
+     rather than as movement. So: same context, spring; new context, teleport. */
+  const ctx = `${S.screen}|${S.overlay || ""}|${S.question ? "q" : ""}`;
+  if (!RING.placed || ctx !== RING.ctx) ringSnap();
+  else longHop();
+  RING.placed = true;
+  RING.ctx = ctx;
   halo.classList.add("halo--on");
+  /* Reduced motion is not "a faster spring", it is NO spring: the ring is
+     simply where the cursor is. The trail has to be zeroed with it -- its
+     opacity is read from `speed`, and a speed left over from the last full-
+     motion flight would strand a glowing rectangle on screen that nothing
+     would ever come back to clear. */
+  if (reduced()) ringSnap();
+  /* `render()` rebuilds `#app`, so the halo it just found is a BRAND NEW div
+     with no inline geometry on it. Waiting for the next rAF to give it one
+     means one frame of a full-opacity ring at 0,0 with zero size -- a flash in
+     the top-left corner on every single render. Paint the current position now
+     and let the loop take over from there. */
+  ringPaint();
+  if (!reduced()) ringWake();
 }
 
 /* One curve per staged attacker, from its own box to the seat it is aimed at.
@@ -3636,8 +4288,10 @@ function paintLamp() {
 }
 
 function paint() {
-  // A full paint invalidates the rail cache: something structural changed.
-  LAST_RAIL = null;
+  /* A deferred rail rebuild is now stale: whatever came through here is newer
+     than the sweep that queued it, and `railHTML()` has already stamped the
+     rail with what it drew. */
+  clearTimeout(RAIL_T);
   // A life total that just changed gets one beat of attention. `S.hit` is set
   // by whatever changed it and cleared here, so it fires once per change
   // however many times the board re-renders around it.
@@ -3682,6 +4336,7 @@ function paintCoach() {
 function chromeHTML() {
   return `
     <div class="ptr" id="ptr"></div>
+    <div class="halo__trail" id="halotrail" aria-hidden="true"></div>
     <div class="halo" id="halo"></div>
     ${S.toast ? `<div class="toast">${S.toast}</div>` : ""}
     ${S.ready ? "" : gateHTML()}`;
@@ -4389,8 +5044,10 @@ function resolveTop() {
   });
 }
 
+/* The rail stamps what it drew, so `paintRail()` can never disagree with the
+   DOM about what is on screen. */
 function railHTML() {
-  return `<div class="rail" id="rail">${railInner()}</div>`;
+  return `<div class="rail" id="rail" data-k="${railKey().replace(/"/g, "")}">${railInner()}</div>`;
 }
 
 function railInner() {
@@ -4507,7 +5164,48 @@ function footName() {
    the bigger surface and already owns identity, so the foot went back to being
    what a hint bar is -- verbs, and nothing else. */
 function footHTML() {
-  return `<div class="foot" id="foot">${footInner()}</div>`;
+  return `<div class="foot" id="foot">
+    <span class="foot__hints" id="foothints" data-k="${footKey().replace(/"/g, "")}">${footInner()}</span>
+    <span class="foot__slab" id="commit" data-k="${commitKey().replace(/"/g, "")}">${commitInner()}</span>
+  </div>`;
+}
+
+/* THE COMMIT SLAB NEVER BREATHED, AND THE REASON WAS THE FOOT.
+   `.btn--commit:not([data-cursor])` carries a 2.6s `waiting` pulse -- the one
+   control that should never be missed, telling you the turn is waiting on it.
+   But the slab lives in the foot, and the foot was rebuilt on EVERY cursor
+   move, and rebuilding an element restarts its CSS animation from zero. Move
+   the ring once every two seconds and the pulse never gets past its own first
+   frame; sweep a lane and it is pinned there. The animation was correct and
+   had simply never been allowed to run.
+
+   So the foot gets the same treatment as the rail: it stamps what it drew, and
+   a move that would draw the identical foot does not touch it. On a sweep down
+   a lane of seven Forests that is six rebuilds saved as well, but the pulse is
+   the reason -- it is the difference between a hint bar and a hint bar with a
+   heartbeat in it. */
+function footKey() {
+  const c = curCard();
+  return [c ? c.n : "-", S.phase, boardVerb(), c && c.ability ? "ab" : ""].join("|");
+}
+
+/* The slab's own key, which deliberately does NOT mention the cursor. */
+function commitKey() {
+  return [ASK.commit, commitTail(), S.targeting ? "t" : "", S.paying ? "p" : ""].join("|");
+}
+
+/* Rebuild each half only when it would draw something different. */
+function paintFoot() {
+  const hints = document.getElementById("foothints");
+  if (hints && hints.dataset.k !== footKey()) {
+    hints.innerHTML = footInner();
+    hints.dataset.k = footKey();
+  }
+  const slab = document.getElementById("commit");
+  if (slab && slab.dataset.k !== commitKey()) {
+    slab.innerHTML = commitInner();
+    slab.dataset.k = commitKey();
+  }
 }
 
 function footInner() {
@@ -4523,13 +5221,17 @@ function footInner() {
     <span class="sp"></span>
     <span class="foot__zone"><b class="g">L1</b>/<b class="g">R1</b> Zone</span>
     <span class="foot__l2"><b class="g">L2</b> Wheel</span>
-    ${S.paying
-      ? `<div class="btn" style="opacity:.55">Paying for ${S.paying.card.n}…</div>`
-      : S.targeting
-      ? `<div class="btn" style="opacity:.55">Casting Beast Within…</div>`
-      : `<div class="btn btn--commit" style="font-size:var(--fs-body);padding:0 18px" data-stop="commit" tabindex="0">
-          ${ASK.commit} <em style="color:inherit;opacity:.75;margin:0">${commitTail()}</em> <b class="g g--a">A</b></div>`}
   `;
+}
+
+/* The commit slab, drawn on its own so a cursor move cannot touch it. */
+function commitInner() {
+  return S.paying
+    ? `<div class="btn" style="opacity:.55">Paying for ${S.paying.card.n}…</div>`
+    : S.targeting
+    ? `<div class="btn" style="opacity:.55">Casting Beast Within…</div>`
+    : `<div class="btn btn--commit" style="font-size:var(--fs-body);padding:0 18px" data-stop="commit" tabindex="0">
+        ${ASK.commit} <em style="color:inherit;opacity:.75;margin:0">${commitTail()}</em> <b class="g g--a">A</b></div>`;
 }
 
 function boardPress(id) {
@@ -5956,8 +6658,14 @@ function onPointer(e, press) {
   const el = nearestStop(p.x, p.y);
   S.ptr.snapped = !!el;
   if (!S.ready) { S.ready = true; render(); }
+  /* `paint()` here rebuilt the combat-arrow SVG on EVERY pointermove -- a
+     hundred times a second while a finger is dragging, to redraw three curves
+     anchored to permanents that a pointer cannot move. Nothing in a pointer
+     move changes except the pointer, and `paintLamp()` is the function that
+     draws exactly that. The Deck's trackpad is the surface that was paying for
+     it, which is the one this round is about. */
   if (el && el.dataset.stop !== S.cur) { S.cur = el.dataset.stop; renderCursor(); }
-  else paint();
+  else paintLamp();
   if (press && el) confirm();
 }
 

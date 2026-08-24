@@ -19,6 +19,7 @@ import {
   groupBattlefield,
 } from "../../logic/zoneGrouping";
 import { Lane } from "./Lane";
+import { OpponentSeat } from "./OpponentSeat";
 import { PlayerOrb } from "./PlayerOrb";
 
 /** Toward the opponent: what fights, and what sits behind it. */
@@ -29,7 +30,6 @@ const BACK_BAND: readonly LaneName[] = ["Lands"];
 interface Props {
   state: GameView;
   player: PlayerView;
-  names: string[];
   compact?: boolean;
   /** Lands on top instead of underneath: this mat faces the viewer. */
   mirrored?: boolean;
@@ -62,12 +62,38 @@ interface Props {
   spending?: ReadonlySet<number>;
   /** Input is gated (narration playing, request in flight). */
   locked?: boolean;
+  /** This opponent's board is the one currently drawn in the viewer's area. */
+  viewing?: boolean;
+  /**
+   * `"lanes"` draws the permanents and no side column at all.
+   *
+   * Two surfaces want it, and both for the same reason: they are showing
+   * somebody's BOARD somewhere other than that somebody's seat. The seat swap
+   * puts an opponent's lanes in the viewer's area, and the `R2` hold draws them
+   * over it -- and in each case the facts about that player are already on
+   * screen, on their seat six pixels above.
+   *
+   * It is also what stops the document holding two `data-player="1"`s. `FxLayer`
+   * resolves a damage numeral with `document.querySelector`, so a second one
+   * takes whichever comes first -- which `OpponentBoard` has been doing since it
+   * was written, drawing a whole second `PlayerOrb` with a duplicate
+   * `life-<pid>` beside it while held.
+   *
+   * `"side"` is the mirror: the panel and no permanents. Two things want it.
+   * The seat whose board has been moved into the viewer's area must stop
+   * drawing that board, or the same permanents are laid out twice -- on a
+   * handheld their lanes are already clipped to zero height, which is NOT the
+   * same as absent, and a clipped card still owns its `data-oid`; the story
+   * that asserts this found two of them the first time it ran. And the viewer
+   * keeps their own panel beside somebody else's board, because life and open
+   * mana are most of what you are assessing a threat against.
+   */
+  variant?: "full" | "lanes" | "side";
 }
 
 export function PlayerMat({
   state,
   player,
-  names,
   compact = false,
   mirrored = false,
   cardScale,
@@ -89,6 +115,8 @@ export function PlayerMat({
   onHoverCard,
   spending,
   locked = false,
+  viewing = false,
+  variant = "full",
 }: Props) {
   const lanes = groupBattlefield(state, player.pid);
   const attachments = attachmentsFor(state, player.pid);
@@ -118,67 +146,119 @@ export function PlayerMat({
     .filter(({ shown }) => shown.length > 0);
 
   return (
-    <section className={compact ? "mat mat--compact" : "mat"} data-testid={`mat-${player.pid}`}>
-      {/* The mat's first column is everything that is a fact about this player
-          rather than a permanent on their board -- commander, life, mana,
-          zones. All of it lives inside the orb; see PlayerOrb. */}
-      <div className="mat__side">
-        <PlayerOrb
-          state={state}
-          player={player}
-          isViewer={player.pid === state.seat}
-          isActive={player.pid === state.active_player}
-          hasPriority={state.priority_player === player.pid}
-          names={names}
-          compact={compact}
-          targetable={playerTargetable}
-          onSelect={onSelectPlayer}
-          spending={spending}
-          playableOids={playableOids}
-          onCastCommander={onCastCommander}
-          onHoverCard={onHoverCard}
-          locked={locked}
-        />
-      </div>
-      <div className="mat__lanes">
-        {bands.map(({ band, shown }) => (
-          <div
-            key={band === FRONT_BAND ? "front" : "back"}
-            // A front band down to one lane takes the whole width: leaving the
-            // hidden lane's track in place would give away the third of a
-            // compact mat that hiding it was meant to reclaim.
-            className={[
-              "band",
-              band === FRONT_BAND ? "band--front" : "band--back",
-              shown.length === 1 ? "band--solo" : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            {shown.map((lane) => (
-              <Lane
-                key={lane}
-                lane={lane}
-                pid={player.pid}
-                cards={lanes[lane]}
-                attachments={attachments}
-                cardScale={cardScale}
-                active={activeLanes?.has(`${player.pid}:${lane}`) ?? false}
-                draggable={draggable}
-                actionableOids={actionableOids}
-                isPlayable={isPlayable}
-                hasAbility={hasAbility}
-                abilityLabel={abilityLabel}
-                isTargetable={isTargetable}
-                isStaged={isStaged}
-                isSelected={isSelected}
-                onActivate={onActivate}
-                onDropOn={onDropOn}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
+    <section
+      className={[
+        "mat",
+        compact ? "mat--compact" : "",
+        variant === "lanes" ? "mat--lanes" : "",
+        variant === "side" ? "mat--side" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      data-testid={`mat-${player.pid}`}
+    >
+      {/*
+        Everything that is a fact about this player rather than a permanent on
+        their board -- and it is a different component depending on whose seat
+        it is, which is the whole of `mockups/seat/`'s argument.
+
+        THE VIEWER GETS A PANEL THEY OPERATE. Commander, life, mana, zones: all
+        of it is theirs to press, and all of it lives inside the orb.
+
+        AN OPPONENT GETS A SUMMARY THEY READ. None of an orb's controls is
+        yours on somebody else's seat, so a pod was three control panels for
+        controls nobody could press -- while the question actually being asked
+        across the table, how developed is that board, was answered by counting
+        cards at 51px. See `OpponentSeat`.
+
+        Drawn at every size. A desktop that summarised opponents differently
+        from a handheld would be two designs for one fact; what changes with the
+        size is whether their lanes are drawn underneath, not what the seat is.
+      */}
+      {variant !== "lanes" && (
+        <div className="mat__side">
+          {compact ? (
+            <OpponentSeat
+              state={state}
+              player={player}
+              isActive={player.pid === state.active_player}
+              hasPriority={state.priority_player === player.pid}
+              targetable={playerTargetable}
+              viewing={viewing}
+              onSelect={onSelectPlayer}
+              onHoverCard={onHoverCard}
+              locked={locked}
+            />
+          ) : (
+            <PlayerOrb
+              state={state}
+              player={player}
+              isViewer={player.pid === state.seat}
+              isActive={player.pid === state.active_player}
+              hasPriority={state.priority_player === player.pid}
+              targetable={playerTargetable}
+              onSelect={onSelectPlayer}
+              spending={spending}
+              playableOids={playableOids}
+              onCastCommander={onCastCommander}
+              onHoverCard={onHoverCard}
+              locked={locked}
+            />
+          )}
+        </div>
+      )}
+
+      {/*
+        Their permanents, unless they are being drawn somewhere else.
+
+        `"side"` is the case where the seat swap has moved this board into
+        the viewer's area -- or where this is the viewer's own panel, sitting
+        beside somebody else's lanes. Their lanes are already clipped to zero
+        height on a handheld, and a clipped card still owns its `data-oid` --
+        so the cards have to LEAVE rather than be hidden, or the document holds
+        two boxes for every permanent and `FxLayer` picks one.
+      */}
+      {variant !== "side" && (
+        <div className="mat__lanes">
+          {bands.map(({ band, shown }) => (
+            <div
+              key={band === FRONT_BAND ? "front" : "back"}
+              // A front band down to one lane takes the whole width: leaving the
+              // hidden lane's track in place would give away the third of a
+              // compact mat that hiding it was meant to reclaim.
+              className={[
+                "band",
+                band === FRONT_BAND ? "band--front" : "band--back",
+                shown.length === 1 ? "band--solo" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              {shown.map((lane) => (
+                <Lane
+                  key={lane}
+                  lane={lane}
+                  pid={player.pid}
+                  cards={lanes[lane]}
+                  attachments={attachments}
+                  cardScale={cardScale}
+                  active={activeLanes?.has(`${player.pid}:${lane}`) ?? false}
+                  draggable={draggable}
+                  actionableOids={actionableOids}
+                  isPlayable={isPlayable}
+                  hasAbility={hasAbility}
+                  abilityLabel={abilityLabel}
+                  isTargetable={isTargetable}
+                  isStaged={isStaged}
+                  isSelected={isSelected}
+                  onActivate={onActivate}
+                  onDropOn={onDropOn}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

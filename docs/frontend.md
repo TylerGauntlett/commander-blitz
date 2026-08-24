@@ -56,27 +56,45 @@ view. That is what the unit tests cover; components stay presentational.
 
 ## Where things sit on screen
 
-A ribbon across the top, three columns, and the hand along the foot.
+A ribbon across the top, **two** columns, and the hand under the left one.
 
 - **Top** — the phase ribbon: five phases as pills, and only the live one expands
   into its steps. All thirteen step labels stay in the DOM regardless, which is
-  both what `e2e/smoke.spec.ts` counts and what keeps the marker's `layoutId`
-  animation continuous across a phase boundary.
-- **Left rail** — the stack, and the event log.
-- **Middle** — opponents on a row that sizes to its content, then your own mat. Each
-  mat's first column is that player's info panel (`PlayerOrb`): their commander,
-  their life dial, their mana, their zone piles. The board itself is two *bands*
-  — see below. Card size is **solved against the space each area actually has**
+  both what `e2e/acceptance.spec.ts` counts and what keeps the marker's
+  `layoutId` animation continuous across a phase boundary. Whose turn it is and
+  who holds *priority* are two chips, because they are two facts — and the case
+  that matters most, somebody else's turn and your decision, is exactly the one
+  a single chip cannot say.
+- **Middle** — opponents on a row that sizes to its content, then your own mat.
+  Your mat's first column is your info panel (`PlayerOrb`): commander, life dial,
+  mana, zone piles — on a handheld the same markup skinned as
+  `mockups/handheld-board/`'s plinth. **An opponent's is an `OpponentSeat`** — a 332x96 summary of
+  what they have on the battlefield, because none of an orb's controls is yours
+  on somebody else's seat and a pod was three control panels for controls nobody
+  could press. Card size is **solved against the space each area actually has**
   rather than fixed: see "How big a card is" below.
-- **Right rail** — the card preview, then **combat**, then the tool strip. Combat
-  moved here from a full-width banner under the board: the decision now sits
-  directly under the card you are reading rather than as far from it as the
-  layout allows, and the foot belongs to the hand alone. Whichever surface owns a
-  decision renders its action ids and the bar stands down (`standDown`), so a
+- **Right rail** — the card you are reading, the panel of things you can do, and
+  the commit dock. **It runs the full height of the screen**, which is the single
+  biggest thing about this layout: it used to stop where the hand started, 514px
+  at 1280x800, of which the action list got 172.
+  `mockups/handheld-board/measure.mjs` measures the same rail at 748 when it runs
+  to the bottom edge instead, and the list at 363-398. Whichever surface owns a
+  decision renders its action ids and the other stands down (`standDown`), so a
   prompt is never printed twice.
-- **Foot** — the hand, and nothing else. Your commander used to sit to its left; it
-  is the hero of your info panel now, drawn as a plinth rather than a card. See
-  `CommandZone` and `docs/mockup-fidelity.md` defect #5.
+- **Foot** — the hand, and nothing else, **inside the board's column** rather
+  than spanning the screen. That is what lets the rail reach the bottom. Your
+  commander used to sit to the hand's left; it is the hero of your info panel
+  now, drawn as a plinth rather than a card. See `CommandZone` and
+  `docs/mockup-fidelity.md` defect #5.
+
+**There is no left rail, at any size.** It held two things and neither earned a
+permanent 232px column. The log is reference you consult rather than something
+you watch, so it comes up on **View** as an overlay. The stack is urgent exactly
+when it is non-empty and absent the rest of the time, so it floats over the
+top-left of the board and grows down over your own panel as it deepens —
+`StackPanel` already drew that pile, it simply drew it inside a rail. What the
+retired column buys is 232px of board, which is most of what the foot costs by
+moving inside it.
 
 ## The board is laid out the way it is played
 
@@ -146,7 +164,7 @@ landscape; a stack of basics is one box; a host carries its auras), so it is exa
 rather than an estimate. `CARD_SCALE.own`, `CARD_SCALE.hand` and `opponentCardScale`
 are still here but they are now **ceilings the solve may not exceed**, not sizes.
 
-Three things about it are worth knowing before touching it:
+Four things about it are worth knowing before touching it:
 
 - **A fit solver reads the layout and then changes it**, so only measurements that
   cannot move are allowed as inputs: lane *width* (grid tracks, hence
@@ -155,6 +173,32 @@ Three things about it are worth knowing before touching it:
   the pod's lane box is pinned so `.play`'s `fit-content(58%)` row cannot depend on
   the pod card size it is being used to solve. `useZoomFit`'s header has the full
   argument.
+- **The pod's box is count-aware**, and the difference was a third of an opponent's
+  card. `--pod-lanes-h` used to *be* the budget, and it is `clamp(140px, 15vh,
+  220px)` — measured at 1600×950 against a **four-seat** pod where nothing fits at
+  any size and the viewer deliberately wins. That is the right answer to the
+  question it was asked. It was then applied at every seat count, and a compact
+  two-band mat costs `2.8·cw + 36` — so 142px could not hold even the 52px floor,
+  `solveBoardCardWidth` fell through its scan, and a 1v1 rendered its opponent at
+  `MIN_CARD_W` next to half an empty table. `solvePodLanesHeight` takes the clamp
+  as a **floor** and raises it to a share of the viewport: 0.20 of `tableH` at one
+  opponent, 0.16 at two, **nothing at three or more**, capped at 320px. `Table`
+  writes the answer back out as `--pod-lanes-h`, so the box CSS draws is the budget
+  the cards were packed into. `share(3+) = 0` is what keeps `deckfit.spec.ts`,
+  `cycle3.spec.ts`'s `rowClipped` guard and `legibility.spec.ts`'s 50.7px
+  measurement byte-identical, and the shares below that are priced against
+  `layout.spec.ts`'s "the zoom uses the room a big display has", which wants the
+  viewer at `MAX_CARD_W` on a 2560×1278 panel with about 105px of slack to spare.
+- **The pod box must be a function of the viewport alone — a stronger rule than
+  "independent of the card size".** `layout.spec.ts` states it outright, and it is
+  easy to break while believing you have not: the first cut of the fix above solved
+  against `.play`'s *measured* height, which no card size can move, and it was still
+  wrong. `.table__body`'s second row is the foot, and the foot's height moves with
+  the hand — so playing a card would resize the foot, resize `.play`, resize the pod
+  box, and translate the viewer's whole board, once per card played. No gate pins
+  that directly: "the viewer's bands do not move" measures *inside* the mat, not the
+  mat's own height. `solvePodLanesHeight` takes `tableH`, the CSS floor and a seat
+  count, and its signature is the argument.
 - **The board height is not monotone in card width.** A tapped permanent is shorter
   but wider, so growing the cards can push a tall card onto the next row and leave a
   short row behind, making a lane *shorter*. The solver scans downward rather than
@@ -300,13 +344,24 @@ Two cases the count has to carry that a repeated mark carried for free:
   leave me with" the way the hollow pips did. Which sources those are is still the
   engine's solved payment and never arithmetic here.
 
-Both the mana panel and the commander-damage panel are **permanent**. They were
-conditional rows in `orb__body`'s `space-between` slack, so they floated in the
-middle of the column and re-spaced the whole interior each time one appeared or
-emptied — several times a turn. They sit on a plate with the zone piles in
-`.orb__foot` now, which puts all the slack in one gap under the plinth. An empty
-mana panel says `—`; a commander-damage chip exists for every other seat from turn
-one, at zero, carrying the seat and a meter of its progress toward 21.
+The mana panel is **permanent**. It was a conditional row in `orb__body`'s
+`space-between` slack, so it floated in the middle of the column and re-spaced
+the whole interior each time it appeared or emptied — several times a turn. It
+sits on a plate with the zone piles in `.orb__foot` now, which puts all the
+slack in one gap under the plinth. An empty mana panel says `—`.
+
+**Commander damage is not on this panel.** It used to be a second plate here —
+one chip per opposing seat with a meter of its progress toward 21 — which
+answered "how close is each of them to killing me" and nothing about the other
+direction, at the cost of the loudest object in the column. Both directions are
+two small arrows on each opponent's own life gauge now (`OpponentSeat`, and
+`docs/mockup-fidelity.md` for the whole argument).
+
+On a handheld this whole column is re-skinned to `mockups/handheld-board/`'s
+plinth: a 148x128 portrait rather than a 2:1 banner, a 64px conic life ring
+rather than a 52px brass seal, and the five zones as coloured chips rather than
+leaf stacks. Markup is identical either way — it is CSS in `handheld.css` and
+nothing else.
 
 Text over an unknown illustration is the one thing here that can fail silently, so
 it is guarded by number: `tests/palette.test.ts` asserts both scrims are gradients
@@ -415,6 +470,26 @@ yet. `SeatName` in `PodSeat.tsx` keeps a local draft and commits on blur and Ent
 pod re-renders on every long-poll return, so a controlled field would reset itself
 mid-word, and a PATCH per keystroke would bump the pod's version for every letter and
 wake three other browsers out of their polls to be told you are still typing.
+
+### Four plates, one row
+
+A plate is read *across* as much as down — whose seat, which deck, what colours — and
+that only holds while the same line is at the same height in all four slots. The name
+field above is exactly what broke it: your chair carries a **field** where the other
+three carry a label, and a field is the taller box. `.plate` is a grid, so every row
+under it inherited the difference and the deck names, the mana and the buttons all
+stepped down on your seat alone — 6px on the desktop plate, 23px on the handheld one,
+where the hit floor raises every control to 44px.
+
+So the two rows whose content differs by seat are **given** a height rather than taking
+one from whatever is in them: `--name-h` and `--meta-h` in `lobby.css`, restated once
+for the handheld floor. `PodLobby.stories.tsx` measures the row tops across all four
+slots at both sizes.
+
+The same floor caught the details glyph. `min-height: 44px` with no `min-width` turned a
+17px circle into a 17x44 pill, and giving it the other half is no better — a 44px disc
+in a row of 14px mana pips is the loudest object on the plate. **A hit floor is a target,
+not a size**: the circle is drawn on `.ibtn::before` at 22px and only the box is 44.
 
 ### One card, two boxes
 
@@ -830,6 +905,305 @@ The Playwright suite boots uvicorn and vite itself and plays the real UI:
 `biome.json` turns off `a11y/useSemanticElements`: it pushes `role="dialog"` towards the
 native `<dialog>` element, which needs an imperative `showModal()` and cannot be driven by
 `AnimatePresence` exit animations.
+
+## Playing with a controller
+
+The client is playable end to end on a gamepad, at a Steam Deck's 1280x800. Two
+signals drive it and they are **deliberately independent**:
+
+| signal | comes from | decides |
+|---|---|---|
+| `<html data-input="mouse\|keyboard\|pad">` | the last input actually used | whether the focus ring and the button glyphs are drawn |
+| `<html data-handheld>` | the viewport, via `logic/breakpoints.ts` | the compact layout |
+
+So a desktop player who picks up a controller gets the ring and the glyphs on
+the unchanged three-column board, and a Deck user with no pad gets the compact
+board and no glyphs. Neither implies the other.
+
+`data-input` is **last-input-wins** rather than "is a pad plugged in", because a
+Deck in desktop mode has both attached at once. `pointermove` is throttled to one
+write per 200ms so a mouse resting on a desk cannot steal the mode back
+mid-navigation.
+
+### Reading the pad: never `getGamepads()[0]`
+
+`navigator.getGamepads()` is **sparse and indexed by slot**, so the nulls in it
+are empty slots rather than padding to trim. "The first non-null entry" is a
+convincing wrong answer to "which pad is the player holding", and on an ordinary
+Windows desktop it is wrong often: Steam publishes a virtual pad beside the
+physical one, a wheel or a flight stick occupies a slot, and a controller that
+reconnects comes back at a higher index.
+
+Read that way the held pad is never looked at, every button comes back neutral,
+the mode never leaves `mouse`, and **nothing at all happens** — which is
+indistinguishable from the polling loop being dead, and sends the next person to
+debug the loop. So `input/pad.ts` reads *every* connected pad, OR-ing the buttons
+and letting the stick pushed hardest win. An idle second device costs nothing and
+cannot shadow the real one.
+
+Two more things a real pad does that a synthetic one does not:
+
+- **`mapping` is not always `"standard"`.** The W3C indices in `buttons.ts` mean
+  something only when the browser says so. When it cannot vouch for a pad — an
+  Xbox pad over Bluetooth that XInput did not claim, most third-party pads — it
+  hands over the raw HID report order instead, where the d-pad is a **hat axis**
+  rather than buttons 12–15 and the face buttons sit at 0/1/3/4 with gaps. `HID`
+  in `pad.ts` is that fallback; without it such a pad has no working directions
+  at all.
+- **A rAF handle is not proof the loop is alive.** No browser runs rAF for a
+  hidden, minimised or occluded window, so a handle taken just before the window
+  went away outlives the loop that owns it. `wake()` trusts a handle only while
+  the loop has ticked inside `STALL_MS`, which is what lets it recover a stalled
+  loop instead of returning early from the one call that exists to do so.
+
+### When the controller does nothing, ask the browser first
+
+`window.__AUTOMTG_RING.pad()` reports `supported`, `secure`, `focused` and the
+raw `pads` list beside the loop's own state, because the three commonest
+failures are not in this code and all three look identical from inside it — an
+empty `pads`:
+
+- the Gamepad API is **secure-context only**, so the app served over plain http
+  to anything but localhost has no `getGamepads` at all (`supported: false`);
+- no browser hands out a pad until it has seen a button pressed **while the page
+  was focused** (`focused: false`);
+- on Windows a running Steam client with a desktop layout bound to the
+  controller swallows it before any browser sees it (`pads: []` while the pad is
+  plainly working elsewhere).
+
+### The cursor is an attribute, not state
+
+> The cursor wants to live as an attribute on ONE element, not as state thirty
+> components read.
+
+This is the single most important thing in `input/`. A cursor in zustand that
+every `Card` subscribes to re-renders all thirty on every step of a sweep, which
+the design round measured at **18.5fps under a 4x CPU throttle** against 59.7fps
+for moving one attribute. The React version of the mistake looks nothing like
+the vanilla one and arrives at the same number.
+
+So `input/cursor.ts` holds one string, stamps `data-cursor` on one node
+imperatively, and **no component subscribes**. `Card`, `Lane`, `PlayerOrb` and
+the rest render `data-stop` as a static prop derived from their own props. The
+two exceptions are `HintBar` and the read rail, both single leaves at the edge
+of the tree, and the rail's write is debounced by `RAIL_SETTLE` so a twelve-step
+sweep costs two rebuilds rather than twelve.
+
+**Stops are a string namespace, never an index** — `card:<oid>`, `orb:<pid>`,
+`act:<actionId>`, `tool:<name>`, `pile:<pid>:<zone>`, `lane:<pid>:<lane>`. Keyed
+on the oid, so the ring survives a card moving from hand to stack to
+battlefield, for the same reason `layoutId` does.
+
+Outside the board, a **native focusable is a stop**. The lobby declares none:
+everything interactive there is already a control, and the fallback means a
+button added next year is reachable without anybody remembering this layer
+exists.
+
+### The cursor may not take focus off you
+
+`stamp()` calls `.focus()` so assistive tech follows the same object the ring is
+on. `resolveCursor()` runs after **every commit** — that is what puts the ring
+back on a card the engine has just replaced. Put those two together on a screen
+made of text fields and you get the bug a player reports as *"the seed box only
+takes one digit"*: a controlled input commits on every keystroke, so the resolve
+re-focused the first control on the screen and the caret left the field.
+
+Two rules, and both halves are needed:
+
+- **A commit is not a request to move focus.** `resolveCursor` re-stamps without
+  focusing when something else already holds it. It still focuses when the
+  cursor genuinely *moved* — a dialog opening over the board must take focus
+  with it, or the trap is only a picture of one — and when nothing holds focus
+  at all, which is the case it exists for.
+- **Where a stop can hold focus, the ring follows it.** Off the board the cursor
+  and DOM focus are two names for one thing, so clicking into a field moves the
+  ring there rather than leaving it on a button nobody is using. Deliberately
+  *not* "follow focus" in general: a board card is a div and cannot hold focus,
+  so there the focused element is merely whatever was pressed last, and
+  following it would drag the ring off the card on every engine push.
+  `focusHolder` is the one function that draws that line.
+
+### Two rules that keep it honest
+
+**`A` is a click.** Not "A does what a click does" — `useCursorNav` dispatches
+`element.click()` on the focused stop. There is no second routing table, no
+branch per stop kind, and no way for a pad to reach an action a pointer cannot.
+
+**Every `data-action-id` is emitted with its stop.** `actionAttrs(id)` returns
+both, so `ActionPanel`'s "every legal action is a button, exactly once" and the
+ring's "every one of them is reachable" are equal *by construction*.
+`tests/stops.test.tsx` fails the build if a bare `data-action-id` reappears.
+
+### The focus trap
+
+`stopRoot()` is nine lines and every consumer asks it: whatever is on top owns
+the ring. Six surfaces mark themselves `data-modal-root`. The half worth knowing
+is `:not([data-closing])` — every dialog animates out through `AnimatePresence`,
+so an *exiting* one is still in the DOM and would trap the ring in a panel that
+is fading away.
+
+### The ring's spring
+
+`input/ring.ts` integrates the **closed form of a damped oscillator**, not
+`v += (k*dx - d*v)*dt`. The naive one is frame-rate dependent — the same spring
+overshoots 1.6px at 60fps and 4.5px at 144fps — and goes unstable at large `dt`,
+which is exactly what a throttled tab hands you. The closed form is exact at any
+`dt` and resolves a dropped second to "the ring is where the cursor is".
+
+`w 36, z 0.78` is 142ms of settling and 2% of overshoot. `longHop` shortens
+anything past 420px, because a spring's settling time is distance-independent —
+a 1000px zone jump would otherwise fly at ~13,000 px/s and strobe.
+
+### The floors, and why they are a CI gate
+
+> Do not ship a controller mode without the 16px floor asserted in CI.
+
+`e2e/handheldAssert.ts` runs at 1280x800 in its own Playwright project and
+asserts: **16px** on anything carrying information, **96px** on any card the
+ring can land on, **44px** on any control, a ring at least 3px *and not
+`outline-style: none`*, at most one cursor, zero unreachable stops, zero
+`title` tooltips.
+
+Every one of those numbers caught something real. The full record is in
+[handheld-playtest.md](handheld-playtest.md); the short version is that the app
+had **123 elements under the floor at 6.5px, 142 native tooltips, and a card
+floor being missed by a card the ring could sit on** — none of which is visible
+in a screenshot, because a reviewer already knows what the label says.
+
+`title` is banned outright (`tests/noTooltips.test.ts`): it opens on hover and
+on nothing else, so on a controller it is information that cannot be reached.
+The 43 sites became `data-hint`, which the hint bar reads off the focused
+element — and which mouse players get immediately rather than after 500ms.
+
+### What the compact layout gives up
+
+Most of what this section used to describe is now simply the layout: the left
+rail is retired at every size, and an opponent is an `OpponentSeat` on a desktop
+too. What is still handheld-only is **their lanes**.
+
+An opponent's cards are clipped to `height: 0` at 1280x800, because three boards
+and the viewer's will not fit at the 52px card floor — which is the observation
+this whole round is built on. Clipped and not removed, and that is load-bearing:
+`FxLayer` anchors damage numerals and exit ghosts by looking up `[data-oid]` in
+the live DOM, so a card that is not laid out has no box to fly from. It is also
+why `input/stops.ts` and `input/groups.ts` filter stops with an ancestor-clip
+walk rather than by size: **a clipped card still reports its own full box**, and
+without the walk the ring could land on one nobody can see. It could, for
+several rounds, and `handheldAssert`'s `unreachable` agreed the board was fine
+because it called the same unfiltered function.
+
+Their board is two presses away and the difference is worth knowing. **`R2`
+held** is the glance — "is it safe to attack into that", which is a second and
+an answer. **Pressing their seat** is a place: you go and stand at it, their
+lanes are drawn where yours were, your own panel stays beside them (life and
+open mana are most of what you assess a threat against), and `B` or the strip's
+own button brings you home. The node MOVES rather than being copied, so there is
+exactly one box per `data-oid` at all times — two would give `FxLayer`'s
+`querySelector` a choice it has no way to make correctly.
+
+**The lane headings go.** "CREATURES", "GLOBAL ARTIFACTS & ENCHANTMENTS",
+"LANDS" name three things drawn directly beneath them. Dropping them buys the
+front band a line of height and the lands band a 74px column —
+`state/useZoomFit.ts` passes `labels: false` to match, and it has to: hiding
+them in CSS alone would leave the solver reserving room for them.
+
+**The tool strip lives in the foot**, portalled out of the right rail by
+`ActionPanel` into a host `Table` renders. Portalled and not duplicated: it is
+the same node, so every `data-action-id`, `data-testid` and ring stop travels
+with it, and the panel's one-control-per-action invariant holds. At the 44px hit
+floor the five controls wrap to three rows in a 200px column; the foot's row is
+1017px and they are one line.
+
+**The commit slab stayed in the rail.** It was portalled into the foot for the
+same reason, and the reason stopped holding when the rail gained 234px — under
+the list it commits is where the thing that ends a decision belongs.
+
+**The card reader is a landscape window, not a small card.** A 243px rail holds
+a card frame 116px across, which is smaller than the board card it is meant to
+be helping you read, with `cover` throwing away most of the painting to get
+there. `art_crop` is 626x457, so a 227x84 window keeps the full width for a
+third of the height, and the 78px it hands back is what the rules text is made
+of. The P/T is stamped on the picture, because the first draft put it on the
+type line and the line ellipsised away the number.
+
+### Jumping around the board
+
+Directional navigation crosses a 96px seat strip, three lanes, a fanned hand and
+a 243px rail one card at a time. `docs/handheld-playtest.md` Loop 1 records
+walking the board as "a bad way to ask can you reach everything": reachable and
+reachable-in-under-a-second are different properties, and only the second is
+playable.
+
+`L1`/`R1` step between five regions — hand, actions, opponents, you, board — and
+trap the ring inside the one it is in. **A region is a container, not a stop-id
+prefix**, because `card:<oid>` is a hand card AND a board card AND a stack item
+AND a prompt option: the namespace says what a stop *is* rather than where it
+lives, which is the whole reason the ring survives a permanent changing zone.
+Only the DOM can answer this. See `input/groups.ts`.
+
+The trap is subordinate to the modal one: `stopRoot` returning anything but the
+board means something is on top and owns the ring outright. It is also scoped to
+`html[data-input="pad"|"keyboard"]` — a mouse player has no ring, and trapping a
+desktop keyboard user inside a region is a regression nobody asked for.
+
+**Holding `L2`** opens a dial that jumps straight to a region. On the trigger and
+not on a shoulder, and that is not a preference: `pad.ts` reports presses and has
+no release event for a shoulder, so a hold there is a timer with nothing to
+cancel it. A trigger is analog and `onFrame` reports its position every frame,
+which is the channel the `R2` reader already uses. The dial carries
+`className="wheelwrap"` — the trap has preferred that class over every other
+candidate since it was written, with nothing in the repo ever rendering one.
+
+**The ring moves itself when the decision changes** (`logic/focusGroup.ts`):
+combat to the board, your main phase to the hand, otherwise the panel. Keyed on
+the pending kind and the step ONLY — run on every render it would drag the ring
+back each time the engine pushed a state, several times a second while an AI
+plays. It says nothing at all when the decision is not yours, when a dialog owns
+it, or when passing is the only thing to say.
+
+**`Y` reads the card the ring is on** at 330px, and on a seat it reads that
+seat's commander — in Commander the deck is the commander.
+
+> **Do not advertise a button without binding it.** `HintBar` printed `L1 Zone`
+> and `L2 Menu` from its first draft and `verbsFor` returns `Y Read` on every
+> card stop, and for several rounds **nothing in the app listened for any of the
+> three**. An advertised button that does nothing teaches the player that the bar
+> is not to be trusted, and nothing in the suite could see it, because the bar
+> renders spans and a span cannot fail to work. `HintBar` renders *from*
+> `NAVIGATION_HINTS` now rather than restating it, and a story compares what the
+> bar can say against `pad.boundButtons()`.
+
+### Everything on screen at once
+
+A Deck is held at one angle in two hands. There is no second position, so a
+board you have to scroll is a board whose bottom half does not exist — and that
+is a stronger claim than the floors make. Three tokens carry it:
+
+| token | what it bounds |
+|---|---|
+| `--pod-seat-h` | one opponent's whole seat, orb and all |
+| `--hand-lift` | how far a hovered hand card rises, and the room reserved for it |
+| `--mat-side` | the viewer's info column |
+
+`e2e/deckfit.spec.ts` is the gate, and it is a separate project because it runs
+at **1200x800 as well as 1280x800**: same height, ~36px less rail, and enough
+findings appeared at exactly one of the two widths that they are not
+interchangeable. It asserts `scrollHeight === clientHeight` on every container
+in a game played in to turn six, two-player and four-seat.
+
+`e2e/handheldAssert.ts` gained `overflowing[]` and `overBudget[]` for the same
+reason. The floors it already checked answer "is this big enough"; neither of
+them can answer "and does it still fit", which is how a 220px opponent seat
+holding an empty board passed every gate in the suite. See
+`docs/handheld-playtest.md` Loop 6.
+
+### Not built
+
+Rumble is best-effort — `vibrationActuator` is Chrome-only, so every rumble is
+redundant with something visible. The four back grips (L4/R4/L5/R5) are
+deliberately unused: Steam Input maps them before the page sees anything.
+Whether Game Mode passes the pad to a non-Steam browser shortcut at all is the
+one thing here that cannot be verified without the hardware.
 
 ## Not built
 
