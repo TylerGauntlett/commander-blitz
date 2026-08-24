@@ -1811,6 +1811,20 @@ const DOOR = {
            than a class for the reason `LEAN_IN` gives: a name that snapped
            through ninety degrees mid-slide measured a 35% jump in a frame. */
         spin: null,
+        /*
+         * Whether the name STAYS PUT instead of leaning to its outer edge.
+         *
+         * The lean was written for a name pinned to the foot of the card, where
+         * the only guaranteed-clear part of a stacked card is the outer sliver
+         * and a centred name is therefore half under its neighbour. A direction
+         * that prints the name IN FLOW, high on the card and with the widest
+         * label narrower than the sliver, does not have that problem -- and the
+         * lean then costs it something real: the words slide sideways under a
+         * card that is itself sliding, which reads as the type coming loose from
+         * the plate it is printed on. Only 01 sets this, and `labelClear` still
+         * has to pass with it set, which is the whole check on the claim above.
+         */
+        steady: false,
       },
       spec
     );
@@ -2176,6 +2190,7 @@ const DOOR = {
   paint() {
     const tune = DOOR.spec ? DOOR.spec.tune : TUNE;
     const spinOf = DOOR.spec && DOOR.spec.spin;
+    const steady = !!(DOOR.spec && DOOR.spec.steady);
     for (let i = 0; i < CARDS.length; i += 1) {
       const el = document.getElementById("slot-" + CARDS[i].id);
       if (!el) continue;
@@ -2200,6 +2215,9 @@ const DOOR = {
        * place had to be measured. `spin` turns it toward a spine, and when it
        * is turned its effective half-width is its own HEIGHT -- which is the
        * whole reason a spine can live in a sliver a horizontal name cannot.
+       *
+       * `steady` switches the travel off and leaves the name where the card
+       * printed it. See `mount()` for when that is allowed.
        */
       const m = DOOR.labels[i];
       if (m) {
@@ -2207,7 +2225,7 @@ const DOOR = {
         const spin = spinOf ? spinOf(Math.abs(i - DOOR.s)) : 0;
         const half = (m.w / 2) * (1 - spin) + (m.h / 2) * spin;
         const edge = p.lean < 0 ? LAB_INSET + half : m.cardW - LAB_INSET - half;
-        const x = p.lean * (edge - m.cx) * (p.lean < 0 ? -1 : 1);
+        const x = steady ? 0 : p.lean * (edge - m.cx) * (p.lean < 0 ? -1 : 1);
         /* Turned on its side, a name belongs up the middle of the strip it is
            in rather than along the foot of a card it no longer fits. */
         const y = spin * (m.cardH / 2 - m.cy);
@@ -3243,9 +3261,52 @@ function soft(hex, a) {
    on all three, because three menu items that describe themselves three
    different ways is a menu that reads as three unrelated things. */
 
+/*
+ * The one constant this direction moves, and it is `steady` below that spends
+ * it rather than taste.
+ *
+ * `_door.js` derives 112 from "the sliver has to be wider than the longest
+ * label", which is the right test for a label that has ALREADY LEANED to the
+ * outer edge: it only has to fit. A label that stays centred has to fit AND be
+ * centred, so what it needs is not a sliver wider than itself but a sliver wide
+ * enough to hold it with the card's own centre still showing.
+ *
+ * The number is measured, not guessed. At 112 the far card's centred DECKS runs
+ * 10.4px under its neighbour -- `labelClear` reports 13%. It reaches zero at
+ * 100; 96 is the next step down and leaves 4px of margin, which is what a
+ * different font stack on a different machine is worth. The pile is still a
+ * pile: 155px of a 190px card showing, against 139 before.
+ */
+const HAND_TUNE = Object.assign({}, TUNE, { BUNCH: 96 });
+
 DOOR.mount({
   title: "01 the hand",
   rowTop: 322,
+  tune: HAND_TUNE,
+
+  /*
+   * THE NAME DOES NOT MOVE. `steady` is the one shared default this file
+   * overrides, and the argument is that the shared rule is answering a problem
+   * this file does not have.
+   *
+   * The lean exists because `.mcard__label` is normally PINNED TO THE FOOT and
+   * centred, so with the row bunched the further of two stacked cards has a
+   * centred name half under its neighbour. Here the name is in flow directly
+   * under the illustration -- `position: static`, `justify-self: center` -- and
+   * it is short: `measure.mjs` reports the widest at 88px against a 139px
+   * sliver, so all three names clear their covering card standing still.
+   *
+   * What the lean cost was the thing the eye actually catches. The row slides
+   * and the words slide too, in the opposite direction, at a different rate --
+   * so PLAY, JOIN and DECKS crab across their own plates every time the
+   * selection changes, and printed type does not do that. A card is a printed
+   * object in this direction: the frame, the window and the name are one piece,
+   * and the only honest way for them to move is together.
+   *
+   * `labelClear` is still the check. It has to stay at 0% with the travel off
+   * or this override is wrong and the lean comes back -- see `measure.mjs`.
+   */
+  steady: true,
 
   face(c) {
     return (

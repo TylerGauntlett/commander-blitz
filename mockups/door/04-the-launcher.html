@@ -1725,6 +1725,20 @@ const DOOR = {
            than a class for the reason `LEAN_IN` gives: a name that snapped
            through ninety degrees mid-slide measured a 35% jump in a frame. */
         spin: null,
+        /*
+         * Whether the name STAYS PUT instead of leaning to its outer edge.
+         *
+         * The lean was written for a name pinned to the foot of the card, where
+         * the only guaranteed-clear part of a stacked card is the outer sliver
+         * and a centred name is therefore half under its neighbour. A direction
+         * that prints the name IN FLOW, high on the card and with the widest
+         * label narrower than the sliver, does not have that problem -- and the
+         * lean then costs it something real: the words slide sideways under a
+         * card that is itself sliding, which reads as the type coming loose from
+         * the plate it is printed on. Only 01 sets this, and `labelClear` still
+         * has to pass with it set, which is the whole check on the claim above.
+         */
+        steady: false,
       },
       spec
     );
@@ -2090,6 +2104,7 @@ const DOOR = {
   paint() {
     const tune = DOOR.spec ? DOOR.spec.tune : TUNE;
     const spinOf = DOOR.spec && DOOR.spec.spin;
+    const steady = !!(DOOR.spec && DOOR.spec.steady);
     for (let i = 0; i < CARDS.length; i += 1) {
       const el = document.getElementById("slot-" + CARDS[i].id);
       if (!el) continue;
@@ -2114,6 +2129,9 @@ const DOOR = {
        * place had to be measured. `spin` turns it toward a spine, and when it
        * is turned its effective half-width is its own HEIGHT -- which is the
        * whole reason a spine can live in a sliver a horizontal name cannot.
+       *
+       * `steady` switches the travel off and leaves the name where the card
+       * printed it. See `mount()` for when that is allowed.
        */
       const m = DOOR.labels[i];
       if (m) {
@@ -2121,7 +2139,7 @@ const DOOR = {
         const spin = spinOf ? spinOf(Math.abs(i - DOOR.s)) : 0;
         const half = (m.w / 2) * (1 - spin) + (m.h / 2) * spin;
         const edge = p.lean < 0 ? LAB_INSET + half : m.cardW - LAB_INSET - half;
-        const x = p.lean * (edge - m.cx) * (p.lean < 0 ? -1 : 1);
+        const x = steady ? 0 : p.lean * (edge - m.cx) * (p.lean < 0 ? -1 : 1);
         /* Turned on its side, a name belongs up the middle of the strip it is
            in rather than along the foot of a card it no longer fits. */
         const y = spin * (m.cardH / 2 - m.cy);

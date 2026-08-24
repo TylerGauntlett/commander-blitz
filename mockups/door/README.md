@@ -108,6 +108,7 @@ y      DROOP*min(|d|,1.6) - LIFT*max(0, 1-|d|)
 scale  1 + RAISE*max(0, 1-|d|)
 z      100 - round(|d|*10)
 lean   clamp((|d| - 0.45) / 0.60)      how far the name has travelled to its edge
+                                      (01 sets `steady` and holds it at 0)
 ink    1 - clamp((|d| - 1) / 0.60)     how much of the card is worth printing on
 ```
 
@@ -221,6 +222,8 @@ Each was a property with no in-between, and each is now a fraction of `s`:
 - **the name's centre-to-edge jump** — a `data-side` attribute that flipped at
   half a place. It is a `lean` ramp now, and the offset is measured, not guessed:
   `paint()` reads where each label naturally sits before it has moved anything.
+  01 has since taken the ramp to its limit and switched the travel off entirely —
+  see finding 2.
 - **02's spine** — `writing-mode: vertical-rl` behind a class, which is ninety
   degrees in one frame. It is a `spin` fraction composed into the same transform,
   so the name rolls onto its side as the pile closes.
@@ -261,14 +264,15 @@ fit in that strip** or it cannot be read at any alignment. Arithmetic, not taste
 
 | | sliver | widest label | fits |
 |---|---|---|---|
-| 01, 03, 04, 05 (`BUNCH` 112) | 136–139px | 88–95px | yes, with 44px |
+| 03, 04, 05 (`BUNCH` 112) | 136–139px | 88–95px | yes, with 44px |
 | the first pass (`BUNCH` 140) | 108px | 102px | **no** — 16px of inset did not fit in the 6 that were left |
 | 02, with a spine (`BUNCH` 178) | 73px | 26px turned | yes, easily |
+| 01, with the name held centred (`BUNCH` 96) | 155px | 88px | yes — see finding 2 |
 
 Which is why 02's vertical name is worth more than it looks: **a spine label is
 about 26px wide whatever it says**, so the constraint stops binding.
 
-### 2. A stacked card's name must sit on its outer edge
+### 2. A stacked card's name must sit on its outer edge — or the stack must open
 
 A centred label is half-covered in exactly the state the brief asks for. Each
 name therefore travels to the edge facing *away* from the selection — the only
@@ -277,6 +281,17 @@ part guaranteed to be uncovered, and what a fanned hand does anyway.
 It costs 04 the one piece of its own grammar it most wanted: a launcher tile's
 title goes at its top left, and a tile stacked to the right is covered *from* the
 left. **That is a cost of the stack, not of the skin.**
+
+**And there is a second way to pay it, which is what 01 now does.** The travel
+buys readability with movement: the row slides one way while the words on it
+slide the other, so PLAY, JOIN and DECKS crab across their own plates on every
+selection change. On a direction whose whole claim is that a card is a *printed
+object*, type that comes loose from the plate is the more expensive of the two
+bills. So 01 sets `steady` and opens the pile instead — `BUNCH` 112 → 96, a 155px
+sliver against an 88px name — and pays in stack depth, which is the thing the
+skin is least about. `labelClear` is what priced it: 13% covered at 112, 4% at
+104, zero at 100. The remaining ±4px of label movement is the card's own 7.2° of
+tilt carrying its printing with it, which is what printing does.
 
 ### 3. The stack costs a card everything except its name
 
@@ -314,9 +329,9 @@ most of 04's case against itself.
 | **Ground** | **drawn hall, retinted** | flat | board anatomy | flat | blurred real art |
 | **Card face** | frame + illustration | printed back | name and verb | plate, live state | back over a crop |
 | **Unselected pair** | tilt away, overlap | **close to a pile** | tilt, overlap | slide flat, overlap | tilt, overlap |
-| **The far card reads** | on its outer edge | **up its spine** | outer edge | outer edge | outer edge |
+| **The far card reads** | **centred, on an opened pile** | **up its spine** | outer edge | outer edge | outer edge |
 | **Pod code** | **a dialog on press** | in the ledger | in the strip | on the plate | under the row |
-| **Tune it moves** | none | `BUNCH` 112→178 | none | `ARC`→0, `RAISE`→0.05 | none |
+| **Tune it moves** | `BUNCH` 112→96 | `BUNCH` 112→178 | none | `ARC`→0, `RAISE`→0.05 | none |
 | **Says what a pod IS** | no | no | **yes** | no | no |
 | **Port cost to React** | medium | medium | medium | **low** | high |
 
