@@ -63,11 +63,12 @@ import { GameOverScreen } from "./GameOverScreen";
 import { GroupDial } from "./GroupDial";
 import { HandFan } from "./HandFan";
 import { HintBar } from "./HintBar";
+import { OpeningHand } from "./OpeningHand";
 import { OpponentBoard } from "./OpponentBoard";
 import { ParticleLayer, clearParticles } from "./ParticleLayer";
 import { PhaseTrack } from "./PhaseTrack";
 import { PlayerMat } from "./PlayerMat";
-import { PromptDialog, isModalDecision } from "./PromptDialog";
+import { PromptDialog, ownsDecision } from "./PromptDialog";
 import { StackPanel } from "./StackPanel";
 import { ZonePeek } from "./ZonePeek";
 
@@ -187,8 +188,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   // There used to be two surfaces to keep straight here -- an action bar and a
   // combat panel, each with its own stand-down rule and a comment explaining why
   // they disagreed. `ActionPanel` is both of them, so the only question left is
-  // whether the modal dialog owns the decision instead.
-  const modalOwnsDecision = isModalDecision(state);
+  // whether something full-screen owns the decision instead -- which is now two
+  // somethings, the dialog and `OpeningHand`, and `ownsDecision` is the one
+  // question that covers both.
+  const modalOwnsDecision = ownsDecision(state);
 
   // Depend on the `mutate` functions, which react-query keeps stable, rather
   // than on the mutation objects, which are new every render -- otherwise every
@@ -1731,6 +1734,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       )}
 
       <PromptDialog state={state} actions={actions} onAct={act} disabled={locked} />
+      <OpeningHand state={state} actions={actions} onAct={act} disabled={locked} />
       <ZonePeek state={state} reasons={removals} />
       <GameOverScreen state={state} onRematch={onRematch} onQuit={onQuit} />
     </div>

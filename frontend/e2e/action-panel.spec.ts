@@ -17,7 +17,14 @@
  */
 
 import { type Locator, type Page, expect, test } from "@playwright/test";
-import { actionsOfKind, isOver, reachDecision, startGame, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  isOver,
+  keepOpeningHand,
+  reachDecision,
+  startGame,
+  waitForOurTurn,
+} from "./helpers";
 
 /** Every action id in the document, in DOM order, including disabled ones. */
 async function renderedIds(page: Page): Promise<string[]> {
@@ -36,13 +43,12 @@ function rowsOfKind(page: Page, kind: string): Locator {
 /**
  * Reach a main-phase priority window with something playable in it.
  *
- * The mulligan has to be answered first and answered *here*: it is a modal
- * decision, so the panel deliberately renders none of its actions, and a loop
- * that only looks for panel rows sits in front of the dialog forever.
+ * The opening hand has to be answered first and answered *there*: it owns the
+ * screen, so the panel deliberately renders none of its actions, and a loop
+ * that only looks for panel rows sits in front of it forever.
  */
 async function reachPriority(page: Page, limit = 60): Promise<boolean> {
-  const keep = actionsOfKind(page, "keep");
-  if (await keep.count()) await keep.first().click();
+  await keepOpeningHand(page);
 
   for (let i = 0; i < limit; i += 1) {
     await waitForOurTurn(page);
@@ -550,13 +556,11 @@ test.describe("reading a card from the panel", () => {
 test.describe("the tools footer", () => {
   test("lives inside the panel and still works from there", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
-    // Past the mulligan first. `.prompt-backdrop` is fixed at `inset: 0` above
-    // everything, so while a decision dialog is up the tools are on screen but
-    // not clickable -- see docs/mockup-fidelity.md. That is pre-existing and out
-    // of scope here; this test is about the footer, not about the backdrop.
-    const keep = actionsOfKind(page, "keep");
-    if (await keep.count()) await keep.first().click();
-    await waitForOurTurn(page);
+    // Past the opening hand first. It is a full-screen surface above
+    // everything, so while it is up the tools are on screen but not clickable --
+    // the same shape as `.prompt-backdrop`'s, see docs/mockup-fidelity.md. That
+    // is pre-existing and out of scope here; this test is about the footer.
+    await keepOpeningHand(page);
 
     // 21. A descendant of the panel, not a pane of its own. The controls used to
     //     sit in a third bordered box in the rail, which is the gap this closed.

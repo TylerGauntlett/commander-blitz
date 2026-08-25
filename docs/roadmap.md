@@ -27,6 +27,45 @@ controller". The client is playable end to end on a gamepad at a Steam Deck's
 
 ---
 
+## The opening hand — shipped
+
+`mockups/mulligan/01-the-deal.html` is meshed into the client as `OpeningHand`. See
+`docs/frontend.md` ("The first decision of every game has its own screen") for what it is
+and `mockups/mulligan/README.md` for why it looks that way.
+
+The first decision of every game was a centred rectangle with two identical grey buttons,
+drawn on top of a 73.6px hand whose rules text resolved to 8.5px and was dropped. It is now
+a full screen of seven cards you can read.
+
+Measured at 1280x800 against the mockup's own numbers:
+
+| | mockup | shipped |
+|---|---|---|
+| card | 296 x 414 | 296 x 414 |
+| pitch | 144 | 144 |
+| row top | 100 | 100 |
+| margin, ink to bezel | 27 | 27 |
+| rules text | 16px | 16px |
+| open rules boxes | 1 | 1 |
+
+- **`--mu` is exactly 1 on a Deck**, 1.19 at 1600x950 and 0.94 at 1200x800, and the arch
+  holds still through a walk of the whole row at all three.
+- **Both halves of a London mulligan** are answered on it. The bottoming step is told apart
+  from every other `choose_objects` by a `purpose` tag the engine now stamps, not by its
+  prompt string.
+- **`mulligans_taken` is on the wire** for the first time, as the lamps.
+- **`A` keeps from a card, `B` mulligans**, and `verbs.ts` says so in the hint bar.
+
+### Deliberately not done
+
+**The other four directions.** `mockups/mulligan/` drew five and this ports one. 02's read
+panel is the one most worth revisiting — it answers "should I keep this" better than any
+card's rules text does — but it is a different screen rather than an addition to this one.
+
+**A deeper read.** The mockup round's 02-05 all raise a card to 296px over the room on `Y`;
+this direction does not need one, because the card you are on is already at that width.
+`Y` still opens `CardHold` app-wide and is left alone.
+
 ## Steamdeck Full Game Support — shipped
 
 `mockups/handheld-board/` is meshed into the client. See `docs/frontend.md`

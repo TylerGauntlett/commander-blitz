@@ -1182,6 +1182,15 @@ def _opening_sequence(state: GameState) -> Generator[Any, list[int], None]:
                 bottom,
                 bottom,
                 pid,
+                # A London mulligan is two questions, and this is the second.
+                # `purpose` is the machine-readable tag `ask_objects` documents
+                # itself as carrying so that "agents and the UI branch on it;
+                # without it they would have to pattern-match on the
+                # human-readable prompt" -- which is exactly what the client
+                # needs here, to tell this apart from every other
+                # `choose_objects` and answer it on the same screen that asked
+                # the first half.
+                purpose="mulligan_bottom",
             )
             for oid in picked:
                 move_object(state, oid, Zone.LIBRARY, to_player=pid, cause="mulligan_bottom")

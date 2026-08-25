@@ -16,6 +16,7 @@ import { describe, expect, it } from "vitest";
 import type { CardView } from "../src/api/types";
 import { type Staging, parseStop, verbsFor } from "../src/logic/verbs";
 import { action, card, gameView, pending, player } from "../src/testing/fixtures";
+import { mulligan, mulliganBottom } from "../src/testing/scenarios";
 
 const creature = (oid: number, overrides: Partial<CardView> = {}): CardView =>
   card({
@@ -276,5 +277,52 @@ describe("verbsFor", () => {
     // `B` is a strict unwind and never quits from the top; a card is never the
     // top, so it always has somewhere to go back to.
     expect(verbsFor(gameView(), [], "card:1").b).toBe("Back");
+  });
+
+  /*
+   * The opening hand, where two of the rules above stop holding.
+   *
+   * A card in your opening hand has no legal action of its own, so every branch
+   * in the file would fall through to `A Read` -- and what `A` does there is
+   * keep the hand. And `B Back` is on almost every other branch, which is true
+   * on a board and false on a screen where `B` mulligans.
+   */
+  describe("during a mulligan", () => {
+    const keepPhase = () => {
+      const s = mulligan();
+      return { state: s.state, actions: s.actions };
+    };
+
+    it("says Keep on a hand card, because that is what A does there", () => {
+      const { state, actions } = keepPhase();
+      expect(verbsFor(state, actions, "card:101").a).toBe("Keep");
+    });
+
+    it("says Mulligan on B from every stop, because B is bound to it", () => {
+      const { state, actions } = keepPhase();
+      expect(verbsFor(state, actions, "card:101").b).toBe("Mulligan");
+      expect(verbsFor(state, actions, "act:a0-keep").b).toBe("Mulligan");
+      expect(verbsFor(state, actions, null).b).toBe("Mulligan");
+    });
+
+    it("names the button the ring is actually on", () => {
+      const { state, actions } = keepPhase();
+      expect(verbsFor(state, actions, "act:a0-keep").a).toBe("Keep");
+      expect(verbsFor(state, actions, "act:a1-mulligan").a).toBe("Mulligan");
+    });
+
+    it("still offers Read on a card, since the neighbour crops the art", () => {
+      const { state, actions } = keepPhase();
+      expect(verbsFor(state, actions, "card:101").y).toBe("Read");
+      // ...and not on a button, where `Table`'s Y binding does nothing.
+      expect(verbsFor(state, actions, "act:a0-keep").y).toBeUndefined();
+    });
+
+    it("drops B entirely while bottoming, because nothing un-picks", () => {
+      const { state, actions } = mulliganBottom();
+      const verbs = verbsFor(state, actions, "act:a0-bottom");
+      expect(verbs.a).toBe(state.players[0].hand?.[0].name);
+      expect(verbs.b).toBeUndefined();
+    });
   });
 });

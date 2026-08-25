@@ -1,0 +1,455 @@
+/*
+ * The opening hand, at every size.
+ *
+ * Ported from `mockups/mulligan/01-the-deal.html`, and `mockups/mulligan/README.md`
+ * is the argument for it. Short version: the first decision of every game was a
+ * centred rectangle with two identical grey buttons, drawn over a hand at
+ * 73.6px whose rules text resolved to 8.5px and was dropped. Here the hand is
+ * the screen, at the width `probe.mjs` says a card needs to carry its own rules
+ * at the 16px floor.
+ *
+ * ---------------------------------------------------------------------------
+ * TWO RULES THIS SHEET IS BUILT ON, and they are `room.css`'s.
+ *
+ * **Every size is `calc(N * var(--mu))`**, where `--mu` is written by
+ * `OpeningHand` from `logic/openingHand.ts`'s `stageUnit` and is exactly 1 at
+ * 1280x800. The stage is full-bleed and only the furniture scales, so a desktop
+ * gets a bigger composition rather than a letterboxed Deck.
+ *
+ * **Every font-size is `max(16px, calc(N * var(--mu)))`.** The 16px floor is a
+ * CI gate (`src/testing/asserts.ts`, run by the handheld Storybook project), and
+ * `handheld.css`'s generated override block exists because 144 selectors were
+ * authored under it and repaired later. Its own comment: "Shrinking this list by
+ * rewriting a screen is the only way it is meant to shrink; adding to it is the
+ * other way to pass the gate, and it is the one that leaves the problem where it
+ * was." **Nothing on this screen is in that list**, and nothing should be.
+ *
+ * ---------------------------------------------------------------------------
+ * AND A THIRD, WHICH IS A TRAP: THE CLASS NAMES ARE NEW.
+ *
+ * `handheld.css` loads last and carries a flat `font-size: 16px` block naming a
+ * hundred and thirty-nine selectors. A recycled class name inherits every rule
+ * anybody ever wrote for it, and would beat every `max()` here. So `.mull__*`,
+ * and never `.prompt`, `.opt` or `.hand`.
+ */
+
+.mull {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-modal);
+  overflow: hidden;
+  /*
+   * NOT A DIALOG BACKDROP. `.prompt-backdrop` dims to 0.82 and blurs, because a
+   * dialog is asking a question and the screen behind it is not part of it. The
+   * board behind this one is not part of the question either -- there is no
+   * board yet, it is turn zero -- so this is nearly opaque and carries the
+   * app's own lit-table wash rather than a scrim over one.
+   */
+  background: radial-gradient(60% 44% at 50% 6%, rgb(143 127 232 / 0.13) 0%, transparent 62%),
+    radial-gradient(70% 50% at 50% 100%, rgb(90 190 220 / 0.07) 0%, transparent 60%),
+    linear-gradient(180deg, var(--void-1) 0%, var(--void-0) 62%);
+}
+
+/* ==========================================================================
+   The place name, and the lamps
+   ==========================================================================
+
+   NOT A QUESTION. A question in the largest type on the screen is a dialog
+   title with the box taken off. This says where you are, the way a shop or an
+   inventory screen does, and the two verbs at the foot say what can be done
+   here. The accessible name on `.mull` is still the question, for a reader that
+   has no picture to go on.
+   ========================================================================== */
+
+.mull__eyebrow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(40px * var(--mu));
+  z-index: 5;
+  margin: 0;
+  color: var(--text-faint);
+  font-size: max(16px, calc(16px * var(--mu)));
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  /* Tracking is trailing space on the last letter, so centred tracked text sits
+     half a letter-space left of true. `door.css` makes the same correction. */
+  text-indent: 0.34em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.mull__lamps {
+  position: absolute;
+  right: calc(40px * var(--mu));
+  top: calc(26px * var(--mu));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--mu));
+  height: 44px;
+  color: var(--text-dim);
+  font-size: max(16px, calc(16px * var(--mu)));
+}
+
+.mull__lampsRow {
+  display: flex;
+  gap: calc(6px * var(--mu));
+}
+
+/*
+ * A lamp is a MARK, not a target -- nothing presses it, so it is allowed to be
+ * 12px inside a 44px row. `handheld.css:2182` states the same distinction for
+ * `.ibtn`: "The floor is a TARGET, not a size, so the target grows and the mark
+ * does not."
+ */
+.mull__lamp {
+  width: calc(12px * var(--mu));
+  height: calc(12px * var(--mu));
+  border: 2px solid rgb(160 155 196 / 0.5);
+  border-radius: 50%;
+}
+
+.mull__lamp[data-spent] {
+  border-color: var(--danger);
+  background: var(--danger);
+}
+
+/* ==========================================================================
+   The arch
+   ==========================================================================
+
+   AN ARCH PINNED TO ITS OWN MIDDLE, and no part of it is a function of the
+   selection. `logic/openingHand.ts` writes `left`, `top`, `transform` and
+   `transform-origin` inline, once per resize; moving the selection touches
+   `z-index`, one attribute and one custom property.
+
+   WHICH IS WHY `left` AND `top` ARE NOT IN THE TRANSITION LIST BELOW. They do
+   not change. The mockup's second pass DID change them -- it grew the selected
+   card and re-centred the row -- and the whole third pass exists because that
+   made every press slide all seven cards sideways under the one you were trying
+   to read.
+   ========================================================================== */
+
+.mull__row {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.mull__slot {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* The lift is on its own element, so the slot's transform -- the arch, written
+   once -- never has to be rebuilt to carry it. `.hand__slot` / `.hand__lift`
+   split for the same reason, and `board.css:1816-1826` records the bug that
+   forced it: transform the box a pointer is inside and the card leaves the
+   pointer, `mouseleave` fires, it drops, `mouseenter` fires, forever. */
+.mull__lift {
+  display: block;
+  transform: translateY(var(--mull-lift, 0px));
+  transition: transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The ring's gold is `--focus`, not `--gold`. "You are on it" and "this is the
+   commit tier" are two different facts and the palette keeps them apart --
+   which is `handheld.css:33-38`'s note, and the reason the Keep plate below is
+   the other one. */
+.mull__slot[data-on] .card {
+  box-shadow: 0 0 0 3px var(--focus), 0 0 calc(44px * var(--mu)) var(--focus-glow), 0
+    calc(20px * var(--mu)) calc(50px * var(--mu)) rgb(0 0 0 / 0.8);
+  border-radius: var(--card-r);
+}
+
+/*
+ * ONLY THE CARD YOU ARE ON PRINTS ITS RULES.
+ *
+ * Seven open rules boxes at this pitch is six columns of type sliced down the
+ * middle by the card in front, and the one sentence that matters has to win
+ * against them. `.face__foot` is `margin-top: auto`, so closing the box lets the
+ * card's own full-bleed illustration take the space back and **the card does not
+ * change size** -- which is the constraint the whole layout is built on.
+ *
+ * Scoped to `.mull__slot`, never to `.face--detail`: the stack and the zone peek
+ * draw that variant too, and it has no rules of its own anywhere in this app.
+ */
+.mull__slot:not([data-on]) .face__rules {
+  display: none;
+}
+
+/*
+ * ON THIS ONE SCREEN THE RULES BOX WINS AND THE ILLUSTRATION GIVES.
+ *
+ * `cards.css:716-728` makes `.face__rules` `flex: 0 1 auto; overflow: hidden`,
+ * and `handheld.css:1484-1492` fades rather than cuts what does not fit. That
+ * is the right call nearly everywhere -- a card is a picture with text on it,
+ * and on a board the picture is how you recognise it across the table.
+ *
+ * It is the wrong call here, and the screenshot is what said so: Vampire
+ * Aristocrat's second line came out half-faded behind its own power badge, on
+ * the one screen whose entire purpose is reading the card. `probe.mjs` sized
+ * 296px against a card that gives the text whatever it needs; this face gives
+ * the text whatever is left.
+ *
+ * So the box takes its content's height and the foot's scrim grows up over the
+ * art to hold it. The art is a bleed layer behind the scrim rather than a flex
+ * item, so nothing reflows -- the card is still exactly `--card-w` by 1.4, which
+ * is the constraint the whole arch is built on.
+ *
+ * THE CAP IS STILL THERE, at 76% of the card. A card with six lines of rules
+ * would otherwise scrim its own illustration away entirely, and past that point
+ * the inherited fade is the honest answer again.
+ */
+.mull__slot .face__rules {
+  flex: 0 0 auto;
+  justify-content: flex-start;
+  overflow: visible;
+  /*
+   * AND THE FADE GOES WITH IT.
+   *
+   * `handheld.css:1484-1492` masks the bottom 14px of every rules box to a
+   * transparent edge, so that a card which genuinely cannot fit its text says
+   * "there is more here" rather than stopping mid-word at a line boundary. With
+   * the box now sized to its content there is never more, and the mask was
+   * washing out the last line of every card that happened to run to two --
+   * which reads as clipped for exactly the reason that comment gives, only
+   * backwards.
+   */
+  mask-image: none;
+}
+
+.mull__slot .face__foot {
+  max-height: 76%;
+  overflow: hidden;
+}
+
+/*
+ * AND THE TYPE LINE COMES BACK, on the card you are reading.
+ *
+ * `handheld.css:537-541` drops `.face__type` from every small card, because at
+ * the 16px floor "Creature — Vampire Soldier" needs about 200px and a card is
+ * 96 to 150 wide -- measured across Storybook, the line overflowed its box by
+ * 21-68px on forty-odd stories. The block right after it exempts "the two
+ * surfaces whose whole job is reading one card", `.opt--card` and `.peek__slot`,
+ * on the grounds that both have the width.
+ *
+ * This is a third such surface and it has more width than either: 296px at
+ * `--mu` 1. So the exemption is the same one, stated here rather than grown
+ * onto that list, because the width it depends on is this screen's own.
+ *
+ * ONLY THE SELECTED CARD, like the rules box above it. The other six are
+ * overlapped by 152px and their type line would be a half-word behind the next
+ * card -- which is the exact failure the drop rule exists to prevent.
+ *
+ * The specificity carries it without needing to load later: this is (0,3,0)
+ * against the drop's (0,2,0).
+ */
+.mull__slot[data-on] .face__type {
+  display: revert;
+  /* Wraps rather than truncating, for the reason the exemption block gives:
+     re-enabling the line without this moves the truncation onto the one screen
+     the player was deliberately sent to read. */
+  white-space: normal;
+}
+
+/* With the text gone the dim no longer has to fight it, so it is lighter than
+   the mockup's first attempt: enough to say "not this one", not so much that the
+   other six become a grey wall you cannot navigate. */
+.mull__slot .card {
+  transition: filter var(--t-base) ease;
+}
+
+.mull__slot:not([data-on]) .card {
+  filter: brightness(0.72) saturate(0.82);
+}
+
+/* A card marked for the bottom sinks and goes cold. `--staged` is the board's
+   own "committed but not yet paid for" colour, which is exactly what a pick
+   before the engine has moved the card is. */
+.mull__slot[data-marked] .mull__lift {
+  transform: translateY(calc(22px * var(--mu)));
+}
+
+.mull__slot[data-marked] .card {
+  filter: saturate(0.5) brightness(0.62);
+}
+
+.mull__tag {
+  position: absolute;
+  left: 50%;
+  top: calc(-16px * var(--mu));
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 calc(12px * var(--mu));
+  transform: translateX(-50%);
+  border-radius: 15px;
+  background: var(--staged);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.6);
+  color: var(--dial-ink);
+  font-size: max(16px, calc(16px * var(--mu)));
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   The two answers
+   ==========================================================================
+
+   NOT BUTTONS IN THE `.btn` SENSE. A button is a rectangle you click; a prompt
+   is a glyph and a verb, and the difference is the whole tone of the screen.
+   There is no border and no fill, because on a Deck there is no pointer -- what
+   makes it pressable is that the pad has that button on it. They are still
+   native `<button>`s, so a mouse and the ring both reach them.
+
+   THE TIERS ARE UNEQUAL, BECAUSE THE ACTIONS ARE. Keep is the answer roughly
+   nine times in ten: it is gold, it is the larger of the two, and it is on the
+   right, which is where `A` physically sits on the pad. `ui.css`'s `.btn` gives
+   both of these the same rectangle -- "the most-pressed control in the game
+   looks exactly like the least-pressed one", which is `mockups/README.md`'s
+   finding 2, at its most extreme here because these two are the only controls
+   on the screen.
+   ========================================================================== */
+
+.mull__acts {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: calc(76px * var(--mu));
+}
+
+.mull__act {
+  display: flex;
+  align-items: center;
+  gap: calc(14px * var(--mu));
+  /* 44px, and it is the box rather than the mark -- the padding is what gets it
+     there on a small `--mu`, not the type. */
+  min-height: 44px;
+  padding: calc(12px * var(--mu)) calc(8px * var(--mu));
+  border: 0;
+  border-radius: calc(12px * var(--mu));
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mull__act:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.mull__glyph {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+}
+
+.mull__words {
+  display: grid;
+  gap: calc(3px * var(--mu));
+}
+
+.mull__verb {
+  font-size: max(16px, calc(30px * var(--mu)));
+  font-weight: 800;
+  line-height: 1;
+}
+
+.mull__sub {
+  color: var(--text-dim);
+  font-size: max(16px, calc(16px * var(--mu)));
+}
+
+/* Order, not source order: Keep is written second in the DOM so the ring meets
+   Mulligan first walking right from the row, and drawn second so it sits under
+   `A` on the right. Both are true at once and neither is a coincidence. */
+.mull__act--mull {
+  order: 1;
+}
+
+.mull__act--keep {
+  order: 2;
+}
+
+.mull__act--keep .mull__verb {
+  color: var(--gold);
+  text-shadow: 0 0 calc(28px * var(--mu)) rgb(255 212 121 / 0.35);
+}
+
+.mull__act:active:not(:disabled) .mull__verb {
+  transform: translateY(2px);
+}
+
+/* The bottoming phase's line, in the same place the two answers stand. There is
+   nothing to press down here: a card IS the answer, so the row above holds every
+   `data-action-id` and this only says how many are left. */
+.mull__ask {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0;
+  color: var(--text);
+  font-size: max(16px, calc(20px * var(--mu)));
+  font-weight: 700;
+}
+
+/* The only other hint on the screen, bottom left, out of the way of both. It
+   names ONE input, which is this direction's claim about reading: there is no
+   button for it, because moving the ring already is it. */
+.mull__move {
+  position: absolute;
+  left: calc(40px * var(--mu));
+  bottom: calc(16px * var(--mu));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: calc(9px * var(--mu));
+  height: 44px;
+  color: var(--text-faint);
+  font-size: max(16px, calc(16px * var(--mu)));
+}
+
+/*
+ * The focused card takes the ring's amber, the way every other focusable does.
+ *
+ * `handheld.css:1368-1372` lists the classes that get this treatment under
+ * `html[data-input="pad"]`, and a new control that is not in that list is a
+ * control the ring lands on with nothing to show for it. This says the same
+ * thing next to the component that needs it rather than growing that list, since
+ * the tint here is on the card's own ring above rather than on a fill.
+ */
+html[data-input="pad"] .mull__act[data-cursor],
+html[data-input="keyboard"] .mull__act[data-cursor] {
+  background: rgb(255 224 138 / 0.12);
+  box-shadow: inset 0 0 0 1px rgb(255 224 138 / 0.34);
+}
+
+/*
+ * REDUCED MOTION DROPS THE LIFT, NOT THE SELECTION.
+ *
+ * `App` passes `reducedMotion="user"` to `MotionConfig`, which covers the fade;
+ * the lift is a CSS transition and has to be told separately. What goes is "how
+ * it felt"; what stays is "what happened" -- the ring, the dim and the open
+ * rules box all still say which card you are on.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .mull__lift,
+  .mull__slot .card {
+    transition: none;
+  }
+}

@@ -14,6 +14,7 @@ import { type Page, expect, test } from "@playwright/test";
 import {
   actionsOfKind,
   isOver,
+  keepOpeningHand,
   reachDecision,
   startGame,
   takeAction,
@@ -44,8 +45,17 @@ test.describe("a turn means a lap of the table", () => {
     // two numbers exist side by side and that the *displayed* one is the round.
     test.setTimeout(180_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
-    const keep = actionsOfKind(page, "keep");
-    if (await keep.count()) await keep.first().click();
+    /*
+     * `keepOpeningHand`, and the wait inside it is the point.
+     *
+     * This used to click Keep and read `data-round` on the next line, which is a
+     * race it happened to win: `engine/game.py` sets `state.round = 1` only after
+     * the WHOLE opening sequence finishes -- every seat's mulligans, and any
+     * bottoming that follows -- so between the press and that push the board
+     * legitimately reads round 0. Asserting the round while the game has not
+     * started yet is asserting the wrong moment, however often it passes.
+     */
+    await keepOpeningHand(page);
 
     const counter = page.getByTestId("turn-counter");
     await expect(counter).toBeVisible();
@@ -219,9 +229,14 @@ test.describe("lands say what they make", () => {
 
 test.describe("choosing a card shows the card", () => {
   test("prompt options render faces rather than bare names", async ({ page }) => {
-    // The mulligan-bottom prompt names cards in a *hand*, and search/scry name
-    // cards in a library -- which `player_view` sends as a count, so the client
-    // had nothing to draw and fell back to a name-only button.
+    // Search and scry name cards in a *library*, which `player_view` sends as a
+    // count -- so the client had nothing to draw and fell back to a name-only
+    // button. `serialize._pending` attaching the face is what fixed it.
+    //
+    // The mulligan-bottom prompt used to be the other half of this test, and it
+    // is not this dialog's any more: `OpeningHand` answers both halves of a
+    // mulligan on its own screen, so mulliganing here would walk past the
+    // surface under test rather than into it. `smoke.spec.ts` covers that path.
     test.setTimeout(180_000);
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
@@ -232,7 +247,7 @@ test.describe("choosing a card shows the card", () => {
         if (!(await dialog.isVisible().catch(() => false))) return false;
         return (await dialog.locator(".opt--card").count()) > 0;
       },
-      { prefer: ["mulligan", "play_land", "cast", "pass"], limit: 120 },
+      { prefer: ["play_land", "cast", "pass"], limit: 120 },
     );
     test.skip(!seen, "no card-choosing prompt came up in this game");
 

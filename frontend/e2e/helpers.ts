@@ -118,6 +118,71 @@ export async function browseDecks(page: Page): Promise<void> {
 }
 
 /**
+ * Answer the opening hand and leave the board playable.
+ *
+ * ONE PLACE, because a dozen specs need to get past this and every one of them
+ * used to reach into the surface that draws it -- finding `prompt-dialog`,
+ * checking `data-decision-kind`, clicking a label. When `OpeningHand` replaced
+ * that dialog, all dozen would have had to change, which is the cost this
+ * function exists to pay once.
+ *
+ * What it will NOT do is name a surface. It presses `data-action-kind`, which is
+ * the server's own vocabulary and the same invariant the rest of this file is
+ * built on: *every legal action is a button carrying `data-action-id`*. A spec
+ * that goes through here keeps working whatever draws the screen next.
+ *
+ * IT ANSWERS BOTH HALVES. A London mulligan asks twice -- keep or mulligan, then
+ * put N on the bottom -- and the second only appears once you have taken at
+ * least one. `mulligans` is how many to take first, so a spec that wants to see
+ * the bottoming step can ask for it instead of engineering a seed that produces
+ * one.
+ */
+export async function keepOpeningHand(page: Page, mulligans = 0): Promise<void> {
+  for (let i = 0; i < mulligans; i += 1) {
+    const mull = actionsOfKind(page, "mulligan");
+    await mull.first().waitFor({ timeout: 30_000 });
+    await mull.first().click();
+    // The new seven arrives as a fresh decision, so wait for the question to be
+    // askable again rather than for a fixed time.
+    await expect(actionsOfKind(page, "keep").first()).toBeVisible({ timeout: 30_000 });
+  }
+
+  const keep = actionsOfKind(page, "keep");
+  if (await keep.count()) await keep.first().click();
+
+  /*
+   * And the bottoming half, if there is one.
+   *
+   * KEYED ON `data-phase`, not on the screen still being up. Answering the
+   * first question leaves the surface mounted for the round trip with every
+   * control disabled, so a loop that only asked "is it still there" grabbed the
+   * disabled Mulligan button and waited out the whole test timeout against it.
+   * A phase of `bottom` is the only thing that means there is a second question.
+   *
+   * Each card is its own button, so pressing the first ENABLED one answers one
+   * pick; `min_count` of them finishes the decision and the screen goes.
+   */
+  const stage = page.getByTestId("opening-hand");
+  for (let guard = 0; guard < 8; guard += 1) {
+    if ((await stage.count()) === 0) break;
+    if ((await stage.getAttribute("data-phase").catch(() => null)) !== "bottom") {
+      // Either it has gone, or it is mid-flight. Give the round trip a moment
+      // and look again rather than pressing whatever happens to be on screen.
+      await page.waitForTimeout(200);
+      continue;
+    }
+    const pick = stage.locator("[data-action-id]:not([disabled])").first();
+    if (!(await pick.count())) {
+      await page.waitForTimeout(200);
+      continue;
+    }
+    await pick.click();
+  }
+
+  await waitForOurTurn(page);
+}
+
+/**
  * Open a pod and leave the catalogue open on your own seat.
  *
  * The path an import really takes: you are choosing a deck, and the deck you

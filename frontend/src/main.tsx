@@ -15,6 +15,9 @@ import "./styles/seat.css";
 import "./styles/reader.css";
 import "./styles/groups.css";
 import "./styles/ui.css";
+// After `ui.css`: the opening hand replaces that sheet's `.prompt` for one
+// decision kind, and its own class names are new so nothing here is a contest.
+import "./styles/opening.css";
 import "./styles/lobby.css";
 // After `lobby.css`, all four: `room.css` and the three screens standing in it
 // replace that sheet's `.door`, `.pod` and `.cat` shells. `room.css` first,
