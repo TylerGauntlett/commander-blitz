@@ -17,5 +17,6 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["vitest/globals", "vite/client", "node"]
   },
-  "include": ["src", "tests", "vite.config.ts", ".storybook"]
+  "//": "`e2e` is here because it was not, and a spec that referenced an undefined helper typechecked clean and then failed four Playwright tests twenty minutes later. Both test directories are checked now; neither is emitted.",
+  "include": ["src", "tests", "e2e", "vite.config.ts", ".storybook"]
 }

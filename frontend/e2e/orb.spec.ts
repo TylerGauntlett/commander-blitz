@@ -15,7 +15,7 @@
  */
 
 import { type Locator, type Page, expect, test } from "@playwright/test";
-import { actionsOfKind, startGame, waitForOurTurn } from "./helpers";
+import { keepOpeningHand, startGame } from "./helpers";
 
 interface Box {
   x: number;
