@@ -214,6 +214,19 @@ def _player(
         "commander_damage_taken": {
             str(k): v for k, v in player.commander_damage_taken.items()
         },
+        # How many mulligans this seat has taken.
+        #
+        # It was on `Player` from the first London-mulligan commit and reachable
+        # only through `full_view`, the dev endpoint -- so the count the engine
+        # writes into the decision's own prompt (`"Mulligan? (2 taken)"`) had
+        # never been on a client. `OpeningHand` draws it as the lamps that say
+        # how many are left, and the alternative was regex-parsing a sentence
+        # written for a human.
+        #
+        # Sent for every seat, not just the viewer: how many times the table
+        # went back for a new hand is public at a real table, and it is the
+        # first thing a pod knows about each other.
+        "mulligans_taken": player.mulligans_taken,
         # Hidden zones are counts for everyone; only the viewer sees their own hand.
         "library_count": len(player.library),
         # The top card, if this seat may see it at all -- `None` otherwise, so

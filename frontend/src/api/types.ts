@@ -111,6 +111,15 @@ export interface PlayerView {
    * to label the chips, and a fixture keyed by oid silently reports zero.
    */
   commander_damage_taken: Record<string, number>;
+  /**
+   * How many mulligans this seat has taken, for every seat.
+   *
+   * Public at a real table, and public here. `OpeningHand` draws the viewer's
+   * as the lamps that say how many are left; the engine also writes it into the
+   * mulligan decision's own prompt string, which is the fallback nobody should
+   * have to parse.
+   */
+  mulligans_taken: number;
   library_count: number;
   /**
    * The top card of this player's library, if this seat may see it at all.

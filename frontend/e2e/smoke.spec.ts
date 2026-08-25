@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 import {
   actionsOfKind,
   isOver,
+  keepOpeningHand,
   lifeOf,
   startGame,
   takeAction,
@@ -52,17 +53,57 @@ test.describe("the table renders and plays", () => {
     expect(layering.isolation === "isolate" || layering.stepZ !== "auto").toBe(true);
   });
 
-  test("opens on the mulligan decision and can keep", async ({ page }) => {
+  test("opens on the opening hand and can keep", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     await waitForOurTurn(page);
 
-    const dialog = page.getByTestId("prompt-dialog");
-    if (await dialog.isVisible()) {
-      expect(await dialog.getAttribute("data-decision-kind")).toBe("mulligan");
-      await page.locator('[data-action-kind="keep"]').click();
-    }
-    await waitForOurTurn(page);
+    /*
+     * The first frame of every game is `OpeningHand`, not the generic dialog.
+     * It draws the seven cards themselves -- which is the whole point of it, and
+     * the thing the dialog it replaced could not do: `PromptDialog` renders a
+     * face only when an option refers to an object, and a mulligan's two options
+     * refer to nothing.
+     */
+    const stage = page.getByTestId("opening-hand");
+    await expect(stage).toBeVisible();
+    expect(await stage.getAttribute("data-decision-kind")).toBe("mulligan");
+    await expect(page.getByTestId("prompt-dialog")).toBeHidden();
+    expect(await stage.locator(".mull__slot").count()).toBe(7);
+
+    await keepOpeningHand(page);
+    await expect(stage).toBeHidden();
     await expect(page.locator(".acts")).toBeVisible();
+  });
+
+  /*
+   * The second question, which only exists once a mulligan has been taken.
+   *
+   * `engine/game.py` bottoms `min(mulligans_taken, hand)` cards, and it is a
+   * different decision KIND from the first half -- so this is the one path that
+   * proves `mulliganPhase` tells a mulligan's `choose_objects` apart from every
+   * other one by the engine's `purpose` tag rather than by its prompt.
+   */
+  test("takes a mulligan and answers the bottoming half in the same room", async ({ page }) => {
+    await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
+    await waitForOurTurn(page);
+
+    const stage = page.getByTestId("opening-hand");
+    await page.locator('[data-action-kind="mulligan"]').first().click();
+    await expect(stage).toBeVisible();
+
+    // One lamp is spent, which is the count the engine had never sent before.
+    await expect(stage.locator(".mull__lamp[data-spent]")).toHaveCount(1);
+
+    await page.locator('[data-action-kind="keep"]').first().click();
+    await expect(stage).toHaveAttribute("data-phase", "bottom");
+    expect(await stage.getAttribute("data-decision-kind")).toBe("choose_objects");
+    // Same room: the seven cards are still the seven cards.
+    expect(await stage.locator(".mull__slot").count()).toBe(7);
+    await expect(page.getByTestId("prompt-dialog")).toBeHidden();
+
+    await stage.locator("[data-action-id]").first().click();
+    await waitForOurTurn(page);
+    await expect(stage).toBeHidden();
   });
 
   test("draws a hand of real cards with names and mana costs", async ({ page }) => {

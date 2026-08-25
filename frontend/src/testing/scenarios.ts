@@ -525,16 +525,9 @@ export function gameOver(winner = 0): Scenario {
 /* Modal decisions                                                     */
 /* ------------------------------------------------------------------ */
 
-/**
- * A mulligan.
- *
- * The options carry `option.card`, which is the whole reason `DecisionOption`
- * has that field: these cards are in a library the player view reports as a
- * count, so `findCard` cannot resolve them and a prompt without them is a row
- * of bare names.
- */
-export function mulligan(): Scenario {
-  const hand = [
+/** The seven the opening-hand scenarios below all deal. */
+function openingSeven() {
+  return [
     pool.forest({ oid: 101, zone: "hand" }),
     pool.forest({ oid: 102, zone: "hand" }),
     pool.forest({ oid: 103, zone: "hand" }),
@@ -543,6 +536,21 @@ export function mulligan(): Scenario {
     pool.cultivate({ oid: 106, zone: "hand" }),
     pool.counterspell({ oid: 107, zone: "hand" }),
   ];
+}
+
+/**
+ * The first half of a London mulligan: keep this hand, or take another seven.
+ *
+ * NEITHER OPTION CARRIES A CARD, and the comment that used to sit here claimed
+ * the opposite. `engine/game.py` builds these two as bare
+ * `DecisionOption(label=..., value=...)` with no `ref`, so `serialize._pending`
+ * attaches no face and `PromptDialog.rowsFor` finds none -- which is exactly why
+ * the one decision whose whole subject is a set of cards used to render as two
+ * grey rectangles. `OpeningHand` does not read the options at all; it draws
+ * `players[seat].hand`, which the server sends in full to the seat being asked.
+ */
+export function mulligan(): Scenario {
+  const hand = openingSeven();
 
   const state = gameView({
     step: "UNTAP",
@@ -562,6 +570,64 @@ export function mulligan(): Scenario {
         base_label: "Mulligan",
       }),
     ],
+    events: [],
+  };
+}
+
+/**
+ * The second half: one mulligan taken, so one card goes to the bottom.
+ *
+ * A different decision KIND from the first half -- `choose_objects`, raised by
+ * `ask_objects` -- and the only thing that tells it apart from every other
+ * `choose_objects` is the `purpose` tag the engine stamps on it. That tag is why
+ * `logic/openingHand.ts` never has to read the prompt string, and matching the
+ * real payload here is the point of the fixture: these options DO carry refs and
+ * faces, where the first half's carry neither.
+ *
+ * `taken` also drives the lamps, and it is `min_count` -- a London mulligan
+ * bottoms exactly as many cards as you have taken. `selected` is what the engine
+ * has already banked, which is the half of this decision a single pick cannot
+ * show: on two, the screen has to say how many are still wanted.
+ */
+export function mulliganBottom(taken = 1, selected: number[] = []): Scenario {
+  const hand = openingSeven();
+  const state = gameView({
+    step: "UNTAP",
+    phase: "beginning",
+    players: [
+      { ...you({ hand }), mulligans_taken: taken },
+      { ...opponent(1, "AI 1"), mulligans_taken: 0 },
+    ],
+    pending: pending({
+      kind: "choose_objects",
+      prompt: `Put ${taken} card(s) on the bottom of your library`,
+      min_count: taken,
+      max_count: taken,
+      options: hand.map((c) => ({
+        label: c.name,
+        ref: { kind: "object", id: c.oid },
+        value: c.oid,
+        card: c,
+      })),
+      selected,
+      context: { purpose: "mulligan_bottom", source_name: "Mulligan" },
+    }),
+  });
+
+  return {
+    state,
+    /* Derived from the state, per this file's header: one action per option, in
+       the same order, carrying the index the engine answers by. */
+    actions: hand.map((c, i) =>
+      action({
+        id: `a${i}-bottom`,
+        kind: "choose",
+        label: c.name,
+        base_label: c.name,
+        choice: i,
+        targets: [{ kind: "object", id: c.oid }],
+      }),
+    ),
     events: [],
   };
 }

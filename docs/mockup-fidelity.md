@@ -32,6 +32,35 @@ so a naive overflow check passes through the exact failure it was written for.
 
 Do not "correct" these. Each is a decision made after the mockup.
 
+### The opening hand draws the app's card, not the mockup's
+
+`mockups/mulligan/01-the-deal.html` invents a `.face--full` face: a banded card with the
+name in a bar, the art in a window, and the type line and rules in bands beneath. The
+shipped `OpeningHand` uses `StaticCard variant="detail"` — the app's own card, a full-bleed
+illustration with graded scrims — at the same 296x414.
+
+That is deliberate, and `variant="detail"`'s own docstring is the reason: it describes
+itself as "the stack, the mulligan dialog, the zone peek — big enough to carry rules, still
+a 1.4 portrait card". A second card component for one screen would be a second thing to
+keep in step with `cards.css`, `palette.test.ts`'s scrim-darkness floor and
+`legibility.spec.ts`. The mockup's banding was a mockup convenience; what it was really
+claiming is that the rules text has to fit, and `styles/opening.css` buys that on the real
+face instead by letting the foot's scrim grow over the art.
+
+Three consequences follow, and none of them is a defect:
+
+- **A basic land shows no reminder text.** `CardFace.isPlainLand` suppresses the rules box
+  on basics, so a Forest shows its art, name and type and no `({T}: Add {G}.)`. The mockup
+  drew the reminder. The client's call is the better one and it predates this screen.
+- **A card whose only text is keywords shows no text.** Serra Angel has `keywords:
+  ["flying", "vigilance"]` and no `oracle_text`, and `variant="detail"` renders the keyword
+  chip line only when it is *not* showing rules. So that card comes out with nothing in its
+  foot. This is a real gap in `detail` — it applies equally to the stack and the zone peek —
+  and it is out of scope here rather than fine. `tests/../OpeningHand.stories.tsx` pins it
+  so a future fix is a deliberate one.
+- **Rules text is 12.5px on a desktop and 16px on a handheld.** `.face`'s `--fs-tx` is a
+  clamp off `--card-w` and `handheld.css` re-floors it. The mockup only ever drew 1280x800.
+
 ### ~~The deck picker stays inline; there is no modal catalogue~~ — reversed
 
 **This entry is closed, and the mockup's design shipped after all.** It used to
