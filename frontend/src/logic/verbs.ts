@@ -162,7 +162,26 @@ export function verbsFor(
     };
   }
 
-  if (ref.kind === "commit") return { a: "Confirm", b: "Back" };
+  /*
+   * The combat bar: the `all` mark, and the slab it sits beside.
+   *
+   * Both are `commit` stops rather than `act:` ones because neither is a
+   * server action -- they stage into `uiStore` and declare what is staged. So
+   * there is no `base_label` to read and the verb has to be written here, and
+   * it is written to match the button's own words: a bar reading `A Confirm`
+   * over a button reading `Attack` is the small kind of lie this file exists
+   * to stop.
+   */
+  if (ref.kind === "commit") {
+    if (ref.raw === "commit:all") {
+      if (decision === "declare_attackers") return { a: "All attack", b: "Back" };
+      if (decision === "declare_blockers") return { a: "All defend", b: "Back" };
+      return { a: "All", b: "Back" };
+    }
+    if (decision === "declare_attackers") return { a: "Attack", b: "Back" };
+    if (decision === "declare_blockers") return { a: "Block", b: "Back" };
+    return { a: "Confirm", b: "Back" };
+  }
 
   if (ref.kind === "act") {
     const action = actionFor(actions, ref);

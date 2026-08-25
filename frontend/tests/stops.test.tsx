@@ -26,6 +26,7 @@ import { ActionPanel } from "../src/components/game/ActionPanel";
 import { PromptDialog } from "../src/components/game/PromptDialog";
 import { actionAttrs, candidatesIn, stopId } from "../src/input/stops";
 import { chooseType } from "../src/testing/scenarios";
+import * as scenarios from "../src/testing/scenarios";
 import { action, card, gameView, pending, player } from "./fixtures";
 
 afterEach(cleanup);
@@ -164,6 +165,63 @@ describe("rendered surfaces", () => {
         standDown={false}
       />,
     );
+    const { stops } = stopsAndIds(container);
+    expect(new Set(stops).size).toBe(stops.length);
+  });
+
+  it("gives the whole combat bar stops, marks and slab included", () => {
+    /*
+     * THE BUG THIS EXISTS FOR. The combat dock is three controls and only one
+     * of them -- "No attacks" -- is a server action, so only that one picked up
+     * a stop from `actionAttrs`. The other two are local staging: "All attack"
+     * writes every attacker into `uiStore`, the slab declares what is staged.
+     * Neither carried `data-stop`, which made the two most-pressed buttons of a
+     * combat step reachable by mouse and by nothing else -- no arrow key, no
+     * d-pad, and no `L2`, which lands in this dock precisely so a handheld
+     * player does not have to walk there.
+     *
+     * The panel's own id invariant could not catch it: they carry no
+     * `data-action-id`, so every count of the action space was correct while
+     * the controller could not press either one.
+     */
+    const { state, actions } = scenarios.combatDeclareAttackers();
+    const { container } = render(
+      <ActionPanel
+        state={state}
+        actions={actions}
+        onAct={noop}
+        onStage={noop}
+        onDeclare={noop}
+        onUndo={noop}
+        onQuit={noop}
+        onToggleFullControl={noop}
+        onToggleManualMana={noop}
+        narrating={false}
+        onSkipNarration={noop}
+        busy={false}
+        aiThinking={false}
+        standDown={false}
+      />,
+    );
+
+    // Asserted through the controls rather than through the stop list, because
+    // the claim is about these three buttons specifically -- a stop that moved
+    // to some other node would still be "contained" by a list.
+    expect(screen.getByTestId("combat-all").dataset.stop).toBe("commit:all");
+    expect(screen.getByTestId("combat-confirm").dataset.stop).toBe("commit");
+    expect(screen.getByTestId("combat-skip").dataset.stop).toMatch(/^act:/);
+
+    /*
+     * ...and in that order in the document, which is also left-to-right on
+     * screen. `L2` lands on the first stop of the dock and one press of right
+     * walks to the next, so the row's order IS the navigation, and a control
+     * inserted ahead of the mark would silently steal the landing.
+     */
+    const dock = container.querySelector(".commit-dock") as HTMLElement;
+    expect(
+      [...dock.querySelectorAll("[data-stop]")].map((el) => el.getAttribute("data-stop"))[0],
+    ).toBe("commit:all");
+
     const { stops } = stopsAndIds(container);
     expect(new Set(stops).size).toBe(stops.length);
   });

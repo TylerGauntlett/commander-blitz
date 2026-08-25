@@ -981,6 +981,19 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * and the trap has to move with the ring -- so this is that, with the
    * landing spot overridden.
    *
+   * IN COMBAT THE LANDING IS THE `ALL` MARK, one press left of the slab. The
+   * dock there is three controls -- all, Attack/Block, no-attacks -- and "all"
+   * is the one that answers the question outright: it stages every attacker or
+   * every worthwhile block, so from it the whole decision is A, or right-then-A
+   * to declare whatever you had already picked by hand. Landing on the slab
+   * instead puts the ring on a button that is DISABLED until something is
+   * staged, which is the state it is in at the instant the decision opens --
+   * so `L2` appeared to jump to a dead control.
+   *
+   * Named rather than taken by document order, even though the two agree
+   * today. The order of a row is a layout fact and this is a behavioural one;
+   * a mark added to the left of it later must not silently steal the landing.
+   *
    * The region is the fallback for the moment there is no slab (the panel is
    * mid-decision and offers only rows), and a deny for the moment there is no
    * panel at all, because a jump that silently does nothing is the defect the
@@ -998,7 +1011,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     // this phase -- `actionAttrs` names the slab after the decision, so its
     // stop id is different on every one of them.
     const dock = document.querySelector<HTMLElement>(".commit-dock");
-    const slab = dock ? landableStopsIn(dock)[0]?.dataset.stop : undefined;
+    if (!dock) return;
+    const stops = landableStopsIn(dock);
+    const all = stops.find((el) => el.dataset.stop === stopId.commitMark("all"));
+    const slab = (all ?? stops[0])?.dataset.stop;
     if (slab) setCursor(slab);
   }, [enterGroup, cue]);
 
@@ -1027,13 +1043,31 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * stated reason: letting go is not something you can forget to do. 0.5 is
    * past any resting value and well short of the click.
    *
-   * A tap of `L2` still jumps the ring to the tool strip, because the frame
-   * threshold is crossed and released before the dial has anything to pick
-   * from -- see the `l2` binding below.
+   * A TAP MUST NOT FLASH IT, and "the tap is over before the dial is worth
+   * looking at" was not true enough to rely on.
+   *
+   * Opening on the press edge meant a tap -- which is a good 100ms of trigger,
+   * because that is how long a thumb takes -- mounted the dial and unmounted it
+   * again. Two things came out of those two frames, and only the first was
+   * cosmetic: a visible flicker across the middle of the screen, and a ring
+   * that moves twice. `GroupDial` puts the ring on its own landing spoke as it
+   * opens, and closing an overlay hands the ring back to the stop that was
+   * underneath -- which is a `resolveCursor` that lands AFTER the tap has
+   * finished. Any direction pressed inside that window is overwritten by the
+   * restore, so `L2` then right -- jump to the combat bar, step to the slab,
+   * which is the whole gesture `L2` exists for -- ate the second press about
+   * half the time. From the player's side the pad simply missed inputs.
+   *
+   * So the dial waits. `HOLD` is the same 260ms the shoulder taps were timed
+   * against, and unlike those this one has something to cancel it: a trigger is
+   * analog, `onFrame` reports its position every frame, and the release edge is
+   * a real event. A tap starts the timer and clears it; a hold lets it fire.
    */
+  const HOLD = 260;
   const l2Held = useRef(false);
   useEffect(() => {
-    return onPadFrame((frame) => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const off = onPadFrame((frame) => {
       const held = frame.l2 > 0.5;
       /*
        * ON THE TRIGGER'S EDGE, NOT ON ITS LEVEL.
@@ -1047,8 +1081,19 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
        */
       if (held === l2Held.current) return;
       l2Held.current = held;
-      setDialOpen(held);
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+      if (held) timer = setTimeout(() => setDialOpen(true), HOLD);
+      // The release closes it whether or not it ever opened, so a hold that is
+      // let go of never leaves the dial up.
+      else setDialOpen(false);
     });
+    return () => {
+      if (timer !== null) clearTimeout(timer);
+      off();
+    };
   }, []);
 
   /*
