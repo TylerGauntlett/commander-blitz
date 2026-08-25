@@ -12,7 +12,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import type { PadButton } from "../../input/buttons";
 import { getCursor, setCursor } from "../../input/cursor";
-import { getGroup, groupOf } from "../../input/groups";
+import { groupOf, groupRoot, landableStopsIn, setGroup } from "../../input/groups";
 import { boundButtons, startPad } from "../../input/pad";
 import { activeRoot } from "../../input/stops";
 import { NAVIGATION_HINTS } from "../../logic/verbs";
@@ -894,13 +894,27 @@ export const HandheldTheCommanderIsReachable: Story = {
     const stop = plinth?.dataset.stop;
     expect(stop, "the plinth has to declare a stop or the ring cannot see it").toBeTruthy();
 
-    // Walked to, not placed: what was broken is that no route arrived here.
-    for (let i = 0; i < 6 && getGroup() !== "orb"; i += 1) {
-      await userEvent.keyboard("]");
-      await waitFor(() => expect(getCursor()).not.toBeNull());
-    }
-    expect(getGroup()).toBe("orb");
-    setCursor(stop as string);
+    /*
+     * It is a LANDABLE stop of the region it sits in, which is the property
+     * that was false. `groupsPresent` and `enterGroup` both walk this list, so
+     * a plinth missing from it is a plinth `R1` steps past and no direction can
+     * reach -- and `landableStopsIn` filters by visibility, so this also says
+     * the ring would not be sent somewhere clipped away.
+     *
+     * Asked of the region rather than by pressing `R1` five times: which
+     * region a given press lands in depends on what else is on the board, and
+     * `HandheldRegionStepping` already owns the question of whether stepping
+     * works at all. This one is about whether there is anything here to step to.
+     */
+    const orb = groupRoot("orb");
+    expect(orb, "the viewer's side panel is where the plinth lives").not.toBeNull();
+    const landable = landableStopsIn(orb as HTMLElement).map((el) => el.dataset.stop);
+    expect(landable, `the orb region holds ${landable.join(", ")}`).toContain(stop);
+
+    // ...and the ring can be put there, which the modal and region traps both
+    // have to allow before the cursor will take it.
+    setGroup("orb");
+    expect(setCursor(stop as string), "the trap refused the plinth").toBe(true);
     expect(getCursor()).toBe(stop);
 
     // ...and the rail read it, which is the whole point of being able to.
@@ -930,9 +944,19 @@ export const HandheldJumpToTheDecision: Story = {
     const dock = canvasElement.querySelector(".commit-dock");
     expect(dock, "the scenario has to have a slab for this to be about").not.toBeNull();
 
-    // Somewhere else entirely first, which is the case this exists for.
-    await userEvent.keyboard("]");
-    await waitFor(() => expect(groupOf(ringed(canvasElement))).not.toBe("acts"));
+    /*
+     * Standing somewhere else first, which is the case this exists for -- and
+     * PLACED rather than stepped to with `R1`. Which region a press lands in
+     * depends on what else is on the board, and a step that has not finished
+     * when the jump goes out is a race rather than a test.
+     * `HandheldRegionStepping` owns whether stepping works.
+     */
+    const hand = groupRoot("hand");
+    const away = hand ? landableStopsIn(hand)[0]?.dataset.stop : undefined;
+    expect(away, "the scenario needs a hand to start away from").toBeTruthy();
+    setGroup("hand");
+    expect(setCursor(away as string)).toBe(true);
+    expect(groupOf(ringed(canvasElement))).not.toBe("acts");
 
     // `z` is `L2`; native events for the reason `HandheldRegionDial` explains.
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "z", bubbles: true }));
