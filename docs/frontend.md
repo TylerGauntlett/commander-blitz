@@ -398,9 +398,67 @@ Forest never hides behind a tapped one.
 bury a choice. Every member stays mounted even when hidden behind the top card —
 unmounting on hover would destroy each card's `layoutId` identity.
 
+## The first decision of every game has its own screen
+
+`PromptDialog` used to draw the mulligan: a centred rectangle, an 18px title, and two
+identical grey `.opt` buttons over a hand at `--card-w-base` — **73.6px** on a Deck, where
+`.face`'s rules text resolves to 8.5px and is dropped. `ui.css:934-951` is the admission
+that this was wrong. That backdrop is a *gradient* rather than a flat dim, and its comment
+says why: *"a flat dim over the whole viewport hid the one thing the player has to look
+at"*. A workaround for a modal that should not have been in front of the hand.
+
+`OpeningHand` is `mockups/mulligan/01-the-deal.html` ported. The hand IS the screen —
+seven cards at the size their own rules text needs — and the answers are face buttons.
+
+**296px is the number the whole thing is built on.** `mockups/mulligan/probe.mjs`
+binary-searches a real card in a real browser for the narrowest width at which it can
+print its own name, cost, type line and rules at the 16px floor. Seven of those laid flush
+is 2072px against a 1280px panel, so a hand you can read *all at once* is not available at
+any layout. One card at a time is, and the rest follows from that.
+
+**Nothing moves when the selection does.** `logic/openingHand.ts` computes the arch once
+per resize and takes no selected index at all — moving the ring touches `z-index`, one
+attribute and one custom property. The mockup's second pass grew the selected card and
+closed the others around it, which meant re-centring the row on every press: the one thing
+holding still was the card you were trying to read. `tests/openingHand.test.ts` is what
+stops that coming back, because a screenshot cannot show it.
+
+**Only the card you are on prints its rules.** Seven open rules boxes at 144px of pitch is
+six columns of type sliced down the middle by the card in front. The box closes on the
+others and the illustration takes the space, so the card is the same size either way.
+`styles/opening.css` also un-does two of `handheld.css`'s blanket rules for this surface
+only — the rules box takes its content's height rather than fading, and the type line
+comes back — on the same grounds the existing exemptions for `.opt--card` and
+`.peek__slot` are made: these are the surfaces whose whole job is reading one card, and
+this one has 296px to do it in.
+
+**It scales, where the mockup does not.** `stageUnit` is `stageScale` (the door's, exactly
+1.0 at 1280x800) capped by what the stage's *width* can hold, so a tall narrow window
+shrinks the arch instead of running it off both sides. Type does not follow it down: every
+size on the sheet is `max(16px, ...)`.
+
+**Both halves of a London mulligan, in one room.** The engine asks twice — keep or
+mulligan, then put N on the bottom — and those used to look nothing like each other,
+because the first carries no object refs and the second does. `mulliganPhase` routes both
+here, and it reads the `purpose` tag the engine stamps on the bottoming decision rather
+than pattern-matching its prompt. `engine/serialize.py` now also sends `mulligans_taken`,
+which had lived on `Player` since London mulligans landed and reached no client; it is the
+lamps.
+
+**`A` keeps the hand from a card.** `A` is `el.click()` on the focused stop app-wide and
+that is not overridable, so a card's own click stays "select" — a mouse must never commit
+a game by clicking a card it only wanted to read. The surface binds `A` scoped to card
+stops, and stands aside when the ring is on the Keep plate so the answer is not given
+twice. `B` mulligans. `verbs.ts` has a branch for both, because `b: "Back"` is true on a
+board and false here.
+
+Two surfaces own decisions now, so `ownsDecision` is what `ActionPanel` reads to stand
+down — a wider question than `isModalDecision`, which the dialog still uses to decide
+whether to open. Getting that split wrong renders `keep` and `mulligan` twice.
+
 ## A decision too long to draw as buttons
 
-`PromptDialog` draws one button per legal action, which is right for a mulligan, a modal
+`PromptDialog` draws one button per legal action, which is right for a modal
 spell or a sacrifice — and wrong for `choose_type`, where the engine asks "choose a
 creature type" by listing every subtype in the loaded pool: 199 in this repo's decks, up
 to 400 (`MAX_TYPE_CHOICES`) in a full one. That prompt was a wall of buttons nobody could

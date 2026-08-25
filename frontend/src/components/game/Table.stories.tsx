@@ -144,15 +144,34 @@ export const CrowdedBoard: Story = {
  * A modal owns the decision.
  *
  * The invariant with teeth: the dialog renders the ids and the panel stands
- * down, so the mulligan buttons exist exactly once between them rather than
+ * down, so a decision's buttons exist exactly once between them rather than
  * once each.
  */
 export const ModalDecision: Story = {
-  args: board(scenarios.mulligan()),
+  args: board(scenarios.mayAbility()),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const dialog = await canvas.findByTestId("prompt-dialog");
-    expect(dialog.dataset.decisionKind).toBe("mulligan");
+    expect(dialog.dataset.decisionKind).toBe("may");
+    expectUniqueActionIds(canvasElement);
+  },
+};
+
+/**
+ * ...and so does a surface that is not the dialog.
+ *
+ * `ownsDecision` is a wider question than `isModalDecision` precisely so this
+ * holds: the opening hand is not a `PromptDialog` and the panel has to stand
+ * down for it anyway. Get that split wrong and `keep` and `mulligan` render
+ * twice, once here and once behind it.
+ */
+export const OpeningHandOwnsTheDecision: Story = {
+  args: board(scenarios.mulligan()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stage = await canvas.findByTestId("opening-hand");
+    expect(stage.dataset.decisionKind).toBe("mulligan");
+    expect(canvas.queryByTestId("prompt-dialog")).toBeNull();
     expectUniqueActionIds(canvasElement);
   },
 };
@@ -515,7 +534,16 @@ export const HandheldDeclareBlockers: Story = {
   },
 };
 
-/** A modal decision, which owns the ring while it is up. */
+/**
+ * The opening hand, on a whole board.
+ *
+ * `OpeningHand.stories.tsx` mounts that screen on its own; this is the
+ * integration the component test cannot make -- the surface, the board it
+ * covers, and `ActionPanel` standing down behind it. `expectUniqueActionIds` is
+ * the assertion that matters: `keep` and `mulligan` exist once between the two,
+ * and the whole reason `ownsDecision` is a wider question than
+ * `isModalDecision` is that they would otherwise exist twice.
+ */
 export const HandheldModalDecision: Story = {
   args: board(scenarios.mulligan()),
   globals: { handheld: "on", input: "pad" },
@@ -524,6 +552,9 @@ export const HandheldModalDecision: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("table");
+    // The screen owns it, and the dialog it replaced does not open behind it.
+    await canvas.findByTestId("opening-hand");
+    expect(canvas.queryByTestId("prompt-dialog")).toBeNull();
     expectHandheldFloors(canvasElement);
     expectNothingOverflows(canvasElement);
     expectUniqueActionIds(canvasElement);

@@ -30,12 +30,10 @@ async function boxOf(locator: Locator): Promise<Box> {
   return box;
 }
 
-/** Start a pod and get past the opening mulligan. A pod is where seats differ. */
+/** Start a pod and get past the opening hand. A pod is where seats differ. */
 async function openPod(page: Page, opponents = 3): Promise<void> {
   await startGame(page, { deck: "aesi", opponents, seed: 7, zoomLock: true });
-  const keep = actionsOfKind(page, "keep");
-  if (await keep.count()) await keep.first().click();
-  await waitForOurTurn(page);
+  await keepOpeningHand(page);
 }
 
 test.describe("the orb fills its column", () => {

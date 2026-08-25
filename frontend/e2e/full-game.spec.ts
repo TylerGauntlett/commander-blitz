@@ -36,6 +36,11 @@ test.describe("a whole game can be played through the UI", () => {
         if (kind) kindsSeen.add(kind);
       };
       await noteKind("prompt-dialog", "data-decision-kind");
+      // The mulligan and its bottoming half have their own screen, and they
+      // carry the same attribute -- so this is a second surface, not a second
+      // vocabulary. Without it `kindsSeen` would stop containing "mulligan" and
+      // the assertion at the end of this test would be checking nothing.
+      await noteKind("opening-hand", "data-decision-kind");
       await noteKind("combat-panel", "data-combat-kind");
 
       expect(

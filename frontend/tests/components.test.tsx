@@ -399,8 +399,17 @@ describe("PromptDialog", () => {
   const shown = (kind: string, extra: Partial<PendingDecision> = {}) =>
     gameView({ pending: pending({ kind, prompt: `Prompt for ${kind}`, ...extra }) });
 
-  it("opens for a mulligan and submits the chosen action", () => {
-    const onAct = vi.fn();
+  /*
+   * THE MULLIGAN IS NOT ONE OF THESE ANY MORE, and the pair below is the whole
+   * of that claim.
+   *
+   * `OpeningHand` draws it as a screen, so this dialog has to stay shut for it
+   * or the two would render `keep` and `mulligan` twice between them. The
+   * second case is the one that needed a new predicate rather than a new entry
+   * in the denylist: the bottoming half of a mulligan is a `choose_objects`,
+   * which is a kind this dialog still owns everywhere else.
+   */
+  it("stays shut for a mulligan, which has a screen of its own", () => {
     render(
       <PromptDialog
         state={shown("mulligan")}
@@ -408,13 +417,37 @@ describe("PromptDialog", () => {
           action({ id: "a0-mulligan", kind: "mulligan", label: "Mulligan" }),
           action({ id: "a1-keep", kind: "keep", label: "Keep" }),
         ]}
-        onAct={onAct}
+        onAct={noop}
         disabled={false}
       />,
     );
-    expect(screen.getByTestId("prompt-dialog").dataset.decisionKind).toBe("mulligan");
-    fireEvent.click(screen.getByText("Keep"));
-    expect(onAct).toHaveBeenCalledWith("a1-keep");
+    expect(screen.queryByTestId("prompt-dialog")).toBeNull();
+  });
+
+  it("stays shut for the bottoming half, and opens for every other choose_objects", () => {
+    const bottoming = shown("choose_objects", {
+      context: { purpose: "mulligan_bottom", source_name: "Mulligan" },
+    });
+    render(
+      <PromptDialog
+        state={bottoming}
+        actions={[action({ id: "a0-bottom", kind: "choose", label: "Forest", choice: 0 })]}
+        onAct={noop}
+        disabled={false}
+      />,
+    );
+    expect(screen.queryByTestId("prompt-dialog")).toBeNull();
+    cleanup();
+
+    render(
+      <PromptDialog
+        state={shown("choose_objects", { context: { purpose: "sacrifice" } })}
+        actions={[action({ id: "a0-sac", kind: "choose", label: "Forest", choice: 0 })]}
+        onAct={noop}
+        disabled={false}
+      />,
+    );
+    expect(screen.getByTestId("prompt-dialog").dataset.decisionKind).toBe("choose_objects");
   });
 
   it.each([

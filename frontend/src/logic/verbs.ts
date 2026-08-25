@@ -21,6 +21,7 @@
 
 import type { GameView, LegalAction } from "../api/types";
 import { blockableBy, defendersFor } from "./actionMatch";
+import { mulliganPhase } from "./openingHand";
 import { findCard } from "./zoneGrouping";
 
 /** The kinds of thing the ring can be resting on. See `input/stops.ts`. */
@@ -99,6 +100,12 @@ const EMPTY: Staging = {
   targeting: false,
 };
 
+/** The action an `act:` stop names, if the list still has it. */
+function actionFor(actions: LegalAction[], ref: StopRef): LegalAction | undefined {
+  const id = ref.raw.slice("act:".length);
+  return actions.find((candidate) => candidate.id === id);
+}
+
 /**
  * The verbs for the stop the ring is on.
  *
@@ -122,11 +129,43 @@ export function verbsFor(
   const ref = parseStop(stop);
   const decision = state.pending?.player === state.seat ? state.pending.kind : null;
 
+  /*
+   * THE OPENING HAND OWNS THE WHOLE SCREEN, SO IT OWNS THE BAR.
+   *
+   * Two things below would otherwise be lies on that screen, and both are the
+   * exact defect this file exists to prevent.
+   *
+   * `A` on a hand card would fall to the generic card tail and say `Read`,
+   * because a card in your opening hand has no legal action of its own. What
+   * `A` actually does there is KEEP -- `OpeningHand` binds it, scoped to card
+   * stops, because a card's own click has to stay "select" for a mouse.
+   *
+   * And `b: "Back"` is on almost every branch below, which is true on a board
+   * and false here: declining to mulligan is itself an answer, so `B` is bound
+   * to Mulligan while the first question is up and to nothing at all while the
+   * second is. A bar that says `B Back` over a button that does not go back is
+   * how a player learns to stop reading it.
+   */
+  const mulligan = mulliganPhase(state);
+  if (mulligan !== null) {
+    const chosen = ref.kind === "act" ? actionFor(actions, ref) : undefined;
+    const verb = chosen?.base_label || chosen?.label;
+    if (mulligan === "bottom") {
+      // A card IS the answer here, so it carries the action and `A` is a click
+      // on it. Nothing un-picks, so `B` is deliberately absent.
+      return { a: verb || "To the bottom" };
+    }
+    return {
+      a: verb || "Keep",
+      b: "Mulligan",
+      y: ref.kind === "card" ? "Read" : undefined,
+    };
+  }
+
   if (ref.kind === "commit") return { a: "Confirm", b: "Back" };
 
   if (ref.kind === "act") {
-    const id = ref.raw.slice("act:".length);
-    const action = actions.find((candidate) => candidate.id === id);
+    const action = actionFor(actions, ref);
     return { a: action?.base_label || action?.label || "Choose", b: "Back" };
   }
 

@@ -26,6 +26,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
+import { mulliganPhase } from "../../logic/openingHand";
 import { COMBO_MIN } from "../../logic/promptFilter";
 import { findCard } from "../../logic/zoneGrouping";
 import { bouncy, ease } from "../../motion/springs";
@@ -41,6 +42,12 @@ const HANDLED_ELSEWHERE = new Set([
   // is modal by default and forgetting this line would silently move the
   // question into the centre of the screen and stand the panel down.
   "choose_x",
+  // `OpeningHand` draws the whole screen. Its second half -- "put N on the
+  // bottom" -- is a `choose_objects`, which cannot be named here because every
+  // other `choose_objects` still belongs to this dialog; `mulliganPhase` is
+  // what tells them apart, and `ownsDecision` below is what keeps the two
+  // predicates from disagreeing.
+  "mulligan",
 ]);
 
 /**
@@ -57,8 +64,25 @@ export function isModalDecision(state: GameView): boolean {
     pending !== null &&
     pending.player === state.seat &&
     !state.game_over &&
-    !HANDLED_ELSEWHERE.has(pending.kind)
+    !HANDLED_ELSEWHERE.has(pending.kind) &&
+    mulliganPhase(state) === null
   );
+}
+
+/**
+ * Whether ANY full-screen surface owns the decision.
+ *
+ * `ActionPanel` reads this and stands down, so a decision's buttons exist
+ * exactly once in the document. It has to be a wider question than
+ * `isModalDecision`: the moment `mulligan` joined the denylist above, this
+ * dialog stopped opening for it -- and had `Table` kept asking
+ * `isModalDecision`, the panel would have stopped standing down at the same
+ * time and rendered `keep` and `mulligan` a second time behind the new screen.
+ * Two ids, one decision, and `expectUniqueActionIds` failing across a whole
+ * game.
+ */
+export function ownsDecision(state: GameView): boolean {
+  return isModalDecision(state) || mulliganPhase(state) !== null;
 }
 
 interface Props {

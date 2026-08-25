@@ -35,6 +35,7 @@ import "../src/styles/seat.css";
 import "../src/styles/reader.css";
 import "../src/styles/groups.css";
 import "../src/styles/ui.css";
+import "../src/styles/opening.css";
 import "../src/styles/lobby.css";
 import "../src/styles/room.css";
 import "../src/styles/door.css";
