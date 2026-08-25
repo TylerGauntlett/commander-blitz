@@ -17,7 +17,14 @@
  */
 
 import { type Locator, type Page, expect, test } from "@playwright/test";
-import { actionsOfKind, isOver, reachDecision, startGame, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  isOver,
+  keepOpeningHand,
+  reachDecision,
+  startGame,
+  waitForOurTurn,
+} from "./helpers";
 
 /** Every action id in the document, in DOM order, including disabled ones. */
 async function renderedIds(page: Page): Promise<string[]> {
