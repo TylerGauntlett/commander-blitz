@@ -387,3 +387,37 @@ def _pick(actions: list[dict]) -> dict:
             if action["kind"] == kind:
                 return action
     return actions[0]
+
+
+class TestSeeding:
+    """A game nobody seeded has to be a different game every time.
+
+    The seed used to ride on the UI; when that control came out, the omitted
+    seed fell through to a literal 0 and every unseeded game dealt the same
+    opening hand in the same order.
+    """
+
+    SEATS = [
+        {"deck_id": "aesi", "kind": "human", "name": "You"},
+        {"deck_id": "edgar", "kind": "ai", "agent": "heuristic"},
+    ]
+
+    def _hand(self, client, body: dict | None) -> list[str]:
+        response = client.post("/api/games", json={"seats": self.SEATS, **(body or {})})
+        assert response.status_code == 201, response.text
+        hand = response.json()["state"]["players"][0]["hand"]
+        assert hand, "the opening hand is never empty"
+        return [card["card_id"] for card in hand]
+
+    def test_unseeded_games_differ(self, client):
+        """Five deals, and at least two of them disagree.
+
+        Stated as "not all identical" rather than "all distinct": two random
+        seeds are allowed to deal the same hand, a constant seed is not.
+        """
+        hands = [self._hand(client, None) for _ in range(5)]
+        assert len({tuple(hand) for hand in hands}) > 1
+
+    def test_an_explicit_seed_still_reproduces(self, client):
+        """The fix must not cost reproducibility -- golden replays need it."""
+        assert self._hand(client, {"seed": 4242}) == self._hand(client, {"seed": 4242})
