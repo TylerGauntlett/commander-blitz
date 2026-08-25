@@ -1332,7 +1332,9 @@ combat to the board, your main phase to the hand, otherwise the panel. Keyed on
 the pending kind and the step ONLY — run on every render it would drag the ring
 back each time the engine pushed a state, several times a second while an AI
 plays. It says nothing at all when the decision is not yours, when a dialog owns
-it, or when passing is the only thing to say.
+it, or when passing is the only thing to say. A block declaration is the one
+case where the region depends on the layout as well as on the game, and it is
+passed in rather than worked out — see “How many presses a decision costs”.
 
 **`Y` reads the card the ring is on** at 330px, and on a seat it reads that
 seat's commander — in Commander the deck is the commander.
@@ -1345,6 +1347,142 @@ seat's commander — in Commander the deck is the commander.
 > renders spans and a span cannot fail to work. `HintBar` renders *from*
 > `NAVIGATION_HINTS` now rather than restating it, and a story compares what the
 > bar can say against `pad.boundButtons()`.
+
+### How many presses a decision costs
+
+Reaching a control and reaching it in two presses are different properties, and
+for eight loops only the first had a gate. Every check asked "is this a stop",
+"is it big enough", "is it on screen" — so a journey that grew from two presses
+to nine would have passed all of them. `docs/handheld-playtest.md` Loop 9 is the
+round that counted, and this is what came out of it.
+
+**The ring follows the decision it just started** (`logic/followUp.ts`). Half the
+decisions in this game are two presses and nothing moved between them: casting a
+removal spell lit up every legal target and left the ring on the card in your
+hand, and picking a blocker left it on the blocker. A pointer never pays either
+cost, because a pointer arrives at the second half of a decision by moving there.
+
+It answers with an **ordered list**, not an answer, and the caller takes the
+first candidate that lands. That is what makes one rule work at both sizes: an
+attacker's card wins on a desktop, and at 1280×800 — where their lanes are
+clipped — the panel's row for the *same pairing* wins instead. Nothing in the
+module knows what a handheld is. The rows are interleaved per attacker rather
+than appended at the end, because falling through to the next row down would
+make the block the ranking had just rejected.
+
+**A stop that exists is not a stop you can use**, and there are two questions
+rather than one. `stops.ts:onScreen` answers *is this on screen now*, which is
+right for a direction press — stepping does not scroll, so a row past the fold
+of the action list is not the thing below the one you are on. `sendableIn`
+answers *can the ring be sent here*, which is a wider set, because `stamp` calls
+`keepInView` and a jump brings its destination with it. Its only disqualifier is
+the one the layout creates on purpose: an ancestor clipped to a zero box.
+Trusting `setCursor` to tell them apart does not work — `stopElement` asks the
+DOM for the id and nothing else, and sent the ring straight back to the clipped
+attacker it was routing around.
+
+**A block declaration goes to the panel when the board cannot answer it.**
+`groupForDecision` sends combat to the board because combat is staged by pressing
+the permanents — true of attacking, false of blocking at this size, and the two
+are indistinguishable from inside a rule about the game. So `Table.boardCanDecide`
+asks the DOM whether any attacker is landable and passes the answer in. Sent to
+the board without it, the ring arrived somewhere holding half a decision:
+pressing your own creature answered nothing and every direction out of it was a
+wall or a seat, while the panel had carried the whole pairing as rows the entire
+time.
+
+**The ring stays in your hand when a card leaves it.** `resolveCursor` keeps the
+ring on the object the engine replaced, which is right for a permanent that
+stayed put and wrong for one that went from hand to battlefield: it dropped into
+the lands while `data-group` still said `hand`. It lands on the next card you
+could play, and failing that on whatever is still in hand — the land drop spends
+itself, so "nothing is playable" is the state the commonest gesture in the game
+leaves behind.
+
+**`X` commits the decision, wherever the ring is.** Every decision this game
+asks ends at one control in the commit dock -- Pass on a priority window, All
+attack then Attack on a declaration, All defend then Block -- and the dock is in
+the right rail where the ring almost never is. `L2` jumps there and `A` presses
+it: two presses on a priority window, four to declare a combat, every turn.
+
+Not a new binding. `X` is the contextual secondary and it is empty on most
+stops, so it takes the job where it has nothing else to do: a card with an
+ability keeps `Activate`, a staged attacker with somewhere else to point keeps
+`Re-aim`. The fall-through is applied to `verbsFor`'s *result* rather than added
+to each of its dozen branches, because a rule applied once cannot drift from
+itself — and it says nothing at all when the ring is already on the control it
+would press, because `A All attack   X All attack` is a one-line bar saying one
+thing twice.
+
+**The first press stages and does not submit**, which is what makes it safe to
+put on a hotkey: `All attack` is reversible, and by the time the second press
+commits the bar has changed to `Attack` and said so. Two presses declare a
+combat from anywhere on the board, down from four.
+
+**Which control is `logic/commit.ts`, shared rather than restated.** Two things
+need the answer and must not differ: `Table.secondary` presses it and
+`logic/verbs.ts` prints its name. Everything else in `verbs.ts` mirrors the
+routing branch for branch and is held to it by a test, which is a discipline;
+one function is a guarantee, and this is the branch that would have drifted
+first — “All defend” declines a chump block, so on a board where every block
+throws a creature away the mark is disabled, and only the ranking knows that.
+`X` goes quiet there rather than reaching past it to “No blocks”: taking the
+damage is a decision a player makes, not a default.
+
+Two of the four are *pressed* rather than posted. “All attack” and the Attack
+slab write to `uiStore` and declare what is staged; they exist in no action list
+and have no id, so `X` clicks the control the panel already rendered — the same
+rule `useCursorNav` uses for `A`, which is what stops a pad ever reaching an
+action a pointer cannot.
+
+**"All attack" is ranked, and a second press sends everything anyway.**
+`logic/autoAttack.ts` mirrors `autoBlock.ts` tier for tier — unopposed, safe,
+trades, dies, needed at home — and the last of those is the only rule that looks
+at the whole board: when an opponent could kill you on the swing back, the
+creatures that are safe attacking are the ones that are useful blocking, so only
+the unopposed ones go. The escalation lives on the same control rather than
+beside it, because racing is a real decision and a fourth button in a
+three-button dock at the 44px hit floor is a row that no longer fits.
+
+**Both rankings share one fight** (`logic/fight.ts`). Deathtouch and first strike
+are modelled because they change who dies; trample, lifelink and menace are not,
+and that file says why. Written once because attacking and blocking ask the same
+two questions from opposite sides, and a keyword modelled in one and not the
+other is two buttons disagreeing about the same two cards.
+
+**A wall at a region's edge gets a second look.** `escapeGroup` ran the same
+`pickStop` over the whole board, so `DRIFT_LIMIT` — which stops the ring lunging
+across the screen at something merely higher — was applied twice to answer two
+different questions, and a hand card at the end of the fan got a deny with the
+rest of the board plainly sitting there. It retries with the drift bound off,
+and only after the strict pass has come back empty board-wide. Inside a region
+the rule is untouched, which is what keeps a column a column; `ALONG_MIN` still
+holds, so the relaxed pass can only find something in the pressed direction.
+
+**The lobby opens on each decision it is asking you for.** The front door opens
+on Play, the pod on "Choose a deck", the catalogue on a deck -- and seating a CPU
+comes back to your own chair while you still owe the pod a deck. `Deal` comes to
+the host the moment the pod is dealable. Every nudge is on the *transition*,
+never on the state: the pod commits about once a second while anybody is
+choosing, and re-asserting a cursor on each of those would pin the ring and make
+the rest of the screen unreachable.
+
+**Taking a deck moves nothing, and that is the correction worth recording.** It
+jumped to `Lock in` for one round, on the reasoning that the button which opened
+the catalogue is finished with the moment a deck is on the chair. True, and not
+the whole board: the pod *opens* on "Choose a deck", so picking one first is the
+natural order -- and at that moment the chairs are still empty. The jump landed
+the player on the control that ENDS the screen, so the path became deck, walk
+back up to seat a CPU, walk back down to lock in. **It added the walk it was
+meant to remove.** `Lock in` is not the next step; it is the last one, and only
+the player knows when the pod is the shape they want.
+
+> **Count the presses, not the stops.** `src/testing/journey.ts` walks a journey
+> and returns what it cost; `Journeys.stories.tsx` asserts a budget per journey
+> at 1280×800 in CI, and `e2e/journeys-handheld.spec.ts` walks the same ones
+> against a real engine for the two that need the server to answer. Budgets are
+> ceilings and never exact counts — an exact count fails on an improvement,
+> which is the wrong direction to be strict in.
 
 ### Everything on screen at once
 

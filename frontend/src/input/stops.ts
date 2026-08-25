@@ -335,6 +335,46 @@ function onScreen(el: Element, rect: DOMRect): boolean {
  * empty box, and navigating onto one puts the ring nowhere. So are stops an
  * ancestor has clipped away -- see `onScreen`, which is the one that matters.
  */
+/**
+ * Stops the ring may be SENT to, which is a wider set than it can STEP to.
+ *
+ * `onScreen` answers "is this on screen right now", which is the right question
+ * for a direction press: stepping does not scroll, so a row past the fold of
+ * the action list is not the thing below the one you are on.
+ *
+ * A JUMP is different. `cursor.ts:stamp` calls `keepInView`, so sending the
+ * ring to a row inside a scroller brings the row with it -- and the follow-up
+ * in `Table` depends on that, because the panel row for a blocker below the
+ * fold is exactly the fallback it exists to reach when the attacker's card is
+ * not drawable. Filtering a jump by `onScreen` rejected that row and the ring
+ * stayed on the creature with nothing to do, which is the dead end the whole
+ * feature is about.
+ *
+ * So the only disqualifier here is the one the layout creates ON PURPOSE: an
+ * ancestor clipped to a zero box. `[data-handheld] .mat--compact .mat__lanes`
+ * is `height: 0; overflow: hidden` so `FxLayer` keeps its anchors, and a card
+ * inside it still reports its own full rect -- which is why this is an
+ * ancestor walk and not a size check. Nothing can scroll a zero-height box into
+ * view, so that one is a real no.
+ */
+export function sendableIn(root: HTMLElement = activeRoot()): Set<string> {
+  const out = new Set<string>();
+  const all = stopsIn(root);
+  for (let i = 0; i < all.length; i += 1) {
+    const el = all[i];
+    const rect = el.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) continue;
+    let clipped = false;
+    for (let a = el.parentElement; a && !clipped; a = a.parentElement) {
+      if (!clips(getComputedStyle(a))) continue;
+      const clip = a.getBoundingClientRect();
+      clipped = clip.width <= 0 || clip.height <= 0;
+    }
+    if (!clipped) out.add(stopIdOf(el, i));
+  }
+  return out;
+}
+
 export function candidatesIn(root: HTMLElement = activeRoot()): Candidate[] {
   const out: Candidate[] = [];
   const all = stopsIn(root);
@@ -424,7 +464,29 @@ export function escapeGroup(
   if (candidates.length === 0) return null;
   const current = from ? candidates.find((c) => c.id === from) : undefined;
   if (!current) return null;
-  return pickStop(current.rect, candidates, dir, from ?? undefined);
+  const strict = pickStop(current.rect, candidates, dir, from ?? undefined);
+  if (strict) return strict;
+  /*
+   * THE SECOND PASS, AND WHY THE WALL WAS OFTEN NOT A REAL ONE.
+   *
+   * `pickStop` rejects a candidate whose sideways offset is more than
+   * `DRIFT_LIMIT` times the distance it travels -- the rule that stopped the
+   * ring teleporting across the board to a tapped permanent whose centre
+   * happened to be a little higher. That rule is right INSIDE a region, and it
+   * was being applied again here, over the whole board, to answer a completely
+   * different question.
+   *
+   * So the escape hit the same wall twice: a hand card at the end of the fan
+   * pressing up, a lane with nothing above it, the last tool in the strip --
+   * each got a nudge and a deny with the rest of the board plainly sitting
+   * there. The player has already said "there is nothing here for me" by
+   * arriving at the edge of the region; a long hop is what they asked for, and
+   * `ring.ts:longHop` is what keeps it from strobing.
+   *
+   * `ALONG_MIN` and the `exclude` still hold, so this can only ever find
+   * something genuinely in the pressed direction.
+   */
+  return pickStop(current.rect, candidates, dir, from ?? undefined, true);
 }
 
 /**

@@ -19,6 +19,7 @@
 
 import type { CardView, GameView, LegalAction } from "../api/types";
 import { blockableBy } from "./actionMatch";
+import { killsInFight, survivesFight } from "./fight";
 import { findCard } from "./zoneGrouping";
 
 /** Lower is better. Mirrors the ranking above; 4 is a chump block. */
@@ -30,27 +31,22 @@ export interface BlockAssignment {
   tier: BlockTier;
 }
 
-/** Toughness left after damage already marked this turn. */
-function effectiveToughness(card: CardView): number {
-  return (card.toughness ?? 0) - (card.damage ?? 0);
-}
-
-function power(card: CardView): number {
-  return card.power ?? 0;
-}
-
 /**
  * How good this block is, on the four-way ranking.
  *
- * Deliberately naive about everything except power and toughness: deathtouch,
- * first strike, trample and lifelink all change the answer, and none of them is
- * modelled here. That is a limitation worth stating rather than hiding, because
- * the button is a shortcut for a player who can see the same cards -- it is not
- * an opponent, and it does not have to be right, only reasonable and reversible.
+ * The fight itself lives in `logic/fight.ts`, because attacking asks the same
+ * two questions from the other side and the two shortcuts must not be allowed
+ * to disagree about the same two cards. Deathtouch and first strike are
+ * modelled there and change the answer here: a deathtouch blocker kills
+ * whatever it stops, and a first striker survives fights it wins.
+ *
+ * Trample, lifelink and menace are still deliberately out -- see that file for
+ * why. The button is a shortcut for a player who can see the same cards; it
+ * does not have to be right, only reasonable and reversible.
  */
 export function blockTier(blocker: CardView, attacker: CardView): BlockTier {
-  const survives = power(attacker) < effectiveToughness(blocker);
-  const kills = power(blocker) >= effectiveToughness(attacker);
+  const survives = survivesFight(blocker, attacker);
+  const kills = killsInFight(blocker, attacker);
   if (survives && kills) return 1;
   if (survives) return 2;
   if (kills) return 3;

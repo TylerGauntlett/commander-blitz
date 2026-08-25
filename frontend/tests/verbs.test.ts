@@ -162,9 +162,14 @@ describe("verbsFor", () => {
       /*
        * A pod is the case; a duel is not. Advertising a re-aim that cycles back
        * to the same opponent is a button that appears to do nothing.
+       *
+       * With one seat `X` is free, so it falls through to the commit -- which
+       * is the point of the fall-through: on a staged attacker with nowhere
+       * else to point, the thing you want is to send it.
        */
       const one = verbsFor(base, attack([1]), "card:1", staging({ stagedAttacks: { 1: 1 } }));
-      expect(one.x).toBeUndefined();
+      expect(one.x).not.toContain("Re-aim");
+      expect(one.x).toBe("Attack");
       const two = verbsFor(
         base,
         attack([1, 2]),
@@ -265,6 +270,86 @@ describe("verbsFor", () => {
     it("falls back to Read on a card with nothing to do", () => {
       const state = gameView({ battlefield: [creature(1)] });
       expect(verbsFor(state, [], "card:1").a).toBe("Read");
+    });
+  });
+
+  /*
+   * X FALLS THROUGH TO PASS.
+   *
+   * Passing is the most repeated action in the game and it had no button: a
+   * keyboard has had `Space` since before any of this existed, and a pad paid
+   * `L2` then `A` for every priority window of every turn. `X` is empty on most
+   * stops, so it takes the job rather than a button being invented for it.
+   *
+   * What these pin is the agreement with `Table.secondary`, which is the whole
+   * point of this file: the fall-through has to be LAST, so nothing that
+   * already had a secondary loses it.
+   */
+  describe("X, where it has nothing else to do", () => {
+    const pass = action({ id: "p", kind: "pass" });
+
+    it("passes from any stop with no secondary of its own", () => {
+      const state = gameView({ battlefield: [creature(1)] });
+      for (const stop of ["card:1", "orb:1", "tool:mute", "pile:0:graveyard", "lane:0:Lands"]) {
+        expect(verbsFor(state, [pass], stop).x).toBe("Pass");
+      }
+    });
+
+    it("says nothing when the ring is already on the control it would press", () => {
+      /*
+       * `A Pass  X Pass` is a one-line bar saying one thing twice, and the bar
+       * is short of room. `X` is a shortcut TO the dock; standing on the dock
+       * you already have `A`.
+       */
+      const state = gameView({ battlefield: [creature(1)] });
+      expect(verbsFor(state, [pass], "commit").x).toBeUndefined();
+      expect(verbsFor(state, [pass], "commit:all").x).toBeUndefined();
+      expect(verbsFor(state, [pass], "act:p").x).toBeUndefined();
+    });
+
+    it("says nothing when passing is not legal", () => {
+      const state = gameView({ battlefield: [creature(1)] });
+      expect(verbsFor(state, [], "card:1").x).toBeUndefined();
+    });
+
+    it("never displaces Activate", () => {
+      const state = gameView({ battlefield: [creature(1)] });
+      const actions = [
+        pass,
+        action({ id: "c", kind: "cast", source_oid: 1 }),
+        action({ id: "b", kind: "activate", source_oid: 1 }),
+      ];
+      expect(verbsFor(state, actions, "card:1").x).toBe("Activate");
+    });
+
+    it("never displaces Re-aim", () => {
+      const state = gameView({
+        battlefield: [creature(1)],
+        pending: pending({ kind: "declare_attackers", player: 0 }),
+        players: [player({ pid: 0 }), player({ pid: 1 }), player({ pid: 2 })],
+      });
+      const actions = [
+        pass,
+        action({
+          id: "s1",
+          kind: "add_attacker",
+          source_oid: 1,
+          targets: [{ kind: "player", id: 1 }],
+        }),
+        action({
+          id: "s2",
+          kind: "add_attacker",
+          source_oid: 1,
+          targets: [{ kind: "player", id: 2 }],
+        }),
+      ];
+      const verbs = verbsFor(state, actions, "card:1", staging({ stagedAttacks: { 1: 1 } }));
+      expect(verbs.x).toMatch(/Re-aim/);
+    });
+
+    it("stays quiet on the opening hand, where there is no priority to pass", () => {
+      const { state, actions } = mulligan();
+      expect(verbsFor(state, actions, "card:101").x).toBeUndefined();
     });
   });
 
