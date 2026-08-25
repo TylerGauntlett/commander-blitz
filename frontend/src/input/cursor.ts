@@ -173,7 +173,44 @@ function stamp(el: HTMLElement | null, focus = true): void {
    * -- see `resolveCursor`, which runs after every commit and must not be able
    * to take a field away from somebody typing in it.
    */
-  if (focus && el.tabIndex >= 0) el.focus({ preventScroll: true });
+  if (!focus) return;
+  if (el.tabIndex < 0) return;
+  el.focus({ preventScroll: true });
+  if (doc.activeElement === el) return;
+  /*
+   * IT ASKED FOR FOCUS AND DID NOT GET IT, so the focus it left behind has to
+   * go rather than stay pointing at the stop before this one.
+   *
+   * A DISABLED CONTROL IS A STOP ON PURPOSE -- `stops.ts` spends a paragraph on
+   * why, and "walk onto a greyed-out action to read why it is greyed out" is
+   * the argument. But `focus()` on one is a silent no-op, so the ring moved and
+   * DOM focus stayed on whatever control it was on last.
+   *
+   * That is not a cosmetic mismatch, because `focusHolder` reads it straight
+   * back: a focused element that is not the ring's is treated as focus the
+   * player moved themselves, and followed. So the ring could not REST on a
+   * disabled control standing next to an enabled one -- it arrived, and the
+   * next `resolveCursor` (one per engine push, which during an opponent's turn
+   * is several a second) saw the stale focus and pulled it back.
+   *
+   * The combat bar is exactly that shape. Attack/Block sits beside the "all"
+   * mark and is disabled until something is staged, which is precisely its
+   * state at the instant the decision opens -- so stepping right onto it held
+   * for about forty milliseconds and snapped back to the mark, again and again.
+   * From the player's side the button that declares the attack could not be
+   * reached at all.
+   *
+   * NARROWED TO STOPS THAT ASKED. A card is a div with `tabIndex` -1: it never
+   * asks for focus, `focusHolder` already ignores stale focus underneath it for
+   * that reason, and blurring there would take focus off a control for no
+   * reason at all. The returns above are what keep that case untouched.
+   *
+   * Asked as "did focus actually land" rather than by reading `disabled`,
+   * because there is more than one way an element declines it and the answer to
+   * all of them is the same.
+   */
+  const active = doc.activeElement as HTMLElement | null;
+  if (active && active !== doc.body && active !== doc.documentElement) active.blur();
 }
 
 /**

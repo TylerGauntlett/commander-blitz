@@ -62,7 +62,22 @@ export const stopId = {
    * actions to everything that counts them.
    */
   combo: (what: string) => `combo:${what}`,
+  /*
+   * THE COMBAT BAR IS THREE CONTROLS AND ONLY ONE OF THEM IS AN ACTION.
+   *
+   * "No attacks" is a legal action the server offered, so it gets `act:` from
+   * `actionAttrs` for free. The other two are not: "All attack" stages every
+   * attacker into `uiStore`, and the slab beside it declares whatever is
+   * staged. Neither exists in the action list, so neither picked up a stop --
+   * and a control with no stop is invisible to the ring, which is how the two
+   * most-pressed buttons of a combat step ended up reachable by mouse only.
+   *
+   * They are `commit` rather than `tool` because that is what they are: the
+   * bar that ENDS a decision. `tool:` would have them answer `A Toggle` in the
+   * hint bar, which is what a mode switch does and not what these do.
+   */
   commit: "commit",
+  commitMark: (what: string) => `commit:${what}`,
 } as const;
 
 /**
