@@ -11,12 +11,19 @@
  * includes *which request went out first and what header it carried*.
  */
 
-import { screen, waitFor } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setPlayerToken } from "../src/api/client";
 import { storeToken } from "../src/state/usePod";
 import { linkGame } from "../src/state/usePodSession";
-import { deckDetail, deckSummary, podView } from "../src/testing/fixtures";
+import {
+  deckDetail,
+  deckSummary,
+  gameView,
+  player,
+  podView,
+  stateResponse,
+} from "../src/testing/fixtures";
 import { renderApp } from "./renderWithRouter";
 
 interface Call {
@@ -26,7 +33,7 @@ interface Call {
 
 let calls: Call[];
 /** path prefix -> what to answer with. The *longest* match wins. */
-let routes: { prefix: string; status?: number; body: unknown }[];
+let routes: { prefix: string; status?: number; body: unknown; repeat?: boolean }[];
 
 function reply(path: string) {
   // Longest rather than first, so `/api/decks/aesi` cannot be answered with the
@@ -57,8 +64,20 @@ beforeEach(() => {
     calls.push({ path, token: headers["X-Player-Token"] ?? null });
     const found = reply(path);
     const key = found?.prefix ?? path;
-    if (answered.has(key)) return new Promise<Response>(() => undefined);
-    answered.add(key);
+    /*
+     * `repeat` opts a route out of answer-once, and the table is what needs it.
+     *
+     * `useGame`'s query key holds the seat, which starts null and moves once the
+     * server has said which seat is yours -- so a rendered table asks for its
+     * state TWICE under two keys, and a stub that answered once left the second
+     * hanging and the screen on "Dealing…" forever. Only the routes a test
+     * genuinely wants to poll say so; everything else keeps the blocking
+     * default, which is what stops a long poll spinning the event loop.
+     */
+    if (!found?.repeat) {
+      if (answered.has(key)) return new Promise<Response>(() => undefined);
+      answered.add(key);
+    }
     const status = found?.status ?? (found ? 200 : 404);
     return {
       ok: status < 400,
@@ -179,5 +198,76 @@ describe("an address that is not anything", () => {
   it("does not treat the singular as an alias for a pod", async () => {
     renderApp("/pod/GYRE-8412");
     expect(await screen.findByTestId("not-found")).toBeTruthy();
+  });
+});
+
+/**
+ * The rematch, which used to be the front door wearing a different word.
+ *
+ * `onRematch={quit}` -- the button said Rematch and navigated to `/`. So the
+ * one thing somebody wants at the end of a game they enjoyed was four steps
+ * away: the door, a new pod, a deck for every chair, and a deal. It deals the
+ * same lineup now, through `POST /api/games`, which is the endpoint that
+ * already takes exactly what a finished game can describe.
+ */
+describe("a rematch", () => {
+  /** A finished game, and a `POST /api/games` that answers with the next one. */
+  function overAndReady() {
+    const finished = gameView({
+      game_over: true,
+      winners: [0],
+      players: [
+        player({ pid: 0, name: "You", deck_id: "aesi" }),
+        player({ pid: 1, name: "AI 1", deck_id: "edgar", hand: null }),
+      ],
+      pending: null,
+    });
+    routes.push({
+      prefix: "/api/games/g1/state",
+      body: stateResponse({ state: finished }),
+      repeat: true,
+    });
+    routes.push({
+      prefix: "/api/games",
+      body: {
+        game_id: "g2",
+        your_seat: 0,
+        state: gameView({ seat: 0 }),
+        actions: [],
+        events: [],
+        event_cursor: 0,
+        version: 1,
+        human_seats: [0],
+      },
+    });
+    routes.push({ prefix: "/api/games/g2/state", body: stateResponse(), repeat: true });
+  }
+
+  it("deals a new game with the same decks and seats, and goes to it", async () => {
+    linkGame("g1", "GYRE-8412");
+    storeToken("GYRE-8412", "tok-1");
+    overAndReady();
+
+    const app = renderApp("/games/g1");
+    fireEvent.click(await screen.findByText("Rematch"));
+
+    await waitFor(() => expect(app.where.pathname).toBe("/games/g2"));
+    // Replaced, not pushed: the table behind us is over, and back must not
+    // offer to walk into it -- the same rule the pod's deal follows.
+    expect(app.where.how).toBe("REPLACE");
+
+    const made = calls.find((call) => call.path.endsWith("/api/games"));
+    expect(made, "nothing was posted to /api/games").toBeTruthy();
+  });
+
+  it("does not go to the front door, which is what it used to do", async () => {
+    linkGame("g1", "GYRE-8412");
+    storeToken("GYRE-8412", "tok-1");
+    overAndReady();
+
+    const app = renderApp("/games/g1");
+    fireEvent.click(await screen.findByText("Rematch"));
+    await waitFor(() => expect(app.where.pathname).not.toBe("/games/g1"));
+    expect(app.where.pathname).not.toBe("/");
   });
 });

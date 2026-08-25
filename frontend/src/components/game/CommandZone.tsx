@@ -45,6 +45,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useEffect, useState } from "react";
 import type { CardView, GameView } from "../../api/types";
+import { stopId } from "../../input/stops";
 import { artUrl } from "../../logic/cardArt";
 import { manaPips } from "../../logic/cardStyle";
 import { commandersOf } from "../../logic/zoneGrouping";
@@ -122,6 +123,34 @@ function Plinth({ card, castable, tax, disabled, onActivate, onHover, seal }: Pl
   const clickable = castable && !disabled;
 
   /*
+   * THE PLINTH IS A STOP, AND UNTIL NOW IT WAS THE ONLY CONTROL ON THE BOARD
+   * THAT WAS NOT.
+   *
+   * The board declares its stops explicitly -- `stopsIn` takes a surface at its
+   * word and gives it no native-focusable fallback, precisely so the rail's tool
+   * buttons are not picked up twice. This element is a `<button>` and was
+   * therefore invisible to the ring anyway: `setCursor("ui:commander-900")`
+   * returned false, no direction could reach it, and **a controller could not
+   * cast its own commander at all**. The hover-fills-the-preview-rail promise at
+   * the top of this file went with it, because `hoverFor` drives `hoveredOid`
+   * from the cursor and the cursor could not get here.
+   *
+   * `card:<oid>` and not a namespace of its own, because that is what this
+   * element IS -- and then `A` casts it, `Y` reads it and the preview rail fills
+   * with no second code path anywhere. See `stops.ts`, whose whole argument for
+   * a string namespace is that a permanent keeps its id across zones.
+   *
+   * ONLY WHILE THE COMMANDER IS IN THE COMMAND ZONE, and that clause is what
+   * keeps the id unique. A stop id names one element; the moment the commander
+   * is cast, the stack panel draws `card:<oid>`, and once it resolves the
+   * battlefield does -- so the plinth would be a second element answering to a
+   * stop that already has one, and `stopElement` would hand the ring whichever
+   * came first in the document. In the command zone nothing else is drawing this
+   * card, which is also exactly when you need to reach it.
+   */
+  const reachable = card.zone === "command";
+
+  /*
    * The pointer left because the plinth stopped existing.
    *
    * `hoveredOid` is only ever cleared by an element's own leave handler, so a
@@ -144,6 +173,7 @@ function Plinth({ card, castable, tax, disabled, onActivate, onHover, seal }: Pl
       type="button"
       className={`cmdslot cmdslot--${state.key}`}
       data-testid={`commander-${card.oid}`}
+      data-stop={reachable ? stopId.card(card.oid) : undefined}
       data-castable={castable ? "true" : "false"}
       data-zone={card.zone}
       data-cmd-state={state.key}

@@ -449,7 +449,26 @@ function frame(now: number): void {
    * the cost saving the self-terminating version was after, without the failure
    * mode: a pad that appears later is seen within ~100ms rather than never.
    */
-  const busy = connected || keyDown.size > 0 || keyLatch.size > 0 || frameHandlers.size > 0;
+  /*
+   * A BUTTON STILL RECORDED AS DOWN KEEPS THE LOOP AWAKE, and that is a fix for
+   * a press the keyboard fallback silently ate.
+   *
+   * `prev` is written above, in the same frame the latch is cleared below it --
+   * so the frame that observes a tapped key observes it as DOWN, and only the
+   * NEXT frame can record the release. With nothing else to poll, that next
+   * frame was 100ms away on the idle timer, and `wake()` cancels that timer the
+   * moment another key arrives: the second press then read `down && was` and
+   * produced no edge at all. Two taps of A inside a tenth of a second were one
+   * press, every time, and only on a keyboard -- a real pad keeps `connected`
+   * true and gets the release frame for free, which is why nothing on a desk
+   * ever saw it.
+   *
+   * One more frame is the whole cost, and only after a tap.
+   */
+  let held = false;
+  for (const down of prev.values()) if (down) held = true;
+  const busy =
+    connected || held || keyDown.size > 0 || keyLatch.size > 0 || frameHandlers.size > 0;
   if (!listening) {
     raf = 0;
     return;
@@ -501,6 +520,11 @@ function wake(): void {
 /** The four keys a text field and the ring both have a claim on. */
 const ARROWS = new Set(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"]);
 
+/** A native option list, which bargains over a different set -- see `SELECT_KEEPS`. */
+function isSelect(target: EventTarget | null): boolean {
+  return (target as HTMLElement | null)?.tagName === "SELECT";
+}
+
 /** Anything with a caret in it, which is the only thing `fieldKeeps` bargains with. */
 function isField(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null;
@@ -533,12 +557,38 @@ function isField(target: EventTarget | null): boolean {
  * layer and letters here, which is the whole reason this asks about the key
  * rather than about the element.
  */
+/**
+ * What a `<select>` keeps, which is NOT everything.
+ *
+ * IT USED TO BE EVERYTHING, AND THAT MADE THE SORT DROPDOWN A ONE-WAY DOOR
+ * WITH A HISTORY STEP IN IT. Two separate failures came out of the one line.
+ *
+ * The trap first: a select has no caret, so the bargain the text fields strike
+ * above -- a direction is the caret's while the caret has somewhere to go --
+ * has nothing to measure and was skipped entirely. Every arrow went to the
+ * control, so the ring walking onto the deck catalogue's `Sort` box could never
+ * walk off it again. The old comment here said "`B` is the way out", and B was
+ * bound on exactly one surface in the app and not on the catalogue.
+ *
+ * And the worse half: `Backspace` was kept too, which meant `SWALLOW` never ran
+ * for it -- and `Backspace` on a `<select>` is not a character, it is the
+ * browser's BACK BUTTON. From `/pods/{code}` that is the front door, so a
+ * player whose controller sends Backspace for B (which is what a Steam Deck's
+ * stock browser template does) was dropped out of the pod entirely by the
+ * button that should have closed the catalogue over it.
+ *
+ * So a select now keeps only the keys that OPERATE one: up and down step the
+ * option, page up and page down jump it, Enter opens it. Left and Right have
+ * nothing to do on a list with no caret and belong to the ring, which is also
+ * the only exit a direction can give. Everything else -- Escape, Backspace, B
+ * -- is a way out and is treated as one.
+ */
+const SELECT_KEEPS = new Set(["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Enter"]);
+
 function fieldKeeps(target: EventTarget | null, key: string): boolean {
   const el = target as HTMLElement | null;
   if (!el || !el.tagName) return false;
-  // A select's arrows change the option, and there is no "end of the list" to
-  // read -- the native control wraps. It keeps them; `B` is the way out.
-  if (el.tagName === "SELECT") return true;
+  if (el.tagName === "SELECT") return SELECT_KEEPS.has(key);
   const typed = el.tagName === "INPUT" || el.tagName === "TEXTAREA";
   if (!typed && el.isContentEditable !== true) return false;
   if (!ARROWS.has(key)) return true;
@@ -569,6 +619,21 @@ function fieldKeeps(target: EventTarget | null, key: string): boolean {
   return key === "ArrowUp"
     ? field.value.slice(0, at).includes("\n")
     : field.value.slice(at).includes("\n");
+}
+
+/**
+ * Whether this key press will arrive as a pad intent, or was kept by a field.
+ *
+ * Exported for the one caller that has to know: an overlay's Back listener.
+ * `Escape` is `B`, so a dialog answering the pad's `b` has already handled every
+ * Escape the ring hears -- but a text field keeps Escape for itself (see
+ * `fieldKeeps`, and `ChoiceCombo` which depends on it), and no intent is emitted
+ * for those. Asking here is what lets a dialog cover that gap without covering
+ * the presses twice: two listeners answering one Escape closed two overlays at
+ * once, which is a Back that goes one level too far.
+ */
+export function padTakesKey(event: KeyboardEvent): boolean {
+  return KEYS[event.key] !== undefined && !fieldKeeps(event.target, event.key);
 }
 
 function onKeyDown(event: KeyboardEvent): void {
@@ -607,7 +672,14 @@ function onKeyDown(event: KeyboardEvent): void {
    * the caret jumps to the other end of the text on the way out, so coming
    * back to the field finds it in a place nobody put it.
    */
-  if (ARROWS.has(event.key) && isField(event.target)) event.preventDefault();
+  /*
+   * ...and the same for the Left/Right a `<select>` no longer keeps: Chrome and
+   * Firefox both change the selected option on those, so taking the key for the
+   * ring without this would re-sort the catalogue on the way out of the box.
+   */
+  if (ARROWS.has(event.key) && (isField(event.target) || isSelect(event.target))) {
+    event.preventDefault();
+  }
   // The OS autorepeat would race our own ramp and win, so the ramp would never
   // be what the player is feeling.
   if (event.repeat) return;

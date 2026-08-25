@@ -754,8 +754,26 @@
 /* Sized off the disc rather than off the viewport a second time. Two clamps for
    one object is how the numeral and the disc drift apart at the sizes nobody
    screenshots. */
+/*
+ * `--dial-n` IS THE RESTING INK, AND IT IS A VARIABLE BECAUSE THE ANIMATION
+ * HAS TO READ IT.
+ *
+ * `PlayerOrb` flashes the numeral green or red on a life change and returns it
+ * to a resting colour -- and Framer writes that resting colour back as an
+ * INLINE style, which beats every rule in this file from the first hit
+ * onwards. So the component named the token directly, and on a handheld, where
+ * the disc is not brass but a ring around a hole in `--void-1`, that stamped
+ * near-black ink onto a dark purple well: the life total went unreadable after
+ * the first point of damage, on the one layout the game is built for.
+ *
+ * One name, defined here and re-pointed by `handheld.css`, and the component
+ * says `var(--dial-n)` without knowing which treatment it is on. It is the same
+ * argument `--fill` already makes in `PlayerOrb`: the two dials differ in CSS
+ * alone.
+ */
 .dial__n {
-  color: var(--dial-ink);
+  --dial-n: var(--dial-ink);
+  color: var(--dial-n);
   font-size: calc(var(--seal-w) * 0.41);
   font-weight: 900;
   line-height: 1;
