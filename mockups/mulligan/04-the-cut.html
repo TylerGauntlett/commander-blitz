@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>04 The Cut — the mulligan, 1280×800</title>
+<link rel="stylesheet" href="_mull.css">
+<style>
+/*
+ * 04 THE CUT — the library is an object, and a mulligan is something you do to it.
+ * ===========================================================================
+ *
+ * THE ARGUMENT: "Mulligan" is a verb about two physical objects. You put the
+ * seven back, the deck is shuffled, you draw seven again, and one of them goes
+ * to the bottom. `game.py:1164-1171` is literally that -- move every object to
+ * LIBRARY, `rng.shuffle`, `draw_cards`. None of those objects is on the shipped
+ * screen. The word "Mulligan" is printed inside a rectangle, and the rectangle
+ * is the only thing that moves.
+ *
+ * So this direction draws the two objects and puts the control between them.
+ * The library is a real stack with a real count on it. The hand is held in a
+ * tight fan at the angle a hand is actually held at. And the answer is a
+ * ROCKER -- one physical switch with two positions -- rather than two buttons.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY A SWITCH AND NOT TWO BUTTONS, which is the part worth arguing about.
+ *
+ * Two buttons is one press: you hit A and it has happened. A switch is two --
+ * push it over, then commit. That is one input more than every other direction
+ * in this round, and on a menu it would be indefensible.
+ *
+ * It is defensible HERE because the thing being answered is irreversible and
+ * happens in the first two seconds of a session, when a player's thumb is still
+ * on the stick from launching the game. A misfired A on the front door costs
+ * you a keypress. A misfired A here costs you a card, permanently, and the game
+ * does not offer to take it back. The switch also gives the screen somewhere to
+ * SHOW the consequence before it is paid: push to CUT and the hand tilts toward
+ * the library and dims, the stack grows, the count changes, the caption reads
+ * "cutting to six". You watch the price before you agree to it.
+ *
+ * The two-step is also why this file's hint bar names both inputs and why the
+ * rocker itself is 560px: the position has to be readable at a glance from
+ * across a couch, not just under a thumb.
+ *
+ * ---------------------------------------------------------------------------
+ * THE PRICE: it is the least information-dense of the five -- there is no read,
+ * no pod, no per-card selection at all, because a hand held in a fan this tight
+ * has only its names showing. It is a direction about FEEL, and if the feel
+ * does not survive contact with a player who has done it forty times, it has
+ * nothing else to fall back on.
+ */
+
+/* ==========================================================================
+   The notch rail
+   ==========================================================================
+   Six mulligans (`game.py:43`), as six cut notches in a rail. A spent one is
+   struck through, which is the same "this is gone" mark the board uses. The
+   engine puts this count in the decision's own prompt string and the client
+   prints a constant instead (`labels.ts:103`), so it has never been drawn.
+   ========================================================================== */
+.rail {
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: var(--hit-floor);
+  padding: 0 20px;
+  border-radius: 10px;
+  border: 1px solid var(--edge);
+  background: rgba(9, 8, 20, 0.6);
+  font-size: var(--fs-floor);
+  color: var(--text-dim);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.rail__notches { display: flex; gap: 8px; }
+.notch {
+  width: 8px;
+  height: 22px;
+  border-radius: 2px;
+  background: rgba(160, 155, 196, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+.notch[data-spent] { background: var(--danger); }
+
+/* ==========================================================================
+   The hand, held
+   ==========================================================================
+   A tight fan about a low pivot -- 70px of pitch against a 172px card, so three
+   fifths of every face but the last is under the next one. That is what a held
+   hand looks like and it is a real cost: only the names read. This direction
+   accepts it because the decision it is drawing is not "which of these seven",
+   it is "these seven, or another seven".
+   ========================================================================== */
+.fan { position: absolute; left: 0; top: 220px; width: 800px; height: 241px; }
+.fan__slot {
+  position: absolute;
+  top: 0;
+  width: 172px;
+  height: 241px;
+  transform-origin: 50% 420px;
+  transition: transform var(--t-room) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fan__slot .face { transition: filter var(--t-room) ease, box-shadow var(--t-fast) ease; }
+
+/*
+ * THE CARD YOU ARE ON, which this direction did not have until the round's
+ * width table was run.
+ *
+ * `measure.mjs` says this fan covers 102px of every 172px card, and `probe.mjs`
+ * says a card needs 295 to be readable. So of the five directions this was the
+ * only one with no reader of any kind AND the heaviest overlap -- seven cards
+ * of which you could see a name and a sliver. A screen whose whole argument is
+ * that the hand is a physical object cannot also be the screen on which the
+ * object is unreadable.
+ *
+ * The card lifts out of the fan the way a card does when a thumb pushes it
+ * proud of the others. It is not a mode and it does not disturb the fan.
+ */
+.fan__slot[data-on] { z-index: 20; }
+.fan__slot[data-on] .lift { transform: translateY(-26px); }
+.fan__slot .lift { display: block; transition: transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1); }
+.fan__slot[data-on] .face {
+  box-shadow: 0 0 0 3px var(--focus), 0 0 30px var(--focus-glow), 0 14px 34px rgba(0, 0, 0, 0.7);
+}
+[data-side="keep"] .fan__slot:not([data-on]) .face { filter: brightness(0.82); }
+
+/* CUT: the hand leans toward the library and goes cold. It is not a preview
+   animation, it is the switch's position drawn on the objects the switch acts
+   on -- which is the only reason a switch is worth an extra press. */
+[data-side="cut"] .fan { }
+[data-side="cut"] .fan__slot { }
+[data-side="cut"] .fan__slot .face { filter: brightness(0.5) saturate(0.45); }
+
+.fan__label {
+  position: absolute;
+  left: 116px;
+  top: 486px;
+  font-size: var(--fs-floor);
+  color: var(--text-dim);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   The library
+   ==========================================================================
+   Sixteen plates at a 2.5px offset. It is not ninety-one plates, and that is
+   the one lie a stack tells: what it has to convey is "a deck, this deep", and
+   the exact depth is on the count plate underneath in figures.
+   ========================================================================== */
+/* TOP 150, NOT 190, and the 40px is the commit prompt's. At 190 the count
+   plate's label sat at y 572 and the prompt starts at 574 -- "IN YOUR LIBRARY"
+   was printed underneath a button. Both were correct in isolation; they are on
+   the same 240px column and nothing said so. */
+.stack { position: absolute; right: 100px; top: 150px; width: 240px; height: 320px; }
+.stack__plate {
+  position: absolute;
+  --card-w: 200px;
+  transition: transform var(--t-room) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.stack__count {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 340px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+}
+.stack__n {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  transition: color var(--t-room) ease;
+}
+[data-side="cut"] .stack__n { color: var(--astral-hi); }
+.stack__label {
+  font-size: var(--fs-floor);
+  color: var(--text-dim);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/*
+ * THE SEVEN GHOST PLATES ARE GONE, and cutting them is this file's one real
+ * subtraction.
+ *
+ * The idea was a trail of seven dashed outlines flying from the fan to the
+ * stack while the switch is on CUT -- "these go back", said in objects rather
+ * than in the caption. It needed a lane, and in the CUT position there is not
+ * one: the fan has just moved 78px toward the library, so the gap between the
+ * hand's right edge and the stack's left is 75px, and a 300px trail drawn in it
+ * lands on top of the last two cards of the hand it is supposed to be leaving.
+ *
+ * The trail was also redundant three times over -- the fan tilts, the count goes
+ * 91 to 98, and the caption says the sentence. What was left was the collision.
+ */
+
+/* ==========================================================================
+   The rocker
+   ==========================================================================
+   One control, two positions, 560x96, and the knob is what moves. The two ends
+   are labelled and BOTH LABELS ARE ALWAYS LEGIBLE -- a switch whose off-side
+   label is dimmed to unreadable has become a button that lies about being a
+   switch.
+   ========================================================================== */
+.rocker {
+  position: absolute;
+  left: 50%;
+  top: 556px;
+  transform: translateX(-50%);
+  width: 560px;
+  height: 96px;
+  padding: 6px;
+  border-radius: 52px;
+  border: 1px solid var(--edge-hi);
+  background: linear-gradient(180deg, rgba(8, 7, 18, 0.9), rgba(24, 22, 46, 0.9));
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.7), 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+.rocker__knob {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 274px;
+  height: 84px;
+  border-radius: 46px;
+  transition: transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1),
+              background var(--t-base) ease, box-shadow var(--t-base) ease;
+  background: linear-gradient(180deg, rgba(143, 127, 232, 0.4), rgba(143, 127, 232, 0.14));
+  box-shadow: 0 0 26px rgba(143, 127, 232, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+[data-side="keep"] .rocker__knob {
+  transform: translateX(274px);
+  background: linear-gradient(180deg, rgba(255, 212, 121, 0.34), rgba(216, 166, 60, 0.12));
+  box-shadow: 0 0 30px rgba(216, 166, 60, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.rocker__sides {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+}
+.rocker__side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: var(--fs-big);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color var(--t-base) ease;
+}
+[data-side="cut"] .rocker__side--cut { color: var(--astral-hi); }
+[data-side="keep"] .rocker__side--keep { color: var(--gold); }
+
+/* What the position means, in a sentence, under the switch. */
+.saying {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 672px;
+  text-align: center;
+  font-size: var(--fs-lead);
+  color: var(--text-dim);
+}
+.saying b { color: var(--text); font-weight: 700; }
+
+/* The commit prompt sits BESIDE the rocker rather than under it, because it is
+   the second half of a two-part gesture and the two parts should not read as a
+   list of two things you could do. */
+.commit {
+  position: absolute;
+  right: 100px;
+  top: 574px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: var(--hit-floor);
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--edge);
+  background: var(--pane-well);
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.commit .glyph { width: 40px; height: 40px; font-size: var(--fs-lead); }
+.commit__verb { font-size: var(--fs-lead); font-weight: 800; }
+.commit:active { transform: translateY(2px); }
+</style>
+</head>
+<body>
+<script src="_mull.js"></script>
+<script>
+const CARD_W = 172;
+const PITCH = 70;
+const SPREAD = 4.2;
+const FAN_CENTRE = 400;   /* x of the fan's middle card */
+const PLATES = 16;
+
+const state = { side: "keep", on: 4 };
+
+/* The shoot harness asks for these; each is a value `GOTO` understands. */
+const STATES = ["cut", "raised"];
+function GOTO(name) {
+  if (name === "raised") { STAGE.raise(HAND[state.on]); return; }
+  state.side = name;
+  place();
+}
+
+function markup() {
+  const n = HAND.length;
+  const left0 = FAN_CENTRE - (PITCH * (n - 1) + CARD_W) / 2;
+  const centre = (n - 1) / 2;
+  return (
+    '<div class="rail">Mulligans<span class="rail__notches">' +
+    Array.from({ length: MAX_MULLIGANS }, () => '<span class="notch"></span>').join("") +
+    "</span></div>" +
+
+    '<div class="fan" id="fan">' +
+    HAND.map((c, i) =>
+      '<div class="fan__slot" id="slot-' + i + '" data-i="' + i + '" style="left:' +
+      (left0 + i * PITCH) + "px;transform:rotate(" +
+      ((i - centre) * SPREAD).toFixed(2) + 'deg)">' +
+      '<div class="lift">' + faceHTML(c, { w: CARD_W, fs: 16 }) + "</div>" +
+      "</div>"
+    ).join("") +
+    "</div>" +
+    '<div class="fan__label">Your hand &middot; ' + n + "</div>" +
+
+    '<div class="stack">' +
+    Array.from({ length: PLATES }, (_, i) =>
+      '<div class="stack__plate back" style="left:' + (i * 2.5) + "px;top:" + (i * 2.5) +
+      'px"></div>'
+    ).join("") +
+    '<div class="stack__count"><span class="stack__n" id="libn">' + LIBRARY + "</span>" +
+    '<span class="stack__label">In your library</span></div>' +
+    "</div>" +
+
+    '<div class="rocker" data-hit>' +
+    '<div class="rocker__knob"></div>' +
+    '<div class="rocker__sides">' +
+    '<span class="rocker__side rocker__side--cut" id="side-cut">Cut</span>' +
+    '<span class="rocker__side rocker__side--keep" id="side-keep">Keep</span>' +
+    "</div></div>" +
+    '<div class="saying" id="saying"></div>' +
+
+    '<button class="commit" type="button" id="commit" data-hit>' +
+    '<span class="glyph glyph--a">A</span>' +
+    '<span class="commit__verb" id="commit-verb"></span></button>' +
+
+    '<div class="hints">' +
+    '<span class="hint"><span class="glyph glyph--key">&#8592;</span>' +
+    '<span class="glyph glyph--key">&#8594;</span>Throw the switch</span>' +
+    '<span class="hint"><span class="glyph glyph--a">A</span>Do it</span>' +
+    /* The two reading inputs are on the RIGHT of the bar, away from the two
+       that decide the hand. The switch and the commit are one gesture and
+       picking a card to read is a different one; a hint bar that mixes them in
+       one run reads as four equal things to press. */
+    '<span class="hint hints__sp"><span class="glyph glyph--key">L1</span>' +
+    '<span class="glyph glyph--key">R1</span>Pick a card</span>' +
+    '<span class="hint"><span class="glyph glyph--y">Y</span>Read it</span>' +
+    "</div>"
+  );
+}
+
+/*
+ * THE POSITION, DRAWN ON EVERY OBJECT IT TOUCHES.
+ *
+ * The fan's tilt, the library's count and the caption are all one function of
+ * `side`, written in one place. Splitting them across three handlers is how a
+ * switch ends up half-thrown -- the caption saying one thing and the count
+ * another -- and that failure is invisible in the position the file opens in.
+ */
+function place() {
+  const n = HAND.length;
+  const centre = (n - 1) / 2;
+  const cut = state.side === "cut";
+  document.querySelector(".deck").setAttribute("data-side", state.side);
+
+  HAND.forEach((_, i) => {
+    const d = i - centre;
+    const el = document.getElementById("slot-" + i);
+    /* Toward the library and down: the gesture of putting a hand back, not a
+       decorative wobble. The whole fan shifts on one axis so the shape of the
+       hand is preserved -- a hand that reorganises itself as it goes back has
+       stopped being the same seven cards. */
+    el.style.transform =
+      "rotate(" + (d * SPREAD).toFixed(2) + "deg)" +
+      (cut ? " translate(78px, 26px) rotate(5deg)" : "");
+  });
+
+  HAND.forEach((_, i) =>
+    document.getElementById("slot-" + i).toggleAttribute("data-on", i === state.on)
+  );
+  if (STAGE.raised) STAGE.raise(HAND[state.on]);
+
+  document.getElementById("libn").textContent = cut ? LIBRARY + n : LIBRARY;
+  document.getElementById("saying").innerHTML = cut
+    ? "These seven go back. You draw <b>seven</b> more and put <b>one</b> on the bottom."
+    : "You keep these <b>seven</b>. First play: <b>" + esc(READ.firstPlay.name) + "</b>, turn 1.";
+  document.getElementById("commit-verb").textContent = cut ? "Cut the deck" : "Keep this hand";
+  STAGE.tag("switch: <b>" + state.side + "</b>");
+}
+
+function throwTo(side) {
+  if (state.side === side) {
+    /* A switch already at its stop does not move, and saying so is the whole
+       reason a switch is legible: you can feel where it is without looking. */
+    STAGE.refuse(document.querySelector(".rocker"), side === "cut" ? -1 : 1);
+    return;
+  }
+  state.side = side;
+  PAD.rumble(45, 0.25);
+  place();
+}
+
+function commit() {
+  if (state.side === "cut") STAGE.commit("Mulligan", "Seven back. Shuffle. Seven more.", true);
+  else STAGE.commit("Keep", "Seven cards. Turn one: Forest, Sol Ring.");
+}
+
+/*
+ * READING IS ON THE SHOULDERS HERE, and only here.
+ *
+ * Every other direction walks its hand with left and right. This one cannot:
+ * left and right ARE the switch, and that is the direction's whole idea. So the
+ * hand moves on L1 and R1 -- which is the cost of spending the d-pad on a
+ * control, stated rather than hidden, and the second reason (after the 102px
+ * overlap) that this is the most expensive of the five to make readable.
+ */
+function pick(d) {
+  const next = state.on + d;
+  if (next < 0 || next >= HAND.length) {
+    STAGE.refuse(document.getElementById("slot-" + state.on), d);
+    return;
+  }
+  state.on = next;
+  place();
+}
+
+STAGE.mount("04 The Cut", markup(), {
+  left: () => throwTo("cut"),
+  right: () => throwTo("keep"),
+  l1: () => pick(-1),
+  r1: () => pick(1),
+  y: () => STAGE.toggleRaise(HAND[state.on]),
+  a: commit,
+  /* B throws it back to Keep rather than committing anything. On a screen whose
+     A is "do the thing the switch says", a B that also committed would be two
+     buttons again -- which is the shape this direction exists to avoid. */
+  b: () => throwTo("keep"),
+});
+
+for (const el of document.querySelectorAll(".fan__slot")) {
+  el.addEventListener("mouseenter", () => { state.on = +el.dataset.i; place(); });
+}
+document.getElementById("side-cut").addEventListener("click", () => throwTo("cut"));
+document.getElementById("side-keep").addEventListener("click", () => throwTo("keep"));
+document.getElementById("commit").addEventListener("click", commit);
+
+place();
+</script>
+</body>
+</html>

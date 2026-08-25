@@ -43,9 +43,21 @@ function submits(kind: string, label: string, id: string) {
   };
 }
 
-export const Mulligan: Story = {
-  args: { state: scenarios.mulligan().state, actions: scenarios.mulligan().actions },
-  play: submits("mulligan", "Keep", "a0-keep"),
+/*
+ * THE MULLIGAN IS NOT ONE OF THESE ANY MORE.
+ *
+ * It was this file's first story and its simplest -- two options, one press --
+ * and `OpeningHand` owns it now, so it is `OpeningHand.stories.tsx`'s. What
+ * stands in its place is the smallest decision this dialog still draws: a "may"
+ * with a yes and a no.
+ *
+ * `PromptDialogStandsDown` further down is the half that still belongs here,
+ * and it is the one worth keeping: it asserts this dialog does NOT open for a
+ * decision another surface owns.
+ */
+export const Simplest: Story = {
+  args: { state: scenarios.mayAbility().state, actions: scenarios.mayAbility().actions },
+  play: submits("may", "Yes", "a0-choose"),
 };
 
 /**
@@ -57,7 +69,7 @@ export const Mulligan: Story = {
  * Nothing about the button says so; it is the parent's `overflow-y` that cuts it.
  */
 export const OptionOnHover: Story = {
-  args: { state: scenarios.mulligan().state, actions: scenarios.mulligan().actions },
+  args: { state: scenarios.mayAbility().state, actions: scenarios.mayAbility().actions },
   parameters: { automtg: { mount: "screen", motion: "real" } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -354,14 +366,41 @@ export const NotMyDecision: Story = {
 /** Input gated while a request is in flight. */
 export const Disabled: Story = {
   args: {
-    state: scenarios.mulligan().state,
-    actions: scenarios.mulligan().actions,
+    state: scenarios.mayAbility().state,
+    actions: scenarios.mayAbility().actions,
     disabled: true,
   },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("prompt-dialog");
-    await userEvent.click(await canvas.findByText("Keep"));
+    await userEvent.click(await canvas.findByText("Yes"));
     expect(args.onAct).not.toHaveBeenCalled();
+  },
+};
+
+/**
+ * And it stays shut for the two kinds `OpeningHand` owns.
+ *
+ * The mulligan is a kind in the denylist; its bottoming half is not, because it
+ * arrives as a `choose_objects` and every other `choose_objects` is still this
+ * dialog's. So the two halves are excluded by two different mechanisms, and
+ * both are worth one assertion.
+ */
+export const StandsDownForTheOpeningHand: Story = {
+  args: { state: scenarios.mulligan().state, actions: scenarios.mulligan().actions },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.queryByTestId("prompt-dialog")).toBeNull();
+  },
+};
+
+export const StandsDownForTheBottomingHalf: Story = {
+  args: {
+    state: scenarios.mulliganBottom().state,
+    actions: scenarios.mulliganBottom().actions,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.queryByTestId("prompt-dialog")).toBeNull();
   },
 };

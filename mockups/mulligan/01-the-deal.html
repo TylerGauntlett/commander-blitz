@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>01 The Deal — the mulligan, 1280×800</title>
+<link rel="stylesheet" href="_mull.css">
+<style>
+/*
+ * 01 THE DEAL — there is no dialog, and every card is a whole card.
+ * ===========================================================================
+ *
+ * THE ARGUMENT, in one sentence: the hand IS the screen, and the answers are
+ * two face buttons rather than two rectangles.
+ *
+ * `PromptDialog` puts a box in the middle of the viewport and the hand behind
+ * it. `ui.css:941-951` is the admission -- the backdrop is a GRADIENT, fading
+ * out toward the bottom so the hand stays lit under the dialog, with a comment
+ * that says exactly why: "a flat dim over the whole viewport hid the one thing
+ * the player has to look at". That is a workaround for a modal that should not
+ * have been there. If the hand is the one thing the player has to look at, put
+ * the hand on the screen at the size of the decision and delete everything in
+ * front of it.
+ *
+ * ---------------------------------------------------------------------------
+ * THE SECOND PASS: THE CARDS CARRY THEIR RULES TEXT.
+ *
+ * The first draft showed seven faces -- art, name, cost, a type word -- and a
+ * one-line reader underneath. Which is to say it showed you seven cards and
+ * told you nothing about what any of them DOES, on the one screen where that is
+ * the entire decision. "Sakura-Tribe Elder" is not information unless you
+ * already know it blocks once and fetches a land.
+ *
+ * `probe.mjs` says what fixing that costs: a card carries its own name, cost,
+ * type line and rules text at the 16px floor at **296px**. Seven of those laid
+ * flush is 2072px against a 1280px panel, so a hand you can read all at once is
+ * not available at any layout. A hand you can read one card at a time is.
+ *
+ * THE ONE-LINE READER IS GONE, because the card is the reader now. A strip
+ * under a row restating the card above it is what the first draft had, and it
+ * was always the weaker half of the pair.
+ *
+ * AND THERE IS STILL NO BUTTON FOR READING. Selecting is reading. 02, 03, 04
+ * and 05 each spend a Y on raising a card; this direction spends nothing, which
+ * is the strongest thing about it.
+ *
+ * ---------------------------------------------------------------------------
+ * THE THIRD PASS: EVERY CARD IS THE SAME SIZE, AND THE ARCH NEVER MOVES.
+ *
+ * The second pass grew the selected card from 176 to 296 and closed the other
+ * six up around it. That reads correctly in a still and badly in the hand: the
+ * row has to be re-centred every time the selection moves, so walking from Sol
+ * Ring to Explosive Vegetation slid all seven cards sideways six times. The one
+ * thing holding still was the card you were trying to read, and everything you
+ * were reading it AGAINST moved underneath it.
+ *
+ * So all seven are 296x414. Every position is computed once at mount and never
+ * again, and the selection changes exactly three things: the stacking order, a
+ * 20px lift, and the ring. Moving costs nothing. Nothing that is not the card
+ * you moved to changes at all.
+ *
+ * WHAT PAYS FOR IT IS THE OVERLAP. Seven 296px cards on a 1280px panel is 144px
+ * of pitch, so every card that is not on top shows half of itself. The second
+ * pass's unselected cards were whole 176px faces; these are half-cards. That is
+ * the trade -- a hand that is denser and completely still, against one that was
+ * cleaner and slid under you -- and on a 7-inch panel at arm's length stillness
+ * wins.
+ *
+ * AND ONLY THE CARD YOU ARE ON PRINTS ITS RULES. Seven open rules boxes at this
+ * pitch is six sliced columns of type competing with the one you are reading;
+ * the box is closed on the other six and the illustration takes the space, so
+ * the card is the same 296x414 either way. See `.ffull__rules` below.
+ *
+ * THE STACK FALLS AWAY FROM THE SELECTION IN BOTH DIRECTIONS: `z-index` is
+ * `100 - |i - on|`, not `i`. A one-directional fan with the selected card
+ * lifted to the top buries its right-hand neighbour completely -- that card is
+ * covered on its left by the 296px card in front of it and on its right by the
+ * next one along, and what survives is a four-pixel stripe. Falling away from
+ * the selection is also what a real hand does when a thumb pushes one card
+ * proud of the others: the cards on the left show their left edges and the ones
+ * on the right show their right edges, which is a name on one side and a mana
+ * cost and a power on the other.
+ */
+
+/* The place name. NOT a question -- a question in the largest type on the
+   screen is a dialog title with the box taken off. This says where you are, the
+   way a shop or an inventory screen does, and the verbs at the bottom say what
+   can be done here. */
+.deal__eyebrow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40px;
+  text-align: center;
+  font-size: var(--fs-floor);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  z-index: 5;
+}
+
+/* Who you are, at the top left, because a Commander game is four decks and the
+   first frame is the only one that has room to say which is yours. */
+.who {
+  position: absolute;
+  left: 40px;
+  top: 26px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--hit-floor);
+  font-size: var(--fs-floor);
+  color: var(--text-dim);
+  z-index: 5;
+}
+.who__crop {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold-deep);
+  box-shadow: 0 0 18px rgba(216, 166, 60, 0.35);
+}
+.who__name { color: var(--text); font-weight: 600; }
+
+/* Mulligans, as six lamps rather than as "(0 taken)" in a prompt string. The
+   engine puts that count in `PendingDecision.prompt` (game.py:1155) and the
+   client prints `DECISION_PROMPTS.mulligan` instead, so the number is on the
+   wire and has never been on the screen. */
+.lamps {
+  position: absolute;
+  right: 40px;
+  top: 26px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: var(--hit-floor);
+  font-size: var(--fs-floor);
+  color: var(--text-dim);
+  z-index: 5;
+}
+.lamps__row { display: flex; gap: 6px; }
+.lamp {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(160, 155, 196, 0.5);
+}
+.lamp[data-spent] { background: var(--danger); border-color: var(--danger); }
+
+/* ==========================================================================
+   The hand
+   ==========================================================================
+   AN ARCH PINNED TO ITS OWN MIDDLE, and no part of it is a function of the
+   selection. Tilt and drop come from `i - centre`; `left` and `top` are written
+   once at mount and never touched again.
+
+   WHICH IS WHY `left` AND `top` ARE NOT IN THE TRANSITION LIST. They do not
+   change, so animating them would be dead weight -- and the previous pass DID
+   change them, which is exactly what made the whole row slide on every press.
+   ========================================================================== */
+.deal__row { position: absolute; left: 0; right: 0; top: 100px; height: 414px; }
+
+.deal__slot {
+  position: absolute;
+  width: 296px;
+  height: 414px;
+  transform-origin: 50% 700px;   /* the pivot, far below the card */
+}
+
+/* THE DEAL. Seven cards arriving one after another, from the library's corner.
+   It runs once, on mount, and it is the whole reason this file is called what
+   it is: the first thing a card game does is deal, and the shipped client opens
+   on a dialog that has already finished.
+
+   On its own element, never on the slot: a filled animation's final keyframe
+   outranks the element's own rule, so `to { transform: none }` on the slot
+   would win permanently and the arch would flatten the moment it landed. */
+@keyframes dealt {
+  from { opacity: 0; transform: translate(340px, 210px) rotate(24deg) scale(0.86); }
+  to   { opacity: 1; transform: none; }
+}
+.deal__in { position: relative; animation: dealt 460ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* The lift is on its own element too, so the slot's transform -- the arch,
+   written once -- never has to be rebuilt to carry it. */
+.deal__lift {
+  display: block;
+  transform: translateY(var(--lift, 0px));
+  transition: transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1);
+}
+.deal__slot[data-on] .deal__lift { --lift: -20px; }
+
+/* The ring is `--focus`, not `--gold`. "You are on it" and "this is the commit
+   tier" are two different facts and the palette keeps them apart on purpose. */
+.deal__slot[data-on] .face {
+  box-shadow: 0 0 0 3px var(--focus), 0 0 44px var(--focus-glow), 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+/*
+ * ONLY THE CARD YOU ARE ON HAS ITS RULES BOX OPEN.
+ *
+ * Seven full cards at 144px of pitch is seven rules boxes, six of them sliced
+ * down the middle by the card in front, and the result was a wall of half
+ * sentences with the one sentence that mattered somewhere inside it. The text
+ * you are trying to read has to win against six columns of type set at the same
+ * size, in the same colour, saying nothing.
+ *
+ * So the box is closed on every card but one. `.ffull__art` is the only member
+ * of the card that flexes, so it absorbs the space exactly and THE CARD DOES
+ * NOT CHANGE SIZE -- which is the whole constraint this pass is built around.
+ * Every box stays 296x414 and every position stays where it was written at
+ * mount; what changes is what is printed inside one of them.
+ *
+ * The unselected cards keep their name, cost, illustration, type line and
+ * power, which is what a hand looks like when you are holding it and reading
+ * one card. Nothing is hidden that you would need to choose which card to read
+ * next.
+ */
+.ffull__rules { transition: none; }
+.deal__slot:not([data-on]) .ffull__rules { display: none; }
+
+/* With the text gone the dim no longer has to fight it, so it is lighter than
+   it was: enough to say "not this one", not so much that the six become a grey
+   wall you cannot navigate. */
+.deal__slot .face { transition: filter var(--t-base) ease; }
+.deal__slot:not([data-on]) .face { filter: brightness(0.72) saturate(0.82); }
+
+/* ==========================================================================
+   The two prompts
+   ==========================================================================
+   NOT BUTTONS. A button is a rectangle you click; a prompt is a glyph and a
+   verb, and the difference is the whole tone of the screen. There is no border,
+   no fill and no hover state, because on a Deck there is no pointer -- the
+   thing that makes it pressable is that the pad has that button on it.
+
+   THE TIERS ARE STILL UNEQUAL, though, because the actions are: Keep is the
+   answer roughly nine times in ten. It is gold, it is 30px, and it is on the
+   right, which is where A physically sits on the pad. Mulligan is the same
+   shape one tier down. `ui.css`'s `.btn` gives both of these the same 7x14px
+   rectangle -- "the most-pressed control in the game looks exactly like the
+   least-pressed one", which is `../README.md`'s finding 2, here at its most
+   extreme because these two are the only controls on the screen.
+   ========================================================================== */
+.deal__acts {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 622px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 76px;
+  z-index: 5;
+}
+.act {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: var(--hit-floor);
+  padding: 12px 4px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.act .glyph { width: 40px; height: 40px; font-size: var(--fs-lead); }
+.act__words { display: grid; gap: 3px; text-align: left; }
+.act__verb { font-size: var(--fs-big); font-weight: 800; line-height: 1; }
+.act__sub { font-size: var(--fs-floor); color: var(--text-dim); }
+
+.act--keep { order: 2; }
+.act--keep .act__verb { color: var(--gold); text-shadow: 0 0 28px rgba(255, 212, 121, 0.35); }
+.act--mull { order: 1; }
+.act--mull .act__verb { color: var(--text); }
+
+.act:active .act__verb { transform: translateY(2px); }
+
+/* The only other hint on the screen, bottom left, out of the way of both. It
+   names ONE input, which is this direction's claim about reading: there is no
+   button for it, because selecting a card already is it. */
+.deal__move {
+  position: absolute;
+  left: 40px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: var(--hit-floor);
+  color: var(--text-faint);
+  font-size: var(--fs-floor);
+  z-index: 5;
+}
+</style>
+</head>
+<body>
+<script src="_mull.js"></script>
+<script>
+/*
+ * THE ARCH, AS ARITHMETIC, because every claim this file makes is a number.
+ *
+ *   W       296px -- `probe.mjs`'s answer: the narrowest a card can be and
+ *           still print its own name, cost, type line and rules at the 16px
+ *           floor. Every card is this width; none of them ever changes
+ *   PITCH   144px: 6 x 144 + 296 = 1160, which leaves 60px of margin each side
+ *   SPREAD  0.9 degrees per step off centre, about a pivot 700px down
+ *   SAG     4px per step squared, so the row sits on a curve rather than on a
+ *           line of slanted rectangles
+ *
+ * THE TILT IS SMALL BECAUSE THE PIVOT IS FAR, and the first draft got the sum
+ * of those two wrong. A slot's top outer corner sits 715px from a pivot at
+ * (148, 700), so rotating the end card by SPREAD x 3 swings that corner by
+ * 715 x 2sin(SPREAD x 1.5) -- 44px at 1.2 degrees per step, against a margin of
+ * 48. Both end cards came to rest 4px from the edge of the panel: inside the
+ * stage, so the gate passed, and visibly jammed against the bezel, so the
+ * screenshot did not. At 0.9 degrees the swing is 33px against a 60px margin.
+ *
+ * None of these is recomputed when the selection moves. That is the point of
+ * this pass: `place()` writes `left`, `top` and `transform` once, at mount, and
+ * every later press only touches `z-index`, one attribute and one custom
+ * property.
+ */
+const W = 296;
+const H = Math.round(W * 1.4);
+const PITCH = 144;
+const ROW_W = PITCH * (HAND.length - 1) + W;
+const LEFT = Math.round((1280 - ROW_W) / 2);
+const CENTRE = (HAND.length - 1) / 2;
+const SPREAD = 0.9;
+const SAG = 4;
+
+const state = { on: 3 };
+
+/* The two cards in this hand with real rules text on them, so `shoot.mjs` takes
+   a picture of the case the second pass exists for rather than only of a basic
+   land's reminder line. */
+const STATES = ["sakura-tribe-elder", "tatyova"];
+function GOTO(id) {
+  const i = HAND.findIndex((c) => c.id === id);
+  if (i >= 0) { state.on = i; select(); }
+}
+
+function markup() {
+  return (
+    '<div class="who">' +
+    '<img class="who__crop" src="../art/' + COMMANDER.art + '" alt="">' +
+    "<div>You &middot; <span class=\"who__name\">" + esc(COMMANDER.name) + "</span></div>" +
+    "</div>" +
+    '<div class="deal__eyebrow">Opening hand</div>' +
+    '<div class="lamps"><span>Mulligans</span><span class="lamps__row">' +
+    Array.from({ length: MAX_MULLIGANS }, () => '<span class="lamp"></span>').join("") +
+    "</span></div>" +
+    '<div class="deal__row" id="row">' +
+    HAND.map((card, i) => {
+      const d = i - CENTRE;
+      return (
+        '<div class="deal__slot" id="slot-' + i + '" data-i="' + i + '" style="left:' +
+        (LEFT + i * PITCH) + "px;top:" + (d * d * SAG).toFixed(1) +
+        "px;transform:rotate(" + (d * SPREAD).toFixed(2) + 'deg)">' +
+        '<div class="deal__in" style="animation-delay:' + (90 + i * 70) + 'ms">' +
+        '<div class="deal__lift">' + fullFaceHTML(card, { w: W, fs: 16 }) + "</div>" +
+        "</div></div>"
+      );
+    }).join("") +
+    "</div>" +
+    '<div class="deal__acts">' +
+    '<button class="act act--mull" type="button" id="act-mull" data-hit>' +
+    '<span class="glyph glyph--b">B</span>' +
+    '<span class="act__words"><span class="act__verb">Mulligan</span>' +
+    '<span class="act__sub">Shuffle back, draw seven, bottom one</span></span></button>' +
+    '<button class="act act--keep" type="button" id="act-keep" data-hit>' +
+    '<span class="glyph glyph--a">A</span>' +
+    '<span class="act__words"><span class="act__verb">Keep</span>' +
+    '<span class="act__sub">Seven cards, three lands</span></span></button>' +
+    "</div>" +
+    '<div class="deal__move"><span class="glyph glyph--key">&#8592;</span>' +
+    '<span class="glyph glyph--key">&#8594;</span>Read a card</div>'
+  );
+}
+
+/*
+ * MOVING THE SELECTION TOUCHES THREE THINGS AND NO GEOMETRY.
+ *
+ * `z-index` falls away from the card you are on in both directions; the
+ * attribute drives the ring, the dim and the lift. Nothing here reads or writes
+ * `left`, `top` or `transform` -- the previous pass did, and that is the whole
+ * defect this one exists to fix, so it is worth saying out loud that the
+ * absence is deliberate rather than an oversight.
+ */
+function select() {
+  HAND.forEach((_, i) => {
+    const slot = document.getElementById("slot-" + i);
+    slot.style.zIndex = 100 - Math.abs(i - state.on);
+    slot.toggleAttribute("data-on", i === state.on);
+  });
+  STAGE.tag("reading <b>" + esc(HAND[state.on].name) + "</b> &middot; every card " + W + "px");
+}
+
+function step(d) {
+  const next = state.on + d;
+  if (next < 0 || next >= HAND.length) {
+    /* A refusal at the end of the row, visible AND felt. The row leans the way
+       you pushed and comes back; the pad buzzes. `../door/`'s rule holds --
+       rumble is never the only channel. */
+    STAGE.refuse(document.getElementById("row"), d);
+    return;
+  }
+  state.on = next;
+  select();
+}
+
+const keep = () => STAGE.commit("Keep", "Seven cards. Turn one: Forest, Sol Ring.");
+const mull = () => STAGE.commit("Mulligan", "Shuffle, draw seven, put one on the bottom.", true);
+
+STAGE.mount("01 The Deal", markup(), {
+  left: () => step(-1),
+  right: () => step(1),
+  a: keep,
+  b: mull,
+});
+
+/* The mouse is a review affordance, not a design one -- these are meant to be
+   read on a Deck. A hover selects; the two prompts are real buttons so a
+   reviewer without a pad can press them. */
+for (const el of document.querySelectorAll(".deal__slot")) {
+  el.addEventListener("mouseenter", () => { state.on = +el.dataset.i; select(); });
+}
+document.getElementById("act-keep").addEventListener("click", keep);
+document.getElementById("act-mull").addEventListener("click", mull);
+
+select();
+</script>
+</body>
+</html>

@@ -158,6 +158,16 @@ export const MOUNTS = {
 
   /* ---- the board ---- */
   trackRow: { where: "the phase ribbon's row of .table", layers: board },
+  /*
+   * The whole board, for the surfaces that COVER it rather than sit in it.
+   *
+   * `.table` is the positioned root -- `board.css:38-41` gives it a `position`
+   * so `.table__air` has something to pin to -- so a full-screen overlay
+   * resolving `inset: 0` needs it and nothing below it. Mounting `OpeningHand`
+   * on `screen` instead would leave it pinned to the viewport, which is nearly
+   * the same box in a story and not the same box at all in the app.
+   */
+  tableOverlay: { where: "over the whole board", layers: board },
   tableBody: { where: "the board's body: the board, the foot and the rail", layers: tableBody },
   /*
    * The foot is a child of the BODY now, not of the table, and it states no

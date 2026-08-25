@@ -25,7 +25,7 @@
  */
 
 import { type Page, expect, test } from "@playwright/test";
-import { actionsOfKind, startGame, waitForOurTurn } from "./helpers";
+import { actionsOfKind, keepOpeningHand, startGame, waitForOurTurn } from "./helpers";
 
 /**
  * Install a fake pad before the app boots.
@@ -139,27 +139,45 @@ test.describe("a gamepad drives the board", () => {
   test("the d-pad walks the ring and A presses what it is on", async ({ page }) => {
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
-    // The mulligan owns the ring before anything else does.
-    await expect(page.getByTestId("prompt-dialog")).toBeVisible();
-    await press(page, BTN.down);
-    const start = await cursor(page);
-    expect(start, "the ring should start inside the open dialog").toMatch(/^act:/);
-
-    await press(page, BTN.right);
-    const moved = await cursor(page);
-    expect(moved).toMatch(/^act:/);
+    // The opening hand owns the ring before anything else does.
+    const stage = page.getByTestId("opening-hand");
+    await expect(stage).toBeVisible();
 
     /*
-     * Six presses in every direction never leave. The board behind the dialog
-     * is full of stops and comes first in the markup, so a resolver without a
-     * trap would have walked straight out onto it.
+     * INSIDE THE SURFACE, rather than in a particular stop namespace.
+     *
+     * This used to assert `^act:` because the only stops in the old dialog were
+     * its two buttons. The opening hand's stops are mostly CARDS -- the ring
+     * opens on the middle one, because reading the hand is what moving is for --
+     * so the namespace was never the claim. Containment is.
+     */
+    const inside = () =>
+      page.evaluate(() => {
+        const stop = document.querySelector("[data-cursor]");
+        return stop !== null && stop.closest("[data-testid='opening-hand']") !== null;
+      });
+
+    expect(await cursor(page), "the ring should start on a card").toMatch(/^card:/);
+    await press(page, BTN.right);
+    expect(await inside(), "the ring left the surface on the first step").toBe(true);
+
+    /*
+     * Presses in every direction never leave. The board behind it is full of
+     * stops and comes first in the markup, so a resolver without a trap would
+     * have walked straight out onto it.
      */
     for (const btn of [BTN.down, BTN.right, BTN.down, BTN.right]) await press(page, btn);
-    expect(await cursor(page), "the ring escaped the modal").toMatch(/^act:/);
+    expect(await inside(), "the ring escaped the modal").toBe(true);
 
-    // And `A` answers it, which is the whole loop: navigate, press, continue.
+    /*
+     * And `A` answers it from wherever it landed, which is the whole loop.
+     *
+     * On a card that is the surface's own binding -- keeping is what `A` means
+     * on this screen, and `verbs.ts` says so in the hint bar. On the Keep plate
+     * it is `useCursorNav`'s click. Either way one press, one answer.
+     */
     await press(page, BTN.a);
-    await expect(page.getByTestId("prompt-dialog")).toBeHidden();
+    await expect(stage).toBeHidden();
     await waitForOurTurn(page);
 
     // The ring re-derives onto the board rather than going out with the dialog.
@@ -508,11 +526,9 @@ test.describe("a controller disguised as a keyboard", () => {
      */
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
-    // The mulligan is a MODAL, and a modal trap is deliberately still hard --
-    // so the region question only exists once it is gone.
-    const keep = actionsOfKind(page, "keep");
-    if (await keep.count()) await keep.first().click();
-    await waitForOurTurn(page);
+    // The opening hand is a MODAL, and a modal trap is deliberately still hard
+    // -- so the region question only exists once it is gone.
+    await keepOpeningHand(page);
 
     /** Which of the five regions the ring is in, by the app's own selectors. */
     const region = () =>
@@ -531,6 +547,22 @@ test.describe("a controller disguised as a keyboard", () => {
       });
 
     const seen = new Set<string>();
+    /*
+     * SEEDED WITH WHERE THE WALK STARTS, which the first version of this was not.
+     *
+     * Recording only the region after each press makes the assertion depend on
+     * which region the ring happens to be in when the loop begins: start in the
+     * hand and the very first press is already in the rail, so a set built from
+     * presses alone contains one region for a walk that plainly crossed a
+     * boundary. The claim is "the arrows moved the ring out of a region", and
+     * the region it moved out of is part of that.
+     *
+     * Found when `keepOpeningHand` changed the timing by a few hundred
+     * milliseconds and this went red without the app behaving any differently.
+     */
+    const first = await region();
+    if (first) seen.add(first);
+
     // Up and down rather than one direction: the point is that the ring crosses
     // region boundaries, and a single direction runs out of board.
     for (const key of ["ArrowUp", "ArrowDown", "ArrowUp", "ArrowDown"]) {

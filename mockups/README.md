@@ -19,7 +19,8 @@ seat/                     an opponent's seat at 332x84, three densities, six dir
 rail/                     the action rail at 243x514, one direction across three decisions
 self/                     your own orb at 154x518 — and what to take off it
 handheld-board/           the whole 1280x800 screen, at full fidelity
-door/                     the latest: the front door as a game menu, three cards on a Deck
+door/                     the front door as a game menu, three cards on a Deck
+mulligan/                 the latest: keep-or-mulligan, as a game screen instead of a dialog
 ```
 
 These five are about the **board**. [`cards/`](cards/README.md) is a separate,
@@ -29,7 +30,7 @@ instead of the letter-on-a-disc pips. It picks up three problems these mockups
 did not look at: the name colliding with its own mana cost, the invented mana
 symbols, and lands all being one tan rectangle.
 
-[`handheld-board/`](handheld-board/README.md) is the most recent, and the only
+[`handheld-board/`](handheld-board/README.md) is the round before those two, and the only
 round that draws **the whole 1280x800 screen** rather than one component over a
 sketch of one. It puts `seat/06-muster.html`'s opponent card, `self/03-plinth.html`'s
 player orb and `rail/`'s action panel on the same Deck, on the layout 06
@@ -53,7 +54,36 @@ the crop, which was that direction's one stated price at 40% of the painting's
 width, comes back to 84% because this layout's foot is 122px taller and the
 portrait is the elastic member.
 
-[`door/`](door/README.md) is the most recent, and the only round whose subject is
+[`mulligan/`](mulligan/README.md) is the most recent, and it takes the round
+after the front door to the screen immediately behind it: **the first decision
+of every game**. `PromptDialog` draws "Keep this hand?" as a centred rectangle
+with an 18px title and two identical grey `.opt` buttons, over a hand it is
+standing on top of -- and `ui.css:941-951`'s backdrop is the admission, a
+*gradient* rather than a flat dim, with a comment saying it exists because "a
+flat dim over the whole viewport hid the one thing the player has to look at".
+Behind it the hand is at 73.6px. Neither option is drawn as a card, because
+`rowsFor` only draws a face when an option refers to an object and the mulligan
+decision's two carry no ref; and the count the engine puts in the decision's own
+prompt string (`game.py:1155`) is thrown away for a constant.
+
+Five directions, from deleting the dialog outright to keeping a panel and
+spending a third of the screen on a read of the hand. Its sharpest finding is
+one the mockups only reached by being measured rather than looked at, and it is
+about READING rather than about looks: **seven readable cards do not fit on a
+Steam Deck.** `probe.mjs` binary-searches a real card for the narrowest width at
+which it can print its own name, cost, type line and rules text at the 16px
+floor -- 296px for the widest of these seven -- and seven of those is 2072px
+against a 1280px panel. The desktop preview card cannot be borrowed either: its
+type scale is absolute and its rules text is 12px, four under the floor, which
+is why `CardPreview` already swaps the whole node out on a handheld.
+
+So every direction here shows one card at a time, and HOW is the comparison.
+Four raise it over the room on Y, with a 0.55 scrim and no blur so the thing you
+are deciding about stays legible behind it. `01-the-deal.html` does not: all
+seven of its cards are the full 296px card, the arch is written once at mount
+and never moves again, and only the one you are on has its rules box open.
+
+[`door/`](door/README.md) is the round before it, and the first whose subject is
 a **control** rather than a layout. It takes the front door -- a wordmark, a gold
 button, a text field and a footer of 11px links -- and makes a Steam Deck main
 menu out of the one game-shaped object already on it: the fan of four card backs
