@@ -22,8 +22,16 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { getCursor, resetCursor, resolveCursor, setCursor } from "../src/input/cursor";
+import {
+  RAIL_SETTLE,
+  getCursor,
+  resetCursor,
+  resolveCursor,
+  setCursor,
+} from "../src/input/cursor";
+import { noteInput, resetInputMode } from "../src/input/inputMode";
 import { stopElement, stopRoot, stopsIn } from "../src/input/stops";
+import { useUiStore } from "../src/state/uiStore";
 
 /** jsdom gives every element a zero-sized box; `candidatesIn` drops those. */
 function board(html: string): HTMLElement {
@@ -338,5 +346,71 @@ describe("setCursor", () => {
       <div data-modal-root><button data-stop="act:a1"></button></div>
     `);
     expect(setCursor("card:1")).toBe(false);
+  });
+});
+
+/*
+ * The preview rail, driven by the ring.
+ *
+ * A `card:` stop is a card and answers for itself. An action row is a decision
+ * ABOUT a card somewhere else, and it says which one in `data-preview-oid` --
+ * the same fact `ActionPanel`'s `previewing()` gives the pointer.
+ *
+ * Reading it is not a nicety. `hoverFor` runs after `stamp()` has moved DOM
+ * focus, so the row's own `onFocus` had already filled the rail by the time a
+ * null arrived to clear it: on a pad or a keyboard the rail went blank on every
+ * row, while a mouse over the same row worked.
+ *
+ * Real timers, because a second move inside `RAIL_SETTLE` is a *sweep* and is
+ * deliberately deferred -- see `hoverFor`. Waiting is what asks the question the
+ * player would ask, which is what the rail says once they stop.
+ */
+describe("the preview rail follows the ring", () => {
+  const settle = () => new Promise((resolve) => setTimeout(resolve, RAIL_SETTLE + 20));
+
+  beforeEach(() => {
+    // Nothing is written in mouse mode, by design -- `hoverFor` returns early.
+    noteInput("pad");
+    useUiStore.setState({ hoveredOid: null });
+  });
+
+  afterEach(() => {
+    resetInputMode();
+    useUiStore.setState({ hoveredOid: null });
+  });
+
+  it("reads a card stop's own oid out of its id", async () => {
+    board(`<div data-stop="card:7"></div>`);
+    setCursor("card:7");
+    await settle();
+    expect(useUiStore.getState().hoveredOid).toBe(7);
+  });
+
+  it("takes the card an action row declares", async () => {
+    board(`<button data-stop="act:a1-attack" data-preview-oid="12"></button>`);
+    setCursor("act:a1-attack");
+    await settle();
+    expect(useUiStore.getState().hoveredOid).toBe(12);
+  });
+
+  it("clears on a stop that is about no card at all", async () => {
+    board(`
+      <div data-stop="card:7"></div>
+      <button data-stop="tool:quit"></button>
+    `);
+    setCursor("card:7");
+    await settle();
+    setCursor("tool:quit");
+    await settle();
+    expect(useUiStore.getState().hoveredOid).toBe(null);
+  });
+
+  it("does not read a missing attribute as the zeroth object", async () => {
+    // `Number(null)` is 0 and `Number.isFinite(0)` is true, which is a hover on
+    // whatever object happens to be oid 0.
+    board(`<button data-stop="act:a2-pass"></button>`);
+    setCursor("act:a2-pass");
+    await settle();
+    expect(useUiStore.getState().hoveredOid).toBe(null);
   });
 });

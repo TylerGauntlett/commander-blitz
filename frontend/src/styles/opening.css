@@ -145,17 +145,46 @@
   color: inherit;
   font: inherit;
   cursor: pointer;
+  /* The arch AND the lift, both written inline by `OpeningHand` -- see the note
+     on that `transform`. Only the second of the two ever changes, so this
+     animates the rise and the sink and nothing else. */
+  transition: transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* The lift is on its own element, so the slot's transform -- the arch, written
-   once -- never has to be rebuilt to carry it. `.hand__slot` / `.hand__lift`
-   split for the same reason, and `board.css:1816-1826` records the bug that
-   forced it: transform the box a pointer is inside and the card leaves the
-   pointer, `mouseleave` fires, it drops, `mouseenter` fires, forever. */
+/*
+ * THE HIT PAD, and it is what lets the slot move at all.
+ *
+ * `board.css:1816-1826` records the bug it answers: transform the box a pointer
+ * is inside and the card leaves the pointer, `mouseleave` fires, it drops,
+ * `mouseenter` fires, forever. The hand's answer is to keep the slot still and
+ * move a child; this screen cannot, because the slot is the STOP and the ring is
+ * drawn around whatever the stop's box is -- a card that rose out of its own
+ * button left the ring below it, around nothing.
+ *
+ * So the box moves and its hit region is bigger than it is: `--mull-pad` is the
+ * larger of the lift and the sink (`logic/openingHand.ts`), extended at both
+ * ends, so wherever the slot travels its hit region still covers where it
+ * started. The pointer stays inside the same element for the whole rise and no
+ * enter or leave fires anywhere.
+ *
+ * Invisible and unpainted -- no background, no border. It sits over the card it
+ * belongs to, which costs nothing: the whole slot is one button and there is
+ * nothing inside it a pointer needs to reach separately.
+ */
+.mull__slot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(-1 * var(--mull-pad, 0px));
+  bottom: calc(-1 * var(--mull-pad, 0px));
+}
+
+/* All that is left of the split: the card's own box, so a `<span>` around a
+   block does not inherit an inline box's line-height. The transform it used to
+   carry is on `.mull__slot` above. */
 .mull__lift {
   display: block;
-  transform: translateY(var(--mull-lift, 0px));
-  transition: transform var(--t-base) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* The ring's gold is `--focus`, not `--gold`. "You are on it" and "this is the
@@ -272,11 +301,9 @@
 
 /* A card marked for the bottom sinks and goes cold. `--staged` is the board's
    own "committed but not yet paid for" colour, which is exactly what a pick
-   before the engine has moved the card is. */
-.mull__slot[data-marked] .mull__lift {
-  transform: translateY(calc(22px * var(--mu)));
-}
-
+   before the engine has moved the card is. The sink itself is `MULL_TUNE.SINK`,
+   on the same inline transform as the lift, because a stylesheet cannot beat an
+   inline one and the two poses are alternatives rather than a stack. */
 .mull__slot[data-marked] .card {
   filter: saturate(0.5) brightness(0.62);
 }
@@ -448,7 +475,7 @@ html[data-input="keyboard"] .mull__act[data-cursor] {
  * rules box all still say which card you are on.
  */
 @media (prefers-reduced-motion: reduce) {
-  .mull__lift,
+  .mull__slot,
   .mull__slot .card {
     transition: none;
   }
