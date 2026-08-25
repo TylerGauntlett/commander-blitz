@@ -25,7 +25,14 @@
  */
 
 import { type Page, expect, test } from "@playwright/test";
-import { actionsOfKind, keepOpeningHand, startGame, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  isOver,
+  keepOpeningHand,
+  startGame,
+  takeAction,
+  waitForOurTurn,
+} from "./helpers";
 
 /**
  * Install a fake pad before the app boots.
@@ -76,7 +83,7 @@ async function press(page: Page, index: number): Promise<void> {
 }
 
 /** W3C Standard Gamepad indices, the ones this suite uses. */
-const BTN = { a: 0, b: 1, l1: 4, r1: 5, down: 13, right: 15 } as const;
+const BTN = { a: 0, b: 1, l1: 4, r1: 5, l2: 6, down: 13, left: 14, right: 15 } as const;
 
 const cursor = (page: Page) =>
   page.evaluate(
@@ -578,5 +585,121 @@ test.describe("a controller disguised as a keyboard", () => {
       seen.size,
       `the ring never left its region; saw only ${[...seen].join(", ") || "nothing"}`,
     ).toBeGreaterThan(1);
+  });
+});
+
+/**
+ * Play on until a combat declaration is ours to make.
+ *
+ * A loop rather than a seed that lands on one: reaching combat means keeping a
+ * hand, casting creatures and surviving to the step, and the engine is
+ * deterministic per seed but the AI pump is a real timing loop. `edgar` rather
+ * than the suite's usual `aesi` for the same reason -- Mardu vampire aggro puts
+ * creatures on the board in the first three turns, and a ramp deck reaches its
+ * own combat step with nothing to declare.
+ */
+async function reachCombat(page: Page, kind: "add_attacker" | "add_blocker"): Promise<void> {
+  const prefer =
+    kind === "add_attacker"
+      ? ["keep", "play_land", "cast", "pass"]
+      : ["keep", "play_land", "cast", "finish_declaration", "pass"];
+  for (let i = 0; i < 120; i += 1) {
+    await waitForOurTurn(page);
+    expect(await isOver(page), "the game ended before combat").toBe(false);
+    if (await actionsOfKind(page, kind).count()) {
+      /*
+       * Let the decision auto-jump land before driving.
+       *
+       * `Table` moves the ring to the region a new decision is in, and it waits
+       * for narration to settle first -- so the decision existing and the ring
+       * having finished arriving are two different moments, and a press between
+       * them is a press the app then overrides.
+       */
+      await page.waitForTimeout(1500);
+      return;
+    }
+    await takeAction(page, prefer);
+  }
+  throw new Error(`never reached ${kind}`);
+}
+
+/**
+ * THE COMBAT BAR, WHICH WAS REACHABLE BY MOUSE AND BY NOTHING ELSE.
+ *
+ * Three controls sit in the dock during a declaration -- the "all" mark, the
+ * Attack/Block slab, and "No attacks" -- and only the third is a server action,
+ * so only the third picked up a `data-stop` from `actionAttrs`. The other two
+ * stage into `uiStore` and declare what is staged; they carry no
+ * `data-action-id` by design, which is exactly why the panel's own
+ * exactly-once invariant scored a clean board while a controller could not
+ * press either of them. There was no arrow key, no d-pad and no `L2` that
+ * reached the two buttons a combat step is actually spent on.
+ *
+ * `L2` lands on the mark rather than the slab, and the order matters twice
+ * over: the mark answers the decision outright, and the slab beside it is
+ * DISABLED until something is staged -- which is its state at the instant the
+ * decision opens, so landing there put the ring on a dead control.
+ *
+ * Driven with the real trigger rather than its keyboard stand-in, because `L2`
+ * is analog and a tap of it also crosses the threshold `Table` holds the region
+ * dial on. A tap must jump and not leave a dial behind.
+ */
+test.describe("the combat bar answers a controller", () => {
+  test.beforeEach(async ({ page }) => {
+    await withFakePad(page);
+  });
+
+  test("L2 lands on the all mark, and right walks the rest of the bar", async ({ page }) => {
+    test.setTimeout(600_000);
+    await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
+    await reachCombat(page, "add_attacker");
+
+    await press(page, BTN.l2);
+    expect(await cursor(page), "L2 did not land on the all mark").toBe("commit:all");
+
+    await press(page, BTN.right);
+    expect(await cursor(page), "right did not reach the Attack slab").toBe("commit");
+
+    // ...and the third control is one more step along, so nothing in the row is
+    // stranded between two stops.
+    await press(page, BTN.right);
+    expect(await cursor(page)).toMatch(/^act:/);
+
+    await press(page, BTN.left);
+    await press(page, BTN.left);
+    expect(await cursor(page), "the walk is not reversible").toBe("commit:all");
+  });
+
+  test("A on the mark stages the attack and A on the slab declares it", async ({ page }) => {
+    /*
+     * The loop the ring exists for, end to end. Reaching the buttons is half
+     * the claim: pressing them has to post the declaration, which is what
+     * `add_attacker` disappearing says.
+     */
+    test.setTimeout(600_000);
+    await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
+    await reachCombat(page, "add_attacker");
+
+    await press(page, BTN.l2);
+    await press(page, BTN.a);
+    await expect(page.getByTestId("combat-confirm")).toBeEnabled();
+
+    await press(page, BTN.right);
+    await press(page, BTN.a);
+    await waitForOurTurn(page);
+    await expect(actionsOfKind(page, "add_attacker")).toHaveCount(0);
+  });
+
+  test("blocking has the same bar and the same walk", async ({ page }) => {
+    // The two modes render from one branch, and a mode-specific regression is
+    // the kind that ships: attacking is the one anybody tests by hand.
+    test.setTimeout(600_000);
+    await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
+    await reachCombat(page, "add_blocker");
+
+    await press(page, BTN.l2);
+    expect(await cursor(page), "L2 did not land on the all mark").toBe("commit:all");
+    await press(page, BTN.right);
+    expect(await cursor(page), "right did not reach the Block slab").toBe("commit");
   });
 });

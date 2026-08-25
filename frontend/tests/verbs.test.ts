@@ -268,6 +268,35 @@ describe("verbsFor", () => {
     });
   });
 
+  /*
+   * The combat dock, whose two local controls are `commit` stops.
+   *
+   * Neither the "all" mark nor the slab is a server action -- they stage into
+   * `uiStore` and declare what is staged -- so there is no `base_label` to read
+   * and the verb is written by hand. It is written to match the button's own
+   * words, because `A Confirm` printed over a button reading `Attack` is
+   * exactly the small lie this whole file exists to stop.
+   */
+  describe("on the combat bar", () => {
+    const declaring = (kind: "declare_attackers" | "declare_blockers") =>
+      gameView({ pending: pending({ kind, player: 0 }), players: [player({ pid: 0 })] });
+
+    it("names the mark after the decision it answers outright", () => {
+      expect(verbsFor(declaring("declare_attackers"), [], "commit:all").a).toBe("All attack");
+      expect(verbsFor(declaring("declare_blockers"), [], "commit:all").a).toBe("All defend");
+    });
+
+    it("names the slab after the word printed on it", () => {
+      expect(verbsFor(declaring("declare_attackers"), [], "commit").a).toBe("Attack");
+      expect(verbsFor(declaring("declare_blockers"), [], "commit").a).toBe("Block");
+    });
+
+    it("falls back to Confirm off combat, where the slab has no combat word", () => {
+      expect(verbsFor(gameView(), [], "commit").a).toBe("Confirm");
+      expect(verbsFor(gameView(), [], "commit:all").a).toBe("All");
+    });
+  });
+
   it("offers Read wherever there is a card to read", () => {
     const state = gameView({ battlefield: [creature(1)] });
     expect(verbsFor(state, [], "card:1").y).toBe("Read");
