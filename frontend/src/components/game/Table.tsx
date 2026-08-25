@@ -961,6 +961,47 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     if (target) setCursor(target);
   }, []);
 
+  /**
+   * `L2` SENDS THE RING TO THE THING THAT SUBMITS YOUR TURN.
+   *
+   * It used to send it to the tool strip, which `Menu` already did -- two
+   * buttons for one jump, and neither of them for the jump that matters. The
+   * commit slab is where a turn is actually spent: Attack, Block, Done, Pass.
+   * It lives in the right rail, and on a handheld the ring is almost never
+   * near it -- you are in your hand, or out on an opponent's board picking
+   * something to attack, and the rail is the far corner of the screen. Walking
+   * there is a dozen presses across a 96px seat strip, three lanes and a fanned
+   * hand, or two `R1` steps if you happen to know the region order. Neither is
+   * a thing to ask for once per phase, thirteen phases a turn.
+   *
+   * The slab specifically, and not the region: `enterGroup` would land on
+   * whichever action the ring last used, and what somebody pressing this wants
+   * is the button that ENDS the decision. Entering the region first is still
+   * right -- it keeps the "where were you when you left" bookkeeping honest,
+   * and the trap has to move with the ring -- so this is that, with the
+   * landing spot overridden.
+   *
+   * The region is the fallback for the moment there is no slab (the panel is
+   * mid-decision and offers only rows), and a deny for the moment there is no
+   * panel at all, because a jump that silently does nothing is the defect the
+   * whole hint bar was rewritten to stop.
+   */
+  const jumpToCommit = useCallback(() => {
+    const acts = groupRoot("acts");
+    if (!acts || landableStopsIn(acts).length === 0) {
+      cue("deny");
+      return;
+    }
+    enterGroup("acts");
+    // The dock sits outside the panel's scrolling pane, which is what makes it
+    // findable by class here rather than by the action id it happens to carry
+    // this phase -- `actionAttrs` names the slab after the decision, so its
+    // stop id is different on every one of them.
+    const dock = document.querySelector<HTMLElement>(".commit-dock");
+    const slab = dock ? landableStopsIn(dock)[0]?.dataset.stop : undefined;
+    if (slab) setCursor(slab);
+  }, [enterGroup, cue]);
+
   const stepGroup = useCallback(
     (step: 1 | -1) => {
       const next = nextGroup(getGroup(), step);
@@ -1132,16 +1173,12 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         setCursor(stopId.tool("settings"));
       }),
       /*
-       * `L2` was advertised by the hint bar and bound to nothing -- `Menu` was
-       * what actually jumped the ring to the tool strip. It does two things now
-       * and they do not collide: a PRESS jumps to the tools, and HOLDING it
-       * opens the region dial (the `onPadFrame` above). A tap crosses and
-       * releases the analog threshold inside a frame or two, which is over
-       * before the dial is worth looking at.
+       * A PRESS jumps to the commit slab, and HOLDING it opens the region dial
+       * (the `onPadFrame` above). The two do not collide: a tap crosses and
+       * releases the analog threshold inside a frame or two, which is over long
+       * before the dial is worth looking at. See `jumpToCommit`.
        */
-      onPad("l2", () => {
-        setCursor(stopId.tool("settings"));
-      }),
+      onPad("l2", jumpToCommit),
       /*
        * Any press ends a hold and puts a held card down.
        *
@@ -1165,6 +1202,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     narration.busy,
     skipAll,
     stepGroup,
+    jumpToCommit,
     heldCard,
     cue,
     state,

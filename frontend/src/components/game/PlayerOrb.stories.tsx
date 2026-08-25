@@ -8,7 +8,8 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { useEffect, useState } from "react";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
 import { APP_VAR } from "../../testing/appGeometry";
 import { expectMountedLike } from "../../testing/asserts";
@@ -201,5 +202,76 @@ export const NoSpineAnywhere: Story = {
     if (canvasElement.querySelector(".orb__spine")) {
       throw new Error("the summary line belongs to OpponentSeat now");
     }
+  },
+};
+
+/**
+ * THE LIFE TOTAL STAYS READABLE AFTER IT CHANGES.
+ *
+ * The numeral flashes green or red on a life change and then goes back to its
+ * resting colour -- and Framer writes that resting colour back as an INLINE
+ * style, which beats every rule in the stylesheet. The component named
+ * `--dial-ink` for it, which is right on the desktop seal: the numeral sits on
+ * brass, and returning it to the old off-white left it white-on-gold.
+ *
+ * The handheld dial is not brass. It is a gold ring around a hole punched out
+ * of `--void-1`, and `handheld.css` colours the numeral `--text` for exactly
+ * that reason -- so one point of damage stamped near-black ink onto a dark
+ * purple well and the life total became unreadable. Only after the first hit,
+ * on the one layout the game is built for.
+ *
+ * `--dial-n` is the indirection that fixes it: the stylesheet owns the resting
+ * ink at both sizes and the component says "put it back" without knowing which
+ * disc it is on. This is the story that would notice it being named directly
+ * again -- so it asserts CONTRAST rather than a colour, because what actually
+ * broke was legibility and a token name is not the property.
+ */
+function reading(el: HTMLElement): number {
+  const [r, g, b] = (getComputedStyle(el).color.match(/[\d.]+/g) ?? ["0", "0", "0"]).map(
+    Number,
+  );
+  // Rec. 601 luma is plenty for "is this ink or is it paper".
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+}
+
+/** Renders the orb, then takes a life off it once -- as a hit would. */
+function TakesAHit(props: ReturnType<typeof seat>) {
+  const [life, setLife] = useState(props.player.life);
+  useEffect(() => {
+    const id = setTimeout(() => setLife((n) => n - 7), 30);
+    return () => clearTimeout(id);
+  }, []);
+  return <PlayerOrb {...props} player={{ ...props.player, life }} />;
+}
+
+export const HandheldLifeStaysReadableAfterAHit: Story = {
+  args: seat(),
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "matSide", motion: "real" } },
+  render: (args) => <TakesAHit {...(args as ReturnType<typeof seat>)} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const numeral = await canvas.findByTestId("life-0");
+    const before = reading(numeral);
+    expect(before, "the numeral starts light on this dial").toBeGreaterThan(0.5);
+
+    // The hit lands, the flash plays, and the numeral comes back to rest.
+    await waitFor(() => expect(numeral.textContent).toBe("33"));
+    await waitFor(
+      () => {
+        expect(numeral.style.color, "the animation rests inline").not.toBe("");
+      },
+      { timeout: 2000 },
+    );
+    await waitFor(
+      () => {
+        expect(
+          reading(numeral),
+          `the life total rested at ${getComputedStyle(numeral).color} on a dark dial`,
+        ).toBeGreaterThan(0.5);
+      },
+      { timeout: 2000 },
+    );
   },
 };

@@ -339,6 +339,42 @@ describe("recovering a stalled loop", () => {
   });
 });
 
+/**
+ * The key latch, and the press that fell down the gap behind it.
+ *
+ * A key tapped faster than a frame is a key the poll never sees, so `keyLatch`
+ * holds it until one frame has looked. That frame writes `prev` as well -- so
+ * it records the key as DOWN, and only the NEXT frame can record the release.
+ * With no pad connected there is nothing else to poll, so that next frame sat
+ * on the 100ms idle timer... and `wake()` cancels the idle timer the instant
+ * another key arrives. The second press then read `down && was`, produced no
+ * edge, and was dropped in silence.
+ *
+ * Two taps inside a tenth of a second were one press, on the keyboard fallback
+ * only -- a real pad keeps the loop at full rate and gets the release frame for
+ * free, which is why this never showed up on a desk. It shows up on a Steam
+ * Deck in gaming mode, where the whole controller IS the keyboard fallback.
+ */
+describe("two taps in quick succession", () => {
+  it("fires twice, even with nothing else keeping the loop awake", () => {
+    const hits: string[] = [];
+    startPad();
+    on("a", () => hits.push("a"));
+
+    const tap = () => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+      vi.advanceTimersByTime(40);
+      window.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter" }));
+      // Well inside `IDLE_MS`, which is exactly the window that ate the second.
+      vi.advanceTimersByTime(40);
+    };
+
+    tap();
+    tap();
+    expect(hits).toEqual(["a", "a"]);
+  });
+});
+
 describe("diagnostics", () => {
   it("reports what the browser can see, not only what the app decided", () => {
     startPad();

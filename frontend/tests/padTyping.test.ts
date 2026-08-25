@@ -61,6 +61,20 @@ function field(value: string, at: number, kind: "input" | "textarea" = "input") 
   return el;
 }
 
+/** An option list with the ring on it -- the deck catalogue's Sort box. */
+function options() {
+  const el = document.createElement("select");
+  for (const value of ["name", "speed"]) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    el.append(option);
+  }
+  document.body.append(el);
+  el.focus();
+  return el;
+}
+
 /**
  * One key, pressed and released, from a given element.
  *
@@ -76,7 +90,7 @@ function tap(el: Element | Window, key: string): KeyboardEvent {
 }
 
 /** What the pad layer heard, in order. */
-function listen(...names: ("a" | "up" | "down" | "left" | "right")[]): string[] {
+function listen(...names: ("a" | "b" | "up" | "down" | "left" | "right")[]): string[] {
   const heard: string[] = [];
   startPad();
   for (const name of names) on(name, () => heard.push(name));
@@ -223,5 +237,88 @@ describe("Enter, outside a field", () => {
     document.body.append(button);
     tap(button, "Escape");
     expect(seen).toEqual(["Escape"]);
+  });
+});
+
+/**
+ * The other control the ring can walk into, and the one that had no way out.
+ *
+ * `fieldKeeps` handed a `<select>` every key, on the reasoning that its arrows
+ * change the option and the native control wraps -- so unlike a text field
+ * there is no end of the line to fall off. That is right about up and down and
+ * wrong about everything else, and it cost two separate defects on the deck
+ * catalogue's Sort box.
+ *
+ * The ring could not leave it: left and right have nothing to do on a list with
+ * no caret, and they were being eaten anyway, so the box was a one-way door on
+ * the one screen a player has to walk across to choose a deck.
+ *
+ * And `Backspace` -- which `SWALLOW` carries precisely because it is a history
+ * step in some contexts and is not recoverable -- never reached `SWALLOW` at
+ * all, because `fieldKeeps` returns before it is consulted. A controller layout
+ * that sends Backspace for `B`, which is what a Steam Deck's stock browser
+ * template does, therefore navigated the browser BACK out of `/pods/{code}` and
+ * on to the front door. The button that should have closed the catalogue closed
+ * the pod.
+ */
+describe("a direction, with an option list in the way", () => {
+  it("gives Up to the list, which is what changes the option", () => {
+    const heard = listen("up");
+    tap(options(), "ArrowUp");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual([]);
+  });
+
+  it("gives Down to the list for the same reason", () => {
+    const heard = listen("down");
+    tap(options(), "ArrowDown");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual([]);
+  });
+
+  it("gives Left to the ring, because a list has no caret to move", () => {
+    const heard = listen("left");
+    tap(options(), "ArrowLeft");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual(["left"]);
+  });
+
+  it("gives Right to the ring as well", () => {
+    const heard = listen("right");
+    tap(options(), "ArrowRight");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual(["right"]);
+  });
+
+  it("preventDefaults the one it takes, or the option steps on the way out", () => {
+    // Chrome and Firefox both change a closed select's value on Left/Right.
+    listen("left");
+    const event = tap(options(), "ArrowLeft");
+    expect(event.defaultPrevented).toBe(true);
+  });
+});
+
+describe("Back, with an option list in the way", () => {
+  it("hands Escape to the ring rather than to the list", () => {
+    const heard = listen("b");
+    tap(options(), "Escape");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual(["b"]);
+  });
+
+  it("hands Backspace over AND swallows it, so the browser cannot step back", () => {
+    const heard = listen("b");
+    const event = tap(options(), "Backspace");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual(["b"]);
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it("still lets Enter open the list, which is the only way to use one", () => {
+    const heard = listen("a");
+    const event = tap(options(), "Enter");
+    vi.advanceTimersByTime(100);
+    expect(heard).toEqual([]);
+    expect(event.defaultPrevented).toBe(false);
   });
 });

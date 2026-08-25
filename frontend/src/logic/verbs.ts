@@ -287,9 +287,15 @@ export function verbsFor(
  *
  * All three are bound now. `L1`/`R1` step between the board's regions
  * (`input/groups.ts`), `L2` held opens the dial that jumps straight to one and
- * tapped sends the ring to the tool strip, and `Y` reads the card the ring is
+ * tapped sends the ring to the commit slab, and `Y` reads the card the ring is
  * on at full size. `L1` stands for the pair because two glyphs for one idea is
  * what the bar is short of room for, and the direction is the obvious half.
+ *
+ * `L2` said `Jump`, which named the mechanism rather than the destination and
+ * pointed at the tool strip -- a jump `Menu` already made. It says `Decide`
+ * now, because the place worth a button of its own is the slab that ends the
+ * decision: Attack, Block, Done, Pass. That control lives in the right rail,
+ * and the ring is almost never near it.
  *
  * `tests/hintsBound.test.ts` fails the build if a button named here loses its
  * listener, which is the cheap way to stop this happening a second time. It
@@ -299,5 +305,5 @@ export function verbsFor(
 export const NAVIGATION_HINTS = [
   { btn: "dpad", label: "Move" },
   { btn: "l1", label: "Region" },
-  { btn: "l2", label: "Jump" },
+  { btn: "l2", label: "Decide" },
 ] as const;
