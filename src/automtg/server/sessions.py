@@ -7,6 +7,7 @@ far (which is how undo works: replay from the seed minus the last human action).
 
 from __future__ import annotations
 
+import secrets
 import threading
 import time
 import uuid
@@ -403,6 +404,23 @@ class GameSession:
             return True
 
 
+#: Upper bound on a generated seed.  Wide enough that two games never collide
+#: in practice, small enough to stay a number a human can read back off a
+#: screen and type into the seed box to deal the same game again.
+MAX_SEED = 2**31 - 1
+
+
+def new_seed() -> int:
+    """A fresh seed for a game nobody asked to reproduce.
+
+    Drawn from ``secrets`` rather than the engine's :class:`Rng`, for the same
+    reason pod codes are: picking the seed is not part of the reproducible game,
+    it is the thing the reproducible game is reproduced *from*.  Seeding it from
+    the engine would need a seed to pick a seed.
+    """
+    return secrets.randbelow(MAX_SEED) + 1
+
+
 #: A game nobody has touched for this long is abandoned.  Two hours is longer
 #: than any real Commander game's *gap between actions*, not longer than a game.
 SESSION_TTL_SECONDS = 2 * 60 * 60
@@ -429,7 +447,7 @@ class SessionRegistry:
         session = GameSession(
             game_id=game_id,
             seats=seats,
-            seed=0 if seed is None else int(seed),
+            seed=new_seed() if seed is None else int(seed),
             data=self.data,
             max_turns=max_turns,
             tokens=dict(tokens or {}),
