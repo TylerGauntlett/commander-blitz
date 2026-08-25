@@ -93,3 +93,25 @@ Point a Steam keyboard layout at these and every control works:
 The board keeps its own shortcuts alongside these: `Space` passes, `1`–`9` play
 the nth card in hand, `U` undoes, and `G` / `E` / `C` peek at the graveyard,
 exile and command zone.
+
+`X` is the one worth knowing on a controller. It is the secondary button, it
+does nothing on most of the board, and it presses whatever the turn is waiting
+on you for without walking to the rail first:
+
+| when | `X` does |
+| --- | --- |
+| a priority window | Pass |
+| declaring attackers, nothing sent yet | All attack |
+| ...and once something is | Attack |
+| declaring blockers, nothing blocking yet | All defend |
+| ...and once something is | Block |
+
+So a whole combat is two presses from wherever you are standing, and the first
+one only *stages* — nothing is committed until the second, and the hint bar
+changes from `All attack` to `Attack` to tell you which one you are on. It says
+nothing for `X` when there is nothing worth pressing, which is its way of saying
+the decision is yours to make on the board.
+
+Where `X` already means something — activating an ability on a card you could
+also cast, re-aiming a staged attacker at a different opponent — it keeps
+meaning that.

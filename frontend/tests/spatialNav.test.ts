@@ -228,6 +228,55 @@ describe("the drift limit", () => {
   });
 });
 
+/*
+ * THE RELAXED PASS, AND THE ONE CALLER ALLOWED TO ASK FOR IT.
+ *
+ * `DRIFT_LIMIT` is what stops the ring lunging across the board to something
+ * that merely happens to be higher, and inside a region it is never relaxed.
+ * `stops.ts:escapeGroup` turns it off for a SECOND pass, after the strict one
+ * has come back empty for the whole board -- at that point the player has
+ * already established there is nothing on their line, and the alternative is a
+ * wall with somewhere obvious to go on the other side of it.
+ */
+describe("the relaxed pass", () => {
+  const from = box(0, 600, 100, 140);
+  const acrossAndUp: Candidate[] = [{ id: "rail", rect: box(1000, 500, 200, 60) }];
+
+  it("finds what the strict pass refuses", () => {
+    expect(pickStop(from, acrossAndUp, "up")).toBeNull();
+    expect(pickStop(from, acrossAndUp, "up", undefined, true)).toBe("rail");
+  });
+
+  it("still requires the candidate to be in the pressed direction", () => {
+    // `ALONG_MIN` holds: relaxing the drift bound must never turn "up" into
+    // "anywhere", or the ring would go backwards.
+    const below: Candidate[] = [{ id: "under", rect: box(1000, 700, 200, 60) }];
+    expect(pickStop(from, below, "up", undefined, true)).toBeNull();
+  });
+
+  it("still refuses the stop the ring is already on", () => {
+    const self: Candidate[] = [{ id: "me", rect: from }];
+    expect(pickStop(from, self, "up", "me", true)).toBeNull();
+  });
+
+  it("leaves scoreStop's ranking alone, so the nearest still wins", () => {
+    const two: Candidate[] = [
+      { id: "far", rect: box(1000, 100, 200, 60) },
+      { id: "near", rect: box(1000, 500, 200, 60) },
+    ];
+    expect(pickStop(from, two, "up", undefined, true)).toBe("near");
+  });
+
+  it("changes nothing when the strict pass already had an answer", () => {
+    const straightUp: Candidate[] = [
+      { id: "above", rect: box(0, 400, 100, 140) },
+      { id: "aside", rect: box(900, 300, 100, 140) },
+    ];
+    expect(pickStop(from, straightUp, "up")).toBe("above");
+    expect(pickStop(from, straightUp, "up", undefined, true)).toBe("above");
+  });
+});
+
 describe("unreachableStops", () => {
   it("finds nothing wrong with a tidy grid", () => {
     expect(unreachableStops(grid())).toEqual([]);

@@ -1113,3 +1113,254 @@ wrong property.
 That is the shape of a suite maturing past the thing it was written for. The
 board was checked repeatedly and carefully; what nobody had checked was whether
 the checks were looking at the board.
+
+---
+
+## Loop 9 — Pacing, and the presses nobody was counting
+
+**Angle.** Loops 1–8 asked whether a controller could *reach* everything. This
+one asks how long it takes. Reachable and reachable-in-two-presses are different
+properties, only the second is playable, and **nothing in the suite could see
+the difference** — every gate to date answers "is this a stop", "is it big
+enough", "is it on screen". A journey that quietly grew from two presses to nine
+would have passed all of them.
+
+_Walked against the live engine at 1280×800 with `?input=pad`, before and after,
+counting presses._
+
+### The measurement, before and after
+
+| journey | before | after |
+|---|---|---|
+| lobby → a dealt game | 9 presses, two of them walks | **8, and neither walk is backwards** |
+| play a land from hand | 2, ring ends on the battlefield | **2, ring stays in the hand** |
+| pass priority | 2 (`L2`, `A`) | **1 (`X`)** |
+| declare a combat | 4 (`L2`, `A`, `right`, `A`), then undo what you did not mean | **2 (`X`, `X`), and the ranking picks** |
+| pick a blocker and aim it | a dead end on the board | **2, ring lands on the block** |
+| read a card | 1 (`Y`) | 1 |
+
+### Findings
+
+#### 9.1 The block decision was not on the board, and the ring was sent there — **the big one**
+
+`groupForDecision` returns `board` for both combat declarations, on the
+reasoning that combat is staged by pressing the permanents. That is true of
+attacking and **false of blocking at 1280×800**, and the two look identical from
+inside the rule.
+
+A block is your creature and then the attacker it stops. An opponent's lanes are
+clipped to zero height so `FxLayer` keeps its anchors, so `stops.ts:onScreen`
+refuses to land the ring on an attacker — correctly, and that is Loop 8.1
+working. What nobody had asked is what the board is then *for*: pressing your own
+creature selected it and answered nothing, and every direction out of it was a
+wall or an opponent's seat. Measured live:
+
+```
+groupForDecision -> "board"
+stops in the region: card:201 card:202 card:61 card:203 card:78 ... (all mine)
+the attacker, card:101, in .play__opponents, lane clientHeight 0  -> not a stop
+A on card:201 -> nothing at all; the hint bar said "Read"
+up -> orb:1 (their seat); up again -> wall
+```
+
+The panel had carried the whole pairing as rows the entire time, with the
+attacker's P/T and a verdict on each. `Table.boardCanDecide` asks the DOM
+whether any attacker is landable and `groupForDecision` takes the answer, so the
+ring starts in the panel when the board cannot answer. **The rule stayed about
+the game; the layout question is asked separately and passed in.**
+
+#### 9.2 Half the decisions are two presses, and nothing moved between them
+
+`beginTargeting` and `select` write to `uiStore` and move nothing. So casting a
+removal spell lit up every legal target and left the ring on the card in your
+hand, four regions away from all of them; picking a blocker left it on the
+blocker. A pointer never pays either cost, because a pointer arrives at the
+second half of a decision by moving there.
+
+`logic/followUp.ts` answers *where*, as an ordered list, and `Table` takes the
+first candidate that lands. The list is what makes it work at both sizes without
+a layout branch: the attacker's card wins on a desktop, and on a handheld it is
+not sendable and the panel row for the **same pairing** wins. The rows are
+interleaved per attacker rather than appended in a block, because falling
+through to the next row down would make the block the ranking had just rejected.
+
+#### 9.3 `setCursor` accepts a stop that exists, not one you can use
+
+The first version of 9.2 trusted `setCursor` to decline an unreachable stop. It
+does not: `stopElement` asks the DOM for the id and nothing else, so the ring
+went straight back to the clipped attacker it was meant to be routing around.
+
+The fix needed a distinction that did not exist. `onScreen` answers *is this on
+screen now*, which is right for a direction press — stepping does not scroll, so
+a row past the fold of the action list is not the thing below the one you are
+on. A **jump** does scroll, because `stamp` calls `keepInView`. Filtering a jump
+by the stepping rule rejected the panel row for any blocker below the fold,
+which is exactly the row the fallback exists to reach.
+
+`stops.ts:sendableIn` is that second rule, and its only disqualifier is the one
+the layout creates on purpose: an ancestor clipped to a zero box. Nothing can
+scroll a zero-height box into view; everything else can be brought to.
+
+#### 9.4 Playing a land left the ring on the battlefield
+
+`resolveCursor` keeps the ring on the object the engine replaced. That is right
+for a permanent that stayed where it was and wrong for one that went from hand
+to battlefield: the ring dropped silently into the lands while `data-group`
+still said `hand`, and the next direction press teleported back to whichever
+hand card won the scoring. It is the most repeated gesture in the game.
+
+The ring stays in the hand now, on the next card you could play — and failing
+that on whatever is still there, which is not a courtesy: the land drop spends
+itself, so "nothing is playable" is exactly the state the common case leaves.
+
+#### 9.5 The thing the turn is waiting on had no button
+
+Every decision this game asks ends at one control in the commit dock -- Pass on
+a priority window, All attack then Attack on a declaration, All defend then
+Block -- and the dock is in the right rail where the ring almost never is. `L2`
+jumps there and `A` presses it: two presses for a pass, four to declare a
+combat, thirteen phases a turn. `Space` has passed from a keyboard since before
+any of this existed and a pad had nothing.
+
+`X` is the contextual secondary and it is **empty on most stops** — it re-aims a
+staged attacker and activates an ability on a card that casts, and says nothing
+anywhere else. So it takes the job rather than a button being invented for it:
+no new glyph, and `HintBar` already renders `verbs.x` conditionally, so the
+one-line bar does not grow. Nothing is displaced.
+
+**The first press stages and does not submit**, and that is what makes it safe
+to bind at all. `All attack` is reversible; by the time the second press commits
+the bar has changed to `Attack` and said which one you are on. A whole combat is
+two presses from wherever you are standing, and the ring never leaves the board.
+
+**It goes quiet where pressing anything would be a guess.** "All defend"
+declines a chump block, so on a board where every block throws a creature away
+the mark is disabled — and `X` stops there rather than reaching past it to "No
+blocks". Taking the damage is a decision a player makes, not a default: they
+still have every creature and the panel still has the row. The one place it does
+reach the decline is when nothing can be declared at all, because the panel has
+promoted it to the whole bar and there is nothing else on screen it could be
+taken instead of.
+
+The fall-through is applied to `verbsFor`'s *result* rather than added to each
+of its dozen branches, because a rule applied once cannot drift from itself.
+`logic/commit.ts` is the other half of that: WHICH control is one function that
+`Table.secondary` and `logic/verbs.ts` both ask, rather than a branch restated
+in each. Everything else in `verbs.ts` mirrors the routing branch for branch and
+is held to it by a test — a discipline; one function is a guarantee, and this is
+the branch that would have drifted first, because only the block ranking knows
+whether the mark is live. What the shared rule cannot cover is the panel's own
+`disabled` conditions, so a story renders the real dock and checks that the bar
+never names a control that is greyed out.
+
+#### 9.6 "All attack" was the shortcut you had to undo
+
+"All defend" has declined a chump block since cycle 2. "All attack" staged every
+legal attacker — so the shortcut for the more consequential decision of the turn
+was the one you took apart card by card. Measured live: a 0/1 Blood Artist swung
+into an untapped 1/1 from one press.
+
+`logic/autoAttack.ts` is the mirror of `autoBlock.ts`, tier for tier, and the
+second press of the same mark sends everything anyway. The escalation is not a
+nicety and it is not a second control: racing is a real decision, no arithmetic
+should be allowed to make it two dozen presses, and a fourth button in a
+three-button dock at the 44px hit floor is a row that no longer fits.
+
+#### 9.7 Both shortcuts read power and toughness and nothing else
+
+`blockTier` ranked a deathtouch blocker as a chump against a 5/5 and scored a
+first striker as losing fights it walks away from — `playtest-feedback-03` cycle
+4 item 5, and the same gap would have been written twice once attacking had a
+ranking of its own.
+
+`logic/fight.ts` is the fight itself, shared: `wouldKill`, `survivesFight`,
+`killsInFight`, `couldBlock`. Deathtouch and first strike are modelled because
+they change *who dies*, which is the only question these functions are asked.
+Trample, lifelink and menace are not, and the file says why.
+
+#### 9.8 The wall at a region's edge was often not a real wall
+
+`escapeGroup` ran the *same* `pickStop` over the whole board, so `DRIFT_LIMIT` —
+the rule that stops the ring lunging across the screen to something merely
+higher — was applied a second time to answer a completely different question. A
+hand card at the end of the fan pressing up, a lane with nothing above it: a
+nudge and a deny with the rest of the board plainly sitting there.
+
+It retries relaxed, and only after the strict pass has come back empty for the
+whole board. Inside a region the rule is untouched, which is what keeps a column
+a column. `ALONG_MIN` still holds, so this can only ever find something in the
+pressed direction, and `longHop` is what stops the result strobing.
+
+#### 9.9 The instrument, which is the finding this loop is really about
+
+`src/testing/journey.ts` counts presses; `Journeys.stories.tsx` asserts a
+**budget** per journey in the `storybook-handheld` project, which is in CI;
+`e2e/journeys-handheld.spec.ts` walks the same journeys against a real engine
+for the two that need the server to answer.
+
+Budgets are ceilings, never exact counts: an exact count fails on an
+improvement, which is the wrong direction to be strict in.
+
+Two things had to be got right for a press to mean anything. `pad.ts` puts a key
+in a latch and dispatches inside the next frame, so a press asserted immediately
+is asserted against a board that has not heard it — and a second press in the
+same frame lands on a ring that has not moved, which quietly makes a journey
+cost whatever number was written down. And `useCursorNav` is mounted by `Screen`
+rather than by the board, so a story rendering `Table` alone presses `A` at
+nothing at all.
+
+#### 9.10 …and one of the nudges added the walk it removed — **found by playing it**
+
+The lobby got two forward nudges: seating a CPU comes back to your own chair,
+and taking a deck moves on to `Lock in`. Both were measured, and the measurement
+walked the pod **opponent first**, which is the order that makes the second one
+look right.
+
+Nobody plays it that way. The pod *opens* on `Choose a deck`, so choosing a deck
+first is the order the screen itself proposes — and at that moment the chairs are
+still empty. The jump landed the player on the control that ENDS the screen:
+
+```
+open on Choose a deck -> A -> A (take it) -> ring jumps to Lock in
+  ...and now walk back up to seat a CPU, and back down to lock in
+```
+
+Deck first went from a walk of one to a walk of two, and the nudge that caused it
+was the one written to remove walks.
+
+**`Lock in` is not the next step; it is the last one**, and only the player knows
+when the pod is the shape they want. It is gone. The ring stays on `Change deck`,
+one row above the chairs, and `Deal` still comes to the host the moment the pod
+is dealable — which is the one nudge on this screen that cannot be premature,
+because "dealable" is the game's answer rather than a guess about intent.
+
+The seating nudge stays, guarded on not yet having a deck: filling a chair while
+you still owe the pod a deck is the one moment the screen knows what you have
+left to do.
+
+Both orders now cost eight presses. The finding is not the press — it is that
+**a forward nudge has to be right for every order the screen allows**, and a
+measurement that walks one order cannot see the other. The e2e suite walks both
+now.
+
+### Deliberately not done
+
+**The viewer's own mat still scrolls on a crowded board.** Measured at
+declare-attackers with six creatures and four lands: `.play__mine` holds 474px
+in 406. That is the trade-off `HandheldCrowdedBoard` already poses and exempts
+on purpose — `board.css` gives the mat `overflow-y: auto` precisely because a
+board you scroll beats a board you cannot read — and closing it means collapsing
+the land lane during a declaration, which is `playtest-feedback-03` cycle 4
+item 1 and a layout change rather than a navigation one.
+
+**Trample in the rankings**, for the reason `logic/fight.ts` gives: it changes
+what a chump block is *worth* rather than who dies.
+
+### What this loop says about the eight before it
+
+Loop 8 ended on "what nobody had checked was whether the checks were looking at
+the board". This one is the next turn of that: the checks were looking at the
+board, and they were all asking the same *kind* of question. Nine gates asked
+whether a thing could be reached and none asked how far away it was — and 9.1 is
+what that blind spot costs, because a ring parked on a region with nothing in it
+satisfies every one of them.

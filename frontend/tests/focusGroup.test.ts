@@ -50,6 +50,36 @@ describe("combat", () => {
     });
     expect(groupForDecision(state, [cast, pass], false)).toBe("board");
   });
+
+  /*
+   * THE BOARD HELD HALF A DECISION, AND THE RING WAS SENT TO IT ANYWAY.
+   *
+   * A block is your creature and then the attacker it stops. At 1280x800 an
+   * opponent's lanes are clipped to zero height, so `stops.ts:onScreen` refuses
+   * to land the ring on an attacker -- correctly. Sent to the board there, `A`
+   * on your own creature answered nothing and every direction out of it was a
+   * wall or a seat, while the panel had carried the whole pairing as rows the
+   * entire time. `Table.boardCanDecide` asks the DOM; this is the rule it feeds.
+   */
+  it("sends blockers to the panel when no attacker can be landed on", () => {
+    const state = view({
+      phase: "combat",
+      active_player: 1,
+      pending: pending({ kind: "declare_blockers", player: 0 }),
+    });
+    expect(groupForDecision(state, [cast, pass], false, false)).toBe("acts");
+  });
+
+  it("assumes the board can decide when nobody says otherwise", () => {
+    // The default matters: every other caller, and every other decision, is
+    // unchanged by the argument existing.
+    const state = view({
+      phase: "combat",
+      pending: pending({ kind: "declare_attackers", player: 0 }),
+    });
+    expect(groupForDecision(state, [cast, pass], false)).toBe("board");
+    expect(groupForDecision(state, [cast, pass], false, true)).toBe("board");
+  });
 });
 
 describe("your main phase", () => {
