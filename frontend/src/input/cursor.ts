@@ -545,6 +545,31 @@ let settleTimer: ReturnType<typeof setTimeout> | null = null;
 let lastStep = 0;
 
 /**
+ * Which card the ring, sitting on this stop, is reading.
+ *
+ * A `card:` stop IS a card and answers for itself. Anything else has to say so,
+ * and `data-preview-oid` is how: an action row is a decision *about* a card that
+ * is somewhere else on the board, and the panel already writes that fact for the
+ * pointer (`ActionPanel`'s `previewing`).
+ *
+ * Reading the attribute rather than trusting the row's own `onFocus` is what
+ * makes the two agree. `hoverFor` runs *after* `stamp()` has moved DOM focus, so
+ * a null here does not leave the row's write standing -- it overwrites it, and
+ * the rail went blank the instant the ring landed on the row that had just
+ * filled it. One source for both inputs, or they drift.
+ */
+function previewOidFor(stop: string): number | null {
+  // `Number(null)` is 0 and `Number.isFinite(0)` is true, so the missing
+  // attribute has to be caught before it becomes a hover on the zeroth object.
+  const declared = stop.startsWith("card:")
+    ? stop.slice(5)
+    : stopElement(stop)?.getAttribute("data-preview-oid");
+  if (!declared) return null;
+  const oid = Number(declared);
+  return Number.isFinite(oid) ? oid : null;
+}
+
+/**
  * Drive `hoveredOid` from the cursor.
  *
  * This one line is what hands the pad the three hover-only surfaces the client
@@ -569,10 +594,10 @@ function hoverFor(stop: string | null): void {
    * spend of 2 with nothing hovered.
    */
   if (getInputMode() === "mouse") return;
-  const oid = stop?.startsWith("card:") ? Number(stop.slice(5)) : null;
+  const oid = stop === null ? null : previewOidFor(stop);
   const store = useUiStore.getState();
   const apply = () => {
-    store.hover(Number.isFinite(oid) ? oid : null);
+    store.hover(oid);
     setSweeping(false);
   };
 

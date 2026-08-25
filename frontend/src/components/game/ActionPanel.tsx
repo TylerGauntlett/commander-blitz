@@ -307,6 +307,14 @@ export function ActionPanel({
    * React's mouseleave does not fire when the pointer moves onto a descendant,
    * but the descendant's own leave handler still clears the preview on the way
    * back out, which reads as flicker. Each control carries its own.
+   *
+   * `data-preview-oid` IS THE SAME FACT, WRITTEN WHERE THE RING CAN READ IT, and
+   * without it the `onFocus` above was dead on arrival for a pad or a keyboard.
+   * `input/cursor.ts`'s `hoverFor` writes `hoveredOid` on every cursor move and
+   * it runs *after* `stamp()` has focused the element -- so a stop it could not
+   * read a card out of cleared the preview a beat after the row's own `onFocus`
+   * had filled it. The rail was blank on exactly the surface a controller player
+   * navigates with, while a mouse over the same row worked.
    */
   const previewing = (oid: number | null | undefined) =>
     oid === null || oid === undefined
@@ -316,6 +324,7 @@ export function ActionPanel({
           onMouseLeave: () => hover(null),
           onFocus: () => hover(oid),
           onBlur: () => hover(null),
+          "data-preview-oid": oid,
         };
   const ptOf = (oid: number) => {
     const found = card(oid);
@@ -625,6 +634,10 @@ export function ActionPanel({
                           data-action-kind={pairAction.kind}
                           data-attacker={attacker}
                           data-defender={pid}
+                          // The pointer gets this from the group row it is
+                          // inside; the ring lands on the chip itself and needs
+                          // it said here. See `previewing`.
+                          data-preview-oid={attacker}
                           aria-pressed={aimed}
                           disabled={disabled}
                           onClick={() => onStage(pairAction.id)}
@@ -806,6 +819,8 @@ export function ActionPanel({
                         onMouseLeave={() => hover(head.source_oid)}
                         onFocus={() => hover(targetOid(aim) ?? head.source_oid)}
                         onBlur={() => hover(head.source_oid)}
+                        // The ring's copy of the line above -- see `previewing`.
+                        data-preview-oid={targetOid(aim) ?? head.source_oid ?? undefined}
                       >
                         <SymbolText text={chipLabel(aim)} />
                       </button>

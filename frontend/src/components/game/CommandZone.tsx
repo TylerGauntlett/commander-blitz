@@ -202,6 +202,10 @@ function Plinth({ card, castable, tax, disabled, onActivate, onHover, seal }: Pl
       onMouseLeave={() => onHover?.(null)}
       onFocus={() => onHover?.(card.oid)}
       onBlur={() => onHover?.(null)}
+      // The ring's copy of the two lines above: `input/cursor.ts`'s `hoverFor`
+      // runs after focus and would otherwise clear what `onFocus` just set.
+      // `ActionPanel`'s `previewing()` writes the same attribute.
+      data-preview-oid={card.oid}
       whileHover={clickable ? { y: -3, scale: 1.03 } : undefined}
       whileTap={clickable ? { scale: 0.98 } : undefined}
       transition={bouncy}
