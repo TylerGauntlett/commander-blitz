@@ -278,6 +278,51 @@ export const AttackMode: Story = {
   },
 };
 
+/**
+ * WHAT A ROW PREVIEWS FOR A POINTER, IT ALSO DECLARES FOR THE RING.
+ *
+ * `previewing()` fills the rail on `onMouseEnter` *and* on `onFocus`, and the
+ * second of those was dead: `input/cursor.ts`'s `hoverFor` runs after `stamp()`
+ * has moved focus and writes `hoveredOid` itself, so a stop it could read no
+ * card out of cleared the rail a beat after the row had filled it. Every action
+ * row on this panel is a decision about a specific card, so on a pad the rail
+ * was blank for all of them while a mouse over the same row worked.
+ *
+ * `data-preview-oid` is the fix and this is its gate: hover each stop, and
+ * whatever the pointer put in the rail is what the attribute has to say. A row
+ * that grows a new hover handler without the attribute fails here rather than
+ * silently going quiet on the input that has no pointer.
+ */
+export const RowsDeclareWhatTheyPreview: Story = {
+  args: from(scenarios.combatDeclareAttackers()),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("combat-panel");
+
+    const stops = [...canvasElement.querySelectorAll<HTMLElement>("[data-stop]")];
+    expect(stops.length).toBeGreaterThan(0);
+    let previewing = 0;
+    for (const stop of stops) {
+      useUiStore.setState({ hoveredOid: null });
+      await userEvent.hover(stop);
+      const byPointer = useUiStore.getState().hoveredOid;
+      // Tools, the commit slab, anything that is about no card: nothing to say.
+      if (byPointer === null) continue;
+      previewing += 1;
+      const declared = stop.dataset.previewOid;
+      expect(
+        declared === undefined ? null : Number(declared),
+        `${stop.dataset.stop} previews ${byPointer} for a pointer and ${
+          declared ?? "nothing"
+        } for the ring`,
+      ).toBe(byPointer);
+    }
+    // The walk has to have found some, or this passes by testing nothing.
+    expect(previewing).toBeGreaterThan(0);
+    useUiStore.setState({ hoveredOid: null });
+  },
+};
+
 /** Staging is local: it goes to `onStage`, and nothing is sent until confirmed. */
 export const StagingAnAttacker: Story = {
   args: from(scenarios.combatDeclareAttackers()),

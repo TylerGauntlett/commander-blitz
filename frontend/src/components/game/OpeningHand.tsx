@@ -205,12 +205,22 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
     if (middleOid !== undefined) setCursor(stopId.card(middleOid));
   }, [middleOid]);
 
-  /* Told to WATCH rather than to re-measure: this runs on the commit that starts
-     the lift, not on the one that finishes it. `HandFan.tsx:175` makes the
-     identical call for the identical reason. */
+  /*
+   * Told to WATCH rather than to re-measure: this runs on the commit that starts
+   * the lift, not on the one that finishes it. `HandFan.tsx:175` makes the
+   * identical call for the identical reason.
+   *
+   * ON EVERY POSE CHANGE, not just on mount, because the slot itself is what
+   * rises now: `retargetRing` measures once, at the instant the cursor lands,
+   * and 150ms of `transition: transform` happen after that. The watch window is
+   * how the ring arrives with the card instead of at the pixel the card was
+   * leaving. `chosen` is in the list for the bottoming phase, where a card sinks
+   * without the cursor going anywhere at all.
+   */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `on` and `chosen` are triggers, not reads; see above.
   useEffect(() => {
     refollowCursor();
-  }, []);
+  }, [on, chosen]);
 
   /*
    * `A` ON A CARD KEEPS THE HAND, and `B` mulligans from anywhere.
@@ -299,6 +309,9 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
           const choice = choices.get(card.oid);
           const marked =
             choice !== undefined && choice.choice !== null && chosen.has(choice.choice);
+          /* Marked beats read, the way the stylesheet's two rules did: a card
+             already going to the bottom stays down even while you are on it. */
+          const shift = marked ? row.sink : isOn ? -row.lift : 0;
           /*
            * In the bottoming phase a card IS the answer, so it carries the
            * action id and `A` is a click on it. In the keep phase it is a stop
@@ -319,11 +332,28 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
                   top: `${slot.y}px`,
                   width: `${row.cardW}px`,
                   height: `${row.cardH}px`,
-                  transform: `rotate(${slot.rot.toFixed(3)}deg)`,
+                  /*
+                   * THE POSE IS ONE TRANSFORM, AND THE SLOT WEARS IT.
+                   *
+                   * The lift used to be on `.mull__lift` inside, so that the box
+                   * the pointer is in never moved. The ring measures the STOP --
+                   * `input/ring.ts`'s `ringTargetFor` and `handheld.css`'s
+                   * `[data-cursor]` outline both -- so a card that rose out of
+                   * its own button left the ring standing 20px below it, around
+                   * an empty rectangle, which is what an arrow key looked like on
+                   * this screen. `.mull__slot::after` is what pays for moving it;
+                   * see `pad` in `logic/openingHand.ts`.
+                   *
+                   * `translateY` FIRST, so it is read in the row's frame rather
+                   * than in the card's own tilted one: every card rises straight
+                   * up the screen, and the end cards do not drift sideways as
+                   * they do it.
+                   */
+                  transform: `translateY(${shift.toFixed(2)}px) rotate(${slot.rot.toFixed(3)}deg)`,
                   transformOrigin: `50% ${row.pivot}px`,
                   zIndex: zFor(i, on),
                   "--card-w": `${row.cardW}px`,
-                  "--mull-lift": isOn ? `${-row.lift}px` : "0px",
+                  "--mull-pad": `${row.pad}px`,
                 } as CSSProperties
               }
               data-on={isOn || undefined}

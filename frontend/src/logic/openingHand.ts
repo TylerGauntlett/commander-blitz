@@ -89,6 +89,15 @@ export const MULL_TUNE = {
   SAG: 4,
   /** px the card you are on rises. */
   LIFT: 20,
+  /**
+   * px a card marked for the bottom sinks.
+   *
+   * Lived in `opening.css` until the slot itself started carrying the pose. Both
+   * displacements are on one transform now -- see `.mull__slot` -- and a
+   * transform written inline cannot be overridden by a stylesheet, so the choice
+   * between them is arithmetic rather than cascade.
+   */
+  SINK: 22,
   /** px from the top of the stage to the row of answers. */
   ACTS_TOP: 622,
 } as const;
@@ -186,6 +195,27 @@ export interface HandRow {
   pivot: number;
   /** px the selected card rises. */
   lift: number;
+  /** px a card marked for the bottom sinks. */
+  sink: number;
+  /**
+   * px of slack the slot's hit pad adds above and below its own box.
+   *
+   * The slot MOVES now -- it carries the lift and the sink itself, so that the
+   * ring, which measures the stop, is around the card rather than around where
+   * the card used to be. That is the one thing `.mull__lift` was there to avoid:
+   * transform the box a pointer is inside and the pointer falls out of it, onto
+   * whichever neighbour is under that pixel, whose `mouseenter` moves the
+   * selection, which drops this card back under the pointer, forever.
+   *
+   * So `.mull__slot::after` is a hit pad the size of the slot plus this much at
+   * both ends, and it travels with the slot -- which makes the hit region a
+   * superset of both poses, and the pointer never leaves the card it is resting
+   * on. `HandFan`'s `.hand__slot` is the same trick with the parts the other way
+   * round: there the fixed box is the parent and the moving one is the child.
+   *
+   * The larger of the two displacements, because one pad answers for both.
+   */
+  pad: number;
   slots: HandSlot[];
 }
 
@@ -221,6 +251,8 @@ export function handRow(count: number, width: number, unit: number): HandRow {
     height: cardH + centre * centre * sag,
     pivot: MULL_TUNE.PIVOT * unit,
     lift: MULL_TUNE.LIFT * unit,
+    sink: MULL_TUNE.SINK * unit,
+    pad: Math.max(MULL_TUNE.LIFT, MULL_TUNE.SINK) * unit,
     slots,
   };
 }

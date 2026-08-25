@@ -77,27 +77,43 @@ export const ReadingMovesNothing: Story = {
     const stage = await canvas.findByTestId("opening-hand");
     await settled(stage);
 
-    const slots = [...canvasElement.querySelectorAll<HTMLElement>("[data-card-oid]")];
-    const before = slots.map((el) => ({
+    /*
+     * THE ROTATION, NOT THE WHOLE TRANSFORM.
+     *
+     * The slot carries its own lift as well as its place in the arch -- one
+     * inline `translateY(...) rotate(...)`, because the ring is drawn around the
+     * stop and a card that rose out of its own button left the ring behind it.
+     * The `translateY` term IS a function of the selection and always was; it
+     * simply used to live in a custom property this story never read. So the
+     * pose is compared without it, and the lift is asserted separately below.
+     */
+    const arch = (el: HTMLElement) => ({
       left: el.style.left,
       top: el.style.top,
-      transform: el.style.transform,
+      rotate: /rotate\([^)]*\)/.exec(el.style.transform)?.[0] ?? "",
       // `offsetWidth`, because these are rotated -- see `HandheldKeep`.
       width: el.offsetWidth,
-    }));
+    });
+    const liftOf = (el: HTMLElement) =>
+      Number.parseFloat(/translateY\(([-\d.]+)px\)/.exec(el.style.transform)?.[1] ?? "0");
+
+    const slots = [...canvasElement.querySelectorAll<HTMLElement>("[data-card-oid]")];
+    const before = slots.map(arch);
 
     // Walk the whole row, both ways.
     for (const el of slots) await userEvent.hover(el);
     for (const el of [...slots].reverse()) await userEvent.hover(el);
     await settled(stage);
 
-    const after = slots.map((el) => ({
-      left: el.style.left,
-      top: el.style.top,
-      transform: el.style.transform,
-      width: el.offsetWidth,
-    }));
-    expect(after).toEqual(before);
+    expect(slots.map(arch)).toEqual(before);
+
+    /* And the one thing that DID move is the card being read: exactly one slot
+       is off its resting line, it is the one the pointer left on, and it is up
+       rather than down. */
+    const lifted = slots.filter((el) => liftOf(el) !== 0);
+    expect(lifted.length).toBe(1);
+    expect(lifted[0]).toBe(slots[0]);
+    expect(liftOf(lifted[0])).toBeLessThan(0);
   },
 };
 
@@ -154,6 +170,47 @@ export const OneRulesBoxAtATime: Story = {
     expect(shown().length).toBe(0);
     await userEvent.hover(slots[4]);
     expect(shown().length).toBe(0);
+  },
+};
+
+/**
+ * THE RING IS DRAWN AROUND THE STOP, SO THE STOP IS WHAT HAS TO RISE.
+ *
+ * Both halves of the ring measure the element carrying `data-stop`: the outline
+ * in `handheld.css` is on `[data-cursor]` itself, and `#ring` is positioned from
+ * `ringTargetFor`, which takes that element's box. The lift used to be on a span
+ * inside the button, so an arrow key drew a gold rectangle 20px below the card
+ * it was supposed to be around -- around the hole the card had just left.
+ *
+ * `.mull__slot::after` is what makes moving the button safe for a pointer; this
+ * is what makes it necessary.
+ */
+export const TheRingRisesWithTheCard: Story = {
+  args: { state: keep().state, actions: keep().actions },
+  parameters: { automtg: { mount: "tableOverlay", motion: "real" } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stage = await canvas.findByTestId("opening-hand");
+    await settled(stage);
+
+    /* The far end of the row, which is also the most tilted -- so this is not
+       quietly asserting about the one upright card in the middle. */
+    const slots = [...canvasElement.querySelectorAll<HTMLElement>(".mull__slot")];
+    const slot = slots[6];
+    const rest = slot.getBoundingClientRect().top;
+
+    await userEvent.hover(slot);
+    await settled(slot);
+    const raised = slot.getBoundingClientRect().top;
+    expect(slot.dataset.on).toBe("true");
+    expect(rest - raised, "the stop itself should rise with the card").toBeGreaterThan(4);
+
+    /* And the two agree, which is the whole bug in one line: the box the ring is
+       drawn around is the box the card is in. */
+    const card = slot.querySelector<HTMLElement>(".card");
+    expect(card).not.toBeNull();
+    const drift = Math.abs((card?.getBoundingClientRect().top ?? 0) - raised);
+    expect(drift, "the ring's box and the card's box are the same box").toBeLessThan(2);
   },
 };
 
