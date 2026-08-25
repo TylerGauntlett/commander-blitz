@@ -182,6 +182,41 @@ describe("resolveCursor", () => {
     expect(document.activeElement).toBe(undo);
   });
 
+  it("lets the ring REST on a disabled control beside an enabled one", () => {
+    /*
+     * THE BUG THIS EXISTS FOR, and it is the combat bar.
+     *
+     * A disabled control is a stop deliberately -- see `stops.ts` -- but
+     * `focus()` on one is a silent no-op, so the ring moved onto it and DOM
+     * focus stayed on the enabled control it came from. `focusHolder` reads
+     * that back as focus the player moved themselves and follows it, so the
+     * ring was dragged home again on the very next resolve. `resolveCursor`
+     * runs once per engine push, which during an opponent's turn is several a
+     * second: the Attack/Block slab, which is disabled until something is
+     * staged, could not be reached at all.
+     *
+     * Off the board rather than on it, because that is where a stop IS a native
+     * focusable and the two are required to agree.
+     */
+    const screen = document.createElement("div");
+    screen.className = "screen";
+    screen.innerHTML = `<button id="all">All</button><button id="go" disabled>Go</button>`;
+    document.body.append(screen);
+
+    const all = document.getElementById("all") as HTMLButtonElement;
+    all.focus();
+    expect(document.activeElement).toBe(all);
+
+    setCursor("ui:#go");
+    expect(getCursor()).toBe("ui:#go");
+    // The stale focus went with the ring rather than staying behind to pull it
+    // back -- which is the half a `data-cursor` assertion alone cannot see.
+    expect(document.activeElement).not.toBe(all);
+
+    resolveCursor();
+    expect(getCursor(), "the ring was dragged back by stale focus").toBe("ui:#go");
+  });
+
   it("stands the ring down when there is nothing to point at", () => {
     board(`<div data-stop="card:1"></div>`);
     setCursor("card:1");

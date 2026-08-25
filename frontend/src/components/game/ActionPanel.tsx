@@ -1183,12 +1183,23 @@ export function ActionPanel({
                   The names live in `aria-label` and `data-hint` and nowhere
                   else. A `title` would reach the mouse only, and this bar is
                   driven by a controller as often as by a thumb.
+
+                  ALL THREE CARRY A STOP, and for a while only one of them did.
+                  "No attacks" is a server action and got `act:` out of
+                  `actionAttrs`; the mark and the slab are local staging, exist
+                  in no action list, and so had nothing for the ring to land on
+                  -- the two most-pressed controls of a combat step were mouse
+                  only, on a client whose whole point is that it plays on a
+                  handheld. They are stops in document order all -> slab ->
+                  skip, which is also left -> right on screen, so `L2` lands on
+                  the mark and one press of right reaches the slab.
                 */
               <div className="bar">
                 {mode === "attack" ? (
                   <button
                     type="button"
                     className="commit-mark"
+                    data-stop={stopId.commitMark("all")}
                     data-testid="combat-all"
                     disabled={disabled || unstagedAttackers.length === 0}
                     onClick={attackWithAll}
@@ -1203,6 +1214,7 @@ export function ActionPanel({
                   <button
                     type="button"
                     className="commit-mark"
+                    data-stop={stopId.commitMark("all")}
                     data-testid="combat-all"
                     disabled={disabled || newBlocks.length === 0}
                     onClick={blockWithAll}
@@ -1222,6 +1234,7 @@ export function ActionPanel({
                 <motion.button
                   type="button"
                   className="commit"
+                  data-stop={stopId.commit}
                   disabled={disabled || staged.length === 0}
                   data-empty={staged.length === 0 ? "true" : "false"}
                   aria-label={
