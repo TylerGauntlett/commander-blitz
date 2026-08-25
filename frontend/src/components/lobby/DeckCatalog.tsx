@@ -28,9 +28,10 @@
  * same control and only one of them starts from nothing.
  */
 
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { DeckImportResponse, DeckSummary } from "../../api/types";
 import { setCursor } from "../../input/cursor";
+import { useDismiss } from "../../input/useDismiss";
 import {
   type CatalogFilters,
   type DeckSort,
@@ -108,13 +109,11 @@ export function DeckCatalog({
 }: Props) {
   const [filters, setFilters] = useState<CatalogFilters>(EMPTY_FILTERS);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  /* Escape and B, and only while nothing is open over this. The footer has
+     advertised `B — Back` since the first draft and nothing was listening for
+     it; see `input/useDismiss.ts` for what that cost. */
+  const stage = useRef<HTMLElement>(null);
+  useDismiss(stage, onClose);
 
   const shown = useMemo(() => visibleDecks(decks, filters), [decks, filters]);
 
@@ -150,6 +149,7 @@ export function DeckCatalog({
          dossier opening over this keeps it. */
     >
       <section
+        ref={stage}
         className="shelf__stage"
         role="dialog"
         aria-modal="true"

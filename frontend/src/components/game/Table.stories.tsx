@@ -11,7 +11,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import type { PadButton } from "../../input/buttons";
-import { groupOf } from "../../input/groups";
+import { getCursor, setCursor } from "../../input/cursor";
+import { getGroup, groupOf } from "../../input/groups";
 import { boundButtons, startPad } from "../../input/pad";
 import { activeRoot } from "../../input/stops";
 import { NAVIGATION_HINTS } from "../../logic/verbs";
@@ -844,6 +845,111 @@ export const HandheldCardHold: Story = {
  * position every frame, which is the same channel the `R2` opponent reader is
  * held on. `z` is `L2` on a keyboard (`input/buttons.ts`).
  */
+/**
+ * `L2` TAPPED SENDS THE RING TO THE THING THAT ENDS THE DECISION.
+ *
+ * The commit slab -- Attack, Block, Done, Pass -- lives in the right rail, and
+ * on a 1280x800 panel the ring is almost never near it: you are in your hand,
+ * or out on an opponent's board choosing what to swing at, and the rail is the
+ * far corner. Walking there is a dozen presses across a seat strip, three lanes
+ * and a fanned hand; `R1` is two steps if you happen to know the region order.
+ * Neither is a thing to ask for once a phase, thirteen phases a turn.
+ *
+ * The button was already advertised. It said `Jump`, and it jumped to the tool
+ * strip -- which `Menu` also did, so the one shoulder the bar promises was
+ * spent on the second way to reach the settings menu.
+ *
+ * A TAP, not a hold: holding `L2` still opens the region dial, and the two do
+ * not collide because a tap crosses and releases the analog threshold inside a
+ * frame or two. `HandheldRegionDial` above is the other half of the same
+ * button.
+ */
+/**
+ * THE COMMAND ZONE IS SOMEWHERE THE RING CAN GO.
+ *
+ * It was not, and it was the only control on the board that was not. The board
+ * declares its stops explicitly -- `stopsIn` takes a surface at its word and
+ * gives it no native-focusable fallback -- and the commander plinth is a
+ * `<button>` carrying no `data-stop`, so the ring could not reach it by any
+ * route. A controller could not cast its own commander at all, and the plinth's
+ * documented promise that "the full card is one hover away in the preview rail"
+ * held for a mouse and for nothing else: `hoverFor` drives `hoveredOid` from
+ * the cursor, and the cursor could not get here.
+ *
+ * The plinth carries `card:<oid>` while the commander is in the command zone,
+ * which is the same id the board would use for it and the reason everything
+ * else follows for nothing: `A` casts, `Y` reads, and the rail fills.
+ */
+export const HandheldTheCommanderIsReachable: Story = {
+  args: board(scenarios.earlyBoard()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    const plinth = canvasElement.querySelector<HTMLElement>('[data-testid^="commander-"]');
+    expect(plinth, "the scenario needs a commander in the command zone").not.toBeNull();
+    const stop = plinth?.dataset.stop;
+    expect(stop, "the plinth has to declare a stop or the ring cannot see it").toBeTruthy();
+
+    // Walked to, not placed: what was broken is that no route arrived here.
+    for (let i = 0; i < 6 && getGroup() !== "orb"; i += 1) {
+      await userEvent.keyboard("]");
+      await waitFor(() => expect(getCursor()).not.toBeNull());
+    }
+    expect(getGroup()).toBe("orb");
+    setCursor(stop as string);
+    expect(getCursor()).toBe(stop);
+
+    // ...and the rail read it, which is the whole point of being able to.
+    await waitFor(() => {
+      const rail = canvasElement.querySelector('[data-testid="card-preview"]');
+      expect(rail?.textContent).toContain("Aesi");
+    });
+  },
+};
+
+/** The element the ring is on, which is `[data-cursor]` and nothing else. */
+function ringed(root: HTMLElement): HTMLElement {
+  const el = root.querySelector<HTMLElement>("[data-cursor]");
+  if (!el) throw new Error("the ring is not on anything");
+  return el;
+}
+
+export const HandheldJumpToTheDecision: Story = {
+  args: board(scenarios.combatDeclareAttackers()),
+  globals: { handheld: "on", input: "pad" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("table");
+    startPad();
+
+    const dock = canvasElement.querySelector(".commit-dock");
+    expect(dock, "the scenario has to have a slab for this to be about").not.toBeNull();
+
+    // Somewhere else entirely first, which is the case this exists for.
+    await userEvent.keyboard("]");
+    await waitFor(() => expect(groupOf(ringed(canvasElement))).not.toBe("acts"));
+
+    // `z` is `L2`; native events for the reason `HandheldRegionDial` explains.
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "z", bubbles: true }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "z", bubbles: true }));
+
+    await waitFor(() => {
+      const on = ringed(canvasElement);
+      expect(dock?.contains(on), `ring landed on ${on?.getAttribute("data-testid")}`).toBe(
+        true,
+      );
+    });
+    // ...and the region trap came with it, or the next direction press would
+    // walk straight back out of the rail.
+    expect(groupOf(ringed(canvasElement))).toBe("acts");
+  },
+};
+
 export const HandheldRegionDial: Story = {
   args: board(scenarios.earlyBoard()),
   globals: { handheld: "on", input: "pad" },

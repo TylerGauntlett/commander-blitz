@@ -11,8 +11,9 @@
  * `localhost` and would work for exactly one person.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { PodView } from "../../api/types";
+import { useDismiss } from "../../input/useDismiss";
 import { openSeats } from "../../logic/lobby";
 
 /** How long a "Copied" label stays up before reverting. */
@@ -50,13 +51,9 @@ export function InviteDialog({ pod, onClose, onOpenChair }: Props) {
     setCopied(what);
   }, []);
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  /* Escape and B, through the one path every overlay in the lobby now uses. */
+  const panel = useRef<HTMLElement>(null);
+  useDismiss(panel, onClose);
 
   const link = inviteUrl(pod);
 
@@ -64,6 +61,7 @@ export function InviteDialog({ pod, onClose, onOpenChair }: Props) {
     <>
       <div className="veil veil--invite" onClick={onClose} aria-hidden="true" />
       <section
+        ref={panel}
         className="inv"
         role="dialog"
         aria-modal="true"
