@@ -358,6 +358,15 @@ export function useGame(session: GameSession | null) {
     error: query.error as Error | null,
     /** The seat this client is playing, once the server has told us. */
     yourSeat,
+    /**
+     * Which seats are people rather than agents.
+     *
+     * The engine does not model it and `GameView` does not carry it -- it rides
+     * on the state RESPONSE beside the view. Exposed because the rematch has to
+     * rebuild the lineup, and "which of these four is a person" is the one fact
+     * about a seat that the board itself cannot answer.
+     */
+    humanSeats,
     /** An AI is deciding and we are watching it play out. */
     aiThinking,
     /** Another person is deciding. Nothing to animate; we are simply waiting. */

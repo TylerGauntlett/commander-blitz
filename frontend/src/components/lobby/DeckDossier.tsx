@@ -8,8 +8,9 @@
  * a flat rating bar. Every empty state below is a real state something reaches.
  */
 
-import { useEffect } from "react";
+import { useRef } from "react";
 import type { DeckRatings } from "../../api/types";
+import { useDismiss } from "../../input/useDismiss";
 import { artistOf } from "../../logic/cardArt";
 import { useUiStore } from "../../state/uiStore";
 import { useDeckDetail } from "../../state/usePod";
@@ -111,18 +112,16 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
   const commander = deck?.commanders[0] ?? null;
   const artist = commander ? artistOf(images, commander) : null;
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  /* Escape and B alike, and only while this is the top of the stack -- the
+     catalogue underneath opens this one and must not close with it. */
+  const panel = useRef<HTMLElement>(null);
+  useDismiss(panel, onClose);
 
   return (
     <>
       <div className="veil veil--dossier" onClick={onClose} aria-hidden="true" />
       <aside
+        ref={panel}
         className="dos"
         role="dialog"
         aria-modal="true"

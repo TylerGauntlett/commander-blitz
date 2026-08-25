@@ -295,11 +295,26 @@ export function PlayerOrb({
     const grew = player.life > before;
     controls.start({
       scale: [1, grew ? 1.28 : 1.34, 1],
-      // Rests on the dial's ink, not `--text`. The numeral sits on brass now,
-      // so returning it to the old off-white would leave it white-on-gold from
-      // the first life change onwards -- a bug that only appears after the
-      // first hit, which is exactly when nobody is looking at the CSS.
-      color: ["var(--dial-ink)", grew ? "var(--gain)" : "var(--danger)", "var(--dial-ink)"],
+      /*
+       * Rests on `--dial-n`, which is WHATEVER THE STYLESHEET SAYS the numeral
+       * is -- and that indirection is the fix rather than a tidy.
+       *
+       * It rested on `--dial-ink` directly, which is right for the desktop
+       * seal: the numeral sits on brass, and returning it to the old off-white
+       * left it white-on-gold from the first life change onwards. The handheld
+       * dial is not brass. It is a gold ring around a hole punched out of
+       * `--void-1`, and `handheld.css` colours the numeral `--text` for exactly
+       * that reason -- but Framer writes the resting colour back as an inline
+       * style, which beats a stylesheet. So one point of damage stamped
+       * near-black ink onto a dark purple well and the life total became
+       * unreadable, on the one layout this game is built for, and only after
+       * the first hit -- which is precisely when nobody is looking at the CSS.
+       *
+       * `--dial-n` is defined on `.dial__n` in `board.css` and re-pointed in
+       * `handheld.css`, so this says "put it back" without knowing which disc
+       * it is on.
+       */
+      color: ["var(--dial-n)", grew ? "var(--gain)" : "var(--danger)", "var(--dial-n)"],
       transition: { duration: 0.5, times: [0, 0.25, 1] },
     });
   }, [player.life, controls]);

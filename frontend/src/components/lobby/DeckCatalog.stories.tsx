@@ -7,7 +7,7 @@
  */
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { cardResponse } from "../../testing/fixtures";
 import * as pods from "../../testing/pods";
 import { DeckCatalog } from "./DeckCatalog";
@@ -169,13 +169,44 @@ export const Close: Story = {
   },
 };
 
-/** Escape closes it too, which is the only exit a keyboard has. */
+/**
+ * Escape closes it too, and so does `B` -- which is the same thing.
+ *
+ * `buttons.ts` maps Escape onto the pad's `b`, so both arrive through
+ * `useDismiss` one frame later rather than through a `window` listener of this
+ * component's own. `waitFor` is that frame; see `input/useDismiss.ts` for why
+ * the raw-key path had to go.
+ */
 export const EscapeCloses: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await canvas.findByTestId("deck-catalog");
     await userEvent.keyboard("{Escape}");
-    expect(args.onClose).toHaveBeenCalled();
+    await waitFor(() => expect(args.onClose).toHaveBeenCalled());
+  },
+};
+
+/**
+ * B CLOSES IT, AND THE FOOTER HAS BEEN PROMISING THAT SINCE THE FIRST DRAFT.
+ *
+ * Nothing was listening. `tests/hintsBound.test.ts` asks only whether a button
+ * is bound *somewhere* in the app, so a hint drawn on a surface that binds it
+ * nowhere passes -- and this surface drew `B — Back` and bound nothing. A
+ * player on a pad pressed the advertised button, the game ignored it, and their
+ * controller layout's own idea of Back took over instead: on a Steam Deck a
+ * history step, which from a pod's address is the front door. Backing out of
+ * the deck catalogue dropped them out of the pod.
+ *
+ * `k` rather than `{Escape}` on purpose: it is `B` in `KEYS` and nothing else,
+ * so this exercises the pad intent rather than a key an overlay might happen to
+ * be listening for.
+ */
+export const BackCloses: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("deck-catalog");
+    await userEvent.keyboard("k");
+    await waitFor(() => expect(args.onClose).toHaveBeenCalled());
   },
 };
 

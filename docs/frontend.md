@@ -1062,7 +1062,8 @@ trigger produces no edges at all for as long as it lasts.
 
 ### The region trap is soft
 
-`L1`/`R1`/`L2` step between the board's five regions, and a region traps the ring
+`L1`/`R1` step between the board's five regions (and holding `L2` opens the dial
+that jumps straight to one), and a region traps the ring
 inside itself so a thumb-flick cannot throw it across the screen. That trap was a
 **one-way door** on any controller missing a shoulder button — which is exactly
 what a Deck in gaming mode is. A region is entered automatically, so the first
@@ -1307,6 +1308,16 @@ The trap is subordinate to the modal one: `stopRoot` returning anything but the
 board means something is on top and owns the ring outright. It is also scoped to
 `html[data-input="pad"|"keyboard"]` — a mouse player has no ring, and trapping a
 desktop keyboard user inside a region is a regression nobody asked for.
+
+**Tapping `L2`** sends the ring to the commit slab — Attack, Block, Done, Pass.
+That control lives in the right rail, and on a 1280x800 panel the ring is almost
+never near it: you are in your hand, or out on an opponent's board choosing what
+to swing at. Walking there is a dozen presses; `R1` is two steps if you happen to
+know the region order. Neither is a thing to ask for once a phase, thirteen
+phases a turn. The button was already advertised — it said `Jump`, and it jumped
+to the tool strip, which `Menu` also does, so the one shoulder the bar promises
+was spent on the second route to the settings menu. It reads `Decide` now,
+because the destination is worth naming and the mechanism is not.
 
 **Holding `L2`** opens a dial that jumps straight to a region. On the trigger and
 not on a shoulder, and that is not a preference: `pad.ts` reports presses and has

@@ -1002,10 +1002,15 @@ html[data-input="keyboard"] .hints {
   background: var(--void-1);
 }
 
+/* The numeral sits in a hole punched out of `--void-1`, not on brass -- so the
+   resting ink is the page's own text colour. Through `--dial-n` rather than
+   `color` directly, because the life-change animation stamps the resting value
+   inline and would otherwise put desktop's near-black on this dark well. See
+   `.dial__n` in `board.css`. */
 [data-handheld] .play__mine .dial__n {
+  --dial-n: var(--text);
   position: relative;
   z-index: 1;
-  color: var(--text);
   font-size: 28px;
   text-shadow: none;
 }

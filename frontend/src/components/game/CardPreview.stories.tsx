@@ -145,6 +145,58 @@ export const ReaderCreature: Story = {
   },
 };
 
+/**
+ * COUNTERS, ON THE PICTURE, ABOVE THE P/T.
+ *
+ * The compressed reader drops the desktop fact list for good reasons -- the
+ * keywords are in the rules text, the status is the tap state, the controller
+ * is whose mat it is on -- and the counters went with them, which was wrong for
+ * the one reason the others were right: **a counter is not restated anywhere.**
+ * A +1/+1 shows up in the derived P/T; a stun, a loyalty, a charge or an oil
+ * counter is a fact about the permanent that this panel was the only place to
+ * read, and it was not reading it.
+ *
+ * STACKED, NOT IN A ROW. The window is 227px, and "+1/+1 x3" beside "stun"
+ * beside "4/4" does not fit in one -- what a row did with the overflow was push
+ * the number off the picture. A column, hard against the right edge, keeps the
+ * P/T in the corner it has always been in and lets the counters take as many
+ * lines as they need above it.
+ */
+export const ReaderCounters: Story = {
+  args: {
+    state: {
+      ...board,
+      battlefield: board.battlefield.map((card) =>
+        card.oid === 205 ? { ...card, counters: { "+1/+1": 3, stun: 1 } } : card,
+      ),
+    },
+  },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  parameters: { automtg: { mount: "railRight", ui: { hoveredOid: 205 } } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Llanowar Elves");
+
+    const counters = canvasElement.querySelector(".reader__counters");
+    expect(counters?.textContent).toContain("+1/+1 x3");
+    expect(counters?.textContent).toContain("stun");
+
+    // A column: the counters sit ABOVE the number, not beside it.
+    const pt = canvasElement.querySelector(".reader__pt") as HTMLElement;
+    const above = (counters as HTMLElement).getBoundingClientRect();
+    const below = pt.getBoundingClientRect();
+    expect(above.bottom).toBeLessThanOrEqual(below.top + 1);
+
+    // Both flush right, and neither of them off the picture.
+    const art = canvasElement.querySelector(".reader__art") as HTMLElement;
+    const window_ = art.getBoundingClientRect();
+    expect(Math.round(above.right)).toBeCloseTo(Math.round(below.right), 0);
+    expect(above.left).toBeGreaterThanOrEqual(window_.left);
+    expect(below.right).toBeLessThanOrEqual(window_.right + 1);
+  },
+};
+
 /** A land: no P/T, and the rules box is most of the panel. */
 export const ReaderLand: Story = {
   args: { state: board },

@@ -31,7 +31,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
 import { type ImageMap, artState, artUrlFor, artistOf } from "../../logic/cardArt";
-import { isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
+import { counterBadges, isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -82,6 +82,19 @@ function CompressedBody({ card, images }: { card: CardView; images: ImageMap }) 
   const pips = manaPips(card.mana_cost);
   const pt =
     card.power !== null && card.toughness !== null ? `${card.power}/${card.toughness}` : null;
+  /*
+   * The counters, on the picture beside the P/T.
+   *
+   * The panel drops the fact list on a handheld -- keywords are in the rules
+   * text, status is the tap state, the controller is whose mat it is on -- and
+   * counters went with them, which was wrong for the one reason the others were
+   * right: a counter is not restated anywhere. A +1/+1 counter is visible in
+   * the derived P/T and nothing else is; a stun, a loyalty, a charge or an oil
+   * counter is a fact about the permanent that this panel is the only place to
+   * read. So they come back here, where the P/T already lives, and nowhere
+   * else.
+   */
+  const badges = counterBadges(card);
 
   return (
     <>
@@ -100,7 +113,27 @@ function CompressedBody({ card, images }: { card: CardView; images: ImageMap }) 
           data-art-state={artState(images, card.card_id)}
         >
           {art !== null && <img className="reader__img" src={art} alt="" aria-hidden="true" />}
-          {pt && <span className="reader__pt tabular">{pt}</span>}
+          {/*
+            STACKED, NOT SIDE BY SIDE. The window is 227px wide and a card with
+            two kinds of counter on it -- "+1/+1 x3" and "stun" -- is already
+            most of that before the P/T asks for its corner. In a row the two
+            collided; in a column the counters sit above the number, both hard
+            against the right edge, and the picture keeps its left half.
+          */}
+          {(badges.length > 0 || pt) && (
+            <div className="reader__marks" data-testid="reader-marks">
+              {badges.length > 0 && (
+                <span className="reader__counters" data-testid="reader-counters">
+                  {badges.map((badge) => (
+                    <span className="counter-badge" key={badge}>
+                      {badge}
+                    </span>
+                  ))}
+                </span>
+              )}
+              {pt && <span className="reader__pt tabular">{pt}</span>}
+            </div>
+          )}
         </div>
       )}
 
