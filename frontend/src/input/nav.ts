@@ -51,6 +51,18 @@ export const ALONG_MIN = 6;
  * axis. A real diagonal step to the next row still qualifies comfortably; a
  * lunge across the whole board does not, and the player gets a wall they can
  * see instead of a jump they cannot explain.
+ *
+ * ## The one caller that turns it off
+ *
+ * `relaxed` drops this test and keeps everything else, and exactly one caller
+ * passes it: `stops.ts:escapeGroup`, on a second pass, after the strict one has
+ * come back empty for the WHOLE BOARD. Inside a region the rule is what makes a
+ * column feel like a column and it is never relaxed. At a region's edge the
+ * player has already established there is nothing on their line -- the strict
+ * pass said so -- and the alternative is a wall with somewhere obvious to go on
+ * the other side of it, which is the "you cannot move up for no reason" a
+ * playtester reports. `ring.ts:longHop` is what stops the resulting jump
+ * strobing across the screen.
  */
 export const DRIFT_LIMIT = 3;
 
@@ -94,7 +106,12 @@ export function alignedWith(from: NavRect, to: NavRect, dir: Dir): boolean {
     : from.left < to.left + to.width && to.left < from.left + from.width;
 }
 
-export function scoreStop(from: NavRect, to: NavRect, dir: Dir): number | null {
+export function scoreStop(
+  from: NavRect,
+  to: NavRect,
+  dir: Dir,
+  relaxed = false,
+): number | null {
   const a = centre(from);
   const b = centre(to);
   const dx = b.x - a.x;
@@ -103,7 +120,7 @@ export function scoreStop(from: NavRect, to: NavRect, dir: Dir): number | null {
   const horizontal = dir === "left" || dir === "right";
   const perp = horizontal ? Math.abs(dy) : Math.abs(dx);
   if (along <= ALONG_MIN) return null;
-  if (!alignedWith(from, to, dir) && perp > along * DRIFT_LIMIT) return null;
+  if (!relaxed && !alignedWith(from, to, dir) && perp > along * DRIFT_LIMIT) return null;
   return along + perp * PERP;
 }
 
@@ -123,6 +140,7 @@ export function pickStop(
   candidates: readonly Candidate[],
   dir: Dir,
   exclude?: string,
+  relaxed = false,
 ): string | null {
   let best: string | null = null;
   let bestScore = Number.POSITIVE_INFINITY;
@@ -130,7 +148,7 @@ export function pickStop(
   let inRowScore = Number.POSITIVE_INFINITY;
   for (const candidate of candidates) {
     if (candidate.id === exclude) continue;
-    const score = scoreStop(from, candidate.rect, dir);
+    const score = scoreStop(from, candidate.rect, dir, relaxed);
     if (score === null) continue;
     if (score < bestScore) {
       bestScore = score;

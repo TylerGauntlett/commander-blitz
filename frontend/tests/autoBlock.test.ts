@@ -12,7 +12,13 @@ import { autoBlocks, blockTier } from "../src/logic/autoBlock";
 import { action, card, gameView, player } from "./fixtures";
 
 /** A creature on the battlefield with the given stats. */
-function creature(oid: number, power: number, toughness: number, damage = 0) {
+function creature(
+  oid: number,
+  power: number,
+  toughness: number,
+  damage = 0,
+  keywords: string[] = [],
+) {
   return card({
     oid,
     name: `C${oid}`,
@@ -21,6 +27,7 @@ function creature(oid: number, power: number, toughness: number, damage = 0) {
     power,
     toughness,
     damage,
+    keywords,
   });
 }
 
@@ -71,6 +78,42 @@ describe("blockTier", () => {
   it("treats exactly-lethal power as a kill and exactly-lethal damage as death", () => {
     // The boundary both ways: 2 power into 2 toughness kills, and is killed.
     expect(blockTier(creature(1, 2, 2), creature(2, 2, 2))).toBe(3);
+  });
+
+  /*
+   * THE TWO KEYWORDS THAT CHANGE THE ANSWER MOST OFTEN, and for two cycles the
+   * ranking read power and toughness and nothing else -- so a deathtouch
+   * blocker was offered as a chump against a 5/5 and a first striker was scored
+   * as losing fights it walks away from. `docs/playtest-feedback-03.md`, cycle
+   * 4 item 5. The fight itself lives in `logic/fight.ts` now, shared with
+   * `attackTier`, so the two shortcuts cannot disagree about the same cards.
+   */
+  it("knows a deathtouch blocker kills whatever it stops", () => {
+    // A 1/1 into a 5/5 is a chump without deathtouch and a real trade with it.
+    expect(blockTier(creature(1, 1, 1), creature(2, 5, 5))).toBe(4);
+    expect(blockTier(creature(1, 1, 1, 0, ["Deathtouch"]), creature(2, 5, 5))).toBe(3);
+  });
+
+  it("knows a deathtouch WALL is the best block there is", () => {
+    // 1/6 deathtouch against a 5/5: kills it, and lives.
+    expect(blockTier(creature(1, 1, 6, 0, ["Deathtouch"]), creature(2, 5, 5))).toBe(1);
+  });
+
+  it("knows a first striker survives a fight it wins", () => {
+    // 2/2 into a 3/2 is a trade; with first strike the 3/2 never swings back.
+    expect(blockTier(creature(1, 2, 2), creature(2, 3, 2))).toBe(3);
+    expect(blockTier(creature(1, 2, 2, 0, ["First strike"]), creature(2, 3, 2))).toBe(1);
+  });
+
+  it("knows a first-striking ATTACKER stops the blocker dealing damage", () => {
+    // The 2/2 has lethal power for the attacker and is dead before it uses it,
+    // so this is a chump rather than the trade the numbers alone suggest.
+    expect(blockTier(creature(1, 2, 2), creature(2, 2, 2))).toBe(3);
+    expect(blockTier(creature(1, 2, 2), creature(2, 2, 2, 0, ["First strike"]))).toBe(4);
+  });
+
+  it("counts double strike as first strike, which is the question being asked", () => {
+    expect(blockTier(creature(1, 2, 2, 0, ["Double strike"]), creature(2, 3, 2))).toBe(1);
   });
 });
 
@@ -134,5 +177,13 @@ describe("autoBlocks", () => {
   it("skips a card it cannot see rather than guessing at its stats", () => {
     const state = board([creature(1, 3, 4)]);
     expect(autoBlocks(state, [block(1, 99)])).toEqual([]);
+  });
+
+  it("now offers the deathtouch block it used to decline", () => {
+    // The whole point of teaching `blockTier` the keyword: a 1/1 deathtouch in
+    // front of a 5/5 is a trade a player makes every game, and "All defend"
+    // was reading it as a creature thrown away.
+    const state = board([creature(1, 1, 1, 0, ["Deathtouch"]), creature(2, 5, 5)]);
+    expect(autoBlocks(state, [block(1, 2)])).toEqual([{ blocker: 1, attacker: 2, tier: 3 }]);
   });
 });

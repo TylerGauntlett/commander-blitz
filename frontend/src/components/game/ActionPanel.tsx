@@ -51,6 +51,7 @@ import {
   defendersFor,
   groupPlayActions,
 } from "../../logic/actionMatch";
+import { sensibleAttacks } from "../../logic/autoAttack";
 import { type BlockTier, autoBlocks, blockTier } from "../../logic/autoBlock";
 import { keywordLabel, manaPips, statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
@@ -344,6 +345,46 @@ export function ActionPanel({
   const attackers = availableAttackers(actions);
   const unstagedAttackers = attackers.filter((oid) => stagedAttacks[oid] === undefined);
 
+  /*
+   * "ALL ATTACK" IS RANKED, AND A SECOND PRESS IS THE ALPHA STRIKE.
+   *
+   * It used to stage every legal attacker, and "All defend" has declined a
+   * chump block since cycle 2 -- so the shortcut for the more consequential
+   * decision of the turn was the one you had to undo card by card. A 0/1 Blood
+   * Artist swung into an untapped 1/1 and the creature you needed at home was
+   * tapped out, both from one press.
+   *
+   * `logic/autoAttack.ts` has the ranking and what it deliberately guesses at.
+   * The escalation is the other half and it is not a nicety: racing is a real
+   * decision, no arithmetic here should be allowed to make it two dozen
+   * presses, and the ring is already resting on this mark when you arrive
+   * (`Table.jumpToCommit`). So press one sends what is worth sending and press
+   * two sends the rest -- which is also why the escalation lives on the SAME
+   * control rather than beside it: a second mark in a three-button dock at the
+   * 44px hit floor is a row that no longer fits, and `expectStableDock` says so.
+   *
+   * Keyed on the decision rather than reset by an effect: `escalated` has to be
+   * false again the next time a declaration opens, and comparing the key on read
+   * is one fewer thing that can be forgotten than an effect that clears it. The
+   * pending kind plus the step is the same narrow key `Table` uses, for the same
+   * reason it uses it.
+   */
+  const sensible = mode === "attack" ? sensibleAttacks(state, actions) : [];
+  const newAttacks = sensible.filter(({ attacker }) => stagedAttacks[attacker] === undefined);
+  const combatKey = `${state.pending?.kind ?? ""}|${state.step}`;
+  const [escalated, setEscalated] = useState({ key: combatKey, on: false });
+  const allOut = escalated.key === combatKey && escalated.on;
+  /*
+   * What the mark would stage if pressed right now.
+   *
+   * Everything once the ranking has been spent -- either because it was
+   * escalated, or because it had nothing to offer in the first place. A mark
+   * that greys out while four creatures could still attack is a mark that looks
+   * broken; the second state has to be reachable from the first by pressing it.
+   */
+  const wouldAttack =
+    allOut || newAttacks.length === 0 ? unstagedAttackers.length : newAttacks.length;
+
   /** The `add_attacker` action for one exact pair, which is what carries the id. */
   const attackActionFor = (attacker: number, defender: number) =>
     actions.find(
@@ -354,10 +395,16 @@ export function ActionPanel({
     ) ?? null;
 
   const attackWithAll = () => {
-    for (const oid of unstagedAttackers) {
-      const [first] = defendersFor(actions, oid);
-      if (first !== undefined) stageAttack(oid, first);
+    if (allOut || newAttacks.length === 0) {
+      for (const oid of unstagedAttackers) {
+        const [first] = defendersFor(actions, oid);
+        if (first !== undefined) stageAttack(oid, first);
+      }
+      setEscalated({ key: combatKey, on: true });
+      return;
     }
+    for (const { attacker, defender } of newAttacks) stageAttack(attacker, defender);
+    setEscalated({ key: combatKey, on: true });
   };
 
   // ------------------------------------------------------------------- block
@@ -1203,10 +1250,25 @@ export function ActionPanel({
                     data-testid="combat-all"
                     disabled={disabled || unstagedAttackers.length === 0}
                     onClick={attackWithAll}
-                    aria-label={`All attack${
-                      unstagedAttackers.length > 0 ? ` (${unstagedAttackers.length})` : ""
-                    }`}
-                    data-hint="Send every creature that can attack"
+                    /*
+                      THE NUMBER IS WHAT THIS PRESS WOULD DO, not how many
+                      creatures exist. "All attack (4 of 7)" says both halves of
+                      the ranking in the place a controller player actually
+                      reads them -- `aria-label` is the accessible name, so it
+                      is what the ring announces and what the hint carries.
+                    */
+                    aria-label={
+                      wouldAttack === 0
+                        ? "All attack"
+                        : wouldAttack < unstagedAttackers.length
+                          ? `All attack (${wouldAttack} of ${unstagedAttackers.length})`
+                          : `All attack (${wouldAttack})`
+                    }
+                    data-hint={
+                      wouldAttack < unstagedAttackers.length
+                        ? "Send everything worth sending. Press again for the rest."
+                        : "Send every creature that can attack"
+                    }
                   >
                     <ActionIcon name="all" />
                   </button>
