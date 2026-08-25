@@ -21,6 +21,7 @@
 
 import type { GameView, LegalAction } from "../api/types";
 import { blockableBy, defendersFor } from "./actionMatch";
+import { commitmentFor } from "./commit";
 import { mulliganPhase } from "./openingHand";
 import { findCard } from "./zoneGrouping";
 
@@ -125,6 +126,61 @@ export function verbsFor(
   actions: LegalAction[],
   stop: string | null,
   staging: Staging = EMPTY,
+): Verbs {
+  const verbs = contextVerbs(state, actions, stop, staging);
+  /*
+   * X FALLS THROUGH TO WHATEVER THE TURN IS WAITING ON, and the fall-through is
+   * the whole design.
+   *
+   * Every decision ends at one control in the commit dock -- Pass, All attack
+   * then Attack, All defend then Block -- and the dock is in the right rail
+   * where the ring almost never is. `L2` jumps there and `A` presses it: two
+   * presses, every phase, thirteen phases a turn.
+   *
+   * `X` is the secondary verb and it is EMPTY on most stops: it re-aims a
+   * staged attacker and activates an ability on a card that casts, and says
+   * nothing at all anywhere else. So the button that already exists takes the
+   * job, and only where it has nothing else to do -- a card with an ability
+   * keeps `Activate`, an attacker keeps `Re-aim`. Nothing is displaced.
+   *
+   * ONE PLACE RATHER THAN A LINE PER BRANCH. There are a dozen returns above
+   * and every one of them would have needed the same three lines; a rule
+   * applied to the result cannot drift from itself.
+   *
+   * ...and WHICH control is `logic/commit.ts`, shared with `Table.secondary`
+   * rather than restated here. Everything else in this file mirrors the routing
+   * branch for branch and is held to it by a test, which is a discipline; one
+   * function is a guarantee, and this is the branch where the two would have
+   * been most tempted to drift -- the mark is disabled on a board where every
+   * block is a chump, and a bar advertising it there would be promising a press
+   * that does nothing.
+   *
+   * NOT WHEN THE RING IS ALREADY ON IT. `A All attack   X All attack` is a
+   * one-line bar saying one thing twice, and the bar is short of room. `X` is a
+   * shortcut TO the dock; standing on the dock you already have `A`.
+   *
+   * `Table.secondary` still PRESSES it there, and that asymmetry is deliberate.
+   * The rule this app holds is one-directional -- "do not advertise a button
+   * without binding it" -- and the reverse is ordinary here: `Space` passes,
+   * `1`-`9` play the nth card, `G`/`E`/`C` peek, and none of them is in the bar.
+   * Making `X` dead in the one place it would otherwise work would be a worse
+   * answer than a hint the player does not need, because a habit that breaks in
+   * one spot is harder to explain than one that does not.
+   */
+  if (verbs.x !== undefined) return verbs;
+  const commit = commitmentFor(state, actions, staging);
+  if (!commit) return verbs;
+  const ref = parseStop(stop);
+  const alreadyThere =
+    ref.kind === "commit" || (commit.actionId !== null && ref.raw === `act:${commit.actionId}`);
+  return alreadyThere ? verbs : { ...verbs, x: commit.verb };
+}
+
+function contextVerbs(
+  state: GameView,
+  actions: LegalAction[],
+  stop: string | null,
+  staging: Staging,
 ): Verbs {
   const ref = parseStop(stop);
   const decision = state.pending?.player === state.seat ? state.pending.kind : null;

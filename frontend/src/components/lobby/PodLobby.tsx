@@ -97,6 +97,10 @@ export function PodLobby({
   const locked = you?.locked ?? false;
   const canDeal = canStart(pod) && !starting;
   const host = pod.you_are_host;
+  /** Chairs with somebody in them, which is what "an opponent was added" means. */
+  const seated = pod.seats.filter(
+    (seat) => seat.kind === "cpu" || seat.kind === "human",
+  ).length;
 
   /*
    * THE RING OPENS ON THE THING THIS SCREEN IS FOR.
@@ -136,6 +140,52 @@ export function PodLobby({
     if (canDeal && !wasDealable.current) setCursor("ui:start-game");
     wasDealable.current = canDeal;
   }, [canDeal]);
+
+  /*
+   * ...AND SEATING A CPU COMES BACK TO YOUR OWN CHAIR, IF YOU HAVE NO DECK YET.
+   *
+   * `resolveCursor` keeps the ring nearest to where the markup changed, so
+   * filling a chair left it on THAT chair's deck button -- which is right in
+   * general and wrong here, because the chair you just filled is the one thing
+   * on the screen now finished with, and choosing your own deck is the decision
+   * the pod is actually waiting on you for.
+   *
+   * ON THE TRANSITION, not on the state, for the reason above: the pod commits
+   * about once a second while anybody is choosing, and re-asserting a cursor on
+   * each of those would pin the ring and make the rest of the screen
+   * unreachable. `wasSeated` is what makes it a one-time nudge somebody can walk
+   * straight back out of.
+   *
+   * GUARDED ON NOT HAVING A DECK, which is what stops it firing on the way back
+   * -- seat a second CPU after choosing and the ring stays where you put it.
+   *
+   * `setCursor` declines a stop that is not on screen rather than blanking the
+   * ring, so a guest with no chair needs no guard of its own.
+   */
+  const wasSeated = useRef(seated);
+  useLayoutEffect(() => {
+    if (seated > wasSeated.current && !you?.deck) setCursor("ui:change-deck");
+    wasSeated.current = seated;
+  }, [seated, you?.deck]);
+
+  /*
+   * TAKING A DECK MOVES NOTHING, AND THAT IS DELIBERATE.
+   *
+   * It jumped to `Lock in` for one round, on the reasoning that the button that
+   * opened the catalogue is finished with the moment a deck is on the chair.
+   * That is true and it is not the whole board: the pod OPENS on `Choose a
+   * deck`, so picking one first is the natural order, and at that point there
+   * are no opponents seated. The jump landed the player on a button that ends
+   * the screen while the chairs behind them were still empty -- so the path
+   * became deck, walk back up to seat a CPU, walk back down to lock in. It
+   * added the walk it was meant to remove.
+   *
+   * `Lock in` is not the next step; it is the LAST one, and only the player
+   * knows when the pod is the shape they want. The ring stays on the return
+   * address -- `Change deck`, one row above the chairs -- and `Deal` still
+   * comes to them the moment the pod is dealable, which is the one nudge here
+   * that cannot be premature.
+   */
 
   const take = (deckId: string, forSeat: number | null) => {
     if (forSeat === null) return;

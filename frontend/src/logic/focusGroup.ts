@@ -45,11 +45,23 @@ const COMBAT = new Set(["declare_attackers", "declare_blockers"]);
  *
  * `null` means "leave the ring alone" -- either nothing is being asked of this
  * seat, or something else already owns where the ring goes.
+ *
+ * `boardCanDecide` is the one thing here the game cannot answer, and it is why
+ * this takes an argument rather than a second `COMBAT` set. A block declaration
+ * is made by pressing your creature and then the attacker it stops -- and at
+ * 1280x800 an opponent's lanes are clipped to zero height, so the attacker is
+ * not a stop the ring can land on. Sent to the board there, the ring arrived
+ * somewhere with exactly half a decision in it: pressing your own creature
+ * answered nothing and every direction out of it was a wall or a seat. `Table`
+ * asks the DOM whether any attacker is landable and passes the answer, because
+ * "which region does this decision live in" and "is that region drawn right
+ * now" are different questions and only the first one is about the game.
  */
 export function groupForDecision(
   state: GameView,
   actions: LegalAction[],
   isModal: boolean,
+  boardCanDecide = true,
 ): GroupId | null {
   // Not your decision. The AI is thinking, or another human is.
   if (state.pending && state.pending.player !== state.seat) return null;
@@ -60,7 +72,7 @@ export function groupForDecision(
   if (isModal) return null;
 
   const kind = state.pending?.player === state.seat ? state.pending.kind : null;
-  if (kind && COMBAT.has(kind)) return "board";
+  if (kind && COMBAT.has(kind)) return boardCanDecide ? "board" : "acts";
 
   /*
    * Your main phase, with something castable in hand.

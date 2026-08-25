@@ -12,9 +12,9 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 | `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
 | `tests/server/` | 287 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 1005 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 328 + 18 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
-| `frontend/e2e/` | 112 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
+| `frontend/tests/` | 1272 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 381 + 35 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
+| `frontend/e2e/` | 118 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
 `scripts/verify.py` runs 15 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
@@ -171,6 +171,48 @@ npm run test:all        # both vitest projects
 `verify.py` skips the story stage with a message when that binary is absent, the same
 way the whole frontend is skipped without `node_modules`. The Storybook *build* stage
 needs no browser and always runs.
+
+## Press budgets, which are a fifth kind of question
+
+Every gate above answers something about a *state*: is this a stop, is it big
+enough, is it on screen, does it hold its own action id. None of them can answer
+how long a decision takes, and on a controller that is the property a player
+actually feels — `docs/handheld-playtest.md` Loop 1 put it as "reachable and
+reachable-in-under-a-second are different properties, and only the second is
+playable". A journey that grew from two presses to nine would have passed every
+check in this document.
+
+```
+src/testing/journey.ts                 walk a journey, return what it cost
+Journeys.stories.tsx                   a budget per journey, 1280x800, in CI
+e2e/journeys-handheld.spec.ts          the same journeys, against a real engine
+```
+
+**Budgets are ceilings, never exact counts.** `toBeLessThanOrEqual`, always: an
+exact count fails on an improvement, which is the wrong direction to be strict
+in, while a ceiling fails only when a journey gets worse.
+
+**The split is about what a fixture can honestly stand in for.** The combat
+shortcuts and the targeting follow-up stage into `uiStore` and are true the
+moment the gesture is made, so a scenario is a faithful board and the story
+belongs in CI. Playing a card is a mutation — the follow-up waits for the new
+action list on purpose, and `fakeGame` never produces one — and the lobby is
+five screens with a pod created over HTTP. Those two are e2e or they are
+nothing.
+
+Two things have to be right before a synthetic press means anything, and both
+were wrong in the first draft:
+
+- **`pad.ts` dispatches on the next frame.** A key goes into a latch and `wake()`
+  starts the loop; the intent arrives inside the following `requestAnimationFrame`
+  and the ring moves in the layout effect after the commit that follows. A press
+  asserted immediately is asserted against a board that has not heard it, and a
+  second press in the same frame lands on a ring that has not moved — which
+  quietly makes a journey cost whatever number the assertion was written with.
+- **`useCursorNav` is mounted by `Screen`, not by the board.** A story rendering
+  `Table` alone presses `A` at nothing at all, and every direction with it. The
+  journey stories mount the hook the way the app does, which is also why
+  `Table.stories.tsx` says `A` and the directions are `e2e/pad.spec.ts`'s to own.
 
 ## Card art has its own gates
 

@@ -26,7 +26,7 @@ import {
   setGroup,
   subscribeGroup,
 } from "../src/input/groups";
-import { activeRoot, escapeGroup } from "../src/input/stops";
+import { activeRoot, candidatesIn, escapeGroup, sendableIn } from "../src/input/stops";
 
 /** jsdom reports a zero box for everything; a stop needs one to count. */
 function boxed(el: Element, w = 100, h = 40): void {
@@ -415,5 +415,162 @@ describe("escapeGroup", () => {
     setGroup("hand");
     document.documentElement.setAttribute("data-input", "mouse");
     expect(escapeGroup("card:1", "up")).toBeNull();
+  });
+
+  /*
+   * THE WALL THAT WAS NOT A REAL WALL.
+   *
+   * The escape ran the SAME `pickStop` over the whole board, so the drift bound
+   * that makes a column feel like a column inside a region was being applied
+   * again to answer a different question -- and the player got a nudge and a
+   * deny with the rest of the board plainly sitting there, off to one side.
+   * `escapeGroup` retries relaxed once the strict pass comes back empty. See
+   * `nav.ts:DRIFT_LIMIT` and `tests/spatialNav.test.ts`.
+   */
+  it("leaves the region even when the way out is off to one side", () => {
+    board(["hand", "acts"]);
+    const at = (el: Element, top: number, height: number, left: number, width: number) => {
+      el.getBoundingClientRect = () =>
+        ({
+          x: left,
+          y: top,
+          width,
+          height,
+          top,
+          left,
+          right: left + width,
+          bottom: top + height,
+          toJSON() {
+            return this;
+          },
+        }) as DOMRect;
+    };
+    at(document.querySelector(".table") as Element, 0, 800, 0, 1280);
+    // A hand card at the left of the fan; the rail is up and a long way right,
+    // which is exactly the real board's shape.
+    at(document.querySelector('[data-stop="card:1"]') as Element, 600, 140, 20, 100);
+    at(document.querySelector('[data-stop="act:a1"]') as Element, 500, 60, 1040, 200);
+    document.documentElement.setAttribute("data-input", "pad");
+    setGroup("hand");
+    expect(escapeGroup("card:1", "up")).toBe("act:a1");
+  });
+
+  it("still refuses when the only candidate is behind you", () => {
+    // The relaxed pass drops the drift bound and nothing else: `ALONG_MIN`
+    // holds, so a wall with the whole board below it is still a wall.
+    board(["hand", "acts"]);
+    const at = (el: Element, top: number, height: number, left: number, width: number) => {
+      el.getBoundingClientRect = () =>
+        ({
+          x: left,
+          y: top,
+          width,
+          height,
+          top,
+          left,
+          right: left + width,
+          bottom: top + height,
+          toJSON() {
+            return this;
+          },
+        }) as DOMRect;
+    };
+    at(document.querySelector(".table") as Element, 0, 800, 0, 1280);
+    at(document.querySelector('[data-stop="card:1"]') as Element, 100, 140, 20, 100);
+    at(document.querySelector('[data-stop="act:a1"]') as Element, 600, 60, 1040, 200);
+    document.documentElement.setAttribute("data-input", "pad");
+    setGroup("hand");
+    expect(escapeGroup("card:1", "up")).toBeNull();
+  });
+});
+
+/*
+ * WHAT THE RING MAY BE *SENT* TO, WHICH IS A WIDER SET THAN IT CAN STEP TO.
+ *
+ * Two questions that look like one, and the follow-up in `Table` needs the
+ * second. `candidatesIn` answers "is this on screen right now", which is right
+ * for a direction press: stepping does not scroll, so a row past the fold of
+ * the action list is not the thing below the one you are on. A JUMP does
+ * scroll -- `cursor.ts:stamp` calls `keepInView` -- so the same row is a
+ * perfectly good destination.
+ *
+ * Asked the first way, the follow-up rejected the panel row for any blocker
+ * below the fold, which is exactly the row it exists to reach when the
+ * attacker's card is not drawable, and the ring stayed on the creature with
+ * nothing to do. See `docs/handheld-playtest.md` Loop 9.3.
+ */
+describe("sendableIn", () => {
+  /** A box, stated: jsdom measures nothing. */
+  function at(el: Element, top: number, height: number, left = 0, width = 100): void {
+    el.getBoundingClientRect = () =>
+      ({
+        x: left,
+        y: top,
+        width,
+        height,
+        top,
+        left,
+        right: left + width,
+        bottom: top + height,
+        toJSON() {
+          return this;
+        },
+      }) as DOMRect;
+  }
+
+  it("takes an ordinary stop", () => {
+    document.body.innerHTML = '<div class="table"><button data-stop="card:1"></button></div>';
+    const table = document.querySelector(".table") as HTMLElement;
+    at(table, 0, 800, 0, 1280);
+    at(document.querySelector('[data-stop="card:1"]') as Element, 100, 140);
+    expect([...sendableIn(table)]).toEqual(["card:1"]);
+  });
+
+  it("refuses a stop with no box of its own", () => {
+    // A card mid-`AnimatePresence`-exit reports an empty rect, and the ring
+    // landing on one puts it nowhere.
+    document.body.innerHTML = '<div class="table"><button data-stop="card:1"></button></div>';
+    const table = document.querySelector(".table") as HTMLElement;
+    at(table, 0, 800, 0, 1280);
+    at(document.querySelector('[data-stop="card:1"]') as Element, 100, 0);
+    expect([...sendableIn(table)]).toEqual([]);
+  });
+
+  it("refuses a stop inside an ancestor clipped to nothing", () => {
+    /*
+     * THE CASE THE LAYOUT CREATES ON PURPOSE. An opponent's lanes are
+     * `height: 0; overflow: hidden` at 1280x800 so `FxLayer` keeps its anchors,
+     * and **a clipped card still reports its own full box** -- which is why
+     * this is an ancestor walk rather than a size check. Nothing can scroll a
+     * zero-height box into view, so this one is a real no.
+     */
+    document.body.innerHTML =
+      '<div class="table"><div class="lanes" style="overflow: hidden">' +
+      '<button data-stop="card:1"></button></div></div>';
+    const table = document.querySelector(".table") as HTMLElement;
+    at(table, 0, 800, 0, 1280);
+    at(document.querySelector(".lanes") as Element, 100, 0);
+    at(document.querySelector('[data-stop="card:1"]') as Element, 100, 140);
+    expect([...sendableIn(table)]).toEqual([]);
+  });
+
+  it("TAKES a stop merely scrolled past the fold, which is the whole point", () => {
+    /*
+     * The row is outside its scroller's box and outside the rail's, and the
+     * rail does not scroll -- so `candidatesIn` refuses it, correctly, because
+     * a direction press would not reach it. A jump brings it into view.
+     */
+    document.body.innerHTML =
+      '<div class="table"><aside class="rail" style="overflow-y: hidden">' +
+      '<div class="list" style="overflow-y: auto">' +
+      '<button data-stop="act:a1"></button></div></aside></div>';
+    const table = document.querySelector(".table") as HTMLElement;
+    at(table, 0, 800, 0, 1280);
+    at(document.querySelector(".rail") as Element, 0, 300, 1000, 240);
+    at(document.querySelector(".list") as Element, 0, 300, 1000, 240);
+    at(document.querySelector('[data-stop="act:a1"]') as Element, 600, 40, 1000, 240);
+
+    expect(candidatesIn(table).map((c) => c.id)).toEqual([]);
+    expect([...sendableIn(table)]).toEqual(["act:a1"]);
   });
 });

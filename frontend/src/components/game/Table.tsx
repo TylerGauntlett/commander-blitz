@@ -13,8 +13,8 @@
  */
 
 import { motion } from "motion/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { CardView, GameView } from "../../api/types";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { CardView, GameView, LegalAction } from "../../api/types";
 import { type SoundName, play } from "../../audio/sfx";
 import { drive, restAll } from "../../fx/actuators";
 import { getCursor, setCursor, setCursorContext, subscribeCursor } from "../../input/cursor";
@@ -31,16 +31,19 @@ import {
   setGroup,
 } from "../../input/groups";
 import { onAny as onAnyPad, on as onPad, onFrame as onPadFrame } from "../../input/pad";
-import { stopElement, stopId } from "../../input/stops";
+import { sendableIn, stopElement, stopId, stopRoot } from "../../input/stops";
 import {
   actionsForCard,
   availableAttackers,
+  availableBlockers,
   blockableBy,
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
 import { reset as forgetCardRects } from "../../logic/cardRects";
+import { COMMIT_TESTID, commitmentFor } from "../../logic/commit";
 import { groupForDecision } from "../../logic/focusGroup";
+import { type Gesture, followUpStops } from "../../logic/followUp";
 import { sourcesSpentBy } from "../../logic/mana";
 import { removalsByOid } from "../../logic/removals";
 import { parseStop } from "../../logic/verbs";
@@ -415,6 +418,23 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   // ------------------------------------------------------------ interaction
 
+  /**
+   * The gesture whose second half the ring has not been moved to yet.
+   *
+   * Declared here rather than beside its effect because the routing callbacks
+   * below close over `followUp` AND name it in their dependency arrays, and a
+   * dependency array is evaluated where it is written -- a `const` declared
+   * further down would be in its temporal dead zone at that moment. The effect
+   * that drains this sits after `useCursorResolve()`, which is the ordering
+   * that matters: a resolve running afterwards would put the ring back.
+   */
+  const [follow, setFollow] = useState<Gesture | null>(null);
+  const followAt = useRef<LegalAction[] | null>(null);
+  const followUp = useCallback((gesture: Gesture) => {
+    followAt.current = null;
+    setFollow(gesture);
+  }, []);
+
   /** Play a card from hand: straight through if unambiguous, else start targeting. */
   const playFromHand = useCallback(
     (card: CardView) => {
@@ -423,14 +443,18 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       if (candidates.length === 0) return;
       if (candidates.length === 1 && candidates[0].targets.length === 0) {
         act(candidates[0].id);
+        // The card is leaving your hand, so the ring must not leave with it.
+        followUp({ kind: "played-from-hand", oid: card.oid });
         return;
       }
       beginTargeting(
         card.oid,
         candidates.map((a) => a.id),
       );
+      // The board has just lit up somewhere else; go and stand on it.
+      followUp({ kind: "targeting", actionIds: candidates.map((a) => a.id) });
     },
-    [gateInput, actions, act, beginTargeting],
+    [gateInput, actions, act, beginTargeting, followUp],
   );
 
   /**
@@ -490,6 +514,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
         }
         if (matches.length > 1) {
           narrowTargeting(matches.map((a) => a.id));
+          // The leftover choice is the panel's, so send the ring to it -- the
+          // rows are the only surface that carries a kicked cast and an
+          // unkicked one as two separate things to press.
+          followUp({ kind: "targeting", actionIds: matches.map((a) => a.id) });
           return;
         }
       }
@@ -520,12 +548,20 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           return;
         }
         if (combatCandidates.has(card.oid)) {
-          select(selectedOid === card.oid ? null : card.oid);
+          const picked = selectedOid === card.oid ? null : card.oid;
+          select(picked);
+          // Picking a blocker is only half of a block. The other half is an
+          // attacker on somebody else's board, which on a handheld is not a
+          // stop at all -- see `logic/followUp.ts`.
+          if (picked !== null) followUp({ kind: "blocker-selected", blocker: picked });
           return;
         }
         if (selectedOid !== null && blockableBy(actions, selectedOid).includes(card.oid)) {
           stageBlock(selectedOid, card.oid);
           select(null);
+          // ...and on to the next creature with a job, so a pod's worth of
+          // attackers is two presses each rather than two plus a walk back.
+          followUp({ kind: "block-staged", blocker: selectedOid });
           return;
         }
         const aimedHere = Object.entries(stagedBlocks)
@@ -578,6 +614,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       select,
       beginTargeting,
       narrowTargeting,
+      followUp,
     ],
   );
 
@@ -698,6 +735,10 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           unstageBlock(action.source_oid);
         } else {
           stageBlock(action.source_oid, attacker);
+          // The row and the card are two ways to make one gesture, so they get
+          // the same follow-up. Only on staging: releasing a block is the
+          // player putting a decision back, not making the next one.
+          followUp({ kind: "block-staged", blocker: action.source_oid });
         }
         return;
       }
@@ -730,6 +771,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
       unstageBlock,
       onDeclare,
       act,
+      followUp,
     ],
   );
 
@@ -816,23 +858,96 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * X: the secondary verb, which is context's business rather than a fixed one.
    *
    * On a staged attacker it re-aims -- the pod case, where `defendersFor` has
-   * several seats and the mouse re-aims by clicking a different orb. Elsewhere
-   * it activates an ability on a card whose primary press casts it.
+   * several seats and the mouse re-aims by clicking a different orb. On a card
+   * whose primary press casts it, it activates an ability instead.
+   *
+   * AND WHERE IT HAS NOTHING ELSE TO DO, IT COMMITS THE DECISION.
+   *
+   * Every decision this game asks ends at one control in the commit dock: Pass
+   * on a priority window, All attack then Attack on a declaration, All defend
+   * then Block. The dock is in the right rail and the ring is almost never near
+   * it -- you are in your hand, or out on your own board choosing what to swing
+   * -- so `L2` exists to jump there and `A` presses it. Two presses, every
+   * phase, thirteen phases a turn. `X` collapses that to one.
+   *
+   * `X` is empty on most stops, so it takes the job rather than a button being
+   * invented for it: no new glyph, and `HintBar` renders `verbs.x`
+   * conditionally already, so the one-line bar does not grow. Nothing is
+   * displaced -- a card with an ability keeps `Activate`, a staged attacker
+   * keeps `Re-aim`.
+   *
+   * WHICH control is `logic/commit.ts`, shared with `logic/verbs.ts` rather
+   * than restated in each. A bar that promises a verb the button does not have
+   * is the defect that file exists to prevent, and this is the branch where the
+   * two would have drifted first -- "All defend" is disabled on a board where
+   * every block is a chump, and only the ranking knows that.
+   *
+   * TWO OF THE FOUR ARE PRESSED RATHER THAN POSTED. "All attack" and the Attack
+   * slab write to `uiStore` and declare what is staged; they exist in no action
+   * list and have no id, so `X` clicks the control the panel already rendered.
+   * That is the same rule `useCursorNav` uses for `A` -- there is no second
+   * routing table, and no way for a pad to reach an action a pointer cannot.
    */
   const secondary = useCallback(() => {
     const ref = parseStop(getCursor());
-    if (ref.kind !== "card" || ref.id === null) return;
-    const oid = ref.id;
-    if (decisionKind === "declare_attackers" && stagedAttacks[oid] !== undefined) {
-      const defenders = defendersFor(actions, oid);
-      if (defenders.length < 2) return;
-      const next = defenders[(defenders.indexOf(stagedAttacks[oid]) + 1) % defenders.length];
-      stageAttack(oid, next);
+    const oid = ref.kind === "card" ? ref.id : null;
+    if (oid !== null) {
+      if (decisionKind === "declare_attackers" && stagedAttacks[oid] !== undefined) {
+        const defenders = defendersFor(actions, oid);
+        if (defenders.length > 1) {
+          const next =
+            defenders[(defenders.indexOf(stagedAttacks[oid]) + 1) % defenders.length];
+          stageAttack(oid, next);
+          return;
+        }
+      }
+      const ability = actions.find((a) => a.source_oid === oid && a.kind === "activate");
+      if (ability) {
+        onBarAct(ability.id);
+        return;
+      }
+    }
+    /*
+     * Silent when there is nothing to do, rather than a deny.
+     *
+     * The bar is the contract: it renders `X` only when `verbsFor` gives it a
+     * verb, and `verbsFor` asks the same `commitmentFor` this does. A refusal
+     * noise for a button the player was never told about is a noise they cannot
+     * explain.
+     */
+    const commit = commitmentFor(state, actions, {
+      stagedAttacks,
+      stagedBlocks,
+      selectedOid,
+      targeting: targetingActionIds.length > 0,
+    });
+    if (!commit) return;
+    if (commit.actionId !== null) {
+      act(commit.actionId);
       return;
     }
-    const ability = actions.find((a) => a.source_oid === oid && a.kind === "activate");
-    if (ability) onBarAct(ability.id);
-  }, [decisionKind, stagedAttacks, actions, stageAttack, onBarAct]);
+    /*
+     * `.click()` and not a re-implementation. The dock is inside the panel and
+     * the staging lives there; reaching in for the button is what keeps the
+     * escalation state, the ranking and the declare call in one place.
+     */
+    document
+      .querySelector<HTMLButtonElement>(
+        `[data-testid="${COMMIT_TESTID[commit.target]}"]:not([disabled])`,
+      )
+      ?.click();
+  }, [
+    decisionKind,
+    stagedAttacks,
+    stagedBlocks,
+    selectedOid,
+    targetingActionIds,
+    state,
+    actions,
+    stageAttack,
+    onBarAct,
+    act,
+  ]);
 
   /**
    * Which opponent is being read, while `R2` is held.
@@ -907,6 +1022,64 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * navigation starts from `[data-cursor]`.
    */
   useCursorResolve();
+
+  /* --------------------------------------------------- following a decision
+   *
+   * HALF THE DECISIONS IN THIS GAME ARE TWO PRESSES, AND NOTHING MOVED BETWEEN
+   * THEM. Press an instant in your hand and the board lights up with legal
+   * targets while the ring is still on the card in your hand; press one of your
+   * creatures during a block declaration and the attacker it has to be pointed
+   * at is on an opponent's board, which at 1280x800 is a lane clipped to zero
+   * height and therefore not a stop at all. A pointer never pays either cost,
+   * because a pointer arrives at the second half of a decision by moving there.
+   *
+   * `logic/followUp.ts` answers WHERE, as an ordered list, and this is the
+   * whole of the DOM half. Two things it has to get right:
+   *
+   * - **The group is released before the cursor moves.** `setCursor` resolves
+   *   through `activeRoot()`, which is still the region being left, so a target
+   *   outside it is not findable and the ring silently does not move. Exactly
+   *   the bug `cursor.ts:moveCursor` records; the region is put back if nothing
+   *   in the list lands, and the cursor->group reconciler below sets the right
+   *   one when something does.
+   * - **A candidate has to be LANDABLE, not merely present.** `setCursor` asks
+   *   `stopElement`, which asks the DOM for the id and nothing else -- so it
+   *   accepts an opponent's attacker sitting in a lane clipped to zero height,
+   *   which is precisely the stop this whole module exists to route around. It
+   *   took the ring straight back to the dead end it was avoiding.
+   *
+   *   `sendableIn` and not `candidatesIn`, and the difference is the whole
+   *   fallback. Stepping does not scroll, so `onScreen` rightly refuses a row
+   *   past the fold of the action list; a JUMP does scroll, because `stamp`
+   *   calls `keepInView`. Filtering by the stepping rule rejected the panel row
+   *   for any blocker below the fold -- which is precisely the row the fallback
+   *   exists to reach -- and the ring stayed on the creature with nothing to do.
+   * - **A gesture that asks the server waits for its answer.** The three combat
+   *   gestures stage into `uiStore` and are true the moment they are made.
+   *   Playing a card is a mutation, and running against the pre-mutation action
+   *   list would send the ring to a card the land drop has just made
+   *   unplayable. So that one holds until `actions` is a different array.
+   */
+  useLayoutEffect(() => {
+    if (!follow) return;
+    if (follow.kind === "played-from-hand") {
+      if (followAt.current === null) {
+        followAt.current = actions;
+        return;
+      }
+      if (followAt.current === actions) return;
+    }
+    const candidates = followUpStops(state, actions, follow, stagedBlocks);
+    setFollow(null);
+    if (candidates.length === 0) return;
+    const was = getGroup();
+    setGroup(null);
+    const sendable = sendableIn(stopRoot());
+    for (const id of candidates) {
+      if (sendable.has(id) && setCursor(id)) return;
+    }
+    setGroup(was);
+  }, [follow, actions, state, stagedBlocks]);
 
   /*
    * ...and the context, which decides whether the ring flies or teleports. A
@@ -1128,6 +1301,38 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    */
   const modalOwns = modalOwnsDecision;
 
+  /**
+   * Is the board a place this combat decision can actually be MADE?
+   *
+   * The one thing `groupForDecision` cannot answer, because it is about the
+   * layout rather than about the game. A block is your creature and then the
+   * attacker it stops, and at 1280x800 an opponent's lanes are clipped to zero
+   * height -- so `stops.ts:onScreen` refuses to land the ring on an attacker,
+   * correctly, and the board holds half a decision. Sent there, `A` on your own
+   * creature answered nothing and every direction out of it was a wall or a
+   * seat. The panel has carried the whole pairing as rows the entire time.
+   *
+   * Asked of the WHOLE TABLE rather than of the board region, and that is the
+   * half worth getting right: on a desktop the attackers are drawn in
+   * `.play__opponents` and the ring reaches them by walking out of the board,
+   * because `escapeGroup` makes the region trap soft. The question is "is that
+   * card on screen anywhere", not "is it in this box".
+   *
+   * Asked of the DOM and not of the card count: a clipped card still reports
+   * its own full box, which is why `landableStopsIn` walks the ancestors.
+   * Attacking is unaffected -- your own creatures are the decision there, and
+   * the seats you aim at are stops at every size.
+   */
+  const boardCanDecide = useCallback(() => {
+    if (decisionKind !== "declare_blockers") return true;
+    const table = document.querySelector<HTMLElement>(".table");
+    if (!table) return true;
+    const reachable = new Set(landableStopsIn(table).map((el) => el.dataset.stop));
+    return availableBlockers(actions).some((blocker) =>
+      blockableBy(actions, blocker).some((attacker) => reachable.has(stopId.card(attacker))),
+    );
+  }, [decisionKind, actions]);
+
   /*
    * ONCE PER DECISION, and a ref rather than a dependency list is what makes it
    * once.
@@ -1153,7 +1358,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     // key is still unclaimed, so the next run after narration settles takes it.
     if (narration.busy) return;
     focusedFor.current = key;
-    const wanted = groupForDecision(state, actions, modalOwns);
+    const wanted = groupForDecision(state, actions, modalOwns, boardCanDecide());
     if (wanted && wanted !== getGroup()) enterGroup(wanted);
   }, [state.pending?.kind, state.step, narration.busy]);
 
