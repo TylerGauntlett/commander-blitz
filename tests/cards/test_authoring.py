@@ -386,3 +386,71 @@ class TestATransformingCardIsOneAnswer:
             {"id": "b"},
         ]
 
+
+
+class TestTheQueueTracksWhatIsInYourDecks:
+    """`wanted` is what puts an imported deck's cards at the head of the queue.
+
+    `Queue._priority` sorts fidelity deficits, then `wanted`, then EDHREC rank --
+    so a card somebody actually put in a list is worked on before the global
+    popularity tail. That ordering is the queue's whole editorial claim.
+    """
+
+    def _queue_with(self, *names: str):
+        from automtg.cards.authoring.queue import Entry, Queue
+
+        return Queue(entries={n: Entry(name=n, scryfall_id=f"id-{n}") for n in names})
+
+    def test_refresh_marks_a_card_already_queued_before_the_import(self, real_registry):
+        """The case the flag exists for, and the one it used to miss.
+
+        `refresh` skips a name it already holds, so `wanted` was only ever set at
+        the moment an entry was *created*. Import a deck afterwards -- which is
+        the normal order, the queue is built from the catalog long before anybody
+        pastes a list -- and every one of its cards stayed `wanted: False`.
+        `--report`'s "in your decks" line read 0 no matter how many decks were in
+        `data/generated/`.
+        """
+        from automtg.cards.images import load_index
+
+        queue = self._queue_with("Sol Ring", "Llanowar Elves")
+        assert not any(e.wanted for e in queue)
+
+        queue.refresh(load_index(), real_registry, wanted={"Sol Ring"}, limit=0)
+
+        assert queue.entries["Sol Ring"].wanted
+        assert not queue.entries["Llanowar Elves"].wanted
+
+    def test_a_card_dropped_from_every_deck_stops_being_wanted(self, real_registry):
+        """It is re-read every run, not accumulated.
+
+        `wanted_names()` reads `data/generated/` fresh each time, so deleting an
+        imported deck has to be able to take the flag back off -- otherwise the
+        priority list silently keeps promoting cards nobody plays any more.
+        """
+        from automtg.cards.images import load_index
+
+        queue = self._queue_with("Sol Ring")
+        queue.entries["Sol Ring"].wanted = True
+
+        queue.refresh(load_index(), real_registry, wanted=set(), limit=0)
+
+        assert not queue.entries["Sol Ring"].wanted
+
+    def test_refresh_still_keeps_a_recorded_verdict(self, real_registry):
+        """`wanted` is an input; `status`, `gate` and `reason` are results.
+
+        The docstring's promise -- "without disturbing what is already recorded"
+        -- is about the run's findings, and re-reading the flag must not cost
+        them.
+        """
+        from automtg.cards.images import load_index
+
+        queue = self._queue_with("Sol Ring")
+        entry = queue.entries["Sol Ring"]
+        entry.status, entry.gate, entry.reason = "unexpressible", "residual", "nope"
+
+        queue.refresh(load_index(), real_registry, wanted={"Sol Ring"}, limit=0)
+
+        assert (entry.status, entry.gate, entry.reason) == ("unexpressible", "residual", "nope")
+        assert entry.wanted
