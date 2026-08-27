@@ -1252,12 +1252,12 @@
     },
     "Academy Manufactor": {
       "edhrec_rank": 264,
-      "gate": "template",
+      "gate": null,
       "name": "Academy Manufactor",
-      "reason": "no template for: If you would create a Clue, Food, or Treasure token, instead create one of each",
+      "reason": "",
       "scryfall_id": "c88eb33d-efba-4ad9-878f-f051079c9bce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Academy Raider": {
@@ -4362,12 +4362,12 @@
     },
     "Ainok Strike Leader": {
       "edhrec_rank": 2267,
-      "gate": "template",
+      "gate": null,
       "name": "Ainok Strike Leader",
-      "reason": "no template for: Whenever you attack with this creature and/or your commander, for each opponent, create a ",
+      "reason": "",
       "scryfall_id": "2d1102e4-447a-4b40-8131-5b36b8979fe0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ainok Survivalist": {
@@ -70512,12 +70512,12 @@
     },
     "Divine Visitation": {
       "edhrec_rank": 1915,
-      "gate": "template",
+      "gate": null,
       "name": "Divine Visitation",
-      "reason": "no template for: If one or more creature tokens would be created under your control, that many 4/4 white An",
+      "reason": "",
       "scryfall_id": "aff6a7f9-9258-4247-9d17-09c9c2cf0c2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Diviner Spirit": {
@@ -120822,12 +120822,12 @@
     },
     "Halo Fountain": {
       "edhrec_rank": 1970,
-      "gate": "template",
+      "gate": null,
       "name": "Halo Fountain",
-      "reason": "no template for: {W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creatu",
+      "reason": "",
       "scryfall_id": "af542837-77a1-462e-8dd6-b4fa8b21bb33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Halo Hopper": {
@@ -125442,12 +125442,12 @@
     },
     "Heraldic Banner": {
       "edhrec_rank": 859,
-      "gate": "template",
+      "gate": null,
       "name": "Heraldic Banner",
-      "reason": "no template for: As this artifact enters, choose a color",
+      "reason": "",
       "scryfall_id": "743ea709-dbb3-4db8-a2ce-544f47eb6339",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Heralds of Tzeentch": {
@@ -161252,12 +161252,12 @@
     },
     "Luck Bobblehead": {
       "edhrec_rank": 4466,
-      "gate": "template",
+      "gate": null,
       "name": "Luck Bobblehead",
-      "reason": "no template for: {1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create ",
+      "reason": "",
       "scryfall_id": "13281945-47ff-464d-96ef-9b26ef6783fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Lucky Clover": {

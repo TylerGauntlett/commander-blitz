@@ -22,6 +22,13 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "academy_manufactor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "accorder_s_shield": {
     "zone": "battlefield"
   },
@@ -58,6 +65,10 @@
     "zone": "battlefield"
   },
   "agent_of_atlas": {
+    "zone": "battlefield"
+  },
+  "ainok_strike_leader": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ajani_s_sunstriker": {
@@ -1723,6 +1734,10 @@
       "graveyard"
     ]
   },
+  "divine_visitation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "diving_griffin": {
     "zone": "battlefield"
   },
@@ -2938,6 +2953,10 @@
   "hallowed_fountain": {
     "zone": "battlefield"
   },
+  "halo_fountain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hand_of_silumgar": {
     "zone": "battlefield"
   },
@@ -3061,6 +3080,10 @@
     "zone": "battlefield"
   },
   "herald_s_horn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "heraldic_banner": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -3951,6 +3974,10 @@
     "zone": "battlefield"
   },
   "lucent_liminid": {
+    "zone": "battlefield"
+  },
+  "luck_bobblehead": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lumbering_falls": {

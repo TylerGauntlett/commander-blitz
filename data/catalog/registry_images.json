@@ -31,6 +31,10 @@
     "artist": "Andrew Goldhawk",
     "scryfall_id": "21892cbc-1af2-4ea1-8907-cec514b53004"
   },
+  "academy_manufactor": {
+    "artist": "David Szabo",
+    "scryfall_id": "c88eb33d-efba-4ad9-878f-f051079c9bce"
+  },
   "accorder_s_shield": {
     "artist": "Alan Pollack",
     "scryfall_id": "c5a4c2ab-c5bc-4e07-8671-a688ebd5471c"
@@ -86,6 +90,10 @@
   "agent_of_atlas": {
     "artist": "Michael Machira",
     "scryfall_id": "a9db550e-ed1f-4973-a7f5-ec2e6adb8e6b"
+  },
+  "ainok_strike_leader": {
+    "artist": "Alexander Mokhov",
+    "scryfall_id": "2d1102e4-447a-4b40-8131-5b36b8979fe0"
   },
   "air_elemental": {
     "artist": "Kev Walker",
@@ -2079,6 +2087,10 @@
     "artist": "N\u00e9N\u00e9 Thomas",
     "scryfall_id": "ad0d2e46-814b-40cb-81a0-8d89285bf196"
   },
+  "divine_visitation": {
+    "artist": "Flavio Greco Paglia",
+    "scryfall_id": "aff6a7f9-9258-4247-9d17-09c9c2cf0c2e"
+  },
   "diving_griffin": {
     "artist": "John Howe",
     "scryfall_id": "4e1e4260-c555-48d4-b779-b97e3639e729"
@@ -3524,6 +3536,10 @@
     "artist": "Piotr Dura",
     "scryfall_id": "b7285986-7e08-4969-86ef-452dc5bfdd9f"
   },
+  "halo_fountain": {
+    "artist": "Yuu Fujiki",
+    "scryfall_id": "af542837-77a1-462e-8dd6-b4fa8b21bb33"
+  },
   "hand_of_silumgar": {
     "artist": "Lius Lasahido",
     "scryfall_id": "d3cbb127-6149-4d0b-ad98-1968f2ebe8e4"
@@ -3672,6 +3688,10 @@
   "herald_s_horn": {
     "artist": "Pablo Mendoza",
     "scryfall_id": "1c2e4ff2-5c14-488e-8548-eb89ffd18e41"
+  },
+  "heraldic_banner": {
+    "artist": "Ravenna Tran",
+    "scryfall_id": "743ea709-dbb3-4db8-a2ce-544f47eb6339"
   },
   "herd_heirloom": {
     "artist": "Allen Morris",
@@ -4809,6 +4829,10 @@
   "lucent_liminid": {
     "artist": "Eric Fortune",
     "scryfall_id": "cd700719-2f65-4fd5-b3aa-3e9402560c79"
+  },
+  "luck_bobblehead": {
+    "artist": "\u00d8rjan Ruttenborg Svendsen",
+    "scryfall_id": "13281945-47ff-464d-96ef-9b26ef6783fa"
   },
   "lumbering_falls": {
     "artist": "Daniel Romanovsky",

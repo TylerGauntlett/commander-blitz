@@ -167,6 +167,7 @@
       "cant_sacrifice",
       "cascade",
       "cast_copy",
+      "choose_color",
       "choose_mode",
       "choose_type",
       "clash",
@@ -230,6 +231,7 @@
       "reveal",
       "reveal_until",
       "ripple",
+      "roll_dice",
       "sacrifice",
       "scry",
       "search_library",
@@ -246,7 +248,8 @@
       "two_piles",
       "unattach",
       "unblockable",
-      "untap"
+      "untap",
+      "win_game"
     ],
     "selector_keys": [
       "any_of",
@@ -367,7 +370,8 @@
       "max_count_of",
       "max_life_of",
       "min_count_of",
-      "min_life_of"
+      "min_life_of",
+      "permanents_entered_this_turn"
     ],
     "supertypes": [
       "Basic",
@@ -457,6 +461,7 @@
       "power_had",
       "power_of",
       "resolutions_this_turn",
+      "rolled",
       "spells_cast_this_turn",
       "sum",
       "times",

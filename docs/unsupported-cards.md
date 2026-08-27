@@ -10,57 +10,30 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **28** capabilities.
+**16 cards** blocked by **20** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [create-token-attacking-player](#create-token-attacking-player) | 2 | 2267 | op |
 | [demonstrate](#demonstrate) | 2 | 11744 | decision, op |
-| [token-creation-replacement](#token-creation-replacement) | 2 | 264 | replacement |
-| [win-the-game](#win-the-game) | 2 | 1970 | op |
 | [attach-another-permanent](#attach-another-permanent) | 1 | 11272 | op |
 | [attack-prohibition-all-defenders](#attack-prohibition-all-defenders) | 1 | 10598 | op |
 | [attack-prohibition-by-subtype](#attack-prohibition-by-subtype) | 1 | 4905 | static_effect |
 | [cant-attack-or-block-alone](#cant-attack-or-block-alone) | 1 | 5022 | static_effect |
-| [choose-color](#choose-color) | 1 | 859 | op, selector |
+| [create-token-attacking-player](#create-token-attacking-player) | 1 | 4905 | op |
 | [defined-x-cost](#defined-x-cost) | 1 | 12117 | cost |
-| [dice-rolling](#dice-rolling) | 1 | 4466 | op |
 | [enchant-player](#enchant-player) | 1 | 10598 | engine, selector, trigger_event |
-| [exclude-binding-set](#exclude-binding-set) | 1 | 1365 | selector |
 | [free-cast-from-a-looked-at-window](#free-cast-from-a-looked-at-window) | 1 | 5975 | op |
 | [gift](#gift) | 1 | 1672 | cost, value |
 | [granted-static-ability](#granted-static-ability) | 1 | 2771 | static_effect |
 | [modal-triggered-ability-targets](#modal-triggered-ability-targets) | 1 | 3530 | engine |
 | [owner-scoped-filter](#owner-scoped-filter) | 1 | 2771 | selector |
 | [player-target-restriction](#player-target-restriction) | 1 | 12938 | selector |
-| [return-spell-to-hand](#return-spell-to-hand) | 1 | 623 | op |
 | [sacrifice-snapshot](#sacrifice-snapshot) | 1 | 4549 | op |
 | [shield-counter](#shield-counter) | 1 | 3036 | replacement |
-| [static-value-permanents-entered](#static-value-permanents-entered) | 1 | 7238 | value |
 | [token-definition](#token-definition) | 1 | 5022 | engine |
 | [triggering-players-turn](#triggering-players-turn) | 1 | 1974 | condition |
-| [untap-permanents-cost](#untap-permanents-cost) | 1 | 1970 | cost |
 | [verifier-self-targeting-etb](#verifier-self-targeting-etb) | 1 | 11153 | engine |
 | [was-cast](#was-cast) | 1 | 1974 | condition |
-
-## create-token-attacking-player
-
-Blocks **2** cards.
-
-- **(op)** `create_token` should accept `attacking` as a player spec -- e.g. `{"binding": "each_player"}` -- so a token can be created attacking a named player. Here the naming player is the one a `for_each_player` loop is currently on, which is exactly what "for each opponent, ... attacking that player" means: at a pod the three tokens are declared against three different seats, one each.
-  <br>Why the existing vocabulary won't do: `attacking` is a bare boolean and `ops_board._attack_target` resolves it as `combat.attackers.get(ctx.source_oid)` -- the single player the *source* is attacking -- so every token in the loop would be pointed at that one seat no matter which opponent the iteration is on, and `for_each_player` would degenerate into "make N tokens all attacking the same player". Worse, this trigger fires on the commander swinging alone: when Ainok Strike Leader is not itself an attacker the lookup returns None, and the tokens arrive tapped but attacking nobody, silently dropping the whole clause while looking implemented. `for_each_player` already binds the right player as `each_player` and `primitives.create_token` already takes `attacking: int | None`; there is no key on the op to pass it through. `put_onto_battlefield`'s `attacking` is the same boolean resolved by `_attack_defender`, which falls back to an arbitrary attacker and is not token creation anyway. The rest of the card is expressible today: the trigger is `you_attack` with `condition` `{"exists": {"attacking": true, "controller": "you", "any_of": [{"self_only": true}, {"is_commander": true}]}}` (the documented `any_of` idiom for "it and/or your commander"), the token id `goblin_1_1_r` exists, `tapped: true` is "tapped", and the second line is an activated ability with a `sacrifice` cost and `grant_keyword` indestructible over `{"controller": "you", "types": ["Creature"], "is_token": true, "count": "all"}`.
-- **(op)** `create_token` (and `copy_permanent`) should accept `attacking` as a player spec -- e.g. `{"binding": "defender"}` -- so a token can be put onto the battlefield attacking a named player rather than only the one the source itself is attacking.
-  <br>Why the existing vocabulary won't do: `attacking` is a bare boolean and `ops_board._attack_target` resolves it as `combat.attackers.get(ctx.source_oid)`, i.e. the player the *source* is attacking. Combat Calligrapher is never an attacker here -- its `creatures_attack_player` trigger fires off some other player's declaration -- so the lookup returns None and the token would arrive tapped but not attacking anyone, silently dropping "that's attacking that opponent" while still looking implemented. The `defender` event binding already carries exactly the right player (`triggers.EVENT_BINDING_KEYS`), and `primitives.create_token` already takes `attacking: int | None`; there is simply no key on the op to pass it through. The rest of the sentence is expressible today: `creatures_attack_player` with `controller: "any"` plus `defending: "opponent"` is "whenever a player attacks one of your opponents", `controller: {"binding": "event_player"}` is "that attacking player creates", `tapped: true` is "tapped", and the token id `inkling_2_1_wb_flying` exists.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ainok Strike Leader** (rank 2267) — `ainok_strike_leader`
-  - Whenever you attack with this creature and/or your commander, for each opponent, create a 1/1 red Goblin creature token that's tapped and attacking that player.
-- **Combat Calligrapher** (rank 4905) — `combat_calligrapher`
-  - Inklings can't attack you or planeswalkers you control.
-  - Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.
-
-</details>
 
 ## demonstrate
 
@@ -79,44 +52,6 @@ Blocks **2** cards.
   - Creature spells you cast have demonstrate. (Whenever you cast a creature spell, you may copy it. If you do, choose an opponent to also copy it. Each copy becomes a token.)
 - **Excavation Technique** (rank 12919) — `excavation_technique`
   - Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it. Players may choose new targets for their copies.)
-
-</details>
-
-## token-creation-replacement
-
-Blocks **2** cards.
-
-- **(replacement)** a static replacement effect that intercepts a token-creation event before the token exists and rewrites what is created -- a filter on the token about to be made (here: subtypes Clue, Food or Treasure) plus a substitute list of token ids to create instead, applied once per creation event and never re-applied to its own output (616.1 / 614.5). The same hook is what Doubling Season, Parallel Lives and Ojer Taq want, so it should take a count multiplier as well as a substitute id list.
-  <br>Why the existing vocabulary won't do: `replacements` in the DSL is a four-entry whitelist -- ReplacementModel.event is Literal["self_enters", "self_enters_tapped", "self_enters_with_counters"] -- and every one of them modifies the permanent that is already arriving; none of them can change *what object gets made*. The `create_token` op and `primitives.create_token` take a fixed `def_id` and put the token straight onto the battlefield, firing TOKEN_CREATED only afterwards, so there is no point at which another permanent can see the pending creation and alter it. `replace_deaths` is the only existing effect that redirects an event, and state.py says it acts *after* the death has already happened; it is hardcoded to deaths and has no analogue for creations. The near miss is a `token_created` trigger filtered to subtypes Clue/Food/Treasure with a `create_token` payload for the other two, and it is wrong twice over: the Food and Treasure it creates fire TOKEN_CREATED themselves and match the same filter, so the ability loops without bound and nothing in the trigger vocabulary can tell a token it made from one it did not; and even bounded it would be a trigger, using the stack, so the extra tokens arrive later instead of simultaneously and can be responded to, which changes every "whenever one or more tokens enter" and artifacts-entering count on the board.
-- **(replacement)** a battlefield-wide replacement effect on token creation: when N creature tokens would be created under a given player's control, create N tokens of a different specified token id instead (same count, original token never created)
-  <br>Why the existing vocabulary won't do: ReplacementModel only accepts the events `self_enters`, `self_enters_tapped` and `self_enters_with_counters`, all of which apply to the card itself as it enters, so there is no way to replace an event happening to other objects. The `token_created` trigger event is the closest, but a trigger fires after the fact: the original 1/1 tokens would still exist and the Angels would be additional, which is a strictly different (and stronger) card than the printed replacement. No entry in `static_effects` alters token creation either, and the Angel token itself (`angel_4_4_w_flying_vigilance`) already exists, so the replacement mechanism is the only missing piece.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Academy Manufactor** (rank 264) — `academy_manufactor`
-  - If you would create a Clue, Food, or Treasure token, instead create one of each.
-- **Divine Visitation** (rank 1915) — `divine_visitation`
-  - If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead.
-
-</details>
-
-## win-the-game
-
-Blocks **2** cards.
-
-- **(op)** An effect op that makes a player (here the ability's controller) win the game outright -- 104.2a, setting the winner directly rather than reducing an opponent to zero life. It should mark the named player a winner and every other player a loser immediately on resolution, honouring the usual 'can't win the game' / 'can't lose the game' replacement space, and it needs a matching `lose_game` for the Door to Nothingness / Demonic Pact family.
-  <br>Why the existing vocabulary won't do: Nothing in `ops` sets a game result. The engine only ever produces a winner as a *consequence*: `sba.py` line 226 is the single place `state.result` is written, and it derives winners from who is still alive after state-based actions. `damage` and `lose_life` can only get there by taking an opponent to 0 life, which is not what this card says and is not achievable against a 40-life opponent from one activation anyway; `add_poison` is likewise a life-total-shaped route to the same state-based check. `set_flag` records an arbitrary flag that only a `has_flag` condition can read -- it changes nothing about the game's outcome. So the third line has no expressible approximation at all, not merely an imprecise one.
-- **(op)** an effect op that makes its controller (or a named player) win the game outright per 104.2a -- set `state.game_over`, `state.winners` to that player and `state.result` to "win", clear priority and the pending decision, and emit GAME_OVER -- without any opponent having to be dead, plus the symmetric lose-the-game path (104.3b) for the same subsystem. This is the shared blocker for every alternate win condition: Thassa's Oracle, Approach of the Second Sun, Laboratory Maniac, Coalition Victory, Test of Endurance, Felidar Sovereign, Mechanized Production.
-  <br>Why the existing vocabulary won't do: `src/automtg/engine/sba.py::check_game_over` is the only writer of `state.winners`, and it derives them from `state.alive()` when one or zero players remain -- winning is currently a *consequence* of everyone else losing, with no entry point for a card that declares a winner while both players sit at 40 life. No op in `ops` writes `game_over`, `winners` or `result`. The nearest existing things all fail differently: `set_flag`/`set_turn_flag` record a boolean that only `has_flag` conditions read, and nothing connects a flag to the game-over path; `damage` or `lose_life` for a lethal amount would end the game through the state-based-action route but is a wholly different effect (it is life loss, so it is preventable, replaceable, and does nothing against an opponent with a higher life total or protection), and here the trigger for winning is a die tally with no life component whatever.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Halo Fountain** (rank 1970) — `halo_fountain`
-  - {W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creature token.
-  - {W}{W}, {T}, Untap two tapped creatures you control: Draw a card.
-  - {W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: You win the game.
-- **Luck Bobblehead** (rank 4466) — `luck_bobblehead`
-  - {1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, you win the game.
 
 </details>
 
@@ -179,23 +114,18 @@ Blocks **1** card.
 
 </details>
 
-## choose-color
+## create-token-attacking-player
 
 Blocks **1** card.
 
-- **(op)** An op that asks the permanent's controller to name one of the five colors as it enters and stores it on the object (a `chosen_color` field beside `chosen_type`), so the same permanent's own abilities can read it back as `{"chosen_color_of": "self"}`
-  <br>Why the existing vocabulary won't do: `choose_type` is the only chooser of its shape and it is hard-wired to creature types: `ops_control._creature_types` enumerates the pool's creature subtypes and the pick is written to `GameObject.chosen_type`, a single string slot with no colour analogue. Nothing in `ops` asks for a colour at all, and `choose_mode` over five modes cannot be it, because a mode chosen at enter-time does not persist as a value the card's other two lines can read.
-- **(selector)** A static filter whose `colors` entry may be `{"chosen_color_of": "self"}` instead of a literal colour list, so a `buff` can affect "creatures you control of the chosen color"
-  <br>Why the existing vocabulary won't do: `colors` is in `static_filter_keys`, but `characteristics._matches_printed` tests it as a plain `set(colors) & card.colors` against literal colour letters. The one dynamic substitution that exists, `characteristics.resolve_chosen_subtypes`, rewrites only a filter's `subtypes` and only for `{"chosen_type_of": "self"}` (Vanquisher's Banner); there is no colour counterpart, and `shares_a_color_with` is effect-side only and absent from `static_filter_keys`.
-- **(op)** `add_mana` able to take the source's chosen colour as its `mana` value, so a mana ability can produce exactly one mana of the colour named as the artifact entered
-  <br>Why the existing vocabulary won't do: `ops_mana.op_add_mana` passes `spec["mana"]` straight to `parse_mana_production`, which only reads a literal mana string. The only "pick a colour at activation" idiom available is a `choose_mode` of five `add_mana` modes, which is the *any colour* card (Commander's Sphere): it lets the player pick freely every activation instead of locking the ability to the one colour chosen on entry, so it would make the card strictly better than printed and would also decouple the mana line from the anthem line.
+- **(op)** `create_token` (and `copy_permanent`) should accept `attacking` as a player spec -- e.g. `{"binding": "defender"}` -- so a token can be put onto the battlefield attacking a named player rather than only the one the source itself is attacking.
+  <br>Why the existing vocabulary won't do: `attacking` is a bare boolean and `ops_board._attack_target` resolves it as `combat.attackers.get(ctx.source_oid)`, i.e. the player the *source* is attacking. Combat Calligrapher is never an attacker here -- its `creatures_attack_player` trigger fires off some other player's declaration -- so the lookup returns None and the token would arrive tapped but not attacking anyone, silently dropping "that's attacking that opponent" while still looking implemented. The `defender` event binding already carries exactly the right player (`triggers.EVENT_BINDING_KEYS`), and `primitives.create_token` already takes `attacking: int | None`; there is simply no key on the op to pass it through. The rest of the sentence is expressible today: `creatures_attack_player` with `controller: "any"` plus `defending: "opponent"` is "whenever a player attacks one of your opponents", `controller: {"binding": "event_player"}` is "that attacking player creates", `tapped: true` is "tapped", and the token id `inkling_2_1_wb_flying` exists.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Heraldic Banner** (rank 859) — `heraldic_banner`
-  - As this artifact enters, choose a color.
-  - Creatures you control of the chosen color get +1/+0.
-  - {T}: Add one mana of the chosen color.
+- **Combat Calligrapher** (rank 4905) — `combat_calligrapher`
+  - Inklings can't attack you or planeswalkers you control.
+  - Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.
 
 </details>
 
@@ -210,20 +140,6 @@ Blocks **1** card.
 
 - **Soul Foundry** (rank 12117) — `soul_foundry`
   - {X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.
-
-</details>
-
-## dice-rolling
-
-Blocks **1** card.
-
-- **(op)** an op that rolls N six-sided dice at resolution -- N an ordinary `value_keys` amount, here `{"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Bobblehead"]}}` -- draws each face from the engine's seeded RNG so replays stay deterministic, emits a die-roll event (Barbarian Class and the whole Fallout/AFR roll-a-die block trigger off "whenever you roll one or more dice"), and binds the *whole multiset of results* under an `as` name the way `create_token` binds the oids it made. It needs a matching family of `value_keys` leaves that read that binding: the number of results satisfying a face predicate (even/odd, a face-value `cmp`, a specific face), so "a tapped Treasure token for each even result" is `create_token` with `amount` reading the even tally and "if you rolled 6 exactly seven times" is an `if`/`cmp` reading the count of 6s off the same roll. Both clauses must read one roll, so a per-roll bound tally is the shape, not two independent rolls.
-  <br>Why the existing vocabulary won't do: Nothing in `ops` produces a number at all. `clash` is the only randomness-adjacent op and it reveals the top card of each library and compares mana values -- it yields a win/lose branch, never a value later effects can read, and it touches the library, which a die roll must not. The `random` selector key picks *objects* at random and evaluates to a set, not an integer, so it cannot be an `amount`. `for_each` iterates objects or players and `repeat`/the `times` cost run a count that is already known, so none of them can iterate over die faces. `value_keys` has no leaf for a roll result and there is no binding namespace for one (`snapshot` records a characteristic of an object that existed, and no object exists here). Any approximation would have to invent the distribution -- e.g. `create_token` with `amount` = half the Bobbleheads -- which is a different card that is right on average and wrong every game.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Luck Bobblehead** (rank 4466) — `luck_bobblehead`
-  - {1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, you win the game.
 
 </details>
 
@@ -244,20 +160,6 @@ Blocks **1** card.
   - Enchant opponent
   - When this Aura enters, enchanted opponent creates a Clue token, a Food token, and a Junk token.
   - At the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.
-
-</details>
-
-## exclude-binding-set
-
-Blocks **1** card.
-
-- **(selector)** a selector clause that drops every object recorded under an `as` binding from the pool, not just one -- so "destroy all OTHER creatures" can spare the whole set of X tokens the same spell just created
-  <br>Why the existing vocabulary won't do: `exclude_binding` is the closest clause, but selectors.py compares `oid == _bound_oid(ctx, name)` and `_bound_oid` returns None for the list form that `create_token`'s `as` writes, so an `exclude_binding` naming the tokens excludes nothing and the destroy kills the Soldiers it was supposed to spare. `{"binding": name}` does read the list, but only to seed a pool -- there is no negation of a binding, and selector_keys has no general `not`. `exclude_self` names the sorcery, which is not a creature and so filters nothing, and `is_token: false` is a different card: it would also spare every unrelated token on the battlefield. Reordering the destroy ahead of the create_token reaches the same final board but is a different card too -- the creatures the wrath kills never see the Soldiers enter, so `permanent_enters` triggers on them (Purphoros, Impact Tremors on a creature) fire in real Magic and would not fire here.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Martial Coup** (rank 1365) — `martial_coup`
-  - If X is 5 or more, destroy all other creatures.
 
 </details>
 
@@ -350,20 +252,6 @@ Blocks **1** card.
 
 </details>
 
-## return-spell-to-hand
-
-Blocks **1** card.
-
-- **(op)** a way to move a *targeted spell* off the stack into its owner's hand -- either a new op that reads `ctx.target_sids(target)` (the way `counter` does), removes that StackItem and moves its backing object to Zone.HAND, or `return_to_hand` taught to accept a `kind: "spell"` target. It must not be a counter: 701.5a bouncing is not countering, so it works on a spell with "this spell can't be countered", it fires no spell-countered event, and the card goes to hand rather than to the graveyard
-  <br>Why the existing vocabulary won't do: `counter` is the only op that consumes a spell target, and its destination is hardwired -- `op_counter` moves the object to Zone.GRAVEYARD with cause="countered", emits SPELL_COUNTERED, and refuses uncounterable spells; it takes no destination key, so it cannot be aimed at a hand and would be a different card in three observable ways. `return_to_hand` reaches the right zone but cannot be aimed at a spell: a `kind: "spell"` target produces a `TargetRef.stack(sid)`, and `resolve_pool`'s `{"target": "t1"}` branch calls `ctx.target_oids`, which keeps only `kind == "object"` refs -- so the pool is empty and the op is a silent no-op. Verified in the sandbox: with `return_to_hand` on `{"target": "t1"}` the targeted dummy creature spell resolved onto the opponent's battlefield untouched, and the card still passed all six gates, which is exactly the quiet wrong-card failure a gap record exists to avoid. Selecting the spell without targeting (`objects: {"zone": "stack"}`) does move it -- `_remove_from_zone` drops the StackItem correctly -- but it is untargeted, would sweep every spell on the stack, and drops the printed "target", so ward/hexproof/heroic and "can't be the target of spells" all stop applying.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Reprieve** (rank 623) — `reprieve`
-  - Return target spell to its owner's hand.
-
-</details>
-
 ## sacrifice-snapshot
 
 Blocks **1** card.
@@ -389,20 +277,6 @@ Blocks **1** card.
 
 - **Diamond City** (rank 3036) — `diamond_city`
   - This land enters with a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)
-
-</details>
-
-## static-value-permanents-entered
-
-Blocks **1** card.
-
-- **(value)** a static value leaf usable as a `buff` static's `power`/`toughness` that counts the creatures which entered the battlefield under your control this turn -- i.e. `permanents_entered_this_turn` (with a type/controller restriction) admitted into `static_value_keys`, so an anthem's magnitude can float with a this-turn event tally that is recomputed continuously as more creatures enter
-  <br>Why the existing vocabulary won't do: `permanents_entered_this_turn` is in `value_keys`, so an *effect* amount can read it, but `static_value_keys` is only const/count/counters_on/mana_symbols/max_count_of/max_life_of/min_count_of/min_life_of and a leaf outside that set is a load error. The nearest member, `count`, tallies objects currently matching a filter, and `static_filter_keys` (attached, attacking, blocking, colors, controller, exclude_self, is_commander, is_token, keywords, not_keywords, not_types, paired, paired_with_source, self_only, subtypes, supertypes, tapped, types) has no entered-this-turn predicate -- a static may only read printed characteristics, so `count` would give the number of creatures you control, not the number that entered this turn, and would be wrong in both directions (creatures out since last turn are counted; a creature that entered and then died is not). Doing it with an op is worse: `pump` on a `permanent_enters` trigger wears off at end of turn but would miss creatures cast later in the turn getting the buff from earlier entries, and `add_counters` is permanent rather than until-end-of-turn, so neither reproduces a continuously recalculated anthem.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kinbinding** (rank 7238) — `kinbinding`
-  - Creatures you control get +X/+X, where X is the number of creatures that entered the battlefield under your control this turn.
 
 </details>
 
@@ -433,22 +307,6 @@ Blocks **1** card.
   - When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.
   - Whenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.
   - Whenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life.
-
-</details>
-
-## untap-permanents-cost
-
-Blocks **1** card.
-
-- **(cost)** An `untap_permanents` entry in `cost_keys`: the exact mirror of the existing `tap_permanents`, i.e. a selector over the battlefield with a `count`, whose pool is forced to `tapped: true` and which untaps each chosen permanent as the cost is paid. It must be a genuine cost (paid on activation, unrescindable, part of what makes the ability legal to activate at all), and the count must be a fixed number written into the card (1, 2 and 15 on this card). It also needs the same activation-legality check `tap_permanents` gets, so the ability is simply not offered when fewer than `count` tapped creatures you control exist -- that gating is the whole point of the card, which is a combo engine that turns untapper effects and vigilance into a win condition.
-  <br>Why the existing vocabulary won't do: `cost_keys` has `untap`, but `CostModel.untap` is a plain bool and `costs.can_pay`/`costs.pay` resolve it against `source_oid` only: it is the {Q} symbol, 'untap this permanent', and cannot reach any other object, cannot carry a selector, and cannot carry a count. It is also the wrong permanent -- this card's cost taps *itself* ({T}) and untaps *other creatures*, so `tap: true` plus `untap: true` on the same cost would tap and then untap the Fountain and touch no creature at all. `tap_permanents` is the closest thing in shape (selector + count over other permanents) but it is the opposite direction: the loader forces `tapped: False` into its pool with the comment that 'this cost always taps untapped permanents', so it selects untapped creatures and taps them. There is no `untap_permanents`, and CostModel is `extra="forbid"`, so inventing the key is a load error rather than a silent no-op. Paying with the effect-side `untap` op instead is refused by the packet's own rule -- it moves the payment to resolution, letting the ability be activated with zero tapped creatures on board, which destroys the only constraint the card has.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Halo Fountain** (rank 1970) — `halo_fountain`
-  - {W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creature token.
-  - {W}{W}, {T}, Untap two tapped creatures you control: Draw a card.
-  - {W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: You win the game.
 
 </details>
 
