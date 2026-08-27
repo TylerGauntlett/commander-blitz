@@ -2412,6 +2412,10 @@
     "artist": "Calder Moore",
     "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e"
   },
+  "entrapment_maneuver": {
+    "artist": "Nicholas Gregory",
+    "scryfall_id": "11f7c22b-f1f8-4d71-b5af-aae97fd6ebf0"
+  },
   "eomer_king_of_rohan": {
     "artist": "Leonardo Borazio",
     "scryfall_id": "5f48930a-d7bd-410b-995a-4e2837aabb25"
@@ -4833,6 +4837,10 @@
   "luck_bobblehead": {
     "artist": "\u00d8rjan Ruttenborg Svendsen",
     "scryfall_id": "13281945-47ff-464d-96ef-9b26ef6783fa"
+  },
+  "lucy_maclean_positively_armed": {
+    "artist": "Ryan Valle",
+    "scryfall_id": "2a5150ee-d177-48f5-9c93-edfaa95922ab"
   },
   "lumbering_falls": {
     "artist": "Daniel Romanovsky",

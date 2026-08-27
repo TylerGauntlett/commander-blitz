@@ -84302,12 +84302,12 @@
     },
     "Entrapment Maneuver": {
       "edhrec_rank": 4549,
-      "gate": "template",
+      "gate": null,
       "name": "Entrapment Maneuver",
-      "reason": "no template for: Target player sacrifices an attacking creature of their choice. You create X 1/1 white Sol",
+      "reason": "",
       "scryfall_id": "11f7c22b-f1f8-4d71-b5af-aae97fd6ebf0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Entreat the Angels": {
@@ -161292,12 +161292,12 @@
     },
     "Lucy MacLean, Positively Armed": {
       "edhrec_rank": 12938,
-      "gate": "template",
+      "gate": null,
       "name": "Lucy MacLean, Positively Armed",
-      "reason": "no template for: Golden Rule — Whenever a token enters, you may have target player other than its controlle",
+      "reason": "",
       "scryfall_id": "2a5150ee-d177-48f5-9c93-edfaa95922ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ludevic's Test Subject // Ludevic's Abomination": {
