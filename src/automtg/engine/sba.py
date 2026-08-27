@@ -13,7 +13,7 @@ from . import sagas
 from .characteristics import chars
 from .enums import Keyword, LossReason, Zone
 from .events import EventType
-from .objects import MINUS_ONE, PLUS_ONE
+from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
 from .primitives import clear_goad
 from .zones import destroy, move_object, sacrifice
@@ -230,6 +230,50 @@ def check_game_over(state: GameState) -> None:
         state.emit(EventType.GAME_OVER, winners=state.winners, result=state.result)
 
 
+def declare_win(state: GameState, pid: int) -> None:
+    """"You win the game" -- 104.2b, spelled as 104.2a.
+
+    The engine has exactly one writer of a game result, `check_game_over`, and it
+    derives the winner from who is still `alive()`. That is not an accident to
+    route around: `Game.over`, `Game.winners`, `state.result`, the `GAME_OVER`
+    event and both serializers in `serialize.py` all read what that one function
+    wrote. A card that assigned `state.winners` itself would produce a game that
+    was over with a winner and *no* `PLAYER_LOST` for the seat that lost, no
+    permanents swept off the battlefield, and priority still sitting on
+    somebody -- a result that replays and serializes but does not agree with the
+    board underneath it.
+
+    So this declares no winner at all. It eliminates every **other** player,
+    through the same `_eliminate` a lethal life total reaches, and then knocks on
+    the same door; `check_game_over` finds one seat alive and draws its own
+    conclusion. That is 104.2a -- "a player still in the game wins the game if
+    that player's opponents have all left the game" -- and it is why the pod
+    needs no second branch: at four players the sentence removes three seats
+    instead of one, which is the shape the rule already had.
+
+    Two no-ops, both deliberate. A game that is already over is not re-decided,
+    so the second of two simultaneous wins changes nothing. And a player who has
+    already left the game cannot win it -- there is nobody to eliminate on their
+    behalf, and eliminating the rest anyway would end the game in a *draw*,
+    `check_game_over` finding nobody alive.
+
+    Deliberately not modelled, because no card in the pool needs it yet:
+
+    - **"You can't win the game" / "can't lose the game"** (Platinum Angel,
+      Abyssal Persecutor). That is replacement-shaped and belongs beside the
+      other continuous prohibitions, not in this function.
+    - **The pod's real ending.** By 800.4 a player who wins a multiplayer game
+      leaves it and the survivors play on; here the game ends for everybody.
+      Recorded in docs/rules-coverage.md.
+    """
+    if state.game_over or not state.is_alive(pid):
+        return
+    for other in state.alive():
+        if other != pid:
+            _eliminate(state, other, LossReason.OPPONENT_WON)
+    check_game_over(state)
+
+
 def declare_draw(state: GameState, reason: str) -> None:
     """End the game in a draw (turn cap reached, or a rules loop was detected)."""
     if state.game_over:
@@ -278,6 +322,22 @@ def _tokens_and_attachments(state: GameState) -> bool:
         card = state.card_of(obj)
         if not (card.is_aura or card.is_equipment):
             continue
+        # 704.5n reads "attached to an illegal **object or player**, or is not
+        # attached to an object or player". An Aura enchanting a player who is
+        # still in the game has a legal host, so it is not binned -- and getting
+        # this wrong is not a subtle bug: "Enchant opponent" resolved, attached
+        # to a seat and was in the graveyard before its own enters trigger could
+        # resolve, so the card played as a blank.
+        #
+        # A player who has *lost* is an illegal host, and the Aura goes with
+        # them by falling through to the branch below. `is_alive` rather than a
+        # seat-count test, because a player eliminated in a pod keeps their
+        # index -- the list is never compacted.
+        if obj.attached_to_player is not None:
+            if state.is_alive(obj.attached_to_player):
+                continue
+            obj.attached_to_player = None
+            changed = True
         target = state.objects.get(obj.attached_to) if obj.attached_to else None
         if target is None or not target.on_battlefield:
             if obj.attached_to is not None:
@@ -398,7 +458,18 @@ def _creature_deaths(state: GameState) -> bool:
             # left to `destroy`: `changed` has to report whether the board
             # actually moved, and `destroy` returning False is the only way to
             # know.
+            shields = obj.counter(SHIELD)
             if destroy(state, oid, cause="lethal_damage", by=by):
+                changed = True
+            elif obj.counter(SHIELD) < shields:
+                # A shield counter (122.1c) replaced the destruction, and unlike
+                # regeneration and totem armor it does **not** remove the marked
+                # damage. So the damage is still lethal and 704.3 says to check
+                # again: the creature sheds one counter per check until it has
+                # none and dies. Reported as a change for that reason alone --
+                # without it the loop stops here and a creature standing in
+                # lethal damage would survive on one counter until somebody next
+                # got priority, then die a check at a time.
                 changed = True
     return changed
 

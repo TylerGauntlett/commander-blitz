@@ -30,7 +30,7 @@ from typing import Any
 from ..characteristics import chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
-from ..objects import PLUS_ONE
+from ..objects import PLUS_ONE, SHIELD
 from .context import EffectContext
 
 #: Every key that may appear at the top level of a value expression.
@@ -147,8 +147,26 @@ VALUE_KEYS = frozenset(
         # cost was paid, which nothing else records: the sacrificed creatures are
         # in a graveyard among everything else that died, and the mana is gone.
         "additional_paid",
+        # "…a tapped Treasure token **for each even result**", and "if you
+        # rolled **6 exactly seven times**" -- Luck Bobblehead, twice off one
+        # roll. How many of the faces a `roll_dice` threw satisfy a predicate.
+        # `count` cannot be it: the binding holds die faces and not objects, and
+        # a roll puts nothing on any board to count.
+        "rolled",
     }
 )
+
+#: The two face predicates ``{"rolled": …}` understands, beyond the bare count
+#: of dice thrown. `parity` is "for each even result"; `face` is "you rolled 6
+#: exactly seven times". A misspelling has to be a load error rather than a
+#: silent fall-through to the bare count, which on Luck Bobblehead would read
+#: the number of *dice* as the number of *sixes* and win the game off seven
+#: Bobbleheads.
+ROLL_PREDICATES = ("face", "parity")
+
+#: Rule 705.1 gives a die two halves and no more; "odd" and "even" are the whole
+#: of what a card asks about the parity of a face.
+ROLL_PARITIES = ("even", "odd")
 
 #: What ``{"distinct": {"of": …}}`` may count. Two entries, and both have a card
 #: behind them: domain counts basic land types, coven counts powers. A third
@@ -208,6 +226,8 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "binding" in expr:
         value = ctx.bindings.get(str(expr["binding"]))
         return int(value) if isinstance(value, int) else 0
+    if "rolled" in expr:
+        return _rolled(ctx, expr["rolled"])
     if "count" in expr:
         from .selectors import resolve_pool
 
@@ -420,6 +440,34 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     raise DslError(f"unknown value expression {sorted(expr)}")
 
 
+def _rolled(ctx: EffectContext, spec: Any) -> int:
+    """How many faces of one `roll_dice` satisfy a predicate.
+
+    ``{"rolled": {"binding": "roll"}}`` is how many dice were thrown;
+    ``{"parity": "even"}`` and ``{"face": 6}`` narrow it. Every reading is of the
+    **same** binding, which is what lets Luck Bobblehead's two sentences be two
+    questions about one roll rather than two rolls.
+
+    A binding nothing wrote reads 0, the way every other binding read does. That
+    is the failure the loader's paired guard exists to catch, since 0 is also a
+    perfectly ordinary answer.
+    """
+    if not isinstance(spec, Mapping):
+        return 0
+    roll = ctx.bindings.get(str(spec.get("binding", "")))
+    results = roll.get("results") if isinstance(roll, Mapping) else None
+    if not isinstance(results, (list, tuple)):
+        return 0
+    faces = [f for f in results if isinstance(f, int) and not isinstance(f, bool)]
+    if "face" in spec:
+        want = evaluate_value(ctx, spec["face"])
+        return sum(1 for f in faces if f == want)
+    if "parity" in spec:
+        remainder = 0 if str(spec["parity"]) == "even" else 1
+        return sum(1 for f in faces if f % 2 == remainder)
+    return len(faces)
+
+
 def _players(ctx: EffectContext, spec: Any) -> list[int]:
     from .selectors import select_players
 
@@ -490,6 +538,18 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
         return 0
     if isinstance(ref, Mapping) and "self" in ref:
         return _from_oid(ctx, ctx.source_oid, which) if ctx.source_oid else 0
+    if isinstance(ref, Mapping) and "objects" in ref:
+        # "X is the mana value of **that card**" -- Soul Foundry, naming the card
+        # it imprinted with `{"zone": "exile", "exiled_with": "self"}`. The four
+        # forms above all reach an object a resolution already has in hand -- a
+        # target, a binding, a snapshot, the source itself -- and an activated
+        # ability's *cost* has none of them: it is priced before any effect runs,
+        # so the only way it can name a card is to go and find it. Summed over
+        # the pool, exactly as the `target` form is, so a selector that matches
+        # nothing reads 0 rather than raising.
+        from .selectors import resolve_pool
+
+        return sum(_from_oid(ctx, oid, which) for oid in resolve_pool(ctx, ref["objects"]))
     if isinstance(ref, int):
         return _from_oid(ctx, ref, which)
     raise DslError(f"unparsable characteristic reference {ref!r}")
@@ -540,11 +600,12 @@ def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None
 
 
 def validate_counter_kind(kind: Any, where: str) -> None:
-    """Refuse a counter kind that *nearly* names a keyword (122.1c).
+    """Refuse a counter kind that *nearly* names one the engine acts on (122.1c).
 
     A counter kind is a free string on purpose -- charge, quest, slumber, lore,
-    age -- so there is no vocabulary to check it against, with one exception.
-    A **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
+    age -- so there is no vocabulary to check it against, with two exceptions.
+    A **shield** counter is spent to replace damage and destruction, and a
+    **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
     the characteristics pipeline), and the match is exact: `"vigilance"` makes a
     vigilant creature and `"Vigilance"`, `"vigilance counter"` and
     `"first strike"` each make a tally nobody consults, on a card that loads
@@ -552,7 +613,7 @@ def validate_counter_kind(kind: Any, where: str) -> None:
 
     That is the one failure mode this whole validation pass exists to refuse,
     and unusually it is detectable, because the near miss normalises onto a
-    keyword the engine implements. A kind that normalises onto nothing is left
+    kind the engine implements. A kind that normalises onto nothing is left
     alone -- it is somebody's charge counter, and guessing at typos in an open
     vocabulary would refuse cards that are correct.
 
@@ -568,6 +629,18 @@ def validate_counter_kind(kind: Any, where: str) -> None:
         if normalised.endswith(suffix):
             normalised = normalised[: -len(suffix)]
     normalised = "_".join(normalised.split())
+    if normalised != kind and normalised == SHIELD:
+        # The same failure with a different consumer. A shield counter is not a
+        # keyword -- it grants nothing and is *spent*, by the replacements in
+        # `zones.destroy` and `primitives.damage_permanent`, and those read the
+        # kind exactly. `"Shield"` on Diamond City would place a counter, show a
+        # counter and be moved by `move_counters` like a counter, and the land
+        # would still die to the removal it is printed to survive.
+        raise DslError(
+            f"{where}: write the shield counter as {SHIELD!r}, not {kind!r}. A shield "
+            f"counter replaces damage and destruction (122.1c) and the lookup is exact, "
+            f"so {kind!r} would be an inert tally on a permanent that never spends it"
+        )
     if normalised != kind and normalised in KEYWORD_COUNTERS:
         raise DslError(
             f"{where}: write a keyword counter as the exact keyword name -- "
@@ -675,6 +748,49 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
 ENTERED_FILTER_KEYS = frozenset({"controller", "types", "subtypes", "colors", "exclude_self"})
 
 
+def validate_rolled(spec: Any, where: str) -> None:
+    """Load-time check of ``{"rolled": …}``.
+
+    Three refusals, and each of them is a card that would otherwise load, play,
+    and be a different card:
+
+    - **No ``binding``.** The leaf would read the empty name, find nothing and
+      answer 0 for ever -- "create a Treasure for each even result" makes none.
+    - **A misspelled predicate.** Unknown keys fall through to the bare count of
+      dice, so ``{"even": true}`` would read the number of *dice* as the number
+      of even results and hand out a Treasure per die.
+    - **Both predicates at once.** ``face`` wins in the evaluator, so the
+      ``parity`` half would be silently dropped.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object naming the roll's binding")
+    unknown = set(spec) - {"binding", *ROLL_PREDICATES}
+    if unknown:
+        raise DslError(
+            f"{where}: unsupported keys {sorted(unknown)} "
+            f"(a roll is read with 'binding' plus at most one of "
+            f"{list(ROLL_PREDICATES)})"
+        )
+    if not (isinstance(spec.get("binding"), str) and spec["binding"]):
+        raise DslError(
+            f"{where}: needs 'binding' naming the roll_dice 'as' it reads; "
+            f"without one it reads 0 however the dice fell"
+        )
+    present = [key for key in ROLL_PREDICATES if key in spec]
+    if len(present) > 1:
+        raise DslError(
+            f"{where}: {present} are two predicates over one roll and only the "
+            f"first is read -- use two separate {{'rolled': …}} values"
+        )
+    if "parity" in spec and str(spec["parity"]) not in ROLL_PARITIES:
+        raise DslError(
+            f"{where}.parity: must be one of {list(ROLL_PARITIES)}, "
+            f"got {spec['parity']!r}"
+        )
+    if "face" in spec:
+        validate_value(spec["face"], f"{where}.face")
+
+
 def validate_entered_filter(spec: Any, where: str) -> None:
     """Load-time check of the enters-this-turn filter.
 
@@ -740,6 +856,8 @@ def validate_value(expr: Any, where: str) -> None:
         from .selectors import validate_selector
 
         validate_selector(expr["count"], f"{where}.count")
+    if "rolled" in expr:
+        validate_rolled(expr["rolled"], f"{where}.rolled")
     if "mana_symbols" in expr:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:

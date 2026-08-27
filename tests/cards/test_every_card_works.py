@@ -34,8 +34,22 @@ EXPECTATIONS_PATH = Path(__file__).resolve().parent / "expectations.json"
 MANA_BASE = ["plains"] * 6 + ["island"] * 6 + ["swamp"] * 6 + ["mountain"] * 6 + ["forest"] * 6
 
 #: Things for targeted effects to point at.
+#:
+#: The opponent's creature is **legendary**, and inert -- a 2/2 with no abilities,
+#: exactly `t_bear` wearing a supertype. Commander Sofia Daguerre reads "destroy
+#: up to one target legendary permanent", and with no legendary on the board she
+#: was the only legal target for her own enters trigger: she destroyed herself
+#: and gate 4 rejected a permanent that ended in the graveyard. The card was
+#: never wrong.
+#:
+#: A swap rather than an addition, so both board sizes are unchanged and no
+#: expectation moves. Inert for the reason `verify.py`'s twin of this prop is:
+#: a legendary with an activated ability the opponent can afford suppresses the
+#: auto-pass, hands them a real priority window with the card under test still
+#: on the stack, and cards start failing gate 4 with "never left the stack".
+#: `t_flyer` keeps a *nonlegendary* creature on that board.
 OWN_BOARD = ["t_bear", "t_dork"]
-OPPONENT_BOARD = ["t_bear", "t_flyer", "sol_ring", "t_anthem", "forest", "island"]
+OPPONENT_BOARD = ["t_legend", "t_flyer", "sol_ring", "t_anthem", "forest", "island"]
 OWN_GRAVEYARD = ["t_bear", "t_dork", "t_flyer"]
 
 
@@ -238,6 +252,7 @@ class TestActivatedAbilities:
             _pay_the_counters(game, oid, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
+            _provide_the_untap_fodder(game, registry, ability)
             _satisfy_the_activation_condition(game, registry, ability)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
@@ -369,6 +384,43 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
         game.state.battlefield.append(fodder.oid)
 
 
+def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
+    """Put out enough **tapped** permanents for an `untap_permanents` cost.
+
+    The mirror of `_provide_the_tap_fodder`, and needed for the same reason:
+    the sandbox's job is to make "could not pay for it" impossible, so that
+    "not activatable" only ever means the ability is broken. Halo Fountain's
+    third line unbends *fifteen tapped creatures* and the generic board has
+    none — untapped ones would not do, because the pool forces `tapped: True`.
+
+    The source is not counted on, exactly as its twin does not count on it: it
+    arrives after this runs, and here it would be tapped by its own `{T}`
+    anyway.
+    """
+    cost = ability.cost
+    spec = getattr(cost, "untap_permanents", None) if cost else None
+    if not spec:
+        return
+    subtypes = {str(s) for s in spec.get("subtypes") or []}
+    types = {str(t) for t in spec.get("types") or ["Creature"]}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token
+            and types <= set(c.types)
+            and (not subtypes or subtypes & set(c.subtypes))
+        ),
+        None,
+    )
+    if match is None:
+        return
+    for _ in range(int(spec.get("count", 1) or 1)):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        fodder.tapped = True
+        game.state.battlefield.append(fodder.oid)
+
+
 def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     """Put out whatever an "activate only if..." clause is counting.
 
@@ -396,6 +448,10 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     if "const" not in right:
         return
 
+    if "permanents_entered_this_turn" in left:
+        _make_permanents_enter(game, registry, left, int(right["const"]))
+        return
+
     # "Activate only if an opponent lost life this turn" -- Falkenrath Pit
     # Fighter. The tally is the real one the engine keeps, so this satisfies the
     # condition by actually taking the life rather than by writing the counter
@@ -418,6 +474,37 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     for _ in range(int(right["const"])):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+
+
+def _make_permanents_enter(game: Game, registry, left: dict, count: int) -> None:
+    """"Activate only if two or more creatures entered the battlefield under your
+    control this turn" -- Diamond City.
+
+    Eighth of the family, and the second that has to satisfy a clause by *doing*
+    the thing rather than by arranging the board. `TurnLedger.permanents_entered`
+    records arrivals, not residents, so stocking the battlefield the way the
+    `count` branch does satisfies nothing: a permanent placed with `new_object`
+    never entered. The same distinction the card is about.
+
+    It goes through `create_token`, which fires the real enters event that the
+    ledger folds -- the argument `life_lost_this_turn` makes one branch up, and
+    for the same reason. A card that names the wrong tally still fails here,
+    because nothing writes the number the condition reads except the engine.
+
+    The token has to match the filter's own `types`, since the clause counts what
+    entered rather than everything that did. A filter this cannot match is left
+    alone rather than approximated, and the ability reports as unusable -- which
+    is the honest answer when the harness cannot build the position.
+    """
+    from automtg.engine.primitives import create_token
+
+    spec = left.get("permanents_entered_this_turn") or {}
+    if spec.get("controller", "you") != "you":
+        return
+    match = _fodder_for(registry, {"types": spec.get("types") or ["Creature"]})
+    if match is None:
+        return
+    create_token(game.state, match.id, 0, max(1, count))
 
 
 def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:

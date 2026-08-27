@@ -462,6 +462,29 @@ export function beatsFor(
         });
         return;
 
+      /*
+       * Dice (rule 705.1). Anchored to the permanent that rolled and floating
+       * the faces themselves, because the beats that follow are the payoff --
+       * a Treasure per even result -- and a player who did not see what came up
+       * cannot tell whether the number of them is right.
+       *
+       * Held longer than a token arrival: the tokens land immediately after, and
+       * the two running together is exactly what hides the roll. No beat when
+       * the source is gone, which is the same guard every anchored beat carries.
+       */
+      case "dice_rolled": {
+        if (event.source === null) return;
+        const results = Array.isArray(event.data.results) ? event.data.results : [];
+        const anchor = { kind: "object", oid: event.source } as const;
+        push({
+          hold: 420,
+          sound: "chime",
+          float: { anchor, value: results.join(" "), tone: "good" },
+          fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+        });
+        return;
+      }
+
       // Both of these change what a card *is* without moving it, so the frame
       // redraws in place. Held longer than an ETB so the change reads as a play
       // rather than as a rendering glitch.

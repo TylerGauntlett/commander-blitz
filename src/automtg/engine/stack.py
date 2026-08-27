@@ -10,13 +10,20 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import BESTOW_TARGET, MUTATE_TARGET, Ability, CardDef, rules_ability
+from .carddef import (
+    BESTOW_TARGET,
+    MUTATE_TARGET,
+    Ability,
+    CardDef,
+    TargetSpec,
+    rules_ability,
+)
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
 from .enums import Zone
 from .events import EventType
-from .primitives import attach
+from .primitives import attach, attach_to_player
 from .structs import StackItem, TargetRef, TriggerInstance
 from .targeting import filter_legal
 from .zones import move_object
@@ -33,6 +40,7 @@ def push_spell(
     *,
     x: int = 0,
     kicked: bool = False,
+    gift_to: int | None = None,
     evoked: bool = False,
     flashback: bool = False,
     overloaded: bool = False,
@@ -101,6 +109,7 @@ def push_spell(
         targets=tuple(targets),
         x=x,
         kicked=kicked,
+        gift_to=gift_to,
         evoked=evoked,
         fused=fused,
         bestowed=bestowed,
@@ -165,6 +174,63 @@ def announce_targets(state: GameState, item: StackItem) -> None:
                 sid=item.sid,
                 is_spell=1 if item.is_spell else 0,
             )
+
+
+def pull_spell_off_stack(
+    state: GameState,
+    sid: int,
+    to_zone: Zone,
+    *,
+    cause: str = "",
+    by: int | None = None,
+) -> StackItem | None:
+    """Take a spell off the stack **without countering it**, and move its card.
+
+    The counterpart of :func:`push_spell`, and deliberately not a counter.
+    Countering is one specific action (701.5a) with three observable
+    consequences the rules attach to it and to nothing else: it is stopped by
+    "this spell can't be countered", it puts the card into its owner's
+    graveyard, and it is the thing "whenever a spell is countered" watches.
+    "Return target spell to its owner's hand" (Reprieve) shares none of them --
+    it is a plain zone change of the card the spell is, so an uncounterable
+    spell is returned like any other and nothing that watches for a countered
+    spell sees anything happen.
+
+    ``to_zone`` is a parameter rather than a constant because *where the card
+    goes* is the only thing that varies between the effects that do this;
+    everything above it -- unlinking the object, forgetting the face it was cast
+    as, and a copy ceasing to exist -- is the same however far it travels.
+
+    Returns the removed :class:`StackItem`, or ``None`` when that ``sid`` is not
+    a spell on the stack any more. That is not an error: targets are re-checked
+    on resolution (608.2b), and a spell that has already left is simply no
+    longer there to move.
+    """
+    item = state.stack_item(sid)
+    if item is None or not item.is_spell:
+        return None
+    state.stack = [it for it in state.stack if it.sid != sid]
+    obj = state.objects.get(item.oid) if item.oid is not None else None
+    if obj is None:
+        return item
+    obj.stack_id = None
+    # It has stopped being a spell, so it stops showing the face it was cast as
+    # -- 715.3c and 702.127b exile an Adventure or a disturbed face *as it
+    # resolves*, and this one never did.
+    obj.showing_second_face = False
+    if obj.is_token:
+        # Rule 706.10: a copy of a spell is not a card, so there is no card to
+        # put anywhere -- 704.5e removes it the moment it is no longer on the
+        # stack. Bouncing a storm copy therefore puts nothing into anybody's
+        # hand, and moving it to `to_zone` first would emit a zone change
+        # saying a card arrived there, which is a card the owner never had.
+        # Removed here rather than left to the token state-based action, which
+        # deliberately exempts the stack (see `sba`) and so would never see it.
+        state.objects.pop(obj.oid, None)
+        state.bump_chars()
+        return item
+    move_object(state, obj.oid, to_zone, to_player=obj.owner, cause=cause, by=by)
+    return item
 
 
 def push_activated_ability(
@@ -248,17 +314,25 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
 def push_triggered_ability(
     state: GameState, trig: TriggerInstance
 ) -> Generator[Any, list[int], StackItem]:
-    """Put one triggered ability on the stack, asking for its targets.
+    """Put one triggered ability on the stack, asking for its modes and targets.
 
-    Rule 603.3d: the controller chooses the targets **as the ability is put on
-    the stack**, not as it resolves. This used to take `options[0]` off a
-    `limit=1` enumeration, which is not a weaker choice but a fixed one -- and
-    for a `kind: "player"` target the enumeration order is `state.alive()`, so
-    the ability always named seat 0. Bojuka Bog exiled its own controller's
-    graveyard in every game it was ever played in, and nothing on the board
-    said so, because the ability did resolve and did exile a graveyard.
+    Rule 603.3d: the controller chooses the modes and the targets **as the
+    ability is put on the stack**, not as it resolves. This used to take
+    `options[0]` off a `limit=1` enumeration, which is not a weaker choice but a
+    fixed one -- and for a `kind: "player"` target the enumeration order is
+    `state.alive()`, so the ability always named seat 0. Bojuka Bog exiled its
+    own controller's graveyard in every game it was ever played in, and nothing
+    on the board said so, because the ability did resolve and did exile a
+    graveyard.
 
-    A generator, so the choice can become a real decision. That is why
+    The modes come **first** and the targets second, because 603.3d applies
+    601.2b and 601.2c in that order -- and because that order is the whole of
+    what a mode-owned target means: which targets the ability declares is not
+    knowable until the modes are known. Recorded on the item so `op_choose_mode`
+    finds the question already answered on resolution rather than asking a
+    second time, in a moment where no target could be declared any more.
+
+    A generator, so the choices can become real decisions. That is why
     `drain_to_stack` is one too, and why `_advance` drives it through `_run`.
     """
     obj = state.objects.get(trig.source_oid)
@@ -279,20 +353,110 @@ def push_triggered_ability(
         granted_by=trig.granted_by,
     )
     ability = ability_of(state, item)
-    if ability is not None and ability.targets:
-        item.targets = yield from _choose_trigger_targets(state, trig, ability)
+    if ability is not None and ability.cast_time_modes:
+        item.modes = yield from _choose_trigger_modes(state, trig, ability)
+        # Recorded even when the answer was "no modes": see
+        # `StackItem.modes_answered`, and `op_choose_mode`, which reads the flag
+        # rather than the tuple for exactly the "choose up to two" case.
+        item.modes_answered = True
+    specs = ability.specs_for_modes(item.modes) if ability is not None else ()
+    if specs:
+        item.targets = yield from _choose_trigger_targets(state, trig, specs)
     state.stack.append(item)
     announce_targets(state, item)
     return item
 
 
-def _choose_trigger_targets(
+def _choose_trigger_modes(
     state: GameState, trig: TriggerInstance, ability: Ability
+) -> Generator[Any, list[int], tuple[int, ...]]:
+    """Which modes this trigger takes -- 603.3d, applying 601.2b.
+
+    The ability-level twin of `Game._ask_modes`, and separate from it for the
+    reason `_choose_trigger_targets` is separate from `legality`: a trigger has
+    no cast action and `stack` cannot import `game`.
+
+    Two things it must get right, each of which is a different card:
+
+    * **601.2b: a mode with no legal target is not offered.** That is what makes
+      Oltec Matterweaver's first bullet still available on the first creature
+      you cast, when you control no artifact token for the second to copy. An
+      unconditional ability-level target instead fizzles the whole trigger
+      there, and an `optional` one lets the second bullet be taken with nothing
+      to point at -- a mode that silently does nothing.
+    * **"that hasn't been chosen" is filtered here too.** Henrika Domnathi's
+      spent modes are struck off by `op_choose_mode`, which only does so on the
+      branch that asks -- and it no longer asks, because this answered it. An
+      unfiltered offer would put a spent mode back on the table.
+
+    Returns the chosen indices in **printed** order for `StackItem.modes`;
+    700.2e executes them that way and `Ability.specs_for_modes` splits the
+    stored refs that way.
+    """
+    from .effects.context import EffectContext, ask_mode
+    from .effects.ops_control import _mode_flag, modal_bounds
+    from .targeting import enumerate_target_tuples
+
+    spec = ability.cast_time_modes or {}
+    modes = list(spec.get("modes") or [])
+    if not modes:
+        return ()
+    card = state.registry.get(trig.def_id) if trig.def_id in state.registry else None
+    ctx = EffectContext(
+        state=state,
+        controller=trig.controller,
+        source_oid=trig.source_oid,
+        bindings=dict(trig.bindings),
+        source_name=card.name if card else trig.description,
+    )
+    floor, up_to = modal_bounds(ctx, spec)
+    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+    # `targeting.selectable_modes` is the same question asked of a spell, and it
+    # is deliberately not reused: it has no bindings to pass, and a trigger's
+    # target line may name what the trigger *found* ("target creature other than
+    # the one that died"). Asked without them, the offer would be computed
+    # against a different board than the declaration a line below.
+    #
+    # A mode with no targets of its own enumerates as `[()]` -- one legal way to
+    # take it -- so the Gnome bullet is always on offer without a special case.
+    offered = [
+        index
+        for index in range(len(modes))
+        if enumerate_target_tuples(
+            state,
+            trig.controller,
+            ability.mode_targets.get(index, ()),
+            trig.source_oid,
+            limit=1,
+            bindings=trig.bindings,
+        )
+    ]
+    source = state.objects.get(trig.source_oid) if trig.source_oid is not None else None
+    if spec.get("once_each") and source is not None:
+        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
+    # A floor that outruns what is on offer is not an ability that chooses fewer
+    # modes -- 601.2b makes it one that cannot choose at all, and 603.3d removes
+    # it from the stack. Clamped rather than refused because the two are
+    # indistinguishable from the board: with no mode chosen the ability resolves
+    # having done nothing, which is what being removed looks like.
+    floor = min(floor, len(offered))
+    picked = yield from ask_mode(
+        ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
+    )
+    return tuple(sorted(offered[i] for i in picked))
+
+
+def _choose_trigger_targets(
+    state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
     """Ask the trigger's controller which of the legal target tuples it takes.
 
     Enumerated at the ordinary cap, the same one casting uses -- a trigger is
     not entitled to fewer choices than a spell with the same targeting line.
+
+    ``specs`` rather than the ability, because a modal trigger's target list is
+    not the printed one: it is `Ability.specs_for_modes` of the modes just
+    chosen, and resolution rebuilds the same list to split the refs by.
 
     Nothing is asked when there is one option or none, which is most triggers:
     "when this dies, it deals damage to *its controller*" has one legal tuple
@@ -303,7 +467,7 @@ def _choose_trigger_targets(
     from .targeting import describe_ref, enumerate_target_tuples
 
     options = enumerate_target_tuples(
-        state, trig.controller, ability.targets, trig.source_oid
+        state, trig.controller, specs, trig.source_oid, bindings=trig.bindings
     )
     if not options:
         return ()
@@ -471,6 +635,14 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # would always read False and every overloaded spell would resolve as the
     # targeted half -- with no targets, which is nothing at all.
     obj.cast_overloaded = item.overloaded
+    # Gift (702.164a), for the same reason and at the same moment as the two
+    # above: "if the gift wasn't promised, return that card…" is an `if` inside
+    # `spell_effects`, and a promise written onto the object afterwards would
+    # read "not promised" on every gift card ever cast. Written here as well as
+    # onto the context so that whatever outlives the spell -- the delayed trigger
+    # it schedules, the permanent it becomes -- can still ask who was promised
+    # what, by which time the StackItem is gone.
+    obj.cast_gift_to = item.gift_to
     obj.pending_face_down = item.face_down
 
     ctx = EffectContext(
@@ -481,6 +653,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         bindings=dict(item.bindings),
         x=item.x,
         kicked=item.kicked,
+        gift_to=item.gift_to,
         modes=item.modes,
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
@@ -671,6 +844,15 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
     The convention is that an Aura's *first object target* is what it enchants,
     which is exactly how the card is written: "Enchant creature" is the targeting
     clause of the spell.
+
+    **Or its first player target.** 303.4a lets the enchant ability name a
+    player -- "Enchant opponent" (Overencumbered), "Enchant player" (Sleeper's
+    Robe) -- and that clause is written the same way, as the spell's target. So
+    the two kinds are one loop and the first target of *either* kind wins, which
+    is the printed reading: no Aura has two enchant clauses. Without the player
+    branch such an Aura resolved, attached to nothing, and was put into the
+    graveyard by `sba` before any of its abilities could matter -- the card
+    played as a blank with its own mana cost.
     """
     # A **bestowed** creature is an Aura the printed card says nothing about, so
     # `is_aura` cannot be the whole test: 702.103a makes it one for as long as it
@@ -681,6 +863,9 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
         for ref in targets.get(spec.id) or []:
             if ref.kind == "object" and ref.id in state.objects:
                 attach(state, obj.oid, ref.id)
+                return
+            if ref.kind == "player":
+                attach_to_player(state, obj.oid, ref.id)
                 return
 
 
@@ -698,7 +883,24 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
     card = state.registry.get(item.def_id) if item.def_id in state.registry else None
 
     targets, any_legal = filter_legal(
-        state, item.controller, ability.targets, item.targets, item.source_oid
+        state,
+        item.controller,
+        # Mode-owned specs come back in the same order `push_triggered_ability`
+        # declared them in, which is what makes `filter_legal`'s positional
+        # split line up with the refs the trigger stored. 608.2b re-checks the
+        # targets of *the modes that were chosen*, and this is how it knows
+        # which those were. For every ability without them it is
+        # `ability.targets` unchanged.
+        ability.specs_for_modes(item.modes),
+        item.targets,
+        item.source_oid,
+        # The same bindings the targets were *declared* against. A target line
+        # that names something the trigger found -- "target player other than
+        # its controller" -- has to be re-checked (608.2b) against the same
+        # object, and control of it can have changed in between. Without this
+        # the re-check reads an empty binding, which is not a stricter answer
+        # than the declaration but a different one.
+        bindings=item.bindings,
     )
     if not any_legal:
         state.emit(

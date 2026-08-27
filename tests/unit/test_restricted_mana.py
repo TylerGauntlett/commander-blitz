@@ -193,33 +193,28 @@ class TestGrantedAbilities:
 class TestWhatCanBeGranted:
     base = {"id": "probe", "name": "Probe", "types": ["Artifact"]}
 
-    @pytest.mark.parametrize(
-        "ability",
-        [
-            {
-                "kind": "static",
-                "effect": "grant_keyword",
-                "affects": {"self_only": True},
-                "keywords": ["flying"],
-            },
-            {
-                "kind": "activated",
-                "cost": {"tap": True},
-                "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
-            },
-        ],
-    )
-    def test_a_static_or_a_non_mana_activated_ability_is_refused(self, ability):
-        """Both would be accepted and then go wrong, in different directions.
+    def test_a_non_mana_activated_ability_is_refused(self):
+        """It would be accepted and then resolve as some other ability.
 
-        A granted static has no place in the fixed-order characteristics
-        pipeline. A granted activated ability that used the stack would reach
+        A granted activated ability that used the stack would reach
         `stack.ability_of` with an index into a list that no longer exists --
         that helper resolves off the source's *printed* abilities, and must,
         because an ability on the stack outlives its source (608.2).
+
+        A granted **static** was refused beside it and is no longer: statics
+        reach the pipeline through `characteristics._battlefield_statics`, which
+        walks the *derived* list, so a granted one arrives sourced on its
+        recipient. See `tests/unit/test_granted_static_ability.py`.
         """
-        model = CardModel.model_validate({**self.base, "grantable_abilities": [ability]})
-        with pytest.raises(DslError, match="only triggered and mana abilities"):
+        model = CardModel.model_validate({
+            **self.base,
+            "grantable_abilities": [{
+                "kind": "activated",
+                "cost": {"tap": True},
+                "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
+            }],
+        })
+        with pytest.raises(DslError, match="not activated"):
             compile_card(model)
 
     def test_a_mana_ability_may_be_granted(self):

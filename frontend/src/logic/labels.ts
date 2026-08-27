@@ -366,6 +366,20 @@ export function describeEvent(
       return `${card ?? "An attacker"} is unblocked`;
     case "token_created":
       return `${who} ${v("create", "creates")} ${card ?? "a token"}`;
+    /*
+     * Dice (rule 705.1). The faces themselves are the line, not how many were
+     * thrown: what a Bobblehead's controller needs to check is *which* results
+     * came up, because the Treasures that follow are one per even result and the
+     * win condition counts the sixes. A roll moves no card, taps nothing and
+     * changes no characteristic, so without this line the Treasures appear from
+     * nowhere and their number looks arbitrary.
+     */
+    case "dice_rolled": {
+      const results = Array.isArray(event.data.results) ? event.data.results : [];
+      const sides = typeof event.data.sides === "number" ? event.data.sides : 6;
+      const dice = results.length === 1 ? "a die" : `${results.length} dice`;
+      return `${who} ${v("roll", "rolls")} ${dice} (d${sides}): ${results.join(", ")}`;
+    }
     // The permanent does not change zones, so no zone_change line covers this.
     // Without a line of its own a creature simply appears on the other side of
     // the board with nothing in the log to say why.

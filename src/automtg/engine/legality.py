@@ -133,9 +133,23 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
     # the declaration, which is the only lever legality has: there is no action
     # for "refuse to attack". A creature that cannot attack owes nothing, which
     # `attack_required` has already accounted for, so this can never deadlock.
-    if not combat_mod.unmet_attack_requirements(state):
+    #
+    # `attacks_valid` is withheld for the same reason and by the same lever, but
+    # it is a restriction rather than a requirement: "this creature can't attack
+    # alone" is judged on the finished declaration, so a lone attacker under it
+    # has to add a second one before the step can end -- the mirror of menace
+    # withholding "Done blocking" below.
+    if not combat_mod.unmet_attack_requirements(state) and combat_mod.attacks_valid(
+        state, pid
+    ):
         out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
-    del pid
+    elif not out:
+        # Nothing left to add and the declaration is still invalid: the
+        # can't-attack-alone creature is the only thing that could attack at
+        # all. Offering nothing is a game that cannot continue, so "Done" comes
+        # back and `finish_attackers` retracts the attack that was never legal
+        # -- exactly what `_blocker_actions` does with `drop_illegal_blocks`.
+        out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
     return out
 
 
@@ -580,6 +594,31 @@ def _cast_options(
     out = _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False)
     if card.kicker is not None:
         out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True)
+    # Gift (702.164a): "you may promise an opponent a gift as you cast this
+    # spell". Kicker's slot -- an optional cast-time choice offered as extra
+    # lines beside the plain one -- with two differences that are the whole
+    # mechanic.
+    #
+    # It is **free**. 702.164a makes the promise a choice, not a cost (601.2b,
+    # with the modes and X), so every line here is priced at the printed cost
+    # and no payment is taken anywhere. That is precisely why it could not be
+    # written as a kicker: the loader refuses a kicker that costs nothing,
+    # correctly, because a kicker that costs nothing is one cast offered twice.
+    #
+    # And it names a **seat**. One line per opponent, the shape emerge uses for
+    # its victim rather than the bool kicker uses for its price: at a pod the
+    # promise goes to one chosen player (not to each of them), and which one is
+    # a real choice with the game on it. Not asked as a decision after the fact,
+    # because 702.164a puts the promise *as the spell is cast* -- a question
+    # asked later would be answered after opponents had already responded to it.
+    #
+    # Unpromised stays first, the way unkicked does: the line that hands an
+    # opponent a creature should never be the one taken by default.
+    if card.gift is not None:
+        for promisee in state.opponents(pid):
+            out += _cast_variant(
+                state, pid, oid, card, tuples, extra_generic=extra_generic, gift_to=promisee
+            )
     # Only from hand: an alternative cost is permission to cast the card *this
     # way*, and nothing extends it to the graveyard or the command zone the way
     # `retrace` and commander casting do.
@@ -848,6 +887,7 @@ def _cast_variant(
     *,
     extra_generic: int,
     kicked: bool = False,
+    gift_to: int | None = None,
     evoked: bool = False,
     emerge_oid: int | None = None,
     flashback: bool = False,
@@ -954,6 +994,13 @@ def _cast_variant(
     if kicked:
         # The card's own word: "kicked", "buyback".
         label_base += f" ({card.kicker_label})"
+    if gift_to is not None:
+        # The card's own words for what is promised, and the seat it is promised
+        # to. Both belong on the chip: a player choosing this line is giving a
+        # named opponent a named thing, and neither half is guessable from the
+        # card name.
+        promisee = state.players[gift_to].name or f"p{gift_to}"
+        label_base += f" (gift {card.gift} to {promisee})"
     if evoked:
         # The card's own word for the cost: "evoked", "dash", "blitz". They are
         # one mechanism, and only the label tells the player which they are
@@ -996,6 +1043,7 @@ def _cast_variant(
                 targets=targets,
                 x=x,
                 kicked=kicked,
+                gift_to=gift_to,
                 evoked=evoked,
                 alternative=alternative,
                 overloaded=overloaded,
@@ -1308,7 +1356,17 @@ def _ability_aims(
     from .costs import ability_purpose
 
     purpose = ability_purpose(state, oid)
-    if ability.cost is not None and ability.cost.mana.x_count:
+    if (
+        ability.cost is not None
+        and ability.cost.mana.x_count
+        # "X is the mana value of that card": an ability that defines its own X
+        # is not offered at a floor of zero the way a Fireball is, because there
+        # is no announcement to make. `can_pay` below prices it -- through
+        # `ability_mana`, which fills in the defined X -- so a Soul Foundry with
+        # a Griselbrand imprinted disappears from the list until eight mana is
+        # available, instead of being offered at X = 0 and copying it for free.
+        and ability.cost.x_value is None
+    ):
         from .costs import mana_sources
 
         if (
@@ -1320,6 +1378,9 @@ def _ability_aims(
             < 0
         ):
             return None
+    # ``x=0`` is the floor for an announced X and is ignored outright for a
+    # defined one -- `costs.ability_mana` is the single place either is priced,
+    # so the number legality tests is the number `costs.pay` charges.
     if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose):
         return None
     return enumerate_target_tuples(state, pid, ability.targets, oid) or None

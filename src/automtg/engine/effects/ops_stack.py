@@ -48,7 +48,24 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The question is only put when there is something to decide: a spell with no
     targets, or one whose targets cannot legally be moved, is not asked.
+
+    ``controller`` is a **player spec** naming whose copy it is, and it is
+    **demonstrate**: "choose an opponent to also copy it." Every copy this op
+    could make used to be the resolving player's, because the controller was
+    the one argument `put_copy_on_stack` was never given -- so the half of
+    demonstrate that balances it was unsayable, and a card written with
+    ``"controller"`` on it loaded clean and handed the copy to the wrong seat.
+    It reads plurally, exactly as `copy_permanent`'s does: one copy per named
+    player, per ``amount``. `choose_player` is what narrows it to the one
+    opponent demonstrate means, via ``{"binding": …}``.
+
+    Each copy's *own* controller answers ``new_targets`` for it -- 706.10 says
+    "players may choose new targets for **their** copies", and asking the
+    resolving player about a copy that is not theirs would be a different card
+    in both directions: it would let you point an opponent's copy and would
+    stop them pointing it themselves.
     """
+    from .selectors import select_players
     from .values import evaluate_value
 
     state = ctx.state
@@ -60,14 +77,25 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     if original is None or not original.is_spell:
         return
     times = evaluate_value(ctx, spec.get("amount", 1)) if "amount" in spec else 1
+    if "controller" in spec:
+        # A named seat that has already lost the game is not handed a copy, and
+        # an unfilled binding names nobody -- which is how "choose an opponent"
+        # makes no second copy at a table where there is no opponent left to
+        # choose, rather than falling back to the resolving player's own.
+        controllers = [
+            pid for pid in select_players(ctx, spec["controller"]) if state.is_alive(pid)
+        ]
+    else:
+        controllers = [ctx.controller]
     for _ in range(max(0, times)):
-        chosen = None
-        if spec.get("new_targets"):
-            chosen = yield from _choose_new_targets(ctx, original)
-        put_copy_on_stack(state, ctx.controller, original, chosen)
+        for pid in controllers:
+            chosen = None
+            if spec.get("new_targets"):
+                chosen = yield from _choose_new_targets(ctx, original, pid)
+            put_copy_on_stack(state, pid, original, chosen)
 
 
-def _choose_new_targets(ctx: EffectContext, original):
+def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None):
     """"You may choose new targets for the copy" (706.10, via 115.7b).
 
     Offered as one pick from every legal target tuple, which is exactly the set
@@ -81,21 +109,45 @@ def _choose_new_targets(ctx: EffectContext, original):
 
     Returns ``None`` when there was nothing to ask -- no target specs, or only
     one legal tuple -- and the copy then keeps what the original had.
+
+    ``chooser`` is the **copy's** controller, not the resolving player's: a
+    demonstrate copy belongs to the chosen opponent, and 706.10's "their
+    copies" is that word. It decides the legal set as well as the seat asked,
+    because "target creature you control" means a different pool for each of
+    them -- so an opponent's copy is offered the targets an opponent could have
+    chosen, which is what stops a redirected copy being pointed somewhere its
+    own controller never could.
     """
     from ..targeting import describe_ref, enumerate_target_tuples
     from .context import ask_mode
 
+    if chooser is None:
+        chooser = ctx.controller
     card = ctx.state.registry.get(original.def_id)
     specs = getattr(card, "targets", ()) or ()
     if not specs:
         return None
     options = enumerate_target_tuples(
         ctx.state,
-        ctx.controller,
+        chooser,
         specs,
         original.oid,
         exclude_sid=original.sid,
     )
+    current = tuple(original.targets)
+    if current not in options:
+        # "You **may** choose new targets", and declining stays on the table
+        # even when what the copy holds is no longer legal for its controller
+        # -- a copy nobody retargets is simply countered on resolution
+        # (608.2b), and for a spell the copy's controller does not *want*, that
+        # is the answer they would give.
+        #
+        # Unreachable until a copy could belong to somebody else. It is the
+        # ordinary case for demonstrate: "target creature you control" names
+        # the copy's controller's creatures, so the tuple the original chose is
+        # usually not among the ones offered to them, and without this the
+        # option list would not contain "leave it".
+        options = [*options, current]
     # One option means the only legal choice is what it already targets, so
     # there is no question -- and asking anyway would be a prompt that cannot
     # change anything, which is the cost this whole feature was held back over.
@@ -106,7 +158,7 @@ def _choose_new_targets(ctx: EffectContext, original):
         for tup in options
     ]
     picked = yield from ask_mode(
-        ctx, f"New targets for {card.name} (copy)?", labels, ctx.controller
+        ctx, f"New targets for {card.name} (copy)?", labels, chooser
     )
     if not picked:
         return None

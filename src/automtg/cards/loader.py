@@ -31,6 +31,7 @@ from automtg.engine.carddef import (
     prune_cost,
     top_level_mode_spec,
 )
+from automtg.engine.characteristics import ABILITY_STATICS
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
@@ -157,6 +158,19 @@ STATIC_EFFECTS = frozenset(
         # rather than a keyword for the same reason `block_restriction` is: a
         # keyword is a characteristic and this is a permission.
         "cant_block",
+        # "This creature can't attack or block alone" -- Toby's Beast token, and
+        # the two halves it is spelled from, each of which is also printed on
+        # its own. Separate effects from `cant_attack`/`cant_block` rather than
+        # a flag on them, because they answer a different question: those two
+        # are absolute per-creature prohibitions read by `can_attack`/
+        # `can_block`, and these are restrictions on the *declaration as a
+        # whole* (508.1c, 509.1b), read by `combat.attacks_valid` and
+        # `combat.blocks_valid` beside menace. Written into `cant_attack` as a
+        # flag, every existing caller would have read the flagless `True` and
+        # stopped the creature attacking at all -- strictly stronger than the
+        # printed card, and invisible on screen.
+        "cant_attack_alone",
+        "cant_block_alone",
         # Marauding Maulhorn.  The obligation to `cant_attack`'s prohibition,
         # read by `combat.attack_required` at the same enforcement point the
         # `must_attack` op uses.  A static rather than that op because a
@@ -171,6 +185,17 @@ STATIC_EFFECTS = frozenset(
         # absolute, so a card built on either is a lock rather than a tax --
         # strictly stronger than what is printed.
         "attack_tax",
+        # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
+        # control."  `attack_tax` with the price taken out, and read at the same
+        # moment by `characteristics.attack_defender_forbidden` through
+        # `combat.attack_target_forbidden`: `affects` says which creatures are
+        # stopped and the permanent's own controller is the seat they may not
+        # attack.  Neither absolute cousin will do -- `cant_attack` takes no
+        # defender, so an Inkling under it could not attack anybody, and the
+        # `cant_attack_player` op is a resolving one-shot keyed on a pair of
+        # seats with no creature filter.  Unlike that op, this one **does** reach
+        # the defender's planeswalkers, because this sentence names them.
+        "cant_attack_you",
         # Ward. Parameterised on a *cost*, so it cannot be a keyword for the
         # reason `protection` cannot: `KNOWN_KEYWORDS` is a set of bare strings
         # and there is nowhere in one to put the `{1}`. Read by
@@ -184,6 +209,93 @@ STATIC_EFFECTS = frozenset(
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
         "spell_cost_reduction",
+        # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
+        # Food, or Treasure token, instead create one of each."  Read by
+        # `primitives.create_token`, which is the only moment a token creation
+        # can still be intercepted -- a `replacements` entry could not, because
+        # every one of those modifies a permanent that is already arriving, and
+        # a `token_created` trigger fires after the token exists and would add
+        # tokens alongside rather than instead.  Narrow on purpose: see
+        # `docs/rules-coverage.md`, which records that there is no general
+        # rule-616 replacement system and that this is not the start of one.
+        "replace_token_creation",
+    }
+)
+
+#: The statics that describe a **player** rather than a characteristic, and so
+#: take ``affects_player`` instead of ``affects``.
+#:
+#: One list rather than a tuple written out at the check site, because two
+#: readers now need it: the requirement that they carry `affects_player`, and
+#: `GRANTABLE_STATIC_EFFECTS` below, which excludes them. Two copies would be two
+#: places to disagree about whether a new player-wide static may be granted.
+PLAYER_WIDE_STATIC_EFFECTS = frozenset(
+    {
+        "extra_land_drops",
+        "no_hand_limit",
+        "play_lands_from_graveyard",
+        "play_lands_from_library_top",
+        "reveal_library_top",
+        "look_at_library_top",
+        "double_land_triggers",
+        "double_land_mana",
+        "freeze_opponent_lands",
+    }
+)
+
+#: Statics whose readers walk **printed** faces, so a granted one would be inert.
+#:
+#: Two families, and both read the printed list for the same acyclicity reason:
+#:
+#: * `characteristics.ABILITY_STATICS` -- `grant_ability` and
+#:   `lose_all_abilities` are gathered by `_ability_statics`, which *must* read
+#:   printed faces, because `_battlefield_statics` reads `abilities_of` and
+#:   `abilities_of` reads them. Granting one is therefore both the recursion the
+#:   fixed order exists to avoid and, as the code stands, a silent no-op.
+#: * the player-wide ones, plus `replace_token_creation` -- all read through
+#:   `characteristics._active_player_statics`, which walks printed faces and
+#:   never sees an appended granted ability.
+#:
+#: Refused by name rather than left to load, because every one of them would
+#: produce a card that loads clean, prints a line of quoted text and does
+#: nothing -- which is the exact failure the whole validation pass exists to
+#: stop.
+UNGRANTABLE_STATIC_EFFECTS = (
+    PLAYER_WIDE_STATIC_EFFECTS | {"replace_token_creation"} | frozenset(ABILITY_STATICS)
+)
+
+#: Statics a `grant_ability` static may hand to another permanent.
+#:
+#: Derived rather than listed, and the subtraction is the definition: everything
+#: read through `characteristics._battlefield_statics`, which walks `abilities_of`
+#: and so finds a granted static sourced on its **recipient**. Nothing else in
+#: this file needs to know which layer a given effect lands in.
+#:
+#: Inspiring Leader is the card: "Commander creatures you own have "Creature
+#: tokens you control get +2/+2."" -- a `buff` in `grantable_abilities`, handed
+#: over by a `grant_ability` static whose `affects` reads
+#: ``{"types": ["Creature"], "is_commander": true, "owner": "you"}``.
+GRANTABLE_STATIC_EFFECTS = STATIC_EFFECTS - UNGRANTABLE_STATIC_EFFECTS
+
+#: Keys a ``replace_token_creation`` static's ``affects_token`` filter may use.
+#:
+#: The printed face of a token definition, and nothing else.  Not
+#: `SPELL_FILTER_KEYS`, which carries `controller`: the token being asked about
+#: has not been created, so it has no controller of its own, and *whose* token
+#: it is has already been decided before the filter is asked -- these
+#: replacements are their controller's own ("if you would create…", "under your
+#: control"), so a `controller` key here could only restate that or contradict
+#: it.
+TOKEN_FILTER_KEYS = frozenset(
+    {
+        "types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "keywords",
+        "not_keywords",
+        "name",
     }
 )
 
@@ -227,6 +339,18 @@ STATIC_FILTER_KEYS = frozenset(
         "not_keywords",
         "tapped",
         "is_commander",
+        # "Commander creatures you **own**."  903.3 makes ownership the relation
+        # the commander rules use, and it is the one place where the printed
+        # word is "own" rather than "control" on a *permanent* filter: a
+        # commander an opponent has stolen is still one you own, and one you
+        # have stolen is not one you own. Board state that no layer can touch --
+        # `owner` is written when the object is made and `change_control` leaves
+        # it alone -- so it is safe here for exactly the reason `controller` is.
+        #
+        # Writing `owner` **replaces** the defaulted `controller: "you"` rather
+        # than adding to it; `characteristics._matches` says why, and
+        # `costs._reduction_matches` has read the word that way all along.
+        "owner",
         "is_token",
         "attacking",
         "blocking",
@@ -242,6 +366,126 @@ STATIC_FILTER_KEYS = frozenset(
         "paired_with_source",
     }
 )
+
+#: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
+_FILTER_PLAYERS = ("you", "opponent")
+
+
+def _check_owner_key(filt: Mapping[str, Any], where: str) -> None:
+    """``owner`` names a player, and a misspelling of one matches nobody.
+
+    There is no ``"any"``: a filter that does not care who owns a permanent says
+    nothing, and an ``owner: "any"`` written beside a defaulted ``controller``
+    would *also* silently switch that default off -- which is the one thing this
+    key does besides testing ownership.
+    """
+    owner = filt.get("owner")
+    if owner is not None and owner not in _FILTER_PLAYERS:
+        raise DslError(
+            f"{where}.owner: must be one of {list(_FILTER_PLAYERS)}, got {owner!r}"
+        )
+
+
+#: The two "of the chosen …" substitutions a static filter may carry.
+_CHOSEN_QUALITY_KEYS = ("chosen_type_of", "chosen_color_of")
+
+
+def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
+    """"…of the chosen type" cannot survive being handed to another permanent.
+
+    `characteristics.resolve_chosen_subtypes` and its colour twin substitute the
+    choice made by the filter's **source**, and a granted static's source is its
+    *recipient*. So an author writing "of the chosen type" means the granter and
+    the engine would read the recipient -- which has chosen nothing, so the
+    filter matches nobody and the card loads clean and does nothing.
+
+    The two readings differ and no printed card asks for either, so this is
+    refused rather than picked between.
+    """
+    if not isinstance(filt, Mapping):
+        return
+    for key in ("subtypes", "colors"):
+        for entry in filt.get(key) or ():
+            if not isinstance(entry, Mapping):
+                continue
+            for chosen in _CHOSEN_QUALITY_KEYS:
+                if chosen in entry:
+                    raise DslError(
+                        f"{where}.{key}: {chosen!r} names the choice made by the "
+                        f"filter's source, and a granted static's source is the "
+                        f"permanent it was granted to -- which has chosen nothing"
+                    )
+
+
+def _walk_effect_specs(effects: Any):
+    """Every effect spec in a tree, branches and modes included."""
+    for effect in effects or ():
+        if not isinstance(effect, Mapping):
+            continue
+        yield effect
+        for key in ("then", "else", "effects"):
+            yield from _walk_effect_specs(effect.get(key))
+        for mode in effect.get("modes") or ():
+            if isinstance(mode, Mapping):
+                yield from _walk_effect_specs(mode.get("effects"))
+
+
+def _check_grant_targets(
+    model: CardModel, abilities: tuple[Ability, ...], grantable: tuple[Ability, ...], where: str
+) -> None:
+    """Every ``grant_ability`` on this card points at a grantable that can work.
+
+    Two failures, both silent, and the second only became possible when a static
+    was allowed into `grantable_abilities` at all:
+
+    * **Out of range.** `characteristics.abilities_of` and the `grant_ability`
+      op both index the list and both skip a miss, so an off-by-one is a card
+      that prints "gains flying and …" and hands over nothing.
+    * **The op pointing at a static.** The *op* grants for a duration through
+      pointers that only `triggers` and `abilities_of`'s callers read as
+      abilities; a static handed over that way never reaches
+      `_battlefield_statics`, because that walk finds statics on the derived
+      list rather than in the grant record. So the one-shot form is refused
+      where the continuous form is exactly what the card wants.
+    """
+    for i, ability in enumerate(grantable):
+        if not ability.is_static:
+            continue
+        if not (ability.static or {}).get("effect"):
+            raise DslError(f"{where}.grantable[{i}]: a static needs an 'effect'")
+
+    def check(index: Any, what: str, *, statics_ok: bool) -> None:
+        try:
+            pos = int(index)
+        except (TypeError, ValueError):
+            raise DslError(f"{where}: {what} index {index!r} is not a number") from None
+        if not 0 <= pos < len(grantable):
+            raise DslError(
+                f"{where}: {what} names 'grantable_abilities[{pos}]' and this card "
+                f"has {len(grantable)} -- a grant nothing answers hands over nothing"
+            )
+        if grantable[pos].is_static and not statics_ok:
+            raise DslError(
+                f"{where}: the grant_ability *op* hands over a pointer that the "
+                f"characteristics pipeline never reads, so granting the static "
+                f"'grantable_abilities[{pos}]' with it would do nothing -- a "
+                f"continuous grant is the `grant_ability` **static**"
+            )
+
+    for ability in abilities:
+        static = ability.static or {}
+        if ability.is_static and static.get("effect") == "grant_ability":
+            check(static.get("ability", 0), "grant_ability static", statics_ok=True)
+
+    trees: list[Any] = [model.spell_effects]
+    trees.extend(a.effects for a in abilities)
+    trees.extend(a.effects for a in grantable)
+    for tree in trees:
+        for effect in _walk_effect_specs(tree):
+            if effect.get("op") != "grant_ability":
+                continue
+            index = effect.get("ability", effect.get("ability_index"))
+            check(index, "grant_ability op", statics_ok=False)
 
 
 # ----------------------------------------------------------------------
@@ -446,11 +690,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     for i, replacement in enumerate(model.replacements):
         if replacement.counter is not None:
-            # "…enters with a vigilance counter on it." Checked here for the
-            # reason the condition below is: the kind is only looked at when a
-            # permanent actually enters, so a near-miss spelling of a keyword
-            # counter would arrive as an inert tally mid-game rather than being
-            # refused at load.
+            # "…enters with a vigilance counter on it", "…enters with a shield
+            # counter on it." Checked here for the reason the condition below
+            # is: the kind is only looked at when a permanent actually enters,
+            # so a near-miss spelling of a keyword or shield counter would
+            # arrive as an inert tally mid-game rather than being refused at
+            # load. Diamond City is the case that makes it matter most, because
+            # a mis-spelled shield counter is *visible on the board* and the
+            # land still dies to the removal it is printed to survive.
             _check_counter_kind(
                 replacement.counter, f"{where}.replacements[{i}].counter"
             )
@@ -509,13 +756,45 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # the stack would reach it with an index into a list that no longer
             # exists, and resolve as some other ability of that permanent.
             continue
-        # A granted *static* would have to join the characteristics pipeline
-        # from an object that is not its source. Granting a keyword is what
-        # `grant_keyword` is for; `docs/rules-coverage.md` records the rest.
+        if ability.is_static and ability.static:
+            # A granted **static**. Inspiring Leader: "Commander creatures you
+            # own have "Creature tokens you control get +2/+2."" -- and the
+            # thing that makes it work is that a granted static needs no code of
+            # its own. `abilities_of` appends it to the recipient's list and
+            # `characteristics._battlefield_statics` walks that list, so the
+            # copy arrives already sourced on the recipient: the quoted anthem's
+            # "you" is the commander creature's controller, and two commander
+            # creatures are two entries, so the tokens get +4/+4 without
+            # anything counting them.
+            #
+            # The near miss -- a `buff` on the Background itself under an
+            # `{"exists": {"is_commander": true}}` condition -- is a different
+            # card three ways: it does not stack per commander creature, it
+            # pumps the *Background controller's* tokens rather than each
+            # granted commander's controller's, and it does not travel with a
+            # commander that changes hands.
+            effect = str(ability.static.get("effect"))
+            if effect not in GRANTABLE_STATIC_EFFECTS:
+                raise DslError(
+                    f"{where}: {effect!r} is read off printed faces "
+                    f"(`_ability_statics` or `_active_player_statics`), so a "
+                    f"granted one would load clean and never apply; grantable "
+                    f"statics are {sorted(GRANTABLE_STATIC_EFFECTS)}"
+                )
+            for key in ("affects", "blockers"):
+                _refuse_granted_chosen_qualities(
+                    ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
+                )
+            continue
+        # An activated ability that is not a mana ability, and nothing else is
+        # left. Granting a keyword is what `grant_keyword` is for;
+        # `docs/rules-coverage.md` records the rest.
         raise DslError(
-            f"{where}: only triggered and mana abilities can be granted, "
+            f"{where}: only triggered, mana and static abilities can be granted, "
             f"not {ability.kind.value}"
         )
+
+    _check_grant_targets(model, abilities, grantable, where)
 
     if model.cost_reduction is not None:
         _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
@@ -544,6 +823,37 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         raise DslError(f"{where}: reads the 'kicked' condition but has no 'kicker' cost")
     if kicker is not None and not reads_kicked:
         raise DslError(f"{where}: has a 'kicker' cost that no effect reads via 'kicked'")
+
+    # Gift is two halves the same way kicker is, and half of it fails just as
+    # quietly -- more quietly, in fact, because a gift costs nothing, so a card
+    # declaring one and reading it nowhere is not even more expensive than the
+    # card it pretends to be. It is simply a cast line the player is offered
+    # that does exactly what the other line does.
+    #
+    # Either spelling counts as reading it, because the two halves of the
+    # printed mechanic are read by different vocabulary: "if the gift wasn't
+    # promised" is the `{"gift_promised": …}` condition, and "**they** create a
+    # tapped 1/1 blue Fish" is the `"gift_recipient"` player spec. Parting Gust
+    # writes both; a card whose whole gift line is "gift a card (they draw a
+    # card)" writes only the second, and refusing it would be refusing the
+    # simplest printed shape the mechanic has.
+    reads_gift = _mentions_gift(model)
+    if reads_gift and model.gift is None:
+        raise DslError(
+            f"{where}: reads the gift ('gift_promised' or the 'gift_recipient' "
+            f"player spec) but has no 'gift' declaration"
+        )
+    if model.gift is not None:
+        if not model.gift.strip():
+            # The string is what is promised, and the residual gate compares it
+            # against the printed line -- so an empty one cannot claim anything
+            # and would put "(gift  to Bob)" on the action.
+            raise DslError(f"{where}: 'gift' must name what is promised, e.g. 'a tapped Fish'")
+        if not reads_gift:
+            raise DslError(
+                f"{where}: has a 'gift' promise that nothing reads via "
+                f"'gift_promised' or the 'gift_recipient' player spec"
+            )
 
     # Evoke is two halves the same way, and half of it is the same silent
     # failure: a cheaper cast that never dies, or a sacrifice clause that can
@@ -868,6 +1178,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             raise DslError(f"{where}: a graveyard cost needs mana")
         if flashback.mana.x_count:
             raise DslError(f"{where}: a graveyard cost with X is not implemented")
+        if flashback.x_value is not None:
+            # The refusal above says X from the graveyard is not implemented, and
+            # a defined X is still an X: `costs.ability_mana` -- the one reader of
+            # `x_value` -- never sees a graveyard cost, which is priced by
+            # `costs.variant_reduction` instead.
+            raise DslError(
+                f"{where}: 'x_value' is an activated ability's, and a graveyard "
+                f"cost is not priced through `ability_mana`"
+            )
         if flashback.mana_reduction is not None:
             # "…costs {X} less to cast **this way**". The one alternative cost
             # modelled as a full `Cost`, so the one that can carry a variant-
@@ -907,12 +1226,32 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"would always read 0"
         )
 
+    # Dice are the same two halves, and fail the same way. A roll is never the
+    # effect -- "roll X six-sided dice" on its own does nothing a player can
+    # see -- and a `{"rolled": …}` with no roll behind it reads 0 for ever, so
+    # Luck Bobblehead would make no Treasures and never win. Both load cleanly.
+    rolls_dice = _mentions_pair(model, "op", "roll_dice")
+    reads_roll = _mentions_condition(model, "rolled")
+    if rolls_dice and not reads_roll:
+        raise DslError(
+            f"{where}: rolls dice that no effect reads via {{'rolled': …}} -- "
+            f"a roll nothing reads changes nothing"
+        )
+    if reads_roll and not rolls_dice:
+        raise DslError(
+            f"{where}: reads a roll with {{'rolled': …}} but never rolls any "
+            f"dice, so it would always read 0"
+        )
+
     reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
     if reads_from_graveyard and flashback is None:
         raise DslError(
             f"{where}: reads the 'cast_from_graveyard' condition but has no "
             f"'graveyard_cost', so it could never be true"
         )
+
+    _validate_was_cast_placement(model, where)
+    _validate_enchanted_player(model, where)
 
     colors = (
         frozenset(model.colors)
@@ -981,6 +1320,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,
         kicker=kicker,
+        gift=model.gift,
         multikicker=multikicker,
         evoke=evoke,
         bestow=bestow,
@@ -1005,6 +1345,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 def _mentions_kicked(model: CardModel) -> bool:
     """Does anything on this card read ``{"kicked": ...}``?"""
     return _mentions_condition(model, "kicked")
+
+
+def _mentions_gift(model: CardModel) -> bool:
+    """Does anything on this card read the gift promise?
+
+    Both spellings, because the printed mechanic has two halves and a card may
+    write either: the ``{"gift_promised": …}`` condition ("if the gift wasn't
+    promised…"), and the ``"gift_recipient"`` player spec, which is what aims
+    the promised reward at the seat that was promised it.
+
+    The player spec is matched as a **value** anywhere in a mapping rather than
+    under a fixed key, because the seat is named through half a dozen different
+    keys depending on the op -- `create_token`'s ``controller``, `draw`'s
+    ``player``, a selector's ``controller``. Checking one of them would let the
+    others load a promise that nothing reads.
+    """
+    if _mentions_condition(model, "gift_promised"):
+        return True
+    return _mentions(model, lambda node: "gift_recipient" in node.values())
 
 
 #: Ops that take an object out of the zone an ability was activated from.
@@ -1045,6 +1404,100 @@ def _mentions_condition(model: CardModel, key: str) -> bool:
     return _mentions(model, lambda node: key in node)
 
 
+def _validate_enchanted_player(model: CardModel, where: str) -> None:
+    """``"enchanted_player"`` only on a card that can *be* attached to a player.
+
+    The spec resolves to `GameObject.attached_to_player`, which only
+    `stack._attach_aura` and the `attach_to_player` primitive ever write, and
+    only for an **Aura**. On anything else it resolves to `[]` for the whole
+    game -- and an empty player list is the quietest failure in the effect
+    layer: a `gain_life` aimed at nobody logs nothing, a `create_token` makes no
+    token, and the card reads on screen as though it has an ability.
+
+    "Enchant player" is one of the Aura's enchant clauses (303.4a), so the
+    subtype is the whole test. Whether the card also *declares* a player target
+    is not checked here: an Aura can be put onto the battlefield attached by an
+    effect rather than cast, and the target line is only how a cast one says it.
+
+    Walks the whole card rather than going through `_mentions`, which searches
+    effects, targets and trigger conditions. A **static** flattens its
+    parameters onto the ability (``effect``, ``affects``, ``power``) and has no
+    ``effects`` list at all, so `_mentions` cannot see an ``affects`` filter --
+    and ``{"controller": "enchanted_player"}`` inside one is the exact spelling
+    this refuses, since `characteristics._matches` would read an unknown
+    controller word as matching every permanent on the table.
+    """
+    if "Aura" in model.subtypes:
+        return
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return "enchanted_player" in node.values() or any(
+                walk(v) for v in node.values()
+            )
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    if walk(model.model_dump()):
+        raise DslError(
+            f"{where}: 'enchanted_player' names the player this **Aura** is "
+            f"attached to (303.4a), and only an Aura is ever attached to one -- "
+            f"on {model.subtypes or 'this card'} it resolves to nobody, every "
+            f"time, and the ability silently does nothing"
+        )
+
+
+#: Which trigger a ``{"was_cast": …}`` clause may hang from.
+#:
+#: 603.6e's "if it was cast" is a fact about the arrival of the permanent the
+#: ability is *on*, and the condition is evaluated with the ability's own source
+#: (`triggers._matches` passes ``source=obj.oid``). Every other home for it is a
+#: card that loads clean and plays wrong, in one of two directions:
+#:
+#: * on ``permanent_enters`` -- "whenever **another** creature enters, if it was
+#:   cast" -- it answers about the trigger's own permanent, not the one that
+#:   entered, so the clause reads a fact about an unrelated object;
+#: * anywhere else (a spell's own effects, an activated ability, a dies trigger)
+#:   it asks a permanent that has not entered anything on this trip, and reads a
+#:   flat ``False`` for ever.
+WAS_CAST_TRIGGERS = frozenset({"self_enters"})
+
+
+def _validate_was_cast_placement(model: CardModel, where: str) -> None:
+    """``was_cast`` only on this permanent's own enters trigger (603.6e)."""
+
+    def reads(node: Any) -> bool:
+        return isinstance(node, Mapping) and "was_cast" in node
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return reads(node) or any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    stray = walk(model.spell_effects) or walk([t.model_dump() for t in model.targets])
+    for ability in model.abilities:
+        event = ability.trigger.event if ability.trigger is not None else None
+        if event in WAS_CAST_TRIGGERS:
+            continue
+        stray = (
+            stray
+            or walk(ability.effects)
+            or walk([t.model_dump() for t in ability.targets])
+            or walk(ability.trigger.condition if ability.trigger else None)
+        )
+    if stray:
+        raise DslError(
+            f"{where}: {{'was_cast': …}} reads how the ability's **own source** "
+            f"arrived on the battlefield, so it belongs on a "
+            f"{sorted(WAS_CAST_TRIGGERS)} trigger (603.6e) and nowhere else -- "
+            f"anywhere else it answers about the wrong object, or about one that "
+            f"has not entered at all"
+        )
+
+
 def _mentions_pair(model: CardModel, key: str, value: str) -> bool:
     """Does anything on this card carry ``{key: value}``?
 
@@ -1082,7 +1535,12 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
 
 
 def _compile_targets(
-    models, where: str, *, on_spell: bool = False, mode_count: int | None = None
+    models,
+    where: str,
+    *,
+    on_spell: bool = False,
+    on_trigger: bool = False,
+    mode_count: int | None = None,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -1103,7 +1561,11 @@ def _compile_targets(
     there to be read, which is why this is a restriction on one of the two
     callers rather than on the form.
 
-    ``mode_count`` is how many modes the card's single top-level ``choose_mode``
+    ``on_trigger`` marks a **triggered** ability's targets, which is the other
+    place a mode-owned spec has a moment to be declared in: 603.3d puts the
+    modes and the targets alike at the instant the ability goes on the stack.
+
+    ``mode_count`` is how many modes the single top-level ``choose_mode``
     offers, or ``None`` when there is no such question to hang a target on.  A
     spec carrying ``mode`` belongs to that mode alone and is declared only if it
     is chosen -- see `carddef.TargetSpec.mode`.
@@ -1133,7 +1595,9 @@ def _compile_targets(
                 f"cast (601.2c), before X is chosen and before any additional "
                 f"cost is paid, so the expression would read 0"
             )
-    _check_mode_targets(specs, where, on_spell=on_spell, mode_count=mode_count)
+    _check_mode_targets(
+        specs, where, on_spell=on_spell, on_trigger=on_trigger, mode_count=mode_count
+    )
     # The ordering rule is about the refs a *cast* stores, and a mode-owned spec
     # stores its refs after every card-level one -- so it is the card-level list
     # that has to end in the variable-size spec, not the printed list.
@@ -1154,30 +1618,42 @@ def _compile_targets(
 
 
 def _check_mode_targets(
-    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, mode_count: int | None
+    specs: tuple[TargetSpec, ...],
+    where: str,
+    *,
+    on_spell: bool,
+    on_trigger: bool = False,
+    mode_count: int | None,
 ) -> None:
     """Every restriction on ``mode``, each one a card that would load wrong.
 
-    A mode-owned target is declared inside the cast, between choosing the modes
-    (601.2b) and paying (601.2h), which is a moment that exists **only** for a
-    spell whose whole effect tree is one top-level ``choose_mode``: anywhere
-    else the modal question is asked as the thing resolves, by which time
-    targets can no longer be declared at all.
+    A mode-owned target needs one moment that owns both questions -- the modes
+    first (601.2b), the targets they own straight after (601.2c) -- and there
+    are exactly two of them.  A **spell** has it inside the cast, between
+    choosing the modes and paying.  A **triggered ability** has it when the
+    ability is put on the stack, which 603.3d says is where both choices
+    happen.  An *activated* ability has neither: `legality` enumerates one
+    activation per legal target tuple, so its targets are fixed before
+    `Game._activate` asks which mode -- the reverse of the printed order.  And
+    a modal question that is not the effect tree's single top-level one is
+    asked as the thing resolves, by which time targets can no longer be
+    declared at all.
     """
     owned = [spec for spec in specs if spec.mode is not None]
     if not owned:
         return
-    if not on_spell:
+    if not (on_spell or on_trigger):
         raise DslError(
-            f"{where}: 'mode' only works on a card's own 'targets' -- an "
-            f"ability's modes are chosen as it resolves, which is after the "
-            f"moment its targets were declared"
+            f"{where}: 'mode' only works on a card's own 'targets' (601.2b) or "
+            f"on a triggered ability's (603.3d) -- an activated ability's "
+            f"targets are enumerated by legality before its modes are chosen, "
+            f"so there is no moment left to declare one in"
         )
     if mode_count is None:
         raise DslError(
-            f"{where}: 'mode' needs the card's whole effect tree to be one "
+            f"{where}: 'mode' needs the whole effect tree to be one "
             f"top-level 'choose_mode' -- a nested or repeated one is answered "
-            f"on resolution, with no cast left to declare a target in"
+            f"on resolution, with nothing left to declare a target in"
         )
     for spec in owned:
         label = f"{where}.target[{spec.id}]"
@@ -1217,6 +1693,30 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
     """
     validate_selector(model.selector, f"{where}.target[{model.id}]")
     label = f"{where}.target[{model.id}]"
+    if (
+        model.kind in ("player", "any")
+        # `"any"` is a *target* word, not a player spec: `_player_allowed`
+        # answers it before `select_players` is asked, and `select_players` has
+        # no name for "everyone who could be targeted". So it is spelled out
+        # here rather than added to `PLAYER_SPEC_NAMES`, where it would start
+        # meaning something to every effect's `player` key too.
+        and model.selector.get("controller") != "any"
+        and "controller" in model.selector
+    ):
+        # `targeting._player_allowed` resolves this clause through
+        # `select_players`, so it is a full player spec and has to be checked as
+        # one. Left unchecked it was the quietest bug in the targeting layer:
+        # `validate_selector` accepts any Mapping here, so
+        # `{"controller": {"controller_of": "subject"}}` compiled cleanly and
+        # was then dropped by a `return True` fallthrough -- a card printed
+        # "target player other than its controller" that played as "target any
+        # player", strictly wider than the printing, with nothing to say so.
+        #
+        # Checked with no sibling targets in scope: the forms a *target's own*
+        # controller clause takes name the trigger's bindings, not another
+        # target of the same card, and a card that tried would rather be told
+        # so than load.
+        _validate_player_spec(model.selector["controller"], f"{label}.controller", {})
     if isinstance(model.count, dict):
         validate_value(model.count, f"{label}.count")
     if model.up_to:
@@ -1277,12 +1777,39 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
-    targets = _compile_targets(model.targets, where)
-    target_kinds = {t.id: t.kind for t in targets}
+    # How many modes a mode-owned target may point at, and `None` when there is
+    # no single modal question to hang one on -- the same test
+    # `Ability.cast_time_modes` makes, asked here because the loader has to
+    # refuse a `mode` the engine would never get to ask about.
+    ability_modes = (
+        top_level_mode_spec(model.effects) if count_mode_specs(model.effects) == 1 else None
+    )
+    all_targets = _compile_targets(
+        model.targets,
+        where,
+        # 603.3d puts a triggered ability's modes *and* its targets at the one
+        # moment it is put on the stack, which is the moment a mode-owned target
+        # needs. An activated ability has no such moment -- see
+        # `_check_mode_targets`.
+        on_trigger=kind in (AbilityKind.TRIGGERED, AbilityKind.CHAPTER),
+        mode_count=len(ability_modes.get("modes") or ()) if ability_modes else None,
+    )
+    targets = tuple(spec for spec in all_targets if spec.mode is None)
+    mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
+    for spec in all_targets:
+        if spec.mode is not None:
+            mode_targets[spec.mode] = (*mode_targets.get(spec.mode, ()), spec)
+    # Effects still name every spec, mode-owned or not: which bucket a target
+    # lives in is about *when it is declared*, not about who may read it.
+    target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.effects):
         _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
 
-    cost = _compile_cost(model.cost, where) if model.cost else None
+    cost = (
+        _compile_cost(model.cost, where, defines_x=kind is AbilityKind.ACTIVATED)
+        if model.cost
+        else None
+    )
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 
@@ -1476,6 +2003,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     mana_rider: tuple[Mapping[str, Any], ...] = ()
     mana_reflects: Mapping[str, Any] | None = None
     mana_identity = False
+    mana_chosen_color = False
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
@@ -1528,6 +2056,24 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             # ability would never be offered whatever the commander's colours.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif any(
+            isinstance(e, Mapping) and isinstance(e.get("mana"), Mapping) for e in mana_effects
+        ):
+            # "{T}: Add one mana of **the chosen color**." Heraldic Banner. The
+            # third member of the same family, and the question is asked of the
+            # permanent's own `chosen_color`.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a chosen-colour mana ability is a single 'add_mana' -- "
+                    f"there is no second thing for the chosen colour to join"
+                )
+            mana_chosen_color = True
+            # The static superset, for the same reason `reflecting` needs one:
+            # an empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source, so the
+            # ability would never be offered whatever colour was chosen.
+            mana_options = _ANY_COLOR_OPTIONS
+            mana_amount = None
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where)
@@ -1548,6 +2094,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
         mana_identity=mana_identity,
+        mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
@@ -1564,6 +2111,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,
+        mode_targets=mode_targets,
         effects=tuple(model.effects),
         static=None,
     )
@@ -1591,6 +2139,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: static filters may only read printed characteristics; "
                 f"unsupported keys {sorted(unknown)}"
             )
+        _check_owner_key(model.affects, f"{where}.affects")
     if model.effect == "block_restriction":
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
@@ -1607,10 +2156,34 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: block_restriction 'blockers' may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
+            _check_owner_key(model.blockers, f"{where}.blockers")
     elif model.blockers is not None or model.require_all:
         raise DslError(
             f"{where}: 'blockers'/'require_all' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
+        )
+    if model.effect in ("cant_attack_alone", "cant_block_alone") and model.affects is None:
+        # `characteristics._matches` reads a missing filter as "matches
+        # nothing", so an "…alone" static without one is a printed restriction
+        # that restricts nobody -- it loads clean, shows on the card and never
+        # fires. Every printed one of these is self-referential, so what the
+        # card wants is `{"self_only": true}`; saying it is the point.
+        raise DslError(
+            f"{where}: {model.effect} needs an 'affects' filter -- "
+            f"{{\"self_only\": true}} for the creature that carries it"
+        )
+    if model.effect == "cant_attack_you" and model.affects is None:
+        # Same refusal, one step further: a missing filter matches nothing, so a
+        # filterless `cant_attack_you` is a wall nobody bounces off. And the
+        # filter is the *whole* of what the sentence says -- "**Inklings** can't
+        # attack you" -- where the seat it protects is never written down,
+        # because it is always the permanent's own controller. Note the printed
+        # line names those creatures wherever they are, so what these cards want
+        # is `controller: "any"`, exactly as `cant_attack` and `attack_tax` do.
+        raise DslError(
+            f"{where}: cant_attack_you needs an 'affects' filter naming the "
+            f"creatures it stops -- e.g. "
+            f"{{\"controller\": \"any\", \"subtypes\": [\"Inkling\"]}}"
         )
     if model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
@@ -1641,22 +2214,46 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_spells' only means anything on a "
             f"spell_cost_reduction static, not on {model.effect!r}"
         )
-    if model.effect in (
-        "extra_land_drops",
-        "no_hand_limit",
-        "play_lands_from_graveyard",
-        "play_lands_from_library_top",
-        "reveal_library_top",
-        "look_at_library_top",
-        "double_land_triggers",
-        "double_land_mana",
-        "freeze_opponent_lands",
-    ):
+    if model.effect == "replace_token_creation":
+        # `affects` names permanents on the battlefield; the token this asks
+        # about has not been created and there is nothing on the battlefield for
+        # that filter to find. Refused rather than ignored, because a Divine
+        # Visitation written with `affects` would load clean, replace nothing,
+        # and print a line of text it never performs.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: replace_token_creation filters the token about to be "
+                f"made with 'affects_token', not 'affects' (which picks out "
+                f"permanents already on the battlefield)"
+            )
+        if model.affects_token is not None:
+            unknown = set(model.affects_token) - TOKEN_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.affects_token: a token that does not exist yet has a "
+                    f"printed face and nothing else; unsupported keys {sorted(unknown)}"
+                )
+        # A replacement that creates nothing is not this effect. "Instead create
+        # one of each" and "that many are created instead" both name what is
+        # made; an empty list would silently *delete* every token its filter
+        # matched, which is a different and much stronger card.
+        if not model.create_instead:
+            raise DslError(
+                f"{where}: replace_token_creation needs 'create_instead' -- the "
+                f"token ids created instead, one of each per token replaced"
+            )
+    elif model.affects_token is not None or model.create_instead:
+        raise DslError(
+            f"{where}: 'affects_token'/'create_instead' only mean anything on a "
+            f"replace_token_creation static, not on {model.effect!r}"
+        )
+    if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
-    elif model.effect == "spell_cost_reduction":
-        # Picks out *spells*, through `affects_spells`, checked above. There are
-        # no permanents for `affects` to name.
+    elif model.effect in ("spell_cost_reduction", "replace_token_creation"):
+        # Picks out *spells* or *tokens not yet created*, through
+        # `affects_spells` and `affects_token`, both checked above. There are no
+        # permanents for `affects` to name.
         pass
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
@@ -1762,6 +2359,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects"] = dict(model.affects)
     if model.affects_spells is not None:
         static["affects_spells"] = dict(model.affects_spells)
+    if model.affects_token is not None:
+        static["affects_token"] = dict(model.affects_token)
+    if model.create_instead:
+        static["create_instead"] = list(model.create_instead)
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     for field_name in ("power", "toughness", "amount"):
@@ -1790,6 +2391,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "attack_tax":
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.effect == "grant_ability":
+        # Which of the card's `grantable_abilities` is handed over. Carried onto
+        # the compiled mapping rather than left on the model, because the
+        # mapping is all `characteristics.abilities_of` ever sees: left behind,
+        # its `static.get("ability", 0)` read 0 for every card, so one with two
+        # grantable abilities silently granted the first whichever it named.
+        # Invisible until a card had two, which is what Inspiring Leader's
+        # quoted static makes ordinary.
+        static["ability"] = int(model.ability or 0)
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
 
@@ -1810,12 +2420,20 @@ COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_man
 COST_REDUCTION_ZONES = frozenset({"battlefield", "command"})
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
-#: ``owner`` is not a static filter key and should not become one -- a static
-#: applies to permanents, where control is the question. A reduction reading the
-#: command zone is the one place the printed word is "own": "a commander you own
-#: on the battlefield or in the command zone" still counts the commander an
-#: opponent stole from you.
-COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "owner"})
+#:
+#: ``zone`` is the only one left. ``owner`` was here alone, on the grounds that a
+#: static applies to permanents "where control is the question" -- and Inspiring
+#: Leader is the card that showed that reasoning was about *most* statics rather
+#: than all of them. "Commander creatures you own have …" is a permanent filter
+#: whose printed word is "own", and 903.3 is why: on a commander, ownership is
+#: the relation the rules use. So ``owner`` moved into `STATIC_FILTER_KEYS` and
+#: is listed here no longer; it is still spelled and read the same way, which is
+#: what made the move a one-line change rather than a second dialect.
+#:
+#: What a reduction kept is the *reason* it wanted the word first: reading the
+#: command zone, where "a commander you own on the battlefield or in the command
+#: zone" still counts the commander an opponent stole from you.
+COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
 
 #: Condition heads a *cost* reduction may use.
 #:
@@ -1951,10 +2569,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
-        if (owner := filt.get("owner")) is not None and owner not in ("you", "opponent"):
-            raise DslError(
-                f"{where}.{key}.owner: must be 'you' or 'opponent', got {owner!r}"
-            )
+        _check_owner_key(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
         _validate_cost_condition(spec["condition"], f"{where}.condition")
@@ -2030,6 +2645,7 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
         unknown = set(spec) - STATIC_COUNT_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}: unsupported filter keys {sorted(unknown)}")
+        _check_owner_key(spec, where)
         return
     unknown = set(spec) - STATIC_ZONE_FILTER_KEYS
     if unknown:
@@ -2160,7 +2776,9 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: not this one reads the effect-side list as the whole language, which is how
 #: Door of Destinies came to be filed as a gap.
 STATIC_VALUE_KEYS = (
-    frozenset({"const", "count", "mana_symbols", "counters_on"})
+    frozenset(
+        {"const", "count", "mana_symbols", "counters_on", "permanents_entered_this_turn"}
+    )
     | STATIC_LIFE_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
@@ -2184,6 +2802,29 @@ def _validate_static_value(value: Any, where: str) -> None:
         raise DslError(f"{where}: an empty object is not a static value")
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    if "permanents_entered_this_turn" in value:
+        # Kinbinding: "Creatures you control get +X/+X, where X is the number of
+        # creatures that entered the battlefield under your control this turn."
+        #
+        # Safe inside a static for the reason `counters_on` is. The turn ledger
+        # is a pipeline **input**: `EnteredPermanent` is a snapshot written once,
+        # at the moment of entry, and nothing in the characteristics pipeline can
+        # write to it -- so an anthem sized by it cannot come to depend on another
+        # static's output and the fixed order of layers-lite stays acyclic.
+        #
+        # `count` is the near miss and is wrong in both directions, which is the
+        # whole reason the ledger exists: a board count is true of a creature that
+        # has sat there since turn three and false of one that entered this turn
+        # and died.
+        #
+        # Validated by the *same* filter check the effect side uses, so
+        # `controller` stays required -- an omitted clause would silently count
+        # the opponents' arrivals too.
+        from automtg.engine.effects.values import validate_entered_filter
+
+        validate_entered_filter(
+            value["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
+        )
     if "counters_on" in value:
         # "Creatures you control of the chosen type get +1/+1 for each charge
         # counter on this artifact" -- Door of Destinies. Safe inside a static
@@ -2232,7 +2873,24 @@ def _validate_static_value(value: Any, where: str) -> None:
         )
 
 
-def _compile_cost(model, where: str) -> Cost:
+def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
+    if model.x_value is not None:
+        # "X is the mana value of that card." Two guards, because both failures
+        # are silent: `x_value` is read by `costs.ability_mana`, which prices an
+        # *activated ability's* cost and nothing else, and what it fills in is
+        # the `{X}` symbol in this cost's own mana.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'x_value' defines the X of an activated ability's "
+                f"cost, and this is not one -- nowhere else prices its mana "
+                f"through `ability_mana`, so it would load and be ignored"
+            )
+        if "X" not in str(model.mana or "").upper():
+            raise DslError(
+                f"{where}.cost: 'x_value' says what the '{{X}}' in this cost is "
+                f"worth, and there is no '{{X}}' in {model.mana!r} for it to fill in"
+            )
+        validate_value(model.x_value, f"{where}.cost.x_value")
     validate_selector(model.sacrifice, f"{where}.cost.sacrifice")
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
@@ -2275,6 +2933,24 @@ def _compile_cost(model, where: str) -> Cost:
             f"{where}.cost.tap_permanents: 'tapped' is implied and may not be set; "
             f"this cost always taps untapped permanents"
         )
+    if model.untap_permanents is not None:
+        if "tapped" in model.untap_permanents:
+            # The mirror guard, for the mirror reason: the pool forces
+            # `tapped: True`, "tapped" is in every printed line of this shape,
+            # and a cost that could "untap" an untapped creature costs nothing.
+            raise DslError(
+                f"{where}.cost.untap_permanents: 'tapped' is implied and may not be "
+                f"set; this cost always untaps tapped permanents"
+            )
+        if "total_power" in model.untap_permanents:
+            # Crew is `tap_permanents`', and it is a printed sum -- "total power
+            # 3 or greater". Nothing printed unbends a board by power, so this
+            # is refused rather than accepted and silently ignored.
+            raise DslError(
+                f"{where}.cost.untap_permanents: 'total_power' is crew's and belongs "
+                f"to 'tap_permanents'; give a 'count'"
+            )
+        validate_selector(model.untap_permanents, f"{where}.cost.untap_permanents")
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
     cost = Cost.from_spec(model.model_dump())
@@ -2372,6 +3048,18 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
             raise DslError(
                 f"{where}: mana abilities may only contain 'add_mana' "
                 f"(or a single 'choose_mode' of them), got {effect.get('op')!r}"
+            )
+        if isinstance(effect.get("mana"), Mapping):
+            # `{"chosen_color_of": "self"}` is one symbol whose colour is not
+            # known at load time, so it cannot be summed with anything and it
+            # cannot be one mode among five -- a mode is a choice made at
+            # activation, which is the *any colour* card this spelling exists to
+            # refuse. It has to be the whole ability, which the branch in
+            # `_build_ability` handles before anything reaches here.
+            raise DslError(
+                f"{where}: a chosen-colour 'add_mana' must be the mana ability's "
+                f"only effect -- it cannot be summed with another symbol or "
+                f"offered as one mode among several"
             )
         for i, v in enumerate(parse_mana_production(str(effect.get("mana", "")))):
             total[i] += v
@@ -2604,6 +3292,18 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
         )
     if not isinstance(who, Mapping):
         return
+    if "not" in who:
+        # "target player **other than** its controller." The complement of a
+        # spec, so whatever it wraps has to be a legal spec in its own right --
+        # otherwise `{"not": {"target": "t9"}}` names an undeclared target and
+        # excludes nobody, which reads as "target any player".
+        _validate_player_spec(who["not"], f"{where}.not", target_kinds)
+        if len(who) > 1:
+            raise DslError(
+                f"{where}: 'not' is the whole spec -- it cannot be combined with "
+                f"{sorted(set(who) - {'not'})}"
+            )
+        return
     for key in ("target", "controller_of_target"):
         if key not in who:
             continue
@@ -2623,6 +3323,46 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
                 f"{where}: target {tid!r} is a {kind!r}, which has no controller -- "
                 f"use {{'target': {tid!r}}} to name the player it chose"
             )
+
+
+#: The ops that can put the permanent they make into combat.
+ATTACKING_OPS = frozenset({"create_token", "copy_permanent", "put_onto_battlefield"})
+
+#: Player specs that can name **more than one** seat. Fine for "each opponent
+#: loses 1 life"; never right for ``attacking``, which is one creature pointed
+#: at one player. ``"opponent"`` is here because a pod makes it three of them --
+#: the reading that is invisible in a two-player game and wrong everywhere else.
+PLURAL_PLAYER_SPEC_NAMES = frozenset({"opponent", "each_opponent", "each_player", "all"})
+
+
+def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check an ``attacking`` clause: the boolean, or a player spec.
+
+    ``true`` is the original and much the commonest spelling -- "wherever the
+    source is already pointed" -- and it is checked here only so that the *other*
+    forms can be. A player spec says "attacking **that player**", which the
+    boolean cannot: Ainok Strike Leader points one token at each opponent, and
+    Combat Calligrapher points one at a defender while never attacking itself.
+
+    Both failures this refuses are silent at runtime. A plural spec has no
+    single answer -- a creature attacks exactly one player -- and picking one
+    would make a card that reads "each opponent" and hits one seat. A bare
+    number would be a *seat*, which no printed card names, and ``0`` is
+    indistinguishable from ``false``.
+    """
+    if isinstance(who, bool):
+        return
+    if isinstance(who, str) and who in PLURAL_PLAYER_SPEC_NAMES:
+        raise DslError(
+            f"{where}: {who!r} can name several players and a creature attacks one -- "
+            f"name the seat ({{'binding': 'each_player'}} inside a for_each_player, "
+            f"a trigger binding, or a target)"
+        )
+    if not isinstance(who, str | Mapping):
+        raise DslError(
+            f"{where}: must be true/false or a player spec, got {who!r}"
+        )
+    _validate_player_spec(who, where, target_kinds)
 
 
 
@@ -2744,6 +3484,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
             )
+    if op == "return_spell_to_hand":
+        # "Return target **spell** to its owner's hand." The op reads
+        # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed
+        # at a `permanent` or `player` target it returns nothing, silently, and
+        # the card resolves having done exactly half of what it says. Both
+        # halves of that are checked: the target has to exist, and it has to be
+        # the kind that can *be* a spell.
+        tid = str(effect.get("target", "t1"))
+        if tid not in target_kinds:
+            raise DslError(
+                f"{where}: return_spell_to_hand references target {tid!r} "
+                f"which the card does not declare"
+            )
+        if target_kinds[tid] != "spell":
+            raise DslError(
+                f"{where}: return_spell_to_hand needs a target of kind 'spell', "
+                f"and {tid!r} is {target_kinds[tid]!r} "
+                f"(a permanent goes back with return_to_hand)"
+            )
+        if "objects" in effect:
+            # The obvious thing to write, copied off `return_to_hand`, and it is
+            # accepted and ignored: a spell is named by the target it was cast
+            # at, not by a selector over a zone. Refused rather than dropped,
+            # because "return every spell on the stack" is a different card.
+            raise DslError(
+                f"{where}: return_spell_to_hand reads no 'objects' -- it takes "
+                f"the spell its 'target' names"
+            )
     # Every op that names a player spells it `player` and every one of them
     # feeds `select_players`, so this is checked once here rather than per op --
     # the way `counter` is. `become_monarch`, `goad` and `cant_attack_player`
@@ -2782,6 +3550,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             _validate_cost_reduction(
                 effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction"
             )
+        if effect["pay"].get("x_value") is not None:
+            # `x_value` fills in the `{X}` of an *activated ability's* cost, and
+            # an optional `pay` is not one: nothing announces X for it either,
+            # so `{"mana": "{X}"}` here is already a cost of nothing. Refused
+            # rather than quietly honoured, because no printed "you may pay"
+            # names an X the card computes, and a field that works in a place
+            # nothing tested it is a price nobody checked.
+            raise DslError(
+                f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
+                f"not to an optional payment"
+            )
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
             # nothing else, so a `times` beside a cost with no mana would load
@@ -2792,6 +3571,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(
                     f"{where}.pay: 'times' multiplies the mana cost, and there is none"
                 )
+    if op == "win_game" and "condition" in effect:
+        # "**If you rolled 6 exactly seven times**, you win the game" (Luck
+        # Bobblehead). A top-level `condition` is read by `if` and by `may` and
+        # by nobody else, so written on this op it is accepted,
+        # ignored, and the card wins the game unconditionally -- the single worst
+        # silent misread in the whole vocabulary, and the *first* way anybody
+        # will try to write the printed sentence, since the condition is where
+        # the card's entire cost lives. Wrapped in an `if` it is one more line
+        # and it means what it says.
+        raise DslError(
+            f"{where}: win_game reads no 'condition' -- wrap it in an "
+            f"{{'op': 'if', 'condition': …, 'then': [{{'op': 'win_game'}}]}}"
+        )
     if "from_top" in effect:
         # "…into its owner's library second from the top." The depth is the whole
         # of the difference between Hinder and a plain tuck, and both ways of
@@ -2812,6 +3604,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.from_top: depth counts from 1 (1 is the top card); got {depth}"
             )
+    if "cast_free" in effect and op != "look_at_top":
+        # "…without paying its mana cost" is free, and every other op that could
+        # plausibly be written with it (`exile`, `search_library`, `reveal`)
+        # ignores unknown keys -- so the card would load, resolve, and quietly
+        # charge full price for a spell the printing gives away.
+        raise DslError(
+            f"{where}: 'cast_free' is a look_at_top key and only it reads the "
+            f"free cast, not {op!r} (see `play_exiled` for a free cast from exile)"
+        )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
         # silently pick a player instead of targeting one.
@@ -2867,6 +3668,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'share_subtype' needs a 'count' above 1; got {count}"
             )
+    if "attachment" in effect:
+        # "…you may attach **it** to a creature you control" (Vault 101:
+        # Birthday Party). Which permanent is doing the attaching, as against
+        # `objects`, which is the host it lands on. Only `attach` reads it, and
+        # this is the one guard that has to exist: written on `put_onto_battle-
+        # field` -- the first place anybody will try it, since that is the op
+        # that just put the Equipment down -- it is accepted, ignored, and the
+        # Equipment arrives equipping nobody. Nothing on screen says so; the
+        # card simply grants no bonus.
+        if op != "attach":
+            raise DslError(
+                f"{where}: 'attachment' names the permanent being attached and "
+                f"only attach reads it, not {op!r}"
+            )
+        validate_selector(effect["attachment"], f"{where}.attachment")
+        sub = effect["attachment"]
+        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.attachment: references target {sub['target']!r} "
+                f"which the card does not declare"
+            )
     if "new_targets" in effect:
         # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on
         # `copy_spell` alone: the choice is a decision per copy, and storm,
@@ -2881,6 +3703,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}"
             )
+    if op == "copy_spell" and "controller" in effect:
+        # Demonstrate's "choose an opponent to **also** copy it". A full player
+        # spec, so it is checked as one: until the op read this key it loaded
+        # clean and was dropped on the floor, which made every copy the
+        # resolving player's and turned the half of demonstrate that balances
+        # it into no clause at all.
+        _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op == "choose_player":
+        # The chosen seat exists only as the binding it is written to -- nothing
+        # else on the card can reach it -- so an omitted 'as' is a prompt whose
+        # answer is thrown away, and two of them sharing a default name would
+        # silently overwrite each other on a card that chose twice.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_player needs an 'as' -- the chosen player is "
+                f"only reachable through the binding it is stored under"
+            )
+        if "players" in effect:
+            _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
     if op == "look_at_top":
         # The depth is the card. Without an amount the op would look at one
         # card and Through the Forest Gate would silently become a cantrip,
@@ -2893,6 +3734,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown look_at_top destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+        # `cast_free` sends what was picked to the **stack**; `destination`,
+        # `tapped` and `playable_this_turn` all describe a card arriving in a
+        # zone and are read only on the branch `cast_free` replaces. Written
+        # together they load clean and one half is silently dropped -- and
+        # `playable_this_turn` is the impulse permission, "play it later at its
+        # printed cost", which is the opposite card from "cast it now for free".
+        if effect.get("cast_free"):
+            clashing = [
+                key
+                for key in ("destination", "tapped", "playable_this_turn")
+                if key in effect
+            ]
+            if clashing:
+                raise DslError(
+                    f"{where}: look_at_top 'cast_free' takes no {sorted(clashing)} -- "
+                    f"the picked card goes to the stack, not to a zone"
+                )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
         # version of the card -- an empty selector matches the very first card
@@ -2947,6 +3805,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
                 f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
+            )
+        # `planeswalkers` decides whether the prohibition reaches 506.2's third
+        # attack target, and it is checked for the reason `no_monarch` and
+        # `was_cast` are: `"false"` is a non-empty string and would read as
+        # `true`, turning "you can't attack that player" into a line strictly
+        # stronger than the printing -- invisibly, since no board shows a
+        # prohibition that was never tested.
+        if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
+            raise DslError(
+                f"{where}.planeswalkers: must be true or false -- true is for the "
+                f"sentence naming no defender at all ('creatures can't attack this "
+                f"combat'), false for every line that names a seat (506.2)"
             )
     if op == "goad":
         # A goad with no selector goads nobody: the spell resolves, the log says
@@ -3171,6 +4041,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and "controller" in effect:
+        # Whose tokens these are, as a full player spec -- `op_create_token`
+        # loops `select_players` over it. Unchecked until gift needed to aim one
+        # at a promised opponent, and a misspelling here is the quietest error
+        # the op has: `select_players` raises `DslError` mid-resolution for a
+        # bad *string*, which is a crash in the middle of a game rather than a
+        # refusal at load, and every mapping form fails silently by resolving to
+        # nobody -- a card that prints "they create a token" and creates none.
+        _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op in ATTACKING_OPS and "attacking" in effect:
+        _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
@@ -3324,6 +4205,46 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"nothing writes and every read of it would be 0 "
                 f"(ops that record: {sorted(RECORDING_OPS)})"
             )
+    if "snapshot" in effect:
+        # `sacrifice`'s LKI twin of `as`: the characteristics the chosen
+        # permanent had while it was still on the battlefield. Only `sacrifice`
+        # reads the key, and an unread key is the silent failure this pass
+        # exists to catch -- Entrapment Maneuver would load with `snapshot` on
+        # the wrong op, resolve, and make zero tokens because
+        # `{"toughness_of": {"binding": …}}` found nothing under that name.
+        # (An effect whose *op* is `snapshot` spells its binding `as`, like
+        # every other recording op, so it never reaches here.)
+        if op != "sacrifice":
+            raise DslError(
+                f"{where}: 'snapshot' captures what a sacrificed permanent had "
+                f"and only sacrifice reads it, not {op!r} "
+                f"(use a separate snapshot op)"
+            )
+        if not (isinstance(effect["snapshot"], str) and effect["snapshot"]):
+            raise DslError(
+                f"{where}: 'snapshot' must be a non-empty binding name, "
+                f"got {effect['snapshot']!r}"
+            )
+    if op == "roll_dice":
+        # The same refusal `join_forces` carries below, for the same reason: a
+        # roll is never the effect, it is what the sentences after it read. A
+        # `roll_dice` with no `as` throws dice into a binding nothing can name,
+        # and every `{"rolled": …}` on the card answers 0 however they fell.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: roll_dice needs an 'as' naming the binding its results "
+                f"land in; without it nothing can read what was rolled"
+            )
+        # "Roll X six-sided dice" -- the *number* of dice is a board count and is
+        # a value expression (checked with `count` above), but the die itself is
+        # printed on the card and never varies. Written as a value it would be
+        # accepted, stringified and silently rolled as a d0.
+        sides = effect.get("sides", 6)
+        if not isinstance(sides, int) or isinstance(sides, bool) or sides < 2:
+            raise DslError(
+                f"{where}: 'sides' is the printed size of the die -- a plain "
+                f"integer of at least 2, got {sides!r}"
+            )
     if op == "join_forces":
         # The total is the card -- "for each mana paid this way" -- so an effect
         # that collects it and names no binding has taxed the whole table for
@@ -3409,6 +4330,35 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: add_mana needs 'mana' (or 'reflecting', or 'in_commander_identity')"
         )
+    if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
+        # The one non-literal `mana`, and validated as such for the reason
+        # `_restriction_name` validates its twin: a near-miss spelling that fell
+        # through would be read as "no colour chosen" for ever, and the card
+        # would load clean and tap for nothing at the table.
+        entry = effect["mana"]
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'mana' may only be {{\"chosen_color_of\": \"self\"}} on "
+                f"'add_mana' -- there is no chosen colour to scale per object"
+            )
+        if set(entry) != {"chosen_color_of"} or entry["chosen_color_of"] != "self":
+            raise DslError(
+                f'{where}: the only dynamic add_mana is {{"chosen_color_of": "self"}}, '
+                f"not {dict(entry)!r}"
+            )
+    if op == "grant_protection":
+        # The same leaf, and the same silent failure it would otherwise have:
+        # "protection from the color of your choice" that fell through the
+        # substitution grants protection from nothing and looks like a card.
+        for i, entry in enumerate(effect.get("from_colors") or ()):
+            if isinstance(entry, Mapping):
+                if set(entry) != {"chosen_color_of"} or entry["chosen_color_of"] != "self":
+                    raise DslError(
+                        f'{where}.from_colors[{i}]: the only dynamic colour is '
+                        f'{{"chosen_color_of": "self"}}, not {dict(entry)!r}'
+                    )
+            elif entry not in KNOWN_COLORS:
+                raise DslError(f"{where}.from_colors[{i}]: unknown colour {entry!r}")
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
@@ -3485,12 +4435,21 @@ def _derive_color_identity(
     for ability in abilities:
         if ability.cost is not None:
             identity.update(c.value for c in ability.cost.mana.colors)
-        for option in ability.mana_options:
+        # `mana_chosen_color` carries the five-colour superset in `mana_options`
+        # so the ability is recognisable as a mana source, but the card prints no
+        # mana symbol at all -- Heraldic Banner's colour identity is colourless,
+        # and reading the superset here would make it five-colour.
+        for option in () if ability.mana_chosen_color else ability.mana_options:
             for i, amount in enumerate(option[:5]):
                 if amount:
                     identity.add(("W", "U", "B", "R", "G")[i])
         for effect in ability.effects:
-            if effect.get("op") in ("add_mana", "add_mana_per"):
+            # A `{"chosen_color_of": "self"}` mana names no symbol on the card,
+            # so it contributes no colour identity -- which is the printed
+            # answer: Heraldic Banner's identity is colourless.
+            if effect.get("op") in ("add_mana", "add_mana_per") and not isinstance(
+                effect.get("mana"), Mapping
+            ):
                 for i, amount in enumerate(parse_mana_production(str(effect.get("mana", "")))[:5]):
                     if amount:
                         identity.add(("W", "U", "B", "R", "G")[i])
@@ -3625,28 +4584,34 @@ def link_meld_results(cards: dict[str, CardDef]) -> None:
 
 
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:
-    """Every ``create_token`` must name a card id that exists and is a token."""
+    """Every ``create_token`` must name a card id that exists and is a token.
+
+    ``create_instead`` on a `replace_token_creation` static is checked by the
+    same rule and in the same place: it names token ids that
+    `primitives.create_token` will put onto the battlefield, so an id that is
+    missing or is a real card fails identically -- and it must fail *here*
+    rather than at the moment somebody plays a Treasure into a Divine
+    Visitation, which is a game already in progress.
+    """
+
+    def check(card: CardDef, token_id: str, where: str) -> None:
+        token = cards.get(token_id)
+        if token is None:
+            raise DslError(f"{card.id}: {where} references unknown card {token_id!r}")
+        if not token.is_token:
+            raise DslError(f"{card.id}: {token_id!r} is not marked as a token")
+
     for card in cards.values():
         for effect in _walk_effects(card):
-            if effect.get("op") != "create_token":
-                continue
-            token_id = str(effect.get("token"))
-            token = cards.get(token_id)
-            if token is None:
-                raise DslError(f"{card.id}: create_token references unknown card {token_id!r}")
-            if not token.is_token:
-                raise DslError(f"{card.id}: {token_id!r} is not marked as a token")
+            if effect.get("op") == "create_token":
+                check(card, str(effect.get("token")), "create_token")
+        for ability in card.abilities:
+            static = ability.static or {}
+            for token_id in static.get("create_instead", ()):
+                check(card, str(token_id), "create_instead")
 
 
 def _walk_effects(card: CardDef):
-    def walk(effects):
-        for effect in effects:
-            yield effect
-            for key in ("then", "else", "effects"):
-                yield from walk(effect.get(key) or [])
-            for mode in effect.get("modes", []) or []:
-                yield from walk(mode.get("effects") or [])
-
-    yield from walk(card.spell_effects)
+    yield from _walk_effect_specs(card.spell_effects)
     for ability in card.abilities:
-        yield from walk(ability.effects)
+        yield from _walk_effect_specs(ability.effects)

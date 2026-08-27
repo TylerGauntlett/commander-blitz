@@ -1,0 +1,103 @@
+{
+  "card": {
+    "id": "overencumbered",
+    "name": "Overencumbered",
+    "oracle_text": "Enchant opponent\nWhen this Aura enters, enchanted opponent creates a Clue token, a Food token, and a Junk token.\nAt the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.",
+    "mana_cost": "{1}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "subtypes": [
+      "Aura"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "player",
+        "selector": {
+          "controller": "opponent"
+        },
+        "count": 1
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this Aura enters, enchanted opponent creates a Clue token, a Food token, and a Junk token.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "clue_token",
+            "controller": "enchanted_player"
+          },
+          {
+            "op": "create_token",
+            "token": "food_token",
+            "controller": "enchanted_player"
+          },
+          {
+            "op": "create_token",
+            "token": "junk_token",
+            "controller": "enchanted_player"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.",
+        "trigger": {
+          "event": "begin_combat",
+          "controller": "any",
+          "condition": {
+            "is_active_player": "enchanted_player"
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": "enchanted_player",
+            "pay": {
+              "mana": "{1}",
+              "times": {
+                "count": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "controller": "enchanted_player"
+                }
+              }
+            },
+            "else": [
+              {
+                "op": "cant_attack_player",
+                "attacker": "each_player",
+                "defender": "each_player",
+                "duration": "this_combat",
+                "planeswalkers": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 9,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

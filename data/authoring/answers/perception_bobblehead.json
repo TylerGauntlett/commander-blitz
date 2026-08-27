@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "perception_bobblehead",
+    "name": "Perception Bobblehead",
+    "oracle_text": "{T}: Add one mana of any color.\n{3}, {T}: Look at the top X cards of your library, where X is the number of Bobbleheads you control. You may cast a spell with mana value 3 or less from among them without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "subtypes": ["Bobblehead"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": { "tap": true },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              { "effects": [ { "op": "add_mana", "mana": "{B}" } ] },
+              { "effects": [ { "op": "add_mana", "mana": "{G}" } ] },
+              { "effects": [ { "op": "add_mana", "mana": "{R}" } ] },
+              { "effects": [ { "op": "add_mana", "mana": "{U}" } ] },
+              { "effects": [ { "op": "add_mana", "mana": "{W}" } ] }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}, {T}: Look at the top X cards of your library, where X is the number of Bobbleheads you control. You may cast a spell with mana value 3 or less from among them without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+        "cost": { "mana": "{3}", "tap": true },
+        "effects": [
+          {
+            "op": "look_at_top",
+            "amount": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": ["Bobblehead"]
+              }
+            },
+            "objects": {
+              "mana_value": { "op": "<=", "value": { "const": 3 } },
+              "count": 1,
+              "optional": true
+            },
+            "cast_free": true,
+            "rest_to_bottom": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -19,6 +19,20 @@ from .structs import TempEffect
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
+#: A **shield counter** (122.1c): "If this permanent would be dealt damage or
+#: destroyed, remove a shield counter from it instead."
+#:
+#: A rules-defined counter kind rather than a keyword, and the distinction is the
+#: whole reason it is a constant here beside the P/T counters instead of a member
+#: of `enums.Keyword`. A keyword counter grants a keyword and the characteristics
+#: pipeline reads it off `enums.KEYWORD_COUNTERS`; a shield counter grants
+#: nothing and is *spent*, once per event, by two replacements that live where
+#: every damage and every destruction already passes -- `primitives.
+#: damage_permanent` and `zones.destroy`. Named here because both of them, and
+#: the loader's near-miss guard, have to agree on the exact string: it is stored
+#: in `GameObject.counters` like any other kind, so `move_counters` carries it
+#: onto a creature the shielding card never mentions and it keeps working there.
+SHIELD = "shield"
 
 
 @dataclass
@@ -37,6 +51,30 @@ class GameObject:
     tapped: bool = False
     #: Turn number this object arrived on the battlefield; drives summoning sickness.
     entered_turn: int = -1
+    #: Whether **this** arrival on the battlefield was a spell its controller
+    #: cast -- rule 603.6e's "when this permanent enters, **if it was cast**".
+    #:
+    #: Stamped by `zones._enter_battlefield` on *every* entry, so it always
+    #: describes the trip the permanent is on rather than anything it did
+    #: earlier. That is the whole of why it exists beside `cast_step`: the cast
+    #: stamps are written once by `stack.push_spell` and deliberately outlive
+    #: the spell, so a permanent that was cast, died and was reanimated still
+    #: answers `cast_step is not None` -- and a card that read the clause that
+    #: way would hand out its enters payload again off every reanimation and
+    #: every blink, which is a strictly cheaper card than the printed one.
+    #:
+    #: Both halves are required and neither alone is the sentence. The arrival
+    #: cause says the object got here as a *resolving spell*, which a token, a
+    #: reanimation and a Show and Tell all fail; `cast_step` says a player
+    #: actually **cast** it, which a copy of a permanent spell fails (707.10 --
+    #: a copy on the stack was never cast) even though it does resolve.
+    #:
+    #: Deliberately **not** cleared by `reset_permanent_state`. Nothing off the
+    #: battlefield may read it -- the loader confines the clause to an enters
+    #: trigger -- except the 603.4 re-check of that trigger's own intervening-if
+    #: after the permanent has already left, and there 603.6e wants the
+    #: last-known answer, which is the one it kept.
+    entered_by_cast: bool = False
     damage: int = 0
     #: Set when damage from a deathtouch source was dealt this turn.
     deathtouched: bool = False
@@ -86,6 +124,31 @@ class GameObject:
     #: `_detach_all` and cleared by `attach`; a stale value is harmless because
     #: oids are never reused, so it can only ever match the object it named.
     last_attached_to: int | None = None
+    #: **The player this Aura enchants** -- "Enchant opponent" (Overencumbered),
+    #: "Enchant player" (Sleeper's Robe). 303.4a lets an Aura's enchant ability
+    #: name a *player*, and 704.5n is the state-based action that follows: an
+    #: Aura attached to an illegal **object or player**, or to nothing at all, is
+    #: put into its owner's graveyard.
+    #:
+    #: A field of its own rather than a second meaning for `attached_to`, and
+    #: that is forced rather than tidy: a player id and an oid are both `int`,
+    #: so one field holding either could not be read without a discriminator on
+    #: every single reader. `attached_to` is consulted by the characteristics
+    #: layer, the `attached` selector and trigger filters, `_detach_all`, the
+    #: phasing rules and bestow, and each of those means "the *permanent* I am
+    #: on"; a seat number arriving in that field would be an oid pointing at
+    #: some unrelated object -- silently, and differently in every game.
+    #:
+    #: The two are mutually exclusive: an Aura is attached to exactly one thing
+    #: (301.5c's shape for Equipment, 303.4 for Auras), so `attach` and
+    #: `attach_to_player` each clear the other's link.
+    #:
+    #: There is no `last_attached_to_player`. That field exists for the
+    #: leave-the-battlefield events, which `_detach_all` clears the link before
+    #: firing; a player does not leave the battlefield, so nothing detaches this
+    #: on the way out and `attached_to_player` is still readable when the Aura's
+    #: own dies trigger is matched.
+    attached_to_player: int | None = None
     until_eot: list[TempEffect] = field(default_factory=list)
     #: What ``until_eot`` held a moment before this object left the battlefield.
     #: Last-known information, in the same style as `last_attached_to`:
@@ -218,6 +281,14 @@ class GameObject:
     #: the StackItem is gone.  Without this the condition is silently False
     #: on every permanent -- an inert card that loads clean.
     cast_kicked: bool = False
+    #: **Gift** (702.164a): which opponent was promised a gift as this object was
+    #: cast, or ``None`` if none was. Same contract as `cast_kicked`, and it does
+    #: two jobs rather than one: a permanent's own enters trigger reads whether
+    #: the promise was made (`{"gift_promised": …}`), and any effect that runs
+    #: after the spell has left the stack -- a delayed trigger it scheduled, an
+    #: ability of the permanent it became -- reads *whom* it was made to, which a
+    #: bool could not say.
+    cast_gift_to: int | None = None
     #: Whether this object was cast for its evoke cost.  Same contract again:
     #: "it's sacrificed when it enters" is an ETB trigger, so the flag has to
     #: outlive the spell.
@@ -377,6 +448,21 @@ class GameObject:
     #: again.
     chosen_type: str | None = None
 
+    #: "As this artifact enters, choose a color." Heraldic Banner. The colour
+    #: letter (``"W"``…``"G"``) this permanent's controller named, read back by
+    #: its own abilities through ``{"chosen_color_of": "self"}``.
+    #:
+    #: A separate slot rather than a second use of ``chosen_type``, because a
+    #: card may print both questions and because a colour and a creature type
+    #: are read by different code -- ``colors`` in a static filter and
+    #: ``mana_options_of`` for the mana ability, neither of which would know
+    #: what to do with a subtype name sitting in the same field.
+    #:
+    #: Reset with the rest of the battlefield state, for the same reason
+    #: ``chosen_type`` is: a permanent that leaves and comes back is a new
+    #: object as far as the rules are concerned, and chooses again.
+    chosen_color: str | None = None
+
     #: "…a token that's a copy of it, **except** it's a white Zombie Angel with
     #: no mana cost." Embalm and eternalize.
     #:
@@ -453,6 +539,11 @@ class GameObject:
         self.counters = {}
         self.attached_to = None
         self.last_attached_to = None
+        # Cleared with `attached_to` and for its reason: a permanent that left
+        # the battlefield and came back is a new object (400.7), and an Aura
+        # that arrives without being cast enchants nobody until something
+        # attaches it. This is why `stack._attach_aura` runs *after* the move.
+        self.attached_to_player = None
         self.paired_with = None
         self.face_down = False
         self.cloaked = False
@@ -466,6 +557,7 @@ class GameObject:
         self.skip_next_untap = False
         self.exiled_by = None
         self.chosen_type = None
+        self.chosen_color = None
         self.added_subtypes = ()
         self.transformed = False
         # A permanent that left the battlefield is no longer a pile: the cards
@@ -543,6 +635,7 @@ class GameObject:
             "added_subtypes": list(self.added_subtypes),
             "transformed": self.transformed,
             "attached_to": self.attached_to,
+            "attached_to_player": self.attached_to_player,
             "is_token": self.is_token,
             "is_commander": self.is_commander,
             "entered_turn": self.entered_turn,

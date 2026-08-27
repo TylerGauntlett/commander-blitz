@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..enums import Zone
+from ..enums import Step, Zone
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..primitives import (
@@ -32,9 +32,16 @@ from ..primitives import (
 )
 from ..structs import TempEffect
 from ..zones import destroy, exile, move_object, sacrifice
+from ..zones import snapshot as capture_snapshot
 from . import register
 from .context import EffectContext
-from .selectors import ZONE_NAMES, choose_objects, pick_from_pool, resolve_pool
+from .selectors import (
+    ZONE_NAMES,
+    choose_objects,
+    pick_from_pool,
+    resolve_pool,
+    select_players,
+)
 from .values import evaluate_value
 
 
@@ -171,6 +178,11 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     list is written down as the op consumes it, and read back with
     ``{"count": {"binding": …}}``.
 
+    ``snapshot`` is Entrapment Maneuver: the same window, but recording the
+    chosen permanent's *characteristics* rather than its oid, because the oid
+    stops answering for them the moment it reaches a graveyard.  See the comment
+    at the write below.
+
     The **effect** road for "you can't sacrifice those creatures this turn"
     (701.17b) is the pool filter below, and it narrows the *pool* rather than
     skipping in the loop deliberately: 701.17b makes a protected permanent an
@@ -199,6 +211,29 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
         # Written before the sacrifice, so the binding is a record of the choice
         # rather than of what survived it.
         ctx.bindings[str(name)] = list(oids)
+    if name := spec.get("snapshot"):
+        # Entrapment Maneuver: "…**that creature's** toughness", where the
+        # creature was picked a line ago by somebody else. `as` records *which*
+        # permanent, and that is enough for a later selector -- but not for a
+        # characteristic, because by the next op the oid names a graveyard card
+        # and `chars()` gives it the printed line. A 5/5 wearing three +1/+1
+        # counters reads back as toughness 5, off by every counter, anthem, Aura
+        # and pump the combat trick was aimed at, while looking implemented.
+        #
+        # So the value is taken here, in the one window where the permanent has
+        # been chosen and has not yet moved. Deliberately the same
+        # `zones.snapshot` the `snapshot` op calls and the same binding shape it
+        # writes -- one dict, or `{}` when nothing was chosen -- so
+        # `{"toughness_of": {"binding": …}}` and `{"binding": …}` as a selector
+        # read it without knowing which op wrote it. Explicit LKI stays the one
+        # mechanism (`docs/rules-coverage.md`); this only moves *when* it may be
+        # taken.
+        #
+        # The first chosen permanent, exactly as `op_snapshot` takes `oids[0]`
+        # of its pool: a snapshot is one object's characteristics and there is
+        # no printed sacrifice that needs a set of them. `as` is still the
+        # record of the whole choice, and the two are written side by side.
+        ctx.bindings[str(name)] = capture_snapshot(ctx.state, oids[0]) if oids else {}
     for oid in oids:
         sacrifice(ctx.state, oid, by=ctx.source_oid)
 
@@ -232,7 +267,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
-    attacking = _attack_defender(ctx) if spec.get("attacking") else None
+    attacking = _attacking_player(ctx, spec, _attack_defender)
     counters = spec.get("counters") or {}
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -257,6 +292,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
         if attacking is not None and ctx.state.combat is not None:
             ctx.state.combat.attackers[oid] = attacking
+            _offer_blocks_to(ctx, attacking)
 
 
 @register("create_token")
@@ -270,10 +306,14 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     turn, so a second copy of the same card would exile the wrong permanent.
     The oids `create_token` returns are the only thing that identifies them, and
     they were being discarded.
+
+    ``attacking`` is either ``true`` -- "wherever the source is already pointed"
+    -- or a player spec naming the seat, which is "attacking **that player**".
+    See `_attacking_player`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
-    attacking = _attack_target(ctx) if spec.get("attacking") else None
+    attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for pid in _players(ctx, spec.get("controller", "you")):
         made.extend(
@@ -286,6 +326,8 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 attacking=attacking,
             )
         )
+    if made and attacking is not None:
+        _offer_blocks_to(ctx, attacking)
     if name := spec.get("as"):
         # Written after the op, unlike `sacrifice`'s, which is written before:
         # that one records a *choice* the player made and this one records
@@ -326,6 +368,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     controllers = _players(ctx, spec.get("controller", "you"))
     overrides = spec.get("except_") or spec.get("except")
+    attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for oid in oids:
         source = ctx.state.objects.get(oid)
@@ -339,12 +382,89 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                     pid,
                     amount,
                     tapped=bool(spec.get("tapped")),
-                    attacking=_attack_target(ctx) if spec.get("attacking") else None,
+                    attacking=attacking,
                     overrides=dict(overrides) if overrides else None,
                 )
             )
+    if made and attacking is not None:
+        _offer_blocks_to(ctx, attacking)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = made
+
+
+def _attacking_player(ctx: EffectContext, spec: Mapping[str, Any], fallback) -> int | None:
+    """Whom a permanent arriving attacking should be attacking.
+
+    ``attacking: true`` is the original spelling and still means "wherever the
+    source is already pointed" -- ``fallback`` is `_attack_target` or
+    `_attack_defender`, whichever this op has always used. Every shipped card
+    uses that form and none of them change.
+
+    Anything else is a **player spec**, which is the case the boolean cannot
+    say. Ainok Strike Leader's "for each opponent, create a token attacking
+    **that player**" names the seat a `for_each_player` loop is on
+    (``{"binding": "each_player"}``); Combat Calligrapher's "attacking that
+    opponent" names the trigger's ``defender`` binding, on a source that is
+    never itself attacking. Under the boolean both would resolve to the one
+    player the *source* attacks -- the same seat for all three tokens at a pod,
+    and nobody at all when the source is not an attacker, which arrives tapped
+    and attacking no-one while looking implemented.
+
+    A creature attacks exactly one player, so a spec that names several is an
+    authoring error rather than something to pick from. The plural *names* are
+    refused at load time (`loader._validate_effect`); this catches the one shape
+    load time cannot see, a multi-ref target. Naming nobody -- an unbound
+    binding, a player who has left -- is the boolean's own "nobody to join": the
+    permanent simply arrives.
+    """
+    who = spec.get("attacking")
+    if who is None or who is False:
+        return None
+    if who is True:
+        return fallback(ctx)
+    named = select_players(ctx, who)
+    if len(named) > 1:
+        raise DslError(
+            f"attacking: {who!r} names {len(named)} players; "
+            f"a creature attacks exactly one"
+        )
+    if not named or not ctx.state.is_alive(named[0]):
+        return None
+    return named[0]
+
+
+def _offer_blocks_to(ctx: EffectContext, defender: int) -> None:
+    """Make sure a newly attacked player still gets to declare blockers.
+
+    `combat.finish_attackers` fills `pending_blockers` from the declaration, so
+    it lists only the players who were attacked *then*. A token created
+    attacking a player nobody declared against -- Ainok Strike Leader's third
+    opponent, who was not part of the swing -- would otherwise be attacked by a
+    creature it is never asked to block (509.1).
+
+    Only **before** the declare blockers step, which is the window every card
+    that says this resolves in: attack triggers go on the stack during the
+    declare attackers step. Once the step has started the queue is being walked
+    -- `game.apply` pops its head as each declaration is answered -- so writing
+    into it would ask the wrong seat to block; and a permanent that arrives
+    attacking after blocks are declared is simply unblocked, which is 509.1 read
+    the other way and what stops this from becoming a second declaration.
+    """
+    combat = ctx.state.combat
+    if combat is None or defender in combat.pending_blockers:
+        return
+    if ctx.state.step >= Step.DECLARE_BLOCKERS:
+        return
+    order = ctx.state.turn_order()
+    if defender not in order:
+        return
+    seat = order.index(defender)
+    at = len(combat.pending_blockers)
+    for i, pid in enumerate(combat.pending_blockers):
+        if pid in order and order.index(pid) > seat:
+            at = i
+            break
+    combat.pending_blockers.insert(at, defender)
 
 
 def _attack_defender(ctx: EffectContext) -> int | None:
@@ -410,11 +530,63 @@ def op_untap(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("attach")
 def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Attach something to something (701.3). Equip, Reconfigure -- and Vault 101.
+
+    ``objects`` is the **host**: the creature the Equipment ends up on, the
+    permanent the Aura ends up enchanting. It has never been the thing that
+    moves. What moves is ``attachment``, and until this key existed there was no
+    way to say it: the attacher was hardcoded to ``ctx.source_oid``, which is
+    exactly right for the two abilities that had ever needed the op. Equip and
+    Reconfigure are printed *on the Equipment*, so "attach to target creature you
+    control" means attach **me**, and naming the mover would be noise.
+
+    Vault 101: Birthday Party is the card where the source is somebody else.
+    "II, III -- You may put an Aura or Equipment card from your hand or graveyard
+    onto the battlefield. If an Equipment is put onto the battlefield this way,
+    you may attach it to a creature you control." The source of that ability is a
+    **Saga** -- an Enchantment that is neither Aura nor Equipment -- so the old
+    op would have attached the Saga itself to a creature and left the Equipment
+    that just arrived sitting on the battlefield unattached, doing nothing. That
+    failure is invisible: the card loads, the ability resolves, and the only
+    evidence is a buff that never appears.
+
+    ``attachment`` is an ordinary selector, so the usual spelling is
+    ``{"binding": "gear"}`` -- the ``as`` name the op that just put the card onto
+    the battlefield wrote. That is what "**it**" and "put onto the battlefield
+    **this way**" mean, and no fresh filter can say it: "an Equipment you
+    control" would also match the Equipment that has been sitting there since
+    turn three.
+
+    **The attachment is resolved first**, and the order carries the conditional.
+    "*If an Equipment* is put onto the battlefield this way" is not a separate
+    `if`: a selector that found an Aura instead matches nothing, the pool is
+    empty, and the op returns without ever asking which creature -- rather than
+    asking and then silently attaching nothing. With ``optional`` on ``objects``
+    the remaining question is the printed "you **may** attach it".
+
+    The Aura half is the same op with a wider ``attachment``. An Aura put onto
+    the battlefield without being cast never targeted anything, so nothing
+    attached it -- `stack._attach_aura` reads the *spell's* targets -- and
+    `sba` bins an Aura enchanting nothing the moment it arrives. Which host is
+    legal for it is the card's own selector to state; the engine models no
+    "enchant creature" restriction off the stack (see `docs/rules-coverage.md`).
+    """
+    if "attachment" in spec:
+        movers = yield from choose_objects(ctx, spec["attachment"], "Attach", "attach")
+        # No pool, no question. See the docstring: this is the "if an Equipment
+        # is put onto the battlefield this way" half, and asking for a host
+        # before knowing there is anything to hang on it would show the player a
+        # decision that cannot change the game.
+        if not movers:
+            return
+    else:
+        movers = [] if ctx.source_oid is None else [ctx.source_oid]
     oids = yield from choose_objects(ctx, spec.get("objects"), "Attach to")
-    aura = ctx.source_oid
-    if aura is not None:
-        for oid in oids[:1]:
-            attach(ctx.state, aura, oid)
+    # One host, however many attachments -- 701.3d attaches each to a single
+    # object, and no printed line hangs one Equipment on two creatures.
+    for oid in oids[:1]:
+        for mover in movers:
+            attach(ctx.state, mover, oid)
 
 
 @register("meld")
@@ -903,8 +1075,16 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
     already returns a flat set of qualities: three colours is three entries and
     nothing had to learn a new shape.
     """
+    from ..characteristics import resolve_chosen_color_list
+
+    # "…protection from the color of your choice" -- Brave the Elements, whose
+    # colour is named by a `choose_color` earlier in the same effect list and
+    # read back off the spell's own object. The substitution is the leaf the
+    # anthem and the mana ability use; an unmade choice drops out, so the
+    # sentence grants protection from nothing rather than from everything.
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     qualities = [
-        *(spec.get("from_colors") or ()),
+        *resolve_chosen_color_list(spec.get("from_colors"), source),
         *(spec.get("from_types") or ()),
         *(spec.get("from_subtypes") or ()),
     ]
@@ -1422,6 +1602,22 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     case the cross-product is installed -- "creatures your opponents control
     can't attack you" is `each_opponent` against `you`, one sentence and one op.
 
+    ``planeswalkers``  optional, default `false`. Does the prohibition also stop
+    an attack on the defender's **planeswalkers**? Off on every line that names
+    a seat, which is 506.2 -- attacking somebody's walker is not attacking them,
+    and that is why Ghostly Prison taxes nothing when the attack goes at one. On
+    for the sentence that names **no defender at all**, which is the whole of
+    "creatures can't attack this combat" (Overencumbered): written as
+    `each_player` against `each_player` with this flag, so every seat and every
+    walker is closed and no creature has a legal declaration left.
+
+    That whole-table form is why the flag lives here rather than becoming a
+    fourth prohibition. `cant_attack` is the near miss and cannot be limited to
+    one combat -- it is a continuous ability read off `_battlefield_statics` for
+    as long as its source sits there, and Overencumbered's lock is bought and
+    lost each combat by a payment. `cant_attack_you` is the other and is a
+    static too, besides being scoped to the seat its permanent sits under.
+
     Nothing is written on any permanent, and that is the point: a resolving
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
@@ -1431,11 +1627,19 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     duration = str(spec.get("duration", "this_turn"))
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_attack_player duration {duration!r}")
+    planeswalkers = bool(spec.get("planeswalkers", False))
     attackers = _players(ctx, spec.get("attacker"))
     defenders = _players(ctx, spec.get("defender"))
     for attacker in attackers:
         for defender in defenders:
-            restrict_attack(ctx.state, attacker, defender, duration, source=ctx.source_oid)
+            restrict_attack(
+                ctx.state,
+                attacker,
+                defender,
+                duration,
+                source=ctx.source_oid,
+                planeswalkers=planeswalkers,
+            )
     yield from ()
 
 

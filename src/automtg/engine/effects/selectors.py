@@ -126,6 +126,10 @@ SELECTOR_KEYS = frozenset(
         #: compares against the *ability source*, which for Shared Animosity is
         #: the enchantment, so it removes nothing from a set of attackers and
         #: the count is over by exactly one.
+        #:
+        #: Excludes the whole **set** a binding holds, not just its first oid --
+        #: `as` on `create_token` records a list, and Martial Coup's "destroy all
+        #: other creatures" has to spare every Soldier it just made.
         "exclude_binding",
         #: "…that shares a creature type with it".  Matches when the candidate's
         #: subtypes intersect those of the object bound under this name, read
@@ -392,6 +396,13 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
         return [ctx.controller]
     if controller == "opponent":
         return ctx.opponents()
+    # "…enchanted player's graveyard". Named here as well as in `matches`,
+    # because a zone selector picks *whose list to walk* rather than filtering
+    # objects, and a name this function did not know fell through to
+    # `alive()` -- every seat at the table, which for a hand or a graveyard is
+    # the widest possible reading of a sentence naming one player.
+    if controller == "enchanted_player":
+        return select_players(ctx, controller)
     return ctx.state.alive()
 
 
@@ -456,9 +467,16 @@ def matches(
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
-    if (name := selector.get("exclude_binding")) is not None and oid == _bound_oid(
+    if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(
         ctx, str(name)
     ):
+        # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
+        # a `snapshot`, and a **list** for an op that recorded what it produced.
+        # Martial Coup writes X Soldiers with `as` and then says "destroy all
+        # *other* creatures"; the singular reader returned `None` for that list,
+        # so the exclusion matched nothing and the spell wrathed the tokens it
+        # had just made. Reading one oid out of the list would be worse -- it
+        # would spare exactly one Soldier and look almost right.
         return False
     if (name := selector.get("shares_a_type_with")) is not None:
         other = _bound_oid(ctx, str(name))
@@ -493,8 +511,15 @@ def matches(
     # currently on. `"opponent"` cannot say it: it means every opponent at once,
     # so `extreme` would take one global maximum over the merged pool and, at a
     # pod, spare the opponent whose best creature is smaller.
-    if isinstance(controller, Mapping) and obj.controller not in select_players(
-        ctx, controller
+    # "…for each artifact **they** control", where *they* is the player this
+    # Aura enchants (Overencumbered). The one named spec allowed here beside the
+    # three words, and it is allowed for the reason the mapping form is: no
+    # combination of you/opponent/any names one seat. `"opponent"` is the near
+    # miss and is exact only at two players -- at a pod it counts the whole
+    # table's artifacts, so the enchanted player's toll goes up because somebody
+    # else built a Signet.
+    if (isinstance(controller, Mapping) or controller == "enchanted_player") and (
+        obj.controller not in select_players(ctx, controller)
     ):
         return False
 
@@ -754,9 +779,9 @@ def pick_from_pool(
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
-#: ``controller_of``, ``owner_of``) and a bare seat number are not here: they
-#: name something the card declares elsewhere and are checked where that is
-#: checked -- `loader._validate_player_spec`.
+#: ``controller_of``, ``owner_of``, ``not``) and a bare seat number are not
+#: here: they name something the card declares elsewhere and are checked where
+#: that is checked -- `loader._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
     {
         "you",
@@ -766,6 +791,19 @@ PLAYER_SPEC_NAMES = frozenset(
         "each_player",
         "all",
         "active_player",
+        # "**Enchanted opponent** creates a Clue token", "at the beginning of
+        # combat on enchanted opponent's turn, **that player** may pay…" --
+        # Overencumbered. The player the ability's own source is attached to
+        # (303.4a). See `select_players`.
+        "enchanted_player",
+        # Gift (702.164a): the one opponent who was promised a gift as this
+        # spell was cast. The only string here naming a seat the *caster* chose,
+        # rather than one derived from the turn structure, from who is playing,
+        # or from where a permanent is attached -- and the one `each_opponent`
+        # gets wrong on this card: at a pod the promise goes to one player, so
+        # "they create a token" handing one to every opponent is three times the
+        # printed card. See `select_players`.
+        "gift_recipient",
     }
 )
 
@@ -786,8 +824,66 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return state.alive()
         if spec == "active_player":
             return [state.active_player]
+        if spec == "gift_recipient":
+            # Gift (702.164a): "**they** create a tapped 1/1 blue Fish creature
+            # token". The opponent the caster promised, and nobody at all when
+            # the promise was not made -- which is what makes the reward
+            # conditional without an `if` around it: `create_token` loops over
+            # this spec, and an empty list creates nothing.
+            #
+            # The context first, then the object, for the reason
+            # `{"gift_promised": …}` reads both: while the spell resolves the
+            # StackItem is what knows, and afterwards -- in a delayed trigger it
+            # scheduled, or on the permanent it became -- only the object is.
+            promisee = ctx.gift_to
+            if promisee is None and ctx.source_oid is not None:
+                obj = state.objects.get(ctx.source_oid)
+                promisee = obj.cast_gift_to if obj is not None else None
+            return [promisee] if promisee is not None and state.is_alive(promisee) else []
+        if spec == "enchanted_player":
+            # "Enchanted opponent creates a Clue token." The seat this Aura is
+            # attached to, read off the **ability's own source** -- the same
+            # argument `attached`, `haunted_by` and cipher's `encoded_by` make:
+            # the Aura knows what it is on, and nothing else in the game state
+            # points back the other way.
+            #
+            # Every other spelling of "enchanted opponent" is a different card.
+            # `{"target": …}` cannot say it: an ability's targets are scoped to
+            # that ability (`loader._validate_player_spec`), and a triggered
+            # ability that declared none would resolve `ctx.target_players` to
+            # `[]` -- which `op_may` reads as "nobody" and bills `ctx.controller`
+            # instead, the documented Rhystic Study failure, so the Aura's own
+            # controller would pay the enchanted player's toll. `each_opponent`
+            # is the near miss and is wrong the moment there are two of them: it
+            # taxes the whole table rather than the one seat the card names.
+            #
+            # `[]` when the source is gone or enchants a permanent instead, and
+            # that is the safe direction: an effect aimed at nobody does
+            # nothing, where a fallback to the controller would silently point
+            # the card at its own caster.
+            obj = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+            pid = obj.attached_to_player if obj is not None else None
+            return [pid] if pid is not None and state.is_alive(pid) else []
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
+        if "not" in spec:
+            # "target player **other than** its controller."
+            #
+            # Every other form here names the players to *allow*; this one names
+            # the player to forbid, and no composition of the inclusive forms
+            # says it. `"opponent"` is the near miss and is wrong in both
+            # directions at once on a card that triggers on anybody's token: it
+            # forbids **you** when an opponent made the token, and permits the
+            # very opponent who made it. At a four-player pod "other than its
+            # controller" is *three* seats -- the other two opponents and you --
+            # which is a set no single inclusive spec can name.
+            #
+            # The complement is taken over `alive()` rather than over every
+            # seat, so a player who has already lost the game is not offered as
+            # a legal target. Nested, so `{"not": {"controller_of": "subject"}}`
+            # reuses the mapping form it wraps rather than duplicating it.
+            excluded = set(select_players(ctx, spec["not"]))
+            return [pid for pid in state.alive() if pid not in excluded]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning
@@ -866,7 +962,7 @@ def validate_selector(selector: Any, where: str) -> None:
     if (
         controller is not None
         and not isinstance(controller, Mapping)
-        and controller not in ("you", "opponent", "any")
+        and controller not in ("you", "opponent", "any", "enchanted_player")
     ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
     if "player" in selector:

@@ -1,0 +1,98 @@
+{
+  "card": {
+    "id": "valorous_stance",
+    "name": "Valorous Stance",
+    "mana_cost": "{1}{W}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "oracle_text": "Choose one —\n• Target creature gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)\n• Destroy target creature with toughness 4 or greater.",
+    "targets": [
+      {
+        "id": "shielded",
+        "kind": "permanent",
+        "mode": 0,
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      {
+        "id": "doomed",
+        "kind": "permanent",
+        "mode": 1,
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ],
+          "toughness": {
+            "op": ">=",
+            "value": {
+              "const": 4
+            }
+          }
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "modes": [
+          {
+            "label": "Target creature gains indestructible until end of turn.",
+            "effects": [
+              {
+                "op": "grant_keyword",
+                "keywords": [
+                  "indestructible"
+                ],
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "target": "shielded"
+                }
+              }
+            ]
+          },
+          {
+            "label": "Destroy target creature with toughness 4 or greater.",
+            "effects": [
+              {
+                "op": "destroy",
+                "objects": {
+                  "target": "doomed"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "granted": {
+      "keywords": [
+        "indestructible"
+      ],
+      "count": 1
+    },
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "hand_size": {
+      "0": 0
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}
