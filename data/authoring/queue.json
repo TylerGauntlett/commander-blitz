@@ -196722,12 +196722,12 @@
     },
     "Parting Gust": {
       "edhrec_rank": 1672,
-      "gate": "template",
+      "gate": null,
       "name": "Parting Gust",
-      "reason": "no template for: Gift a tapped Fish",
+      "reason": "",
       "scryfall_id": "1086e826-94b8-4398-8a38-d8eacca56a43",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Parting Thoughts": {

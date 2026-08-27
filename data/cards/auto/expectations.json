@@ -4991,6 +4991,11 @@
   "pardic_wanderer": {
     "zone": "battlefield"
   },
+  "parting_gust": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 7,
+    "zone": "graveyard"
+  },
   "path_of_ancestry": {
     "zone": "battlefield"
   },
