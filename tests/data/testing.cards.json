@@ -2320,6 +2320,106 @@
       ]
     },
     {
+      "id": "t_entrapment",
+      "name": "Test Entrapment Maneuver",
+      "oracle_text": "Target player sacrifices an attacking creature of their choice. You create X 1/1 white Soldier creature tokens, where X is that creature's toughness.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "sacrifice",
+          "objects": {
+            "zone": "battlefield",
+            "controller": {
+              "target": "t1"
+            },
+            "types": [
+              "Creature"
+            ],
+            "attacking": true,
+            "count": 1,
+            "chooser": "owner"
+          },
+          "as": "chosen",
+          "snapshot": "victim"
+        },
+        {
+          "op": "create_token",
+          "token": "human_soldier_1_1_w",
+          "amount": {
+            "toughness_of": {
+              "binding": "victim"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_entrapment_printed",
+      "name": "Test Entrapment Maneuver (printed toughness)",
+      "oracle_text": "Target player sacrifices an attacking creature of their choice. You create X 1/1 white Soldier creature tokens, where X is that creature's printed toughness.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          },
+          "count": 1
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "sacrifice",
+          "objects": {
+            "zone": "battlefield",
+            "controller": {
+              "target": "t1"
+            },
+            "types": [
+              "Creature"
+            ],
+            "attacking": true,
+            "count": 1,
+            "chooser": "owner"
+          },
+          "as": "chosen"
+        },
+        {
+          "op": "snapshot",
+          "objects": {
+            "binding": "chosen"
+          },
+          "as": "victim"
+        },
+        {
+          "op": "create_token",
+          "token": "human_soldier_1_1_w",
+          "amount": {
+            "toughness_of": {
+              "binding": "victim"
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": "t_edict",
       "name": "Test Edict",
       "oracle_text": "Each opponent sacrifices a creature.",

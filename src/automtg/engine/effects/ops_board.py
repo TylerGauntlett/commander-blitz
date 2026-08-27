@@ -32,6 +32,7 @@ from ..primitives import (
 )
 from ..structs import TempEffect
 from ..zones import destroy, exile, move_object, sacrifice
+from ..zones import snapshot as capture_snapshot
 from . import register
 from .context import EffectContext
 from .selectors import (
@@ -177,6 +178,11 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     list is written down as the op consumes it, and read back with
     ``{"count": {"binding": …}}``.
 
+    ``snapshot`` is Entrapment Maneuver: the same window, but recording the
+    chosen permanent's *characteristics* rather than its oid, because the oid
+    stops answering for them the moment it reaches a graveyard.  See the comment
+    at the write below.
+
     The **effect** road for "you can't sacrifice those creatures this turn"
     (701.17b) is the pool filter below, and it narrows the *pool* rather than
     skipping in the loop deliberately: 701.17b makes a protected permanent an
@@ -205,6 +211,29 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
         # Written before the sacrifice, so the binding is a record of the choice
         # rather than of what survived it.
         ctx.bindings[str(name)] = list(oids)
+    if name := spec.get("snapshot"):
+        # Entrapment Maneuver: "…**that creature's** toughness", where the
+        # creature was picked a line ago by somebody else. `as` records *which*
+        # permanent, and that is enough for a later selector -- but not for a
+        # characteristic, because by the next op the oid names a graveyard card
+        # and `chars()` gives it the printed line. A 5/5 wearing three +1/+1
+        # counters reads back as toughness 5, off by every counter, anthem, Aura
+        # and pump the combat trick was aimed at, while looking implemented.
+        #
+        # So the value is taken here, in the one window where the permanent has
+        # been chosen and has not yet moved. Deliberately the same
+        # `zones.snapshot` the `snapshot` op calls and the same binding shape it
+        # writes -- one dict, or `{}` when nothing was chosen -- so
+        # `{"toughness_of": {"binding": …}}` and `{"binding": …}` as a selector
+        # read it without knowing which op wrote it. Explicit LKI stays the one
+        # mechanism (`docs/rules-coverage.md`); this only moves *when* it may be
+        # taken.
+        #
+        # The first chosen permanent, exactly as `op_snapshot` takes `oids[0]`
+        # of its pool: a snapshot is one object's characteristics and there is
+        # no printed sacrifice that needs a set of them. `as` is still the
+        # record of the whole choice, and the two are written side by side.
+        ctx.bindings[str(name)] = capture_snapshot(ctx.state, oids[0]) if oids else {}
     for oid in oids:
         sacrifice(ctx.state, oid, by=ctx.source_oid)
 
