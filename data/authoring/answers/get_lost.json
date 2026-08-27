@@ -1,0 +1,25 @@
+{
+  "card": {
+    "id": "get_lost",
+    "name": "Get Lost",
+    "oracle_text": "Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens. (They're artifacts with \"{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.\")",
+    "mana_cost": "{1}{W}",
+    "types": ["Instant"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "targets": [
+      {"id": "t1", "kind": "permanent", "selector": {"zone": "battlefield", "any_types": ["Creature", "Enchantment", "Planeswalker"]}, "count": 1}
+    ],
+    "spell_effects": [
+      {"op": "snapshot", "target": "t1", "as": "victim"},
+      {"op": "destroy", "objects": {"target": "t1"}},
+      {"op": "create_token", "token": "map_token", "amount": {"const": 2}, "controller": {"controller_of": "victim"}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 33,
+    "tokens": {"id": "map_token", "count": 2},
+    "graveyard_size": {"0": 4}
+  }
+}

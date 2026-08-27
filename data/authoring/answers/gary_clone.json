@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "gary_clone",
+    "name": "Gary Clone",
+    "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhenever this creature attacks, each creature you control named Gary Clone gets +1/+0 until end of turn.",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Human", "Citizen"],
+    "power": 1,
+    "toughness": 3,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "additional_cost": {"mana": "{2}"},
+    "additional_optional": true,
+    "additional_repeatable": true,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)",
+        "trigger": {"event": "self_enters"},
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": {"self_only": true},
+            "amount": {"additional_paid": true},
+            "controller": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks, each creature you control named Gary Clone gets +1/+0 until end of turn.",
+        "trigger": {"event": "attacks", "source": "self"},
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "name": "Gary Clone",
+              "count": "all"
+            },
+            "power": {"const": 1},
+            "toughness": {"const": 0}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

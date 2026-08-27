@@ -1,0 +1,22 @@
+{
+  "card_id": "vault_101_birthday_party",
+  "name": "Vault 101: Birthday Party",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 1/1 white Human Soldier creature token and a Food token. (A Food token is an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nII, III — You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.",
+  "blocked_sentences": [
+    "If an Equipment is put onto the battlefield this way, you may attach it to a creature you control."
+  ],
+  "needs": [
+    {
+      "capability": "attach-another-permanent",
+      "kind": "op",
+      "what": "the 'attach' op needs to name WHICH permanent is being attached -- an 'attachment' selector (or a binding recorded by the op that just put the Equipment onto the battlefield) -- so a resolving ability can attach a third object to a creature, instead of only ever attaching its own source",
+      "why_existing_wont_do": "'attach' in reference hardcodes the attacher as ctx.source_oid (engine/effects/ops_board.py op_attach: 'aura = ctx.source_oid') and reads 'objects' only as the thing being attached TO. That is right for Equip and Reconfigure, where the Equipment prints its own ability, but here the source is the Saga -- an Enchantment that is neither Aura nor Equipment -- so the op would try to attach the Saga itself to a creature and the just-arrived Equipment would sit unattached. 'put_onto_battlefield' is the other near miss: it carries 'tapped', 'attacking' and 'counters' for the arrival, but no 'attached_to', so the Equipment cannot enter already equipped either."
+    }
+  ],
+  "closest_existing": [
+    "equip",
+    "reconfigure",
+    "aura_swap"
+  ],
+  "confidence": "high"
+}

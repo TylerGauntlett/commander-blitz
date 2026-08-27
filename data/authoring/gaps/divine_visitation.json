@@ -1,0 +1,18 @@
+{
+  "card_id": "divine_visitation",
+  "name": "Divine Visitation",
+  "oracle_text": "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead.",
+  "blocked_sentences": [
+    "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead."
+  ],
+  "needs": [
+    {
+      "capability": "token-creation-replacement",
+      "kind": "replacement",
+      "what": "a battlefield-wide replacement effect on token creation: when N creature tokens would be created under a given player's control, create N tokens of a different specified token id instead (same count, original token never created)",
+      "why_existing_wont_do": "ReplacementModel only accepts the events `self_enters`, `self_enters_tapped` and `self_enters_with_counters`, all of which apply to the card itself as it enters, so there is no way to replace an event happening to other objects. The `token_created` trigger event is the closest, but a trigger fires after the fact: the original 1/1 tokens would still exist and the Angels would be additional, which is a strictly different (and stronger) card than the printed replacement. No entry in `static_effects` alters token creation either, and the Angel token itself (`angel_4_4_w_flying_vigilance`) already exists, so the replacement mechanism is the only missing piece."
+    }
+  ],
+  "closest_existing": ["token_created", "self_enters", "create_token", "replace_deaths"],
+  "confidence": "high"
+}

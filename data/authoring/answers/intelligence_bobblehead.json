@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "intelligence_bobblehead",
+    "name": "Intelligence Bobblehead",
+    "oracle_text": "{T}: Add one mana of any color.\n{5}, {T}: Draw X cards, where X is the number of Bobbleheads you control.",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Bobblehead"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{W}"}]}
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{5}, {T}: Draw X cards, where X is the number of Bobbleheads you control.",
+        "cost": {
+          "mana": "{5}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "amount": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": [
+                  "Bobblehead"
+                ],
+                "count": "all"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

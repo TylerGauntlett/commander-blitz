@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "castle_ardenvale",
+    "name": "Castle Ardenvale",
+    "oracle_text": "This land enters tapped unless you control a Plains.\n{T}: Add {W}.\n{2}{W}{W}, {T}: Create a 1/1 white Human creature token.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "W"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Plains"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}{W}{W}, {T}: Create a 1/1 white Human creature token.",
+        "cost": {
+          "mana": "{2}{W}{W}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "human_1_1_w",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

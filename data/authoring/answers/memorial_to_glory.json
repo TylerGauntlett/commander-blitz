@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "memorial_to_glory",
+    "name": "Memorial to Glory",
+    "oracle_text": "This land enters tapped.\n{T}: Add {W}.\n{3}{W}, {T}, Sacrifice this land: Create two 1/1 white Soldier creature tokens.",
+    "mana_cost": "",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "W"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{3}{W}, {T}, Sacrifice this land: Create two 1/1 white Soldier creature tokens.",
+        "cost": {
+          "mana": "{3}{W}",
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "soldier_1_1_w",
+            "amount": {
+              "const": 2
+            },
+            "controller": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

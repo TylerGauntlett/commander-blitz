@@ -1,0 +1,32 @@
+{
+  "card_id": "heraldic_banner",
+  "name": "Heraldic Banner",
+  "oracle_text": "As this artifact enters, choose a color.\nCreatures you control of the chosen color get +1/+0.\n{T}: Add one mana of the chosen color.",
+  "blocked_sentences": [
+    "As this artifact enters, choose a color.",
+    "Creatures you control of the chosen color get +1/+0.",
+    "{T}: Add one mana of the chosen color."
+  ],
+  "needs": [
+    {
+      "capability": "choose-color",
+      "kind": "op",
+      "what": "An op that asks the permanent's controller to name one of the five colors as it enters and stores it on the object (a `chosen_color` field beside `chosen_type`), so the same permanent's own abilities can read it back as `{\"chosen_color_of\": \"self\"}`",
+      "why_existing_wont_do": "`choose_type` is the only chooser of its shape and it is hard-wired to creature types: `ops_control._creature_types` enumerates the pool's creature subtypes and the pick is written to `GameObject.chosen_type`, a single string slot with no colour analogue. Nothing in `ops` asks for a colour at all, and `choose_mode` over five modes cannot be it, because a mode chosen at enter-time does not persist as a value the card's other two lines can read."
+    },
+    {
+      "capability": "choose-color",
+      "kind": "selector",
+      "what": "A static filter whose `colors` entry may be `{\"chosen_color_of\": \"self\"}` instead of a literal colour list, so a `buff` can affect \"creatures you control of the chosen color\"",
+      "why_existing_wont_do": "`colors` is in `static_filter_keys`, but `characteristics._matches_printed` tests it as a plain `set(colors) & card.colors` against literal colour letters. The one dynamic substitution that exists, `characteristics.resolve_chosen_subtypes`, rewrites only a filter's `subtypes` and only for `{\"chosen_type_of\": \"self\"}` (Vanquisher's Banner); there is no colour counterpart, and `shares_a_color_with` is effect-side only and absent from `static_filter_keys`."
+    },
+    {
+      "capability": "choose-color",
+      "kind": "op",
+      "what": "`add_mana` able to take the source's chosen colour as its `mana` value, so a mana ability can produce exactly one mana of the colour named as the artifact entered",
+      "why_existing_wont_do": "`ops_mana.op_add_mana` passes `spec[\"mana\"]` straight to `parse_mana_production`, which only reads a literal mana string. The only \"pick a colour at activation\" idiom available is a `choose_mode` of five `add_mana` modes, which is the *any colour* card (Commander's Sphere): it lets the player pick freely every activation instead of locking the ability to the one colour chosen on entry, so it would make the card strictly better than printed and would also decouple the mana line from the anthem line."
+    }
+  ],
+  "closest_existing": ["choose_type", "chosen_type_of", "set_colors", "shares_a_color_with"],
+  "confidence": "high"
+}

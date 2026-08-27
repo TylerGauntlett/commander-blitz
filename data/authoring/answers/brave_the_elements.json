@@ -1,0 +1,137 @@
+{
+  "card": {
+    "color_identity": [
+      "W"
+    ],
+    "colors": [
+      "W"
+    ],
+    "id": "brave_the_elements",
+    "mana_cost": "{W}",
+    "name": "Brave the Elements",
+    "oracle_text": "Choose a color. White creatures you control gain protection from the chosen color until end of turn.",
+    "spell_effects": [
+      {
+        "count": 1,
+        "modes": [
+          {
+            "effects": [
+              {
+                "from_colors": [
+                  "W"
+                ],
+                "objects": {
+                  "colors": [
+                    "W"
+                  ],
+                  "controller": "you",
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                },
+                "op": "grant_protection"
+              }
+            ]
+          },
+          {
+            "effects": [
+              {
+                "from_colors": [
+                  "U"
+                ],
+                "objects": {
+                  "colors": [
+                    "W"
+                  ],
+                  "controller": "you",
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                },
+                "op": "grant_protection"
+              }
+            ]
+          },
+          {
+            "effects": [
+              {
+                "from_colors": [
+                  "B"
+                ],
+                "objects": {
+                  "colors": [
+                    "W"
+                  ],
+                  "controller": "you",
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                },
+                "op": "grant_protection"
+              }
+            ]
+          },
+          {
+            "effects": [
+              {
+                "from_colors": [
+                  "R"
+                ],
+                "objects": {
+                  "colors": [
+                    "W"
+                  ],
+                  "controller": "you",
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                },
+                "op": "grant_protection"
+              }
+            ]
+          },
+          {
+            "effects": [
+              {
+                "from_colors": [
+                  "G"
+                ],
+                "objects": {
+                  "colors": [
+                    "W"
+                  ],
+                  "controller": "you",
+                  "count": "all",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                },
+                "op": "grant_protection"
+              }
+            ]
+          }
+        ],
+        "op": "choose_mode"
+      }
+    ],
+    "types": [
+      "Instant"
+    ]
+  },
+  "expectation": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  }
+}

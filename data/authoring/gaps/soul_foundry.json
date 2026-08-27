@@ -1,0 +1,23 @@
+{
+  "card_id": "soul_foundry",
+  "name": "Soul Foundry",
+  "oracle_text": "Imprint — When this artifact enters, you may exile a creature card from your hand.\n{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.",
+  "blocked_sentences": [
+    "{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card."
+  ],
+  "needs": [
+    {
+      "capability": "defined-x-cost",
+      "kind": "cost",
+      "what": "an activated ability whose {X} mana cost is *defined* by a value expression evaluated at activation time -- here {\"mana_value_of\": {\"zone\": \"exile\", \"exiled_with\": \"self\"}}, the mana value of the card this permanent imprinted -- instead of being announced by the activating player. Concretely: a field on CostModel (e.g. `x_value`) that, when present, makes game._ask_x return that evaluated number rather than calling ask_x, and makes legality/max_affordable_x price the ability at exactly that X so it is offered only when the player can actually pay it.",
+      "why_existing_wont_do": "CostModel.mana is a fixed string, and game._ask_x routes every cost with x_count through effects.context.ask_x with a ceiling of mana.max_affordable_x, so X is always a free player choice -- writing cost {\"mana\": \"{X}\"} lets the player announce X=0 and copy an imprinted Griselbrand for nothing, which is a strictly better card rather than this one. CostModel.times is the only value-expression multiplier on a cost, but its own schema comment scopes it out ('Read only where an EffectContext exists to evaluate it -- i.e. by `may`'s `pay`, not by an activated ability's cost, which is charged before any effect runs'), and ManaCost.scaled is in fact called from exactly one place, ops_control.py's pay op; engine/costs.py never reads it, so `times` on an activated cost is silently ignored and the ability would charge its unscaled printed mana. pay_life is the only cost that accepts a computed amount and it is life, not mana. mana_reduction only subtracts generic and clamps at zero, so it cannot raise a {0} base up to a card's mana value."
+    }
+  ],
+  "closest_existing": [
+    "times",
+    "pay_life",
+    "mana_reduction"
+  ],
+  "confidence": "high",
+  "notes": "The first printed line is fully expressible today: a self_enters trigger wrapping `may` around `exile` over {\"zone\": \"hand\", \"controller\": \"you\", \"types\": [\"Creature\"]}, read back by the `exiled_with` selector, and copy_permanent does copy a card sitting in exile. Only the cost half of line two is blocked, so this unblocks with one cost field and no new op. Worth flagging for whoever builds it: both the naive {X} version and a `times` version VERIFY CLEAN ('passed all 6 gates'), because the sandbox never activates an activated ability -- the gates cannot catch this class of error, which is why it is recorded here instead."
+}

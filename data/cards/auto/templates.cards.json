@@ -8762,6 +8762,59 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bovine_intervention",
+      "mana_cost": "{1}{W}",
+      "name": "Bovine Intervention",
+      "oracle_text": "Destroy target artifact or creature. Its controller creates a 2/2 white Ox creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "ox_2_2_w"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -8810,6 +8863,135 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "brave_the_elements",
+      "mana_cost": "{W}",
+      "name": "Brave the Elements",
+      "oracle_text": "Choose a color. White creatures you control gain protection from the chosen color until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "from_colors": [
+                    "W"
+                  ],
+                  "objects": {
+                    "colors": [
+                      "W"
+                    ],
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "effects": [
+                {
+                  "from_colors": [
+                    "U"
+                  ],
+                  "objects": {
+                    "colors": [
+                      "W"
+                    ],
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "effects": [
+                {
+                  "from_colors": [
+                    "B"
+                  ],
+                  "objects": {
+                    "colors": [
+                      "W"
+                    ],
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "effects": [
+                {
+                  "from_colors": [
+                    "R"
+                  ],
+                  "objects": {
+                    "colors": [
+                      "W"
+                    ],
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            },
+            {
+              "effects": [
+                {
+                  "from_colors": [
+                    "G"
+                  ],
+                  "objects": {
+                    "colors": [
+                      "W"
+                    ],
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_protection"
+                }
+              ]
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -10446,6 +10628,89 @@
             "controller": "you",
             "exclude_self": true,
             "subtypes": [
+              "Soldier"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Soldier creatures you control get +1/+1 and have vigilance.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Soldier"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Other Soldier creatures you control get +1/+1 and have vigilance."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create three 1/1 white Soldier creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "captain_of_the_watch",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{4}{W}{W}",
+      "name": "Captain of the Watch",
+      "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)\nOther Soldier creatures you control get +1/+1 and have vigilance.\nWhen this creature enters, create three 1/1 white Soldier creature tokens.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
               "Vampire"
             ],
             "types": [
@@ -10828,6 +11093,68 @@
       "id": "cascade_bluffs",
       "name": "Cascade Bluffs",
       "oracle_text": "{T}: Add {C}.\n{U/R}, {T}: Add {U}{U}, {U}{R}, or {R}{R}.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "human_1_1_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}{W}, {T}: Create a 1/1 white Human creature token."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "castle_ardenvale",
+      "name": "Castle Ardenvale",
+      "oracle_text": "This land enters tapped unless you control a Plains.\n{T}: Add {W}.\n{2}{W}{W}, {T}: Create a 1/1 white Human creature token.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "subtypes": [
+                  "Plains"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
       "source": "auto",
       "types": [
         "Land"
@@ -11657,6 +11984,108 @@
         {
           "effects": [
             {
+              "amount": {
+                "x": true
+              },
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create X 1/1 colorless Hero creature tokens.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "scry",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Light Party — Whenever you attack with four or more creatures, scry 2, then draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "attackers"
+              },
+              "op": "pump",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Full Party — Whenever you attack with eight or more creatures, those creatures get +4/+4 until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 8
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "champions_from_beyond",
+      "mana_cost": "{X}{W}{W}",
+      "name": "Champions from Beyond",
+      "oracle_text": "When this enchantment enters, create X 1/1 colorless Hero creature tokens.\nLight Party — Whenever you attack with four or more creatures, scry 2, then draw a card.\nFull Party — Whenever you attack with eight or more creatures, those creatures get +4/+4 until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "become_monarch",
               "player": "you"
             }
@@ -12049,6 +12478,103 @@
       "source": "auto",
       "subtypes": [
         "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Bobblehead"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{4}, {T}: Create X 1/1 white Soldier creature tokens, where X is the number of Bobbleheads you control. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "charisma_bobblehead",
+      "mana_cost": "{3}",
+      "name": "Charisma Bobblehead",
+      "oracle_text": "{T}: Add one mana of any color.\n{4}, {T}: Create X 1/1 white Soldier creature tokens, where X is the number of Bobbleheads you control. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Bobblehead"
       ],
       "types": [
         "Artifact"
@@ -15109,6 +15635,59 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "crisis_of_conscience",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Crisis of Conscience",
+      "oracle_text": "Choose one —\n• Destroy all tokens.\n• Destroy all nonland, nontoken permanents.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "is_token": false,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy all nonland, nontoken permanents."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "is_token": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy all tokens."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -21131,6 +21710,183 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "emergency_eject",
+      "mana_cost": "{2}{W}",
+      "name": "Emergency Eject",
+      "oracle_text": "Destroy target nonland permanent. Its controller creates a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "lander_token"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Bobblehead"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "{3}, {T}: Up to X target creatures you control get +1/+0 and gain indestructible until end of turn, where X is the number of Bobbleheads you control as you activate this ability. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "endurance_bobblehead",
+      "mana_cost": "{3}",
+      "name": "Endurance Bobblehead",
+      "oracle_text": "{T}: Add one mana of any color.\n{3}, {T}: Up to X target creatures you control get +1/+0 and gain indestructible until end of turn, where X is the number of Bobbleheads you control as you activate this ability. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Bobblehead"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -22703,6 +23459,59 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "fateful_absence",
+      "mana_cost": "{1}{W}",
+      "name": "Fateful Absence",
+      "oracle_text": "Destroy target creature or planeswalker. Its controller investigates. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "clue_token"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -23070,6 +23879,92 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "cat_beast_2_2_w"
+                    }
+                  ],
+                  "label": "Create a 2/2 white Cat Beast creature token."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    },
+                    {
+                      "keywords": [
+                        "vigilance"
+                      ],
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on each creature you control. Those creatures gain vigilance until end of turn."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, choose one —\n• Create a 2/2 white Cat Beast creature token.\n• Put a +1/+1 counter on each creature you control. Those creatures gain vigilance until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "felidar_retreat",
+      "mana_cost": "{3}{W}",
+      "name": "Felidar Retreat",
+      "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• Create a 2/2 white Cat Beast creature token.\n• Put a +1/+1 counter on each creature you control. Those creatures gain vigilance until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -27003,6 +27898,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "name": "Gary Clone",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, each creature you control named Gary Clone gets +1/+0 until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{2}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "gary_clone",
+      "mana_cost": "{1}{W}",
+      "name": "Gary Clone",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nWhenever this creature attacks, each creature you control named Gary Clone gets +1/+0 until end of turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -27146,6 +28117,60 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "get_lost",
+      "mana_cost": "{1}{W}",
+      "name": "Get Lost",
+      "oracle_text": "Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens. (They're artifacts with \"{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "map_token"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Enchantment",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -33524,6 +34549,79 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "attacking": true,
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "attacking": true,
+              "op": "create_token",
+              "tapped": true,
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, create two 1/1 white Soldier creature tokens that are tapped and attacking.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hero_of_bladehold",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Hero of Bladehold",
+      "oracle_text": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)\nWhenever this creature attacks, create two 1/1 white Soldier creature tokens that are tapped and attacking.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -34818,6 +35916,36 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hour_of_reckoning",
+      "mana_cost": "{4}{W}{W}{W}",
+      "name": "Hour of Reckoning",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDestroy all nontoken creatures.",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "is_token": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -36563,6 +37691,101 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{5}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "count": "all",
+                  "subtypes": [
+                    "Bobblehead"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}, {T}: Draw X cards, where X is the number of Bobbleheads you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "intelligence_bobblehead",
+      "mana_cost": "{3}",
+      "name": "Intelligence Bobblehead",
+      "oracle_text": "{T}: Add one mana of any color.\n{5}, {T}: Draw X cards, where X is the number of Bobbleheads you control.",
+      "source": "auto",
+      "subtypes": [
+        "Bobblehead"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -38901,6 +40124,114 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each opponent's end step, if that player controls more creatures than you, create a 1/1 white Soldier creature token.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "controller": {
+                    "binding": "event_player"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "creatures_you_control": true
+              }
+            },
+            "controller": "opponent",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "subtypes": [
+                      "Plains"
+                    ],
+                    "supertypes": [
+                      "Basic"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a basic Plains card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each opponent's end step, if that player controls more lands than you, you may search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "controller": {
+                    "binding": "event_player"
+                  },
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "controller": "opponent",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "keeper_of_the_accord",
+      "mana_cost": "{3}{W}",
+      "name": "Keeper of the Accord",
+      "oracle_text": "At the beginning of each opponent's end step, if that player controls more creatures than you, create a 1/1 white Soldier creature token.\nAt the beginning of each opponent's end step, if that player controls more lands than you, you may search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -45802,6 +47133,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}, {T}, Sacrifice this land: Create two 1/1 white Soldier creature tokens."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "memorial_to_glory",
+      "mana_cost": "",
+      "name": "Memorial to Glory",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W}.\n{3}{W}, {T}, Sacrifice this land: Create two 1/1 white Soldier creature tokens.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -51707,6 +53097,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "colors": [
+              "W"
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "White creature spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "warrior_1_1_w_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, create a 1/1 white Warrior creature token with vigilance.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "oketra_s_monument",
+      "mana_cost": "{3}",
+      "name": "Oketra's Monument",
+      "oracle_text": "White creature spells you cast cost {1} less to cast.\nWhenever you cast a creature spell, create a 1/1 white Warrior creature token with vigilance.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -53479,6 +54925,34 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "colors": [
+              "W"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "White spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "pearl_medallion",
+      "mana_cost": "{2}",
+      "name": "Pearl Medallion",
+      "oracle_text": "White spells you cast cost {1} less to cast.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -54292,6 +55766,133 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "discard",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Sort Inventory — Draw a card, then discard a card."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "attached": true,
+                        "count": "all",
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Pick a Perk — Put a +1/+1 counter on that creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "map_lands"
+                      },
+                      "op": "untap"
+                    }
+                  ],
+                  "label": "Check Map — Untap up to two target lands."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "map_lands",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "Whenever equipped creature attacks, choose one —\n• Sort Inventory — Draw a card, then discard a card.\n• Pick a Perk — Put a +1/+1 counter on that creature.\n• Check Map — Untap up to two target lands.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "pip_boy_3000",
+      "mana_cost": "{1}",
+      "name": "Pip-Boy 3000",
+      "oracle_text": "Whenever equipped creature attacks, choose one —\n• Sort Inventory — Draw a card, then discard a card.\n• Pick a Perk — Put a +1/+1 counter on that creature.\n• Check Map — Untap up to two target lands.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -55088,6 +56689,193 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "During your turn, creature tokens you control get +1/+4.",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}: Create a 1/1 white Soldier creature token."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "prava_of_the_steel_legion",
+      "keywords": [
+        "partner"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Prava of the Steel Legion",
+      "oracle_text": "During your turn, creature tokens you control get +1/+4.\n{3}{W}: Create a 1/1 white Soldier creature token.\nPartner (You can have two commanders if both have partner.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this Equipment enters, return target creature card with mana value 3 or less from your graveyard to the battlefield and attach this Equipment to it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has vigilance.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has vigilance."
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "pre_war_formalwear",
+      "mana_cost": "{2}{W}",
+      "name": "Pre-War Formalwear",
+      "oracle_text": "When this Equipment enters, return target creature card with mana value 3 or less from your graveyard to the battlefield and attach this Equipment to it.\nEquipped creature gets +2/+2 and has vigilance.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -56586,6 +58374,82 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "hideaway"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Hideaway 5 (When this enchantment enters, look at the top five cards of your library, exile one face down, then put the rest on the bottom in a random order.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "creatures_you_control": true
+                },
+                "right": {
+                  "const": 10
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "op": "play_exiled"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Play the exiled card without paying its mana cost?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with one or more creatures, create that many 1/1 green and white Citizen creature tokens. Then if you control ten or more creatures, you may play the exiled card without paying its mana cost.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rabble_rousing",
+      "mana_cost": "{4}{W}",
+      "name": "Rabble Rousing",
+      "oracle_text": "Hideaway 5 (When this enchantment enters, look at the top five cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nWhenever you attack with one or more creatures, create that many 1/1 green and white Citizen creature tokens. Then if you control ten or more creatures, you may play the exiled card without paying its mana cost.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -64055,6 +65919,83 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create that many tokens that are copies of it.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature token you control enters, put a +1/+1 counter on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{3}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "securitron_squadron",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Securitron Squadron",
+      "oracle_text": "Squad {3} (As an additional cost to cast this spell, you may pay {3} any number of times. When this creature enters, create that many tokens that are copies of it.)\nVigilance\nWhenever a creature token you control enters, put a +1/+1 counter on it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -72207,6 +74148,118 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Bobblehead"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{3}, {T}: Put X +1/+1 counters on target creature, where X is the number of Bobbleheads you control. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "strength_bobblehead",
+      "mana_cost": "{3}",
+      "name": "Strength Bobblehead",
+      "oracle_text": "{T}: Add one mana of any color.\n{3}, {T}: Put X +1/+1 counters on target creature, where X is the number of Bobbleheads you control. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Bobblehead"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -72359,6 +74412,58 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "stroke_of_midnight",
+      "mana_cost": "{2}{W}",
+      "name": "Stroke of Midnight",
+      "oracle_text": "Destroy target nonland permanent. Its controller creates a 1/1 white Human creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "human_1_1_w"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -81224,6 +83329,86 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "valorous_stance",
+      "mana_cost": "{1}{W}",
+      "name": "Valorous Stance",
+      "oracle_text": "Choose one —\n• Target creature gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)\n• Destroy target creature with toughness 4 or greater.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "target": "shielded"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Target creature gains indestructible until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "doomed"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target creature with toughness 4 or greater."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "id": "shielded",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "doomed",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "toughness": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -88592,6 +90777,104 @@
       ],
       "toughness": 4,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "gain_control",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "quest",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{T}: Target opponent gains control of Yes Man. When they do, you draw two cards and put a quest counter on Yes Man. Activate only during your turn."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "quest"
+              },
+              "controller": {
+                "binding": "event_player"
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Wild Card — When Yes Man leaves the battlefield, its owner creates a tapped 1/1 white Soldier creature token for each quest counter on it.",
+          "trigger": {
+            "controller": "any",
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "yes_man_personal_securitron",
+      "mana_cost": "{2}{W}",
+      "name": "Yes Man, Personal Securitron",
+      "oracle_text": "{T}: Target opponent gains control of Yes Man. When they do, you draw two cards and put a quest counter on Yes Man. Activate only during your turn.\nWild Card — When Yes Man leaves the battlefield, its owner creates a tapped 1/1 white Soldier creature token for each quest counter on it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
