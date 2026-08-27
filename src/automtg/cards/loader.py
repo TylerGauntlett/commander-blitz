@@ -824,6 +824,37 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if kicker is not None and not reads_kicked:
         raise DslError(f"{where}: has a 'kicker' cost that no effect reads via 'kicked'")
 
+    # Gift is two halves the same way kicker is, and half of it fails just as
+    # quietly -- more quietly, in fact, because a gift costs nothing, so a card
+    # declaring one and reading it nowhere is not even more expensive than the
+    # card it pretends to be. It is simply a cast line the player is offered
+    # that does exactly what the other line does.
+    #
+    # Either spelling counts as reading it, because the two halves of the
+    # printed mechanic are read by different vocabulary: "if the gift wasn't
+    # promised" is the `{"gift_promised": …}` condition, and "**they** create a
+    # tapped 1/1 blue Fish" is the `"gift_recipient"` player spec. Parting Gust
+    # writes both; a card whose whole gift line is "gift a card (they draw a
+    # card)" writes only the second, and refusing it would be refusing the
+    # simplest printed shape the mechanic has.
+    reads_gift = _mentions_gift(model)
+    if reads_gift and model.gift is None:
+        raise DslError(
+            f"{where}: reads the gift ('gift_promised' or the 'gift_recipient' "
+            f"player spec) but has no 'gift' declaration"
+        )
+    if model.gift is not None:
+        if not model.gift.strip():
+            # The string is what is promised, and the residual gate compares it
+            # against the printed line -- so an empty one cannot claim anything
+            # and would put "(gift  to Bob)" on the action.
+            raise DslError(f"{where}: 'gift' must name what is promised, e.g. 'a tapped Fish'")
+        if not reads_gift:
+            raise DslError(
+                f"{where}: has a 'gift' promise that nothing reads via "
+                f"'gift_promised' or the 'gift_recipient' player spec"
+            )
+
     # Evoke is two halves the same way, and half of it is the same silent
     # failure: a cheaper cast that never dies, or a sacrifice clause that can
     # never fire.  Both would load cleanly.
@@ -1220,6 +1251,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
 
     _validate_was_cast_placement(model, where)
+    _validate_enchanted_player(model, where)
 
     colors = (
         frozenset(model.colors)
@@ -1288,6 +1320,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,
         kicker=kicker,
+        gift=model.gift,
         multikicker=multikicker,
         evoke=evoke,
         bestow=bestow,
@@ -1312,6 +1345,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 def _mentions_kicked(model: CardModel) -> bool:
     """Does anything on this card read ``{"kicked": ...}``?"""
     return _mentions_condition(model, "kicked")
+
+
+def _mentions_gift(model: CardModel) -> bool:
+    """Does anything on this card read the gift promise?
+
+    Both spellings, because the printed mechanic has two halves and a card may
+    write either: the ``{"gift_promised": …}`` condition ("if the gift wasn't
+    promised…"), and the ``"gift_recipient"`` player spec, which is what aims
+    the promised reward at the seat that was promised it.
+
+    The player spec is matched as a **value** anywhere in a mapping rather than
+    under a fixed key, because the seat is named through half a dozen different
+    keys depending on the op -- `create_token`'s ``controller``, `draw`'s
+    ``player``, a selector's ``controller``. Checking one of them would let the
+    others load a promise that nothing reads.
+    """
+    if _mentions_condition(model, "gift_promised"):
+        return True
+    return _mentions(model, lambda node: "gift_recipient" in node.values())
 
 
 #: Ops that take an object out of the zone an ability was activated from.
@@ -1350,6 +1402,50 @@ def _effects_move_source(effects: Any) -> bool:
 def _mentions_condition(model: CardModel, key: str) -> bool:
     """Does anything on this card read the ``key`` condition?"""
     return _mentions(model, lambda node: key in node)
+
+
+def _validate_enchanted_player(model: CardModel, where: str) -> None:
+    """``"enchanted_player"`` only on a card that can *be* attached to a player.
+
+    The spec resolves to `GameObject.attached_to_player`, which only
+    `stack._attach_aura` and the `attach_to_player` primitive ever write, and
+    only for an **Aura**. On anything else it resolves to `[]` for the whole
+    game -- and an empty player list is the quietest failure in the effect
+    layer: a `gain_life` aimed at nobody logs nothing, a `create_token` makes no
+    token, and the card reads on screen as though it has an ability.
+
+    "Enchant player" is one of the Aura's enchant clauses (303.4a), so the
+    subtype is the whole test. Whether the card also *declares* a player target
+    is not checked here: an Aura can be put onto the battlefield attached by an
+    effect rather than cast, and the target line is only how a cast one says it.
+
+    Walks the whole card rather than going through `_mentions`, which searches
+    effects, targets and trigger conditions. A **static** flattens its
+    parameters onto the ability (``effect``, ``affects``, ``power``) and has no
+    ``effects`` list at all, so `_mentions` cannot see an ``affects`` filter --
+    and ``{"controller": "enchanted_player"}`` inside one is the exact spelling
+    this refuses, since `characteristics._matches` would read an unknown
+    controller word as matching every permanent on the table.
+    """
+    if "Aura" in model.subtypes:
+        return
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return "enchanted_player" in node.values() or any(
+                walk(v) for v in node.values()
+            )
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    if walk(model.model_dump()):
+        raise DslError(
+            f"{where}: 'enchanted_player' names the player this **Aura** is "
+            f"attached to (303.4a), and only an Aura is ever attached to one -- "
+            f"on {model.subtypes or 'this card'} it resolves to nobody, every "
+            f"time, and the ability silently does nothing"
+        )
 
 
 #: Which trigger a ``{"was_cast": …}`` clause may hang from.
@@ -3710,6 +3806,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
                 f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
             )
+        # `planeswalkers` decides whether the prohibition reaches 506.2's third
+        # attack target, and it is checked for the reason `no_monarch` and
+        # `was_cast` are: `"false"` is a non-empty string and would read as
+        # `true`, turning "you can't attack that player" into a line strictly
+        # stronger than the printing -- invisibly, since no board shows a
+        # prohibition that was never tested.
+        if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
+            raise DslError(
+                f"{where}.planeswalkers: must be true or false -- true is for the "
+                f"sentence naming no defender at all ('creatures can't attack this "
+                f"combat'), false for every line that names a seat (506.2)"
+            )
     if op == "goad":
         # A goad with no selector goads nobody: the spell resolves, the log says
         # nothing, and every creature attacks exactly as it pleases. Detain's
@@ -3933,6 +4041,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and "controller" in effect:
+        # Whose tokens these are, as a full player spec -- `op_create_token`
+        # loops `select_players` over it. Unchecked until gift needed to aim one
+        # at a promised opponent, and a misspelling here is the quietest error
+        # the op has: `select_players` raises `DslError` mid-resolution for a
+        # bad *string*, which is a crash in the middle of a game rather than a
+        # refusal at load, and every mapping form fails silently by resolving to
+        # nobody -- a card that prints "they create a token" and creates none.
+        _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
     if op in ATTACKING_OPS and "attacking" in effect:
         _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
     # A misspelled duration would silently fall back to until-end-of-turn,

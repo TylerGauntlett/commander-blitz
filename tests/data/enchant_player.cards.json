@@ -1,0 +1,184 @@
+{
+  "_comment": "Cards that exist only for the enchant-a-player test (tests/unit/test_enchant_player.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_seat_robe` is the minimal 'Enchant player' Aura; `t_encumber` is the Overencumbered prototype, whose three sentences are the whole reason the capability exists; `t_creature_aura` is the counterfactual -- the same abilities on an Aura that enchants a *creature*, where `enchanted_player` names nobody.",
+  "cards": [
+    {
+      "id": "t_seat_robe",
+      "name": "Test Seat Robe",
+      "oracle_text": "Enchant player\nEnchanted player loses 1 life at the beginning of their upkeep.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "count": 1
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Enchanted player loses 1 life at the beginning of their upkeep.",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "any",
+            "condition": {
+              "is_active_player": "enchanted_player"
+            }
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "enchanted_player",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_encumber",
+      "name": "Test Encumber",
+      "oracle_text": "Enchant opponent\nWhen this Aura enters, enchanted opponent creates a Clue token.\nAt the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          },
+          "count": 1
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this Aura enters, enchanted opponent creates a Clue token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "clue_token",
+              "controller": "enchanted_player"
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.",
+          "trigger": {
+            "event": "begin_combat",
+            "controller": "any",
+            "condition": {
+              "is_active_player": "enchanted_player"
+            }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "player": "enchanted_player",
+              "pay": {
+                "mana": "{1}",
+                "times": {
+                  "count": {
+                    "zone": "battlefield",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "controller": "enchanted_player"
+                  }
+                }
+              },
+              "else": [
+                {
+                  "op": "cant_attack_player",
+                  "attacker": "each_player",
+                  "defender": "each_player",
+                  "duration": "this_combat",
+                  "planeswalkers": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_creature_aura",
+      "name": "Test Creature Aura",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, enchanted player creates a Clue token.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "count": 1
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this Aura enters, enchanted player creates a Clue token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "clue_token",
+              "controller": "enchanted_player"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

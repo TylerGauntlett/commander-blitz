@@ -1,3 +1,135 @@
+## An Aura that enchants a **player** — 303.4a / 702.5b / 704.5n
+
+### Overview
+
+Overencumbered: *"Enchant opponent / When this Aura enters, enchanted opponent
+creates a Clue token, a Food token, and a Junk token. / At the beginning of
+combat on enchanted opponent's turn, that player may pay {1} for each artifact
+they control. If they don't, creatures can't attack this combat."*
+
+The gap record (`data/authoring/gaps/overencumbered.json`) had already run the
+experiment, and its finding is the whole argument for this change: the only
+expectation that passed about the shipped card was `zone: "graveyard"`. Rule
+303.4a lets the enchant ability name a **player**; the engine could only attach
+to an object, so the Aura resolved, enchanted nobody, and `sba._tokens_and_
+attachments` moved it to the graveyard with cause `aura_unattached` before its
+own enters trigger could resolve. Three printed sentences, a mana cost, and no
+game effect at all.
+
+Four things were missing, and the record names all four:
+
+| in the card | what the engine had |
+|---|---|
+| "Enchant opponent" | `attached_to`, an oid; `_attach_aura` attaching only on `ref.kind == "object"`; an SBA that bins anything else |
+| "enchanted opponent", "that player" | player specs for you / opponents / everyone / the active player — none of them "the one this Aura is on" |
+| "on enchanted opponent's turn" | `TriggerModel.controller` of you / opponent / any, where "opponent" is *every* opponent at a pod |
+| "creatures can't attack this combat" | `cant_attack_player`, which deliberately exempts planeswalkers, and the `cant_attack` static, which has no duration |
+
+### Tier: A — a field, a spec, and one key on an existing op
+
+No `TempEffect.kind`, no layer in `_compute`, no `DecisionKind`, no `EventType`
+and no API field. The host is a plain field on `GameObject`, written by one new
+primitive and read by four callers; `enchanted_player` is a name in
+`PLAYER_SPEC_NAMES`; the combat lock is a boolean on the op that already
+installs attack restrictions. Nothing reaches the server or the frontend.
+
+**Three of the four needs cost nothing beyond the first.** The trigger clause
+needed no new vocabulary at all — `is_active_player` already takes a player
+spec, so *"at the beginning of combat on enchanted opponent's turn"* is
+`controller: "any"` plus `{"is_active_player": "enchanted_player"}`, and the
+`may` + `pay` + `times` half already worked.
+
+### What was built
+
+- `engine/objects.py` — `GameObject.attached_to_player`, cleared by
+  `reset_permanent_state` beside `attached_to`, and in `to_dict`. **A second
+  field, not a second meaning for the first**: a player id and an oid are both
+  `int`, so one field holding either could not be read without a discriminator
+  at each of seven readers that all mean "the permanent I am on" — the
+  characteristics layer, the `attached` selector, trigger filters,
+  `_detach_all`, phasing, bestow and the state-based action. A seat number in
+  that field is an oid pointing at an unrelated object.
+- `engine/primitives.py` — `attach_to_player`, and `attach` clearing the seat
+  link so an Aura is attached to exactly one thing (303.4). `restrict_attack`
+  takes `planeswalkers`, part of the dedup key so a narrow entry cannot swallow
+  a wide one.
+- `engine/stack.py` — `_attach_aura` takes the spell's first target of **either**
+  kind. No Aura has two enchant clauses, so one loop is the printed reading.
+- `engine/sba.py` — 704.5n as written: attached to an illegal object *or player*,
+  or to nothing. A player still in the game is a legal host; one who has lost is
+  not, and the Aura falls through to the graveyard with them.
+- `engine/effects/selectors.py` — `"enchanted_player"`, read off the ability's
+  own source. Also accepted as a selector's `controller` (*"for each artifact
+  **they** control"*), in `matches` and `_zone_owners`.
+- `engine/characteristics.py` — the same word in the static filter `_matches`,
+  and `is_attached` reading either host. Both were required rather than
+  optional: an unrecognised controller word matches **every** permanent, so a
+  static naming one player would silently name the table.
+- `engine/structs.py` / `engine/combat.py` — `AttackRestriction.planeswalkers`,
+  and the clause in `attack_target_forbidden` that reads it.
+- `engine/effects/ops_board.py` — `planeswalkers` on `cant_attack_player`.
+- `cards/loader.py` — `_validate_enchanted_player` (the spec only on an Aura,
+  walking the whole card so a static's `affects` is covered) and a bool guard on
+  `planeswalkers`.
+
+### Planeswalkers: the third divergence, and the same rule for deciding it
+
+`cant_attack_player` exempts walkers, `cant_attack_you` includes them, goad
+includes them — and this line includes them. The answer follows **what the
+printed sentence names**, never a house rule:
+
+- *"You can't attack that player this turn"* names a seat, and attacking
+  somebody's planeswalker is not attacking them (506.2 — the Ghostly Prison
+  ruling).
+- *"Creatures can't attack this combat"* names **no defender at all**, so there
+  is no seat to read narrowly and all three of 506.2's attack targets are
+  forbidden.
+
+Written as `each_player` against `each_player` with the flag, rather than as a
+third spelling of the sentence: `restrict_attack` drops the self-pairs nobody
+could declare, so the cross-product is exactly "nobody attacks anybody". The two
+near misses are both statics — `cant_attack` is read off `_battlefield_statics`
+for as long as its source sits there, and this lock is bought and lost by a
+payment every combat while the Aura never moves.
+
+### What the test proves
+
+`tests/unit/test_enchant_player.py`, over three cards in
+`tests/data/enchant_player.cards.json` — a minimal "Enchant player" Robe, the
+Overencumbered prototype, and `t_creature_aura`, deliberately the **wrong**
+card: the same `enchanted_player` clause on an Aura that enchants a creature:
+
+- the Aura **cast at a seat** arrives on the battlefield with
+  `attached_to_player` set and `attached_to` empty, and is not binned — the
+  regression the capability exists for;
+- the counterfactual: an Aura attached to nothing is **still** binned, and one
+  whose enchanted player leaves the game goes with them;
+- the enters trigger pays out to the **enchanted** seat, and at a three-player
+  pod to that seat only — where `each_opponent` would pay two;
+- the Aura on a *creature* names nobody, and makes no token: `[]` rather than a
+  fallback to the controller, which would point the card at its own caster;
+- the toll is billed to the enchanted player, and scales with **their** artifacts
+  — a third player's three artifacts do not raise it, which
+  `controller: "opponent"` would;
+- the upkeep trigger fires on the enchanted player's turn and on neither of the
+  other two, asserted at turn one so "it fired eventually" cannot pass;
+- **no ADD_ATTACKER is offered at all** when the toll goes unpaid — the step is
+  skipped, which is what "creatures can't attack" looks like from legality — and
+  paying leaves both the seat and the planeswalker on offer;
+- the planeswalker boundary from both sides: the wide restriction empties
+  `legal_planeswalker_defenders`, the narrow one still leaves the walker
+  attackable, and the two are separate entries in the table;
+- the **wearing-off**: the next turn's combat is free, asserted as an offered
+  attack rather than as an empty list, because an empty list is also what
+  "nothing was ever installed" looks like;
+- the loader refuses `enchanted_player` off an Aura, including inside a static's
+  `affects`, and a non-boolean `planeswalkers`.
+
+### Guarded by
+
+`.venv/Scripts/python.exe -m pytest tests/unit tests/cards -q -p no:warnings`,
+and `ruff check src scripts tests`.
+
 ## An attack prohibition that names a subtype and a seat — 508.1c
 
 ### Overview

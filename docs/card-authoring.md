@@ -309,6 +309,27 @@ regardless of what they did. That is the exact failure this harness exists to
 catch, hiding inside the harness. `drive` now stops at priority, at combat, and
 at the turn boundary.
 
+The third one was not a wrong answer at all — it was the sandbox.
+
+**Commander Sofia Daguerre** — "When this enters, destroy up to one target
+legendary permanent." Every clause of her compiled, and she failed gate 4 with
+"is a permanent but ended in graveyard": she is Legendary, so she is a legal
+target for her own trigger, and she was the *only* legendary permanent in the
+sandbox. The harness could offer the trigger nothing but the card under test.
+
+The fix was a **prop, not a wider gate**. Widening gate 4 to let any permanent
+whose own trigger can finish it end in the graveyard would cover nearly every
+removal creature ever printed, and gate 4's whole job is noticing a creature
+that is simply gone. So the opponent's creature slot became a `legendary_creature`
+role — a *replacement*, not an addition, because the boards are 32 and 6 and
+every expectation in `data/cards/auto/` was written against those numbers. Same
+answer as `noncreature_spell` and `x_spell` before it: **add the role, do not
+relax the gate.** The role also requires the prop to be *inert* — nothing on it
+triggers and nothing on it can be activated — because a prop that acts folds its
+own behaviour into every card's verdict, and in the opponent's hands a payable
+activated ability suppresses the auto-pass and makes every card in the pool fail
+gate 4 with "never left the stack".
+
 ## Where the output lives
 
 ```

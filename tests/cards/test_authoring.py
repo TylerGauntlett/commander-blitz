@@ -47,6 +47,22 @@ def pool(real_registry: CardRegistry) -> CardRegistry:
     return real_registry
 
 
+@pytest.fixture(scope="module")
+def hand_written() -> CardRegistry:
+    """The pool minus `auto/` -- the position an authored card is measured in.
+
+    Not the same board as `pool`, and the difference matters wherever a test
+    reads a *number* off it. `--collect` and `tests/cards/test_auto_cards.py`
+    both verify against the hand-written pool, so that is the board every
+    expectation in `data/cards/auto/` was written against; the whole shipped
+    registry picks its props from 2,400 machine-authored cards instead, and one
+    of them is an Aura, which state-based actions bin on sight.
+    """
+    from automtg.cards.registry import data_dir
+
+    return CardRegistry.from_paths(sorted((data_dir() / "cards").glob("*.cards.json")))
+
+
 class TestTheGateThatMatters:
     def test_a_card_that_does_the_wrong_thing_is_rejected(self, pool):
         """Compiles, casts, resolves -- and draws nothing.
@@ -223,6 +239,159 @@ class TestTheSandboxIsUsable:
             }.get(key, {"0": 9999})
             problems = V.check_expectation(game, "x", oid, {key: sample})
             assert problems, f"expectation key {key!r} asserts nothing"
+
+
+class TestASelfLegalTriggerIsExercisedAgainstTheBoard:
+    """The half of gate 4 that must not be traded away to make a card pass.
+
+    Commander Sofia Daguerre's "When this enters, destroy up to one target
+    legendary permanent" may lawfully name *her*. Until the sandbox carried a
+    legendary permanent of its own she was the only legal target it could offer,
+    so she destroyed herself and gate 4 rejected her for "ended in graveyard" --
+    a correct card failing for a harness reason.
+
+    The fix was a prop, not a wider gate (`verify._play_once` carries the
+    argument). Which means the two claims below are one claim: a permanent whose
+    own trigger may finish it is verified against the board, **and** a permanent
+    that genuinely vanishes is still rejected. Drop the second and the first is
+    a weakened gate wearing a test.
+    """
+
+    #: Sofia's shape, reduced to the part that mattered: a Legendary permanent
+    #: whose enters trigger is a removal effect its own source satisfies.
+    SELF_LEGAL = {
+        "id": "auto_test_crash_landing",
+        "name": "Auto Test Crash Landing",
+        "oracle_text": "When this creature enters, destroy up to one target legendary permanent.",
+        "mana_cost": "{2}{W}",
+        "types": ["Creature"],
+        "supertypes": ["Legendary"],
+        "subtypes": ["Human", "Soldier"],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [
+            {
+                "kind": "triggered",
+                "text": (
+                    "When this creature enters, destroy up to one target legendary permanent."
+                ),
+                "trigger": {"event": "self_enters", "source": "self"},
+                "targets": [
+                    {
+                        "id": "t1",
+                        "kind": "permanent",
+                        "selector": {"zone": "battlefield", "supertypes": ["Legendary"]},
+                        "count": 1,
+                        "optional": True,
+                    }
+                ],
+                "effects": [{"op": "destroy", "objects": {"target": "t1"}}],
+            }
+        ],
+    }
+
+    #: No target, no choice, no ambiguity: it enters and it is gone. Gate 4's
+    #: entire reason for existing.
+    VANISHES = {
+        "id": "auto_test_vanishing_ogre",
+        "name": "Auto Test Vanishing Ogre",
+        "oracle_text": "When this creature enters, sacrifice it.",
+        "mana_cost": "{1}{R}",
+        "types": ["Creature"],
+        "subtypes": ["Ogre"],
+        "power": 3,
+        "toughness": 3,
+        "abilities": [
+            {
+                "kind": "triggered",
+                "text": "When this creature enters, sacrifice it.",
+                "trigger": {"event": "self_enters", "source": "self"},
+                "effects": [{"op": "sacrifice", "objects": {"self_only": True}}],
+            }
+        ],
+    }
+
+    def test_a_card_that_may_target_itself_clears_every_gate(self, hand_written):
+        verdict = V.verify(
+            self.SELF_LEGAL,
+            # 6 down to 5, and the opponent's graveyard says which one. Two
+            # keys rather than one because `zone: "battlefield"` on its own is
+            # satisfied by a trigger that declined and did nothing.
+            {"zone": "battlefield", "graveyard_size": {"1": 1}, "opponent_battlefield_count": 5},
+            hand_written,
+        )
+        assert verdict.ok, str(verdict)
+
+    def test_it_is_exercised_against_the_board_rather_than_itself(self, hand_written):
+        """The card survives, and the *opponent's* legendary is the one that died.
+
+        This is the observation the gap record asked for: a self-legal removal
+        trigger pointed at the position instead of at the card under test.
+        """
+        card = V.compile_card(V.CardModel.model_validate(self.SELF_LEGAL))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, card.id: card})
+        game, oid, _, _ = V._cast(merged, card)
+
+        assert game.state.objects[oid].zone is V.Zone.BATTLEFIELD
+        opponent_graveyard = game.state.players[1].graveyard
+        assert len(opponent_graveyard) == 1, "the trigger destroyed nothing"
+        died = game.state.registry.get(game.state.objects[opponent_graveyard[0]].def_id)
+        assert "Legendary" in died.supertypes
+        assert died.id != card.id
+
+    def test_a_permanent_that_genuinely_vanishes_is_still_rejected(self, hand_written):
+        """The gate is not weaker than it was.
+
+        A creature that leaves the battlefield on arrival is exactly what gate 4
+        catches, and no expectation could reveal it: `zone: "graveyard"` is a
+        legal thing for an authored card to claim.
+        """
+        verdict = V.verify(self.VANISHES, {"zone": "graveyard"}, hand_written)
+        assert verdict.failed_gate == "playable"
+        assert "ended in graveyard" in verdict.reason
+
+
+class TestTheLegendaryProp:
+    """What the sandbox gained, and what it was not allowed to cost."""
+
+    def test_the_board_carries_exactly_one_legendary_permanent(self, hand_written):
+        game = V.build_sandbox(hand_written, "sol_ring")
+        legendary = [
+            o
+            for pid in (0, 1)
+            for o in game.state.battlefield_objects(pid)
+            if "Legendary" in game.state.registry.get(o.def_id).supertypes
+        ]
+        assert len(legendary) == 1, "a legendary target, and only one, or the counts move"
+        assert legendary[0].controller == 1, "it is the opponent's, so removal points across"
+
+    def test_the_boards_are_still_the_documented_sizes(self, hand_written):
+        """32 and 6, because every authored expectation was written against them.
+
+        `_props` silently drops a role the pool cannot fill, so a role narrow
+        enough to go unfilled would shrink the opponent's board by one and
+        falsify every `opponent_battlefield_count` in `data/cards/auto/`
+        without changing a single card file. This is the tripwire for that.
+        """
+        game = V.build_sandbox(hand_written, "sol_ring")
+        assert len(game.state.battlefield_objects(0)) == 32
+        assert len(game.state.battlefield_objects(1)) == 6
+
+    def test_the_prop_is_inert(self, hand_written):
+        """Nothing on it triggers and nothing on it can be activated.
+
+        A prop exists to be pointed at. One that *acts* folds its own behaviour
+        into every card's verdict -- and in the opponent's hands a payable
+        non-mana activated ability is worse than noise: it stops the auto-pass,
+        so the opponent takes a real priority window while the card under test
+        is still on the stack, `drive` returns at `PRIORITY`, and every card in
+        the pool fails gate 4 with "never left the stack".
+        """
+        prop_id = V._props(hand_written, V.OPPONENT_BOARD_ROLES)[0]
+        prop = hand_written.get(prop_id)
+        assert "Legendary" in prop.supertypes
+        assert prop.is_creature
+        assert not [a for a in prop.abilities if a.is_activated or a.is_triggered]
 
 
 class TestThePacketCarriesTheWholeVocabulary:

@@ -154,6 +154,27 @@ class AttackRestriction:
     #: The player who may not be attacked.
     defender: int
     duration: str = "this_turn"
+    #: Does it also stop an attack on ``defender``'s **planeswalkers**?
+    #:
+    #: ``False`` on every card that names a player, and that is 506.2: "you
+    #: can't attack that player this turn" restricts attacking the *seat*, and
+    #: attacking a planeswalker they control is not attacking them -- which is
+    #: why Ghostly Prison taxes nothing when the attack goes at a walker.
+    #:
+    #: ``True`` is for the sentence that names **no defender at all**:
+    #: "creatures can't attack this combat" (Overencumbered). There is no seat
+    #: in that sentence to read narrowly, so it forbids every attack a creature
+    #: could declare, and 506.2's three attack targets are all of them. Written
+    #: as a flag on the pair rather than a fourth prohibition, because the pair
+    #: is already the shape a whole-table lock takes: `each_player` against
+    #: `each_player` installs the cross-product, and `restrict_attack` drops the
+    #: self-pairs nobody could declare anyway.
+    #:
+    #: The same divergence, in the same predicate, that goad and the
+    #: `cant_attack_you` static already carry, and it is decided the same way
+    #: each time: by what the printed sentence names, never by a house rule
+    #: about walkers.
+    planeswalkers: bool = False
     #: The permanent or spell that installed it, for the log.  Not part of the
     #: lifetime: unlike `frozen_by` this outlives its source leaving the
     #: battlefield, because a resolved one-shot effect does not care what
@@ -165,6 +186,7 @@ class AttackRestriction:
             "attacker": self.attacker,
             "defender": self.defender,
             "duration": self.duration,
+            "planeswalkers": self.planeswalkers,
             "source": self.source,
         }
 
@@ -475,6 +497,11 @@ class StackItem:
     #: time and read on resolution, because that is the only place it can be
     #: known: nothing about the object afterwards records what was paid for it.
     kicked: bool = False
+    #: **Gift** (702.164a): which opponent was promised a gift as this spell was
+    #: cast, or ``None`` if none was. Decided at cast time and read on
+    #: resolution, exactly as `kicked` is -- and a seat rather than a bool,
+    #: because the card's reward effect has to know *whose* it is.
+    gift_to: int | None = None
     evoked: bool = False
     #: Cast for its **bestow** cost, which makes it an Aura spell with enchant
     #: creature. Read on resolution to decide which target list the spell has:
@@ -527,6 +554,7 @@ class StackItem:
             "targets": [t.to_dict() for t in self.targets],
             "x": self.x,
             "kicked": self.kicked,
+            "gift_to": self.gift_to,
             "description": self.description,
         }
 

@@ -594,6 +594,31 @@ def _cast_options(
     out = _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False)
     if card.kicker is not None:
         out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True)
+    # Gift (702.164a): "you may promise an opponent a gift as you cast this
+    # spell". Kicker's slot -- an optional cast-time choice offered as extra
+    # lines beside the plain one -- with two differences that are the whole
+    # mechanic.
+    #
+    # It is **free**. 702.164a makes the promise a choice, not a cost (601.2b,
+    # with the modes and X), so every line here is priced at the printed cost
+    # and no payment is taken anywhere. That is precisely why it could not be
+    # written as a kicker: the loader refuses a kicker that costs nothing,
+    # correctly, because a kicker that costs nothing is one cast offered twice.
+    #
+    # And it names a **seat**. One line per opponent, the shape emerge uses for
+    # its victim rather than the bool kicker uses for its price: at a pod the
+    # promise goes to one chosen player (not to each of them), and which one is
+    # a real choice with the game on it. Not asked as a decision after the fact,
+    # because 702.164a puts the promise *as the spell is cast* -- a question
+    # asked later would be answered after opponents had already responded to it.
+    #
+    # Unpromised stays first, the way unkicked does: the line that hands an
+    # opponent a creature should never be the one taken by default.
+    if card.gift is not None:
+        for promisee in state.opponents(pid):
+            out += _cast_variant(
+                state, pid, oid, card, tuples, extra_generic=extra_generic, gift_to=promisee
+            )
     # Only from hand: an alternative cost is permission to cast the card *this
     # way*, and nothing extends it to the graveyard or the command zone the way
     # `retrace` and commander casting do.
@@ -862,6 +887,7 @@ def _cast_variant(
     *,
     extra_generic: int,
     kicked: bool = False,
+    gift_to: int | None = None,
     evoked: bool = False,
     emerge_oid: int | None = None,
     flashback: bool = False,
@@ -968,6 +994,13 @@ def _cast_variant(
     if kicked:
         # The card's own word: "kicked", "buyback".
         label_base += f" ({card.kicker_label})"
+    if gift_to is not None:
+        # The card's own words for what is promised, and the seat it is promised
+        # to. Both belong on the chip: a player choosing this line is giving a
+        # named opponent a named thing, and neither half is guessable from the
+        # card name.
+        promisee = state.players[gift_to].name or f"p{gift_to}"
+        label_base += f" (gift {card.gift} to {promisee})"
     if evoked:
         # The card's own word for the cost: "evoked", "dash", "blitz". They are
         # one mechanism, and only the label tells the player which they are
@@ -1010,6 +1043,7 @@ def _cast_variant(
                 targets=targets,
                 x=x,
                 kicked=kicked,
+                gift_to=gift_to,
                 evoked=evoked,
                 alternative=alternative,
                 overloaded=overloaded,

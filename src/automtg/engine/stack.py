@@ -23,7 +23,7 @@ from .effects.conditions import evaluate
 from .effects.context import EffectContext
 from .enums import Zone
 from .events import EventType
-from .primitives import attach
+from .primitives import attach, attach_to_player
 from .structs import StackItem, TargetRef, TriggerInstance
 from .targeting import filter_legal
 from .zones import move_object
@@ -40,6 +40,7 @@ def push_spell(
     *,
     x: int = 0,
     kicked: bool = False,
+    gift_to: int | None = None,
     evoked: bool = False,
     flashback: bool = False,
     overloaded: bool = False,
@@ -108,6 +109,7 @@ def push_spell(
         targets=tuple(targets),
         x=x,
         kicked=kicked,
+        gift_to=gift_to,
         evoked=evoked,
         fused=fused,
         bestowed=bestowed,
@@ -633,6 +635,14 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # would always read False and every overloaded spell would resolve as the
     # targeted half -- with no targets, which is nothing at all.
     obj.cast_overloaded = item.overloaded
+    # Gift (702.164a), for the same reason and at the same moment as the two
+    # above: "if the gift wasn't promised, return that card…" is an `if` inside
+    # `spell_effects`, and a promise written onto the object afterwards would
+    # read "not promised" on every gift card ever cast. Written here as well as
+    # onto the context so that whatever outlives the spell -- the delayed trigger
+    # it schedules, the permanent it becomes -- can still ask who was promised
+    # what, by which time the StackItem is gone.
+    obj.cast_gift_to = item.gift_to
     obj.pending_face_down = item.face_down
 
     ctx = EffectContext(
@@ -643,6 +653,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         bindings=dict(item.bindings),
         x=item.x,
         kicked=item.kicked,
+        gift_to=item.gift_to,
         modes=item.modes,
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
@@ -833,6 +844,15 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
     The convention is that an Aura's *first object target* is what it enchants,
     which is exactly how the card is written: "Enchant creature" is the targeting
     clause of the spell.
+
+    **Or its first player target.** 303.4a lets the enchant ability name a
+    player -- "Enchant opponent" (Overencumbered), "Enchant player" (Sleeper's
+    Robe) -- and that clause is written the same way, as the spell's target. So
+    the two kinds are one loop and the first target of *either* kind wins, which
+    is the printed reading: no Aura has two enchant clauses. Without the player
+    branch such an Aura resolved, attached to nothing, and was put into the
+    graveyard by `sba` before any of its abilities could matter -- the card
+    played as a blank with its own mana cost.
     """
     # A **bestowed** creature is an Aura the printed card says nothing about, so
     # `is_aura` cannot be the whole test: 702.103a makes it one for as long as it
@@ -843,6 +863,9 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
         for ref in targets.get(spec.id) or []:
             if ref.kind == "object" and ref.id in state.objects:
                 attach(state, obj.oid, ref.id)
+                return
+            if ref.kind == "player":
+                attach_to_player(state, obj.oid, ref.id)
                 return
 
 

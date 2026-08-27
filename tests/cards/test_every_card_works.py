@@ -434,6 +434,10 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     if "const" not in right:
         return
 
+    if "permanents_entered_this_turn" in left:
+        _make_permanents_enter(game, registry, left, int(right["const"]))
+        return
+
     # "Activate only if an opponent lost life this turn" -- Falkenrath Pit
     # Fighter. The tally is the real one the engine keeps, so this satisfies the
     # condition by actually taking the life rather than by writing the counter
@@ -456,6 +460,37 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     for _ in range(int(right["const"])):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+
+
+def _make_permanents_enter(game: Game, registry, left: dict, count: int) -> None:
+    """"Activate only if two or more creatures entered the battlefield under your
+    control this turn" -- Diamond City.
+
+    Eighth of the family, and the second that has to satisfy a clause by *doing*
+    the thing rather than by arranging the board. `TurnLedger.permanents_entered`
+    records arrivals, not residents, so stocking the battlefield the way the
+    `count` branch does satisfies nothing: a permanent placed with `new_object`
+    never entered. The same distinction the card is about.
+
+    It goes through `create_token`, which fires the real enters event that the
+    ledger folds -- the argument `life_lost_this_turn` makes one branch up, and
+    for the same reason. A card that names the wrong tally still fails here,
+    because nothing writes the number the condition reads except the engine.
+
+    The token has to match the filter's own `types`, since the clause counts what
+    entered rather than everything that did. A filter this cannot match is left
+    alone rather than approximated, and the ability reports as unusable -- which
+    is the honest answer when the harness cannot build the position.
+    """
+    from automtg.engine.primitives import create_token
+
+    spec = left.get("permanents_entered_this_turn") or {}
+    if spec.get("controller", "you") != "you":
+        return
+    match = _fodder_for(registry, {"types": spec.get("types") or ["Creature"]})
+    if match is None:
+        return
+    create_token(game.state, match.id, 0, max(1, count))
 
 
 def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:

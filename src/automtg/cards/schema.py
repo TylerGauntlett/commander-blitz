@@ -513,6 +513,23 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: **Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as
+    #: you cast this spell." The string is *what is promised* -- ``"a tapped
+    #: Fish"``, ``"a card"``, ``"a Food"`` -- and it is the printed noun phrase,
+    #: because the residual gate compares it against the printed line.
+    #:
+    #: The kicker slot pointed at a **recipient** instead of at a price. Kicker
+    #: is an additional cost the caster pays; a gift costs nothing at all and
+    #: names one opponent, so legality offers one promised cast line **per
+    #: opponent** at the printed price -- emerge's shape ("one line per victim"),
+    #: not kicker's bool, because a promise made to the wrong seat is a
+    #: different card.
+    #:
+    #: The reward is an ordinary effect the card writes **first** in
+    #: ``spell_effects`` (702.164b: the gift happens before the spell's other
+    #: effects), aimed with the ``"gift_recipient"`` player spec. Whether the
+    #: promise was made is read back with ``{"gift_promised": true}``.
+    gift: str | None = None
     #: **Multikicker {1}{W}** (702.32b): "You may pay an additional {1}{W} any
     #: number of times as you cast this spell."
     #:

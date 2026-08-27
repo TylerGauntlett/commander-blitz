@@ -322,6 +322,22 @@ def _tokens_and_attachments(state: GameState) -> bool:
         card = state.card_of(obj)
         if not (card.is_aura or card.is_equipment):
             continue
+        # 704.5n reads "attached to an illegal **object or player**, or is not
+        # attached to an object or player". An Aura enchanting a player who is
+        # still in the game has a legal host, so it is not binned -- and getting
+        # this wrong is not a subtle bug: "Enchant opponent" resolved, attached
+        # to a seat and was in the graveyard before its own enters trigger could
+        # resolve, so the card played as a blank.
+        #
+        # A player who has *lost* is an illegal host, and the Aura goes with
+        # them by falling through to the branch below. `is_alive` rather than a
+        # seat-count test, because a player eliminated in a pod keeps their
+        # index -- the list is never compacted.
+        if obj.attached_to_player is not None:
+            if state.is_alive(obj.attached_to_player):
+                continue
+            obj.attached_to_player = None
+            changed = True
         target = state.objects.get(obj.attached_to) if obj.attached_to else None
         if target is None or not target.on_battlefield:
             if obj.attached_to is not None:

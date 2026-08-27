@@ -608,7 +608,13 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         # Not the `{"attached": true}` filter key, which is the opposite
         # direction -- that names the permanent this one is attached *to*, and
         # is how "equipped creature gets +1/+1" is written.
-        return (source.attached_to is not None) == bool(cond["is_attached"])
+        #
+        # Either host counts. An Aura enchanting a **player** is attached
+        # (303.4a), and both fields are pipeline inputs on the same terms, so
+        # reading only the object one would answer "no" for a permanent the
+        # rules and the state-based actions both call attached.
+        attached = source.attached_to is not None or source.attached_to_player is not None
+        return attached == bool(cond["is_attached"])
     if "has_city_s_blessing" in cond:
         # Player state, so a pipeline *input* exactly as a zone count is:
         # nothing in the fixed-order characteristics pipeline can change whether
@@ -1061,6 +1067,14 @@ def _matches(
     if controller == "you" and obj.controller != source.controller:
         return False
     if controller == "opponent" and obj.controller == source.controller:
+        return False
+    # "Creatures **enchanted player** controls…" -- an Aura on a seat (303.4a),
+    # read off its own link. Answered here rather than left to fall through,
+    # because an unrecognised controller word matches *everything*: a static
+    # naming one player would be a static naming the table, and nothing on the
+    # board would say so. `None` -- an Aura on a permanent, or on nobody --
+    # matches no permanent, since no seat has that id.
+    if controller == "enchanted_player" and obj.controller != source.attached_to_player:
         return False
     if owner == "you" and obj.owner != source.controller:
         return False

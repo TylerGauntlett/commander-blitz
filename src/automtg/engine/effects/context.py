@@ -35,6 +35,11 @@ class EffectContext:
     x: int = 0
     #: Whether the spell being resolved paid its kicker cost.
     kicked: bool = False
+    #: **Gift** (702.164a): which opponent was promised a gift as the spell being
+    #: resolved was cast, or ``None`` if none was. Read by the
+    #: ``{"gift_promised": …}`` condition and by the ``"gift_recipient"`` player
+    #: spec, which is how the card aims the promised reward at the right seat.
+    gift_to: int | None = None
     modes: tuple[int, ...] = ()
     #: Whether :attr:`modes` is an *answer* rather than an empty default. See
     #: `structs.StackItem.modes_answered`: "choose up to two" may choose none,
