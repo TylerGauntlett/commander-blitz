@@ -493,6 +493,37 @@ class TestLands:
         }
         assert not any("printed condition is not modelled" in n for n in result.notes)
 
+    def test_one_basic_type_is_not_wrapped_in_any_of(self):
+        """The Castle cycle names one type, and `any_of` takes two or more.
+
+        The single-type case is the common one -- the five Eldraine Castles,
+        Arena of Glory, Shifting Woodland and four more -- and it used to build
+        a one-branch `any_of`, which `validate_selector` raises on.  The raise
+        travelled out of `build_proxy` as "could not be generated", and
+        `import_deck` turns any card it could not generate into `unknown_cards`
+        -- so one Castle failed the **whole deck**, not just itself.
+        """
+        result, card = built(
+            name="Castle Ardenvale",
+            type_line="Land",
+            oracle_text="This land enters tapped unless you control a Plains.\n"
+            "{T}: Add {W}.\n"
+            "{2}{W}{W}, {T}: Create a 1/1 white Human creature token.",
+            produced_mana=("W",),
+            color_identity="W",
+        )
+        replacement = next(r for r in card.replacements if r["event"] == "self_enters_tapped")
+        assert replacement["condition"] == {
+            "not": {
+                "exists": {
+                    "zone": "battlefield",
+                    "controller": "you",
+                    "subtypes": ["Plains"],
+                }
+            }
+        }
+        assert not any("printed condition is not modelled" in n for n in result.notes)
+
     def test_an_unreadable_condition_still_enters_tapped_and_says_so(self):
         """A free untapped dual distorts a game far more than a slow one.
 
