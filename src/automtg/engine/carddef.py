@@ -123,6 +123,12 @@ class Cost:
     #: on the next untap step -- so a cost of this shape is repeatable in a way
     #: neither of those is.
     tap_permanents: Mapping[str, Any] | None = None
+    #: "Untap two tapped creatures you control": the mirror of
+    #: ``tap_permanents``, pool forced to ``tapped: True``.  Distinct from
+    #: ``untap``, which is the ``{Q}`` symbol and only ever untaps the source --
+    #: Halo Fountain's cost carries ``tap`` *and* this, and they name different
+    #: permanents.
+    untap_permanents: Mapping[str, Any] | None = None
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
@@ -183,6 +189,9 @@ class Cost:
             tap_permanents=(
                 dict(spec["tap_permanents"]) if spec.get("tap_permanents") else None
             ),
+            untap_permanents=(
+                dict(spec["untap_permanents"]) if spec.get("untap_permanents") else None
+            ),
             discard=int(spec.get("discard", 0) or 0),
             discard_selector=(
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
@@ -228,6 +237,7 @@ class Cost:
             and self.sacrifice is None
             and self.return_to_hand is None
             and self.tap_permanents is None
+            and self.untap_permanents is None
             and self.discard == 0
             and not self.discard_self
             and not self.pay_life
@@ -250,6 +260,10 @@ class Cost:
             parts.append("Return to hand")
         if self.tap_permanents:
             parts.append(f"Tap {self.tap_permanents.get('count', 1)} untapped permanents")
+        if self.untap_permanents:
+            parts.append(
+                f"Untap {self.untap_permanents.get('count', 1)} tapped permanents"
+            )
         if self.discard:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:

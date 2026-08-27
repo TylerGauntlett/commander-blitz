@@ -37,7 +37,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
-from .primitives import lose_life, sacrifice_forbidden, tap_permanent
+from .primitives import lose_life, sacrifice_forbidden, tap_permanent, untap_permanent
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -664,6 +664,10 @@ def can_pay(
         return False
     if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
         return False
+    if cost.untap_permanents is not None and not _untap_cost_pool(
+        state, pid, cost, source_oid
+    ):
+        return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
         kind = str(cost.remove_counters.get("counter", "+1/+1"))
@@ -811,6 +815,38 @@ def _total_power(state: GameState, oids: list[int]) -> int:
     return sum(chars(state, oid).power for oid in oids if oid in state.objects)
 
 
+def _untap_cost_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> list[int]:
+    """Which permanents this cost may untap -- "two tapped creatures you control".
+
+    The mirror of :func:`_tap_cost_pool`, and ``tapped: True`` is forced for the
+    same reason its twin forces ``tapped: False``: "tapped" is part of every
+    printed line of this shape, and a cost that could "untap" something already
+    untapped would be free. Halo Fountain is a combo engine whose whole
+    constraint is that the board has to be bent before it can be unbent.
+
+    No ``total_power``. Crew is a printed sum -- "total power 3 or greater" --
+    and nothing printed unbends a board by power; the loader refuses one rather
+    than letting it load and be ignored.
+
+    Summoning sickness does not apply, for `_tap_cost_pool`'s reason: rule 302.6
+    restricts the ``{T}`` symbol in a permanent's *own* cost, and this is a cost
+    that reaches other permanents. A creature that arrived tapped this turn --
+    off Halo Fountain's own Citizen line, or attacking -- pays it.
+    """
+    from .effects.selectors import resolve_pool
+
+    spec = dict(cost.untap_permanents or {})
+    spec.setdefault("controller", "you")
+    spec.setdefault("zone", "battlefield")
+    spec["tapped"] = True
+    count = int(spec.pop("count", 1) or 1)
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    pool = resolve_pool(ctx, spec)
+    return pool if len(pool) >= count else []
+
+
 def _graveyard_pool(
     state: GameState, pid: int, cost: Cost, source_oid: int | None
 ) -> list[int]:
@@ -946,6 +982,14 @@ def pay(
                 needed -= _total_power(state, [chosen])
                 tap_permanent(state, chosen)
                 remaining.remove(chosen)
+
+    if cost.untap_permanents is not None:
+        spec = dict(cost.untap_permanents)
+        count = int(spec.pop("count", 1) or 1)
+        pool = _untap_cost_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(ctx, "Untap", pool, count, count, pid, "untap_cost")
+        for oid in picked:
+            untap_permanent(state, oid)
 
     if cost.remove_counters is not None and source_oid is not None:
         from .primitives import remove_counters

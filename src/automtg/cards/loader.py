@@ -184,6 +184,38 @@ STATIC_EFFECTS = frozenset(
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
         "spell_cost_reduction",
+        # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
+        # Food, or Treasure token, instead create one of each."  Read by
+        # `primitives.create_token`, which is the only moment a token creation
+        # can still be intercepted -- a `replacements` entry could not, because
+        # every one of those modifies a permanent that is already arriving, and
+        # a `token_created` trigger fires after the token exists and would add
+        # tokens alongside rather than instead.  Narrow on purpose: see
+        # `docs/rules-coverage.md`, which records that there is no general
+        # rule-616 replacement system and that this is not the start of one.
+        "replace_token_creation",
+    }
+)
+
+#: Keys a ``replace_token_creation`` static's ``affects_token`` filter may use.
+#:
+#: The printed face of a token definition, and nothing else.  Not
+#: `SPELL_FILTER_KEYS`, which carries `controller`: the token being asked about
+#: has not been created, so it has no controller of its own, and *whose* token
+#: it is has already been decided before the filter is asked -- these
+#: replacements are their controller's own ("if you would create…", "under your
+#: control"), so a `controller` key here could only restate that or contradict
+#: it.
+TOKEN_FILTER_KEYS = frozenset(
+    {
+        "types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "keywords",
+        "not_keywords",
+        "name",
     }
 )
 
@@ -1678,6 +1710,39 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_spells' only means anything on a "
             f"spell_cost_reduction static, not on {model.effect!r}"
         )
+    if model.effect == "replace_token_creation":
+        # `affects` names permanents on the battlefield; the token this asks
+        # about has not been created and there is nothing on the battlefield for
+        # that filter to find. Refused rather than ignored, because a Divine
+        # Visitation written with `affects` would load clean, replace nothing,
+        # and print a line of text it never performs.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: replace_token_creation filters the token about to be "
+                f"made with 'affects_token', not 'affects' (which picks out "
+                f"permanents already on the battlefield)"
+            )
+        if model.affects_token is not None:
+            unknown = set(model.affects_token) - TOKEN_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.affects_token: a token that does not exist yet has a "
+                    f"printed face and nothing else; unsupported keys {sorted(unknown)}"
+                )
+        # A replacement that creates nothing is not this effect. "Instead create
+        # one of each" and "that many are created instead" both name what is
+        # made; an empty list would silently *delete* every token its filter
+        # matched, which is a different and much stronger card.
+        if not model.create_instead:
+            raise DslError(
+                f"{where}: replace_token_creation needs 'create_instead' -- the "
+                f"token ids created instead, one of each per token replaced"
+            )
+    elif model.affects_token is not None or model.create_instead:
+        raise DslError(
+            f"{where}: 'affects_token'/'create_instead' only mean anything on a "
+            f"replace_token_creation static, not on {model.effect!r}"
+        )
     if model.effect in (
         "extra_land_drops",
         "no_hand_limit",
@@ -1691,9 +1756,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     ):
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
-    elif model.effect == "spell_cost_reduction":
-        # Picks out *spells*, through `affects_spells`, checked above. There are
-        # no permanents for `affects` to name.
+    elif model.effect in ("spell_cost_reduction", "replace_token_creation"):
+        # Picks out *spells* or *tokens not yet created*, through
+        # `affects_spells` and `affects_token`, both checked above. There are no
+        # permanents for `affects` to name.
         pass
     elif model.affects is None:
         raise DslError(f"{where}: static effect {model.effect!r} needs 'affects'")
@@ -1799,6 +1865,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects"] = dict(model.affects)
     if model.affects_spells is not None:
         static["affects_spells"] = dict(model.affects_spells)
+    if model.affects_token is not None:
+        static["affects_token"] = dict(model.affects_token)
+    if model.create_instead:
+        static["create_instead"] = list(model.create_instead)
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     for field_name in ("power", "toughness", "amount"):
@@ -2337,6 +2407,24 @@ def _compile_cost(model, where: str) -> Cost:
             f"{where}.cost.tap_permanents: 'tapped' is implied and may not be set; "
             f"this cost always taps untapped permanents"
         )
+    if model.untap_permanents is not None:
+        if "tapped" in model.untap_permanents:
+            # The mirror guard, for the mirror reason: the pool forces
+            # `tapped: True`, "tapped" is in every printed line of this shape,
+            # and a cost that could "untap" an untapped creature costs nothing.
+            raise DslError(
+                f"{where}.cost.untap_permanents: 'tapped' is implied and may not be "
+                f"set; this cost always untaps tapped permanents"
+            )
+        if "total_power" in model.untap_permanents:
+            # Crew is `tap_permanents`', and it is a printed sum -- "total power
+            # 3 or greater". Nothing printed unbends a board by power, so this
+            # is refused rather than accepted and silently ignored.
+            raise DslError(
+                f"{where}.cost.untap_permanents: 'total_power' is crew's and belongs "
+                f"to 'tap_permanents'; give a 'count'"
+            )
+        validate_selector(model.untap_permanents, f"{where}.cost.untap_permanents")
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
     cost = Cost.from_spec(model.model_dump())
@@ -2857,6 +2945,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
             raise DslError(
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
+            )
+    if op == "return_spell_to_hand":
+        # "Return target **spell** to its owner's hand." The op reads
+        # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed
+        # at a `permanent` or `player` target it returns nothing, silently, and
+        # the card resolves having done exactly half of what it says. Both
+        # halves of that are checked: the target has to exist, and it has to be
+        # the kind that can *be* a spell.
+        tid = str(effect.get("target", "t1"))
+        if tid not in target_kinds:
+            raise DslError(
+                f"{where}: return_spell_to_hand references target {tid!r} "
+                f"which the card does not declare"
+            )
+        if target_kinds[tid] != "spell":
+            raise DslError(
+                f"{where}: return_spell_to_hand needs a target of kind 'spell', "
+                f"and {tid!r} is {target_kinds[tid]!r} "
+                f"(a permanent goes back with return_to_hand)"
+            )
+        if "objects" in effect:
+            # The obvious thing to write, copied off `return_to_hand`, and it is
+            # accepted and ignored: a spell is named by the target it was cast
+            # at, not by a selector over a zone. Refused rather than dropped,
+            # because "return every spell on the stack" is a different card.
+            raise DslError(
+                f"{where}: return_spell_to_hand reads no 'objects' -- it takes "
+                f"the spell its 'target' names"
             )
     # Every op that names a player spells it `player` and every one of them
     # feeds `select_players`, so this is checked once here rather than per op --
@@ -3812,17 +3928,31 @@ def link_meld_results(cards: dict[str, CardDef]) -> None:
 
 
 def validate_token_references(cards: Mapping[str, CardDef]) -> None:
-    """Every ``create_token`` must name a card id that exists and is a token."""
+    """Every ``create_token`` must name a card id that exists and is a token.
+
+    ``create_instead`` on a `replace_token_creation` static is checked by the
+    same rule and in the same place: it names token ids that
+    `primitives.create_token` will put onto the battlefield, so an id that is
+    missing or is a real card fails identically -- and it must fail *here*
+    rather than at the moment somebody plays a Treasure into a Divine
+    Visitation, which is a game already in progress.
+    """
+
+    def check(card: CardDef, token_id: str, where: str) -> None:
+        token = cards.get(token_id)
+        if token is None:
+            raise DslError(f"{card.id}: {where} references unknown card {token_id!r}")
+        if not token.is_token:
+            raise DslError(f"{card.id}: {token_id!r} is not marked as a token")
+
     for card in cards.values():
         for effect in _walk_effects(card):
-            if effect.get("op") != "create_token":
-                continue
-            token_id = str(effect.get("token"))
-            token = cards.get(token_id)
-            if token is None:
-                raise DslError(f"{card.id}: create_token references unknown card {token_id!r}")
-            if not token.is_token:
-                raise DslError(f"{card.id}: {token_id!r} is not marked as a token")
+            if effect.get("op") == "create_token":
+                check(card, str(effect.get("token")), "create_token")
+        for ability in card.abilities:
+            static = ability.static or {}
+            for token_id in static.get("create_instead", ()):
+                check(card, str(token_id), "create_instead")
 
 
 def _walk_effects(card: CardDef):

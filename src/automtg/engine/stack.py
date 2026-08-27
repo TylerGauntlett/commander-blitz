@@ -167,6 +167,63 @@ def announce_targets(state: GameState, item: StackItem) -> None:
             )
 
 
+def pull_spell_off_stack(
+    state: GameState,
+    sid: int,
+    to_zone: Zone,
+    *,
+    cause: str = "",
+    by: int | None = None,
+) -> StackItem | None:
+    """Take a spell off the stack **without countering it**, and move its card.
+
+    The counterpart of :func:`push_spell`, and deliberately not a counter.
+    Countering is one specific action (701.5a) with three observable
+    consequences the rules attach to it and to nothing else: it is stopped by
+    "this spell can't be countered", it puts the card into its owner's
+    graveyard, and it is the thing "whenever a spell is countered" watches.
+    "Return target spell to its owner's hand" (Reprieve) shares none of them --
+    it is a plain zone change of the card the spell is, so an uncounterable
+    spell is returned like any other and nothing that watches for a countered
+    spell sees anything happen.
+
+    ``to_zone`` is a parameter rather than a constant because *where the card
+    goes* is the only thing that varies between the effects that do this;
+    everything above it -- unlinking the object, forgetting the face it was cast
+    as, and a copy ceasing to exist -- is the same however far it travels.
+
+    Returns the removed :class:`StackItem`, or ``None`` when that ``sid`` is not
+    a spell on the stack any more. That is not an error: targets are re-checked
+    on resolution (608.2b), and a spell that has already left is simply no
+    longer there to move.
+    """
+    item = state.stack_item(sid)
+    if item is None or not item.is_spell:
+        return None
+    state.stack = [it for it in state.stack if it.sid != sid]
+    obj = state.objects.get(item.oid) if item.oid is not None else None
+    if obj is None:
+        return item
+    obj.stack_id = None
+    # It has stopped being a spell, so it stops showing the face it was cast as
+    # -- 715.3c and 702.127b exile an Adventure or a disturbed face *as it
+    # resolves*, and this one never did.
+    obj.showing_second_face = False
+    if obj.is_token:
+        # Rule 706.10: a copy of a spell is not a card, so there is no card to
+        # put anywhere -- 704.5e removes it the moment it is no longer on the
+        # stack. Bouncing a storm copy therefore puts nothing into anybody's
+        # hand, and moving it to `to_zone` first would emit a zone change
+        # saying a card arrived there, which is a card the owner never had.
+        # Removed here rather than left to the token state-based action, which
+        # deliberately exempts the stack (see `sba`) and so would never see it.
+        state.objects.pop(obj.oid, None)
+        state.bump_chars()
+        return item
+    move_object(state, obj.oid, to_zone, to_player=obj.owner, cause=cause, by=by)
+    return item
+
+
 def push_activated_ability(
     state: GameState,
     source_oid: int,

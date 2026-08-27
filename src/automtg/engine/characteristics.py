@@ -1636,6 +1636,46 @@ def player_extra_land_drops(state: GameState, pid: int) -> int:
     )
 
 
+def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str, Any]]:
+    """The active ``replace_token_creation`` statics ``pid`` controls, in battlefield order.
+
+    Academy Manufactor and Divine Visitation. Read by
+    `primitives._token_creation_plan` and by nothing else, the way
+    `untap_during_each_untap_step` is read by the untap step alone: a token that
+    is about to be created has no object for a characteristic to attach to, so
+    this cannot be a layer -- it is a fact about what *will* be made.
+
+    Filtered on the source's controller rather than on `affects_player`, because
+    both printed cards say "you" and neither prints the opponent-facing half.
+    Order is `state.battlefield` order, which is arrival order: rule 616.1 gives
+    the choice of which replacement to apply first to the affected player, and
+    this engine does not ask -- see `_token_creation_plan`, which owns that
+    divergence and the once-per-event rule with it.
+    """
+    return [
+        static
+        for obj, static in _active_player_statics(state, "replace_token_creation")
+        if obj.controller == pid
+    ]
+
+
+def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:
+    """Does the token about to be created match this filter?
+
+    A token definition is nothing *but* a printed face -- there is no object yet,
+    no controller on it and no board state -- so this is `_matches_printed` and
+    only `_matches_printed`, shared with the counting filters rather than
+    rewritten beside `create_token`, where the two spellings of "Artifact
+    subtype Treasure" would drift.
+
+    An empty selector matches everything, which is the one place the static
+    filter language differs here on purpose: `_matches` refuses `None` because
+    "every permanent gets +1/+1" is not a card, and "if you would create a
+    token" with no filter at all is a shape a card really does print.
+    """
+    return _matches_printed(state.registry.get(def_id), selector)
+
+
 def commander_subtypes(state: GameState, pid: int) -> frozenset[str]:
     """Every creature type this player's commanders currently have.
 

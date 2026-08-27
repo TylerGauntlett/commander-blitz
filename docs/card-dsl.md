@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-96 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+98 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -197,7 +197,7 @@ it, but a card that needed correcting was authored wrong.
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` `copy_spell` |
+| Stack | `counter` `copy_spell` `return_spell_to_hand` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
@@ -591,6 +591,39 @@ Exclude were all Counterspell — the clause loaded, validated, and was simply
 never asked. `tests/unit/test_x_in_mana_cost.py` pins the repair on those two
 shipped cards as well as on the key it was built for.
 
+### Doing something to a spell that is not countering it
+
+```jsonc
+// Reprieve — "Return target spell to its owner's hand. Draw a card."
+{ "targets": [ { "id": "t1", "kind": "spell", "selector": {} } ],
+  "spell_effects": [ { "op": "return_spell_to_hand", "target": "t1" },
+                     { "op": "draw", "amount": { "const": 1 } } ] }
+```
+
+Rule 701.5a makes **countering** one specific action, and three things are true
+of it and of nothing else: "this spell can't be countered" stops it, the card
+lands in its owner's graveyard, and it is what "whenever a spell is countered"
+watches. Returning a spell to a hand shares none of them, so it is a separate op
+rather than a `destination` key on `counter` — which would be a card that
+declines to answer Carnage Tyrant and sets off the wrong triggers when it does.
+
+`return_to_hand` is the other near miss and the dangerous one. It takes an
+`objects` **selector**, and a `kind: "spell"` target is not an object: it is a
+`TargetRef.stack(sid)`, which `resolve_pool` drops. `{"op": "return_to_hand",
+"objects": {"target": "t1"}}` therefore loads, validates, resolves, and returns
+*nothing* — the targeted spell goes on to resolve untouched. The loader now
+refuses the two ways of writing that: `return_spell_to_hand` insists its
+`target` is declared `kind: "spell"`, and refuses an `objects` key outright.
+
+Selecting the spell by zone (`{"objects": {"zone": "stack"}}`) does move it, and
+is a different card: untargeted, so it sweeps the whole stack and ward, hexproof
+and "can't be the target of spells" stop applying.
+
+Where the card goes is its **owner's** hand — a spell whose controller is not
+its owner still goes home. And a *copy* of a spell is not a card (706.10), so
+there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
+`stack.pull_spell_off_stack` is the one place all of that lives.
+
 ## Value expressions
 
 Anywhere a number is expected:
@@ -979,6 +1012,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
   "tap_permanents": { "subtypes": ["Vampire"], "count": 5 },  // taps *others*; they stay
   "tap_permanents": { "types": ["Creature"], "total_power": 3 },  // crew 3
+  "untap_permanents": { "types": ["Creature"], "count": 2 },  // untaps *others*; they stay
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
@@ -1024,6 +1058,26 @@ shape and a cost that could re-tap something already tapped costs nothing.
 Summoning sickness deliberately does not apply: rule 302.6 restricts the `{T}`
 symbol in a permanent's *own* cost, and Captivating Vampire's ruling is explicit
 that a Vampire which just arrived may be tapped for it — the source included.
+
+`untap_permanents` is its mirror — "Untap two tapped creatures you control",
+Halo Fountain — and everything above holds with the sign flipped. The pool forces
+`tapped: **true**`, the loader refuses a card that spells `tapped` itself, the
+permanents stay, and summoning sickness does not apply.
+
+It is not `untap`. `untap` is the `{Q}` symbol and only ever untaps the source,
+and on this card that is not merely imprecise, it is the wrong permanent: Halo
+Fountain's cost is `{T}` **and** an untap, so `"tap": true, "untap": true` taps
+the Fountain, untaps the Fountain, and touches no creature at all. The two
+halves have to name different permanents, which is exactly what a selector cost
+is for.
+
+Nor is it the `untap` **op**, for `tap_permanents`' reason doubled: paying at
+resolution lets the ability be activated with nothing tapped, and Halo Fountain's
+third line is *"you win the game"*. The gating is the card.
+
+No `total_power`. Crew is a printed sum — "total power 3 or greater" — and
+nothing printed unbends a board by power, so one here is a load error rather
+than a knob that quietly reads as "untap one".
 
 ### Crew — a tap cost measured in power
 
@@ -1464,6 +1518,7 @@ characteristics — the loader rejects anything else. See
 
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
 `block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
+[`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 `extra_land_drops`, plus the player-wide ones below.
 
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
@@ -1810,6 +1865,71 @@ Last-known information, made explicit:
 
 Without the `snapshot`, the creature would already be gone by the time the life gain
 is computed. Declaring it is the engine's substitute for a general LKI system.
+
+## "If you would create a … token, instead …"
+
+Two printed sentences, one static:
+
+```jsonc
+// Academy Manufactor
+{ "kind": "static",
+  "text": "If you would create a Clue, Food, or Treasure token, instead create one of each.",
+  "effect": "replace_token_creation",
+  "affects_token": { "subtypes": ["Clue", "Food", "Treasure"] },
+  "create_instead": ["clue_token", "food_token", "treasure_token"] }
+```
+
+```jsonc
+// Divine Visitation
+{ "kind": "static",
+  "text": "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead.",
+  "effect": "replace_token_creation",
+  "affects_token": { "types": ["Creature"] },
+  "create_instead": ["angel_4_4_w_flying_vigilance"] }
+```
+
+**Each token that would have been created becomes one of each id in
+`create_instead`.** That single rule is why the two cards need one field and not
+two: Manufactor lists three ids, so one Treasure becomes a Clue, a Food and a
+Treasure (and *two* Treasures become two of each); Divine Visitation lists one,
+so N Soldiers become N Angels and "that many" is preserved without a count ever
+being written down. There is no count multiplier — Doubling Season and Parallel
+Lives are still blocked, deliberately.
+
+`affects_token`, not `affects`: the token being asked about **does not exist
+yet**, so there is no permanent for a static filter to find and no board state to
+read. It takes the printed-face keys (`types`, `not_types`, `subtypes`,
+`supertypes`, `colors`, `keywords`, `not_keywords`, `name`) and the loader
+refuses everything else, along with an `affects` written here by mistake — which
+would otherwise load clean, match nothing, and print a line the card never
+performs. Omitting the filter matches every token.
+
+Three rules the mechanism is entirely shaped by:
+
+- **A replacement applies at most once to each creation** (614.5). The statics
+  are gathered once and applied in one pass, so Divine Visitation does not
+  replace the Angels it just made — they are creature tokens too, and re-reading
+  its own output is not a slow card, it is a hang. It also fixes the numbers when
+  there are two: two Divine Visitations still make N Angels, and two Academy
+  Manufactors turn one Treasure into **three of each**, which is the printed
+  ruling.
+- **The replacement belongs to the token's controller.** Both cards say "you", so
+  the statics consulted are the ones the seat *the token arrives under* controls
+  — not the seat that controls whatever is creating it. A Manufactor's controller
+  handing an opponent a Treasure hands them one Treasure.
+- **Only the identity is replaced.** Everything else the creating effect said
+  still applies, so `"tapped": true` into a Divine Visitation is a tapped Angel
+  and `attacking` still joins combat. Embalm-style `overrides` are the exception
+  and are dropped: they describe the token that was replaced and never made.
+
+This is a hook inside `primitives.create_token` and **not** a general rule-616
+replacement system — see [rules-coverage](rules-coverage.md#not-implemented).
+Token creation gets one because it is the only event in the engine whose subject
+does not exist yet: a `replacements` whitelist entry modifies a permanent that is
+already arriving, and a `token_created` trigger fires after the token is on the
+battlefield, so it would add tokens *alongside* rather than instead — a strictly
+stronger card — and a Manufactor written that way would re-trigger on its own
+Treasure forever.
 
 ## Making a token that is already attacking
 
