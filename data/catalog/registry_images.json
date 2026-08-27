@@ -4317,6 +4317,10 @@
     "artist": "Jason Chan",
     "scryfall_id": "159c309c-568d-4780-9db5-b50a997e7bb2"
   },
+  "kinbinding": {
+    "artist": "Caio Monteiro",
+    "scryfall_id": "b6e35fd5-de7e-40a8-a23c-00d07fd1ac56"
+  },
   "kindercatch": {
     "artist": "Terese Nielsen",
     "scryfall_id": "4954e8a3-e72b-4f28-8762-2b1c658c31b6"
@@ -5005,6 +5009,10 @@
   "marshal_s_anthem": {
     "artist": "Matt Stewart",
     "scryfall_id": "7c84cbf6-cab0-4b53-ab60-470ade5c3654"
+  },
+  "martial_coup": {
+    "artist": "Andreas Zafiratos",
+    "scryfall_id": "a0660e74-6973-41d7-a20b-8d71fed1495a"
   },
   "martyr_of_dusk": {
     "artist": "Greg Staples",

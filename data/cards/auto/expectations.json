@@ -3560,6 +3560,14 @@
   "khalni_heart_expedition": {
     "zone": "battlefield"
   },
+  "kinbinding": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "kithkin_1_1_gw"
+    },
+    "zone": "battlefield"
+  },
   "kindercatch": {
     "zone": "battlefield"
   },
@@ -4126,6 +4134,18 @@
       "0": 0
     },
     "zone": "battlefield"
+  },
+  "martial_coup": {
+    "battlefield_count": 50,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 20,
+      "id": "soldier_1_1_w"
+    },
+    "zone": "graveyard"
   },
   "mask_of_avacyn": {
     "zone": "battlefield"
