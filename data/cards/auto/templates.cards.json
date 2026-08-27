@@ -61019,6 +61019,42 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "reprieve",
+      "mana_cost": "{1}{W}",
+      "name": "Reprieve",
+      "oracle_text": "Return target spell to its owner's hand.\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "return_spell_to_hand",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
