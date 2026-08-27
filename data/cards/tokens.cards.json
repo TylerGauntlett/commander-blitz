@@ -81,6 +81,44 @@
       "is_token": true
     },
     {
+      "id": "beast_4_4_w_alone",
+      "name": "Beast Token",
+      "oracle_text": "This token can't attack or block alone.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't attack or block alone.",
+          "effect": "cant_attack_alone",
+          "affects": {
+            "self_only": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "This token can't attack or block alone.",
+          "effect": "cant_block_alone",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
+    },
+    {
       "id": "clue_token",
       "name": "Clue",
       "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",

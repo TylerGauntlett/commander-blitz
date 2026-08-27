@@ -19,6 +19,20 @@ from .structs import TempEffect
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
+#: A **shield counter** (122.1c): "If this permanent would be dealt damage or
+#: destroyed, remove a shield counter from it instead."
+#:
+#: A rules-defined counter kind rather than a keyword, and the distinction is the
+#: whole reason it is a constant here beside the P/T counters instead of a member
+#: of `enums.Keyword`. A keyword counter grants a keyword and the characteristics
+#: pipeline reads it off `enums.KEYWORD_COUNTERS`; a shield counter grants
+#: nothing and is *spent*, once per event, by two replacements that live where
+#: every damage and every destruction already passes -- `primitives.
+#: damage_permanent` and `zones.destroy`. Named here because both of them, and
+#: the loader's near-miss guard, have to agree on the exact string: it is stored
+#: in `GameObject.counters` like any other kind, so `move_counters` carries it
+#: onto a creature the shielding card never mentions and it keeps working there.
+SHIELD = "shield"
 
 
 @dataclass

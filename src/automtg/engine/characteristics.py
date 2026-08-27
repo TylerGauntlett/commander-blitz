@@ -1450,6 +1450,49 @@ def block_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
+def _alone_forbidden(state: GameState, oid: int, effect: str) -> bool:
+    """Is this creature under a "…alone" static of this kind?
+
+    The shared body of the two below, which differ only in the effect name they
+    look for. Deliberately **not** folded into `attack_forbidden` and
+    `block_forbidden` with a flag: those two answer "may this creature do it at
+    all", and every caller of them treats a `True` as an absolute prohibition.
+    A creature that can't attack alone can attack, so it must not be visible to
+    that question at all -- which is why this is a separate effect name rather
+    than an extra key on `cant_attack`.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != effect:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
+
+
+def attack_alone_forbidden(state: GameState, oid: int) -> bool:
+    """"This creature can't attack alone" -- may it be the *only* attacker?
+
+    A restriction on the declaration as a whole (508.1c), not on the creature,
+    so the answer here is only half of it: this says the creature carries the
+    restriction, and `combat.attacks_valid` decides whether the declaration
+    being built breaks it.
+    """
+    return _alone_forbidden(state, oid, "cant_attack_alone")
+
+
+def block_alone_forbidden(state: GameState, oid: int) -> bool:
+    """"This creature can't block alone" -- may it be its controller's only blocker?
+
+    The mirror of `attack_alone_forbidden`, read by `combat.blocks_valid`
+    (509.1b) beside menace and `require_all`, which have the same shape: a
+    legality that only exists once the whole declaration does.
+    """
+    return _alone_forbidden(state, oid, "cant_block_alone")
+
+
 def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 

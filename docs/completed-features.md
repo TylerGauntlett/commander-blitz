@@ -1,3 +1,344 @@
+## `cant_attack_alone` / `cant_block_alone` — a restriction on the declaration
+
+### Overview
+
+Toby, Beastie Befriender: *"When Toby enters, create a 4/4 white Beast creature
+token with **'This token can't attack or block alone.'**"*
+
+The gap record (`data/authoring/gaps/toby_beastie_befriender.json`) had proved
+both halves of the failure. Every prohibition the engine owned was
+per-creature — `characteristics.attack_forbidden` takes one oid and sees nothing
+else in the declaration — so writing the token with `cant_attack`/`cant_block`
+would have printed a Beast that can never attack or block: strictly stronger
+than the card, and invisible on the board. And the token itself did not exist;
+substituting `beast_4_4_g` *passed the text gates*, which would have shipped a
+green abilityless 4/4 under Toby's printed white Beast line.
+
+*Alone* is a restriction on the **declaration as a whole** (508.1c, 509.1b). The
+same creature is legal beside a second attacker and illegal by itself, so there
+is nothing to refuse when it is picked — it is judged when the declaration is
+finished, which is where menace and Tromokratis' `require_all` already lived.
+
+### What was built
+
+- **Two static effects**, not one flag on `cant_attack`. A flag would have been
+  read by every existing caller of the absolute prohibition; two names also let
+  a card print the half it prints, and the queue holds all three wordings.
+- **`combat.attacks_valid(state, player)`** — the counterpart `blocks_valid` had
+  never had. `finish_attackers` performed no whole-declaration validation at
+  all, so a correctly shaped static would have had nowhere to be enforced.
+- **`combat.drop_illegal_attacks`**, the mirror of `drop_illegal_blocks`, called
+  first thing in `finish_attackers`: a creature dropped there never taps and
+  never fires `ATTACKS`, because it did not attack.
+- **The alone clause in `blocks_valid`/`drop_illegal_blocks`**, counting the
+  defending player's whole declaration rather than one attacker's — the second
+  blocker does not have to be blocking the same creature.
+- **`legality._attacker_actions` withholds "Done attacking"** while the
+  declaration is illegal, and hands it back when there is no `ADD_ATTACKER` left
+  to offer, exactly as the blocking side does. Withholding without that escape
+  is a step with no legal action in it.
+- **The token**: `beast_4_4_w_alone`, 4/4 white Beast, both statics, each ability
+  carrying the printed sentence.
+
+Two of them declared together are legal — each is the other's company — and the
+count is read live, so a companion that dies mid-declaration was never company
+(506.4) and the creature left behind is dropped.
+
+Toby is expressible whole: his second line ("As long as you control four or more
+creature tokens, creature tokens you control have flying") needed nothing new,
+being a `grant_keyword` static over `{"controller": "you", "types": ["Creature"],
+"is_token": true}` under a `cmp` condition counting the same.
+
+## `cast_free` — a free cast out of a looked-at window
+
+### Overview
+
+Perception Bobblehead: *"{3}, {T}: Look at the top X cards of your library, where
+X is the number of Bobbleheads you control. **You may cast a spell with mana
+value 3 or less from among them without paying its mana cost.** Put the rest on
+the bottom of your library in a random order."*
+
+The gap record (`data/authoring/gaps/perception_bobblehead.json`) had already
+probed every spelling the DSL offered, and the finding is the reason this is
+worth a run: the natural one **loads and silently does nothing**.
+
+`play_exiled` is the only selector-driven free cast in the language. It defaults
+its selector to `exiled_with: "self"`, which is answered by `obj.exiled_by` — and
+`exiled_by` is written in exactly two places, `op_exile` under `until_leaves`
+and `op_hideaway`. `look_at_top`'s exile destination goes through `_move_found`
+→ `move_object` → `reset_permanent_state`, which never sets that field and
+actively clears it. So `look_at_top {"destination": "exile"}` followed by
+`play_exiled` hands the second op an empty pool. The card loads, resolves, logs
+an exile, and does nothing else. Nothing fails; it is just a blank ability.
+
+The other three are each a different card:
+
+- `playable_this_turn` is the **impulse** permission — play it later, at its
+  printed cost, expiring with the turn. `docs/card-dsl.md` keeps that distinct
+  from `play_exiled` on purpose, and "without paying its mana cost" is the other
+  side of that table.
+- `hideaway` has the right *shape* — bounded top-N, take one, bottom the rest at
+  random — and it sets `exiled_by`, so `play_exiled` can follow it. But its
+  exile is mandatory and unfiltered: it forces a card out of the window when
+  nothing there is castable, and a card exiled and not cast is gone from the
+  library for good instead of going to the bottom with the rest. Strictly worse
+  than the printing, and observable.
+- `cascade` and `ripple` free-cast off a library already, but their tests are
+  hardcoded — "nonland card with lesser mana value than this spell", "the same
+  name as this spell" — and neither takes a parameter a card can substitute a
+  selector into. Cascade's depth is also unknowable, where this card looks at
+  exactly X.
+
+### Tier: A — one key on an existing op
+
+No new op: `look_at_top` already had the bounded window, the selector, the
+`count`/`optional` vocabulary through `pick_from_pool`, and `rest_to_bottom`.
+No new `DecisionKind`: `_offer_free_cast` composes `ask_yes_no`, which cascade
+and ripple have used since they shipped. No `EventType` — `cast_for_free` fires
+`SPELL_CAST` with `free=1`, which the log and "whenever you cast" triggers
+already read. No server or frontend change.
+
+### The design question: where the free cast is bolted on
+
+Three places it could have gone, and the choice is forced by *where the declined
+card ends up*.
+
+1. **A key on `look_at_top`** — chosen. `op_look_at_top` branches: with
+   `cast_free`, what `pick_from_pool` narrowed goes to `_cast_from_window`
+   instead of `_move_found`, and that helper returns the oids that actually
+   reached the stack. Everything else — refused, unpickable, filtered out by the
+   selector, a land — is still "the rest", and the existing `rest_to_bottom`
+   branch bottoms it unchanged. One op owns the window and the remainder, which
+   is the only arrangement where those two cannot disagree.
+2. **Record `exiled_by` in `_move_found`.** One line, and it would make
+   `look_at_top {"destination": "exile"}` + `play_exiled` work. It also changes
+   the card: it exiles cards the printing only ever *looks at*, and a declined
+   card sits in exile permanently rather than going to the bottom. That is
+   hideaway's bargain, and refusing it is rule 3 of the brief — a
+   half-implemented mechanic makes a cheaper card than the printed one.
+3. **A binding the free cast reads.** `look_at_top` stores the window under
+   `as`, a later `play_exiled` reads it. It costs a new selector key, an
+   implicit contract between two ops, and it *still* leaves the "put the rest on
+   the bottom" bookkeeping split across the pair — the second op would have to
+   hand the first one back its refusals.
+
+### What shipped
+
+- `src/automtg/engine/effects/ops_cards.py` — `cast_free` on `op_look_at_top`,
+  and `_cast_from_window`, which offers each picked card through the existing
+  `_offer_free_cast` and returns what reached the stack. `taken` is now computed
+  on both branches so `rest_to_bottom` reads one variable either way.
+- **Lands are filtered out of the pool** under `cast_free`. "Cast **a spell**" —
+  a land is played, never cast (601.2), and `cast_for_free` would put one on the
+  stack without complaining. The filter cannot live in the card's selector,
+  because "mana value 3 or less" is true of every land ever printed, so the
+  selector that spells Perception Bobblehead would otherwise offer a free
+  Forest-on-the-stack. Filtered lands are still bottomed: they were looked at.
+- `src/automtg/cards/loader.py` — two guards. `cast_free` on any op but
+  `look_at_top` is refused (`exile`, `search_library` and friends ignore unknown
+  keys, so the card would load and charge full price for a spell the printing
+  gives away). And beside `cast_free`, the keys `destination`, `tapped` and
+  `playable_this_turn` are refused: each is read only on the branch `cast_free`
+  replaces, so written together one half is silently dropped — and
+  `playable_this_turn` is the *opposite* card besides.
+- `tests/unit/test_free_cast_from_window.py` — 23 tests.
+- `docs/card-dsl.md` — "Casting for free out of the window", a third column on
+  the impulse-draw comparison table, and a pointer from the `look_at_top`
+  paragraph. `docs/rules-coverage.md` — a row under Implemented.
+
+### 601.2b, in both directions
+
+Casting without paying is still casting. `_offer_free_cast` shares
+`suspend.cast_for_free`, so the spell goes on the **stack**: its "whenever you
+cast" triggers fire, it can be countered, and its targets are chosen now. It
+gets **no haste** — that flag belongs to suspend, and a creature cast this way
+that could attack immediately would be a strictly better card.
+
+And "you **may** cast" is optional twice over: the pick itself is declinable
+(`optional: true` on the selector), and the offer is a yes/no. A refusal — or a
+cast that cannot happen because nothing is a legal target — folds the card back
+into the rest rather than losing it.
+
+### Determinism
+
+"In a random order" goes through the shared `_bottom_in_random_order`, which
+uses `state.rng.shuffled` and never `random`.
+`tests/unit/test_determinism_hygiene.py` scans the source for the latter;
+`TestTheOrderComesFromTheGameRng` pins the former from the outside, asserting
+that the game's own stream advanced and that a fixed seed reproduces the order.
+
+### What the test proves
+
+The naive implementation silently does nothing, so "the spell resolved" is not a
+test. Three claims carry it:
+
+- **Free.** The controller has no lands and an empty mana pool, so a `{1}{G}`
+  creature on the stack could not have been paid for from that board at all —
+  and the `SPELL_CAST` event carries `free=1`, which is what a cast trigger and
+  the log read.
+- **The rest reached the bottom.** The cast card is *not* among them (bottoming
+  it would drag it off the stack); a declined one *is*; the card below the
+  window is untouched and still on top; and `player.exile` is empty in every
+  case, which is where every alternative spelling would have stranded them.
+- **The selector bounds it.** An overpriced card and a land are never offered at
+  all — no decision is asked — and a castable card one deeper than `amount` was
+  never looked at.
+
+### Guarded by
+
+`tests/unit/test_free_cast_from_window.py`,
+`tests/unit/test_cascade_and_ripple.py` (the shared `_offer_free_cast` and
+`_bottom_in_random_order`), `tests/unit/test_determinism_hygiene.py`, and
+`tests/cards` re-running all six authoring gates over every machine-authored
+card.
+
+## Shield counters — a replacement effect that lives on a counter
+
+### Overview
+
+Diamond City: *"This land enters with a shield counter on it. (**If it would be
+dealt damage or destroyed, remove a shield counter from it instead.**) / {T}: Add
+{C}. / {T}: Move a shield counter from this land onto target creature. Activate
+only if two or more creatures entered the battlefield under your control this
+turn."*
+
+The gap record (`data/authoring/gaps/diamond_city.json`) is unusual, and its
+warning is the reason this was filed rather than shipped. Counter kinds are free
+strings, so the worker **built the would-be answer** — a
+`self_enters_with_counters` replacement naming `"shield"`, plus the
+`move_counters` ability for line three — and it **passed all six gates**, with
+the expectation `{"zone": "battlefield", "counters": {"kind": "shield", "amount":
+1}}` satisfied exactly. No gate can see this gap: placing the counter is
+genuine, showing it is genuine, moving it is genuine, and only its *meaning* is
+missing. The land entered with an inert tally, died to the first removal spell it
+is printed to survive, and spent a tap moving a token of nothing onto a creature.
+
+So the unit test is the only thing that can prove the counter does anything, and
+that is what `tests/unit/test_shield_counter.py` is for.
+
+### What was missing, exactly
+
+Three near misses, all of them checked and none of them usable:
+
+- `enums.KEYWORD_COUNTERS` is `frozenset(k.value for k in Keyword) -
+  INERT_KEYWORDS`, and "shield" is not a `Keyword`. The characteristics pipeline
+  therefore applies nothing for it, and `values.validate_counter_kind` documents
+  that a kind normalising onto no keyword "is somebody's charge counter" and is
+  deliberately left as an inert tally.
+- `zones.destroy` replaced a destruction from exactly three places — the
+  `indestructible` keyword, the integer `obj.regeneration_shields`, and totem
+  armor read off the Aura. None counter-driven, and none transferable.
+- `prevent_damage` is refused an `objects` clause outright ("`prevent_damage`
+  shields a *player* and takes no objects"), so it cannot cover a permanent at
+  all.
+
+The `regenerate` op is the nearest miss and is wrong four ways: it does not touch
+damage, it taps the permanent and removes its damage (701.15a) where a shield
+counter does neither, its shields are wiped at cleanup, and they live in an
+integer field rather than in `obj.counters` — so `move_counters` could not carry
+one onto the target creature, which is the third line of the card.
+
+### The shape
+
+**No new op, no new keyword, no new `EventType`, no new `DecisionKind`, no API
+field.** The DSL already had every word Diamond City needs. What it needed is
+that two existing code paths read the counter.
+
+Two shipped paths were the right precedents, and this is exactly those two keyed
+on a counter kind instead of on a field or a keyword:
+
+| | |
+|---|---|
+| `obj.regeneration_shields` | a spent-once replacement of a **destruction** |
+| absorb / `prevented_damage` | a per-permanent prevention of **damage** |
+
+`objects.SHIELD` names the kind, so the two hooks and the loader's guard cannot
+drift; `primitives.spend_shield_counter` is the single consumer, because the rule
+is *one counter per event* whatever the event was, and written twice the two
+sites would disagree about the one thing the card is bought for. It removes the
+counter and says so, and nothing else — what replaced what is the caller's
+sentence, since prevented damage is a `DAMAGE_PREVENTED` the trigger bus already
+carries and a replaced destruction is a log line beside `regenerated` and
+`totem_armor`.
+
+**It lives on the counter rather than on the card**, which is load-bearing rather
+than tidy: Diamond City's third ability moves the shield onto a creature the land
+never mentions, and it has to go on working there.
+
+### The four properties, and the boundary each one is
+
+```
+it replaces damage AND destruction   one counter per event, not per point
+a replacement, not a reduction       5 damage costs one counter, marks nothing
+not indestructible                   with no counters left, it dies
+not regeneration                     no tap, no un-combat, damage stays marked
+```
+
+The last row has a visible consequence. Because the marked damage stays, a
+shielded creature standing in lethal damage is destroyed, replaced, and then
+checked **again** (704.3) — so it sheds one counter per state-based-action check
+until it has none. Regeneration and totem armor both remove the damage and stop
+after one; the shield counter does not, and that asymmetry is printed. It also
+took the one line outside the two hooks: `sba._creature_deaths` reports `changed`
+when a counter was spent, because `destroy` returning False was previously the
+only way it knew the board had not moved. Without it the loop stops after one
+counter and the creature survives on the rest until somebody next gets priority.
+
+### Two orderings, neither of which shows on a board
+
+**`indestructible` is checked first and spends nothing.** It is not a replacement
+that consumes anything — the destruction simply never happens — so a permanent
+that survives on it keeps its counter, exactly as it keeps its regeneration
+shield.
+
+**The counter goes after absorb and before a regeneration shield.** Both pairs
+are two replacements of one event, which 616.1 hands to the affected player and
+the engine does not model. Both orderings are the choice its controller would
+make: after absorb, the counter is spent only on damage that would otherwise
+land, so a 2-damage ping into "prevent the next 3" leaves it alone; before
+regeneration, it is the cheaper of the two ways to survive, costing no tap, no
+removal from combat and no damage.
+
+On the damage side it also has to sit **before** the planeswalker and wither
+branches, because each of those is a different *place to put* the damage rather
+than a reason it was not dealt — a shielded planeswalker must not lose loyalty
+and a shielded creature must not take -1/-1 counters from a withering source.
+
+### What it does not stop
+
+**Sacrifice** (701.16b) and **0 toughness** both go through, and that is the
+absence of a rule rather than an extra one: neither destroys, so neither reaches
+`zones.destroy`. Regeneration and totem armor fail against both for the same
+reason.
+
+### The guard
+
+`values.validate_counter_kind` grew a second near-miss branch beside the keyword
+one, so `"Shield"`, `"shield counter"` and `"shield counters"` are refused at
+load while `"shielding"` and `"charge"` stay free. Every path already routed
+through it — `_validate_effect`'s single `counter` check covers `add_counters`,
+`remove_counters` and `move_counters`, and the replacement validator checks
+`self_enters_with_counters` explicitly — so the guard reaches the card without a
+new call site.
+
+It matters more here than for a keyword counter, and the reason is the gap
+record's warning again: a mis-spelled shield counter is **visible on the board**.
+It is placed, shown, moved by `move_counters` and added to by `proliferate` — and
+the permanent still dies.
+
+### Files
+
+- `src/automtg/engine/objects.py` — `SHIELD`, beside `PLUS_ONE` and `MINUS_ONE`
+- `src/automtg/engine/primitives.py` — `spend_shield_counter`, and the damage hook
+- `src/automtg/engine/zones.py` — the destruction hook, second in the ladder
+- `src/automtg/engine/sba.py` — the state-based-action loop keeps going
+- `src/automtg/engine/effects/values.py` — the near-miss guard
+- `tests/unit/test_shield_counter.py` — 36 tests
+
+Diamond City itself is not in `data/` — the prototype lives in the test file, as
+`TestDiamondCity`, because the point is the engine: that exact card definition
+loaded and passed every gate before this change, and the land still died.
+
 ## `demonstrate` — a copy that belongs to somebody else
 
 ### Overview

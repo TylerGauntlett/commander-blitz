@@ -30,7 +30,7 @@ from typing import Any
 from ..characteristics import chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
-from ..objects import PLUS_ONE
+from ..objects import PLUS_ONE, SHIELD
 from .context import EffectContext
 
 #: Every key that may appear at the top level of a value expression.
@@ -600,11 +600,12 @@ def validate_mana_symbols(spec: Any, where: str, *, validate_objects: Any = None
 
 
 def validate_counter_kind(kind: Any, where: str) -> None:
-    """Refuse a counter kind that *nearly* names a keyword (122.1c).
+    """Refuse a counter kind that *nearly* names one the engine acts on (122.1c).
 
     A counter kind is a free string on purpose -- charge, quest, slumber, lore,
-    age -- so there is no vocabulary to check it against, with one exception.
-    A **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
+    age -- so there is no vocabulary to check it against, with two exceptions.
+    A **shield** counter is spent to replace damage and destruction, and a
+    **keyword** counter grants its keyword (`enums.KEYWORD_COUNTERS`, read by
     the characteristics pipeline), and the match is exact: `"vigilance"` makes a
     vigilant creature and `"Vigilance"`, `"vigilance counter"` and
     `"first strike"` each make a tally nobody consults, on a card that loads
@@ -612,7 +613,7 @@ def validate_counter_kind(kind: Any, where: str) -> None:
 
     That is the one failure mode this whole validation pass exists to refuse,
     and unusually it is detectable, because the near miss normalises onto a
-    keyword the engine implements. A kind that normalises onto nothing is left
+    kind the engine implements. A kind that normalises onto nothing is left
     alone -- it is somebody's charge counter, and guessing at typos in an open
     vocabulary would refuse cards that are correct.
 
@@ -628,6 +629,18 @@ def validate_counter_kind(kind: Any, where: str) -> None:
         if normalised.endswith(suffix):
             normalised = normalised[: -len(suffix)]
     normalised = "_".join(normalised.split())
+    if normalised != kind and normalised == SHIELD:
+        # The same failure with a different consumer. A shield counter is not a
+        # keyword -- it grants nothing and is *spent*, by the replacements in
+        # `zones.destroy` and `primitives.damage_permanent`, and those read the
+        # kind exactly. `"Shield"` on Diamond City would place a counter, show a
+        # counter and be moved by `move_counters` like a counter, and the land
+        # would still die to the removal it is printed to survive.
+        raise DslError(
+            f"{where}: write the shield counter as {SHIELD!r}, not {kind!r}. A shield "
+            f"counter replaces damage and destruction (122.1c) and the lookup is exact, "
+            f"so {kind!r} would be an inert tally on a permanent that never spends it"
+        )
     if normalised != kind and normalised in KEYWORD_COUNTERS:
         raise DslError(
             f"{where}: write a keyword counter as the exact keyword name -- "

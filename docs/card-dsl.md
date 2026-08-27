@@ -157,6 +157,9 @@ stay on top in order), and the count is the ordinary selector `count` on
 `objects`, because `pick_from_pool` is shared with `choose_objects`. `amount` is
 required — defaulted it would look at one card and say nothing about it.
 
+`cast_free` sends what was picked to the **stack** instead of to a destination
+zone — see [Casting for free out of the window](#casting-for-free-out-of-the-window).
+
 `put_on_top` sends a permanent to a library, and `from_top` says **how deep**:
 
 ```jsonc
@@ -1640,6 +1643,7 @@ characteristics — the loader rejects anything else. See
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
 `block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
+[`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 `extra_land_drops`, plus the player-wide ones below.
 
 A static's **magnitude** — its `power`, `toughness` or `amount`, and either side
@@ -4433,6 +4437,75 @@ Two consequences worth knowing before writing a card with one:
   making counters the one *visible* kind of grant would be the inconsistency.
   Effect selectors read derived characteristics on the battlefield and do see it.
 
+## Shield counters — the other counter kind the engine reads
+
+```jsonc
+// Diamond City: "This land enters with a shield counter on it."
+{ "event": "self_enters_with_counters", "counter": "shield", "amount": 1 }
+```
+
+**No new op, no new keyword, no new replacement entry.** A shield counter is
+rule 122.1c's other named kind, and like a keyword counter it was always
+*sayable* — what was missing is that anything read it. `zones.destroy` and
+`primitives.damage_permanent` now spend one, and `move_counters` was already
+enough for the rest of the card.
+
+The reminder text is the whole specification: *"If it would be dealt damage or
+destroyed, remove a shield counter from it instead."* Four consequences, and
+each one is a different card if it is wrong:
+
+| | |
+|---|---|
+| **two events** | it replaces a destruction *and* a damage event — one counter per event, not per point and not per turn |
+| **not a reduction** | five damage costs one counter and is prevented **entirely**. Nothing is marked, so nothing is left for a state-based action; no deathtouch, no lifelink, no damage ledger, no `DAMAGE_DEALT` |
+| **not indestructible** | with no counters left the permanent dies to the next thing that destroys it |
+| **not regeneration** | it is not tapped, not removed from combat, and its marked damage is **not** removed |
+
+That last row has a visible consequence worth knowing before writing a card that
+moves a shield onto something already hurt. Because the damage stays marked, a
+creature standing in lethal damage is destroyed, replaced, and then **checked
+again** (704.3) — so it sheds one counter per state-based-action check until it
+has none and dies. Totem armor and regeneration both remove the damage and
+therefore stop after one; the shield counter does not, and that asymmetry is
+printed.
+
+Two orderings are load-bearing and neither shows on a board. `indestructible` is
+checked **first** and does not spend a counter, because it is not a replacement
+that consumes anything — the destruction simply never happens, exactly as it
+does not spend a regeneration shield. And a shield counter is spent **after**
+absorb on the damage side and **before** a regeneration shield on the
+destruction side: 616.1 would let the affected player choose between two
+replacements of the same event, the engine does not model that choice, and both
+orderings are the one its controller would pick — the counter is spent only on
+damage that would otherwise land, and it is the cheaper of the two ways to
+survive a destruction.
+
+**Sacrifice is not destruction** (701.16b), so a shield counter does not stop
+one — nor does it save a creature from 0 toughness. Neither is an extra rule
+here: neither reaches `zones.destroy`, which is the same reason regeneration and
+totem armor fail against both.
+
+**It lives on the counter, not on the card**, and that is load-bearing rather
+than tidy. Diamond City's third line is `{T}: Move a shield counter from this
+land onto target creature` — an ordinary `move_counters` — and the counter has
+to go on working on a creature the land never mentions. Written as a per-card
+ability instead, the land would spend a tap moving a token of nothing.
+
+**The spelling is exact, and the loader enforces it**, for the same reason and
+through the same guard as a keyword counter:
+
+| written | outcome |
+|---|---|
+| `"shield"` | a permanent that survives one damage event or one destruction per counter |
+| `"Shield"`, `"shield counter"`, `"shield counters"` | **refused at load** |
+| `"shielding"`, `"charge"` | an ordinary tally, untouched |
+
+Worth spelling out why that guard matters more here than anywhere else: a
+near-miss shield counter is *visible on the board*. It is placed, it is shown,
+`move_counters` carries it, `proliferate` adds another — and the permanent still
+dies to the removal it is printed to survive. That card passes all six authoring
+gates, because placing the counter is genuine and only its meaning is missing.
+
 ## Transforming double-faced cards
 
 ```jsonc
@@ -5176,11 +5249,12 @@ Florian, Voldaren Scion, and the whole impulse family. A key on the `exile` op:
 
 **This is not `play_exiled`.** They read alike and are different cards:
 
-| | `play_exiled` | `playable_this_turn` |
-|---|---|---|
-| who plays it | the effect does, as it resolves | you do, later, when you like |
-| price | **free** | the printed cost |
-| how long | now, or never | until the turn ends |
+| | `play_exiled` | `playable_this_turn` | `look_at_top` `cast_free` |
+|---|---|---|---|
+| who plays it | the effect does, as it resolves | you do, later, when you like | the effect does, as it resolves |
+| price | **free** | the printed cost | **free** |
+| how long | now, or never | until the turn ends | now, or never |
+| where from | exile, linked by `exiled_by` | exile | the library, unmoved |
 
 `play_exiled` is hideaway's permission. Writing Florian with it hands you a free
 Griselbrand, which is not a subtle difference on a card that regularly exiles
@@ -5199,6 +5273,67 @@ still spent, and the spell is still paid for in full.
 
 Written *after* the move, like `until_leaves` and for the same reason:
 `reset_permanent_state` runs on the way into exile and would wipe it.
+
+## Casting for free out of the window
+
+Perception Bobblehead — *"Look at the top X cards of your library, where X is the
+number of Bobbleheads you control. **You may cast a spell with mana value 3 or
+less from among them without paying its mana cost.** Put the rest on the bottom
+of your library in a random order."*
+
+```jsonc
+{ "op": "look_at_top", "amount": { "count": { "zone": "battlefield",
+    "controller": "you", "subtypes": ["Bobblehead"] } },
+  "objects": { "mana_value": { "op": "<=", "value": 3 },
+               "count": 1, "optional": true },
+  "cast_free": true, "rest_to_bottom": true }
+```
+
+`cast_free` replaces the destination branch: what `pick_from_pool` narrowed out
+of the window goes to the **stack** instead of to a zone, and whatever was not
+cast folds back into "the rest" that `rest_to_bottom` bottoms.
+
+It is a key on `look_at_top` rather than either of the two things it looks like,
+and the reasons are the card:
+
+- **`{"destination": "exile"}` + `play_exiled` silently does nothing.**
+  `play_exiled` defaults its selector to `exiled_with: "self"`, answered by
+  `obj.exiled_by` — and `look_at_top`'s exile goes through `move_object`, whose
+  `reset_permanent_state` clears that field. The pool comes back empty and the
+  whole ability resolves having done nothing at all.
+- **Writing `exiled_by` on the way out would fix the plumbing and break the
+  card.** It exiles cards the printing only ever *looks at*, and a declined card
+  would sit in exile for the rest of the game rather than going to the bottom
+  with the rest — a strictly worse card, and an observable rules difference.
+  That is `hideaway`'s bargain, which is why hideaway is not this either: its
+  exile is mandatory and unfiltered, so it fires even when nothing in the window
+  is castable.
+- **`playable_this_turn` is a different card.** See the table above: impulse is
+  "later, at the printed cost". The loader refuses the two keys together, along
+  with `destination` and `tapped`, because each of them is read only on the
+  branch `cast_free` replaces and would otherwise be dropped in silence.
+- `cascade` and `ripple` already free-cast off a library, but their tests are
+  hardcoded — "lesser mana value than this spell", "the same name as this spell"
+  — with no parameter a card can substitute a selector into. `cast_free` is
+  ripple's shape with that test lifted out into the selector `look_at_top`
+  already accepts.
+
+Three rules details, none of them optional:
+
+- **601.2b — it is a cast.** `_offer_free_cast` shares `suspend.cast_for_free`,
+  so the spell uses the stack, its "whenever you cast" triggers fire and it can
+  be countered. It gets no haste: that flag belongs to suspend.
+- **"a spell" excludes lands.** Every land ever printed has mana value 0, so the
+  printed selector alone would offer a free Forest *onto the stack*. The op
+  filters lands out of the pool under `cast_free`; they are still "looked at",
+  so they still go to the bottom.
+- **"You may."** The offer is a yes/no, and a refusal — or a cast that cannot
+  happen, because nothing is a legal target — bottoms the card with the rest
+  rather than losing it.
+
+`rest_to_bottom` routes through `state.rng` like cascade's and ripple's, never
+`random`; `tests/unit/test_determinism_hygiene.py` scans for the latter and
+`tests/unit/test_free_cast_from_window.py` pins the former from the outside.
 
 ## Aura swap — an exchange, not two moves
 
@@ -5862,6 +5997,62 @@ about the shape of the finished declaration.
 Both are statics rather than keywords for the reason `lock_abilities` is one: a
 keyword is a *characteristic*, and these are permissions. Listing "can't block"
 among a creature's keywords would be a lie about what the card says.
+
+### Can't attack or block **alone**
+
+    Toby, Beastie Befriender — "…create a 4/4 white Beast creature token with
+                                'This token can't attack or block alone.'"
+
+```jsonc
+{ "kind": "static", "effect": "cant_attack_alone", "affects": { "self_only": true } }
+{ "kind": "static", "effect": "cant_block_alone",  "affects": { "self_only": true } }
+```
+
+Two effects rather than one, because the printed line comes three ways — "can't
+attack alone", "can't block alone", and both together — and a card spells the
+one it prints. The token above carries both, each ability holding the whole
+sentence as its `text`, which is the same shape "gets +1/+1 and has flying"
+already takes.
+
+**Why they are not `cant_attack` with a flag.** Those two are absolute: they take
+one oid and answer yes/no with no view of the rest of the declaration, and every
+caller reads a `True` as "this creature cannot attack, full stop". A flag inside
+them would have been read by all of those callers, printing a Beast that can
+never attack — strictly stronger than the card, and invisible on the board.
+*Alone* is a restriction on the **declaration** (508.1c, 509.1b): the same
+creature is legal beside a second attacker and illegal by itself, so there is
+nothing to refuse at the moment it is picked.
+
+That put it where menace and `require_all` already live — the checks that only
+mean something once the declaration is complete:
+
+| | attack side | block side |
+|---|---|---|
+| whole-declaration check | `combat.attacks_valid` | `combat.blocks_valid` |
+| the escape when it cannot be met | `combat.drop_illegal_attacks` | `combat.drop_illegal_blocks` |
+
+`attacks_valid` is new, and its absence was half the gap: `blocks_valid` had
+existed since menace, and `finish_attackers` had no counterpart at all, so a
+correctly shaped static would have had nowhere to be enforced.
+
+Enforcement is by **withholding "Done attacking"**, the only lever `legality`
+has — a player part-way through a declaration has not broken a rule, they have
+simply not finished. When there is no `ADD_ATTACKER` left to offer, "Done" comes
+back and `finish_attackers` retracts the attack, exactly as `finish_blockers`
+retracts an unfinishable Tromokratis block. Dropping is not a concession there
+either: "it doesn't attack" is precisely the declaration the rules produce when
+the only alternative was illegal.
+
+Two of them declared together are legal, each being the other's company, which
+is why the check counts *blockers* rather than asking whether each one is
+unrestricted. And the count is read live off the battlefield: a companion that
+dies mid-declaration was never company (506.4), and the lone creature left
+behind is dropped.
+
+The blocking half counts the defending player's whole declaration rather than
+one attacker's — the second blocker does not have to be blocking the same
+creature — which is exactly what makes it a `blocks_valid` question rather than
+a `can_block` one.
 
 ### The `cant_block` **op** — the same sentence with a clock
 

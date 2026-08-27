@@ -284,19 +284,40 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     shuffle after a search. And ``objects`` carries the count, so "any number of
     land cards from among them" is the ordinary ``count: "any"`` rather than a
     second spelling that only this op understands.
+
+    ``cast_free`` sends what was picked to the **stack** instead of to a
+    destination zone -- see :func:`_cast_from_window`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
+    cast_free = bool(spec.get("cast_free"))
     selector = spec.get("objects") or spec.get("selector") or {}
     for pid in select_players(ctx, spec.get("player", "you")):
         top = list(ctx.state.players[pid].library[: max(0, int(amount))])
         pool = [oid for oid in top if _matches_library(ctx, oid, selector)]
+        if cast_free:
+            # "…cast **a spell**…" -- a land is played, never cast (601.2), and
+            # `cast_for_free` would put one on the stack without complaint. The
+            # filter belongs here rather than in the card's selector because
+            # "mana value 3 or less" is true of every land ever printed, so the
+            # selector that spells Perception Bobblehead would otherwise offer a
+            # free Forest-on-the-stack.
+            pool = [
+                oid
+                for oid in pool
+                if not ctx.state.card_of(ctx.state.objects[oid]).is_land
+            ]
+        taken: set[int] = set()
         if pool:
             picked = yield from pick_from_pool(
                 ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
             )
-            _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
+            if cast_free:
+                taken = set((yield from _cast_from_window(ctx, pid, picked)))
+            else:
+                _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
+                taken = set(picked)
         # "…and put the rest on the bottom of your library in a random order."
         # Florian. Shuffling instead is a different game action: it reorders the
         # *whole* deck, and everything under the cards you looked at was already
@@ -305,10 +326,54 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
         # "The rest" means what was looked at and not taken -- including cards
         # the selector filtered out of the pool, which were still looked at.
         if spec.get("rest_to_bottom", False):
-            taken = set(picked) if pool else set()
             _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
         if spec.get("shuffle", False):
             shuffle_library(ctx.state, pid)
+
+
+def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):
+    """"You may cast a spell … from among them without paying its mana cost."
+
+    Perception Bobblehead. Ripple's shape -- offer, cast, fold the refusals back
+    into "the rest" -- with ripple's hardcoded "same name as this spell" test
+    replaced by the selector `look_at_top` already accepts, which is what lets a
+    card say "with mana value 3 or less".
+
+    Returns the oids that actually reached the stack, so the caller's
+    `rest_to_bottom` bottoms everything else. That is the whole reason this is a
+    key on `look_at_top` rather than an `exile` + `play_exiled` pair:
+
+    - **`play_exiled` cannot see these cards.** Its selector defaults to
+      `exiled_with: "self"`, answered by `obj.exiled_by`, which `move_object`'s
+      `reset_permanent_state` clears on the way into exile. `look_at_top`'s
+      exile destination therefore hands `play_exiled` an empty pool and the
+      whole ability silently does nothing.
+    - **Writing `exiled_by` in `_move_found` would fix the plumbing and break
+      the card.** A declined card would sit in exile for the rest of the game
+      instead of going to the bottom with the rest, which is a strictly worse
+      card than the printed one and an observable rules difference; and it would
+      exile cards the printed card only ever *looks at*.
+    - **A binding read by a later op** buys the same thing for two ops, a new
+      selector key and an implicit contract between them, and still leaves the
+      "the rest" bookkeeping split across the pair.
+
+    Rule 601.2b: this is a real cast. `_offer_free_cast` shares
+    `suspend.cast_for_free`, so the spell uses the stack, its "when you cast"
+    triggers fire and it can be countered -- and it is offered rather than
+    forced, because the printed word is "may". A cast that cannot happen (no
+    legal target) is a refusal, not a crash, and folds back into the rest too.
+    """
+    cast: list[int] = []
+    for oid in picked:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        name = ctx.state.card_of(obj).name
+        if (yield from _offer_free_cast(
+            ctx, pid, oid, f"Cast {name} without paying its mana cost?"
+        )):
+            cast.append(oid)
+    return cast
 
 
 def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
