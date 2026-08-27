@@ -1982,6 +1982,18 @@
     },
     "zone": "graveyard"
   },
+  "entrapment_maneuver": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 0,
+      "id": "soldier_1_1_w"
+    },
+    "zone": "graveyard"
+  },
   "eomer_king_of_rohan": {
     "counters": {
       "amount": 0,
@@ -3978,6 +3990,13 @@
   },
   "luck_bobblehead": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lucy_maclean_positively_armed": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "lumbering_falls": {

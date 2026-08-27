@@ -22217,6 +22217,59 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "entrapment_maneuver",
+      "mana_cost": "{3}{W}",
+      "name": "Entrapment Maneuver",
+      "oracle_text": "Target player sacrifices an attacking creature of their choice. You create X 1/1 white Soldier creature tokens, where X is that creature's toughness.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "attacking": true,
+            "chooser": "owner",
+            "controller": {
+              "target": "t1"
+            },
+            "count": 1,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice",
+          "snapshot": "victim"
+        },
+        {
+          "amount": {
+            "toughness_of": {
+              "binding": "victim"
+            }
+          },
+          "op": "create_token",
+          "token": "soldier_1_1_w"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -45260,6 +45313,90 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "copies",
+                  "controller": {
+                    "target": "t1"
+                  },
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "copies",
+                      "controller": "opponent"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ]
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": {
+                  "not": {
+                    "controller_of": "subject"
+                  }
+                }
+              }
+            }
+          ],
+          "text": "Golden Rule — Whenever a token enters, you may have target player other than its controller create a token that's a copy of it, then you draw a card if an opponent created a token this way. Do this only once each turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "token_created",
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "lucy_maclean_positively_armed",
+      "mana_cost": "{4}{W}",
+      "name": "Lucy MacLean, Positively Armed",
+      "oracle_text": "Golden Rule — Whenever a token enters, you may have target player other than its controller create a token that's a copy of it, then you draw a card if an opponent created a token this way. Do this only once each turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Survivor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**16 cards** blocked by **20** capabilities.
+**14 cards** blocked by **18** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,8 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-static-ability](#granted-static-ability) | 1 | 2771 | static_effect |
 | [modal-triggered-ability-targets](#modal-triggered-ability-targets) | 1 | 3530 | engine |
 | [owner-scoped-filter](#owner-scoped-filter) | 1 | 2771 | selector |
-| [player-target-restriction](#player-target-restriction) | 1 | 12938 | selector |
-| [sacrifice-snapshot](#sacrifice-snapshot) | 1 | 4549 | op |
 | [shield-counter](#shield-counter) | 1 | 3036 | replacement |
 | [token-definition](#token-definition) | 1 | 5022 | engine |
 | [triggering-players-turn](#triggering-players-turn) | 1 | 1974 | condition |
@@ -235,34 +233,6 @@ Blocks **1** card.
 
 - **Inspiring Leader** (rank 2771) — `inspiring_leader`
   - Commander creatures you own have "Creature tokens you control get +2/+2."
-
-</details>
-
-## player-target-restriction
-
-Blocks **1** card.
-
-- **(selector)** A `kind: "player"` target spec must be able to exclude a player named at trigger time -- "target player other than its controller", where "it" is the token the `token_created` event bound as `subject`. Two halves are missing: (a) `targeting._player_allowed` must honour the mapping forms of a player spec that `selectors.select_players` already parses (`controller_of`, `owner_of`, `binding`, `target`, `controller_of_target`) instead of only the three strings; and (b) there must be a *negated* player spec -- something like `{"not": {"controller_of": "subject"}}`, or a `not_controller` clause on the target selector -- because every existing mapping form names the players to allow and this line names the one player to forbid. Both `candidates` and `still_legal` route through `_player_allowed`, so fixing it there covers declaration and the 608.2b re-check.
-  <br>Why the existing vocabulary won't do: `targeting._player_allowed` is the whole of player-target legality and reads exactly one key: `clause = spec.selector.get("controller", "any")`, honouring only "you" (pid == controller) and "opponent" (pid != controller) and falling through to `return True` for anything else. Neither string is the printed restriction: the token's controller is whoever made the token, which on this card is routinely an opponent (it triggers on `controller: "any"`), so "opponent" wrongly forbids targeting yourself when an opponent's token enters and wrongly permits targeting the very opponent who made it, and "you"/"any" are further off still. Worse, the near miss loads *silently*: `selectors.validate_selector` accepts a Mapping `controller`, so `{"controller": {"controller_of": "subject"}}` compiles cleanly (verified against `compile_card`) and is then dropped on the floor by the `return True` fallthrough, yielding "target any player" -- a card that looks implemented and plays as a strictly wider one. And even if the mapping were honoured it is the inclusive set: `controller_of: "subject"` names the token's controller, which is precisely the player this line excludes, and `select_players` has no negation form at all. Splitting the ability in two (one trigger filtered `controller: "you"` targeting `controller: "opponent"`, one filtered `controller: "opponent"` targeting anyone) is not a workaround: it is still wrong in a pod, where "other than its controller" includes the other opponents, and `max_per_turn` is a per-ability cap, so two abilities would let "Do this only once each turn" happen twice.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lucy MacLean, Positively Armed** (rank 12938) — `lucy_maclean_positively_armed`
-  - Golden Rule — Whenever a token enters, you may have target player other than its controller create a token that's a copy of it, then you draw a card if an opponent created a token this way. Do this only once each turn.
-
-</details>
-
-## sacrifice-snapshot
-
-Blocks **1** card.
-
-- **(op)** A way to capture last-known battlefield information about the permanent that an effect's own *chooser* picked, before that op moves it. Concretely: let `sacrifice` take a `snapshot` key beside its `as` (e.g. `{"op": "sacrifice", "objects": {...}, "snapshot": "victim"}`) that runs `zones.snapshot` on each chosen oid in the window the op already has between `pick_from_pool` returning and the `sacrifice()` call -- the same window in which it already writes `as` -- so a later `{"toughness_of": {"var": "victim"}}` reads the toughness the creature had on the battlefield. Equivalently: a `snapshot` op that can name a pool and take the choice itself, binding the picked object without consuming it, so the card can snapshot and then sacrifice the same creature.
-  <br>Why the existing vocabulary won't do: `snapshot` is the engine's only LKI mechanism and it reads its subject either from a `target` (declared at cast time -- Swords to Plowshares, Feed the Swarm, Beast Within all take this road) or from an `objects` selector resolved at the moment the op runs. Entrapment Maneuver's creature is neither: it is picked by the *target player* during resolution, inside `op_sacrifice`. `sacrifice`'s `as` binding is a list of oids and is written before the move, but it is only readable by the *next* op, by which time the creature is a graveyard card -- and `zones.snapshot` calls `chars()`, which on a graveyard object gives the printed line. Measured in this repo: a 5/5 with three +1/+1 counters (battlefield toughness 8) sacrificed with `as`, then snapshotted through `{"binding": "victim"}`, captures `toughness: 5`. So `snapshot` after `sacrifice` is off by every counter, anthem, Aura, Equipment and pump on the attacker -- exactly the things a combat trick like this meets -- while looking implemented. `toughness_had` is the other candidate and does not reach either: it reads `ctx.bindings["had_toughness"]`, which only the DIES and LEAVES_BATTLEFIELD trigger events bind (`zones.move_object`); the SACRIFICED event deliberately carries only `oid`/`card`/`was_creature`, this card is an Instant resolving its own effects rather than a trigger, and a `delayed_trigger` on `dies` could not be filtered to "the creature sacrificed this way" -- no selector names it -- besides moving the token creation out of the spell's own resolution. `for_each` is the last near miss: it binds each object as `each` while it is still on the battlefield, but it goes through `resolve_pool` alone and never `pick_from_pool`, so it ignores `count` and `chooser` and would iterate *every* attacking creature the target player controls instead of the one they chose.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Entrapment Maneuver** (rank 4549) — `entrapment_maneuver`
-  - You create X 1/1 white Soldier creature tokens, where X is that creature's toughness.
 
 </details>
 
