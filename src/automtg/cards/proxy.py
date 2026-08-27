@@ -822,8 +822,15 @@ def _unless_condition(clause: str) -> dict | None:
         # wrong reading here is a land that enters untapped when it should not.
         if not all(n.title() in _BASIC_LAND_SUBTYPES for n in names):
             return None
-        branches = [{"subtypes": [n.title()]} for n in names]
-        return {"not": {"exists": {**mine, "any_of": branches}}}
+        # One type is the common case -- the whole Castle cycle -- and it must
+        # not be wrapped in `any_of`, which takes two branches or more and
+        # raises on one.  The raise travelled out of `build_proxy` as "could
+        # not be generated" and failed the *whole import*, not just this land.
+        if len(names) == 1:
+            found = {"subtypes": [names[0].title()]}
+        else:
+            found = {"any_of": [{"subtypes": [n.title()]} for n in names]}
+        return {"not": {"exists": {**mine, **found}}}
 
     if match := _UNLESS_COUNT.match(clause):
         count = _NUMBER_WORDS[match.group("n").lower()]
