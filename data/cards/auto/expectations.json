@@ -1266,6 +1266,13 @@
   "combat_celebrant": {
     "zone": "battlefield"
   },
+  "commander_sofia_daguerre": {
+    "graveyard_size": {
+      "1": 1
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "commercial_district": {
     "zone": "battlefield"
   },
@@ -4900,6 +4907,14 @@
     "zone": "battlefield"
   },
   "orzhov_signet": {
+    "zone": "battlefield"
+  },
+  "overencumbered": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "opponent_battlefield_count": 9,
     "zone": "battlefield"
   },
   "overflowing_basin": {

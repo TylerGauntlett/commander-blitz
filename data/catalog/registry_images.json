@@ -1551,6 +1551,10 @@
     "artist": "Luc Courtois",
     "scryfall_id": "f9c515bb-3d45-4c24-92bb-69c5c6520959"
   },
+  "commander_sofia_daguerre": {
+    "artist": "Craig Elliott",
+    "scryfall_id": "63259e39-7267-465e-8600-9104c34bfcba"
+  },
   "commanders_sphere": {
     "artist": "Ryan Alexander Lee",
     "scryfall_id": "a0d50603-e31f-4cd7-b4b6-49847d99eb2e"
@@ -5857,6 +5861,10 @@
   "orzhov_signet": {
     "artist": "Greg Hildebrandt",
     "scryfall_id": "ca0d3984-fbb3-4661-a424-f79d2253e057"
+  },
+  "overencumbered": {
+    "artist": "Elizabeth Peir\u00f3",
+    "scryfall_id": "1c6ab676-2437-4927-8f30-dd234298f190"
   },
   "overflowing_basin": {
     "artist": "Sarah Finnigan",

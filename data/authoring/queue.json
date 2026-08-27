@@ -50452,12 +50452,12 @@
     },
     "Commander Sofia Daguerre": {
       "edhrec_rank": 11153,
-      "gate": "template",
+      "gate": null,
       "name": "Commander Sofia Daguerre",
-      "reason": "no template for: Crash Landing — When enters, destroy up to one target legendary permanent. That permanent'",
+      "reason": "",
       "scryfall_id": "63259e39-7267-465e-8600-9104c34bfcba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Commander's Authority": {
@@ -194342,12 +194342,12 @@
     },
     "Overencumbered": {
       "edhrec_rank": 10598,
-      "gate": "template",
+      "gate": null,
       "name": "Overencumbered",
-      "reason": "no template for: Enchant opponent",
+      "reason": "",
       "scryfall_id": "1c6ab676-2437-4927-8f30-dd234298f190",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Overflowing Basin": {

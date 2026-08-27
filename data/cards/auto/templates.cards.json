@@ -14390,6 +14390,81 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "controller_of": "victim"
+              },
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "supertypes": [
+                  "Legendary"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Crash Landing — When Commander Sofia Daguerre enters, destroy up to one target legendary permanent. That permanent's controller creates a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "commander_sofia_daguerre",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Commander Sofia Daguerre",
+      "oracle_text": "Flash\nCrash Landing — When Commander Sofia Daguerre enters, destroy up to one target legendary permanent. That permanent's controller creates a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -55138,6 +55213,100 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "enchanted_player",
+              "op": "create_token",
+              "token": "clue_token"
+            },
+            {
+              "controller": "enchanted_player",
+              "op": "create_token",
+              "token": "food_token"
+            },
+            {
+              "controller": "enchanted_player",
+              "op": "create_token",
+              "token": "junk_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, enchanted opponent creates a Clue token, a Food token, and a Junk token.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "attacker": "each_player",
+                  "defender": "each_player",
+                  "duration": "this_combat",
+                  "op": "cant_attack_player",
+                  "planeswalkers": true
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}",
+                "times": {
+                  "count": {
+                    "controller": "enchanted_player",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "player": "enchanted_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.",
+          "trigger": {
+            "condition": {
+              "is_active_player": "enchanted_player"
+            },
+            "controller": "any",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "overencumbered",
+      "mana_cost": "{1}{W}",
+      "name": "Overencumbered",
+      "oracle_text": "Enchant opponent\nWhen this Aura enters, enchanted opponent creates a Clue token, a Food token, and a Junk token.\nAt the beginning of combat on enchanted opponent's turn, that player may pay {1} for each artifact they control. If they don't, creatures can't attack this combat.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
