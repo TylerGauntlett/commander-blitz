@@ -5509,6 +5509,44 @@
       ]
     },
     {
+      "id": "t_untapper",
+      "name": "Test Untapper",
+      "oracle_text": "{T}, Untap two tapped Bears you control: Draw a card.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Citizen"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Untap two tapped Bears you control: Draw a card.",
+          "cost": {
+            "tap": true,
+            "untap_permanents": {
+              "subtypes": [
+                "Bear"
+              ],
+              "count": 2
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_tapper",
       "name": "Test Tapper",
       "oracle_text": "Tap two untapped Bears you control: Draw a card.",

@@ -384,6 +384,44 @@ def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("return_spell_to_hand")
+def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Return target spell to its owner's hand." Reprieve is the witness.
+
+    **Not a counter, and not `return_to_hand` either.** Both near misses are
+    wrong in ways that look right:
+
+    - `counter` is the only other op that consumes a spell target, and its
+      destination is hardwired to the graveyard. It also refuses a spell with
+      "this spell can't be countered" and emits `SPELL_COUNTERED`, and neither
+      belongs here: rule 701.5a makes countering one specific action, and
+      returning a spell to a hand is not it. Reprieve answers an uncounterable
+      spell perfectly well, and nothing that triggers on countering fires.
+    - `return_to_hand` reaches the right zone but cannot see a spell. A
+      `kind: "spell"` target is a `TargetRef.stack(sid)`, and `resolve_pool`'s
+      `{"target": …}` branch keeps only `kind == "object"` refs -- so the pool
+      comes back empty and the op is a *silent* no-op: the targeted spell
+      resolves onto the battlefield untouched and the card still looks like it
+      worked. That is why this reads `ctx.target_sids`, the way `counter` does.
+
+    Selecting the spell by zone instead (`objects: {"zone": "stack"}`) does move
+    it, but it is untargeted -- it would sweep every spell on the stack, and
+    ward, hexproof and "can't be the target of spells" would all stop applying
+    to a card whose printed line says "target".
+
+    Where the card lands is its **owner's** hand, not the controller's: a stolen
+    or an opponent's spell goes home. `pull_spell_off_stack` does that, and the
+    706.10 case where the "spell" is a copy and there is no card at all.
+    """
+    from ..stack import pull_spell_off_stack
+
+    target_id = str(spec.get("target", "t1"))
+    for sid in ctx.target_sids(target_id):
+        pull_spell_off_stack(
+            ctx.state, sid, Zone.HAND, cause="returned", by=ctx.source_oid
+        )
+
+
 @register("return_from_graveyard")
 def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
     selector = dict(spec.get("objects") or {})

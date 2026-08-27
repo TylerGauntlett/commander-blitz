@@ -1,3 +1,279 @@
+## `replace_token_creation` — rewriting a token creation before the token exists
+
+### Overview
+
+Academy Manufactor: *"If you would create a Clue, Food, or Treasure token,
+**instead create one of each**."*
+Divine Visitation: *"If one or more creature tokens would be created under your
+control, **that many 4/4 white Angel creature tokens with flying and vigilance
+are created instead**."*
+
+Both gap records landed on the same wall. `ReplacementModel.event` is a closed
+`Literal` of three enters-the-battlefield forms, every one of which modifies a
+permanent that is *already arriving*; and `primitives.create_token` took a fixed
+`def_id`, put the token straight onto the battlefield, and fired `TOKEN_CREATED`
+afterwards — so there was no moment at which the pending creation could be seen,
+let alone altered.
+
+The near miss is a `token_created` trigger, and naming why it is wrong is most of
+the argument for building anything: it adds tokens **alongside** rather than
+instead, so the 1/1 Soldiers still exist and the Angels are extra — a strictly
+stronger card than the printed one; it uses the stack, so the extra tokens arrive
+later and can be responded to, which changes every "whenever one or more tokens
+enter" count on the board; and a Manufactor written that way re-triggers on the
+Treasure it just made, with nothing in the trigger vocabulary able to tell a
+token it made from one it did not.
+
+### Tier: B — a new continuous effect
+
+A static (`STATIC_EFFECTS`, a `condition` gate, a battlefield reader), not a new
+op, decision or event. It is the only tier that fits: the sentence is a standing
+fact about a player's board that is true again every time a token would be made,
+and there is nothing for a one-shot to be spent on. No layer, though — a token
+that does not exist yet has no characteristics to compute — so the reader lives
+beside the player-wide statics rather than in `_compute`, and the one consumer is
+`primitives.create_token`.
+
+### What was built
+
+- **`primitives._token_creation_plan`** — the whole mechanism. Returns what the
+  creation actually creates, or `None` for "nothing applied", which is every
+  token creation in a game where neither card is out.
+- **`characteristics.token_creation_replacements` / `printed_token_matches`** —
+  which statics are switched on and whose, and whether a token definition matches
+  a printed-face filter. The second is `_matches_printed` and only
+  `_matches_printed`, so the filter language cannot drift into a second spelling.
+- **`AbilityModel.affects_token` / `create_instead`**, `TOKEN_FILTER_KEYS`, and
+  the loader guards — including `validate_token_references` now checking
+  `create_instead` ids, so a missing or non-token id fails at load rather than
+  three turns into a game.
+
+**One field for two shapes.** The two sentences read as different mechanisms — a
+substitution *set* keyed on what was about to be made, and a substitution of
+identity that preserves a count — and they are one: *each token that would have
+been created becomes one of each id in `create_instead`*. Manufactor lists three
+ids, so one Treasure becomes three tokens and two Treasures become two of each;
+Divine Visitation lists one, so N Soldiers become N Angels and "that many" is
+preserved without a count ever being written down.
+
+### The rules it turns on
+
+- **614.5 — a replacement applies at most once to a given event.** One pass over
+  a fixed list of statics. This is not a nicety: the Angels a Divine Visitation
+  creates are creature tokens under your control, so an implementation that
+  re-read its own output would hang rather than play slowly. It is also what
+  fixes the numbers when there are two of something — two Divine Visitations
+  still make N Angels, and two Academy Manufactors turn one Treasure into
+  **three of each**, which is the printed ruling.
+- **The replacement is the token's controller's**, because both cards say "you" —
+  not the controller of whatever effect is creating the token. A Manufactor's
+  controller handing an opponent a Treasure hands them one Treasure.
+- **Only the identity is replaced.** `tapped` and `attacking` survive onto the
+  substitute (the printed Divine Visitation ruling); embalm-style `overrides` do
+  not, because they describe the token that was replaced and never made.
+- **Manufactor + Divine Visitation** has a defined answer and it is that they
+  never feed each other: a Manufactor makes three *noncreature artifacts*, which
+  "creature tokens" never names, and a Visitation makes an Angel, which is no
+  kind of Clue, Food or Treasure. So the one divergence below cannot bite here.
+
+### Deliberately not built
+
+Not rule 616. There is no event object, no "replaced by" chain, and nothing
+outside `create_token` consults a replacement — 616.1's "the affected player
+chooses which applicable replacement to apply first" is answered by battlefield
+order instead of by asking, which is invisible for the pair above and is recorded
+in `docs/rules-coverage.md`. There is no count *multiplier* either, so Doubling
+Season, Parallel Lives, Anointed Procession and Ojer Taq remain blocked; that is
+a second capability, not a second key in a card file. A fourth entry on the
+enters-the-battlefield whitelist is still engine work.
+
+### Tests
+
+`tests/unit/test_token_creation_replacement.py` — 29 tests in six classes, one
+per claim: what is created instead, 614.5's once-per-event (including both
+two-copy numbers), whose replacement it is, the Manufactor/Visitation
+interaction and its order-independence, what the creating effect still says, and
+when it stops applying (source leaves, `condition` false). Plus the loader's
+refusals, since a card that loads clean and replaces nothing is the failure the
+validation pass exists to stop. Both cards are compiled through `compile_card`
+inside the test rather than added to `data/cards/`.
+
+## `return_spell_to_hand` — taking a spell off the stack without countering it
+
+### Overview
+
+Reprieve: *"**Return target spell to its owner's hand.** Draw a card."*
+
+Rule 701.5a makes **countering** one specific action, and the whole of this
+capability is that returning a spell is not it. Three things are true of a
+counter and of nothing else — "this spell can't be countered" stops it, the card
+lands in its owner's *graveyard*, and it is what "whenever a spell is countered"
+watches — and Reprieve has none of them. It answers Carnage Tyrant, it puts the
+card in a hand, and nothing hears about a countering that did not happen.
+
+### Tier: A — a new op composing existing primitives
+
+No new decision, event, continuous effect or API field. `counter` already proved
+an op can consume a `kind: "spell"` target via `ctx.target_sids`, and
+`zones.move_object` already moves a card off the stack; the op is the two of them
+with the destination changed.
+
+### Why neither near miss would do
+
+- **`counter` with a destination key.** Its destination is hardwired to the
+  graveyard, it refuses `uncounterable` spells, and it emits `SPELL_COUNTERED`.
+  Adding a key would leave the other two, and they are observable: the card
+  would decline to answer an uncounterable spell, and it would set off triggers
+  the printed card never sets off.
+- **`return_to_hand`.** It reaches the right zone but cannot *see* a spell. A
+  `kind: "spell"` target is a `TargetRef.stack(sid)`, and `resolve_pool`'s
+  `{"target": …}` branch keeps only `kind == "object"` refs — so the pool comes
+  back empty and the op is a **silent no-op**. A card written that way passes
+  all six authoring gates with the targeted spell resolving onto the battlefield
+  untouched, which is the exact quiet wrong-card failure the gap record existed
+  to prevent. Teaching `resolve_pool` to yield stack refs was rejected for the
+  same reason: it would silently let `destroy` and `exile` be aimed at a spell.
+- **`objects: {"zone": "stack"}`.** It does move the spell, and it is a
+  different card: untargeted, so it sweeps the whole stack, and ward, hexproof
+  and "can't be the target of spells" all stop applying to a line that prints
+  the word "target".
+
+### `stack.pull_spell_off_stack` — the counterpart of `push_spell`
+
+The op is three lines because the rules live in one helper in `stack.py`, beside
+the function that puts a spell there in the first place. It unlinks the object
+from the stack item, forgets the face the spell was cast as, and then:
+
+- an ordinary spell's card moves to `to_zone` in its **owner's** hand — 400.7,
+  not its controller's, so a spell cast by someone who does not own it goes
+  home;
+- a **copy** of a spell is not a card (706.10). There is nothing to put in a
+  hand, so 704.5e removes it and it ceases to exist. Routing it to a hand first
+  and letting the token state-based action clean it up would be observably
+  wrong in the log — a card arriving in a hand its owner never had — and the
+  token SBA deliberately exempts the stack, so it would never have seen it.
+
+`to_zone` is a parameter rather than a constant because *where the card goes* is
+the only thing that varies between the effects that do this; everything above it
+is the same however far it travels.
+
+A missing sid returns `None` rather than raising: targets are re-checked on
+resolution (608.2b), and a spell that has already left is simply not there. Two
+Reprieves at one spell is the natural case — the second to resolve returns it,
+the first fizzles, and 608.2b takes its "Draw a card" with it.
+
+### The loader guard
+
+`return_spell_to_hand` insists its `target` is declared `kind: "spell"`, and
+refuses an `objects` key outright. Both are the shapes of the silent failure
+above: aimed at a permanent target the op returns nothing, and `objects` is what
+`return_to_hand` takes, so it is the copy-paste mistake.
+
+### What it unblocks
+
+`data/authoring/gaps/reprieve.json`. Reprieve is now expressible in the DSL; no
+importer template was added, so the card is harvested by the next agent-tier
+`/author-cards` run rather than by `--tier templates`.
+
+### Tests
+
+`tests/unit/test_return_spell_to_hand.py`. Every behavioural test asserts on
+where the **other** spell ended up rather than on Reprieve having resolved,
+because the failure being guarded against is one where Reprieve resolves
+perfectly and nothing happens. Verified by stubbing the op out to a no-op: the
+first test fails on `count_on_battlefield(game, "t_bear") == 0`.
+
+## `untap_permanents` — the untap twin of `tap_permanents`
+
+### Overview
+
+Halo Fountain, all three of its lines: *"{W}, {T}, **Untap a tapped creature you
+control**: Create a 1/1 green and white Citizen creature token."* / *"{W}{W},
+{T}, **Untap two tapped creatures you control**: Draw a card."* /
+*"{W}{W}{W}{W}{W}, {T}, **Untap fifteen tapped creatures you control**: You win
+the game."*
+
+`cost_keys` had `untap`, and it is the `{Q}` symbol: a bare bool that
+`costs.can_pay` and `costs.pay` resolve against `source_oid` alone. It cannot
+reach another object, cannot carry a selector, and cannot carry a count. On this
+card it is also the **wrong permanent twice over**, which is the part worth
+saying out loud: the printed cost taps the Fountain *and* untaps other
+creatures, so `"tap": true, "untap": true` on one cost taps the Fountain,
+untaps the Fountain, and touches no creature at all. It loads, it plays, and it
+is free.
+
+The other near miss is worse. Paying with the effect-side `untap` **op** moves
+the payment to resolution, so the ability becomes activatable with nothing
+tapped anywhere — and the third line of this card is *"you win the game"*. Halo
+Fountain is a combo engine whose only constraint is that the board must be bent
+before it can be unbent; an approximation that drops the constraint is not a
+lossy version of the card, it is a five-mana "I win".
+
+`CostModel` is `extra="forbid"`, so inventing the key was a load error rather
+than a silent no-op — the gap record's own verification, and the reason this
+arrived as a gap instead of as a broken card.
+
+### Tier: A — a new cost composing existing primitives
+
+The cost analogue of a new op. `untap_permanent` already exists in
+`primitives.py` and already fires `UNTAPPED`, `resolve_pool` already answers the
+selector, and `ask_objects` already asks which ones. No new decision kind, no
+new event, no continuous effect, no API field — `Cost.describe()` is a string
+and `LegalActionDTO.kind` is a bare string, so nothing in `server/` or
+`frontend/` changed.
+
+`legality.py` needed nothing either, and that is a finding rather than an
+omission: `tap_permanents` has no legality code of its own. Activation legality
+runs through `legality._ability_aims`'s single `can_pay`, so the pool check
+placed there gates the ability for free — which is the requirement the gap
+record cared most about.
+
+### The mirror is exact, and the one place it is not
+
+`_untap_cost_pool` is `_tap_cost_pool` with the sign flipped, deliberately line
+for line:
+
+- **`tapped: True` is forced**, exactly as its twin forces `tapped: False`, and
+  a card that spells `tapped` itself is refused at load rather than overridden
+  in silence. Same argument, same consequence: "tapped" is in every printed line
+  of this shape, and a cost that could untap an already-untapped creature costs
+  nothing.
+- **The permanents stay.** Not sacrificed, not bounced — which is what makes a
+  cost of this shape repeatable, and on this card what makes vigilance and any
+  untapper a combo piece.
+- **Summoning sickness does not apply**, per rule 302.6: that rule restricts the
+  `{T}` symbol in a permanent's *own* cost, and this reaches other permanents.
+  Here it is load-bearing rather than incidental — the first line makes a
+  Citizen, and a Citizen that arrived tapped is fodder for the second.
+- **Charged at activation**, before the ability resolves, unrescindable. The
+  whole point.
+
+The one asymmetry is `total_power`. Crew rides on `tap_permanents` because
+"total power 3 or greater" is a printed sum; nothing printed unbends a board by
+power, so `total_power` on this key is a `DslError` rather than a silently
+ignored knob — which would otherwise quietly read as "untap one".
+
+### What it unblocks
+
+Halo Fountain, completely. It was waiting on two capabilities and `win_game`
+landed first, so with this the card's cost half and effect half are both
+expressible: `create_token` with `citizen_1_1_gw`, `draw`, and `win_game` were
+all already there.
+
+### Tests
+
+`tests/unit/test_untap_permanents_cost.py`. The boundary in both directions
+(one short refuses, exactly the count pays), the pool's forced `tapped: True`
+(an untapped board does not pay, a half-tapped board counts only the tapped
+half), the selector and `controller` narrowing, summoning sickness, that the
+source ends **tapped** while the creatures end **untapped** on one activation,
+that it takes exactly the count and leaves the rest, that the ability is not
+offered when the board cannot pay, and that it wears off — activated once, the
+Bears are standing up and it is not offered again. Plus the four load-time
+guards.
+
+---
+
 ## `attacking` names a player — "a token that's attacking **that player**"
 
 ### Overview

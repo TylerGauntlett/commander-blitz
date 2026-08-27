@@ -39,6 +39,15 @@ class CostModel(BaseModel):
     #: A sum rather than a headcount, read off *derived* power, so one 4/4 crews
     #: a Vehicle that four 0/1s cannot and an anthem changes who can.
     tap_permanents: dict[str, Any] | None = None
+    #: "Untap two tapped creatures you control" -- Halo Fountain. The mirror of
+    #: ``tap_permanents``: a selector over the battlefield with a ``count``,
+    #: whose pool is forced to ``tapped: True`` instead of ``tapped: False``.
+    #: Not ``untap``, which is the ``{Q}`` symbol and only ever untaps the
+    #: source -- Halo Fountain taps *itself* and untaps *other* creatures, so
+    #: the two appear on the same cost and mean different permanents. No
+    #: ``total_power``: crew is a printed sum, and no printed line unbends a
+    #: board by power.
+    untap_permanents: dict[str, Any] | None = None
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.
@@ -302,10 +311,32 @@ class AbilityModel(BaseModel):
     #: declaration rather than per pair, so it cannot be a ``blockers``
     #: filter.
     require_all: bool = False
+    #: ``replace_token_creation``: which token is about to be made. A filter on
+    #: a *printed face* and not on `affects`, which picks out permanents on the
+    #: battlefield: the token this asks about does not exist yet, has no
+    #: controller of its own and no board state to read. Academy Manufactor's is
+    #: ``{"subtypes": ["Clue", "Food", "Treasure"]}``, Divine Visitation's is
+    #: ``{"types": ["Creature"]}``. Omitted means "any token", which is a shape
+    #: printed cards really take.
+    affects_token: dict[str, Any] | None = None
+    #: ``replace_token_creation``: the token ids created instead. **One of each,
+    #: per token that was about to be made** -- so Academy Manufactor's three
+    #: ids turn one Treasure into a Clue, a Food and a Treasure, and Divine
+    #: Visitation's single id turns N Soldiers into N Angels. The list is why
+    #: two very differently worded cards need one field: "instead create one of
+    #: each" is a list of three and "that many are created instead" is a list of
+    #: one. See `primitives._token_creation_plan`.
+    create_instead: list[str] = Field(default_factory=list)
 
 
 class ReplacementModel(BaseModel):
-    """One of the four whitelisted replacement effects."""
+    """One of the four whitelisted replacement effects.
+
+    Every one of them modifies the permanent that is *already arriving*, which
+    is why token creation is not here and could not be: there is no object yet.
+    "If you would create a Clue, Food, or Treasure token" is a
+    ``replace_token_creation`` static instead -- see `AbilityModel.create_instead`.
+    """
 
     model_config = Strict
 
