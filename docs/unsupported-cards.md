@@ -10,17 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**14 cards** blocked by **18** capabilities.
+**10 cards** blocked by **15** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [demonstrate](#demonstrate) | 2 | 11744 | decision, op |
-| [attach-another-permanent](#attach-another-permanent) | 1 | 11272 | op |
 | [attack-prohibition-all-defenders](#attack-prohibition-all-defenders) | 1 | 10598 | op |
 | [attack-prohibition-by-subtype](#attack-prohibition-by-subtype) | 1 | 4905 | static_effect |
 | [cant-attack-or-block-alone](#cant-attack-or-block-alone) | 1 | 5022 | static_effect |
 | [create-token-attacking-player](#create-token-attacking-player) | 1 | 4905 | op |
-| [defined-x-cost](#defined-x-cost) | 1 | 12117 | cost |
 | [enchant-player](#enchant-player) | 1 | 10598 | engine, selector, trigger_event |
 | [free-cast-from-a-looked-at-window](#free-cast-from-a-looked-at-window) | 1 | 5975 | op |
 | [gift](#gift) | 1 | 1672 | cost, value |
@@ -32,40 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [triggering-players-turn](#triggering-players-turn) | 1 | 1974 | condition |
 | [verifier-self-targeting-etb](#verifier-self-targeting-etb) | 1 | 11153 | engine |
 | [was-cast](#was-cast) | 1 | 1974 | condition |
-
-## demonstrate
-
-Blocks **2** cards.
-
-- **(op)** a way for `copy_spell` to put the copy on the stack under a player other than the resolving controller -- a `controller` player-spec on the op that is threaded through to `put_copy_on_stack`, so "choose an opponent to also copy it" makes a copy that opponent controls, resolves for them, and lets them (not you) take the `new_targets` choice
-  <br>Why the existing vocabulary won't do: `copy_spell` (src/automtg/engine/effects/ops_stack.py) reads only `sid`, `amount` and `new_targets`; it calls `put_copy_on_stack(state, ctx.controller, original, chosen)`, hard-coding the copy's controller to the effect's own controller, and `put_copy_on_stack` builds the StackItem and its backing token object with `controller=controller` from that one argument. `_validate_effect` has no effect-key whitelist, so writing `"controller": "opponent"` on the op would load and be silently ignored -- a copy under the wrong player. `for_each_player` only binds `each_player`; it does not rebind `ctx.controller`, so nesting the op inside it still yields a copy you control. `cast_copy` has the same hard-coded `ctx.controller`. And `_choose_new_targets` asks `ctx.controller`, so even a redirected copy would put the opponent's target choice to the wrong seat.
-- **(decision)** a decision that picks one opponent and binds them for use as a player spec, so "choose an opponent" names a single seat at a multiplayer table rather than the whole `each_opponent` set
-  <br>Why the existing vocabulary won't do: `select_players` resolves `opponent`/`each_opponent` to every opponent at once and offers no chooser; the only ways to name one player are `target`, `controller_of_target`, `controller_of`/`owner_of` and `binding`, all of which read something a target or trigger already produced. Demonstrate's copy is explicitly not targeted, so none of them apply, and at a pod `each_opponent` would hand a copy to every opponent instead of one.
-- **(op)** a `controller` (or `players`) field on the `copy_spell` op naming who the copy is put on the stack under the control of -- specifically a player-valued spec such as `{"controller": "chosen_opponent"}` that prompts the source's controller to choose one opponent and creates that opponent's copy under their control, with the chosen opponent then making that copy's own choices (new targets, modes) as its controller
-  <br>Why the existing vocabulary won't do: `op_copy_spell` in src/automtg/engine/effects/ops_stack.py reads only `sid`, `amount` and `new_targets`, and ends `put_copy_on_stack(state, ctx.controller, original, chosen)` -- the copy's controller is hardcoded to the controller of the effect, and `put_copy_on_stack` builds the StackItem with `controller=controller` for that same value. There is no spec key the loader accepts to redirect it (the loader only validates `new_targets` for this op), so every copy this op can make is yours. `for_each_player` does not help: it binds `each_player` into `ctx.bindings` and never reassigns `ctx.controller`, so a `copy_spell` nested inside it still copies under your control. `copy_permanent` does carry a `controller` override, but it copies a permanent already on the battlefield rather than the spell on the stack, so using it would resolve at the wrong time, make the opponent's token a copy of the resolved creature instead of a copy of the spell, and skip the spell copy entirely -- a different card. Dropping the opponent's copy would make the Lecturer a strictly one-sided Cackling Counterpart engine with no downside, which is the half of demonstrate that balances it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Silverquill Lecturer** (rank 11744) — `silverquill_lecturer`
-  - Creature spells you cast have demonstrate. (Whenever you cast a creature spell, you may copy it. If you do, choose an opponent to also copy it. Each copy becomes a token.)
-- **Excavation Technique** (rank 12919) — `excavation_technique`
-  - Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it. Players may choose new targets for their copies.)
-
-</details>
-
-## attach-another-permanent
-
-Blocks **1** card.
-
-- **(op)** the 'attach' op needs to name WHICH permanent is being attached -- an 'attachment' selector (or a binding recorded by the op that just put the Equipment onto the battlefield) -- so a resolving ability can attach a third object to a creature, instead of only ever attaching its own source
-  <br>Why the existing vocabulary won't do: 'attach' in reference hardcodes the attacher as ctx.source_oid (engine/effects/ops_board.py op_attach: 'aura = ctx.source_oid') and reads 'objects' only as the thing being attached TO. That is right for Equip and Reconfigure, where the Equipment prints its own ability, but here the source is the Saga -- an Enchantment that is neither Aura nor Equipment -- so the op would try to attach the Saga itself to a creature and the just-arrived Equipment would sit unattached. 'put_onto_battlefield' is the other near miss: it carries 'tapped', 'attacking' and 'counters' for the arrival, but no 'attached_to', so the Equipment cannot enter already equipped either.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vault 101: Birthday Party** (rank 11272) — `vault_101_birthday_party`
-  - If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.
-
-</details>
 
 ## attack-prohibition-all-defenders
 
@@ -124,20 +87,6 @@ Blocks **1** card.
 - **Combat Calligrapher** (rank 4905) — `combat_calligrapher`
   - Inklings can't attack you or planeswalkers you control.
   - Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.
-
-</details>
-
-## defined-x-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated ability whose {X} mana cost is *defined* by a value expression evaluated at activation time -- here {"mana_value_of": {"zone": "exile", "exiled_with": "self"}}, the mana value of the card this permanent imprinted -- instead of being announced by the activating player. Concretely: a field on CostModel (e.g. `x_value`) that, when present, makes game._ask_x return that evaluated number rather than calling ask_x, and makes legality/max_affordable_x price the ability at exactly that X so it is offered only when the player can actually pay it.
-  <br>Why the existing vocabulary won't do: CostModel.mana is a fixed string, and game._ask_x routes every cost with x_count through effects.context.ask_x with a ceiling of mana.max_affordable_x, so X is always a free player choice -- writing cost {"mana": "{X}"} lets the player announce X=0 and copy an imprinted Griselbrand for nothing, which is a strictly better card rather than this one. CostModel.times is the only value-expression multiplier on a cost, but its own schema comment scopes it out ('Read only where an EffectContext exists to evaluate it -- i.e. by `may`'s `pay`, not by an activated ability's cost, which is charged before any effect runs'), and ManaCost.scaled is in fact called from exactly one place, ops_control.py's pay op; engine/costs.py never reads it, so `times` on an activated cost is silently ignored and the ability would charge its unscaled printed mana. pay_life is the only cost that accepts a computed amount and it is life, not mana. mana_reduction only subtracts generic and clamps at zero, so it cannot raise a {0} base up to a card's mana value.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Soul Foundry** (rank 12117) — `soul_foundry`
-  - {X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.
 
 </details>
 

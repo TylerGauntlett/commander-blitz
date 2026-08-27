@@ -1,0 +1,74 @@
+{
+  "card": {
+    "id": "soul_foundry",
+    "name": "Soul Foundry",
+    "oracle_text": "Imprint — When this artifact enters, you may exile a creature card from your hand.\n{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.",
+    "mana_cost": "{4}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Imprint — When this artifact enters, you may exile a creature card from your hand.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "effects": [
+              {
+                "op": "exile",
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "count": 1
+                },
+                "until_leaves": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.",
+        "cost": {
+          "mana": "{X}",
+          "tap": true,
+          "x_value": {
+            "mana_value_of": {
+              "objects": {
+                "zone": "exile",
+                "exiled_with": "self"
+              }
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": {
+              "zone": "exile",
+              "exiled_with": "self"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

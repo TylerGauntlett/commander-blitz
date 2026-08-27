@@ -2033,6 +2033,17 @@
       "graveyard"
     ]
   },
+  "excavation_technique": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 4
+    },
+    "tokens": {
+      "count": 2,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "executioner_s_hood": {
     "zone": "battlefield"
   },
@@ -6239,6 +6250,10 @@
   "silvercoat_lion": {
     "zone": "battlefield"
   },
+  "silverquill_lecturer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "simic_charm": {
     "target_pt_delta": {
       "power": 3,
@@ -6460,6 +6475,13 @@
     "counters": {
       "amount": 4,
       "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
+  "soul_foundry": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
     },
     "zone": "battlefield"
   },
@@ -7502,6 +7524,18 @@
     "zone": "battlefield"
   },
   "vastwood_gorger": {
+    "zone": "battlefield"
+  },
+  "vault_101_birthday_party": {
+    "battlefield_count": 35,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "tokens": {
+      "count": 1,
+      "id": "human_soldier_1_1_w"
+    },
     "zone": "battlefield"
   },
   "vault_of_the_archangel": {

@@ -87242,12 +87242,12 @@
     },
     "Excavation Technique": {
       "edhrec_rank": 12919,
-      "gate": "template",
+      "gate": null,
       "name": "Excavation Technique",
-      "reason": "no template for: Demonstrate",
+      "reason": "",
       "scryfall_id": "32ffc8eb-9518-455c-ada5-8b7596896dcf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Excavator": {
@@ -245972,12 +245972,12 @@
     },
     "Silverquill Lecturer": {
       "edhrec_rank": 11744,
-      "gate": "template",
+      "gate": null,
       "name": "Silverquill Lecturer",
-      "reason": "no template for: Creature spells you cast have demonstrate",
+      "reason": "",
       "scryfall_id": "507e34d0-cdc5-4226-9664-b725b702044d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Silverquill Pledgemage": {
@@ -253672,12 +253672,12 @@
     },
     "Soul Foundry": {
       "edhrec_rank": 12117,
-      "gate": "template",
+      "gate": null,
       "name": "Soul Foundry",
-      "reason": "no template for: Imprint — When this artifact enters, you may exile a creature card from your hand",
+      "reason": "",
       "scryfall_id": "6c7a441b-e4af-41ba-85a4-fcb4f40534c3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Soul Immolation": {
@@ -299162,12 +299162,12 @@
     },
     "Vault 101: Birthday Party": {
       "edhrec_rank": 11272,
-      "gate": "template",
+      "gate": null,
       "name": "Vault 101: Birthday Party",
-      "reason": "no template for: I — Create a 1/1 white Human Soldier creature token and a Food token",
+      "reason": "",
       "scryfall_id": "741caee0-03c7-4b72-8f71-234e66eb6609",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vault 112: Sadistic Simulation": {
