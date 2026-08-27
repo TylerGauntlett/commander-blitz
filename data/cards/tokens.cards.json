@@ -380,15 +380,68 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}, Sacrifice: Add {C}.",
+          "text": "{T}, Sacrifice this artifact: Add one mana of any color.",
           "is_mana_ability": true,
           "cost": {
-            "tap": true
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
           },
           "effects": [
             {
-              "op": "add_mana",
-              "mana": "{C}"
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }

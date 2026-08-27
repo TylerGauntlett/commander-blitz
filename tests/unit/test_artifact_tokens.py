@@ -17,7 +17,8 @@ would quietly make Emergency Eject a strictly better card than the printed one.
 
 from __future__ import annotations
 
-from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from automtg.engine.enums import COLORLESS, ActionKind, DecisionKind, Step, Zone
+from automtg.engine.mana import SYMBOL_INDEX
 from automtg.engine.primitives import create_token
 from tests.conftest import _default_answer, oids_of, pass_until
 
@@ -198,3 +199,49 @@ class TestMap:
         assert not [
             a for a in game.legal_actions() if a.kind is ActionKind.ACTIVATE and a.source == oid
         ]
+
+
+class TestTreasure:
+    """"{T}, Sacrifice this artifact: Add one mana of any color."
+
+    It shipped as `{T}: Add {C}` -- no sacrifice, and colourless. Both halves
+    were wrong in the direction that matters: a Treasure you never have to
+    sacrifice is a Sol Ring that taps for one, and thirty-odd cards in the pool
+    make Treasures. The colour is not cosmetic either -- Treasure is played to
+    *fix*, and one that only made {C} could not cast the spell it was made for.
+    """
+
+    def test_it_makes_a_colored_mana_and_is_spent_doing_it(self, builder):
+        game, oid = board(builder, "treasure_token")
+
+        action = next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE and a.source == oid
+        )
+        game.apply(action)
+        # A mana ability does not use the stack; the mode is the only question.
+        for _ in range(20):
+            decision = game.pending()
+            if decision is None or decision.kind is DecisionKind.PRIORITY:
+                break
+            choice = next(
+                (a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE), None
+            )
+            if choice is None:
+                break
+            game.apply(choice)
+
+        assert gone(game, oid), "a Treasure that survives being tapped is a mana rock"
+        pool = game.state.players[0].mana_pool
+        assert pool.total() == 1
+        # SYMBOLS is W U B R G C, so the last slot is colourless -- which is
+        # what it used to produce and what a fixer must not.
+        assert pool.amounts[SYMBOL_INDEX[COLORLESS]] == 0
+
+    def test_every_color_is_on_offer(self, registry):
+        """Five modes, not one. "Any color" is what a Treasure is played for."""
+        ability = registry.get("treasure_token").abilities[0]
+        assert ability.is_mana_ability
+        modes = ability.effects[0]["modes"]
+        assert [m["label"] for m in modes] == ["White", "Blue", "Black", "Red", "Green"]

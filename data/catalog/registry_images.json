@@ -239,6 +239,10 @@
     "artist": "John Avon",
     "scryfall_id": "136f1e4e-ca24-45cb-a39c-4dd159bb1488"
   },
+  "angel_4_4_w_flying_vigilance": {
+    "artist": "Thomas Chamberlain-Keen",
+    "scryfall_id": "75378703-7c80-4a4b-87ef-203eb74edc21"
+  },
   "angel_of_despair": {
     "artist": "Abigail Larson",
     "scryfall_id": "5366d209-e609-4f1e-a86b-9f585abe1fa9"
@@ -1227,6 +1231,10 @@
     "artist": "Pete Venters",
     "scryfall_id": "16bfba30-4075-4bd6-9e4b-3a37641d43ce"
   },
+  "cat_beast_2_2_w": {
+    "artist": "Bayard Wu",
+    "scryfall_id": "322ef76e-e0f0-48d7-a6ad-5d4c1c9ccb2e"
+  },
   "cat_warriors": {
     "artist": "Melissa A. Benson",
     "scryfall_id": "90823485-83cd-4260-b860-7f05d8588905"
@@ -1370,6 +1378,10 @@
   "circle_of_dreams_druid": {
     "artist": "Sam Guay",
     "scryfall_id": "be6fdec0-a2c4-4da2-ae14-961185eaee66"
+  },
+  "citizen_1_1_gw": {
+    "artist": "Maria Poliakova",
+    "scryfall_id": "fa605271-03c0-401b-a470-4301898c2124"
   },
   "claim_jumper": {
     "artist": "Gaboleps",
@@ -2640,6 +2652,10 @@
     "artist": "Christopher Moeller",
     "scryfall_id": "484fbce6-71bd-40eb-a71b-86958a094708"
   },
+  "fish_1_1_u": {
+    "artist": "Rhonda Libbey",
+    "scryfall_id": "c5a8b2c9-c933-4b91-afc0-b211145a348e"
+  },
   "fishliver_oil": {
     "artist": "Ralph Horsley",
     "scryfall_id": "c3c4a1f4-0a8e-4e70-a2a8-ceebbca63b6c"
@@ -2707,6 +2723,10 @@
   "font_of_fertility": {
     "artist": "Jack Wang",
     "scryfall_id": "a8e85cd4-c116-42e2-a94b-2c04b06c4e2b"
+  },
+  "food_token": {
+    "artist": "Ben Wootten",
+    "scryfall_id": "110f41a6-1ca5-463e-8a6d-fdf021842b43"
   },
   "foot_headquarters": {
     "artist": "Hokyoung Kim",
@@ -3087,6 +3107,10 @@
   "gnarled_mass": {
     "artist": "Tony Szczudlo",
     "scryfall_id": "5c28728d-4839-4cdf-91d4-b9fb4b5d0449"
+  },
+  "gnome_1_1_c": {
+    "artist": "Racrufi",
+    "scryfall_id": "e32673cc-bec9-49b3-bc34-e2b3982ca245"
   },
   "gnottvold_recluse": {
     "artist": "Nicholas Gregory",
@@ -3601,6 +3625,10 @@
     "artist": "Allen Morris",
     "scryfall_id": "5579a3ac-7fdb-4204-b44e-fe0174f78cfa"
   },
+  "hero_1_1_c": {
+    "artist": "Lixin Yin",
+    "scryfall_id": "e4a64831-eec5-4fc9-8904-19523af3ca42"
+  },
   "hero_s_resolve": {
     "artist": "Pete Venters",
     "scryfall_id": "71a0f233-895e-4072-8339-c9448110d3e8"
@@ -3913,6 +3941,10 @@
     "artist": "Anna Steinbauer",
     "scryfall_id": "07015524-874f-4856-a5c1-3148bd126886"
   },
+  "inkling_2_1_wb_flying": {
+    "artist": "Nia Kovalevski",
+    "scryfall_id": "b2ef67fc-b544-4fb3-8362-a29d4533fdd7"
+  },
   "inkmoth_nexus": {
     "artist": "Matteo Bassini",
     "scryfall_id": "0aec35cb-aaa8-4952-b421-a8b6c26d5e74"
@@ -4113,6 +4145,10 @@
     "artist": "Trevor Hairsine",
     "scryfall_id": "5f46870b-3d8d-4aae-8d59-6bd88a50b37c"
   },
+  "junk_token": {
+    "artist": "Justine Cruz",
+    "scryfall_id": "62c4a6f6-6425-4c0c-b35a-880fcab42aad"
+  },
   "juvenile_gloomwidow": {
     "artist": "Thomas M. Baxa",
     "scryfall_id": "d7f323d5-f26c-46e9-9d6a-be5c254fe8b6"
@@ -4244,6 +4280,10 @@
   "kitesail_scout": {
     "artist": "Dan Murayama Scott",
     "scryfall_id": "68a07aad-4ed5-47ae-b04c-9b9919000f6c"
+  },
+  "kithkin_1_1_gw": {
+    "artist": "Jeff Laubenstein",
+    "scryfall_id": "2ed11e1b-2289-48d2-8d96-ee7e590ecfd4"
   },
   "kithkin_billyrider": {
     "artist": "Zara Alfonso",
@@ -4428,6 +4468,10 @@
   "land_leeches": {
     "artist": "Quinton Hoover",
     "scryfall_id": "71f1d97c-5bfa-4791-9004-5f2464908c30"
+  },
+  "lander_token": {
+    "artist": "Martin de Diego S\u00e1daba",
+    "scryfall_id": "49164e15-252a-46e2-8c5a-66e41e071072"
   },
   "lantern_kami": {
     "artist": "John Avon",
@@ -4817,6 +4861,10 @@
   "mantle_of_webs": {
     "artist": "Mathias Kollros",
     "scryfall_id": "a96285a4-57bf-4ef1-b960-b03601e6d209"
+  },
+  "map_token": {
+    "artist": "Camille Alquier",
+    "scryfall_id": "03516d49-0613-46f7-8d88-3bf26d2c8659"
   },
   "maraleaf_pixie": {
     "artist": "Matt Cavotta",
@@ -5697,6 +5745,10 @@
   "overwhelming_stampede": {
     "artist": "Daniel Landerman",
     "scryfall_id": "6996b9c4-e78c-4970-91c7-9025a0a4f670"
+  },
+  "ox_2_2_w": {
+    "artist": "Nanna Marie Steffensen",
+    "scryfall_id": "4db2ad28-a2d9-41ba-811b-bde40a870675"
   },
   "painful_truths": {
     "artist": "Winona Nelson",
@@ -9151,6 +9203,10 @@
     "scryfall_id": "2a212bd9-657d-4a43-a276-80805314b938"
   },
   "warrior_1_1_r": {
+    "artist": "Ernanda Souza",
+    "scryfall_id": "3053e02b-7157-4fb6-9427-d64a68ea29c3"
+  },
+  "warrior_1_1_w_vigilance": {
     "artist": "Ernanda Souza",
     "scryfall_id": "3053e02b-7157-4fb6-9427-d64a68ea29c3"
   },
