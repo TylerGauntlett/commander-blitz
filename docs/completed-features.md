@@ -1,3 +1,291 @@
+## `demonstrate` — a copy that belongs to somebody else
+
+### Overview
+
+Excavation Technique: *"Demonstrate (When you cast this spell, you may copy it.
+If you do, **choose an opponent to also copy it.** Players may choose new targets
+for their copies.)"* — and Silverquill Lecturer, which grants it to your creature
+spells.
+
+The first half was already there: `copy_spell` has copied a spell on the stack
+since storm. The second half was unsayable in two separate ways, and both gap
+records (`data/authoring/gaps/excavation_technique.json`,
+`silverquill_lecturer.json`) found the same two independently.
+
+`op_copy_spell` read only `sid`, `amount` and `new_targets`, and ended
+`put_copy_on_stack(state, ctx.controller, original, chosen)`. The controller was
+an argument that only ever got one value, so **every copy the engine could make
+was yours** — and since `_validate_effect` has no effect-key whitelist, a card
+written with `"controller": "opponent"` on the op loaded clean, was ignored, and
+played as a card with no downside. `for_each_player` is not a way round it: it
+binds `each_player` and never reassigns `ctx.controller`.
+
+And nothing could name **one** opponent. `select_players` resolves `"opponent"`
+and `"each_opponent"` to the whole set; `target`, `controller_of_target`,
+`controller_of` and `owner_of` each read something a target or a trigger already
+produced, and demonstrate's copy is explicitly untargeted. At a pod
+`"each_opponent"` gives a copy to *every* opponent, which is a different card.
+
+Dropping the opponent's copy would not have been a smaller version of either
+card. It is the half that balances the keyword: without it the Lecturer is a
+one-sided Cackling Counterpart engine and Excavation Technique is unconditional
+removal with no rider.
+
+### Tier: A — one key on an existing op, and one new op composing existing primitives
+
+No new `DecisionKind`: `ask_player` and `CHOOSE_PLAYER` have existed since clash,
+which asks the same question and hands back a player id, so legality's
+`_choice_actions`, `game.apply` and `verify.py`'s auto-answer table all work
+unchanged. What was missing was never the decision — it was somewhere to *put*
+the answer. No `EventType` (`SPELL_COPIED` already carries the copy's controller
+as its `player`), no continuous effect, no server and no frontend change.
+
+### What was built
+
+- **`engine/effects/ops_stack.py::op_copy_spell`** — a `controller` player spec,
+  resolved through `select_players` and filtered to the living. It reads
+  *plurally*, exactly as `copy_permanent`'s identically named key already does:
+  one copy per named seat, per `amount`. Absent, it is the resolving player, so
+  storm, replicate, conspire, casualty, gravestorm and epic are untouched.
+- **`engine/effects/ops_stack.py::_choose_new_targets`** — takes the **copy's**
+  controller as `chooser`, and uses it for `enumerate_target_tuples` as well as
+  for `ask_mode`.
+- **`engine/effects/ops_control.py::op_choose_player`** — asks one seat out of a
+  `players` pool (default: the opponents) and records it under `as`, beside
+  `choose_type` and `choose_color`, whose shape it copies.
+- **`engine/effects/__init__.py::RECORDING_OPS`** — `choose_player` added, so the
+  loader's `as` guard knows it writes a binding.
+- **`cards/loader.py::_validate_effect`** — `copy_spell`'s `controller` is
+  checked as a full player spec, and `choose_player` requires an `as` and
+  validates its `players`.
+
+### The chooser decides the legal set, not only who is asked
+
+115.7b says "players may choose new targets for **their** copies", and reading
+that as "who gets the prompt" is only half of it. "Target creature you control"
+names a different pool for each seat, so a redirected copy asked from the
+resolving player's side is wrong in both directions at once: it lets you aim a
+copy that is not yours, at creatures its controller could never have chosen.
+
+### "Leave it alone" had to be added to the menu
+
+`_choose_new_targets` skipped the question when there was one legal tuple, on the
+argument that the only legal choice is what the copy already targets. That
+argument holds only while the copy's controller is the original's. A demonstrate
+copy usually holds a tuple that is **not** legal for its new controller, so the
+old test skipped the prompt in exactly the case where it decides the card — and
+would then have auto-taken the one legal target, forcing an opponent to point a
+spell they did not want at their own board.
+
+The current tuple is now appended to the options when it is not already among
+them, so declining stays available: a copy nobody retargets is countered on
+resolution (608.2b), which is the answer an opponent gives to a copy of something
+they do not want. Behaviour for a same-controller copy is unchanged, because
+there the current tuple is already in the list.
+
+### `as` is required on `choose_player` alone
+
+Every other recording op defaults its binding name or does without one. Here the
+chosen seat is unreachable except through the binding — nothing on the card can
+find it otherwise — so an omitted `as` is a prompt whose answer is discarded, and
+two `choose_player`s sharing a defaulted name would silently overwrite each
+other on a card that chose twice.
+
+### The granted shape, and what it is not
+
+"Creature spells you cast have demonstrate" is written as the same cast trigger
+on the Lecturer, filtered to creature spells you cast. There is **no vocabulary
+for granting an ability to a spell on the stack**, and this is not a workaround
+that loses something: the trigger fires on exactly the casts the grant would have
+covered, and "each copy becomes a token" is 706.10's own rule rather than a
+rider, since `put_copy_on_stack` backs every copy with a token object already.
+A copy is put on the stack and not cast, so the grant does not re-trigger on its
+own copies.
+
+### Tests
+
+`tests/unit/test_demonstrate.py`, with test-only cards in
+`tests/data/testing.cards.json`: `t_demo_draw` (untargeted, so the draw itself
+proves whose copy resolved), `t_demo_pump` ("target creature you control", which
+is what makes the chooser's pool differ from mine) and `t_lecturer` (the granted
+shape). It covers the pod boundary — one chosen seat out of two opponents, not
+`each_opponent` — declining the `may`, declining the retarget so the copy is
+countered, and `t_stormcat` as the regression that an unqualified copy is still
+the resolving player's.
+
+## `x_value` — an X the ability defines, instead of the player announcing it
+
+### Overview
+
+Soul Foundry: *"Imprint — When this artifact enters, you may exile a creature
+card from your hand. **{X}, {T}: Create a token that's a copy of the exiled card.
+X is the mana value of that card.**"*
+
+Every X in the engine was an announcement. Rule 601.2b has the caster choose X,
+`game._ask_x` raised a `CHOOSE_X` decision with a ceiling of
+`mana.max_affordable_x`, and `legality` offered the line at its floor of X = 0
+because the choice is the player's to make later. That is right for Fireball and
+it is the whole bug for Soul Foundry: the second sentence *is* X, so the card
+written as `{"mana": "{X}"}` lets the player announce zero and copy an imprinted
+Griselbrand for nothing.
+
+That version is not an approximation of the printed card, it is a strictly better
+one — and it **passes all six authoring gates**, because the verifier's sandbox
+never activates an activated ability. The gap record
+(`data/authoring/gaps/soul_foundry.json`) exists because the gates cannot catch
+this class of error, and `tests/unit/test_defined_x_cost.py` is the only thing
+that does.
+
+### Tier: A — a new field on `Cost`, no new op
+
+No new op (`copy_permanent` already copies a card sitting in exile, because an
+oid survives a zone change), no `DecisionKind` — the point of the change is that
+one is no longer *asked* — no `EventType`, no continuous effect, no server and no
+frontend change.
+
+### What was built
+
+- **`cards/schema.py::CostModel.x_value` / `engine/carddef.py::Cost.x_value`** —
+  a value expression evaluated at activation time, `None` for "X is announced".
+- **`engine/costs.py::defined_x`** — evaluates it (clamped at zero) and returns
+  `None` when the cost does not define X.
+- **`engine/costs.py::ability_mana`** — reads it and *overrides* the `x` its
+  caller passed. This is the whole design: `can_pay` and `pay` both price an
+  ability's mana through this one function, so the X legality tests is the X the
+  payment charges, with no second place to keep them in step.
+- **`engine/game.py::_ask_x`** — returns the defined number instead of asking.
+- **`engine/legality.py::_ability_aims`** — skips the "is there **any**
+  affordable X" gate when the ability defines its own, and lets `can_pay` price
+  it. So the row is absent from the action list until the mana is really there.
+- **`engine/effects/values.py::_characteristic`** — an `{"objects": selector}`
+  form beside `target`, `binding`, `var` and `self`, summed over the pool the
+  same way the `target` form is.
+- **`cards/loader.py`** — `x_value` is refused on every cost node that is not an
+  activated ability's, and beside a `mana` with no `{X}` to fill in.
+
+### Why a cost needed a value expression that reads a *pool*
+
+The four characteristic references that existed all name an object the resolution
+already has in hand — a target, a binding, a snapshot, the source itself. An
+activated ability's cost has none of them: it is priced before any effect runs,
+so the only way it can name a card is to go and find it. Soul Foundry's imprint
+is a card in exile linked back by `exiled_by`, which the `exiled_with` selector
+already reads, and `{"mana_value_of": {"objects": …}}` is that selector asked for
+a number.
+
+### Why not `times`
+
+`times` is the only other part of a cost that is not fixed when the card is
+written, and its own schema comment scopes it out: it is read where an
+`EffectContext` exists to evaluate it — by `may`'s `pay`, not by an activated
+ability's cost. `ManaCost.scaled` is called from exactly one place,
+`ops_control.py`'s `pay` op; `engine/costs.py` never reads it. So `times` on an
+activated cost is silently ignored and the ability charges its unscaled printed
+mana. It also multiplies the *whole* cost rather than filling in one symbol.
+`mana_reduction` only subtracts generic and clamps at zero, so it cannot raise a
+`{0}` base up to a card's mana value, and `pay_life` is the one computed cost
+that already existed — and it is life, not mana.
+
+### Zero is an answer, not an absence
+
+`x_value` is `None` for "X is announced" rather than `0`, because 0 is a
+perfectly good defined X: an imprinted Ornithopter makes the ability free, and a
+Soul Foundry with nothing imprinted is activatable for `{0}` and copies nothing —
+an empty pool sums to zero, which is what a table would say too.
+
+### Tests
+
+`tests/unit/test_defined_x_cost.py`, with test-only cards in
+`tests/data/defined_x.cards.json`: `t_imprint_foundry` (Soul Foundry's shape),
+`t_free_thopter` (the X = 0 boundary), and `t_naive_foundry` — deliberately the
+*wrong* card, the `{"mana": "{X}"}` version, asserted against so the difference
+the field makes is a fact in the suite rather than a claim in a comment.
+
+## `attachment` — attaching a permanent that is not the ability's source
+
+### Overview
+
+Vault 101: Birthday Party, a Saga: *"II, III — You may put an Aura or Equipment
+card from your hand or graveyard onto the battlefield. **If an Equipment is put
+onto the battlefield this way, you may attach it to a creature you control.**"*
+
+Every attach the engine had ever done was a permanent attaching **itself**.
+`op_attach` read `objects` as the *host* and hardcoded the mover to
+`ctx.source_oid`, which is exactly right for the only two abilities that had ever
+needed it: Equip and Reconfigure are printed on the Equipment, so "attach to
+target creature you control" can only mean *me*, and naming the mover would have
+been noise.
+
+Here the source is the **Saga** — an Enchantment that is neither Aura nor
+Equipment. Written with a plain `attach`, the engine attaches the Saga to a
+creature and leaves the Equipment that just arrived lying on the battlefield
+equipping nobody.
+
+`put_onto_battlefield` was the other near miss and the reason the loader guard
+exists: it carries `tapped`, `attacking` and `counters` for the arrival but has
+no `attached_to`, so the Equipment cannot enter already equipped — and
+`attachment` written there, which is the first place anybody will try it, would
+have been accepted and ignored.
+
+### Tier: A — a new sub-key on an existing op
+
+Not even a new op: `attach` already existed, already took a selector, and the
+only thing missing was a second one. No `DecisionKind` (both questions are
+`choose_objects` over ordinary selectors), no `EventType` (`ATTACHED` already
+fires from the primitive), no continuous effect, no server or frontend change.
+
+### What was built
+
+- **`effects/ops_board.py::op_attach`** — an optional `attachment` selector
+  naming what moves. Absent, the source is the mover and nothing about Equip or
+  Reconfigure changes.
+- **`cards/loader.py::_validate_effect`** — `attachment` is refused on every op
+  but `attach`, its selector is validated, and a `target` inside it must be one
+  the card declares.
+
+### The two things that are not obvious
+
+**The attachment is resolved before the host, and that order carries the
+conditional.** *"If an Equipment* is put onto the battlefield this way" is not a
+separate `if` op: a `subtypes: ["Equipment"]` filter over a binding that holds an
+*Aura* matches nothing, the pool is empty, and the op returns without asking
+which creature. Resolving the host first would show the player a decision that
+cannot change the game. `optional` on `objects` is then the printed "you **may**
+attach it".
+
+**The binding is what makes "it" mean one card.** `attachment` is written
+`{"binding": "gear"}`, naming the `as` of the `search_zones` that just put the
+card down. A fresh filter — "an Equipment you control" — is a legal reading of
+the pool and the wrong reading of the card: it would also pick up the Equipment
+that has been sitting there since turn three.
+
+### The Aura half is the same op
+
+An Aura put onto the battlefield without being cast targeted nothing, so
+`stack._attach_aura` — which reads the *spell's* targets — never runs, and
+`sba` bins it (704.5m). The same op with the `subtypes` filter dropped attaches
+it and it survives. Which host is legal for a given Aura is the card's own
+selector to state; the engine models no standing "Enchant creature" restriction
+off the stack, which is now recorded in `docs/rules-coverage.md` under
+**Simplified**.
+
+### Why the test had to assert on characteristics
+
+The gap record's own observation: this failure is invisible to all six authoring
+gates. The card loads, the chapter resolves, the Equipment really is on the
+battlefield, and a zone expectation sees exactly what it expected. So
+`tests/unit/test_attach_another_permanent.py` asserts on `attached_to` and on
+`chars(state, oid).power` — the `+2/+0` that never appears is the only evidence
+there is. Run against the previous `op_attach`, ten of its eighteen tests fail;
+the Equip regression test passes under both, which is the point of it.
+
+### Tests
+
+`tests/unit/test_attach_another_permanent.py`, with test-only cards in
+`tests/data/attach_another.cards.json` (a Saga in Vault 101's exact shape, two
+stand-in rites that drive the same effects at a chosen moment, an Equipment, an
+Aura and a vanilla bear).
+
 ## `replace_token_creation` — rewriting a token creation before the token exists
 
 ### Overview

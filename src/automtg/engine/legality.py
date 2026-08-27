@@ -1308,7 +1308,17 @@ def _ability_aims(
     from .costs import ability_purpose
 
     purpose = ability_purpose(state, oid)
-    if ability.cost is not None and ability.cost.mana.x_count:
+    if (
+        ability.cost is not None
+        and ability.cost.mana.x_count
+        # "X is the mana value of that card": an ability that defines its own X
+        # is not offered at a floor of zero the way a Fireball is, because there
+        # is no announcement to make. `can_pay` below prices it -- through
+        # `ability_mana`, which fills in the defined X -- so a Soul Foundry with
+        # a Griselbrand imprinted disappears from the list until eight mana is
+        # available, instead of being offered at X = 0 and copying it for free.
+        and ability.cost.x_value is None
+    ):
         from .costs import mana_sources
 
         if (
@@ -1320,6 +1330,9 @@ def _ability_aims(
             < 0
         ):
             return None
+    # ``x=0`` is the floor for an announced X and is ignored outright for a
+    # defined one -- `costs.ability_mana` is the single place either is priced,
+    # so the number legality tests is the number `costs.pay` charges.
     if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose):
         return None
     return enumerate_target_tuples(state, pid, ability.targets, oid) or None

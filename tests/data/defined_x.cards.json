@@ -1,0 +1,141 @@
+{
+  "_comment": "Cards that exist only for the defined-X cost test (tests/unit/test_defined_x_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_naive_foundry` is deliberately the WRONG card -- the version of Soul Foundry the DSL could write before `x_value` existed -- and is asserted against as the counterfactual.",
+  "cards": [
+    {
+      "id": "t_imprint_foundry",
+      "name": "Test Imprint Foundry",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a creature card from your hand.\n{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Imprint — When this artifact enters, you may exile a creature card from your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "zone": "hand",
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "count": 1
+                  },
+                  "until_leaves": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.",
+          "cost": {
+            "mana": "{X}",
+            "tap": true,
+            "x_value": {
+              "mana_value_of": {
+                "objects": {
+                  "zone": "exile",
+                  "exiled_with": "self"
+                }
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "zone": "exile",
+                "exiled_with": "self"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_naive_foundry",
+      "name": "Test Naive Foundry",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a creature card from your hand.\n{X}, {T}: Create a token that's a copy of the exiled card. X is the mana value of that card.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Imprint — When this artifact enters, you may exile a creature card from your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "zone": "hand",
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "count": 1
+                  },
+                  "until_leaves": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{X}, {T}: Create a token that's a copy of the exiled card.",
+          "cost": {
+            "mana": "{X}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "zone": "exile",
+                "exiled_with": "self"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_free_thopter",
+      "name": "Test Free Thopter",
+      "oracle_text": "Flying",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Thopter"
+      ],
+      "power": 0,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ]
+    }
+  ]
+}

@@ -538,6 +538,18 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
         return 0
     if isinstance(ref, Mapping) and "self" in ref:
         return _from_oid(ctx, ctx.source_oid, which) if ctx.source_oid else 0
+    if isinstance(ref, Mapping) and "objects" in ref:
+        # "X is the mana value of **that card**" -- Soul Foundry, naming the card
+        # it imprinted with `{"zone": "exile", "exiled_with": "self"}`. The four
+        # forms above all reach an object a resolution already has in hand -- a
+        # target, a binding, a snapshot, the source itself -- and an activated
+        # ability's *cost* has none of them: it is priced before any effect runs,
+        # so the only way it can name a card is to go and find it. Summed over
+        # the pool, exactly as the `target` form is, so a selector that matches
+        # nothing reads 0 rather than raising.
+        from .selectors import resolve_pool
+
+        return sum(_from_oid(ctx, oid, which) for oid in resolve_pool(ctx, ref["objects"]))
     if isinstance(ref, int):
         return _from_oid(ctx, ref, which)
     raise DslError(f"unparsable characteristic reference {ref!r}")

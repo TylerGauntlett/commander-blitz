@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-98 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+99 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -200,7 +200,7 @@ it, but a card that needed correcting was authored wrong.
 | Stack | `counter` `copy_spell` `return_spell_to_hand` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
-| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -668,6 +668,8 @@ Anywhere a number is expected:
 { "power_of": { "var": "victim" } }             // from a snapshot
 { "toughness_of": { "target": "t1" } }
 { "mana_value_of": { "target": "t1" } }
+{ "mana_value_of": { "objects": { "zone": "exile",       // …of whatever a selector
+                                  "exiled_with": "self" } } }  // finds; SUMS the pool
 { "life_of": "you" }                            // SUMS over its player spec
 { "min_life_of": "each_opponent" }              // the lowest, one player at a time
 { "max_life_of": "each_opponent" }              // the highest
@@ -1051,15 +1053,64 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
-                              "objects": { "self_only": true } } } }  // …for each
+                              "objects": { "self_only": true } } },  // …for each
+  "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
+                 "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
 
-`times` multiplies the **mana** half and is the only part of a cost that is not
-fixed when the card is written — cumulative upkeep's "pay its upkeep cost for
-each age counter on it". It is read only by `may`'s `pay`, and that location is
-forced rather than convenient: an activated ability's cost is settled by
+`times` multiplies the **mana** half and is one of the two parts of a cost that
+are not fixed when the card is written — cumulative upkeep's "pay its upkeep cost
+for each age counter on it". It is read only by `may`'s `pay`, and that location
+is forced rather than convenient: an activated ability's cost is settled by
 legality *before* any effect has run, so a value expression there would have
 nothing to read.
+
+### `x_value` — an X the card fixes, not the player
+
+The other one, and it goes the other way: `x_value` is read **only** on an
+activated ability's cost, and it is what lets that cost be settled before any
+effect runs rather than being blocked by it.
+
+Rule 601.2b makes X an announcement — the player chooses it, and `game._ask_x`
+puts a `CHOOSE_X` decision to them with a ceiling of whatever they can pay. Some
+abilities say what X is instead: Soul Foundry's "{X}, {T}: Create a token that's
+a copy of the exiled card. **X is the mana value of that card.**" There is
+nothing to announce, so nothing is asked.
+
+```jsonc
+{ "kind": "activated",
+  "cost": { "mana": "{X}", "tap": true,
+            "x_value": { "mana_value_of": { "objects": { "zone": "exile",
+                                                         "exiled_with": "self" } } } },
+  "effects": [ { "op": "copy_permanent",
+                 "objects": { "zone": "exile", "exiled_with": "self" } } ] }
+```
+
+One reader, `costs.ability_mana`, which both `costs.can_pay` and `costs.pay` go
+through — so the X legality prices the ability at is the X the payment charges,
+and there is no seam between them. `legality._ability_aims` therefore skips the
+"is there **any** affordable X" gate that an announced X needs: a Soul Foundry
+with a six-drop imprinted is simply absent from the action list until six mana is
+available, rather than being offered at its floor.
+
+That floor is the whole reason the field exists. Written as a bare
+`{"mana": "{X}"}` the line loads, passes every authoring gate — the verifier's
+sandbox never activates an activated ability — and lets the player announce X = 0
+and copy an imprinted Griselbrand for nothing. `tests/unit/test_defined_x_cost.py`
+asserts both halves of that difference.
+
+Refused anywhere else, because nowhere else prices its mana through
+`ability_mana`: on a triggered or static ability's cost, on `additional_cost`
+(folded into the spell's price), on `graveyard_cost`/`flashback` (priced by
+`variant_reduction`, and an X there is unimplemented anyway), and on `may`'s
+`pay`. Also refused beside a `mana` with no `{X}` in it — there would be nothing
+for it to fill in. A value that comes out negative is clamped to zero: a negative
+X is not a discount on the rest of the cost.
+
+Zero is a real answer rather than an absence, which is why the field is `None`
+for "X is announced" instead of `0`. An imprinted Ornithopter really does make
+the ability free, and Soul Foundry with nothing imprinted really is activatable
+for `{0}` — the empty pool sums to zero, and the copy then has nothing to copy.
 
 It multiplies **every** part of the cost. `{1}{U}` at three age counters is
 `{3}{U}{U}{U}`, and scaling only the generic half gives `{3}{U}` — a card that
@@ -1151,7 +1202,12 @@ its mana, and a cost of five that settled for four would be a different card.
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
 `{ "target": "t1" }` · `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
-`{ "not": { … } }`
+`{ "binding": "name" }` · `{ "not": { … } }`
+
+`{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
+`choose_player` put under that name. It is the only one of these that can name
+**one** opponent at a pod without a target to read it off — which is what
+demonstrate needs, since its copy is not targeted.
 
 ### `not` — the player a card *excludes*
 
@@ -2306,6 +2362,67 @@ Attaching during an Aura's `spell_effects` does **not** work, and the failure is
 silent: `move_object` calls `reset_permanent_state` on the way onto the
 battlefield, which clears `attached_to`, so the Aura arrives enchanting nothing
 and state-based actions put it in the graveyard.
+
+### `attachment` — attaching something that is not the source
+
+    Vault 101: Birthday Party — "II, III — You may put an Aura or Equipment card
+    from your hand or graveyard onto the battlefield. If an Equipment is put onto
+    the battlefield this way, you may attach it to a creature you control."
+
+```jsonc
+{ "kind": "chapter", "chapter": 2, "text": "II, III — …",
+  "effects": [
+    { "op": "search_zones", "zones": ["hand", "graveyard"], "player": "you",
+      "count": { "const": 1 }, "destination": "battlefield", "as": "gear",
+      "selector": { "subtypes": ["Aura", "Equipment"] } },
+    { "op": "attach",
+      "attachment": { "binding": "gear", "zone": "battlefield",
+                      "subtypes": ["Equipment"] },
+      "objects": { "zone": "battlefield", "controller": "you",
+                   "types": ["Creature"], "count": 1, "optional": true } } ] }
+```
+
+`objects` is the **host** and always was. `attachment` is the thing that
+*moves*, and until it existed there was no way to say it: the mover was
+hardcoded to the ability's source, which is exactly right for Equip and
+Reconfigure — printed on the Equipment, so "attach to target creature you
+control" can only mean *me* — and wrong the moment a third party does the
+attaching. Here the source is a **Saga**, an Enchantment that is neither Aura
+nor Equipment, so the old op attached the Saga to a creature and left the
+Equipment lying on the battlefield equipping nobody.
+
+**That is invisible to all six authoring gates.** The card loads, the chapter
+resolves, the Equipment really is on the battlefield, and a zone expectation
+sees exactly what it expected. The only evidence is a `+2/+0` that never
+appears. Omitting `attachment` is therefore not a smaller card, it is a broken
+one, and `tests/unit/test_attach_another_permanent.py` is where the difference is
+pinned.
+
+Write it as `{"binding": …}`, naming the `as` of the op that just put the card
+down. That is what "**it**" and "put onto the battlefield **this way**" mean, and
+no fresh filter can say it — `{"controller": "you", "subtypes": ["Equipment"]}`
+would also pick up the Equipment that has been sitting there since turn three.
+
+**The attachment is resolved before the host, and the order carries the
+conditional.** "*If an Equipment* is put onto the battlefield this way" is not a
+separate `if`: a `subtypes: ["Equipment"]` filter over a binding holding an Aura
+matches nothing, the pool is empty, and the op returns without ever asking which
+creature. Asking and then attaching nothing would show a player a decision that
+cannot change the game. `optional` on `objects` is the remaining "you **may**
+attach it".
+
+The **Aura** half of the same sentence is the same op with the `subtypes` filter
+dropped, and it is not optional flavour — an Aura put onto the battlefield
+without being cast targeted nothing, `stack._attach_aura` reads the *spell's*
+targets, and state-based actions bin it a moment later (704.5m). Which host is
+legal for a given Aura is the card's own selector to state: the engine models no
+"Enchant creature" restriction off the stack, because "Enchant creature" is a
+targeting clause on the spell (see `docs/rules-coverage.md`).
+
+`attachment` is refused at load time on every op but `attach`. The near miss is
+writing it on `put_onto_battlefield` beside its `tapped` and `counters` — the op
+that actually puts the Equipment down — where it would be accepted, ignored, and
+silent.
 
 ## Untapping on somebody else's turn
 
@@ -6870,7 +6987,11 @@ Offered as one pick from every legal target tuple, which is exactly the set the
 caster chose from — so 115.7b's "change any number of them, each new target
 legal" falls out rather than being enforced separately, and the original tuple
 is on the list as the "change nothing" answer. Not asked when there is nothing
-to decide: no target specs, or only one legal tuple.
+to decide: no target specs, or only one legal tuple *and it is the one the copy
+already holds*. That last qualifier is demonstrate's — a copy under somebody
+else's control usually holds a tuple that is not legal for them at all, and
+"leave it alone" is added to the menu explicitly so declining stays available
+(a copy nobody retargets is countered on resolution, 608.2b).
 
 No new `DecisionKind` — `ask_mode` already asks "pick one of these labels" and
 hands back an index, the same argument `choose_type` makes. Refused at load time
@@ -6879,6 +7000,65 @@ on any other op.
 Retargeting is not a detail of the card that wanted it. A copy that can only
 re-kill what the original killed is a strictly worse spell than the one printed,
 and it would look entirely normal on screen.
+
+#### Demonstrate — "choose an opponent to **also** copy it"
+
+```jsonc
+// Excavation Technique. "When you cast this spell" is the same cast trigger
+// casualty uses, so the copies resolve above the spell.
+{ "kind": "triggered", "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [
+    { "op": "may", "prompt": "Demonstrate?", "effects": [
+      { "op": "copy_spell", "new_targets": true },
+      { "op": "choose_player", "players": "each_opponent", "as": "demonstrated",
+        "prompt": "Choose an opponent to also copy it" },
+      { "op": "copy_spell", "new_targets": true,
+        "controller": { "binding": "demonstrated" } } ] } ] }
+```
+
+Two additions, and neither is a new `DecisionKind`.
+
+`copy_spell` takes a **`controller`** player spec saying whose copy it is. It
+reads plurally, exactly as `copy_permanent`'s already does — one copy per named
+seat, per `amount` — and defaults to the resolving player, so storm, replicate,
+conspire, casualty, gravestorm and epic are untouched. Without it every copy the
+engine could make was yours: `put_copy_on_stack` took the controller as an
+argument and `op_copy_spell` only ever passed its own. A card written with the
+key anyway loaded clean and was ignored, because there is no effect-key
+whitelist — a copy silently under the wrong player.
+
+`choose_player` names **one** seat and records it under `as`, which the
+`{"binding": …}` player spec then reads. This is the piece that was missing, not
+the decision: `ask_player`/`CHOOSE_PLAYER` have been here since clash. What
+could not be said was *one* opponent. `select_players` resolves `"opponent"` and
+`"each_opponent"` to the whole set, and every single-seat spelling — `target`,
+`controller_of_target`, `controller_of`, `owner_of` — reads something a target
+or a trigger already produced. Demonstrate's copy is explicitly untargeted, so
+none of them apply, and at a pod `"each_opponent"` hands a copy to *every*
+opponent instead of the one the card says to choose. `as` is **required** on it,
+alone among the recording ops: the chosen seat is unreachable otherwise, and two
+`choose_player`s sharing a defaulted name would overwrite each other.
+
+Each copy's own controller answers its `new_targets` question — 115.7b says
+"players may choose new targets for **their** copies", and the chooser decides
+the *legal set* as well as who is asked. "Target creature you control" means a
+different pool for each of them, so read off the resolving seat an opponent's
+copy could be pointed somewhere its controller never could have pointed it, in
+one direction, while they could not point it at all in the other.
+
+**Dropping the opponent's copy is not a smaller card, it is a different one.**
+It is the half that balances demonstrate: without it Silverquill Lecturer is a
+one-sided Cackling Counterpart engine with no downside and Excavation Technique
+is unconditional removal with no rider.
+
+"Creature spells you cast have demonstrate" is that same cast trigger written on
+the granting permanent and filtered — `{"event": "spell_cast", "controller":
+"you", "filter": {"types": ["Creature"]}}` — rather than an ability handed to
+each spell. There is no vocabulary for granting an ability *to a spell on the
+stack*; the trigger on the granter fires on exactly the same casts, and "each
+copy becomes a token" is 706.10's own rule rather than a rider, since a copy is
+backed by a token object already.
 
 #### Multikicker
 
