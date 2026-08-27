@@ -126,6 +126,10 @@ SELECTOR_KEYS = frozenset(
         #: compares against the *ability source*, which for Shared Animosity is
         #: the enchantment, so it removes nothing from a set of attackers and
         #: the count is over by exactly one.
+        #:
+        #: Excludes the whole **set** a binding holds, not just its first oid --
+        #: `as` on `create_token` records a list, and Martial Coup's "destroy all
+        #: other creatures" has to spare every Soldier it just made.
         "exclude_binding",
         #: "…that shares a creature type with it".  Matches when the candidate's
         #: subtypes intersect those of the object bound under this name, read
@@ -456,9 +460,16 @@ def matches(
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
-    if (name := selector.get("exclude_binding")) is not None and oid == _bound_oid(
+    if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(
         ctx, str(name)
     ):
+        # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
+        # a `snapshot`, and a **list** for an op that recorded what it produced.
+        # Martial Coup writes X Soldiers with `as` and then says "destroy all
+        # *other* creatures"; the singular reader returned `None` for that list,
+        # so the exclusion matched nothing and the spell wrathed the tokens it
+        # had just made. Reading one oid out of the list would be worse -- it
+        # would spare exactly one Soldier and look almost right.
         return False
     if (name := selector.get("shares_a_type_with")) is not None:
         other = _bound_oid(ctx, str(name))
