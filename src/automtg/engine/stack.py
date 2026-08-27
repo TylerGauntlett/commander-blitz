@@ -360,7 +360,7 @@ def _choose_trigger_targets(
     from .targeting import describe_ref, enumerate_target_tuples
 
     options = enumerate_target_tuples(
-        state, trig.controller, ability.targets, trig.source_oid
+        state, trig.controller, ability.targets, trig.source_oid, bindings=trig.bindings
     )
     if not options:
         return ()
@@ -755,7 +755,18 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
     card = state.registry.get(item.def_id) if item.def_id in state.registry else None
 
     targets, any_legal = filter_legal(
-        state, item.controller, ability.targets, item.targets, item.source_oid
+        state,
+        item.controller,
+        ability.targets,
+        item.targets,
+        item.source_oid,
+        # The same bindings the targets were *declared* against. A target line
+        # that names something the trigger found -- "target player other than
+        # its controller" -- has to be re-checked (608.2b) against the same
+        # object, and control of it can have changed in between. Without this
+        # the re-check reads an empty binding, which is not a stricter answer
+        # than the declaration but a different one.
+        bindings=item.bindings,
     )
     if not any_legal:
         state.emit(

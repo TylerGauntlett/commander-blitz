@@ -1266,6 +1266,30 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
     """
     validate_selector(model.selector, f"{where}.target[{model.id}]")
     label = f"{where}.target[{model.id}]"
+    if (
+        model.kind in ("player", "any")
+        # `"any"` is a *target* word, not a player spec: `_player_allowed`
+        # answers it before `select_players` is asked, and `select_players` has
+        # no name for "everyone who could be targeted". So it is spelled out
+        # here rather than added to `PLAYER_SPEC_NAMES`, where it would start
+        # meaning something to every effect's `player` key too.
+        and model.selector.get("controller") != "any"
+        and "controller" in model.selector
+    ):
+        # `targeting._player_allowed` resolves this clause through
+        # `select_players`, so it is a full player spec and has to be checked as
+        # one. Left unchecked it was the quietest bug in the targeting layer:
+        # `validate_selector` accepts any Mapping here, so
+        # `{"controller": {"controller_of": "subject"}}` compiled cleanly and
+        # was then dropped by a `return True` fallthrough -- a card printed
+        # "target player other than its controller" that played as "target any
+        # player", strictly wider than the printing, with nothing to say so.
+        #
+        # Checked with no sibling targets in scope: the forms a *target's own*
+        # controller clause takes name the trigger's bindings, not another
+        # target of the same card, and a card that tried would rather be told
+        # so than load.
+        _validate_player_spec(model.selector["controller"], f"{label}.controller", {})
     if isinstance(model.count, dict):
         validate_value(model.count, f"{label}.count")
     if model.up_to:
@@ -2766,6 +2790,18 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
         )
     if not isinstance(who, Mapping):
         return
+    if "not" in who:
+        # "target player **other than** its controller." The complement of a
+        # spec, so whatever it wraps has to be a legal spec in its own right --
+        # otherwise `{"not": {"target": "t9"}}` names an undeclared target and
+        # excludes nobody, which reads as "target any player".
+        _validate_player_spec(who["not"], f"{where}.not", target_kinds)
+        if len(who) > 1:
+            raise DslError(
+                f"{where}: 'not' is the whole spec -- it cannot be combined with "
+                f"{sorted(set(who) - {'not'})}"
+            )
+        return
     for key in ("target", "controller_of_target"):
         if key not in who:
             continue
@@ -3568,6 +3604,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: {op!r} records no binding, so its 'as' would name one "
                 f"nothing writes and every read of it would be 0 "
                 f"(ops that record: {sorted(RECORDING_OPS)})"
+            )
+    if "snapshot" in effect:
+        # `sacrifice`'s LKI twin of `as`: the characteristics the chosen
+        # permanent had while it was still on the battlefield. Only `sacrifice`
+        # reads the key, and an unread key is the silent failure this pass
+        # exists to catch -- Entrapment Maneuver would load with `snapshot` on
+        # the wrong op, resolve, and make zero tokens because
+        # `{"toughness_of": {"binding": …}}` found nothing under that name.
+        # (An effect whose *op* is `snapshot` spells its binding `as`, like
+        # every other recording op, so it never reaches here.)
+        if op != "sacrifice":
+            raise DslError(
+                f"{where}: 'snapshot' captures what a sacrificed permanent had "
+                f"and only sacrifice reads it, not {op!r} "
+                f"(use a separate snapshot op)"
+            )
+        if not (isinstance(effect["snapshot"], str) and effect["snapshot"]):
+            raise DslError(
+                f"{where}: 'snapshot' must be a non-empty binding name, "
+                f"got {effect['snapshot']!r}"
             )
     if op == "roll_dice":
         # The same refusal `join_forces` carries below, for the same reason: a

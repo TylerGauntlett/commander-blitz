@@ -765,9 +765,9 @@ def pick_from_pool(
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
-#: ``controller_of``, ``owner_of``) and a bare seat number are not here: they
-#: name something the card declares elsewhere and are checked where that is
-#: checked -- `loader._validate_player_spec`.
+#: ``controller_of``, ``owner_of``, ``not``) and a bare seat number are not
+#: here: they name something the card declares elsewhere and are checked where
+#: that is checked -- `loader._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
     {
         "you",
@@ -799,6 +799,24 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return [state.active_player]
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
+        if "not" in spec:
+            # "target player **other than** its controller."
+            #
+            # Every other form here names the players to *allow*; this one names
+            # the player to forbid, and no composition of the inclusive forms
+            # says it. `"opponent"` is the near miss and is wrong in both
+            # directions at once on a card that triggers on anybody's token: it
+            # forbids **you** when an opponent made the token, and permits the
+            # very opponent who made it. At a four-player pod "other than its
+            # controller" is *three* seats -- the other two opponents and you --
+            # which is a set no single inclusive spec can name.
+            #
+            # The complement is taken over `alive()` rather than over every
+            # seat, so a player who has already lost the game is not offered as
+            # a legal target. Nested, so `{"not": {"controller_of": "subject"}}`
+            # reuses the mapping form it wraps rather than duplicating it.
+            excluded = set(select_players(ctx, spec["not"]))
+            return [pid for pid in state.alive() if pid not in excluded]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning
