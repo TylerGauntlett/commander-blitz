@@ -8,6 +8,8 @@ clauses on triggers, and static ability conditions.
     {"kicked": true}
     {"evoked": true}
     {"cast_during": "your_main"}
+    {"was_cast": true}
+    {"is_active_player": {"binding": "event_player"}}
 """
 
 from __future__ import annotations
@@ -65,6 +67,18 @@ CONDITION_KEYS = frozenset(
         # step stamped on the object as it went on the stack, not the step the
         # game is in now -- see `_cast_during`.
         "cast_during",
+        # "When this artifact enters, **if it was cast**…" (603.6e). About
+        # *this* arrival on the battlefield, which is the one thing none of the
+        # `cast_*` stamps can say: they are written once and never cleared, so
+        # they still answer for a permanent that was cast, died and was
+        # reanimated. See `entered_by_cast`.
+        "was_cast",
+        # "…**during their turn**". Whether the player a spec names is the
+        # active player. Takes a full player spec the way `is_monarch` does, so
+        # a trigger writes `{"binding": "event_player"}` and asks about the
+        # player the *event* was about rather than about its own controller,
+        # which is the only thing `is_your_turn` can ask.
+        "is_active_player",
     }
 )
 
@@ -187,6 +201,36 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         return any(ctx.state.monarch == p for p in pids)
     if "no_monarch" in cond:
         return (ctx.state.monarch is None) == bool(cond["no_monarch"])
+    if "is_active_player" in cond:
+        from .selectors import select_players
+
+        # "…during **their** turn." A player spec rather than a fixed seat,
+        # which is the whole of the difference from `is_your_turn`: that one
+        # compares the active player to `ctx.controller`, and a trigger is
+        # always evaluated with the ability's own controller there
+        # (`triggers._matches`), so it can only ever ask about you.
+        #
+        # `any`, matching `is_monarch` -- and like the monarchy it can never be
+        # true of two seats at once, so the quantifier is exact rather than an
+        # approximation. An empty spec (a binding the event never carried) is
+        # `False`, which is the safe direction: a "during their turn" clause
+        # that cannot tell whose turn it is must not fire.
+        pids = select_players(ctx, cond["is_active_player"])
+        return any(ctx.state.active_player == p for p in pids)
+    if "was_cast" in cond:
+        # 603.6e. Asked of the ability's own source, which for the enters
+        # trigger this clause lives on is the permanent that just arrived.
+        #
+        # `cast_during` enumerated over every phase is the near miss and
+        # reduces to `obj.cast_step is not None`: a stamp written once by
+        # `stack.push_spell` and cleared by nothing, so a permanent that was
+        # cast, died and was reanimated still answers `True` and hands out its
+        # enters payload a second time. `not_cause` on the trigger is the other
+        # one and names a single cause to refuse, which stops a token copy and
+        # nothing else -- not a reanimation, not a blink, not Show and Tell.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        was_cast = obj is not None and obj.entered_by_cast
+        return was_cast == bool(cond["was_cast"])
     if "is_your_turn" in cond:
         return (ctx.state.active_player == ctx.controller) == bool(cond["is_your_turn"])
     if "cmp" in cond:
@@ -309,6 +353,37 @@ def validate_condition(cond: Any, where: str) -> None:
                 f"{where}.is_monarch: must name one of {sorted(PLAYER_SPEC_NAMES)} "
                 f"or a target/binding, got {who!r}"
             )
+    if "is_active_player" in cond:
+        from .selectors import PLAYER_SPEC_NAMES
+
+        who = cond["is_active_player"]
+        # `true` is the tempting miss and the reason this is not defaulted:
+        # `select_players` refuses a bool outright, so the card would raise at
+        # the first trigger instead of at load. `"active_player"` is the other
+        # one -- a legal spec that makes the leaf a tautology, and therefore a
+        # card whose "during their turn" clause has no clause in it.
+        if isinstance(who, bool) or who is None:
+            raise DslError(
+                f"{where}.is_active_player: needs a player spec -- "
+                f"{{'binding': 'event_player'}} for 'during their turn' -- "
+                f"got {who!r}"
+            )
+        if isinstance(who, str):
+            if who == "active_player":
+                raise DslError(
+                    f"{where}.is_active_player: 'active_player' is always true here; "
+                    f"name the player the clause is about instead"
+                )
+            if who not in PLAYER_SPEC_NAMES:
+                raise DslError(
+                    f"{where}.is_active_player: must name one of "
+                    f"{sorted(PLAYER_SPEC_NAMES)} or a target/binding, got {who!r}"
+                )
+    # Not truthiness-tested, for `no_monarch`'s reason: `{"was_cast": "false"}`
+    # is a non-empty string and would read as `true`, which on Wedding Ring is
+    # the difference between one copy and one per reanimation.
+    if "was_cast" in cond and not isinstance(cond["was_cast"], bool):
+        raise DslError(f"{where}.was_cast: must be true or false")
     # A flag name that is not a name matches nothing, so the guard never bites
     # and the once-each-turn clause it was written for is simply absent from a
     # card that reads as though it has one. `true` is the tempting mistake --

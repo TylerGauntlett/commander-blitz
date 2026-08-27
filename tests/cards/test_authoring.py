@@ -264,11 +264,17 @@ class TestThePacketCarriesTheWholeVocabulary:
         only, an effect's selector may read far more.
 
         Neither contains the other, which is the reason both have to travel.
-        The static-only keys are one category -- **relationships between two
-        permanents**, read off a field rather than off a characteristic:
+        The static-only keys are mostly one category -- **relationships between
+        two permanents**, read off a field rather than off a characteristic:
         soulbond's two are "as long as this creature is paired, **both** get
         +1/+1", one static written once and applied to two creatures. Both are
         board state, so no static can depend on another's output through them.
+
+        `owner` is the exception and is static-only for a duller reason: no card
+        has yet needed an *effect* to say "creatures you own". It arrived for
+        Inspiring Leader's "Commander creatures you own have …", where 903.3
+        makes ownership the rules-relevant relation, and it stays on this side
+        of the line until a one-shot prints the word.
 
         `attached` used to be here and is now in *both* lists. The claim that it
         was "meaningless to an effect's selector" was simply wrong: Blade of the
@@ -280,7 +286,7 @@ class TestThePacketCarriesTheWholeVocabulary:
 
         ref = reference()
         static, selector = set(ref["static_filter_keys"]), set(ref["selector_keys"])
-        assert static - selector == {"paired", "paired_with_source"}
+        assert static - selector == {"paired", "paired_with_source", "owner"}
         assert "attached" in static and "attached" in selector
         assert len(selector - static) > 10, "the selector language is the larger one"
 

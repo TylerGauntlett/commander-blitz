@@ -56,6 +56,11 @@ class TargetSpec:
     #: the modes are chosen (601.2b then 601.2c), which is the printed order and
     #: the reverse of the one legality enumerates in.  See
     #: :attr:`CardDef.mode_targets` and `game.Game._ask_mode_targets`.
+    #:
+    #: A **triggered** ability may own one too, and it is the same rule read at
+    #: the other moment: 603.3d chooses a trigger's modes and its targets alike
+    #: as the ability is put on the stack.  See :attr:`Ability.mode_targets` and
+    #: `stack.push_triggered_ability`.
     mode: int | None = None
 
     @property
@@ -383,6 +388,28 @@ def top_level_mode_spec(effects: Any) -> Mapping[str, Any] | None:
     return None
 
 
+def _specs_for_modes(
+    base: tuple[TargetSpec, ...],
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]],
+    modes: Sequence[int],
+) -> tuple[TargetSpec, ...]:
+    """The specs one declaration actually used: the flat list, then the modes'.
+
+    One function for a card and for an ability, because the ordering is the
+    whole content and two copies of it is two chances to disagree:
+    `targeting.filter_legal` splits the stored refs **by position**, so
+    whatever declared the targets and whatever re-checks them on resolution
+    have to walk the modes in the same order -- ascending mode index, which is
+    the printed order 700.2e executes them in.
+    """
+    if not mode_targets:
+        return base
+    extra: list[TargetSpec] = []
+    for index in sorted(modes):
+        extra.extend(mode_targets.get(index, ()))
+    return tuple(base) + tuple(extra)
+
+
 @dataclass(frozen=True)
 class Ability:
     """An activated, triggered or static ability printed on a card."""
@@ -468,22 +495,43 @@ class Ability:
     once_each_turn: bool = False
     # activated + triggered
     targets: tuple[TargetSpec, ...] = ()
+    #: Target specs owned by one **mode** each, the ability-level twin of
+    #: :attr:`CardDef.mode_targets`.  Only a *triggered* ability may have them:
+    #: 603.3d puts both the modes and the targets at the moment the ability is
+    #: put on the stack, so there is one moment that owns both questions.  An
+    #: activated ability has no such moment -- `legality` enumerates one
+    #: activation per legal target tuple, which is before `Game._activate` asks
+    #: which mode -- so `loader._check_mode_targets` refuses it there.
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     effects: tuple[Mapping[str, Any], ...] = ()
     # static
     static: Mapping[str, Any] | None = None
 
     @property
     def cast_time_modes(self) -> Mapping[str, Any] | None:
-        """The ``choose_mode`` to ask about on activation, or ``None``.
+        """The ``choose_mode`` to ask about before this goes on the stack.
 
-        Only for an *activated* ability, and only when the ability's whole
-        effect tree contains exactly one ``choose_mode`` at its top level. A
-        triggered ability has no activation to ask at, and a nested or repeated
-        one keeps asking as it resolves.
+        ``None`` unless the ability's whole effect tree contains exactly one
+        ``choose_mode`` at its top level: a nested or repeated one is a second
+        question that genuinely belongs to resolution, and pre-answering it
+        would bind the wrong one.
+
+        Answered for an **activated** ability (602.2b) and for a **triggered**
+        one (603.3d) alike.  The triggered half is not a convenience: the modes
+        have to be chosen at the moment the ability is put on the stack, because
+        that is the only moment at which a mode-owned target could be declared
+        -- and 601.2b, which 603.3d applies, says a mode with no legal target
+        cannot be chosen at all.  A *static* ability never reaches the stack.
         """
-        if not self.is_activated or count_mode_specs(self.effects) != 1:
+        if self.is_static or count_mode_specs(self.effects) != 1:
             return None
         return top_level_mode_spec(self.effects)
+
+    def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
+        """The target specs this ability actually declared -- see
+        :meth:`CardDef.specs_for_modes`, of which this is the ability-level
+        twin, down to the ordering rule `targeting.filter_legal` depends on."""
+        return _specs_for_modes(self.targets, self.mode_targets, modes)
 
     @property
     def is_activated(self) -> bool:
@@ -754,12 +802,7 @@ class CardDef:
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
         """
-        if not self.mode_targets:
-            return self.targets
-        extra: list[TargetSpec] = []
-        for index in sorted(modes):
-            extra.extend(self.mode_targets.get(index, ()))
-        return tuple(self.targets) + tuple(extra)
+        return _specs_for_modes(self.targets, self.mode_targets, modes)
 
     @property
     def retrace_cost(self) -> Cost:

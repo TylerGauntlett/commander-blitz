@@ -1,0 +1,102 @@
+{
+  "_comment": "Cards that exist only for the subtype attack-prohibition test (tests/unit/test_attack_prohibition_by_subtype.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_ink_lock` is deliberately the WRONG card -- the `cant_attack` version of the same sentence, which stops Inklings attacking anybody -- and is asserted against as the counterfactual.",
+  "cards": [
+    {
+      "id": "t_inkling",
+      "name": "Test Inkling",
+      "oracle_text": "Flying",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Inkling"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "t_calligrapher",
+      "name": "Test Calligrapher",
+      "oracle_text": "Inklings can't attack you or planeswalkers you control.",
+      "mana_cost": "{2}{W}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Scribe"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "power": 1,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Inklings can't attack you or planeswalkers you control.",
+          "effect": "cant_attack_you",
+          "affects": {
+            "controller": "any",
+            "subtypes": [
+              "Inkling"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ink_lock",
+      "name": "Test Ink Lock",
+      "oracle_text": "Inklings can't attack.",
+      "mana_cost": "{2}{W}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Scribe"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "power": 1,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Inklings can't attack.",
+          "effect": "cant_attack",
+          "affects": {
+            "controller": "any",
+            "subtypes": [
+              "Inkling"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

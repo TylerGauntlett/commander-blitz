@@ -303,7 +303,7 @@ class TestTheLoaderRefusals:
                 }
             ]
         )
-        with pytest.raises(DslError, match="only triggered and mana abilities"):
+        with pytest.raises(DslError, match="not activated"):
             self.compile(card)
 
 

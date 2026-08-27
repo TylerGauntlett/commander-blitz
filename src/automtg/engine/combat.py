@@ -15,8 +15,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import (
+    any_defender_attack_prohibition,
     attack_alone_forbidden,
     attack_compelled,
+    attack_defender_forbidden,
     attack_forbidden,
     block_alone_forbidden,
     block_forbidden,
@@ -97,7 +99,11 @@ def can_attack(state: GameState, oid: int) -> bool:
     # `attack_target_forbidden` only fires while some other defender is
     # available, so a goad can never empty both lists and a goaded creature is
     # never made unable to attack by the goad itself.
-    if state.attack_restrictions and not (
+    # `cant_attack_you` is the second thing that can empty both lists -- an
+    # Inkling in a two-player game whose only opponent has a Combat Calligrapher
+    # has nowhere legal to swing -- so it joins the cheap guard rather than
+    # relying on the one already there.
+    if (state.attack_restrictions or any_defender_attack_prohibition(state)) and not (
         legal_defenders(state, oid) or legal_planeswalker_defenders(state, oid)
     ):
         return False
@@ -294,6 +300,15 @@ def attack_target_forbidden(
         for restriction in state.attack_restrictions:
             if restriction.attacker == obj.controller and restriction.defender == defender:
                 return True
+    # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
+    # control." The same seam read off a *static* instead of the table, so the
+    # prohibition is filtered on the attacking creature and lives exactly as
+    # long as the permanent printing it. Deliberately **not** under the
+    # `planeswalker is None` guard above: this sentence names the walkers, where
+    # `attack_restrictions`' sentence ("that player can't attack you") does not,
+    # and reading either one the other's way would be a different card.
+    if attack_defender_forbidden(state, oid, defender):
+        return True
     # Goad's second half (701.38a): "…and attacks a player other than you if
     # able". `defender` is the defending *player* for both attack kinds -- a
     # planeswalker's controller is the defending player (506.2) and

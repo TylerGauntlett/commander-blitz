@@ -1,3 +1,447 @@
+## An attack prohibition that names a subtype and a seat — 508.1c
+
+### Overview
+
+Combat Calligrapher: *"Inklings can't attack you or planeswalkers you control."*
+
+The gap record (`data/authoring/gaps/combat_calligrapher.json`) had already done
+the analysis, and it was right: the sentence carries **three** things at once,
+and the engine had each of them separately.
+
+| in the sentence | what the engine had |
+|---|---|
+| a filter on the *attacking* creature | `cant_attack`, which takes no defender |
+| a *defending* seat | the `cant_attack_player` op, which takes no filter |
+| "for as long as this permanent is here" | a static — but no defender-scoped one that forbids |
+
+Every substitution is a different card, and each is a card the log would narrate
+as if it were right:
+
+- **`cant_attack`** would stop Inklings attacking *anybody*. That is strictly
+  stronger than the printed line, and it would switch off Combat Calligrapher's
+  own third line, which hands each opponent a tapped, attacking Inkling
+  expressly so that they keep swinging at each other.
+- **the `cant_attack_player` op** is keyed on the pair of seats in
+  `state.attack_restrictions` and carries no creature filter at all. Its
+  `duration` is required precisely because it is a resolving one-shot with no
+  permanent to hang off — so it cannot be a creature's continuous ability, and
+  there is no third duration that would make it one.
+- **`attack_tax`** is defender-scoped *and* filtered, and it prices the attack.
+  An unpayable tax is a prohibition; a payable one is Propaganda.
+
+### Tier: B — a continuous effect, and no new layer
+
+A new `STATIC_EFFECTS` entry read by two new predicates in `characteristics`.
+No `TempEffect.kind`, no primitive and no place in `_compute`, for the reason
+`cant_attack`, `cant_block` and `attack_tax` have none either: this is a
+**permission**, not a characteristic. A keyword or a layer would be a lie about
+what the card says, and `chars` has nowhere to put "…but not at that player".
+Nothing reaches the server or the frontend: `LegalActionDTO.kind` is a bare
+string and the ADD_ATTACKER actions are simply not offered.
+
+### What was built
+
+- `engine/characteristics.py` — `attack_defender_forbidden(state, oid,
+  defender)`, written as `attack_tax`'s twin with the price taken out: the same
+  `_battlefield_statics` walk, the same `source_obj.controller != defender`
+  seat test, the same `_matches` filter. And
+  `any_defender_attack_prohibition(state)`, the cheap half of the guard below.
+- `engine/combat.py` — one clause in `attack_target_forbidden`, the
+  per-attacker/per-defender seam `cant_attack_player` built and goad reused, so
+  legality, `add_attacker` and the RL action mask cannot disagree. And the
+  static joins `attack_restrictions` in `can_attack`'s guard against a creature
+  with nowhere left to swing.
+- `cards/loader.py` — `cant_attack_you` in `STATIC_EFFECTS`, and a guard
+  requiring `affects`.
+
+### Planeswalkers: the opposite answer from the op, and not a house rule
+
+`attack_target_forbidden` exempts `attack_restrictions` at a planeswalker
+(506.2, the Ghostly Prison reading) and does **not** exempt this static. The two
+answers differ because the two printed sentences differ:
+
+- *"You can't attack that player this turn"* is a sentence about being attacked,
+  and attacking somebody's planeswalker is not attacking them.
+- *"Inklings can't attack you **or planeswalkers you control**"* names the
+  walkers out loud, so nothing has to be inferred in either direction.
+
+Goad made the same divergence, in the same predicate, on the same argument, and
+it is why that argument was taken as a parameter rather than assumed. Because a
+planeswalker's controller **is** the defending player and
+`legal_planeswalker_defenders` passes it, one seat test covers both attack kinds.
+
+This half is only sayable because **attacking planeswalkers is implemented** —
+`tests/unit/test_planeswalkers.py` holds it. `docs/rules-coverage.md` still
+listed it under *Not implemented → Combat*; that line was stale and is corrected
+in the same change, because the card's second clause rests on it. A vacuous
+reading — "no planeswalker can be attacked, so the clause is satisfied by
+nothing" — was available and is not what shipped.
+
+### What the test proves
+
+`tests/unit/test_attack_prohibition_by_subtype.py`, over three cards in
+`tests/data/cant_attack_you.cards.json` (an Inkling, the wall, and `t_ink_lock`,
+which is deliberately the **wrong** card — the `cant_attack` version of the same
+sentence, kept as the counterfactual the way `t_naive_foundry` is):
+
+- it **narrows** rather than removes: the walled seat is withheld and every
+  other opponent is still offered, where the counterfactual grounds the Inkling
+  entirely;
+- the filter is real — a Bear attacks the walled seat as normal — and two walls
+  close two seats;
+- **planeswalkers**: the walker behind the wall is not offered to an Inkling, is
+  offered to a Bear, and a walker with no wall in front of it is offered to
+  both; and the `cant_attack_player` op still exempts walkers, pinned from the
+  other side so the widening cannot have leaked;
+- it points **one way**: the wall's own controller's Inklings attack everyone
+  else, and it says nothing about attacks in the other direction;
+- `add_attacker` refuses what legality withheld — the two halves of the seam;
+- the **boundary**, one opponent and one wall: the Inkling is not a legal
+  attacker, a creature *compelled* to attack owes nothing it cannot legally do,
+  and the declare-attackers step is skipped rather than offered with no legal
+  action in it;
+- the **wearing-off**: the seat reopens the moment the source leaves, mid
+  declaration, and the compelled creature's requirement comes back with it;
+- the loader refuses a wall with no filter, a filter key that is not a printed
+  characteristic, and a `cost` (which would be a second, silent spelling of
+  `attack_tax` that nothing charges).
+
+### Guarded by
+
+`.venv/Scripts/python.exe -m pytest tests/unit tests/cards -q -p no:warnings`,
+and `ruff check src scripts tests`.
+
+## A granted *static* ability, and an `owner`-scoped static filter — 903.3
+
+### Overview
+
+Inspiring Leader: *"Commander creatures you own have "Creature tokens you control
+get +2/+2.""*
+
+The gap record (`data/authoring/gaps/inspiring_leader.json`) named **two** needs
+and both blocked the card on their own.
+
+`grantable_abilities` refused a static outright — `loader._compile_card` raised
+*"only triggered and mana abilities can be granted, not static"* — so the honest
+wording was a hard load error rather than a silent no-op. And
+`STATIC_FILTER_KEYS` had `controller` and no `owner`, so "creatures you **own**"
+could not be said at all; `owner` existed in exactly one place,
+`COST_REDUCTION_FILTER_KEYS`, which a static's `affects` cannot reach.
+
+### Tier: B — a continuous effect, and no new layer
+
+The widening needed **no new code in the characteristics pipeline**, which is
+both the design and the reason it is safe. `characteristics.abilities_of`
+appends a granted ability to the **recipient's** list, and
+`_battlefield_statics` walks that list rather than the printed face — so a
+granted static arrives already sourced on the recipient and is applied in the
+same fixed layer as a printed one. No `TempEffect.kind`, no primitive, no
+reordering of `_compute`. Nothing reaches the server or the frontend.
+
+Everything source-relative inside the granted ability then means the right thing
+for free: the quoted anthem's `controller: "you"` is the commander creature's
+controller rather than the Background's, and two commander creatures put two
+entries in that walk, so the tokens get +4/+4 without anything counting them.
+
+### Why this cannot break layers-lite
+
+The constraint of [ADR 0001](adr/0001-layers-lite.md) is that a static's filter
+may not read another static's output. Three facts keep it:
+
+1. *Who receives* a grant is decided by `_ability_statics` plus `_matches` on the
+   granter's `affects` — printed characteristics and board state only.
+2. *What the granted static affects* is decided by `_matches` too, by the same
+   rule.
+3. `_ability_statics` collects **only** off printed faces, so a granted
+   `grant_ability` or `lose_all_abilities` is never collected at all. That
+   severed edge is not new — it is the divergence from 613.8 that shipped with
+   `lose_all_abilities` — and it is exactly what stops static-grants-static
+   recursion.
+
+So a grant changes only *which permanent a static is sourced on*. The fixed
+order is over effect **kinds**, and is untouched.
+
+### What was built
+
+- `engine/characteristics.py` — `_matches` reads `owner`, mirroring the reading
+  `costs._reduction_matches` has taken since Visions of Glory: writing `owner`
+  **suppresses** the defaulted `controller: "you"`, because a filter that named
+  ownership and not control is asking the other question, and a defaulted
+  control clause on top of it drops exactly the stolen-commander case the key
+  exists for. `_battlefield_statics` grew the argument above as its docstring,
+  since it is the function the whole design rests on.
+- `cards/loader.py` — `owner` in `STATIC_FILTER_KEYS` and out of
+  `COST_REDUCTION_FILTER_KEYS` (one spelling, not two dialects), with
+  `_check_owner_key` shared by `affects`, `blockers`, counting filters and cost
+  reductions. `PLAYER_WIDE_STATIC_EFFECTS` hoisted out of the `affects_player`
+  check site so it has one definition, and `GRANTABLE_STATIC_EFFECTS` **derived**
+  from it as `STATIC_EFFECTS - UNGRANTABLE_STATIC_EFFECTS` — every static read
+  through `_battlefield_statics`, which is the honest boundary rather than a
+  hand-picked list.
+- `cards/loader.py` — `_check_grant_targets`, and two bugs it caught that the
+  widening would have made ordinary. The compiled `grant_ability` static never
+  carried its `ability` index at all, so `abilities_of`'s
+  `static.get("ability", 0)` read `0` for every card — invisible until a card had
+  two grantable abilities, which the quoted static makes normal. And an
+  out-of-range index in either form was a silent no-op.
+
+### What it refuses, and why each refusal is not fussiness
+
+- **The ability statics and the player-wide ones** cannot be granted: their
+  readers walk printed faces, so a granted one would load clean, print a line of
+  quoted text and never apply.
+- **The one-shot `grant_ability` op** may not hand a static over. Its grants are
+  pointers `_battlefield_statics` never walks; the continuous form is a
+  different key.
+- **`{"chosen_type_of": "self"}`** inside a granted filter is refused rather than
+  picked between: the substitution reads the filter's *source*, an author means
+  the granter, and the engine would read the recipient — which has chosen
+  nothing, so the filter matches nobody.
+
+### What the test proves
+
+`tests/unit/test_granted_static_ability.py`, over an Inspiring Leader compiled in
+the test rather than added to `data/cards/`:
+
+- nought, one and two commander creatures give the tokens +0, +2 and **+4** — the
+  stacking the near-miss `{"exists": {"is_commander": true}}` condition cannot
+  do;
+- a non-commander creature is not granted it, and the Background does not gain
+  it;
+- an opponent's tokens are untouched, and a **stolen** commander creature pumps
+  its thief's tokens and stops pumping yours — the grant follows ownership, the
+  anthem follows the recipient's controller, and no anthem on the granter can
+  split those two;
+- a commander you merely *control* is not granted it, while the same board read
+  with `controller: "you"` is (3, 3) — both directions of the near miss, in one
+  place;
+- the wearing-off: clearing `is_commander` takes the anthem away the same turn;
+- the loader refuses a granted ability static, a granted player-wide static, an
+  out-of-range grant, the op pointing at a static, `chosen_type_of`, and an
+  `owner` that names nobody.
+
+### Guarded by
+
+`.venv/Scripts/python.exe -m pytest tests/unit tests/cards -q -p no:warnings`,
+and `ruff check src scripts tests`.
+
+## A triggered ability that chooses its modes on the stack — 603.3d
+
+### Overview
+
+Oltec Matterweaver: *"Whenever you cast a creature spell, choose one — • Create
+a 1/1 colorless Gnome artifact creature token. • Create a token that's a copy of
+**target** artifact token you control."*
+
+The gap record (`data/authoring/gaps/oltec_matterweaver.json`) had verified that
+everything else on the card compiles: `copy_permanent` takes `objects`, the
+`is_token` selector key exists, `gnome_1_1_c` is in the token pool, and
+`retreat_to_kazandu` shows a modal `choose_mode` inside a triggered ability
+already works. What was missing was a **moment** for the second bullet's target
+to be declared in.
+
+Mode-owned targets shipped for spells (`TargetSpec.mode`, `CardDef.mode_targets`),
+and the loader refused them on an ability outright — *"'mode' only works on a
+card's own 'targets' — an ability's modes are chosen as it resolves, which is
+after the moment its targets were declared."* That was true of the engine and
+not of the rules. **603.3d** puts a triggered ability's modes *and* its targets
+at the one instant it is put on the stack, applying 601.2b then 601.2c exactly
+as a cast does; the engine only had the second half.
+
+### The three ways of writing it without `mode`, all measured
+
+Each is a different card, and the second bullet is not the half that breaks:
+
+- **A plain ability-level target.** It is declared for *every* trigger, so
+  `filter_legal` answers `any_legal` False and the **whole trigger fizzles**
+  whenever you control no artifact token — which is the state of the board on
+  the first creature you cast in every game, because the Gnome is itself the
+  first artifact token. It also fizzles the trigger when the token is removed in
+  response even though the controller meant to take the Gnome bullet.
+- **The same spec with `optional: true`.** It survives that
+  (`filter_legal` returns `remains or not had_targets`), but it lets the copy
+  bullet be taken having declined the target — a mode that silently does nothing
+  — and it still forces the target to be named before the mode is known.
+- **A `chooser: "controller"` selector inside the mode.** The
+  `retreat_to_kazandu` shape. It resolves at the right time and **is not
+  targeting**: no `became_target` event, no ward or shroud check on your own
+  token, and no 608.2b fizzle when the chosen token is gone.
+
+### Tier: A — no new decision kind, no new event, no new op
+
+`ask_mode` and `ask_targets` already compose, and both questions already had a
+generator to be asked from: `push_triggered_ability` became one when Bojuka Bog
+was fixed. Nothing reaches the server or the frontend — `StackItem.modes` is
+already serialized and `DecisionKind.CHOOSE_MODE` is already answered by every
+seat, the RL encoder and the authoring verifier.
+
+### What was built
+
+- `engine/carddef.py` — `Ability.mode_targets`, the ability-level twin of
+  `CardDef.mode_targets`; `Ability.cast_time_modes` now answers for a
+  **triggered** ability as well as an activated one (a static never reaches the
+  stack); `Ability.specs_for_modes`, and `CardDef.specs_for_modes` rewritten to
+  share one `_specs_for_modes` with it — the ordering *is* the content, and two
+  copies of it are two chances to disagree about which mode a stored ref belongs
+  to.
+- `engine/stack.py` — `push_triggered_ability` asks `_choose_trigger_modes`
+  first and then the chosen modes' targets, recording both on the item
+  (`modes`, `modes_answered`) so `op_choose_mode` finds the question answered
+  rather than asking again on resolution. `_choose_trigger_targets` takes a
+  **spec list** rather than the ability, because a modal trigger's target list
+  is not the printed one. `_resolve_ability` splits the stored refs with
+  `ability.specs_for_modes(item.modes)`, which is how 608.2b's re-check knows
+  which mode was chosen.
+- `cards/loader.py` — `_compile_ability` splits its target list into card-level
+  and mode-owned the way `compile_card` does, and `_check_mode_targets` gained
+  `on_trigger`. An **activated** ability is still refused, and the message now
+  says why it is the one that cannot: legality enumerates one activation per
+  legal target tuple, so its targets are fixed before `Game._activate` asks
+  which mode.
+
+### 601.2b: a mode with no legal target is not offered
+
+This is the whole card, and it is what `_choose_trigger_modes` gates on. A mode
+with no `mode_targets` enumerates as `[()]` — one legal way to take it — so the
+Gnome bullet is always on offer without a special case, and with nothing else to
+copy it is the *only* offer, taken without a prompt.
+
+`targeting.selectable_modes` asks the same question for a spell and is
+deliberately not reused: it has no bindings to pass, and a trigger's target line
+may name what the trigger found. Asked without them, the offer would be computed
+against a different board than the declaration a line later.
+
+"Choose one **that hasn't been chosen**" (Henrika Domnathi) is filtered here
+too. `op_choose_mode` strikes spent modes off only on the branch that asks, and
+it no longer asks — so without this an unfiltered offer would put a spent mode
+back on the table.
+
+### What the test proves
+
+`tests/unit/test_modal_triggered_targets.py`, over a test-only
+`t_matterweaver` in `tests/data/modal_trigger.cards.json`:
+
+- with **no** artifact token, the Gnome bullet is the only mode offered, is
+  taken without a question, and **still makes its Gnome** — the case all three
+  workarounds get wrong;
+- a Treasure an *opponent* controls does not open the copy bullet, because
+  "you control" is half of "no legal target";
+- one artifact token is the boundary: both bullets are then offered, to the
+  trigger's controller;
+- the copy bullet declares its own target as the ability goes on the stack and
+  fires `became_target` there (603.2d); the Gnome bullet declares **no** target
+  at all;
+- with two artifact tokens the target is a real second question, asked after the
+  mode and never before it;
+- 608.2b: removing the targeted token fizzles the copy bullet and creates
+  nothing, while the same removal on the same board leaves the Gnome bullet
+  untouched — the split an unconditional ability-level target cannot make;
+- the loader still refuses `mode` on an activated ability, without a single
+  top-level `choose_mode`, out of range, `optional`, or with a caster-chosen
+  size.
+
+### Guarded by
+
+`.venv/Scripts/python.exe -m pytest tests/unit tests/cards -q`, and
+`ruff check src scripts tests`.
+
+## `was_cast` and `is_active_player` — two loop guards on one card
+
+### Overview
+
+Wedding Ring: *"When this artifact enters, **if it was cast**, target opponent
+creates a token that's a copy of it. / Whenever an opponent who controls an
+artifact named Wedding Ring draws a card **during their turn**, you draw a card. /
+Whenever an opponent who controls an artifact named Wedding Ring gains life
+**during their turn**, you gain that much life."*
+
+The gap record (`data/authoring/gaps/wedding_ring.json`) had verified that
+everything *else* on the card already compiles — the `player` target plus
+`copy_permanent` with `controller: {"target": "t1"}`, the `draw` / `you_gain_life`
+triggers with `controller: "opponent"`, the `exists` filter scoped by
+`{"binding": "event_player"}`, and `gain_life` off `{"binding": "amount"}`. Two
+condition leaves were missing, and both are **loop guards rather than flavour**:
+this card's payload is a copy of itself under an opponent's control, and its two
+watchers read every draw and every life gain at the table.
+
+Both had a near miss that compiles, which is why neither could be skipped.
+
+### "If it was cast" — 603.6e
+
+The clause is about *this* arrival on the battlefield. Without it, the copy
+Wedding Ring makes has an enters trigger of its own, and copies again — per
+opponent, without bound.
+
+`{"any": [{"cast_during": "beginning"}, …]}` over every phase is the reduction
+the gap record proved compiles, and it is exactly `obj.cast_step is not None`.
+That stamp is written once by `stack.push_spell` and cleared by **nothing**:
+`reset_permanent_state` leaves the `cast_*` flags alone on purpose, so an enters
+trigger can still ask whether its permanent was kicked or evoked, and oids
+survive every zone change. A Ring that was cast, died and was reanimated answers
+`True` and hands out a second free copy. `not_cause: "token"` is the other near
+miss and names one cause to refuse: it stops the self-copy and does nothing about
+a blink, a reanimation, or Show and Tell.
+
+### "During their turn"
+
+`is_your_turn` compares `state.active_player` to `ctx.controller`, and
+`triggers._matches` evaluates every trigger condition with
+`controller=obj.controller` hardcoded — so it can only ever ask about the
+ability's own controller. `{"is_your_turn": false}` compiles and reads "not your
+turn", which coincides with the printed clause **only in a duel**. This engine
+plays pods, and at three seats it is a strictly wider card: it fires when one
+opponent draws during a *third* player's turn.
+
+Nothing bridged it. No `value_keys` leaf evaluates to a player id, so `cmp`
+cannot compare two; `validate_selector` refuses any `controller` string outside
+`you`/`opponent`/`any`, so `{"count": {…, "controller": "active_player"}}` does
+not load; `has_turn_flag` is keyed to the source. `"active_player"` was already
+in `PLAYER_SPEC_NAMES` — what was missing was any way to *ask* about it.
+
+### What was built
+
+- **`GameObject.entered_by_cast`**, stamped by `zones._enter_battlefield` on
+  **every** arrival, before the enters replacements and long before the
+  `ENTERS_BATTLEFIELD` event the trigger queues off. Two facts joined, because
+  each alone is a wider card: the arrival `cause` says the object got here as a
+  *resolving spell*, and `cast_step` says a player actually cast it — which a
+  **copy** of a permanent spell fails (707.10) even though it resolves.
+- Deliberately **not** cleared by `reset_permanent_state`. Nothing off the
+  battlefield may read it except the 603.4 re-check of the very trigger it
+  gates, after the permanent has already left — and there 603.6e wants the
+  last-known answer.
+- **`{"was_cast": true}`** and **`{"is_active_player": <player spec>}`** in
+  `CONDITION_KEYS`. The second takes the full spec `select_players` resolves, the
+  way `is_monarch` does, so a trigger writes `{"binding": "event_player"}` and
+  `triggers.event_bindings` already carries it.
+- **Load-time guards.** `was_cast` must be a literal boolean (`"false"` is a
+  non-empty string and would read as `true`, which on this card is the
+  difference between one copy and one per reanimation), and the loader confines
+  it to a `self_enters` trigger: the condition reads the ability's **own**
+  source, so on `permanent_enters` it answers about the wrong object and
+  anywhere else it reads a flat `False` for ever. `is_active_player` refuses a
+  bare `true`, a misspelled seat, and `"active_player"` — a tautology, and
+  therefore a "during their turn" clause with no clause in it.
+
+### What it does not do
+
+Neither leaf is in the static condition language or in a cost reduction's
+whitelist. A static is evaluated with no event and no bindings; a cost is priced
+before anything reaches the stack, which is the same line `cast_during` sits
+behind.
+
+### Test
+
+`tests/unit/test_was_cast_and_their_turn.py` — 20 cases. The two that carry the
+argument are `TestOnlyThisArrivalCounts`, which puts `was_cast` and the
+`cast_during` reduction to the *same object* after a reanimation and pins them
+apart, and `TestTheThirdPlayersTurn`, which is a three-player pod asserting that
+`{"is_your_turn": false}` gets that seat wrong in the same position.
+
+Wedding Ring is expressible whole: cast, an opponent gets one token copy;
+reanimated, nobody gets anything; and at three seats the draw and life-gain
+watchers fire on the drawing opponent's own turn and on no other.
+
 ## `cant_attack_alone` / `cant_block_alone` — a restriction on the declaration
 
 ### Overview

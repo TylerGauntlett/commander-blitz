@@ -10,7 +10,14 @@ from __future__ import annotations
 from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
-from .carddef import BESTOW_TARGET, MUTATE_TARGET, Ability, CardDef, rules_ability
+from .carddef import (
+    BESTOW_TARGET,
+    MUTATE_TARGET,
+    Ability,
+    CardDef,
+    TargetSpec,
+    rules_ability,
+)
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
@@ -305,17 +312,25 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
 def push_triggered_ability(
     state: GameState, trig: TriggerInstance
 ) -> Generator[Any, list[int], StackItem]:
-    """Put one triggered ability on the stack, asking for its targets.
+    """Put one triggered ability on the stack, asking for its modes and targets.
 
-    Rule 603.3d: the controller chooses the targets **as the ability is put on
-    the stack**, not as it resolves. This used to take `options[0]` off a
-    `limit=1` enumeration, which is not a weaker choice but a fixed one -- and
-    for a `kind: "player"` target the enumeration order is `state.alive()`, so
-    the ability always named seat 0. Bojuka Bog exiled its own controller's
-    graveyard in every game it was ever played in, and nothing on the board
-    said so, because the ability did resolve and did exile a graveyard.
+    Rule 603.3d: the controller chooses the modes and the targets **as the
+    ability is put on the stack**, not as it resolves. This used to take
+    `options[0]` off a `limit=1` enumeration, which is not a weaker choice but a
+    fixed one -- and for a `kind: "player"` target the enumeration order is
+    `state.alive()`, so the ability always named seat 0. Bojuka Bog exiled its
+    own controller's graveyard in every game it was ever played in, and nothing
+    on the board said so, because the ability did resolve and did exile a
+    graveyard.
 
-    A generator, so the choice can become a real decision. That is why
+    The modes come **first** and the targets second, because 603.3d applies
+    601.2b and 601.2c in that order -- and because that order is the whole of
+    what a mode-owned target means: which targets the ability declares is not
+    knowable until the modes are known. Recorded on the item so `op_choose_mode`
+    finds the question already answered on resolution rather than asking a
+    second time, in a moment where no target could be declared any more.
+
+    A generator, so the choices can become real decisions. That is why
     `drain_to_stack` is one too, and why `_advance` drives it through `_run`.
     """
     obj = state.objects.get(trig.source_oid)
@@ -336,20 +351,110 @@ def push_triggered_ability(
         granted_by=trig.granted_by,
     )
     ability = ability_of(state, item)
-    if ability is not None and ability.targets:
-        item.targets = yield from _choose_trigger_targets(state, trig, ability)
+    if ability is not None and ability.cast_time_modes:
+        item.modes = yield from _choose_trigger_modes(state, trig, ability)
+        # Recorded even when the answer was "no modes": see
+        # `StackItem.modes_answered`, and `op_choose_mode`, which reads the flag
+        # rather than the tuple for exactly the "choose up to two" case.
+        item.modes_answered = True
+    specs = ability.specs_for_modes(item.modes) if ability is not None else ()
+    if specs:
+        item.targets = yield from _choose_trigger_targets(state, trig, specs)
     state.stack.append(item)
     announce_targets(state, item)
     return item
 
 
-def _choose_trigger_targets(
+def _choose_trigger_modes(
     state: GameState, trig: TriggerInstance, ability: Ability
+) -> Generator[Any, list[int], tuple[int, ...]]:
+    """Which modes this trigger takes -- 603.3d, applying 601.2b.
+
+    The ability-level twin of `Game._ask_modes`, and separate from it for the
+    reason `_choose_trigger_targets` is separate from `legality`: a trigger has
+    no cast action and `stack` cannot import `game`.
+
+    Two things it must get right, each of which is a different card:
+
+    * **601.2b: a mode with no legal target is not offered.** That is what makes
+      Oltec Matterweaver's first bullet still available on the first creature
+      you cast, when you control no artifact token for the second to copy. An
+      unconditional ability-level target instead fizzles the whole trigger
+      there, and an `optional` one lets the second bullet be taken with nothing
+      to point at -- a mode that silently does nothing.
+    * **"that hasn't been chosen" is filtered here too.** Henrika Domnathi's
+      spent modes are struck off by `op_choose_mode`, which only does so on the
+      branch that asks -- and it no longer asks, because this answered it. An
+      unfiltered offer would put a spent mode back on the table.
+
+    Returns the chosen indices in **printed** order for `StackItem.modes`;
+    700.2e executes them that way and `Ability.specs_for_modes` splits the
+    stored refs that way.
+    """
+    from .effects.context import EffectContext, ask_mode
+    from .effects.ops_control import _mode_flag, modal_bounds
+    from .targeting import enumerate_target_tuples
+
+    spec = ability.cast_time_modes or {}
+    modes = list(spec.get("modes") or [])
+    if not modes:
+        return ()
+    card = state.registry.get(trig.def_id) if trig.def_id in state.registry else None
+    ctx = EffectContext(
+        state=state,
+        controller=trig.controller,
+        source_oid=trig.source_oid,
+        bindings=dict(trig.bindings),
+        source_name=card.name if card else trig.description,
+    )
+    floor, up_to = modal_bounds(ctx, spec)
+    labels = [str(m.get("label") or f"Mode {i + 1}") for i, m in enumerate(modes)]
+    # `targeting.selectable_modes` is the same question asked of a spell, and it
+    # is deliberately not reused: it has no bindings to pass, and a trigger's
+    # target line may name what the trigger *found* ("target creature other than
+    # the one that died"). Asked without them, the offer would be computed
+    # against a different board than the declaration a line below.
+    #
+    # A mode with no targets of its own enumerates as `[()]` -- one legal way to
+    # take it -- so the Gnome bullet is always on offer without a special case.
+    offered = [
+        index
+        for index in range(len(modes))
+        if enumerate_target_tuples(
+            state,
+            trig.controller,
+            ability.mode_targets.get(index, ()),
+            trig.source_oid,
+            limit=1,
+            bindings=trig.bindings,
+        )
+    ]
+    source = state.objects.get(trig.source_oid) if trig.source_oid is not None else None
+    if spec.get("once_each") and source is not None:
+        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
+    # A floor that outruns what is on offer is not an ability that chooses fewer
+    # modes -- 601.2b makes it one that cannot choose at all, and 603.3d removes
+    # it from the stack. Clamped rather than refused because the two are
+    # indistinguishable from the board: with no mode chosen the ability resolves
+    # having done nothing, which is what being removed looks like.
+    floor = min(floor, len(offered))
+    picked = yield from ask_mode(
+        ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
+    )
+    return tuple(sorted(offered[i] for i in picked))
+
+
+def _choose_trigger_targets(
+    state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
     """Ask the trigger's controller which of the legal target tuples it takes.
 
     Enumerated at the ordinary cap, the same one casting uses -- a trigger is
     not entitled to fewer choices than a spell with the same targeting line.
+
+    ``specs`` rather than the ability, because a modal trigger's target list is
+    not the printed one: it is `Ability.specs_for_modes` of the modes just
+    chosen, and resolution rebuilds the same list to split the refs by.
 
     Nothing is asked when there is one option or none, which is most triggers:
     "when this dies, it deals damage to *its controller*" has one legal tuple
@@ -360,7 +465,7 @@ def _choose_trigger_targets(
     from .targeting import describe_ref, enumerate_target_tuples
 
     options = enumerate_target_tuples(
-        state, trig.controller, ability.targets, trig.source_oid, bindings=trig.bindings
+        state, trig.controller, specs, trig.source_oid, bindings=trig.bindings
     )
     if not options:
         return ()
@@ -757,7 +862,13 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
     targets, any_legal = filter_legal(
         state,
         item.controller,
-        ability.targets,
+        # Mode-owned specs come back in the same order `push_triggered_ability`
+        # declared them in, which is what makes `filter_legal`'s positional
+        # split line up with the refs the trigger stored. 608.2b re-checks the
+        # targets of *the modes that were chosen*, and this is how it knows
+        # which those were. For every ability without them it is
+        # `ability.targets` unchanged.
+        ability.specs_for_modes(item.modes),
         item.targets,
         item.source_oid,
         # The same bindings the targets were *declared* against. A target line

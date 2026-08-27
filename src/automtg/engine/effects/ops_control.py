@@ -285,11 +285,15 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     :meth:`Game._cast` does exactly that when the card asks a single top-level
     modal question -- the answer arrives here on ``ctx.modes``.
 
-    The fallback still asks, and two shapes rely on it: a *triggered* ability,
-    which has no cast to be asked at, and a nested ``choose_mode``, which is a
-    second question that genuinely belongs to resolution.  The answer is
-    consumed rather than read, so an inner one asks rather than silently reusing
-    the outer one's modes.
+    A *triggered* ability is answered early too: 603.3d puts its modes at the
+    moment it goes on the stack, which `stack.push_triggered_ability` does --
+    and it has to, because that is the only moment a mode-owned target could be
+    declared in.
+
+    The fallback still asks, and one shape relies on it: a nested
+    ``choose_mode``, which is a second question that genuinely belongs to
+    resolution.  The answer is consumed rather than read, so an inner one asks
+    rather than silently reusing the outer one's modes.
 
     ``all_if`` is **entwine**: "choose both if you pay the entwine cost". The
     entwine price is an ordinary `kicker`, so legality already offers the spell

@@ -506,6 +506,35 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
     Reads `abilities_of` rather than the printed face, so a permanent that has
     lost its abilities stops applying its anthem -- which is the half of "loses
     all abilities" that no amount of work at the offer sites would have caught.
+
+    It is also where a **granted static** joins the pipeline, and there is no
+    code here for it: `abilities_of` appends the granted ability to the
+    *recipient's* list, so this walk finds it with ``obj`` -- the recipient --
+    as its source, and every layer below reads it as an ordinary static of that
+    permanent. That is the whole of Inspiring Leader's "Commander creatures you
+    own have "Creature tokens you control get +2/+2."": the quoted anthem's
+    "you" is the commander creature's controller because the commander creature
+    is what the pipeline thinks said it, and two commander creatures put two
+    entries in this list, so the tokens get +4/+4 without anything counting.
+
+    **Why that cannot break the fixed order.** Three facts, and the argument
+    needs all three:
+
+    1. *Who receives* a granted static is decided by `_ability_statics` plus
+       `_matches` on the granter's `affects` -- printed characteristics and
+       board state, never a layer's output.
+    2. *What it affects* is decided by `_matches` too, and by the same rule.
+    3. `_ability_statics` collects **only** off printed faces, so a granted
+       `grant_ability` or `lose_all_abilities` is never collected at all. That
+       severed edge -- already there, and already paid for as the one recorded
+       divergence from 613.8 -- is what stops static-grants-static recursion,
+       and `loader.GRANTABLE_STATIC_EFFECTS` refuses the two by name rather
+       than letting a card load clean and do nothing.
+
+    So the only thing a grant changes is *which permanent a static is sourced
+    on*, which is what `controller: "you"` and `self_only` are measured against.
+    The layer order is over effect *kinds* -- a granted `buff` is applied at
+    layer 4 beside every printed one -- so it is untouched.
     """
     out: list[tuple[GameObject, Mapping[str, Any]]] = []
     for oid in state.battlefield:
@@ -1008,10 +1037,34 @@ def _matches(
     if selector.get("paired_with_source"):
         return source.paired_with is not None and obj.oid == source.paired_with
 
-    controller = selector.get("controller", "you")
+    # "Commander creatures you **own**." Ownership is board state that no layer
+    # can change -- `GameObject.owner` is written once, when the object is made,
+    # and `change_control` deliberately leaves it alone -- so it is a pipeline
+    # *input* exactly as `controller` and `tapped` are, and reading it here
+    # cannot make one static depend on another's output.
+    #
+    # `owner` present suppresses the default `controller: "you"`, which is the
+    # reading `costs._reduction_matches` already takes for the same word: a
+    # filter that named ownership and not control is asking the other question,
+    # and a defaulted control clause on top of it would silently re-impose the
+    # answer the card went out of its way not to ask for -- dropping exactly the
+    # case `owner` exists for, a commander an opponent has stolen. 903.3 is why
+    # that case is not a curiosity: on a commander card, ownership *is* the
+    # relation the rules use, and "you own" and "you control" part company on
+    # precisely the boards commanders are played on.
+    #
+    # "You" is the source's **controller**, not its owner, which is what
+    # `_static_players` already decided the word means on a permanent: a stolen
+    # anthem pumps for whoever is holding it.
+    owner = selector.get("owner")
+    controller = selector.get("controller", None if owner else "you")
     if controller == "you" and obj.controller != source.controller:
         return False
     if controller == "opponent" and obj.controller == source.controller:
+        return False
+    if owner == "you" and obj.owner != source.controller:
+        return False
+    if owner == "opponent" and obj.owner == source.controller:
         return False
 
     if not _matches_printed(card, selector, obj.added_subtypes):
@@ -1372,6 +1425,68 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
         if _matches(state, obj, source_obj, static.get("affects")):
             return True
     return False
+
+
+def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool:
+    """May this creature **not** attack ``defender``, or a planeswalker they control?
+
+    Combat Calligrapher -- "Inklings can't attack you or planeswalkers you
+    control." A prohibition that is a *continuous ability of a permanent*,
+    scoped to one seat and filtered on the attacking creature's printed
+    characteristics. None of the three near misses is that shape.
+
+    Written as `attack_tax`'s twin, with the price taken out: `affects` says
+    which creatures are stopped and the static's own controller is the seat they
+    are stopped from attacking -- "creatures can't attack **you**" is the same
+    sentence in both, once as a toll and once as a wall.
+    `cant_attack`/`attack_forbidden` is the wrong one because no defender is in
+    the question at all, so an Inkling under it could not attack *anybody* --
+    strictly stronger than the printed line, and it would switch off
+    Calligrapher's own second ability, which hands opponents Inklings expressly
+    to keep them swinging at each other. The `cant_attack_player` op has the
+    right scope and carries no creature filter at all, and its `duration` is
+    required precisely because it is a resolving one-shot with no permanent to
+    hang off, so it cannot be a creature's continuous ability.
+
+    **Planeswalkers are included here**, which is the opposite answer from that
+    op, and it is opposite for the reason goad's is opposite to Ghostly
+    Prison's: the answer follows the printed sentence rather than a house rule.
+    "You can't attack that player" is 506.2's reading -- attacking somebody's
+    planeswalker is not attacking them -- and the sentence *this* effect exists
+    for says "or planeswalkers you control" out loud, so neither half is
+    inferred. A planeswalker's controller **is** the defending player (506.2)
+    and `combat.legal_planeswalker_defenders` passes it, so the one seat test
+    below covers the walker as well as the chair, exactly as goad's does.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_attack_you":
+            continue
+        # The wall protects the seat the permanent is under -- the line
+        # `attack_tax` already draws, and the whole shape of the family.
+        if source_obj.controller != defender:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
+
+
+def any_defender_attack_prohibition(state: GameState) -> bool:
+    """Is there a ``cant_attack_you`` static on the battlefield at all?
+
+    The cheap half of `combat.can_attack`'s guard against a creature with
+    nowhere left to attack, beside the `attack_restrictions` list test that
+    guard already had. The expensive half -- "has this creature any legal
+    defender left" -- walks every seat and every planeswalker through
+    `attack_target_forbidden`, and is worth asking only in a game that plays one
+    of these cards.
+    """
+    return any(
+        static.get("effect") == "cant_attack_you"
+        for _, static in _battlefield_statics(state)
+    )
 
 
 def attack_tax(state: GameState, oid: int, defender: int) -> str:
