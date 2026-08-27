@@ -1,0 +1,36 @@
+{
+  "card": {
+    "id": "divine_visitation",
+    "name": "Divine Visitation",
+    "oracle_text": "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead.",
+    "mana_cost": "{3}{W}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead.",
+        "effect": "replace_token_creation",
+        "affects_token": {
+          "types": [
+            "Creature"
+          ]
+        },
+        "create_instead": [
+          "angel_4_4_w_flying_vigilance"
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -285,6 +285,43 @@
     {
       "abilities": [
         {
+          "affects_token": {
+            "subtypes": [
+              "Clue",
+              "Food",
+              "Treasure"
+            ]
+          },
+          "create_instead": [
+            "clue_token",
+            "food_token",
+            "treasure_token"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If you would create a Clue, Food, or Treasure token, instead create one of each."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "academy_manufactor",
+      "mana_cost": "{3}",
+      "name": "Academy Manufactor",
+      "oracle_text": "If you would create a Clue, Food, or Treasure token, instead create one of each.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Assembly-Worker"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -789,6 +826,96 @@
         "Human",
         "Spy",
         "Hero"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attacking": {
+                    "binding": "each_player"
+                  },
+                  "op": "create_token",
+                  "tapped": true,
+                  "token": "goblin_1_1_r"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with this creature and/or your commander, for each opponent, create a 1/1 red Goblin creature token that's tapped and attacking that player.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "any_of": [
+                  {
+                    "self_only": true
+                  },
+                  {
+                    "is_commander": true
+                  }
+                ],
+                "binding": "attackers"
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Creature tokens you control gain indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ainok_strike_leader",
+      "mana_cost": "{1}{W}",
+      "name": "Ainok Strike Leader",
+      "oracle_text": "Whenever you attack with this creature and/or your commander, for each opponent, create a 1/1 red Goblin creature token that's tapped and attacking that player.\nSacrifice this creature: Creature tokens you control gain indestructible until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Warrior"
       ],
       "toughness": 2,
       "types": [
@@ -19341,6 +19468,37 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_token": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "create_instead": [
+            "angel_4_4_w_flying_vigilance"
+          ],
+          "effect": "replace_token_creation",
+          "kind": "static",
+          "text": "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "divine_visitation",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Divine Visitation",
+      "oracle_text": "If one or more creature tokens would be created under your control, that many 4/4 white Angel creature tokens with flying and vigilance are created instead.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -32883,6 +33041,91 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{W}",
+            "tap": true,
+            "untap_permanents": {
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "citizen_1_1_gw"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creature token."
+        },
+        {
+          "cost": {
+            "mana": "{W}{W}",
+            "tap": true,
+            "untap_permanents": {
+              "count": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}{W}, {T}, Untap two tapped creatures you control: Draw a card."
+        },
+        {
+          "cost": {
+            "mana": "{W}{W}{W}{W}{W}",
+            "tap": true,
+            "untap_permanents": {
+              "count": 15,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "win_game",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: You win the game."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "halo_fountain",
+      "mana_cost": "{2}{W}",
+      "name": "Halo Fountain",
+      "oracle_text": "{W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creature token.\n{W}{W}, {T}, Untap two tapped creatures you control: Draw a card.\n{W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: You win the game.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -34400,6 +34643,72 @@
       "mana_cost": "{3}",
       "name": "Herald's Horn",
       "oracle_text": "As this artifact enters, choose a creature type.\nCreature spells you cast of the chosen type cost {1} less to cast.\nAt the beginning of your upkeep, look at the top card of your library. If it's a creature card of the chosen type, you may reveal it and put it into your hand.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              {
+                "chosen_color_of": "self"
+              }
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creatures you control of the chosen color get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": {
+                "chosen_color_of": "self"
+              },
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of the chosen color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "heraldic_banner",
+      "mana_cost": "{3}",
+      "name": "Heraldic Banner",
+      "oracle_text": "As this artifact enters, choose a color.\nCreatures you control of the chosen color get +1/+0.\n{T}: Add one mana of the chosen color.",
       "source": "auto",
       "types": [
         "Artifact"
@@ -44823,6 +45132,134 @@
       "types": [
         "Enchantment",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "roll",
+              "count": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Bobblehead"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "roll_dice",
+              "sides": 6
+            },
+            {
+              "amount": {
+                "rolled": {
+                  "binding": "roll",
+                  "parity": "even"
+                }
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            },
+            {
+              "condition": {
+                "cmp": "=",
+                "left": {
+                  "rolled": {
+                    "binding": "roll",
+                    "face": 6
+                  }
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "win_game",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, you win the game."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "luck_bobblehead",
+      "mana_cost": "{3}",
+      "name": "Luck Bobblehead",
+      "oracle_text": "{T}: Add one mana of any color.\n{1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, you win the game.",
+      "source": "auto",
+      "subtypes": [
+        "Bobblehead"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
