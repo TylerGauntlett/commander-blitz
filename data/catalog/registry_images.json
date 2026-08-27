@@ -2472,6 +2472,10 @@
     "artist": "Rytis Sabaliauskas",
     "scryfall_id": "c0318a48-30e4-4ef7-be3d-5e561c5ce428"
   },
+  "excavation_technique": {
+    "artist": "Francisco Miyara",
+    "scryfall_id": "32ffc8eb-9518-455c-ada5-8b7596896dcf"
+  },
   "exclude": {
     "artist": "Mark Romanoski",
     "scryfall_id": "014bc5a5-4483-42e9-9c14-1ad229b28eb7"
@@ -7442,6 +7446,10 @@
     "artist": "Terese Nielsen",
     "scryfall_id": "9d33e866-cfd8-44e6-8070-df8df1ce965d"
   },
+  "silverquill_lecturer": {
+    "artist": "Ryan Pancoast",
+    "scryfall_id": "507e34d0-cdc5-4226-9664-b725b702044d"
+  },
   "simic_charm": {
     "artist": "Zoltan Boros",
     "scryfall_id": "3384ee4e-738f-4442-bccd-4f96022b7219"
@@ -7721,6 +7729,10 @@
   "sorin_imperious_bloodlord": {
     "artist": "Chase Stone",
     "scryfall_id": "219d3e48-e0b1-472d-ac45-11c14b292c9e"
+  },
+  "soul_foundry": {
+    "artist": "Arnie Swekel",
+    "scryfall_id": "6c7a441b-e4af-41ba-85a4-fcb4f40534c3"
   },
   "soul_of_the_rapids": {
     "artist": "Anthony Palumbo",
@@ -8993,6 +9005,10 @@
   "vastwood_gorger": {
     "artist": "Kieran Yanner",
     "scryfall_id": "df9547f7-2789-4cac-bf61-78e4047a95fb"
+  },
+  "vault_101_birthday_party": {
+    "artist": "Andrea Piparo",
+    "scryfall_id": "741caee0-03c7-4b72-8f71-234e66eb6609"
   },
   "vault_of_the_archangel": {
     "artist": "John Avon",
