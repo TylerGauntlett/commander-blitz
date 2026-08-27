@@ -900,6 +900,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             raise DslError(f"{where}: a graveyard cost needs mana")
         if flashback.mana.x_count:
             raise DslError(f"{where}: a graveyard cost with X is not implemented")
+        if flashback.x_value is not None:
+            # The refusal above says X from the graveyard is not implemented, and
+            # a defined X is still an X: `costs.ability_mana` -- the one reader of
+            # `x_value` -- never sees a graveyard cost, which is priced by
+            # `costs.variant_reduction` instead.
+            raise DslError(
+                f"{where}: 'x_value' is an activated ability's, and a graveyard "
+                f"cost is not priced through `ability_mana`"
+            )
         if flashback.mana_reduction is not None:
             # "…costs {X} less to cast **this way**". The one alternative cost
             # modelled as a full `Cost`, so the one that can carry a variant-
@@ -1355,7 +1364,11 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     for i, effect in enumerate(model.effects):
         _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
 
-    cost = _compile_cost(model.cost, where) if model.cost else None
+    cost = (
+        _compile_cost(model.cost, where, defines_x=kind is AbilityKind.ACTIVATED)
+        if model.cost
+        else None
+    )
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 
@@ -2388,7 +2401,24 @@ def _validate_static_value(value: Any, where: str) -> None:
         )
 
 
-def _compile_cost(model, where: str) -> Cost:
+def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
+    if model.x_value is not None:
+        # "X is the mana value of that card." Two guards, because both failures
+        # are silent: `x_value` is read by `costs.ability_mana`, which prices an
+        # *activated ability's* cost and nothing else, and what it fills in is
+        # the `{X}` symbol in this cost's own mana.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'x_value' defines the X of an activated ability's "
+                f"cost, and this is not one -- nowhere else prices its mana "
+                f"through `ability_mana`, so it would load and be ignored"
+            )
+        if "X" not in str(model.mana or "").upper():
+            raise DslError(
+                f"{where}.cost: 'x_value' says what the '{{X}}' in this cost is "
+                f"worth, and there is no '{{X}}' in {model.mana!r} for it to fill in"
+            )
+        validate_value(model.x_value, f"{where}.cost.x_value")
     validate_selector(model.sacrifice, f"{where}.cost.sacrifice")
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
@@ -3048,6 +3078,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             _validate_cost_reduction(
                 effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction"
             )
+        if effect["pay"].get("x_value") is not None:
+            # `x_value` fills in the `{X}` of an *activated ability's* cost, and
+            # an optional `pay` is not one: nothing announces X for it either,
+            # so `{"mana": "{X}"}` here is already a cost of nothing. Refused
+            # rather than quietly honoured, because no printed "you may pay"
+            # names an X the card computes, and a field that works in a place
+            # nothing tested it is a price nobody checked.
+            raise DslError(
+                f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
+                f"not to an optional payment"
+            )
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
             # nothing else, so a `times` beside a cost with no mana would load
@@ -3146,6 +3187,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'share_subtype' needs a 'count' above 1; got {count}"
             )
+    if "attachment" in effect:
+        # "…you may attach **it** to a creature you control" (Vault 101:
+        # Birthday Party). Which permanent is doing the attaching, as against
+        # `objects`, which is the host it lands on. Only `attach` reads it, and
+        # this is the one guard that has to exist: written on `put_onto_battle-
+        # field` -- the first place anybody will try it, since that is the op
+        # that just put the Equipment down -- it is accepted, ignored, and the
+        # Equipment arrives equipping nobody. Nothing on screen says so; the
+        # card simply grants no bonus.
+        if op != "attach":
+            raise DslError(
+                f"{where}: 'attachment' names the permanent being attached and "
+                f"only attach reads it, not {op!r}"
+            )
+        validate_selector(effect["attachment"], f"{where}.attachment")
+        sub = effect["attachment"]
+        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.attachment: references target {sub['target']!r} "
+                f"which the card does not declare"
+            )
     if "new_targets" in effect:
         # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on
         # `copy_spell` alone: the choice is a decision per copy, and storm,
@@ -3160,6 +3222,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}"
             )
+    if op == "copy_spell" and "controller" in effect:
+        # Demonstrate's "choose an opponent to **also** copy it". A full player
+        # spec, so it is checked as one: until the op read this key it loaded
+        # clean and was dropped on the floor, which made every copy the
+        # resolving player's and turned the half of demonstrate that balances
+        # it into no clause at all.
+        _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op == "choose_player":
+        # The chosen seat exists only as the binding it is written to -- nothing
+        # else on the card can reach it -- so an omitted 'as' is a prompt whose
+        # answer is thrown away, and two of them sharing a default name would
+        # silently overwrite each other on a card that chose twice.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_player needs an 'as' -- the chosen player is "
+                f"only reachable through the binding it is stored under"
+            )
+        if "players" in effect:
+            _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
     if op == "look_at_top":
         # The depth is the card. Without an amount the op would look at one
         # card and Through the Forest Gate would silently become a cantrip,

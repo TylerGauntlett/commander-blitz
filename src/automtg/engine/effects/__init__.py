@@ -30,6 +30,12 @@ OPS: dict[str, Callable[..., Any]] = {}
 #: and the implementations cannot drift apart.
 RECORDING_OPS = frozenset(
     {
+        #: The one recorder whose binding is a **player**: `choose_player`
+        #: writes the seat that was chosen, read back by the `{"binding": …}`
+        #: player spec rather than as a pool of objects. It is also the only
+        #: one for which `as` is *required* -- the answer is unreachable
+        #: otherwise. See `ops_control.op_choose_player`.
+        "choose_player",
         "copy_permanent",
         "create_token",
         "exile",

@@ -164,6 +164,15 @@ class Cost:
     #: `costs.variant_reduction` on the flashback branch alone, which is what
     #: keeps it off the printed hand cast.
     mana_reduction: Mapping[str, Any] | None = None
+    #: "X is the mana value of that card" -- Soul Foundry. A value expression
+    #: that **defines** the ``{X}`` in `mana`, rather than the player announcing
+    #: it. Evaluated by `costs.defined_x` at activation time, and applied by
+    #: `costs.ability_mana`, which both `can_pay` and `pay` go through -- so the
+    #: ability is offered at exactly the X it is charged, and `game._ask_x`
+    #: hands the number back instead of asking for one.
+    #:
+    #: `None` means "X is announced" (601.2b), which is every other X cost.
+    x_value: Mapping[str, Any] | None = None
 
     @staticmethod
     def from_spec(spec: Mapping[str, Any] | None) -> Cost | None:
@@ -217,6 +226,7 @@ class Cost:
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
+            x_value=(dict(spec["x_value"]) if spec.get("x_value") else None),
         )
 
     def without_mana(self) -> Cost:

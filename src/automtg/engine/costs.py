@@ -540,6 +540,32 @@ def can_pay_mana(
     )
 
 
+def defined_x(
+    state: GameState, pid: int, cost: Cost | None, source_oid: int | None
+) -> int | None:
+    """What X is, when the ability *says* rather than *asks*.
+
+    "{X}, {T}: Create a token that's a copy of the exiled card. **X is the mana
+    value of that card.**" -- Soul Foundry. Rule 601.2b announces X for a spell,
+    and 602.2b puts an activated ability's costs on the same footing, but an
+    ability whose own text fixes X never asks: the number is read off the board
+    when the ability is activated.
+
+    ``None`` -- not ``0`` -- means "this cost does not define X", because 0 is a
+    perfectly good defined X (an imprinted Ornithopter) and reading the two the
+    same way would send every ordinary Fireball down this path.
+
+    Clamped at zero: a value expression can go negative (a `minus`), and a
+    negative X is not a discount on the rest of the cost.
+    """
+    if cost is None or cost.x_value is None:
+        return None
+    from .effects.values import evaluate_value
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    return max(0, int(evaluate_value(ctx, cost.x_value)))
+
+
 def ability_mana(
     state: GameState,
     pid: int,
@@ -566,7 +592,16 @@ def ability_mana(
     -- the same care `life_cost` and `mana_produced` already take.  ``source_oid``
     is threaded through for the same reason: a reduction gated on a condition
     about its own permanent must answer that question identically in both.
+
+    An ability that **defines** its own X ("X is the mana value of that card")
+    is priced here too, and the ``x`` the caller passed is overridden rather
+    than trusted: this one function is what legality, `can_pay` and `pay` all
+    reach, so a defined X cannot be offered at one number and charged at
+    another.  See :func:`defined_x`.
     """
+    defined = defined_x(state, pid, cost, source_oid)
+    if defined is not None:
+        x = defined
     req = cost.mana.with_x(x)
     less = reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
     if not less:

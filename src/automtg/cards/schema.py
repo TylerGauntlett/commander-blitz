@@ -88,6 +88,26 @@ class CostModel(BaseModel):
     #:
     #: Generic only and clamped at zero, like every other reduction.
     mana_reduction: dict[str, Any] | None = None
+    #: "X is the mana value of that card" -- Soul Foundry. A value expression
+    #: that **defines** X instead of the player announcing it: evaluated when
+    #: the ability is activated, and the whole of what it decides is what the
+    #: ``{X}`` in this cost's ``mana`` is worth.
+    #:
+    #: Read by `costs.ability_mana`, which both `costs.can_pay` and `costs.pay`
+    #: go through, so the ability is *offered* at exactly the X it will be
+    #: *charged* -- and by `game._ask_x`, which returns it rather than putting a
+    #: ``CHOOSE_X`` decision to the player. Without it a `{"mana": "{X}"}` cost
+    #: is an ordinary announced X (601.2b) and the player says zero, which on an
+    #: imprint card copies a Griselbrand for nothing.
+    #:
+    #: Only on an **activated ability's** cost, and only beside a ``mana`` cost
+    #: containing ``{X}``; refused anywhere else, because nowhere else prices its
+    #: mana through `ability_mana` and a field that is read in one cost node and
+    #: ignored in another is a discount nobody wrote.
+    #:
+    #: Not ``times`` below, which multiplies the whole mana half rather than
+    #: filling in one symbol, and is read only by `may`'s ``pay``.
+    x_value: dict[str, Any] | None = None
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
     #: A value expression multiplying the ``mana`` half, and the only part of a
     #: cost that is not fixed when the card is written. Read only where an

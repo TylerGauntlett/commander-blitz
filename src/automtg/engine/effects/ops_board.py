@@ -530,11 +530,63 @@ def op_untap(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("attach")
 def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Attach something to something (701.3). Equip, Reconfigure -- and Vault 101.
+
+    ``objects`` is the **host**: the creature the Equipment ends up on, the
+    permanent the Aura ends up enchanting. It has never been the thing that
+    moves. What moves is ``attachment``, and until this key existed there was no
+    way to say it: the attacher was hardcoded to ``ctx.source_oid``, which is
+    exactly right for the two abilities that had ever needed the op. Equip and
+    Reconfigure are printed *on the Equipment*, so "attach to target creature you
+    control" means attach **me**, and naming the mover would be noise.
+
+    Vault 101: Birthday Party is the card where the source is somebody else.
+    "II, III -- You may put an Aura or Equipment card from your hand or graveyard
+    onto the battlefield. If an Equipment is put onto the battlefield this way,
+    you may attach it to a creature you control." The source of that ability is a
+    **Saga** -- an Enchantment that is neither Aura nor Equipment -- so the old
+    op would have attached the Saga itself to a creature and left the Equipment
+    that just arrived sitting on the battlefield unattached, doing nothing. That
+    failure is invisible: the card loads, the ability resolves, and the only
+    evidence is a buff that never appears.
+
+    ``attachment`` is an ordinary selector, so the usual spelling is
+    ``{"binding": "gear"}`` -- the ``as`` name the op that just put the card onto
+    the battlefield wrote. That is what "**it**" and "put onto the battlefield
+    **this way**" mean, and no fresh filter can say it: "an Equipment you
+    control" would also match the Equipment that has been sitting there since
+    turn three.
+
+    **The attachment is resolved first**, and the order carries the conditional.
+    "*If an Equipment* is put onto the battlefield this way" is not a separate
+    `if`: a selector that found an Aura instead matches nothing, the pool is
+    empty, and the op returns without ever asking which creature -- rather than
+    asking and then silently attaching nothing. With ``optional`` on ``objects``
+    the remaining question is the printed "you **may** attach it".
+
+    The Aura half is the same op with a wider ``attachment``. An Aura put onto
+    the battlefield without being cast never targeted anything, so nothing
+    attached it -- `stack._attach_aura` reads the *spell's* targets -- and
+    `sba` bins an Aura enchanting nothing the moment it arrives. Which host is
+    legal for it is the card's own selector to state; the engine models no
+    "enchant creature" restriction off the stack (see `docs/rules-coverage.md`).
+    """
+    if "attachment" in spec:
+        movers = yield from choose_objects(ctx, spec["attachment"], "Attach", "attach")
+        # No pool, no question. See the docstring: this is the "if an Equipment
+        # is put onto the battlefield this way" half, and asking for a host
+        # before knowing there is anything to hang on it would show the player a
+        # decision that cannot change the game.
+        if not movers:
+            return
+    else:
+        movers = [] if ctx.source_oid is None else [ctx.source_oid]
     oids = yield from choose_objects(ctx, spec.get("objects"), "Attach to")
-    aura = ctx.source_oid
-    if aura is not None:
-        for oid in oids[:1]:
-            attach(ctx.state, aura, oid)
+    # One host, however many attachments -- 701.3d attaches each to a single
+    # object, and no printed line hangs one Equipment on two creatures.
+    for oid in oids[:1]:
+        for mover in movers:
+            attach(ctx.state, mover, oid)
 
 
 @register("meld")

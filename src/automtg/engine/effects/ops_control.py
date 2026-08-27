@@ -11,7 +11,7 @@ from ..costs import can_pay, pay
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
-from .context import EffectContext, ask_mode, ask_yes_no
+from .context import EffectContext, ask_mode, ask_player, ask_yes_no
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
@@ -187,6 +187,49 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
     if obj is not None:
         obj.chosen_color = COLOR_CHOICES[picked[0]][0]
         ctx.state.bump_chars()
+
+
+@register("choose_player")
+def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Choose an opponent." Demonstrate, and the untargeted way to name a seat.
+
+    The player twin of :func:`op_choose_type` and :func:`op_choose_color`: it
+    asks a question and records the answer under ``as``, and every later spec
+    reads it back with ``{"binding": …}`` -- the player spec `select_players`
+    already had and which, until now, only a **trigger** could fill.
+
+    That is the gap it closes. `select_players` resolves ``"opponent"`` and
+    ``"each_opponent"`` to the whole set, and every spelling that names *one*
+    seat -- ``target``, ``controller_of_target``, ``controller_of``,
+    ``owner_of`` -- reads something a target or a trigger already produced.
+    Demonstrate's copy is explicitly **not** targeted, so none of them apply,
+    and at a pod ``"each_opponent"`` would hand a copy to every opponent
+    instead of the one the card says to choose.
+
+    **No new `DecisionKind`.** `ask_player` and `CHOOSE_PLAYER` have been here
+    since clash, which asks the same question ("which opponent?") and hands
+    back a player id -- so legality's `_choice_actions`, `game.apply` and the
+    authoring verifier's auto-answer table all work unchanged. What was missing
+    was never the decision; it was somewhere to *put* the answer.
+
+    ``players`` is the pool to choose from, a player spec, defaulting to the
+    opponents. It asks nobody when the pool is a single seat -- `ask_player`'s
+    own short-circuit, and the reading that makes a two-player game skip a
+    prompt whose answer was never in doubt.
+
+    Nothing is bound when there is no one to choose, so ``{"binding": …}``
+    resolves to no players and whatever depended on the choice does not happen.
+    A card that means "and if you did not, …" says so with `if`.
+    """
+    pool = select_players(ctx, spec.get("players", "each_opponent"))
+    pool = [pid for pid in pool if ctx.state.is_alive(pid)]
+    if not pool:
+        return
+    prompt = str(spec.get("prompt") or "Choose a player")
+    chosen = yield from ask_player(ctx, prompt, pool, ctx.controller)
+    if chosen is None:
+        return
+    ctx.bindings[str(spec["as"])] = int(chosen)
 
 
 def _creature_types(ctx: EffectContext) -> set[str]:
