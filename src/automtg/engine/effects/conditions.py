@@ -6,6 +6,7 @@ clauses on triggers, and static ability conditions.
     {"exists": {selector}}
     {"zone_is": "battlefield"}
     {"kicked": true}
+    {"gift_promised": false}
     {"evoked": true}
     {"cast_during": "your_main"}
     {"was_cast": true}
@@ -36,6 +37,15 @@ CONDITION_KEYS = frozenset(
         "zone_is",
         "is_your_turn",
         "kicked",
+        # Gift (702.164a): "**if the gift wasn't promised**, return that card to
+        # the battlefield…". `kicked`'s shape for a choice that costs nothing:
+        # the promise is made as the spell is cast and the spell branches on it.
+        #
+        # It is deliberately not spelled as a test on the recipient -- "did
+        # anybody get a gift" and "who got it" are two questions, and only the
+        # first one is what the printed sentence asks. The second is a player
+        # spec (`"gift_recipient"`), which is the half that aims the reward.
+        "gift_promised",
         "evoked",
         "cast_from_graveyard",
         # Overload (702.96a): "change its text by replacing all instances of
@@ -128,6 +138,15 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_kicked = ctx.kicked or (obj is not None and obj.cast_kicked)
         return was_kicked == bool(cond["kicked"])
+    if "gift_promised" in cond:
+        # Two sources for the same reason `kicked` has two: while the spell
+        # resolves the StackItem is authoritative, and once the spell is gone --
+        # a delayed trigger it scheduled, an enters trigger of the permanent it
+        # became -- only the object is left. `stack.resolve` writes the object
+        # *before* `spell_effects` run, so both readings agree at every moment.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        promised = ctx.gift_to is not None or (obj is not None and obj.cast_gift_to is not None)
+        return promised == bool(cond["gift_promised"])
     if "overloaded" in cond:
         # Written onto the object *before* `spell_effects` run, so this reads
         # the object in both lifetimes -- the same shape `kicked` has, and for

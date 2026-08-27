@@ -70,7 +70,7 @@ It is checked by casting your card in one fixed position and reading the board.
 |---|---|
 | You are player 0, at **40 life**; the opponent is player 1, at **40 life** |
 | Your battlefield | **32 permanents** — 30 lands (6 each of Plains, Island, Swamp, Mountain, Forest) + 2 creatures |
-| Opponent's battlefield | **6 permanents** — a creature, a flier, an artifact, an enchantment, a Forest and an Island |
+| Opponent's battlefield | **6 permanents** — a **legendary** creature, a flier, an artifact, an enchantment, a Forest and an Island |
 | Your hand | **just the card under test** — so `hand_size` is 0 after you cast it |
 | Your library | **40 cards**, all basic lands |
 | Opponent's library | 20 cards |
@@ -79,6 +79,14 @@ It is checked by casting your card in one fixed position and reading the board.
 
 The board props are chosen *by role* from the card pool, so do not assume specific
 card names, printed power/toughness, or that the two creatures differ.
+
+The opponent's creature is the position's **one and only legendary permanent**, and
+it is theirs rather than yours on purpose: a card whose own enters trigger says
+"destroy target legendary permanent" is a legal target for itself, so without a
+legendary somewhere else on the board the harness could only point the trigger at
+the card under test, which would then lawfully destroy itself and fail gate 4.
+Nothing else on either board is legendary, so a card that *counts* legends counts
+one.
 
 **The traps, each of which has actually happened:**
 

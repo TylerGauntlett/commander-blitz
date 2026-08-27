@@ -294,11 +294,23 @@ def attack_target_forbidden(
     at the goader just as squarely. Reading goad the way Ghostly Prison is read
     would leave every goad in a game with a planeswalker on the table free to be
     dodged, and the log would say the requirement had been met.
+
+    An `AttackRestriction` may say so too, and the third divergence is decided
+    the same way as the first two -- by what the printed sentence names.
+    `AttackRestriction.planeswalkers` is `False` on every line that names a seat
+    ("you can't attack that player this turn") and `True` for the one that names
+    **no defender at all**: "creatures can't attack this combat"
+    (Overencumbered). There is no seat in that sentence to read narrowly, so it
+    forbids all three of 506.2's attack targets, and a restriction that exempted
+    walkers would print a card whose whole text is "creatures can't attack" and
+    then let creatures attack.
     """
     obj = state.objects.get(oid)
-    if planeswalker is None and state.attack_restrictions and obj is not None:
+    if state.attack_restrictions and obj is not None:
         for restriction in state.attack_restrictions:
-            if restriction.attacker == obj.controller and restriction.defender == defender:
+            if restriction.attacker != obj.controller or restriction.defender != defender:
+                continue
+            if planeswalker is None or restriction.planeswalkers:
                 return True
     # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
     # control." The same seam read off a *static* instead of the table, so the

@@ -2035,6 +2035,10 @@
     "artist": "Daniel Gelon",
     "scryfall_id": "cd1101f5-0bc1-47fa-891b-206b9c1c7f79"
   },
+  "diamond_city": {
+    "artist": "Pascal Quidault",
+    "scryfall_id": "2259e77f-0a15-43e2-bb94-41e8c585d927"
+  },
   "dictate_of_erebos": {
     "artist": "Kathleen Neeley & AndWorld Design",
     "scryfall_id": "93789500-bcc5-40b0-991d-84d17cef95a6"
@@ -5946,6 +5950,10 @@
     "artist": "Svetlin Velinov",
     "scryfall_id": "902b462a-a552-42d4-91f0-bd33cd9cb719"
   },
+  "perception_bobblehead": {
+    "artist": "Marina Ortega Lorente",
+    "scryfall_id": "2925410a-7c44-4bf4-83cd-3e75dbe82b23"
+  },
   "peregrine_griffin": {
     "artist": "Steve Prescott",
     "scryfall_id": "0296eaa6-f9fe-4fb8-af9c-04928d99e2e2"
@@ -8573,6 +8581,10 @@
   "tobias_andrion": {
     "artist": "Andi Rusu",
     "scryfall_id": "e298291d-8e96-4676-8b6f-daf6fd290b57"
+  },
+  "toby_beastie_befriender": {
+    "artist": "Ashley Mackenzie",
+    "scryfall_id": "cafe5755-88b0-4fee-8596-4232844f60fc"
   },
   "tolarian_academy": {
     "artist": "Stephen Daniele",

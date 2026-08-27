@@ -1602,6 +1602,22 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     case the cross-product is installed -- "creatures your opponents control
     can't attack you" is `each_opponent` against `you`, one sentence and one op.
 
+    ``planeswalkers``  optional, default `false`. Does the prohibition also stop
+    an attack on the defender's **planeswalkers**? Off on every line that names
+    a seat, which is 506.2 -- attacking somebody's walker is not attacking them,
+    and that is why Ghostly Prison taxes nothing when the attack goes at one. On
+    for the sentence that names **no defender at all**, which is the whole of
+    "creatures can't attack this combat" (Overencumbered): written as
+    `each_player` against `each_player` with this flag, so every seat and every
+    walker is closed and no creature has a legal declaration left.
+
+    That whole-table form is why the flag lives here rather than becoming a
+    fourth prohibition. `cant_attack` is the near miss and cannot be limited to
+    one combat -- it is a continuous ability read off `_battlefield_statics` for
+    as long as its source sits there, and Overencumbered's lock is bought and
+    lost each combat by a payment. `cant_attack_you` is the other and is a
+    static too, besides being scoped to the seat its permanent sits under.
+
     Nothing is written on any permanent, and that is the point: a resolving
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
@@ -1611,11 +1627,19 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     duration = str(spec.get("duration", "this_turn"))
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_attack_player duration {duration!r}")
+    planeswalkers = bool(spec.get("planeswalkers", False))
     attackers = _players(ctx, spec.get("attacker"))
     defenders = _players(ctx, spec.get("defender"))
     for attacker in attackers:
         for defender in defenders:
-            restrict_attack(ctx.state, attacker, defender, duration, source=ctx.source_oid)
+            restrict_attack(
+                ctx.state,
+                attacker,
+                defender,
+                duration,
+                source=ctx.source_oid,
+                planeswalkers=planeswalkers,
+            )
     yield from ()
 
 

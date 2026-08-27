@@ -396,6 +396,13 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
         return [ctx.controller]
     if controller == "opponent":
         return ctx.opponents()
+    # "…enchanted player's graveyard". Named here as well as in `matches`,
+    # because a zone selector picks *whose list to walk* rather than filtering
+    # objects, and a name this function did not know fell through to
+    # `alive()` -- every seat at the table, which for a hand or a graveyard is
+    # the widest possible reading of a sentence naming one player.
+    if controller == "enchanted_player":
+        return select_players(ctx, controller)
     return ctx.state.alive()
 
 
@@ -504,8 +511,15 @@ def matches(
     # currently on. `"opponent"` cannot say it: it means every opponent at once,
     # so `extreme` would take one global maximum over the merged pool and, at a
     # pod, spare the opponent whose best creature is smaller.
-    if isinstance(controller, Mapping) and obj.controller not in select_players(
-        ctx, controller
+    # "…for each artifact **they** control", where *they* is the player this
+    # Aura enchants (Overencumbered). The one named spec allowed here beside the
+    # three words, and it is allowed for the reason the mapping form is: no
+    # combination of you/opponent/any names one seat. `"opponent"` is the near
+    # miss and is exact only at two players -- at a pod it counts the whole
+    # table's artifacts, so the enchanted player's toll goes up because somebody
+    # else built a Signet.
+    if (isinstance(controller, Mapping) or controller == "enchanted_player") and (
+        obj.controller not in select_players(ctx, controller)
     ):
         return False
 
@@ -777,6 +791,19 @@ PLAYER_SPEC_NAMES = frozenset(
         "each_player",
         "all",
         "active_player",
+        # "**Enchanted opponent** creates a Clue token", "at the beginning of
+        # combat on enchanted opponent's turn, **that player** may pay…" --
+        # Overencumbered. The player the ability's own source is attached to
+        # (303.4a). See `select_players`.
+        "enchanted_player",
+        # Gift (702.164a): the one opponent who was promised a gift as this
+        # spell was cast. The only string here naming a seat the *caster* chose,
+        # rather than one derived from the turn structure, from who is playing,
+        # or from where a permanent is attached -- and the one `each_opponent`
+        # gets wrong on this card: at a pod the promise goes to one player, so
+        # "they create a token" handing one to every opponent is three times the
+        # printed card. See `select_players`.
+        "gift_recipient",
     }
 )
 
@@ -797,6 +824,46 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return state.alive()
         if spec == "active_player":
             return [state.active_player]
+        if spec == "gift_recipient":
+            # Gift (702.164a): "**they** create a tapped 1/1 blue Fish creature
+            # token". The opponent the caster promised, and nobody at all when
+            # the promise was not made -- which is what makes the reward
+            # conditional without an `if` around it: `create_token` loops over
+            # this spec, and an empty list creates nothing.
+            #
+            # The context first, then the object, for the reason
+            # `{"gift_promised": …}` reads both: while the spell resolves the
+            # StackItem is what knows, and afterwards -- in a delayed trigger it
+            # scheduled, or on the permanent it became -- only the object is.
+            promisee = ctx.gift_to
+            if promisee is None and ctx.source_oid is not None:
+                obj = state.objects.get(ctx.source_oid)
+                promisee = obj.cast_gift_to if obj is not None else None
+            return [promisee] if promisee is not None and state.is_alive(promisee) else []
+        if spec == "enchanted_player":
+            # "Enchanted opponent creates a Clue token." The seat this Aura is
+            # attached to, read off the **ability's own source** -- the same
+            # argument `attached`, `haunted_by` and cipher's `encoded_by` make:
+            # the Aura knows what it is on, and nothing else in the game state
+            # points back the other way.
+            #
+            # Every other spelling of "enchanted opponent" is a different card.
+            # `{"target": …}` cannot say it: an ability's targets are scoped to
+            # that ability (`loader._validate_player_spec`), and a triggered
+            # ability that declared none would resolve `ctx.target_players` to
+            # `[]` -- which `op_may` reads as "nobody" and bills `ctx.controller`
+            # instead, the documented Rhystic Study failure, so the Aura's own
+            # controller would pay the enchanted player's toll. `each_opponent`
+            # is the near miss and is wrong the moment there are two of them: it
+            # taxes the whole table rather than the one seat the card names.
+            #
+            # `[]` when the source is gone or enchants a permanent instead, and
+            # that is the safe direction: an effect aimed at nobody does
+            # nothing, where a fallback to the controller would silently point
+            # the card at its own caster.
+            obj = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+            pid = obj.attached_to_player if obj is not None else None
+            return [pid] if pid is not None and state.is_alive(pid) else []
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
         if "not" in spec:
@@ -895,7 +962,7 @@ def validate_selector(selector: Any, where: str) -> None:
     if (
         controller is not None
         and not isinstance(controller, Mapping)
-        and controller not in ("you", "opponent", "any")
+        and controller not in ("you", "opponent", "any", "enchanted_player")
     ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
     if "player" in selector:

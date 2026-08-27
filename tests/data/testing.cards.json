@@ -12503,6 +12503,114 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_gift",
+      "name": "Test Parting Gust",
+      "oracle_text": "Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)\nExile target nontoken creature. If the gift wasn't promised, return that card to the battlefield under its owner's control with a +1/+1 counter on it at the beginning of the next end step.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Instant"
+      ],
+      "gift": "a tapped Fish",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "is_token": false
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "create_token",
+          "token": "fish_1_1_u",
+          "tapped": true,
+          "controller": "gift_recipient"
+        },
+        {
+          "op": "exile",
+          "objects": {
+            "target": "t1"
+          },
+          "as": "exiled"
+        },
+        {
+          "op": "if",
+          "condition": {
+            "gift_promised": false
+          },
+          "then": [
+            {
+              "op": "delay",
+              "step": "end_step",
+              "effects": [
+                {
+                  "op": "put_onto_battlefield",
+                  "objects": {
+                    "binding": "exiled"
+                  },
+                  "controller": "owner",
+                  "counters": {
+                    "+1/+1": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gift_creature",
+      "name": "Test Gift Bearer",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nWhen this creature enters, if the gift was promised, you draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bird"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "gift": "a card",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, if the gift was promised, you draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "condition": {
+              "gift_promised": true
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "gift_recipient",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
     }
   ]
 }

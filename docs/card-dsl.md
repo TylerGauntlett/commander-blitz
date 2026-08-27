@@ -1245,7 +1245,7 @@ its mana, and a cost of five that settled for four would be a different card.
 ## Player specs
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
-`{ "target": "t1" }` · `{ "controller_of_target": "t1" }` ·
+`"enchanted_player"` · `{ "target": "t1" }` · `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }`
 
@@ -1253,6 +1253,12 @@ its mana, and a cost of five that settled for four would be a different card.
 `choose_player` put under that name. It is the only one of these that can name
 **one** opponent at a pod without a target to read it off — which is what
 demonstrate needs, since its copy is not targeted.
+
+`"enchanted_player"` is the seat the ability's **own source** is attached to —
+"enchanted opponent", "that player", "enchanted player". It is refused at load
+time on any card that is not an Aura, and it is the only named spec that is also
+legal as a selector's `controller`: see
+[An Aura that enchants a player](#an-aura-that-enchants-a-player).
 
 ### `not` — the player a card *excludes*
 
@@ -2399,6 +2405,88 @@ ability whose effect is `attach`:
     "count": 1 } ],
   "effects": [ { "op": "attach", "objects": { "target": "t1" } } ] }
 ```
+
+### An Aura that enchants a player
+
+    Overencumbered — "Enchant opponent
+                      When this Aura enters, enchanted opponent creates a Clue
+                      token, a Food token, and a Junk token.
+                      At the beginning of combat on enchanted opponent's turn,
+                      that player may pay {1} for each artifact they control. If
+                      they don't, creatures can't attack this combat."
+
+Rule 303.4a lets the enchant ability name a **player**, and the clause is written
+exactly as "Enchant creature" is — as the spell's target, with `kind: "player"`:
+
+```jsonc
+"targets": [ { "id": "t1", "kind": "player",
+               "selector": { "controller": "opponent" }, "count": 1 } ],
+
+// "…enchanted opponent creates a Clue token."
+{ "op": "create_token", "token": "clue_token", "controller": "enchanted_player" }
+
+// "At the beginning of combat on enchanted opponent's turn…"
+"trigger": { "event": "begin_combat", "controller": "any",
+             "condition": { "is_active_player": "enchanted_player" } }
+
+// "…may pay {1} for each artifact they control. If they don't, creatures
+//  can't attack this combat."
+{ "op": "may", "player": "enchanted_player",
+  "pay": { "mana": "{1}",
+           "times": { "count": { "zone": "battlefield", "types": ["Artifact"],
+                                 "controller": "enchanted_player" } } },
+  "else": [ { "op": "cant_attack_player", "attacker": "each_player",
+              "defender": "each_player", "duration": "this_combat",
+              "planeswalkers": true } ] }
+```
+
+**The host is a second field, `GameObject.attached_to_player`, not a second
+meaning for `attached_to`.** That is forced rather than tidy: a player id and an
+oid are both `int`, so one field holding either could not be read without a
+discriminator at every reader — and there are seven, each meaning "the permanent
+I am on": the characteristics layer, the `attached` selector, trigger filters,
+`_detach_all`, phasing, bestow and the state-based action. A seat number arriving
+in that field is an oid pointing at an unrelated object, silently and differently
+in every game. The two are mutually exclusive, so `attach` and `attach_to_player`
+each clear the other's link (303.4).
+
+`stack._attach_aura` takes the spell's first target of **either** kind, which is
+the printed reading: no Aura has two enchant clauses. Without the player branch
+Overencumbered resolved, attached to nothing, and `sba` moved it to the graveyard
+with cause `aura_unattached` before its own enters trigger could resolve — three
+printed sentences, a mana cost and no game effect at all. 704.5n is now read as
+it is written: an Aura attached to an illegal object **or player**, or to
+nothing, is binned. A player still in the game is a legal host; one who has lost
+is not, and the Aura goes with them.
+
+`"enchanted_player"` is the spec that names the seat, read off the **ability's
+own source** — the argument `attached`, `haunted_by` and cipher's `encoded_by`
+all make: the Aura knows what it is on, and nothing points back the other way.
+Every other spelling is a different card:
+
+| | what it says instead |
+|---|---|
+| `{ "target": "enchanted" }` | refused at compile. An ability's `target_kinds` are scoped to *that ability's* targets, and a triggered ability declaring none resolves `ctx.target_players` to `[]` — which `op_may` reads as "nobody" and bills `ctx.controller`, so the Aura's **own controller** would pay the enchanted player's toll. The documented Rhystic Study failure |
+| `"each_opponent"` | the near miss, and invisible at two players. At a pod it taxes the whole table rather than the one seat the card names |
+| `"opponent"` on the artifact count | the same error one layer down: the toll would scale with everybody's artifacts, so the enchanted player's price goes up because a third player built a Signet |
+
+It is also the one named spec legal as a **selector's `controller`** ("for each
+artifact *they* control"), in `matches`, `_zone_owners` and
+`characteristics._matches` alike. All three had to learn it: an unrecognised
+controller word matches **every** permanent rather than none, so a static naming
+one player would silently be a static naming the table.
+
+"At the beginning of combat on enchanted opponent's turn" needed **no new trigger
+clause**. `TriggerModel.controller` is you/opponent/any and `"opponent"` is the
+near miss — at a pod it fires on every opponent's combat — but `is_active_player`
+already takes a player spec, so `controller: "any"` plus that condition is the
+sentence exactly. `is_your_turn` cannot stand in: a trigger is always evaluated
+with the ability's own controller, which here is the other seat.
+
+`enchanted_player` is refused at load time on any card that is not an Aura,
+including inside a static's `affects` filter — nothing else is ever attached to a
+player, so it would resolve to nobody for the whole game and the ability would
+read on screen as though it did something.
 
 ### Reconfigure — taking it off again
 
@@ -6587,7 +6675,36 @@ Three things it deliberately does **not** do:
 |---|---|
 | stop the creature attacking at all | it narrows the choice — the same creature still attacks anybody else, and a version that blanked the attack step would be a strictly stronger card than either witness |
 | point both ways | stopping A attacking B says nothing about B attacking A |
-| reach planeswalkers | "creatures can't attack you" restricts attacking the *player*; a planeswalker they control is a different thing being attacked (506.2), which is why a Ghostly Prison charges nothing for it |
+| reach planeswalkers | "creatures can't attack you" restricts attacking the *player*; a planeswalker they control is a different thing being attacked (506.2), which is why a Ghostly Prison charges nothing for it — **unless the sentence names no defender at all**, which is `planeswalkers: true` below |
+
+### `planeswalkers: true` — "creatures can't attack this combat"
+
+    Overencumbered — "…that player may pay {1} for each artifact they control.
+                      If they don't, creatures can't attack this combat."
+
+```jsonc
+{ "op": "cant_attack_player", "attacker": "each_player", "defender": "each_player",
+  "duration": "this_combat", "planeswalkers": true }
+```
+
+A sentence with **no defender in it**, so there is no seat to read narrowly:
+506.2 gives an attack three possible targets and this line forbids all of them.
+Both sides are `each_player`, which installs the cross-product — `restrict_attack`
+drops the self-pairs nobody could declare — and the flag closes the walkers, so
+no creature has a legal declaration left and the declare-attackers step is
+skipped entirely.
+
+This is the same divergence `cant_attack_you` and goad already carry, decided the
+same way every time: **by what the printed sentence names**, never by a house
+rule about walkers. Off for every line that names a seat; on for the one that
+names none.
+
+Neither near miss can carry it. The `cant_attack` static filters the attacker and
+takes no defender, which is the right *shape* — but it is a continuous ability
+read off `_battlefield_statics` for as long as its source sits there, and this
+lock is bought and lost by a payment each combat while the Aura never moves.
+`cant_attack_you` is a static too, and is scoped to the seat its permanent sits
+under. Hence a flag on the pair rather than a third spelling of the sentence.
 
 The legality seam is `combat.attack_target_forbidden(state, oid, defender,
 planeswalker=…)`, and `legal_defenders`, `legal_planeswalker_defenders` and

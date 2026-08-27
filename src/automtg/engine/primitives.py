@@ -665,8 +665,56 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     # A fresh attachment supersedes the remembered one, so an Equipment moved to
     # a second creature cannot still answer for the first.
     aura.last_attached_to = None
+    # An Aura is attached to exactly one thing (303.4), so moving one onto a
+    # permanent takes it off whatever player it was on. Nothing prints that
+    # today -- no card moves an Aura between a player and a permanent -- and it
+    # is written anyway because the alternative is a permanent carrying two
+    # hosts, where every reader would get a different answer.
+    aura.attached_to_player = None
     state.bump_chars()
     fire(state, EventType.ATTACHED, player=aura.controller, source=aura_oid, oid=target_oid)
+    return True
+
+
+def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
+    """"Enchant opponent" -- attach an Aura to a **player** (303.4a, 702.5b).
+
+    `attach` above with a seat where the permanent goes, and it is a separate
+    function rather than a widened one for the reason `GameObject`'s two fields
+    are separate: a player id and an oid are both `int`, so a single entry point
+    taking either could not tell them apart, and the failure would be an Aura
+    silently enchanting an unrelated permanent.
+
+    The two restrictions `attach` enforces have no counterpart here, and both
+    absences are rules rather than omissions. 301.5c is about a permanent
+    attaching to *itself*, which a seat cannot be. And protection is a property
+    of objects and players alike, but the enchant restriction it blocks is
+    "can't be enchanted by" -- a player has no protection in any card the engine
+    can be handed, and inventing one here would be a rule nothing asked for.
+
+    Liveness is checked, unlike `attach`'s battlefield test, and it is the same
+    check: a player who has lost the game is no more a legal host than a
+    permanent in a graveyard, and `sba` bins the Aura either way.
+
+    The ATTACHED event carries the seat in ``player_attached`` rather than in
+    ``oid``: that key is an object id everywhere else in the log, and a seat
+    number arriving in it would read as some unrelated permanent to anything
+    that subscribes.
+    """
+    aura = state.objects.get(aura_oid)
+    if aura is None or not aura.on_battlefield or not state.is_alive(player):
+        return False
+    aura.attached_to_player = player
+    aura.attached_to = None
+    aura.last_attached_to = None
+    state.bump_chars()
+    fire(
+        state,
+        EventType.ATTACHED,
+        player=aura.controller,
+        source=aura_oid,
+        player_attached=player,
+    )
     return True
 
 
@@ -1070,6 +1118,7 @@ def restrict_attack(
     defender: int,
     duration: str = "this_turn",
     source: int | None = None,
+    planeswalkers: bool = False,
 ) -> bool:
     """"``attacker`` can't attack ``defender``" for ``duration``.
 
@@ -1087,6 +1136,13 @@ def restrict_attack(
     same opponent in the same combat impose one restriction, not two, and
     "can't attack" does not stack -- so a second copy would only make the
     eventual clear-up quadratic.
+
+    ``planeswalkers`` widens the pair to the defender's **planeswalkers** as
+    well as their seat, and it is part of the deduplication key on purpose: a
+    narrow restriction and a wide one over the same pair are not the same
+    prohibition, and folding them together would let a Ghostly-Prison-shaped
+    entry swallow "creatures can't attack this combat". See
+    :class:`structs.AttackRestriction`.
     """
     from .structs import ATTACK_RESTRICTION_DURATIONS, AttackRestriction
 
@@ -1097,7 +1153,11 @@ def restrict_attack(
     if not state.is_alive(attacker) or not state.is_alive(defender):
         return False
     entry = AttackRestriction(
-        attacker=attacker, defender=defender, duration=duration, source=source
+        attacker=attacker,
+        defender=defender,
+        duration=duration,
+        planeswalkers=planeswalkers,
+        source=source,
     )
     if entry in state.attack_restrictions:
         return False

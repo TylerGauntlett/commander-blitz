@@ -684,6 +684,13 @@ class CardDef:
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.
     kicker: ManaCost | None = None
+    #: **Gift a tapped Fish** (702.164a) -- what is promised, as the printed noun
+    #: phrase. Not a cost: a gift is paid for with nothing, so the promised line
+    #: is offered at the printed price. What it names instead is a **seat**, so
+    #: legality offers one promised line per opponent and the chosen one rides on
+    #: `Action.gift_to`. Read back by `{"gift_promised": …}` and by the
+    #: ``"gift_recipient"`` player spec.
+    gift: str | None = None
     #: **Multikicker {1}{W}** (702.32b). Nothing in the engine reads this: the
     #: loader has already desugared it into the three fields above, which is the
     #: whole mechanic. What it records is the *name* the card declared the cost

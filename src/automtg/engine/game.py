@@ -490,6 +490,13 @@ class Game:
             tuple(action.targets) + mode_refs,
             x=x,
             kicked=action.kicked,
+            # Gift (702.164a). Carried onto the stack item and paid for with
+            # nothing -- there is no `pay` call above for it, and that is the
+            # mechanic rather than an omission: the promise is a 601.2b choice
+            # made as the spell is cast, like the modes a line above, not a cost
+            # under 601.2g. What the promise then *buys* the opponent is an
+            # ordinary effect on the card, and it happens on resolution.
+            gift_to=action.gift_to,
             evoked=action.evoked,
             flashback=action.flashback,
             overloaded=action.overloaded,
