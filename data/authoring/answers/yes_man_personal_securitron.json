@@ -1,0 +1,103 @@
+{
+  "card": {
+    "id": "yes_man_personal_securitron",
+    "name": "Yes Man, Personal Securitron",
+    "oracle_text": "{T}: Target opponent gains control of Yes Man. When they do, you draw two cards and put a quest counter on Yes Man. Activate only during your turn.\nWild Card — When Yes Man leaves the battlefield, its owner creates a tapped 1/1 white Soldier creature token for each quest counter on it.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Artifact",
+      "Creature"
+    ],
+    "subtypes": [
+      "Robot"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Target opponent gains control of Yes Man. When they do, you draw two cards and put a quest counter on Yes Man. Activate only during your turn.",
+        "cost": {
+          "tap": true
+        },
+        "condition": {
+          "is_your_turn": true
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "player",
+            "selector": {
+              "controller": "opponent"
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "gain_control",
+            "player": {
+              "target": "t1"
+            },
+            "objects": {
+              "self_only": true
+            },
+            "duration": "permanent"
+          },
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 2
+            }
+          },
+          {
+            "op": "add_counters",
+            "counter": "quest",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "self_only": true
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Wild Card — When Yes Man leaves the battlefield, its owner creates a tapped 1/1 white Soldier creature token for each quest counter on it.",
+        "trigger": {
+          "event": "leaves_battlefield",
+          "source": "self",
+          "controller": "any"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "soldier_1_1_w",
+            "tapped": true,
+            "amount": {
+              "counters_had": "quest"
+            },
+            "controller": {
+              "binding": "event_player"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

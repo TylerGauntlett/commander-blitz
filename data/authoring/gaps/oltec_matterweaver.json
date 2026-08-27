@@ -1,0 +1,24 @@
+{
+  "card_id": "oltec_matterweaver",
+  "name": "Oltec Matterweaver",
+  "oracle_text": "Whenever you cast a creature spell, choose one —\n• Create a 1/1 colorless Gnome artifact creature token.\n• Create a token that's a copy of target artifact token you control.",
+  "blocked_sentences": [
+    "Whenever you cast a creature spell, choose one —\n• Create a 1/1 colorless Gnome artifact creature token.\n• Create a token that's a copy of target artifact token you control."
+  ],
+  "needs": [
+    {
+      "capability": "modal-triggered-ability-targets",
+      "kind": "engine",
+      "what": "A triggered ability whose modes are chosen when the ability is put on the stack (603.3d, applying 601.2b), so that one of its modes may own a target which is declared at that same moment -- the ability-level twin of what a modal spell already has. Concretely: give `AbilityDef` the `mode_targets` map `CardDef` already carries, let `AbilityDef.cast_time_modes` answer for a triggered ability as well as an activated one, and have `stack.push_triggered_ability` ask the modal question and then the chosen modes' targets (the `Game._ask_modes` / `Game._ask_mode_targets` pair) before appending the StackItem, storing the answer on `StackItem.modes` so `op_choose_mode` consumes it via `ctx.modes_answered` instead of asking again. `stack.filter_legal` then has to split the stored refs by chosen mode the way `CardDef.specs_for_modes` does for a spell, and 601.2b's \"a mode with no legal target cannot be chosen\" has to gate which modes are offered -- which is exactly what makes this card's mode one still available on the first trigger, when you control no artifact token yet.",
+      "why_existing_wont_do": "`TargetModel.mode` exists but is refused here: `loader._check_mode_targets` raises \"'mode' only works on a card's own 'targets' -- an ability's modes are chosen as it resolves, which is after the moment its targets were declared\", because `_compile_targets` is called with `on_spell=False` for an ability (loader.py:1280) and `AbilityDef.cast_time_modes` returns None for anything that is not activated, so `ops_control.op_choose_mode` asks the modal question during resolution. Every way of saying it without `mode` is a different card. (a) A plain ability-level target for the copy mode compiles, but `stack.push_triggered_ability` declares it for every trigger and `filter_legal` then reports `any_legal` False whenever you control no artifact token, so the whole trigger fizzles and mode one's Gnome is never created -- which is the normal case for the very first creature you cast, since the Gnome is itself the first artifact token. It also fizzles the entire trigger if the targeted token is removed in response even when the controller meant to take mode one. (b) The same spec with `optional: true` survives that (`filter_legal` returns `remains or not had_targets`), but it lets the controller decline the target and then choose mode two, which silently does nothing, and it still forces the target to be named before the mode is known. (c) Dropping the word \"target\" for a `chooser: \"controller\"` selector inside the mode -- the shape `retreat_to_kazandu` uses for \"Put a +1/+1 counter on target creature\" -- resolves at the right time but is not targeting at all: no shroud/ward check on your own token, no `becomes_target` trigger, and no fizzle when the chosen token is gone.",
+      "note": "Nothing else on the card is missing: `copy_permanent` takes `objects`, the `is_token` selector key exists, `gnome_1_1_c` is in the token pool, and `retreat_to_kazandu` shows a modal `choose_mode` inside a triggered ability already works -- it is only the target inside one of the modes that has no moment to be declared in."
+    }
+  ],
+  "closest_existing": [
+    "mode_targets",
+    "choose_mode",
+    "cast_time_modes",
+    "chooser"
+  ],
+  "confidence": "high"
+}

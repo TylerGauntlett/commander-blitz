@@ -1,0 +1,33 @@
+{
+  "card_id": "luck_bobblehead",
+  "name": "Luck Bobblehead",
+  "oracle_text": "{T}: Add one mana of any color.\n{1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, you win the game.",
+  "blocked_sentences": [
+    "{1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, you win the game."
+  ],
+  "needs": [
+    {
+      "capability": "dice-rolling",
+      "kind": "op",
+      "what": "an op that rolls N six-sided dice at resolution -- N an ordinary `value_keys` amount, here `{\"count\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"subtypes\": [\"Bobblehead\"]}}` -- draws each face from the engine's seeded RNG so replays stay deterministic, emits a die-roll event (Barbarian Class and the whole Fallout/AFR roll-a-die block trigger off \"whenever you roll one or more dice\"), and binds the *whole multiset of results* under an `as` name the way `create_token` binds the oids it made. It needs a matching family of `value_keys` leaves that read that binding: the number of results satisfying a face predicate (even/odd, a face-value `cmp`, a specific face), so \"a tapped Treasure token for each even result\" is `create_token` with `amount` reading the even tally and \"if you rolled 6 exactly seven times\" is an `if`/`cmp` reading the count of 6s off the same roll. Both clauses must read one roll, so a per-roll bound tally is the shape, not two independent rolls.",
+      "why_existing_wont_do": "Nothing in `ops` produces a number at all. `clash` is the only randomness-adjacent op and it reveals the top card of each library and compares mana values -- it yields a win/lose branch, never a value later effects can read, and it touches the library, which a die roll must not. The `random` selector key picks *objects* at random and evaluates to a set, not an integer, so it cannot be an `amount`. `for_each` iterates objects or players and `repeat`/the `times` cost run a count that is already known, so none of them can iterate over die faces. `value_keys` has no leaf for a roll result and there is no binding namespace for one (`snapshot` records a characteristic of an object that existed, and no object exists here). Any approximation would have to invent the distribution -- e.g. `create_token` with `amount` = half the Bobbleheads -- which is a different card that is right on average and wrong every game.",
+      "note": "The payload halves are already expressible: `treasure_token` is in the token pool, `create_token` takes `tapped`, and `count` with `subtypes: [\"Bobblehead\"]` counts the Bobbleheads (the subtype is in the engine's enum). Only the roll and the win are missing."
+    },
+    {
+      "capability": "win-the-game",
+      "kind": "op",
+      "what": "an effect op that makes its controller (or a named player) win the game outright per 104.2a -- set `state.game_over`, `state.winners` to that player and `state.result` to \"win\", clear priority and the pending decision, and emit GAME_OVER -- without any opponent having to be dead, plus the symmetric lose-the-game path (104.3b) for the same subsystem. This is the shared blocker for every alternate win condition: Thassa's Oracle, Approach of the Second Sun, Laboratory Maniac, Coalition Victory, Test of Endurance, Felidar Sovereign, Mechanized Production.",
+      "why_existing_wont_do": "`src/automtg/engine/sba.py::check_game_over` is the only writer of `state.winners`, and it derives them from `state.alive()` when one or zero players remain -- winning is currently a *consequence* of everyone else losing, with no entry point for a card that declares a winner while both players sit at 40 life. No op in `ops` writes `game_over`, `winners` or `result`. The nearest existing things all fail differently: `set_flag`/`set_turn_flag` record a boolean that only `has_flag` conditions read, and nothing connects a flag to the game-over path; `damage` or `lose_life` for a lethal amount would end the game through the state-based-action route but is a wholly different effect (it is life loss, so it is preventable, replaceable, and does nothing against an opponent with a higher life total or protection), and here the trigger for winning is a die tally with no life component whatever."
+    }
+  ],
+  "closest_existing": [
+    "clash",
+    "random",
+    "for_each",
+    "repeat",
+    "create_token",
+    "set_flag",
+    "snapshot"
+  ],
+  "confidence": "high"
+}

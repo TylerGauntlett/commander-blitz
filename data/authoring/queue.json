@@ -1258,7 +1258,7 @@
       "scryfall_id": "c88eb33d-efba-4ad9-878f-f051079c9bce",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Academy Raider": {
       "edhrec_rank": 20524,
@@ -4368,7 +4368,7 @@
       "scryfall_id": "2d1102e4-447a-4b40-8131-5b36b8979fe0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ainok Survivalist": {
       "edhrec_rank": 6576,
@@ -5358,7 +5358,7 @@
       "scryfall_id": "674e08ef-5291-4465-99c0-7313698f7a93",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Akroma, Angel of Fury": {
       "edhrec_rank": 7104,
@@ -7588,7 +7588,7 @@
       "scryfall_id": "fe1023a2-c096-4c62-8627-e865b348ba02",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "An Unearthly Child": {
       "edhrec_rank": 13894,
@@ -8198,7 +8198,7 @@
       "scryfall_id": "7109092e-52c3-417b-a2c0-340eabb5af9d",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Ancient Grudge": {
       "edhrec_rank": 7021,
@@ -9218,7 +9218,7 @@
       "scryfall_id": "407183c6-c962-4f8c-867e-abc309b6c573",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Angus Mackenzie": {
       "edhrec_rank": 18466,
@@ -11228,7 +11228,7 @@
       "scryfall_id": "5eb843ef-b223-40d0-a461-54b16d188d0e",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Arcane Encyclopedia": {
       "edhrec_rank": 10985,
@@ -12978,7 +12978,7 @@
       "scryfall_id": "bf561379-4e5f-486a-bcdf-6e08e105316e",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Arjun, the Shifting Flame": {
       "edhrec_rank": 13272,
@@ -20618,7 +20618,7 @@
       "scryfall_id": "e9da18b4-1efc-44b7-8001-a2cfd44c69bf",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Baron Helmut Zemo": {
       "edhrec_rank": 13784,
@@ -21908,7 +21908,7 @@
       "scryfall_id": "c47c1bf5-f11e-4f86-b20b-5d899a11dc56",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Battlefield Improvisation": {
       "edhrec_rank": 7903,
@@ -25878,7 +25878,7 @@
       "scryfall_id": "34e7bebf-1844-476c-a947-978393908fa2",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Blade of the Oni": {
       "edhrec_rank": 9949,
@@ -27008,7 +27008,7 @@
       "scryfall_id": "94e0ad38-31b3-46ba-9999-9b6ff57906ae",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Blightning": {
       "edhrec_rank": 16089,
@@ -28518,7 +28518,7 @@
       "scryfall_id": "97d42d32-c9c8-4def-a48b-0590ea572e33",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Bloodgift Demon": {
       "edhrec_rank": 3524,
@@ -28638,7 +28638,7 @@
       "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Bloodline Necromancer": {
       "edhrec_rank": 4006,
@@ -29008,7 +29008,7 @@
       "scryfall_id": "3c340ba8-9287-4072-937a-438251b5ff1d",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Bloodthirsty Ogre": {
       "edhrec_rank": 29312,
@@ -30168,7 +30168,7 @@
       "scryfall_id": "55b5b094-9d2d-4d96-b90c-78fecdae725a",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Bojuka Brigand": {
       "edhrec_rank": 24425,
@@ -31598,7 +31598,7 @@
       "scryfall_id": "cfc8001f-25ac-41c4-9cdf-1bc0d1959808",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Boromir, Gondor's Hope": {
       "edhrec_rank": 6835,
@@ -32402,13 +32402,13 @@
     },
     "Bovine Intervention": {
       "edhrec_rank": 3866,
-      "gate": "template",
+      "gate": null,
       "name": "Bovine Intervention",
-      "reason": "no template for: Destroy target artifact or creature. Its controller creates a 2/2 white Ox creature token",
+      "reason": "",
       "scryfall_id": "9fe4ad5a-3337-467a-b857-7297085da11f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Bow of Nylea": {
       "edhrec_rank": 2318,
@@ -32608,7 +32608,7 @@
       "scryfall_id": "f403af12-6114-4121-b421-3448e084864c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Brain Gorgers": {
       "edhrec_rank": 19518,
@@ -33142,13 +33142,13 @@
     },
     "Brave the Elements": {
       "edhrec_rank": 3732,
-      "gate": "template",
+      "gate": null,
       "name": "Brave the Elements",
-      "reason": "no template for: Choose a color. White creatures you control gain protection from the chosen color until en",
+      "reason": "",
       "scryfall_id": "4c8ff6cd-e3ac-4024-aacb-86f7e1f43ba0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Brave the Sands": {
       "edhrec_rank": 1791,
@@ -38888,7 +38888,7 @@
       "scryfall_id": "587cc3ba-75c2-46a0-bd44-6f953fe1eb01",
       "source": "template:cycling",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Canyon Vaulter": {
       "edhrec_rank": 14396,
@@ -39362,13 +39362,13 @@
     },
     "Captain of the Watch": {
       "edhrec_rank": 3863,
-      "gate": "template",
+      "gate": null,
       "name": "Captain of the Watch",
-      "reason": "no template for: Other Soldier creatures you control get +1/+1 and have vigilance",
+      "reason": "",
       "scryfall_id": "72641763-ac1d-42af-896b-985fd8980413",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Captain's Call": {
       "edhrec_rank": 12498,
@@ -39488,7 +39488,7 @@
       "scryfall_id": "0f87aadf-7638-4691-b5a5-86f928e98462",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Captive Audience": {
       "edhrec_rank": 7373,
@@ -40028,7 +40028,7 @@
       "scryfall_id": "c0e175cb-ffea-473f-8422-53273f263016",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Carrion Grub": {
       "edhrec_rank": 10492,
@@ -40622,13 +40622,13 @@
     },
     "Castle Ardenvale": {
       "edhrec_rank": 698,
-      "gate": "template",
+      "gate": null,
       "name": "Castle Ardenvale",
-      "reason": "no template for: {2}{W}{W}, {T}: Create a 1/1 white Human creature token",
+      "reason": "",
       "scryfall_id": "d2b011b0-3e44-4796-bb0a-615e259184db",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Castle Doom": {
       "edhrec_rank": 11100,
@@ -41628,7 +41628,7 @@
       "scryfall_id": "a8a57915-5226-4d3c-ae8e-a55c50f3c131",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Cayth, Famed Mechanist": {
       "edhrec_rank": 4238,
@@ -42798,7 +42798,7 @@
       "scryfall_id": "3acd188d-1e9f-4fec-8b88-2f64c6733682",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Chain to Memory": {
       "edhrec_rank": 20270,
@@ -43272,13 +43272,13 @@
     },
     "Champions from Beyond": {
       "edhrec_rank": 4040,
-      "gate": "template",
+      "gate": null,
       "name": "Champions from Beyond",
-      "reason": "no template for: When this enchantment enters, create X 1/1 colorless Hero creature tokens",
+      "reason": "",
       "scryfall_id": "92ef9285-e2dc-40fc-86fa-6913bbc405db",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Champions of Minas Tirith": {
       "edhrec_rank": 5253,
@@ -44572,13 +44572,13 @@
     },
     "Charisma Bobblehead": {
       "edhrec_rank": 5955,
-      "gate": "template",
+      "gate": null,
       "name": "Charisma Bobblehead",
-      "reason": "no template for: {4}, {T}: Create X 1/1 white Soldier creature tokens, where X is the number of Bobbleheads",
+      "reason": "",
       "scryfall_id": "35f61330-869f-448c-8374-1cbac7c23454",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Charismatic Conqueror": {
       "edhrec_rank": 1035,
@@ -45978,7 +45978,7 @@
       "scryfall_id": "da3b705c-a5c9-4e65-9a5e-31b7dc734623",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Chrome Prowler": {
       "edhrec_rank": 19481,
@@ -46858,7 +46858,7 @@
       "scryfall_id": "c21565d0-fc40-4d89-9b27-87c03385e0af",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "City of Death": {
       "edhrec_rank": 4477,
@@ -46898,7 +46898,7 @@
       "scryfall_id": "a7a8b6b8-b95f-4014-b17a-a6d44d965995",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "City on Fire": {
       "edhrec_rank": 842,
@@ -47318,7 +47318,7 @@
       "scryfall_id": "4e87c55b-897f-4997-adbc-2620993669be",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Clawing Torment": {
       "edhrec_rank": 8456,
@@ -47848,7 +47848,7 @@
       "scryfall_id": "5544247d-1f8f-443f-a4c4-d8461db28a79",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Cliffrunner Behemoth": {
       "edhrec_rank": 25828,
@@ -47898,7 +47898,7 @@
       "scryfall_id": "31342ed4-55d8-4abb-a995-a98cb9ea3ad1",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Cling to Dust": {
       "edhrec_rank": 8044,
@@ -49438,7 +49438,7 @@
       "scryfall_id": "9cfb4080-0f31-4352-b47a-a36955b68a18",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Coiling Rebirth": {
       "edhrec_rank": 4181,
@@ -50118,7 +50118,7 @@
       "scryfall_id": "3c154814-72e4-4cca-a927-66c58602ae80",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Combat Celebrant": {
       "edhrec_rank": 1000,
@@ -50458,7 +50458,7 @@
       "scryfall_id": "63259e39-7267-465e-8600-9104c34bfcba",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Commander's Authority": {
       "edhrec_rank": 17377,
@@ -52908,7 +52908,7 @@
       "scryfall_id": "77e3ea71-ea9f-4bbf-93cb-0f6339f8a3ab",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Coral Barrier": {
       "edhrec_rank": 22272,
@@ -53068,7 +53068,7 @@
       "scryfall_id": "0d91e61d-e3bf-4ddc-9f01-18b1abe35a61",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Core Prowler": {
       "edhrec_rank": 8001,
@@ -55882,13 +55882,13 @@
     },
     "Crisis of Conscience": {
       "edhrec_rank": 12238,
-      "gate": "template",
+      "gate": null,
       "name": "Crisis of Conscience",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "04d6932a-5714-4e9e-9229-ea182a175779",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Critical Hit": {
       "edhrec_rank": 9302,
@@ -56248,7 +56248,7 @@
       "scryfall_id": "c976d0a5-0f17-40e9-93c9-362b59252202",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Crowd-Control Warden": {
       "edhrec_rank": 21642,
@@ -57768,7 +57768,7 @@
       "scryfall_id": "426ed66e-41b3-4e44-90a2-697aafaa8c5c",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Cultivator Drone": {
       "edhrec_rank": 19928,
@@ -58098,7 +58098,7 @@
       "scryfall_id": "566ac9ab-f62f-4bc9-bb5b-8f8c7e397e0a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Curiosity Crafter": {
       "edhrec_rank": 1723,
@@ -60758,7 +60758,7 @@
       "scryfall_id": "227f249f-a1da-4db0-a1a5-34378375fa8e",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Dark Salvation": {
       "edhrec_rank": 7542,
@@ -62228,7 +62228,7 @@
       "scryfall_id": "9d9a5654-6795-4799-ae3b-5827bfdf7a97",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Dazzling Angel": {
       "edhrec_rank": 3116,
@@ -62648,7 +62648,7 @@
       "scryfall_id": "e0f658ff-323e-4e32-beaa-1d5753b4f081",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Deadly Embrace": {
       "edhrec_rank": 14815,
@@ -65068,7 +65068,7 @@
       "scryfall_id": "c2cb5a93-d2f9-4df6-9488-c57b6f18ae2b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Deflection": {
       "edhrec_rank": 22136,
@@ -67018,7 +67018,7 @@
       "scryfall_id": "e7a32387-5faf-4f93-8cb2-d54bd7f1001b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Desperate Sentry": {
       "edhrec_rank": 25416,
@@ -67928,7 +67928,7 @@
       "scryfall_id": "2259e77f-0a15-43e2-bb94-41e8c585d927",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Diamond Faerie": {
       "edhrec_rank": 19731,
@@ -70518,7 +70518,7 @@
       "scryfall_id": "aff6a7f9-9258-4247-9d17-09c9c2cf0c2e",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Diviner Spirit": {
       "edhrec_rank": 22502,
@@ -70608,7 +70608,7 @@
       "scryfall_id": "6e0db10d-fb6d-44df-9ff2-6f1e0e8f8209",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Dizzying Gaze": {
       "edhrec_rank": 26285,
@@ -72958,7 +72958,7 @@
       "scryfall_id": "2429510d-ce59-472d-b0df-5e6b7cdf63af",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Dragon's Smile": {
       "edhrec_rank": 30946,
@@ -73328,7 +73328,7 @@
       "scryfall_id": "af298499-349f-4af1-8791-3fba5dbff0cc",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Dragonsoul Knight": {
       "edhrec_rank": 28459,
@@ -75878,7 +75878,7 @@
       "scryfall_id": "76e85c9f-bd0a-4285-b86c-69e170d4405a",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Dryad's Caress": {
       "edhrec_rank": 26422,
@@ -78908,7 +78908,7 @@
       "scryfall_id": "78f57a41-e9a6-4f71-92a0-46c4534c8fca",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Edgar, King of Figaro": {
       "edhrec_rank": 9622,
@@ -82228,17 +82228,17 @@
       "scryfall_id": "ab95f6e7-b806-47fe-a071-6c38b3176d94",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Emergency Eject": {
       "edhrec_rank": 8429,
-      "gate": "template",
+      "gate": null,
       "name": "Emergency Eject",
-      "reason": "no template for: Destroy target nonland permanent. Its controller creates a Lander token",
+      "reason": "",
       "scryfall_id": "fc98b2d4-86fc-4c47-b2a7-1f3c89463607",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Emergency Medical Hologram": {
       "edhrec_rank": null,
@@ -83332,13 +83332,13 @@
     },
     "Endurance Bobblehead": {
       "edhrec_rank": 5830,
-      "gate": "template",
+      "gate": null,
       "name": "Endurance Bobblehead",
-      "reason": "no template for: {3}, {T}: Up to X target creatures you control get +1/+0 and gain indestructible until end",
+      "reason": "",
       "scryfall_id": "8768789b-c414-4e35-bff3-d06a69dccff6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Endure": {
       "edhrec_rank": 26877,
@@ -84308,7 +84308,7 @@
       "scryfall_id": "11f7c22b-f1f8-4d71-b5af-aae97fd6ebf0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Entreat the Angels": {
       "edhrec_rank": 4945,
@@ -86748,7 +86748,7 @@
       "scryfall_id": "e4ed0052-d6dd-4f69-8313-10863baefac9",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Everglades": {
       "edhrec_rank": 10342,
@@ -87248,7 +87248,7 @@
       "scryfall_id": "32ffc8eb-9518-455c-ada5-8b7596896dcf",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Excavator": {
       "edhrec_rank": 26491,
@@ -87608,7 +87608,7 @@
       "scryfall_id": "d11c5fe0-1528-4c94-a8cc-42bcab9d7487",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Exotic Pets": {
       "edhrec_rank": 16753,
@@ -89198,7 +89198,7 @@
       "scryfall_id": "fc8d66ed-8a01-41ce-805c-05333322c6f6",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Fade Away": {
       "edhrec_rank": 13198,
@@ -89748,7 +89748,7 @@
       "scryfall_id": "5aeda464-e71e-4e89-b355-237680bc1a7b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Faithless Salvaging": {
       "edhrec_rank": 8630,
@@ -89928,7 +89928,7 @@
       "scryfall_id": "da9d87ed-a1c2-48a7-995e-b462a87dad6a",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Falkenrath Reaver": {
       "edhrec_rank": 27657,
@@ -91302,13 +91302,13 @@
     },
     "Fateful Absence": {
       "edhrec_rank": 6021,
-      "gate": "template",
+      "gate": null,
       "name": "Fateful Absence",
-      "reason": "no template for: Destroy target creature or planeswalker. Its controller investigates",
+      "reason": "",
       "scryfall_id": "ea9e80c6-92b1-4c06-bf7e-b5e9f6c73418",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Fateful Discovery": {
       "edhrec_rank": 25757,
@@ -92238,7 +92238,7 @@
       "scryfall_id": "a041cfe3-a02d-41e2-aea3-76bc2bacc10e",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Feedback": {
       "edhrec_rank": 28043,
@@ -92412,13 +92412,13 @@
     },
     "Felidar Retreat": {
       "edhrec_rank": 501,
-      "gate": "template",
+      "gate": null,
       "name": "Felidar Retreat",
-      "reason": "no template for: Landfall — Whenever a land you control enters, choose one —",
+      "reason": "",
       "scryfall_id": "5f8c16d5-c2ed-4e5c-8f50-d39013845f55",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Felidar Savior": {
       "edhrec_rank": 11223,
@@ -93458,7 +93458,7 @@
       "scryfall_id": "f465ded8-0d38-42ac-bafc-a12185013c5d",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Fetid Horror": {
       "edhrec_rank": 30233,
@@ -93848,7 +93848,7 @@
       "scryfall_id": "ac4fc06d-50b8-455f-8d14-85c0c791c422",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Fierce Invocation": {
       "edhrec_rank": 27899,
@@ -94028,7 +94028,7 @@
       "scryfall_id": "3e73be68-aec6-4033-9cdd-bc473d7db93a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Fiery Justice": {
       "edhrec_rank": 24312,
@@ -94378,7 +94378,7 @@
       "scryfall_id": "c7b110c0-7211-4192-b065-37a25f832698",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Final Judgment": {
       "edhrec_rank": 8346,
@@ -97888,7 +97888,7 @@
       "scryfall_id": "3377d600-e43f-4cce-ae3f-541e519ee4ad",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Floriferous Vinewall": {
       "edhrec_rank": 13441,
@@ -98358,7 +98358,7 @@
       "scryfall_id": "ba8fa9db-f24f-46d4-add1-71b7f77636e2",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Flutterfox": {
       "edhrec_rank": 20396,
@@ -99328,7 +99328,7 @@
       "scryfall_id": "cb795f86-3721-4ae5-9893-49d7d9973f86",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Force of Rage": {
       "edhrec_rank": 18605,
@@ -99378,7 +99378,7 @@
       "scryfall_id": "7a87f8bc-1b3e-4cb2-9343-5f008e942411",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Forced Adaptation": {
       "edhrec_rank": 8235,
@@ -99608,7 +99608,7 @@
       "scryfall_id": "10718d37-63d4-44b7-9450-5d49cffce944",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Foresee": {
       "edhrec_rank": 9665,
@@ -103878,7 +103878,7 @@
       "scryfall_id": "6265bf1d-07a8-4f84-a39f-ee02d9921771",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Gallifrey Stands": {
       "edhrec_rank": 13853,
@@ -104078,7 +104078,7 @@
       "scryfall_id": "3bce6015-a7df-43d4-849b-0f306d501658",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Game Over": {
       "edhrec_rank": 9844,
@@ -104782,13 +104782,13 @@
     },
     "Gary Clone": {
       "edhrec_rank": 12715,
-      "gate": "template",
+      "gate": null,
       "name": "Gary Clone",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "a45346ac-54a9-4fda-bde7-92ff75ac34f7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Garza Zol, Plague Queen": {
       "edhrec_rank": 27898,
@@ -105718,7 +105718,7 @@
       "scryfall_id": "80c235ae-8297-4860-babe-de4a9df48c58",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gemstone Mine": {
       "edhrec_rank": 3330,
@@ -106412,13 +106412,13 @@
     },
     "Get Lost": {
       "edhrec_rank": 1795,
-      "gate": "template",
+      "gate": null,
       "name": "Get Lost",
-      "reason": "no template for: Destroy target creature, enchantment, or planeswalker. Its controller creates two Map toke",
+      "reason": "",
       "scryfall_id": "522aa72b-2b8c-484c-872b-f082101cee35",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Get Out": {
       "edhrec_rank": 5929,
@@ -106618,7 +106618,7 @@
       "scryfall_id": "3f89bc6f-fc43-49ad-881f-8897750e4b5f",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Ghalta, Primal Hunger // Ghalta, Primal Hunger": {
       "edhrec_rank": 466,
@@ -108988,7 +108988,7 @@
       "scryfall_id": "1fbb4493-23db-4c91-a3e0-17b139f5d00f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gitaxian Raptor": {
       "edhrec_rank": 24648,
@@ -116838,7 +116838,7 @@
       "scryfall_id": "643b6832-0fa1-4ce8-bda8-00fe9810ffeb",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Greenwarden of Murasa": {
       "edhrec_rank": 3760,
@@ -119778,7 +119778,7 @@
       "scryfall_id": "98423ff9-48e3-4985-9fe4-7c095c3ceee0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Gut, True Soul Zealot": {
       "edhrec_rank": 6967,
@@ -120828,7 +120828,7 @@
       "scryfall_id": "af542837-77a1-462e-8dd6-b4fa8b21bb33",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Halo Hopper": {
       "edhrec_rank": 17012,
@@ -122628,7 +122628,7 @@
       "scryfall_id": "32f1e668-89b8-4f82-afc1-6c3efb1fef3b",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Haunted Screen": {
       "edhrec_rank": 13779,
@@ -125188,7 +125188,7 @@
       "scryfall_id": "f52805c6-d226-4e7b-8c3a-767ed522739e",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Henry Wu, InGen Geneticist": {
       "edhrec_rank": 20054,
@@ -125438,7 +125438,7 @@
       "scryfall_id": "1c2e4ff2-5c14-488e-8548-eb89ffd18e41",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Heraldic Banner": {
       "edhrec_rank": 859,
@@ -125448,7 +125448,7 @@
       "scryfall_id": "743ea709-dbb3-4db8-a2ce-544f47eb6339",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Heralds of Tzeentch": {
       "edhrec_rank": 9099,
@@ -125528,7 +125528,7 @@
       "scryfall_id": "5579a3ac-7fdb-4204-b44e-fe0174f78cfa",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Herd Migration": {
       "edhrec_rank": 20001,
@@ -125672,13 +125672,13 @@
     },
     "Hero of Bladehold": {
       "edhrec_rank": 1963,
-      "gate": "template",
+      "gate": null,
       "name": "Hero of Bladehold",
-      "reason": "no template for: Battle cry",
+      "reason": "",
       "scryfall_id": "8536e50d-81b3-4b1d-9469-22fad35fe145",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Hero of Bretagard": {
       "edhrec_rank": 13737,
@@ -125948,7 +125948,7 @@
       "scryfall_id": "12edbdcc-085f-48c8-9605-3c7e3fe63bc7",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Heroic Reinforcements": {
       "edhrec_rank": 8025,
@@ -126178,7 +126178,7 @@
       "scryfall_id": "674960ce-ff33-4d5e-a24a-a4582b2e9809",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Hexmark Destroyer": {
       "edhrec_rank": 14267,
@@ -126808,7 +126808,7 @@
       "scryfall_id": "51da4a4b-ea12-4169-a7cf-eb4427f13e84",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "High-Speed Hoverbike": {
       "edhrec_rank": 9433,
@@ -129592,13 +129592,13 @@
     },
     "Hour of Reckoning": {
       "edhrec_rank": 1043,
-      "gate": "template",
+      "gate": null,
       "name": "Hour of Reckoning",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "5b73c1cb-0e96-41d7-91c1-912aedd263a7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Hour of Revelation": {
       "edhrec_rank": 3712,
@@ -130268,7 +130268,7 @@
       "scryfall_id": "08fd6904-c497-40de-b3cf-a427e5bed264",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Hullcarver": {
       "edhrec_rank": 10696,
@@ -136718,7 +136718,7 @@
       "scryfall_id": "394f432d-e59f-44ce-a166-1a939a648cbd",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Inspiring Overseer": {
       "edhrec_rank": 1635,
@@ -136992,13 +136992,13 @@
     },
     "Intelligence Bobblehead": {
       "edhrec_rank": 5916,
-      "gate": "template",
+      "gate": null,
       "name": "Intelligence Bobblehead",
-      "reason": "no template for: {5}, {T}: Draw X cards, where X is the number of Bobbleheads you control",
+      "reason": "",
       "scryfall_id": "114600bd-4bf5-4eeb-bb9d-25bfb8a54adc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Interceptor Mechan": {
       "edhrec_rank": 13328,
@@ -137248,7 +137248,7 @@
       "scryfall_id": "50b9575a-53d9-4df7-b86c-cda021107d3f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Into the Fray": {
       "edhrec_rank": 24113,
@@ -137308,7 +137308,7 @@
       "scryfall_id": "25edefa9-9fff-4b71-83ae-696c196a795c",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Into the Story": {
       "edhrec_rank": 5624,
@@ -137518,7 +137518,7 @@
       "scryfall_id": "c99f6785-e5a1-4fdc-9fb5-e1a372e7e848",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Inundate": {
       "edhrec_rank": 12605,
@@ -138448,7 +138448,7 @@
       "scryfall_id": "fd466b20-d11d-419e-8765-9befb9590299",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Ioreth of the Healing House": {
       "edhrec_rank": 2479,
@@ -139498,7 +139498,7 @@
       "scryfall_id": "78814c92-b52c-462a-866f-3e7da9db9f70",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Isolated Watchtower": {
       "edhrec_rank": 10434,
@@ -141538,7 +141538,7 @@
       "scryfall_id": "aa1e5db0-4cd8-4d42-bde1-3e3d0041339f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Jeska, Thrice Reborn": {
       "edhrec_rank": 4432,
@@ -141898,7 +141898,7 @@
       "scryfall_id": "d3656079-0b27-4169-a792-2629eff8ea56",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Jeweled Bird": {
       "edhrec_rank": null,
@@ -143258,7 +143258,7 @@
       "scryfall_id": "d4929e39-fccc-450b-bb18-f5ad56a397bd",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Jungle Creeper": {
       "edhrec_rank": 29559,
@@ -146342,13 +146342,13 @@
     },
     "Keeper of the Accord": {
       "edhrec_rank": 1240,
-      "gate": "template",
+      "gate": null,
       "name": "Keeper of the Accord",
-      "reason": "no template for: At the beginning of each opponent's end step, if that player controls more creatures than ",
+      "reason": "",
       "scryfall_id": "367dad7f-774a-47c2-892b-b3952dbed683",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Keeper of the Beasts": {
       "edhrec_rank": 29504,
@@ -147288,7 +147288,7 @@
       "scryfall_id": "159c309c-568d-4780-9db5-b50a997e7bb2",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Khalni Hydra": {
       "edhrec_rank": 13959,
@@ -147808,7 +147808,7 @@
       "scryfall_id": "b6e35fd5-de7e-40a8-a23c-00d07fd1ac56",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kindercatch": {
       "edhrec_rank": 24542,
@@ -149948,7 +149948,7 @@
       "scryfall_id": "2ee1d489-0980-444e-8b07-107be791b76e",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Kodama of the North Tree": {
       "edhrec_rank": 21686,
@@ -150178,7 +150178,7 @@
       "scryfall_id": "25b26103-d7f4-43c4-976f-f061476b11bc",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Koma, World-Eater": {
       "edhrec_rank": 2180,
@@ -153478,7 +153478,7 @@
       "scryfall_id": "585be7c2-b303-4612-bafa-ca7a555212aa",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Last Gasp": {
       "edhrec_rank": 16840,
@@ -156778,7 +156778,7 @@
       "scryfall_id": "21775491-53e7-4654-8d23-54d0acd89299",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Light from Within": {
       "edhrec_rank": 22983,
@@ -157008,7 +157008,7 @@
       "scryfall_id": "7673784e-db4b-43a1-8d55-1bb9fc1e284f",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Lightning Cloud": {
       "edhrec_rank": 28226,
@@ -158138,7 +158138,7 @@
       "scryfall_id": "63bacc32-d6ba-420c-9b49-299c08e5fb39",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Lionheart Glimmer": {
       "edhrec_rank": 11950,
@@ -160638,7 +160638,7 @@
       "scryfall_id": "9c3f861f-0f46-4360-970e-a5cfc5ef194b",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Lotus Field": {
       "edhrec_rank": 904,
@@ -160678,7 +160678,7 @@
       "scryfall_id": "133dac2f-ef50-460e-89c4-a23870faac06",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Lotus Ring": {
       "edhrec_rank": 11739,
@@ -161258,7 +161258,7 @@
       "scryfall_id": "13281945-47ff-464d-96ef-9b26ef6783fa",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Lucky Clover": {
       "edhrec_rank": 10403,
@@ -161298,7 +161298,7 @@
       "scryfall_id": "2a5150ee-d177-48f5-9c93-edfaa95922ab",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ludevic's Test Subject // Ludevic's Abomination": {
       "edhrec_rank": 18432,
@@ -161718,7 +161718,7 @@
       "scryfall_id": "3d99587a-7fb1-41fc-b7ea-1178f9625081",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Lunar Avenger": {
       "edhrec_rank": 25876,
@@ -163218,7 +163218,7 @@
       "scryfall_id": "44921b2e-5938-4f63-92b9-0b719a2f8c68",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Magic Missile": {
       "edhrec_rank": 12543,
@@ -164418,7 +164418,7 @@
       "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Malakir Soothsayer": {
       "edhrec_rank": 25313,
@@ -164868,7 +164868,7 @@
       "scryfall_id": "263aac65-b18b-45ed-80c1-12428dfc5a4c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mana Crypt": {
       "edhrec_rank": 4399,
@@ -165078,7 +165078,7 @@
       "scryfall_id": "f20b3a5b-c07e-4314-ab3e-097212ff5e6e",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mana Vortex": {
       "edhrec_rank": 20234,
@@ -165788,7 +165788,7 @@
       "scryfall_id": "5f70dafc-c638-4ec0-ab5b-62998f752720",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Marauding Boneslasher": {
       "edhrec_rank": 27883,
@@ -167008,7 +167008,7 @@
       "scryfall_id": "a0660e74-6973-41d7-a20b-8d71fed1495a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Martial Glory": {
       "edhrec_rank": 19320,
@@ -167808,7 +167808,7 @@
       "scryfall_id": "35c21fc4-d2f4-4682-b6af-f2e32377c9af",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Master of Death": {
       "edhrec_rank": 7004,
@@ -169378,17 +169378,17 @@
       "scryfall_id": "29c999f7-caed-4d24-9881-d5b07c5cd579",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Memorial to Glory": {
       "edhrec_rank": 6841,
-      "gate": "template",
+      "gate": null,
       "name": "Memorial to Glory",
-      "reason": "no template for: {3}{W}, {T}, Sacrifice this land: Create two 1/1 white Soldier creature tokens",
+      "reason": "",
       "scryfall_id": "edad3735-0cf3-471d-9731-8118aa4dce68",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Memorial to Unity": {
       "edhrec_rank": 12666,
@@ -169698,7 +169698,7 @@
       "scryfall_id": "ab8741ca-43cb-4b4c-890d-0a363524bd13",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mental Modulation": {
       "edhrec_rank": 11657,
@@ -172558,7 +172558,7 @@
       "scryfall_id": "75b75aaf-499d-47b0-ab6d-873240b641b2",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mindclaw Shaman": {
       "edhrec_rank": 11318,
@@ -173558,7 +173558,7 @@
       "scryfall_id": "8819dd6d-1127-4c73-9df7-5e5d66c20a68",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Mirkwood Channeler": {
       "edhrec_rank": 14116,
@@ -174218,7 +174218,7 @@
       "scryfall_id": "13fe1eff-e475-4949-9914-c49cb15ec433",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mise": {
       "edhrec_rank": null,
@@ -174308,7 +174308,7 @@
       "scryfall_id": "a081ddde-8614-4f71-8192-d412b96a5dcf",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mishra's Command": {
       "edhrec_rank": 9561,
@@ -175788,7 +175788,7 @@
       "scryfall_id": "2b93e65e-8a10-444f-8b0a-9327dd30cce2",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mogg Sentry": {
       "edhrec_rank": 22106,
@@ -176128,7 +176128,7 @@
       "scryfall_id": "6c5d3eba-e456-47c2-992b-a97ba66e9676",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Molly Hayes, Runaway": {
       "edhrec_rank": 26409,
@@ -178388,7 +178388,7 @@
       "scryfall_id": "2be84175-062c-439f-abad-c57cd9eb490f",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Mossbridge Troll": {
       "edhrec_rank": 15594,
@@ -178848,7 +178848,7 @@
       "scryfall_id": "08c63a42-7969-4e07-ad98-c312156ad0d2",
       "source": "",
       "status": "unexpressible",
-      "wanted": false
+      "wanted": true
     },
     "Mox Diamond": {
       "edhrec_rank": 246,
@@ -178858,7 +178858,7 @@
       "scryfall_id": "fadb218d-29e2-42d1-a7a1-1066741d63ad",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mox Emerald": {
       "edhrec_rank": null,
@@ -178898,7 +178898,7 @@
       "scryfall_id": "6a2dbb1a-4b83-47b6-92ca-145fa5c9c16b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mox Pearl": {
       "edhrec_rank": null,
@@ -180948,7 +180948,7 @@
       "scryfall_id": "fce23be6-787a-43bb-8bfd-c6672fad9105",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mystic Repeal": {
       "edhrec_rank": 20979,
@@ -181118,7 +181118,7 @@
       "scryfall_id": "f3054d9f-7080-46dc-aa2f-804f8120c094",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Mystifying Maze": {
       "edhrec_rank": 6952,
@@ -184658,7 +184658,7 @@
       "scryfall_id": "83731072-3c9f-4e47-802c-b54a59b865f8",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Nezumi Bladeblesser": {
       "edhrec_rank": 12759,
@@ -190292,13 +190292,13 @@
     },
     "Oketra's Monument": {
       "edhrec_rank": 1022,
-      "gate": "template",
+      "gate": null,
       "name": "Oketra's Monument",
-      "reason": "no template for: White creature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "01bdc760-a5c9-45a9-9d83-dd3780f8ed6f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Okiba Reckoner Raid // Nezumi Road Captain": {
       "edhrec_rank": 11472,
@@ -190688,7 +190688,7 @@
       "scryfall_id": "3eb5cc8d-a198-43cd-a2bd-9c9414d815b2",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Olivia, Crimson Bride": {
       "edhrec_rank": 4949,
@@ -190778,7 +190778,7 @@
       "scryfall_id": "1617d39d-4989-4ac4-8cd0-ac1b4e7312df",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Olórin's Searing Light": {
       "edhrec_rank": 4960,
@@ -191928,7 +191928,7 @@
       "scryfall_id": "d3c58997-5555-423a-822e-749fac90e392",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ophiomancer": {
       "edhrec_rank": 663,
@@ -192088,7 +192088,7 @@
       "scryfall_id": "ab19808f-a5b8-4dfd-800e-2064cd6538c8",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Oracle of Nectars": {
       "edhrec_rank": 22603,
@@ -193488,7 +193488,7 @@
       "scryfall_id": "cc8f8ede-9620-4f7f-8326-a75031ef6ec1",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Orzhov Charm": {
       "edhrec_rank": 14145,
@@ -193778,7 +193778,7 @@
       "scryfall_id": "486d7edc-d983-41f0-8b78-c99aecd72996",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Oteclan Landmark // Oteclan Levitator": {
       "edhrec_rank": 16269,
@@ -194348,7 +194348,7 @@
       "scryfall_id": "1c6ab676-2437-4927-8f30-dd234298f190",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Overflowing Basin": {
       "edhrec_rank": 711,
@@ -195218,7 +195218,7 @@
       "scryfall_id": "cb91055f-215a-4243-835b-35de515a2ba5",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Pact of the Serpent": {
       "edhrec_rank": 2183,
@@ -195398,7 +195398,7 @@
       "scryfall_id": "faa82f09-0693-4cc6-8770-8c6a35aa627b",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Painsmith": {
       "edhrec_rank": 27872,
@@ -196068,7 +196068,7 @@
       "scryfall_id": "a3bb5de4-7838-465a-8ed9-0b217593703c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Paradise Plume": {
       "edhrec_rank": 10836,
@@ -196728,7 +196728,7 @@
       "scryfall_id": "1086e826-94b8-4398-8a38-d8eacca56a43",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Parting Thoughts": {
       "edhrec_rank": 20340,
@@ -196928,7 +196928,7 @@
       "scryfall_id": "b1aaa7b0-1cac-4a92-b880-7ef1ac00618f",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Path of Anger's Flame": {
       "edhrec_rank": 24965,
@@ -197358,7 +197358,7 @@
       "scryfall_id": "a70d7b65-77d0-41d3-9735-d64b9288fde1",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Patron of the Wild": {
       "edhrec_rank": 27190,
@@ -197582,13 +197582,13 @@
     },
     "Pearl Medallion": {
       "edhrec_rank": 460,
-      "gate": "template",
+      "gate": null,
       "name": "Pearl Medallion",
-      "reason": "no template for: White spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "1225264f-b298-4b56-b208-c5da87bd6867",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Pearl Shard": {
       "edhrec_rank": 31271,
@@ -198168,7 +198168,7 @@
       "scryfall_id": "2925410a-7c44-4bf4-83cd-3e75dbe82b23",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Perch Protection": {
       "edhrec_rank": 2371,
@@ -201312,13 +201312,13 @@
     },
     "Pip-Boy 3000": {
       "edhrec_rank": 2663,
-      "gate": "template",
+      "gate": null,
       "name": "Pip-Boy 3000",
-      "reason": "no template for: Whenever equipped creature attacks, choose one —",
+      "reason": "",
       "scryfall_id": "00cf7bd2-be3f-4cae-82a1-3232b2dc2815",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Piper Wright, Publick Reporter": {
       "edhrec_rank": 6208,
@@ -202838,7 +202838,7 @@
       "scryfall_id": "79c27df1-0c05-4208-a80c-73185ab35424",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Plumecreed Escort": {
       "edhrec_rank": 4280,
@@ -204362,13 +204362,13 @@
     },
     "Prava of the Steel Legion": {
       "edhrec_rank": 3778,
-      "gate": "template",
+      "gate": null,
       "name": "Prava of the Steel Legion",
-      "reason": "no template for: During your turn, creature tokens you control get +1/+4",
+      "reason": "",
       "scryfall_id": "d801439c-b63f-48be-b3d4-08daf2ca400e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Prayer of Binding": {
       "edhrec_rank": 16317,
@@ -204382,13 +204382,13 @@
     },
     "Pre-War Formalwear": {
       "edhrec_rank": 6070,
-      "gate": "template",
+      "gate": null,
       "name": "Pre-War Formalwear",
-      "reason": "no template for: When this Equipment enters, return target creature card with mana value 3 or less from you",
+      "reason": "",
       "scryfall_id": "db08975d-ae6e-43b2-8170-79f12149ad83",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Preacher": {
       "edhrec_rank": 22128,
@@ -209098,7 +209098,7 @@
       "scryfall_id": "e4507ef5-0d30-42ca-b305-f99c6e10432b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Pyrewild Shaman": {
       "edhrec_rank": 20676,
@@ -209148,7 +209148,7 @@
       "scryfall_id": "2dea1e46-9786-429f-ad57-d608c006f508",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Pyroceratops": {
       "edhrec_rank": 18090,
@@ -209238,7 +209238,7 @@
       "scryfall_id": "c634d49a-a349-4153-b14d-0b9032589030",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Pyromancer Ascension": {
       "edhrec_rank": 11924,
@@ -210792,13 +210792,13 @@
     },
     "Rabble Rousing": {
       "edhrec_rank": 3294,
-      "gate": "template",
+      "gate": null,
       "name": "Rabble Rousing",
-      "reason": "no template for: Hideaway 5",
+      "reason": "",
       "scryfall_id": "206c8529-56df-4ed9-97bc-6c9b5e2a04c4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Rabble-Rouser": {
       "edhrec_rank": 26687,
@@ -211438,7 +211438,7 @@
       "scryfall_id": "a71d1ec3-2d7a-4749-8936-8bf7a8b83d84",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Rage Extractor": {
       "edhrec_rank": 30463,
@@ -213348,7 +213348,7 @@
       "scryfall_id": "a6ebb0c9-59d7-4c27-83a5-16dac9a890e6",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Ramunap Hydra": {
       "edhrec_rank": 16064,
@@ -216718,7 +216718,7 @@
       "scryfall_id": "70a45e9b-699e-425a-9f3d-267274830d3e",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Red Ghost, Intangible Genius": {
       "edhrec_rank": 14597,
@@ -218238,7 +218238,7 @@
       "scryfall_id": "064e88cb-b9ae-4b70-a788-7a0c2e215f1c",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Relive the Past": {
       "edhrec_rank": 24435,
@@ -219048,7 +219048,7 @@
       "scryfall_id": "d2afc2b0-bd68-494b-9952-1fe53213552f",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Reprisal": {
       "edhrec_rank": 20350,
@@ -220248,7 +220248,7 @@
       "scryfall_id": "6d33f025-9c5f-4437-8415-397126d1227d",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Retreat to Valakut": {
       "edhrec_rank": 15870,
@@ -223358,7 +223358,7 @@
       "scryfall_id": "cbd00730-3137-4a75-a061-0508d1882eff",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Rite of Harmony": {
       "edhrec_rank": 4488,
@@ -223938,7 +223938,7 @@
       "scryfall_id": "57a93a71-d77c-417f-85d0-cd420f573331",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Riverwalk Technique": {
       "edhrec_rank": 17993,
@@ -235278,7 +235278,7 @@
       "scryfall_id": "62c19f87-1bbc-4309-8781-4519db8b91a2",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Scuttlegator": {
       "edhrec_rank": 20799,
@@ -235998,7 +235998,7 @@
       "scryfall_id": "857818d8-454b-4c2c-8cf2-7aa9c2898b18",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Search the City": {
       "edhrec_rank": 30554,
@@ -236692,13 +236692,13 @@
     },
     "Securitron Squadron": {
       "edhrec_rank": 4397,
-      "gate": "template",
+      "gate": null,
       "name": "Securitron Squadron",
-      "reason": "no template for: Squad {3}",
+      "reason": "",
       "scryfall_id": "3f361e79-91eb-42d6-a967-cc01c7528595",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Security Blockade": {
       "edhrec_rank": 28551,
@@ -241308,7 +241308,7 @@
       "scryfall_id": "5aa0c810-3b7d-4661-979e-e84fb327742d",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Shattered Seraph": {
       "edhrec_rank": 22193,
@@ -242688,7 +242688,7 @@
       "scryfall_id": "2e558f0a-f921-4ecf-b1c9-2c93aa2d3fd9",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Shipwreck Dowser": {
       "edhrec_rank": 8613,
@@ -245978,7 +245978,7 @@
       "scryfall_id": "507e34d0-cdc5-4226-9664-b725b702044d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Silverquill Pledgemage": {
       "edhrec_rank": 25816,
@@ -246128,7 +246128,7 @@
       "scryfall_id": "9d367aa4-e85f-402e-b781-527808edcc0a",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Simic Ascendancy": {
       "edhrec_rank": 1266,
@@ -246158,7 +246158,7 @@
       "scryfall_id": "3384ee4e-738f-4442-bccd-4f96022b7219",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Simic Cluestone": {
       "edhrec_rank": 15212,
@@ -246188,7 +246188,7 @@
       "scryfall_id": "4485d30c-7471-474f-b2b4-cfa2c2144d89",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Simic Guildmage": {
       "edhrec_rank": 19900,
@@ -246258,7 +246258,7 @@
       "scryfall_id": "bf222c78-f12e-4857-93da-fade99c740b8",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Simic Sky Swallower": {
       "edhrec_rank": 8522,
@@ -246568,7 +246568,7 @@
       "scryfall_id": "5358b87a-1a29-426d-b165-40c97da2c14d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Sink into Takenuma": {
       "edhrec_rank": 27516,
@@ -248108,7 +248108,7 @@
       "scryfall_id": "1d8b007b-3169-4ee3-80c7-781fc096fc7a",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Skullcrack": {
       "edhrec_rank": 9912,
@@ -251118,7 +251118,7 @@
       "scryfall_id": "7b0edb33-1aa9-40ba-ba2b-db7c02768acd",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Smoldering Spires": {
       "edhrec_rank": 14107,
@@ -251368,7 +251368,7 @@
       "scryfall_id": "367d46d1-fa7a-403d-8949-b478a1f83f46",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Snapcaster Mage": {
       "edhrec_rank": 1445,
@@ -253448,7 +253448,7 @@
       "scryfall_id": "219d3e48-e0b1-472d-ac45-11c14b292c9e",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Sorin, Lord of Innistrad": {
       "edhrec_rank": 4879,
@@ -253678,7 +253678,7 @@
       "scryfall_id": "6c7a441b-e4af-41ba-85a4-fcb4f40534c3",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Soul Immolation": {
       "edhrec_rank": 6767,
@@ -253878,7 +253878,7 @@
       "scryfall_id": "25bc7936-4c85-47d5-8ac4-094403bd5edb",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Soul Shepherd": {
       "edhrec_rank": 30764,
@@ -258458,7 +258458,7 @@
       "scryfall_id": "d5f68c73-4794-4659-b494-edf89105beab",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Spitting Sliver": {
       "edhrec_rank": 21166,
@@ -259018,7 +259018,7 @@
       "scryfall_id": "90594c9c-95a5-4d3c-9005-863fa710cdbd",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Sporesower Thallid": {
       "edhrec_rank": 8756,
@@ -259318,7 +259318,7 @@
       "scryfall_id": "e15ab0aa-4059-4923-9816-6f7a9e5b5a18",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Springleaf Parade": {
       "edhrec_rank": 2242,
@@ -261128,7 +261128,7 @@
       "scryfall_id": "fc7d1912-7e27-49ef-bd98-375d975a42b0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Starting Town NPC": {
       "edhrec_rank": null,
@@ -264982,13 +264982,13 @@
     },
     "Strength Bobblehead": {
       "edhrec_rank": 6034,
-      "gate": "template",
+      "gate": null,
       "name": "Strength Bobblehead",
-      "reason": "no template for: {3}, {T}: Put X +1/+1 counters on target creature, where X is the number of Bobbleheads yo",
+      "reason": "",
       "scryfall_id": "271424ac-1f2b-4419-baca-bc9f0a862221",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Strength from the Fallen": {
       "edhrec_rank": 23929,
@@ -265208,7 +265208,7 @@
       "scryfall_id": "2099f819-d504-447a-a390-75267d8a7e55",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Striking Sliver": {
       "edhrec_rank": 5050,
@@ -265332,13 +265332,13 @@
     },
     "Stroke of Midnight": {
       "edhrec_rank": 202,
-      "gate": "template",
+      "gate": null,
       "name": "Stroke of Midnight",
-      "reason": "no template for: Destroy target nonland permanent. Its controller creates a 1/1 white Human creature token",
+      "reason": "",
       "scryfall_id": "711135d0-7769-4154-873a-e2505f8795f0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Stromgald Cabal": {
       "edhrec_rank": 19920,
@@ -266058,7 +266058,7 @@
       "scryfall_id": "a720f867-eb3e-4b42-835a-1bdc19de8f7c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Submerged Boneyard": {
       "edhrec_rank": 5057,
@@ -266598,7 +266598,7 @@
       "scryfall_id": "eedb9df2-20d3-4cfd-8aed-336edc37d5a9",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Sultai Ascendancy": {
       "edhrec_rank": 8977,
@@ -267608,7 +267608,7 @@
       "scryfall_id": "ac70c9ae-5115-46db-9ef8-05c475c88154",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Sunfall": {
       "edhrec_rank": 3908,
@@ -269508,7 +269508,7 @@
       "scryfall_id": "83d0b761-d694-4232-9f40-5bd8c82a05f1",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Swans of Bryn Argoll": {
       "edhrec_rank": 15815,
@@ -269968,7 +269968,7 @@
       "scryfall_id": "03f7e9fc-8e59-45c1-90fc-1d04d929b292",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Swiftgear Drake": {
       "edhrec_rank": 23079,
@@ -272348,7 +272348,7 @@
       "scryfall_id": "a365885c-f7d9-4ea1-9125-5265055e5570",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Talisman of Creativity": {
       "edhrec_rank": 126,
@@ -272388,7 +272388,7 @@
       "scryfall_id": "0c959368-2f58-48de-b7a5-2bab408652b5",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Talisman of Impulse": {
       "edhrec_rank": 582,
@@ -272408,7 +272408,7 @@
       "scryfall_id": "ccacf88d-407d-465d-958a-1389b7d700e6",
       "source": "template:proxy:complete",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Talisman of Progress": {
       "edhrec_rank": 141,
@@ -272818,7 +272818,7 @@
       "scryfall_id": "a9953e53-3d56-4129-8fab-df33c69b8a95",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tandem Tactics": {
       "edhrec_rank": 25602,
@@ -276038,7 +276038,7 @@
       "scryfall_id": "48783dc1-0976-4955-b7e3-afa311160d68",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Teremko Griffin": {
       "edhrec_rank": 23207,
@@ -279708,7 +279708,7 @@
       "scryfall_id": "bdd2c783-1483-490a-ae93-c4664a0a9564",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "The Ooze": {
       "edhrec_rank": 4798,
@@ -282188,7 +282188,7 @@
       "scryfall_id": "ad077996-6b5e-4eb8-bb6e-93d43c5efa8f",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Thought-Knot Seer": {
       "edhrec_rank": 8967,
@@ -286188,7 +286188,7 @@
       "scryfall_id": "cafe5755-88b0-4fee-8596-4232844f60fc",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tocasia's Dig Site": {
       "edhrec_rank": 6137,
@@ -287468,7 +287468,7 @@
       "scryfall_id": "3d75c583-4150-406b-b0e2-5c7610e77a6b",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Tormod's Cryptkeeper": {
       "edhrec_rank": 16424,
@@ -288678,7 +288678,7 @@
       "scryfall_id": "12e601d1-cf31-4077-b3ad-e13dfce4dac3",
       "source": "",
       "status": "unexpressible",
-      "wanted": false
+      "wanted": true
     },
     "Training Compound": {
       "edhrec_rank": 10870,
@@ -292738,7 +292738,7 @@
       "scryfall_id": "7705b895-1b73-4cd1-bbf8-bf359edc67b0",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Twisted Justice": {
       "edhrec_rank": 26849,
@@ -295048,7 +295048,7 @@
       "scryfall_id": "49c8b2ed-95bf-4a85-a0d7-6d7c01fc086d",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Underworld Cerberus": {
       "edhrec_rank": 23811,
@@ -295358,7 +295358,7 @@
       "scryfall_id": "4d802c0d-da4d-407d-808d-f891b12bcef8",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Unexplained Disappearance": {
       "edhrec_rank": 17305,
@@ -296818,7 +296818,7 @@
       "scryfall_id": "6eecff8f-89c6-425d-baf7-1148b3cfc381",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Urban Retreat": {
       "edhrec_rank": 5095,
@@ -297248,7 +297248,7 @@
       "scryfall_id": "adee0858-7529-4e41-b045-3bcc0a3c56a7",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Urza's Blueprints": {
       "edhrec_rank": 23081,
@@ -298282,13 +298282,13 @@
     },
     "Valorous Stance": {
       "edhrec_rank": 2632,
-      "gate": "template",
+      "gate": null,
       "name": "Valorous Stance",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "f726d332-6961-403d-83f8-25c997f4dffc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Valorous Steed": {
       "edhrec_rank": 19381,
@@ -298438,7 +298438,7 @@
       "scryfall_id": "b0d8588f-7986-4c35-b230-375287b4f475",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Vampire Opportunist": {
       "edhrec_rank": 24984,
@@ -299168,7 +299168,7 @@
       "scryfall_id": "741caee0-03c7-4b72-8f71-234e66eb6609",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Vault 112: Sadistic Simulation": {
       "edhrec_rank": 11125,
@@ -299318,7 +299318,7 @@
       "scryfall_id": "3fb781da-2b8b-44c6-999f-5038e79a7d57",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Vaultborn Tyrant": {
       "edhrec_rank": 1804,
@@ -299798,7 +299798,7 @@
       "scryfall_id": "078933b3-6d82-45f2-94e8-addf54cf1704",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Veinfire Borderpost": {
       "edhrec_rank": 16962,
@@ -302418,7 +302418,7 @@
       "scryfall_id": "60103ff2-3214-4521-b28e-2af4987056b7",
       "source": "template:additional-cost:sacrifice,spell:^draw (?P<n>\\d+|a|an|one|two|three|four|",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Village Survivors": {
       "edhrec_rank": 31424,
@@ -303238,7 +303238,7 @@
       "scryfall_id": "f511830b-1c1f-4d30-aa5d-4314726d142e",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Viscerid Armor": {
       "edhrec_rank": 30247,
@@ -303628,7 +303628,7 @@
       "scryfall_id": "65beff20-a533-44eb-addd-8d6fed02c6a2",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Vitu-Ghazi Guildmage": {
       "edhrec_rank": 14332,
@@ -303678,7 +303678,7 @@
       "scryfall_id": "25ef2d44-c261-4511-b96f-85e7a291e318",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Vivi's Persistence": {
       "edhrec_rank": 6804,
@@ -303708,7 +303708,7 @@
       "scryfall_id": "c9082527-aa88-42f7-b2f2-de21878cb179",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Vivid Flying Fish": {
       "edhrec_rank": 26793,
@@ -303728,7 +303728,7 @@
       "scryfall_id": "c2152076-0023-4fb8-9321-205e0d1b1b26",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Vivid Marsh": {
       "edhrec_rank": 6271,
@@ -304988,7 +304988,7 @@
       "scryfall_id": "dd0ee2f1-d5be-4f60-a128-7011eef71f11",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Voldaren Pariah // Abolisher of Bloodlines": {
       "edhrec_rank": 12101,
@@ -305498,7 +305498,7 @@
       "scryfall_id": "6aebcc3b-504e-40fc-b232-a2aa21a0521b",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Vorosh, the Hunter": {
       "edhrec_rank": 19298,
@@ -307938,7 +307938,7 @@
       "scryfall_id": "caf2dc02-9989-4e5f-8b9b-76ff416f8070",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "War Screecher": {
       "edhrec_rank": 25710,
@@ -308798,7 +308798,7 @@
       "scryfall_id": "00d2af40-f20b-4f78-8ef5-ed33e6f0b835",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Warrior's Resolve": {
       "edhrec_rank": 14619,
@@ -310378,7 +310378,7 @@
       "scryfall_id": "3c16b2a4-2c40-4d38-bfe8-43ca127b5bdd",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Wedding Security": {
       "edhrec_rank": 16174,
@@ -310688,7 +310688,7 @@
       "scryfall_id": "a6ed954c-17e5-45e4-9fba-8eedcad8f9b9",
       "source": "agent",
       "status": "done",
-      "wanted": false
+      "wanted": true
     },
     "Welder Automaton": {
       "edhrec_rank": 24134,
@@ -311078,7 +311078,7 @@
       "scryfall_id": "3f3c77ad-fce8-4506-90e1-7ef71552a71c",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Wheel of Misfortune": {
       "edhrec_rank": 1175,
@@ -312598,7 +312598,7 @@
       "scryfall_id": "cc0ed18d-c91a-4907-ab9a-a64f48918451",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Wild Roads": {
       "edhrec_rank": 12961,
@@ -318292,13 +318292,13 @@
     },
     "Yes Man, Personal Securitron": {
       "edhrec_rank": 3790,
-      "gate": "template",
+      "gate": null,
       "name": "Yes Man, Personal Securitron",
-      "reason": "no template for: {T}: Target opponent gains control of Yes Man. When they do, you draw two cards and put a ",
+      "reason": "",
       "scryfall_id": "6f266eb4-1de6-41c2-9b8c-eb62e9093980",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Yeva's Forcemage": {
       "edhrec_rank": 26443,

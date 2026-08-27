@@ -1,0 +1,35 @@
+{
+  "card_id": "halo_fountain",
+  "name": "Halo Fountain",
+  "oracle_text": "{W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creature token.\n{W}{W}, {T}, Untap two tapped creatures you control: Draw a card.\n{W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: You win the game.",
+  "blocked_sentences": [
+    "{W}, {T}, Untap a tapped creature you control: Create a 1/1 green and white Citizen creature token.",
+    "{W}{W}, {T}, Untap two tapped creatures you control: Draw a card.",
+    "{W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you control: You win the game."
+  ],
+  "needs": [
+    {
+      "capability": "untap-permanents-cost",
+      "kind": "cost",
+      "what": "An `untap_permanents` entry in `cost_keys`: the exact mirror of the existing `tap_permanents`, i.e. a selector over the battlefield with a `count`, whose pool is forced to `tapped: true` and which untaps each chosen permanent as the cost is paid. It must be a genuine cost (paid on activation, unrescindable, part of what makes the ability legal to activate at all), and the count must be a fixed number written into the card (1, 2 and 15 on this card). It also needs the same activation-legality check `tap_permanents` gets, so the ability is simply not offered when fewer than `count` tapped creatures you control exist -- that gating is the whole point of the card, which is a combo engine that turns untapper effects and vigilance into a win condition.",
+      "why_existing_wont_do": "`cost_keys` has `untap`, but `CostModel.untap` is a plain bool and `costs.can_pay`/`costs.pay` resolve it against `source_oid` only: it is the {Q} symbol, 'untap this permanent', and cannot reach any other object, cannot carry a selector, and cannot carry a count. It is also the wrong permanent -- this card's cost taps *itself* ({T}) and untaps *other creatures*, so `tap: true` plus `untap: true` on the same cost would tap and then untap the Fountain and touch no creature at all. `tap_permanents` is the closest thing in shape (selector + count over other permanents) but it is the opposite direction: the loader forces `tapped: False` into its pool with the comment that 'this cost always taps untapped permanents', so it selects untapped creatures and taps them. There is no `untap_permanents`, and CostModel is `extra=\"forbid\"`, so inventing the key is a load error rather than a silent no-op. Paying with the effect-side `untap` op instead is refused by the packet's own rule -- it moves the payment to resolution, letting the ability be activated with zero tapped creatures on board, which destroys the only constraint the card has.",
+      "note": "The payloads themselves are all fine: `create_token` with `citizen_1_1_gw` (which exists in the token pool) and `draw` cover the first two lines' effects. Only the cost half of lines one and two is missing."
+    },
+    {
+      "capability": "win-the-game",
+      "kind": "op",
+      "what": "An effect op that makes a player (here the ability's controller) win the game outright -- 104.2a, setting the winner directly rather than reducing an opponent to zero life. It should mark the named player a winner and every other player a loser immediately on resolution, honouring the usual 'can't win the game' / 'can't lose the game' replacement space, and it needs a matching `lose_game` for the Door to Nothingness / Demonic Pact family.",
+      "why_existing_wont_do": "Nothing in `ops` sets a game result. The engine only ever produces a winner as a *consequence*: `sba.py` line 226 is the single place `state.result` is written, and it derives winners from who is still alive after state-based actions. `damage` and `lose_life` can only get there by taking an opponent to 0 life, which is not what this card says and is not achievable against a 40-life opponent from one activation anyway; `add_poison` is likewise a life-total-shaped route to the same state-based check. `set_flag` records an arbitrary flag that only a `has_flag` condition can read -- it changes nothing about the game's outcome. So the third line has no expressible approximation at all, not merely an imprecise one."
+    }
+  ],
+  "closest_existing": [
+    "tap_permanents",
+    "untap",
+    "sacrifice",
+    "return_to_hand",
+    "damage",
+    "lose_life",
+    "set_flag"
+  ],
+  "confidence": "high"
+}

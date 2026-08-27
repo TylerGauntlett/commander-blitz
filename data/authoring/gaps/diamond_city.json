@@ -1,0 +1,26 @@
+{
+  "card_id": "diamond_city",
+  "name": "Diamond City",
+  "oracle_text": "This land enters with a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\n{T}: Add {C}.\n{T}: Move a shield counter from this land onto target creature. Activate only if two or more creatures entered the battlefield under your control this turn.",
+  "blocked_sentences": [
+    "This land enters with a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)"
+  ],
+  "needs": [
+    {
+      "capability": "shield-counter",
+      "kind": "replacement",
+      "what": "the shield counter as a rules-defined counter kind (CR 122.1c-style, as +1/+1 and keyword counters already are): a permanent with one or more shield counters on it replaces both (a) any damage that would be dealt to it and (b) any destruction of it, with 'remove one shield counter from it instead'. It needs two hook points and one shared consumer: in `zones.destroy`, a check alongside the existing indestructible / regeneration-shield / totem-armor ladder that removes one shield counter and returns False; and in `primitives`' object-damage path, a check before damage is marked that removes one shield counter and prevents the whole damage event. Because a shield counter can be moved between permanents by `move_counters`, the behaviour has to live on the counter kind rather than on a per-card ability, so that the counter keeps working after it lands on a creature the shield-granting card never mentions.",
+      "why_existing_wont_do": "Counter kinds are free strings and `add_counters` / `self_enters_with_counters` will happily place a counter named 'shield', but nothing reads it. `enums.KEYWORD_COUNTERS` is `frozenset(k.value for k in Keyword) - INERT_KEYWORDS`, and 'shield' is not in the Keyword enum, so `characteristics` applies nothing for it; `values.validate_counter_kind` explicitly documents that a kind normalising onto no keyword 'is somebody's charge counter' and is left as an inert tally. `zones.destroy` replaces destruction from exactly three sources -- the `indestructible` keyword, `obj.regeneration_shields`, and `_totem_armor` -- none of which is counter-driven or transferable. The `regenerate` op is the nearest miss and is wrong in four ways: it does not touch damage at all, it taps the permanent and removes its damage (701.15a) which a shield counter does not, its shields are wiped at end of turn by `primitives`' cleanup, and they live in the integer field `obj.regeneration_shields` rather than in `obj.counters`, so `move_counters` cannot carry one onto the target creature. `prevent_damage` is refused any `objects` clause -- loader.py rejects it with 'prevent_damage shields a *player* and takes no objects' -- so it cannot cover a permanent. `grant_keyword: indestructible` covers neither damage nor the one-shot consumption. The `replacements` whitelist is `Literal[\"self_enters\", \"self_enters_tapped\", \"self_enters_with_counters\"]`, all of which modify a permanent as it arrives; there is no entry for being dealt damage or being destroyed.",
+      "note": "The rest of the card is already expressible and should load unchanged once this exists: line 1's placement is a `self_enters_with_counters` replacement with `counter: \"shield\", amount: 1`; line 2 is the packet's mana ability; line 3 is an activated ability with `cost: {\"tap\": true}`, a `move_counters` effect for the 'shield' kind onto a targeted creature, and `condition: {\"cmp\": \">=\", \"left\": {\"permanents_entered_this_turn\": {\"controller\": \"you\", \"types\": [\"Creature\"]}}, \"right\": {\"const\": 2}}`. It is deliberately not written as a partial answer: without the replacement the card enters with an inert tally, dies to any removal it is printed to survive, and its third ability spends a tap to move a token of nothing onto a creature -- a card that looks implemented and is not. Verified: that exact card (replacement + move_counters + condition, all shapes above) loads and reports 'passed all 6 gates' with expectation {\"zone\": \"battlefield\", \"counters\": {\"kind\": \"shield\", \"amount\": 1}}. The gates cannot see the gap, because placing the counter is real and only its meaning is missing -- which is why this is filed as a gap rather than shipped as an answer."
+    }
+  ],
+  "closest_existing": [
+    "self_enters_with_counters",
+    "regenerate",
+    "prevent_damage",
+    "move_counters",
+    "grant_keyword",
+    "replacements"
+  ],
+  "confidence": "high"
+}

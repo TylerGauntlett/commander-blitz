@@ -1,0 +1,35 @@
+{
+  "card_id": "wedding_ring",
+  "name": "Wedding Ring",
+  "oracle_text": "When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.\nWhenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.\nWhenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life.",
+  "blocked_sentences": [
+    "When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.",
+    "Whenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.",
+    "Whenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life."
+  ],
+  "needs": [
+    {
+      "capability": "was-cast",
+      "kind": "condition",
+      "what": "A condition leaf -- `{\"was_cast\": true}` -- that is true only when the ability's source arrived on the battlefield *as a resolving spell on this trip*, and false for a token, for a permanent an effect put onto the battlefield, and for a card that was cast earlier in the game and re-entered by reanimation or a blink. The engine already has both halves of the fact and only fails to join them: `stack._place_after_resolution` moves a resolved permanent with `cause=\"resolved\"` while `create_token` uses `cause=\"token\"` and `op_put_onto_battlefield` uses `cause=\"put_onto_battlefield\"`, so recording the entering cause on the object (or clearing the `cast_*` flags in `GameObject.reset_permanent_state` on the way *out* of the battlefield, so they only describe the trip that stamped them) plus one entry in `CONDITION_KEYS` is the whole change. This is the loop guard on every card of this shape: without it Wedding Ring's own copy triggers on entry and copies itself again, per opponent, without bound.",
+      "why_existing_wont_do": "`condition_keys` has no test for having been cast at all. `cast_during` is the closest and asks a narrower question -- which phase the spell was cast in -- and the tempting reduction, `{\"any\": [{\"cast_during\": \"beginning\"}, {\"cast_during\": \"precombat_main\"}, {\"cast_during\": \"combat\"}, {\"cast_during\": \"postcombat_main\"}, {\"cast_during\": \"ending\"}]}`, compiles (verified) and is exactly `obj.cast_step is not None`. That is not the printed clause: `cast_step` is written in one place, `stack.py:67` at `push_spell`, and is never cleared -- `objects.py:438 reset_permanent_state` does not touch it and oids survive every zone change -- so a Wedding Ring that was cast, died and was reanimated still answers true and hands an opponent a free copy the printed card does not. `not_cause` on the trigger is the other near miss and is a single string naming one cause to refuse: `not_cause: \"token\"` stops the self-copy loop but still fires for a Ring reanimated, blinked, or dropped in by Show and Tell, and there is no way to list the other causes. `kicked`, `evoked`, `overloaded` and `cast_from_graveyard` all read cast-time flags on the same object, but each asks about *how* it was cast and none of them means \"it was cast\".",
+      "note": "The payload of this sentence is already expressible and needs nothing: a `player`-kind target with `selector: {\"controller\": \"opponent\"}`, and `copy_permanent` with `objects: {\"self_only\": true}` and `controller: {\"target\": \"t1\"}`. Verified to compile; only the intervening-if is missing."
+    },
+    {
+      "capability": "triggering-players-turn",
+      "kind": "condition",
+      "what": "A condition leaf that compares the **active player** to a player spec -- `{\"is_active_player\": {\"binding\": \"event_player\"}}` -- so a trigger can say \"during their turn\", meaning the turn of the player the event was about rather than the turn of the ability's controller. It should take the full player spec the way `is_monarch` and `has_city_s_blessing` already do (`select_players`, which resolves `{\"binding\": ...}`), and `triggers.event_bindings` already puts `event_player` in the bindings an intervening-if is evaluated with, so the leaf is a two-line addition to `effects/conditions.py` plus `CONDITION_KEYS`. `\"active_player\"` is already a member of `PLAYER_SPEC_NAMES`; what is missing is any way to *ask* about it. Wanted by every \"during their turn\" / \"during that player's turn\" clause, of which this card has two.",
+      "why_existing_wont_do": "`is_your_turn` (effects/conditions.py:191) compares `state.active_player` to `ctx.controller`, and `triggers._matches` evaluates a trigger condition with `controller=obj.controller` hardcoded, so it can only ever ask about the ability's own controller. `{\"is_your_turn\": false}` is the near miss: it compiles (verified) and reads \"not your turn\", which coincides with the printed clause only in a duel. This engine plays pods -- `sandbox.GameBuilder(players=...)`, `state.num_players`, four Commander decks in `data/cards/` -- and at four seats it is a strictly wider card, firing when opponent A draws during opponent B's turn, which Wedding Ring does not do. `cmp` cannot bridge the gap either: no `value_keys` leaf evaluates to a player id (`life_of`, `cards_in_hand` and friends take a player spec and sum over it), and the selector route is closed too -- `selectors.matches` accepts a Mapping `controller` only through `select_players`, and `validate_selector` refuses any controller string outside you/opponent/any, so `{\"count\": {..., \"controller\": \"active_player\"}}` does not load. `has_turn_flag` is keyed to `ctx.source_oid` and so cannot record whose turn it is on another player's behalf.",
+      "note": "The rest of both trigger lines is already expressible and verified to compile, so nothing else about them needs building: `{\"event\": \"draw\", \"controller\": \"opponent\"}` and `{\"event\": \"you_gain_life\", \"controller\": \"opponent\"}` read the actor off `event.player`; \"who controls an artifact named Wedding Ring\" is `{\"exists\": {\"zone\": \"battlefield\", \"types\": [\"Artifact\"], \"name\": \"Wedding Ring\", \"controller\": {\"binding\": \"event_player\"}}}`, which correctly scopes to the one opponent the event was about; and \"you gain that much life\" is `gain_life` with `{\"binding\": \"amount\"}`, carried by `EVENT_BINDING_KEYS`."
+    }
+  ],
+  "closest_existing": [
+    "cast_during",
+    "not_cause",
+    "is_your_turn",
+    "exists",
+    "binding",
+    "copy_permanent"
+  ],
+  "confidence": "high"
+}

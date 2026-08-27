@@ -1,0 +1,33 @@
+{
+  "card_id": "toby_beastie_befriender",
+  "name": "Toby, Beastie Befriender",
+  "oracle_text": "When Toby enters, create a 4/4 white Beast creature token with \"This token can't attack or block alone.\"\nAs long as you control four or more creature tokens, creature tokens you control have flying.",
+  "blocked_sentences": [
+    "When Toby enters, create a 4/4 white Beast creature token with \"This token can't attack or block alone.\""
+  ],
+  "needs": [
+    {
+      "capability": "cant-attack-or-block-alone",
+      "kind": "static_effect",
+      "what": "A pair of combat restrictions judged on the *whole* declaration rather than per creature: an attacker may not be declared if it would be the only attacker its controller declares, and a blocker may not be declared if it would be the only creature its controller declares as a blocker (509.1b/508.1c -- the declaration is illegal as a whole, so it is not a per-creature prohibition and not a per-pair one). Concretely: a `cant_attack`/`cant_block` variant carrying an `alone: true` (or `min_others: 1`) flag, plus the missing enforcement point on the attack side -- an `attacks_valid(state, player)` mirroring `combat.blocks_valid`, checked where `finish_attackers` locks the declaration in and offered back through `legal_attackers`/`add_attacker` so legality never offers an attack the engine then refuses.",
+      "why_existing_wont_do": "`cant_attack` and `cant_block` are the two nearest statics and both are absolute: `characteristics.attack_forbidden`/`block_forbidden` take a single `oid` and answer yes/no with no view of the rest of the declaration, so either one here would forbid the token from ever attacking or blocking -- strictly stronger than what is printed, and invisible on screen. `block_restriction` does see more of the board but is scoped to the attacker being blocked: its `blockers` filter is a static filter over one would-be blocker (printed characteristics only), and its `require_all` flag -- the one whole-declaration check that exists (`combat._all_blockers_present`, Tromokratis) -- asks about the creatures the *defending player controls*, not about how many of them are blocking alongside this one, and lives on the attacker rather than the restricted creature. On the attack side there is no whole-declaration hook at all: `blocks_valid` exists for menace and `require_all`, but `finish_attackers` performs no equivalent validation, so even a correctly-shaped static would have nowhere to be enforced. `banding` is in the keyword list and is a different rule (damage assignment and band formation), not a co-attacker requirement.",
+      "note": "The second printed line -- \"As long as you control four or more creature tokens, creature tokens you control have flying\" -- IS expressible today (a `grant_keyword` static filtered `{\"controller\": \"you\", \"is_token\": true, \"types\": [\"Creature\"]}` under a `cmp` condition on a `count` of the same), so this card needs nothing new for it. Per the brief, a partly expressible card is filed whole rather than half-authored."
+    },
+    {
+      "capability": "token-definition",
+      "kind": "engine",
+      "what": "A token definition for the 4/4 white Beast this card creates, carrying its own printed ability -- id along the lines of `beast_4_4_w_cant_attack_or_block_alone`, `{\"types\": [\"Creature\"], \"subtypes\": [\"Beast\"], \"power\": 4, \"toughness\": 4, \"colors\": [\"W\"], \"color_identity\": [\"W\"], \"is_token\": true}` plus a `kind: \"static\"` ability implementing the restriction above. It cannot be added until that static exists, which is why the two needs are one work item and not two.",
+      "why_existing_wont_do": "The token pool in `data/cards/tokens.cards.json` has no white 4/4 Beast: `beast_4_4_g` and `beast_3_3_g` are green and abilityless, `cat_beast_2_2_w` is white but a 2/2 with the wrong subtype line, and `angel_4_4_w_flying_vigilance` is the only white 4/4 (wrong creature type, and it has flying and vigilance the Beast does not). `create_token` takes a fixed `def_id` and there is no way to spell out a token's characteristics inline or to bolt an ability onto an existing definition at creation time, so substituting any of them would silently print a different card. Tokens do support abilities (clue_token, treasure_token, junk_token and four others carry `abilities`), so the definition itself is only blocked on the missing static effect, not on the token format. Verified against the gates: an invented id is refused by the registry gate (\"create_token references unknown card 'beast_4_4_w_cant_attack_or_block_alone'\"), while substituting `beast_4_4_g` *loads and passes the text gates* -- it would ship a green abilityless 4/4 under Toby's printed white Beast line with nothing to flag it, which is exactly the silent-approximation failure this record exists to avoid. Dropping the line instead is caught by the residual gate (\"printed text not represented\")."
+    }
+  ],
+  "closest_existing": [
+    "cant_attack",
+    "cant_block",
+    "block_restriction",
+    "banding",
+    "create_token",
+    "beast_4_4_g",
+    "cat_beast_2_2_w"
+  ],
+  "confidence": "high"
+}

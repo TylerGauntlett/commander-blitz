@@ -1,0 +1,22 @@
+{
+  "card_id": "commander_sofia_daguerre",
+  "name": "Commander Sofia Daguerre",
+  "oracle_text": "Flash\nCrash Landing — When Commander Sofia Daguerre enters, destroy up to one target legendary permanent. That permanent's controller creates a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")",
+  "blocked_sentences": [
+    "Crash Landing — When Commander Sofia Daguerre enters, destroy up to one target legendary permanent. That permanent's controller creates a Junk token. (It's an artifact with \"{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.\")"
+  ],
+  "needs": [
+    {
+      "capability": "verifier-self-targeting-etb",
+      "kind": "engine",
+      "what": "The authoring sandbox needs to be able to verify a permanent whose own enters-the-battlefield trigger can legally target and destroy the permanent itself. Sofia is a Legendary Creature, so when 'destroy up to one target legendary permanent' goes on the stack she is a legal target -- and in the sandbox she is the ONLY legendary permanent on the battlefield (the two own creatures, the four opponent props and every land are nonlegendary). verify._answer takes the first CHOOSE action ('Commander Sofia Daguerre', ahead of 'no targets'), so she destroys herself, and gate 4 _play_once rejects the card with 'commander_sofia_daguerre is a permanent but ended in graveyard'. Two fixes would each unblock it: (a) widen _play_once's `allowed` zones to {BATTLEFIELD, GRAVEYARD} for a permanent that carries a self_enters trigger able to destroy/exile/bounce its own source -- the same carve-out `played.is_aura` already gets for Dead Weight; or (b) have _answer prefer a target other than the card under test when the choice offers one, so a self-legal removal trigger is exercised against the board instead of itself.",
+      "why_existing_wont_do": "The closest existing allowance is _play_once's `allowed = {BATTLEFIELD, GRAVEYARD} if played.is_aura`, added so Dead Weight may bin itself after killing its host; it keys off `is_aura` only, so a creature that legally destroys itself is still a hard gate-4 failure. The only DSL-side way past it is putting `exclude_self: true` on the trigger's target selector, which makes the whole card pass all six gates -- but that is a rules change, not an implementation: 'up to one target legendary permanent' may lawfully be Sofia herself, and shipping the exclusion would silently print a different card. Every other piece is already expressible and verified: `optional: true` with `count: 1` is 'up to one target' (loader.py:1241), `supertypes: [\"Legendary\"]` is a valid selector key, `snapshot` + `create_token` with `controller: {\"controller_of\": \"victim\"}` is exactly Beast Within's shape, `junk_token` exists in data/cards/tokens.cards.json, `flash` is in the Keyword enum, and the residual gate accepts the whole 'Crash Landing -- ...' line including the Junk reminder text as one ability's `text`."
+    }
+  ],
+  "closest_existing": [
+    "beast_within",
+    "rapid_hybridization",
+    "dead_weight"
+  ],
+  "confidence": "high"
+}
