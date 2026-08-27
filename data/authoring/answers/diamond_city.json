@@ -1,0 +1,92 @@
+{
+  "card": {
+    "id": "diamond_city",
+    "name": "Diamond City",
+    "oracle_text": "This land enters with a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\n{T}: Add {C}.\n{T}: Move a shield counter from this land onto target creature. Activate only if two or more creatures entered the battlefield under your control this turn.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "replacements": [
+      {
+        "event": "self_enters_with_counters",
+        "counter": "shield",
+        "amount": 1
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Move a shield counter from this land onto target creature. Activate only if two or more creatures entered the battlefield under your control this turn.",
+        "cost": {
+          "tap": true
+        },
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "permanents_entered_this_turn": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "right": {
+            "const": 2
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "move_counters",
+            "counter": "shield",
+            "amount": {
+              "const": 1
+            },
+            "from": {
+              "self_only": true
+            },
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {
+      "kind": "shield",
+      "amount": 1
+    }
+  }
+}

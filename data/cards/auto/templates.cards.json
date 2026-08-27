@@ -14258,6 +14258,66 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "subtypes": [
+              "Inkling"
+            ]
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Inklings can't attack you or planeswalkers you control."
+        },
+        {
+          "effects": [
+            {
+              "attacking": {
+                "binding": "defender"
+              },
+              "controller": {
+                "binding": "event_player"
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.",
+          "trigger": {
+            "controller": "any",
+            "defending": "opponent",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "combat_calligrapher",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Combat Calligrapher",
+      "oracle_text": "Flying\nInklings can't attack you or planeswalkers you control.\nWhenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Cleric"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -19042,6 +19102,89 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "shield",
+              "from": {
+                "self_only": true
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Move a shield counter from this land onto target creature. Activate only if two or more creatures entered the battlefield under your control this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "diamond_city",
+      "name": "Diamond City",
+      "oracle_text": "This land enters with a shield counter on it. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\n{T}: Add {C}.\n{T}: Move a shield counter from this land onto target creature. Activate only if two or more creatures entered the battlefield under your control this turn.",
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "shield",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -38081,6 +38224,63 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "is_commander": true,
+            "owner": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Commander creatures you own have \"Creature tokens you control get +2/+2.\""
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Creature tokens you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "id": "inspiring_leader",
+      "mana_cost": "{2}{W}",
+      "name": "Inspiring Leader",
+      "oracle_text": "Commander creatures you own have \"Creature tokens you control get +2/+2.\"",
+      "source": "auto",
+      "subtypes": [
+        "Background"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -54067,6 +54267,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "gnome_1_1_c"
+                    }
+                  ],
+                  "label": "Create a 1/1 colorless Gnome artifact creature token."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "tok"
+                      },
+                      "op": "copy_permanent"
+                    }
+                  ],
+                  "label": "Create a token that's a copy of target artifact token you control."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "tok",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a creature spell, choose one — • Create a 1/1 colorless Gnome artifact creature token. • Create a token that's a copy of target artifact token you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "oltec_matterweaver",
+      "mana_cost": "{2}{W}",
+      "name": "Oltec Matterweaver",
+      "oracle_text": "Whenever you cast a creature spell, choose one —\n• Create a 1/1 colorless Gnome artifact creature token.\n• Create a token that's a copy of target artifact token you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "omega_myr",
@@ -55923,6 +56207,112 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Bobblehead"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "cast_free": true,
+              "objects": {
+                "count": 1,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "optional": true
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}: Look at the top X cards of your library, where X is the number of Bobbleheads you control. You may cast a spell with mana value 3 or less from among them without paying its mana cost. Put the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "perception_bobblehead",
+      "mana_cost": "{3}",
+      "name": "Perception Bobblehead",
+      "oracle_text": "{T}: Add one mana of any color.\n{3}, {T}: Look at the top X cards of your library, where X is the number of Bobbleheads you control. You may cast a spell with mana value 3 or less from among them without paying its mana cost. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "subtypes": [
+        "Bobblehead"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -80807,6 +81197,81 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "beast_4_4_w_alone"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Toby enters, create a 4/4 white Beast creature token with \"This token can't attack or block alone.\"",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "As long as you control four or more creature tokens, creature tokens you control have flying."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "toby_beastie_befriender",
+      "mana_cost": "{2}{W}",
+      "name": "Toby, Beastie Befriender",
+      "oracle_text": "When Toby enters, create a 4/4 white Beast creature token with \"This token can't attack or block alone.\"\nAs long as you control four or more creature tokens, creature tokens you control have flying.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -88970,6 +89435,134 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": {
+                "target": "t1"
+              },
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.",
+          "trigger": {
+            "condition": {
+              "was_cast": true
+            },
+            "controller": "you",
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "exists": {
+                    "controller": {
+                      "binding": "event_player"
+                    },
+                    "name": "Wedding Ring",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  }
+                },
+                {
+                  "is_active_player": {
+                    "binding": "event_player"
+                  }
+                }
+              ]
+            },
+            "controller": "opponent",
+            "event": "draw"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "exists": {
+                    "controller": {
+                      "binding": "event_player"
+                    },
+                    "name": "Wedding Ring",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  }
+                },
+                {
+                  "is_active_player": {
+                    "binding": "event_player"
+                  }
+                }
+              ]
+            },
+            "controller": "opponent",
+            "event": "you_gain_life"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wedding_ring",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Wedding Ring",
+      "oracle_text": "When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.\nWhenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.\nWhenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

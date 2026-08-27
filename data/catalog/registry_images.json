@@ -1539,6 +1539,10 @@
     "artist": "Yeong-Hao Han",
     "scryfall_id": "f2c60e63-0b86-4100-a932-bb9e9b197610"
   },
+  "combat_calligrapher": {
+    "artist": "Joseph Weston",
+    "scryfall_id": "3c154814-72e4-4cca-a927-66c58602ae80"
+  },
   "combat_celebrant": {
     "artist": "Chris Rallis",
     "scryfall_id": "b943300e-e6af-4e7f-b936-62ef9c314916"
@@ -4069,6 +4073,10 @@
     "artist": "Randy Gallegos",
     "scryfall_id": "adc56f47-ae0a-498b-8730-2096937887e5"
   },
+  "inspiring_leader": {
+    "artist": "Stephen Stark",
+    "scryfall_id": "394f432d-e59f-44ce-a166-1a939a648cbd"
+  },
   "inspiring_vantage": {
     "artist": "Dani Pendergast",
     "scryfall_id": "8b71132c-306a-4e37-a34a-777f1028e4a1"
@@ -5749,6 +5757,10 @@
   "olivia_s_wrath": {
     "artist": "N\u00e9stor Ossand\u00f3n Leal",
     "scryfall_id": "3eb5cc8d-a198-43cd-a2bd-9c9414d815b2"
+  },
+  "oltec_matterweaver": {
+    "artist": "Villarrte",
+    "scryfall_id": "1617d39d-4989-4ac4-8cd0-ac1b4e7312df"
   },
   "omega_myr": {
     "artist": "Dany Orizio",
@@ -9481,6 +9493,10 @@
   "web": {
     "artist": "Hugh Jamieson",
     "scryfall_id": "6b15a1d5-a892-4d3b-a373-3a43424894c3"
+  },
+  "wedding_ring": {
+    "artist": "ConcernedApe",
+    "scryfall_id": "3c16b2a4-2c40-4d38-bfe8-43ca127b5bdd"
   },
   "wei_elite_companions": {
     "artist": "Li Youliang",

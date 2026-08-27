@@ -88,7 +88,9 @@
       "tap",
       "tap_permanents",
       "times",
-      "untap"
+      "untap",
+      "untap_permanents",
+      "x_value"
     ],
     "expectation_keys": [
       "life",
@@ -170,7 +172,9 @@
       "cant_sacrifice",
       "cascade",
       "cast_copy",
+      "choose_color",
       "choose_mode",
+      "choose_player",
       "choose_type",
       "clash",
       "connive",
@@ -229,10 +233,12 @@
       "repeat",
       "replace_deaths",
       "return_from_graveyard",
+      "return_spell_to_hand",
       "return_to_hand",
       "reveal",
       "reveal_until",
       "ripple",
+      "roll_dice",
       "sacrifice",
       "scry",
       "search_library",
@@ -249,7 +255,8 @@
       "two_piles",
       "unattach",
       "unblockable",
-      "untap"
+      "untap",
+      "win_game"
     ],
     "selector_keys": [
       "any_of",
@@ -320,7 +327,9 @@
       "block_restriction",
       "buff",
       "cant_attack",
+      "cant_attack_alone",
       "cant_block",
+      "cant_block_alone",
       "double_land_mana",
       "double_land_triggers",
       "extra_land_drops",
@@ -334,6 +343,7 @@
       "play_lands_from_library_top",
       "prevent_damage",
       "protection",
+      "replace_token_creation",
       "reveal_library_top",
       "set_colors",
       "set_pt",
@@ -370,7 +380,8 @@
       "max_count_of",
       "max_life_of",
       "min_count_of",
-      "min_life_of"
+      "min_life_of",
+      "permanents_entered_this_turn"
     ],
     "supertypes": [
       "Basic",
@@ -460,6 +471,7 @@
       "power_had",
       "power_of",
       "resolutions_this_turn",
+      "rolled",
       "spells_cast_this_turn",
       "sum",
       "times",

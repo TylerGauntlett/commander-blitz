@@ -50112,12 +50112,12 @@
     },
     "Combat Calligrapher": {
       "edhrec_rank": 4905,
-      "gate": "template",
+      "gate": null,
       "name": "Combat Calligrapher",
-      "reason": "no template for: Inklings can't attack you or planeswalkers you control",
+      "reason": "",
       "scryfall_id": "3c154814-72e4-4cca-a927-66c58602ae80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Combat Celebrant": {
@@ -67922,12 +67922,12 @@
     },
     "Diamond City": {
       "edhrec_rank": 3036,
-      "gate": "template",
+      "gate": null,
       "name": "Diamond City",
-      "reason": "no template for: This land enters with a shield counter on it",
+      "reason": "",
       "scryfall_id": "2259e77f-0a15-43e2-bb94-41e8c585d927",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Diamond Faerie": {
@@ -136712,12 +136712,12 @@
     },
     "Inspiring Leader": {
       "edhrec_rank": 2771,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Leader",
-      "reason": "no template for: Commander creatures you own have \"Creature tokens you control get +2/+2.\"",
+      "reason": "",
       "scryfall_id": "394f432d-e59f-44ce-a166-1a939a648cbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Inspiring Overseer": {
@@ -190772,12 +190772,12 @@
     },
     "Oltec Matterweaver": {
       "edhrec_rank": 3530,
-      "gate": "template",
+      "gate": null,
       "name": "Oltec Matterweaver",
-      "reason": "no template for: Whenever you cast a creature spell, choose one —",
+      "reason": "",
       "scryfall_id": "1617d39d-4989-4ac4-8cd0-ac1b4e7312df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Olórin's Searing Light": {
@@ -198162,12 +198162,12 @@
     },
     "Perception Bobblehead": {
       "edhrec_rank": 5975,
-      "gate": "template",
+      "gate": null,
       "name": "Perception Bobblehead",
-      "reason": "no template for: {3}, {T}: Look at the top X cards of your library, where X is the number of Bobbleheads yo",
+      "reason": "",
       "scryfall_id": "2925410a-7c44-4bf4-83cd-3e75dbe82b23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Perch Protection": {
@@ -286182,12 +286182,12 @@
     },
     "Toby, Beastie Befriender": {
       "edhrec_rank": 5022,
-      "gate": "template",
+      "gate": null,
       "name": "Toby, Beastie Befriender",
-      "reason": "no template for: When Toby enters, create a 4/4 white Beast creature token with \"This token can't attack or",
+      "reason": "",
       "scryfall_id": "cafe5755-88b0-4fee-8596-4232844f60fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tocasia's Dig Site": {
@@ -310372,12 +310372,12 @@
     },
     "Wedding Ring": {
       "edhrec_rank": 1974,
-      "gate": "template",
+      "gate": null,
       "name": "Wedding Ring",
-      "reason": "no template for: When this artifact enters, if it was cast, target opponent creates a token that's a copy o",
+      "reason": "",
       "scryfall_id": "3c16b2a4-2c40-4d38-bfe8-43ca127b5bdd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Wedding Security": {
