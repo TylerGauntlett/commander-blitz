@@ -55975,6 +55975,78 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "gift": "a tapped Fish",
+      "id": "parting_gust",
+      "mana_cost": "{W}{W}",
+      "name": "Parting Gust",
+      "oracle_text": "Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)\nExile target nontoken creature. If the gift wasn't promised, return that card to the battlefield under its owner's control with a +1/+1 counter on it at the beginning of the next end step.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "gift_recipient",
+          "op": "create_token",
+          "tapped": true,
+          "token": "fish_1_1_u"
+        },
+        {
+          "as": "exiled",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "condition": {
+            "gift_promised": false
+          },
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "controller": "owner",
+                  "counters": {
+                    "+1/+1": 1
+                  },
+                  "objects": {
+                    "binding": "exiled"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Return that card to the battlefield under its owner's control with a +1/+1 counter on it."
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "is_token": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
