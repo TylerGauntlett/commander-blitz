@@ -403,6 +403,20 @@ class Ability:
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.
     mana_identity: bool = False
+    #: "{T}: Add one mana of **the chosen color**." Heraldic Banner. The third
+    #: member of the same family as `mana_reflects` and `mana_identity`: the
+    #: colour is a question about this permanent's own `chosen_color`, asked
+    #: when the ability is offered, and `mana_options` carries the five-colour
+    #: superset until then so the ability is recognisable as a mana source at
+    #: load time. `costs.mana_options_of` does the narrowing, to the one colour
+    #: that was chosen -- or to nothing at all before a colour has been named.
+    #:
+    #: This is what stops the card being written as a `choose_mode` of five
+    #: `add_mana`s, which is the *any colour* card: that spelling would let the
+    #: player pick freely on every activation instead of locking the ability to
+    #: the colour named on entry, and would decouple the mana line from the
+    #: anthem line that reads the same choice.
+    mana_chosen_color: bool = False
     #: "Spend this mana only to cast a creature spell of the chosen type or
     #: activate an ability of a creature source of the chosen type."  ``None`` is
     #: ordinary mana.  See :class:`~automtg.engine.mana.ManaRestriction` for the

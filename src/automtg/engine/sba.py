@@ -230,6 +230,50 @@ def check_game_over(state: GameState) -> None:
         state.emit(EventType.GAME_OVER, winners=state.winners, result=state.result)
 
 
+def declare_win(state: GameState, pid: int) -> None:
+    """"You win the game" -- 104.2b, spelled as 104.2a.
+
+    The engine has exactly one writer of a game result, `check_game_over`, and it
+    derives the winner from who is still `alive()`. That is not an accident to
+    route around: `Game.over`, `Game.winners`, `state.result`, the `GAME_OVER`
+    event and both serializers in `serialize.py` all read what that one function
+    wrote. A card that assigned `state.winners` itself would produce a game that
+    was over with a winner and *no* `PLAYER_LOST` for the seat that lost, no
+    permanents swept off the battlefield, and priority still sitting on
+    somebody -- a result that replays and serializes but does not agree with the
+    board underneath it.
+
+    So this declares no winner at all. It eliminates every **other** player,
+    through the same `_eliminate` a lethal life total reaches, and then knocks on
+    the same door; `check_game_over` finds one seat alive and draws its own
+    conclusion. That is 104.2a -- "a player still in the game wins the game if
+    that player's opponents have all left the game" -- and it is why the pod
+    needs no second branch: at four players the sentence removes three seats
+    instead of one, which is the shape the rule already had.
+
+    Two no-ops, both deliberate. A game that is already over is not re-decided,
+    so the second of two simultaneous wins changes nothing. And a player who has
+    already left the game cannot win it -- there is nobody to eliminate on their
+    behalf, and eliminating the rest anyway would end the game in a *draw*,
+    `check_game_over` finding nobody alive.
+
+    Deliberately not modelled, because no card in the pool needs it yet:
+
+    - **"You can't win the game" / "can't lose the game"** (Platinum Angel,
+      Abyssal Persecutor). That is replacement-shaped and belongs beside the
+      other continuous prohibitions, not in this function.
+    - **The pod's real ending.** By 800.4 a player who wins a multiplayer game
+      leaves it and the survivors play on; here the game ends for everybody.
+      Recorded in docs/rules-coverage.md.
+    """
+    if state.game_over or not state.is_alive(pid):
+        return
+    for other in state.alive():
+        if other != pid:
+            _eliminate(state, other, LossReason.OPPONENT_WON)
+    check_game_over(state)
+
+
 def declare_draw(state: GameState, reason: str) -> None:
     """End the game in a draw (turn cap reached, or a rules loop was detected)."""
     if state.game_over:

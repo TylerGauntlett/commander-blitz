@@ -7217,6 +7217,79 @@
       ]
     },
     {
+      "id": "t_bobblehead",
+      "name": "Test Bobblehead",
+      "oracle_text": "{1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, draw a card.",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Bobblehead"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Roll X six-sided dice, where X is the number of Bobbleheads you control. Create a tapped Treasure token for each even result. If you rolled 6 exactly seven times, draw a card.",
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "roll_dice",
+              "count": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Bobblehead"
+                  ]
+                }
+              },
+              "sides": 6,
+              "as": "roll"
+            },
+            {
+              "op": "create_token",
+              "token": "treasure_token",
+              "tapped": true,
+              "amount": {
+                "rolled": {
+                  "binding": "roll",
+                  "parity": "even"
+                }
+              }
+            },
+            {
+              "op": "if",
+              "condition": {
+                "cmp": "=",
+                "left": {
+                  "rolled": {
+                    "binding": "roll",
+                    "face": 6
+                  }
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "then": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_explore_target",
       "name": "Test Exploration",
       "oracle_text": "Target creature you control explores.",
@@ -11884,6 +11957,200 @@
               ]
             }
           }
+        }
+      ]
+    },
+    {
+      "id": "t_heraldic",
+      "name": "Test Heraldic Banner",
+      "oracle_text": "As this artifact enters, choose a color.\nCreatures you control of the chosen color get +1/+0.\n{T}: Add one mana of the chosen color.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Creatures you control of the chosen color get +1/+0.",
+          "effect": "buff",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "colors": [
+              {
+                "chosen_color_of": "self"
+              }
+            ]
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of the chosen color.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": {
+                "chosen_color_of": "self"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_brave",
+      "name": "Test Brave the Elements",
+      "oracle_text": "Creatures you control gain protection from the color of your choice until end of turn.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_color",
+          "prompt": "Choose a color"
+        },
+        {
+          "op": "grant_protection",
+          "from_colors": [
+            {
+              "chosen_color_of": "self"
+            }
+          ],
+          "objects": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_pod_marshal",
+      "name": "Test Pod Marshal",
+      "oracle_text": "Whenever you attack, for each opponent, create a 1/1 red Goblin creature token that's tapped and attacking that player.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack, for each opponent, create a 1/1 red Goblin creature token that's tapped and attacking that player.",
+          "trigger": {
+            "event": "you_attack",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "for_each_player",
+              "players": "each_opponent",
+              "effects": [
+                {
+                  "op": "create_token",
+                  "token": "goblin_1_1_r",
+                  "tapped": true,
+                  "attacking": {
+                    "binding": "each_player"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ink_scribe",
+      "name": "Test Ink Scribe",
+      "oracle_text": "Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.",
+      "mana_cost": "{2}{W}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Scribe"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "any",
+            "defending": "opponent"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying",
+              "tapped": true,
+              "controller": {
+                "binding": "event_player"
+              },
+              "attacking": {
+                "binding": "defender"
+              }
+            }
+          ]
         }
       ]
     }

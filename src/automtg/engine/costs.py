@@ -321,6 +321,8 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     introduces no new question. That is what keeps a reflecting ability a mana
     ability for 605.1a.
     """
+    if ability.mana_chosen_color:
+        return _chosen_color_options(state, oid, ability)
     if ability.mana_identity:
         return _identity_options(state, oid, ability)
     if ability.mana_reflects is None:
@@ -355,6 +357,36 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
         if any(amount and i in colors for i, amount in enumerate(option)):
             out.append(option)
     return tuple(out)
+
+
+def _chosen_color_options(
+    state: GameState, oid: int, ability: Ability
+) -> tuple[tuple[int, ...], ...]:
+    """The five-colour superset narrowed to the colour this permanent chose.
+
+    "{T}: Add one mana of the chosen color" -- Heraldic Banner. Exactly one
+    option once a colour has been named, and **none at all** before then, which
+    is the same match-nothing default `resolve_chosen_colors` gives the anthem
+    on the line above it: an ability that offered all five while the enters
+    trigger was still on the stack would be a Chromatic Lantern for a moment.
+
+    An empty result is a real answer the solver already understands -- it simply
+    never picks a source that produces nothing -- and it is the same answer
+    `_identity_options` gives a colourless commander.
+
+    It **only looks**: reading `chosen_color` asks nothing and puts nothing on
+    the stack, so this stays a mana ability for 605.1a.
+    """
+    obj = state.objects.get(oid)
+    chosen = obj.chosen_color if obj is not None else None
+    if chosen is None:
+        return ()
+    index = SYMBOL_INDEX.get(chosen)
+    if index is None:  # pragma: no cover - the loader only writes WUBRG here
+        return ()
+    return tuple(
+        option for option in ability.mana_options if option[index]
+    )
 
 
 def _identity_options(

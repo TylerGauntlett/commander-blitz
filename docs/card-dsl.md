@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-94 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+96 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -195,10 +195,11 @@ it, but a card that needed correcting was authored wrong.
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
-| Players | `become_monarch` |
+| Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` |
 | Turn structure | `extra_combat` |
+| Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ## Selectors — "which objects"
@@ -630,6 +631,10 @@ Anywhere a number is expected:
 { "mana_symbols": { "of": "G",                  // chroma -- pips, not colours
                     "objects": { "controller": "you" } } }
 { "colors_of_mana_spent": true }                // sunburst, converge
+{ "rolled": { "binding": "roll" } }             // how many dice a roll_dice threw
+{ "rolled": { "binding": "roll",                // …how many came up even
+              "parity": "even" } }              //    ("odd" is the other half)
+{ "rolled": { "binding": "roll", "face": 6 } }  // …how many came up 6
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 ```
 
@@ -1822,6 +1827,52 @@ A token created this way was never *declared* as an attacker, so it triggers
 nothing that fires on attacking. That is the real rule, and it is also what keeps
 "whenever this attacks, make a token that is attacking" from making tokens
 forever.
+
+### "…attacking **that player**"
+
+`attacking` also takes a **player spec** instead of `true`, which is the clause
+the boolean cannot say — the token attacks a *named* seat rather than wherever
+the source happens to be pointed:
+
+```jsonc
+// "For each opponent, create a 1/1 red Goblin creature token that's tapped and
+//  attacking that player." -- Ainok Strike Leader
+{ "op": "for_each_player", "players": "each_opponent",
+  "effects": [
+    { "op": "create_token", "token": "goblin_1_1_r", "tapped": true,
+      "attacking": { "binding": "each_player" } }
+  ] }
+
+// "…that attacking player creates a tapped 2/1 … Inkling … that's attacking
+//  that opponent." -- Combat Calligrapher
+{ "op": "create_token", "token": "inkling_2_1_wb_flying", "tapped": true,
+  "controller": { "binding": "event_player" },
+  "attacking":  { "binding": "defender" } }
+```
+
+Any player spec works — a loop's `each_player`, a trigger binding such as
+`defender`, `controller_of`, or a target. Written with `true`, both of those
+cards would be silently wrong rather than merely weaker: inside the loop all
+three of Ainok's tokens would point at the one seat the Ainok itself is swinging
+at, and the Calligrapher (which never attacks) would make a token attacking
+**nobody** while still looking implemented.
+
+Two guards come with it:
+
+- A spec that can name **several** seats is refused at load time — `"opponent"`
+  and `"each_opponent"` included, because a pod makes them plural — and a target
+  that chose two players raises when it resolves. A creature attacks exactly one
+  player, so there is nothing to pick from.
+- A spec that names **nobody** (an unbound binding, a player who has left) is the
+  boolean's "nobody to join": the token simply arrives, tapped if asked.
+
+If the named seat was not being attacked at all, it is added to the queue of
+players who declare blockers, in turn order — being attacked is what makes a
+player a defending player (509.1). Only until the declare blockers step starts:
+a permanent that arrives attacking after blocks are declared is simply
+unblocked, which is what stops this from re-opening a declaration.
+
+`copy_permanent` and `put_onto_battlefield` take the same key the same way.
 
 ## Mana abilities
 
@@ -6297,6 +6348,74 @@ otherwise get quietly wrong:
 At a pod the op asks which opponent to clash with; in a duel there is one
 opponent and `ask_player` does not stop to ask.
 
+## Rolling dice
+
+Rule 705.1. `roll_dice` throws the dice and **writes down every face**; the
+sentences after it read that record with `{"rolled": …}`.
+
+```jsonc
+// Luck Bobblehead
+{ "op": "roll_dice",
+  "count": { "count": { "zone": "battlefield", "controller": "you",
+                        "subtypes": ["Bobblehead"] } },
+  "sides": 6,
+  "as": "roll" },
+{ "op": "create_token", "token": "treasure_token", "tapped": true,
+  "amount": { "rolled": { "binding": "roll", "parity": "even" } } },
+{ "op": "if",
+  "condition": { "cmp": "=", "right": { "const": 7 },
+                 "left": { "rolled": { "binding": "roll", "face": 6 } } },
+  "then": [ { "op": "win_game", "player": "you" } ] }
+```
+
+**One roll, read twice.** That is the whole design, and it is why the results
+are a binding rather than a return value. "Create a tapped Treasure token for
+each even result. If you rolled 6 exactly seven times, you win the game." are
+two questions about *the same faces* — the sixes are a subset of the evens the
+card just paid out for. Two `roll_dice` ops would decorrelate the halves and
+make a card that is right on average and wrong every game.
+
+| Key | |
+|---|---|
+| `count` | how many dice. A **value expression**, because X is a board count that moves between activations |
+| `sides` | the printed size of the die, a plain integer ≥ 2. Defaults to 6. Deliberately *not* a value expression: no printed card rolls a die whose size it does not name, and written as one it would be stringified and rolled as a d0 |
+| `as` | **required.** The binding the faces land in — a roll nothing reads changes nothing |
+
+`{"rolled": {...}}` reads one of those bindings. Bare, it is how many dice were
+thrown; `parity` (`"even"` / `"odd"`) and `face` narrow it to how many results
+satisfy that predicate. At most one predicate per read — two would silently drop
+one — so "for each even result" and "how many sixes" are two `rolled` values
+naming one binding.
+
+The binding is `{"results": [...], "sides": N}` and not a bare list of faces, and
+that is not cosmetic: every other `as` records **oids**, and `resolve_pool` reads
+any bound list as objects. A bare `[6, 3, 2]` would make
+`{"objects": {"binding": "roll"}}` name objects 6, 3 and 2 — three real
+permanents with nothing to do with the roll — and the next op along would destroy
+them. Reading a roll as objects now finds nothing, which is the truth: a die roll
+creates nothing to point at.
+
+Two boundaries:
+
+| | |
+|---|---|
+| **Zero dice roll nothing, and still write the binding** | "X is the number of Bobbleheads you control" is 0 on an empty board; without the write, the reads after it would answer off the *previous* resolution. No `dice_rolled` event is logged for a roll of nothing |
+| **A second roll into the same name replaces the first** | a binding is a record of *this* roll, not a tape of every roll |
+
+Every face comes from `state.rng`, the engine's one seeded source, so a replay of
+the same seed and action tape rolls the same dice. Nothing in `src/automtg` may
+call `random` directly.
+
+The loader refuses either half without the other, exactly as it does for clash:
+a `roll_dice` no `{"rolled": …}` reads, and a `{"rolled": …}` with no roll behind
+it (which would read 0 for ever), are both load errors.
+
+**Not covered:** "whenever you roll one or more dice" triggers, and the d20
+outcome tables of the AFR block ("1—9 … 10—19 … 20"). The `dice_rolled` event
+exists and carries `results` and `sides`, so the trigger is a name in
+`TRIGGER_EVENTS` away; the outcome tables are a banding construct on top of it
+and are their own capability.
+
 ## Cycling
 
 The first ability the engine offers from a zone that is not the battlefield:
@@ -6900,6 +7019,58 @@ the end step and the draw. The same trade `delay` and the day/night switch recor
 `has_city_s_blessing`. It would be safe there — the designation is a pipeline
 input — but no card in the pool asks it from a static, and the blessing is in both
 only because a card needed both.
+
+### "You win the game"
+
+```jsonc
+// Halo Fountain — "…Untap fifteen tapped creatures you control: You win the
+// game." The cost is a separate capability; the payload is one op.
+{ "op": "win_game", "player": "you" }
+
+// Luck Bobblehead — "If you rolled 6 exactly seven times, you win the game."
+// The condition goes in an `if`, never on the op. Whatever produces the tally,
+// the win is the same op behind it.
+{ "op": "if", "condition": { … }, "then": [ { "op": "win_game" } ] }
+```
+
+`win_game` takes the ordinary player spec and defaults to `"you"`, which is what
+both cards print. It is the first op to reach a game **result** at all:
+everything that had ever produced a winner did it by arithmetic — `damage` and
+`lose_life` take a seat to zero, `add_poison` takes it to ten — and
+`sba.check_game_over` noticed afterwards. Neither card here is about a life
+total, so there was no approximation to make, only a missing sentence.
+
+**It declares no winner.** `sba.declare_win` eliminates every *other* player,
+through the same `_eliminate` a lethal life total reaches, and then calls
+`check_game_over`, which finds one seat alive and draws its own conclusion. That
+is 104.2a — "a player still in the game wins the game if that player's opponents
+have all left the game" — and it is what keeps the result honest: `Game.over`,
+`Game.winners`, `state.result`, the `GAME_OVER` event and both serializers all
+read what that one function wrote, so an op that assigned `state.winners` itself
+would produce a game that was over with a winner and no `PLAYER_LOST` for the
+seat that lost, no permanents swept off the battlefield, and priority still
+sitting on somebody. The pod needs no second branch for the same reason: at four
+players the sentence removes three seats instead of one, which is the shape the
+rule already had. Each seat's `loss_reason` is `opponent_won`, its own value
+beside `poison` and for that reason — a player eliminated at 40 life did not run
+out of life, and the frontend prints the reason to them.
+
+A `condition` written **on** the op is a load error. Nothing but `if` and `may`
+reads one, so `{"op": "win_game", "condition": …}` would be accepted, ignored,
+and the card would win the game every time it resolved — the worst silent
+misread in the vocabulary, and the first way anybody will try to write Luck
+Bobblehead's line, since the condition is where the card's entire cost lives.
+Wrapped in an `if` it is one more line and it means what it says.
+
+*Deliberately left out.* There is **no `lose_game` op**: losing is the mechanism
+here rather than a second op, so the engine half already exists and the op is two
+lines whenever a card wants it — Door to Nothingness and Demonic Pact are the
+family and neither is in the pool. There is no "can't win the game" / "can't lose
+the game" either (Platinum Angel, Abyssal Persecutor); that is a continuous
+prohibition over this whole subsystem, not a clause of this op. And the pod's
+ending is a simplification — by 800.4 a player who wins a multiplayer game leaves
+it and the survivors play on, while here the game ends for everybody. See
+[rules-coverage.md](rules-coverage.md).
 
 ### Flashback
 

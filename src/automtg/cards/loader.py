@@ -907,6 +907,23 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"would always read 0"
         )
 
+    # Dice are the same two halves, and fail the same way. A roll is never the
+    # effect -- "roll X six-sided dice" on its own does nothing a player can
+    # see -- and a `{"rolled": …}` with no roll behind it reads 0 for ever, so
+    # Luck Bobblehead would make no Treasures and never win. Both load cleanly.
+    rolls_dice = _mentions_pair(model, "op", "roll_dice")
+    reads_roll = _mentions_condition(model, "rolled")
+    if rolls_dice and not reads_roll:
+        raise DslError(
+            f"{where}: rolls dice that no effect reads via {{'rolled': …}} -- "
+            f"a roll nothing reads changes nothing"
+        )
+    if reads_roll and not rolls_dice:
+        raise DslError(
+            f"{where}: reads a roll with {{'rolled': …}} but never rolls any "
+            f"dice, so it would always read 0"
+        )
+
     reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
     if reads_from_graveyard and flashback is None:
         raise DslError(
@@ -1476,6 +1493,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     mana_rider: tuple[Mapping[str, Any], ...] = ()
     mana_reflects: Mapping[str, Any] | None = None
     mana_identity = False
+    mana_chosen_color = False
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
@@ -1528,6 +1546,24 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             # ability would never be offered whatever the commander's colours.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif any(
+            isinstance(e, Mapping) and isinstance(e.get("mana"), Mapping) for e in mana_effects
+        ):
+            # "{T}: Add one mana of **the chosen color**." Heraldic Banner. The
+            # third member of the same family, and the question is asked of the
+            # permanent's own `chosen_color`.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a chosen-colour mana ability is a single 'add_mana' -- "
+                    f"there is no second thing for the chosen colour to join"
+                )
+            mana_chosen_color = True
+            # The static superset, for the same reason `reflecting` needs one:
+            # an empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source, so the
+            # ability would never be offered whatever colour was chosen.
+            mana_options = _ANY_COLOR_OPTIONS
+            mana_amount = None
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where)
@@ -1548,6 +1584,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
         mana_identity=mana_identity,
+        mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
@@ -2398,6 +2435,18 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
                 f"{where}: mana abilities may only contain 'add_mana' "
                 f"(or a single 'choose_mode' of them), got {effect.get('op')!r}"
             )
+        if isinstance(effect.get("mana"), Mapping):
+            # `{"chosen_color_of": "self"}` is one symbol whose colour is not
+            # known at load time, so it cannot be summed with anything and it
+            # cannot be one mode among five -- a mode is a choice made at
+            # activation, which is the *any colour* card this spelling exists to
+            # refuse. It has to be the whole ability, which the branch in
+            # `_build_ability` handles before anything reaches here.
+            raise DslError(
+                f"{where}: a chosen-colour 'add_mana' must be the mana ability's "
+                f"only effect -- it cannot be summed with another symbol or "
+                f"offered as one mode among several"
+            )
         for i, v in enumerate(parse_mana_production(str(effect.get("mana", "")))):
             total[i] += v
     if not any(total):
@@ -2650,6 +2699,46 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
 
 
+#: The ops that can put the permanent they make into combat.
+ATTACKING_OPS = frozenset({"create_token", "copy_permanent", "put_onto_battlefield"})
+
+#: Player specs that can name **more than one** seat. Fine for "each opponent
+#: loses 1 life"; never right for ``attacking``, which is one creature pointed
+#: at one player. ``"opponent"`` is here because a pod makes it three of them --
+#: the reading that is invisible in a two-player game and wrong everywhere else.
+PLURAL_PLAYER_SPEC_NAMES = frozenset({"opponent", "each_opponent", "each_player", "all"})
+
+
+def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check an ``attacking`` clause: the boolean, or a player spec.
+
+    ``true`` is the original and much the commonest spelling -- "wherever the
+    source is already pointed" -- and it is checked here only so that the *other*
+    forms can be. A player spec says "attacking **that player**", which the
+    boolean cannot: Ainok Strike Leader points one token at each opponent, and
+    Combat Calligrapher points one at a defender while never attacking itself.
+
+    Both failures this refuses are silent at runtime. A plural spec has no
+    single answer -- a creature attacks exactly one player -- and picking one
+    would make a card that reads "each opponent" and hits one seat. A bare
+    number would be a *seat*, which no printed card names, and ``0`` is
+    indistinguishable from ``false``.
+    """
+    if isinstance(who, bool):
+        return
+    if isinstance(who, str) and who in PLURAL_PLAYER_SPEC_NAMES:
+        raise DslError(
+            f"{where}: {who!r} can name several players and a creature attacks one -- "
+            f"name the seat ({{'binding': 'each_player'}} inside a for_each_player, "
+            f"a trigger binding, or a target)"
+        )
+    if not isinstance(who, str | Mapping):
+        raise DslError(
+            f"{where}: must be true/false or a player spec, got {who!r}"
+        )
+    _validate_player_spec(who, where, target_kinds)
+
+
 
 #: The clauses an *event-watching* delayed ability may carry (603.7).
 #:
@@ -2817,6 +2906,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(
                     f"{where}.pay: 'times' multiplies the mana cost, and there is none"
                 )
+    if op == "win_game" and "condition" in effect:
+        # "**If you rolled 6 exactly seven times**, you win the game" (Luck
+        # Bobblehead). A top-level `condition` is read by `if` and by `may` and
+        # by nobody else, so written on this op it is accepted,
+        # ignored, and the card wins the game unconditionally -- the single worst
+        # silent misread in the whole vocabulary, and the *first* way anybody
+        # will try to write the printed sentence, since the condition is where
+        # the card's entire cost lives. Wrapped in an `if` it is one more line
+        # and it means what it says.
+        raise DslError(
+            f"{where}: win_game reads no 'condition' -- wrap it in an "
+            f"{{'op': 'if', 'condition': …, 'then': [{{'op': 'win_game'}}]}}"
+        )
     if "from_top" in effect:
         # "…into its owner's library second from the top." The depth is the whole
         # of the difference between Hinder and a plain tuck, and both ways of
@@ -3196,6 +3298,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op in ATTACKING_OPS and "attacking" in effect:
+        _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
@@ -3349,6 +3453,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"nothing writes and every read of it would be 0 "
                 f"(ops that record: {sorted(RECORDING_OPS)})"
             )
+    if op == "roll_dice":
+        # The same refusal `join_forces` carries below, for the same reason: a
+        # roll is never the effect, it is what the sentences after it read. A
+        # `roll_dice` with no `as` throws dice into a binding nothing can name,
+        # and every `{"rolled": …}` on the card answers 0 however they fell.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: roll_dice needs an 'as' naming the binding its results "
+                f"land in; without it nothing can read what was rolled"
+            )
+        # "Roll X six-sided dice" -- the *number* of dice is a board count and is
+        # a value expression (checked with `count` above), but the die itself is
+        # printed on the card and never varies. Written as a value it would be
+        # accepted, stringified and silently rolled as a d0.
+        sides = effect.get("sides", 6)
+        if not isinstance(sides, int) or isinstance(sides, bool) or sides < 2:
+            raise DslError(
+                f"{where}: 'sides' is the printed size of the die -- a plain "
+                f"integer of at least 2, got {sides!r}"
+            )
     if op == "join_forces":
         # The total is the card -- "for each mana paid this way" -- so an effect
         # that collects it and names no binding has taxed the whole table for
@@ -3434,6 +3558,35 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: add_mana needs 'mana' (or 'reflecting', or 'in_commander_identity')"
         )
+    if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
+        # The one non-literal `mana`, and validated as such for the reason
+        # `_restriction_name` validates its twin: a near-miss spelling that fell
+        # through would be read as "no colour chosen" for ever, and the card
+        # would load clean and tap for nothing at the table.
+        entry = effect["mana"]
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'mana' may only be {{\"chosen_color_of\": \"self\"}} on "
+                f"'add_mana' -- there is no chosen colour to scale per object"
+            )
+        if set(entry) != {"chosen_color_of"} or entry["chosen_color_of"] != "self":
+            raise DslError(
+                f'{where}: the only dynamic add_mana is {{"chosen_color_of": "self"}}, '
+                f"not {dict(entry)!r}"
+            )
+    if op == "grant_protection":
+        # The same leaf, and the same silent failure it would otherwise have:
+        # "protection from the color of your choice" that fell through the
+        # substitution grants protection from nothing and looks like a card.
+        for i, entry in enumerate(effect.get("from_colors") or ()):
+            if isinstance(entry, Mapping):
+                if set(entry) != {"chosen_color_of"} or entry["chosen_color_of"] != "self":
+                    raise DslError(
+                        f'{where}.from_colors[{i}]: the only dynamic colour is '
+                        f'{{"chosen_color_of": "self"}}, not {dict(entry)!r}'
+                    )
+            elif entry not in KNOWN_COLORS:
+                raise DslError(f"{where}.from_colors[{i}]: unknown colour {entry!r}")
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
@@ -3510,12 +3663,21 @@ def _derive_color_identity(
     for ability in abilities:
         if ability.cost is not None:
             identity.update(c.value for c in ability.cost.mana.colors)
-        for option in ability.mana_options:
+        # `mana_chosen_color` carries the five-colour superset in `mana_options`
+        # so the ability is recognisable as a mana source, but the card prints no
+        # mana symbol at all -- Heraldic Banner's colour identity is colourless,
+        # and reading the superset here would make it five-colour.
+        for option in () if ability.mana_chosen_color else ability.mana_options:
             for i, amount in enumerate(option[:5]):
                 if amount:
                     identity.add(("W", "U", "B", "R", "G")[i])
         for effect in ability.effects:
-            if effect.get("op") in ("add_mana", "add_mana_per"):
+            # A `{"chosen_color_of": "self"}` mana names no symbol on the card,
+            # so it contributes no colour identity -- which is the printed
+            # answer: Heraldic Banner's identity is colourless.
+            if effect.get("op") in ("add_mana", "add_mana_per") and not isinstance(
+                effect.get("mana"), Mapping
+            ):
                 for i, amount in enumerate(parse_mana_production(str(effect.get("mana", "")))[:5]):
                     if amount:
                         identity.add(("W", "U", "B", "R", "G")[i])
