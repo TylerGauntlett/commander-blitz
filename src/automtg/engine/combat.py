@@ -15,8 +15,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import (
+    attack_alone_forbidden,
     attack_compelled,
     attack_forbidden,
+    block_alone_forbidden,
     block_forbidden,
     block_restrictions,
     chars,
@@ -423,6 +425,81 @@ def remove_attacker(state: GameState, oid: int) -> None:
         state.combat.attacking_planeswalker.pop(oid, None)
 
 
+def _declared_attackers(state: GameState, player: int) -> list[int]:
+    """The creatures this player currently has declared as attacking.
+
+    Filtered to permanents still on the battlefield and not removed from combat
+    (506.4): a creature that has left is no longer an attacking creature, so it
+    cannot be the "other creature" a can't-attack-alone restriction is counting.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    out = []
+    for oid in combat.attackers:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield or oid in combat.removed:
+            continue
+        if obj.controller == player:
+            out.append(oid)
+    return out
+
+
+def attacks_valid(state: GameState, player: int) -> bool:
+    """Check attack restrictions that only make sense on the *complete* declaration.
+
+    The counterpart of `blocks_valid`, and the reason it did not exist until
+    now: every other attack prohibition -- tapped, `defender`, `cant_attack`,
+    detained, an unpayable tax -- is a fact about one creature, answered by
+    `can_attack` before the attack is ever offered. "This creature can't attack
+    alone" (508.1c) is a fact about the *declaration*: the same creature in the
+    same position is legal beside a second attacker and illegal by itself, so
+    there is nothing to refuse at the moment it is picked.
+
+    Withheld "Done attacking" is how `legality` enforces it, exactly as it does
+    for menace on the other side. A player part-way through a declaration has
+    not broken a rule -- they have not finished.
+    """
+    attackers = _declared_attackers(state, player)
+    if len(attackers) > 1:
+        return True
+    return not any(attack_alone_forbidden(state, oid) for oid in attackers)
+
+
+def drop_illegal_attacks(state: GameState) -> list[int]:
+    """Retract attacks that can never become a legal declaration.
+
+    The mirror of `drop_illegal_blocks`, and it exists for the same reason: the
+    rules declare attackers all at once and this engine does it one at a time,
+    so a player can walk into a half-declaration the rules would never have
+    produced -- a lone can't-attack-alone creature with nothing else able to
+    attack beside it. `legality` withholds "Done attacking" while that is true,
+    but hands it back when there is no `ADD_ATTACKER` left to offer, because a
+    turn with no legal action in it is a game that cannot continue.
+
+    Dropping is not a concession: "it doesn't attack" is precisely the
+    declaration the rules would have produced, since the only alternative was
+    illegal. Returns the attackers it retracted.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    controllers = []
+    for oid in combat.attackers:
+        obj = state.objects.get(oid)
+        if obj is not None and obj.controller not in controllers:
+            controllers.append(obj.controller)
+    dropped: list[int] = []
+    for player in controllers:
+        if attacks_valid(state, player):
+            continue
+        for oid in _declared_attackers(state, player):
+            if attack_alone_forbidden(state, oid):
+                remove_attacker(state, oid)
+                dropped.append(oid)
+    return dropped
+
+
 def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
     """Lock in the attack: form bands, tap the attackers and fire their triggers.
 
@@ -435,6 +512,13 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
     combat = state.combat
     if combat is None:
         return
+    # Before the bands, the taps and the triggers, and for the same reason
+    # `finish_blockers` opens with `drop_illegal_blocks`: an incremental
+    # declaration can reach a shape the rules would never have produced, and
+    # what gets locked in has to be a declaration that was actually legal.
+    # A creature dropped here never taps and never fires ATTACKS -- it did not
+    # attack.
+    drop_illegal_attacks(state)
     yield from _declare_bands(state)
     combat.attackers_declared = True
     discharge_attack_requirements(state)
@@ -815,6 +899,22 @@ def drop_illegal_blocks(state: GameState, defender: int) -> list[int]:
         combat.block_order[attacker_oid] = [
             b for b in combat.block_order.get(attacker_oid, []) if b not in dropped
         ]
+    # After the `require_all` pass, not before: dropping a Tromokratis block can
+    # leave a can't-block-alone creature as the only blocker left, and then it
+    # is the one that was never legal either.
+    remaining = _blocking_for(state, defender)
+    if not _alone_blocks_valid(state, remaining):
+        for b in remaining:
+            if not block_alone_forbidden(state, b):
+                continue
+            attacker_oid = combat.blockers.pop(b, None)
+            dropped.append(b)
+            if attacker_oid is not None:
+                combat.block_order[attacker_oid] = [
+                    other
+                    for other in combat.block_order.get(attacker_oid, [])
+                    if other != b
+                ]
     return dropped
 
 
@@ -827,18 +927,60 @@ def add_blocker(state: GameState, blocker_oid: int, attacker_oid: int, defender:
     return True
 
 
+def _blocking_for(state: GameState, defender: int) -> list[int]:
+    """The creatures this player currently has declared as blocking.
+
+    Across every attacker, and filtered the way `_declared_attackers` is: a
+    blocker that has left the battlefield or been removed from combat is not
+    blocking any more (506.4), so it cannot be the company a can't-block-alone
+    creature needs.
+    """
+    combat = state.combat
+    if combat is None:
+        return []
+    out = []
+    for oid in combat.blockers:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield or oid in combat.removed:
+            continue
+        if obj.controller == defender:
+            out.append(oid)
+    return out
+
+
+def _alone_blocks_valid(state: GameState, blocking: list[int]) -> bool:
+    """Is no can't-block-alone creature this player's only blocker?
+
+    Two of them blocking together is legal, and that is the point of writing it
+    as "is there a second blocker" rather than "is this creature unrestricted":
+    each is the other's company, which is what the printed word *alone* says.
+    """
+    if len(blocking) > 1:
+        return True
+    return not any(block_alone_forbidden(state, oid) for oid in blocking)
+
+
 def blocks_valid(state: GameState, defender: int) -> bool:
     """Check evasion requirements that only make sense on the *complete* declaration.
 
-    Two of them.  Menace: an attacker with menace must be blocked by zero or at
-    least two creatures.  And ``require_all``, Tromokratis' "can't be blocked
+    Three of them.  Menace: an attacker with menace must be blocked by zero or
+    at least two creatures.  ``require_all``, Tromokratis' "can't be blocked
     unless all creatures defending player controls block it" -- which cannot be
     a per-pair check, because whether *this* block is legal depends on what
-    every other creature is doing.
+    every other creature is doing.  And "this creature can't block alone"
+    (509.1b), which is the first of the three to be a fact about the *blocking*
+    side rather than about one attacker.
     """
     combat = state.combat
     if combat is None:
         return True
+    # "…can't block alone": legal alongside any second blocker this player
+    # declares, whatever that one is blocking, and illegal by itself. Counted
+    # across the whole declaration rather than per attacker, because the second
+    # creature does not have to be blocking the same attacker -- which is
+    # exactly what makes it a `blocks_valid` question and not a `can_block` one.
+    if not _alone_blocks_valid(state, _blocking_for(state, defender)):
+        return False
     # Provoke and the lure family. Enforced here rather than by refusing to
     # offer anything, for the same reason menace is: the declaration is legal
     # or not *as a whole*, and a player part-way through building one has not

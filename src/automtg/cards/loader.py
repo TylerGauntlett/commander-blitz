@@ -157,6 +157,19 @@ STATIC_EFFECTS = frozenset(
         # rather than a keyword for the same reason `block_restriction` is: a
         # keyword is a characteristic and this is a permission.
         "cant_block",
+        # "This creature can't attack or block alone" -- Toby's Beast token, and
+        # the two halves it is spelled from, each of which is also printed on
+        # its own. Separate effects from `cant_attack`/`cant_block` rather than
+        # a flag on them, because they answer a different question: those two
+        # are absolute per-creature prohibitions read by `can_attack`/
+        # `can_block`, and these are restrictions on the *declaration as a
+        # whole* (508.1c, 509.1b), read by `combat.attacks_valid` and
+        # `combat.blocks_valid` beside menace. Written into `cant_attack` as a
+        # flag, every existing caller would have read the flagless `True` and
+        # stopped the creature attacking at all -- strictly stronger than the
+        # printed card, and invisible on screen.
+        "cant_attack_alone",
+        "cant_block_alone",
         # Marauding Maulhorn.  The obligation to `cant_attack`'s prohibition,
         # read by `combat.attack_required` at the same enforcement point the
         # `must_attack` op uses.  A static rather than that op because a
@@ -478,11 +491,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     for i, replacement in enumerate(model.replacements):
         if replacement.counter is not None:
-            # "…enters with a vigilance counter on it." Checked here for the
-            # reason the condition below is: the kind is only looked at when a
-            # permanent actually enters, so a near-miss spelling of a keyword
-            # counter would arrive as an inert tally mid-game rather than being
-            # refused at load.
+            # "…enters with a vigilance counter on it", "…enters with a shield
+            # counter on it." Checked here for the reason the condition below
+            # is: the kind is only looked at when a permanent actually enters,
+            # so a near-miss spelling of a keyword or shield counter would
+            # arrive as an inert tally mid-game rather than being refused at
+            # load. Diamond City is the case that makes it matter most, because
+            # a mis-spelled shield counter is *visible on the board* and the
+            # land still dies to the removal it is printed to survive.
             _check_counter_kind(
                 replacement.counter, f"{where}.replacements[{i}].counter"
             )
@@ -1717,6 +1733,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'blockers'/'require_all' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
+        )
+    if model.effect in ("cant_attack_alone", "cant_block_alone") and model.affects is None:
+        # `characteristics._matches` reads a missing filter as "matches
+        # nothing", so an "…alone" static without one is a printed restriction
+        # that restricts nobody -- it loads clean, shows on the card and never
+        # fires. Every printed one of these is self-referential, so what the
+        # card wants is `{"self_only": true}`; saying it is the point.
+        raise DslError(
+            f"{where}: {model.effect} needs an 'affects' filter -- "
+            f"{{\"self_only\": true}} for the creature that carries it"
         )
     if model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
@@ -3132,6 +3158,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.from_top: depth counts from 1 (1 is the top card); got {depth}"
             )
+    if "cast_free" in effect and op != "look_at_top":
+        # "…without paying its mana cost" is free, and every other op that could
+        # plausibly be written with it (`exile`, `search_library`, `reveal`)
+        # ignores unknown keys -- so the card would load, resolve, and quietly
+        # charge full price for a spell the printing gives away.
+        raise DslError(
+            f"{where}: 'cast_free' is a look_at_top key and only it reads the "
+            f"free cast, not {op!r} (see `play_exiled` for a free cast from exile)"
+        )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
         # silently pick a player instead of targeting one.
@@ -3253,6 +3288,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown look_at_top destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+        # `cast_free` sends what was picked to the **stack**; `destination`,
+        # `tapped` and `playable_this_turn` all describe a card arriving in a
+        # zone and are read only on the branch `cast_free` replaces. Written
+        # together they load clean and one half is silently dropped -- and
+        # `playable_this_turn` is the impulse permission, "play it later at its
+        # printed cost", which is the opposite card from "cast it now for free".
+        if effect.get("cast_free"):
+            clashing = [
+                key
+                for key in ("destination", "tapped", "playable_this_turn")
+                if key in effect
+            ]
+            if clashing:
+                raise DslError(
+                    f"{where}: look_at_top 'cast_free' takes no {sorted(clashing)} -- "
+                    f"the picked card goes to the stack, not to a zone"
+                )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
         # version of the card -- an empty selector matches the very first card

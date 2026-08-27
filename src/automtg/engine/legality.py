@@ -133,9 +133,23 @@ def _attacker_actions(state: GameState, pid: int) -> list[Action]:
     # the declaration, which is the only lever legality has: there is no action
     # for "refuse to attack". A creature that cannot attack owes nothing, which
     # `attack_required` has already accounted for, so this can never deadlock.
-    if not combat_mod.unmet_attack_requirements(state):
+    #
+    # `attacks_valid` is withheld for the same reason and by the same lever, but
+    # it is a restriction rather than a requirement: "this creature can't attack
+    # alone" is judged on the finished declaration, so a lone attacker under it
+    # has to add a second one before the step can end -- the mirror of menace
+    # withholding "Done blocking" below.
+    if not combat_mod.unmet_attack_requirements(state) and combat_mod.attacks_valid(
+        state, pid
+    ):
         out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
-    del pid
+    elif not out:
+        # Nothing left to add and the declaration is still invalid: the
+        # can't-attack-alone creature is the only thing that could attack at
+        # all. Offering nothing is a game that cannot continue, so "Done" comes
+        # back and `finish_attackers` retracts the attack that was never legal
+        # -- exactly what `_blocker_actions` does with `drop_illegal_blocks`.
+        out.append(Action(kind=ActionKind.FINISH_DECLARATION, label="Done attacking"))
     return out
 
 

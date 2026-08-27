@@ -13,7 +13,7 @@ from . import sagas
 from .characteristics import chars
 from .enums import Keyword, LossReason, Zone
 from .events import EventType
-from .objects import MINUS_ONE, PLUS_ONE
+from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
 from .primitives import clear_goad
 from .zones import destroy, move_object, sacrifice
@@ -442,7 +442,18 @@ def _creature_deaths(state: GameState) -> bool:
             # left to `destroy`: `changed` has to report whether the board
             # actually moved, and `destroy` returning False is the only way to
             # know.
+            shields = obj.counter(SHIELD)
             if destroy(state, oid, cause="lethal_damage", by=by):
+                changed = True
+            elif obj.counter(SHIELD) < shields:
+                # A shield counter (122.1c) replaced the destruction, and unlike
+                # regeneration and totem armor it does **not** remove the marked
+                # damage. So the damage is still lethal and 704.3 says to check
+                # again: the creature sheds one counter per check until it has
+                # none and dies. Reported as a change for that reason alone --
+                # without it the loop stops here and a creature standing in
+                # lethal damage would survive on one counter until somebody next
+                # got priority, then die a check at a time.
                 changed = True
     return changed
 

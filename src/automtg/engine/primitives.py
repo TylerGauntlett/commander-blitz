@@ -14,7 +14,7 @@ from . import sagas
 from .characteristics import chars, printed_token_matches, token_creation_replacements
 from .enums import Keyword, Zone
 from .events import EventType
-from .objects import MINUS_ONE, PLUS_ONE, GameObject
+from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -299,6 +299,35 @@ def damage_permanent(
         )
         if amount <= 0:
             return 0
+    # Shield counter (122.1c): "if it would be dealt damage ... remove a shield
+    # counter from it instead". A **replacement, not a reduction** -- one counter
+    # answers the whole event however big it is, so lethal damage to a shielded
+    # creature costs exactly one counter and marks nothing. Written as an early
+    # return for the same reason protection is: what was replaced was never
+    # dealt, so no deathtouch mark, no lifelink, no damage ledger, no
+    # `DAMAGE_DEALT`, and a `damaged_this_turn` that still reads no.
+    #
+    # After absorb, and that ordering is the one judgement call. Both are
+    # replacement-ish shields over the same event and 616.1 would let the
+    # affected player pick; checked this way round the counter is spent only on
+    # damage that would otherwise land, so a 2-damage ping into "prevent the next
+    # 3" leaves the shield counter on the permanent, which is what its controller
+    # would have chosen. Before the planeswalker and wither branches, because
+    # each of those is a *different place to put the damage* rather than a reason
+    # it is not dealt -- a shielded planeswalker must not lose loyalty and a
+    # shielded creature must not take -1/-1 counters from a withering source.
+    if spend_shield_counter(state, oid, source=source_oid):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="shield_counter",
+        )
+        return 0
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword
@@ -438,6 +467,42 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
         state.bump_chars()
         state.emit(EventType.COUNTER_REMOVED, source=oid, counter=kind, amount=taken)
     return taken
+
+
+def spend_shield_counter(state: GameState, oid: int, *, source: int | None = None) -> bool:
+    """Try to spend one shield counter (122.1c).  True if one was there.
+
+    The single consumer behind both halves of the shield counter, and the reason
+    there is a function rather than two `if obj.counter(SHIELD)` lines: the two
+    hook points are in different modules -- `zones.destroy` and
+    `damage_permanent` above -- and the rule is that *one* counter is removed per
+    event, whatever the event was and however large it was. Written twice, the
+    two sites would drift on the one thing the card is bought for.
+
+    It removes the counter and says so, and it does nothing else. What replaced
+    what is the caller's sentence to say, because the two are not the same
+    announcement -- prevented damage is a `DAMAGE_PREVENTED` the trigger bus
+    already carries, and a replaced destruction is a log line beside
+    `regenerated` and `totem_armor`.
+
+    Note what it deliberately does **not** copy from regeneration (701.15a): the
+    permanent is not tapped, it is not removed from combat, and its marked damage
+    is not removed. A shield counter is not a regeneration shield, and a shielded
+    creature that already has lethal damage marked on it therefore loses one
+    counter per state-based-action check until it has none and dies -- which is
+    the printed behaviour, and the reason the counter is worth spending *before*
+    the damage is ever marked.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.counter(SHIELD) <= 0:
+        return False
+    remove_counters(state, oid, SHIELD, 1)
+    # `emit`, not `fire`: a log line, in the same shape and for the same reason
+    # as `regenerated` and `totem_armor` in `zones`. Nothing subscribes to a
+    # replacement that stopped something happening, and inventing an `EventType`
+    # for it would need narrating in the frontend to earn its keep.
+    state.emit("shield_counter", player=obj.controller, source=source, oid=oid)
+    return True
 
 
 def _token_creation_plan(
