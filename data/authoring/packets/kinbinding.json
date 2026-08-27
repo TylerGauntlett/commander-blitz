@@ -360,7 +360,8 @@
       "max_count_of",
       "max_life_of",
       "min_count_of",
-      "min_life_of"
+      "min_life_of",
+      "permanents_entered_this_turn"
     ],
     "supertypes": [
       "Basic",

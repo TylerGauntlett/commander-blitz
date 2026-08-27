@@ -40597,6 +40597,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "permanents_entered_this_turn": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "Creatures you control get +X/+X, where X is the number of creatures that entered the battlefield under your control this turn.",
+          "toughness": {
+            "permanents_entered_this_turn": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "kithkin_1_1_gw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, create a 1/1 green and white Kithkin creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kinbinding",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Kinbinding",
+      "oracle_text": "Creatures you control get +X/+X, where X is the number of creatures that entered the battlefield under your control this turn.\nAt the beginning of combat on your turn, create a 1/1 green and white Kithkin creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -46808,6 +46870,57 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "martial_coup",
+      "mana_cost": "{X}{W}{W}",
+      "name": "Martial Coup",
+      "oracle_text": "Create X 1/1 white Soldier creature tokens. If X is 5 or more, destroy all other creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "made",
+          "op": "create_token",
+          "token": "soldier_1_1_w"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "count": "all",
+                "exclude_binding": "made",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "martial_coup",
+    "name": "Martial Coup",
+    "oracle_text": "Create X 1/1 white Soldier creature tokens. If X is 5 or more, destroy all other creatures.",
+    "mana_cost": "{X}{W}{W}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "spell_effects": [
+      {
+        "op": "create_token",
+        "token": "soldier_1_1_w",
+        "amount": {
+          "x": true
+        },
+        "as": "made"
+      },
+      {
+        "op": "if",
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "x": true
+          },
+          "right": {
+            "const": 5
+          }
+        },
+        "then": [
+          {
+            "op": "destroy",
+            "objects": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ],
+              "count": "all",
+              "exclude_binding": "made"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "tokens": {
+      "id": "soldier_1_1_w",
+      "count": 20
+    },
+    "battlefield_count": 50,
+    "opponent_battlefield_count": 4,
+    "graveyard_size": {
+      "0": 5
+    }
+  }
+}

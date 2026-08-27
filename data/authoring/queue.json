@@ -147802,12 +147802,12 @@
     },
     "Kinbinding": {
       "edhrec_rank": 7238,
-      "gate": "template",
+      "gate": null,
       "name": "Kinbinding",
-      "reason": "no template for: Creatures you control get +X/+X, where X is the number of creatures that entered the battl",
+      "reason": "",
       "scryfall_id": "b6e35fd5-de7e-40a8-a23c-00d07fd1ac56",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Kindercatch": {
@@ -167002,12 +167002,12 @@
     },
     "Martial Coup": {
       "edhrec_rank": 1365,
-      "gate": "template",
+      "gate": null,
       "name": "Martial Coup",
-      "reason": "no template for: Create X 1/1 white Soldier creature tokens. If X is 5 or more, destroy all other creatures",
+      "reason": "",
       "scryfall_id": "a0660e74-6973-41d7-a20b-8d71fed1495a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Martial Glory": {
