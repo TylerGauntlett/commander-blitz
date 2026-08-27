@@ -2160,7 +2160,9 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: not this one reads the effect-side list as the whole language, which is how
 #: Door of Destinies came to be filed as a gap.
 STATIC_VALUE_KEYS = (
-    frozenset({"const", "count", "mana_symbols", "counters_on"})
+    frozenset(
+        {"const", "count", "mana_symbols", "counters_on", "permanents_entered_this_turn"}
+    )
     | STATIC_LIFE_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
@@ -2184,6 +2186,29 @@ def _validate_static_value(value: Any, where: str) -> None:
         raise DslError(f"{where}: an empty object is not a static value")
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    if "permanents_entered_this_turn" in value:
+        # Kinbinding: "Creatures you control get +X/+X, where X is the number of
+        # creatures that entered the battlefield under your control this turn."
+        #
+        # Safe inside a static for the reason `counters_on` is. The turn ledger
+        # is a pipeline **input**: `EnteredPermanent` is a snapshot written once,
+        # at the moment of entry, and nothing in the characteristics pipeline can
+        # write to it -- so an anthem sized by it cannot come to depend on another
+        # static's output and the fixed order of layers-lite stays acyclic.
+        #
+        # `count` is the near miss and is wrong in both directions, which is the
+        # whole reason the ledger exists: a board count is true of a creature that
+        # has sat there since turn three and false of one that entered this turn
+        # and died.
+        #
+        # Validated by the *same* filter check the effect side uses, so
+        # `controller` stays required -- an omitted clause would silently count
+        # the opponents' arrivals too.
+        from automtg.engine.effects.values import validate_entered_filter
+
+        validate_entered_filter(
+            value["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
+        )
     if "counters_on" in value:
         # "Creatures you control of the chosen type get +1/+1 for each charge
         # counter on this artifact" -- Door of Destinies. Safe inside a static

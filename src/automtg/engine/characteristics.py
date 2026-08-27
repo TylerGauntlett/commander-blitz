@@ -674,6 +674,33 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return max(_counts_per_player(state, expr["max_count_of"], source), default=0)
     if "min_count_of" in expr:
         return min_count(_counts_per_player(state, expr["min_count_of"], source))
+    if "permanents_entered_this_turn" in expr:
+        # Kinbinding: "Creatures you control get +X/+X, where X is the number of
+        # creatures that entered the battlefield under your control this turn."
+        #
+        # Safe here for the reason `counters_on` is, one step further removed:
+        # an `EnteredPermanent` is a snapshot the ledger wrote *once*, when the
+        # permanent arrived, and no layer of this pipeline can write to it. So
+        # the magnitude reads a pipeline input and the fixed order stays acyclic.
+        #
+        # The recomputation story is the same too -- `chars` is cached against
+        # `state.char_version`, which the enters path bumps -- so the anthem
+        # grows the moment a creature lands and, unlike a board count, does not
+        # shrink again when it dies. That asymmetry *is* the printed card.
+        spec = expr["permanents_entered_this_turn"]
+        controllers = _static_players(state, source, spec.get("controller"))
+        excluded = source.oid if spec.get("exclude_self") else None
+        return sum(
+            1
+            for entry in state.turn_ledger.permanents_entered
+            if entry.oid != excluded
+            and entry.matches(
+                controllers=controllers,
+                types=spec.get("types") or (),
+                subtypes=spec.get("subtypes") or (),
+                colors=spec.get("colors") or (),
+            )
+        )
     if "counters_on" in expr:
         # "Creatures you control of the chosen type get +1/+1 for each charge
         # counter on this artifact" -- Door of Destinies. The `counters`

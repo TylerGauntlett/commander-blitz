@@ -411,7 +411,7 @@ whatever attacked, which is different on every trigger.
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
 | `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted |
-| `exclude_binding` | drops the bound object from the pool |
+| `exclude_binding` | drops the bound object — or the whole **set** a binding holds — from the pool |
 
 `subtypes` cannot stand in for the first: it takes a literal list, fixed when
 the card is written. Reaching for `{"count": {"attacking": true}}` instead
@@ -1471,8 +1471,24 @@ smaller than the effect-side `value_keys`:
 | `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
 | `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks |
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
+| `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
+
+`permanents_entered_this_turn` is the newest, and the one whose near miss is
+worst. Kinbinding reads "Creatures you control get +X/+X, where X is the number
+of creatures that entered the battlefield under your control this turn", and
+`{"count": {"zone": "battlefield", …}}` is wrong in **both** directions — it
+counts a creature that has stood there since turn three, and it has already
+forgotten one that entered this turn and died. Both are ordinary lines of play.
+The anthem therefore grows when a creature lands and does *not* shrink when it
+dies, which looks like a bug and is the printed card.
+
+It reads the same `TurnLedger.permanents_entered` snapshots the effect side has
+read since Éowyn, through the same `validate_entered_filter`, so `controller`
+stays required here too: an omitted clause would silently count the opponents'
+arrivals, and every printed sentence of this shape says whose battlefield it
+means.
 
 Everything in that table reads a **pipeline input**, which is the whole rule: a
 leaf that read a *derived* characteristic would let one static's magnitude depend
@@ -1614,7 +1630,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
