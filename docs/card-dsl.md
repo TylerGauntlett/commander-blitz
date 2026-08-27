@@ -1245,7 +1245,8 @@ its mana, and a cost of five that settled for four would be a different card.
 ## Player specs
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
-`"enchanted_player"` · `{ "target": "t1" }` · `{ "controller_of_target": "t1" }` ·
+`"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
+`{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }`
 
@@ -1259,6 +1260,13 @@ demonstrate needs, since its copy is not targeted.
 time on any card that is not an Aura, and it is the only named spec that is also
 legal as a selector's `controller`: see
 [An Aura that enchants a player](#an-aura-that-enchants-a-player).
+
+`"gift_recipient"` is the one opponent the caster promised a gift as this spell
+was cast — the only string here naming a seat the **caster chose**, rather than
+one derived from the turn structure, from who is playing, or from where a
+permanent is attached. It resolves to **nobody** when no promise was made, which
+is what makes a gift's reward conditional with no `if` around it. See
+[Gift](#gift--a-promise-made-to-one-opponent-for-nothing).
 
 ### `not` — the player a card *excludes*
 
@@ -5084,6 +5092,82 @@ the half-a-kicker guard is satisfied, since something does read `kicked` — and
 the clause was then silently unreachable. You paid the extra {1}{U} and nothing
 happened. `{"kicked": ...}` now reads the resolution context *or* the object,
 which are the flag's two lifetimes and never overlap.
+
+## Gift — a promise made to one opponent, for nothing
+
+**Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as you
+cast this spell. If you do, they create a tapped 1/1 blue Fish creature token
+before its other effects."
+
+```jsonc
+{
+  "id": "parting_gust",
+  "mana_cost": "{1}{W}",
+  "gift": "a tapped Fish",
+  "spell_effects": [
+    // The gift itself, written FIRST -- 702.164b puts it before the spell's
+    // other effects, and effect order is the only thing that says so.
+    { "op": "create_token", "token": "fish_1_1_u", "tapped": true,
+      "controller": "gift_recipient" },
+    { "op": "exile", "objects": { "target": "t1" }, "as": "exiled" },
+    { "op": "if", "condition": { "gift_promised": false },
+      "then": [ { "op": "delay", "step": "end_step", "effects": [ … ] } ] }
+  ]
+}
+```
+
+`gift` is the kicker slot with the two things that make it a different mechanic.
+
+**It costs nothing**, so it is a 601.2b *choice* — made with the modes and X,
+never charged, and `game._cast` takes no payment for it. That is exactly why it
+could not be written as a `kicker`: the loader refuses a kicker whose mana value
+is 0, correctly, because a kicker that costs nothing is one cast offered twice.
+
+**It names a seat, not a price.** So legality offers **one promised line per
+opponent** — emerge's shape ("one line per victim") rather than kicker's bool —
+and which opponent rides on the action. `"an opponent"` is one player: at a pod
+`each_opponent` would be three times the printed card, and in a two-player game
+the two spellings are indistinguishable, which is what makes the wrong one easy
+to ship. Unpromised is listed first, as unkicked is: the line that hands an
+opponent a creature is never the default.
+
+The two halves the card writes are:
+
+| | |
+|---|---|
+| `{"gift_promised": true/false}` | "**if the gift wasn't promised**, return that card…" — a condition, beside `kicked` and `overloaded` |
+| `"gift_recipient"` | "**they** create a tapped 1/1 Fish" — a player spec naming the promised seat, and **nobody** when no promise was made |
+
+That second reading is what makes the reward conditional with no `if` around it:
+`create_token` loops over its `controller` player spec, and an empty list creates
+nothing. A card whose whole gift clause is "gift a card (they draw a card)" needs
+only the player spec and branches on nothing.
+
+The loader refuses **half** a gift in either direction, exactly as it does for
+kicker: a `gift` that nothing reads through either spelling, and either spelling
+on a card with no `gift`. Half a gift is quieter than half a kicker — it is not
+even more expensive than the card it pretends to be, just a second cast line that
+does the same thing.
+
+Gate 5 of the authoring verifier measures a gift card **promised**, because that
+is the strictly larger claim; gate 4 casts it unpromised, so the "if the gift
+wasn't promised" half is exercised too. This is not decoration. The near miss
+that was measured before gift existed — `additional_cost: {}` with
+`additional_optional` and a `cmp` on `additional_paid` — *loaded and passed all
+six gates while its gift branch never ran once*, because `_additional_ceiling`
+offers times 0 and 1 at the same price and `verify.find_play` picks its line by
+`kicked`, which such a card never sets. A flag legality can offer needs a flag
+the harness can ask for, or the gate measures the half of the card that was
+always going to work.
+
+### After the spell is gone
+
+The promise is written onto the object before `spell_effects` run, the way
+`cast_kicked` and `cast_overloaded` are, so both readings above still answer once
+the `StackItem` has gone — inside a delayed trigger the spell scheduled, and on
+the enters trigger of the permanent a gift *creature* becomes. It records the
+**seat**, not a bool, because "whom" is the half a later effect needs and a bool
+could not say it.
 
 ## Delayed triggers — "at the beginning of the next …"
 
