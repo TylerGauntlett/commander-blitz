@@ -510,11 +510,44 @@ exactly one, so nothing else changed.
 hand without asking. `count` still defaults to `"all"`, so every reveal already
 in the pool is unchanged.
 
-Ten ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
-`copy_permanent`, `gain_control`, `snapshot`, `join_forces`, `search_library`
-and `search_zones`. **No other op does**, and an `as` on one that does not is a
-load error — it would name a binding nothing writes, every read of it would be
-0, and the card's second sentence would silently do nothing.
+Eleven ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
+`copy_permanent`, `gain_control`, `snapshot`, `join_forces`, `roll_dice`,
+`search_library` and `search_zones`. **No other op does**, and an `as` on one
+that does not is a load error — it would name a binding nothing writes, every
+read of it would be 0, and the card's second sentence would silently do nothing.
+
+### `sacrifice`'s `snapshot` — what the creature *had*
+
+`as` records which object was chosen; `snapshot` records what it **was** while
+it was still on the battlefield. Entrapment Maneuver needs the second: "Target
+player sacrifices an attacking creature of their choice. You create X 1/1 white
+Soldier creature tokens, where X is **that creature's toughness**."
+
+```jsonc
+{ "op": "sacrifice",
+  "objects": { "controller": { "target": "t1" }, "types": ["Creature"],
+               "attacking": true, "count": 1, "chooser": "owner" },
+  "snapshot": "victim" },
+{ "op": "create_token", "token": "soldier_1_1_w",
+  "amount": { "toughness_of": { "binding": "victim" } } }
+```
+
+The creature is chosen by **another player**, inside the op, so nothing outside
+it can name the object while it is still there — and afterwards every route
+reads the *printed* toughness. A 5/5 with three +1/+1 counters is toughness 8 on
+the battlefield and reports 5 through the `as` binding, which is a card that
+quietly makes three fewer Soldiers than it should. `toughness_had` cannot reach
+it either: that is bound by the dies and leaves-battlefield **trigger** events,
+and this is an instant's own resolution.
+
+So the key fills in the window the op already had between the choice being made
+and the sacrifice happening — the same window `as` is written in. A sacrifice
+that finds nothing binds an empty snapshot, and `toughness_of` over it is 0,
+which is the printed card: no creature sacrificed, no Soldiers.
+
+Only `sacrifice` reads it. On any other op it is a load error, because a
+`snapshot` key nothing consumes is the silent-failure shape this whole
+validation pass exists to catch.
 
 The two searches record for the referent in "then … untap **that land**"
 (Fabled Passage). The closest expressible card without it was "untap a tapped
@@ -1117,7 +1150,39 @@ its mana, and a cost of five that settled for four would be a different card.
 
 `"you"` · `"opponent"` / `"each_opponent"` · `"each_player"` · `"active_player"` ·
 `{ "target": "t1" }` · `{ "controller_of_target": "t1" }` ·
-`{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }`
+`{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
+`{ "not": { … } }`
+
+### `not` — the player a card *excludes*
+
+Every spec above names the players to **allow**. Lucy MacLean names the one to
+forbid: "target player **other than its controller**", where "it" is the token
+her `token_created` trigger bound as `subject`.
+
+```jsonc
+"targets": [ { "id": "t1", "kind": "player",
+               "selector": { "controller": { "not": { "controller_of": "subject" } } } } ]
+```
+
+`"opponent"` is the near miss, and on a card that triggers on *anybody's* token
+it is wrong in both directions at once — it forbids **you** when an opponent
+made the token, and permits the very opponent who made it. At a four-player pod
+"other than its controller" is *three* seats, which no inclusive spec can name.
+
+The complement is taken over the living, so a player who has already lost is
+never offered. It nests, so it reuses whatever mapping form it wraps rather than
+duplicating it, and it is the whole spec — combining it with another key is a
+load error.
+
+A `controller` clause on a `kind: "player"` (or `"any"`) target is a **full
+player spec**, resolved by the same `select_players` an effect's `player` key
+uses, and it is validated as one. It did not used to be: the clause was read in
+three ways — `"you"`, `"opponent"`, and a `return True` fallthrough — so a
+mapping compiled cleanly, was dropped on the floor, and left a card printed
+"other than its controller" playing as "target any player". Wider than the
+printing, with nothing to say so. `"any"` is spelled out rather than added to
+`PLAYER_SPEC_NAMES`, because it is a *target* word: it would otherwise start
+meaning something to every effect's `player` key too.
 
 ### `target` versus `controller_of_target`
 
