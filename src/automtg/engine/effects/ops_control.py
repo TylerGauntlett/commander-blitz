@@ -11,7 +11,7 @@ from ..costs import can_pay, pay
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
-from .context import EffectContext, ask_mode, ask_yes_no
+from .context import EffectContext, ask_mode, ask_player, ask_yes_no
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
@@ -137,6 +137,101 @@ def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.state.bump_chars()
 
 
+#: The five colours a "choose a color" prompt offers: ``(letter, label)`` in
+#: WUBRG order.
+#:
+#: A fixed list, not a survey of the pool the way `_creature_types` is. There
+#: are exactly five colours and every one of them is always a legal answer, so
+#: there is nothing for the board to narrow -- and the order is the printed one,
+#: which keeps a replay picking the same colour from the same index.
+COLOR_CHOICES: tuple[tuple[str, str], ...] = (
+    ("W", "White"),
+    ("U", "Blue"),
+    ("B", "Black"),
+    ("R", "Red"),
+    ("G", "Green"),
+)
+
+
+@register("choose_color")
+def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"As this artifact enters, choose a color." Heraldic Banner.
+
+    The colour twin of :func:`op_choose_type`, and deliberately the same shape
+    down to the two decisions below. Stored on the permanent as a colour letter
+    and read back by its own abilities through ``{"chosen_color_of": "self"}``,
+    which stands wherever a literal colour letter does: a static filter's
+    ``colors``, an ``add_mana``'s ``mana``, and ``grant_protection``'s
+    ``from_colors``.
+
+    **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
+    labels" and hands back the index, which is exactly this question -- so
+    legality's `_choice_actions`, `game.apply` and the authoring verifier's
+    auto-answer table all keep working unchanged. A `CHOOSE_COLOR` kind would
+    have been the same decision wearing a different name, and it would have had
+    to be taught to every seat that can already answer a modal spell.
+
+    *Divergence, recorded in `rules-coverage.md` beside `choose_type`'s*: the
+    printed line is "**as** this enters", a replacement that cannot be responded
+    to. `zones` applies enter-replacements synchronously and cannot stop to ask,
+    so this is a `self_enters` trigger instead and the colour is chosen a moment
+    after the permanent arrives rather than as it does.
+    """
+    prompt = str(spec.get("prompt") or "Choose a color")
+    picked = yield from ask_mode(
+        ctx, prompt, [label for _, label in COLOR_CHOICES], ctx.controller
+    )
+    if not picked:
+        return
+    obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if obj is not None:
+        obj.chosen_color = COLOR_CHOICES[picked[0]][0]
+        ctx.state.bump_chars()
+
+
+@register("choose_player")
+def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Choose an opponent." Demonstrate, and the untargeted way to name a seat.
+
+    The player twin of :func:`op_choose_type` and :func:`op_choose_color`: it
+    asks a question and records the answer under ``as``, and every later spec
+    reads it back with ``{"binding": …}`` -- the player spec `select_players`
+    already had and which, until now, only a **trigger** could fill.
+
+    That is the gap it closes. `select_players` resolves ``"opponent"`` and
+    ``"each_opponent"`` to the whole set, and every spelling that names *one*
+    seat -- ``target``, ``controller_of_target``, ``controller_of``,
+    ``owner_of`` -- reads something a target or a trigger already produced.
+    Demonstrate's copy is explicitly **not** targeted, so none of them apply,
+    and at a pod ``"each_opponent"`` would hand a copy to every opponent
+    instead of the one the card says to choose.
+
+    **No new `DecisionKind`.** `ask_player` and `CHOOSE_PLAYER` have been here
+    since clash, which asks the same question ("which opponent?") and hands
+    back a player id -- so legality's `_choice_actions`, `game.apply` and the
+    authoring verifier's auto-answer table all work unchanged. What was missing
+    was never the decision; it was somewhere to *put* the answer.
+
+    ``players`` is the pool to choose from, a player spec, defaulting to the
+    opponents. It asks nobody when the pool is a single seat -- `ask_player`'s
+    own short-circuit, and the reading that makes a two-player game skip a
+    prompt whose answer was never in doubt.
+
+    Nothing is bound when there is no one to choose, so ``{"binding": …}``
+    resolves to no players and whatever depended on the choice does not happen.
+    A card that means "and if you did not, …" says so with `if`.
+    """
+    pool = select_players(ctx, spec.get("players", "each_opponent"))
+    pool = [pid for pid in pool if ctx.state.is_alive(pid)]
+    if not pool:
+        return
+    prompt = str(spec.get("prompt") or "Choose a player")
+    chosen = yield from ask_player(ctx, prompt, pool, ctx.controller)
+    if chosen is None:
+        return
+    ctx.bindings[str(spec["as"])] = int(chosen)
+
+
 def _creature_types(ctx: EffectContext) -> set[str]:
     """Every creature subtype the card pool actually contains."""
     found: set[str] = set()
@@ -190,11 +285,15 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     :meth:`Game._cast` does exactly that when the card asks a single top-level
     modal question -- the answer arrives here on ``ctx.modes``.
 
-    The fallback still asks, and two shapes rely on it: a *triggered* ability,
-    which has no cast to be asked at, and a nested ``choose_mode``, which is a
-    second question that genuinely belongs to resolution.  The answer is
-    consumed rather than read, so an inner one asks rather than silently reusing
-    the outer one's modes.
+    A *triggered* ability is answered early too: 603.3d puts its modes at the
+    moment it goes on the stack, which `stack.push_triggered_ability` does --
+    and it has to, because that is the only moment a mode-owned target could be
+    declared in.
+
+    The fallback still asks, and one shape relies on it: a nested
+    ``choose_mode``, which is a second question that genuinely belongs to
+    resolution.  The answer is consumed rather than read, so an inner one asks
+    rather than silently reusing the outer one's modes.
 
     ``all_if`` is **entwine**: "choose both if you pay the entwine cost". The
     entwine price is an ordinary `kicker`, so legality already offers the spell

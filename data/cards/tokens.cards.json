@@ -81,6 +81,44 @@
       "is_token": true
     },
     {
+      "id": "beast_4_4_w_alone",
+      "name": "Beast Token",
+      "oracle_text": "This token can't attack or block alone.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't attack or block alone.",
+          "effect": "cant_attack_alone",
+          "affects": {
+            "self_only": true
+          }
+        },
+        {
+          "kind": "static",
+          "text": "This token can't attack or block alone.",
+          "effect": "cant_block_alone",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
+    },
+    {
       "id": "clue_token",
       "name": "Clue",
       "oracle_text": "{2}, Sacrifice this artifact: Draw a card.",
@@ -380,15 +418,68 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "{T}, Sacrifice: Add {C}.",
+          "text": "{T}, Sacrifice this artifact: Add one mana of any color.",
           "is_mana_ability": true,
           "cost": {
-            "tap": true
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
           },
           "effects": [
             {
-              "op": "add_mana",
-              "mana": "{C}"
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -594,6 +685,390 @@
         "B"
       ],
       "is_token": true
+    },
+    {
+      "id": "ox_2_2_w",
+      "name": "Ox Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "hero_1_1_c",
+      "name": "Hero Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Hero"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "angel_4_4_w_flying_vigilance",
+      "name": "Angel Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Angel"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "cat_beast_2_2_w",
+      "name": "Cat Beast Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat",
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "citizen_1_1_gw",
+      "name": "Citizen Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Citizen"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "kithkin_1_1_gw",
+      "name": "Kithkin Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kithkin"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "gnome_1_1_c",
+      "name": "Gnome Token",
+      "oracle_text": "",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Gnome"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "warrior_1_1_w_vigilance",
+      "name": "Warrior Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Warrior"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "inkling_2_1_wb_flying",
+      "name": "Inkling Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Inkling"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "fish_1_1_u",
+      "name": "Fish Token",
+      "oracle_text": "",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Fish"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "food_token",
+      "name": "Food",
+      "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Food"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "junk_token",
+      "name": "Junk",
+      "oracle_text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Junk"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",
+          "sorcery_speed_only": true,
+          "cost": {
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "look_at_top",
+              "player": "you",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "count": 1
+              },
+              "destination": "exile",
+              "playable_this_turn": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lander_token",
+      "name": "Lander",
+      "oracle_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Lander"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "search_library",
+              "player": "you",
+              "count": 1,
+              "destination": "battlefield",
+              "tapped": true,
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "supertypes": [
+                  "Basic"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "map_token",
+      "name": "Map",
+      "oracle_text": "{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Map"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery.",
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{1}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "targets": [
+            {
+              "id": "explorer",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "explore",
+              "objects": {
+                "target": "explorer"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -354,6 +354,10 @@ class LossReason(str, Enum):
     COMMANDER_DAMAGE = "commander_damage"
     POISON = "poison"
     CONCEDE = "concede"
+    #: Somebody else's card said "you win the game" (104.2a). Its own reason for
+    #: the argument POISON has: this seat did not run out of life, did not deck
+    #: itself and did not concede, and the frontend prints the reason to them.
+    OPPONENT_WON = "opponent_won"
 
 
 #: Which card type each subtype belongs to -- 205.3, as one flat table.

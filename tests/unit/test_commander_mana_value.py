@@ -343,7 +343,7 @@ class TestTheLoaderRefusesTheSilentShapes:
             )
 
     def test_a_bad_owner_is_refused(self):
-        with pytest.raises(DslError, match="must be 'you' or 'opponent'"):
+        with pytest.raises(DslError, match=r"owner: must be one of"):
             compile_spec(flashback_card({"greatest_mana_value": {"owner": "anyone"}}))
 
     def test_two_kinds_of_arithmetic_are_still_refused(self):

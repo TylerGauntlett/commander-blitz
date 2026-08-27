@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "kinbinding",
+    "name": "Kinbinding",
+    "oracle_text": "Creatures you control get +X/+X, where X is the number of creatures that entered the battlefield under your control this turn.\nAt the beginning of combat on your turn, create a 1/1 green and white Kithkin creature token.",
+    "mana_cost": "{3}{W}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Creatures you control get +X/+X, where X is the number of creatures that entered the battlefield under your control this turn.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        },
+        "power": {
+          "permanents_entered_this_turn": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        "toughness": {
+          "permanents_entered_this_turn": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of combat on your turn, create a 1/1 green and white Kithkin creature token.",
+        "trigger": {
+          "event": "begin_combat",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "kithkin_1_1_gw",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 34,
+    "tokens": {
+      "id": "kithkin_1_1_gw",
+      "count": 1
+    }
+  }
+}

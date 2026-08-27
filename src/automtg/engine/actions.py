@@ -34,6 +34,13 @@ class Action:
     #: display: "Into the Roil" and "Into the Roil (kicked)" are two different
     #: things to do with the same card and must not compare equal.
     kicked: bool = False
+    #: **Gift** (702.164a): which opponent was promised the gift as this spell
+    #: was cast, or ``None`` for the line that promised nobody.  A seat rather
+    #: than a bool, and part of the identity for a reason `kicked` does not have
+    #: to make: the two promised lines of a three-player game cost the same and
+    #: are not the same thing to do, because a 1/1 handed to the player on your
+    #: left is not a 1/1 handed to the player on your right.
+    gift_to: int | None = None
     #: Whether this cast pays the card's *evoke* cost instead of its printed
     #: one.  Part of the identity for the same reason ``kicked`` is: a
     #: Mulldrifter cast for {2}{U} and one cast for {4}{U} are two different
@@ -133,6 +140,7 @@ class Action:
             choice=self.choice,
             x=self.x,
             kicked=self.kicked,
+            gift_to=self.gift_to,
             evoked=self.evoked,
             flashback=self.flashback,
             alternative=self.alternative,
@@ -155,6 +163,7 @@ class Action:
             -1 if self.choice is None else self.choice,
             self.x,
             self.kicked,
+            -1 if self.gift_to is None else self.gift_to,
             self.evoked,
             self.flashback,
             self.alternative,
@@ -172,6 +181,7 @@ class Action:
             "choice": self.choice,
             "x": self.x,
             "kicked": self.kicked,
+            "gift_to": self.gift_to,
             "evoked": self.evoked,
             "alternative": self.alternative,
             "pay_generic": self.pay_generic,

@@ -10,13 +10,13 @@ UI and the RL action space.
 from __future__ import annotations
 
 import itertools
-from collections.abc import Sequence
-from typing import TYPE_CHECKING
+from collections.abc import Mapping, Sequence
+from typing import TYPE_CHECKING, Any
 
 from .carddef import TargetSpec
 from .characteristics import chars, protected_from
 from .effects.context import EffectContext
-from .effects.selectors import matches, resolve_pool
+from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .structs import StackItem, TargetRef
@@ -36,15 +36,30 @@ def candidates(
     source_oid: int | None,
     *,
     exclude_sid: int | None = None,
+    bindings: Mapping[str, Any] | None = None,
 ) -> list[TargetRef]:
-    """Every legal choice for one target spec, in deterministic order."""
-    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
+    """Every legal choice for one target spec, in deterministic order.
+
+    ``bindings`` is what the *event* carried, for a triggered ability whose
+    target line names something the trigger found -- "target player other than
+    **its** controller", where "it" is the token bound as ``subject``.  Passed
+    in rather than read off anything reachable from here because a target spec
+    is declared before there is a `StackItem` to read it from (603.3d), so the
+    only holder is the `TriggerInstance` legality is enumerating for.  Empty for
+    a spell, which binds nothing at all.
+    """
+    ctx = EffectContext(
+        state=state,
+        controller=controller,
+        source_oid=source_oid,
+        bindings=dict(bindings or {}),
+    )
 
     if spec.kind == "player":
         return [
             TargetRef.player(pid)
             for pid in state.alive()
-            if _player_allowed(state, controller, pid, spec)
+            if _player_allowed(ctx, pid, spec)
         ]
 
     if spec.kind == "spell":
@@ -62,7 +77,16 @@ def candidates(
             for oid in resolve_pool(ctx, {**dict(spec.selector), "zone": "battlefield"})
             if can_be_targeted(state, controller, oid, source_oid=source_oid)
         ]
-        refs.extend(TargetRef.player(pid) for pid in state.alive())
+        # The player half of "any target" is filtered by the same clause the
+        # `kind: "player"` branch uses, and has to be: `still_legal` re-checks a
+        # player ref through `_player_allowed` whatever the spec's kind, so a
+        # seat offered here and refused there would be an action a player can
+        # take that then fizzles on resolution. No shipped card writes a
+        # `controller` clause on an `any` spec, so today this changes nothing --
+        # it is the two halves agreeing rather than a new restriction.
+        refs.extend(
+            TargetRef.player(pid) for pid in state.alive() if _player_allowed(ctx, pid, spec)
+        )
         return refs
 
     pool = resolve_pool(ctx, spec.selector)
@@ -99,13 +123,41 @@ def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> boo
     return matches(ctx, item.oid, spec.selector, default_zone="stack")
 
 
-def _player_allowed(state: GameState, controller: int, pid: int, spec: TargetSpec) -> bool:
+def _player_allowed(ctx: EffectContext, pid: int, spec: TargetSpec) -> bool:
+    """May this seat be chosen for a ``kind: "player"`` (or ``"any"``) spec?
+
+    The whole of player-target legality, and it used to read exactly one key in
+    exactly three ways: ``"you"``, ``"opponent"``, and a ``return True``
+    fallthrough for everything else.  The fallthrough was the bug.
+    `selectors.validate_selector` has always accepted a **Mapping** here --
+    `matches` honours one on the object side, scoping "creatures **they**
+    control" to one seat -- so ``{"controller": {"controller_of": "subject"}}``
+    compiled cleanly, was dropped on the floor, and left a card that reads
+    "target player other than its controller" playing as "target any player".
+    A strictly wider card than the printed one, with nothing anywhere to say so.
+
+    So the clause is a full **player spec** now, resolved by the same
+    `select_players` every effect's ``player`` key uses -- which is where the
+    negated form lives (``{"not": {...}}``) and why this function needs a
+    context rather than a bare controller: ``controller_of``, ``owner_of`` and
+    ``binding`` all read `ctx.bindings`.
+
+    ``"any"`` is answered before `select_players` sees it, because it is a
+    *target* word rather than a player spec: `select_players` has no name for
+    "everyone including the dead-but-not-yet" and would raise on it.  The two
+    surviving strings are left to `select_players` rather than compared here,
+    so the one definition of "opponent" serves both -- at a pod that is three
+    seats, and this function is asked about one at a time.
+
+    Both `candidates` and `still_legal` come through here, so the clause is
+    honoured when the targets are declared *and* re-checked as the ability
+    resolves (608.2b) -- which matters for a spec that names a player off a
+    binding, since control of the bound permanent can change in between.
+    """
     clause = spec.selector.get("controller", "any")
-    if clause == "opponent":
-        return pid != controller
-    if clause == "you":
-        return pid == controller
-    return True
+    if clause == "any":
+        return True
+    return pid in select_players(ctx, clause)
 
 
 def can_be_targeted(
@@ -210,6 +262,7 @@ def enumerate_target_tuples(
     *,
     exclude_sid: int | None = None,
     limit: int = MAX_TARGET_OPTIONS,
+    bindings: Mapping[str, Any] | None = None,
 ) -> list[tuple[TargetRef, ...]]:
     """Every legal combination of targets, capped at ``limit``.
 
@@ -227,7 +280,9 @@ def enumerate_target_tuples(
 
     per_spec: list[list[tuple[TargetRef, ...]]] = []
     for spec in specs:
-        options = candidates(state, controller, spec, source_oid, exclude_sid=exclude_sid)
+        options = candidates(
+            state, controller, spec, source_oid, exclude_sid=exclude_sid, bindings=bindings
+        )
         # Declining comes *last*, and that is load-bearing rather than
         # cosmetic: whatever picks a tuple without asking -- an AI seat, a
         # trigger resolving on its own -- takes the first, and a Shipbreaker
@@ -324,10 +379,18 @@ def still_legal(
     spec: TargetSpec,
     ref: TargetRef,
     source_oid: int | None,
+    *,
+    bindings: Mapping[str, Any] | None = None,
 ) -> bool:
     """Re-check a chosen target as the spell or ability resolves."""
+    ctx = EffectContext(
+        state=state,
+        controller=controller,
+        source_oid=source_oid,
+        bindings=dict(bindings or {}),
+    )
     if ref.kind == "player":
-        return state.is_alive(ref.id) and _player_allowed(state, controller, ref.id, spec)
+        return state.is_alive(ref.id) and _player_allowed(ctx, ref.id, spec)
     if ref.kind == "stack":
         item = state.stack_item(ref.id)
         if item is None or not item.is_spell:
@@ -336,7 +399,6 @@ def still_legal(
         # is half of what makes a target legal. Without this an Essence Scatter
         # held against a creature spell would still counter it after the spell
         # stopped being a creature spell.
-        ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
         return _spell_matches(ctx, item, spec)
     obj = state.objects.get(ref.id)
     if obj is None:
@@ -345,7 +407,6 @@ def still_legal(
         return False
     if spec.kind == "card_in_graveyard":
         return obj.zone is Zone.GRAVEYARD
-    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
     selector = dict(spec.selector)
     if spec.kind == "any" and "zone" not in selector:
         selector["zone"] = "battlefield"
@@ -358,6 +419,8 @@ def filter_legal(
     specs: Sequence[TargetSpec],
     refs: Sequence[TargetRef],
     source_oid: int | None,
+    *,
+    bindings: Mapping[str, Any] | None = None,
 ) -> tuple[dict[str, tuple[TargetRef, ...]], bool]:
     """Split stored targets into per-spec buckets, dropping illegal ones.
 
@@ -380,7 +443,11 @@ def filter_legal(
         take = len(refs) - index if spec.variable_size else max(1, spec.count)
         chunk = list(refs[index : index + take])
         index += take
-        kept = [r for r in chunk if still_legal(state, controller, spec, r, source_oid)]
+        kept = [
+            r
+            for r in chunk
+            if still_legal(state, controller, spec, r, source_oid, bindings=bindings)
+        ]
         if chunk:
             had_targets = True
         buckets[spec.id] = kept

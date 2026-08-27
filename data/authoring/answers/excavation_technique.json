@@ -1,0 +1,63 @@
+{
+  "card": {
+    "id": "excavation_technique",
+    "name": "Excavation Technique",
+    "oracle_text": "Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it. Players may choose new targets for their copies.)\nDestroy target nonland permanent. Its controller creates two Treasure tokens.",
+    "mana_cost": "{3}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": { "zone": "battlefield", "not_types": ["Land"] }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "active_zones": ["stack"],
+        "text": "Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it. Players may choose new targets for their copies.)",
+        "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Demonstrate?",
+            "effects": [
+              { "op": "copy_spell", "new_targets": true },
+              {
+                "op": "choose_player",
+                "players": "each_opponent",
+                "as": "demonstrated",
+                "prompt": "Choose an opponent to also copy it"
+              },
+              {
+                "op": "copy_spell",
+                "new_targets": true,
+                "controller": { "binding": "demonstrated" }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "spell_effects": [
+      { "op": "snapshot", "target": "t1", "as": "victim" },
+      { "op": "destroy", "objects": { "target": "t1" } },
+      {
+        "op": "create_token",
+        "token": "treasure_token",
+        "amount": { "const": 2 },
+        "controller": { "controller_of": "victim" }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "tokens": { "id": "treasure_token", "count": 2 },
+    "graveyard_size": { "0": 4 },
+    "battlefield_count": 33
+  }
+}

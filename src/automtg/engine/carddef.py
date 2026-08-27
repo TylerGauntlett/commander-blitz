@@ -56,6 +56,11 @@ class TargetSpec:
     #: the modes are chosen (601.2b then 601.2c), which is the printed order and
     #: the reverse of the one legality enumerates in.  See
     #: :attr:`CardDef.mode_targets` and `game.Game._ask_mode_targets`.
+    #:
+    #: A **triggered** ability may own one too, and it is the same rule read at
+    #: the other moment: 603.3d chooses a trigger's modes and its targets alike
+    #: as the ability is put on the stack.  See :attr:`Ability.mode_targets` and
+    #: `stack.push_triggered_ability`.
     mode: int | None = None
 
     @property
@@ -123,6 +128,12 @@ class Cost:
     #: on the next untap step -- so a cost of this shape is repeatable in a way
     #: neither of those is.
     tap_permanents: Mapping[str, Any] | None = None
+    #: "Untap two tapped creatures you control": the mirror of
+    #: ``tap_permanents``, pool forced to ``tapped: True``.  Distinct from
+    #: ``untap``, which is the ``{Q}`` symbol and only ever untaps the source --
+    #: Halo Fountain's cost carries ``tap`` *and* this, and they name different
+    #: permanents.
+    untap_permanents: Mapping[str, Any] | None = None
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
@@ -158,6 +169,15 @@ class Cost:
     #: `costs.variant_reduction` on the flashback branch alone, which is what
     #: keeps it off the printed hand cast.
     mana_reduction: Mapping[str, Any] | None = None
+    #: "X is the mana value of that card" -- Soul Foundry. A value expression
+    #: that **defines** the ``{X}`` in `mana`, rather than the player announcing
+    #: it. Evaluated by `costs.defined_x` at activation time, and applied by
+    #: `costs.ability_mana`, which both `can_pay` and `pay` go through -- so the
+    #: ability is offered at exactly the X it is charged, and `game._ask_x`
+    #: hands the number back instead of asking for one.
+    #:
+    #: `None` means "X is announced" (601.2b), which is every other X cost.
+    x_value: Mapping[str, Any] | None = None
 
     @staticmethod
     def from_spec(spec: Mapping[str, Any] | None) -> Cost | None:
@@ -182,6 +202,9 @@ class Cost:
             ),
             tap_permanents=(
                 dict(spec["tap_permanents"]) if spec.get("tap_permanents") else None
+            ),
+            untap_permanents=(
+                dict(spec["untap_permanents"]) if spec.get("untap_permanents") else None
             ),
             discard=int(spec.get("discard", 0) or 0),
             discard_selector=(
@@ -208,6 +231,7 @@ class Cost:
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
+            x_value=(dict(spec["x_value"]) if spec.get("x_value") else None),
         )
 
     def without_mana(self) -> Cost:
@@ -228,6 +252,7 @@ class Cost:
             and self.sacrifice is None
             and self.return_to_hand is None
             and self.tap_permanents is None
+            and self.untap_permanents is None
             and self.discard == 0
             and not self.discard_self
             and not self.pay_life
@@ -250,6 +275,10 @@ class Cost:
             parts.append("Return to hand")
         if self.tap_permanents:
             parts.append(f"Tap {self.tap_permanents.get('count', 1)} untapped permanents")
+        if self.untap_permanents:
+            parts.append(
+                f"Untap {self.untap_permanents.get('count', 1)} tapped permanents"
+            )
         if self.discard:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:
@@ -359,6 +388,28 @@ def top_level_mode_spec(effects: Any) -> Mapping[str, Any] | None:
     return None
 
 
+def _specs_for_modes(
+    base: tuple[TargetSpec, ...],
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]],
+    modes: Sequence[int],
+) -> tuple[TargetSpec, ...]:
+    """The specs one declaration actually used: the flat list, then the modes'.
+
+    One function for a card and for an ability, because the ordering is the
+    whole content and two copies of it is two chances to disagree:
+    `targeting.filter_legal` splits the stored refs **by position**, so
+    whatever declared the targets and whatever re-checks them on resolution
+    have to walk the modes in the same order -- ascending mode index, which is
+    the printed order 700.2e executes them in.
+    """
+    if not mode_targets:
+        return base
+    extra: list[TargetSpec] = []
+    for index in sorted(modes):
+        extra.extend(mode_targets.get(index, ()))
+    return tuple(base) + tuple(extra)
+
+
 @dataclass(frozen=True)
 class Ability:
     """An activated, triggered or static ability printed on a card."""
@@ -403,6 +454,20 @@ class Ability:
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.
     mana_identity: bool = False
+    #: "{T}: Add one mana of **the chosen color**." Heraldic Banner. The third
+    #: member of the same family as `mana_reflects` and `mana_identity`: the
+    #: colour is a question about this permanent's own `chosen_color`, asked
+    #: when the ability is offered, and `mana_options` carries the five-colour
+    #: superset until then so the ability is recognisable as a mana source at
+    #: load time. `costs.mana_options_of` does the narrowing, to the one colour
+    #: that was chosen -- or to nothing at all before a colour has been named.
+    #:
+    #: This is what stops the card being written as a `choose_mode` of five
+    #: `add_mana`s, which is the *any colour* card: that spelling would let the
+    #: player pick freely on every activation instead of locking the ability to
+    #: the colour named on entry, and would decouple the mana line from the
+    #: anthem line that reads the same choice.
+    mana_chosen_color: bool = False
     #: "Spend this mana only to cast a creature spell of the chosen type or
     #: activate an ability of a creature source of the chosen type."  ``None`` is
     #: ordinary mana.  See :class:`~automtg.engine.mana.ManaRestriction` for the
@@ -430,22 +495,43 @@ class Ability:
     once_each_turn: bool = False
     # activated + triggered
     targets: tuple[TargetSpec, ...] = ()
+    #: Target specs owned by one **mode** each, the ability-level twin of
+    #: :attr:`CardDef.mode_targets`.  Only a *triggered* ability may have them:
+    #: 603.3d puts both the modes and the targets at the moment the ability is
+    #: put on the stack, so there is one moment that owns both questions.  An
+    #: activated ability has no such moment -- `legality` enumerates one
+    #: activation per legal target tuple, which is before `Game._activate` asks
+    #: which mode -- so `loader._check_mode_targets` refuses it there.
+    mode_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     effects: tuple[Mapping[str, Any], ...] = ()
     # static
     static: Mapping[str, Any] | None = None
 
     @property
     def cast_time_modes(self) -> Mapping[str, Any] | None:
-        """The ``choose_mode`` to ask about on activation, or ``None``.
+        """The ``choose_mode`` to ask about before this goes on the stack.
 
-        Only for an *activated* ability, and only when the ability's whole
-        effect tree contains exactly one ``choose_mode`` at its top level. A
-        triggered ability has no activation to ask at, and a nested or repeated
-        one keeps asking as it resolves.
+        ``None`` unless the ability's whole effect tree contains exactly one
+        ``choose_mode`` at its top level: a nested or repeated one is a second
+        question that genuinely belongs to resolution, and pre-answering it
+        would bind the wrong one.
+
+        Answered for an **activated** ability (602.2b) and for a **triggered**
+        one (603.3d) alike.  The triggered half is not a convenience: the modes
+        have to be chosen at the moment the ability is put on the stack, because
+        that is the only moment at which a mode-owned target could be declared
+        -- and 601.2b, which 603.3d applies, says a mode with no legal target
+        cannot be chosen at all.  A *static* ability never reaches the stack.
         """
-        if not self.is_activated or count_mode_specs(self.effects) != 1:
+        if self.is_static or count_mode_specs(self.effects) != 1:
             return None
         return top_level_mode_spec(self.effects)
+
+    def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
+        """The target specs this ability actually declared -- see
+        :meth:`CardDef.specs_for_modes`, of which this is the ability-level
+        twin, down to the ordering rule `targeting.filter_legal` depends on."""
+        return _specs_for_modes(self.targets, self.mode_targets, modes)
 
     @property
     def is_activated(self) -> bool:
@@ -598,6 +684,13 @@ class CardDef:
     #: not folded into `mana_cost` because mana value must stay what is printed,
     #: and because the choice is the mechanic: legality offers the spell twice.
     kicker: ManaCost | None = None
+    #: **Gift a tapped Fish** (702.164a) -- what is promised, as the printed noun
+    #: phrase. Not a cost: a gift is paid for with nothing, so the promised line
+    #: is offered at the printed price. What it names instead is a **seat**, so
+    #: legality offers one promised line per opponent and the chosen one rides on
+    #: `Action.gift_to`. Read back by `{"gift_promised": …}` and by the
+    #: ``"gift_recipient"`` player spec.
+    gift: str | None = None
     #: **Multikicker {1}{W}** (702.32b). Nothing in the engine reads this: the
     #: loader has already desugared it into the three fields above, which is the
     #: whole mechanic. What it records is the *name* the card declared the cost
@@ -716,12 +809,7 @@ class CardDef:
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
         """
-        if not self.mode_targets:
-            return self.targets
-        extra: list[TargetSpec] = []
-        for index in sorted(modes):
-            extra.extend(self.mode_targets.get(index, ()))
-        return tuple(self.targets) + tuple(extra)
+        return _specs_for_modes(self.targets, self.mode_targets, modes)
 
     @property
     def retrace_cost(self) -> Cost:

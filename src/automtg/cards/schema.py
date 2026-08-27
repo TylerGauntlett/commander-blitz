@@ -39,6 +39,15 @@ class CostModel(BaseModel):
     #: A sum rather than a headcount, read off *derived* power, so one 4/4 crews
     #: a Vehicle that four 0/1s cannot and an anthem changes who can.
     tap_permanents: dict[str, Any] | None = None
+    #: "Untap two tapped creatures you control" -- Halo Fountain. The mirror of
+    #: ``tap_permanents``: a selector over the battlefield with a ``count``,
+    #: whose pool is forced to ``tapped: True`` instead of ``tapped: False``.
+    #: Not ``untap``, which is the ``{Q}`` symbol and only ever untaps the
+    #: source -- Halo Fountain taps *itself* and untaps *other* creatures, so
+    #: the two appear on the same cost and mean different permanents. No
+    #: ``total_power``: crew is a printed sum, and no printed line unbends a
+    #: board by power.
+    untap_permanents: dict[str, Any] | None = None
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.
@@ -79,6 +88,26 @@ class CostModel(BaseModel):
     #:
     #: Generic only and clamped at zero, like every other reduction.
     mana_reduction: dict[str, Any] | None = None
+    #: "X is the mana value of that card" -- Soul Foundry. A value expression
+    #: that **defines** X instead of the player announcing it: evaluated when
+    #: the ability is activated, and the whole of what it decides is what the
+    #: ``{X}`` in this cost's ``mana`` is worth.
+    #:
+    #: Read by `costs.ability_mana`, which both `costs.can_pay` and `costs.pay`
+    #: go through, so the ability is *offered* at exactly the X it will be
+    #: *charged* -- and by `game._ask_x`, which returns it rather than putting a
+    #: ``CHOOSE_X`` decision to the player. Without it a `{"mana": "{X}"}` cost
+    #: is an ordinary announced X (601.2b) and the player says zero, which on an
+    #: imprint card copies a Griselbrand for nothing.
+    #:
+    #: Only on an **activated ability's** cost, and only beside a ``mana`` cost
+    #: containing ``{X}``; refused anywhere else, because nowhere else prices its
+    #: mana through `ability_mana` and a field that is read in one cost node and
+    #: ignored in another is a discount nobody wrote.
+    #:
+    #: Not ``times`` below, which multiplies the whole mana half rather than
+    #: filling in one symbol, and is read only by `may`'s ``pay``.
+    x_value: dict[str, Any] | None = None
     #: Cumulative upkeep: "pay its upkeep cost **for each age counter on it**".
     #: A value expression multiplying the ``mana`` half, and the only part of a
     #: cost that is not fixed when the card is written. Read only where an
@@ -302,10 +331,32 @@ class AbilityModel(BaseModel):
     #: declaration rather than per pair, so it cannot be a ``blockers``
     #: filter.
     require_all: bool = False
+    #: ``replace_token_creation``: which token is about to be made. A filter on
+    #: a *printed face* and not on `affects`, which picks out permanents on the
+    #: battlefield: the token this asks about does not exist yet, has no
+    #: controller of its own and no board state to read. Academy Manufactor's is
+    #: ``{"subtypes": ["Clue", "Food", "Treasure"]}``, Divine Visitation's is
+    #: ``{"types": ["Creature"]}``. Omitted means "any token", which is a shape
+    #: printed cards really take.
+    affects_token: dict[str, Any] | None = None
+    #: ``replace_token_creation``: the token ids created instead. **One of each,
+    #: per token that was about to be made** -- so Academy Manufactor's three
+    #: ids turn one Treasure into a Clue, a Food and a Treasure, and Divine
+    #: Visitation's single id turns N Soldiers into N Angels. The list is why
+    #: two very differently worded cards need one field: "instead create one of
+    #: each" is a list of three and "that many are created instead" is a list of
+    #: one. See `primitives._token_creation_plan`.
+    create_instead: list[str] = Field(default_factory=list)
 
 
 class ReplacementModel(BaseModel):
-    """One of the four whitelisted replacement effects."""
+    """One of the four whitelisted replacement effects.
+
+    Every one of them modifies the permanent that is *already arriving*, which
+    is why token creation is not here and could not be: there is no object yet.
+    "If you would create a Clue, Food, or Treasure token" is a
+    ``replace_token_creation`` static instead -- see `AbilityModel.create_instead`.
+    """
 
     model_config = Strict
 
@@ -462,6 +513,23 @@ class CardModel(BaseModel):
     #: cast.  What being kicked then *does* is an ordinary ``if`` on the
     #: ``{"kicked": true}`` condition, so no card needs new effect vocabulary.
     kicker: str | None = None
+    #: **Gift a tapped Fish** (702.164a): "You may promise an opponent a gift as
+    #: you cast this spell." The string is *what is promised* -- ``"a tapped
+    #: Fish"``, ``"a card"``, ``"a Food"`` -- and it is the printed noun phrase,
+    #: because the residual gate compares it against the printed line.
+    #:
+    #: The kicker slot pointed at a **recipient** instead of at a price. Kicker
+    #: is an additional cost the caster pays; a gift costs nothing at all and
+    #: names one opponent, so legality offers one promised cast line **per
+    #: opponent** at the printed price -- emerge's shape ("one line per victim"),
+    #: not kicker's bool, because a promise made to the wrong seat is a
+    #: different card.
+    #:
+    #: The reward is an ordinary effect the card writes **first** in
+    #: ``spell_effects`` (702.164b: the gift happens before the spell's other
+    #: effects), aimed with the ``"gift_recipient"`` player spec. Whether the
+    #: promise was made is read back with ``{"gift_promised": true}``.
+    gift: str | None = None
     #: **Multikicker {1}{W}** (702.32b): "You may pay an additional {1}{W} any
     #: number of times as you cast this spell."
     #:

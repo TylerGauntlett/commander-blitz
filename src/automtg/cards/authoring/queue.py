@@ -115,6 +115,14 @@ class Queue:
         """
         have = {card.name for card in registry}
         wanted = wanted or set()
+        # `wanted` is an *input*, re-read from `data/generated/` every run, not a
+        # result to be preserved like `status` and `reason`. An entry queued
+        # before the deck was imported would otherwise stay `wanted: False`
+        # forever -- which is the whole case the flag exists for, and it made
+        # `--report`'s "in your decks" line read 0 for anybody who imported a
+        # deck after the queue was built.
+        for name, existing in self.entries.items():
+            existing.wanted = name in wanted
         added = 0
         for entry in index.iter_by_popularity():
             if limit is not None and added >= limit:

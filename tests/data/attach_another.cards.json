@@ -1,0 +1,239 @@
+{
+  "_comment": "Cards for tests/unit/test_attach_another_permanent.py -- the 'attachment' sub-key on the attach op. Test-only; never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_gear_shield",
+      "name": "Test Gear Shield",
+      "oracle_text": "Equipped creature gets +0/+3.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +0/+3.",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"const": 0},
+          "toughness": {"const": 3}
+        }
+      ]
+    },
+    {
+      "id": "t_gear_bear",
+      "name": "Test Gear Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_gear_saga",
+      "name": "Test Gear Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 1/1 white Human Soldier creature token.\nII, III — You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.",
+      "mana_cost": "{2}{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Enchantment"],
+      "subtypes": ["Saga"],
+      "abilities": [
+        {
+          "kind": "chapter",
+          "chapter": 1,
+          "text": "I — Create a 1/1 white Human Soldier creature token.",
+          "effects": [
+            {"op": "create_token", "token": "human_soldier_1_1_w", "controller": "you"}
+          ]
+        },
+        {
+          "kind": "chapter",
+          "chapter": 2,
+          "text": "II, III — You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.",
+          "effects": [
+            {
+              "op": "search_zones",
+              "zones": ["hand", "graveyard"],
+              "player": "you",
+              "count": {"const": 1},
+              "selector": {"subtypes": ["Aura", "Equipment"]},
+              "destination": "battlefield",
+              "as": "gear"
+            },
+            {
+              "op": "attach",
+              "attachment": {"binding": "gear", "zone": "battlefield", "subtypes": ["Equipment"]},
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "count": 1,
+                "optional": true
+              }
+            }
+          ]
+        },
+        {
+          "kind": "chapter",
+          "chapter": 3,
+          "text": "II, III — You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.",
+          "effects": [
+            {
+              "op": "search_zones",
+              "zones": ["hand", "graveyard"],
+              "player": "you",
+              "count": {"const": 1},
+              "selector": {"subtypes": ["Aura", "Equipment"]},
+              "destination": "battlefield",
+              "as": "gear"
+            },
+            {
+              "op": "attach",
+              "attachment": {"binding": "gear", "zone": "battlefield", "subtypes": ["Equipment"]},
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "count": 1,
+                "optional": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gear_rite",
+      "name": "Test Gear Rite",
+      "oracle_text": "{T}: You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "search_zones",
+              "zones": ["hand", "graveyard"],
+              "player": "you",
+              "count": {"const": 1},
+              "selector": {"subtypes": ["Aura", "Equipment"]},
+              "destination": "battlefield",
+              "as": "gear"
+            },
+            {
+              "op": "attach",
+              "attachment": {"binding": "gear", "zone": "battlefield", "subtypes": ["Equipment"]},
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "count": 1,
+                "optional": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_aura_rite",
+      "name": "Test Aura Rite",
+      "oracle_text": "{T}: You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If you do, attach it to a creature you control.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: You may put an Aura or Equipment card from your hand or graveyard onto the battlefield. If you do, attach it to a creature you control.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "search_zones",
+              "zones": ["hand", "graveyard"],
+              "player": "you",
+              "count": {"const": 1},
+              "selector": {"subtypes": ["Aura", "Equipment"]},
+              "destination": "battlefield",
+              "as": "gear"
+            },
+            {
+              "op": "attach",
+              "attachment": {"binding": "gear", "zone": "battlefield"},
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gear_blade",
+      "name": "Test Gear Blade",
+      "oracle_text": "Equipped creature gets +2/+0.\nEquip {1}",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +2/+0.",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"const": 2},
+          "toughness": {"const": 0}
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {1}",
+          "sorcery_speed_only": true,
+          "cost": {"mana": "{1}"},
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+            }
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_gear_wings",
+      "name": "Test Gear Wings",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.",
+      "mana_cost": "{U}",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"zone": "battlefield", "types": ["Creature"]}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1.",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"const": 1},
+          "toughness": {"const": 1}
+        }
+      ]
+    }
+  ]
+}

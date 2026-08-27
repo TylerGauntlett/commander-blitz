@@ -1,0 +1,45 @@
+{
+  "card": {
+    "id": "academy_manufactor",
+    "name": "Academy Manufactor",
+    "oracle_text": "If you would create a Clue, Food, or Treasure token, instead create one of each.",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact",
+      "Creature"
+    ],
+    "subtypes": [
+      "Assembly-Worker"
+    ],
+    "power": 1,
+    "toughness": 3,
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If you would create a Clue, Food, or Treasure token, instead create one of each.",
+        "effect": "replace_token_creation",
+        "affects_token": {
+          "subtypes": [
+            "Clue",
+            "Food",
+            "Treasure"
+          ]
+        },
+        "create_instead": [
+          "clue_token",
+          "food_token",
+          "treasure_token"
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

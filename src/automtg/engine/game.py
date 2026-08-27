@@ -490,6 +490,13 @@ class Game:
             tuple(action.targets) + mode_refs,
             x=x,
             kicked=action.kicked,
+            # Gift (702.164a). Carried onto the stack item and paid for with
+            # nothing -- there is no `pay` call above for it, and that is the
+            # mechanic rather than an omission: the promise is a 601.2b choice
+            # made as the spell is cast, like the modes a line above, not a cost
+            # under 601.2g. What the promise then *buys* the opponent is an
+            # ordinary effect on the card, and it happens on resolution.
+            gift_to=action.gift_to,
             evoked=action.evoked,
             flashback=action.flashback,
             overloaded=action.overloaded,
@@ -553,6 +560,11 @@ class Game:
                 0,
                 purpose,
                 exclude_oid=oid if ability.cost.tap else None,
+                # The whole cost node, not just its mana half: an ability that
+                # defines its own X ("X is the mana value of that card") reads
+                # the answer off `cost.x_value` and never asks.
+                cost_node=ability.cost,
+                cost_source=oid,
             )
 
         modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
@@ -624,6 +636,8 @@ class Game:
         purpose,
         *,
         exclude_oid: int | None = None,
+        cost_node: Cost | None = None,
+        cost_source: int | None = None,
     ) -> Generator[Any, list[int], int]:
         """How big is X, if this cost has one at all?
 
@@ -632,9 +646,25 @@ class Game:
         this running -- a mana ability activated in response, most obviously.
         Using the same ``purpose`` and ``extra_generic`` the payment is about to
         use is what guarantees the largest offered X is payable.
+
+        ``cost_node`` is the whole cost the mana half came from, and is given
+        only by the activation path: an ability that **defines** X answers this
+        question out of `cost.x_value` and never reaches the ceiling at all.
         """
         if not cost.x_count:
             return 0
+        from .costs import defined_x
+
+        # "X is the mana value of that card." An ability that defines X does not
+        # ask for one: 601.2b's announcement is the *player's* choice, and this
+        # card has already made it. Answered before the ceiling below is
+        # computed, because there is nothing to bound: `costs.ability_mana` prices the
+        # cost at this same number, and legality only offered the ability
+        # because that price was payable -- so there is no ceiling to compute
+        # and no question to put.
+        defined = defined_x(self.state, pid, cost_node, cost_source)
+        if defined is not None:
+            return defined
         from .costs import mana_sources
         from .effects.context import EffectContext, ask_x
         from .mana import max_affordable_x

@@ -284,19 +284,40 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
     shuffle after a search. And ``objects`` carries the count, so "any number of
     land cards from among them" is the ordinary ``count: "any"`` rather than a
     second spelling that only this op understands.
+
+    ``cast_free`` sends what was picked to the **stack** instead of to a
+    destination zone -- see :func:`_cast_from_window`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
+    cast_free = bool(spec.get("cast_free"))
     selector = spec.get("objects") or spec.get("selector") or {}
     for pid in select_players(ctx, spec.get("player", "you")):
         top = list(ctx.state.players[pid].library[: max(0, int(amount))])
         pool = [oid for oid in top if _matches_library(ctx, oid, selector)]
+        if cast_free:
+            # "…cast **a spell**…" -- a land is played, never cast (601.2), and
+            # `cast_for_free` would put one on the stack without complaint. The
+            # filter belongs here rather than in the card's selector because
+            # "mana value 3 or less" is true of every land ever printed, so the
+            # selector that spells Perception Bobblehead would otherwise offer a
+            # free Forest-on-the-stack.
+            pool = [
+                oid
+                for oid in pool
+                if not ctx.state.card_of(ctx.state.objects[oid]).is_land
+            ]
+        taken: set[int] = set()
         if pool:
             picked = yield from pick_from_pool(
                 ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
             )
-            _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
+            if cast_free:
+                taken = set((yield from _cast_from_window(ctx, pid, picked)))
+            else:
+                _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
+                taken = set(picked)
         # "…and put the rest on the bottom of your library in a random order."
         # Florian. Shuffling instead is a different game action: it reorders the
         # *whole* deck, and everything under the cards you looked at was already
@@ -305,10 +326,54 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
         # "The rest" means what was looked at and not taken -- including cards
         # the selector filtered out of the pool, which were still looked at.
         if spec.get("rest_to_bottom", False):
-            taken = set(picked) if pool else set()
             _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
         if spec.get("shuffle", False):
             shuffle_library(ctx.state, pid)
+
+
+def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):
+    """"You may cast a spell … from among them without paying its mana cost."
+
+    Perception Bobblehead. Ripple's shape -- offer, cast, fold the refusals back
+    into "the rest" -- with ripple's hardcoded "same name as this spell" test
+    replaced by the selector `look_at_top` already accepts, which is what lets a
+    card say "with mana value 3 or less".
+
+    Returns the oids that actually reached the stack, so the caller's
+    `rest_to_bottom` bottoms everything else. That is the whole reason this is a
+    key on `look_at_top` rather than an `exile` + `play_exiled` pair:
+
+    - **`play_exiled` cannot see these cards.** Its selector defaults to
+      `exiled_with: "self"`, answered by `obj.exiled_by`, which `move_object`'s
+      `reset_permanent_state` clears on the way into exile. `look_at_top`'s
+      exile destination therefore hands `play_exiled` an empty pool and the
+      whole ability silently does nothing.
+    - **Writing `exiled_by` in `_move_found` would fix the plumbing and break
+      the card.** A declined card would sit in exile for the rest of the game
+      instead of going to the bottom with the rest, which is a strictly worse
+      card than the printed one and an observable rules difference; and it would
+      exile cards the printed card only ever *looks at*.
+    - **A binding read by a later op** buys the same thing for two ops, a new
+      selector key and an implicit contract between them, and still leaves the
+      "the rest" bookkeeping split across the pair.
+
+    Rule 601.2b: this is a real cast. `_offer_free_cast` shares
+    `suspend.cast_for_free`, so the spell uses the stack, its "when you cast"
+    triggers fire and it can be countered -- and it is offered rather than
+    forced, because the printed word is "may". A cast that cannot happen (no
+    legal target) is a refusal, not a crash, and folds back into the rest too.
+    """
+    cast: list[int] = []
+    for oid in picked:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        name = ctx.state.card_of(obj).name
+        if (yield from _offer_free_cast(
+            ctx, pid, oid, f"Cast {name} without paying its mana cost?"
+        )):
+            cast.append(oid)
+    return cast
 
 
 def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
@@ -381,6 +446,44 @@ def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         move_object(
             ctx.state, oid, Zone.HAND, to_player=obj.owner, cause="returned", by=ctx.source_oid
+        )
+
+
+@register("return_spell_to_hand")
+def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Return target spell to its owner's hand." Reprieve is the witness.
+
+    **Not a counter, and not `return_to_hand` either.** Both near misses are
+    wrong in ways that look right:
+
+    - `counter` is the only other op that consumes a spell target, and its
+      destination is hardwired to the graveyard. It also refuses a spell with
+      "this spell can't be countered" and emits `SPELL_COUNTERED`, and neither
+      belongs here: rule 701.5a makes countering one specific action, and
+      returning a spell to a hand is not it. Reprieve answers an uncounterable
+      spell perfectly well, and nothing that triggers on countering fires.
+    - `return_to_hand` reaches the right zone but cannot see a spell. A
+      `kind: "spell"` target is a `TargetRef.stack(sid)`, and `resolve_pool`'s
+      `{"target": …}` branch keeps only `kind == "object"` refs -- so the pool
+      comes back empty and the op is a *silent* no-op: the targeted spell
+      resolves onto the battlefield untouched and the card still looks like it
+      worked. That is why this reads `ctx.target_sids`, the way `counter` does.
+
+    Selecting the spell by zone instead (`objects: {"zone": "stack"}`) does move
+    it, but it is untargeted -- it would sweep every spell on the stack, and
+    ward, hexproof and "can't be the target of spells" would all stop applying
+    to a card whose printed line says "target".
+
+    Where the card lands is its **owner's** hand, not the controller's: a stolen
+    or an opponent's spell goes home. `pull_spell_off_stack` does that, and the
+    706.10 case where the "spell" is a copy and there is no card at all.
+    """
+    from ..stack import pull_spell_off_stack
+
+    target_id = str(spec.get("target", "t1"))
+    for sid in ctx.target_sids(target_id):
+        pull_spell_off_stack(
+            ctx.state, sid, Zone.HAND, cause="returned", by=ctx.source_oid
         )
 
 
@@ -740,6 +843,92 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
         opponent=other,
         won=won,
     )
+
+
+#: What `roll_dice` writes under its ``as`` name, and what `{"rolled": …}` reads
+#: back: ``{"results": [face, …], "sides": 6}``.
+#:
+#: A **mapping** rather than the bare list of faces every other recording op
+#: writes, and the reason is not taste. `selectors._bound_oids` reads any bound
+#: list as a list of **oids**, so `[6, 3, 2]` would make
+#: `{"count": {"binding": "roll"}}` answer 3 by luck and
+#: `{"objects": {"binding": "roll"}}` name objects 6, 3 and 2 -- three
+#: permanents that have nothing to do with the roll, silently destroyed by the
+#: next op along. A mapping with no ``oid`` key reads back through the same path
+#: as *no objects at all*, which is the truth: rolling a die creates nothing to
+#: point at.
+ROLL_RESULTS = "results"
+ROLL_SIDES = "sides"
+
+#: The default die. Rule 705.1 does not privilege one, but every card in the
+#: pool that rolls says "six-sided", so a missing ``sides`` is that and not a
+#: guess.
+DEFAULT_SIDES = 6
+
+
+@register("roll_dice")
+def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 705.1 -- roll dice, and write down every face that came up.
+
+    "Roll X six-sided dice, where X is the number of Bobbleheads you control.
+    Create a tapped Treasure token for each even result. If you rolled 6 exactly
+    seven times, you win the game." -- Luck Bobblehead.
+
+    The op is the roll and **only** the roll. What makes it usable is that it
+    records its results under an ``as`` name, the way `create_token` records the
+    oids it made and `sacrifice` records what it consumed, so the two sentences
+    after it are two *reads of one roll* rather than two rolls::
+
+        {"op": "roll_dice", "count": {"count": {...Bobbleheads...}}, "as": "roll"}
+        {"op": "create_token", "token": "treasure_token", "tapped": true,
+         "amount": {"rolled": {"binding": "roll", "parity": "even"}}}
+        {"op": "if",
+         "condition": {"cmp": "=", "right": {"const": 7},
+                       "left": {"rolled": {"binding": "roll", "face": 6}}},
+         "then": [...]}
+
+    Rolling twice -- once to count the evens and once to count the sixes --
+    would be a different and much worse card: on six dice the printed one makes
+    a Treasure for every even *it actually rolled*, and the sixes it counts are
+    a subset of them. Two rolls decorrelate the halves, so a hand that rolled
+    seven 6s would create Treasures off some other roll entirely. That is the
+    whole reason the binding exists rather than a `clash`-style boolean.
+
+    ``count`` is a value expression and not a literal, because X here is a board
+    count that changes between activations; ``sides`` is a literal, because no
+    printed card rolls a die whose size it does not name.
+
+    Determinism: the faces come from ``state.rng``, the engine's single seeded
+    source, so a replay of the same seed and action tape rolls the same dice.
+    Nothing in the package may call :mod:`random` directly.
+
+    **Zero dice is a real case**, not an edge one: "X is the number of
+    Bobbleheads you control" is 0 on an empty board, and the op must still write
+    an (empty) binding so the reads after it answer 0 rather than reading
+    whatever a previous resolution left behind. No event is emitted for it --
+    nothing was rolled.
+    """
+    sides = int(spec.get(ROLL_SIDES, DEFAULT_SIDES))
+    # `max(0, …)` rather than a refusal: "X is the number of Bobbleheads you
+    # control" can only be negative through arithmetic a card should not be
+    # writing, and rolling a negative number of dice has no reading at all.
+    count = max(0, evaluate_value(ctx, spec.get("count", 1)))
+    results = [ctx.state.rng.randint(1, sides) for _ in range(count)]
+    # Written whatever the count, including zero -- see the docstring. The
+    # loader requires the `as`; the default is here so a direct call cannot
+    # raise instead of rolling.
+    ctx.bindings[str(spec.get("as") or "roll")] = {
+        ROLL_RESULTS: results,
+        ROLL_SIDES: sides,
+    }
+    if results:
+        ctx.state.emit(
+            EventType.DICE_ROLLED,
+            player=ctx.controller,
+            source=ctx.source_oid,
+            results=list(results),
+            sides=sides,
+        )
 
 
 def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):

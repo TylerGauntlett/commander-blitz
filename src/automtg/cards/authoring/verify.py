@@ -74,13 +74,52 @@ _ROLES: dict[str, Any] = {
     "x_spell": lambda c: (c.is_instant or c.is_sorcery)
     and not c.targets
     and c.mana_cost.x_count > 0,
+    #: Something for "destroy target **legendary** permanent" to point at --
+    #: Commander Sofia Daguerre. :func:`_play_once` carries the argument for
+    #: why this is a prop and not a carve-out; the two clauses of the predicate
+    #: are:
+    #:
+    #: - **legendary**, which is the shape the sandbox was missing;
+    #: - **inert** -- nothing on it triggers and nothing on it can be activated
+    #:   -- because a prop exists to be pointed at, and one that *acts* folds
+    #:   its own behaviour into every card's verdict. Bident of Thassa is the
+    #:   worked example: its `{1}{U}, {T}:` is payable off the Forest and Island
+    #:   the opponent is dealt, and a payable non-mana activated ability stops
+    #:   `_should_auto_pass`, so the opponent takes a real priority window while
+    #:   the card under test is still on the stack, `drive` returns at
+    #:   `PRIORITY`, and *every* card fails gate 4 with "never left the stack".
+    #:   That is measured, not feared.
+    #:
+    #: A quiet prop is not a nicety either. The alphabetically first legendary
+    #: creature is a 5/5 Leviathan, and swapping *that* one in moved three
+    #: authored verdicts -- Whelming Wave exempts Leviathans, and two mass
+    #: bounces are capped on power. Every prop is load-bearing for somebody, so
+    #: the check on a change here is `tests/cards/test_auto_cards.py`, which
+    #: re-runs all six gates over every authored card; the pick below leaves all
+    #: of them passing.
+    #:
+    #: It fills the opponent's **creature** slot rather than being appended, so
+    #: the boards stay 32 and 6 and every authored `battlefield_count` and
+    #: `opponent_battlefield_count` still reads what it read when it was
+    #: written. Nothing is lost by the swap: the prop is still a creature, and
+    #: the flier keeps the board a *nonlegendary* creature for "destroy target
+    #: nonlegendary creature" to find.
+    "legendary_creature": lambda c: (
+        c.is_creature
+        and not c.is_token
+        and "Legendary" in c.supertypes
+        and not any(a.is_activated or a.is_triggered for a in c.abilities)
+    ),
 }
 
 #: Which roles each zone gets.  The opponent's board carries one of each broad
 #: type, so "destroy target artifact" and "return target creature" both find
-#: something to point at.
+#: something to point at -- and its creature is the board's one **legendary**
+#: permanent, so "target legendary permanent" finds something that is not the
+#: card under test.  Four roles, still, and a Forest and an Island: the counts
+#: are 32 and 6 and every authored expectation was written against them.
 OWN_BOARD_ROLES = ("creature", "creature")
-OPPONENT_BOARD_ROLES = ("creature", "flier", "artifact", "enchantment")
+OPPONENT_BOARD_ROLES = ("legendary_creature", "flier", "artifact", "enchantment")
 OWN_GRAVEYARD_ROLES = ("creature", "flier")
 BASIC_LANDS = ("forest", "island", "swamp", "mountain", "plains")
 
@@ -231,7 +270,14 @@ def _answer(game: Game, decision: PendingDecision):
     return actions[0]
 
 
-def find_play(game: Game, card_id: str, *, kicked: bool = False, multikicked: bool = False):
+def find_play(
+    game: Game,
+    card_id: str,
+    *,
+    kicked: bool = False,
+    multikicked: bool = False,
+    gifted: bool = False,
+):
     """The action that plays this card, optionally the kicked way.
 
     A kicker card is offered twice, and the two are different cards in every way
@@ -244,12 +290,28 @@ def find_play(game: Game, card_id: str, *, kicked: bool = False, multikicked: bo
     for the most the sandbox can pay -- the same "maximum, because zero measures
     nothing" that `_answer` applies to `CHOOSE_X`, and the same reason
     `_play_and_check` measures a kicker card kicked.
+
+    ``gifted`` is that same request for the **gift** promise (702.164a), and it
+    is the reason gift could not be smuggled in through the optional-additional
+    -cost slot. `_additional_ceiling` offers times 0 and 1 at the same price for
+    a cost of `{}`, and this function picks its line with `kicked`, which such a
+    card does not set -- so the free line always won, the promised branch never
+    ran once, and the card sailed through all six gates having done nothing.
+    A flag legality can offer needs a flag the harness can ask for, or gate 5
+    measures the half of the card that was already going to work.
+
+    Unlike `kicked` it names a **seat** rather than a price, so the ask is "any
+    promised line" and the first is taken: which opponent is promised is a
+    choice between equals in a sandbox with one of them, and legality's order is
+    stable.
     """
     matches = []
     for action in game.legal_actions():
         if action.kind not in (ActionKind.CAST, ActionKind.PLAY_LAND):
             continue
         if action.kind is ActionKind.CAST and action.kicked != kicked:
+            continue
+        if action.kind is ActionKind.CAST and (action.gift_to is not None) != gifted:
             continue
         obj = game.state.objects.get(action.source)
         if obj is not None and obj.def_id == card_id and obj.zone is Zone.HAND:
@@ -528,7 +590,53 @@ def verify(
 
 
 def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
-    """Cast it and assert only that it went where cards of its kind go."""
+    """Cast it and assert only that it went where cards of its kind go.
+
+    **Never weaken a gate to make a card pass.** This gate is the one that
+    catches a creature which vanishes -- compiles, casts, resolves, and is not
+    on the battlefield afterwards -- so the set of zones it allows a permanent
+    is the whole of its value, and every widening of that set spends some of it.
+
+    Commander Sofia Daguerre is the card that tested the rule. "When this
+    enters, destroy up to one target legendary permanent" may lawfully name
+    *her*: she is a Legendary Creature and a legal target for her own trigger.
+    Every clause of her compiles, and she failed here with "is a permanent but
+    ended in graveyard" -- because the sandbox carried no other legendary
+    permanent, so the only legal target the harness could hand the trigger was
+    the card under test, which then lawfully destroyed itself.
+
+    Two things were **not** done about that, and saying why is the point of this
+    paragraph:
+
+    - The `allowed` set below was not widened to ``{BATTLEFIELD, GRAVEYARD}``
+      for permanents whose own trigger can finish them. That reading covers
+      almost every removal creature ever printed, so the gate would stop
+      distinguishing "Sofia lawfully shot herself" from "this creature is
+      simply gone", which is the only thing it is for. The `is_aura` carve-out
+      is narrow on purpose -- Dead Weight's -2/-2 kills its own host and state-
+      based actions bin the Aura, a *rules consequence with nowhere else to
+      go* -- and it is precedent for an argued exception, not for a general one.
+    - The card was not written with `exclude_self` on its target selector. That
+      passes all six gates and prints a different card: "up to one target
+      legendary permanent" includes Sofia, and shipping the exclusion would be
+      the vocabulary quietly rewriting the rules text.
+
+    What was actually missing was on the board, not in the gate. The sandbox
+    had a creature, a flier, an artifact and an enchantment and **no legendary
+    anything**, so "target legendary permanent" was a printed selector the
+    position could not represent -- the same absence that made "counter target
+    noncreature spell" unplayable here until `noncreature_spell` was added, and
+    "target spell with {X} in its mana cost" until `x_spell` was. The house
+    answer both times was *add the role, do not relax the gate*, and
+    `legendary_creature` is the third time: the opponent's creature slot is
+    filled by a legendary creature, so the boards stay 32 and 6 and a
+    self-legal removal trigger is exercised against something that is not
+    itself.
+
+    A permanent that genuinely vanishes is still rejected here, unchanged.
+    ``tests/cards/test_authoring.py`` asserts both halves together, because the
+    second is what stops the first from being a weakened gate.
+    """
     game, oid, _, _ = _cast(registry, card)
     obj = game.state.objects.get(oid)
     if obj is None:
@@ -567,11 +675,21 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
     # line would let a card whose entire text is the kicks ship having returned
     # nothing -- and it would have no way to tell that from the card working.
     # Gate 4 casts it unkicked, which is where X = 0 gets exercised.
+    #
+    # A gift card is measured **promised**, and the argument is kicker's word for
+    # word: the promised line is the strictly larger claim, because it does
+    # everything the plain line does *plus* hand an opponent something. A gate
+    # that took the unpromised line would let a card whose entire gift clause is
+    # "they create a tapped 1/1 blue Fish" ship creating nothing, with no way to
+    # tell that from the card working -- which is exactly what the measured
+    # `additional_cost: {}` hack did before this existed. Gate 4 casts it
+    # unpromised, so the "if the gift wasn't promised" half is exercised too.
     game, oid, target_oid, before = _cast(
         registry,
         card,
         kicked=card.kicker is not None,
         multikicked=card.multikicker is not None,
+        gifted=card.gift is not None,
     )
     return check_expectation(
         game,
@@ -584,7 +702,12 @@ def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) ->
 
 
 def _cast(
-    registry: CardRegistry, card: CardDef, *, kicked: bool = False, multikicked: bool = False
+    registry: CardRegistry,
+    card: CardDef,
+    *,
+    kicked: bool = False,
+    multikicked: bool = False,
+    gifted: bool = False,
 ) -> tuple[Game, int, int | None, tuple[int, int] | None]:
     """Cast the card in the sandbox and let it finish.
 
@@ -604,7 +727,9 @@ def _cast(
         add_dummy_spell(game, registry)
     game._advance()
 
-    action = find_play(game, card.id, kicked=kicked, multikicked=multikicked)
+    action = find_play(
+        game, card.id, kicked=kicked, multikicked=multikicked, gifted=gifted
+    )
     if action is None:
         offered = [a.label for a in game.legal_actions()][:8]
         raise AutoMtgError(f"{card.id} is not playable in the sandbox; offered: {offered}")
@@ -746,6 +871,21 @@ def _covered(card: CardDef, line: str) -> bool:
     # ordinary `if`, so no ability carries this line either.
     if card.kicker is not None and stripped.lower().startswith("kicker "):
         return True
+
+    # "Gift a tapped Fish (You may promise an opponent a gift as you cast this
+    # spell…)" is `kicker`'s shape again -- a card-level cast-time choice offered
+    # by legality, with no ability that could honestly carry the line.
+    #
+    # Strict like `multikicker`'s claimant rather than permissive like
+    # `kicker`'s, and for the same reason: what is promised is the whole of what
+    # the line says, so the declared noun phrase has to *be* the printed one. A
+    # card declaring `gift: "a card"` cannot claim a printed "Gift a tapped
+    # Fish" -- that is a strictly better card wearing the right words. The
+    # reminder text in parentheses is the rule and is dropped, exactly as
+    # `_declares_printed_cost` drops it.
+    if card.gift is not None and stripped.lower().startswith("gift "):
+        promised = stripped[len("gift ") :].split("(")[0].strip().rstrip(".").strip()
+        return promised.casefold() == card.gift.strip().casefold()
 
     # "Multikicker {1}{W} (You may pay an additional {1}{W} any number of times
     # as you cast this spell.)" is the same shape as `kicker` above: a

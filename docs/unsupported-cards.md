@@ -10,5 +10,25 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**1 card** blocked by **1** capability.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [gift](#gift) | 1 | 1672 | cost, value |
+
+## gift
+
+Blocks **1** card.
+
+- **(cost)** a card-level `gift` declaration -- the kicker slot in `legality._cast_variant` / `game._cast`, but for a promise that costs the caster **nothing**: it offers a second cast line at the printed price, asks the caster to name one opponent (rule 702.164a -- the promise is made to a chosen player, not to all of them), and records both the promise and the recipient on the spell object the way `obj.cast_kicked` records a kick. The gift itself is then an ordinary effect the card writes first in `spell_effects` -- for this card `{"op": "create_token", "token": "fish_1_1_u", "tapped": true, "controller": <the promised opponent>}` -- so no new op is needed for the reward, only a way to aim `controller` at the promisee. The authoring harness must also cast the promised line: `verify._play_and_check` measures a kicker card kicked precisely so a `{"kicked": true}` branch cannot ship inert, and a `gift` flag needs the same treatment or it inherits that hole.
+  <br>Why the existing vocabulary won't do: `kicker` is the only free-standing optional cast-time flag an effect can read back (`{"kicked": true}`), and it is mana-only: `loader` line 417 refuses a kicker whose mana value is 0 -- verified, `kicker: "{0}"` raises `DslError: kicker '{0}' costs nothing` -- so it cannot carry a promise that is paid for with nothing. `additional_cost` is a full `CostModel`, and every key in it (`mana`, `sacrifice`, `discard`, `pay_life`, `tap`, `tap_permanents`, `return_to_hand`, `exile_from_graveyard`, `remove_counters`, `untap`, `loyalty`) is a payment the **caster** makes from their own side of the board; none of them can express "an opponent gets a tapped 1/1 blue Fish", and nothing in the cost language names a recipient. The empty-`CostModel` hack is worse than useless and was measured: `additional_cost: {}` + `additional_optional: true` loads, and the card *passes all six gates* while the gift branch never runs once -- `_additional_ceiling` offers times 0 and 1 at the same price, and `verify._play_and_check` picks its cast line with `kicked=card.kicker is not None`, which is False here, so the harness always takes the times=0 line. That is exactly the quiet wrong-card failure a gap record exists to prevent.
+- **(value)** a condition head -- `{"gift_promised": true}` alongside `kicked` / `evoked` / `overloaded` in `effects/conditions.py`'s CONDITION_KEYS -- so the second sentence can branch on whether the promise was made, and the same flag on the object (like `obj.cast_kicked`) so it survives into the delayed trigger.
+  <br>Why the existing vocabulary won't do: `kicked` is the only condition of this shape and is bound to a mana kicker cost the loader will not let cost nothing (`loader` refuses both a zero kicker and a kicker no effect reads via `kicked`). `additional_paid` is not a condition head at all -- it is a `value_keys` entry counting *how many times* an additional cost was paid, so reading it needs a `cmp` against an `additional_cost` that, per the need above, cannot be written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Parting Gust** (rank 1672) — `parting_gust`
+  - Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)
+  - Exile target nontoken creature. If the gift wasn't promised, return that card to the battlefield under its owner's control with a +1/+1 counter on it at the beginning of the next end step.
+
+</details>

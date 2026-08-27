@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "fateful_absence",
+    "name": "Fateful Absence",
+    "oracle_text": "Destroy target creature or planeswalker. Its controller investigates. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "mana_cost": "{1}{W}",
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "types": ["Instant"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "any_types": ["Creature", "Planeswalker"]
+        }
+      }
+    ],
+    "spell_effects": [
+      { "op": "snapshot", "target": "t1", "as": "victim" },
+      { "op": "destroy", "objects": { "target": "t1" } },
+      {
+        "op": "create_token",
+        "token": "clue_token",
+        "amount": { "const": 1 },
+        "controller": { "controller_of": "victim" }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": { "0": 0 },
+    "graveyard_size": { "0": 4 },
+    "tokens": { "id": "clue_token", "count": 1 },
+    "battlefield_count": 32
+  }
+}

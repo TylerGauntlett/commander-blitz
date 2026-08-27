@@ -598,6 +598,15 @@ class GameState:
                         colors=frozenset(c.colors),
                     )
                 )
+                # The ledger is now a *static* magnitude too -- Kinbinding's
+                # "+X/+X, where X is the number of creatures that entered the
+                # battlefield under your control this turn". `_enter_battlefield`
+                # bumped the cache a moment ago, before this entry existed, so
+                # the arriving permanent would read the anthem one short of what
+                # its own arrival made it: every other permanent on the board
+                # correct and the new one stale, which is the hardest kind of
+                # wrong number to see.
+                self.bump_chars()
         elif event.type == EventType.DAMAGE_DEALT:
             # Two shapes share this event, and they say which they are: `to` is
             # "player" or "permanent".  Only the first is life loss, and on the

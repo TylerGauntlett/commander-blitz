@@ -341,6 +341,20 @@ def _enter_battlefield(
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
     obj.tapped = forced_tapped
+    # "…**if it was cast**" (603.6e). Written here, before the replacements and
+    # long before the ENTERS_BATTLEFIELD event below, because the trigger's own
+    # intervening-if is evaluated as the ability queues off that event.
+    #
+    # Written on *every* arrival, so it describes this trip and no other:
+    # `cast_step` and the other `cast_*` stamps are set once by
+    # `stack.push_spell` and never cleared, and a permanent that was cast, died
+    # and came back would still answer to them.
+    #
+    # `cause == "resolved"` alone is not the clause either. A **copy** of a
+    # permanent spell resolves the same way and was never cast (707.10), and it
+    # is a fresh object with no cast stamp on it -- so the two halves together
+    # are what the sentence says, and each one alone is a wider card.
+    obj.entered_by_cast = cause == "resolved" and obj.cast_step is not None
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
 
@@ -442,14 +456,33 @@ def destroy(
 ) -> bool:
     """Destroy a permanent unless something replaces the destruction.
 
-    Three things can stop it, and they are three different mechanisms rather
+    Four things can stop it, and they are four different mechanisms rather
     than one with a parameter:
 
     | | |
     |---|---|
     | `indestructible` | the destruction simply does not happen |
+    | a **shield counter** (122.1c) | one counter is removed and nothing else changes |
     | a **regeneration** shield (701.15) | it is tapped, removed from combat and its damage removed, and one shield is spent |
     | **totem armor** (702.88a) | its damage is removed and the *Aura* is destroyed instead |
+
+    A shield counter is checked **after** indestructible and **before**
+    regeneration, and both halves of that are deliberate. Indestructible is not
+    a replacement that consumes anything -- the destruction never happens -- so
+    a permanent that survives on it must not be charged a counter, exactly as it
+    is not charged a regeneration shield. Against regeneration, 616.1 would let
+    the affected player choose between two replacements of the same event and
+    the engine does not model that choice; the counter goes first because it is
+    strictly the cheaper one, costing no tap, no removal from combat and no
+    marked damage, so it is the one its controller would pick.
+
+    It is **not indestructible**: a shielded permanent whose counters have run
+    out falls straight through to the destruction. `no_regeneration` does not
+    touch it either -- "it can't be regenerated" names regeneration, and a
+    shield counter is a different replacement, the same way indestructible and
+    totem armor are. Nor does a shield counter save anything from **sacrifice**
+    (701.16b) or from 0 toughness, which is the absence of a rule rather than
+    one: neither destroys, so neither reaches this function.
 
     Regeneration and totem armor are checked here rather than as `replacements`
     entries because that whitelist is about a permanent *entering the
@@ -485,6 +518,13 @@ def destroy(
     if obj is None or not obj.on_battlefield:
         return False
     if "indestructible" in chars(state, oid).keywords:
+        return False
+    # A shield counter (122.1c). Imported here rather than at the top because
+    # `primitives` imports *this* module for `move_object`; the cycle is real and
+    # the function is the natural home for a counter mutation.
+    from .primitives import spend_shield_counter
+
+    if spend_shield_counter(state, oid, source=by):
         return False
     if obj.regeneration_shields > 0 and not no_regeneration:
         obj.regeneration_shields -= 1

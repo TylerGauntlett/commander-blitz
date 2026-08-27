@@ -11,10 +11,10 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
-from .characteristics import chars
+from .characteristics import chars, printed_token_matches, token_creation_replacements
 from .enums import Keyword, Zone
 from .events import EventType
-from .objects import MINUS_ONE, PLUS_ONE, GameObject
+from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -299,6 +299,35 @@ def damage_permanent(
         )
         if amount <= 0:
             return 0
+    # Shield counter (122.1c): "if it would be dealt damage ... remove a shield
+    # counter from it instead". A **replacement, not a reduction** -- one counter
+    # answers the whole event however big it is, so lethal damage to a shielded
+    # creature costs exactly one counter and marks nothing. Written as an early
+    # return for the same reason protection is: what was replaced was never
+    # dealt, so no deathtouch mark, no lifelink, no damage ledger, no
+    # `DAMAGE_DEALT`, and a `damaged_this_turn` that still reads no.
+    #
+    # After absorb, and that ordering is the one judgement call. Both are
+    # replacement-ish shields over the same event and 616.1 would let the
+    # affected player pick; checked this way round the counter is spent only on
+    # damage that would otherwise land, so a 2-damage ping into "prevent the next
+    # 3" leaves the shield counter on the permanent, which is what its controller
+    # would have chosen. Before the planeswalker and wither branches, because
+    # each of those is a *different place to put the damage* rather than a reason
+    # it is not dealt -- a shielded planeswalker must not lose loyalty and a
+    # shielded creature must not take -1/-1 counters from a withering source.
+    if spend_shield_counter(state, oid, source=source_oid):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="shield_counter",
+        )
+        return 0
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword
@@ -440,6 +469,109 @@ def remove_counters(state: GameState, oid: int, kind: str, amount: int) -> int:
     return taken
 
 
+def spend_shield_counter(state: GameState, oid: int, *, source: int | None = None) -> bool:
+    """Try to spend one shield counter (122.1c).  True if one was there.
+
+    The single consumer behind both halves of the shield counter, and the reason
+    there is a function rather than two `if obj.counter(SHIELD)` lines: the two
+    hook points are in different modules -- `zones.destroy` and
+    `damage_permanent` above -- and the rule is that *one* counter is removed per
+    event, whatever the event was and however large it was. Written twice, the
+    two sites would drift on the one thing the card is bought for.
+
+    It removes the counter and says so, and it does nothing else. What replaced
+    what is the caller's sentence to say, because the two are not the same
+    announcement -- prevented damage is a `DAMAGE_PREVENTED` the trigger bus
+    already carries, and a replaced destruction is a log line beside
+    `regenerated` and `totem_armor`.
+
+    Note what it deliberately does **not** copy from regeneration (701.15a): the
+    permanent is not tapped, it is not removed from combat, and its marked damage
+    is not removed. A shield counter is not a regeneration shield, and a shielded
+    creature that already has lethal damage marked on it therefore loses one
+    counter per state-based-action check until it has none and dies -- which is
+    the printed behaviour, and the reason the counter is worth spending *before*
+    the damage is ever marked.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.counter(SHIELD) <= 0:
+        return False
+    remove_counters(state, oid, SHIELD, 1)
+    # `emit`, not `fire`: a log line, in the same shape and for the same reason
+    # as `regenerated` and `totem_armor` in `zones`. Nothing subscribes to a
+    # replacement that stopped something happening, and inventing an `EventType`
+    # for it would need narrating in the frontend to earn its keep.
+    state.emit("shield_counter", player=obj.controller, source=source, oid=oid)
+    return True
+
+
+def _token_creation_plan(
+    state: GameState, def_id: str, controller: int, count: int
+) -> list[tuple[str, int]] | None:
+    """What this token creation actually creates, after the `replace_token_creation`
+    statics ``controller`` has on the battlefield have had their say.
+
+    Academy Manufactor ("if you would create a Clue, Food, or Treasure token,
+    instead create one of each") and Divine Visitation ("if one or more creature
+    tokens would be created under your control, that many 4/4 Angels are created
+    instead") are two printed sentences and one mechanism: **each token that was
+    about to be made becomes one of each id in ``create_instead``**.  Manufactor
+    lists three ids, so one Treasure becomes a Clue, a Food and a Treasure;
+    Divine Visitation lists one, so N Soldiers become N Angels and the count is
+    preserved for free.  There is no count multiplier and no mode flag, because
+    neither card needs one.
+
+    **What this is not.** It is not rule 616 and it is not a general replacement
+    system.  There is no event object, nothing else in the engine can be
+    replaced, the affected player is never asked to order two replacements
+    (616.1), and nothing outside `create_token` consults these statics.
+    ``docs/rules-coverage.md`` records the general system as engine work that has
+    not been done; this is the one narrow hook the two cards above need, and a
+    third card of a different shape -- a count multiplier such as Doubling
+    Season, or a replacement of anything other than a token creation -- is more
+    engine work rather than a new row in a card file.
+
+    Two rules the shape of the loop is entirely about:
+
+    - **614.5, a replacement applies at most once to a given event.**  One pass
+      over a fixed list of statics, each one seeing the plan as the statics
+      before it left it.  So a Divine Visitation does not re-apply to the Angels
+      it just made -- which is not an optimisation, it is the difference between
+      this card and an infinite loop -- and two Academy Manufactors turn one
+      Treasure into three of each rather than into nothing terminating.
+    - **The replacement is the *token's controller's*.**  Both cards say "you",
+      so a Divine Visitation across the table does not touch your Soldiers, and
+      the list is gathered for ``controller`` rather than for whoever controls
+      the effect that is creating the token.
+
+    ``None`` means nothing applied, which is every token creation in a game
+    where neither card is on the battlefield: the caller then takes the original
+    path unchanged, ``overrides`` and all.
+    """
+    if count <= 0:
+        return None
+    statics = token_creation_replacements(state, controller)
+    if not statics:
+        return None
+    plan = [(def_id, count)]
+    replaced = False
+    for static in statics:
+        selector = static.get("affects_token") or {}
+        substitutes = static.get("create_instead") or ()
+        after: list[tuple[str, int]] = []
+        matched = False
+        for pending_id, pending_count in plan:
+            if printed_token_matches(state, pending_id, selector):
+                matched = True
+                after.extend((str(sub), pending_count) for sub in substitutes)
+            else:
+                after.append((pending_id, pending_count))
+        if matched:
+            plan = after
+            replaced = True
+    return plan if replaced else None
+
+
 def create_token(
     state: GameState,
     def_id: str,
@@ -460,26 +592,54 @@ def create_token(
     ``overrides`` is embalm's "except it's a white Zombie Angel with no mana
     cost".  Set *before* the token enters, so its enters-trigger and every
     characteristic read afterwards see the token it actually is.
+
+    What is created is not always what was asked for: `_token_creation_plan`
+    gives the `replace_token_creation` statics their say first, and this is the
+    one place in the engine that consults them, because it is the one place a
+    token creation can still be intercepted.  Everything the *creating effect*
+    said about the token still applies to whatever is created instead -- tapped,
+    and attacking, which is the printed ruling -- but ``overrides`` do not: they
+    describe the token that was replaced and never made, so a substituted
+    creation drops them rather than painting somebody else's exception onto an
+    Angel.
     """
+    plan = _token_creation_plan(state, def_id, controller, count)
+    if plan is None:
+        plan = [(def_id, count)]
+    else:
+        overrides = None
     made: list[int] = []
-    for _ in range(max(0, count)):
-        obj = new_object(
-            state, def_id, owner=controller, zone=Zone.EXILE, controller=controller, is_token=True
-        )
-        if overrides:
-            obj.copy_overrides = dict(overrides)
-        # The token is created "nowhere" and then enters the battlefield, so ETB
-        # triggers and enters-tapped replacements run through the normal path.
-        state.players[controller].exile.append(obj.oid)
-        move_object(state, obj.oid, Zone.BATTLEFIELD, tapped=tapped, cause="token")
-        if attacking is not None and state.combat is not None:
-            state.combat.attackers[obj.oid] = attacking
-        # `fire`, not `emit`: the event has always been recorded in the log and
-        # nothing subscribed to it, so "whenever you create a token" could not be
-        # said. Fired *after* the move, so the token is on the battlefield by the
-        # time anything listening resolves.
-        fire(state, EventType.TOKEN_CREATED, player=controller, source=obj.oid, card=def_id)
-        made.append(obj.oid)
+    for token_id, token_count in plan:
+        for _ in range(max(0, token_count)):
+            obj = new_object(
+                state,
+                token_id,
+                owner=controller,
+                zone=Zone.EXILE,
+                controller=controller,
+                is_token=True,
+            )
+            if overrides:
+                obj.copy_overrides = dict(overrides)
+            # The token is created "nowhere" and then enters the battlefield, so
+            # ETB triggers and enters-tapped replacements run through the normal
+            # path.
+            state.players[controller].exile.append(obj.oid)
+            move_object(state, obj.oid, Zone.BATTLEFIELD, tapped=tapped, cause="token")
+            if attacking is not None and state.combat is not None:
+                state.combat.attackers[obj.oid] = attacking
+            # `fire`, not `emit`: the event has always been recorded in the log
+            # and nothing subscribed to it, so "whenever you create a token"
+            # could not be said. Fired *after* the move, so the token is on the
+            # battlefield by the time anything listening resolves.
+            fire(
+                state,
+                EventType.TOKEN_CREATED,
+                player=controller,
+                source=obj.oid,
+                card=token_id,
+            )
+            made.append(obj.oid)
     return made
 
 
@@ -505,8 +665,56 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     # A fresh attachment supersedes the remembered one, so an Equipment moved to
     # a second creature cannot still answer for the first.
     aura.last_attached_to = None
+    # An Aura is attached to exactly one thing (303.4), so moving one onto a
+    # permanent takes it off whatever player it was on. Nothing prints that
+    # today -- no card moves an Aura between a player and a permanent -- and it
+    # is written anyway because the alternative is a permanent carrying two
+    # hosts, where every reader would get a different answer.
+    aura.attached_to_player = None
     state.bump_chars()
     fire(state, EventType.ATTACHED, player=aura.controller, source=aura_oid, oid=target_oid)
+    return True
+
+
+def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
+    """"Enchant opponent" -- attach an Aura to a **player** (303.4a, 702.5b).
+
+    `attach` above with a seat where the permanent goes, and it is a separate
+    function rather than a widened one for the reason `GameObject`'s two fields
+    are separate: a player id and an oid are both `int`, so a single entry point
+    taking either could not tell them apart, and the failure would be an Aura
+    silently enchanting an unrelated permanent.
+
+    The two restrictions `attach` enforces have no counterpart here, and both
+    absences are rules rather than omissions. 301.5c is about a permanent
+    attaching to *itself*, which a seat cannot be. And protection is a property
+    of objects and players alike, but the enchant restriction it blocks is
+    "can't be enchanted by" -- a player has no protection in any card the engine
+    can be handed, and inventing one here would be a rule nothing asked for.
+
+    Liveness is checked, unlike `attach`'s battlefield test, and it is the same
+    check: a player who has lost the game is no more a legal host than a
+    permanent in a graveyard, and `sba` bins the Aura either way.
+
+    The ATTACHED event carries the seat in ``player_attached`` rather than in
+    ``oid``: that key is an object id everywhere else in the log, and a seat
+    number arriving in it would read as some unrelated permanent to anything
+    that subscribes.
+    """
+    aura = state.objects.get(aura_oid)
+    if aura is None or not aura.on_battlefield or not state.is_alive(player):
+        return False
+    aura.attached_to_player = player
+    aura.attached_to = None
+    aura.last_attached_to = None
+    state.bump_chars()
+    fire(
+        state,
+        EventType.ATTACHED,
+        player=aura.controller,
+        source=aura_oid,
+        player_attached=player,
+    )
     return True
 
 
@@ -910,6 +1118,7 @@ def restrict_attack(
     defender: int,
     duration: str = "this_turn",
     source: int | None = None,
+    planeswalkers: bool = False,
 ) -> bool:
     """"``attacker`` can't attack ``defender``" for ``duration``.
 
@@ -927,6 +1136,13 @@ def restrict_attack(
     same opponent in the same combat impose one restriction, not two, and
     "can't attack" does not stack -- so a second copy would only make the
     eventual clear-up quadratic.
+
+    ``planeswalkers`` widens the pair to the defender's **planeswalkers** as
+    well as their seat, and it is part of the deduplication key on purpose: a
+    narrow restriction and a wide one over the same pair are not the same
+    prohibition, and folding them together would let a Ghostly-Prison-shaped
+    entry swallow "creatures can't attack this combat". See
+    :class:`structs.AttackRestriction`.
     """
     from .structs import ATTACK_RESTRICTION_DURATIONS, AttackRestriction
 
@@ -937,7 +1153,11 @@ def restrict_attack(
     if not state.is_alive(attacker) or not state.is_alive(defender):
         return False
     entry = AttackRestriction(
-        attacker=attacker, defender=defender, duration=duration, source=source
+        attacker=attacker,
+        defender=defender,
+        duration=duration,
+        planeswalkers=planeswalkers,
+        source=source,
     )
     if entry in state.attack_restrictions:
         return False
