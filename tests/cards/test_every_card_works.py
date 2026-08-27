@@ -34,8 +34,22 @@ EXPECTATIONS_PATH = Path(__file__).resolve().parent / "expectations.json"
 MANA_BASE = ["plains"] * 6 + ["island"] * 6 + ["swamp"] * 6 + ["mountain"] * 6 + ["forest"] * 6
 
 #: Things for targeted effects to point at.
+#:
+#: The opponent's creature is **legendary**, and inert -- a 2/2 with no abilities,
+#: exactly `t_bear` wearing a supertype. Commander Sofia Daguerre reads "destroy
+#: up to one target legendary permanent", and with no legendary on the board she
+#: was the only legal target for her own enters trigger: she destroyed herself
+#: and gate 4 rejected a permanent that ended in the graveyard. The card was
+#: never wrong.
+#:
+#: A swap rather than an addition, so both board sizes are unchanged and no
+#: expectation moves. Inert for the reason `verify.py`'s twin of this prop is:
+#: a legendary with an activated ability the opponent can afford suppresses the
+#: auto-pass, hands them a real priority window with the card under test still
+#: on the stack, and cards start failing gate 4 with "never left the stack".
+#: `t_flyer` keeps a *nonlegendary* creature on that board.
 OWN_BOARD = ["t_bear", "t_dork"]
-OPPONENT_BOARD = ["t_bear", "t_flyer", "sol_ring", "t_anthem", "forest", "island"]
+OPPONENT_BOARD = ["t_legend", "t_flyer", "sol_ring", "t_anthem", "forest", "island"]
 OWN_GRAVEYARD = ["t_bear", "t_dork", "t_flyer"]
 
 

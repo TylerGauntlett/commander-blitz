@@ -1,3 +1,113 @@
+## `gift` — a cast-time promise that costs nothing and names a seat — 702.164a
+
+### Overview
+
+Parting Gust: *"**Gift a tapped Fish** (You may promise an opponent a gift as you
+cast this spell. If you do, they create a tapped 1/1 blue Fish creature token
+before its other effects.) / Exile target nontoken creature. If the gift wasn't
+promised, return that card to the battlefield under its owner's control with a
++1/+1 counter on it at the beginning of the next end step."*
+
+The gap record (`data/authoring/gaps/parting_gust.json`) had already run the
+experiment and the finding is the whole argument for this change. `kicker` was
+the only free-standing optional cast-time flag an effect could read back, and it
+is wrong here twice:
+
+- **it is mana-only, and a gift is free.** `loader` refuses a kicker whose mana
+  value is 0 — verified, `kicker: "{0}"` raises `kicker '{0}' costs nothing` —
+  and the refusal is right: a kicker that costs nothing is one cast offered
+  twice. But 702.164a makes the promise a **601.2b choice**, made with the modes
+  and X, paid for with nothing;
+- **it is a bool, and a gift names a player.** Every key of `additional_cost`'s
+  `CostModel` is a payment the *caster* makes from their own side of the board,
+  and nothing in the cost language names a recipient at all.
+
+### What was measured, and why it mattered
+
+The near miss was not hypothetical. `additional_cost: {}` with
+`additional_optional: true` and a `cmp` on `additional_paid` **loads, and passes
+all six authoring gates, while the gift branch never runs once**:
+`_additional_ceiling` offers times 0 and 1 at the same price, and
+`verify._play_and_check` picks its cast line with `kicked=card.kicker is not
+None`, which is `False` for such a card — so the harness always took the times=0
+line and measured the half of the card that was going to work anyway.
+
+That is the shape of the requirement, not a footnote to it: **whatever flag
+legality can offer, the authoring harness has to be able to ask for**, or the
+mechanic inherits the same hole. `find_play` grew a `gifted` argument beside
+`kicked` and `multikicked`, and `_play_and_check` passes `card.gift is not None`
+— the identical argument kicker's line makes, because promised is the strictly
+larger claim. Gate 4 still casts it unpromised, so both branches are exercised.
+
+Proven rather than asserted: with the real Parting Gust and the expectation
+`{"opponent_battlefield_count": 6}`, the unpromised line leaves the opponent's
+board at 5 and the promised line at 6, so a gift that shipped inert fails gate 5.
+Aiming its `create_token` at `"you"` instead of at the promisee — the exact way
+this ships wrong — was run and does fail, with *"opponent battlefield is 5,
+expected 6"*.
+
+### The shape
+
+`gift` is a **string**: what is promised, as the printed noun phrase, because the
+residual gate compares it against the printed "Gift …" line and a card declaring
+`gift: "a card"` must not be able to claim a printed "Gift a tapped Fish".
+
+Legality offers one promised cast line **per opponent** at the printed price —
+emerge's shape ("one line per victim"), not kicker's bool — because
+"*an* opponent" is one seat and which one is a real choice with the game on it.
+`Action.gift_to` carries it, `StackItem.gift_to` carries it onto the stack, and
+`GameObject.cast_gift_to` is written before `spell_effects` run so it outlives
+the spell, the way `cast_kicked` and `cast_overloaded` do.
+
+`each_opponent` is the near miss and is wrong in the way that is hardest to
+notice: it is three times the printed card at a pod and *identical* to it in a
+two-player game.
+
+The card reads it two ways, and the two are different questions:
+
+| | |
+|---|---|
+| `{"gift_promised": true/false}` | "**if the gift wasn't promised**, return that card…" — a condition beside `kicked`, `evoked` and `overloaded` |
+| `"gift_recipient"` | "**they** create a tapped 1/1 blue Fish" — a player spec, resolving to **nobody** when no promise was made |
+
+The second is what makes the reward conditional with no `if` around it:
+`op_create_token` loops `select_players` over its `controller`, and an empty list
+creates nothing. It is also why the loader's half-a-gift guard accepts *either*
+spelling as a reader — a card whose whole gift line is "gift a card (they draw a
+card)" branches on nothing and writes only the player spec, and refusing it would
+refuse the simplest printed shape the mechanic has.
+
+### No new decision, no new event, no server or frontend change
+
+The promise is a **cast variant**, so it rides on the action legality already
+builds; there is no `DecisionKind` and nothing to auto-answer in `verify._answer`.
+Game state is serialized generically and `LegalActionDTO.kind` is a bare string,
+so the extra cast line reaches the client as data it already renders.
+
+### Also fixed on the way
+
+`create_token`'s `controller` was never validated as a player spec, although
+`op_create_token` resolves it through `select_players`. A misspelling was the
+quietest error the op had: a bad *string* raises `DslError` mid-resolution, in
+the middle of a game rather than at load, and every mapping form fails silently
+by resolving to nobody — a card that prints "they create a token" and creates
+none. It is checked at load time now, with the guards for `token` and
+`attacking`.
+
+### Coverage
+
+`tests/unit/test_gift.py`, and `t_gift` / `t_gift_creature` in
+`tests/data/testing.cards.json`. The boundaries it holds down are: both lines are
+offered and the unpromised one is first; the promised line costs exactly the
+printed cost; one line per opponent at a three-player pod and only the promised
+seat receives; the token arrives **tapped** (measured on the opponent's turn,
+because the caster's own turn rolls through an untap step before priority comes
+back); the unpromised line creates nothing and schedules an `end_step` return
+that arrives with its `+1/+1` counter under its owner's control; the promised
+line schedules nothing at all and the exiled creature never comes back; a gift
+permanent still knows who was promised after the `StackItem` is gone; `find_play`
+can ask for either line; and the loader refuses half a gift in four directions.
+
 ## An Aura that enchants a **player** — 303.4a / 702.5b / 704.5n
 
 ### Overview
