@@ -36,6 +36,10 @@ RECORDING_OPS = frozenset(
         "gain_control",
         "join_forces",
         "reveal",
+        #: The one recorder whose binding is not a set of objects: `roll_dice`
+        #: writes the faces it threw, read back by `{"rolled": …}` rather than
+        #: by `{"count": {"binding": …}}`. See `ops_cards.op_roll_dice`.
+        "roll_dice",
         "sacrifice",
         "search_library",
         "search_zones",

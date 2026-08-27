@@ -217,6 +217,20 @@ class EventType:
     MANA_SPENT = "mana_spent"
     MANA_EMPTIED = "mana_emptied"
 
+    # randomness
+    #: Dice were rolled (rule 705.1) -- one event per `roll_dice`, however many
+    #: dice it threw, because "roll X six-sided dice" is one act and the printed
+    #: cards that care say "whenever you roll **one or more** dice".
+    #:
+    #: ``data["results"]`` is every face in the order it came up and
+    #: ``data["sides"]`` the kind of die, so the log line can say what was
+    #: rolled. Nothing else in the log could: a roll moves no card, changes no
+    #: characteristic and touches no zone, so without this the Treasures a
+    #: Bobblehead makes appear out of nowhere and the number of them looks
+    #: arbitrary. Not emitted for a roll of **zero** dice -- "roll X dice" with
+    #: X at 0 rolls nothing, and a line saying so would be noise.
+    DICE_ROLLED = "dice_rolled"
+
     # game outcome
     PLAYER_LOST = "player_lost"
     GAME_OVER = "game_over"

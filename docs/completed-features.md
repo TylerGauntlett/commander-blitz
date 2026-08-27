@@ -1,3 +1,207 @@
+## `attacking` names a player — "a token that's attacking **that player**"
+
+### Overview
+
+Ainok Strike Leader: *"Whenever you attack with this creature and/or your
+commander, **for each opponent**, create a 1/1 red Goblin creature token that's
+tapped and **attacking that player**."* Combat Calligrapher: *"Whenever a player
+attacks one of your opponents, that attacking player creates a tapped 2/1 white
+and black Inkling creature token with flying that's **attacking that
+opponent**."*
+
+Two gap records, filed independently, with the same diagnosis: `attacking` was a
+bare boolean, resolved by `ops_board._attack_target` as
+`combat.attackers.get(ctx.source_oid)` — the one player the *source* is already
+attacking. That is exactly right for the mobilize-shaped cards it was written
+for, and silently wrong for both of these:
+
+- Inside `for_each_player` the boolean has no idea the loop moved. At a pod all
+  three of Ainok's tokens would be declared against the single seat the Ainok
+  itself is swinging at, so "for each opponent" would degenerate into "three
+  tokens at one player" — a different and better card.
+- Combat Calligrapher never attacks. Its trigger fires off somebody else's
+  declaration, so the lookup returns `None` and the token arrives tapped and
+  attacking **nobody**, dropping the whole clause while still looking
+  implemented.
+
+There was no lossy approximation to refuse, because there was no way to write
+the sentence at all: `primitives.create_token` has always taken
+`attacking: int | None`, and there was simply no key on the op to pass a player
+through.
+
+### Tier: A — one key widened, no new op
+
+`attacking` now also takes a **player spec**, resolved through
+`select_players` like every other one, so the loop's `each_player`, a trigger's
+`defender`, `controller_of` and a target all work with no new vocabulary. The
+boolean spelling is untouched: every shipped card uses it, and `docs/card-dsl.md`
+documents its contract.
+
+No new decision kind, event, continuous effect or API field. `copy_permanent`
+and `put_onto_battlefield` take the same key through the same helper and were
+widened with it.
+
+### What had to be refused
+
+A creature attacks exactly one player, so a spec naming several has no answer
+and picking one would ship a card that reads like a pod sweep and hits one seat.
+The plural **names** are a load error — `"opponent"` and `"each_opponent"`
+included, because a pod is what makes them plural and a two-player game hides it
+— and the one shape load time cannot see, a target that chose two players,
+raises when it resolves. A bare seat number is refused as well: no printed card
+names a seat, and `0` is indistinguishable from `false`.
+
+Naming **nobody** is not an error. An unbound binding or a player who has left
+is the boolean's own "there is nobody to join", and the permanent simply arrives
+(tapped, if asked).
+
+### The half that was not in either gap record
+
+Being attacked is what makes a player a defending player, and `finish_attackers`
+fills `pending_blockers` from the *declaration*. Ainok's third opponent — a seat
+nobody declared against — would have been attacked by a creature it was never
+asked to block (509.1). `_offer_blocks_to` inserts that seat into the queue in
+turn order, and only **before** the declare blockers step, which is the window
+every card that says this resolves in: attack triggers go on the stack during
+the declare attackers step. Once the step is walking its queue, `game.apply`
+pops the head as each declaration is answered, so writing into it would ask the
+wrong seat; and a permanent that arrives attacking after blocks are declared is
+simply unblocked. That is 509.1 read the other way, and it is what stops this
+from becoming a second block declaration.
+
+508.4 is unchanged and asserted: a permanent put onto the battlefield attacking
+was never *declared* an attacker, so it triggers nothing that fires on
+attacking — which is the real rule and also what keeps "whenever this attacks,
+make a token that is attacking" finite.
+
+### Evidence
+
+`tests/unit/test_token_attacking_player.py` — 30 tests. Both printed sentences
+run as real cards (`t_pod_marshal`, `t_ink_scribe`) through a four-player
+combat: one token per opponent, each at its own seat; the Marshal makes them
+while staying home; the Scribe points its token at a defender while attacking
+nothing; every newly attacked seat is asked to declare blockers; and the damage
+lands on the seats that were named.
+
+## `win_game` — the first op that reaches a game result
+
+### Overview
+
+Halo Fountain: *"{W}{W}{W}{W}{W}, {T}, Untap fifteen tapped creatures you
+control: **You win the game.**"* Luck Bobblehead: *"…If you rolled 6 exactly
+seven times, **you win the game.**"*
+
+Two gap records, one sentence, and the same diagnosis in both: `sba.py` is the
+only writer of `state.winners`, and it derives them from who is still `alive()`
+after state-based actions. Winning was a *consequence* of everybody else dying,
+and there was no entry point for a card that declares a winner while both seats
+sit at 40 life.
+
+Unusually for a gap, there was no approximation to refuse. `damage` and
+`lose_life` reach a game over through the life total — preventable, replaceable,
+and nowhere near 40 points from one activation of a Fountain — and `add_poison`
+is the same route with a different track. `set_flag` writes a boolean that only a
+`has_flag` condition reads and changes nothing about the outcome. So the third
+line of Halo Fountain had no expressible version at all, not merely a lossy one.
+
+### Tier: A, and the whole design is one question
+
+A new op composing existing primitives. No decision, no continuous effect, no
+event, no API field — `GAME_OVER` already existed and the frontend already
+narrates it.
+
+The only real question is **where the result is written**, and the answer is
+"not here". `Game.over`, `Game.winners`, `state.result`, the `GAME_OVER` event
+and both serializers in `serialize.py` all read what `check_game_over` wrote. An
+op that assigned `state.winners` itself would produce a game that was over, with
+a winner, and:
+
+- no `PLAYER_LOST` event for the seat that lost, so the log would never say how
+  the game ended;
+- that seat's permanents still on the battlefield, still counted by every
+  selector;
+- `priority_idx` still pointing at somebody, and a `pending_decision` still
+  hanging off a game nobody can act in.
+
+All three serialize perfectly and replay perfectly. They are just wrong.
+
+### The shape: 104.2a, which the pod already had
+
+`sba.declare_win(state, pid)` eliminates every **other** player — the same
+`_eliminate` a lethal life total reaches — and then calls `check_game_over`,
+which finds one seat alive and concludes for itself. That is rule 104.2a, *"a
+player still in the game wins the game if that player's opponents have all left
+the game"*, and it is why the multiplayer case needs no second branch: at four
+players the sentence removes three seats rather than one, which is the shape the
+rule was already written in. In a duel it is the same statement read the other
+way round — the player who wins is the other one losing.
+
+Two no-ops, both deliberate:
+
+- **A game already over is not re-decided.** Two simultaneous wins leave the
+  first one standing rather than eliminating everybody and ending in a draw.
+- **A player who has already left cannot win.** There is nobody to eliminate on
+  their behalf, and doing it anyway would empty the table — `check_game_over`
+  finding nobody alive calls that a `draw`, which is a *worse* answer than
+  ignoring the sentence.
+
+### `opponent_won` is its own `LossReason`
+
+The argument `poison` made, one rung further out: a seat eliminated at 40 life
+did not run out of life, did not deck itself and did not concede, and
+`labels.ts` prints the reason to that player. The frontend needed no change —
+`lossReason` falls back to the raw string with underscores stripped, so the new
+value reads "opponent won" until somebody writes a nicer phrase for it.
+
+### The loader guard, which is the one that matters
+
+`{"op": "win_game", "condition": …}` is a load error. A top-level `condition` is
+read by `if` and by `may` and by nobody else, so written on this op it would be
+accepted, ignored, and the card would win the game every time it resolved.
+
+That is not a hypothetical mis-authoring: it is the *first* way anybody will try
+to write Luck Bobblehead's line, because the condition is where the card's entire
+cost lives. Of all the silent misreads the load-time checks exist to catch, this
+is the most expensive one available, and the fix the error points at is one more
+line of JSON.
+
+### What was deliberately left out
+
+- **No `lose_game` op.** Losing is the mechanism here rather than a second op —
+  "you win the game" *is* every opponent losing — so the engine half already
+  exists and registering the op is two lines whenever a card wants it. Door to
+  Nothingness and Demonic Pact are the family; neither is in the pool, and a
+  vocabulary item with no card behind it is the thing these checks exist to keep
+  out.
+- **No "can't win the game" / "can't lose the game."** Platinum Angel and Abyssal
+  Persecutor are a continuous prohibition over this whole subsystem, not a clause
+  of this op.
+- **The pod's real ending.** By 800.4 a player who wins a multiplayer game leaves
+  it and the survivors play on; here the game ends for everybody. Recorded in
+  `docs/rules-coverage.md`.
+
+### Test
+
+`tests/unit/test_win_game.py`. The claim under test is not "the game ends" but
+*how* — that the result and the board still agree afterwards. Twenty-five cases
+across five claims: the win happens without a point of life moving; it goes
+through `check_game_over` (the `PLAYER_LOST`, the swept permanents, cleared
+priority, exactly one `GAME_OVER`, the serialized view, no legal actions); it is
+not re-decided by a later state-based pass or a second win; the pod boundary,
+where three players is two eliminations; and the loader guard, including the
+`if`-wrapped shape the error message points at.
+
+### What it unblocks
+
+Halo Fountain's third line and Luck Bobblehead's, plus the alternate-win family
+waiting on the same subsystem: Thassa's Oracle, Approach of the Second Sun,
+Laboratory Maniac, Coalition Victory, Test of Endurance, Felidar Sovereign,
+Mechanized Production. Both witness cards need a second capability each — an
+`untap_permanents` cost and a dice-rolling op — so neither is authored by this
+change alone.
+
+---
+
 ## `abilities_of` — what a permanent actually has
 
 ### Overview
@@ -7488,6 +7692,126 @@ reverse of rule 601.2b, which is why the shared `optional: true` idiom in
 
 See `docs/rules-coverage.md`, `docs/card-dsl.md`, `docs/api.md` and
 `docs/bugs.md`.
+
+---
+
+
+## `roll_dice` — one roll, read two ways
+
+### Overview
+
+Rule 705.1. Luck Bobblehead: "{1}, {T}: Roll X six-sided dice, where X is the
+number of Bobbleheads you control. Create a tapped Treasure token **for each
+even result**. If you rolled **6 exactly seven times**, you win the game."
+
+Nothing in `ops` produced a *number* at all. `clash` is the only other
+randomness-consuming op and yields a win/lose boolean; the `random` selector key
+picks objects and evaluates to a set; `for_each` and `repeat` iterate over things
+that already exist. So two pieces were missing: an op that rolls, and a value
+leaf that reads the roll back.
+
+### Tier: A, plus one value leaf and one event
+
+A new op composing existing primitives — `state.rng`, `evaluate_value` and the
+`as`-binding convention `create_token`, `sacrifice`, `exile` and `reveal` already
+share. No new decision kind (the op asks nobody anything and is not even a
+generator), and no server or API change. The one Tier D piece is
+`EventType.DICE_ROLLED`, with its two frontend halves.
+
+### The design question: why the results are a binding
+
+The card is two sentences about **one** roll. The Treasures count the even
+results; the win condition counts the sixes; and the sixes are a *subset* of the
+evens the card just paid out for. Two `roll_dice` ops — one per sentence — would
+decorrelate the halves, giving a card that is right on average and wrong every
+game: a hand that rolled seven 6s would create its Treasures off some other roll
+entirely.
+
+So the op records what it threw, and the reads are pure functions of that record:
+
+```jsonc
+{ "op": "roll_dice", "count": { "count": { …Bobbleheads… } }, "sides": 6, "as": "roll" },
+{ "op": "create_token", "token": "treasure_token", "tapped": true,
+  "amount": { "rolled": { "binding": "roll", "parity": "even" } } },
+{ "op": "if",
+  "condition": { "cmp": "=", "right": { "const": 7 },
+                 "left": { "rolled": { "binding": "roll", "face": 6 } } },
+  "then": [ { "op": "win_game", "player": "you" } ] }
+```
+
+`{"rolled": …}` bare is how many dice were thrown; `parity` and `face` narrow it
+to how many results satisfy that predicate. At most one predicate per read, which
+is a load error rather than a silent drop.
+
+### A mapping, not a list of faces
+
+The binding is `{"results": [...], "sides": N}`. Every other recording op writes
+a list of **oids**, and `selectors._bound_oids` reads any bound list as exactly
+that — so a bare `[6, 3, 2]` would have made `{"count": {"binding": "roll"}}`
+answer 3 by luck and `{"objects": {"binding": "roll"}}` name objects 6, 3 and 2:
+three real permanents with nothing to do with the roll, destroyed by the next op
+along. A mapping with no `oid` key reads back through the same path as *no
+objects at all*, which is the truth — rolling a die creates nothing to point at.
+
+### `count` is a value, `sides` is a literal
+
+X is a board count that moves between activations, so it is an ordinary value
+expression. The die is printed on the card and never varies; written as a value
+expression it would be accepted, stringified and rolled as a d0, so the loader
+requires a plain integer of at least 2.
+
+### Zero dice
+
+"X is the number of Bobbleheads you control" is 0 on an empty board. The op still
+writes the (empty) binding — without that, the reads after it would answer off
+whatever the *previous* resolution left behind. No event is emitted for a roll of
+nothing, because nothing was rolled.
+
+### Determinism
+
+Every face comes from `state.rng.randint(1, sides)`, the engine's one seeded
+source. `tests/unit/test_determinism_hygiene.py` scans the source for direct
+`random` use and would fail otherwise; the test file asserts that the faces match
+a reference `Rng` advanced the same number of times, so the roll is pinned to the
+stream rather than merely to "some RNG".
+
+### What the loader refuses
+
+| | |
+|---|---|
+| `roll_dice` with no `as` | the faces land in a binding nothing can name, and every `{"rolled": …}` on the card reads 0 |
+| `sides` that is not an integer ≥ 2 | a d0, silently |
+| a `roll_dice` no `{"rolled": …}` reads | a roll is never the effect |
+| a `{"rolled": …}` with no roll behind it | reads 0 for ever |
+| `{"rolled": …}` with no `binding` | the same silent zero |
+| an unknown key, e.g. `{"even": true}` | falls through to the count of *dice*, so a Bobblehead would hand out a Treasure per die |
+| a `parity` that is not `even`/`odd` | same |
+| `face` and `parity` together | `face` wins in the evaluator and the other half is dropped |
+
+Both card-level checks are the shape `clash` already had — two halves, each of
+which loads cleanly and does nothing on its own.
+
+### What it does not do
+
+"Whenever you roll one or more dice" triggers (Barbarian Class, the Fallout and
+AFR roll-a-die block): the `dice_rolled` event exists and carries `results` and
+`sides`, and nothing subscribes to it — a name in `TRIGGER_EVENTS` away, plus a
+decision about which bindings a trigger's effects can read. And the AFR d20
+outcome tables ("1—9 … 10—19 … 20"), which are a banding construct on top of a
+roll and their own capability.
+
+### Test
+
+`tests/unit/test_dice_rolling.py` — 39 tests. The claim classes are
+`TestOneRollReadTwoWays` (the evens and the sixes come off the same faces; a read
+draws no randomness; every face is counted exactly once),
+`TestTheBindingIsFacesNotObjects` (the trap above, asserted from both directions),
+`TestZeroDice`, `TestRerolling`, `TestDeterminism`, `TestTheEvent`,
+`TestThroughARealCard` (`t_bobblehead`, the ability activated with the RNG pinned,
+so the Treasures are checked against the faces that actually came up) and
+`TestTheLoaderGuards`.
+
+See `docs/card-dsl.md` ("Rolling dice") and `docs/rules-coverage.md`.
 
 ---
 

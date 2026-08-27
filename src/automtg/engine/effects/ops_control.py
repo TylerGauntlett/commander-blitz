@@ -137,6 +137,58 @@ def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.state.bump_chars()
 
 
+#: The five colours a "choose a color" prompt offers: ``(letter, label)`` in
+#: WUBRG order.
+#:
+#: A fixed list, not a survey of the pool the way `_creature_types` is. There
+#: are exactly five colours and every one of them is always a legal answer, so
+#: there is nothing for the board to narrow -- and the order is the printed one,
+#: which keeps a replay picking the same colour from the same index.
+COLOR_CHOICES: tuple[tuple[str, str], ...] = (
+    ("W", "White"),
+    ("U", "Blue"),
+    ("B", "Black"),
+    ("R", "Red"),
+    ("G", "Green"),
+)
+
+
+@register("choose_color")
+def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"As this artifact enters, choose a color." Heraldic Banner.
+
+    The colour twin of :func:`op_choose_type`, and deliberately the same shape
+    down to the two decisions below. Stored on the permanent as a colour letter
+    and read back by its own abilities through ``{"chosen_color_of": "self"}``,
+    which stands wherever a literal colour letter does: a static filter's
+    ``colors``, an ``add_mana``'s ``mana``, and ``grant_protection``'s
+    ``from_colors``.
+
+    **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
+    labels" and hands back the index, which is exactly this question -- so
+    legality's `_choice_actions`, `game.apply` and the authoring verifier's
+    auto-answer table all keep working unchanged. A `CHOOSE_COLOR` kind would
+    have been the same decision wearing a different name, and it would have had
+    to be taught to every seat that can already answer a modal spell.
+
+    *Divergence, recorded in `rules-coverage.md` beside `choose_type`'s*: the
+    printed line is "**as** this enters", a replacement that cannot be responded
+    to. `zones` applies enter-replacements synchronously and cannot stop to ask,
+    so this is a `self_enters` trigger instead and the colour is chosen a moment
+    after the permanent arrives rather than as it does.
+    """
+    prompt = str(spec.get("prompt") or "Choose a color")
+    picked = yield from ask_mode(
+        ctx, prompt, [label for _, label in COLOR_CHOICES], ctx.controller
+    )
+    if not picked:
+        return
+    obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if obj is not None:
+        obj.chosen_color = COLOR_CHOICES[picked[0]][0]
+        ctx.state.bump_chars()
+
+
 def _creature_types(ctx: EffectContext) -> set[str]:
     """Every creature subtype the card pool actually contains."""
     found: set[str] = set()

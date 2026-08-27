@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..enums import Zone
+from ..enums import Step, Zone
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..primitives import (
@@ -34,7 +34,13 @@ from ..structs import TempEffect
 from ..zones import destroy, exile, move_object, sacrifice
 from . import register
 from .context import EffectContext
-from .selectors import ZONE_NAMES, choose_objects, pick_from_pool, resolve_pool
+from .selectors import (
+    ZONE_NAMES,
+    choose_objects,
+    pick_from_pool,
+    resolve_pool,
+    select_players,
+)
 from .values import evaluate_value
 
 
@@ -232,7 +238,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     """
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
-    attacking = _attack_defender(ctx) if spec.get("attacking") else None
+    attacking = _attacking_player(ctx, spec, _attack_defender)
     counters = spec.get("counters") or {}
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -257,6 +263,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
         if attacking is not None and ctx.state.combat is not None:
             ctx.state.combat.attackers[oid] = attacking
+            _offer_blocks_to(ctx, attacking)
 
 
 @register("create_token")
@@ -270,10 +277,14 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     turn, so a second copy of the same card would exile the wrong permanent.
     The oids `create_token` returns are the only thing that identifies them, and
     they were being discarded.
+
+    ``attacking`` is either ``true`` -- "wherever the source is already pointed"
+    -- or a player spec naming the seat, which is "attacking **that player**".
+    See `_attacking_player`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
-    attacking = _attack_target(ctx) if spec.get("attacking") else None
+    attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for pid in _players(ctx, spec.get("controller", "you")):
         made.extend(
@@ -286,6 +297,8 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 attacking=attacking,
             )
         )
+    if made and attacking is not None:
+        _offer_blocks_to(ctx, attacking)
     if name := spec.get("as"):
         # Written after the op, unlike `sacrifice`'s, which is written before:
         # that one records a *choice* the player made and this one records
@@ -326,6 +339,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     controllers = _players(ctx, spec.get("controller", "you"))
     overrides = spec.get("except_") or spec.get("except")
+    attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for oid in oids:
         source = ctx.state.objects.get(oid)
@@ -339,12 +353,89 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                     pid,
                     amount,
                     tapped=bool(spec.get("tapped")),
-                    attacking=_attack_target(ctx) if spec.get("attacking") else None,
+                    attacking=attacking,
                     overrides=dict(overrides) if overrides else None,
                 )
             )
+    if made and attacking is not None:
+        _offer_blocks_to(ctx, attacking)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = made
+
+
+def _attacking_player(ctx: EffectContext, spec: Mapping[str, Any], fallback) -> int | None:
+    """Whom a permanent arriving attacking should be attacking.
+
+    ``attacking: true`` is the original spelling and still means "wherever the
+    source is already pointed" -- ``fallback`` is `_attack_target` or
+    `_attack_defender`, whichever this op has always used. Every shipped card
+    uses that form and none of them change.
+
+    Anything else is a **player spec**, which is the case the boolean cannot
+    say. Ainok Strike Leader's "for each opponent, create a token attacking
+    **that player**" names the seat a `for_each_player` loop is on
+    (``{"binding": "each_player"}``); Combat Calligrapher's "attacking that
+    opponent" names the trigger's ``defender`` binding, on a source that is
+    never itself attacking. Under the boolean both would resolve to the one
+    player the *source* attacks -- the same seat for all three tokens at a pod,
+    and nobody at all when the source is not an attacker, which arrives tapped
+    and attacking no-one while looking implemented.
+
+    A creature attacks exactly one player, so a spec that names several is an
+    authoring error rather than something to pick from. The plural *names* are
+    refused at load time (`loader._validate_effect`); this catches the one shape
+    load time cannot see, a multi-ref target. Naming nobody -- an unbound
+    binding, a player who has left -- is the boolean's own "nobody to join": the
+    permanent simply arrives.
+    """
+    who = spec.get("attacking")
+    if who is None or who is False:
+        return None
+    if who is True:
+        return fallback(ctx)
+    named = select_players(ctx, who)
+    if len(named) > 1:
+        raise DslError(
+            f"attacking: {who!r} names {len(named)} players; "
+            f"a creature attacks exactly one"
+        )
+    if not named or not ctx.state.is_alive(named[0]):
+        return None
+    return named[0]
+
+
+def _offer_blocks_to(ctx: EffectContext, defender: int) -> None:
+    """Make sure a newly attacked player still gets to declare blockers.
+
+    `combat.finish_attackers` fills `pending_blockers` from the declaration, so
+    it lists only the players who were attacked *then*. A token created
+    attacking a player nobody declared against -- Ainok Strike Leader's third
+    opponent, who was not part of the swing -- would otherwise be attacked by a
+    creature it is never asked to block (509.1).
+
+    Only **before** the declare blockers step, which is the window every card
+    that says this resolves in: attack triggers go on the stack during the
+    declare attackers step. Once the step has started the queue is being walked
+    -- `game.apply` pops its head as each declaration is answered -- so writing
+    into it would ask the wrong seat to block; and a permanent that arrives
+    attacking after blocks are declared is simply unblocked, which is 509.1 read
+    the other way and what stops this from becoming a second declaration.
+    """
+    combat = ctx.state.combat
+    if combat is None or defender in combat.pending_blockers:
+        return
+    if ctx.state.step >= Step.DECLARE_BLOCKERS:
+        return
+    order = ctx.state.turn_order()
+    if defender not in order:
+        return
+    seat = order.index(defender)
+    at = len(combat.pending_blockers)
+    for i, pid in enumerate(combat.pending_blockers):
+        if pid in order and order.index(pid) > seat:
+            at = i
+            break
+    combat.pending_blockers.insert(at, defender)
 
 
 def _attack_defender(ctx: EffectContext) -> int | None:
@@ -903,8 +994,16 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
     already returns a flat set of qualities: three colours is three entries and
     nothing had to learn a new shape.
     """
+    from ..characteristics import resolve_chosen_color_list
+
+    # "…protection from the color of your choice" -- Brave the Elements, whose
+    # colour is named by a `choose_color` earlier in the same effect list and
+    # read back off the spell's own object. The substitution is the leaf the
+    # anthem and the mana ability use; an unmade choice drops out, so the
+    # sentence grants protection from nothing rather than from everything.
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     qualities = [
-        *(spec.get("from_colors") or ()),
+        *resolve_chosen_color_list(spec.get("from_colors"), source),
         *(spec.get("from_types") or ()),
         *(spec.get("from_subtypes") or ()),
     ]

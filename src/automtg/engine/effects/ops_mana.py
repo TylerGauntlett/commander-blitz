@@ -13,14 +13,42 @@ from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
 
+def mana_string(ctx: EffectContext, spec: Mapping[str, Any]) -> str:
+    """The symbols this ``add_mana`` produces, as a production string.
+
+    Almost always the literal the card printed. The one exception is
+    ``{"mana": {"chosen_color_of": "self"}}`` -- Heraldic Banner's "add one mana
+    of the chosen color" -- where the symbol is a question about the source
+    permanent and cannot be known until it has been asked.
+
+    A source that has chosen no colour yet produces **nothing**, the same
+    match-nothing default the chosen colour has everywhere else. It only looks:
+    no decision is asked here, which is what keeps an ``add_mana`` legal inside
+    a mana ability (605.1a).
+
+    Note that a real *mana ability* never reaches this function at all --
+    `costs.activate_mana_ability` adds the mana from `costs.mana_options_of`
+    rather than by running the effect. This is the path for the other
+    ``add_mana``s: a triggered ability, or a spell.
+    """
+    mana = spec.get("mana", "")
+    if not isinstance(mana, Mapping):
+        return str(mana)
+    from ..characteristics import resolve_chosen_color_list
+
+    source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    return "".join(f"{{{c}}}" for c in resolve_chosen_color_list([mana], source))
+
+
 @register("add_mana")
 def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
-    produced = parse_mana_production(str(spec.get("mana", "")))
+    symbols = mana_string(ctx, spec)
+    if not symbols:
+        return
+    produced = parse_mana_production(symbols)
     for pid in select_players(ctx, spec.get("player", "you")):
         ctx.state.players[pid].mana_pool.add_tuple(produced, source=ctx.source_oid)
-        ctx.state.emit(
-            EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=spec.get("mana", "")
-        )
+        ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
 
 
 @register("add_mana_per")

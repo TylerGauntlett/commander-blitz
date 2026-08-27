@@ -867,6 +867,60 @@ def resolve_chosen_subtypes(
     return {**selector, "subtypes": out}
 
 
+def resolve_chosen_color_list(entries: Any, source: GameObject | None) -> list[str]:
+    """Literal colour letters, with ``{"chosen_color_of": "self"}`` substituted.
+
+    The leaf-level half of :func:`resolve_chosen_colors`, split out because two
+    readers want the plain list and not a selector: ``op_add_mana``, which turns
+    it into a production string, and ``op_grant_protection``, whose
+    ``from_colors`` is a list of qualities rather than a filter.
+
+    A source that has chosen nothing yet contributes **nothing** -- the entry is
+    dropped, so "protection from the chosen color" before a colour is named is
+    protection from nothing. The selector wrapper turns that emptiness into a
+    match-nothing sentinel instead, because an empty ``colors`` key in a filter
+    means "no colour test" and would match everything.
+    """
+    out: list[str] = []
+    for entry in entries or ():
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_color_of") != "self":
+            continue
+        chosen = source.chosen_color if source is not None else None
+        if chosen is not None:
+            out.append(chosen)
+    return out
+
+
+def resolve_chosen_colors(
+    selector: Mapping[str, Any], source: GameObject | None
+) -> Mapping[str, Any]:
+    """Turn ``[{"chosen_color_of": "self"}]`` into the colour that was chosen.
+
+    The exact counterpart of :func:`resolve_chosen_subtypes`, one key over.
+    Heraldic Banner's "creatures you control **of the chosen color** get +1/+0"
+    is a static filter whose ``colors`` is a plain list of literal letters
+    everywhere else, so the substitution happens wherever a filter is about to
+    be matched rather than at load time -- the choice does not exist until the
+    permanent is on the battlefield.
+
+    Kept as a second function rather than folded into its subtype twin so that
+    the four callers of that one keep their name honest, and because the two
+    substitutions are independent: a card may name a type, a colour, or both.
+
+    A source that has chosen nothing yet matches **nothing**, which is right for
+    the same reason it is right there: an anthem for "the chosen color" before a
+    colour is chosen should pump nobody, not everybody.
+    """
+    wanted = selector.get("colors")
+    if not wanted or not any(isinstance(c, Mapping) for c in wanted):
+        return selector
+    out = resolve_chosen_color_list(wanted, source)
+    return {**selector, "colors": out or ["\0none"]}
+
+
 def _matches_printed(
     card: CardDef, selector: Mapping[str, Any], added_subtypes: tuple[str, ...] = ()
 ) -> bool:
@@ -930,7 +984,7 @@ def _matches(
         return False
     if not obj.on_battlefield:
         return False
-    selector = resolve_chosen_subtypes(selector, source)
+    selector = resolve_chosen_colors(resolve_chosen_subtypes(selector, source), source)
     card = state.card_of(obj)
 
     if selector.get("exclude_self") and obj.oid == source.oid:
@@ -1434,7 +1488,8 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
         # choice, and this loop has had it all along -- `_battlefield_statics`
         # yields the source beside the static, and only `_matches_printed`'s
         # signature (a printed card, no object) suggested otherwise.
-        if not _matches_printed(card, resolve_chosen_subtypes(filt, source_obj)):
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if not _matches_printed(card, resolved):
             continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total

@@ -377,6 +377,21 @@ class GameObject:
     #: again.
     chosen_type: str | None = None
 
+    #: "As this artifact enters, choose a color." Heraldic Banner. The colour
+    #: letter (``"W"``…``"G"``) this permanent's controller named, read back by
+    #: its own abilities through ``{"chosen_color_of": "self"}``.
+    #:
+    #: A separate slot rather than a second use of ``chosen_type``, because a
+    #: card may print both questions and because a colour and a creature type
+    #: are read by different code -- ``colors`` in a static filter and
+    #: ``mana_options_of`` for the mana ability, neither of which would know
+    #: what to do with a subtype name sitting in the same field.
+    #:
+    #: Reset with the rest of the battlefield state, for the same reason
+    #: ``chosen_type`` is: a permanent that leaves and comes back is a new
+    #: object as far as the rules are concerned, and chooses again.
+    chosen_color: str | None = None
+
     #: "…a token that's a copy of it, **except** it's a white Zombie Angel with
     #: no mana cost." Embalm and eternalize.
     #:
@@ -466,6 +481,7 @@ class GameObject:
         self.skip_next_untap = False
         self.exiled_by = None
         self.chosen_type = None
+        self.chosen_color = None
         self.added_subtypes = ()
         self.transformed = False
         # A permanent that left the battlefield is no longer a pile: the cards

@@ -742,6 +742,92 @@ def op_clash(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+#: What `roll_dice` writes under its ``as`` name, and what `{"rolled": …}` reads
+#: back: ``{"results": [face, …], "sides": 6}``.
+#:
+#: A **mapping** rather than the bare list of faces every other recording op
+#: writes, and the reason is not taste. `selectors._bound_oids` reads any bound
+#: list as a list of **oids**, so `[6, 3, 2]` would make
+#: `{"count": {"binding": "roll"}}` answer 3 by luck and
+#: `{"objects": {"binding": "roll"}}` name objects 6, 3 and 2 -- three
+#: permanents that have nothing to do with the roll, silently destroyed by the
+#: next op along. A mapping with no ``oid`` key reads back through the same path
+#: as *no objects at all*, which is the truth: rolling a die creates nothing to
+#: point at.
+ROLL_RESULTS = "results"
+ROLL_SIDES = "sides"
+
+#: The default die. Rule 705.1 does not privilege one, but every card in the
+#: pool that rolls says "six-sided", so a missing ``sides`` is that and not a
+#: guess.
+DEFAULT_SIDES = 6
+
+
+@register("roll_dice")
+def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 705.1 -- roll dice, and write down every face that came up.
+
+    "Roll X six-sided dice, where X is the number of Bobbleheads you control.
+    Create a tapped Treasure token for each even result. If you rolled 6 exactly
+    seven times, you win the game." -- Luck Bobblehead.
+
+    The op is the roll and **only** the roll. What makes it usable is that it
+    records its results under an ``as`` name, the way `create_token` records the
+    oids it made and `sacrifice` records what it consumed, so the two sentences
+    after it are two *reads of one roll* rather than two rolls::
+
+        {"op": "roll_dice", "count": {"count": {...Bobbleheads...}}, "as": "roll"}
+        {"op": "create_token", "token": "treasure_token", "tapped": true,
+         "amount": {"rolled": {"binding": "roll", "parity": "even"}}}
+        {"op": "if",
+         "condition": {"cmp": "=", "right": {"const": 7},
+                       "left": {"rolled": {"binding": "roll", "face": 6}}},
+         "then": [...]}
+
+    Rolling twice -- once to count the evens and once to count the sixes --
+    would be a different and much worse card: on six dice the printed one makes
+    a Treasure for every even *it actually rolled*, and the sixes it counts are
+    a subset of them. Two rolls decorrelate the halves, so a hand that rolled
+    seven 6s would create Treasures off some other roll entirely. That is the
+    whole reason the binding exists rather than a `clash`-style boolean.
+
+    ``count`` is a value expression and not a literal, because X here is a board
+    count that changes between activations; ``sides`` is a literal, because no
+    printed card rolls a die whose size it does not name.
+
+    Determinism: the faces come from ``state.rng``, the engine's single seeded
+    source, so a replay of the same seed and action tape rolls the same dice.
+    Nothing in the package may call :mod:`random` directly.
+
+    **Zero dice is a real case**, not an edge one: "X is the number of
+    Bobbleheads you control" is 0 on an empty board, and the op must still write
+    an (empty) binding so the reads after it answer 0 rather than reading
+    whatever a previous resolution left behind. No event is emitted for it --
+    nothing was rolled.
+    """
+    sides = int(spec.get(ROLL_SIDES, DEFAULT_SIDES))
+    # `max(0, …)` rather than a refusal: "X is the number of Bobbleheads you
+    # control" can only be negative through arithmetic a card should not be
+    # writing, and rolling a negative number of dice has no reading at all.
+    count = max(0, evaluate_value(ctx, spec.get("count", 1)))
+    results = [ctx.state.rng.randint(1, sides) for _ in range(count)]
+    # Written whatever the count, including zero -- see the docstring. The
+    # loader requires the `as`; the default is here so a direct call cannot
+    # raise instead of rolling.
+    ctx.bindings[str(spec.get("as") or "roll")] = {
+        ROLL_RESULTS: results,
+        ROLL_SIDES: sides,
+    }
+    if results:
+        ctx.state.emit(
+            EventType.DICE_ROLLED,
+            player=ctx.controller,
+            source=ctx.source_oid,
+            results=list(results),
+            sides=sides,
+        )
+
+
 def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     """"You may cast it without paying its mana cost."  Returns whether it was.
 
