@@ -1,0 +1,134 @@
+{
+  "card": {
+    "id": "wedding_ring",
+    "name": "Wedding Ring",
+    "oracle_text": "When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.\nWhenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.\nWhenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life.",
+    "mana_cost": "{2}{W}{W}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this artifact enters, if it was cast, target opponent creates a token that's a copy of it.",
+        "trigger": {
+          "event": "self_enters",
+          "controller": "you",
+          "source": "self",
+          "condition": {
+            "was_cast": true
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "player",
+            "count": 1,
+            "selector": {
+              "controller": "opponent"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": {
+              "zone": "battlefield",
+              "self_only": true
+            },
+            "controller": {
+              "target": "t1"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent who controls an artifact named Wedding Ring draws a card during their turn, you draw a card.",
+        "trigger": {
+          "event": "draw",
+          "controller": "opponent",
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "name": "Wedding Ring",
+                  "controller": {
+                    "binding": "event_player"
+                  }
+                }
+              },
+              {
+                "is_active_player": {
+                  "binding": "event_player"
+                }
+              }
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent who controls an artifact named Wedding Ring gains life during their turn, you gain that much life.",
+        "trigger": {
+          "event": "you_gain_life",
+          "controller": "opponent",
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "zone": "battlefield",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "name": "Wedding Ring",
+                  "controller": {
+                    "binding": "event_player"
+                  }
+                }
+              },
+              {
+                "is_active_player": {
+                  "binding": "event_player"
+                }
+              }
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {
+              "binding": "amount"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 7
+  }
+}
