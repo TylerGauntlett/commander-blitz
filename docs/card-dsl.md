@@ -200,7 +200,7 @@ it, but a card that needed correcting was authored wrong.
 | Stack | `counter` `copy_spell` `return_spell_to_hand` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
-| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -4828,6 +4828,40 @@ unusable without making any card play differently.
 that cannot be responded to. `zones._enter_battlefield` applies enter-
 replacements synchronously and cannot stop to ask, so this is a `self_enters`
 trigger and the choice happens a moment after the permanent arrives.
+
+## "Choose a color"
+
+Heraldic Banner, and the colour twin of the section above. It reads back as
+`{"chosen_color_of": "self"}`, and every argument `choose_type` makes applies
+unchanged — no new `DecisionKind` (`ask_mode` asks it), a filter that matches
+nothing until the choice is made, and the same "**as** this enters" divergence.
+
+```jsonc
+// As this artifact enters, choose a color.
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [ { "op": "choose_color" } ] },
+
+// Creatures you control of the chosen color get +1/+0.
+{ "kind": "static", "effect": "buff",
+  "affects": { "controller": "you", "types": ["Creature"],
+               "colors": [ { "chosen_color_of": "self" } ] },
+  "power": { "const": 1 }, "toughness": { "const": 0 } },
+
+// {T}: Add one mana of the chosen color.
+{ "kind": "activated", "is_mana_ability": true, "cost": { "tap": true },
+  "effects": [ { "op": "add_mana", "mana": { "chosen_color_of": "self" } } ] }
+```
+
+The mana half is why this could not be faked. A mana ability may hold only
+`add_mana`, or one `choose_mode` of `add_mana`s — and that second shape is
+exactly the *any* colour idiom, which is a strictly better card than "the chosen
+color". So `add_mana`'s `mana` had to accept the reference itself rather than the
+ability offering five modes; the loader refuses `{"chosen_color_of": …}` inside a
+`choose_mode` for that reason, and Heraldic Banner's proxy — which had been
+generating the five-mode version — is now the printed card instead.
+
+Five labels rather than the pool-derived list `choose_type` builds: there are
+five colours, and every one of them exists.
 [Recorded in rules-coverage.md](rules-coverage.md).
 
 ## Embalm — an ability activated from the graveyard

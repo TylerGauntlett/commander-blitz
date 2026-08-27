@@ -219042,12 +219042,12 @@
     },
     "Reprieve": {
       "edhrec_rank": 623,
-      "gate": "template",
+      "gate": null,
       "name": "Reprieve",
-      "reason": "no template for: Return target spell to its owner's hand",
+      "reason": "",
       "scryfall_id": "d2afc2b0-bd68-494b-9952-1fe53213552f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Reprisal": {
