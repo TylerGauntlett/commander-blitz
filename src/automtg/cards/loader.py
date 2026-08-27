@@ -31,6 +31,7 @@ from automtg.engine.carddef import (
     prune_cost,
     top_level_mode_spec,
 )
+from automtg.engine.characteristics import ABILITY_STATICS
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
@@ -184,6 +185,17 @@ STATIC_EFFECTS = frozenset(
         # absolute, so a card built on either is a lock rather than a tax --
         # strictly stronger than what is printed.
         "attack_tax",
+        # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
+        # control."  `attack_tax` with the price taken out, and read at the same
+        # moment by `characteristics.attack_defender_forbidden` through
+        # `combat.attack_target_forbidden`: `affects` says which creatures are
+        # stopped and the permanent's own controller is the seat they may not
+        # attack.  Neither absolute cousin will do -- `cant_attack` takes no
+        # defender, so an Inkling under it could not attack anybody, and the
+        # `cant_attack_player` op is a resolving one-shot keyed on a pair of
+        # seats with no creature filter.  Unlike that op, this one **does** reach
+        # the defender's planeswalkers, because this sentence names them.
+        "cant_attack_you",
         # Ward. Parameterised on a *cost*, so it cannot be a keyword for the
         # reason `protection` cannot: `KNOWN_KEYWORDS` is a set of bare strings
         # and there is nowhere in one to put the `{1}`. Read by
@@ -209,6 +221,61 @@ STATIC_EFFECTS = frozenset(
         "replace_token_creation",
     }
 )
+
+#: The statics that describe a **player** rather than a characteristic, and so
+#: take ``affects_player`` instead of ``affects``.
+#:
+#: One list rather than a tuple written out at the check site, because two
+#: readers now need it: the requirement that they carry `affects_player`, and
+#: `GRANTABLE_STATIC_EFFECTS` below, which excludes them. Two copies would be two
+#: places to disagree about whether a new player-wide static may be granted.
+PLAYER_WIDE_STATIC_EFFECTS = frozenset(
+    {
+        "extra_land_drops",
+        "no_hand_limit",
+        "play_lands_from_graveyard",
+        "play_lands_from_library_top",
+        "reveal_library_top",
+        "look_at_library_top",
+        "double_land_triggers",
+        "double_land_mana",
+        "freeze_opponent_lands",
+    }
+)
+
+#: Statics whose readers walk **printed** faces, so a granted one would be inert.
+#:
+#: Two families, and both read the printed list for the same acyclicity reason:
+#:
+#: * `characteristics.ABILITY_STATICS` -- `grant_ability` and
+#:   `lose_all_abilities` are gathered by `_ability_statics`, which *must* read
+#:   printed faces, because `_battlefield_statics` reads `abilities_of` and
+#:   `abilities_of` reads them. Granting one is therefore both the recursion the
+#:   fixed order exists to avoid and, as the code stands, a silent no-op.
+#: * the player-wide ones, plus `replace_token_creation` -- all read through
+#:   `characteristics._active_player_statics`, which walks printed faces and
+#:   never sees an appended granted ability.
+#:
+#: Refused by name rather than left to load, because every one of them would
+#: produce a card that loads clean, prints a line of quoted text and does
+#: nothing -- which is the exact failure the whole validation pass exists to
+#: stop.
+UNGRANTABLE_STATIC_EFFECTS = (
+    PLAYER_WIDE_STATIC_EFFECTS | {"replace_token_creation"} | frozenset(ABILITY_STATICS)
+)
+
+#: Statics a `grant_ability` static may hand to another permanent.
+#:
+#: Derived rather than listed, and the subtraction is the definition: everything
+#: read through `characteristics._battlefield_statics`, which walks `abilities_of`
+#: and so finds a granted static sourced on its **recipient**. Nothing else in
+#: this file needs to know which layer a given effect lands in.
+#:
+#: Inspiring Leader is the card: "Commander creatures you own have "Creature
+#: tokens you control get +2/+2."" -- a `buff` in `grantable_abilities`, handed
+#: over by a `grant_ability` static whose `affects` reads
+#: ``{"types": ["Creature"], "is_commander": true, "owner": "you"}``.
+GRANTABLE_STATIC_EFFECTS = STATIC_EFFECTS - UNGRANTABLE_STATIC_EFFECTS
 
 #: Keys a ``replace_token_creation`` static's ``affects_token`` filter may use.
 #:
@@ -272,6 +339,18 @@ STATIC_FILTER_KEYS = frozenset(
         "not_keywords",
         "tapped",
         "is_commander",
+        # "Commander creatures you **own**."  903.3 makes ownership the relation
+        # the commander rules use, and it is the one place where the printed
+        # word is "own" rather than "control" on a *permanent* filter: a
+        # commander an opponent has stolen is still one you own, and one you
+        # have stolen is not one you own. Board state that no layer can touch --
+        # `owner` is written when the object is made and `change_control` leaves
+        # it alone -- so it is safe here for exactly the reason `controller` is.
+        #
+        # Writing `owner` **replaces** the defaulted `controller: "you"` rather
+        # than adding to it; `characteristics._matches` says why, and
+        # `costs._reduction_matches` has read the word that way all along.
+        "owner",
         "is_token",
         "attacking",
         "blocking",
@@ -287,6 +366,126 @@ STATIC_FILTER_KEYS = frozenset(
         "paired_with_source",
     }
 )
+
+#: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
+_FILTER_PLAYERS = ("you", "opponent")
+
+
+def _check_owner_key(filt: Mapping[str, Any], where: str) -> None:
+    """``owner`` names a player, and a misspelling of one matches nobody.
+
+    There is no ``"any"``: a filter that does not care who owns a permanent says
+    nothing, and an ``owner: "any"`` written beside a defaulted ``controller``
+    would *also* silently switch that default off -- which is the one thing this
+    key does besides testing ownership.
+    """
+    owner = filt.get("owner")
+    if owner is not None and owner not in _FILTER_PLAYERS:
+        raise DslError(
+            f"{where}.owner: must be one of {list(_FILTER_PLAYERS)}, got {owner!r}"
+        )
+
+
+#: The two "of the chosen …" substitutions a static filter may carry.
+_CHOSEN_QUALITY_KEYS = ("chosen_type_of", "chosen_color_of")
+
+
+def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
+    """"…of the chosen type" cannot survive being handed to another permanent.
+
+    `characteristics.resolve_chosen_subtypes` and its colour twin substitute the
+    choice made by the filter's **source**, and a granted static's source is its
+    *recipient*. So an author writing "of the chosen type" means the granter and
+    the engine would read the recipient -- which has chosen nothing, so the
+    filter matches nobody and the card loads clean and does nothing.
+
+    The two readings differ and no printed card asks for either, so this is
+    refused rather than picked between.
+    """
+    if not isinstance(filt, Mapping):
+        return
+    for key in ("subtypes", "colors"):
+        for entry in filt.get(key) or ():
+            if not isinstance(entry, Mapping):
+                continue
+            for chosen in _CHOSEN_QUALITY_KEYS:
+                if chosen in entry:
+                    raise DslError(
+                        f"{where}.{key}: {chosen!r} names the choice made by the "
+                        f"filter's source, and a granted static's source is the "
+                        f"permanent it was granted to -- which has chosen nothing"
+                    )
+
+
+def _walk_effect_specs(effects: Any):
+    """Every effect spec in a tree, branches and modes included."""
+    for effect in effects or ():
+        if not isinstance(effect, Mapping):
+            continue
+        yield effect
+        for key in ("then", "else", "effects"):
+            yield from _walk_effect_specs(effect.get(key))
+        for mode in effect.get("modes") or ():
+            if isinstance(mode, Mapping):
+                yield from _walk_effect_specs(mode.get("effects"))
+
+
+def _check_grant_targets(
+    model: CardModel, abilities: tuple[Ability, ...], grantable: tuple[Ability, ...], where: str
+) -> None:
+    """Every ``grant_ability`` on this card points at a grantable that can work.
+
+    Two failures, both silent, and the second only became possible when a static
+    was allowed into `grantable_abilities` at all:
+
+    * **Out of range.** `characteristics.abilities_of` and the `grant_ability`
+      op both index the list and both skip a miss, so an off-by-one is a card
+      that prints "gains flying and …" and hands over nothing.
+    * **The op pointing at a static.** The *op* grants for a duration through
+      pointers that only `triggers` and `abilities_of`'s callers read as
+      abilities; a static handed over that way never reaches
+      `_battlefield_statics`, because that walk finds statics on the derived
+      list rather than in the grant record. So the one-shot form is refused
+      where the continuous form is exactly what the card wants.
+    """
+    for i, ability in enumerate(grantable):
+        if not ability.is_static:
+            continue
+        if not (ability.static or {}).get("effect"):
+            raise DslError(f"{where}.grantable[{i}]: a static needs an 'effect'")
+
+    def check(index: Any, what: str, *, statics_ok: bool) -> None:
+        try:
+            pos = int(index)
+        except (TypeError, ValueError):
+            raise DslError(f"{where}: {what} index {index!r} is not a number") from None
+        if not 0 <= pos < len(grantable):
+            raise DslError(
+                f"{where}: {what} names 'grantable_abilities[{pos}]' and this card "
+                f"has {len(grantable)} -- a grant nothing answers hands over nothing"
+            )
+        if grantable[pos].is_static and not statics_ok:
+            raise DslError(
+                f"{where}: the grant_ability *op* hands over a pointer that the "
+                f"characteristics pipeline never reads, so granting the static "
+                f"'grantable_abilities[{pos}]' with it would do nothing -- a "
+                f"continuous grant is the `grant_ability` **static**"
+            )
+
+    for ability in abilities:
+        static = ability.static or {}
+        if ability.is_static and static.get("effect") == "grant_ability":
+            check(static.get("ability", 0), "grant_ability static", statics_ok=True)
+
+    trees: list[Any] = [model.spell_effects]
+    trees.extend(a.effects for a in abilities)
+    trees.extend(a.effects for a in grantable)
+    for tree in trees:
+        for effect in _walk_effect_specs(tree):
+            if effect.get("op") != "grant_ability":
+                continue
+            index = effect.get("ability", effect.get("ability_index"))
+            check(index, "grant_ability op", statics_ok=False)
 
 
 # ----------------------------------------------------------------------
@@ -557,13 +756,45 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # the stack would reach it with an index into a list that no longer
             # exists, and resolve as some other ability of that permanent.
             continue
-        # A granted *static* would have to join the characteristics pipeline
-        # from an object that is not its source. Granting a keyword is what
-        # `grant_keyword` is for; `docs/rules-coverage.md` records the rest.
+        if ability.is_static and ability.static:
+            # A granted **static**. Inspiring Leader: "Commander creatures you
+            # own have "Creature tokens you control get +2/+2."" -- and the
+            # thing that makes it work is that a granted static needs no code of
+            # its own. `abilities_of` appends it to the recipient's list and
+            # `characteristics._battlefield_statics` walks that list, so the
+            # copy arrives already sourced on the recipient: the quoted anthem's
+            # "you" is the commander creature's controller, and two commander
+            # creatures are two entries, so the tokens get +4/+4 without
+            # anything counting them.
+            #
+            # The near miss -- a `buff` on the Background itself under an
+            # `{"exists": {"is_commander": true}}` condition -- is a different
+            # card three ways: it does not stack per commander creature, it
+            # pumps the *Background controller's* tokens rather than each
+            # granted commander's controller's, and it does not travel with a
+            # commander that changes hands.
+            effect = str(ability.static.get("effect"))
+            if effect not in GRANTABLE_STATIC_EFFECTS:
+                raise DslError(
+                    f"{where}: {effect!r} is read off printed faces "
+                    f"(`_ability_statics` or `_active_player_statics`), so a "
+                    f"granted one would load clean and never apply; grantable "
+                    f"statics are {sorted(GRANTABLE_STATIC_EFFECTS)}"
+                )
+            for key in ("affects", "blockers"):
+                _refuse_granted_chosen_qualities(
+                    ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
+                )
+            continue
+        # An activated ability that is not a mana ability, and nothing else is
+        # left. Granting a keyword is what `grant_keyword` is for;
+        # `docs/rules-coverage.md` records the rest.
         raise DslError(
-            f"{where}: only triggered and mana abilities can be granted, "
+            f"{where}: only triggered, mana and static abilities can be granted, "
             f"not {ability.kind.value}"
         )
+
+    _check_grant_targets(model, abilities, grantable, where)
 
     if model.cost_reduction is not None:
         _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
@@ -988,6 +1219,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"'graveyard_cost', so it could never be true"
         )
 
+    _validate_was_cast_placement(model, where)
+
     colors = (
         frozenset(model.colors)
         if model.colors is not None
@@ -1119,6 +1352,56 @@ def _mentions_condition(model: CardModel, key: str) -> bool:
     return _mentions(model, lambda node: key in node)
 
 
+#: Which trigger a ``{"was_cast": …}`` clause may hang from.
+#:
+#: 603.6e's "if it was cast" is a fact about the arrival of the permanent the
+#: ability is *on*, and the condition is evaluated with the ability's own source
+#: (`triggers._matches` passes ``source=obj.oid``). Every other home for it is a
+#: card that loads clean and plays wrong, in one of two directions:
+#:
+#: * on ``permanent_enters`` -- "whenever **another** creature enters, if it was
+#:   cast" -- it answers about the trigger's own permanent, not the one that
+#:   entered, so the clause reads a fact about an unrelated object;
+#: * anywhere else (a spell's own effects, an activated ability, a dies trigger)
+#:   it asks a permanent that has not entered anything on this trip, and reads a
+#:   flat ``False`` for ever.
+WAS_CAST_TRIGGERS = frozenset({"self_enters"})
+
+
+def _validate_was_cast_placement(model: CardModel, where: str) -> None:
+    """``was_cast`` only on this permanent's own enters trigger (603.6e)."""
+
+    def reads(node: Any) -> bool:
+        return isinstance(node, Mapping) and "was_cast" in node
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return reads(node) or any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    stray = walk(model.spell_effects) or walk([t.model_dump() for t in model.targets])
+    for ability in model.abilities:
+        event = ability.trigger.event if ability.trigger is not None else None
+        if event in WAS_CAST_TRIGGERS:
+            continue
+        stray = (
+            stray
+            or walk(ability.effects)
+            or walk([t.model_dump() for t in ability.targets])
+            or walk(ability.trigger.condition if ability.trigger else None)
+        )
+    if stray:
+        raise DslError(
+            f"{where}: {{'was_cast': …}} reads how the ability's **own source** "
+            f"arrived on the battlefield, so it belongs on a "
+            f"{sorted(WAS_CAST_TRIGGERS)} trigger (603.6e) and nowhere else -- "
+            f"anywhere else it answers about the wrong object, or about one that "
+            f"has not entered at all"
+        )
+
+
 def _mentions_pair(model: CardModel, key: str, value: str) -> bool:
     """Does anything on this card carry ``{key: value}``?
 
@@ -1156,7 +1439,12 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
 
 
 def _compile_targets(
-    models, where: str, *, on_spell: bool = False, mode_count: int | None = None
+    models,
+    where: str,
+    *,
+    on_spell: bool = False,
+    on_trigger: bool = False,
+    mode_count: int | None = None,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -1177,7 +1465,11 @@ def _compile_targets(
     there to be read, which is why this is a restriction on one of the two
     callers rather than on the form.
 
-    ``mode_count`` is how many modes the card's single top-level ``choose_mode``
+    ``on_trigger`` marks a **triggered** ability's targets, which is the other
+    place a mode-owned spec has a moment to be declared in: 603.3d puts the
+    modes and the targets alike at the instant the ability goes on the stack.
+
+    ``mode_count`` is how many modes the single top-level ``choose_mode``
     offers, or ``None`` when there is no such question to hang a target on.  A
     spec carrying ``mode`` belongs to that mode alone and is declared only if it
     is chosen -- see `carddef.TargetSpec.mode`.
@@ -1207,7 +1499,9 @@ def _compile_targets(
                 f"cast (601.2c), before X is chosen and before any additional "
                 f"cost is paid, so the expression would read 0"
             )
-    _check_mode_targets(specs, where, on_spell=on_spell, mode_count=mode_count)
+    _check_mode_targets(
+        specs, where, on_spell=on_spell, on_trigger=on_trigger, mode_count=mode_count
+    )
     # The ordering rule is about the refs a *cast* stores, and a mode-owned spec
     # stores its refs after every card-level one -- so it is the card-level list
     # that has to end in the variable-size spec, not the printed list.
@@ -1228,30 +1522,42 @@ def _compile_targets(
 
 
 def _check_mode_targets(
-    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, mode_count: int | None
+    specs: tuple[TargetSpec, ...],
+    where: str,
+    *,
+    on_spell: bool,
+    on_trigger: bool = False,
+    mode_count: int | None,
 ) -> None:
     """Every restriction on ``mode``, each one a card that would load wrong.
 
-    A mode-owned target is declared inside the cast, between choosing the modes
-    (601.2b) and paying (601.2h), which is a moment that exists **only** for a
-    spell whose whole effect tree is one top-level ``choose_mode``: anywhere
-    else the modal question is asked as the thing resolves, by which time
-    targets can no longer be declared at all.
+    A mode-owned target needs one moment that owns both questions -- the modes
+    first (601.2b), the targets they own straight after (601.2c) -- and there
+    are exactly two of them.  A **spell** has it inside the cast, between
+    choosing the modes and paying.  A **triggered ability** has it when the
+    ability is put on the stack, which 603.3d says is where both choices
+    happen.  An *activated* ability has neither: `legality` enumerates one
+    activation per legal target tuple, so its targets are fixed before
+    `Game._activate` asks which mode -- the reverse of the printed order.  And
+    a modal question that is not the effect tree's single top-level one is
+    asked as the thing resolves, by which time targets can no longer be
+    declared at all.
     """
     owned = [spec for spec in specs if spec.mode is not None]
     if not owned:
         return
-    if not on_spell:
+    if not (on_spell or on_trigger):
         raise DslError(
-            f"{where}: 'mode' only works on a card's own 'targets' -- an "
-            f"ability's modes are chosen as it resolves, which is after the "
-            f"moment its targets were declared"
+            f"{where}: 'mode' only works on a card's own 'targets' (601.2b) or "
+            f"on a triggered ability's (603.3d) -- an activated ability's "
+            f"targets are enumerated by legality before its modes are chosen, "
+            f"so there is no moment left to declare one in"
         )
     if mode_count is None:
         raise DslError(
-            f"{where}: 'mode' needs the card's whole effect tree to be one "
+            f"{where}: 'mode' needs the whole effect tree to be one "
             f"top-level 'choose_mode' -- a nested or repeated one is answered "
-            f"on resolution, with no cast left to declare a target in"
+            f"on resolution, with nothing left to declare a target in"
         )
     for spec in owned:
         label = f"{where}.target[{spec.id}]"
@@ -1375,8 +1681,31 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
-    targets = _compile_targets(model.targets, where)
-    target_kinds = {t.id: t.kind for t in targets}
+    # How many modes a mode-owned target may point at, and `None` when there is
+    # no single modal question to hang one on -- the same test
+    # `Ability.cast_time_modes` makes, asked here because the loader has to
+    # refuse a `mode` the engine would never get to ask about.
+    ability_modes = (
+        top_level_mode_spec(model.effects) if count_mode_specs(model.effects) == 1 else None
+    )
+    all_targets = _compile_targets(
+        model.targets,
+        where,
+        # 603.3d puts a triggered ability's modes *and* its targets at the one
+        # moment it is put on the stack, which is the moment a mode-owned target
+        # needs. An activated ability has no such moment -- see
+        # `_check_mode_targets`.
+        on_trigger=kind in (AbilityKind.TRIGGERED, AbilityKind.CHAPTER),
+        mode_count=len(ability_modes.get("modes") or ()) if ability_modes else None,
+    )
+    targets = tuple(spec for spec in all_targets if spec.mode is None)
+    mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
+    for spec in all_targets:
+        if spec.mode is not None:
+            mode_targets[spec.mode] = (*mode_targets.get(spec.mode, ()), spec)
+    # Effects still name every spec, mode-owned or not: which bucket a target
+    # lives in is about *when it is declared*, not about who may read it.
+    target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.effects):
         _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
 
@@ -1686,6 +2015,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,
+        mode_targets=mode_targets,
         effects=tuple(model.effects),
         static=None,
     )
@@ -1713,6 +2043,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: static filters may only read printed characteristics; "
                 f"unsupported keys {sorted(unknown)}"
             )
+        _check_owner_key(model.affects, f"{where}.affects")
     if model.effect == "block_restriction":
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
@@ -1729,6 +2060,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}: block_restriction 'blockers' may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
+            _check_owner_key(model.blockers, f"{where}.blockers")
     elif model.blockers is not None or model.require_all:
         raise DslError(
             f"{where}: 'blockers'/'require_all' only mean anything on a "
@@ -1743,6 +2075,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: {model.effect} needs an 'affects' filter -- "
             f"{{\"self_only\": true}} for the creature that carries it"
+        )
+    if model.effect == "cant_attack_you" and model.affects is None:
+        # Same refusal, one step further: a missing filter matches nothing, so a
+        # filterless `cant_attack_you` is a wall nobody bounces off. And the
+        # filter is the *whole* of what the sentence says -- "**Inklings** can't
+        # attack you" -- where the seat it protects is never written down,
+        # because it is always the permanent's own controller. Note the printed
+        # line names those creatures wherever they are, so what these cards want
+        # is `controller: "any"`, exactly as `cant_attack` and `attack_tax` do.
+        raise DslError(
+            f"{where}: cant_attack_you needs an 'affects' filter naming the "
+            f"creatures it stops -- e.g. "
+            f"{{\"controller\": \"any\", \"subtypes\": [\"Inkling\"]}}"
         )
     if model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
@@ -1806,17 +2151,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_token'/'create_instead' only mean anything on a "
             f"replace_token_creation static, not on {model.effect!r}"
         )
-    if model.effect in (
-        "extra_land_drops",
-        "no_hand_limit",
-        "play_lands_from_graveyard",
-        "play_lands_from_library_top",
-        "reveal_library_top",
-        "look_at_library_top",
-        "double_land_triggers",
-        "double_land_mana",
-        "freeze_opponent_lands",
-    ):
+    if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
     elif model.effect in ("spell_cost_reduction", "replace_token_creation"):
@@ -1960,6 +2295,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "attack_tax":
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.effect == "grant_ability":
+        # Which of the card's `grantable_abilities` is handed over. Carried onto
+        # the compiled mapping rather than left on the model, because the
+        # mapping is all `characteristics.abilities_of` ever sees: left behind,
+        # its `static.get("ability", 0)` read 0 for every card, so one with two
+        # grantable abilities silently granted the first whichever it named.
+        # Invisible until a card had two, which is what Inspiring Leader's
+        # quoted static makes ordinary.
+        static["ability"] = int(model.ability or 0)
 
     return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
 
@@ -1980,12 +2324,20 @@ COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_man
 COST_REDUCTION_ZONES = frozenset({"battlefield", "command"})
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
-#: ``owner`` is not a static filter key and should not become one -- a static
-#: applies to permanents, where control is the question. A reduction reading the
-#: command zone is the one place the printed word is "own": "a commander you own
-#: on the battlefield or in the command zone" still counts the commander an
-#: opponent stole from you.
-COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "owner"})
+#:
+#: ``zone`` is the only one left. ``owner`` was here alone, on the grounds that a
+#: static applies to permanents "where control is the question" -- and Inspiring
+#: Leader is the card that showed that reasoning was about *most* statics rather
+#: than all of them. "Commander creatures you own have …" is a permanent filter
+#: whose printed word is "own", and 903.3 is why: on a commander, ownership is
+#: the relation the rules use. So ``owner`` moved into `STATIC_FILTER_KEYS` and
+#: is listed here no longer; it is still spelled and read the same way, which is
+#: what made the move a one-line change rather than a second dialect.
+#:
+#: What a reduction kept is the *reason* it wanted the word first: reading the
+#: command zone, where "a commander you own on the battlefield or in the command
+#: zone" still counts the commander an opponent stole from you.
+COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
 
 #: Condition heads a *cost* reduction may use.
 #:
@@ -2121,10 +2473,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
-        if (owner := filt.get("owner")) is not None and owner not in ("you", "opponent"):
-            raise DslError(
-                f"{where}.{key}.owner: must be 'you' or 'opponent', got {owner!r}"
-            )
+        _check_owner_key(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
         _validate_cost_condition(spec["condition"], f"{where}.condition")
@@ -2200,6 +2549,7 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
         unknown = set(spec) - STATIC_COUNT_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}: unsupported filter keys {sorted(unknown)}")
+        _check_owner_key(spec, where)
         return
     unknown = set(spec) - STATIC_ZONE_FILTER_KEYS
     if unknown:
@@ -4145,14 +4495,6 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
 
 
 def _walk_effects(card: CardDef):
-    def walk(effects):
-        for effect in effects:
-            yield effect
-            for key in ("then", "else", "effects"):
-                yield from walk(effect.get(key) or [])
-            for mode in effect.get("modes", []) or []:
-                yield from walk(mode.get("effects") or [])
-
-    yield from walk(card.spell_effects)
+    yield from _walk_effect_specs(card.spell_effects)
     for ability in card.abilities:
-        yield from walk(ability.effects)
+        yield from _walk_effect_specs(ability.effects)

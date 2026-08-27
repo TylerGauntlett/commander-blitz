@@ -341,6 +341,20 @@ def _enter_battlefield(
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
     obj.tapped = forced_tapped
+    # "…**if it was cast**" (603.6e). Written here, before the replacements and
+    # long before the ENTERS_BATTLEFIELD event below, because the trigger's own
+    # intervening-if is evaluated as the ability queues off that event.
+    #
+    # Written on *every* arrival, so it describes this trip and no other:
+    # `cast_step` and the other `cast_*` stamps are set once by
+    # `stack.push_spell` and never cleared, and a permanent that was cast, died
+    # and came back would still answer to them.
+    #
+    # `cause == "resolved"` alone is not the clause either. A **copy** of a
+    # permanent spell resolves the same way and was never cast (707.10), and it
+    # is a fresh object with no cast stamp on it -- so the two halves together
+    # are what the sentence says, and each one alone is a wider card.
+    obj.entered_by_cast = cause == "resolved" and obj.cast_step is not None
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
 

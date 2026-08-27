@@ -1,0 +1,88 @@
+{
+  "_comment": "Test-only cards for tests/unit/test_modal_triggered_targets.py -- a triggered ability whose modes are chosen as it goes on the stack (603.3d), one of which owns a target. Shaped on Oltec Matterweaver.",
+  "cards": [
+    {
+      "id": "t_matterweaver",
+      "name": "Test Matterweaver",
+      "oracle_text": "Whenever you cast a creature spell, choose one —\n• Create a 1/1 colorless Gnome artifact creature token.\n• Create a token that's a copy of target artifact token you control.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Gnome"
+      ],
+      "power": 2,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, choose one — • Create a 1/1 colorless Gnome artifact creature token. • Create a token that's a copy of target artifact token you control.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "targets": [
+            {
+              "id": "tok",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "is_token": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Create a 1/1 colorless Gnome artifact creature token.",
+                  "effects": [
+                    {
+                      "op": "create_token",
+                      "token": "gnome_1_1_c",
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you"
+                    }
+                  ]
+                },
+                {
+                  "label": "Create a token that's a copy of target artifact token you control.",
+                  "effects": [
+                    {
+                      "op": "copy_permanent",
+                      "objects": {
+                        "target": "tok"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

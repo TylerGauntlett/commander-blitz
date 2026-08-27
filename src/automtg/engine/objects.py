@@ -51,6 +51,30 @@ class GameObject:
     tapped: bool = False
     #: Turn number this object arrived on the battlefield; drives summoning sickness.
     entered_turn: int = -1
+    #: Whether **this** arrival on the battlefield was a spell its controller
+    #: cast -- rule 603.6e's "when this permanent enters, **if it was cast**".
+    #:
+    #: Stamped by `zones._enter_battlefield` on *every* entry, so it always
+    #: describes the trip the permanent is on rather than anything it did
+    #: earlier. That is the whole of why it exists beside `cast_step`: the cast
+    #: stamps are written once by `stack.push_spell` and deliberately outlive
+    #: the spell, so a permanent that was cast, died and was reanimated still
+    #: answers `cast_step is not None` -- and a card that read the clause that
+    #: way would hand out its enters payload again off every reanimation and
+    #: every blink, which is a strictly cheaper card than the printed one.
+    #:
+    #: Both halves are required and neither alone is the sentence. The arrival
+    #: cause says the object got here as a *resolving spell*, which a token, a
+    #: reanimation and a Show and Tell all fail; `cast_step` says a player
+    #: actually **cast** it, which a copy of a permanent spell fails (707.10 --
+    #: a copy on the stack was never cast) even though it does resolve.
+    #:
+    #: Deliberately **not** cleared by `reset_permanent_state`. Nothing off the
+    #: battlefield may read it -- the loader confines the clause to an enters
+    #: trigger -- except the 603.4 re-check of that trigger's own intervening-if
+    #: after the permanent has already left, and there 603.6e wants the
+    #: last-known answer, which is the one it kept.
+    entered_by_cast: bool = False
     damage: int = 0
     #: Set when damage from a deathtouch source was dealt this turn.
     deathtouched: bool = False
