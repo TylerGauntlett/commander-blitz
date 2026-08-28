@@ -2127,6 +2127,9 @@
   "esper_panorama": {
     "zone": "battlefield"
   },
+  "espers_to_magicite": {
+    "zone": "graveyard"
+  },
   "eternal_warrior": {
     "zone": [
       "battlefield",

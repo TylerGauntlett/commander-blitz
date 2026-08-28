@@ -3934,6 +3934,35 @@ prints first. The second is no longer a cloak special case: every rules-supplied
 ability carries a negative index and `ability_of` answers all of them the same
 way, without reading the board.
 
+## "…except it's an artifact and it loses all other card types"
+
+Espers to Magicite. A fourth key on `copy_permanent`'s `except_`, beside
+embalm's `colors`, `add_subtypes` and `no_mana_cost`:
+
+```jsonc
+{ "op": "copy_permanent", "objects": { "target": "t1" }, "controller": "you",
+  "except_": { "types": ["Artifact"] } }
+```
+
+**A replacement, not an addition**, and the printed line is what decides. "It's
+an artifact **and it loses all other card types**" leaves a token that is an
+Artifact and nothing else; a union would leave it a creature as well, and a
+creature can attack, block and die. `add_subtypes` beside it *is* an addition,
+for the same reason: "except it's a white Zombie Angel" adds Zombie and Angel to
+what the copied card already was.
+
+**Card types only.** The copied card's subtypes stay, which is also what the
+printing says: the token loses its card *types* and is not told to lose its
+creature types.
+
+An empty list is refused — it replaces rather than adds, so it would be a
+permanent with no card type at all, which no printing says.
+
+Applied to the printed face before any layer, where the rest of `copy_overrides`
+is applied, because the exception is part of what the object *is* rather than an
+effect on it: an animate afterwards layers on top exactly as it would on a
+printed artifact.
+
 ## Targeting a card in exile
 
 Espers to Magicite — *"…choose up to one **target creature card exiled this
