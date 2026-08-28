@@ -1,0 +1,30 @@
+{
+  "card_id": "gogo_mysterious_mime",
+  "name": "Gogo, Mysterious Mime",
+  "oracle_text": "At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime. If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime.",
+    "If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able."
+  ],
+  "needs": [
+    {
+      "capability": "become_copy",
+      "kind": "op",
+      "what": "an op that makes an existing permanent already on the battlefield become a copy of another permanent (layer 1 copy effect), with a duration (until end of turn as well as permanently) and an `except_` override block so the copy can keep its own name -- e.g. {\"op\": \"become_copy\", \"objects\": {\"self_only\": true}, \"copying\": {\"target\": \"creature\"}, \"duration\": \"end_of_turn\", \"except_\": {\"name\": \"Gogo, Mysterious Mime\"}}",
+      "why_existing_wont_do": "`copy_permanent` is the only copy op for permanents and it always calls `create_token` with the source's def_id -- it makes a NEW token copy and never alters the object it is pointed at, so it cannot turn Gogo itself into a copy, and it has no duration at all. `animate` overwrites power/toughness, colors, types and keywords with literal values, so it cannot take another object's whole printed characteristics, and `transform` only flips a double-faced card to its own back face. Making a token instead would leave the real Gogo unchanged and add a permanent the card never creates."
+    },
+    {
+      "capability": "become_copy",
+      "kind": "engine",
+      "what": "a copy effect applied in place must re-derive the target permanent's characteristics from the copied CardDef while leaving counters, damage, attachments and status on the object, and must expire cleanly at end of turn, restoring Gogo's printed characteristics",
+      "why_existing_wont_do": "The object model derives identity from a fixed `def_id` set when the object is created (`copy_permanent` relies on exactly that), and there is no continuous-effect layer that rewrites an existing object's def_id for a duration; `lose_all_abilities` and `set_pt` are the only statics that overwrite characteristics and neither can source them from another object."
+    }
+  ],
+  "closest_existing": [
+    "copy_permanent",
+    "animate",
+    "transform",
+    "cast_copy"
+  ],
+  "confidence": "high"
+}

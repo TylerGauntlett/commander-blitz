@@ -3206,6 +3206,10 @@
       "0": 2
     }
   },
+  "high_market": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "high_society_hunter": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3668,6 +3672,13 @@
     "zone": "battlefield"
   },
   "ketria_triome": {
+    "zone": "battlefield"
+  },
+  "key_to_the_city": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
     "zone": "battlefield"
   },
   "khalni_heart_expedition": {
@@ -4486,6 +4497,10 @@
   "moorish_cavalry": {
     "zone": "battlefield"
   },
+  "morbid_opportunist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "moriok_reaver": {
     "zone": "battlefield"
   },
@@ -5152,6 +5167,13 @@
   "pitiless_gorgon": {
     "zone": "battlefield"
   },
+  "pitiless_plunderer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "plague_beetle": {
     "zone": "battlefield"
   },
@@ -5344,6 +5366,18 @@
   "prowling_caracal": {
     "zone": "battlefield"
   },
+  "pull_from_the_grave": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "graveyard"
+  },
   "pygmy_allosaurus": {
     "zone": "battlefield"
   },
@@ -5483,6 +5517,11 @@
   "raugrin_triome": {
     "zone": "battlefield"
   },
+  "ravenous_chupacabra": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "ravenous_lindwurm": {
     "life": {
       "0": 44
@@ -5510,6 +5549,13 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "reanimate": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
   },
   "rearing_embermare": {
     "zone": "battlefield"

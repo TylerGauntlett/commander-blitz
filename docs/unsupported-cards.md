@@ -10,19 +10,27 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**11 cards** blocked by **20** capabilities.
+**21 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
+| [additional-cost](#additional-cost) | 1 | 2357 | engine |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
+| [become-copy](#become-copy) | 1 | 2769 | engine, op |
 | [card-left-graveyard-this-turn](#card-left-graveyard-this-turn) | 1 | 8270 | engine |
+| [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
+| [cast-this-way](#cast-this-way) | 1 | 4170 | selector |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [discard-any-number](#discard-any-number) | 1 | 5132 | op, value |
+| [discard-up-to](#discard-up-to) | 1 | 3959 | op, value |
+| [discarded-this-way](#discarded-this-way) | 1 | 7573 | value |
 | [entered-from-graveyard](#entered-from-graveyard) | 1 | 5132 | trigger_event |
+| [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | engine, op |
+| [exile-self-cost](#exile-self-cost) | 1 | 8547 | cost |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [extreme-value](#extreme-value) | 1 | 9647 | value |
 | [graveyard-arrival-this-turn](#graveyard-arrival-this-turn) | 1 | 6878 | selector |
@@ -30,10 +38,16 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [leaves-graveyard](#leaves-graveyard) | 1 | 10518 | trigger_event |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
+| [mill-cost](#mill-cost) | 1 | 1226 | cost |
+| [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
+| [modal-activated-ability-targets](#modal-activated-ability-targets) | 1 | 8547 | engine |
 | [modal-cost](#modal-cost) | 1 | 869 | cost |
+| [moogle-token](#moogle-token) | 1 | 7573 | engine |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
+| [shares-a-name-with](#shares-a-name-with) | 1 | 6823 | selector |
+| [unearth](#unearth) | 1 | 2622 | replacement |
 
 ## cast-from-graveyard
 
@@ -55,6 +69,21 @@ Blocks **2** cards.
 - **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
   - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
   - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
+
+</details>
+
+## additional-cost
+
+Blocks **1** card.
+
+- **(engine)** a card-level `additional_cost` that is charged on every way of casting the spell, not only from hand -- specifically on the flashback (and other alternative-cost / non-hand) cast lines, so that a mandatory additional cost is owed by the graveyard cast too (601.2f)
+  <br>Why the existing vocabulary won't do: `additional_cost` is the right slot and `cost_keys.discard` is the right price, but legality only offers additional-cost cast variants under `state.objects[oid].zone is Zone.HAND`, and the flashback line is built by calling `_cast_variant(..., flashback=True)` directly from the graveyard loop, bypassing the `_cast_options` block that sets `additional_times`. `game._cast` pays the non-mana half only when `action.additional_times` is nonzero, so a flashed-back Laughing Mad would cost {3}{R} and discard nothing -- a strictly-better free draw-two, which is exactly the quiet wrongness the printed reminder 'and any additional costs' rules out. Moving the discard into `spell_effects` as the `discard` op is not a substitute: that pays at resolution rather than as a cost, and lets the spell be cast when the price could not be paid.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Laughing Mad** (rank 2357) — `laughing_mad`
+  - As an additional cost to cast this spell, discard a card.
+  - Flashback {3}{R} (You may cast this card from your graveyard for its flashback cost and any additional costs. Then exile it.)
 
 </details>
 
@@ -88,6 +117,23 @@ Blocks **1** card.
 
 </details>
 
+## become-copy
+
+Blocks **1** card.
+
+- **(op)** an op that makes an existing permanent already on the battlefield become a copy of another permanent (layer 1 copy effect), with a duration (until end of turn as well as permanently) and an `except_` override block so the copy can keep its own name -- e.g. {"op": "become_copy", "objects": {"self_only": true}, "copying": {"target": "creature"}, "duration": "end_of_turn", "except_": {"name": "Gogo, Mysterious Mime"}}
+  <br>Why the existing vocabulary won't do: `copy_permanent` is the only copy op for permanents and it always calls `create_token` with the source's def_id -- it makes a NEW token copy and never alters the object it is pointed at, so it cannot turn Gogo itself into a copy, and it has no duration at all. `animate` overwrites power/toughness, colors, types and keywords with literal values, so it cannot take another object's whole printed characteristics, and `transform` only flips a double-faced card to its own back face. Making a token instead would leave the real Gogo unchanged and add a permanent the card never creates.
+- **(engine)** a copy effect applied in place must re-derive the target permanent's characteristics from the copied CardDef while leaving counters, damage, attachments and status on the object, and must expire cleanly at end of turn, restoring Gogo's printed characteristics
+  <br>Why the existing vocabulary won't do: The object model derives identity from a fixed `def_id` set when the object is created (`copy_permanent` relies on exactly that), and there is no continuous-effect layer that rewrites an existing object's def_id for a duration; `lose_all_abilities` and `set_pt` are the only statics that overwrite characteristics and neither can source them from another object.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gogo, Mysterious Mime** (rank 2769) — `gogo_mysterious_mime`
+  - At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime.
+  - If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.
+
+</details>
+
 ## card-left-graveyard-this-turn
 
 Blocks **1** card.
@@ -99,6 +145,20 @@ Blocks **1** card.
 
 - **Gau, Feral Youth** (rank 8270) — `gau_feral_youth`
   - At the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.
+
+</details>
+
+## cast-from-among-milled
+
+Blocks **1** card.
+
+- **(op)** an effect granting the controller permission, until end of turn, to cast up to one spell from a named set of cards sitting in graveyards (including an opponent's graveyard), paying that spell's costs normally
+  <br>Why the existing vocabulary won't do: `play_exiled` is the only "cast that card from over there" op and it is wrong three ways: its selector defaults to the exile zone and `exiled_with: self` so it cannot see graveyard cards, it casts via `suspend.cast_for_free` while Locke's permission makes you pay, and it resolves the cast immediately instead of leaving a standing permission that lasts until end of turn. The `play_lands_from_graveyard` static is graveyard-scoped but lands-only, yours-only, permanent and unrestricted to a set. `return_from_graveyard` moves cards rather than granting permission, and the `cast_from_graveyard` condition key only asks after the fact where a spell was cast from.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
+  - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
 
 </details>
 
@@ -114,6 +174,20 @@ Blocks **1** card.
 - **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
   - You may play lands and cast spells from the top of your library.
   - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
+
+</details>
+
+## cast-this-way
+
+Blocks **1** card.
+
+- **(selector)** A selector key that names exactly the cards a free-cast op (`play_exiled`) actually cast during this resolution -- e.g. `{"cast_this_way": "self"}` -- so a following `for_each` can loop them and a `lose_life` inside can use the existing `{"owner_of": "each"}` player spec with `{"mana_value_of": {"binding": "each"}}` as its amount.
+  <br>Why the existing vocabulary won't do: `play_exiled` chooses its cards, calls `cast_for_free` on each and binds nothing, so no later effect can see which ones were taken. The closest selector is `exiled_with: "self"`, which is the wrong set in both directions at once: a card that was cast has left exile and no longer matches, and a card the player declined to cast still does -- so it names 'exiled this way' and never 'cast this way'. `was_cast` is a condition about the ability's own source, not a pool, and `snapshot` captures one object chosen in advance rather than an unknown-size set decided mid-resolution.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kefka, Dancing Mad** (rank 4170) — `kefka_dancing_mad`
+  - Then each player who owns a spell you cast this way loses life equal to its mana value.
 
 </details>
 
@@ -162,6 +236,38 @@ Blocks **1** card.
 
 </details>
 
+## discard-up-to
+
+Blocks **1** card.
+
+- **(op)** an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- "discard up to two cards" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves
+  <br>Why the existing vocabulary won't do: `op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count
+- **(value)** a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so "then draw that many cards" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{"count": {"binding": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free
+  <br>Why the existing vocabulary won't do: `discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant
+
+<details><summary>Cards waiting on this</summary>
+
+- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
+  - When Joshua enters, discard up to two cards, then draw that many cards.
+  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
+
+</details>
+
+## discarded-this-way
+
+Blocks **1** card.
+
+- **(value)** a condition/value leaf that names the cards discarded during this ability's own resolution and filters them by card type, so an `if` can ask "was a creature card discarded this way" and "was a noncreature card discarded this way" — e.g. a `discarded_this_way` value taking a selector and returning a count, usable inside `cmp`/`exists`, populated by the `discard` op for the duration of the resolution (and across a `for_each_player` loop, since this card asks about every player's discard, not just the controller's)
+  <br>Why the existing vocabulary won't do: `discard` records nothing and returns nothing. `cards_to_graveyard_this_turn` is the closest value key and is wrong twice over: it is turn-scoped rather than resolution-scoped and it counts every graveyard at the table and every earlier discard, mill or death this turn. `count` over `{"zone": "graveyard"}` counts what was already there — in the verification sandbox that is two creature cards, so the creature branch would fire unconditionally. `connive` is the only op that reads its own discard, but it is a fused draw+discard+counter-on-self op with "nonland" hardcoded; it cannot gate an arbitrary effect, cannot ask about "creature" vs "noncreature", and cannot see another player's discard. Its own docstring states the case: "the cards that were just discarded, which nothing in the condition or value language can name".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
+  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
+  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
+
+</details>
+
 ## entered-from-graveyard
 
 Blocks **1** card.
@@ -174,6 +280,39 @@ Blocks **1** card.
 - **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
   - When Celes enters, discard any number of cards, then draw that many cards plus one.
   - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+
+</details>
+
+## exile-and-return-transformed
+
+Blocks **1** card.
+
+- **(op)** an op that exiles a permanent and immediately returns it to the battlefield **transformed, under its owner's control** -- as a new object, so it enters, its enters triggers fire, it is summoning sick, and counters/auras/control effects on the old object are gone. The Final Fantasy "Dominant" transforming cycle prints this line on both faces
+  <br>Why the existing vocabulary won't do: `transform` (ops_board.py `op_transform`) turns the permanent over **in place**: it calls `primitives.transform` on the live object, so the permanent never changes zones, keeps its counters, attachments and summoning-sickness state, and fires no leaves-the-battlefield or enters triggers. That is a materially stronger and differently-timed card. `exile` can move it out but has no return path other than `until_leaves` (the O-Ring link, which hands back on a later trigger, untransformed), and neither `put_onto_battlefield` nor `return_from_graveyard` accepts any "arrives on its back face" flag -- the only back-face-on-arrival path in the engine is `graveyard_cast_transformed`, which is disturb/`stack.py` and applies to *casting* the card from the graveyard, not to an activated ability on the battlefield. `meld` is the one op that does the exile-and-re-enter dance, but it is hard-wired to `melds_with`/`melds_into` and needs a partner permanent
+- **(engine)** the packet for a transforming double-faced card must carry the **back face's printed text**. This packet gives only the front face's `oracle_text` while `type_line` names a back face ("Legendary Enchantment Creature -- Saga Phoenix"), so the `back` half of the answer -- which the answer format does support, see `henrika_domnathi_henrika_infernal_seer.json` -- cannot be written without inventing the Saga's chapters
+  <br>Why the existing vocabulary won't do: `back_face` in `schema.py` requires a real second card entry in the pool, and the residual gate holds every printed line to an ability. With no back-face oracle text in the packet there is nothing to author it from, and a `transform`-family ability pointing at an absent or guessed back face is worse than no card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
+  - When Joshua enters, discard up to two cards, then draw that many cards.
+  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
+
+</details>
+
+## exile-self-cost
+
+Blocks **1** card.
+
+- **(cost)** an activation cost component that exiles the source permanent itself, the exile twin of the existing 'sacrifice' cost -- Cost needs a boolean flag (e.g. exile_self) that both can_pay and pay honour, moving the source to exile as the cost is paid rather than to the graveyard
+  <br>Why the existing vocabulary won't do: cost_keys carries 'sacrifice', which puts the source in the graveyard, and 'exile_from_graveyard', which exiles a chosen card already in a graveyard. Neither exiles the source from the battlefield, and the difference is load-bearing here: Phoenix Down is meant to be one-shot and graveyard-proof, so paying with 'sacrifice' would leave it recurrable and would also feed its own first mode. Paying with the 'exile' op instead moves the payment to resolution, so the ability could be activated when the source is already gone and the exile could be countered or fizzle.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Phoenix Down** (rank 8547) — `phoenix_down`
+  - {1}{W}, {T}, Exile this artifact: Choose one —
+  - • Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.
+  - • Exile target Skeleton, Spirit, or Zombie.
 
 </details>
 
@@ -282,6 +421,50 @@ Blocks **1** card.
 
 </details>
 
+## mill-cost
+
+Blocks **1** card.
+
+- **(cost)** a `mill` entry in an activated ability's cost that puts the top N cards of the activating player's library into their graveyard as part of paying the cost, and that is unpayable when the library holds fewer than N cards
+  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard`, `discard_selector` and `discard_self`, which all move cards out of hand, and `exile_from_graveyard`, which moves them out of the graveyard -- nothing moves cards off the top of the library, and `sacrifice`/`pay_life`/`remove_counters` are unrelated resources. The `mill` op exists but is an effect, not a cost: putting it in `effects` moves the payment to resolution, so the ability could be activated with an empty library and would still produce mana, and the packet's own note says paying with an op instead of a cost is wrong. It is doubly impossible here because this is a mana ability, and a mana ability may contain only `add_mana` (or one `choose_mode` of `add_mana` modes), so `mill` cannot legally appear in its effects at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Millikin** (rank 1226) — `millikin`
+  - {T}, Mill a card: Add {C}.
+
+</details>
+
+## milled-this-way
+
+Blocks **1** card.
+
+- **(selector)** the `mill` op must write a binding naming the cards it just put into graveyards (across every player it milled), so a later `if` can ask `{"exists": {"binding": "milled", "types": ["Land"]}}` and a later op can act on exactly that set
+  <br>Why the existing vocabulary won't do: `mill` takes only `amount` and `player` and throws away the oid list `mill_cards` returns, so nothing downstream can name the cards it moved. `search_library` already binds what it found, which is the shape needed, but no milling op does. `exists` over a graveyard selector is a different card -- it would match a land already in a graveyard from an earlier turn, and here both players' graveyards start non-empty. `snapshot` reads a value off an object that is already known, not the identity of a set the previous op created.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
+  - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
+
+</details>
+
+## modal-activated-ability-targets
+
+Blocks **1** card.
+
+- **(engine)** per-mode target declaration on an *activated* ability: a moment during activation that chooses the mode first (601.2b) and then declares only that mode's targets, so an activated ability's TargetSpec may carry 'mode' the way a spell's and a triggered ability's already can
+  <br>Why the existing vocabulary won't do: The 'mode' field on a target spec exists but loader._check_mode_targets explicitly refuses it on an activated ability, because legality enumerates one activation per legal target tuple before Game._activate asks which mode -- the reverse of the printed order. Putting both bullets' targets on the ability unconditionally is not the same card: it would demand a legal creature card in the graveyard *and* a legal Skeleton/Spirit/Zombie before the ability could ever be activated, and would bind a target the chosen mode never uses. Moving the choose_mode below the top level makes the mode question resolution-time, by which point targets can no longer be declared at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Phoenix Down** (rank 8547) — `phoenix_down`
+  - {1}{W}, {T}, Exile this artifact: Choose one —
+  - • Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.
+  - • Exile target Skeleton, Spirit, or Zombie.
+
+</details>
+
 ## modal-cost
 
 Blocks **1** card.
@@ -293,6 +476,21 @@ Blocks **1** card.
 
 - **Bitter Triumph** (rank 869) — `bitter_triumph`
   - As an additional cost to cast this spell, discard a card or pay 3 life.
+
+</details>
+
+## moogle-token
+
+Blocks **1** card.
+
+- **(engine)** a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name
+  <br>Why the existing vocabulary won't do: `create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
+  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
+  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
 
 </details>
 
@@ -339,5 +537,33 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
+
+</details>
+
+## shares-a-name-with
+
+Blocks **1** card.
+
+- **(selector)** a selector clause that matches objects whose name equals the name of another object bound in the same effect -- e.g. {"is_token": true, "controller": {"controller_of_target": 0}, "shares_a_name_with": "target", "count": "all"} -- so a spell can sweep every copy of the thing it targeted
+  <br>Why the existing vocabulary won't do: The `name` selector key is a literal string compared against card.name, so it can only be written by the card author at load time and cannot read the name of the target chosen at cast time. The two binding-reading clauses that do exist, `shares_a_type_with` and `shares_a_color_with`, compare subtypes and colors off a bound oid but there is no name-comparing sibling. `snapshot` only captures a numeric value off a departing object, not a name usable as a selector filter.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Legions to Ashes** (rank 6823) — `legions_to_ashes`
+  - Exile target nonland permanent an opponent controls and all tokens that player controls with the same name as that permanent.
+
+</details>
+
+## unearth
+
+Blocks **1** card.
+
+- **(replacement)** a self-scoped, duration-bounded replacement of a permanent's *leave-the-battlefield* zone change -- "if this permanent would leave the battlefield, exile it instead" -- that fires for every destination (graveyard, hand, exile, library, command zone), not only for a death, and that is installed by the resolving unearth ability on the card it just returned and lasts as long as that permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: `replace_deaths` is the only op in `ops` that redirects a zone change, and `zones.move_object` gates it on `from_zone is BATTLEFIELD and to_zone is GRAVEYARD` (src/automtg/engine/zones.py:95-99) -- so it catches a death and nothing else. Unearth's clause is the *whole* leave-the-battlefield event: bounced to hand, exiled by removal, shuffled into the library, sent to the command zone. Substituting `replace_deaths` is not a rounding error on this card, it is the card's central loop: this Priest's own ability sacrifices itself, and the printed replacement is what makes that a one-way trip. Modelled as death-only, an opponent's bounce or exile still leaves a card that can be unearthed again; modelled not at all (the engine's currently documented unearth divergence, docs/rules-coverage.md line 99, which pairs a `put_onto_battlefield` of `self_only` with `grant_keyword` haste and a `delay`ed `exile`), the sacrifice puts the Priest straight back in the graveyard to be unearthed again next turn, making it an unbounded reanimation engine the printed card explicitly forbids. `delay` cannot say it either: a delayed trigger fires at a named step, and this has to fire the moment the permanent would move, before it lands anywhere. `until_leaves` is the opposite link -- it declares a return, not an interception -- and `static_effects` carries only `replace_token_creation`, which docs/rules-coverage.md line 182 states is deliberately not the start of a general replacement system.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Priest of Fell Rites** (rank 2622) — `priest_of_fell_rites`
+  - Unearth {3}{W}{B} ({3}{W}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)
 
 </details>

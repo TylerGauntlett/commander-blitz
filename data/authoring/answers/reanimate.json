@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "reanimate",
+    "name": "Reanimate",
+    "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+    "mana_cost": "{B}",
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "card_in_graveyard",
+        "count": 1,
+        "selector": {
+          "zone": "graveyard",
+          "controller": "any",
+          "types": ["Creature"]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "put_onto_battlefield",
+        "objects": {"target": "t1"},
+        "controller": "you"
+      },
+      {
+        "op": "lose_life",
+        "player": "you",
+        "amount": {"mana_value_of": {"target": "t1"}}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 33,
+    "graveyard_size": {"0": 2}
+  }
+}
