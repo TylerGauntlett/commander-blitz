@@ -4319,15 +4319,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # somebody reads its colour.
         if not isinstance(overrides, Mapping):
             raise DslError(f"{where}: 'except_' must be an object")
-        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost"}
+        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost", "types"}
         if unknown:
             raise DslError(
                 f"{where}.except_: unsupported keys {sorted(unknown)} "
-                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost')"
+                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost', 'types')"
             )
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "types" in overrides:
+            # A **replacement**, unlike `add_subtypes` beside it -- "it's an
+            # artifact and it loses all other card types". So an empty list is a
+            # copy with no card type at all, which no printing says and which
+            # nothing downstream is written to survive.
+            if not overrides["types"]:
+                raise DslError(
+                    f"{where}.except_.types: replaces the copy's card types, "
+                    f"so an empty list is a permanent with none"
+                )
+            for t in overrides["types"]:
+                if t not in KNOWN_TYPES:
+                    raise DslError(f"{where}.except_.types: unknown card type {t!r}")
     if op == "add_subtype":
         # An op that names no subtype is a printed sentence that does nothing,
         # and it would load and resolve exactly like one that works.

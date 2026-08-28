@@ -23841,6 +23841,73 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "id": "magicite",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_exile",
+              "optional": true,
+              "selector": {
+                "binding": "magicite",
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "espers_to_magicite",
+      "mana_cost": "{2}{W}",
+      "name": "Espers to Magicite",
+      "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "magicite",
+          "objects": {
+            "controller": "opponent",
+            "count": "all",
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        },
+        {
+          "ability": "magicite",
+          "op": "reflexive_trigger"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

@@ -174,6 +174,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             subtypes.update(added)
         if (repaint := obj.copy_overrides.get("colors")) is not None:
             colors = set(repaint)
+        if (retyped := obj.copy_overrides.get("types")) is not None:
+            # "…except it's an artifact and it **loses all other card types**."
+            # A replacement, where `add_subtypes` above is an addition, and the
+            # printed clause is what decides which: Espers to Magicite's token
+            # is an Artifact and nothing else, so a union would leave it a
+            # creature that could attack and die -- a strictly better card.
+            #
+            # Card types only. The subtypes are the copied card's and stay,
+            # which is also what the printing says: it loses its card types and
+            # is not told to lose its creature types.
+            types = set(retyped)
 
     # Bestow (702.103b): "it's an Aura spell with enchant creature... it becomes
     # a creature again if it's not attached to a creature". Applied to the

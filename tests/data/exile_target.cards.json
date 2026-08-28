@@ -1,18 +1,34 @@
 {
-  "_comment": "Cards that exist only for the card-in-exile target test (tests/unit/test_card_in_exile_target.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_magicite` is the Espers to Magicite shape: exile every opponent's graveyard, then target one of the cards THIS spell put there. `t_wide_magicite` is the counterfactual -- the same target line without the binding, which reaches every creature card anyone has ever exiled.",
+  "_comment": "Cards that exist only for the card-in-exile target test (tests/unit/test_card_in_exile_target.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_magicite` is the Espers to Magicite shape: exile every opponent's graveyard, then target one of the cards THIS spell put there. `t_wide_magicite` is the counterfactual -- the same target line without the binding, which reaches every creature card anyone has ever exiled. `t_magicite_token` and `t_plain_token` are the copy half: the same token with and without the card-type replacement.",
   "cards": [
     {
       "id": "t_magicite",
       "name": "Test Magicite",
       "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Put it onto the battlefield under your control.",
       "mana_cost": "{2}{B}",
-      "types": ["Sorcery"],
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "spell_effects": [
-        {"op": "exile", "as": "banished",
-         "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}},
-        {"op": "reflexive_trigger", "ability": "magicite"}
+        {
+          "op": "exile",
+          "as": "banished",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          }
+        },
+        {
+          "op": "reflexive_trigger",
+          "ability": "magicite"
+        }
       ],
       "abilities": [
         {
@@ -20,11 +36,28 @@
           "id": "magicite",
           "text": "When you do, choose up to one target creature card exiled this way.",
           "targets": [
-            {"id": "t1", "kind": "card_in_exile", "count": 1, "optional": true,
-             "selector": {"binding": "banished", "types": ["Creature"], "controller": "any"}}
+            {
+              "id": "t1",
+              "kind": "card_in_exile",
+              "count": 1,
+              "optional": true,
+              "selector": {
+                "binding": "banished",
+                "types": [
+                  "Creature"
+                ],
+                "controller": "any"
+              }
+            }
           ],
           "effects": [
-            {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"}
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "controller": "you"
+            }
           ]
         }
       ]
@@ -34,13 +67,29 @@
       "name": "Test Wide Magicite",
       "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card in exile. Put it onto the battlefield under your control.",
       "mana_cost": "{2}{B}",
-      "types": ["Sorcery"],
-      "colors": ["B"],
-      "color_identity": ["B"],
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
       "spell_effects": [
-        {"op": "exile", "as": "banished",
-         "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}},
-        {"op": "reflexive_trigger", "ability": "magicite"}
+        {
+          "op": "exile",
+          "as": "banished",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          }
+        },
+        {
+          "op": "reflexive_trigger",
+          "ability": "magicite"
+        }
       ],
       "abilities": [
         {
@@ -48,11 +97,154 @@
           "id": "magicite",
           "text": "When you do, choose up to one target creature card in exile.",
           "targets": [
-            {"id": "t1", "kind": "card_in_exile", "count": 1, "optional": true,
-             "selector": {"types": ["Creature"], "controller": "any"}}
+            {
+              "id": "t1",
+              "kind": "card_in_exile",
+              "count": 1,
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "controller": "any"
+              }
+            }
           ],
           "effects": [
-            {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"}
+            {
+              "op": "put_onto_battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_magicite_token",
+      "name": "Test Magicite Token",
+      "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "as": "banished",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          }
+        },
+        {
+          "op": "reflexive_trigger",
+          "ability": "magicite"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "reflexive",
+          "id": "magicite",
+          "text": "When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_exile",
+              "count": 1,
+              "optional": true,
+              "selector": {
+                "binding": "banished",
+                "types": [
+                  "Creature"
+                ],
+                "controller": "any"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "target": "t1"
+              },
+              "controller": "you",
+              "except_": {
+                "types": [
+                  "Artifact"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_plain_token",
+      "name": "Test Plain Token",
+      "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "as": "banished",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          }
+        },
+        {
+          "op": "reflexive_trigger",
+          "ability": "magicite"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "reflexive",
+          "id": "magicite",
+          "text": "When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card.",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_exile",
+              "count": 1,
+              "optional": true,
+              "selector": {
+                "binding": "banished",
+                "types": [
+                  "Creature"
+                ],
+                "controller": "any"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "target": "t1"
+              },
+              "controller": "you"
+            }
           ]
         }
       ]

@@ -85532,12 +85532,12 @@
     },
     "Espers to Magicite": {
       "edhrec_rank": 6897,
-      "gate": "template",
+      "gate": null,
       "name": "Espers to Magicite",
-      "reason": "no template for: Exile each opponent's graveyard. When you do, choose up to one target creature card exiled",
+      "reason": "",
       "scryfall_id": "6cb18871-dd23-4ce8-a535-16adefae63c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Esperzoa": {

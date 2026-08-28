@@ -10,31 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**4 cards** blocked by **7** capabilities.
+**3 cards** blocked by **6** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
-
-## copy-with-type-change
-
-Blocks **1** card.
-
-- **(op)** an `except_` clause on `copy_permanent` (or an equivalent token-copy op) that overwrites the copy's card types -- '...except it's an artifact and it loses all other card types', i.e. set types to exactly [Artifact] on the token copy rather than adding to them
-  <br>Why the existing vocabulary won't do: `copy_permanent` accepts only `colors`, `add_subtypes` and `no_mana_cost` in `except_` (loader rejects any other key), so it can recolour and add subtypes but never change the copy's card types; the copy would come back a creature. `set_types` exists but only as a *static_effect*, which a resolving instant cannot apply as a one-shot copy modification, and a static ability may only read printed characteristics of an object that already exists. `add_subtype` explicitly refuses a `types` key. `create_token` needs a pre-declared token id and so cannot copy an arbitrary exiled card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Espers to Magicite** (rank 6897) — `espers_to_magicite`
-  - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
-
-</details>
 
 ## dfc-back-face-text
 
