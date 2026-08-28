@@ -1146,6 +1146,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "untap_permanents": { "types": ["Creature"], "count": 2 },  // untaps *others*; they stay
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
+  "exile_self": true,                             // Phoenix Down: exiles the source, not to the graveyard
   "mill": 1,                                      // Millikin: off *your* library's top
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "remove_counters": { "counter": "-1/-1", "amount": 1 },

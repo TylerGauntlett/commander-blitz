@@ -1886,6 +1886,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         gated_once = model.once_each_turn and bool(model.activate_steps)
         removes_source = (
             cost.discard_self
+            or cost.exile_self
             or cost.exile_from_graveyard is not None
             or _effects_move_source(model.effects)
             or gated_once

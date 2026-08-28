@@ -685,6 +685,13 @@ def can_pay(
         return False
     if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
+    if cost.exile_self:
+        # "Exile this artifact" -- the source has to still be on the battlefield
+        # to exile, checked for the same reason `discard_self` checks the hand:
+        # legality offered the action and the board can move before `pay` runs.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or not obj.on_battlefield:
+            return False
     if cost.discard_self:
         # The card must be the payer's to throw away and still be in the zone it
         # is activated from. Checked rather than assumed because legality offers
@@ -994,6 +1001,13 @@ def pay(
         # That is the whole difference from `discard`, and asking would let the
         # player cycle by pitching something else.
         yield from _discard(state, pid, [source_oid])
+
+    if cost.exile_self and source_oid is not None:
+        # No `ask_objects` and no selector: which permanent goes is not a
+        # choice, it is *this* one -- the same reason `discard_self` asks
+        # nothing. Paid here, as the ability goes on the stack, so the source is
+        # gone before it can be responded to or feed its own effects.
+        exile_object(state, source_oid, cause="cost")
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
