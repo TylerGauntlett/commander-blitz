@@ -7,7 +7,7 @@
   ],
   "needs": [
     {
-      "capability": "card_left_graveyard_this_turn",
+      "capability": "graveyard_movement_ledger",
       "kind": "engine",
       "what": "a per-turn ledger of cards that left a player's graveyard this turn (to any zone -- exile, hand, library, battlefield), exposed both as a condition an intervening-if can ask (\"if a card left your graveyard this turn\") and as a count value, keyed by the graveyard's owner",
       "why_existing_wont_do": "value_keys has `cards_to_graveyard_this_turn`, which counts movement in the opposite direction (cards put *into* the graveyard) and so is true in exactly the wrong cases. `cast_from_graveyard` only asks about the source spell itself, not about any card. `has_turn_flag` reads a flag written by `set_turn_flag` on the same source, so it cannot observe a zone change caused by some other card. `exists`/`zone_is`/`cmp` only read the graveyard's current contents, which says nothing about what departed it. The engine keeps only `cards_drawn_this_turn`, `resolutions_this_turn` and `triggers_this_turn` as per-turn ledgers -- no graveyard-departure tracking exists to read."

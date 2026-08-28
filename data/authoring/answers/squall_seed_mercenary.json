@@ -1,0 +1,107 @@
+{
+  "card": {
+    "id": "squall_seed_mercenary",
+    "name": "Squall, SeeD Mercenary",
+    "oracle_text": "Rough Divide — Whenever a creature you control attacks alone, it gains double strike until end of turn.\nWhenever Squall deals combat damage to a player, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+    "mana_cost": "{2}{W}{B}",
+    "colors": [
+      "B",
+      "W"
+    ],
+    "color_identity": [
+      "B",
+      "W"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Knight",
+      "Mercenary"
+    ],
+    "power": 3,
+    "toughness": 4,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Rough Divide — Whenever a creature you control attacks alone, it gains double strike until end of turn.",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "you",
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "count": {
+                "binding": "attackers"
+              }
+            },
+            "right": {
+              "const": 1
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "keywords": [
+              "double_strike"
+            ],
+            "objects": {
+              "binding": "attackers"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever Squall deals combat damage to a player, return target permanent card with mana value 3 or less from your graveyard to the battlefield.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "gy_permanent",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "not_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "mana_value": {
+                "op": "<=",
+                "value": {
+                  "const": 3
+                }
+              }
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "battlefield",
+            "controller": "you",
+            "objects": {
+              "target": "gy_permanent"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    }
+  }
+}

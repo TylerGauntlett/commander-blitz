@@ -5739,6 +5739,13 @@
   "riptide_turtle": {
     "zone": "battlefield"
   },
+  "rise_of_the_dark_realms": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "risen_sanctuary": {
     "zone": "battlefield"
   },
@@ -5855,6 +5862,14 @@
   },
   "ruination_wurm": {
     "zone": "battlefield"
+  },
+  "ruinous_ultimatum": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 0
+    },
+    "opponent_battlefield_count": 2,
+    "zone": "graveyard"
   },
   "rumble_arena": {
     "zone": "battlefield"
@@ -6196,6 +6211,13 @@
   "shadow_glider": {
     "zone": "battlefield"
   },
+  "shadow_mysterious_assassin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "shadowblood_ridge": {
     "zone": "battlefield"
   },
@@ -6353,6 +6375,20 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "siegfried_famed_swordsman": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
   },
   "silent_artisan": {
     "zone": "battlefield"
@@ -6725,6 +6761,13 @@
       "0": 42
     }
   },
+  "squall_seed_mercenary": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "squire": {
     "zone": "battlefield"
   },
@@ -6787,6 +6830,26 @@
     "zone": "battlefield"
   },
   "stirring_wildwood": {
+    "zone": "battlefield"
+  },
+  "stitch_together": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
+  "stitcher_s_supplier": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
     "zone": "battlefield"
   },
   "stomper_cub": {
@@ -6909,6 +6972,13 @@
     "zone": "battlefield"
   },
   "summit_prowler": {
+    "zone": "battlefield"
+  },
+  "summon_bahamut": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
     "zone": "battlefield"
   },
   "sun_sentinel": {
@@ -8057,6 +8127,13 @@
   "watcher_in_the_mist": {
     "zone": "battlefield"
   },
+  "watcher_of_the_wayside": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 42
+    },
+    "zone": "battlefield"
+  },
   "watchwolf": {
     "zone": "battlefield"
   },
@@ -8479,5 +8556,12 @@
   },
   "zombie_goliath": {
     "zone": "battlefield"
+  },
+  "zombify": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
   }
 }

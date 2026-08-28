@@ -1,0 +1,23 @@
+{
+  "card_id": "spirit_mascot",
+  "name": "Spirit Mascot",
+  "oracle_text": "Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.",
+  "blocked_sentences": [
+    "Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature."
+  ],
+  "needs": [
+    {
+      "capability": "leaves_graveyard",
+      "kind": "trigger_event",
+      "what": "a triggered-ability event that fires when one or more cards move out of a graveyard -- a DSL trigger name mapping to a graveyard-departure event that carries the owner of the graveyard (so `controller: \"you\"` can restrict it to your own) and batches every card that left as part of the same move into a single firing, so exiling three cards from your graveyard for one cost puts one +1/+1 counter on this creature and not three",
+      "why_existing_wont_do": "`trigger_events` carries `leaves_battlefield` (and `dies`, `sacrificed`), all of which are about a permanent leaving the battlefield -- the wrong zone entirely, and a card leaving the graveyard is never a permanent leaving play. `exile_from_graveyard` is a *cost* key and `return_from_graveyard` is an *op*: they are two of the ways a card leaves a graveyard, not a way to notice one, and hanging the counter off either would only cover a card's own effects, never an opponent's graveyard hate, another player's reanimation of your creature, or a flashback/escape cast that exiles on resolution. The engine's `ZONE_CHANGE` event (src/automtg/engine/events.py) does carry `from`/`to` zones and would be the natural substrate, but it is absent from `TRIGGER_EVENTS` in src/automtg/engine/triggers.py, so no DSL trigger can listen to it, and even if one could, it is emitted once per object moved, which is exactly the per-card firing the printed \"one or more\" forbids."
+    }
+  ],
+  "closest_existing": [
+    "leaves_battlefield",
+    "exile_from_graveyard",
+    "return_from_graveyard",
+    "sacrificed"
+  ],
+  "confidence": "high"
+}

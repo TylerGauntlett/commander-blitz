@@ -1,0 +1,44 @@
+{
+  "card": {
+    "id": "siegfried_famed_swordsman",
+    "name": "Siegfried, Famed Swordsman",
+    "oracle_text": "Menace\nWhen Siegfried enters, mill three cards. Then put X +1/+1 counters on Siegfried, where X is twice the number of creature cards in your graveyard.",
+    "mana_cost": "{3}{B}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Warrior", "Rogue"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["menace"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Siegfried enters, mill three cards. Then put X +1/+1 counters on Siegfried, where X is twice the number of creature cards in your graveyard.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {"op": "mill", "player": "you", "amount": {"const": 3}},
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "objects": {"zone": "battlefield", "self_only": true},
+            "amount": {
+              "times": [
+                {"const": 2},
+                {"count": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "library_size": {"0": 37},
+    "graveyard_size": {"0": 5},
+    "counters": {"kind": "+1/+1", "amount": 4}
+  }
+}

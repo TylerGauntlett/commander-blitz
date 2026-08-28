@@ -1,0 +1,22 @@
+{
+  "card_id": "summon_knights_of_round",
+  "name": "Summon: Knights of Round",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after V.)\nI, II, III, IV — Create three 2/2 white Knight creature tokens.\nV — Ultimate End — Other creatures you control get +2/+2 until end of turn. Put an indestructible counter on each of them.\nIndestructible",
+  "blocked_sentences": [
+    "I, II, III, IV — Create three 2/2 white Knight creature tokens."
+  ],
+  "needs": [
+    {
+      "capability": "missing_token",
+      "kind": "engine",
+      "what": "a vanilla 2/2 white Knight creature token in the token pool (data/cards/tokens.cards.json), id in the style of the existing entries — `knight_2_2_w` — with types [\"Creature\"], subtypes [\"Knight\"], power 2, toughness 2, colors [\"W\"] and no keywords, so `create_token` has an id to name for this chapter",
+      "why_existing_wont_do": "`create_token` can only name a token already defined in data/cards/tokens.cards.json, and the pool has no plain 2/2 white Knight. The two nearest entries are both wrong: `knight_2_2_w_vigilance` is the right size, color and subtype but carries vigilance, which this card does not print — twelve tokens across the four chapters would each gain an evasion-relevant ability the card never grants; and `human_knight_2_2_r_trample_haste` is red, adds the Human subtype, and has trample and haste. The other 2/2 white tokens (`ox_2_2_w`, `cat_beast_2_2_w`) have the wrong subtype, which is load-bearing on a Knight-tribal card."
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "knight_2_2_w_vigilance",
+    "human_knight_2_2_r_trample_haste"
+  ],
+  "confidence": "high"
+}

@@ -1,46 +1,40 @@
 {
   "card": {
-    "id": "helping_hand",
-    "name": "Helping Hand",
-    "oracle_text": "Return target creature card with mana value 3 or less from your graveyard to the battlefield tapped.",
-    "mana_cost": "{W}",
+    "id": "zombify",
+    "name": "Zombify",
+    "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+    "mana_cost": "{3}{B}",
     "types": [
       "Sorcery"
     ],
     "colors": [
-      "W"
+      "B"
     ],
     "color_identity": [
-      "W"
+      "B"
     ],
     "targets": [
       {
         "id": "t1",
         "kind": "card_in_graveyard",
+        "count": 1,
         "selector": {
           "zone": "graveyard",
           "controller": "you",
           "types": [
             "Creature"
-          ],
-          "mana_value": {
-            "op": "<=",
-            "value": {
-              "const": 3
-            }
-          }
-        },
-        "count": 1
+          ]
+        }
       }
     ],
     "spell_effects": [
       {
-        "op": "put_onto_battlefield",
+        "op": "return_from_graveyard",
+        "destination": "battlefield",
+        "controller": "you",
         "objects": {
           "target": "t1"
-        },
-        "controller": "you",
-        "tapped": true
+        }
       }
     ]
   },

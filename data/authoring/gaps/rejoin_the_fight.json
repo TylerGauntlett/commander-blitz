@@ -1,0 +1,31 @@
+{
+  "card_id": "rejoin_the_fight",
+  "name": "Rejoin the Fight",
+  "oracle_text": "Mill three cards. Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen. Return each card chosen this way to the battlefield under your control.",
+  "blocked_sentences": [
+    "Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.",
+    "Return each card chosen this way to the battlefield under your control."
+  ],
+  "needs": [
+    {
+      "capability": "opponent_chooser",
+      "kind": "selector",
+      "what": "a selector `chooser` that can name an arbitrary player -- a player spec such as {\"binding\": \"each_player\"} or \"opponent\" -- so that inside a `for_each_player` loop the looped opponent is the one asked to pick from a pool of cards that are in YOUR graveyard (and hence owned and controlled by you)",
+      "why_existing_wont_do": "`chooser` in `selector_keys` is validated at load time to exactly \"controller\", \"owner\" or \"none\" (selectors.validate_selector). For a pool of `{\"zone\": \"graveyard\", \"controller\": \"you\"}` both \"controller\" and \"owner\" resolve to the spell's controller, so the caster picks the creature cards instead of each opponent. `for_each_player` binds `each_player` only for the selector's `controller`/`player` filters, not for who is asked; `scry` is the only op with a separate `chooser` player spec and it is hard-wired to scry/fateseal, not to object selection."
+    },
+    {
+      "capability": "cumulative_choice_exclusion",
+      "kind": "selector",
+      "what": "a way for a sequence of choices made in one resolution to accumulate, so a later choice can exclude everything already chosen -- e.g. an `as` binding on the choosing op that APPENDS across `for_each_player` iterations, readable by `exclude_binding`, giving \"a creature card in your graveyard that hasn't been chosen\"",
+      "why_existing_wont_do": "`exclude_binding` reads a binding written once by `as`, and `return_from_graveyard` sets no binding at all; even ops that do write `as` overwrite it each iteration, so iteration N could only exclude iteration N-1's pick, not the whole set. Nothing in `selector_keys` records \"already chosen this resolution\"."
+    },
+    {
+      "capability": "deferred_batch_choice",
+      "kind": "op",
+      "what": "choices gathered from several players first and the effect applied once to the whole set -- \"each opponent chooses ... Return EACH card chosen this way to the battlefield\" is one simultaneous return after all choices are made",
+      "why_existing_wont_do": "The only player-shaped loop, `for_each_player`, executes its whole body per player, so a `return_from_graveyard` inside it returns each creature as its own event; the cards would enter one at a time between choices rather than together, changing enters-the-battlefield ordering and letting each opponent see the previous card already on the battlefield."
+    }
+  ],
+  "closest_existing": ["for_each_player", "return_from_graveyard", "exclude_binding", "scry"],
+  "confidence": "high"
+}

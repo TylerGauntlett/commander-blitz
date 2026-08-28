@@ -10,44 +10,81 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**21 cards** blocked by **34** capabilities.
+**30 cards** blocked by **42** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
+| [discard-binding](#discard-binding) | 3 | 3959 | op, value |
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
-| [additional-cost](#additional-cost) | 1 | 2357 | engine |
+| [graveyard-movement-ledger](#graveyard-movement-ledger) | 2 | 6878 | engine, selector |
+| [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
+| [mill-cost](#mill-cost) | 2 | 1226 | cost |
+| [missing-token](#missing-token) | 2 | 2308 | engine |
+| [additional-cost-on-alternative-cast](#additional-cost-on-alternative-cast) | 1 | 2357 | engine |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [become-copy](#become-copy) | 1 | 2769 | engine, op |
-| [card-left-graveyard-this-turn](#card-left-graveyard-this-turn) | 1 | 8270 | engine |
+| [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
 | [cast-this-way](#cast-this-way) | 1 | 4170 | selector |
+| [choose-permanents](#choose-permanents) | 1 | 2867 | op, selector |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
-| [discard-any-number](#discard-any-number) | 1 | 5132 | op, value |
-| [discard-up-to](#discard-up-to) | 1 | 3959 | op, value |
-| [discarded-this-way](#discarded-this-way) | 1 | 7573 | value |
+| [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
+| [deferred-batch-choice](#deferred-batch-choice) | 1 | 8473 | op |
 | [entered-from-graveyard](#entered-from-graveyard) | 1 | 5132 | trigger_event |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | engine, op |
 | [exile-self-cost](#exile-self-cost) | 1 | 8547 | cost |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
+| [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [extreme-value](#extreme-value) | 1 | 9647 | value |
-| [graveyard-arrival-this-turn](#graveyard-arrival-this-turn) | 1 | 6878 | selector |
 | [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
-| [leaves-graveyard](#leaves-graveyard) | 1 | 10518 | trigger_event |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
-| [mill-cost](#mill-cost) | 1 | 1226 | cost |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
-| [modal-activated-ability-targets](#modal-activated-ability-targets) | 1 | 8547 | engine |
+| [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
 | [modal-cost](#modal-cost) | 1 | 869 | cost |
-| [moogle-token](#moogle-token) | 1 | 7573 | engine |
+| [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
+| [pay-x-life-additional-cost](#pay-x-life-additional-cost) | 1 | 67 | cost, value |
+| [per-player-choice-memory](#per-player-choice-memory) | 1 | 5124 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
+| [sandbox-graveyard-props](#sandbox-graveyard-props) | 1 | 5461 | engine |
 | [shares-a-name-with](#shares-a-name-with) | 1 | 6823 | selector |
+| [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
+| [target-player-chooses](#target-player-chooses) | 1 | 3427 | decision |
 | [unearth](#unearth) | 1 | 2622 | replacement |
+
+## discard-binding
+
+Blocks **3** cards.
+
+- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
+  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
+- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
+  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
+- **(op)** an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- "discard up to two cards" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves
+  <br>Why the existing vocabulary won't do: `op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count
+- **(value)** a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so "then draw that many cards" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{"count": {"binding": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free
+  <br>Why the existing vocabulary won't do: `discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant
+- **(value)** a condition/value leaf that names the cards discarded during this ability's own resolution and filters them by card type, so an `if` can ask "was a creature card discarded this way" and "was a noncreature card discarded this way" — e.g. a `discarded_this_way` value taking a selector and returning a count, usable inside `cmp`/`exists`, populated by the `discard` op for the duration of the resolution (and across a `for_each_player` loop, since this card asks about every player's discard, not just the controller's)
+  <br>Why the existing vocabulary won't do: `discard` records nothing and returns nothing. `cards_to_graveyard_this_turn` is the closest value key and is wrong twice over: it is turn-scoped rather than resolution-scoped and it counts every graveyard at the table and every earlier discard, mill or death this turn. `count` over `{"zone": "graveyard"}` counts what was already there — in the verification sandbox that is two creature cards, so the creature branch would fire unconditionally. `connive` is the only op that reads its own discard, but it is a fused draw+discard+counter-on-self op with "nonland" hardcoded; it cannot gate an arbitrary effect, cannot ask about "creature" vs "noncreature", and cannot see another player's discard. Its own docstring states the case: "the cards that were just discarded, which nothing in the condition or value language can name".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
+  - When Joshua enters, discard up to two cards, then draw that many cards.
+  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
+- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
+  - When Celes enters, discard any number of cards, then draw that many cards plus one.
+  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
+  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
+  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
+
+</details>
 
 ## cast-from-graveyard
 
@@ -72,7 +109,81 @@ Blocks **2** cards.
 
 </details>
 
-## additional-cost
+## graveyard-movement-ledger
+
+Blocks **2** cards.
+
+- **(selector)** a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from ("from anywhere other than the battlefield") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from
+  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago
+- **(engine)** a per-turn ledger of cards that left a player's graveyard this turn (to any zone -- exile, hand, library, battlefield), exposed both as a condition an intervening-if can ask ("if a card left your graveyard this turn") and as a count value, keyed by the graveyard's owner
+  <br>Why the existing vocabulary won't do: value_keys has `cards_to_graveyard_this_turn`, which counts movement in the opposite direction (cards put *into* the graveyard) and so is true in exactly the wrong cases. `cast_from_graveyard` only asks about the source spell itself, not about any card. `has_turn_flag` reads a flag written by `set_turn_flag` on the same source, so it cannot observe a zone change caused by some other card. `exists`/`zone_is`/`cmp` only read the graveyard's current contents, which says nothing about what departed it. The engine keeps only `cards_drawn_this_turn`, `resolutions_this_turn` and `triggers_this_turn` as per-turn ledgers -- no graveyard-departure tracking exists to read.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
+  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
+- **Gau, Feral Youth** (rank 8270) — `gau_feral_youth`
+  - At the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.
+
+</details>
+
+## leaves-graveyard
+
+Blocks **2** cards.
+
+- **(trigger_event)** a trigger event fired when one or more cards leave a specified player's graveyard, batched so that a single move of several cards fires the ability once, and filterable by the leaving cards' printed characteristics (here: creature cards, your graveyard)
+  <br>Why the existing vocabulary won't do: trigger_events has 'leaves_battlefield' and 'dies', which watch the battlefield and fire on cards arriving in a graveyard rather than departing it; 'discard' and 'sacrificed' likewise only ever put cards *into* a graveyard. Nothing in the list observes the graveyard as a source zone, so the many ways a card leaves it -- reanimation via return_from_graveyard or put_onto_battlefield, exile via the exile op or an exile_from_graveyard cost, a graveyard cast, a shuffle-back -- all happen unobserved. The batching ('one or more ... leave') is a second requirement no existing event carries: every listed event fires per object.
+- **(trigger_event)** a triggered-ability event that fires when one or more cards move out of a graveyard -- a DSL trigger name mapping to a graveyard-departure event that carries the owner of the graveyard (so `controller: "you"` can restrict it to your own) and batches every card that left as part of the same move into a single firing, so exiling three cards from your graveyard for one cost puts one +1/+1 counter on this creature and not three
+  <br>Why the existing vocabulary won't do: `trigger_events` carries `leaves_battlefield` (and `dies`, `sacrificed`), all of which are about a permanent leaving the battlefield -- the wrong zone entirely, and a card leaving the graveyard is never a permanent leaving play. `exile_from_graveyard` is a *cost* key and `return_from_graveyard` is an *op*: they are two of the ways a card leaves a graveyard, not a way to notice one, and hanging the counter off either would only cover a card's own effects, never an opponent's graveyard hate, another player's reanimation of your creature, or a flashback/escape cast that exiles on resolution. The engine's `ZONE_CHANGE` event (src/automtg/engine/events.py) does carry `from`/`to` zones and would be the natural substrate, but it is absent from `TRIGGER_EVENTS` in src/automtg/engine/triggers.py, so no DSL trigger can listen to it, and even if one could, it is emitted once per object moved, which is exactly the per-card firing the printed "one or more" forbids.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
+  - This spell costs {1} less to cast for each creature card in your graveyard.
+  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
+- **Spirit Mascot** (rank 19564) — `spirit_mascot`
+  - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.
+
+</details>
+
+## mill-cost
+
+Blocks **2** cards.
+
+- **(cost)** a `mill` entry in an activated ability's cost that puts the top N cards of the activating player's library into their graveyard as part of paying the cost, and that is unpayable when the library holds fewer than N cards
+  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard`, `discard_selector` and `discard_self`, which all move cards out of hand, and `exile_from_graveyard`, which moves them out of the graveyard -- nothing moves cards off the top of the library, and `sacrifice`/`pay_life`/`remove_counters` are unrelated resources. The `mill` op exists but is an effect, not a cost: putting it in `effects` moves the payment to resolution, so the ability could be activated with an empty library and would still produce mana, and the packet's own note says paying with an op instead of a cost is wrong. It is doubly impossible here because this is a mana ability, and a mana ability may contain only `add_mana` (or one `choose_mode` of `add_mana` modes), so `mill` cannot legally appear in its effects at all.
+- **(cost)** a `mill` entry on an activated ability's cost -- "Mill a card" (a fixed number, milled from the activating player's own library) paid as part of activation, so the ability cannot be activated with an empty library and the cards are in the graveyard before the ability resolves
+  <br>Why the existing vocabulary won't do: `cost_keys` carries tap, sacrifice, discard/discard_self, exile_from_graveyard, return_to_hand, pay_life, remove_counters, tap_permanents/untap_permanents and the mana forms -- none of which moves cards from library to graveyard. `discard` is the nearest shape (a fixed count off a zone you own) but it empties the hand, not the library, and the hand is not what this card is metering. Writing the mill as a `mill` op in `effects` instead is explicitly the wrong answer per the packet notes: it moves the payment to resolution, so the ability could be activated (and responded to) with an empty library and the graveyard would fill after the ability had already been put on the stack -- which matters on this exact card, whose other ability counts cards in that graveyard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Millikin** (rank 1226) — `millikin`
+  - {T}, Mill a card: Add {C}.
+- **The Warring Triad** (rank 3427) — `the_warring_triad`
+  - {T}, Mill a card: Target player adds one mana of any color.
+
+</details>
+
+## missing-token
+
+Blocks **2** cards.
+
+- **(engine)** a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name
+  <br>Why the existing vocabulary won't do: `create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control.
+- **(engine)** a vanilla 2/2 white Knight creature token in the token pool (data/cards/tokens.cards.json), id in the style of the existing entries — `knight_2_2_w` — with types ["Creature"], subtypes ["Knight"], power 2, toughness 2, colors ["W"] and no keywords, so `create_token` has an id to name for this chapter
+  <br>Why the existing vocabulary won't do: `create_token` can only name a token already defined in data/cards/tokens.cards.json, and the pool has no plain 2/2 white Knight. The two nearest entries are both wrong: `knight_2_2_w_vigilance` is the right size, color and subtype but carries vigilance, which this card does not print — twelve tokens across the four chapters would each gain an evasion-relevant ability the card never grants; and `human_knight_2_2_r_trample_haste` is red, adds the Human subtype, and has trample and haste. The other 2/2 white tokens (`ox_2_2_w`, `cat_beast_2_2_w`) have the wrong subtype, which is load-bearing on a Knight-tribal card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summon: Knights of Round** (rank 2308) — `summon_knights_of_round`
+  - I, II, III, IV — Create three 2/2 white Knight creature tokens.
+- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
+  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
+  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
+
+</details>
+
+## additional-cost-on-alternative-cast
 
 Blocks **1** card.
 
@@ -134,17 +245,17 @@ Blocks **1** card.
 
 </details>
 
-## card-left-graveyard-this-turn
+## cast-exiled-with
 
 Blocks **1** card.
 
-- **(engine)** a per-turn ledger of cards that left a player's graveyard this turn (to any zone -- exile, hand, library, battlefield), exposed both as a condition an intervening-if can ask ("if a card left your graveyard this turn") and as a count value, keyed by the graveyard's owner
-  <br>Why the existing vocabulary won't do: value_keys has `cards_to_graveyard_this_turn`, which counts movement in the opposite direction (cards put *into* the graveyard) and so is true in exactly the wrong cases. `cast_from_graveyard` only asks about the source spell itself, not about any card. `has_turn_flag` reads a flag written by `set_turn_flag` on the same source, so it cannot observe a zone change caused by some other card. `exists`/`zone_is`/`cmp` only read the graveyard's current contents, which says nothing about what departed it. The engine keeps only `cards_drawn_this_turn`, `resolutions_this_turn` and `triggers_this_turn` as per-turn ledgers -- no graveyard-departure tracking exists to read.
+- **(op)** an effect that offers casting a card previously exiled by this permanent (selector {"zone": "exile", "exiled_with": "self"}) at its normal mana cost, on a later turn than the one it was exiled on
+  <br>Why the existing vocabulary won't do: `play_exiled` is the only op that casts from an exiled_with pool and it goes through `cast_for_free` -- it never charges the mana cost, which is the whole point of this chapter (the card is paid for, just with any type of mana). `exile` with `playable_this_turn` does grant a printed-price permission, but it is set by the exiling op itself and `legality.py` gates it on `obj.playable_turn == state.turn`, so a card exiled by chapter I is no longer castable when chapter II resolves on a later turn.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Gau, Feral Youth** (rank 8270) — `gau_feral_youth`
-  - At the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.
+- **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
+  - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
 
 </details>
 
@@ -191,6 +302,23 @@ Blocks **1** card.
 
 </details>
 
+## choose-permanents
+
+Blocks **1** card.
+
+- **(op)** an op that has a named chooser pick permanents out of a pool and records them as a binding without doing anything to them -- here the spell's controller picking survivors on another player's battlefield, so a later `sacrifice` can spare them with `exclude_binding`
+  <br>Why the existing vocabulary won't do: Every op that writes a binding via `as` also acts on what it picked: `sacrifice`, `exile`, `gain_control`, `reveal`, `create_token`, `copy_permanent`, `search_zones`. `snapshot` writes a binding without acting, but it takes `oids[0]` of its pool with no `count`/`chooser` narrowing at all, so it cannot be a choice and cannot hold four picks. There is no way to mark the four kept permanents before the mass sacrifice, and inverting the card into 'choose the ones to sacrifice' is a different choice -- the printed card names one survivor per type, not an all-but-one selection.
+- **(selector)** a per-type quota on a single choice: 'at most one artifact, at most one creature, at most one enchantment and at most one planeswalker', each skipped when that player controls none, with a permanent that is two of those types eligible as either
+  <br>Why the existing vocabulary won't do: `count` is one flat number applied to a pool that `types`/`any_types` filter uniformly, so `{"any_types": ["Artifact","Creature","Enchantment","Planeswalker"], "count": 4}` would happily take four creatures. Splitting it into four separate one-of-each-type choices is not a workaround either: `exclude_binding` reads a single binding name, and every binding write assigns the name outright rather than appending, so the one `sacrifice` that follows can spare only the last of the four.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tragic Arrogance** (rank 2867) — `tragic_arrogance`
+  - For each player, you choose from among the permanents that player controls an artifact, a creature, an enchantment, and a planeswalker.
+  - Then each player sacrifices all other nonland permanents they control.
+
+</details>
+
 ## copy-card-in-exile
 
 Blocks **1** card.
@@ -219,52 +347,33 @@ Blocks **1** card.
 
 </details>
 
-## discard-any-number
+## cumulative-choice-exclusion
 
 Blocks **1** card.
 
-- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
-  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
-- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
-  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
+- **(selector)** a way for a sequence of choices made in one resolution to accumulate, so a later choice can exclude everything already chosen -- e.g. an `as` binding on the choosing op that APPENDS across `for_each_player` iterations, readable by `exclude_binding`, giving "a creature card in your graveyard that hasn't been chosen"
+  <br>Why the existing vocabulary won't do: `exclude_binding` reads a binding written once by `as`, and `return_from_graveyard` sets no binding at all; even ops that do write `as` overwrite it each iteration, so iteration N could only exclude iteration N-1's pick, not the whole set. Nothing in `selector_keys` records "already chosen this resolution".
 
 <details><summary>Cards waiting on this</summary>
 
-- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
-  - When Celes enters, discard any number of cards, then draw that many cards plus one.
-  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+- **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
+  - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
+  - Return each card chosen this way to the battlefield under your control.
 
 </details>
 
-## discard-up-to
+## deferred-batch-choice
 
 Blocks **1** card.
 
-- **(op)** an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- "discard up to two cards" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves
-  <br>Why the existing vocabulary won't do: `op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count
-- **(value)** a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so "then draw that many cards" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{"count": {"binding": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free
-  <br>Why the existing vocabulary won't do: `discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant
+- **(op)** choices gathered from several players first and the effect applied once to the whole set -- "each opponent chooses ... Return EACH card chosen this way to the battlefield" is one simultaneous return after all choices are made
+  <br>Why the existing vocabulary won't do: The only player-shaped loop, `for_each_player`, executes its whole body per player, so a `return_from_graveyard` inside it returns each creature as its own event; the cards would enter one at a time between choices rather than together, changing enters-the-battlefield ordering and letting each opponent see the previous card already on the battlefield.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
-  - When Joshua enters, discard up to two cards, then draw that many cards.
-  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-
-</details>
-
-## discarded-this-way
-
-Blocks **1** card.
-
-- **(value)** a condition/value leaf that names the cards discarded during this ability's own resolution and filters them by card type, so an `if` can ask "was a creature card discarded this way" and "was a noncreature card discarded this way" — e.g. a `discarded_this_way` value taking a selector and returning a count, usable inside `cmp`/`exists`, populated by the `discard` op for the duration of the resolution (and across a `for_each_player` loop, since this card asks about every player's discard, not just the controller's)
-  <br>Why the existing vocabulary won't do: `discard` records nothing and returns nothing. `cards_to_graveyard_this_turn` is the closest value key and is wrong twice over: it is turn-scoped rather than resolution-scoped and it counts every graveyard at the table and every earlier discard, mill or death this turn. `count` over `{"zone": "graveyard"}` counts what was already there — in the verification sandbox that is two creature cards, so the creature branch would fire unconditionally. `connive` is the only op that reads its own discard, but it is a fused draw+discard+counter-on-self op with "nonland" hardcoded; it cannot gate an arbitrary effect, cannot ask about "creature" vs "noncreature", and cannot see another player's discard. Its own docstring states the case: "the cards that were just discarded, which nothing in the condition or value language can name".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
-  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
-  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
+- **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
+  - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
+  - Return each card chosen this way to the battlefield under your control.
 
 </details>
 
@@ -331,6 +440,20 @@ Blocks **1** card.
 
 </details>
 
+## exiled-with-link
+
+Blocks **1** card.
+
+- **(op)** a key on `exile` that records `exiled_by = source` so a later `exiled_with: "self"` selector can find the cards, without also declaring that they return
+  <br>Why the existing vocabulary won't do: `until_leaves` is the only key that sets `exiled_by` in `op_exile`, and it is the O-Ring link: it declares a return when the source leaves the battlefield. This Saga is sacrificed after chapter IV, so every card chapter I exiled would be handed back -- including the cards taken from opponents' graveyards. `hideaway` sets the link too but only for a card it chose off the top of your own library.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
+  - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
+
+</details>
+
 ## extreme-value
 
 Blocks **1** card.
@@ -343,20 +466,6 @@ Blocks **1** card.
 - **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
   - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
   - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
-
-</details>
-
-## graveyard-arrival-this-turn
-
-Blocks **1** card.
-
-- **(selector)** a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from ("from anywhere other than the battlefield") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from
-  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago
-
-<details><summary>Cards waiting on this</summary>
-
-- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
-  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
 
 </details>
 
@@ -391,21 +500,6 @@ Blocks **1** card.
 
 </details>
 
-## leaves-graveyard
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when one or more cards leave a specified player's graveyard, batched so that a single move of several cards fires the ability once, and filterable by the leaving cards' printed characteristics (here: creature cards, your graveyard)
-  <br>Why the existing vocabulary won't do: trigger_events has 'leaves_battlefield' and 'dies', which watch the battlefield and fire on cards arriving in a graveyard rather than departing it; 'discard' and 'sacrificed' likewise only ever put cards *into* a graveyard. Nothing in the list observes the graveyard as a source zone, so the many ways a card leaves it -- reanimation via return_from_graveyard or put_onto_battlefield, exile via the exile op or an exile_from_graveyard cost, a graveyard cast, a shuffle-back -- all happen unobserved. The batching ('one or more ... leave') is a second requirement no existing event carries: every listed event fires per object.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
-  - This spell costs {1} less to cast for each creature card in your graveyard.
-  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
-
-</details>
-
 ## linked-targets
 
 Blocks **1** card.
@@ -418,20 +512,6 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## mill-cost
-
-Blocks **1** card.
-
-- **(cost)** a `mill` entry in an activated ability's cost that puts the top N cards of the activating player's library into their graveyard as part of paying the cost, and that is unpayable when the library holds fewer than N cards
-  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard`, `discard_selector` and `discard_self`, which all move cards out of hand, and `exile_from_graveyard`, which moves them out of the graveyard -- nothing moves cards off the top of the library, and `sacrifice`/`pay_life`/`remove_counters` are unrelated resources. The `mill` op exists but is an effect, not a cost: putting it in `effects` moves the payment to resolution, so the ability could be activated with an empty library and would still produce mana, and the packet's own note says paying with an op instead of a cost is wrong. It is doubly impossible here because this is a mana ability, and a mana ability may contain only `add_mana` (or one `choose_mode` of `add_mana` modes), so `mill` cannot legally appear in its effects at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Millikin** (rank 1226) — `millikin`
-  - {T}, Mill a card: Add {C}.
 
 </details>
 
@@ -449,7 +529,7 @@ Blocks **1** card.
 
 </details>
 
-## modal-activated-ability-targets
+## modal-activated-targets
 
 Blocks **1** card.
 
@@ -479,18 +559,49 @@ Blocks **1** card.
 
 </details>
 
-## moogle-token
+## opponent-chooser
 
 Blocks **1** card.
 
-- **(engine)** a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name
-  <br>Why the existing vocabulary won't do: `create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control.
+- **(selector)** a selector `chooser` that can name an arbitrary player -- a player spec such as {"binding": "each_player"} or "opponent" -- so that inside a `for_each_player` loop the looped opponent is the one asked to pick from a pool of cards that are in YOUR graveyard (and hence owned and controlled by you)
+  <br>Why the existing vocabulary won't do: `chooser` in `selector_keys` is validated at load time to exactly "controller", "owner" or "none" (selectors.validate_selector). For a pool of `{"zone": "graveyard", "controller": "you"}` both "controller" and "owner" resolve to the spell's controller, so the caster picks the creature cards instead of each opponent. `for_each_player` binds `each_player` only for the selector's `controller`/`player` filters, not for who is asked; `scry` is the only op with a separate `chooser` player spec and it is hard-wired to scry/fateseal, not to object selection.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
-  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
-  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
+- **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
+  - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
+  - Return each card chosen this way to the battlefield under your control.
+
+</details>
+
+## pay-x-life-additional-cost
+
+Blocks **1** card.
+
+- **(cost)** an additional cost whose amount is a number the caster announces while casting (601.2b), for a spell with no {X} in its mana cost -- 'pay X life' where X is chosen freely from 0 up to the caster's life total
+  <br>Why the existing vocabulary won't do: `pay_life` in a cost is a fixed integer or a board-derived value expression (War Room), never a player-announced number, and `x_value` is refused outside an activated ability that has a literal '{X}' in its own mana. The nearest shape, `additional_cost` + `additional_optional` + `additional_repeatable` (replicate/multikicker), is an optional cost paid a number of times rather than one mandatory announced X, so it is a different printed sentence and a different legality offer.
+- **(value)** a value leaf that reads the X announced for a non-mana additional cost, so the spell's effects can be sized by it
+  <br>Why the existing vocabulary won't do: The `x` leaf returns `ctx.x`, and `ctx.x` is only ever filled by `game._ask_x`, which returns 0 unless the cost's mana has an `{X}` symbol (`cost.mana.x_count`). Toxic Deluge's mana cost is {2}{B}, so `x` would silently evaluate to 0 and the sweep would be -0/-0. `additional_paid` counts repeatable optional payments, not an announced X.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Toxic Deluge** (rank 67) — `toxic_deluge`
+  - As an additional cost to cast this spell, pay X life.
+  - All creatures get -X/-X until end of turn.
+
+</details>
+
+## per-player-choice-memory
+
+Blocks **1** card.
+
+- **(selector)** A way for a `may` that is resolved once per player (inside `for_each_player`) to record which players accepted, plus a player spec that later selects exactly that recorded set -- so a *subsequent* effect in the same resolution can say "each opponent who did this this way". Concretely: something like an `as` binding on `may` that accumulates the accepting player ids across the loop, readable afterwards as `{"players": {"binding": "accepted"}}` on `damage`. The first half of the sentence ("Each player may discard their hand and draw five cards") is already expressible as `for_each_player` over `each_player` wrapping a `may` whose `player` is `{"binding": "each_player"}` with `discard` + `draw`; only the back-reference is blocked.
+  <br>Why the existing vocabulary won't do: `set_flag`/`has_flag` is the closest recording mechanism and is object-scoped, not player-scoped: `op_set_flag` writes into `obj.flags` of battlefield objects only, and the `has_flag` condition is always asked of `ctx.source_oid`, the ability's own source -- so it cannot say anything about a player. `set_turn_flag`/`has_turn_flag` is the same shape keyed by oid. `for_each_player` does bind `each_player`, but the binding is overwritten on every iteration and restored at the end of the loop, so nothing survives to be read after the loop. `join_forces` is the only op that accumulates across a player loop and it accumulates an integer total, not the set of seats that said yes. Folding the `damage` into the `may`'s own `effects` is the tempting near miss and is wrong in two visible ways: it damages each opponent before the next opponent has been asked (in multiplayer a player can be killed mid-loop, changing later choices), and it splits one simultaneous damage event into several separate ones, which is observable to damage triggers and to prevention shields.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Snort** (rank 5124) — `snort`
+  - Each player may discard their hand and draw five cards. Then Snort deals 5 damage to each opponent who discarded their hand this way.
 
 </details>
 
@@ -540,6 +651,20 @@ Blocks **1** card.
 
 </details>
 
+## sandbox-graveyard-props
+
+Blocks **1** card.
+
+- **(engine)** A verification sandbox whose graveyard contains at least one cheap creature card -- mana value 3 or less -- so a targeted reanimation spell with a printed mana-value restriction has a legal target and can be cast at gate 4. Concretely: OWN_GRAVEYARD_ROLES in src/automtg/cards/authoring/verify.py needs a 'small_creature' role (a non-token creature with mana value <= 3) alongside the existing 'creature' and 'flier' roles, and _ROLES needs the matching predicate.
+  <br>Why the existing vocabulary won't do: The DSL itself is sufficient: a targets entry of kind 'card_in_graveyard' with selector {zone: graveyard, controller: you, types: [Creature], mana_value: {op: '<=', value: {const: 3}}} feeding put_onto_battlefield with controller 'you' and tapped true says the printed line exactly -- it is the same construction bishop_of_rebirth already ships in data/cards/edgar.cards.json. What blocks the card is the fixed position: OWN_GRAVEYARD_ROLES = ('creature', 'flier') resolves against the shipped pool to acidic_slime ({3}{G}{G}, mana value 5) and air_elemental ({3}{U}{U}, mana value 5), so no card in any graveyard satisfies 'mana value 3 or less'. With no legal target the spell is never offered and gate 4 reports 'not playable in the sandbox; offered: [Attack p1 ...]'. The only ways to make it castable in the present position are to drop the mana-value clause or to add 'optional' to a target the card does not print as 'up to one' -- both misrepresent the printed card, which the brief forbids.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Helping Hand** (rank 5461) — `helping_hand`
+  - Return target creature card with mana value 3 or less from your graveyard to the battlefield tapped.
+
+</details>
+
 ## shares-a-name-with
 
 Blocks **1** card.
@@ -551,6 +676,34 @@ Blocks **1** card.
 
 - **Legions to Ashes** (rank 6823) — `legions_to_ashes`
   - Exile target nonland permanent an opponent controls and all tokens that player controls with the same name as that permanent.
+
+</details>
+
+## spend-mana-as-any-type
+
+Blocks **1** card.
+
+- **(engine)** a per-spell permission that lets mana of any type be spent to pay that spell's cost, attached to the cast permission granted above (rule 609.4b-style cost-payment relaxation)
+  <br>Why the existing vocabulary won't do: Nothing in `ops`, `static_effects` or `cost_keys` relaxes a spell's colored requirements. `mana_reduction` only shrinks generic, `spell_cost_reduction` likewise, and `add_mana`/`add_mana_per` change what is produced rather than what may be spent. The engine's only 'any type' handling (costs.py's Vorinclex path) is mana *production*, not payment.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
+  - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
+
+</details>
+
+## target-player-chooses
+
+Blocks **1** card.
+
+- **(decision)** a way to direct a modal/colour choice to a player other than the ability's controller -- e.g. a `chooser` on `choose_mode` (or on `choose_color`) naming a target player -- so "target player adds one mana of any color" asks the targeted player which colour they add
+  <br>Why the existing vocabulary won't do: "Add one mana of any color" is spelled as one `choose_mode` over five `add_mana` modes (Arcane Signet, Command Tower). `op_choose_mode` always calls `ask_mode(..., ctx.controller, ...)` and has no chooser field, and `op_choose_color` likewise asks `ctx.controller` and stores the colour on its own source. `add_mana` can send the mana to another player via its `player` spec, but the colour would still be picked by the ability's controller, which is a different card: the mana lands in the target player's pool in a colour they did not choose.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Warring Triad** (rank 3427) — `the_warring_triad`
+  - {T}, Mill a card: Target player adds one mana of any color.
 
 </details>
 

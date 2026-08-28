@@ -8,13 +8,13 @@
   ],
   "needs": [
     {
-      "capability": "discard_up_to",
+      "capability": "discard_binding",
       "kind": "op",
       "what": "an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- \"discard up to two cards\" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves",
       "why_existing_wont_do": "`op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count"
     },
     {
-      "capability": "discard_up_to",
+      "capability": "discard_binding",
       "kind": "value",
       "what": "a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so \"then draw that many cards\" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{\"count\": {\"binding\": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free",
       "why_existing_wont_do": "`discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant"

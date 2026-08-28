@@ -8,13 +8,13 @@
   ],
   "needs": [
     {
-      "capability": "discard_any_number",
+      "capability": "discard_binding",
       "kind": "op",
       "what": "a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: \"any\"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said",
       "why_existing_wont_do": "`discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, \"Discard\", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives \"you may discard a card\", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability"
     },
     {
-      "capability": "discard_any_number",
+      "capability": "discard_binding",
       "kind": "value",
       "what": "a value naming how many cards that discard just discarded, so the follow-up draw can be \"that many cards plus one\" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to",
       "why_existing_wont_do": "`discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong"

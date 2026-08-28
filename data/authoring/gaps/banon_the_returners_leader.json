@@ -1,9 +1,9 @@
 {
   "card_id": "banon_the_returners_leader",
   "name": "Banon, the Returners' Leader",
-  "oracle_text": "Pray \u2014 Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.\nWhenever you attack, you may pay {1} and discard a card. If you do, draw a card.",
+  "oracle_text": "Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.\nWhenever you attack, you may pay {1} and discard a card. If you do, draw a card.",
   "blocked_sentences": [
-    "Pray \u2014 Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn."
+    "Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn."
   ],
   "needs": [
     {
@@ -19,7 +19,7 @@
       "why_existing_wont_do": "`set_turn_flag`/`has_turn_flag` can record that something happened this turn, but they are effect ops and conditions readable only while an ability resolves; nothing consults them when legality enumerates castable spells, so there is no way to make a standing permission stop offering itself after its first use"
     },
     {
-      "capability": "graveyard_arrival_this_turn",
+      "capability": "graveyard_movement_ledger",
       "kind": "selector",
       "what": "a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from (\"from anywhere other than the battlefield\") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from",
       "why_existing_wont_do": "`cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago"

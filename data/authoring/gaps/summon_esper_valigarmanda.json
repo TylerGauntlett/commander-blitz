@@ -1,0 +1,36 @@
+{
+  "card_id": "summon_esper_valigarmanda",
+  "name": "Summon: Esper Valigarmanda",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI — Exile an instant or sorcery card from each graveyard.\nII, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.\nFlying, haste",
+  "blocked_sentences": [
+    "II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell."
+  ],
+  "needs": [
+    {
+      "capability": "cast_exiled_with",
+      "kind": "op",
+      "what": "an effect that offers casting a card previously exiled by this permanent (selector {\"zone\": \"exile\", \"exiled_with\": \"self\"}) at its normal mana cost, on a later turn than the one it was exiled on",
+      "why_existing_wont_do": "`play_exiled` is the only op that casts from an exiled_with pool and it goes through `cast_for_free` -- it never charges the mana cost, which is the whole point of this chapter (the card is paid for, just with any type of mana). `exile` with `playable_this_turn` does grant a printed-price permission, but it is set by the exiling op itself and `legality.py` gates it on `obj.playable_turn == state.turn`, so a card exiled by chapter I is no longer castable when chapter II resolves on a later turn."
+    },
+    {
+      "capability": "spend_mana_as_any_type",
+      "kind": "engine",
+      "what": "a per-spell permission that lets mana of any type be spent to pay that spell's cost, attached to the cast permission granted above (rule 609.4b-style cost-payment relaxation)",
+      "why_existing_wont_do": "Nothing in `ops`, `static_effects` or `cost_keys` relaxes a spell's colored requirements. `mana_reduction` only shrinks generic, `spell_cost_reduction` likewise, and `add_mana`/`add_mana_per` change what is produced rather than what may be spent. The engine's only 'any type' handling (costs.py's Vorinclex path) is mana *production*, not payment."
+    },
+    {
+      "capability": "exiled_with_link",
+      "kind": "op",
+      "what": "a key on `exile` that records `exiled_by = source` so a later `exiled_with: \"self\"` selector can find the cards, without also declaring that they return",
+      "why_existing_wont_do": "`until_leaves` is the only key that sets `exiled_by` in `op_exile`, and it is the O-Ring link: it declares a return when the source leaves the battlefield. This Saga is sacrificed after chapter IV, so every card chapter I exiled would be handed back -- including the cards taken from opponents' graveyards. `hideaway` sets the link too but only for a card it chose off the top of your own library."
+    }
+  ],
+  "closest_existing": [
+    "play_exiled",
+    "hideaway",
+    "exile.playable_this_turn",
+    "exile.until_leaves",
+    "mana_reduction"
+  ],
+  "confidence": "high"
+}
