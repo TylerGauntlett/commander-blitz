@@ -10,15 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**9 cards** blocked by **22** capabilities.
+**8 cards** blocked by **20** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
-| [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
@@ -36,21 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
-
-## alternative-cost-pay-life
-
-Blocks **1** card.
-
-- **(replacement)** An alternative cost that REPLACES a spell's mana cost with a life payment computed from that spell's own mana value, applied automatically to every spell cast under the permission above. Needs (a) alternative-cost machinery that substitutes for the whole mana cost rather than reducing it, (b) the substituted cost to be paid in life, and (c) its amount to be read from the spell being cast (its mana value), not from the source granting the permission. The life payment is a cost, so a player who cannot pay that much life cannot cast the spell that way.
-  <br>Why the existing vocabulary won't do: `pay_life` exists in `cost_keys`, but `cost_keys` is only what an ACTIVATED ABILITY'S OWN cost may contain -- it cannot be attached to some other spell being cast from a zone. `spell_cost_reduction` in `static_effects` is the only static that touches what other spells cost, and it reduces a mana cost by an amount; it cannot swap the payment to a different resource, and reducing to {0} would be a different card (it would not drain the caster's life, so Citadel's self-limiting downside would vanish). Nothing in `static_effects` or `condition_keys` can read the mana value of the spell currently being cast at payment time; `mana_value_of` is a `value_key` for effects at resolution, not a payment-time hook.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
-  - You may play lands and cast spells from the top of your library.
-  - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
-
-</details>
 
 ## batched-enters-trigger
 
@@ -92,21 +75,6 @@ Blocks **1** card.
 
 - **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
   - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
-
-</details>
-
-## cast-from-library-top
-
-Blocks **1** card.
-
-- **(static_effect)** A player-wide continuous static that widens the zones a player may CAST NONLAND SPELLS from to include the top card of their own library -- the casting twin of `play_lands_from_library_top`, covering instants, sorceries, creatures and any other spell, playable at the times that spell's own timing rules allow. It must also make the top card legal to see for the purpose of casting it (Bolas's Citadel pairs it with its own `look_at_library_top` line), and it must be true continuously rather than at one moment.
-  <br>Why the existing vocabulary won't do: `play_lands_from_library_top` in `static_effects` is the closest thing and is lands only -- `player_plays_lands_from_library_top` is documented as 'whether this player may play the top card of their library, IF IT IS A LAND', so it grants no permission for a nonland spell. `play_lands_from_graveyard` is the same permission aimed at a different zone, also lands only. On the op side, `play_exiled` lets a card be played from exile but only for cards a resolving effect has already exiled, so it cannot reach an untouched library top, and it is a one-shot resolution effect rather than a continuous permission. `look_at_library_top` grants visibility and is explicitly documented as granting 'no permission to play or move the card'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
-  - You may play lands and cast spells from the top of your library.
-  - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
 
 </details>
 

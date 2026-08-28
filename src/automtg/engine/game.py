@@ -25,6 +25,7 @@ from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
+from .mana import ManaCost
 from .player import MAX_HAND_SIZE, PlayerState
 from .primitives import draw_cards
 from .rng import Rng
@@ -361,6 +362,14 @@ class Game:
             cost = card.overload
         elif action.kicked:
             cost = card.mana_cost.plus(card.kicker)
+        elif action.from_library_top:
+            # "…pay life equal to its mana value **rather than** pay its mana
+            # cost" -- Bolas's Citadel. The whole mana half is replaced, so it
+            # is priced free here exactly as `_cast_variant` priced the line,
+            # and the life is charged below. Without this the spell was offered
+            # for free and then billed its printed cost, which `pay` refused
+            # with no mana on the board: the cast simply did nothing.
+            cost = ManaCost.parse("")
         else:
             cost = card.mana_cost
 
@@ -512,6 +521,16 @@ class Game:
         # so the permission shown and the permission spent are the same one.
         # Nothing else in the engine knows this cast happened, which is why the
         # granting oid rides on the stack item.
+        if action.from_library_top:
+            # "…pay life equal to its mana value rather than pay its mana cost."
+            # The mana half was already zeroed when the line was priced, so this
+            # is the whole price. 118.4 lets a player pay down to exactly 0, and
+            # legality withholds the line above that -- so this is charged
+            # rather than offered and rewound.
+            ok = yield from pay(state, pid, Cost(pay_life=card.mana_value), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+
         permission = None
         enters_tapped = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:

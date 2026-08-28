@@ -402,6 +402,32 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
+    # "You may play lands and cast spells from the top of your library" --
+    # Bolas's Citadel. A fifth zone a spell may be cast from, and the only one
+    # that is *hidden*: the top card and nothing below it, which is what the
+    # card says and the only part of a library anybody is entitled to see.
+    # Lands are the neighbouring `play_lands_from_library_top` permission and
+    # are offered by `_land_actions`, so this covers only what that one cannot.
+    from .characteristics import library_top_cast_permission
+
+    top_permission = library_top_cast_permission(state, pid)
+    if top_permission is not None and state.players[pid].library:
+        oid = state.players[pid].library[0]
+        card = state.card(oid)
+        # 118.4: a player may pay life down to exactly 0, so the test is on
+        # having that much and not on surviving it. A line offered and then
+        # unpayable would be an action the engine could not honour.
+        affordable = state.players[pid].life >= card.mana_value
+        if not card.is_land and affordable and _timing_ok(card, sorcery_speed):
+            out.extend(
+                _cast_variant(
+                    state, pid, oid, card,
+                    enumerate_target_tuples(state, pid, card.targets, oid),
+                    extra_generic=0,
+                    from_library_top=True,
+                )
+            )
+
     # Adventure (715.3d): the card is in exile having gone on one, and its
     # *front* face may be cast from there. A fourth zone a card may be cast
     # from, widened the way retrace widens the graveyard -- and it is the front
@@ -1013,6 +1039,7 @@ def _cast_variant(
     overloaded: bool = False,
     additional_times: int = 0,
     additional_choice: int | None = None,
+    from_library_top: bool = False,
     foretold: bool = False,
     face_down: bool = False,
     second_face: bool = False,
@@ -1068,6 +1095,13 @@ def _cast_variant(
         cost = card.mana_cost.plus(card.kicker)
     else:
         cost = card.mana_cost
+    if from_library_top:
+        # "…pay life equal to its mana value **rather than** pay its mana cost."
+        # A whole substitution rather than a reduction, which is what
+        # `spell_cost_reduction` cannot do: the mana half becomes free here and
+        # `Game._cast` charges the life. Priced before every discount below, so
+        # nothing reduces a cost that is no longer being paid.
+        cost = ManaCost.parse("")
     branch = chosen_additional(card, additional_choice)
     if additional_times and branch is not None:
         # The mana half of the additional cost, charged `additional_times` over.
@@ -1176,6 +1210,7 @@ def _cast_variant(
                 overloaded=overloaded,
                 additional_times=additional_times,
                 additional_choice=additional_choice,
+                from_library_top=from_library_top,
                 foretold=foretold,
                 face_down=face_down,
                 second_face=second_face,

@@ -120,6 +120,16 @@ STATIC_EFFECTS = frozenset(
         # `affects_spells`, the same filter `spell_cost_reduction` matches a
         # card in hand with, and counts its uses per granting permanent.
         "cast_from_graveyard",
+        # "You may play lands and **cast spells** from the top of your library.
+        # If you cast a spell this way, pay life equal to its mana value rather
+        # than pay its mana cost." Bolas's Citadel. The casting twin of
+        # `play_lands_from_library_top`, which is lands only and grants nothing
+        # for a nonland spell.
+        #
+        # The life price belongs to the same static rather than a second one:
+        # the permission without it is every spell in the deck castable off the
+        # top at its printed cost, which is a different and much stronger card.
+        "cast_from_library_top",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -243,6 +253,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "no_hand_limit",
         "play_lands_from_graveyard",
         "cast_from_graveyard",
+        "cast_from_library_top",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
@@ -2242,6 +2253,11 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f"{{\"controller\": \"any\", \"subtypes\": [\"Inkling\"]}}"
         )
+    if model.effect == "cast_from_library_top" and not model.pay_life_instead:
+        raise DslError(
+            f"{where}: cast_from_library_top needs 'pay_life_instead' -- "
+            f"the permission without its price is a different card"
+        )
     if model.effect == "cast_from_graveyard":
         # Both halves required, for `spell_cost_reduction`'s reason: a
         # permission that named no card type would let every spell out of the
@@ -2475,6 +2491,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "attack_tax":
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.effect == "cast_from_library_top":
+        static["pay_life_instead"] = True
     if model.effect == "cast_from_graveyard":
         # Carried onto the compiled mapping rather than left on the model, for
         # `grant_ability`'s reason a few lines down: the mapping is all

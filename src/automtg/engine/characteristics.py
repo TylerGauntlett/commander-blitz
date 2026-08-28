@@ -1895,6 +1895,21 @@ def graveyard_cast_arrival_ok(
     return obj.graveyard_from in allowed
 
 
+def library_top_cast_permission(state: GameState, pid: int):
+    """The permanent letting this player cast off the top of their library.
+
+    Bolas's Citadel. The casting twin of
+    `player_plays_lands_from_library_top`, which is documented as lands only and
+    so grants nothing for a nonland spell -- and unlike it this returns the
+    granting permanent rather than a bool, because the price rides on the same
+    static and `Game._cast` has to read it.
+    """
+    for obj, static in _active_player_statics(state, "cast_from_library_top"):
+        if _reaches_player(obj, static, pid):
+            return obj, static
+    return None
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 
