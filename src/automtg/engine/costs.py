@@ -924,6 +924,10 @@ def pay(
     legality used when it decided this was payable -- restricted mana is offered
     or withheld by that alone.
     """
+    # A payment is one group, the way an effect op is: an
+    # `exile_from_graveyard` cost that takes three cards takes them at
+    # once. See `triggers._queue`.
+    state.event_batch += 1
     if cost is None and not extra_generic:
         return True
     cost = cost or Cost()

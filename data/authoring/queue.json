@@ -257922,12 +257922,12 @@
     },
     "Spirit Mascot": {
       "edhrec_rank": 19564,
-      "gate": "template",
+      "gate": null,
       "name": "Spirit Mascot",
-      "reason": "no template for: Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "123f1fde-d8de-4640-baa1-bb3781713168",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spirit Mirror": {

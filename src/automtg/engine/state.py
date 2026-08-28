@@ -136,6 +136,17 @@ class GameState:
     ability_static_version: int = -1
 
     triggers_this_step: int = 0
+    #: Which "simultaneous" group the moves happening right now belong to.
+    #: Bumped once per effect op and once per cost payment -- the two places a
+    #: card can move several cards at once -- so a trigger that reads "one or
+    #: more cards" can fire once for the whole group. See `triggers._queue`.
+    event_batch: int = 0
+    #: (oid, ability index, batch) triples a batched trigger has already queued,
+    #: so "one or more" fires once per simultaneous group. Never cleared during
+    #: a game: the batch counter only increases, so an old triple can never be
+    #: matched again, and the set is bounded by how many batched triggers
+    #: actually fired rather than by the length of the game.
+    batched_triggers: set = field(default_factory=set)
     #: "Whenever a creature dealt damage by this creature this turn dies…"
     #:
     #: victim oid -> the oids of everything that has damaged it this turn.

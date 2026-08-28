@@ -200,6 +200,31 @@ def move_object(
         },
     )
 
+    # "Whenever one or more cards leave your graveyard" -- Spirit Mascot, Cyan.
+    # Narrow on purpose: `ZONE_CHANGE` above records *every* move and stays off
+    # the trigger bus, because routing it through `fire` would run the trigger
+    # scan on every draw, discard and shuffle in the game.
+    #
+    # Tokens are excluded for the reason the ledger excludes them: a token in a
+    # graveyard ceases to exist as a state-based action, and that is not a card
+    # leaving. `player` is the graveyard's **owner** (400.3), so "your
+    # graveyard" is answered about the yard rather than about whoever moved the
+    # card -- an opponent's graveyard hate still fires your Mascot.
+    if (
+        from_zone is Zone.GRAVEYARD
+        and to_zone is not Zone.GRAVEYARD
+        and not obj.is_token
+    ):
+        fire(
+            state,
+            EventType.LEAVES_GRAVEYARD,
+            player=owner,
+            source=oid,
+            oid=oid,
+            card=card.id,
+            batch=state.event_batch,
+        )
+
     if was_on_battlefield:
         fire(
             state,
