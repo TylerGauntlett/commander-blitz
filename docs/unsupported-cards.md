@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**16 cards** blocked by **31** capabilities.
+**15 cards** blocked by **30** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
-| [per-player-choice-memory](#per-player-choice-memory) | 1 | 5124 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
@@ -434,20 +433,6 @@ Blocks **1** card.
 - **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
   - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
   - Return each card chosen this way to the battlefield under your control.
-
-</details>
-
-## per-player-choice-memory
-
-Blocks **1** card.
-
-- **(selector)** A way for a `may` that is resolved once per player (inside `for_each_player`) to record which players accepted, plus a player spec that later selects exactly that recorded set -- so a *subsequent* effect in the same resolution can say "each opponent who did this this way". Concretely: something like an `as` binding on `may` that accumulates the accepting player ids across the loop, readable afterwards as `{"players": {"binding": "accepted"}}` on `damage`. The first half of the sentence ("Each player may discard their hand and draw five cards") is already expressible as `for_each_player` over `each_player` wrapping a `may` whose `player` is `{"binding": "each_player"}` with `discard` + `draw`; only the back-reference is blocked.
-  <br>Why the existing vocabulary won't do: `set_flag`/`has_flag` is the closest recording mechanism and is object-scoped, not player-scoped: `op_set_flag` writes into `obj.flags` of battlefield objects only, and the `has_flag` condition is always asked of `ctx.source_oid`, the ability's own source -- so it cannot say anything about a player. `set_turn_flag`/`has_turn_flag` is the same shape keyed by oid. `for_each_player` does bind `each_player`, but the binding is overwritten on every iteration and restored at the end of the loop, so nothing survives to be read after the loop. `join_forces` is the only op that accumulates across a player loop and it accumulates an integer total, not the set of seats that said yes. Folding the `damage` into the `may`'s own `effects` is the tempting near miss and is wrong in two visible ways: it damages each opponent before the next opponent has been asked (in multiplayer a player can be killed mid-loop, changing later choices), and it splits one simultaneous damage event into several separate ones, which is observable to damage triggers and to prevention shields.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Snort** (rank 5124) — `snort`
-  - Each player may discard their hand and draw five cards. Then Snort deals 5 damage to each opponent who discarded their hand this way.
 
 </details>
 

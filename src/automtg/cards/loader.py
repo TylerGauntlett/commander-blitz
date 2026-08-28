@@ -3376,6 +3376,22 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
         )
     if not isinstance(who, Mapping):
         return
+    if "except" in who:
+        # "each **opponent** who discarded their hand this way" -- Snort. An
+        # inclusive spec narrowed by a seat, which `not` cannot do: `not` is the
+        # complement over the whole table, and the set a binding holds includes
+        # you whenever you took the same option. Both halves are validated in
+        # their own right, and the rest of the mapping has to be a real spec --
+        # a bare `{"except": "you"}` names everyone the long way round.
+        _validate_player_spec(who["except"], f"{where}.except", target_kinds)
+        rest = {k: v for k, v in who.items() if k != "except"}
+        if not rest:
+            raise DslError(
+                f"{where}: 'except' narrows another spec, so there has to be one "
+                f"to narrow -- use {{'not': ...}} for a bare complement"
+            )
+        _validate_player_spec(rest, where, target_kinds)
+        return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
         # spec, so whatever it wraps has to be a legal spec in its own right --

@@ -251632,12 +251632,12 @@
     },
     "Snort": {
       "edhrec_rank": 5124,
-      "gate": "template",
+      "gate": null,
       "name": "Snort",
-      "reason": "no template for: Each player may discard their hand and draw five cards. Then deals 5 damage to each oppone",
+      "reason": "",
       "scryfall_id": "2fbe13c7-af6c-43f4-b947-f32ea48a0edb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Snorting Gahr": {
