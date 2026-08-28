@@ -1990,6 +1990,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             mana_ability=model.trigger.mana_ability,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
+            batched=model.trigger.batched,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(

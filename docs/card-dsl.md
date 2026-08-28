@@ -1563,7 +1563,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
-`counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
+`counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented`
 
 **`damage_prevented`** fires when damage that would have been dealt to a player

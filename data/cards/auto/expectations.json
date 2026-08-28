@@ -6761,6 +6761,10 @@
   "spirebluff_canal": {
     "zone": "battlefield"
   },
+  "spirit_mascot": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spirited_companion": {
     "hand_size": {
       "0": 1

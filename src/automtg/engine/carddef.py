@@ -365,6 +365,17 @@ class TriggerSpec:
     #: A card printing "one or more" *without* a per-turn cap would still be
     #: wrong, and is still a gap.
     max_per_turn: int | None = None
+    #: "Whenever **one or more** cards leave your graveyard…" -- Spirit Mascot.
+    #: The event fires once per card, because that is how cards move; this says
+    #: the *ability* fires once per simultaneous group. Without it, Rise of the
+    #: Dark Realms emptying a five-card graveyard would put five +1/+1 counters
+    #: on the Mascot instead of one.
+    #:
+    #: Deliberately not `max_per_turn: 1`, which the codebase already documents
+    #: as the stand-in for this shape and which is a *different card*: a printed
+    #: "one or more" fires again later the same turn for a second, separate
+    #: departure, and a per-turn cap does not.
+    batched: bool = False
     #: Which chapter number a ``chapter`` trigger fires on -- the "II" in "II --
     #: Create two 2/2 red Human Knight creature tokens".
     #:

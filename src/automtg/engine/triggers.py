@@ -30,6 +30,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     "permanent_enters": EventType.ENTERS_BATTLEFIELD,
     "dies": EventType.DIES,
     "leaves_battlefield": EventType.LEAVES_BATTLEFIELD,
+    "leaves_graveyard": EventType.LEAVES_GRAVEYARD,
     "land_played": EventType.LAND_PLAYED,
     "spell_cast": EventType.SPELL_CAST,
     "attacks": EventType.ATTACKS,
@@ -1122,11 +1123,29 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # Keyed by (permanent, ability index) rather than by card, so two Welcoming
     # Vampires each get their own draw.
     spec_cap = ability.trigger.max_per_turn if ability.trigger is not None else None
+    spec_batched = ability.trigger.batched if ability.trigger is not None else False
     if spec_cap is not None:
         key = (obj.oid, ability.index)
         if state.triggers_this_turn.get(key, 0) >= spec_cap:
             return
         state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
+
+    # "Whenever **one or more** cards leave your graveyard" -- one firing per
+    # simultaneous group, not per card. `state.event_batch` is bumped once per
+    # effect op and once per cost payment, which are the two places an effect
+    # moves several cards at once, so an `exile` over a whole graveyard shares
+    # one batch and queues this ability once.
+    #
+    # Keyed by (permanent, ability index, batch) for the reason the per-turn cap
+    # is keyed by (permanent, ability index): two Spirit Mascots each get their
+    # own counter from the same departure.
+    if spec_batched:
+        batch = event.data.get("batch")
+        if batch is not None:
+            key = (obj.oid, ability.index, batch)
+            if key in state.batched_triggers:
+                return
+            state.batched_triggers.add(key)
 
     state.triggers_this_step += 1
     if state.triggers_this_step > MAX_TRIGGERS_PER_STEP:

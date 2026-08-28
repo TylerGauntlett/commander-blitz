@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**22 cards** blocked by **36** capabilities.
+**21 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
 | [discard-binding](#discard-binding) | 2 | 3959 | op, value |
-| [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [become-copy](#become-copy) | 1 | 2769 | engine, op |
@@ -38,6 +37,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
+| [leaves-graveyard](#leaves-graveyard) | 1 | 10518 | trigger_event |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
@@ -95,25 +95,6 @@ Blocks **2** cards.
 - **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
   - When Celes enters, discard any number of cards, then draw that many cards plus one.
   - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-
-</details>
-
-## leaves-graveyard
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event fired when one or more cards leave a specified player's graveyard, batched so that a single move of several cards fires the ability once, and filterable by the leaving cards' printed characteristics (here: creature cards, your graveyard)
-  <br>Why the existing vocabulary won't do: trigger_events has 'leaves_battlefield' and 'dies', which watch the battlefield and fire on cards arriving in a graveyard rather than departing it; 'discard' and 'sacrificed' likewise only ever put cards *into* a graveyard. Nothing in the list observes the graveyard as a source zone, so the many ways a card leaves it -- reanimation via return_from_graveyard or put_onto_battlefield, exile via the exile op or an exile_from_graveyard cost, a graveyard cast, a shuffle-back -- all happen unobserved. The batching ('one or more ... leave') is a second requirement no existing event carries: every listed event fires per object.
-- **(trigger_event)** a triggered-ability event that fires when one or more cards move out of a graveyard -- a DSL trigger name mapping to a graveyard-departure event that carries the owner of the graveyard (so `controller: "you"` can restrict it to your own) and batches every card that left as part of the same move into a single firing, so exiling three cards from your graveyard for one cost puts one +1/+1 counter on this creature and not three
-  <br>Why the existing vocabulary won't do: `trigger_events` carries `leaves_battlefield` (and `dies`, `sacrificed`), all of which are about a permanent leaving the battlefield -- the wrong zone entirely, and a card leaving the graveyard is never a permanent leaving play. `exile_from_graveyard` is a *cost* key and `return_from_graveyard` is an *op*: they are two of the ways a card leaves a graveyard, not a way to notice one, and hanging the counter off either would only cover a card's own effects, never an opponent's graveyard hate, another player's reanimation of your creature, or a flashback/escape cast that exiles on resolution. The engine's `ZONE_CHANGE` event (src/automtg/engine/events.py) does carry `from`/`to` zones and would be the natural substrate, but it is absent from `TRIGGER_EVENTS` in src/automtg/engine/triggers.py, so no DSL trigger can listen to it, and even if one could, it is emitted once per object moved, which is exactly the per-card firing the printed "one or more" forbids.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
-  - This spell costs {1} less to cast for each creature card in your graveyard.
-  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
-- **Spirit Mascot** (rank 19564) — `spirit_mascot`
-  - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.
 
 </details>
 
@@ -430,6 +411,21 @@ Blocks **1** card.
 
 - **Anger** (rank 351) — `anger`
   - As long as this card is in your graveyard and you control a Mountain, creatures you control have haste.
+
+</details>
+
+## leaves-graveyard
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired when one or more cards leave a specified player's graveyard, batched so that a single move of several cards fires the ability once, and filterable by the leaving cards' printed characteristics (here: creature cards, your graveyard)
+  <br>Why the existing vocabulary won't do: trigger_events has 'leaves_battlefield' and 'dies', which watch the battlefield and fire on cards arriving in a graveyard rather than departing it; 'discard' and 'sacrificed' likewise only ever put cards *into* a graveyard. Nothing in the list observes the graveyard as a source zone, so the many ways a card leaves it -- reanimation via return_from_graveyard or put_onto_battlefield, exile via the exile op or an exile_from_graveyard cost, a graveyard cast, a shuffle-back -- all happen unobserved. The batching ('one or more ... leave') is a second requirement no existing event carries: every listed event fires per object.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
+  - This spell costs {1} less to cast for each creature card in your graveyard.
+  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
 
 </details>
 

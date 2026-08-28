@@ -92,6 +92,11 @@ def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any, None]:
     fn = OPS.get(op_name)
     if fn is None:
         raise DslError(f"unknown effect op {op_name!r}")
+    # One op is one "simultaneous" group: an `exile` over a whole graveyard
+    # moves every card at once, and "whenever one or more cards leave your
+    # graveyard" has to fire once for it rather than once per card. See
+    # `triggers._queue` and `state.event_batch`.
+    ctx.state.event_batch += 1
     result = fn(ctx, spec)
     if inspect.isgenerator(result):
         yield from result
