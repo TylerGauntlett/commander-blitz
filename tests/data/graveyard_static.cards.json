@@ -1,0 +1,52 @@
+{
+  "_comment": "Cards that exist only for the graveyard-static test (tests/unit/test_graveyard_static.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_anger` is Anger's shape. `t_wrong_anger` is the card the DSL could write before this existed -- the same static with no `active_zones`, so it works from the battlefield and stops when the card dies, the exact inverse of the printed card.",
+  "cards": [
+    {
+      "id": "t_anger",
+      "name": "Test Anger",
+      "oracle_text": "Haste\nAs long as this card is in your graveyard and you control a Mountain, creatures you control have haste.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Incarnation"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["haste"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as this card is in your graveyard and you control a Mountain, creatures you control have haste.",
+          "effect": "grant_keyword",
+          "keywords": ["haste"],
+          "active_zones": ["graveyard"],
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "condition": {"exists": {"zone": "battlefield", "controller": "you", "subtypes": ["Mountain"]}}
+        }
+      ]
+    },
+    {
+      "id": "t_wrong_anger",
+      "name": "Test Wrong Anger",
+      "oracle_text": "Haste\nAs long as this card is in your graveyard and you control a Mountain, creatures you control have haste.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Incarnation"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["haste"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as this card is in your graveyard and you control a Mountain, creatures you control have haste.",
+          "effect": "grant_keyword",
+          "keywords": ["haste"],
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "condition": {"exists": {"zone": "battlefield", "controller": "you", "subtypes": ["Mountain"]}}
+        }
+      ]
+    }
+  ]
+}

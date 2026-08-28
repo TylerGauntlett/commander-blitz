@@ -4,13 +4,25 @@
     "name": "Bloodthirsty Conqueror",
     "oracle_text": "Flying, deathtouch\nWhenever an opponent loses life, you gain that much life. (Damage causes loss of life.)",
     "mana_cost": "{3}{B}{B}",
-    "types": ["Creature"],
-    "subtypes": ["Vampire", "Knight"],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Knight"
+    ],
     "power": 5,
     "toughness": 5,
-    "colors": ["B"],
-    "color_identity": ["B"],
-    "keywords": ["flying", "deathtouch"],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "keywords": [
+      "flying",
+      "deathtouch"
+    ],
     "abilities": [
       {
         "kind": "triggered",
@@ -23,7 +35,9 @@
           {
             "op": "gain_life",
             "player": "you",
-            "amount": {"binding": "amount"}
+            "amount": {
+              "binding": "amount"
+            }
           }
         ]
       }
@@ -32,7 +46,12 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 0},
-    "life": {"0": 40, "1": 40}
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    }
   }
 }

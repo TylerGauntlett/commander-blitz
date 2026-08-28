@@ -97,6 +97,49 @@ class GameObject:
     #: `reset_permanent_state`, so it cannot ride the card out of the zone it
     #: was redirected into.
     dies_to: str | None = None
+    #: "Exile it ... **if it would leave the battlefield**" -- unearth, and
+    #: embalm's cousins. A zone name replacing this permanent's destination
+    #: whichever way it leaves: destroyed, sacrificed, bounced to hand, exiled
+    #: by removal, shuffled into a library, sent to the command zone.
+    #:
+    #: Deliberately **not** `dies_to` with a wider gate, because the lifetimes
+    #: differ and that is the whole point. `dies_to` is turn-scoped -- "would
+    #: die **this turn**" -- and is cleared at cleanup. This one lasts exactly
+    #: as long as the permanent is on the battlefield, so it is cleared only by
+    #: `reset_permanent_state`, on the zone change that consumes it. An unearth
+    #: replacement that expired at end of turn would let the card be unearthed
+    #: again next turn, which is the loop the printed clause exists to close.
+    leaves_to: str | None = None
+    #: "…become a copy of another target creature you control, **except its name
+    #: is Gogo, Mysterious Mime**." A layer-1 copy effect applied *in place*.
+    #:
+    #: The def id this permanent is currently copying, read by `state.card_of`
+    #: -- the one place a permanent's current face is decided, so a copy shows
+    #: everywhere at once exactly as a transform does, and no reader of a card
+    #: needed changing. `copy_permanent` is a different thing entirely: it makes
+    #: a new **token** and never alters the object it points at.
+    copying: str | None = None
+    #: The name the copy keeps, for the "except its name is…" clause. `None`
+    #: takes the copied card's own name, which is the ordinary case.
+    copying_name: str | None = None
+    #: Whether the copy above expires at cleanup. Clone copies permanently;
+    #: Gogo copies "until end of turn", and only that form is cleared.
+    copying_until_eot: bool = False
+    #: When this card reached a graveyard, and from where -- Banon, the
+    #: Returners' Leader: "cards in your graveyard that were put there **from
+    #: anywhere other than the battlefield this turn**".
+    #:
+    #: Per card, which is the whole point: `TurnLedger.cards_to_graveyard` is a
+    #: bare integer across every graveyard at the table and retains neither
+    #: which cards arrived nor where they came from, so a selector reading it
+    #: could only ever see the whole yard -- and Banon would recur a creature
+    #: that died in combat five turns ago.
+    #:
+    #: Set by `zones.move_object` on the way in and left alone afterwards.
+    #: `reset_permanent_state` does not clear it, because a card that leaves the
+    #: graveyard has no use for it and one that comes back is written again.
+    graveyard_turn: int = -1
+    graveyard_from: str | None = None
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
@@ -394,6 +437,18 @@ class GameObject:
     #: This one is a permission with a duration, and the cost is still owed.
     playable_by: int | None = None
     playable_turn: int = -1
+    #: Which permanent's permission made this card playable, when that
+    #: permission caps how many of its cards may be cast -- Locke, Treasure
+    #: Hunter: "you may cast **a spell** from among those cards", singular, out
+    #: of however many were milled. The cap is counted per granting permanent in
+    #: the turn ledger, so the group has to say which one granted it.
+    playable_group: int | None = None
+    #: "…and mana of any type can be spent to cast that spell" -- Summon: Esper
+    #: Valigarmanda. A relaxation of what may be *spent*, riding along with the
+    #: permission that made the card castable and expiring with it, so it is
+    #: kept on the card rather than on the player: the same turn's other spells
+    #: are paid for normally.
+    playable_any_type: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -520,6 +575,31 @@ class GameObject:
     #: it. Cleared by that same reset when the card comes back, which is right:
     #: the link is spent once it has been followed.
     exiled_by: int | None = None
+    #: Which zone this card was in when it was exiled -- "return it to the zone
+    #: it came from" (Cloak and Dagger, Entwined, whose one exile can take a
+    #: card out of a hand *or* a permanent off the battlefield). Recorded as the
+    #: zone's name rather than the enum so it serializes with the rest of the
+    #: object.
+    #:
+    #: Written by `zones.exile`, and after the move: `move_object` runs
+    #: `reset_permanent_state` on the way, which clears this for the reason it
+    #: clears `exiled_by` -- a card that has since left exile came from nowhere.
+    exiled_from: str | None = None
+    #: **Prepared** (Emeritus of Woe // Demonic Tutor). "This creature enters
+    #: prepared. (While it's prepared, you may cast a copy of its spell. Doing
+    #: so unprepares it.)"
+    #:
+    #: A state on the permanent and not a counter, because the reminder text is
+    #: the whole of the mechanic and says nothing about a number: a permanent is
+    #: prepared or it is not, and preparing an already-prepared one changes
+    #: nothing. It is not `flags` either -- a flag is inert bookkeeping, and
+    #: this is read by the casting-permission path.
+    #:
+    #: Cleared by `reset_permanent_state`, so a permanent that left the
+    #: battlefield and came back is not still prepared: 400.7 makes it a new
+    #: object, and the printed line is what puts the state on in the first
+    #: place.
+    prepared: bool = False
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
@@ -549,6 +629,10 @@ class GameObject:
         self.cloaked = False
         self.until_eot = []
         self.dies_to = None
+        self.leaves_to = None
+        self.copying = None
+        self.copying_name = None
+        self.copying_until_eot = False
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the
         # rules are concerned, so it is no longer renowned either.
@@ -570,6 +654,10 @@ class GameObject:
         self.on_adventure = False
         self.playable_by = None
         self.playable_turn = -1
+        self.playable_group = None
+        self.playable_any_type = False
+        self.exiled_from = None
+        self.prepared = False
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield

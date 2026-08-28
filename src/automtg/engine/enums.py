@@ -313,6 +313,22 @@ class AbilityKind(str, Enum):
     #: card-level `final_chapter` derived from those numbers; and a load-time
     #: refusal of a chapter ability on a card that is not a Saga.
     CHAPTER = "chapter"
+    #: A **reflexive triggered ability** (603.11) -- "…exile each opponent's
+    #: graveyard. **When you do**, choose up to one target creature card exiled
+    #: this way." A fifth kind for the reason `CHAPTER` is a fourth: the printed
+    #: line has no *event* in it that any trigger vocabulary could name. "When
+    #: you do" means "when the instruction just above this one is carried out",
+    #: which is not something the board can be watched for -- the effect that
+    #: causes it has to say so itself, and the `reflexive_trigger` op is that
+    #: saying.
+    #:
+    #: So `Ability.is_triggered` is deliberately **False** here and the ability
+    #: carries no `TriggerSpec`: nothing must ever match it off an event, or a
+    #: card would fire it on its own. Everything downstream of the queue is
+    #: shared -- APNAP order, the stack, and targets chosen as it is put there,
+    #: which is exactly what 603.11 asks for and the whole reason this is an
+    #: ability on the card rather than more effects inside the spell.
+    REFLEXIVE = "reflexive"
 
 
 class ActionKind(str, Enum):

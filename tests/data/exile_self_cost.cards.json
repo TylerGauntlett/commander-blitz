@@ -1,0 +1,35 @@
+{
+  "_comment": "Cards that exist only for the exile-self cost test (tests/unit/test_exile_self_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_phoenix_down` pays by exiling itself; `t_sac_down` is the near miss that sacrifices instead, leaving the artifact in the graveyard where the card is meant to be gone for good.",
+  "cards": [
+    {
+      "id": "t_phoenix_down",
+      "name": "Test Phoenix Down",
+      "oracle_text": "{1}{W}, {T}, Exile this artifact: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}{W}, {T}, Exile this artifact: Draw a card.",
+          "cost": {"mana": "{1}{W}", "tap": true, "exile_self": true},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_sac_down",
+      "name": "Test Sac Down",
+      "oracle_text": "{1}{W}, {T}, Sacrifice this artifact: Draw a card.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}{W}, {T}, Sacrifice this artifact: Draw a card.",
+          "cost": {"mana": "{1}{W}", "tap": true, "sacrifice": {"self_only": true}},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

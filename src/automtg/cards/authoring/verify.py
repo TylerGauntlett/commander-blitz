@@ -104,6 +104,36 @@ _ROLES: dict[str, Any] = {
     #: written. Nothing is lost by the swap: the prop is still a creature, and
     #: the flier keeps the board a *nonlegendary* creature for "destroy target
     #: nonlegendary creature" to find.
+    #: Something for "return target creature card **with mana value 3 or less**"
+    #: to point at -- Helping Hand, and every other cheap reanimation spell.
+    #: The graveyard's two props were both mana value 5 (`acidic_slime` and
+    #: `air_elemental`), so a printed cost ceiling of 3 left the spell with no
+    #: legal target at all: gate 4 reported "not playable in the sandbox" and
+    #: the only ways to pass were to drop the mana-value clause or to make the
+    #: target `optional` when the card does not print "up to one" -- both of
+    #: which describe a *different card*. The prop was missing, so the prop was
+    #: added rather than the gate relaxed, the same call `legendary_creature`
+    #: records above.
+    #:
+    #: Three clauses, each load-bearing:
+    #:
+    #: - **mana value 3 or less**, the shape that was absent;
+    #: - **inert**, for the reason `legendary_creature` gives at length -- a
+    #:   prop that acts folds its own behaviour into every card's verdict, and
+    #:   the incumbent `acidic_slime` is not inert: reanimating it destroyed one
+    #:   of the opponent's permanents, so any card that returned it had that
+    #:   destruction baked into its expectation;
+    #: - **nonlegendary**, because the worker brief promises the opponent's
+    #:   creature is the position's one and only legendary permanent, and a
+    #:   legend sitting in the graveyard breaks that promise the moment a
+    #:   reanimation spell puts it onto the battlefield.
+    "small_creature": lambda c: (
+        c.is_creature
+        and not c.is_token
+        and "Legendary" not in c.supertypes
+        and c.mana_value <= 3
+        and not any(a.is_activated or a.is_triggered for a in c.abilities)
+    ),
     "legendary_creature": lambda c: (
         c.is_creature
         and not c.is_token
@@ -120,7 +150,7 @@ _ROLES: dict[str, Any] = {
 #: are 32 and 6 and every authored expectation was written against them.
 OWN_BOARD_ROLES = ("creature", "creature")
 OPPONENT_BOARD_ROLES = ("legendary_creature", "flier", "artifact", "enchantment")
-OWN_GRAVEYARD_ROLES = ("creature", "flier")
+OWN_GRAVEYARD_ROLES = ("small_creature", "flier")
 BASIC_LANDS = ("forest", "island", "swamp", "mountain", "plains")
 
 
@@ -173,10 +203,54 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     builder.battlefield(0, _props(registry, OWN_BOARD_ROLES))
     builder.battlefield(1, [*_props(registry, OPPONENT_BOARD_ROLES), "forest", "island"])
     builder.graveyard(0, _props(registry, OWN_GRAVEYARD_ROLES))
-    builder.library(0, list(BASIC_LANDS) * 8)
+    # Forty cards, and the **second** one is deliberately not a land. The pile
+    # used to be forty basic lands, which made Cultivator Colossus -- "put a
+    # land card from your hand onto the battlefield, draw a card, and repeat
+    # this process" -- draw a land every iteration and deck the player, once the
+    # hand gained a spare land for it to start on. One nonland stops that loop.
+    #
+    # Second rather than first, and the position is the whole point: Coiling
+    # Oracle and Through the Forest Gate *reveal the top card* and branch on
+    # whether it is a land, so a nonland on top would quietly retire the branch
+    # those cards are about. Index 1 is deep enough that only a card drawing
+    # twice ever sees it, and no expectation asserts what a drawn card *is*.
+    library = list(BASIC_LANDS) * 8
+    stopper = _props(registry, ("noncreature_spell",))
+    if stopper:
+        library[1] = stopper[0]
+    builder.library(0, library)
     builder.library(1, ["forest", "island"] * 10)
     if in_hand:
-        builder.hand(0, [card_id])
+        # A spare card beside the one under test, and it is load-bearing.
+        # 601.2a moves a spell to the stack before its costs are paid, so a card
+        # can never discard *itself* to pay its own additional cost -- and a
+        # hand holding only the card under test therefore leaves every mandatory
+        # "as an additional cost, discard a card" with no fodder and unplayable
+        # at gate 4. Big Score and Laughing Mad are the witnesses.
+        #
+        # The prop is added rather than the gate relaxed, the same call
+        # `legendary_creature` and `small_creature` record. It is a basic land
+        # so that it does nothing on its own: nothing triggers off it, it is
+        # never cast, and `find_play` looks for the card under test by id rather
+        # than taking the first action.
+        #
+        # Every authored `hand_size` counts it, which is why they read one
+        # higher than the printed spell would suggest.
+        #
+        # It has to be a **land**. A castable spare is not inert: with an
+        # instant in hand the player keeps priority while the card under test is
+        # on the stack, `drive` returns at PRIORITY, and 169 cards fail gate 4
+        # with "never left the stack" -- the same trap `legendary_creature`
+        # records about a payable activated ability, one zone over. A land is
+        # played by a *special action*, so it offers something to do without
+        # ever holding the stack open.
+        #
+        # Having a legal action at all is itself a fidelity gain: it stops the
+        # position auto-passing to end of turn, and the brief promises
+        # "measurement happens before cleanup, so until-end-of-turn effects are
+        # still live". Before this, Call for Aid was measured *after* its
+        # control effect had worn off.
+        builder.hand(0, [card_id, "forest"])
     return builder.build(advance=False)
 
 
@@ -259,6 +333,20 @@ def _answer(game: Game, decision: PendingDecision):
     # the board could pay for.
     if decision.kind is DecisionKind.CHOOSE_X:
         choices = [a for a in actions if a.kind is ActionKind.CHOOSE]
+        # ...but not an X that ends the game. Toxic Deluge's X is paid in
+        # **life**, and 118.4 puts the whole life total on offer, so the maximum
+        # is suicide: the player hits 0, loses to a state-based action, and the
+        # spell never resolves -- gate 4 reports "never left the stack" about a
+        # card that is perfectly fine. A harness that kills the player observes
+        # nothing.
+        #
+        # Provably inert for every X that is paid in mana: this sandbox has 30
+        # lands against 40 life, so a mana ceiling never reaches the cap.
+        pid = decision.player
+        life = game.state.players[pid].life if pid is not None else 0
+        alive = [a for a in choices if (a.choice or 0) < life]
+        if alive:
+            return max(alive, key=lambda a: a.choice or 0)
         if choices:
             return max(choices, key=lambda a: a.choice or 0)
 
@@ -967,5 +1055,12 @@ def _covered(card: CardDef, line: str) -> bool:
         if event == "self_enters_tapped" and "tapped" in lowered:
             return True
         if event == "self_enters_with_counters" and "counter" in lowered and "enters" in lowered:
+            return True
+        if event == "self_enters_prepared" and "prepared" in lowered and "enters" in lowered:
+            # "This creature enters prepared. (While it's prepared, you may cast
+            # a copy of its spell. Doing so unprepares it.)" -- one printed line
+            # holding the replacement *and* its reminder text, which is the
+            # rules rather than anything the card implements. Claimed by the
+            # replacement, the way "enters tapped" above is.
             return True
     return False

@@ -75,7 +75,7 @@
   "expectation": {
     "zone": "battlefield",
     "hand_size": {
-      "0": 0
+      "0": 1
     }
   }
 }

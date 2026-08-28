@@ -1,0 +1,49 @@
+{
+  "_comment": "Cards that exist only for the reflexive-trigger test (tests/unit/test_reflexive_trigger.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_reflex` is the Espers to Magicite shape: an instruction, and then a 'when you do' half that goes on the stack by itself and picks its target there. `t_inline` is the counterfactual -- the same two sentences run as one resolution.",
+  "cards": [
+    {
+      "id": "t_reflex",
+      "name": "Test Reflex",
+      "oracle_text": "Exile each opponent's graveyard. When you do, destroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "exile", "as": "banished",
+         "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}},
+        {"op": "reflexive_trigger", "ability": "aftermath"}
+      ],
+      "abilities": [
+        {
+          "kind": "reflexive",
+          "id": "aftermath",
+          "text": "When you do, destroy target creature.",
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_inline",
+      "name": "Test Inline",
+      "oracle_text": "Exile each opponent's graveyard. Destroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "as": "banished",
+         "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}},
+        {"op": "destroy", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

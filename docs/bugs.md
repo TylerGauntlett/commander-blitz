@@ -2,6 +2,26 @@
 
 ### Fixed
 
+- **A spell could pay its own mandatory additional cost by discarding itself.**
+  601.2a moves a spell to the stack before any of its costs are paid, so a card
+  can never be fodder for its own "discard a card". Legality priced the cost
+  while the card was still in hand, though, so it counted itself: Bitter Triumph
+  ("discard a card **or** pay 3 life") could eat the very spell being cast,
+  which then never resolved, and a card whose hand held nothing else had the
+  cost charge silently *nothing* -- a free Laughing Mad. `costs._discard_pool`
+  now takes `source_oid` and excludes it. Cycling is unaffected (`discard_self`
+  is its own flag) and an activated ability's source is on the battlefield, so
+  excluding it from a hand pool is a no-op there.
+
+  The knock-on was the bigger half: with the fix, a sandbox hand holding only
+  the card under test leaves every mandatory discard unpayable, so
+  `verify.build_sandbox` now deals a spare **land** beside it. A land and not a
+  spell -- a castable card in hand keeps the player on priority while the card
+  under test is on the stack, and 169 cards then fail with "never left the
+  stack". Every authored `hand_size` counts the spare, which is why they read
+  one higher than the printed card suggests.
+
+
 - **Clicking Mind Stone sacrificed it.**
   Mind Stone reads "{T}: Add {C}" and "{1}, {T}, Sacrifice this artifact: Draw a
   card", and the panel showed one option. `legality._activate_actions` withholds
@@ -71,6 +91,24 @@
   now only ever says what the click is for.
 
 ### Known, not fixed
+
+- **A triggered ability with no legal target still resolves.**
+  603.3d and 608.2b: a triggered ability that requires targets and can choose
+  none is removed from the stack and does nothing.
+  `game._choose_trigger_targets` returns `()` instead, and the ability resolves
+  with an empty target list -- so every effect in it that does *not* read the
+  target runs anyway. Found while authoring Gogo, Mysterious Mime: with the
+  "If you do" rider written as a plain sibling of the copy, a lone Gogo with no
+  other creature to copy was still asked the question and still got +2/+0,
+  haste and attacks-this-turn-if-able, none of which the printed card gives it.
+
+  Gogo works around it at the card level, with an `exists` condition on the
+  `may` that gates the whole clause on there being a legal creature to copy.
+  That is correct for this card and is not the general fix: any targeted trigger
+  whose non-target effects are unconditional has the same hole. Fixing it
+  properly means dropping such an ability at resolution, which would change
+  behaviour for every targeted trigger in the pool and so wants its own run and
+  its own re-collect.
 
 - **The RL policy has never seen an equip action.** `ai/action_space.py` caps
   `ABIL_CAP = 2` and indexes `action.ability_index`, which counts *all*

@@ -93,6 +93,8 @@ VALUE_KEYS = frozenset(
         "life_lost_this_turn",
         "spells_cast_this_turn",
         "cards_to_graveyard_this_turn",
+        "cards_from_graveyard_this_turn",
+        "extreme_value",
         # "…if this is the second time this ability has resolved this turn."
         # Keyed by ability rather than by player, and counting the resolution in
         # progress, so it is the one ledger tally read off the effect context
@@ -419,6 +421,36 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # Every graveyard, so it takes no player spec: gravestorm counts cards
         # put into *a* graveyard, not into yours.
         return ledger.cards_to_graveyard
+    if "extreme_value" in expr:
+        # "…where X is the **greatest** mana value among artifacts you control"
+        # -- Edgar, Master Machinist. A single number off a pool, which neither
+        # existing piece can give: `mana_value_of` with an `objects` ref *sums*
+        # over the pool, and the `extreme` selector key deliberately keeps every
+        # object tied for the extremum so `choose_objects` can break the tie.
+        # Composing the two therefore reads 2X when two artifacts tie for
+        # greatest and 3X when three do -- a silent overcount on an ordinary
+        # board, and a bigger Edgar than the card prints.
+        from .selectors import resolve_pool
+
+        spec = expr["extreme_value"]
+        which = str(spec.get("of", "mana_value"))
+        pick = str(spec.get("pick", "greatest"))
+        pool = resolve_pool(ctx, spec.get("objects"))
+        values = [_from_oid(ctx, oid, which) for oid in pool]
+        if not values:
+            # An empty pool is 0, matching every other pool-reading value here:
+            # "the greatest mana value among artifacts you control" with no
+            # artifacts is +0/+0, not an error.
+            return 0
+        return max(values) if pick == "greatest" else min(values)
+    if "cards_from_graveyard_this_turn" in expr:
+        # The mirror, and it *does* take a player spec: Gau asks about "**your**
+        # graveyard", and the one number the engine already kept counts the
+        # opposite direction across every yard at the table -- true in exactly
+        # the wrong cases. Keyed by the graveyard's owner (400.3), so a card an
+        # opponent reanimated out of your yard still counts as having left it.
+        pids = _players(ctx, expr["cards_from_graveyard_this_turn"])
+        return sum(ledger.cards_from_graveyard.get(p, 0) for p in pids)
     if "sum" in expr:
         return sum(evaluate_value(ctx, e) for e in expr["sum"])
     if "minus" in expr:

@@ -30,6 +30,7 @@ TRIGGER_EVENTS: dict[str, str] = {
     "permanent_enters": EventType.ENTERS_BATTLEFIELD,
     "dies": EventType.DIES,
     "leaves_battlefield": EventType.LEAVES_BATTLEFIELD,
+    "leaves_graveyard": EventType.LEAVES_GRAVEYARD,
     "land_played": EventType.LAND_PLAYED,
     "spell_cast": EventType.SPELL_CAST,
     "attacks": EventType.ATTACKS,
@@ -220,6 +221,14 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "sacrificed",
         "token_created",
         "leaves_battlefield",
+        # The card that left the graveyard, so a filter may ask what it was --
+        # Cyan, Vengeful Samurai's "whenever one or more **creature cards**
+        # leave your graveyard". The card has already reached its new zone when
+        # the event fires and `matches_card_filter` reads the printed face, so
+        # the subject is still there to be asked about, exactly as it is for
+        # `discard`. Without this the filter had no subject and matched nothing,
+        # so the trigger silently never fired.
+        "leaves_graveyard",
         "spell_cast",
         "attacks",
         "blocks",
@@ -768,6 +777,13 @@ def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict
 #: Event payload keys carried into a trigger's bindings.
 EVENT_BINDING_KEYS = (
     "amount",
+    # Which zone the permanent came from -- Celes, Rune Knight: "if one or more
+    # of them **entered from a graveyard**". `cause` names the *mechanism*
+    # (`put_onto_battlefield`, `manifest`, `meld`) and the same mechanism
+    # reaches the battlefield from any zone, so it cannot answer this. The
+    # origin was on the separate ZONE_CHANGE event all along, which no trigger
+    # maps to, so nothing could reach it.
+    "from_zone",
     "damage",
     "life",
     "sid",
@@ -1122,11 +1138,29 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # Keyed by (permanent, ability index) rather than by card, so two Welcoming
     # Vampires each get their own draw.
     spec_cap = ability.trigger.max_per_turn if ability.trigger is not None else None
+    spec_batched = ability.trigger.batched if ability.trigger is not None else False
     if spec_cap is not None:
         key = (obj.oid, ability.index)
         if state.triggers_this_turn.get(key, 0) >= spec_cap:
             return
         state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
+
+    # "Whenever **one or more** cards leave your graveyard" -- one firing per
+    # simultaneous group, not per card. `state.event_batch` is bumped once per
+    # effect op and once per cost payment, which are the two places an effect
+    # moves several cards at once, so an `exile` over a whole graveyard shares
+    # one batch and queues this ability once.
+    #
+    # Keyed by (permanent, ability index, batch) for the reason the per-turn cap
+    # is keyed by (permanent, ability index): two Spirit Mascots each get their
+    # own counter from the same departure.
+    if spec_batched:
+        batch = event.data.get("batch")
+        if batch is not None:
+            key = (obj.oid, ability.index, batch)
+            if key in state.batched_triggers:
+                return
+            state.batched_triggers.add(key)
 
     state.triggers_this_step += 1
     if state.triggers_this_step > MAX_TRIGGERS_PER_STEP:

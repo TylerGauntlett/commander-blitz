@@ -4,39 +4,64 @@
     "name": "Bloodghast",
     "oracle_text": "This creature can't block.\nThis creature has haste as long as an opponent has 10 or less life.\nLandfall — Whenever a land you control enters, you may return this card from your graveyard to the battlefield.",
     "mana_cost": "{B}{B}",
-    "types": ["Creature"],
-    "subtypes": ["Vampire", "Spirit"],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Spirit"
+    ],
     "power": 2,
     "toughness": 1,
-    "colors": ["B"],
-    "color_identity": ["B"],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
     "abilities": [
       {
         "kind": "static",
         "text": "This creature can't block.",
         "effect": "cant_block",
-        "affects": {"self_only": true}
+        "affects": {
+          "self_only": true
+        }
       },
       {
         "kind": "static",
         "text": "This creature has haste as long as an opponent has 10 or less life.",
         "effect": "grant_keyword",
-        "keywords": ["haste"],
-        "affects": {"self_only": true},
+        "keywords": [
+          "haste"
+        ],
+        "affects": {
+          "self_only": true
+        },
         "condition": {
           "cmp": "<=",
-          "left": {"min_life_of": "each_opponent"},
-          "right": {"const": 10}
+          "left": {
+            "min_life_of": "each_opponent"
+          },
+          "right": {
+            "const": 10
+          }
         }
       },
       {
         "kind": "triggered",
         "text": "Landfall — Whenever a land you control enters, you may return this card from your graveyard to the battlefield.",
-        "active_zones": ["graveyard"],
+        "active_zones": [
+          "graveyard"
+        ],
         "trigger": {
           "event": "permanent_enters",
           "controller": "you",
-          "filter": {"types": ["Land"]}
+          "filter": {
+            "types": [
+              "Land"
+            ]
+          }
         },
         "effects": [
           {
@@ -45,7 +70,10 @@
             "effects": [
               {
                 "op": "return_from_graveyard",
-                "objects": {"zone": "graveyard", "self_only": true},
+                "objects": {
+                  "zone": "graveyard",
+                  "self_only": true
+                },
                 "destination": "battlefield",
                 "controller": "you"
               }
@@ -58,6 +86,8 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 0}
+    "hand_size": {
+      "0": 1
+    }
   }
 }

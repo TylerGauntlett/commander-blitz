@@ -91,6 +91,25 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
                 # must not run -- the same contract `else` has for a refusal.
                 yield from execute(ctx, spec.get("else") or [])
                 return
+        if name := spec.get("as"):
+            # "Then Snort deals 5 damage to each opponent **who discarded their
+            # hand this way**." The set of players who said yes, accumulated
+            # across a `for_each_player` loop and read back with the
+            # `{"binding": …}` player spec.
+            #
+            # Recorded here, after the cost is paid and before the effects run,
+            # so it means "accepted" and not "was asked". And it is the
+            # *acceptance* rather than anything the effects moved, which is the
+            # whole point on this card: a player with an empty hand who takes
+            # the free draw-five has discarded their hand -- of nothing -- and
+            # is still one of the opponents Snort burns. Deriving the set from
+            # the cards discarded would quietly spare exactly the player the
+            # card is aimed at.
+            previous = ctx.bindings.get(str(name))
+            seats = list(previous) if isinstance(previous, list) else []
+            if chooser not in seats:
+                seats.append(chooser)
+            ctx.bindings[str(name)] = seats
         yield from execute(ctx, spec.get("effects") or [])
         if not spec.get("repeat") or not evaluate(ctx, condition):
             return
@@ -324,6 +343,23 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     # says a permanent that left and came back is a new object that may choose
     # again -- the same rule flip and transform already lean on.
     once_each = bool(spec.get("once_each"))
+    # "**Target player** adds one mana of any color" -- The Warring Triad. The
+    # player who adds the mana is the one who picks its colour, so the question
+    # goes to them and not to us. `ask_mode` always took an arbitrary chooser,
+    # the way `ask_objects` did for Fact or Fiction's pile-splitter, so this
+    # costs nothing but the resolution. Absent, it is our own choice as before.
+    #
+    # `carddef.asks_another_player` keeps such a mode out of `cast_time_modes`,
+    # so it is never pre-answered by the controller at 601.2b/602.2b time and
+    # always reaches the ask below.
+    chooser = ctx.controller
+    if (who := spec.get("chooser")) is not None:
+        picked_players = select_players(ctx, who)
+        if not picked_players:
+            # No player to ask -- the target is gone. Nothing is chosen and
+            # nothing happens, rather than the controller quietly deciding.
+            return
+        chooser = picked_players[0]
     source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     offered = list(range(len(modes)))
     if once_each and source is not None:
@@ -347,14 +383,14 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             ctx,
             "Choose",
             [labels[i] for i in offered],
-            ctx.controller,
+            chooser,
             floor,
             up_to,
         )
         chosen = [offered[i] for i in picked]
     else:
         chosen = yield from ask_mode(
-            ctx, "Choose", labels, ctx.controller, floor, up_to
+            ctx, "Choose", labels, chooser, floor, up_to
         )
 
     # 700.2e: "the modes are executed in the order written on the card", not the

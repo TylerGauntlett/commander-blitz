@@ -39,6 +39,7 @@ def move_object(
     tapped: bool = False,
     cause: str = "",
     by: int | None = None,
+    as_face: str | None = None,
 ) -> GameObject:
     """Move an object to another zone, firing every consequent event.
 
@@ -60,6 +61,16 @@ def move_object(
     Neither is on ``DIES`` or ``LEAVES_BATTLEFIELD``: nothing reads them there,
     and a new key in a *fired* event's data can collide with a card's trigger
     bindings.
+
+    ``as_face`` is ``"front"`` or ``"back"`` and says which face a double-faced
+    permanent **arrives** as -- "return it to the battlefield transformed"
+    (Joshua, Phoenix's Dominant) and "return it to the battlefield (front face
+    up)" on the other side of the same card. It has to be a parameter here and
+    cannot be set by the caller afterwards, twice over: `reset_permanent_state`
+    clears `transformed` on the way in, and the arriving face is what every
+    enters-replacement and enters-trigger must see -- a Saga's lore counter is a
+    replacement on the back face, so a permanent that turned over one line later
+    would already have entered as something else.
     """
     obj = state.objects[oid]
     from_zone = obj.zone
@@ -97,6 +108,16 @@ def move_object(
         and to_zone is Zone.GRAVEYARD
     ):
         to_zone = Zone(obj.dies_to)
+        target_player = owner
+
+    # "…or **if it would leave the battlefield**" -- unearth. The whole
+    # departure and not just the death: bounced, exiled, shuffled away, sent to
+    # the command zone. After `dies_to` so the wider clause wins when a card
+    # carries both, which changes nothing when they name the same zone and is
+    # the right way round when they do not -- this one is what the card printed
+    # about *leaving*, and dying is one way of leaving.
+    if obj.leaves_to and from_zone is Zone.BATTLEFIELD:
+        to_zone = Zone(obj.leaves_to)
         target_player = owner
 
     was_creature = from_zone is Zone.BATTLEFIELD and "Creature" in chars(state, oid).types
@@ -161,6 +182,13 @@ def move_object(
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
         obj.reset_permanent_state()
 
+    if as_face is not None:
+        # After the reset, which clears `transformed`, and before anything reads
+        # the arriving object: `card` is recomputed below so the replacements
+        # and the enters event see the face that is actually arriving.
+        obj.transformed = as_face == "back"
+        card = state.card_of(obj)
+
     obj.left_with = left_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
@@ -199,6 +227,38 @@ def move_object(
             "by_card": by_card,
         },
     )
+
+    # "…put there from anywhere other than the battlefield **this turn**" --
+    # Banon. Recorded per card as it arrives, because the turn ledger's count is
+    # a bare integer over every graveyard and cannot say which card or whence.
+    if to_zone is Zone.GRAVEYARD and from_zone is not Zone.GRAVEYARD:
+        obj.graveyard_turn = state.turn
+        obj.graveyard_from = from_zone.value
+
+    # "Whenever one or more cards leave your graveyard" -- Spirit Mascot, Cyan.
+    # Narrow on purpose: `ZONE_CHANGE` above records *every* move and stays off
+    # the trigger bus, because routing it through `fire` would run the trigger
+    # scan on every draw, discard and shuffle in the game.
+    #
+    # Tokens are excluded for the reason the ledger excludes them: a token in a
+    # graveyard ceases to exist as a state-based action, and that is not a card
+    # leaving. `player` is the graveyard's **owner** (400.3), so "your
+    # graveyard" is answered about the yard rather than about whoever moved the
+    # card -- an opponent's graveyard hate still fires your Mascot.
+    if (
+        from_zone is Zone.GRAVEYARD
+        and to_zone is not Zone.GRAVEYARD
+        and not obj.is_token
+    ):
+        fire(
+            state,
+            EventType.LEAVES_GRAVEYARD,
+            player=owner,
+            source=oid,
+            oid=oid,
+            card=card.id,
+            batch=state.event_batch,
+        )
 
     if was_on_battlefield:
         fire(
@@ -247,7 +307,9 @@ def move_object(
             )
 
     if to_zone is Zone.BATTLEFIELD:
-        _enter_battlefield(state, obj, card, forced_tapped=tapped, cause=cause)
+        _enter_battlefield(
+            state, obj, card, forced_tapped=tapped, cause=cause, from_zone=from_zone
+        )
 
     return obj
 
@@ -337,6 +399,7 @@ def _enter_battlefield(
     *,
     forced_tapped: bool = False,
     cause: str = "",
+    from_zone: Zone | None = None,
 ) -> None:
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
@@ -368,6 +431,16 @@ def _enter_battlefield(
         if not evaluate_condition(
             state, replacement.get("condition"), controller=obj.controller, source=obj.oid
         ):
+            continue
+        if event == "self_enters_prepared":
+            # "This creature **enters prepared**." A characteristic of the
+            # arrival, in the slot enters-tapped occupies, and not a trigger:
+            # the permanent is never seen unprepared, so nothing can respond in
+            # the window between its arriving and its state being set -- and
+            # `self_enters` triggers reading `has_prepared` would answer
+            # differently depending on which of them the controller ordered
+            # first.
+            obj.prepared = True
             continue
         if event == "self_enters_tapped" or (
             event == "self_enters" and replacement.get("modify", {}).get("tapped")
@@ -432,6 +505,22 @@ def _enter_battlefield(
         # way to tell its own output from anything else's -- it would trigger on
         # the permanent it just put down, and again on that one's, forever.
         cause=cause,
+        # **Where** it came from, which `cause` does not say: that names the
+        # mechanism (`put_onto_battlefield`, `manifest`, `meld`) and the same
+        # mechanism reaches the battlefield from any zone. Celes, Rune Knight
+        # asks "if one or more of them **entered from a graveyard**", which is a
+        # question about the zone and covers every route out of it --
+        # reanimation, `return_from_graveyard`, a cast from the yard.
+        #
+        # The origin was on the separate ZONE_CHANGE event all along, and no
+        # trigger maps to that one, so nothing could reach it.
+        from_zone=from_zone.value if from_zone is not None else None,
+        # One firing per **simultaneous** batch, for "whenever one or more
+        # creatures enter". `permanent_enters` fires once per permanent, so a
+        # mass reanimation would put three counters where the card prints one.
+        # See `triggers._queue`; without this the batched flag had nothing to
+        # group by on this event.
+        batch=state.event_batch,
     )
     # A Saga entered with its first lore counter (714.2b), so chapter I triggers
     # (714.2c). The counter itself was put on by the replacement loop above, which
@@ -579,7 +668,16 @@ def exile(state: GameState, oid: int, *, cause: str = "exiled", by: int | None =
     obj = state.objects.get(oid)
     if obj is None:
         return False
+    # Where it came from, for the exile-until effects that give it back: "return
+    # it to the zone it came from" is one sentence covering a card taken out of
+    # a hand and a permanent taken off the battlefield, and nothing else on the
+    # object remembers which. Read before the move and written after, because
+    # `move_object` runs `reset_permanent_state` in between -- the same order
+    # `op_exile` writes `exiled_by` in, for the same reason.
+    origin = obj.zone
     move_object(state, oid, Zone.EXILE, cause=cause, by=by)
+    if (moved := state.objects.get(oid)) is not None:
+        moved.exiled_from = origin.value
     return True
 
 

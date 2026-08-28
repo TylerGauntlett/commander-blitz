@@ -1,0 +1,116 @@
+{
+  "_comment": "Cards that exist only for the spend-mana-as-any-type test (tests/unit/test_spend_mana_as_any_type.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_hoarder` is the Valigarmanda shape: exile an instant or sorcery from every graveyard at the table, keeping the link, then later offer one of them back at its printed price with the colours waived. `t_strict_hoarder` is the same card with the waiver removed, which is what the assertions are measured against.",
+  "cards": [
+    {
+      "id": "t_hoarder",
+      "name": "Test Hoarder",
+      "oracle_text": "When this creature enters, exile an instant or sorcery card from each graveyard. {T}: You may cast an instant or sorcery card exiled with this creature, and mana of any type can be spent to cast that spell.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, exile an instant or sorcery card from each graveyard.",
+          "effects": [
+            {
+              "op": "for_each_player",
+              "players": "each_player",
+              "effects": [
+                {
+                  "op": "exile",
+                  "link": true,
+                  "objects": {
+                    "zone": "graveyard",
+                    "player": {"binding": "each_player"},
+                    "any_types": ["Instant", "Sorcery"],
+                    "count": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: You may cast an instant or sorcery card exiled with this creature, and mana of any type can be spent to cast that spell.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "grant_playable",
+              "limit": 1,
+              "any_type": true,
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self",
+                "any_types": ["Instant", "Sorcery"],
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_strict_hoarder",
+      "name": "Test Strict Hoarder",
+      "oracle_text": "When this creature enters, exile an instant or sorcery card from each graveyard. {T}: You may cast an instant or sorcery card exiled with this creature.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, exile an instant or sorcery card from each graveyard.",
+          "effects": [
+            {
+              "op": "for_each_player",
+              "players": "each_player",
+              "effects": [
+                {
+                  "op": "exile",
+                  "link": true,
+                  "objects": {
+                    "zone": "graveyard",
+                    "player": {"binding": "each_player"},
+                    "any_types": ["Instant", "Sorcery"],
+                    "count": 1
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: You may cast an instant or sorcery card exiled with this creature.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "grant_playable",
+              "limit": 1,
+              "objects": {
+                "zone": "exile",
+                "controller": "any",
+                "exiled_with": "self",
+                "any_types": ["Instant", "Sorcery"],
+                "count": "all"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

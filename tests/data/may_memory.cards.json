@@ -1,0 +1,50 @@
+{
+  "_comment": "Cards that exist only for the may-acceptance test (tests/unit/test_may_memory.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_snort` is Snort's shape: each player MAY wheel, then each opponent who accepted takes 5. `t_snort_by_cards` is the near-miss that derives the set from the cards discarded, and so spares an opponent who accepted with an empty hand -- the very player a wheel is aimed at.",
+  "cards": [
+    {
+      "id": "t_snort",
+      "name": "Test Snort",
+      "oracle_text": "Each player may discard their hand and draw five cards. Then this spell deals 5 damage to each opponent who discarded their hand this way.",
+      "mana_cost": "{2}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {"op": "for_each_player", "players": "each_player", "effects": [
+          {"op": "may", "as": "wheeled", "player": {"binding": "each_player"},
+           "prompt": "Discard your hand and draw five?",
+           "effects": [
+             {"op": "discard", "player": {"binding": "each_player"},
+              "amount": {"cards_in_hand": {"binding": "each_player"}}, "as": "pitched"},
+             {"op": "draw", "player": {"binding": "each_player"}, "amount": {"const": 5}}
+           ]}
+        ]},
+        {"op": "damage", "amount": {"const": 5},
+         "player": {"binding": "wheeled", "except": "you"}}
+      ]
+    },
+    {
+      "id": "t_snort_by_cards",
+      "name": "Test Snort By Cards",
+      "oracle_text": "Each player may discard their hand and draw five cards. Then this spell deals 5 damage to each opponent who discarded their hand this way.",
+      "mana_cost": "{2}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {"op": "for_each_player", "players": "each_player", "effects": [
+          {"op": "may", "player": {"binding": "each_player"},
+           "prompt": "Discard your hand and draw five?",
+           "effects": [
+             {"op": "discard", "player": {"binding": "each_player"},
+              "amount": {"cards_in_hand": {"binding": "each_player"}}, "as": "pitched"},
+             {"op": "draw", "player": {"binding": "each_player"}, "amount": {"const": 5}}
+           ]}
+        ]},
+        {"op": "for_each", "objects": {"binding": "pitched"}, "effects": [
+          {"op": "damage", "amount": {"const": 5}, "player": {"owner_of": "each", "except": "you"}}
+        ]}
+      ]
+    }
+  ]
+}

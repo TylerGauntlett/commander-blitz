@@ -1,0 +1,73 @@
+{
+  "_comment": "The counterfactual for tests/unit/test_unearth.py: `t_unearther` with its leave-the-battlefield replacement written as `replace_deaths`, which catches a death and nothing else -- so the card survives a bounce and can be unearthed again. Identical in every other respect, so the tests measure that one op. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_unearther_death_only",
+      "name": "Test Unearthed Zombie (death only)",
+      "oracle_text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+          "active_zones": [
+            "graveyard"
+          ],
+          "sorcery_speed_only": true,
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "effects": [
+            {
+              "op": "put_onto_battlefield",
+              "controller": "you",
+              "objects": {
+                "zone": "graveyard",
+                "self_only": true
+              }
+            },
+            {
+              "op": "replace_deaths",
+              "destination": "exile",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "grant_keyword",
+              "keyword": "haste",
+              "duration": "permanent",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step.",
+              "effects": [
+                {
+                  "op": "exile",
+                  "objects": {
+                    "zone": "battlefield",
+                    "self_only": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

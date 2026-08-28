@@ -1,0 +1,19 @@
+{
+  "_comment": "A card that exists only for the graveyard cost-reduction test (tests/unit/test_graveyard_cost_reduction.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_cyan` is Cyan's shape -- {1} less per creature card in your graveyard.",
+  "cards": [
+    {
+      "id": "t_cyan",
+      "name": "Test Cyan",
+      "oracle_text": "This spell costs {1} less to cast for each creature card in your graveyard.\nDouble strike",
+      "mana_cost": "{4}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Samurai"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": ["double_strike"],
+      "cost_reduction": {"count": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+    }
+  ]
+}

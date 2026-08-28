@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-99 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+107 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `return_to_origin` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -195,15 +195,15 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` `copy_spell` `return_spell_to_hand` |
+| Stack | `counter` `copy_spell` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
-| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -233,6 +233,7 @@ Every key is optional; all present keys must match.
   "exclude_binding": "subject",   // "each OTHER attacking creature"
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
   "shares_a_color_with": "it",   // radiance -- "...that shares a color with it"
+  "shares_a_name_with": "victim",// "...with the same name as that permanent"
   "self_only": true,              // this permanent only
   "extreme": { "of": "toughness", "pick": "least" },  // "...with the least toughness"
   "count": 1,                     // an int, or "all", or "any" -- see below
@@ -415,6 +416,7 @@ whatever attacked, which is different on every trigger.
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
 | `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted |
+| `shares_a_name_with` | the same clause on names — Legions to Ashes' "all tokens that player controls **with the same name as that permanent**". `name` cannot stand in: it takes a literal string fixed when the card is written. Alone in the family in **tolerating a bound object that has already left the battlefield**, so a spell that exiles its target and its copies together works whichever order the two ops run in |
 | `exclude_binding` | drops the bound object — or the whole **set** a binding holds — from the pool |
 
 `subtypes` cannot stand in for the first: it takes a literal list, fixed when
@@ -582,7 +584,55 @@ no-op — is not one of "those creatures".
 { "op": "copy_permanent", "objects": { "target": "t1" },
   "tapped": true, "attacking": true, "as": "the_token" },
 { "op": "exile", "objects": { "binding": "the_token" } }
+
+// Joshua — "Discard up to two cards, then draw that many cards."
+{ "op": "discard", "player": "you", "amount": { "const": 2 },
+  "up_to": true, "as": "pitched" },
+{ "op": "draw", "player": "you",
+  "amount": { "count": { "binding": "pitched" } } }
+
+// Kefka — "each player who owns a spell YOU CAST this way loses life…"
+// `play_exiled`'s `as` is the cards actually cast, which is neither the cards
+// offered nor the cards exiled: one with no legal target is never cast at all.
+{ "op": "exile", "as": "banished", "objects": { … } },
+{ "op": "play_exiled", "as": "cast",
+  "objects": { "binding": "banished", "count": "any" } },
+{ "op": "for_each", "objects": { "binding": "cast" },
+  "effects": [ { "op": "lose_life", "player": { "owner_of": "each" },
+                 "amount": { "mana_value_of": { "binding": "each" } } } ] }
+
+// Mog — "each player may discard a card … if a creature card was discarded this way"
+// `"each_player"` as a plain string, and ONE discard op: the binding is written
+// once at the end, so it accumulates across every seat the op touched. A
+// per-iteration discard inside `for_each_player` rewrites it each pass and the
+// card would only ever see the last player's card.
+{ "op": "discard", "player": "each_player", "amount": { "const": 1 },
+  "up_to": true, "as": "pitched" },
+{ "op": "if", "condition": { "exists": { "binding": "pitched",
+                                         "types": ["Creature"] } },
+  "then": [ … ] }
 ```
+
+### `discard`: `up_to` and `as`
+
+`up_to` makes `amount` a **ceiling** with a floor of zero, so "discard up to two
+cards" is satisfiable with none and, with `amount` reading your hand size, so is
+"discard any number of cards". It is opt-in on purpose: an exact discard offered
+as a range would let a player keep a card the effect was meant to take. It may
+not be combined with `random`, which has no choice to relax.
+
+`as` records what actually went, so "then draw **that many** cards" (Joshua),
+"that many cards **plus one**" (Celes) and "if a **creature card** was discarded
+this way" (Mog) can all read it back. The binding **accumulates** across the
+players one discard touches — Mog asks one card of every player in a single
+resolution and then asks what was discarded at all, not what the last player
+pitched.
+
+Every near-miss for that read-back is wrong in a way nobody would catch on the
+board, which is why the binding exists rather than a clever value:
+`cards_to_graveyard_this_turn` is one turn-wide integer over every graveyard at
+the table, counting deaths and mills and earlier discards, and counting your own
+graveyard counts what was already sitting in it.
 
 The token half is not expressible any other way: `is_token` matches every token
 you control, and `{"is_token": true, "attacking": true}` also catches tokens
@@ -692,6 +742,9 @@ Anywhere a number is expected:
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
+{ "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
+{ "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
+                     "objects": { … } } }                      //   where `mana_value_of` sums
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
@@ -1095,6 +1148,9 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "untap_permanents": { "types": ["Creature"], "count": 2 },  // untaps *others*; they stay
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
+  "exile_self": true,                             // Phoenix Down: exiles the source, not to the graveyard
+  "mill": 1,                                      // Millikin: off *your* library's top
+  "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
@@ -1102,6 +1158,32 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
                  "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
+
+### `mill` — a cost, and never an effect
+
+"{T}, Mill a card: Add {C}" — Millikin, Deranged Assistant, The Warring Triad.
+No selector: the cards come off the top of the *activating* player's own
+library, so there is nothing to choose and nobody to ask.
+
+Writing it as the `mill` **op** in the ability's `effects` is the wrong card,
+not a stylistic variant. A cost is paid as the ability goes on the stack
+(601.2h); an effect runs at resolution, so the ability could be activated and
+responded to with the cards still on top of the library. The Warring Triad makes
+that observable — its *other* ability counts cards in the very graveyard this
+cost fills. On Millikin the op is not merely wrong but unwritable, because a
+mana ability may contain only `add_mana`.
+
+**It is payable with an empty library.** 701.13b: milling more cards than you
+have mills your entire library, so the action always succeeds and the cost can
+always be paid — Millikin still taps for {C} with nothing left to mill. This is
+the opposite of `discard`, which an empty hand *does* make unpayable, and the
+asymmetry is exactly that no rule lets you discard fewer cards than asked.
+
+The one trap is `Cost.is_tap_only()`, which `costs.solver_taps` reads to decide
+which mana abilities the payment solver may tap on its own without asking. A
+mill cost disqualifies an ability there, moving it to the offered-to-the-player
+path where a Signet's `{1}` and a Vivid land's counter already sit. Without
+that, the solver would take the mana and never mill.
 
 `times` multiplies the **mana** half and is one of the two parts of a cost that
 are not fixed when the card is written — cumulative upkeep's "pay its upkeep cost
@@ -1495,7 +1577,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
-`counter_placed` · `sacrificed` · `token_created` · `draw` · `discard` · `cycle` ·
+`counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented`
 
 **`damage_prevented`** fires when damage that would have been dealt to a player
@@ -2918,6 +3000,112 @@ does — so `op_choose_mode` sees the question already answered there as well.
 Mana abilities are the exception and a stricter one: their modes are compiled
 into `mana_options` and never reach the interpreter at all.
 
+### `chooser` — when somebody else picks the mode
+
+```jsonc
+{ "op": "choose_mode", "chooser": { "target": "t1" }, "modes": [ … ] }
+```
+
+"**Target player** adds one mana of any color" — The Warring Triad. "One mana of
+any color" is spelled as a `choose_mode` over five `add_mana` modes, and the
+player *adding* the mana is the one who picks its colour. Without `chooser` the
+ability's controller chooses and the mana lands in somebody else's pool in a
+colour they did not pick — a strictly better card than the printed one.
+
+An ordinary player spec, so `{"target": "t1"}`, `"opponent"` and the rest all
+work. It needed no new `DecisionKind`: `ask_mode` always took an arbitrary
+chooser, the same way `ask_objects` did for Fact or Fiction's pile-splitter.
+
+**It also changes *when* the question is asked.** A chooser-carrying
+`choose_mode` is kept out of `cast_time_modes` (`carddef.asks_another_player`),
+so it is never pre-answered under 601.2b/602.2b — which would have put the
+answer in the controller's hands, defeating the point — and instead resolves
+late, where a nested `choose_mode` already lives.
+
+A **mana ability** may not carry one. It resolves without the stack, inside
+somebody's payment, so there is no window in which to stop and ask; the loader
+refuses it. The cards that look like they want it target, and a mana ability
+cannot target (605.1a), so they were never mana abilities to begin with.
+
+### A static that works from the graveyard
+
+```jsonc
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["haste"],
+  "active_zones": ["graveyard"],
+  "affects": { "controller": "you", "types": ["Creature"] },
+  "condition": { "exists": { "zone": "battlefield", "controller": "you",
+                             "subtypes": ["Mountain"] } } }
+```
+
+Anger, and the Incarnation cycle. `active_zones` was already read on activated
+and triggered abilities; a static reads it too, and only `battlefield` (the
+default) and `graveyard` are accepted — those are the two zones the engine walks
+for statics, and one declaring `hand` would load clean and never be gathered.
+
+**The zone clause needs no condition.** Being collected only while the card sits
+in a graveyard *is* "as long as this card is in your graveyard", so
+`static_condition_keys` gained nothing. Everything after the "and" is an
+ordinary static `condition`.
+
+Getting this wrong is not a card that does nothing, it is a card that does the
+**inverse**: without `active_zones` the anthem switches on while Anger is a 2/2
+in play and switches off when it dies, which is exactly when it should start.
+
+### `choose_permanents` — marking without acting
+
+```jsonc
+// Tragic Arrogance — one survivor of each type, per player, then the sweep.
+{ "op": "for_each_player", "players": "each_player", "effects": [
+    { "op": "choose_permanents", "as": "kept", "prompt": "Keep an artifact",
+      "objects": { "zone": "battlefield", "controller": { "binding": "each_player" },
+                   "types": ["Artifact"], "count": 1, "optional": true } },
+    …one each for Creature, Enchantment and Planeswalker… ] },
+{ "op": "sacrifice", "chooser": "none",
+  "objects": { "zone": "battlefield", "controller": "any", "not_types": ["Land"],
+               "count": "all", "exclude_binding": "kept" } }
+```
+
+The only recorder that does **nothing** to what it picked. Every other one acts
+— `sacrifice`, `exile`, `gain_control`, `reveal`, `create_token`,
+`copy_permanent`, `search_zones` — and `snapshot` records without acting but
+takes `oids[0]` with no `count` or `chooser`, so it is neither a choice nor four
+picks. It needs an `as`; a choice nobody reads back is a prompt for nothing, and
+the loader refuses it.
+
+Its binding **accumulates**, which is what makes the per-type quota sayable.
+`count` is one flat number over a pool `types` filters uniformly, so a single
+choice of four would happily keep four creatures; four choices sharing one name
+keep one of each, and the single `exclude_binding` on the sweep spares them all.
+
+### `may`'s `as`, and `except` on a player spec
+
+```jsonc
+// Snort — "…then deals 5 damage to each opponent who discarded their hand this way."
+{ "op": "for_each_player", "players": "each_player", "effects": [
+    { "op": "may", "as": "wheeled", "player": { "binding": "each_player" },
+      "effects": [ …discard the hand, draw five… ] } ] },
+{ "op": "damage", "amount": { "const": 5 },
+  "player": { "binding": "wheeled", "except": "you" } }
+```
+
+`may`'s `as` records **the players who said yes** -- the only binding that is a
+set of seats rather than of objects -- accumulated across a `for_each_player`
+loop and read back with the `{"binding": …}` player spec. Nothing else could:
+`set_flag` and `set_turn_flag` are object-scoped and `has_flag` is always asked
+of the ability's own source, and `each_player` is overwritten each iteration and
+restored when the loop ends.
+
+**It records the acceptance, not what the effects moved.** Deriving the set from
+the cards discarded looks equivalent and is wrong in both directions on this
+card: a player with an empty hand who takes the free draw-five has discarded
+their hand -- of nothing -- and is still burned, while a player with three cards
+would be burned once per card.
+
+`except` narrows an inclusive spec by a seat. `not` cannot do it: `not` is the
+complement over the whole table, and the recorded set contains you whenever you
+took the same option. It needs a spec to narrow -- a bare `{"except": "you"}` is
+just `{"not": "you"}` written the long way, and the loader says so.
+
 ### Entwine — "choose both if you pay the entwine cost"
 
 ```jsonc
@@ -3559,6 +3747,123 @@ damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
 
+## "When you do" — reflexive triggered abilities
+
+Espers to Magicite — *"Exile each opponent's graveyard. **When you do**, choose
+up to one target creature card exiled this way. Create a token that's a copy of
+that card…"*
+
+```jsonc
+"spell_effects": [
+  { "op": "exile", "as": "banished",
+    "objects": { "zone": "graveyard", "controller": "opponent", "count": "all" } },
+  { "op": "reflexive_trigger", "ability": "magicite" }
+],
+"abilities": [
+  { "kind": "reflexive", "id": "magicite",
+    "text": "When you do, choose up to one target creature card exiled this way.",
+    "targets": [ ... ],
+    "effects": [ ... ] }
+]
+```
+
+Rule 603.11. The second sentence is a **separate object**: it goes on the stack
+when a player would next receive priority — so after the spell that fired it has
+finished resolving — it chooses its targets as it is put there (603.3d), and the
+other players get a window to answer it.
+
+**A fifth `AbilityKind`, for the reason there is a fourth.** "When you do" names
+no event. It means "when the instruction immediately above this one is carried
+out", which is a fact about one resolution rather than anything the board can be
+watched for. So the ability carries **no `TriggerSpec` at all**, and the effect
+that carries out the instruction fires it by name. Two independent gates keep it
+from firing on its own: `_candidate_abilities` skips an ability whose `trigger`
+is None, and `Ability.is_triggered` is False for this kind.
+
+Writing it as an ability on the card rather than as more effects inside the op
+is what buys everything downstream for nothing — APNAP queueing, modes, targets
+at 603.3d, the responder's window — because it becomes an ordinary
+`TriggerInstance` the moment it is queued.
+
+**Not more effects inline**, which is the shape it is easiest to mistake for:
+
+| | inline effects | `reflexive_trigger` |
+|---|---|---|
+| when the choice is made | mid-resolution | as the ability goes on the stack |
+| is it a *target* | no — nothing announced | yes, announced and re-checked (608.2b) |
+| may anyone respond | no | yes |
+| what the log shows | one resolution | a spell and then an ability |
+
+**Not `delayed_trigger`.** That watches an `EventType`, and there is none for
+"the thing I just did".
+
+The bindings are copied when the op runs, so "…exiled **this way**" still names
+the cards the earlier op recorded once the ability reaches the stack.
+
+**The wiring is checked in both directions at load time**, because both
+directions are silent. An ability nothing fires is a printed line that never
+happens; an op naming an id that is not there is a spell missing its second
+sentence. Neither fails any other check — the ability compiles cleanly and the
+op is a known name — so `_check_reflexive_wiring` is the only place either can
+be caught. `id` is required on a reflexive ability and refused on every other
+kind.
+
+## Prepared
+
+Emeritus of Woe // Demonic Tutor — *"This creature enters prepared. (While it's
+prepared, you may cast a copy of its spell. Doing so unprepares it.)"*
+
+```jsonc
+{ "id": "emeritus_of_woe_demonic_tutor", "...": "...",
+  "prepared_face": "demonic_tutor",
+  "replacements": [{ "event": "self_enters_prepared" }],
+  "abilities": [
+    { "kind": "triggered", "trigger": { "event": "end_step", "controller": "you" },
+      "condition": { "cmp": ">=",
+                     "left": { "creatures_died_this_turn": "all" },
+                     "right": { "const": 2 } },
+      "effects": [{ "op": "become_prepared", "objects": { "self_only": true } }] }
+  ] }
+```
+
+A state on the permanent that **is** a casting permission. Three near misses,
+each one step off:
+
+| | what it is | why it is not this |
+|---|---|---|
+| `second_face` | a card with a second castable half | casting one takes the object *out of its zone*; a prepared permanent stays |
+| `set_flag` | a word written on a permanent | inert bookkeeping — nothing in the casting path reads `obj.flags`, so the card would do nothing |
+| a counter | a number | the mechanic has no number: a permanent is prepared or it is not |
+
+`set_turn_flag` is a fourth and is a different card again: it expires at the
+turn boundary, and prepared survives until it is *spent*.
+
+**One card, two objects**, which no other face relationship in the engine has:
+the permanent stays on the battlefield and a **copy** goes on the stack. The
+copy is a token, which is what makes it cease to exist afterwards (111.7)
+instead of putting a card in a graveyard that Emeritus is not in.
+
+`prepared_face` gets the same derived `parent_face` back-link a second face
+gets, and for the same reason: the entry is a *face*, not a card anybody owns,
+so it must not be shufflable into a deck.
+
+**Entering prepared is a replacement**, in the slot `self_enters_tapped`
+occupies, not a trigger. The permanent is never seen unprepared, so nothing can
+respond in the window between its arriving and its state being set — and two
+`self_enters` triggers reading the state would answer differently depending on
+the order their controller put them on the stack.
+
+**The cast is offered from the battlefield**, which no other cast line is: every
+zone `_cast_actions` walks is one the spell then leaves, so this is its own walk
+rather than another entry in that list. Priced, timed and targeted off the spell
+face, the way an Adventure half is — Demonic Tutor is a sorcery whatever the
+creature printing it is.
+
+`become_prepared` only turns the state **on**. "Doing so unprepares it" is the
+rules' own sentence printed as reminder text, so `Game._cast` clears it and no
+card writes that — which is also why the permission needs no rate limit: it is
+spent by being used.
+
 ## Sagas
 
 ```jsonc
@@ -3685,6 +3990,246 @@ prints first. The second is no longer a cloak special case: every rules-supplied
 ability carries a negative index and `ability_of` answers all of them the same
 way, without reading the board.
 
+## "…except it's an artifact and it loses all other card types"
+
+Espers to Magicite. A fourth key on `copy_permanent`'s `except_`, beside
+embalm's `colors`, `add_subtypes` and `no_mana_cost`:
+
+```jsonc
+{ "op": "copy_permanent", "objects": { "target": "t1" }, "controller": "you",
+  "except_": { "types": ["Artifact"] } }
+```
+
+**A replacement, not an addition**, and the printed line is what decides. "It's
+an artifact **and it loses all other card types**" leaves a token that is an
+Artifact and nothing else; a union would leave it a creature as well, and a
+creature can attack, block and die. `add_subtypes` beside it *is* an addition,
+for the same reason: "except it's a white Zombie Angel" adds Zombie and Angel to
+what the copied card already was.
+
+**Card types only.** The copied card's subtypes stay, which is also what the
+printing says: the token loses its card *types* and is not told to lose its
+creature types.
+
+An empty list is refused — it replaces rather than adds, so it would be a
+permanent with no card type at all, which no printing says.
+
+Applied to the printed face before any layer, where the rest of `copy_overrides`
+is applied, because the exception is part of what the object *is* rather than an
+effect on it: an animate afterwards layers on top exactly as it would on a
+printed artifact.
+
+## "…until this permanent leaves the battlefield" — giving it back
+
+Cloak and Dagger, Entwined exiles a card that may have come from either of two
+zones, so the return has to undo whichever happened:
+
+```jsonc
+{ "op": "return_to_origin",
+  "objects": { "zone": "exile", "controller": "any",
+               "exiled_with": "self", "count": "all" } }
+```
+
+**Every neighbouring op hardwires its destination**, which is why none of them
+can say this. `return_to_hand` is the hand; `put_onto_battlefield` is the
+battlefield; `return_from_graveyard` takes a `destination` but reads its pool
+out of a graveyard. Two ops filtered by origin would be two sentences where the
+printing has one — and there was nothing to filter on, since only the graveyard
+kept an arrival record (`graveyard_from`).
+
+So `zones.exile` stamps `exiled_from` on the way out — in the zone function
+rather than in `op_exile`, so a card exiled by *any* route can be given back —
+and this op reads it. Written **after** the move, because `move_object` runs
+`reset_permanent_state` in between; the same order `exiled_by` is written in,
+for the same reason.
+
+**Owner, on both branches.** A card leaving exile goes to its owner's hand, and
+400.7's exceptions do not reach a permanent coming back from an exile-until
+effect.
+
+A card whose origin is missing is **left where it is**, which is the answer
+400.7 gives too: there is nowhere to return it to. Guessing the battlefield
+would put a card from somebody's hand onto the board.
+
+`controller: "any"` on the pool, because exile is kept per owner and the card
+was taken from an opponent.
+
+## One choice across two zones — `union`
+
+Cloak and Dagger, Entwined — *"You may exile a nonland card from their **hand
+or** the chosen creature…"*
+
+```jsonc
+{ "union": [
+    { "zone": "hand", "player": { "target": "who" }, "not_types": ["Land"] },
+    { "target": "what" } ],
+  "count": 1, "optional": true }
+```
+
+Every other selector gathers from **one** zone and then filters, because `zone`
+takes one name. This sentence asks for a pool that spans two.
+
+**`any_of` is the near miss, and is a filter.** It narrows the pool the outer
+selector already gathered — which is exactly why `validate_selector` refuses a
+`zone` inside one of its branches: *"put 'zone' on the outer selector; a branch
+filters the pool it already chose"*. A card choosing from a hand *or* the
+battlefield has no one zone to gather from, so there is nothing for `any_of` to
+narrow.
+
+| | `any_of` | `union` |
+|---|---|---|
+| what it does | filters one gathered pool | assembles several |
+| a `zone` in a branch | refused | required, in effect — each branch brings its own |
+| what sits outside | the whole selector | `count`, `chooser`, `optional`, `random` only |
+
+`union` resolves each branch in its own right and concatenates, in written order
+and dropping duplicates: a branch overlapping another is one card offered once,
+not twice. One `count`/`chooser` then asks across the lot, which is the whole
+point — the printed line is a single choice.
+
+**Only the pool-shaping keys may sit beside it.** A characteristic clause
+written outside would have to mean one thing for a card in a hand and another
+for a permanent on the battlefield — and `matches` reads derived characteristics
+for the one and printed ones for the other. Whatever it was meant to narrow
+belongs in a branch, so the loader says so rather than picking a reading.
+
+## "Exile it, then return it transformed under its owner's control"
+
+Joshua, Phoenix's Dominant, and the rest of the Final Fantasy "Dominant" cycle:
+
+```jsonc
+{ "op": "exile_and_return", "objects": { "self_only": true }, "face": "back" }
+```
+
+**Not `transform`**, and the two are a different card in five ways at once:
+
+| | `transform` | `exile_and_return` |
+|---|---|---|
+| zones | never leaves the battlefield | exile, then back |
+| counters, Auras | kept | gone (a new object) |
+| summoning sickness | kept | sick again |
+| control | unchanged | back to its **owner** |
+| triggers | none | leaves-the-battlefield, then enters |
+
+400.7: what comes back is a new object. The owner clause is the one that makes
+this a removal answer for a permanent somebody has stolen, and `transform`
+cannot say it at all — a permanent that never changes zones never changes hands.
+
+**`face` is required, and is written out rather than inferred.** The cycle
+prints this line on *both* faces: the front returns it transformed and the back
+returns it "(front face up)". An op that only ever flipped would say the same
+thing twice and be silently wrong on one of them — on the reading a player is
+least likely to check.
+
+The face is passed **into** the move rather than set afterwards, twice over:
+`reset_permanent_state` clears `transformed` on the way in, and the arriving
+face is what every enters-replacement and enters-trigger must see. Joshua's back
+is a Saga whose lore counter is a `self_enters_with_counters` replacement, so a
+permanent that turned over one line later would already have entered as
+something else. `move_object` takes `as_face` for that reason and recomputes the
+card before the replacements run.
+
+Control is set **before** the move, the way `put_onto_battlefield` sets it:
+`to_player` says whose copy of a zone a card joins and the battlefield is
+shared, so control is not something `move_object` decides — and the enters event
+carries the controller.
+
+If the exile is replaced (a commander its owner sends to the command zone), the
+return does not happen: the object is no longer where the effect was tracking
+it, which is what 400.7 says about it.
+
+## "Target opponent and up to one target creature they control"
+
+Cloak and Dagger, Entwined. One target spec reading another spec's answer:
+
+```jsonc
+"targets": [
+  { "id": "who", "kind": "player", "count": 1,
+    "selector": { "controller": "opponent" } },
+  { "id": "what", "kind": "permanent", "count": 1, "optional": true,
+    "selector": { "zone": "battlefield", "types": ["Creature"],
+                  "controller": { "target": "who" } } }
+]
+```
+
+The *language* was already there — `{"target": "who"}` is an ordinary player
+spec and `select_players` has always understood it. Two things stopped it.
+
+- **The loader refused it by construction.** A target's own `controller` clause
+  was validated with no siblings in scope, so a card that named one was told the
+  target did not exist. It is now checked against the siblings declared
+  **before** it — and against a Mapping clause on *any* kind, where the old gate
+  only looked at `player` and `any` specs, which is why Cloak and Dagger's
+  second spec (a `permanent`) slipped through unchecked.
+- **The enumeration could not have answered it.** Every spec's candidates were
+  computed independently and multiplied at the end, so the linked spec resolved
+  `{"target": "who"}` against a spec with no answer yet: no seats, no
+  candidates, and a second target that could never be chosen.
+
+601.2c is both the way out and the reason the clause is legal at all: every
+target is chosen at once, so what is legal is the **pair**. So the combinations
+are grown one spec at a time rather than multiplied at the end, and a linked
+spec is enumerated **per partial combination** — against the opponent that
+branch actually picked.
+
+Only a linked spec pays for that. An independent one is enumerated once and
+reused across every partial, which is what the old product did and is the shape
+of every card in the pool but this one.
+
+A partial whose next *required* spec has nothing legal is dropped — 601.2c read
+the other way round: a target you cannot complete is not a legal choice of the
+ones before it. With no linked spec in sight that is exactly the old behaviour,
+since every partial saw the same options and so dies together.
+
+**Declaration order matters**, and naming a sibling that comes later is refused
+by name. 608.2b asks the question again on resolution, so `filter_legal` hands
+each spec the buckets already settled: a creature that changes controller in
+response stops being one "they" control, and is dropped while the opponent
+target stands.
+
+## Targeting a card in exile
+
+Espers to Magicite — *"…choose up to one **target creature card exiled this
+way**."*
+
+```jsonc
+{ "id": "t1", "kind": "card_in_exile", "count": 1, "optional": true,
+  "selector": { "binding": "banished", "types": ["Creature"],
+                "controller": "any" } }
+```
+
+A sixth target `kind`, beside `permanent`, `player`, `spell`,
+`card_in_graveyard` and `any`. **The kind is what the rest of the engine reads a
+target by**, and a card in exile is not a permanent (110.1) — so writing this
+`kind: "permanent"` with an exile selector would have *worked*, because
+`candidates` falls through to the selector for any kind it does not name, and
+would have gone on calling the thing it targets something it is not.
+
+The three zone-bearing kinds must now agree with their selector's `zone`, and
+each may leave it out because the kind already said it:
+
+| kind | zone |
+|---|---|
+| `permanent` | `battlefield` |
+| `card_in_graveyard` | `graveyard` |
+| `card_in_exile` | `exile` |
+
+No card in the pool wrote a mismatched one, so the refusals cost nothing.
+
+**`controller: "any"` is usually wanted**, because exile is kept per owner: a
+card taken out of an opponent's graveyard sits in the *opponent's* exile, and a
+spec without the clause walks only your own pile.
+
+**608.2b is re-asked with the selector, not just the zone.**
+`card_in_graveyard` checks only that the card is still in a graveyard, and can:
+it names a card by its printed face, which does not change while it lies there.
+An exile spec names one by *where it came from* — "exiled **this way**" — which
+is a binding, so `still_legal` re-runs the same `resolve_pool` call `candidates`
+ran. Re-running it rather than calling `matches` is both halves of the point:
+`matches` has no answer for a binding, which names a pool rather than describing
+an object, and running the identical call makes the two agree by construction —
+a target cannot be offered in one place and refused in the other.
+
 ## "For each player, up to one target permanent that player controls"
 
 ```jsonc
@@ -3713,6 +4258,39 @@ that swallows whatever was chosen cannot have that bug.
 Needs `count: "any"`; refused at load time otherwise, because on a fixed-size
 spec the cap either changes nothing or makes the spec unsatisfiable, and both
 are silent.
+
+## "…with total mana value 6 or less" — a cap on the picks together
+
+Phoenix, Warden of Fire's third chapter:
+
+```jsonc
+{ "id": "t1", "kind": "card_in_graveyard", "count": "any",
+  "total_mana_value": 6,
+  "selector": { "zone": "graveyard", "controller": "you",
+                "types": ["Creature"] } }
+```
+
+**No selector clause can say it.** Every clause in `matches` is evaluated
+against one candidate in isolation, so `mana_value: {"op": "<=", "value": 6}`
+says "*each* of these costs six or less" — a far wider card, and one that looks
+right until somebody reanimates six one-drops for six mana of creatures.
+
+So it lives where the *combinations* are built, in the same slot
+`one_per_player` occupies and for the same reason: both are facts about a set of
+chosen objects rather than about any one of them. Every subset that would exceed
+the cap is simply never offered.
+
+Read off the **printed** cost, which is all a card in a graveyard has — nothing
+is applying to it, and an X in a mana cost is 0 anywhere but on the stack
+(202.3b).
+
+**Not re-checked on resolution.** 608.2b asks whether each target is still legal
+one at a time; the total was a condition on the *choice*, and a spell whose
+targets have partly gone does not have its arithmetic redone.
+
+A cap of zero is refused — a spec that can only ever choose nothing, printed as
+though it chose something — as is one on a `player` or `spell` target, neither
+of which has a mana value for it to add up.
 
 ## "Any number of target creatures"
 
@@ -5389,6 +5967,15 @@ in the pool; when one arrives, that is where it goes.
 
 #### Why this is a `delayed_trigger` and not a duration on `exile`
 
+`link` is the same record under a neutral name, and **only** a record. Written
+`until_leaves` a card is saying the exiled cards come back; Summon: Esper
+Valigarmanda takes an instant or sorcery out of *every* graveyard at the table
+and is then sacrificed after its last chapter, so that spelling would read as
+promising an opponent's card back to them. Both keys set `exiled_by` and nothing
+else — the return was always a separate `leaves_battlefield` trigger on the card
+— and both require `objects`, since with nothing selected there is nothing to
+write the link on.
+
 `exile` has one duration, `until_leaves`, and it is the Oblivion Ring link: the op
 records `exiled_by` and the return is a separate `leaves_battlefield` trigger on
 the same card reading `{"zone": "exile", "exiled_with": "self"}`. For Palace
@@ -5666,6 +6253,71 @@ still spent, and the spell is still paid for in full.
 
 Written *after* the move, like `until_leaves` and for the same reason:
 `reset_permanent_state` runs on the way into exile and would wipe it.
+
+## A standing permission, and mana of any type
+
+Locke, Treasure Hunter — *"…Until end of turn, you may cast a spell from among
+those cards"* — and Summon: Esper Valigarmanda — *"You may cast an instant or
+sorcery card exiled with this Saga, **and mana of any type can be spent to cast
+that spell**."*
+
+```jsonc
+{ "op": "grant_playable", "limit": 1, "any_type": true,
+  "objects": { "zone": "exile", "controller": "any", "exiled_with": "self",
+               "any_types": ["Instant", "Sorcery"], "count": "all" } }
+```
+
+`grant_playable` writes the same `playable_by`/`playable_turn` pair that
+`exile`'s `playable_this_turn` writes, and the difference is **where the cards
+are**. Impulse grants the permission to cards the same op has just exiled;
+this grants it to cards that are already somewhere — the graveyards Locke just
+milled into, the exile pile a Saga filled two turns ago — and moves nothing.
+`objects` is required for that reason: with no selection it is a line that reads
+as a grant and grants nothing.
+
+| | `play_exiled` | `exile` + `playable_this_turn` | `grant_playable` |
+|---|---|---|---|
+| the cards move | already in exile | this op exiles them | **not at all** |
+| which zone | exile | exile | any zone the selector names |
+| price | free | printed | printed |
+| how many | one | all of them | `limit`, per granting permanent |
+
+`limit` is "**a** spell", singular, out of however many were flagged. Counted in
+the turn ledger against the granting permanent (`playable_group`), on the same
+negative slot a `cast_from_graveyard` permission bills, so two Lockes are two
+spells and one Locke milling three cards is still one.
+
+**Every seat's copy of both zones is walked.** Exile is kept per owner, so a
+card taken out of an opponent's graveyard sits in the *opponent's* exile, and a
+permission that only reached your own would silently drop half of what
+Valigarmanda's first chapter took. The flag *is* the permission, so widening the
+walk offers nothing extra: nothing carries it that was not granted it.
+
+### `any_type`
+
+"…and mana of any type can be spent to cast that spell" is the one clause in the
+engine that relaxes a **coloured** requirement, and nothing else could stand in
+for it. Every cost reduction there is — `spell_cost_reduction`, convoke, delve,
+emerge, the commander tax's negative twin — is clamped to the generic part
+precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
+type" is about what a permanent *produces*, not about what may be spent.
+
+`ManaCost.as_any_type` sums the coloured and hybrid pips into `generic`, which
+is the rule rather than a stand-in for it: a generic pip is the one demand any
+mana already satisfies, so a cost whose colours have all been waived is exactly
+a generic cost of the same size. `{C}` goes with them — "any type" names the
+colourless type too — and `X` does not, being a number the caster chooses.
+
+The flag rides on the **card**, beside the permission it is printed next to, and
+is read only while that permission is live (`playable_turn == state.turn`).
+Not on the player and not on the turn: the caster's other spells that turn are
+paid for normally, which is what the printed "**that** spell" says.
+
+Both sides read it — `legality._cast_variant` prices the line with the colours
+already waived, and `Game._cast` waives them again before paying — so a line
+that was offered is a line that can be paid. Getting only one of them is the
+failure mode the `cast_from_library_top` work already hit once: the spell is
+offered, goes on the stack, and the payment quietly refuses.
 
 ## Casting for free out of the window
 

@@ -1,0 +1,69 @@
+{
+  "card": {
+    "id": "bolas_s_citadel",
+    "name": "Bolas's Citadel",
+    "oracle_text": "You may look at the top card of your library any time.\nYou may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.\n{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life.",
+    "mana_cost": "{3}{B}{B}{B}",
+    "types": [
+      "Artifact"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "You may look at the top card of your library any time.",
+        "effect": "look_at_library_top",
+        "affects_player": "you"
+      },
+      {
+        "kind": "static",
+        "text": "You may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+        "effect": "cast_from_library_top",
+        "affects_player": "you",
+        "pay_life_instead": true
+      },
+      {
+        "kind": "static",
+        "text": "You may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+        "effect": "play_lands_from_library_top",
+        "affects_player": "you"
+      },
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life.",
+        "cost": {
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "not_types": [
+              "Land"
+            ],
+            "count": 10
+          }
+        },
+        "effects": [
+          {
+            "op": "lose_life",
+            "player": "each_opponent",
+            "amount": {
+              "const": 10
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

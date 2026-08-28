@@ -84,7 +84,10 @@ class TestTheGateThatMatters:
         assert "playable" in verdict.passed
 
     def test_a_correct_card_passes_every_gate(self, pool):
-        verdict = V.verify(DIVINATION, {"hand_size": {"0": 2}}, pool)
+        # Three, not two: the sandbox hand holds a spare land beside the card
+        # under test, so a mandatory "discard a card" has fodder. Divination
+        # draws two on top of that spare.
+        verdict = V.verify(DIVINATION, {"hand_size": {"0": 3}}, pool)
         assert verdict.ok, str(verdict)
         assert set(verdict.passed) == set(V.GATES)
 
@@ -392,6 +395,72 @@ class TestTheLegendaryProp:
         assert "Legendary" in prop.supertypes
         assert prop.is_creature
         assert not [a for a in prop.abilities if a.is_activated or a.is_triggered]
+
+
+class TestTheCheapGraveyardProp:
+    """A reanimation spell with a printed cost ceiling needs something to return.
+
+    Rule 115.4: a spell with an illegal or absent target is never put on the
+    stack, so a card the sandbox cannot legally aim is not a *failing* card --
+    it is an unasked question. Both graveyard props were mana value 5
+    (`acidic_slime` and `air_elemental`), so every spell printing "mana value 3
+    or less" hit gate 4 with "not playable in the sandbox" no matter how
+    faithfully it was written. Helping Hand is the witness: it is the exact
+    construction `bishop_of_rebirth` already ships, and it was filed as an
+    unimplementable card purely because the position could not ask it anything.
+
+    The two ways to make such a card pass without this prop are to drop the
+    mana-value clause or to mark the target `optional` when the card does not
+    print "up to one" -- both describe a different card, which is the one
+    failure the whole pipeline exists to prevent. So the prop was added rather
+    than the gate relaxed.
+    """
+
+    def test_the_graveyard_offers_a_target_a_cost_ceiling_can_reach(self, hand_written):
+        ids = V._props(hand_written, V.OWN_GRAVEYARD_ROLES)
+        cheap = [c for c in map(hand_written.get, ids) if c.mana_value <= 3]
+        assert cheap, "no graveyard card a 'mana value 3 or less' spell could target"
+
+    def test_it_still_offers_an_expensive_one(self, hand_written):
+        """The ceiling case must not cost us the floor case.
+
+        Swapping *both* props for cheap creatures would break the mirror image
+        -- "mana value 4 or greater" -- so the graveyard keeps one of each.
+        """
+        ids = V._props(hand_written, V.OWN_GRAVEYARD_ROLES)
+        assert [c for c in map(hand_written.get, ids) if c.mana_value >= 4]
+
+    def test_the_graveyard_is_still_two_cards(self, hand_written):
+        """Appending a third prop would falsify every authored `graveyard_size`.
+
+        The prop was *swapped* into the existing slot for exactly this reason,
+        the same call `legendary_creature` made about the opponent's board.
+        """
+        game = V.build_sandbox(hand_written, "sol_ring")
+        assert len(game.state.players[0].graveyard) == 2
+
+    def test_the_cheap_prop_is_inert(self, hand_written):
+        """The incumbent was not, and it was quietly editing other cards.
+
+        `acidic_slime` destroys a permanent when it enters, so every card that
+        returned it from the graveyard had that destruction folded into its
+        expectation -- a prop's behaviour showing up in another card's verdict.
+        """
+        ids = V._props(hand_written, V.OWN_GRAVEYARD_ROLES)
+        cheap = min(map(hand_written.get, ids), key=lambda c: c.mana_value)
+        assert not [a for a in cheap.abilities if a.is_activated or a.is_triggered]
+
+    def test_the_cheap_prop_is_not_legendary(self, hand_written):
+        """The brief promises exactly one legend, and reanimation would break it.
+
+        `references/worker-brief.md` tells every worker the opponent's creature
+        is the position's one and only legendary permanent, so a card that
+        counts legends counts one. A legend in the graveyard keeps that true
+        only until something returns it to the battlefield.
+        """
+        ids = V._props(hand_written, V.OWN_GRAVEYARD_ROLES)
+        cheap = min(map(hand_written.get, ids), key=lambda c: c.mana_value)
+        assert "Legendary" not in cheap.supertypes
 
 
 class TestThePacketCarriesTheWholeVocabulary:

@@ -4,12 +4,21 @@
     "name": "Viscera Seer",
     "oracle_text": "Sacrifice a creature: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
     "mana_cost": "{B}",
-    "types": ["Creature"],
-    "subtypes": ["Vampire", "Wizard"],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Wizard"
+    ],
     "power": 1,
     "toughness": 1,
-    "colors": ["B"],
-    "color_identity": ["B"],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
     "abilities": [
       {
         "kind": "activated",
@@ -18,7 +27,9 @@
           "sacrifice": {
             "zone": "battlefield",
             "controller": "you",
-            "types": ["Creature"],
+            "types": [
+              "Creature"
+            ],
             "count": 1
           }
         },
@@ -26,7 +37,9 @@
           {
             "op": "scry",
             "player": "you",
-            "amount": {"const": 1}
+            "amount": {
+              "const": 1
+            }
           }
         ]
       }
@@ -35,6 +48,8 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 0}
+    "hand_size": {
+      "0": 1
+    }
   }
 }

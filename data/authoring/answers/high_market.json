@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "high_market",
+    "name": "High Market",
+    "oracle_text": "{T}: Add {C}.\n{T}, Sacrifice a creature: You gain 1 life.",
+    "mana_cost": "",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice a creature: You gain 1 life.",
+        "cost": {
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": ["Creature"],
+            "count": 1
+          }
+        },
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

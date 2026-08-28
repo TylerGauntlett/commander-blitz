@@ -1,0 +1,107 @@
+{
+  "_comment": "Cards that exist only for the discard-binding test (tests/unit/test_discard_binding.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. Between them they cover the three shipped cards that needed this: t_pitch_and_draw is Joshua ('discard up to two cards, then draw that many'), t_pitch_plus_one is Celes ('discard any number, draw that many plus one'), t_pitch_each is Mog ('each player may discard a card ... if a creature card was discarded this way'), and t_exact_pitch is the counterfactual with no up_to.",
+  "cards": [
+    {
+      "id": "t_pitch_and_draw",
+      "name": "Test Pitch And Draw",
+      "oracle_text": "Discard up to two cards, then draw that many cards.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {
+            "const": 2
+          },
+          "up_to": true,
+          "as": "pitched"
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "count": {
+              "binding": "pitched"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_pitch_plus_one",
+      "name": "Test Pitch Plus One",
+      "oracle_text": "Discard any number of cards, then draw that many cards plus one.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {
+            "cards_in_hand": "you"
+          },
+          "up_to": true,
+          "as": "pitched"
+        },
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "sum": [
+              {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              {
+                "const": 1
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_exact_pitch",
+      "name": "Test Exact Pitch",
+      "oracle_text": "Discard two cards.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {
+            "const": 2
+          },
+          "as": "pitched"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "_comment": "Cards that exist only for the mill-as-a-cost test (tests/unit/test_mill_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mill_rock` is Millikin's shape -- a mana ability whose cost mills. `t_naive_mill_rock` is deliberately the WRONG card: the version the DSL could write before `mill` was a cost, with the mill moved into the ability's effects, and it is asserted against as the counterfactual.",
+  "cards": [
+    {
+      "id": "t_mill_rock",
+      "name": "Test Mill Rock",
+      "oracle_text": "{T}, Mill a card: Add {C}.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Mill a card: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true,
+            "mill": 1
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_mill_two_rock",
+      "name": "Test Mill Two Rock",
+      "oracle_text": "{T}, Mill two cards: Add {C}{C}.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Mill two cards: Add {C}{C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true,
+            "mill": 2
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            },
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_plain_rock",
+      "name": "Test Plain Rock",
+      "oracle_text": "{T}: Add {C}.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

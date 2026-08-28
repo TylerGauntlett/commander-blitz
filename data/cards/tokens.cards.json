@@ -303,6 +303,26 @@
       "is_token": true
     },
     {
+      "id": "knight_2_2_w",
+      "name": "Knight Token",
+      "oracle_text": "2/2 white Knight creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "knight_2_2_w_vigilance",
       "name": "Knight Token",
       "oracle_text": "2/2 white Knight creature token with vigilance.",
@@ -683,6 +703,29 @@
       "color_identity": [
         "W",
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "moogle_1_2_w_lifelink",
+      "name": "Moogle Token",
+      "oracle_text": "1/2 white Moogle creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Moogle"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
       ],
       "is_token": true
     },

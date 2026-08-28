@@ -1,0 +1,192 @@
+{
+  "_comment": "Cards that exist only for the choose_mode chooser test (tests/unit/test_mode_chooser.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_donor_rock` is The Warring Triad's third line -- 'Target player adds one mana of any color', where the player ADDING picks the colour. `t_selfish_rock` is the same card without the chooser, the version the DSL could write before it existed, and is the counterfactual: its controller picks and its controller is paid.",
+  "cards": [
+    {
+      "id": "t_donor_rock",
+      "name": "Test Donor Rock",
+      "oracle_text": "{T}: Target player adds one mana of any color.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Target player adds one mana of any color.",
+          "cost": {
+            "tap": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "chooser": {
+                "target": "t1"
+              },
+              "modes": [
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_selfish_rock",
+      "name": "Test Selfish Rock",
+      "oracle_text": "{T}: Target player adds one mana of any color.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Target player adds one mana of any color.",
+          "cost": {
+            "tap": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "modes": [
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

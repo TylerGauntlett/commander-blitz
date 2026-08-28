@@ -4,9 +4,15 @@
     "name": "Felidar Retreat",
     "oracle_text": "Landfall — Whenever a land you control enters, choose one —\n• Create a 2/2 white Cat Beast creature token.\n• Put a +1/+1 counter on each creature you control. Those creatures gain vigilance until end of turn.",
     "mana_cost": "{3}{W}",
-    "types": ["Enchantment"],
-    "colors": ["W"],
-    "color_identity": ["W"],
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
     "abilities": [
       {
         "kind": "triggered",
@@ -14,7 +20,11 @@
         "trigger": {
           "event": "permanent_enters",
           "controller": "you",
-          "filter": {"types": ["Land"]}
+          "filter": {
+            "types": [
+              "Land"
+            ]
+          }
         },
         "effects": [
           {
@@ -27,7 +37,9 @@
                   {
                     "op": "create_token",
                     "token": "cat_beast_2_2_w",
-                    "amount": {"const": 1},
+                    "amount": {
+                      "const": 1
+                    },
                     "controller": "you"
                   }
                 ]
@@ -38,21 +50,29 @@
                   {
                     "op": "add_counters",
                     "counter": "+1/+1",
-                    "amount": {"const": 1},
+                    "amount": {
+                      "const": 1
+                    },
                     "objects": {
                       "zone": "battlefield",
                       "controller": "you",
-                      "types": ["Creature"],
+                      "types": [
+                        "Creature"
+                      ],
                       "count": "all"
                     }
                   },
                   {
                     "op": "grant_keyword",
-                    "keywords": ["vigilance"],
+                    "keywords": [
+                      "vigilance"
+                    ],
                     "objects": {
                       "zone": "battlefield",
                       "controller": "you",
-                      "types": ["Creature"],
+                      "types": [
+                        "Creature"
+                      ],
                       "count": "all"
                     }
                   }
@@ -67,6 +87,8 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 0}
+    "hand_size": {
+      "0": 1
+    }
   }
 }

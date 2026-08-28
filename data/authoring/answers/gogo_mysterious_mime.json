@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "gogo_mysterious_mime",
+    "name": "Gogo, Mysterious Mime",
+    "oracle_text": "At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime. If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.",
+    "mana_cost": "{3}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Wizard"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime. If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.",
+        "trigger": {"event": "begin_combat", "controller": "you"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "exclude_self": true
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "may",
+            "condition": {"exists": {"target": "t1", "zone": "battlefield", "types": ["Creature"]}},
+            "effects": [
+              {
+                "op": "become_copy",
+                "except_name": "Gogo, Mysterious Mime",
+                "duration": "end_of_turn",
+                "objects": {"zone": "battlefield", "self_only": true},
+                "copying": {"target": "t1"}
+              },
+              {"op": "pump", "power": {"const": 2}, "toughness": {"const": 0}, "objects": {"zone": "battlefield", "self_only": true}},
+              {"op": "grant_keyword", "keywords": ["haste"], "objects": {"zone": "battlefield", "self_only": true}},
+              {"op": "must_attack", "duration": "this_turn", "objects": {"zone": "battlefield", "self_only": true}},
+              {"op": "pump", "power": {"const": 2}, "toughness": {"const": 0}, "objects": {"target": "t1"}},
+              {"op": "grant_keyword", "keywords": ["haste"], "objects": {"target": "t1"}},
+              {"op": "must_attack", "duration": "this_turn", "objects": {"target": "t1"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

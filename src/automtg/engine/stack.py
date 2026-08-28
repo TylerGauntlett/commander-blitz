@@ -43,6 +43,8 @@ def push_spell(
     gift_to: int | None = None,
     evoked: bool = False,
     flashback: bool = False,
+    graveyard_permission: int | None = None,
+    enters_tapped: bool = False,
     overloaded: bool = False,
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
@@ -59,9 +61,14 @@ def push_spell(
 
     # Removed by hand rather than via move_object: a spell going on the stack must
     # not fire leave-the-zone triggers or reset the state we are about to set.
-    source_list = state.players[obj.owner].zone_list(obj.zone)
-    if oid in source_list:
-        source_list.remove(oid)
+    #
+    # A spell that was **made** on the stack has no zone to leave -- a prepared
+    # permanent's copy is created there, and the battlefield the permanent is
+    # still standing on is not a player-owned list anyway.
+    if obj.zone not in (Zone.STACK, Zone.BATTLEFIELD):
+        source_list = state.players[obj.owner].zone_list(obj.zone)
+        if oid in source_list:
+            source_list.remove(oid)
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
@@ -115,6 +122,8 @@ def push_spell(
         bestowed=bestowed,
         mutated=mutated,
         flashback=flashback,
+        graveyard_permission=graveyard_permission,
+        enters_tapped=enters_tapped,
         overloaded=overloaded,
         spliced=spliced,
         face_down=face_down,
@@ -611,7 +620,9 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
             EventType.SPELL_FIZZLED, player=item.controller, source=item.oid, card=card.id
         )
         obj.stack_id = None
-        obj.cast_from_graveyard = item.flashback
+        obj.cast_from_graveyard = (
+            item.flashback or item.graveyard_permission is not None
+        )
         # 715.3c and 702.127b both exile the card **as it resolves**, so a
         # second face that never resolves does not get the rider: an Adventure
         # whose target vanished is a card in the graveyard, not one in exile
@@ -629,7 +640,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # Set before the effects run, not after: "if this spell was cast from a
     # graveyard, create ten of those tokens instead" is read *during*
     # `spell_effects`, so a flag written afterwards would always read False.
-    obj.cast_from_graveyard = item.flashback
+    # `or` the permission: a card cast out of a graveyard under Edgar's
+    # permission was cast from a graveyard whichever route it took, and every
+    # `cast_from_graveyard` condition asks that, not "was it flashed back".
+    obj.cast_from_graveyard = item.flashback or item.graveyard_permission is not None
     # Same reason, same moment: "destroy each artifact instead of target
     # artifact" is an `if` inside `spell_effects`, so a flag written after them
     # would always read False and every overloaded spell would resolve as the
@@ -697,7 +711,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     if item.mutated:
         yield from _merge_mutation(state, item, targets)
         return
-    _place_after_resolution(state, obj, card)
+    _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
     _attach_aura(state, obj, card, targets, specs)
 
 
@@ -743,7 +757,9 @@ def _merge_mutation(
     merge_permanents(state, host_oid, item.oid, on_top=on_top)
 
 
-def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
+def _place_after_resolution(
+    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False
+) -> None:
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
     The object's zone is still ``STACK``; ``move_object`` handles that case by
@@ -811,6 +827,13 @@ def _place_after_resolution(state: GameState, obj, card: CardDef) -> None:
         obj.face_down = True
         obj.pending_face_down = False
         obj.revealed_to.add(obj.controller)
+        state.bump_chars()
+    if enters_tapped and destination is Zone.BATTLEFIELD:
+        # "…that artifact enters tapped" -- the rider on Edgar's graveyard-cast
+        # permission. After the move for the reason the two neighbours here give:
+        # `reset_permanent_state` runs on the way onto the battlefield and
+        # untaps, so a flag set beforehand would be wiped.
+        obj.tapped = True
         state.bump_chars()
     if obj.cast_transformed and destination is Zone.BATTLEFIELD:
         # `reset_permanent_state` cleared it on the way in -- 712.13a, "enters

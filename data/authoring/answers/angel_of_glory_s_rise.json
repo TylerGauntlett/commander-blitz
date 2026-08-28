@@ -4,25 +4,40 @@
     "name": "Angel of Glory's Rise",
     "oracle_text": "Flying\nWhen this creature enters, exile all Zombies, then return all Human creature cards from your graveyard to the battlefield.",
     "mana_cost": "{5}{W}{W}",
-    "types": ["Creature"],
-    "subtypes": ["Angel"],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Angel"
+    ],
     "power": 4,
     "toughness": 6,
-    "colors": ["W"],
-    "color_identity": ["W"],
-    "keywords": ["flying"],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "flying"
+    ],
     "abilities": [
       {
         "kind": "triggered",
         "text": "When this creature enters, exile all Zombies, then return all Human creature cards from your graveyard to the battlefield.",
-        "trigger": {"event": "self_enters", "source": "self"},
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
         "effects": [
           {
             "op": "exile",
             "objects": {
               "zone": "battlefield",
               "controller": "any",
-              "subtypes": ["Zombie"],
+              "subtypes": [
+                "Zombie"
+              ],
               "count": "all"
             }
           },
@@ -33,8 +48,12 @@
             "objects": {
               "zone": "graveyard",
               "controller": "you",
-              "types": ["Creature"],
-              "subtypes": ["Human"],
+              "types": [
+                "Creature"
+              ],
+              "subtypes": [
+                "Human"
+              ],
               "count": "all"
             }
           }
@@ -44,8 +63,10 @@
   },
   "expectation": {
     "zone": "battlefield",
-    "battlefield_count": 33,
+    "battlefield_count": 34,
     "opponent_battlefield_count": 6,
-    "graveyard_size": {"0": 2}
+    "graveyard_size": {
+      "0": 1
+    }
   }
 }

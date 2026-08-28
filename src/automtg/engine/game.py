@@ -25,6 +25,7 @@ from .costs import ability_purpose, pay
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
+from .mana import ManaCost
 from .player import MAX_HAND_SIZE, PlayerState
 from .primitives import draw_cards
 from .rng import Rng
@@ -291,7 +292,13 @@ class Game:
         # object must not start showing that face until the spell is actually on
         # the stack, because every `return` between here and `push_spell` is a
         # cast that did not happen.
-        if action.second_face and card.second_face is not None:
+        if action.prepared and card.prepared_face is not None:
+            # "…you may cast **a copy of its spell**." The face is what is being
+            # cast, so everything below -- price, X, modes, targets, purpose --
+            # is read off it, exactly as it is for a second face. What differs
+            # comes later, at `push_spell`: the permanent stays where it is.
+            card = state.registry.get(card.prepared_face)
+        elif action.second_face and card.second_face is not None:
             card = state.registry.get(card.second_face)
         # Fused: one spell whose cost, targets and effects are both halves'.
         # Built here the same way legality built it to price the line, so the
@@ -361,8 +368,23 @@ class Game:
             cost = card.overload
         elif action.kicked:
             cost = card.mana_cost.plus(card.kicker)
+        elif action.from_library_top:
+            # "…pay life equal to its mana value **rather than** pay its mana
+            # cost" -- Bolas's Citadel. The whole mana half is replaced, so it
+            # is priced free here exactly as `_cast_variant` priced the line,
+            # and the life is charged below. Without this the spell was offered
+            # for free and then billed its printed cost, which `pay` refused
+            # with no mana on the board: the cast simply did nothing.
+            cost = ManaCost.parse("")
         else:
             cost = card.mana_cost
+
+        granted = state.objects[oid]
+        if granted.playable_any_type and granted.playable_turn == state.turn:
+            # The paying half of the relaxation `_cast_variant` priced the line
+            # with. Both sides read the same flag off the same card, so a line
+            # that was offered is a line that can be paid.
+            cost = cost.as_any_type()
 
         # Convoke and delve. Netted into `extra` alongside the commander tax
         # and emerge's sacrifice, so it goes through the same clamp: `pay`
@@ -463,11 +485,34 @@ class Game:
         # Deadly Dispute's artifact. Paid after the mana (rule 601.2g), the same
         # order emerge's sacrifice and retrace's discard use, so a creature that
         # tapped for mana can still be the one that is eaten.
-        if action.additional_times and card.additional_cost is not None:
+        # `chosen_additional` rather than `card.additional_cost`, so a modal
+        # cost -- "discard a card **or** pay 3 life" -- charges the branch the
+        # player was offered. Legality prices the line through the same helper,
+        # so the price shown and the price taken cannot disagree.
+        from .legality import chosen_additional
+
+        additional = chosen_additional(card, action.additional_choice)
+        if additional is not None and additional.pay_life_x:
+            # "As an additional cost to cast this spell, pay X life" -- Toxic
+            # Deluge. 601.2b puts the announcement here, with the rest of the
+            # costs, and 118.4 lets a player pay life down to exactly 0, so the
+            # ceiling is the whole life total. `x` is then carried on the stack
+            # item, which is how the sweep reads `{"x": true}` on resolution.
+            from .effects.context import EffectContext, ask_x
+
+            ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+            # Reassigns `x`, which is 0 for these cards: `_ask_x` above returns
+            # early unless the *mana* cost has an {X}, and Toxic Deluge's is
+            # {2}{B}. The one X a spell has is the one the player announced,
+            # whichever half of the cost it belongs to, and `push_spell` carries
+            # it below.
+            x = yield from ask_x(
+                ctx, f"Choose X for {card.name}", state.players[pid].life, pid
+            )
+            yield from pay(state, pid, Cost(pay_life=x), oid)
+        if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
-                ok = yield from pay(
-                    state, pid, card.additional_cost.without_mana(), oid
-                )
+                ok = yield from pay(state, pid, additional.without_mana(), oid)
                 if not ok:  # pragma: no cover - legality already proved payability
                     return
             obj.cast_additional = action.additional_times
@@ -483,6 +528,68 @@ class Game:
         # stay in hand and can be spliced again next turn.
         spliced = yield from self._ask_splices(pid, card, oid)
 
+        # "Once during each of your turns, you may cast an artifact spell from
+        # your graveyard" -- Edgar. Billed to the granting permanent, through
+        # the same `_graveyard_cast_permission` legality offered the line with,
+        # so the permission shown and the permission spent are the same one.
+        # Nothing else in the engine knows this cast happened, which is why the
+        # granting oid rides on the stack item.
+        if action.from_library_top:
+            # "…pay life equal to its mana value rather than pay its mana cost."
+            # The mana half was already zeroed when the line was priced, so this
+            # is the whole price. 118.4 lets a player pay down to exactly 0, and
+            # legality withholds the line above that -- so this is charged
+            # rather than offered and rewound.
+            ok = yield from pay(state, pid, Cost(pay_life=card.mana_value), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+
+        if obj.playable_group is not None and obj.playable_turn == state.turn:
+            # "…you may cast **a spell** from among those cards." Billed to the
+            # permanent that granted the permission, through the same ledger
+            # slot a `cast_from_graveyard` permission uses, so legality's cap
+            # and this agree about what has been spent.
+            state.turn_ledger.activated(obj.playable_group, legality.GRAVEYARD_CAST_SLOT)
+
+        permission = None
+        enters_tapped = False
+        if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
+            granting = legality._graveyard_cast_permission(state, pid, card, oid)
+            if granting is not None:
+                permission = granting.oid
+                state.turn_ledger.activated(granting.oid, legality.GRAVEYARD_CAST_SLOT)
+                from .characteristics import graveyard_cast_permissions
+
+                for source_obj, static in graveyard_cast_permissions(state, pid):
+                    if source_obj.oid == granting.oid and static.get("enters_tapped"):
+                        enters_tapped = True
+                        break
+
+        if action.prepared:
+            # A **copy**, and the permanent stays on the battlefield -- the one
+            # cast in the engine that does not move the object it names. So the
+            # spell is a fresh token object of the spell face, which is also
+            # what makes it vanish correctly on resolution (110.5g): a copy of a
+            # sorcery goes to a graveyard that then empties itself of it, and
+            # Emeritus is not the card that went there.
+            #
+            # "Doing so **unprepares it**" is the rules' own sentence, printed
+            # as reminder text, so it happens here rather than on the card. It
+            # happens *after* the cost is paid and everything is chosen: a cast
+            # that was abandoned mid-payment has not been made, and the
+            # permission is spent by using it.
+            obj.prepared = False
+            spell = new_object(
+                state,
+                card.id,
+                owner=pid,
+                zone=Zone.STACK,
+                controller=pid,
+                is_token=True,
+            )
+            oid = spell.oid
+            state.bump_chars()
+
         item = stack.push_spell(
             state,
             oid,
@@ -490,6 +597,8 @@ class Game:
             tuple(action.targets) + mode_refs,
             x=x,
             kicked=action.kicked,
+            graveyard_permission=permission,
+            enters_tapped=enters_tapped,
             # Gift (702.164a). Carried onto the stack item and paid for with
             # nothing -- there is no `pay` call above for it, and that is the
             # mechanic rather than an omission: the promise is a 601.2b choice
@@ -567,7 +676,16 @@ class Game:
                 cost_source=oid,
             )
 
-        modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
+        if action.ability_modes:
+            # A modal ability whose bullets own their targets -- Phoenix Down.
+            # The bullet was chosen when the action was: legality offers one
+            # activation per mode, each carrying only that mode's targets, which
+            # is the only way round that satisfies 601.2b before 601.2c. Asking
+            # again here would ask a question the player has already answered
+            # and could contradict the targets already declared.
+            modes = action.ability_modes
+        else:
+            modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
 
         # `fire`, not `emit`: emit only writes the log, and an activation event
         # nothing listens for is the same silent no-op the cycling event below

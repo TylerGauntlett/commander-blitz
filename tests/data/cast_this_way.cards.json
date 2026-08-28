@@ -1,0 +1,154 @@
+{
+  "_comment": "Cards that exist only for the play_exiled `as` test (tests/unit/test_cast_this_way.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_kefka_bolt` is Kefka's shape: exile from each opponent's graveyard, cast any number of them free, then make each owner lose life equal to what was cast. `t_kefka_exiled` is the near-miss the DSL could already write, reading `exiled_with: self` instead, and is asserted to be the WRONG set.",
+  "cards": [
+    {
+      "id": "t_kefka_bolt",
+      "name": "Test Kefka Bolt",
+      "oracle_text": "Exile a card from each opponent's graveyard. You may cast any number of spells from among cards exiled this way without paying their mana costs. Then each player who owns a spell you cast this way loses life equal to its mana value.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "as": "banished"
+        },
+        {
+          "op": "play_exiled",
+          "as": "cast",
+          "objects": {
+            "binding": "banished",
+            "count": "any"
+          }
+        },
+        {
+          "op": "for_each",
+          "objects": {
+            "binding": "cast"
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": {
+                "owner_of": "each"
+              },
+              "amount": {
+                "mana_value_of": {
+                  "binding": "each"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_kefka_exiled",
+      "name": "Test Kefka Exiled",
+      "oracle_text": "Exile a card from each opponent's graveyard. You may cast any number of spells from among cards exiled this way without paying their mana costs. Then each player who owns a card exiled this way loses life equal to its mana value.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "as": "banished"
+        },
+        {
+          "op": "play_exiled",
+          "objects": {
+            "binding": "banished",
+            "count": "any"
+          }
+        },
+        {
+          "op": "for_each",
+          "objects": {
+            "binding": "banished",
+            "count": "all"
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": {
+                "owner_of": "each"
+              },
+              "amount": {
+                "mana_value_of": {
+                  "binding": "each"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_kefka_pod",
+      "name": "Test Kefka Pod",
+      "oracle_text": "Exile a card at random from each opponent's graveyard. You may cast any number of spells from among cards exiled this way without paying their mana costs.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "for_each_player",
+          "players": "each_opponent",
+          "effects": [
+            {
+              "op": "exile",
+              "as": "banished",
+              "objects": {
+                "zone": "graveyard",
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "random": true
+              }
+            }
+          ]
+        },
+        {
+          "op": "play_exiled",
+          "as": "cast",
+          "objects": {
+            "binding": "banished",
+            "count": "any"
+          }
+        }
+      ]
+    }
+  ]
+}

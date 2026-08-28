@@ -61,7 +61,9 @@ class TestTemplatesProduceCardsTheEngineAgreesWith:
             # Lifegain with a number rather than a word.
             ("Radiant Fountain", {"life": {"0": 42}}),
             # A creature whose whole text is an ETB draw.
-            ("Wall of Blossoms", {"hand_size": {"0": 1}}),
+            # Two, not one: the sandbox hand keeps a spare land beside the card
+            # under test, and the ETB draw lands on top of it.
+            ("Wall of Blossoms", {"hand_size": {"0": 2}}),
         ],
     )
     def test_it_translates_and_verifies(self, index, hand_written, card, expectation):

@@ -1,0 +1,114 @@
+{
+  "_comment": "Cards that exist only for the union-selector test (tests/unit/test_union_selector.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_union_grab` is the Cloak and Dagger shape: one choice offered across two zones at once. `t_hand_grab` is the counterfactual -- the same line narrowed to the one zone a selector could name before.",
+  "cards": [
+    {
+      "id": "t_union_grab",
+      "name": "Test Union Grab",
+      "oracle_text": "You may exile a nonland card from your hand or a creature you control.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "union": [
+              {
+                "zone": "hand",
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ]
+              },
+              {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              }
+            ],
+            "count": 1,
+            "optional": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_hand_grab",
+      "name": "Test Hand Grab",
+      "oracle_text": "You may exile a nonland card from your hand.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "hand",
+            "controller": "you",
+            "not_types": [
+              "Land"
+            ],
+            "count": 1,
+            "optional": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_overlap_grab",
+      "name": "Test Overlap Grab",
+      "oracle_text": "You may exile a creature you control or a nonland permanent you control.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "union": [
+              {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ]
+              },
+              {
+                "zone": "battlefield",
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            ],
+            "count": 1,
+            "optional": true
+          }
+        }
+      ]
+    }
+  ]
+}

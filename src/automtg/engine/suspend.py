@@ -177,24 +177,29 @@ def rebound_tick(state: GameState, pid: int) -> None:
         cast_for_free(state, pid, oid)
 
 
-def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) -> None:
+def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) -> bool:
     """Put a suspended card on the stack having paid nothing for it.
 
     Still a cast: it uses the stack, it can be countered, and its targets are
     chosen now.  A card with no legal target simply stays in exile with no time
     counters, which is what the rules say happens to it.
+
+    Returns whether the card actually reached the stack. Every caller but one
+    ignores it; `ops_cards.op_play_exiled` needs it, because "each player who
+    owns a spell **you cast this way**" (Kefka) has to name the cards that were
+    really cast and not the ones that were merely offered.
     """
     from . import stack, triggers
     from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
-        return
+        return False
     card = state.card_of(obj)
 
     options = enumerate_target_tuples(state, pid, card.targets, oid, limit=1)
     if not options:
-        return
+        return False
     # And its modes, on the one card shape whose targets belong to them. Same
     # simplification, same reason: there is no seat to ask here.
     modes, mode_refs = stack.free_cast_modes(state, pid, card, oid)
@@ -217,3 +222,4 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
         card=card.id,
         free=1,
     )
+    return True

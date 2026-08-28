@@ -17,6 +17,7 @@ from .selectors import (
     ZONE_NAMES,
     choose_objects,
     pick_from_pool,
+    resolve_pool,
     select_players,
 )
 from .values import evaluate_value
@@ -52,25 +53,115 @@ def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("discard")
 def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Discard cards, optionally letting the player choose how many.
+
+    ``up_to`` makes ``amount`` a **ceiling** rather than an exact count, so the
+    floor is zero and the player may decline entirely: "discard up to two cards"
+    (Joshua) and, with ``amount`` reading the hand size, "discard any number of
+    cards" (Celes). Without it the count is exact, which is the ordinary
+    "discard a card" and stays the default -- an exact discard offered as a
+    range would let a player keep the card a cost was meant to take.
+
+    ``as`` records what actually went, the way `exile`, `sacrifice` and
+    `reveal` already do. Three cards need it and none of them can be written
+    without it:
+
+    - "then draw that many cards" -- Joshua -- reads
+      ``{"count": {"binding": ...}}``;
+    - "draw that many cards plus one" -- Celes -- the same, plus one;
+    - "If a **creature card** was discarded this way" -- Mog -- an `exists`
+      over the binding with a `types` filter.
+
+    Every near-miss is wrong in a way nobody would spot on the board:
+    `cards_to_graveyard_this_turn` is a turn-wide integer over every graveyard
+    at the table, and counting your own graveyard counts what was already in it.
+
+    The binding **accumulates** across players rather than being overwritten,
+    because Mog discards one card per player in a single resolution and then
+    asks what was discarded *at all*, not what the last player pitched.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     random = bool(spec.get("random"))
+    up_to = bool(spec.get("up_to"))
+    name = spec.get("as")
+    taken: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
         if not hand:
             continue
         take = min(amount, len(hand))
         if random:
+            # A random discard has no floor to relax: nobody is choosing, so
+            # "up to" and "exactly" pick the same cards.
             picked = ctx.state.rng.shuffled(hand)[:take]
         else:
-            picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
+            floor = 0 if up_to else take
+            picked = yield from ask_objects(
+                ctx, "Discard", hand, floor, take, pid, "discard"
+            )
+        taken.extend(picked)
         yield from _replacements().discard(ctx.state, pid, picked)
+    if name:
+        ctx.bindings[str(name)] = taken
 
 
 @register("mill")
 def op_mill(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put cards from the top of a library into its owner's graveyard.
+
+    ``as`` records the cards this op actually milled, accumulating across the
+    players it touched -- Locke, Treasure Hunter: "each player mills a card. If
+    a **land card was milled this way**, create a Treasure token."
+
+    The binding is what makes that sentence sayable at all. `exists` over a
+    graveyard selector is a different card: it matches a land that was already
+    sitting in somebody's graveyard, so Locke would make a Treasure every attack
+    whatever the mill turned up. Milling less than asked is not an error either
+    (701.13b), so the record is what was moved rather than what was requested.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    milled: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
-        mill_cards(ctx.state, pid, amount)
+        milled.extend(mill_cards(ctx.state, pid, amount))
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + milled
+
+
+@register("grant_playable")
+def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Until end of turn, you may cast a spell from among those cards."
+
+    Locke, Treasure Hunter. A **standing permission** left on cards where they
+    already are, which is what separates it from every neighbouring op:
+    `play_exiled` casts one card there and then, for free, out of exile;
+    `exile`'s `playable_this_turn` grants the same permission but only to cards
+    it has just exiled. Locke's cards stay in their owners' graveyards --
+    including an opponent's -- and are paid for at their printed price.
+
+    ``any_type`` is the clause Valigarmanda prints beside the permission --
+    "and mana of any type can be spent to cast that spell" -- and belongs to
+    the same grant rather than to the player or the turn.
+
+    ``limit`` is "a spell", singular. Counted per granting permanent in the turn
+    ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
+    spells and one Locke milling three cards is still one.
+    """
+    oids = resolve_pool(ctx, spec.get("objects"))
+    limit = int(spec.get("limit", 0) or 0)
+    any_type = bool(spec.get("any_type"))
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        obj.playable_by = ctx.controller
+        obj.playable_turn = ctx.state.turn
+        obj.playable_group = ctx.source_oid if limit else None
+        # "…and mana of any type can be spent to cast that spell" travels with
+        # the permission it is printed beside, and expires with it: the flag is
+        # read only where `playable_turn` already gates the offer.
+        obj.playable_any_type = any_type
 
 
 @register("shuffle")
@@ -446,6 +537,54 @@ def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         move_object(
             ctx.state, oid, Zone.HAND, to_player=obj.owner, cause="returned", by=ctx.source_oid
+        )
+
+
+@register("return_to_origin")
+def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Return exiled cards to the zone each of them came from.
+
+    Cloak and Dagger, Entwined -- "exile a nonland card from their hand **or**
+    the chosen creature until Cloak and Dagger leave the battlefield". One
+    exile, two possible origins, and the return has to undo whichever happened:
+    the card taken out of a hand goes back to that hand, the permanent taken off
+    the battlefield goes back to the battlefield.
+
+    **Every neighbouring op hardwires its destination**, which is why none of
+    them can say this: `return_to_hand` is the hand, `put_onto_battlefield` is
+    the battlefield, `return_from_graveyard` takes a `destination` but reads its
+    pool out of a graveyard. Writing the card as two ops filtered by origin
+    would be two sentences where the printing has one -- and there was nothing
+    to filter on either, since only the graveyard kept an arrival record.
+
+    So `zones.exile` now stamps `exiled_from` on the way out and this reads it
+    back. Owner rather than controller, and the same on both branches: a card
+    leaving exile goes to its owner's hand, and 400.7's exceptions do not
+    reach a permanent returning from an exile-until effect.
+
+    A card whose `exiled_from` is missing is left where it is. That is not a
+    silent failure but the same answer 400.7 gives: an object with no recorded
+    origin has nowhere to be returned to, and the alternative -- guessing the
+    battlefield -- would put a card in a hand onto the board.
+    """
+    from ..enums import Zone as _Zone
+
+    zones = {z.value: z for z in _Zone}
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Return")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or obj.zone is not _Zone.EXILE:
+            continue
+        origin = zones.get(obj.exiled_from or "")
+        if origin is None or origin is _Zone.EXILE:
+            continue
+        move_object(
+            ctx.state,
+            oid,
+            origin,
+            to_player=obj.owner,
+            cause="returned",
+            by=ctx.source_oid,
         )
 
 
@@ -996,16 +1135,37 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     Shares `suspend.cast_for_free`, so it is a real cast -- it uses the stack
     and can be countered -- and shares its documented simplification: the
     targets are the first legal tuple rather than a choice.
+
+    ``as`` records the cards that were actually **cast**, which is a different
+    set from the ones offered and from the ones exiled. Kefka needs exactly that
+    distinction: "each player who owns a spell you cast this way loses life
+    equal to its mana value". `exiled_with: "self"` is wrong in both directions
+    at once -- a card that was cast has left exile and stops matching, and a
+    card the player declined still matches -- so it names "exiled this way" and
+    never "cast this way". A card with no legal target is not cast at all, which
+    is why the binding is built from `cast_for_free`'s answer rather than from
+    the chosen list.
     """
     from ..suspend import cast_for_free
 
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "exile")
     selector.setdefault("controller", "any")
-    selector.setdefault("exiled_with", "self")
+    if "binding" not in selector:
+        # "The exiled card" is `exiled_with: "self"` by default -- hideaway, and
+        # every card that exiles and then offers back what it exiled. A pool
+        # named by a **binding** has already said which cards those are, and the
+        # default would then narrow it to nothing: only `until_leaves` sets the
+        # `exiled_by` link that `exiled_with` reads, so a plain `exile` followed
+        # by a `play_exiled` over its own `as` matched no card at all.
+        selector.setdefault("exiled_with", "self")
     oids = yield from choose_objects(ctx, selector, "Play the exiled card", "play_exiled")
+    cast: list[int] = []
     for oid in oids:
-        cast_for_free(ctx.state, ctx.controller, oid)
+        if cast_for_free(ctx.state, ctx.controller, oid):
+            cast.append(oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = cast
 
 
 @register("cascade")
