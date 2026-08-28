@@ -288432,12 +288432,12 @@
     },
     "Tragic Arrogance": {
       "edhrec_rank": 2867,
-      "gate": "template",
+      "gate": null,
       "name": "Tragic Arrogance",
-      "reason": "no template for: For each player, you choose from among the permanents that player controls an artifact, a ",
+      "reason": "",
       "scryfall_id": "512da48c-a02a-4670-84f3-595b245e0321",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tragic Banshee": {

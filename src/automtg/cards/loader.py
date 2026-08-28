@@ -4141,6 +4141,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "as" in effect and not isinstance(effect["as"], str):
             raise DslError(f"{where}: discard's 'as' is a binding name")
+    if op == "choose_permanents" and "as" not in effect:
+        # It changes nothing on the board, so a choice nobody reads back is a
+        # question put to the player for no reason -- and a card written that
+        # way would load, prompt, and do nothing with the answer.
+        raise DslError(
+            f"{where}: 'choose_permanents' only marks permanents, so it needs an "
+            f"'as' for something later to read"
+        )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "create_token" and "controller" in effect:
