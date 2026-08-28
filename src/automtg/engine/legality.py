@@ -437,12 +437,18 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         card = state.card(oid)
         if not _timing_ok(card, sorcery_speed):
             continue
+        ft_tuples = enumerate_target_tuples(state, pid, card.targets, oid)
         out.extend(
-            _cast_variant(
+            _charge_additional_cost(
                 state, pid, oid, card,
-                enumerate_target_tuples(state, pid, card.targets, oid),
-                extra_generic=0,
-                foretold=True,
+                _cast_variant(
+                    state, pid, oid, card, ft_tuples,
+                    extra_generic=0, foretold=True,
+                ),
+                lambda times, oid=oid, card=card, tuples=ft_tuples: _cast_variant(
+                    state, pid, oid, card, tuples,
+                    extra_generic=0, foretold=True, additional_times=times,
+                ),
             )
         )
 
@@ -467,18 +473,23 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if card.flashback is not None and can_pay(
             state, pid, card.flashback.without_mana(), oid
         ):
+            fb_tuples = enumerate_target_tuples(
+                state, pid, card.targets, oid,
+                exclude_sid=state.objects[oid].stack_id,
+            )
+            # "…for its flashback cost **and any additional costs**" is printed
+            # in flashback's own reminder text, and 601.2f says it anyway.
             out.extend(
-                _cast_variant(
-                    state,
-                    pid,
-                    oid,
-                    card,
-                    enumerate_target_tuples(
-                        state, pid, card.targets, oid,
-                        exclude_sid=state.objects[oid].stack_id,
+                _charge_additional_cost(
+                    state, pid, oid, card,
+                    _cast_variant(
+                        state, pid, oid, card, fb_tuples,
+                        extra_generic=0, flashback=True,
                     ),
-                    extra_generic=0,
-                    flashback=True,
+                    lambda times, oid=oid, card=card, tuples=fb_tuples: _cast_variant(
+                        state, pid, oid, card, tuples,
+                        extra_generic=0, flashback=True, additional_times=times,
+                    ),
                 )
             )
 
@@ -661,35 +672,18 @@ def _cast_options(
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
             )
-    # An additional cost -- casualty, replicate, "sacrifice an artifact". One
-    # line per number of times paid, for the reason convoke offers one per
-    # number convoked: the count changes the price and is the player's to
-    # choose. A *mandatory* one starts at 1, so the free line above is not
-    # offered at all -- which is the whole difference between Deadly Dispute and
-    # a card that may pay.
-    if card.additional_cost is not None and state.objects[oid].zone is Zone.HAND:
-        first = 0 if card.additional_optional else 1
-        last = _additional_ceiling(state, pid, oid, card)
-        if not card.additional_optional:
-            # The free line is withdrawn *whenever* the cost is mandatory, not
-            # only when it happens to be unpayable. Clearing it just in the
-            # unpayable case is the same thing as never charging it: a player
-            # holding a creature was offered both Village Rites lines and
-            # `find_play` took the first, so the card was a one-mana draw-two
-            # that sacrificed nothing. An unpayable cost then falls out of the
-            # same statement, because the loop below adds nothing when
-            # `last` is 0 and the printed spell is simply not castable.
-            #
-            # Everything is dropped, not just the plain variant: with a
-            # mandatory additional cost, *every* way of casting the spell owes
-            # it (601.2f), so an evoke or kicker line that skipped it would be
-            # the same bug wearing a different name.
-            out = []
-        for times in range(max(first, 1), last + 1):
-            out += _cast_variant(
-                state, pid, oid, card, tuples, extra_generic=extra_generic,
-                additional_times=times,
-            )
+    # An additional cost -- casualty, replicate, "sacrifice an artifact". No
+    # zone gate: 601.2f charges it on every cast, so a retrace line out of the
+    # graveyard and a commander cast out of the command zone owe it too. The
+    # blocks below stay hand-only because morph, overload, emerge and convoke
+    # genuinely are.
+    out = _charge_additional_cost(
+        state, pid, oid, card, out,
+        lambda times: _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic,
+            additional_times=times,
+        ),
+    )
     # Morph: "you may cast this card face down as a 2/2 creature for {3}"
     # (702.37a). A cast variant with **no targets** -- a face-down spell is a
     # nameless 2/2 with no text, so there is nothing on it to target with -- and
@@ -742,6 +736,49 @@ def _cast_options(
 #: convoke's ceiling is: every count is a separate cast action multiplied by
 #: every legal target tuple.
 MAX_ADDITIONAL_TIMES = 6
+
+
+def _charge_additional_cost(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    out: list[Action],
+    build,
+) -> list[Action]:
+    """601.2f: **every** way of casting a spell owes its additional cost.
+
+    ``build(times)`` makes the same cast line again with the cost charged
+    ``times`` over; ``out`` is the free line or lines the caller already built.
+
+    One line per number of times paid, for the reason convoke offers one per
+    number convoked: the count changes the price and is the player's to choose.
+
+    A *mandatory* cost withdraws the free lines entirely -- not merely when it
+    happens to be unpayable. Clearing it only in the unpayable case is the same
+    thing as never charging it: a player holding a creature was offered both
+    Village Rites lines and `find_play` took the first, so the card was a
+    one-mana draw-two that sacrificed nothing. An unpayable cost then falls out
+    of the same statement, because the loop adds nothing when the ceiling is 0
+    and the spell is simply not castable.
+
+    Everything is dropped, not just the plain variant: an evoke or kicker line
+    that skipped the cost would be the same bug wearing a different name -- and
+    so is a **flashback** line, which is why this is a helper rather than a
+    block inside `_cast_options`. Laughing Mad is the witness: "As an additional
+    cost to cast this spell, discard a card" plus "Flashback {3}{R}", whose own
+    reminder text spells out "for its flashback cost *and any additional
+    costs*". Flashback, foretell and retrace all reach the stack by paths that
+    used to skip this, so a flashed-back Laughing Mad drew two and discarded
+    nothing.
+    """
+    if card.additional_cost is None:
+        return out
+    if not card.additional_optional:
+        out = []
+    for times in range(1, _additional_ceiling(state, pid, oid, card) + 1):
+        out = out + build(times)
+    return out
 
 
 def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:

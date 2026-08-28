@@ -72,6 +72,24 @@
 
 ### Known, not fixed
 
+- **A spell can pay its own mandatory additional cost by discarding itself.**
+  Found while wiring 601.2f onto the non-hand cast lines (`shares` nothing with
+  that change, which is correct and covered by
+  `tests/unit/test_additional_cost_every_cast.py`). Legality prices the cost
+  while the card is *still in hand*, so `costs._discard_pool` counts the card
+  being cast as legal fodder for its own "discard a card" and offers the line;
+  by the time `Game._cast` pays, 601.2a has moved the card to the stack, the
+  pool is empty, and the discard silently charges **nothing**. Repro: Laughing
+  Mad as the only card in hand -- it casts, draws two, and discards nothing,
+  which is a free draw-two. The authoring sandbox hits this on every card with
+  a mandatory discard, because its hand holds only the card under test; Big
+  Score's answer records the same artifact from the other side.
+
+  The fix is to exclude the card being cast from `_discard_pool` when pricing
+  its own additional cost, but it is a *different* capability from the one that
+  found it and it moves at least one shipped expectation, so it is recorded
+  rather than bundled.
+
 - **The RL policy has never seen an equip action.** `ai/action_space.py` caps
   `ABIL_CAP = 2` and indexes `action.ability_index`, which counts *all*
   abilities including statics and triggers. Twelve cards (eleven Equipment plus

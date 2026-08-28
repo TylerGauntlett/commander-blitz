@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **38** capabilities.
+**24 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 2 | 6878 | engine, selector |
 | [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
-| [additional-cost-on-alternative-cast](#additional-cost-on-alternative-cast) | 1 | 2357 | engine |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [become-copy](#become-copy) | 1 | 2769 | engine, op |
@@ -139,21 +138,6 @@ Blocks **2** cards.
   - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
 - **Spirit Mascot** (rank 19564) — `spirit_mascot`
   - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.
-
-</details>
-
-## additional-cost-on-alternative-cast
-
-Blocks **1** card.
-
-- **(engine)** a card-level `additional_cost` that is charged on every way of casting the spell, not only from hand -- specifically on the flashback (and other alternative-cost / non-hand) cast lines, so that a mandatory additional cost is owed by the graveyard cast too (601.2f)
-  <br>Why the existing vocabulary won't do: `additional_cost` is the right slot and `cost_keys.discard` is the right price, but legality only offers additional-cost cast variants under `state.objects[oid].zone is Zone.HAND`, and the flashback line is built by calling `_cast_variant(..., flashback=True)` directly from the graveyard loop, bypassing the `_cast_options` block that sets `additional_times`. `game._cast` pays the non-mana half only when `action.additional_times` is nonzero, so a flashed-back Laughing Mad would cost {3}{R} and discard nothing -- a strictly-better free draw-two, which is exactly the quiet wrongness the printed reminder 'and any additional costs' rules out. Moving the discard into `spell_effects` as the `discard` op is not a substitute: that pays at resolution rather than as a cost, and lets the spell be cast when the price could not be paid.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Laughing Mad** (rank 2357) — `laughing_mad`
-  - As an additional cost to cast this spell, discard a card.
-  - Flashback {3}{R} (You may cast this card from your graveyard for its flashback cost and any additional costs. Then exile it.)
 
 </details>
 

@@ -153772,12 +153772,12 @@
     },
     "Laughing Mad": {
       "edhrec_rank": 2357,
-      "gate": "template",
+      "gate": null,
       "name": "Laughing Mad",
-      "reason": "no template for: Flashback {3}{R}",
+      "reason": "",
       "scryfall_id": "9268ccdb-0b5b-4624-9443-f7b5330ec71f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Launch": {

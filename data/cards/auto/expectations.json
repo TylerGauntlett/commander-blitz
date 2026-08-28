@@ -3881,6 +3881,15 @@
   "lathnu_sailback": {
     "zone": "battlefield"
   },
+  "laughing_mad": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "lava_serpent": {
     "zone": "battlefield"
   },
