@@ -105172,12 +105172,12 @@
     },
     "Gau, Feral Youth": {
       "edhrec_rank": 8270,
-      "gate": "template",
+      "gate": null,
       "name": "Gau, Feral Youth",
-      "reason": "no template for: Rage — Whenever Gau attacks, put a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "89175ce1-0746-4ba1-970e-617d134b0527",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gauntlet of Might": {

@@ -2590,6 +2590,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gau_feral_youth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "battlefield"
+  },
   "geist_of_the_moors": {
     "zone": "battlefield"
   },

@@ -791,6 +791,17 @@ class TurnLedger:
     #: Tokens are excluded because they are not cards, and a token dying is the
     #: single most common way this number would otherwise be wrong.
     cards_to_graveyard: int = 0
+    #: Cards that **left** a graveyard this turn, per graveyard owner -- Gau,
+    #: Feral Youth: "if a card left your graveyard this turn". The mirror of
+    #: `cards_to_graveyard` above and deliberately not folded into it: that one
+    #: counts the opposite direction, so it is true in exactly the wrong cases,
+    #: and it is a single total across every graveyard at the table where this
+    #: has to be answered about *your* graveyard alone.
+    #:
+    #: Tokens are excluded for the same reason they are there: a token in a
+    #: graveyard ceases to exist as a state-based action, and counting that as
+    #: "a card left" would make the condition true every turn anything died.
+    cards_from_graveyard: dict[int, int] = field(default_factory=dict)
     #: Every creature **subtype** that has dealt combat damage to a player this
     #: turn -- prowl, and the one tally here that is not a number.
     #:
@@ -911,6 +922,7 @@ class TurnLedger:
         self.combat_damage_types.clear()
         self.ability_activations.clear()
         self.cards_to_graveyard = 0
+        self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()
         self.object_flags.clear()
         self.permanents_entered.clear()

@@ -732,6 +732,7 @@ Anywhere a number is expected:
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
+{ "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }

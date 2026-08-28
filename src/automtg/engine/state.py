@@ -642,6 +642,20 @@ class GameState:
             obj = self.objects.get(data.get("oid"))
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
+            # The departure half. Keyed by the graveyard's **owner** rather than
+            # by whoever moved the card: "a card left *your* graveyard" is a
+            # fact about the yard, and a Reanimate cast by an opponent on your
+            # creature still emptied your graveyard by one.
+            if (
+                data.get("from") == Zone.GRAVEYARD.value
+                and data.get("to") != Zone.GRAVEYARD.value
+                and obj is not None
+                and not obj.is_token
+                and pid is not None
+            ):
+                ledger.cards_from_graveyard[pid] = (
+                    ledger.cards_from_graveyard.get(pid, 0) + 1
+                )
 
     def bump_chars(self) -> None:
         """Invalidate the derived-characteristics cache."""
