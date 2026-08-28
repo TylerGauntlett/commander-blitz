@@ -1,0 +1,95 @@
+{
+  "_comment": "Cards that exist only for the exile-and-return test (tests/unit/test_exile_and_return.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_flipper` is the Joshua shape: exile it and give it back transformed, under its owner's control. `t_turner` is the counterfactual -- the same line written with `transform`, which turns it over in place.",
+  "cards": [
+    {
+      "id": "t_dominant",
+      "name": "Test Flipper",
+      "oracle_text": "{T}: Exile this creature, then return it to the battlefield transformed under its owner's control.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Hero"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "back_face": "t_dominant_back",
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Exile this creature, then return it to the battlefield transformed under its owner's control.",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "exile_and_return", "objects": {"self_only": true}, "face": "back"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_dominant_back",
+      "name": "Test Flipped",
+      "oracle_text": "When this creature enters, you gain 3 life.\n{T}: Exile this creature, then return it to the battlefield (front face up).",
+      "types": ["Creature"],
+      "subtypes": ["Phoenix"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, you gain 3 life.",
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Exile this creature, then return it to the battlefield (front face up).",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "exile_and_return", "objects": {"self_only": true}, "face": "front"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_inplace",
+      "name": "Test Turner",
+      "oracle_text": "{T}: Transform this creature.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Hero"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "back_face": "t_inplace_back",
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Transform this creature.",
+          "cost": {"tap": true},
+          "effects": [{"op": "transform", "objects": {"self_only": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_inplace_back",
+      "name": "Test Turned",
+      "oracle_text": "When this creature enters, you gain 3 life.",
+      "types": ["Creature"],
+      "subtypes": ["Phoenix"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, you gain 3 life.",
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+        }
+      ]
+    }
+  ]
+}

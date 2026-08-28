@@ -265,6 +265,70 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.exiled_by = ctx.source_oid
 
 
+@register("exile_and_return")
+def op_exile_and_return(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Exile it, then return it to the battlefield **transformed** under its
+    owner's control."
+
+    Joshua, Phoenix's Dominant, and the Final Fantasy "Dominant" cycle, which
+    prints this line on both faces -- the front returns it transformed and the
+    back returns it "(front face up)". So ``face`` is written out rather than
+    inferred from where it started: on the back the sentence turns it *back*,
+    and an op that only ever flipped would say the same thing twice.
+
+    **Not `transform`.** That turns the permanent over in place: it never
+    changes zones, so it keeps its counters, its Auras and its summoning
+    sickness, fires no leaves-the-battlefield trigger and no enters trigger, and
+    stays under whoever controls it. Every one of those is a difference this
+    card prints the other way, and together they make a materially stronger and
+    differently-timed permanent.
+
+    It is a **new object** (400.7): what comes back is summoning sick, has no
+    counters, carries no attachments, and is under its **owner's** control --
+    which is the clause that makes this a removal answer for a stolen permanent
+    and is written on the card.
+
+    ``face`` is required. Defaulted to "turn it over" the op would be right on
+    Joshua's front and silently wrong on the Saga's third chapter, which is the
+    same card and the reading a player would never see going wrong.
+
+    The face is passed **into** the move rather than set afterwards: the
+    arriving face is what every enters-replacement and enters-trigger must see,
+    and the back of this very card is a Saga whose lore counter is a
+    replacement.
+    """
+    face = str(spec.get("face", ""))
+    for oid in resolve_pool(ctx, spec.get("objects")):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        owner = obj.owner
+        exile(ctx.state, oid, cause="exiled", by=ctx.source_oid)
+        moved = ctx.state.objects.get(oid)
+        if moved is None or moved.zone is not Zone.EXILE:
+            # A commander its owner sent to the command zone instead, or
+            # anything else that replaced the exile. It did not end up where the
+            # return would read it from, so the second half simply does not
+            # happen -- which is what 400.7 says about an object that is no
+            # longer the one the effect was tracking.
+            continue
+        # Set before the move, the way `put_onto_battlefield` sets it: control
+        # is not something `move_object` decides -- `to_player` says whose copy
+        # of a zone the card joins, and the battlefield is shared -- and the
+        # enters-the-battlefield event carries the controller, so an arrival
+        # under the wrong seat would fire its own triggers for the wrong player.
+        moved.controller = owner
+        move_object(
+            ctx.state,
+            oid,
+            Zone.BATTLEFIELD,
+            to_player=owner,
+            cause="returned",
+            by=ctx.source_oid,
+            as_face=face,
+        )
+
+
 @register("sacrifice")
 def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     """Sacrifice permanents, optionally recording which ones.

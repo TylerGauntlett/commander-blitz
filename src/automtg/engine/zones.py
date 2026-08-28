@@ -39,6 +39,7 @@ def move_object(
     tapped: bool = False,
     cause: str = "",
     by: int | None = None,
+    as_face: str | None = None,
 ) -> GameObject:
     """Move an object to another zone, firing every consequent event.
 
@@ -60,6 +61,16 @@ def move_object(
     Neither is on ``DIES`` or ``LEAVES_BATTLEFIELD``: nothing reads them there,
     and a new key in a *fired* event's data can collide with a card's trigger
     bindings.
+
+    ``as_face`` is ``"front"`` or ``"back"`` and says which face a double-faced
+    permanent **arrives** as -- "return it to the battlefield transformed"
+    (Joshua, Phoenix's Dominant) and "return it to the battlefield (front face
+    up)" on the other side of the same card. It has to be a parameter here and
+    cannot be set by the caller afterwards, twice over: `reset_permanent_state`
+    clears `transformed` on the way in, and the arriving face is what every
+    enters-replacement and enters-trigger must see -- a Saga's lore counter is a
+    replacement on the back face, so a permanent that turned over one line later
+    would already have entered as something else.
     """
     obj = state.objects[oid]
     from_zone = obj.zone
@@ -170,6 +181,13 @@ def move_object(
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
         obj.reset_permanent_state()
+
+    if as_face is not None:
+        # After the reset, which clears `transformed`, and before anything reads
+        # the arriving object: `card` is recomputed below so the replacements
+        # and the enters event see the face that is actually arriving.
+        obj.transformed = as_face == "back"
+        card = state.card_of(obj)
 
     obj.left_with = left_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)

@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-105 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+106 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -195,7 +195,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
@@ -4036,6 +4036,51 @@ written outside would have to mean one thing for a card in a hand and another
 for a permanent on the battlefield — and `matches` reads derived characteristics
 for the one and printed ones for the other. Whatever it was meant to narrow
 belongs in a branch, so the loader says so rather than picking a reading.
+
+## "Exile it, then return it transformed under its owner's control"
+
+Joshua, Phoenix's Dominant, and the rest of the Final Fantasy "Dominant" cycle:
+
+```jsonc
+{ "op": "exile_and_return", "objects": { "self_only": true }, "face": "back" }
+```
+
+**Not `transform`**, and the two are a different card in five ways at once:
+
+| | `transform` | `exile_and_return` |
+|---|---|---|
+| zones | never leaves the battlefield | exile, then back |
+| counters, Auras | kept | gone (a new object) |
+| summoning sickness | kept | sick again |
+| control | unchanged | back to its **owner** |
+| triggers | none | leaves-the-battlefield, then enters |
+
+400.7: what comes back is a new object. The owner clause is the one that makes
+this a removal answer for a permanent somebody has stolen, and `transform`
+cannot say it at all — a permanent that never changes zones never changes hands.
+
+**`face` is required, and is written out rather than inferred.** The cycle
+prints this line on *both* faces: the front returns it transformed and the back
+returns it "(front face up)". An op that only ever flipped would say the same
+thing twice and be silently wrong on one of them — on the reading a player is
+least likely to check.
+
+The face is passed **into** the move rather than set afterwards, twice over:
+`reset_permanent_state` clears `transformed` on the way in, and the arriving
+face is what every enters-replacement and enters-trigger must see. Joshua's back
+is a Saga whose lore counter is a `self_enters_with_counters` replacement, so a
+permanent that turned over one line later would already have entered as
+something else. `move_object` takes `as_face` for that reason and recomputes the
+card before the replacements run.
+
+Control is set **before** the move, the way `put_onto_battlefield` sets it:
+`to_player` says whose copy of a zone a card joins and the battlefield is
+shared, so control is not something `move_object` decides — and the enters event
+carries the controller.
+
+If the exile is replaced (a commander its owner sends to the command zone), the
+return does not happen: the object is no longer where the effect was tracking
+it, which is what 400.7 says about it.
 
 ## "Target opponent and up to one target creature they control"
 
