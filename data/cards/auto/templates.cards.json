@@ -49380,6 +49380,41 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mill": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Mill a card: Add {C}. (To mill a card, put the top card of your library into your graveyard.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "millikin",
+      "mana_cost": "{2}",
+      "name": "Millikin",
+      "oracle_text": "{T}, Mill a card: Add {C}. (To mill a card, put the top card of your library into your graveyard.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

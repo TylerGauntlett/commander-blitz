@@ -1095,6 +1095,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "untap_permanents": { "types": ["Creature"], "count": 2 },  // untaps *others*; they stay
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
+  "mill": 1,                                      // Millikin: off *your* library's top
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
@@ -1102,6 +1103,32 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
                  "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
+
+### `mill` — a cost, and never an effect
+
+"{T}, Mill a card: Add {C}" — Millikin, Deranged Assistant, The Warring Triad.
+No selector: the cards come off the top of the *activating* player's own
+library, so there is nothing to choose and nobody to ask.
+
+Writing it as the `mill` **op** in the ability's `effects` is the wrong card,
+not a stylistic variant. A cost is paid as the ability goes on the stack
+(601.2h); an effect runs at resolution, so the ability could be activated and
+responded to with the cards still on top of the library. The Warring Triad makes
+that observable — its *other* ability counts cards in the very graveyard this
+cost fills. On Millikin the op is not merely wrong but unwritable, because a
+mana ability may contain only `add_mana`.
+
+**It is payable with an empty library.** 701.13b: milling more cards than you
+have mills your entire library, so the action always succeeds and the cost can
+always be paid — Millikin still taps for {C} with nothing left to mill. This is
+the opposite of `discard`, which an empty hand *does* make unpayable, and the
+asymmetry is exactly that no rule lets you discard fewer cards than asked.
+
+The one trap is `Cost.is_tap_only()`, which `costs.solver_taps` reads to decide
+which mana abilities the payment solver may tap on its own without asking. A
+mill cost disqualifies an ability there, moving it to the offered-to-the-player
+path where a Signet's `{1}` and a Vivid land's counter already sit. Without
+that, the solver would take the mana and never mill.
 
 `times` multiplies the **mana** half and is one of the two parts of a cost that
 are not fixed when the card is written — cumulative upkeep's "pay its upkeep cost

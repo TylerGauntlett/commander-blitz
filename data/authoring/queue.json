@@ -171992,12 +171992,12 @@
     },
     "Millikin": {
       "edhrec_rank": 1226,
-      "gate": "template",
+      "gate": null,
       "name": "Millikin",
-      "reason": "no template for: {T}, Mill a card: Add {C}",
+      "reason": "",
       "scryfall_id": "c2073453-4108-4039-a8c2-0f94dd7bf237",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Millstone": {

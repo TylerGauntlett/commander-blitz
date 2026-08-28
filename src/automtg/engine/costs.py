@@ -722,6 +722,14 @@ def can_pay(
     ):
         return False
 
+    # `cost.mill` is deliberately **not** tested, and the asymmetry with
+    # `discard` above is the whole point. 701.13b: "If a player is instructed to
+    # mill a number of cards greater than the number of cards in their library,
+    # that player mills their entire library." Milling more than you have is a
+    # legal action that mills fewer, so the cost is always payable and Millikin
+    # still taps for {C} on an empty library. There is no equivalent rule for
+    # discarding, which is why an empty hand *does* make `discard` unpayable.
+
     # Mana last: it is the most expensive check.
     if not cost.mana.is_free() or cost.mana.x_count:
         sources = mana_sources(state, pid, purpose=purpose)
@@ -1046,6 +1054,14 @@ def pay(
             add_counters(state, source_oid, "loyalty", cost.loyalty)
         elif cost.loyalty < 0:
             remove_counters(state, source_oid, "loyalty", -cost.loyalty)
+
+    if cost.mill:
+        # No `ask_objects`: the cards come off the top of the library, so there
+        # is nothing to choose. `mill_cards` already stops at an empty library,
+        # which is 701.13b and the reason `can_pay` does not gate on this.
+        from .primitives import mill_cards
+
+        mill_cards(state, pid, cost.mill)
 
     if cost.exile_from_graveyard is not None:
         spec = dict(cost.exile_from_graveyard)

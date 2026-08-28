@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**28 cards** blocked by **41** capabilities.
+**27 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 2 | 6878 | engine, selector |
 | [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
-| [mill-cost](#mill-cost) | 2 | 1226 | cost |
 | [additional-cost-on-alternative-cast](#additional-cost-on-alternative-cast) | 1 | 2357 | engine |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
@@ -41,6 +40,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
+| [mill-cost](#mill-cost) | 1 | 3427 | cost |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [missing-token](#missing-token) | 1 | 7573 | engine |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
@@ -142,24 +142,6 @@ Blocks **2** cards.
   - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
 - **Spirit Mascot** (rank 19564) — `spirit_mascot`
   - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.
-
-</details>
-
-## mill-cost
-
-Blocks **2** cards.
-
-- **(cost)** a `mill` entry in an activated ability's cost that puts the top N cards of the activating player's library into their graveyard as part of paying the cost, and that is unpayable when the library holds fewer than N cards
-  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard`, `discard_selector` and `discard_self`, which all move cards out of hand, and `exile_from_graveyard`, which moves them out of the graveyard -- nothing moves cards off the top of the library, and `sacrifice`/`pay_life`/`remove_counters` are unrelated resources. The `mill` op exists but is an effect, not a cost: putting it in `effects` moves the payment to resolution, so the ability could be activated with an empty library and would still produce mana, and the packet's own note says paying with an op instead of a cost is wrong. It is doubly impossible here because this is a mana ability, and a mana ability may contain only `add_mana` (or one `choose_mode` of `add_mana` modes), so `mill` cannot legally appear in its effects at all.
-- **(cost)** a `mill` entry on an activated ability's cost -- "Mill a card" (a fixed number, milled from the activating player's own library) paid as part of activation, so the ability cannot be activated with an empty library and the cards are in the graveyard before the ability resolves
-  <br>Why the existing vocabulary won't do: `cost_keys` carries tap, sacrifice, discard/discard_self, exile_from_graveyard, return_to_hand, pay_life, remove_counters, tap_permanents/untap_permanents and the mana forms -- none of which moves cards from library to graveyard. `discard` is the nearest shape (a fixed count off a zone you own) but it empties the hand, not the library, and the hand is not what this card is metering. Writing the mill as a `mill` op in `effects` instead is explicitly the wrong answer per the packet notes: it moves the payment to resolution, so the ability could be activated (and responded to) with an empty library and the graveyard would fill after the ability had already been put on the stack -- which matters on this exact card, whose other ability counts cards in that graveyard.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Millikin** (rank 1226) — `millikin`
-  - {T}, Mill a card: Add {C}.
-- **The Warring Triad** (rank 3427) — `the_warring_triad`
-  - {T}, Mill a card: Target player adds one mana of any color.
 
 </details>
 
@@ -492,6 +474,20 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
+
+</details>
+
+## mill-cost
+
+Blocks **1** card.
+
+- **(cost)** a `mill` entry on an activated ability's cost -- "Mill a card" (a fixed number, milled from the activating player's own library) paid as part of activation, so the ability cannot be activated with an empty library and the cards are in the graveyard before the ability resolves
+  <br>Why the existing vocabulary won't do: `cost_keys` carries tap, sacrifice, discard/discard_self, exile_from_graveyard, return_to_hand, pay_life, remove_counters, tap_permanents/untap_permanents and the mana forms -- none of which moves cards from library to graveyard. `discard` is the nearest shape (a fixed count off a zone you own) but it empties the hand, not the library, and the hand is not what this card is metering. Writing the mill as a `mill` op in `effects` instead is explicitly the wrong answer per the packet notes: it moves the payment to resolution, so the ability could be activated (and responded to) with an empty library and the graveyard would fill after the ability had already been put on the stack -- which matters on this exact card, whose other ability counts cards in that graveyard.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Warring Triad** (rank 3427) — `the_warring_triad`
+  - {T}, Mill a card: Target player adds one mana of any color.
 
 </details>
 

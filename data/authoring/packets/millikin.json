@@ -80,6 +80,7 @@
       "loyalty",
       "mana",
       "mana_reduction",
+      "mill",
       "pay_life",
       "remove_counters",
       "return_to_hand",

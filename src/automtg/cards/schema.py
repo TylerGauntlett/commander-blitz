@@ -48,6 +48,17 @@ class CostModel(BaseModel):
     #: ``total_power``: crew is a printed sum, and no printed line unbends a
     #: board by power.
     untap_permanents: dict[str, Any] | None = None
+    #: "**Mill a card**" as part of an activation cost -- Millikin, Deranged
+    #: Assistant, The Warring Triad. Cards come off the top of the *activating*
+    #: player's library, so there is nothing to choose and no selector.
+    #:
+    #: Deliberately not the ``mill`` **op**. Writing it in ``effects`` moves the
+    #: payment to resolution, so the ability could be activated and responded to
+    #: before the cards moved -- which is observable on The Warring Triad, whose
+    #: other ability counts cards in that same graveyard. It is doubly wrong on
+    #: Millikin, a mana ability, since a mana ability may contain only
+    #: ``add_mana``.
+    mill: int = 0
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.

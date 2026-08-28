@@ -4398,6 +4398,10 @@
   "millennial_gargoyle": {
     "zone": "battlefield"
   },
+  "millikin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "minotaur_abomination": {
     "zone": "battlefield"
   },

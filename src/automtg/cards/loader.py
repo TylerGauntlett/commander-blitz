@@ -2895,6 +2895,11 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
+    if model.mill < 0:
+        raise DslError(
+            f"{where}.cost: 'mill' is how many cards go from the top of your "
+            f"library to your graveyard, so it cannot be negative (got {model.mill})"
+        )
     # `total_power` is crew's, and it is a property of the *cost* rather than a
     # test on any one candidate -- a selector cannot say "these together" -- so
     # it is lifted out before the selector language sees it.
