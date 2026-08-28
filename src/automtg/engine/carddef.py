@@ -134,6 +134,9 @@ class Cost:
     #: Halo Fountain's cost carries ``tap`` *and* this, and they name different
     #: permanents.
     untap_permanents: Mapping[str, Any] | None = None
+    #: "Mill a card" as a cost -- see `CostModel.mill`. No selector: the cards
+    #: come off the top of the activating player's own library.
+    mill: int = 0
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
@@ -228,6 +231,7 @@ class Cost:
             exile_from_graveyard=(
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
+            mill=int(spec.get("mill", 0) or 0),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -255,6 +259,13 @@ class Cost:
             and self.untap_permanents is None
             and self.discard == 0
             and not self.discard_self
+            # Without this the payment solver would treat Millikin as a plain
+            # tap-for-mana source and take the {C} without ever milling.
+            # `costs.solver_taps` reads this, and `legality._activate_actions`
+            # reads its complement, so a mill cost moves the ability from
+            # "tapped silently by the solver" to "offered to the player" --
+            # the same place a Signet's {1} and a Vivid land's counter sit.
+            and self.mill == 0
             and not self.pay_life
             and self.remove_counters is None
             and self.loyalty is None
@@ -279,6 +290,8 @@ class Cost:
             parts.append(
                 f"Untap {self.untap_permanents.get('count', 1)} tapped permanents"
             )
+        if self.mill:
+            parts.append(f"Mill {self.mill}")
         if self.discard:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:
