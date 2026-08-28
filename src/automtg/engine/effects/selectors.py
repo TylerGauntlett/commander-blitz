@@ -62,6 +62,19 @@ SELECTOR_KEYS = frozenset(
         #: complement is only equal for single-typed permanents, so it would
         #: refuse artifact creatures, which the printed line accepts.
         "any_types",
+        #: **One pool built from several**, each with its own zone -- "you may
+        #: exile a nonland card from their **hand** or the chosen creature"
+        #: (Cloak and Dagger, Entwined), where the two halves are a hand and the
+        #: battlefield. Every branch is resolved in its own right and the
+        #: results are concatenated, so one `count`/`chooser` then asks across
+        #: the lot.
+        #:
+        #: Not `any_of`, which is the near miss and is a *filter*: it narrows
+        #: the pool the outer selector already gathered from one zone, and
+        #: refuses a `zone` inside a branch for exactly that reason. A card
+        #: choosing "from their hand or the battlefield" has no one zone to
+        #: gather from, so there is nothing for `any_of` to narrow.
+        "union",
         #: A union of whole sub-selectors: matches when *any* of them does.
         #: "…among it and any number of commanders" is not a filter that can
         #: be narrowed into -- `self_only` and `is_commander` are both true
@@ -274,6 +287,25 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
             ],
             selector,
         )
+
+    if (branches := selector.get("union")) is not None:
+        # One pool assembled from several, each branch resolved in its own
+        # right -- so each may name its own zone, which is the whole difference
+        # from `any_of` beside it. Order is the written order and duplicates are
+        # dropped, because a branch that overlaps another is one card offered
+        # once, not twice.
+        #
+        # The outer selector carries nothing but the pool-shaping keys (the
+        # loader refuses the rest), so there is no filtering to do here and no
+        # default zone to apply: a filter written outside would have to mean
+        # something for a card in a hand *and* for a permanent, and the two
+        # answer to different layers.
+        pooled: list[int] = []
+        for branch in branches:
+            for oid in resolve_pool(ctx, branch):
+                if oid not in pooled:
+                    pooled.append(oid)
+        return pooled
 
     state = ctx.state
     zone_name = selector.get("zone", "battlefield")
@@ -1121,6 +1153,27 @@ def validate_selector(selector: Any, where: str) -> None:
                     f"{where}: unknown supertype {name!r} in {key!r} "
                     f"(known: {sorted(KNOWN_SUPERTYPES)})"
                 )
+    union = selector.get("union")
+    if union is not None:
+        if not isinstance(union, (list, tuple)) or len(union) < 2:
+            raise DslError(f"{where}: union takes a list of at least two selectors")
+        extra = set(selector) - {"union", "count", "chooser", "optional", "random"}
+        if extra:
+            # A branch brings its own zone, so a characteristic clause written
+            # outside would have to mean one thing for a card in a hand and
+            # another for a permanent on the battlefield -- and `matches` reads
+            # derived characteristics for one and printed ones for the other.
+            # Whatever it was meant to narrow, it belongs in the branches.
+            raise DslError(
+                f"{where}: union assembles whole selectors, so {sorted(extra)} "
+                f"belong inside a branch -- only 'count', 'chooser', 'optional' "
+                f"and 'random' may sit beside it"
+            )
+        for i, branch in enumerate(union):
+            if not isinstance(branch, Mapping):
+                raise DslError(f"{where}.union[{i}]: each branch is a selector")
+            validate_selector(branch, f"{where}.union[{i}]")
+
     branches = selector.get("any_of")
     if branches is not None:
         if not isinstance(branches, (list, tuple)) or len(branches) < 2:

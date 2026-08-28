@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**3 cards** blocked by **5** capabilities.
+**3 cards** blocked by **4** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
-| [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 
 ## dfc-back-face-text
 
@@ -79,20 +78,5 @@ Blocks **1** card.
 - **Emeritus of Woe // Demonic Tutor** (rank 3846) — `emeritus_of_woe_demonic_tutor`
   - This creature enters prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)
   - At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.
-
-</details>
-
-## resolution-choice-across-zones
-
-Blocks **1** card.
-
-- **(decision)** one optional 'you may' choice, made on resolution, that picks a single object from either of two disjoint pools -- a nonland card in the revealed hand, or the creature this ability targeted -- and offers the creature half only when the optional target was actually chosen
-  <br>Why the existing vocabulary won't do: 'may' wraps a single fixed effect, and a 'choose_mode' of two exile effects is announced as a mode list whose entries do not know whether the 'up to one target creature' was taken: with no creature targeted, the second mode would still be offered and its exile would resolve over an empty target list, doing nothing while reading as a choice. Two 'may'-wrapped exiles in sequence is also wrong -- it lets the controller exile a hand card AND the creature, where the printed card exiles exactly one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
-  - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
-  - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
 
 </details>
