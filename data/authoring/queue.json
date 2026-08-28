@@ -223022,12 +223022,12 @@
     },
     "Rise of the Dark Realms": {
       "edhrec_rank": 516,
-      "gate": "template",
+      "gate": null,
       "name": "Rise of the Dark Realms",
-      "reason": "no template for: Put all creature cards from all graveyards onto the battlefield under your control",
+      "reason": "",
       "scryfall_id": "953c7338-e30d-452c-89ff-0c5fca690b2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rise of the Dread Marn": {
@@ -227022,12 +227022,12 @@
     },
     "Ruinous Ultimatum": {
       "edhrec_rank": 643,
-      "gate": "template",
+      "gate": null,
       "name": "Ruinous Ultimatum",
-      "reason": "no template for: Destroy all nonland permanents your opponents control",
+      "reason": "",
       "scryfall_id": "bda08b23-4cfa-4e34-a74e-c7353e557d41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ruinous Waterbending": {
@@ -240122,12 +240122,12 @@
     },
     "Shadow, Mysterious Assassin": {
       "edhrec_rank": 6027,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow, Mysterious Assassin",
-      "reason": "no template for: Throw — Whenever Shadow deals combat damage to a player, you may sacrifice another nonland",
+      "reason": "",
       "scryfall_id": "d2a400d2-cf8e-4be8-9eb8-46af1aa73698",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow-Rite Priest": {
@@ -244572,12 +244572,12 @@
     },
     "Siegfried, Famed Swordsman": {
       "edhrec_rank": 7657,
-      "gate": "template",
+      "gate": null,
       "name": "Siegfried, Famed Swordsman",
-      "reason": "no template for: When Siegfried enters, mill three cards. Then put X +1/+1 counters on Siegfried, where X i",
+      "reason": "",
       "scryfall_id": "69dadb0c-413e-4658-9cdc-23a65df7a800",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sierra, Nuka's Biggest Fan": {
@@ -259642,12 +259642,12 @@
     },
     "Squall, SeeD Mercenary": {
       "edhrec_rank": 3752,
-      "gate": "template",
+      "gate": null,
       "name": "Squall, SeeD Mercenary",
-      "reason": "no template for: Rough Divide — Whenever a creature you control attacks alone, it gains double strike until",
+      "reason": "",
       "scryfall_id": "51df7137-8bfc-4140-b436-88834bd78b73",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squallmonger": {
@@ -262772,12 +262772,12 @@
     },
     "Stitch Together": {
       "edhrec_rank": 1650,
-      "gate": "template",
+      "gate": null,
       "name": "Stitch Together",
-      "reason": "no template for: Return target creature card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "73f1aa13-b3bc-480e-826c-6bded7ee1ca6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stitch in Time": {
@@ -262862,12 +262862,12 @@
     },
     "Stitcher's Supplier": {
       "edhrec_rank": 621,
-      "gate": "template",
+      "gate": null,
       "name": "Stitcher's Supplier",
-      "reason": "no template for: When this creature enters or dies, mill three cards",
+      "reason": "",
       "scryfall_id": "4ad7ec71-b046-4470-88a7-11881265b6b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stitchwing Skaab": {
@@ -266842,12 +266842,12 @@
     },
     "Summon: Bahamut": {
       "edhrec_rank": 1348,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Bahamut",
-      "reason": "no template for: I, II — Destroy up to one target nonland permanent",
+      "reason": "",
       "scryfall_id": "95318d85-4a08-47ac-a43d-ea83c0bea81c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Brynhildr": {
@@ -309212,12 +309212,12 @@
     },
     "Watcher of the Wayside": {
       "edhrec_rank": 15918,
-      "gate": "template",
+      "gate": null,
       "name": "Watcher of the Wayside",
-      "reason": "no template for: When this creature enters, target player mills two cards. You gain 2 life",
+      "reason": "",
       "scryfall_id": "2dcafdac-a293-4adc-a540-3b3f469cf6f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Watchers of the Dead": {
@@ -320542,12 +320542,12 @@
     },
     "Zombify": {
       "edhrec_rank": 3635,
-      "gate": "template",
+      "gate": null,
       "name": "Zombify",
-      "reason": "no template for: Return target creature card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "05b50907-41e2-4613-b030-7c6556874bd2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zone of Flame": {
