@@ -104,6 +104,36 @@ _ROLES: dict[str, Any] = {
     #: written. Nothing is lost by the swap: the prop is still a creature, and
     #: the flier keeps the board a *nonlegendary* creature for "destroy target
     #: nonlegendary creature" to find.
+    #: Something for "return target creature card **with mana value 3 or less**"
+    #: to point at -- Helping Hand, and every other cheap reanimation spell.
+    #: The graveyard's two props were both mana value 5 (`acidic_slime` and
+    #: `air_elemental`), so a printed cost ceiling of 3 left the spell with no
+    #: legal target at all: gate 4 reported "not playable in the sandbox" and
+    #: the only ways to pass were to drop the mana-value clause or to make the
+    #: target `optional` when the card does not print "up to one" -- both of
+    #: which describe a *different card*. The prop was missing, so the prop was
+    #: added rather than the gate relaxed, the same call `legendary_creature`
+    #: records above.
+    #:
+    #: Three clauses, each load-bearing:
+    #:
+    #: - **mana value 3 or less**, the shape that was absent;
+    #: - **inert**, for the reason `legendary_creature` gives at length -- a
+    #:   prop that acts folds its own behaviour into every card's verdict, and
+    #:   the incumbent `acidic_slime` is not inert: reanimating it destroyed one
+    #:   of the opponent's permanents, so any card that returned it had that
+    #:   destruction baked into its expectation;
+    #: - **nonlegendary**, because the worker brief promises the opponent's
+    #:   creature is the position's one and only legendary permanent, and a
+    #:   legend sitting in the graveyard breaks that promise the moment a
+    #:   reanimation spell puts it onto the battlefield.
+    "small_creature": lambda c: (
+        c.is_creature
+        and not c.is_token
+        and "Legendary" not in c.supertypes
+        and c.mana_value <= 3
+        and not any(a.is_activated or a.is_triggered for a in c.abilities)
+    ),
     "legendary_creature": lambda c: (
         c.is_creature
         and not c.is_token
@@ -120,7 +150,7 @@ _ROLES: dict[str, Any] = {
 #: are 32 and 6 and every authored expectation was written against them.
 OWN_BOARD_ROLES = ("creature", "creature")
 OPPONENT_BOARD_ROLES = ("legendary_creature", "flier", "artifact", "enchantment")
-OWN_GRAVEYARD_ROLES = ("creature", "flier")
+OWN_GRAVEYARD_ROLES = ("small_creature", "flier")
 BASIC_LANDS = ("forest", "island", "swamp", "mountain", "plains")
 
 

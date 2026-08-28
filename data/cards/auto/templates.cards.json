@@ -35042,6 +35042,52 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "helping_hand",
+      "mana_cost": "{2}{W}",
+      "name": "Helping Hand",
+      "oracle_text": "Return target creature card with mana value 3 or less from your graveyard to the battlefield tapped.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield",
+          "tapped": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "henchbots",

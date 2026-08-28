@@ -74,7 +74,7 @@ It is checked by casting your card in one fixed position and reading the board.
 | Your hand | **just the card under test** — so `hand_size` is 0 after you cast it |
 | Your library | **40 cards**, all basic lands |
 | Opponent's library | 20 cards |
-| Your graveyard | **2 creature cards** |
+| Your graveyard | **2 creature cards** — one of **mana value 3 or less**, one of **mana value 5**, so a printed cost ceiling *and* a printed floor each have something to reach |
 | Phase | your precombat main phase, turn 1, with mana enough to cast anything |
 
 The board props are chosen *by role* from the card pool, so do not assume specific

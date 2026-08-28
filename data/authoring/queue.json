@@ -125062,12 +125062,12 @@
     },
     "Helping Hand": {
       "edhrec_rank": 5461,
-      "gate": "playable",
+      "gate": null,
       "name": "Helping Hand",
-      "reason": "AutoMtgError: helping_hand is not playable in the sandbox; offered: ['Attack p1 with Acidic Slime', 'Attack p1 with Acidic Slime', 'Done attacking']",
+      "reason": "",
       "scryfall_id": "da5e29a8-a8fb-452b-9973-61ad613f9907",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helvault": {
