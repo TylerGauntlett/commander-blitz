@@ -506,6 +506,26 @@ class Game:
         # stay in hand and can be spliced again next turn.
         spliced = yield from self._ask_splices(pid, card, oid)
 
+        # "Once during each of your turns, you may cast an artifact spell from
+        # your graveyard" -- Edgar. Billed to the granting permanent, through
+        # the same `_graveyard_cast_permission` legality offered the line with,
+        # so the permission shown and the permission spent are the same one.
+        # Nothing else in the engine knows this cast happened, which is why the
+        # granting oid rides on the stack item.
+        permission = None
+        enters_tapped = False
+        if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
+            granting = legality._graveyard_cast_permission(state, pid, card)
+            if granting is not None:
+                permission = granting.oid
+                state.turn_ledger.activated(granting.oid, legality.GRAVEYARD_CAST_SLOT)
+                from .characteristics import graveyard_cast_permissions
+
+                for source_obj, static in graveyard_cast_permissions(state, pid):
+                    if source_obj.oid == granting.oid and static.get("enters_tapped"):
+                        enters_tapped = True
+                        break
+
         item = stack.push_spell(
             state,
             oid,
@@ -513,6 +533,8 @@ class Game:
             tuple(action.targets) + mode_refs,
             x=x,
             kicked=action.kicked,
+            graveyard_permission=permission,
+            enters_tapped=enters_tapped,
             # Gift (702.164a). Carried onto the stack item and paid for with
             # nothing -- there is no `pay` call above for it, and that is the
             # mechanic rather than an omission: the promise is a 601.2b choice

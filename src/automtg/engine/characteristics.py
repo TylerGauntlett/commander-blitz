@@ -1826,6 +1826,46 @@ def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "play_lands_from_graveyard")
 
 
+def graveyard_cast_permissions(
+    state: GameState, pid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """"…you may cast an artifact spell from your graveyard." Edgar.
+
+    The permissions currently reaching ``pid``, each with the permanent granting
+    it -- the source matters because the rate limit is counted per granting
+    permanent, so two Edgars are two casts a turn the way two Welcoming Vampires
+    each draw.
+
+    A list rather than a bool, which is the whole difference from
+    `player_plays_lands_from_graveyard`: that one answers a yes/no the land drop
+    asks, while this has to say *which* spells and *how many times*.
+    """
+    return [
+        (obj, static)
+        for obj, static in _active_player_statics(state, "cast_from_graveyard")
+        if _reaches_player(obj, static, pid)
+    ]
+
+
+def graveyard_cast_allows(
+    state: GameState, source_obj: GameObject, static: Mapping[str, Any], card: CardDef
+) -> bool:
+    """Does this permission let *this* card out of the graveyard?
+
+    The same `affects_spells` filter `spell_cost_reduction` matches a card in
+    hand with, and matched the same way -- `_matches_printed`, because a card in
+    a graveyard has a printed face and an owner and no board state.
+    """
+    filt = static.get("affects_spells")
+    if not filt:
+        # The loader requires one. Defaulting to `{}` would make an empty filter
+        # free the whole graveyard, so a compile bug would hand over everything
+        # rather than nothing.
+        return False
+    resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+    return _matches_printed(card, resolved)
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 

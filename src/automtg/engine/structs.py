@@ -521,6 +521,15 @@ class StackItem:
     #: the once-only rider that exiles the card instead of
     #: returning it to the graveyard.
     flashback: bool = False
+    #: Cast out of a graveyard under a **permission granted by a permanent** --
+    #: Edgar, Master Machinist -- rather than by the card's own flashback. The
+    #: granting permanent's oid, so the per-turn use is billed to the one the
+    #: line was offered under, and `None` for everything else.
+    graveyard_permission: int | None = None
+    #: "…that artifact **enters tapped**", the rider on that permission. Carried
+    #: on the item rather than the object because `reset_permanent_state` runs
+    #: on the way onto the battlefield and would wipe a flag set beforehand.
+    enters_tapped: bool = False
     #: Cast for the card's overload cost, read on resolution by the
     #: `{"overloaded": true}` condition the card branches on.
     overloaded: bool = False

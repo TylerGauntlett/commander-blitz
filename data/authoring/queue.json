@@ -78922,12 +78922,12 @@
     },
     "Edgar, Master Machinist": {
       "edhrec_rank": 9647,
-      "gate": "template",
+      "gate": null,
       "name": "Edgar, Master Machinist",
-      "reason": "no template for: Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest m",
+      "reason": "",
       "scryfall_id": "098a8025-6454-45d8-abe3-2c3dada3f582",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Edge Rover": {

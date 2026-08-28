@@ -112,6 +112,14 @@ STATIC_EFFECTS = frozenset(
         # than a characteristic, with no object for it to attach to.
         "no_hand_limit",
         "play_lands_from_graveyard",
+        # "Once during each of your turns, you may cast an artifact spell from
+        # your graveyard." Edgar, Master Machinist. Player-wide like
+        # `play_lands_from_graveyard` and strictly wider than it: that one is
+        # read only by the land drop, cannot be narrowed by card type and
+        # carries no per-turn count. Filters the spells it permits with
+        # `affects_spells`, the same filter `spell_cost_reduction` matches a
+        # card in hand with, and counts its uses per granting permanent.
+        "cast_from_graveyard",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -234,6 +242,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "extra_land_drops",
         "no_hand_limit",
         "play_lands_from_graveyard",
+        "cast_from_graveyard",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
@@ -2233,7 +2242,34 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f"{{\"controller\": \"any\", \"subtypes\": [\"Inkling\"]}}"
         )
-    if model.effect == "spell_cost_reduction":
+    if model.effect == "cast_from_graveyard":
+        # Both halves required, for `spell_cost_reduction`'s reason: a
+        # permission that named no card type would let every spell out of the
+        # graveyard, and one with no `max_per_turn` would be an unbounded engine
+        # rather than the printed "once during each of your turns".
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: cast_from_graveyard needs 'affects_spells' naming which "
+                f"spells it lets out -- without one it frees the whole graveyard"
+            )
+        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a card in a graveyard has a printed face "
+                f"and an owner and no board state; unsupported keys {sorted(unknown)}"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: cast_from_graveyard filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if not model.static_max_per_turn:
+            raise DslError(
+                f"{where}: cast_from_graveyard needs 'max_per_turn' -- "
+                f"'once during each of your turns' is the whole rate limit, and "
+                f"without it the permission is an unbounded engine"
+            )
+    elif model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
         # in hand while legality prices it, so it may only read the printed
         # face. A static that reduced nothing would load clean and show
@@ -2439,6 +2475,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "attack_tax":
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.effect == "cast_from_graveyard":
+        # Carried onto the compiled mapping rather than left on the model, for
+        # `grant_ability`'s reason a few lines down: the mapping is all
+        # `characteristics` ever sees, and a rate limit left behind would read
+        # as no limit at all.
+        static["max_per_turn"] = int(model.static_max_per_turn or 1)
+        if model.enters_tapped:
+            static["enters_tapped"] = True
     if model.effect == "grant_ability":
         # Which of the card's `grantable_abilities` is handed over. Carried onto
         # the compiled mapping rather than left on the model, because the

@@ -468,6 +468,13 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         out.extend(_second_face_actions(state, pid, oid, card, Zone.GRAVEYARD, sorcery_speed))
         if not _timing_ok(card, sorcery_speed):
             continue
+        # "Once during each of your turns, you may cast an artifact spell from
+        # your graveyard" -- Edgar. A permission granted by a *permanent*, so
+        # unlike flashback and retrace it is not a property of the card being
+        # cast and legality has to ask the board. Offered at the **printed**
+        # price, which is what separates it from flashback's alternative cost.
+        if _graveyard_cast_permission(state, pid, card) is not None:
+            out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         # Flashback is the same widening with a different price: an alternative
@@ -742,6 +749,38 @@ def _cast_options(
 #: convoke's ceiling is: every count is a separate cast action multiplied by
 #: every legal target tuple.
 MAX_ADDITIONAL_TIMES = 6
+
+
+def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef):
+    """The permission that would let ``card`` be cast from a graveyard, if any.
+
+    Returns the granting permanent, or ``None``. Both `legality` and
+    `Game._cast` go through here, so the permission a line was offered under is
+    the one its use is billed to -- the same agreement `chosen_additional` keeps
+    for a modal cost.
+
+    The first unspent one wins. Which of two identical Edgars is billed is not a
+    choice any card asks the player to make, and they are interchangeable.
+    """
+    from .characteristics import graveyard_cast_allows, graveyard_cast_permissions
+
+    for source_obj, static in graveyard_cast_permissions(state, pid):
+        if not graveyard_cast_allows(state, source_obj, static, card):
+            continue
+        cap = int(static.get("max_per_turn") or 1)
+        # Billed against the granting permanent through the ordinary activation
+        # ledger, keyed on a sentinel index no real ability can occupy, so a
+        # permanent that also has activated abilities does not share a counter
+        # with them.
+        if state.turn_ledger.activations(source_obj.oid, GRAVEYARD_CAST_SLOT) >= cap:
+            continue
+        return source_obj
+    return None
+
+
+#: The `ability_index` a graveyard-cast permission's per-turn count is filed
+#: under. Negative, so it can never collide with a real ability's index.
+GRAVEYARD_CAST_SLOT = -1
 
 
 def chosen_additional(card: CardDef, choice: int | None) -> Cost | None:
