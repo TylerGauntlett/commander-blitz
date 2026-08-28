@@ -443,6 +443,12 @@ class GameObject:
     #: of however many were milled. The cap is counted per granting permanent in
     #: the turn ledger, so the group has to say which one granted it.
     playable_group: int | None = None
+    #: "…and mana of any type can be spent to cast that spell" -- Summon: Esper
+    #: Valigarmanda. A relaxation of what may be *spent*, riding along with the
+    #: permission that made the card castable and expiring with it, so it is
+    #: kept on the card rather than on the player: the same turn's other spells
+    #: are paid for normally.
+    playable_any_type: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -624,6 +630,7 @@ class GameObject:
         self.playable_by = None
         self.playable_turn = -1
         self.playable_group = None
+        self.playable_any_type = False
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield

@@ -7130,6 +7130,9 @@
     },
     "zone": "battlefield"
   },
+  "summon_esper_valigarmanda": {
+    "zone": "battlefield"
+  },
   "summon_knights_of_round": {
     "battlefield_count": 36,
     "tokens": {

@@ -451,8 +451,15 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # permission has to reach an opponent's yard. The flag is the permission, so
     # walking a wider set of zones offers nothing extra -- nothing carries it
     # that was not granted it.
-    permitted = list(state.players[pid].exile)
+    permitted: list[int] = []
     for player in state.players:
+        # Both zones, and every seat's copy of them. Exile is kept per owner, so
+        # a card taken out of an *opponent's* graveyard sits in that opponent's
+        # exile -- Valigarmanda exiles "an instant or sorcery card from each
+        # graveyard" and then offers you one of them. The flag is the
+        # permission, so walking a wider set of zones offers nothing extra:
+        # nothing carries it that was not granted it.
+        permitted.extend(player.exile)
         permitted.extend(player.graveyard)
     for oid in permitted:
         obj = state.objects[oid]
@@ -1117,6 +1124,14 @@ def _cast_variant(
         # `Game._cast` charges the life. Priced before every discount below, so
         # nothing reduces a cost that is no longer being paid.
         cost = ManaCost.parse("")
+    permission = state.objects[oid]
+    if permission.playable_any_type and permission.playable_turn == state.turn:
+        # "…and mana of any type can be spent to cast that spell." The colours
+        # are relaxed once the price has been chosen, so it is the price this
+        # line is actually offering that gets relaxed rather than the printed
+        # cost -- and the discounts below still only touch the generic part,
+        # which by now is all there is.
+        cost = cost.as_any_type()
     branch = chosen_additional(card, additional_choice)
     if additional_times and branch is not None:
         # The mana half of the additional cost, charged `additional_times` over.

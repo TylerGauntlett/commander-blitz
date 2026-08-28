@@ -4170,13 +4170,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # The link is written on the exiled card and points at the source of the
     # ability that exiled it. With nothing to exile there is nothing to link,
     # and the card would load as a permanent exile with no way to say so.
-    if op == "exile" and effect.get("until_leaves") and "objects" not in effect:
+    if (
+        op == "exile"
+        and (effect.get("until_leaves") or effect.get("link"))
+        and "objects" not in effect
+    ):
+        key = "until_leaves" if effect.get("until_leaves") else "link"
         raise DslError(
-            f"{where}: 'until_leaves' needs 'objects' -- there is nothing to link"
+            f"{where}: {key!r} needs 'objects' -- there is nothing to link"
         )
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
+    # `grant_playable` writes the permission on the cards it selects and does
+    # nothing else, so with no selection it is a line that reads as a grant and
+    # grants nothing.
+    if op == "grant_playable" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'grant_playable' needs 'objects' -- "
+            f"there is nothing to grant permission on"
+        )
     if op == "exile" and effect.get("playable_this_turn") and "objects" not in effect:
         raise DslError(
             f"{where}: 'playable_this_turn' needs 'objects' -- "

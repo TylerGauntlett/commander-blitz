@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-99 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+103 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -5577,6 +5577,15 @@ in the pool; when one arrives, that is where it goes.
 
 #### Why this is a `delayed_trigger` and not a duration on `exile`
 
+`link` is the same record under a neutral name, and **only** a record. Written
+`until_leaves` a card is saying the exiled cards come back; Summon: Esper
+Valigarmanda takes an instant or sorcery out of *every* graveyard at the table
+and is then sacrificed after its last chapter, so that spelling would read as
+promising an opponent's card back to them. Both keys set `exiled_by` and nothing
+else — the return was always a separate `leaves_battlefield` trigger on the card
+— and both require `objects`, since with nothing selected there is nothing to
+write the link on.
+
 `exile` has one duration, `until_leaves`, and it is the Oblivion Ring link: the op
 records `exiled_by` and the return is a separate `leaves_battlefield` trigger on
 the same card reading `{"zone": "exile", "exiled_with": "self"}`. For Palace
@@ -5854,6 +5863,71 @@ still spent, and the spell is still paid for in full.
 
 Written *after* the move, like `until_leaves` and for the same reason:
 `reset_permanent_state` runs on the way into exile and would wipe it.
+
+## A standing permission, and mana of any type
+
+Locke, Treasure Hunter — *"…Until end of turn, you may cast a spell from among
+those cards"* — and Summon: Esper Valigarmanda — *"You may cast an instant or
+sorcery card exiled with this Saga, **and mana of any type can be spent to cast
+that spell**."*
+
+```jsonc
+{ "op": "grant_playable", "limit": 1, "any_type": true,
+  "objects": { "zone": "exile", "controller": "any", "exiled_with": "self",
+               "any_types": ["Instant", "Sorcery"], "count": "all" } }
+```
+
+`grant_playable` writes the same `playable_by`/`playable_turn` pair that
+`exile`'s `playable_this_turn` writes, and the difference is **where the cards
+are**. Impulse grants the permission to cards the same op has just exiled;
+this grants it to cards that are already somewhere — the graveyards Locke just
+milled into, the exile pile a Saga filled two turns ago — and moves nothing.
+`objects` is required for that reason: with no selection it is a line that reads
+as a grant and grants nothing.
+
+| | `play_exiled` | `exile` + `playable_this_turn` | `grant_playable` |
+|---|---|---|---|
+| the cards move | already in exile | this op exiles them | **not at all** |
+| which zone | exile | exile | any zone the selector names |
+| price | free | printed | printed |
+| how many | one | all of them | `limit`, per granting permanent |
+
+`limit` is "**a** spell", singular, out of however many were flagged. Counted in
+the turn ledger against the granting permanent (`playable_group`), on the same
+negative slot a `cast_from_graveyard` permission bills, so two Lockes are two
+spells and one Locke milling three cards is still one.
+
+**Every seat's copy of both zones is walked.** Exile is kept per owner, so a
+card taken out of an opponent's graveyard sits in the *opponent's* exile, and a
+permission that only reached your own would silently drop half of what
+Valigarmanda's first chapter took. The flag *is* the permission, so widening the
+walk offers nothing extra: nothing carries it that was not granted it.
+
+### `any_type`
+
+"…and mana of any type can be spent to cast that spell" is the one clause in the
+engine that relaxes a **coloured** requirement, and nothing else could stand in
+for it. Every cost reduction there is — `spell_cost_reduction`, convoke, delve,
+emerge, the commander tax's negative twin — is clamped to the generic part
+precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
+type" is about what a permanent *produces*, not about what may be spent.
+
+`ManaCost.as_any_type` sums the coloured and hybrid pips into `generic`, which
+is the rule rather than a stand-in for it: a generic pip is the one demand any
+mana already satisfies, so a cost whose colours have all been waived is exactly
+a generic cost of the same size. `{C}` goes with them — "any type" names the
+colourless type too — and `X` does not, being a number the caster chooses.
+
+The flag rides on the **card**, beside the permission it is printed next to, and
+is read only while that permission is live (`playable_turn == state.turn`).
+Not on the player and not on the turn: the caster's other spells that turn are
+paid for normally, which is what the printed "**that** spell" says.
+
+Both sides read it — `legality._cast_variant` prices the line with the colours
+already waived, and `Game._cast` waives them again before paying — so a line
+that was offered is a line that can be paid. Getting only one of them is the
+failure mode the `cast_from_library_top` work already hit once: the spell is
+offered, goes on the stack, and the payment quietly refuses.
 
 ## Casting for free out of the window
 

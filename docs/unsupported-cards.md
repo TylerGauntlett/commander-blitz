@@ -10,36 +10,19 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**5 cards** blocked by **12** capabilities.
+**4 cards** blocked by **9** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
-| [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
-| [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
-
-## cast-exiled-with
-
-Blocks **1** card.
-
-- **(op)** an effect that offers casting a card previously exiled by this permanent (selector {"zone": "exile", "exiled_with": "self"}) at its normal mana cost, on a later turn than the one it was exiled on
-  <br>Why the existing vocabulary won't do: `play_exiled` is the only op that casts from an exiled_with pool and it goes through `cast_for_free` -- it never charges the mana cost, which is the whole point of this chapter (the card is paid for, just with any type of mana). `exile` with `playable_this_turn` does grant a printed-price permission, but it is set by the exiling op itself and `legality.py` gates it on `obj.playable_turn == state.turn`, so a card exiled by chapter I is no longer castable when chapter II resolves on a later turn.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
-  - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
 
 ## copy-card-in-exile
 
@@ -114,20 +97,6 @@ Blocks **1** card.
 
 </details>
 
-## exiled-with-link
-
-Blocks **1** card.
-
-- **(op)** a key on `exile` that records `exiled_by = source` so a later `exiled_with: "self"` selector can find the cards, without also declaring that they return
-  <br>Why the existing vocabulary won't do: `until_leaves` is the only key that sets `exiled_by` in `op_exile`, and it is the O-Ring link: it declares a return when the source leaves the battlefield. This Saga is sacrificed after chapter IV, so every card chapter I exiled would be handed back -- including the cards taken from opponents' graveyards. `hideaway` sets the link too but only for a card it chose off the top of your own library.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
-  - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
-
 ## linked-targets
 
 Blocks **1** card.
@@ -186,19 +155,5 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## spend-mana-as-any-type
-
-Blocks **1** card.
-
-- **(engine)** a per-spell permission that lets mana of any type be spent to pay that spell's cost, attached to the cast permission granted above (rule 609.4b-style cost-payment relaxation)
-  <br>Why the existing vocabulary won't do: Nothing in `ops`, `static_effects` or `cost_keys` relaxes a spell's colored requirements. `mana_reduction` only shrinks generic, `spell_cost_reduction` likewise, and `add_mana`/`add_mana_per` change what is produced rather than what may be spent. The engine's only 'any type' handling (costs.py's Vorinclex path) is mana *production*, not payment.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
-  - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
 
 </details>

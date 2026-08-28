@@ -266882,12 +266882,12 @@
     },
     "Summon: Esper Valigarmanda": {
       "edhrec_rank": 5429,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Esper Valigarmanda",
-      "reason": "no template for: I — Exile an instant or sorcery card from each graveyard",
+      "reason": "",
       "scryfall_id": "7f0298b4-c7ca-49b8-baaa-b9fad4c2bfd5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Fat Chocobo": {
