@@ -1,0 +1,58 @@
+{
+  "_comment": "Cards that exist only for the linked-target test (tests/unit/test_linked_targets.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_dagger` is the Cloak and Dagger shape: target an opponent, and then up to one target creature THEY control. `t_loose_dagger` is the counterfactual -- the same two targets with no link between them, which is a different and wider card.",
+  "cards": [
+    {
+      "id": "t_dagger",
+      "name": "Test Dagger",
+      "oracle_text": "When this creature enters, choose target opponent and up to one target creature they control. Destroy the chosen creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, choose target opponent and up to one target creature they control. Destroy the chosen creature.",
+          "targets": [
+            {"id": "who", "kind": "player", "count": 1,
+             "selector": {"controller": "opponent"}},
+            {"id": "what", "kind": "permanent", "count": 1, "optional": true,
+             "selector": {"zone": "battlefield", "types": ["Creature"],
+                          "controller": {"target": "who"}}}
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "what"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_loose_dagger",
+      "name": "Test Loose Dagger",
+      "oracle_text": "When this creature enters, choose target opponent and up to one target creature. Destroy the chosen creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, choose target opponent and up to one target creature. Destroy the chosen creature.",
+          "targets": [
+            {"id": "who", "kind": "player", "count": 1,
+             "selector": {"controller": "opponent"}},
+            {"id": "what", "kind": "permanent", "count": 1, "optional": true,
+             "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "what"}}]
+        }
+      ]
+    }
+  ]
+}

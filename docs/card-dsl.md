@@ -3963,6 +3963,55 @@ is applied, because the exception is part of what the object *is* rather than an
 effect on it: an animate afterwards layers on top exactly as it would on a
 printed artifact.
 
+## "Target opponent and up to one target creature they control"
+
+Cloak and Dagger, Entwined. One target spec reading another spec's answer:
+
+```jsonc
+"targets": [
+  { "id": "who", "kind": "player", "count": 1,
+    "selector": { "controller": "opponent" } },
+  { "id": "what", "kind": "permanent", "count": 1, "optional": true,
+    "selector": { "zone": "battlefield", "types": ["Creature"],
+                  "controller": { "target": "who" } } }
+]
+```
+
+The *language* was already there — `{"target": "who"}` is an ordinary player
+spec and `select_players` has always understood it. Two things stopped it.
+
+- **The loader refused it by construction.** A target's own `controller` clause
+  was validated with no siblings in scope, so a card that named one was told the
+  target did not exist. It is now checked against the siblings declared
+  **before** it — and against a Mapping clause on *any* kind, where the old gate
+  only looked at `player` and `any` specs, which is why Cloak and Dagger's
+  second spec (a `permanent`) slipped through unchecked.
+- **The enumeration could not have answered it.** Every spec's candidates were
+  computed independently and multiplied at the end, so the linked spec resolved
+  `{"target": "who"}` against a spec with no answer yet: no seats, no
+  candidates, and a second target that could never be chosen.
+
+601.2c is both the way out and the reason the clause is legal at all: every
+target is chosen at once, so what is legal is the **pair**. So the combinations
+are grown one spec at a time rather than multiplied at the end, and a linked
+spec is enumerated **per partial combination** — against the opponent that
+branch actually picked.
+
+Only a linked spec pays for that. An independent one is enumerated once and
+reused across every partial, which is what the old product did and is the shape
+of every card in the pool but this one.
+
+A partial whose next *required* spec has nothing legal is dropped — 601.2c read
+the other way round: a target you cannot complete is not a legal choice of the
+ones before it. With no linked spec in sight that is exactly the old behaviour,
+since every partial saw the same options and so dies together.
+
+**Declaration order matters**, and naming a sibling that comes later is refused
+by name. 608.2b asks the question again on resolution, so `filter_legal` hands
+each spec the buckets already settled: a creature that changes controller in
+response stops being one "they" control, and is dropped while the opponent
+target stands.
+
 ## Targeting a card in exile
 
 Espers to Magicite — *"…choose up to one **target creature card exiled this

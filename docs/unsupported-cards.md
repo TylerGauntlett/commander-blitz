@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**3 cards** blocked by **6** capabilities.
+**3 cards** blocked by **5** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
-| [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 
@@ -57,21 +56,6 @@ Blocks **1** card.
 
 - **(op)** an exile-until-this-permanent-leaves link that returns each exiled card to the zone it came from -- the nonland card exiled out of a hand goes back to its owner's hand, the creature exiled off the battlefield goes back to the battlefield -- from a single return, since one printed sentence covers both
   <br>Why the existing vocabulary won't do: exile's 'until_leaves' only records the link; the return is an ordinary leaves_battlefield trigger whose op hardwires one destination (Oblivion Ring uses put_onto_battlefield over {'zone':'exile','exiled_with':'self'}, return_to_hand always moves to Zone.HAND). Nothing on the exiled object records the zone it was exiled from, so no condition or selector can split the returned cards by origin, and picking either op would send half the cases to the wrong zone
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
-  - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
-  - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## linked-targets
-
-Blocks **1** card.
-
-- **(selector)** a target spec whose selector is filtered by another target of the same ability -- 'up to one target creature THEY control', where 'they' is the target opponent chosen by the sibling target spec, so the creature's legality is decided by the seat picked for the first target
-  <br>Why the existing vocabulary won't do: selector_keys has 'controller', and it accepts a player-spec mapping, but neither form reaches a sibling target: the loader validates a target's own 'controller' clause with an empty target table on purpose ('Checked with no sibling targets in scope ... a card that tried would rather be told so than load'), and even if it loaded, {'target': 'opp'} resolves through ctx.target_players, which targeting.candidates builds with no targets bound yet -- so the creature spec would enumerate zero legal candidates and the clause would be silently inert. 'controller': 'opponent' is the near miss and is strictly wider: at a pod it offers creatures controlled by opponents the card never chose
 
 <details><summary>Cards waiting on this</summary>
 
