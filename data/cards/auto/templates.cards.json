@@ -44050,6 +44050,64 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "legions_to_ashes",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Legions to Ashes",
+      "oracle_text": "Exile target nonland permanent an opponent controls and all tokens that player controls with the same name as that permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "objects": {
+            "controller": {
+              "controller_of": "victim"
+            },
+            "count": "all",
+            "exclude_binding": "victim",
+            "is_token": true,
+            "shares_a_name_with": "victim",
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {

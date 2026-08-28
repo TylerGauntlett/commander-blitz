@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**27 cards** blocked by **41** capabilities.
+**26 cards** blocked by **40** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
-| [shares-a-name-with](#shares-a-name-with) | 1 | 6823 | selector |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
 | [target-player-chooses](#target-player-chooses) | 1 | 3427 | decision |
 | [unearth](#unearth) | 1 | 2622 | replacement |
@@ -639,20 +638,6 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## shares-a-name-with
-
-Blocks **1** card.
-
-- **(selector)** a selector clause that matches objects whose name equals the name of another object bound in the same effect -- e.g. {"is_token": true, "controller": {"controller_of_target": 0}, "shares_a_name_with": "target", "count": "all"} -- so a spell can sweep every copy of the thing it targeted
-  <br>Why the existing vocabulary won't do: The `name` selector key is a literal string compared against card.name, so it can only be written by the card author at load time and cannot read the name of the target chosen at cast time. The two binding-reading clauses that do exist, `shares_a_type_with` and `shares_a_color_with`, compare subtypes and colors off a bound oid but there is no name-comparing sibling. `snapshot` only captures a numeric value off a departing object, not a name usable as a selector filter.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Legions to Ashes** (rank 6823) — `legions_to_ashes`
-  - Exile target nonland permanent an opponent controls and all tokens that player controls with the same name as that permanent.
 
 </details>
 

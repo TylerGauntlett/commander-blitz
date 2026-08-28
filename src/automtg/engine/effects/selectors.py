@@ -137,6 +137,16 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "…and all tokens that player controls **with the same name as that
+        #: permanent**" -- Legions to Ashes. The dynamic twin of `name`, which
+        #: takes a literal string fixed when the card is written; which name
+        #: matters here is decided by whatever was targeted at cast time.
+        #: Compared on `card.name`, since nothing in the characteristics layer
+        #: renames an object, and tolerant of a target that has already left the
+        #: battlefield -- the spell exiles the target and its copies together,
+        #: so a reading that needed the target still in play would sweep nothing
+        #: whenever the ops ran in the other order.
+        "shares_a_name_with",
         #: "…a creature spell that shares a creature type with **your
         #: commander**." Path of Ancestry. Takes a *player* rather than a
         #: binding name, which is why it is not a spelling of the clause above:
@@ -566,6 +576,28 @@ def matches(
         return False
     if (want := selector.get("name")) and card.name != want:
         return False
+    if (bound := selector.get("shares_a_name_with")) is not None:
+        # Legions to Ashes: "…and all tokens that player controls **with the
+        # same name as that permanent**." The dynamic twin of the literal
+        # `name` clause directly above -- that one is a string the card author
+        # writes at load time, this one is read off an object bound at cast
+        # time, which is the only way to say "the same name as the thing I just
+        # targeted".
+        #
+        # `card.name`, not a characteristics lookup: the characteristics layer
+        # models types, colours, power and keywords, and nothing in it renames
+        # an object, so the card's name is the name.
+        other = _bound_oid(ctx, str(bound))
+        if other is None:
+            return False
+        target = state.objects.get(other)
+        # Deliberately tolerant of an object that has already left the
+        # battlefield. Legions to Ashes exiles its target and the tokens in one
+        # breath, and an implementation that read the name only while the
+        # target was still in play would sweep nothing whenever the ops ran in
+        # the other order -- a spell that silently did half its job.
+        if target is None or state.card_of(target).name != card.name:
+            return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
         return False

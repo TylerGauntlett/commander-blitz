@@ -155102,12 +155102,12 @@
     },
     "Legions to Ashes": {
       "edhrec_rank": 6823,
-      "gate": "template",
+      "gate": null,
       "name": "Legions to Ashes",
-      "reason": "no template for: Exile target nonland permanent an opponent controls and all tokens that player controls wi",
+      "reason": "",
       "scryfall_id": "39fe8402-2f70-4498-a0b6-6a9dd0e2848f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legolas Greenleaf": {

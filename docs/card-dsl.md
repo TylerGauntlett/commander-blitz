@@ -233,6 +233,7 @@ Every key is optional; all present keys must match.
   "exclude_binding": "subject",   // "each OTHER attacking creature"
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
   "shares_a_color_with": "it",   // radiance -- "...that shares a color with it"
+  "shares_a_name_with": "victim",// "...with the same name as that permanent"
   "self_only": true,              // this permanent only
   "extreme": { "of": "toughness", "pick": "least" },  // "...with the least toughness"
   "count": 1,                     // an int, or "all", or "any" -- see below
@@ -415,6 +416,7 @@ whatever attacked, which is different on every trigger.
 |---|---|
 | `shares_a_type_with` | matches when the candidate's subtypes intersect those of the object bound under this name. **Derived** subtypes on both sides, so a changeling or a granted type counts — which is most of what anybody plays this alongside |
 | `shares_a_color_with` | the same clause on colours — radiance. `colors` cannot stand in for the same reason `subtypes` cannot: it takes a literal list, and which colour matters is decided by what was targeted |
+| `shares_a_name_with` | the same clause on names — Legions to Ashes' "all tokens that player controls **with the same name as that permanent**". `name` cannot stand in: it takes a literal string fixed when the card is written. Alone in the family in **tolerating a bound object that has already left the battlefield**, so a spell that exiles its target and its copies together works whichever order the two ops run in |
 | `exclude_binding` | drops the bound object — or the whole **set** a binding holds — from the pool |
 
 `subtypes` cannot stand in for the first: it takes a literal list, fixed when
