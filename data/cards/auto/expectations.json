@@ -1255,6 +1255,9 @@
       "graveyard"
     ]
   },
+  "cloak_and_dagger_entwined": {
+    "zone": "battlefield"
+  },
   "cloak_of_the_bat": {
     "zone": "battlefield"
   },

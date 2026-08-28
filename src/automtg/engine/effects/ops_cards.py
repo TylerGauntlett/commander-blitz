@@ -540,6 +540,54 @@ def op_return_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("return_to_origin")
+def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Return exiled cards to the zone each of them came from.
+
+    Cloak and Dagger, Entwined -- "exile a nonland card from their hand **or**
+    the chosen creature until Cloak and Dagger leave the battlefield". One
+    exile, two possible origins, and the return has to undo whichever happened:
+    the card taken out of a hand goes back to that hand, the permanent taken off
+    the battlefield goes back to the battlefield.
+
+    **Every neighbouring op hardwires its destination**, which is why none of
+    them can say this: `return_to_hand` is the hand, `put_onto_battlefield` is
+    the battlefield, `return_from_graveyard` takes a `destination` but reads its
+    pool out of a graveyard. Writing the card as two ops filtered by origin
+    would be two sentences where the printing has one -- and there was nothing
+    to filter on either, since only the graveyard kept an arrival record.
+
+    So `zones.exile` now stamps `exiled_from` on the way out and this reads it
+    back. Owner rather than controller, and the same on both branches: a card
+    leaving exile goes to its owner's hand, and 400.7's exceptions do not
+    reach a permanent returning from an exile-until effect.
+
+    A card whose `exiled_from` is missing is left where it is. That is not a
+    silent failure but the same answer 400.7 gives: an object with no recorded
+    origin has nowhere to be returned to, and the alternative -- guessing the
+    battlefield -- would put a card in a hand onto the board.
+    """
+    from ..enums import Zone as _Zone
+
+    zones = {z.value: z for z in _Zone}
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Return")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or obj.zone is not _Zone.EXILE:
+            continue
+        origin = zones.get(obj.exiled_from or "")
+        if origin is None or origin is _Zone.EXILE:
+            continue
+        move_object(
+            ctx.state,
+            oid,
+            origin,
+            to_player=obj.owner,
+            cause="returned",
+            by=ctx.source_oid,
+        )
+
+
 @register("return_spell_to_hand")
 def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Return target spell to its owner's hand." Reprieve is the witness.

@@ -4352,6 +4352,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
+    # The op reads each card's recorded origin and moves it; with nothing
+    # selected it is a return that returns nothing.
+    if op == "return_to_origin" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'return_to_origin' needs 'objects' -- there is nothing to return"
+        )
     # "When you do" has to say which do. Without the key the op names the empty
     # id, no ability matches it, and the second half of the card never happens.
     if op == "reflexive_trigger" and not effect.get("ability"):

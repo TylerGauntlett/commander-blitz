@@ -640,7 +640,16 @@ def exile(state: GameState, oid: int, *, cause: str = "exiled", by: int | None =
     obj = state.objects.get(oid)
     if obj is None:
         return False
+    # Where it came from, for the exile-until effects that give it back: "return
+    # it to the zone it came from" is one sentence covering a card taken out of
+    # a hand and a permanent taken off the battlefield, and nothing else on the
+    # object remembers which. Read before the move and written after, because
+    # `move_object` runs `reset_permanent_state` in between -- the same order
+    # `op_exile` writes `exiled_by` in, for the same reason.
+    origin = obj.zone
     move_object(state, oid, Zone.EXILE, cause=cause, by=by)
+    if (moved := state.objects.get(oid)) is not None:
+        moved.exiled_from = origin.value
     return True
 
 

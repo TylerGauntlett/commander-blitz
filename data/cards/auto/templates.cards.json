@@ -14052,6 +14052,125 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "who"
+                },
+                "zone": "hand"
+              },
+              "op": "reveal"
+            },
+            {
+              "link": true,
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "union": [
+                  {
+                    "not_types": [
+                      "Land"
+                    ],
+                    "player": {
+                      "target": "who"
+                    },
+                    "zone": "hand"
+                  },
+                  {
+                    "target": "what"
+                  }
+                ]
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "who",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            },
+            {
+              "count": 1,
+              "id": "what",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": {
+                  "target": "who"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Cloak and Dagger enter, choose target opponent and up to one target creature they control. They reveal their hand. You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "return_to_origin"
+            }
+          ],
+          "kind": "triggered",
+          "text": "…until Cloak and Dagger leave the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "cloak_and_dagger_entwined",
+      "keywords": [
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Cloak and Dagger, Entwined",
+      "oracle_text": "Deathtouch, lifelink\nWhen Cloak and Dagger enter, choose target opponent and up to one target creature they control. They reveal their hand. You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
