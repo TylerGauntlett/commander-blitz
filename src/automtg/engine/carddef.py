@@ -47,6 +47,14 @@ class TargetSpec:
     #: ``count == "any"``.
     one_per_player: bool = False
     optional: bool = False
+    #: A cap on the combined mana value of everything chosen for this spec --
+    #: "any number of target creature cards **with total mana value 6 or
+    #: less**" (Phoenix, Warden of Fire). A constraint *between* the picks, so
+    #: it is applied where the combinations are built rather than in the
+    #: selector: every selector clause is evaluated against one candidate in
+    #: isolation, and `mana_value: {"op": "<=", "value": 6}` is a different and
+    #: far wider card -- six one-drops pass it. ``None`` for no cap.
+    total_mana_value: int | None = None
     #: The index of the **mode** that owns this target, or ``None`` for the
     #: ordinary card-level kind.  "Choose up to two. Return those cards from
     #: your graveyard to your hand. * Target artifact card. * Target creature

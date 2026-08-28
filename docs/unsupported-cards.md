@@ -10,27 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**2 cards** blocked by **2** capabilities.
+**1 card** blocked by **1** capability.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
-
-## exile-and-return-transformed
-
-Blocks **1** card.
-
-- **(op)** an op that exiles a permanent and immediately returns it to the battlefield **transformed, under its owner's control** -- as a new object, so it enters, its enters triggers fire, it is summoning sick, and counters/auras/control effects on the old object are gone. The Final Fantasy "Dominant" transforming cycle prints this line on both faces
-  <br>Why the existing vocabulary won't do: `transform` (ops_board.py `op_transform`) turns the permanent over **in place**: it calls `primitives.transform` on the live object, so the permanent never changes zones, keeps its counters, attachments and summoning-sickness state, and fires no leaves-the-battlefield or enters triggers. That is a materially stronger and differently-timed card. `exile` can move it out but has no return path other than `until_leaves` (the O-Ring link, which hands back on a later trigger, untransformed), and neither `put_onto_battlefield` nor `return_from_graveyard` accepts any "arrives on its back face" flag -- the only back-face-on-arrival path in the engine is `graveyard_cast_transformed`, which is disturb/`stack.py` and applies to *casting* the card from the graveyard, not to an activated ability on the battlefield. `meld` is the one op that does the exile-and-re-enter dance, but it is hard-wired to `melds_with`/`melds_into` and needs a partner permanent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
-  - When Joshua enters, discard up to two cards, then draw that many cards.
-  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-
-</details>
 
 ## prepared
 

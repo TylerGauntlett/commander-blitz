@@ -142742,12 +142742,12 @@
     },
     "Joshua, Phoenix's Dominant // Phoenix, Warden of Fire": {
       "edhrec_rank": 3959,
-      "gate": "template",
+      "gate": null,
       "name": "Joshua, Phoenix's Dominant // Phoenix, Warden of Fire",
-      "reason": "no template for: When Joshua enters, discard up to two cards, then draw that many cards",
+      "reason": "",
       "scryfall_id": "04dd9ad9-eab2-447c-b065-078a0b184519",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Josu Vess, Lich Knight": {

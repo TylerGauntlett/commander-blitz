@@ -294,6 +294,42 @@ def _names_a_sibling(node: Any, ids: set[str]) -> bool:
     return False
 
 
+
+def _within_total(
+    state: GameState, refs: Sequence[TargetRef], cap: int | None
+) -> bool:
+    """Do these picks add up to ``cap`` or less? -- "with **total** mana value 6
+    or less" (Phoenix, Warden of Fire).
+
+    A constraint **between** the picks, which is why it lives here and not in
+    the selector: every selector clause is evaluated against one candidate in
+    isolation, so `mana_value: {"op": "<=", "value": 6}` says "each of these
+    costs six or less" and is a far wider card -- six one-drops pass it and are
+    six mana of creatures.
+
+    The same slot `one_per_player` occupies, and for the same reason: both are
+    facts about a *set* of chosen objects rather than about any one of them.
+
+    Read off the printed cost, which is what a card in a graveyard has: nothing
+    is applying to it, and `mana_value()` with no X is the number the card
+    prints (202.3b -- an X in a mana cost is 0 anywhere but on the stack).
+
+    Not re-checked on resolution. 608.2b asks whether each target is *still
+    legal* one at a time; the total was a condition on the choice, and a spell
+    whose targets have partly gone does not have its arithmetic redone.
+    """
+    if cap is None:
+        return True
+    total = 0
+    for ref in refs:
+        if ref.kind != "object":
+            continue
+        obj = state.objects.get(ref.id)
+        if obj is None:
+            continue
+        total += state.card_of(obj).mana_cost.mana_value()
+    return total <= cap
+
 def _spec_options(
     state: GameState,
     controller: int,
@@ -344,7 +380,8 @@ def _spec_options(
             tuple(c)
             for size in range(ceiling, 0, -1)
             for c in itertools.combinations(options, size)
-            if not spec.one_per_player or _one_each(state, c)
+            if (not spec.one_per_player or _one_each(state, c))
+            and _within_total(state, c, spec.total_mana_value)
         ]
         return list(dict.fromkeys([*subsets[: _room(limit, [()])], ()]))
     if count <= 0:
@@ -355,7 +392,9 @@ def _spec_options(
         return [()]
     if count > 1:
         combos = [
-            tuple(c) for c in itertools.combinations(options, min(count, len(options)))
+            tuple(c)
+            for c in itertools.combinations(options, min(count, len(options)))
+            if _within_total(state, c, spec.total_mana_value)
         ]
         if not combos and not spec.optional:
             return []
