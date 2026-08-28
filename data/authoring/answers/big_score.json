@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "big_score",
+    "name": "Big Score",
+    "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards and create two Treasure tokens. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "mana_cost": "{3}{R}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "additional_cost": {
+      "discard": 1
+    },
+    "spell_effects": [
+      {
+        "op": "draw",
+        "amount": {
+          "const": 2
+        }
+      },
+      {
+        "op": "create_token",
+        "token": "treasure_token",
+        "amount": {
+          "const": 2
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "battlefield_count": 34,
+    "tokens": {
+      "id": "treasure_token",
+      "count": 2
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "general_leo_cristophe",
+    "name": "General Leo Cristophe",
+    "oracle_text": "When General Leo Cristophe enters, return up to one target creature card with mana value 3 or less from your graveyard to the battlefield. Then put a +1/+1 counter on General Leo Cristophe for each creature you control.",
+    "mana_cost": "{4}{W}",
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When General Leo Cristophe enters, return up to one target creature card with mana value 3 or less from your graveyard to the battlefield. Then put a +1/+1 counter on General Leo Cristophe for each creature you control.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "optional": true,
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "types": ["Creature"],
+              "mana_value": {"op": "<=", "value": {"const": 3}}
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "battlefield",
+            "controller": "you",
+            "objects": {"target": "t1"}
+          },
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"creatures_you_control": true},
+            "objects": {"self_only": true}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "+1/+1", "amount": 3}
+  }
+}

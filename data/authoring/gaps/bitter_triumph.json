@@ -1,0 +1,22 @@
+{
+  "card_id": "bitter_triumph",
+  "name": "Bitter Triumph",
+  "oracle_text": "As an additional cost to cast this spell, discard a card or pay 3 life.\nDestroy target creature or planeswalker.",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, discard a card or pay 3 life."
+  ],
+  "needs": [
+    {
+      "capability": "modal_cost",
+      "kind": "cost",
+      "what": "a cost that is a choice between two whole alternative payments -- 'discard a card OR pay 3 life' -- where the caster picks one branch as the spell is cast and only that branch is paid and checked for payability",
+      "why_existing_wont_do": "A cost is a single flat record whose entries are conjunctive: writing both `discard` and `pay_life` on the same cost charges the player both, which is a strictly worse card, and writing only one silently drops the other half of the printed line. `additional_optional` is the nearest thing and only makes one fixed cost skippable (a yes/no on paying it), not a choice between two different prices; `choose_mode` is an effect op that runs on resolution, so it can neither be a cost nor gate whether the spell is castable"
+    }
+  ],
+  "closest_existing": [
+    "additional_cost",
+    "additional_optional",
+    "choose_mode"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,36 @@
+{
+  "card_id": "cloak_and_dagger_entwined",
+  "name": "Cloak and Dagger, Entwined",
+  "oracle_text": "Deathtouch, lifelink\nWhen Cloak and Dagger enter, choose target opponent and up to one target creature they control. They reveal their hand. You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.",
+  "blocked_sentences": [
+    "When Cloak and Dagger enter, choose target opponent and up to one target creature they control.",
+    "You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield."
+  ],
+  "needs": [
+    {
+      "capability": "linked_targets",
+      "kind": "selector",
+      "what": "a target spec whose selector is filtered by another target of the same ability -- 'up to one target creature THEY control', where 'they' is the target opponent chosen by the sibling target spec, so the creature's legality is decided by the seat picked for the first target",
+      "why_existing_wont_do": "selector_keys has 'controller', and it accepts a player-spec mapping, but neither form reaches a sibling target: the loader validates a target's own 'controller' clause with an empty target table on purpose ('Checked with no sibling targets in scope ... a card that tried would rather be told so than load'), and even if it loaded, {'target': 'opp'} resolves through ctx.target_players, which targeting.candidates builds with no targets bound yet -- so the creature spec would enumerate zero legal candidates and the clause would be silently inert. 'controller': 'opponent' is the near miss and is strictly wider: at a pod it offers creatures controlled by opponents the card never chose"
+    },
+    {
+      "capability": "exile_until_leaves_return_to_origin",
+      "kind": "op",
+      "what": "an exile-until-this-permanent-leaves link that returns each exiled card to the zone it came from -- the nonland card exiled out of a hand goes back to its owner's hand, the creature exiled off the battlefield goes back to the battlefield -- from a single return, since one printed sentence covers both",
+      "why_existing_wont_do": "exile's 'until_leaves' only records the link; the return is an ordinary leaves_battlefield trigger whose op hardwires one destination (Oblivion Ring uses put_onto_battlefield over {'zone':'exile','exiled_with':'self'}, return_to_hand always moves to Zone.HAND). Nothing on the exiled object records the zone it was exiled from, so no condition or selector can split the returned cards by origin, and picking either op would send half the cases to the wrong zone"
+    },
+    {
+      "capability": "resolution_choice_across_zones",
+      "kind": "decision",
+      "what": "one optional 'you may' choice, made on resolution, that picks a single object from either of two disjoint pools -- a nonland card in the revealed hand, or the creature this ability targeted -- and offers the creature half only when the optional target was actually chosen",
+      "why_existing_wont_do": "'may' wraps a single fixed effect, and a 'choose_mode' of two exile effects is announced as a mode list whose entries do not know whether the 'up to one target creature' was taken: with no creature targeted, the second mode would still be offered and its exile would resolve over an empty target list, doing nothing while reading as a choice. Two 'may'-wrapped exiles in sequence is also wrong -- it lets the controller exile a hand card AND the creature, where the printed card exiles exactly one"
+    }
+  ],
+  "closest_existing": [
+    "oblivion_ring",
+    "fiend_hunter",
+    "look_at_hand",
+    "choose_mode"
+  ],
+  "confidence": "high"
+}

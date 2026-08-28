@@ -1,0 +1,40 @@
+{
+  "card_id": "edgar_master_machinist",
+  "name": "Edgar, Master Machinist",
+  "oracle_text": "Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.\nTools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.",
+  "blocked_sentences": [
+    "Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.",
+    "Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control."
+  ],
+  "needs": [
+    {
+      "capability": "cast_from_graveyard",
+      "kind": "static_effect",
+      "what": "a static ability on one permanent that lets its controller cast OTHER cards from their graveyard, filtered by card type (here artifact spells) and rate-limited to once during each of that player's turns",
+      "why_existing_wont_do": "`play_lands_from_graveyard` is the only graveyard-play permission in `static_effects`, and legality.py reads it solely through `player_plays_lands_from_graveyard` for the land drop -- it cannot authorize a spell cast, cannot be narrowed by type, and carries no per-turn counter. Flashback is the only other graveyard cast route and it is a property of the card being cast (`card.flashback`, read off the card in legality.py), so it cannot be conferred on arbitrary artifact cards by a different permanent."
+    },
+    {
+      "capability": "cast_from_graveyard",
+      "kind": "replacement",
+      "what": "an enters-tapped replacement applied to a DIFFERENT permanent than the ability's source -- the artifact that was cast from the graveyard under this permission -- conditioned on that permanent having been cast this way",
+      "why_existing_wont_do": "The only enters-tapped replacement is `self_enters_tapped` (zones.py), which fires on the source's own entry; the free tier mis-templated this clause onto Edgar himself, which is not what the card says. The `cast_from_graveyard` CONDITION key exists but only reads `obj.cast_from_graveyard` during a resolution -- there is no replacement event keyed on a permanent entering that was cast from a graveyard."
+    },
+    {
+      "capability": "extreme_value",
+      "kind": "value",
+      "what": "a value leaf that returns the greatest (or least) power/toughness/mana value across a selected pool as a SINGLE number -- e.g. {\"extreme_value\": {\"of\": \"mana_value\", \"pick\": \"greatest\", \"objects\": {...}}}",
+      "why_existing_wont_do": "`mana_value_of` with an `objects` ref SUMS over the pool (values.py `_characteristic`), and the `extreme` selector key keeps every object tied for the extremum on purpose (selectors.py `_narrow_to_extreme`, so `choose_objects` can break the tie). Combining them therefore reads 2X when two artifacts tie for the greatest mana value, and 3X when three do -- a silent overcount on a very common board, not an edge case. `max` in `value_keys` takes a fixed literal list of sub-expressions, so it cannot aggregate over a pool whose size is unknown until resolution, and `max_count_of` aggregates a COUNT of objects per player, not a characteristic."
+    }
+  ],
+  "closest_existing": [
+    "play_lands_from_graveyard",
+    "flashback",
+    "self_enters_tapped",
+    "cast_from_graveyard",
+    "extreme",
+    "mana_value_of",
+    "max",
+    "max_count_of"
+  ],
+  "confidence": "high"
+}

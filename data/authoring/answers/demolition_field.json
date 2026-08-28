@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "demolition_field",
+    "name": "Demolition Field",
+    "oracle_text": "{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That land's controller may search their library for a basic land card, put it onto the battlefield, then shuffle. You may search your library for a basic land card, put it onto the battlefield, then shuffle.",
+    "mana_cost": "",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That land's controller may search their library for a basic land card, put it onto the battlefield, then shuffle. You may search your library for a basic land card, put it onto the battlefield, then shuffle.",
+        "cost": {
+          "mana": "{2}",
+          "tap": true,
+          "sacrifice": {"zone": "battlefield", "controller": "you", "self_only": true, "count": 1}
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "types": ["Land"],
+              "not_supertypes": ["Basic"],
+              "controller": "opponent"
+            }
+          }
+        ],
+        "effects": [
+          {"op": "snapshot", "target": "t1", "as": "victim"},
+          {"op": "destroy", "objects": {"target": "t1"}},
+          {
+            "op": "search_library",
+            "player": {"controller_of": "victim"},
+            "count": 1,
+            "destination": "battlefield",
+            "selector": {"types": ["Land"], "supertypes": ["Basic"]}
+          },
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "destination": "battlefield",
+            "selector": {"types": ["Land"], "supertypes": ["Basic"]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
