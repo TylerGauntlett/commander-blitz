@@ -3963,6 +3963,45 @@ is applied, because the exception is part of what the object *is* rather than an
 effect on it: an animate afterwards layers on top exactly as it would on a
 printed artifact.
 
+## One choice across two zones — `union`
+
+Cloak and Dagger, Entwined — *"You may exile a nonland card from their **hand
+or** the chosen creature…"*
+
+```jsonc
+{ "union": [
+    { "zone": "hand", "player": { "target": "who" }, "not_types": ["Land"] },
+    { "target": "what" } ],
+  "count": 1, "optional": true }
+```
+
+Every other selector gathers from **one** zone and then filters, because `zone`
+takes one name. This sentence asks for a pool that spans two.
+
+**`any_of` is the near miss, and is a filter.** It narrows the pool the outer
+selector already gathered — which is exactly why `validate_selector` refuses a
+`zone` inside one of its branches: *"put 'zone' on the outer selector; a branch
+filters the pool it already chose"*. A card choosing from a hand *or* the
+battlefield has no one zone to gather from, so there is nothing for `any_of` to
+narrow.
+
+| | `any_of` | `union` |
+|---|---|---|
+| what it does | filters one gathered pool | assembles several |
+| a `zone` in a branch | refused | required, in effect — each branch brings its own |
+| what sits outside | the whole selector | `count`, `chooser`, `optional`, `random` only |
+
+`union` resolves each branch in its own right and concatenates, in written order
+and dropping duplicates: a branch overlapping another is one card offered once,
+not twice. One `count`/`chooser` then asks across the lot, which is the whole
+point — the printed line is a single choice.
+
+**Only the pool-shaping keys may sit beside it.** A characteristic clause
+written outside would have to mean one thing for a card in a hand and another
+for a permanent on the battlefield — and `matches` reads derived characteristics
+for the one and printed ones for the other. Whatever it was meant to narrow
+belongs in a branch, so the loader says so rather than picking a reading.
+
 ## "Target opponent and up to one target creature they control"
 
 Cloak and Dagger, Entwined. One target spec reading another spec's answer:
