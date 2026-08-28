@@ -159222,12 +159222,12 @@
     },
     "Locke, Treasure Hunter": {
       "edhrec_rank": 4443,
-      "gate": "template",
+      "gate": null,
       "name": "Locke, Treasure Hunter",
-      "reason": "no template for: Locke can't be blocked by creatures with greater power",
+      "reason": "",
       "scryfall_id": "af4481b1-43b0-43e6-a9ea-f4ec0a551e61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Locked in the Cemetery": {

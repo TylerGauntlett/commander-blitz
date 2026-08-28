@@ -4073,6 +4073,16 @@
   "loamdragger_giant": {
     "zone": "battlefield"
   },
+  "locke_treasure_hunter": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "skulk"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "lone_missionary": {
     "life": {
       "0": 44

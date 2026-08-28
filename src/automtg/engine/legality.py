@@ -446,9 +446,24 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # left in exile with a bare flag would stay castable for the rest of the
     # game. The price is the printed one -- this grants permission, not a
     # discount, which is the whole difference from `play_exiled`.
-    for oid in state.players[pid].exile:
+    # Every graveyard as well as your own exile: Locke, Treasure Hunter mills
+    # one card from **each** player and then lets you cast one of them, so the
+    # permission has to reach an opponent's yard. The flag is the permission, so
+    # walking a wider set of zones offers nothing extra -- nothing carries it
+    # that was not granted it.
+    permitted = list(state.players[pid].exile)
+    for player in state.players:
+        permitted.extend(player.graveyard)
+    for oid in permitted:
         obj = state.objects[oid]
         if obj.playable_by != pid or obj.playable_turn != state.turn:
+            continue
+        # "…you may cast **a spell** from among those cards", singular out of
+        # however many were milled. Counted per granting permanent, so two
+        # Lockes are two spells and one Locke milling three cards is still one.
+        if obj.playable_group is not None and state.turn_ledger.activations(
+            obj.playable_group, GRAVEYARD_CAST_SLOT
+        ):
             continue
         card = state.card(oid)
         if card.is_land or not _timing_ok(card, sorcery_speed):

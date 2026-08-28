@@ -45873,6 +45873,92 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "skulk"
+          ],
+          "kind": "static",
+          "text": "Locke can't be blocked by creatures with greater power."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "mugged",
+              "op": "mill",
+              "player": "each_player"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "mugged",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            },
+            {
+              "limit": 1,
+              "objects": {
+                "binding": "mugged"
+              },
+              "op": "grant_playable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "locke_treasure_hunter",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Locke, Treasure Hunter",
+      "oracle_text": "Locke can't be blocked by creatures with greater power.\nMug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

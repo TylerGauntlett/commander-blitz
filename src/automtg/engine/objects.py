@@ -437,6 +437,12 @@ class GameObject:
     #: This one is a permission with a duration, and the cost is still owed.
     playable_by: int | None = None
     playable_turn: int = -1
+    #: Which permanent's permission made this card playable, when that
+    #: permission caps how many of its cards may be cast -- Locke, Treasure
+    #: Hunter: "you may cast **a spell** from among those cards", singular, out
+    #: of however many were milled. The cap is counted per granting permanent in
+    #: the turn ledger, so the group has to say which one granted it.
+    playable_group: int | None = None
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -617,6 +623,7 @@ class GameObject:
         self.on_adventure = False
         self.playable_by = None
         self.playable_turn = -1
+        self.playable_group = None
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield

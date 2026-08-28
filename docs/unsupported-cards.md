@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**8 cards** blocked by **20** capabilities.
+**7 cards** blocked by **18** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
-| [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
@@ -28,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
-| [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
@@ -61,20 +59,6 @@ Blocks **1** card.
 
 - **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
   - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
-
-## cast-from-among-milled
-
-Blocks **1** card.
-
-- **(op)** an effect granting the controller permission, until end of turn, to cast up to one spell from a named set of cards sitting in graveyards (including an opponent's graveyard), paying that spell's costs normally
-  <br>Why the existing vocabulary won't do: `play_exiled` is the only "cast that card from over there" op and it is wrong three ways: its selector defaults to the exile zone and `exiled_with: self` so it cannot see graveyard cards, it casts via `suspend.cast_for_free` while Locke's permission makes you pay, and it resolves the cast immediately instead of leaving a standing permission that lasts until end of turn. The `play_lands_from_graveyard` static is graveyard-scoped but lands-only, yours-only, permanent and unrestricted to a set. `return_from_graveyard` moves cards rather than granting permission, and the `cast_from_graveyard` condition key only asks after the fact where a spell was cast from.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
-  - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
 
 </details>
 
@@ -239,20 +223,6 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## milled-this-way
-
-Blocks **1** card.
-
-- **(selector)** the `mill` op must write a binding naming the cards it just put into graveyards (across every player it milled), so a later `if` can ask `{"exists": {"binding": "milled", "types": ["Land"]}}` and a later op can act on exactly that set
-  <br>Why the existing vocabulary won't do: `mill` takes only `amount` and `player` and throws away the oid list `mill_cards` returns, so nothing downstream can name the cards it moved. `search_library` already binds what it found, which is the shape needed, but no milling op does. `exists` over a graveyard selector is a different card -- it would match a land already in a graveyard from an earlier turn, and here both players' graveyards start non-empty. `snapshot` reads a value off an object that is already known, not the identity of a set the previous op created.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
-  - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
 
 </details>
 
