@@ -59,6 +59,11 @@ class Action:
     #: number for replicate. Part of the identity for the reason `kicked` is:
     #: the count changes both the price and what the spell does.
     additional_times: int = 0
+    #: Which branch of a modal additional cost this cast pays -- "discard a card
+    #: or pay 3 life". Part of the action's identity for the reason `kicked` is:
+    #: the two branches are two prices for the same spell and the player is
+    #: choosing between them. `None` when the card has no modal cost.
+    additional_choice: int | None = None
     #: Cast out of the exile it was foretold to, for the foretell cost. Part of
     #: the identity like `flashback`: the same card can be nowhere else, but the
     #: price is not the printed one and the action must not compare equal to a

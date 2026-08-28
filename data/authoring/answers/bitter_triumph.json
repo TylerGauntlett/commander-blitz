@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "bitter_triumph",
+    "name": "Bitter Triumph",
+    "oracle_text": "As an additional cost to cast this spell, discard a card or pay 3 life.\nDestroy target creature or planeswalker.",
+    "mana_cost": "{1}{B}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "additional_cost_options": [
+      {
+        "discard": 1
+      },
+      {
+        "pay_life": 3
+      }
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "any_of": [
+            {
+              "types": [
+                "Creature"
+              ]
+            },
+            {
+              "types": [
+                "Planeswalker"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "destroy",
+        "objects": {
+          "target": "t1"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 0
+    },
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 40
+    }
+  }
+}

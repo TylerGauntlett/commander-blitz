@@ -4,9 +4,15 @@
     "name": "Cyclonic Rift",
     "oracle_text": "Return target nonland permanent you don't control to its owner's hand.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
     "mana_cost": "{1}{U}",
-    "types": ["Instant"],
-    "colors": ["U"],
-    "color_identity": ["U"],
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
     "overload": "{6}{U}",
     "targets": [
       {
@@ -17,21 +23,27 @@
         "selector": {
           "zone": "battlefield",
           "controller": "opponent",
-          "not_types": ["Land"]
+          "not_types": [
+            "Land"
+          ]
         }
       }
     ],
     "spell_effects": [
       {
         "op": "if",
-        "condition": { "overloaded": true },
+        "condition": {
+          "overloaded": true
+        },
         "then": [
           {
             "op": "return_to_hand",
             "objects": {
               "zone": "battlefield",
               "controller": "opponent",
-              "not_types": ["Land"],
+              "not_types": [
+                "Land"
+              ],
               "count": "all"
             }
           }
@@ -39,7 +51,9 @@
         "else": [
           {
             "op": "return_to_hand",
-            "objects": { "target": "t1" }
+            "objects": {
+              "target": "t1"
+            }
           }
         ]
       }
@@ -47,8 +61,12 @@
   },
   "expectation": {
     "zone": "graveyard",
-    "graveyard_size": { "0": 3 },
+    "graveyard_size": {
+      "0": 3
+    },
     "opponent_battlefield_count": 5,
-    "hand_size": { "0": 0 }
+    "hand_size": {
+      "0": 1
+    }
   }
 }

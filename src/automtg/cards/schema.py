@@ -524,6 +524,22 @@ class CardModel(BaseModel):
     #: the price and is the player's to choose. How many times it was paid is
     #: read back with ``{"additional_paid": true}``.
     additional_cost: CostModel | None = None
+    #: "As an additional cost to cast this spell, discard a card **or** pay 3
+    #: life" -- Bitter Triumph. Two whole alternative payments, one of which the
+    #: caster picks as the spell is cast.
+    #:
+    #: A sibling of ``additional_cost`` rather than a shape of it, because a
+    #: `CostModel`'s entries are **conjunctive**: writing `discard` and
+    #: `pay_life` on one cost charges both, which is a strictly worse card, and
+    #: writing either alone silently drops half the printed line.
+    #: ``additional_optional`` is the nearest existing thing and only makes one
+    #: fixed price skippable; `choose_mode` runs at resolution and so can
+    #: neither be a cost nor decide whether the spell is castable.
+    #:
+    #: Legality offers one cast line per **payable** branch, exactly as emerge
+    #: offers one per sacrificeable creature: the player is choosing, and the
+    #: choice changes the price.
+    additional_cost_options: list[CostModel] = Field(default_factory=list)
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What that additional cost is called on screen. `kicker` is the engine's

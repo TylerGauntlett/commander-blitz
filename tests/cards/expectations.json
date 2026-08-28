@@ -116,7 +116,7 @@
   },
   "champion_of_dusk": {
     "hand_size": {
-      "0": 1
+      "0": 2
     },
     "life": {
       "0": 39
@@ -160,7 +160,7 @@
   "cultivate": {
     "battlefield_count": 33,
     "hand_size": {
-      "0": 1
+      "0": 2
     }
   },
   "day_of_judgment": {
@@ -168,7 +168,7 @@
   },
   "deep_analysis": {
     "hand_size": {
-      "0": 2
+      "0": 3
     }
   },
   "deputy_of_detention": {
@@ -188,7 +188,7 @@
   },
   "divination": {
     "hand_size": {
-      "0": 2
+      "0": 3
     }
   },
   "dragon_fodder": {
@@ -202,7 +202,7 @@
   },
   "dusk_legion_zealot": {
     "hand_size": {
-      "0": 1
+      "0": 2
     },
     "life": {
       "0": 39
@@ -216,7 +216,7 @@
   },
   "elvish_visionary": {
     "hand_size": {
-      "0": 1
+      "0": 2
     }
   },
   "emeria_angel": {
@@ -234,7 +234,7 @@
   "eternal_witness": {
     "battlefield_count": 33,
     "hand_size": {
-      "0": 1
+      "0": 2
     },
     "zone": "battlefield"
   },
@@ -253,7 +253,7 @@
   },
   "explore": {
     "hand_size": {
-      "0": 1
+      "0": 2
     },
     "library_size": {
       "0": 39
@@ -287,7 +287,7 @@
   },
   "growth_spiral": {
     "hand_size": {
-      "0": 1
+      "0": 2
     },
     "library_size": {
       "0": 39
@@ -305,7 +305,7 @@
   },
   "harmonize": {
     "hand_size": {
-      "0": 3
+      "0": 4
     }
   },
   "harrow": {
@@ -363,7 +363,7 @@
   "kodamas_reach": {
     "battlefield_count": 33,
     "hand_size": {
-      "0": 1
+      "0": 2
     }
   },
   "kraken_hatchling_swarm": {
@@ -426,7 +426,7 @@
   },
   "mulldrifter": {
     "hand_size": {
-      "0": 2
+      "0": 3
     }
   },
   "naturalize": {
@@ -440,7 +440,7 @@
   },
   "nights_whisper": {
     "hand_size": {
-      "0": 2
+      "0": 3
     },
     "life": {
       "0": 38
@@ -478,7 +478,7 @@
   },
   "preordain": {
     "hand_size": {
-      "0": 1
+      "0": 2
     }
   },
   "pulse_tracker": {
@@ -502,7 +502,7 @@
   },
   "read_the_bones": {
     "hand_size": {
-      "0": 2
+      "0": 3
     },
     "life": {
       "0": 38
@@ -554,7 +554,7 @@
   "simic_growth_chamber": {
     "battlefield_count": 32,
     "hand_size": {
-      "0": 1
+      "0": 2
     },
     "zone": "battlefield"
   },
@@ -600,7 +600,7 @@
   },
   "sylvan_ranger": {
     "hand_size": {
-      "0": 1
+      "0": 2
     }
   },
   "tatyova_benthic_druid": {

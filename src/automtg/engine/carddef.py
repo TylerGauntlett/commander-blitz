@@ -715,6 +715,9 @@ class CardDef:
     #: Dispute. A full `Cost`, where `kicker` is mana-only, and offered as one
     #: cast line per number of times paid.
     additional_cost: Cost | None = None
+    #: "…discard a card **or** pay 3 life" -- one cast line per payable branch.
+    #: See `CostModel.additional_cost_options`.
+    additional_cost_options: tuple[Cost, ...] = ()
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What the kicker is called on screen -- "kicked", "buyback".

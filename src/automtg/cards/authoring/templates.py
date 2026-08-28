@@ -36,6 +36,11 @@ from ..schema import CardModel
 #: Starting life in the verifier's sandbox, so a lifegain template can say what
 #: the total should be.
 SANDBOX_LIFE = 40
+#: What the hand holds once the card under test has been cast: the spare land
+#: `verify.build_sandbox` deals beside it, so that a mandatory "as an additional
+#: cost, discard a card" has fodder. Every drawn card lands on top of it, which
+#: is why a "draw N" template asserts N + 1.
+SANDBOX_HAND_AFTER_CAST = 1
 
 WORDS = {
     "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4,
@@ -75,7 +80,7 @@ def _draw(match: re.Match[str]) -> Translation:
     n = _count(match.group("n"))
     return Translation(
         effects=[{"op": "draw", "player": "you", "amount": {"const": n}}],
-        expect={"hand_size": {"0": n}},
+        expect={"hand_size": {"0": SANDBOX_HAND_AFTER_CAST + n}},
     )
 
 

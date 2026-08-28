@@ -964,6 +964,34 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"reduction on the card's 'cost_reduction' instead"
         )
     additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
+    additional_cost_options: tuple = ()
+    if model.additional_cost_options:
+        if model.additional_cost is not None:
+            # Two spellings of one slot; whichever won would be the card and the
+            # other would load clean and never be charged.
+            raise DslError(
+                f"{where}: give 'additional_cost' or 'additional_cost_options', "
+                f"not both -- the options list already holds every branch"
+            )
+        if len(model.additional_cost_options) < 2:
+            # One branch is not a choice, and writing it this way hides an
+            # ordinary additional cost behind machinery nobody needs to read.
+            raise DslError(
+                f"{where}: 'additional_cost_options' is a choice between prices, "
+                f"so it needs at least two -- use 'additional_cost' for one"
+            )
+        if model.additional_repeatable:
+            # "Discard a card or pay 3 life, any number of times" is not a
+            # printed shape, and the two features disagree about what a cast
+            # line means: one per branch against one per number of times paid.
+            raise DslError(
+                f"{where}: 'additional_repeatable' does not compose with "
+                f"'additional_cost_options'"
+            )
+        additional_cost_options = tuple(
+            _compile_cost(option, f"{where}.additional_cost_options[{i}]")
+            for i, option in enumerate(model.additional_cost_options)
+        )
     additional_optional = model.additional_optional
     additional_repeatable = model.additional_repeatable
 
@@ -1316,6 +1344,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         splice=ManaCost.parse(model.splice) if model.splice else None,
         splice_onto=model.splice_onto,
         additional_cost=additional_cost,
+        additional_cost_options=additional_cost_options,
         additional_optional=additional_optional,
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,

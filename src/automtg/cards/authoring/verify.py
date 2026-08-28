@@ -203,10 +203,54 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     builder.battlefield(0, _props(registry, OWN_BOARD_ROLES))
     builder.battlefield(1, [*_props(registry, OPPONENT_BOARD_ROLES), "forest", "island"])
     builder.graveyard(0, _props(registry, OWN_GRAVEYARD_ROLES))
-    builder.library(0, list(BASIC_LANDS) * 8)
+    # Forty cards, and the **second** one is deliberately not a land. The pile
+    # used to be forty basic lands, which made Cultivator Colossus -- "put a
+    # land card from your hand onto the battlefield, draw a card, and repeat
+    # this process" -- draw a land every iteration and deck the player, once the
+    # hand gained a spare land for it to start on. One nonland stops that loop.
+    #
+    # Second rather than first, and the position is the whole point: Coiling
+    # Oracle and Through the Forest Gate *reveal the top card* and branch on
+    # whether it is a land, so a nonland on top would quietly retire the branch
+    # those cards are about. Index 1 is deep enough that only a card drawing
+    # twice ever sees it, and no expectation asserts what a drawn card *is*.
+    library = list(BASIC_LANDS) * 8
+    stopper = _props(registry, ("noncreature_spell",))
+    if stopper:
+        library[1] = stopper[0]
+    builder.library(0, library)
     builder.library(1, ["forest", "island"] * 10)
     if in_hand:
-        builder.hand(0, [card_id])
+        # A spare card beside the one under test, and it is load-bearing.
+        # 601.2a moves a spell to the stack before its costs are paid, so a card
+        # can never discard *itself* to pay its own additional cost -- and a
+        # hand holding only the card under test therefore leaves every mandatory
+        # "as an additional cost, discard a card" with no fodder and unplayable
+        # at gate 4. Big Score and Laughing Mad are the witnesses.
+        #
+        # The prop is added rather than the gate relaxed, the same call
+        # `legendary_creature` and `small_creature` record. It is a basic land
+        # so that it does nothing on its own: nothing triggers off it, it is
+        # never cast, and `find_play` looks for the card under test by id rather
+        # than taking the first action.
+        #
+        # Every authored `hand_size` counts it, which is why they read one
+        # higher than the printed spell would suggest.
+        #
+        # It has to be a **land**. A castable spare is not inert: with an
+        # instant in hand the player keeps priority while the card under test is
+        # on the stack, `drive` returns at PRIORITY, and 169 cards fail gate 4
+        # with "never left the stack" -- the same trap `legendary_creature`
+        # records about a payable activated ability, one zone over. A land is
+        # played by a *special action*, so it offers something to do without
+        # ever holding the stack open.
+        #
+        # Having a legal action at all is itself a fidelity gain: it stops the
+        # position auto-passing to end of turn, and the brief promises
+        # "measurement happens before cleanup, so until-end-of-turn effects are
+        # still live". Before this, Call for Aid was measured *after* its
+        # control effect had worn off.
+        builder.hand(0, [card_id, "forest"])
     return builder.build(advance=False)
 
 
