@@ -584,7 +584,45 @@ no-op — is not one of "those creatures".
 { "op": "copy_permanent", "objects": { "target": "t1" },
   "tapped": true, "attacking": true, "as": "the_token" },
 { "op": "exile", "objects": { "binding": "the_token" } }
+
+// Joshua — "Discard up to two cards, then draw that many cards."
+{ "op": "discard", "player": "you", "amount": { "const": 2 },
+  "up_to": true, "as": "pitched" },
+{ "op": "draw", "player": "you",
+  "amount": { "count": { "binding": "pitched" } } }
+
+// Mog — "each player may discard a card … if a creature card was discarded this way"
+// `"each_player"` as a plain string, and ONE discard op: the binding is written
+// once at the end, so it accumulates across every seat the op touched. A
+// per-iteration discard inside `for_each_player` rewrites it each pass and the
+// card would only ever see the last player's card.
+{ "op": "discard", "player": "each_player", "amount": { "const": 1 },
+  "up_to": true, "as": "pitched" },
+{ "op": "if", "condition": { "exists": { "binding": "pitched",
+                                         "types": ["Creature"] } },
+  "then": [ … ] }
 ```
+
+### `discard`: `up_to` and `as`
+
+`up_to` makes `amount` a **ceiling** with a floor of zero, so "discard up to two
+cards" is satisfiable with none and, with `amount` reading your hand size, so is
+"discard any number of cards". It is opt-in on purpose: an exact discard offered
+as a range would let a player keep a card the effect was meant to take. It may
+not be combined with `random`, which has no choice to relax.
+
+`as` records what actually went, so "then draw **that many** cards" (Joshua),
+"that many cards **plus one**" (Celes) and "if a **creature card** was discarded
+this way" (Mog) can all read it back. The binding **accumulates** across the
+players one discard touches — Mog asks one card of every player in a single
+resolution and then asks what was discarded at all, not what the last player
+pitched.
+
+Every near-miss for that read-back is wrong in a way nobody would catch on the
+board, which is why the binding exists rather than a clever value:
+`cards_to_graveyard_this_turn` is one turn-wide integer over every graveyard at
+the table, counting deaths and mills and earlier discards, and counting your own
+graveyard counts what was already sitting in it.
 
 The token half is not expressible any other way: `is_token` matches every token
 you control, and `{"is_token": true, "attacking": true}` also catches tokens

@@ -52,18 +52,56 @@ def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("discard")
 def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Discard cards, optionally letting the player choose how many.
+
+    ``up_to`` makes ``amount`` a **ceiling** rather than an exact count, so the
+    floor is zero and the player may decline entirely: "discard up to two cards"
+    (Joshua) and, with ``amount`` reading the hand size, "discard any number of
+    cards" (Celes). Without it the count is exact, which is the ordinary
+    "discard a card" and stays the default -- an exact discard offered as a
+    range would let a player keep the card a cost was meant to take.
+
+    ``as`` records what actually went, the way `exile`, `sacrifice` and
+    `reveal` already do. Three cards need it and none of them can be written
+    without it:
+
+    - "then draw that many cards" -- Joshua -- reads
+      ``{"count": {"binding": ...}}``;
+    - "draw that many cards plus one" -- Celes -- the same, plus one;
+    - "If a **creature card** was discarded this way" -- Mog -- an `exists`
+      over the binding with a `types` filter.
+
+    Every near-miss is wrong in a way nobody would spot on the board:
+    `cards_to_graveyard_this_turn` is a turn-wide integer over every graveyard
+    at the table, and counting your own graveyard counts what was already in it.
+
+    The binding **accumulates** across players rather than being overwritten,
+    because Mog discards one card per player in a single resolution and then
+    asks what was discarded *at all*, not what the last player pitched.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     random = bool(spec.get("random"))
+    up_to = bool(spec.get("up_to"))
+    name = spec.get("as")
+    taken: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
         if not hand:
             continue
         take = min(amount, len(hand))
         if random:
+            # A random discard has no floor to relax: nobody is choosing, so
+            # "up to" and "exactly" pick the same cards.
             picked = ctx.state.rng.shuffled(hand)[:take]
         else:
-            picked = yield from ask_objects(ctx, "Discard", hand, take, take, pid, "discard")
+            floor = 0 if up_to else take
+            picked = yield from ask_objects(
+                ctx, "Discard", hand, floor, take, pid, "discard"
+            )
+        taken.extend(picked)
         yield from _replacements().discard(ctx.state, pid, picked)
+    if name:
+        ctx.bindings[str(name)] = taken
 
 
 @register("mill")

@@ -38,6 +38,13 @@ RECORDING_OPS = frozenset(
         "choose_player",
         "copy_permanent",
         "create_token",
+        #: "…then draw that many cards" -- Joshua; "draw that many cards **plus
+        #: one**" -- Celes; "if a **creature card** was discarded this way" --
+        #: Mog. The binding **accumulates** across the players a single discard
+        #: touches, because Mog asks one card of each player in one resolution
+        #: and then asks what was discarded at all, not what the last player
+        #: pitched. See `ops_cards.op_discard`.
+        "discard",
         "exile",
         "gain_control",
         "join_forces",

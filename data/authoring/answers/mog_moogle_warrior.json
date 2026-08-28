@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "mog_moogle_warrior",
+    "name": "Mog, Moogle Warrior",
+    "oracle_text": "Lifelink\nDance — At the beginning of your end step, each player may discard a card. Each player who discarded a card this way draws a card. If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink. Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.",
+    "mana_cost": "{1}{R}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Moogle", "Warrior"],
+    "power": 1,
+    "toughness": 2,
+    "colors": ["R", "W"],
+    "color_identity": ["R", "W"],
+    "keywords": ["lifelink"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Dance — At the beginning of your end step, each player may discard a card. Each player who discarded a card this way draws a card. If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink. Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.",
+        "trigger": {"event": "end_step", "controller": "you"},
+        "effects": [
+          {
+            "op": "discard",
+            "player": "each_player",
+            "amount": {"const": 1},
+            "up_to": true,
+            "as": "pitched"
+          },
+          {
+            "op": "for_each",
+            "objects": {"binding": "pitched"},
+            "effects": [
+              {"op": "draw", "player": {"owner_of": "each"}, "amount": {"const": 1}}
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {"exists": {"binding": "pitched", "types": ["Creature"]}},
+            "then": [
+              {"op": "create_token", "token": "moogle_1_2_w_lifelink", "amount": {"const": 1}}
+            ]
+          },
+          {
+            "op": "if",
+            "condition": {"exists": {"binding": "pitched", "not_types": ["Creature"]}},
+            "then": [
+              {
+                "op": "add_counters",
+                "counter": "+1/+1",
+                "amount": {"const": 1},
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": ["Moogle"],
+                  "count": "all"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

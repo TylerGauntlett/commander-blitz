@@ -175642,12 +175642,12 @@
     },
     "Mog, Moogle Warrior": {
       "edhrec_rank": 7573,
-      "gate": "template",
+      "gate": null,
       "name": "Mog, Moogle Warrior",
-      "reason": "no template for: Dance — At the beginning of your end step, each player may discard a card. Each player who",
+      "reason": "",
       "scryfall_id": "f8ed092f-3a85-45d5-b986-2d400d6e1bad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mogg Alarm": {

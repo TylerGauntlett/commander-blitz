@@ -4065,6 +4065,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown gain_control duration {effect['duration']!r} "
                 f"(use 'until_end_of_turn' or 'permanent')"
             )
+    if op == "discard":
+        if "up_to" in effect and not isinstance(effect["up_to"], bool):
+            raise DslError(f"{where}: discard's 'up_to' is a boolean")
+        if effect.get("up_to") and effect.get("random"):
+            # Nobody is choosing, so there is no floor to relax -- and a card
+            # that printed both would be saying two different things about who
+            # decides.
+            raise DslError(
+                f"{where}: discard cannot be both 'random' and 'up_to' -- "
+                f"a random discard has no choice to make"
+            )
+        if "as" in effect and not isinstance(effect["as"], str):
+            raise DslError(f"{where}: discard's 'as' is a binding name")
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "create_token" and "controller" in effect:
@@ -4181,12 +4194,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # `up_to_if` (conditional, floor of one) between them could not say. The
         # name is `TargetSpec`'s, where it has meant the same thing since "up to
         # X target creatures".
-        if op != "choose_mode":
+        if op not in ("choose_mode", "discard"):
             raise DslError(
-                f"{where}: 'up_to' only means anything on choose_mode, not {op!r}"
+                f"{where}: 'up_to' only means anything on choose_mode or "
+                f"discard, not {op!r}"
             )
         if not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: 'up_to' is a boolean, got {effect['up_to']!r}")
+        if op == "discard":
+            # "Discard up to two cards" -- the same word doing the same job one
+            # op over: `amount` becomes a ceiling and the floor drops to zero.
+            # The mode-count checks below are `choose_mode`'s own and read
+            # `count`, which a discard does not have.
+            return
         count = effect.get("count", 1)
         if isinstance(count, dict) and "const" in count:
             count = count["const"]
