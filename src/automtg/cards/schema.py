@@ -155,7 +155,9 @@ class TargetModel(BaseModel):
     model_config = Strict
 
     id: str
-    kind: Literal["permanent", "player", "spell", "card_in_graveyard", "any"]
+    kind: Literal[
+        "permanent", "player", "spell", "card_in_graveyard", "card_in_exile", "any"
+    ]
     selector: dict[str, Any] = Field(default_factory=dict)
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.

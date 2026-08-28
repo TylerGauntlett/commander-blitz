@@ -71,6 +71,17 @@ def candidates(
             and _spell_matches(ctx, item, spec)
         ]
 
+    if spec.kind == "card_in_exile":
+        # Exile is kept per owner, so the selector says whose pile to walk the
+        # same way a graveyard spec does; the zone is supplied, because the kind
+        # already said it and a card writing something else would mean a target
+        # line whose name and whose pool disagree.
+        return [
+            TargetRef.obj(oid)
+            for oid in resolve_pool(ctx, {**dict(spec.selector), "zone": "exile"})
+            if can_be_targeted(state, controller, oid, source_oid=source_oid)
+        ]
+
     if spec.kind == "any":
         refs: list[TargetRef] = [
             TargetRef.obj(oid)
@@ -407,6 +418,22 @@ def still_legal(
         return False
     if spec.kind == "card_in_graveyard":
         return obj.zone is Zone.GRAVEYARD
+    if spec.kind == "card_in_exile":
+        # The zone **and** the selector, where `card_in_graveyard` above checks
+        # only the zone. Re-resolved rather than matched, because the clause
+        # this kind exists for is a *binding* -- "exiled this way" -- and
+        # `matches` has no answer for one: a binding names a pool rather than
+        # describing an object, so it is `resolve_pool` that knows. Running the
+        # same call `candidates` runs also makes the two agree by construction,
+        # which is the property that keeps a target from being offered here and
+        # refused there. The difference is what the two kinds are used for: a
+        # graveyard spec names a card by its printed face, which cannot change
+        # while it lies there, and an exile spec names one by where it came from
+        # -- "…a creature card **exiled this way**" -- which is a binding, and a
+        # binding is exactly the sort of clause 608.2b exists to re-ask.
+        return obj.zone is Zone.EXILE and ref.id in resolve_pool(
+            ctx, {**dict(spec.selector), "zone": "exile"}
+        )
     selector = dict(spec.selector)
     if spec.kind == "any" and "zone" not in selector:
         selector["zone"] = "battlefield"

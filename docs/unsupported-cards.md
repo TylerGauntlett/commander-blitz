@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**4 cards** blocked by **8** capabilities.
+**4 cards** blocked by **7** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
@@ -22,20 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
-
-## copy-card-in-exile
-
-Blocks **1** card.
-
-- **(selector)** targeting an individual card in exile that the same spell put there, as the source for a token copy -- 'up to one target creature card exiled this way'
-  <br>Why the existing vocabulary won't do: `exiled_with` filters to cards a source exiled and `optional` gives 'up to one', so the *filter* is sayable, but there is no way to bind it as a target: the target would have to be chosen after the exile happens, which is the reflexive trigger above. Without that, the target spec is evaluated on cast against an exile zone that does not yet contain the cards.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Espers to Magicite** (rank 6897) — `espers_to_magicite`
-  - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
-
-</details>
 
 ## copy-with-type-change
 

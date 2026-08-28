@@ -1775,6 +1775,24 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
         # target of the same card, and a card that tried would rather be told
         # so than load.
         _validate_player_spec(model.selector["controller"], f"{label}.controller", {})
+    zone = model.selector.get("zone")
+    if model.kind == "permanent" and zone not in (None, "battlefield"):
+        # A card in a graveyard, a hand or exile is not a permanent (110.1), and
+        # the kind is what the rest of the engine reads the target *by*. Left
+        # accepted, `candidates` would happily enumerate the other zone and the
+        # card would play correctly while calling the thing it targets something
+        # it is not -- which is the state a later reader of either half acts
+        # wrongly on. `card_in_graveyard` and `card_in_exile` are the spellings.
+        raise DslError(
+            f"{label}: a 'permanent' target is on the battlefield, not in {zone!r} "
+            f"-- use 'card_in_graveyard' or 'card_in_exile'"
+        )
+    if model.kind == "card_in_exile" and zone not in (None, "exile"):
+        raise DslError(f"{label}: a 'card_in_exile' target is in exile, not in {zone!r}")
+    if model.kind == "card_in_graveyard" and zone not in (None, "graveyard"):
+        raise DslError(
+            f"{label}: a 'card_in_graveyard' target is in a graveyard, not in {zone!r}"
+        )
     if isinstance(model.count, dict):
         validate_value(model.count, f"{label}.count")
     if model.up_to:
@@ -3521,7 +3539,9 @@ PLAYER_TARGET_KINDS = frozenset({"player", "any"})
 #: :data:`PLAYER_TARGET_KINDS` rather than a list of its own, and deliberately
 #: so: exactly one of the two keys is right for any given target spec, which is
 #: what makes the pair a checkable choice instead of two ways to be wrong.
-CONTROLLED_TARGET_KINDS = frozenset({"permanent", "spell", "card_in_graveyard"})
+CONTROLLED_TARGET_KINDS = frozenset(
+    {"permanent", "spell", "card_in_graveyard", "card_in_exile"}
+)
 
 
 def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
