@@ -158,6 +158,13 @@ class TargetModel(BaseModel):
     kind: Literal[
         "permanent", "player", "spell", "card_in_graveyard", "card_in_exile", "any"
     ]
+    #: "…any number of target creature cards **with total mana value 6 or
+    #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
+    #: on each of them: no selector clause can say it, because every clause is
+    #: evaluated against one candidate in isolation and `mana_value: {"op":
+    #: "<=", "value": 6}` is a different and much wider card -- six one-drops
+    #: pass it and are six mana of creatures.
+    total_mana_value: int | None = None
     selector: dict[str, Any] = Field(default_factory=dict)
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.

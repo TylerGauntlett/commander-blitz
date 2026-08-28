@@ -1835,6 +1835,23 @@ def _compile_target(
         _validate_player_spec(
             model.selector["controller"], f"{label}.controller", dict(siblings or {})
         )
+    if model.total_mana_value is not None:
+        if model.total_mana_value < 1:
+            # A cap of zero is a spec that can only ever choose nothing, which
+            # is a target line that reads as though it did something.
+            raise DslError(
+                f"{label}: 'total_mana_value' is a cap on the picks together, "
+                f"so {model.total_mana_value} would allow nothing to be chosen"
+            )
+        if model.kind in ("player", "spell"):
+            # A player has no mana value, and a spell's is the one thing about
+            # it that is already on the stack -- neither card exists, and the
+            # clause would be read against zero for every candidate.
+            raise DslError(
+                f"{label}: 'total_mana_value' caps the mana value of the objects "
+                f"chosen, which a {model.kind!r} target does not have"
+            )
+
     zone = model.selector.get("zone")
     if model.kind == "permanent" and zone not in (None, "battlefield"):
         # A card in a graveyard, a hand or exile is not a permanent (110.1), and
@@ -1885,6 +1902,7 @@ def _compile_target(
         up_to=model.up_to,
         one_per_player=model.one_per_player,
         optional=model.optional,
+        total_mana_value=model.total_mana_value,
         mode=model.mode,
     )
 

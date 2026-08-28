@@ -4203,6 +4203,39 @@ Needs `count: "any"`; refused at load time otherwise, because on a fixed-size
 spec the cap either changes nothing or makes the spec unsatisfiable, and both
 are silent.
 
+## "…with total mana value 6 or less" — a cap on the picks together
+
+Phoenix, Warden of Fire's third chapter:
+
+```jsonc
+{ "id": "t1", "kind": "card_in_graveyard", "count": "any",
+  "total_mana_value": 6,
+  "selector": { "zone": "graveyard", "controller": "you",
+                "types": ["Creature"] } }
+```
+
+**No selector clause can say it.** Every clause in `matches` is evaluated
+against one candidate in isolation, so `mana_value: {"op": "<=", "value": 6}`
+says "*each* of these costs six or less" — a far wider card, and one that looks
+right until somebody reanimates six one-drops for six mana of creatures.
+
+So it lives where the *combinations* are built, in the same slot
+`one_per_player` occupies and for the same reason: both are facts about a set of
+chosen objects rather than about any one of them. Every subset that would exceed
+the cap is simply never offered.
+
+Read off the **printed** cost, which is all a card in a graveyard has — nothing
+is applying to it, and an X in a mana cost is 0 anywhere but on the stack
+(202.3b).
+
+**Not re-checked on resolution.** 608.2b asks whether each target is still legal
+one at a time; the total was a condition on the *choice*, and a spell whose
+targets have partly gone does not have its arithmetic redone.
+
+A cap of zero is refused — a spec that can only ever choose nothing, printed as
+though it chose something — as is one on a `player` or `spell` target, neither
+of which has a mana value for it to add up.
+
 ## "Any number of target creatures"
 
 ```jsonc

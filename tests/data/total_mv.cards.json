@@ -1,0 +1,41 @@
+{
+  "_comment": "Cards that exist only for the total-mana-value test (tests/unit/test_total_mana_value.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_flames_of_rebirth` is Phoenix, Warden of Fire's third chapter: a cap on the picks TOGETHER. `t_each_six` is the counterfactual -- the same line read as a cap on each of them, which is what a selector clause can say and is a much wider card.",
+  "cards": [
+    {
+      "id": "t_flames_of_rebirth",
+      "name": "Test Flames of Rebirth",
+      "oracle_text": "Return any number of target creature cards with total mana value 6 or less from your graveyard to the battlefield.",
+      "mana_cost": "{4}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": "any",
+         "total_mana_value": 6,
+         "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "return_from_graveyard", "destination": "battlefield",
+         "controller": "you", "objects": {"target": "t1"}}
+      ]
+    },
+    {
+      "id": "t_each_six",
+      "name": "Test Each Six",
+      "oracle_text": "Return any number of target creature cards with mana value 6 or less from your graveyard to the battlefield.",
+      "mana_cost": "{4}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": "any",
+         "selector": {"zone": "graveyard", "controller": "you", "types": ["Creature"],
+                      "mana_value": {"op": "<=", "value": {"const": 6}}}}
+      ],
+      "spell_effects": [
+        {"op": "return_from_graveyard", "destination": "battlefield",
+         "controller": "you", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

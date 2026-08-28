@@ -41213,6 +41213,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "up_to": true
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Joshua enters, discard up to two cards, then draw that many cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{R}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "face": "back",
+              "objects": {
+                "self_only": true
+              },
+              "op": "exile_and_return"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery."
+        }
+      ],
+      "back_face": "phoenix_warden_of_fire",
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "joshua_phoenix_s_dominant_phoenix_warden_of_fire",
+      "mana_cost": "{2}{R}{W}",
+      "name": "Joshua, Phoenix's Dominant // Phoenix, Warden of Fire",
+      "oracle_text": "When Joshua enters, discard up to two cards, then draw that many cards.\n{3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -58822,6 +58898,104 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II — Rising Flames — Phoenix deals 2 damage to each opponent."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II — Rising Flames — Phoenix deals 2 damage to each opponent."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "face": "front",
+              "objects": {
+                "self_only": true
+              },
+              "op": "exile_and_return"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "total_mana_value": 6
+            }
+          ],
+          "text": "III — Flames of Rebirth — Return any number of target creature cards with total mana value 6 or less from your graveyard to the battlefield. Exile Phoenix, then return it to the battlefield (front face up)."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "phoenix_warden_of_fire",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "name": "Phoenix, Warden of Fire",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Rising Flames — Phoenix deals 2 damage to each opponent.\nIII — Flames of Rebirth — Return any number of target creature cards with total mana value 6 or less from your graveyard to the battlefield. Exile Phoenix, then return it to the battlefield (front face up).\nFlying, lifelink",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Phoenix"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {
