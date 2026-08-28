@@ -205162,12 +205162,12 @@
     },
     "Priest of Fell Rites": {
       "edhrec_rank": 2622,
-      "gate": "template",
+      "gate": null,
       "name": "Priest of Fell Rites",
-      "reason": "no template for: {T}, Pay 3 life, Sacrifice this creature: Return target creature card from your graveyard ",
+      "reason": "",
       "scryfall_id": "1131c841-d736-4c97-9c80-7e61fa30079d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of Forgotten Gods": {

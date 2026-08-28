@@ -5360,6 +5360,10 @@
   "prideful_feastling": {
     "zone": "battlefield"
   },
+  "priest_of_fell_rites": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "priest_of_titania": {
     "zone": "battlefield"
   },

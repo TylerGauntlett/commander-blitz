@@ -315,7 +315,7 @@
     {
       "id": "t_imprinter",
       "name": "Test Imprinting Foundry",
-      "oracle_text": "Imprint \u2014 When this artifact enters, you may exile a creature card from your hand.\n{3}, {T}: Create a token that's a copy of the exiled card.",
+      "oracle_text": "Imprint — When this artifact enters, you may exile a creature card from your hand.\n{3}, {T}: Create a token that's a copy of the exiled card.",
       "mana_cost": "{4}",
       "types": [
         "Artifact"
@@ -528,7 +528,7 @@
         },
         {
           "kind": "static",
-          "text": "\u2026both creatures get +1/+1.",
+          "text": "…both creatures get +1/+1.",
           "effect": "buff",
           "affects": {
             "paired": true
@@ -542,7 +542,7 @@
         },
         {
           "kind": "static",
-          "text": "\u2026both creatures get +1/+1.",
+          "text": "…both creatures get +1/+1.",
           "effect": "buff",
           "affects": {
             "paired_with_source": true
@@ -989,7 +989,7 @@
     {
       "id": "t_join_forces",
       "name": "Test Shared Draw",
-      "oracle_text": "Join forces \u2014 Starting with you, each player may pay any amount of mana. Draw a card for each mana paid this way.",
+      "oracle_text": "Join forces — Starting with you, each player may pay any amount of mana. Draw a card for each mana paid this way.",
       "mana_cost": "{1}{U}",
       "types": [
         "Sorcery"
@@ -1320,7 +1320,7 @@
     {
       "id": "t_bloodrusher",
       "name": "Test Bloodrusher",
-      "oracle_text": "Bloodrush \u2014 {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
+      "oracle_text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
       "mana_cost": "{2}{R}",
       "types": [
         "Creature"
@@ -1333,7 +1333,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "Bloodrush \u2014 {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
+          "text": "Bloodrush — {1}{R}, Discard Test Bloodrusher: Target attacking creature gets +3/+1 until end of turn.",
           "active_zones": [
             "hand"
           ],
@@ -1617,7 +1617,7 @@
     {
       "id": "t_channeler",
       "name": "Test Channeler",
-      "oracle_text": "Channel \u2014 {1}{G}, Discard Test Channeler: You gain 3 life.",
+      "oracle_text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
       "mana_cost": "{3}{G}",
       "types": [
         "Creature"
@@ -1630,7 +1630,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "Channel \u2014 {1}{G}, Discard Test Channeler: You gain 3 life.",
+          "text": "Channel — {1}{G}, Discard Test Channeler: You gain 3 life.",
           "active_zones": [
             "hand"
           ],
@@ -3112,7 +3112,7 @@
     {
       "id": "t_escapist",
       "name": "Test Escapist",
-      "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape\u2014{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape—{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
       "mana_cost": "{2}{R}",
       "types": [
         "Instant"
@@ -3938,7 +3938,7 @@
     {
       "id": "t_hero",
       "name": "Test Hero",
-      "oracle_text": "Heroic \u2014 Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
+      "oracle_text": "Heroic — Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
       "mana_cost": "{1}{W}",
       "types": [
         "Creature"
@@ -3952,7 +3952,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Heroic \u2014 Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
+          "text": "Heroic — Whenever you cast a spell that targets Test Hero, put a +1/+1 counter on it.",
           "trigger": {
             "event": "becomes_target",
             "source": "self",
@@ -4051,7 +4051,7 @@
     {
       "id": "t_inspired",
       "name": "Test Inspired",
-      "oracle_text": "Inspired \u2014 Whenever Test Inspired becomes untapped, draw a card.",
+      "oracle_text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
       "mana_cost": "{2}{U}",
       "types": [
         "Creature"
@@ -4064,7 +4064,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Inspired \u2014 Whenever Test Inspired becomes untapped, draw a card.",
+          "text": "Inspired — Whenever Test Inspired becomes untapped, draw a card.",
           "trigger": {
             "event": "becomes_untapped",
             "source": "self"
@@ -5176,7 +5176,7 @@
     {
       "id": "t_scythe",
       "name": "Test Scythe Cat",
-      "oracle_text": "Landfall \u2014 Whenever a land you control enters, put a +1/+1 counter on this creature. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on this creature instead.",
+      "oracle_text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on this creature instead.",
       "mana_cost": "{1}{G}",
       "types": [
         "Creature"
@@ -5189,7 +5189,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Landfall \u2014 Whenever a land you control enters, put a +1/+1 counter on this creature. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on this creature instead.",
+          "text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on this creature. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on this creature instead.",
           "trigger": {
             "event": "permanent_enters",
             "controller": "you",
@@ -5686,7 +5686,7 @@
     {
       "id": "t_threshold_bear",
       "name": "Test Threshold Bear",
-      "oracle_text": "Threshold \u2014 Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
+      "oracle_text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
       "mana_cost": "{1}{G}",
       "types": [
         "Creature"
@@ -5699,7 +5699,7 @@
       "abilities": [
         {
           "kind": "static",
-          "text": "Threshold \u2014 Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
+          "text": "Threshold — Test Threshold Bear gets +2/+2 as long as there are seven or more cards in your graveyard.",
           "effect": "buff",
           "affects": {
             "self_only": true
@@ -6125,7 +6125,7 @@
     {
       "id": "t_forecaster",
       "name": "Test Forecast Sphinx",
-      "oracle_text": "Forecast \u2014 {1}{U}, Reveal this card from your hand: You gain 2 life. (Activate only during your upkeep and only once each turn.)",
+      "oracle_text": "Forecast — {1}{U}, Reveal this card from your hand: You gain 2 life. (Activate only during your upkeep and only once each turn.)",
       "mana_cost": "{3}{U}",
       "types": [
         "Creature"
@@ -6138,7 +6138,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "Forecast \u2014 {1}{U}, Reveal this card from your hand: You gain 2 life. (Activate only during your upkeep and only once each turn.)",
+          "text": "Forecast — {1}{U}, Reveal this card from your hand: You gain 2 life. (Activate only during your upkeep and only once each turn.)",
           "active_zones": [
             "hand"
           ],
@@ -6786,7 +6786,7 @@
     {
       "id": "t_kinship",
       "name": "Test Kinship Ox",
-      "oracle_text": "Kinship \u2014 At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",
+      "oracle_text": "Kinship — At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",
       "mana_cost": "{2}{G}",
       "types": [
         "Creature"
@@ -6799,7 +6799,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "Kinship \u2014 At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",
+          "text": "Kinship — At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",
           "trigger": {
             "event": "upkeep",
             "controller": "you"
@@ -6966,7 +6966,7 @@
     {
       "id": "t_unearther",
       "name": "Test Unearthed Zombie",
-      "oracle_text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. Unearth only as a sorcery.)",
+      "oracle_text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
       "mana_cost": "{2}{B}",
       "types": [
         "Creature"
@@ -6979,7 +6979,7 @@
       "abilities": [
         {
           "kind": "activated",
-          "text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. Unearth only as a sorcery.)",
+          "text": "Unearth {1}{B} ({1}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
           "active_zones": [
             "graveyard"
           ],
@@ -6993,6 +6993,14 @@
               "controller": "you",
               "objects": {
                 "zone": "graveyard",
+                "self_only": true
+              }
+            },
+            {
+              "op": "replace_leaves_battlefield",
+              "destination": "exile",
+              "objects": {
+                "zone": "battlefield",
                 "self_only": true
               }
             },
@@ -7026,7 +7034,7 @@
     {
       "id": "t_entwiner",
       "name": "Test Entwine",
-      "oracle_text": "Choose one \u2014\n\u2022 Draw a card.\n\u2022 You gain 3 life.\nEntwine {2} (Choose both if you pay the entwine cost.)",
+      "oracle_text": "Choose one —\n• Draw a card.\n• You gain 3 life.\nEntwine {2} (Choose both if you pay the entwine cost.)",
       "mana_cost": "{1}{G}",
       "kicker": "{2}",
       "kicker_label": "entwine",
@@ -7189,7 +7197,7 @@
     {
       "id": "t_chroma_hulk",
       "name": "Test Primalcrux",
-      "oracle_text": "Chroma \u2014 Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",
+      "oracle_text": "Chroma — Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",
       "mana_cost": "{G}{G}{G}{G}",
       "types": [
         "Creature"
@@ -7202,7 +7210,7 @@
       "abilities": [
         {
           "kind": "static",
-          "text": "Chroma \u2014 Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",
+          "text": "Chroma — Test Primalcrux's power and toughness are each equal to the number of green mana symbols in the mana costs of permanents you control.",
           "effect": "set_pt",
           "affects": {
             "self_only": true
@@ -8728,7 +8736,7 @@
     {
       "id": "t_henrika",
       "name": "Test Henrika",
-      "oracle_text": "At the beginning of combat on your turn, choose one that hasn't been chosen \u2014\n\u2022 You gain 1 life.\n\u2022 You draw a card and you lose 1 life.",
+      "oracle_text": "At the beginning of combat on your turn, choose one that hasn't been chosen —\n• You gain 1 life.\n• You draw a card and you lose 1 life.",
       "mana_cost": "{2}{B}",
       "types": [
         "Creature"
@@ -8747,7 +8755,7 @@
       "abilities": [
         {
           "kind": "triggered",
-          "text": "At the beginning of combat on your turn, choose one that hasn't been chosen \u2014",
+          "text": "At the beginning of combat on your turn, choose one that hasn't been chosen —",
           "trigger": {
             "event": "begin_combat",
             "controller": "you"
@@ -10546,7 +10554,7 @@
     {
       "id": "t_ward_sacrifice",
       "name": "Test Ward Sacrifice",
-      "oracle_text": "Ward\u2014Sacrifice a creature. (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player sacrifices a creature.)",
+      "oracle_text": "Ward—Sacrifice a creature. (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player sacrifices a creature.)",
       "mana_cost": "{2}{B}",
       "types": [
         "Creature"
@@ -10562,7 +10570,7 @@
       "abilities": [
         {
           "kind": "static",
-          "text": "Ward\u2014Sacrifice a creature.",
+          "text": "Ward—Sacrifice a creature.",
           "effect": "ward",
           "affects": {
             "self_only": true
@@ -10752,7 +10760,7 @@
     {
       "id": "t_addendum",
       "name": "Test Addendum",
-      "oracle_text": "Creatures you control gain indestructible until end of turn.\nAddendum \u2014 If you cast this spell during your main phase, put a +1/+1 counter on each of those creatures and they gain vigilance until end of turn.",
+      "oracle_text": "Creatures you control gain indestructible until end of turn.\nAddendum — If you cast this spell during your main phase, put a +1/+1 counter on each of those creatures and they gain vigilance until end of turn.",
       "mana_cost": "{1}{W}",
       "types": [
         "Instant"
@@ -10817,7 +10825,7 @@
     {
       "id": "t_saga",
       "name": "Test Saga",
-      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI \u2014 Draw a card.\nII \u2014 You gain 2 life.\nIII \u2014 Create a 1/1 white Human Soldier creature token.",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Draw a card.\nII — You gain 2 life.\nIII — Create a 1/1 white Human Soldier creature token.",
       "mana_cost": "{2}{W}",
       "types": [
         "Enchantment"
@@ -10835,7 +10843,7 @@
         {
           "kind": "chapter",
           "chapter": 1,
-          "text": "I \u2014 Draw a card.",
+          "text": "I — Draw a card.",
           "effects": [
             {
               "op": "draw",
@@ -10849,7 +10857,7 @@
         {
           "kind": "chapter",
           "chapter": 2,
-          "text": "II \u2014 You gain 2 life.",
+          "text": "II — You gain 2 life.",
           "effects": [
             {
               "op": "gain_life",
@@ -10863,7 +10871,7 @@
         {
           "kind": "chapter",
           "chapter": 3,
-          "text": "III \u2014 Create a 1/1 white Human Soldier creature token.",
+          "text": "III — Create a 1/1 white Human Soldier creature token.",
           "effects": [
             {
               "op": "create_token",
@@ -10880,7 +10888,7 @@
     {
       "id": "t_saga_one_chapter",
       "name": "Test One-Chapter Saga",
-      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after I.)\nI \u2014 Draw a card.",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after I.)\nI — Draw a card.",
       "mana_cost": "{W}",
       "types": [
         "Enchantment"
@@ -10898,7 +10906,7 @@
         {
           "kind": "chapter",
           "chapter": 1,
-          "text": "I \u2014 Draw a card.",
+          "text": "I — Draw a card.",
           "effects": [
             {
               "op": "draw",
@@ -10914,7 +10922,7 @@
     {
       "id": "t_saga_unfinished",
       "name": "Test Unfinished Saga",
-      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI \u2014 Draw a card.",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Draw a card.",
       "mana_cost": "{W}",
       "types": [
         "Enchantment"
@@ -10933,7 +10941,7 @@
         {
           "kind": "chapter",
           "chapter": 1,
-          "text": "I \u2014 Draw a card.",
+          "text": "I — Draw a card.",
           "effects": [
             {
               "op": "draw",
@@ -11868,7 +11876,7 @@
     {
       "id": "t_modal_recall",
       "name": "Test Modal Recall",
-      "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n\u2022 Target artifact card.\n\u2022 Target creature card.\n\u2022 Target enchantment card.\n\u2022 Target land card.",
+      "oracle_text": "Choose up to two. Return those cards from your graveyard to your hand.\n• Target artifact card.\n• Target creature card.\n• Target enchantment card.\n• Target land card.",
       "mana_cost": "{1}{G}",
       "types": [
         "Sorcery"
@@ -11986,7 +11994,7 @@
     {
       "id": "t_modal_one_recall",
       "name": "Test Modal One Recall",
-      "oracle_text": "Choose one. Return that card from your graveyard to your hand.\n\u2022 Target artifact card.\n\u2022 Target enchantment card.",
+      "oracle_text": "Choose one. Return that card from your graveyard to your hand.\n• Target artifact card.\n• Target enchantment card.",
       "mana_cost": "{G}",
       "types": [
         "Sorcery"

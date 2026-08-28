@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**14 cards** blocked by **28** capabilities.
+**13 cards** blocked by **27** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
-| [unearth](#unearth) | 1 | 2622 | replacement |
 
 ## cast-from-graveyard
 
@@ -461,19 +460,5 @@ Blocks **1** card.
 
 - **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
   - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
-
-## unearth
-
-Blocks **1** card.
-
-- **(replacement)** a self-scoped, duration-bounded replacement of a permanent's *leave-the-battlefield* zone change -- "if this permanent would leave the battlefield, exile it instead" -- that fires for every destination (graveyard, hand, exile, library, command zone), not only for a death, and that is installed by the resolving unearth ability on the card it just returned and lasts as long as that permanent is on the battlefield
-  <br>Why the existing vocabulary won't do: `replace_deaths` is the only op in `ops` that redirects a zone change, and `zones.move_object` gates it on `from_zone is BATTLEFIELD and to_zone is GRAVEYARD` (src/automtg/engine/zones.py:95-99) -- so it catches a death and nothing else. Unearth's clause is the *whole* leave-the-battlefield event: bounced to hand, exiled by removal, shuffled into the library, sent to the command zone. Substituting `replace_deaths` is not a rounding error on this card, it is the card's central loop: this Priest's own ability sacrifices itself, and the printed replacement is what makes that a one-way trip. Modelled as death-only, an opponent's bounce or exile still leaves a card that can be unearthed again; modelled not at all (the engine's currently documented unearth divergence, docs/rules-coverage.md line 99, which pairs a `put_onto_battlefield` of `self_only` with `grant_keyword` haste and a `delay`ed `exile`), the sacrifice puts the Priest straight back in the graveyard to be unearthed again next turn, making it an unbounded reanimation engine the printed card explicitly forbids. `delay` cannot say it either: a delayed trigger fires at a named step, and this has to fire the moment the permanent would move, before it lands anywhere. `until_leaves` is the opposite link -- it declares a return, not an interception -- and `static_effects` carries only `replace_token_creation`, which docs/rules-coverage.md line 182 states is deliberately not the start of a general replacement system.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Priest of Fell Rites** (rank 2622) — `priest_of_fell_rites`
-  - Unearth {3}{W}{B} ({3}{W}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)
 
 </details>

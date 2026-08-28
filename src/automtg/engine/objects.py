@@ -97,6 +97,19 @@ class GameObject:
     #: `reset_permanent_state`, so it cannot ride the card out of the zone it
     #: was redirected into.
     dies_to: str | None = None
+    #: "Exile it ... **if it would leave the battlefield**" -- unearth, and
+    #: embalm's cousins. A zone name replacing this permanent's destination
+    #: whichever way it leaves: destroyed, sacrificed, bounced to hand, exiled
+    #: by removal, shuffled into a library, sent to the command zone.
+    #:
+    #: Deliberately **not** `dies_to` with a wider gate, because the lifetimes
+    #: differ and that is the whole point. `dies_to` is turn-scoped -- "would
+    #: die **this turn**" -- and is cleared at cleanup. This one lasts exactly
+    #: as long as the permanent is on the battlefield, so it is cleared only by
+    #: `reset_permanent_state`, on the zone change that consumes it. An unearth
+    #: replacement that expired at end of turn would let the card be unearthed
+    #: again next turn, which is the loop the printed clause exists to close.
+    leaves_to: str | None = None
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
@@ -549,6 +562,7 @@ class GameObject:
         self.cloaked = False
         self.until_eot = []
         self.dies_to = None
+        self.leaves_to = None
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the
         # rules are concerned, so it is no longer renowned either.
