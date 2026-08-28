@@ -453,7 +453,12 @@ class ReplacementModel(BaseModel):
 
     model_config = Strict
 
-    event: Literal["self_enters", "self_enters_tapped", "self_enters_with_counters"]
+    event: Literal[
+        "self_enters",
+        "self_enters_tapped",
+        "self_enters_with_counters",
+        "self_enters_prepared",
+    ]
     modify: dict[str, Any] = Field(default_factory=dict)
     counter: str | None = None
     #: How many, as a plain integer or a **value expression** -- "enters with a
@@ -540,6 +545,12 @@ class CardModel(BaseModel):
     #: cast from hand; an **Aftermath** half may be cast *only* from the
     #: graveyard (702.127a), which is the whole of what that keyword says.
     second_face_zone: Literal["hand", "graveyard"] = "hand"
+    #: The card id of the **spell** a prepared permanent may cast a copy of --
+    #: "While it's prepared, you may cast a copy of its spell" (Emeritus of Woe
+    #: // Demonic Tutor). Its own field rather than a third `second_face_zone`
+    #: value: casting a second face takes the object out of its zone, and this
+    #: leaves the permanent where it is and puts a copy on the stack.
+    prepared_face: str | None = None
     #: **Fuse** (702.102a): "You may cast one or both halves of this card from
     #: your hand." The third cast line on a split card, and the only one that is
     #: **one spell made of two faces** -- both costs paid together, both halves'

@@ -585,6 +585,21 @@ class GameObject:
     #: `reset_permanent_state` on the way, which clears this for the reason it
     #: clears `exiled_by` -- a card that has since left exile came from nowhere.
     exiled_from: str | None = None
+    #: **Prepared** (Emeritus of Woe // Demonic Tutor). "This creature enters
+    #: prepared. (While it's prepared, you may cast a copy of its spell. Doing
+    #: so unprepares it.)"
+    #:
+    #: A state on the permanent and not a counter, because the reminder text is
+    #: the whole of the mechanic and says nothing about a number: a permanent is
+    #: prepared or it is not, and preparing an already-prepared one changes
+    #: nothing. It is not `flags` either -- a flag is inert bookkeeping, and
+    #: this is read by the casting-permission path.
+    #:
+    #: Cleared by `reset_permanent_state`, so a permanent that left the
+    #: battlefield and came back is not still prepared: 400.7 makes it a new
+    #: object, and the printed line is what puts the state on in the first
+    #: place.
+    prepared: bool = False
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
@@ -642,6 +657,7 @@ class GameObject:
         self.playable_group = None
         self.playable_any_type = False
         self.exiled_from = None
+        self.prepared = False
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield

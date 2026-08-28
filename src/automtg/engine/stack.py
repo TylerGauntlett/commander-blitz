@@ -61,9 +61,14 @@ def push_spell(
 
     # Removed by hand rather than via move_object: a spell going on the stack must
     # not fire leave-the-zone triggers or reset the state we are about to set.
-    source_list = state.players[obj.owner].zone_list(obj.zone)
-    if oid in source_list:
-        source_list.remove(oid)
+    #
+    # A spell that was **made** on the stack has no zone to leave -- a prepared
+    # permanent's copy is created there, and the battlefield the permanent is
+    # still standing on is not a player-owned list anyway.
+    if obj.zone not in (Zone.STACK, Zone.BATTLEFIELD):
+        source_list = state.players[obj.owner].zone_list(obj.zone)
+        if oid in source_list:
+            source_list.remove(oid)
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND

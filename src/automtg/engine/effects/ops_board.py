@@ -265,6 +265,33 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.exiled_by = ctx.source_oid
 
 
+@register("become_prepared")
+def op_become_prepared(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"This creature **becomes prepared**." Emeritus of Woe // Demonic Tutor.
+
+    The turning-on half of the state; the turning-off is the rules' own -- "you
+    may cast a copy of its spell. **Doing so unprepares it**" is reminder text,
+    so `Game._cast` clears it and no card ever writes that.
+
+    **Not `set_flag`.** A flag is inert bookkeeping -- renown is stored that way
+    -- and nothing in the casting-permission path reads `obj.flags`, so a
+    permanent flagged "prepared" would gain no ability to cast anything and the
+    card would silently do nothing. `set_flag` also has no counterpart that
+    clears one, and `set_turn_flag` expires at the turn boundary rather than on
+    use, which is a different card again: prepared survives until it is spent.
+
+    **Not a counter**, either. The reminder text is the whole of the mechanic
+    and says nothing about a number: a permanent is prepared or it is not, and
+    preparing an already-prepared one changes nothing.
+    """
+    for oid in resolve_pool(ctx, spec.get("objects")):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.prepared = True
+    ctx.state.bump_chars()
+
+
 @register("exile_and_return")
 def op_exile_and_return(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Exile it, then return it to the battlefield **transformed** under its

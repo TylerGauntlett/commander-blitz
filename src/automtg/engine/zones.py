@@ -432,6 +432,16 @@ def _enter_battlefield(
             state, replacement.get("condition"), controller=obj.controller, source=obj.oid
         ):
             continue
+        if event == "self_enters_prepared":
+            # "This creature **enters prepared**." A characteristic of the
+            # arrival, in the slot enters-tapped occupies, and not a trigger:
+            # the permanent is never seen unprepared, so nothing can respond in
+            # the window between its arriving and its state being set -- and
+            # `self_enters` triggers reading `has_prepared` would answer
+            # differently depending on which of them the controller ordered
+            # first.
+            obj.prepared = True
+            continue
         if event == "self_enters_tapped" or (
             event == "self_enters" and replacement.get("modify", {}).get("tapped")
         ):

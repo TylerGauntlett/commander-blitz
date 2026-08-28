@@ -39,14 +39,15 @@ PAYLOADS = _auto_payloads()
 
 #: The second entries of two-faced cards, by id -- both links. `back_face` is a
 #: transforming card's other side and `second_face` is a modal DFC's, a split
-#: half or an Adventure; either way the entry is not a card in its own right. It
+#: half, an Adventure, or the spell half of a prepared creature; either way the
+#: entry is not a card in its own right. It
 #: is never drawn or shuffled into a deck on its own, it has no expectation --
 #: there is no position to cast it in by itself -- and it is checked *through*
 #: its front, which names it as a companion below.
 BACK_FACE_IDS = frozenset(
     str(c[key])
     for c in PAYLOADS
-    for key in ("back_face", "second_face")
+    for key in ("back_face", "second_face", "prepared_face")
     if c.get(key)
 )
 
@@ -78,7 +79,7 @@ class TestEveryAutoCardStillPasses:
         # pointing at a card that is not in the pool.
         companions = [
             by_id[str(payload[key])]
-            for key in ("back_face", "second_face")
+            for key in ("back_face", "second_face", "prepared_face")
             if payload.get(key) and str(payload[key]) in by_id
         ]
         verdict = V.verify(payload, expectation, hand_written, companions=companions)

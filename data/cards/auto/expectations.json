@@ -2059,6 +2059,9 @@
     },
     "zone": "graveyard"
   },
+  "emeritus_of_woe_demonic_tutor": {
+    "zone": "battlefield"
+  },
   "endurance_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"

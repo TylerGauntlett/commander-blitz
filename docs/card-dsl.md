@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-106 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+107 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -195,7 +195,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
@@ -3807,6 +3807,62 @@ sentence. Neither fails any other check — the ability compiles cleanly and the
 op is a known name — so `_check_reflexive_wiring` is the only place either can
 be caught. `id` is required on a reflexive ability and refused on every other
 kind.
+
+## Prepared
+
+Emeritus of Woe // Demonic Tutor — *"This creature enters prepared. (While it's
+prepared, you may cast a copy of its spell. Doing so unprepares it.)"*
+
+```jsonc
+{ "id": "emeritus_of_woe_demonic_tutor", "...": "...",
+  "prepared_face": "demonic_tutor",
+  "replacements": [{ "event": "self_enters_prepared" }],
+  "abilities": [
+    { "kind": "triggered", "trigger": { "event": "end_step", "controller": "you" },
+      "condition": { "cmp": ">=",
+                     "left": { "creatures_died_this_turn": "all" },
+                     "right": { "const": 2 } },
+      "effects": [{ "op": "become_prepared", "objects": { "self_only": true } }] }
+  ] }
+```
+
+A state on the permanent that **is** a casting permission. Three near misses,
+each one step off:
+
+| | what it is | why it is not this |
+|---|---|---|
+| `second_face` | a card with a second castable half | casting one takes the object *out of its zone*; a prepared permanent stays |
+| `set_flag` | a word written on a permanent | inert bookkeeping — nothing in the casting path reads `obj.flags`, so the card would do nothing |
+| a counter | a number | the mechanic has no number: a permanent is prepared or it is not |
+
+`set_turn_flag` is a fourth and is a different card again: it expires at the
+turn boundary, and prepared survives until it is *spent*.
+
+**One card, two objects**, which no other face relationship in the engine has:
+the permanent stays on the battlefield and a **copy** goes on the stack. The
+copy is a token, which is what makes it cease to exist afterwards (111.7)
+instead of putting a card in a graveyard that Emeritus is not in.
+
+`prepared_face` gets the same derived `parent_face` back-link a second face
+gets, and for the same reason: the entry is a *face*, not a card anybody owns,
+so it must not be shufflable into a deck.
+
+**Entering prepared is a replacement**, in the slot `self_enters_tapped`
+occupies, not a trigger. The permanent is never seen unprepared, so nothing can
+respond in the window between its arriving and its state being set — and two
+`self_enters` triggers reading the state would answer differently depending on
+the order their controller put them on the stack.
+
+**The cast is offered from the battlefield**, which no other cast line is: every
+zone `_cast_actions` walks is one the spell then leaves, so this is its own walk
+rather than another entry in that list. Priced, timed and targeted off the spell
+face, the way an Adventure half is — Demonic Tutor is a sorcery whatever the
+creature printing it is.
+
+`become_prepared` only turns the state **on**. "Doing so unprepares it" is the
+rules' own sentence printed as reminder text, so `Game._cast` clears it and no
+card writes that — which is also why the permission needs no rate limit: it is
+spent by being used.
 
 ## Sagas
 

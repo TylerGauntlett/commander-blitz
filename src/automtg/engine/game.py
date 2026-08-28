@@ -292,7 +292,13 @@ class Game:
         # object must not start showing that face until the spell is actually on
         # the stack, because every `return` between here and `push_spell` is a
         # cast that did not happen.
-        if action.second_face and card.second_face is not None:
+        if action.prepared and card.prepared_face is not None:
+            # "…you may cast **a copy of its spell**." The face is what is being
+            # cast, so everything below -- price, X, modes, targets, purpose --
+            # is read off it, exactly as it is for a second face. What differs
+            # comes later, at `push_spell`: the permanent stays where it is.
+            card = state.registry.get(card.prepared_face)
+        elif action.second_face and card.second_face is not None:
             card = state.registry.get(card.second_face)
         # Fused: one spell whose cost, targets and effects are both halves'.
         # Built here the same way legality built it to price the line, so the
@@ -558,6 +564,31 @@ class Game:
                     if source_obj.oid == granting.oid and static.get("enters_tapped"):
                         enters_tapped = True
                         break
+
+        if action.prepared:
+            # A **copy**, and the permanent stays on the battlefield -- the one
+            # cast in the engine that does not move the object it names. So the
+            # spell is a fresh token object of the spell face, which is also
+            # what makes it vanish correctly on resolution (110.5g): a copy of a
+            # sorcery goes to a graveyard that then empties itself of it, and
+            # Emeritus is not the card that went there.
+            #
+            # "Doing so **unprepares it**" is the rules' own sentence, printed
+            # as reminder text, so it happens here rather than on the card. It
+            # happens *after* the cost is paid and everything is chosen: a cast
+            # that was abandoned mid-payment has not been made, and the
+            # permission is spent by using it.
+            obj.prepared = False
+            spell = new_object(
+                state,
+                card.id,
+                owner=pid,
+                zone=Zone.STACK,
+                controller=pid,
+                is_token=True,
+            )
+            oid = spell.oid
+            state.bump_chars()
 
         item = stack.push_spell(
             state,
