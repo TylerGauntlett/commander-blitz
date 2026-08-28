@@ -1,0 +1,25 @@
+{
+  "card_id": "mog_moogle_warrior",
+  "name": "Mog, Moogle Warrior",
+  "oracle_text": "Lifelink\nDance — At the beginning of your end step, each player may discard a card. Each player who discarded a card this way draws a card. If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink. Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.",
+  "blocked_sentences": [
+    "If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.",
+    "Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control."
+  ],
+  "needs": [
+    {
+      "capability": "discarded_this_way",
+      "kind": "value",
+      "what": "a condition/value leaf that names the cards discarded during this ability's own resolution and filters them by card type, so an `if` can ask \"was a creature card discarded this way\" and \"was a noncreature card discarded this way\" — e.g. a `discarded_this_way` value taking a selector and returning a count, usable inside `cmp`/`exists`, populated by the `discard` op for the duration of the resolution (and across a `for_each_player` loop, since this card asks about every player's discard, not just the controller's)",
+      "why_existing_wont_do": "`discard` records nothing and returns nothing. `cards_to_graveyard_this_turn` is the closest value key and is wrong twice over: it is turn-scoped rather than resolution-scoped and it counts every graveyard at the table and every earlier discard, mill or death this turn. `count` over `{\"zone\": \"graveyard\"}` counts what was already there — in the verification sandbox that is two creature cards, so the creature branch would fire unconditionally. `connive` is the only op that reads its own discard, but it is a fused draw+discard+counter-on-self op with \"nonland\" hardcoded; it cannot gate an arbitrary effect, cannot ask about \"creature\" vs \"noncreature\", and cannot see another player's discard. Its own docstring states the case: \"the cards that were just discarded, which nothing in the condition or value language can name\"."
+    },
+    {
+      "capability": "moogle_token",
+      "kind": "engine",
+      "what": "a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name",
+      "why_existing_wont_do": "`create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control."
+    }
+  ],
+  "closest_existing": ["connive", "cards_to_graveyard_this_turn", "vampire_1_1_wb_lifelink"],
+  "confidence": "high"
+}

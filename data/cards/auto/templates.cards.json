@@ -35937,6 +35937,58 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice a creature: You gain 1 life."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "high_market",
+      "mana_cost": "",
+      "name": "High Market",
+      "oracle_text": "{T}: Add {C}.\n{T}, Sacrifice a creature: You gain 1 life.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -41634,6 +41686,78 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Discard a card: Up to one target creature can't be blocked this turn."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": "you",
+              "prompt": "Pay {2} to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this artifact becomes untapped, you may pay {2}. If you do, draw a card.",
+          "trigger": {
+            "event": "becomes_untapped",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "key_to_the_city",
+      "mana_cost": "{2}",
+      "name": "Key to the City",
+      "oracle_text": "{T}, Discard a card: Up to one target creature can't be blocked this turn.\nWhenever this artifact becomes untapped, you may pay {2}. If you do, draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -50362,6 +50486,51 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more other creatures die, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "morbid_opportunist",
+      "mana_cost": "{2}{B}",
+      "name": "Morbid Opportunist",
+      "oracle_text": "Whenever one or more other creatures die, draw a card. This ability triggers only once each turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -57753,6 +57922,51 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "pitiless_plunderer",
+      "mana_cost": "{3}{B}",
+      "name": "Pitiless Plunderer",
+      "oracle_text": "Whenever another creature you control dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -59763,6 +59977,53 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "pull_from_the_grave",
+      "mana_cost": "{2}{B}",
+      "name": "Pull from the Grave",
+      "oracle_text": "Return up to two target creature cards from your graveyard to your hand. You gain 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "gy_creatures"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "gy_creatures",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -61498,6 +61759,60 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target creature an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ravenous_chupacabra",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Ravenous Chupacabra",
+      "oracle_text": "When this creature enters, destroy target creature an opponent controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Beast",
+        "Horror"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 4
               },
@@ -61775,6 +62090,54 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "reanimate",
+      "mana_cost": "{B}",
+      "name": "Reanimate",
+      "oracle_text": "Put target creature card from a graveyard onto the battlefield under your control. You lose life equal to that card's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_onto_battlefield"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "target": "t1"
+            }
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

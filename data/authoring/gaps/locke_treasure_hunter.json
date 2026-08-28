@@ -1,0 +1,24 @@
+{
+  "card_id": "locke_treasure_hunter",
+  "name": "Locke, Treasure Hunter",
+  "oracle_text": "Locke can't be blocked by creatures with greater power.\nMug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.",
+  "blocked_sentences": [
+    "Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards."
+  ],
+  "needs": [
+    {
+      "capability": "milled_this_way",
+      "kind": "selector",
+      "what": "the `mill` op must write a binding naming the cards it just put into graveyards (across every player it milled), so a later `if` can ask `{\"exists\": {\"binding\": \"milled\", \"types\": [\"Land\"]}}` and a later op can act on exactly that set",
+      "why_existing_wont_do": "`mill` takes only `amount` and `player` and throws away the oid list `mill_cards` returns, so nothing downstream can name the cards it moved. `search_library` already binds what it found, which is the shape needed, but no milling op does. `exists` over a graveyard selector is a different card -- it would match a land already in a graveyard from an earlier turn, and here both players' graveyards start non-empty. `snapshot` reads a value off an object that is already known, not the identity of a set the previous op created."
+    },
+    {
+      "capability": "cast_from_among_milled",
+      "kind": "op",
+      "what": "an effect granting the controller permission, until end of turn, to cast up to one spell from a named set of cards sitting in graveyards (including an opponent's graveyard), paying that spell's costs normally",
+      "why_existing_wont_do": "`play_exiled` is the only \"cast that card from over there\" op and it is wrong three ways: its selector defaults to the exile zone and `exiled_with: self` so it cannot see graveyard cards, it casts via `suspend.cast_for_free` while Locke's permission makes you pay, and it resolves the cast immediately instead of leaving a standing permission that lasts until end of turn. The `play_lands_from_graveyard` static is graveyard-scoped but lands-only, yours-only, permanent and unrestricted to a set. `return_from_graveyard` moves cards rather than granting permission, and the `cast_from_graveyard` condition key only asks after the fact where a spell was cast from."
+    }
+  ],
+  "closest_existing": ["play_exiled", "play_lands_from_graveyard", "return_from_graveyard", "hideaway", "snapshot"],
+  "confidence": "high"
+}

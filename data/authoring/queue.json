@@ -125062,12 +125062,12 @@
     },
     "Helping Hand": {
       "edhrec_rank": 5461,
-      "gate": "template",
+      "gate": "playable",
       "name": "Helping Hand",
-      "reason": "no template for: Return target creature card with mana value 3 or less from your graveyard to the battlefie",
+      "reason": "AutoMtgError: helping_hand is not playable in the sandbox; offered: ['Attack p1 with Acidic Slime', 'Attack p1 with Acidic Slime', 'Done attacking']",
       "scryfall_id": "da5e29a8-a8fb-452b-9973-61ad613f9907",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Helvault": {
@@ -126692,12 +126692,12 @@
     },
     "High Market": {
       "edhrec_rank": 443,
-      "gate": "template",
+      "gate": null,
       "name": "High Market",
-      "reason": "no template for: {T}, Sacrifice a creature: You gain 1 life",
+      "reason": "",
       "scryfall_id": "894aa6b6-0d08-4c43-8734-9cb7b31359c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "High Noon": {
@@ -147182,12 +147182,12 @@
     },
     "Key to the City": {
       "edhrec_rank": 1320,
-      "gate": "template",
+      "gate": null,
       "name": "Key to the City",
-      "reason": "no template for: {T}, Discard a card: Up to one target creature can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "df087751-b8bf-4db0-a571-fb32f596fc2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Key to the Side-Door": {
@@ -177742,12 +177742,12 @@
     },
     "Morbid Opportunist": {
       "edhrec_rank": 253,
-      "gate": "template",
+      "gate": null,
       "name": "Morbid Opportunist",
-      "reason": "no template for: Whenever one or more other creatures die, draw a card. This ability triggers only once eac",
+      "reason": "",
       "scryfall_id": "08838865-a9b6-4323-96a2-0d3a7aba9d3d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Morbid Plunder": {
@@ -201742,12 +201742,12 @@
     },
     "Pitiless Plunderer": {
       "edhrec_rank": 226,
-      "gate": "template",
+      "gate": null,
       "name": "Pitiless Plunderer",
-      "reason": "no template for: Whenever another creature you control dies, create a Treasure token",
+      "reason": "",
       "scryfall_id": "8ba8b02a-8a05-40cd-8b83-51fd0cc0a7a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pitiless Pontiff": {
@@ -208092,12 +208092,12 @@
     },
     "Pull from the Grave": {
       "edhrec_rank": 11971,
-      "gate": "template",
+      "gate": null,
       "name": "Pull from the Grave",
-      "reason": "no template for: Return up to two target creature cards from your graveyard to your hand. You gain 2 life",
+      "reason": "",
       "scryfall_id": "d73612fe-8992-4650-a7e3-c7b662da6a03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pulling Teeth": {
@@ -214522,12 +214522,12 @@
     },
     "Ravenous Chupacabra": {
       "edhrec_rank": 1091,
-      "gate": "template",
+      "gate": null,
       "name": "Ravenous Chupacabra",
-      "reason": "no template for: When this creature enters, destroy target creature an opponent controls",
+      "reason": "",
       "scryfall_id": "f9a7f2f0-3c12-4dba-975e-26d01f3f9c0d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ravenous Daggertooth": {
@@ -215582,12 +215582,12 @@
     },
     "Reanimate": {
       "edhrec_rank": 57,
-      "gate": "template",
+      "gate": null,
       "name": "Reanimate",
-      "reason": "no template for: Put target creature card from a graveyard onto the battlefield under your control. You los",
+      "reason": "",
       "scryfall_id": "3e560cb9-3036-46a2-a5c7-edb04d0095b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reap": {

@@ -1,0 +1,23 @@
+{
+  "card_id": "millikin",
+  "name": "Millikin",
+  "oracle_text": "{T}, Mill a card: Add {C}. (To mill a card, put the top card of your library into your graveyard.)",
+  "blocked_sentences": [
+    "{T}, Mill a card: Add {C}."
+  ],
+  "needs": [
+    {
+      "capability": "mill_cost",
+      "kind": "cost",
+      "what": "a `mill` entry in an activated ability's cost that puts the top N cards of the activating player's library into their graveyard as part of paying the cost, and that is unpayable when the library holds fewer than N cards",
+      "why_existing_wont_do": "`cost_keys` carries `discard`, `discard_selector` and `discard_self`, which all move cards out of hand, and `exile_from_graveyard`, which moves them out of the graveyard -- nothing moves cards off the top of the library, and `sacrifice`/`pay_life`/`remove_counters` are unrelated resources. The `mill` op exists but is an effect, not a cost: putting it in `effects` moves the payment to resolution, so the ability could be activated with an empty library and would still produce mana, and the packet's own note says paying with an op instead of a cost is wrong. It is doubly impossible here because this is a mana ability, and a mana ability may contain only `add_mana` (or one `choose_mode` of `add_mana` modes), so `mill` cannot legally appear in its effects at all."
+    }
+  ],
+  "closest_existing": [
+    "discard",
+    "discard_self",
+    "exile_from_graveyard",
+    "mill"
+  ],
+  "confidence": "high"
+}
