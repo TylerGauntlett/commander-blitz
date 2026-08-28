@@ -58127,6 +58127,112 @@
     {
       "abilities": [
         {
+          "cost": {
+            "exile_self": true,
+            "mana": "{1}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "put_onto_battlefield",
+                      "tapped": true
+                    }
+                  ],
+                  "label": "Return a creature card"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t2"
+                      },
+                      "op": "exile"
+                    }
+                  ],
+                  "label": "Exile a Skeleton, Spirit or Zombie"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "mode": 0,
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Skeleton"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Spirit"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Zombie"
+                    ]
+                  }
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{W}, {T}, Exile this artifact: Choose one —\n• Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.\n• Exile target Skeleton, Spirit, or Zombie."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "phoenix_down",
+      "mana_cost": "{W}",
+      "name": "Phoenix Down",
+      "oracle_text": "{1}{W}, {T}, Exile this artifact: Choose one —\n• Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.\n• Exile target Skeleton, Spirit, or Zombie.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

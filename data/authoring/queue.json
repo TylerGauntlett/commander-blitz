@@ -199672,12 +199672,12 @@
     },
     "Phoenix Down": {
       "edhrec_rank": 8547,
-      "gate": "template",
+      "gate": null,
       "name": "Phoenix Down",
-      "reason": "no template for: {1}{W}, {T}, Exile this artifact: Choose one —",
+      "reason": "",
       "scryfall_id": "62e299b0-9ef6-49d3-aa79-384325fed89e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phoenix Fleet Airship": {

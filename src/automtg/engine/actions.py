@@ -64,6 +64,14 @@ class Action:
     #: the two branches are two prices for the same spell and the player is
     #: choosing between them. `None` when the card has no modal cost.
     additional_choice: int | None = None
+    #: Which bullet of a **modal activated ability** this activation takes --
+    #: Phoenix Down. Part of the action's identity for the reason `kicked` is:
+    #: 601.2b chooses the mode before 601.2c declares its targets, so the two
+    #: bullets are two different things to do with one permanent and each is
+    #: offered with only the targets it owns. Empty for everything else,
+    #: including a modal ability whose modes own no targets -- that one is still
+    #: asked at activation, as it always was.
+    ability_modes: tuple[int, ...] = ()
     #: Cast out of the exile it was foretold to, for the foretell cost. Part of
     #: the identity like `flashback`: the same card can be nowhere else, but the
     #: price is not the printed one and the action must not compare equal to a

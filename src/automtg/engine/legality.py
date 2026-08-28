@@ -1304,6 +1304,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             tuples = _ability_aims(state, pid, oid, ability, zone, sorcery_speed)
             if tuples is None:
                 continue
+            aims = tuples
             # "Add one mana of any colour" is five different things to do, and
             # which one is the player's call -- the solver is not making it,
             # because it never sees this ability at all. One action per yield,
@@ -1312,7 +1313,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             label_base = f"{card.name}: {ability.text or 'activate'}"
             for mana_option in _mana_option_indices(state, oid, ability):
                 option_label = _mana_option_label(state, oid, ability, mana_option)
-                for targets in tuples:
+                for ability_modes, targets in aims:
                     label = label_base
                     if option_label:
                         label += f" ({option_label})"
@@ -1327,6 +1328,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                             ability_index=ability.index,
                             targets=targets,
                             x=x,
+                            ability_modes=ability_modes,
                             mana_option=mana_option,
                             label=label,
                             # Shared across the yields on purpose: it is the row
@@ -1381,13 +1383,17 @@ def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
 def _ability_aims(
     state: GameState, pid: int, oid: int, ability, zone: Zone, sorcery_speed: bool
 ) -> list[tuple] | None:
-    """The target tuples this ability could be activated with, or ``None``.
+    """How this ability could be activated: ``(modes, targets)`` pairs, or ``None``.
+
+    ``modes`` is empty for everything except a modal ability whose bullets own
+    their targets, where it names the one bullet this activation takes -- see
+    the per-mode enumeration at the end.
 
     Every condition an offer depends on *except* the mana gate: being activated
     at all, the zone saying so, timing, X being payable, the cost being payable,
     and there being a legal target. ``None`` rather than ``[]`` because an
-    untargeted ability legitimately returns ``[()]`` -- one way to aim it, naming
-    nothing.
+    untargeted ability legitimately returns ``[((), ())]`` -- one way to aim it,
+    naming nothing.
 
     Split out of :func:`_activate_actions` so :func:`_offers_something_else` can
     ask the identical question. If the two drifted, a Mind Stone would show its
@@ -1461,7 +1467,36 @@ def _ability_aims(
     # so the number legality tests is the number `costs.pay` charges.
     if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose):
         return None
-    return enumerate_target_tuples(state, pid, ability.targets, oid) or None
+    # `mode_targets`, not `targets`: the loader lifts a mode-owned spec out of
+    # the flat list into the per-mode map, so `ability.targets` holds only the
+    # card-level ones and is empty on a card whose every target belongs to a
+    # bullet.
+    if not ability.mode_targets:
+        tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
+        return [((), targets) for targets in tuples] if tuples else None
+
+    # A **modal** activated ability whose bullets own their targets -- Phoenix
+    # Down. 601.2b picks the mode before 601.2c declares its targets, and the
+    # reverse was the whole reason `loader._check_mode_targets` refused `mode`
+    # here: legality enumerated one activation per target tuple, so the targets
+    # were fixed before `Game._activate` could ask which bullet.
+    #
+    # So the mode becomes part of the *action*, the way `kicked` is on a cast,
+    # and each mode is offered only with the targets it owns. A bullet with no
+    # legal target is not offered at all, which is 601.2b's other half: a mode
+    # that cannot be chosen is not among the choices, and Phoenix Down with an
+    # empty graveyard offers only its second bullet rather than being
+    # unactivatable.
+    out: list[tuple] = []
+    spec = ability.cast_time_modes
+    modes = list((spec or {}).get("modes") or ())
+    for mode in range(len(modes)):
+        specs = ability.specs_for_modes((mode,))
+        tuples = enumerate_target_tuples(state, pid, specs, oid)
+        if not tuples:
+            continue
+        out.extend(((mode,), targets) for targets in tuples)
+    return out or None
 
 
 def _activation_allowed(state: GameState, pid: int, oid: int, ability) -> bool:
