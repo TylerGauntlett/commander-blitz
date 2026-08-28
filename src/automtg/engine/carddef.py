@@ -146,6 +146,16 @@ class Cost:
     #: lets the player pick, so a Krosan Tusker could be "cycled" by pitching
     #: something else and staying in hand.
     discard_self: bool = False
+    #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
+    #: of `discard_self`, and deliberately not `sacrifice`, which puts the
+    #: source in the graveyard. The difference is the whole card here: Phoenix
+    #: Down is meant to be one-shot and graveyard-proof, and sacrificing it
+    #: would leave it recurrable *and* feed its own first mode.
+    #:
+    #: Not the `exile` op either -- an op runs at resolution, so the ability
+    #: could be activated and responded to with the source still on the
+    #: battlefield, and 601.2h pays costs before any of that.
+    exile_self: bool = False
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
@@ -245,6 +255,7 @@ class Cost:
             ),
             mill=int(spec.get("mill", 0) or 0),
             pay_life_x=bool(spec.get("pay_life_x")),
+            exile_self=bool(spec.get("exile_self")),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -279,6 +290,7 @@ class Cost:
             # "tapped silently by the solver" to "offered to the player" --
             # the same place a Signet's {1} and a Vivid land's counter sit.
             and self.mill == 0
+            and not self.exile_self
             and not self.pay_life
             and self.remove_counters is None
             and self.loyalty is None
@@ -309,6 +321,8 @@ class Cost:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:
             parts.append("Discard this card")
+        if self.exile_self:
+            parts.append("Exile this permanent")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")

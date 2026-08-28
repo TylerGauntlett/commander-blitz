@@ -65,6 +65,16 @@ class CostModel(BaseModel):
     discard_selector: dict[str, Any] | None = None
     #: Cycling's "Discard this card": the source discards itself, no choice.
     discard_self: bool = False
+    #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
+    #: of `discard_self`, and deliberately not `sacrifice`, which puts the
+    #: source in the graveyard. The difference is the whole card here: Phoenix
+    #: Down is meant to be one-shot and graveyard-proof, and sacrificing it
+    #: would leave it recurrable *and* feed its own first mode.
+    #:
+    #: Not the `exile` op either -- an op runs at resolution, so the ability
+    #: could be activated and responded to with the source still on the
+    #: battlefield, and 601.2h pays costs before any of that.
+    exile_self: bool = False
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed
