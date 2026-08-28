@@ -1,0 +1,34 @@
+{
+  "_comment": "Cards that exist only for the announced-X-life test (tests/unit/test_pay_x_life.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_toxic_deluge` is Toxic Deluge's shape. `t_fixed_deluge` is the card the DSL could write before this existed -- a fixed 3 life and a fixed -3/-3 -- and is the counterfactual that cannot be aimed.",
+  "cards": [
+    {
+      "id": "t_toxic_deluge",
+      "name": "Test Toxic Deluge",
+      "oracle_text": "As an additional cost to cast this spell, pay X life.\nAll creatures get -X/-X until end of turn.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "additional_cost": {"pay_life_x": true},
+      "spell_effects": [
+        {"op": "pump", "power": {"minus": [{"const": 0}, {"x": true}]},
+         "toughness": {"minus": [{"const": 0}, {"x": true}]},
+         "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"], "count": "all"}}
+      ]
+    },
+    {
+      "id": "t_fixed_deluge",
+      "name": "Test Fixed Deluge",
+      "oracle_text": "As an additional cost to cast this spell, pay 3 life.\nAll creatures get -3/-3 until end of turn.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "additional_cost": {"pay_life": 3},
+      "spell_effects": [
+        {"op": "pump", "power": {"const": -3}, "toughness": {"const": -3},
+         "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"], "count": "all"}}
+      ]
+    }
+  ]
+}

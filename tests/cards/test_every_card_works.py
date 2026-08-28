@@ -165,6 +165,17 @@ def _answer(game: Game, decision: PendingDecision):
     # the board could pay for.
     if decision.kind is DecisionKind.CHOOSE_X:
         choices = [a for a in actions if a.kind is ActionKind.CHOOSE]
+        # ...but never an X that ends the game, mirroring
+        # `verify._answer`. Toxic Deluge's X is paid in **life** and 118.4 puts
+        # the whole total on offer, so the maximum is suicide: the player hits 0,
+        # loses to a state-based action, and the spell never resolves. Inert for
+        # a mana X, whose ceiling is bounded by the board's 30 lands against 40
+        # life.
+        pid = decision.player
+        life = game.state.players[pid].life if pid is not None else 0
+        alive = [a for a in choices if (a.choice or 0) < life]
+        if alive:
+            return max(alive, key=lambda a: a.choice or 0)
         if choices:
             return max(choices, key=lambda a: a.choice or 0)
 

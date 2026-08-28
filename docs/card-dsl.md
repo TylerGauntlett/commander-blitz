@@ -1147,6 +1147,7 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "mill": 1,                                      // Millikin: off *your* library's top
+  "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:

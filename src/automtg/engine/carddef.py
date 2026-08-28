@@ -150,6 +150,18 @@ class Cost:
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
     pay_life: int | Mapping[str, Any] = 0
+    #: "As an additional cost to cast this spell, **pay X life**" -- Toxic
+    #: Deluge. The caster announces X as the spell is cast (601.2b), and the
+    #: spell's own effects read it back with ``{"x": true}``.
+    #:
+    #: A flag rather than a value expression, because every other `pay_life` is
+    #: a number the *board* decides -- a literal, or War Room's count of
+    #: commander colours -- and this one is the player's choice. And not
+    #: `additional_repeatable` with ``pay_life: 1``, which produces the same set
+    #: of outcomes but caps at `legality.MAX_ADDITIONAL_TIMES` (six), turns one
+    #: payment of X life into X payments of one, and describes an *optional*
+    #: cost paid a number of times rather than one mandatory announced number.
+    pay_life_x: bool = False
     remove_counters: Mapping[str, Any] | None = None
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
@@ -232,6 +244,7 @@ class Cost:
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
             mill=int(spec.get("mill", 0) or 0),
+            pay_life_x=bool(spec.get("pay_life_x")),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
