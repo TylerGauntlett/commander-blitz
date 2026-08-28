@@ -217772,12 +217772,12 @@
     },
     "Rejoin the Fight": {
       "edhrec_rank": 8473,
-      "gate": "template",
+      "gate": null,
       "name": "Rejoin the Fight",
-      "reason": "no template for: Mill three cards. Then starting with the next opponent in turn order, each opponent choose",
+      "reason": "",
       "scryfall_id": "32f42de9-2eb3-4c11-aed1-7c0fb8768af1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rejuvenate": {
