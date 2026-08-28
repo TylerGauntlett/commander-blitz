@@ -4352,6 +4352,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
+    # Which face it comes back as. Defaulted to "turn it over" the op reads
+    # correctly on a card's front and silently wrongly on its back, where the
+    # same sentence turns it the other way -- and both faces of the Dominant
+    # cycle print one.
+    if op == "exile_and_return":
+        if "objects" not in effect:
+            raise DslError(
+                f"{where}: 'exile_and_return' needs 'objects' -- "
+                f"there is nothing to exile"
+            )
+        face = effect.get("face")
+        if face not in ("front", "back"):
+            raise DslError(
+                f"{where}: 'exile_and_return' needs a 'face' of 'front' or 'back' "
+                f"(got {face!r})"
+            )
     # The op reads each card's recorded origin and moves it; with nothing
     # selected it is a return that returns nothing.
     if op == "return_to_origin" and "objects" not in effect:
