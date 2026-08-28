@@ -575,6 +575,16 @@ class GameObject:
     #: it. Cleared by that same reset when the card comes back, which is right:
     #: the link is spent once it has been followed.
     exiled_by: int | None = None
+    #: Which zone this card was in when it was exiled -- "return it to the zone
+    #: it came from" (Cloak and Dagger, Entwined, whose one exile can take a
+    #: card out of a hand *or* a permanent off the battlefield). Recorded as the
+    #: zone's name rather than the enum so it serializes with the rest of the
+    #: object.
+    #:
+    #: Written by `zones.exile`, and after the move: `move_object` runs
+    #: `reset_permanent_state` on the way, which clears this for the reason it
+    #: clears `exiled_by` -- a card that has since left exile came from nowhere.
+    exiled_from: str | None = None
 
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
@@ -631,6 +641,7 @@ class GameObject:
         self.playable_turn = -1
         self.playable_group = None
         self.playable_any_type = False
+        self.exiled_from = None
         self.revealed_to = set()
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield

@@ -47992,12 +47992,12 @@
     },
     "Cloak and Dagger, Entwined": {
       "edhrec_rank": 21778,
-      "gate": "template",
+      "gate": null,
       "name": "Cloak and Dagger, Entwined",
-      "reason": "no template for: When Cloak and Dagger enter, choose target opponent and up to one target creature they con",
+      "reason": "",
       "scryfall_id": "50aa361c-72fd-4ecb-b877-a27646c66ad0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cloak of Confusion": {

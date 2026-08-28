@@ -66,12 +66,12 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-104 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+105 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `return_to_origin` |
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -3962,6 +3962,41 @@ Applied to the printed face before any layer, where the rest of `copy_overrides`
 is applied, because the exception is part of what the object *is* rather than an
 effect on it: an animate afterwards layers on top exactly as it would on a
 printed artifact.
+
+## "…until this permanent leaves the battlefield" — giving it back
+
+Cloak and Dagger, Entwined exiles a card that may have come from either of two
+zones, so the return has to undo whichever happened:
+
+```jsonc
+{ "op": "return_to_origin",
+  "objects": { "zone": "exile", "controller": "any",
+               "exiled_with": "self", "count": "all" } }
+```
+
+**Every neighbouring op hardwires its destination**, which is why none of them
+can say this. `return_to_hand` is the hand; `put_onto_battlefield` is the
+battlefield; `return_from_graveyard` takes a `destination` but reads its pool
+out of a graveyard. Two ops filtered by origin would be two sentences where the
+printing has one — and there was nothing to filter on, since only the graveyard
+kept an arrival record (`graveyard_from`).
+
+So `zones.exile` stamps `exiled_from` on the way out — in the zone function
+rather than in `op_exile`, so a card exiled by *any* route can be given back —
+and this op reads it. Written **after** the move, because `move_object` runs
+`reset_permanent_state` in between; the same order `exiled_by` is written in,
+for the same reason.
+
+**Owner, on both branches.** A card leaving exile goes to its owner's hand, and
+400.7's exceptions do not reach a permanent coming back from an exile-until
+effect.
+
+A card whose origin is missing is **left where it is**, which is the answer
+400.7 gives too: there is nowhere to return it to. Guessing the battlefield
+would put a card from somebody's hand onto the board.
+
+`controller: "any"` on the pool, because exile is kept per owner and the card
+was taken from an opponent.
 
 ## One choice across two zones — `union`
 

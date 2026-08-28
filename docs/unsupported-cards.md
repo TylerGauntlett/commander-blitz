@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**3 cards** blocked by **4** capabilities.
+**2 cards** blocked by **3** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
-| [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 
 ## dfc-back-face-text
@@ -46,21 +45,6 @@ Blocks **1** card.
 - **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
   - When Joshua enters, discard up to two cards, then draw that many cards.
   - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-
-</details>
-
-## exile-until-leaves-return-to-origin
-
-Blocks **1** card.
-
-- **(op)** an exile-until-this-permanent-leaves link that returns each exiled card to the zone it came from -- the nonland card exiled out of a hand goes back to its owner's hand, the creature exiled off the battlefield goes back to the battlefield -- from a single return, since one printed sentence covers both
-  <br>Why the existing vocabulary won't do: exile's 'until_leaves' only records the link; the return is an ordinary leaves_battlefield trigger whose op hardwires one destination (Oblivion Ring uses put_onto_battlefield over {'zone':'exile','exiled_with':'self'}, return_to_hand always moves to Zone.HAND). Nothing on the exiled object records the zone it was exiled from, so no condition or selector can split the returned cards by origin, and picking either op would send half the cases to the wrong zone
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
-  - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
-  - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
 
 </details>
 

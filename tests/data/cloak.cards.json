@@ -1,0 +1,55 @@
+{
+  "_comment": "A card that exists only for the return-to-origin test (tests/unit/test_return_to_origin.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_cloak` is Cloak and Dagger, Entwined: one exile that can take a card out of a hand or a permanent off the battlefield, and one return that has to undo whichever happened.",
+  "cards": [
+    {
+      "id": "t_cloak",
+      "name": "Test Cloak",
+      "oracle_text": "When this creature enters, choose target opponent and up to one target creature they control. You may exile a nonland card from their hand or the chosen creature until this creature leaves the battlefield.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "text": "When this creature enters, choose target opponent and up to one target creature they control. You may exile a nonland card from their hand or the chosen creature until this creature leaves the battlefield.",
+          "targets": [
+            {"id": "who", "kind": "player", "count": 1,
+             "selector": {"controller": "opponent"}},
+            {"id": "what", "kind": "permanent", "count": 1, "optional": true,
+             "selector": {"zone": "battlefield", "types": ["Creature"],
+                          "controller": {"target": "who"}}}
+          ],
+          "effects": [
+            {
+              "op": "exile",
+              "link": true,
+              "objects": {
+                "union": [
+                  {"zone": "hand", "player": {"target": "who"}, "not_types": ["Land"]},
+                  {"target": "what"}
+                ],
+                "count": 1,
+                "optional": true
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "trigger": {"event": "leaves_battlefield", "source": "self"},
+          "text": "When this creature leaves the battlefield, return the exiled card to the zone it came from.",
+          "effects": [
+            {"op": "return_to_origin",
+             "objects": {"zone": "exile", "controller": "any", "exiled_with": "self",
+                         "count": "all"}}
+          ]
+        }
+      ]
+    }
+  ]
+}
