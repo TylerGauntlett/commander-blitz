@@ -3934,6 +3934,49 @@ prints first. The second is no longer a cloak special case: every rules-supplied
 ability carries a negative index and `ability_of` answers all of them the same
 way, without reading the board.
 
+## Targeting a card in exile
+
+Espers to Magicite — *"…choose up to one **target creature card exiled this
+way**."*
+
+```jsonc
+{ "id": "t1", "kind": "card_in_exile", "count": 1, "optional": true,
+  "selector": { "binding": "banished", "types": ["Creature"],
+                "controller": "any" } }
+```
+
+A sixth target `kind`, beside `permanent`, `player`, `spell`,
+`card_in_graveyard` and `any`. **The kind is what the rest of the engine reads a
+target by**, and a card in exile is not a permanent (110.1) — so writing this
+`kind: "permanent"` with an exile selector would have *worked*, because
+`candidates` falls through to the selector for any kind it does not name, and
+would have gone on calling the thing it targets something it is not.
+
+The three zone-bearing kinds must now agree with their selector's `zone`, and
+each may leave it out because the kind already said it:
+
+| kind | zone |
+|---|---|
+| `permanent` | `battlefield` |
+| `card_in_graveyard` | `graveyard` |
+| `card_in_exile` | `exile` |
+
+No card in the pool wrote a mismatched one, so the refusals cost nothing.
+
+**`controller: "any"` is usually wanted**, because exile is kept per owner: a
+card taken out of an opponent's graveyard sits in the *opponent's* exile, and a
+spec without the clause walks only your own pile.
+
+**608.2b is re-asked with the selector, not just the zone.**
+`card_in_graveyard` checks only that the card is still in a graveyard, and can:
+it names a card by its printed face, which does not change while it lies there.
+An exile spec names one by *where it came from* — "exiled **this way**" — which
+is a binding, so `still_legal` re-runs the same `resolve_pool` call `candidates`
+ran. Re-running it rather than calling `matches` is both halves of the point:
+`matches` has no answer for a binding, which names a pool rather than describing
+an object, and running the identical call makes the two agree by construction —
+a target cannot be offered in one place and refused in the other.
+
 ## "For each player, up to one target permanent that player controls"
 
 ```jsonc

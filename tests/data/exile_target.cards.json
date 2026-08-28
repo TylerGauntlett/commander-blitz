@@ -1,0 +1,61 @@
+{
+  "_comment": "Cards that exist only for the card-in-exile target test (tests/unit/test_card_in_exile_target.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_magicite` is the Espers to Magicite shape: exile every opponent's graveyard, then target one of the cards THIS spell put there. `t_wide_magicite` is the counterfactual -- the same target line without the binding, which reaches every creature card anyone has ever exiled.",
+  "cards": [
+    {
+      "id": "t_magicite",
+      "name": "Test Magicite",
+      "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Put it onto the battlefield under your control.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "exile", "as": "banished",
+         "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}},
+        {"op": "reflexive_trigger", "ability": "magicite"}
+      ],
+      "abilities": [
+        {
+          "kind": "reflexive",
+          "id": "magicite",
+          "text": "When you do, choose up to one target creature card exiled this way.",
+          "targets": [
+            {"id": "t1", "kind": "card_in_exile", "count": 1, "optional": true,
+             "selector": {"binding": "banished", "types": ["Creature"], "controller": "any"}}
+          ],
+          "effects": [
+            {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wide_magicite",
+      "name": "Test Wide Magicite",
+      "oracle_text": "Exile each opponent's graveyard. When you do, choose up to one target creature card in exile. Put it onto the battlefield under your control.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "exile", "as": "banished",
+         "objects": {"zone": "graveyard", "controller": "opponent", "count": "all"}},
+        {"op": "reflexive_trigger", "ability": "magicite"}
+      ],
+      "abilities": [
+        {
+          "kind": "reflexive",
+          "id": "magicite",
+          "text": "When you do, choose up to one target creature card in exile.",
+          "targets": [
+            {"id": "t1", "kind": "card_in_exile", "count": 1, "optional": true,
+             "selector": {"types": ["Creature"], "controller": "any"}}
+          ],
+          "effects": [
+            {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"}
+          ]
+        }
+      ]
+    }
+  ]
+}

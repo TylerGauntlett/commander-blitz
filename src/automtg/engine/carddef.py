@@ -28,7 +28,8 @@ class TargetSpec:
     """A single target requirement of a spell or ability."""
 
     id: str
-    kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard" | "any"
+    kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
+    #        | "card_in_exile" | "any"
     selector: Mapping[str, Any] = field(default_factory=dict)
     #: A number, or ``"any"`` for "any number of target …" -- a size the caster
     #: chooses. At most one spec per card may be ``"any"``, and it must be the

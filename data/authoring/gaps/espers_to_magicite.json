@@ -11,12 +11,6 @@
       "kind": "op",
       "what": "an `except_` clause on `copy_permanent` (or an equivalent token-copy op) that overwrites the copy's card types -- '...except it's an artifact and it loses all other card types', i.e. set types to exactly [Artifact] on the token copy rather than adding to them",
       "why_existing_wont_do": "`copy_permanent` accepts only `colors`, `add_subtypes` and `no_mana_cost` in `except_` (loader rejects any other key), so it can recolour and add subtypes but never change the copy's card types; the copy would come back a creature. `set_types` exists but only as a *static_effect*, which a resolving instant cannot apply as a one-shot copy modification, and a static ability may only read printed characteristics of an object that already exists. `add_subtype` explicitly refuses a `types` key. `create_token` needs a pre-declared token id and so cannot copy an arbitrary exiled card."
-    },
-    {
-      "capability": "copy_card_in_exile",
-      "kind": "selector",
-      "what": "targeting an individual card in exile that the same spell put there, as the source for a token copy -- 'up to one target creature card exiled this way'",
-      "why_existing_wont_do": "`exiled_with` filters to cards a source exiled and `optional` gives 'up to one', so the *filter* is sayable, but there is no way to bind it as a target: the target would have to be chosen after the exile happens, which is the reflexive trigger above. Without that, the target spec is evaluated on cast against an exile zone that does not yet contain the cards."
     }
   ],
   "closest_existing": [
