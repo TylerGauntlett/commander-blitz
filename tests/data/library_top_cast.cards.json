@@ -1,0 +1,29 @@
+{
+  "_comment": "A card that exists only for the cast-off-the-top test (tests/unit/test_cast_from_library_top.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana.",
+  "cards": [
+    {
+      "id": "t_citadel",
+      "name": "Test Citadel",
+      "oracle_text": "You may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+      "mana_cost": "{3}{B}{B}{B}",
+      "types": ["Artifact"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+          "effect": "cast_from_library_top",
+          "affects_player": "you",
+          "pay_life_instead": true
+        },
+        {
+          "kind": "static",
+          "text": "You may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+          "effect": "play_lands_from_library_top",
+          "affects_player": "you"
+        }
+      ]
+    }
+  ]
+}

@@ -373,8 +373,15 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     )
     if match is None:
         return
-    fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
-    game.state.battlefield.append(fodder.oid)
+    # As many as the cost asks for, not one. Bolas's Citadel sacrifices **ten**
+    # nonland permanents, and a board handed a single creature reported a
+    # working card as unusable -- the same false negative this helper exists to
+    # prevent, one order of magnitude up.
+    count = spec.get("count", 1)
+    wanted = int(count) if isinstance(count, int) else 1
+    for _ in range(max(1, wanted)):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
 
 
 def _provide_the_tap_fodder(game: Game, registry, ability) -> None:

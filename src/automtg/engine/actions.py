@@ -72,6 +72,12 @@ class Action:
     #: including a modal ability whose modes own no targets -- that one is still
     #: asked at activation, as it always was.
     ability_modes: tuple[int, ...] = ()
+    #: Cast off the **top of the library** under a permanent's permission --
+    #: Bolas's Citadel. Part of the action's identity like `flashback`: the same
+    #: card can be nowhere else, but the price is not the printed one and the
+    #: action must not compare equal to a hand cast of it. What it buys is on
+    #: the granting static, which `Game._cast` reads to charge the life.
+    from_library_top: bool = False
     #: Cast out of the exile it was foretold to, for the foretell cost. Part of
     #: the identity like `flashback`: the same card can be nowhere else, but the
     #: price is not the printed one and the action must not compare equal to a

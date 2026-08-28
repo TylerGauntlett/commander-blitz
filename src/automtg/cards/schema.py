@@ -357,6 +357,15 @@ class AbilityModel(BaseModel):
     #: reached a graveyard and from where are facts about *this copy* and not
     #: about the card, and `affects_spells` may only read the printed face.
     arrived_this_turn_from: list[str] | None = None
+    #: "…pay life equal to its **mana value** rather than pay its mana cost."
+    #: Bolas's Citadel, on a `cast_from_library_top` static. An alternative cost
+    #: imposed on somebody else's spell, which `spell_cost_reduction` cannot
+    #: express: that one lowers a mana cost by an amount and cannot swap the
+    #: payment to a different resource entirely.
+    #:
+    #: Required on that static, because the permission without its price is
+    #: every spell in the deck castable off the top at its printed cost.
+    pay_life_instead: bool = False
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)

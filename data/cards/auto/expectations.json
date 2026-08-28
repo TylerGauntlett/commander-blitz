@@ -778,6 +778,10 @@
   "bojuka_bog": {
     "zone": "battlefield"
   },
+  "bolas_s_citadel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bone_saw": {
     "zone": "battlefield"
   },
