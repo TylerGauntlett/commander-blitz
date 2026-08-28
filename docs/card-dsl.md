@@ -2947,6 +2947,33 @@ does — so `op_choose_mode` sees the question already answered there as well.
 Mana abilities are the exception and a stricter one: their modes are compiled
 into `mana_options` and never reach the interpreter at all.
 
+### `chooser` — when somebody else picks the mode
+
+```jsonc
+{ "op": "choose_mode", "chooser": { "target": "t1" }, "modes": [ … ] }
+```
+
+"**Target player** adds one mana of any color" — The Warring Triad. "One mana of
+any color" is spelled as a `choose_mode` over five `add_mana` modes, and the
+player *adding* the mana is the one who picks its colour. Without `chooser` the
+ability's controller chooses and the mana lands in somebody else's pool in a
+colour they did not pick — a strictly better card than the printed one.
+
+An ordinary player spec, so `{"target": "t1"}`, `"opponent"` and the rest all
+work. It needed no new `DecisionKind`: `ask_mode` always took an arbitrary
+chooser, the same way `ask_objects` did for Fact or Fiction's pile-splitter.
+
+**It also changes *when* the question is asked.** A chooser-carrying
+`choose_mode` is kept out of `cast_time_modes` (`carddef.asks_another_player`),
+so it is never pre-answered under 601.2b/602.2b — which would have put the
+answer in the controller's hands, defeating the point — and instead resolves
+late, where a nested `choose_mode` already lives.
+
+A **mana ability** may not carry one. It resolves without the stack, inside
+somebody's payment, so there is no window in which to stop and ask; the loader
+refuses it. The cards that look like they want it target, and a mana ability
+cannot target (605.1a), so they were never mana abilities to begin with.
+
 ### Entwine — "choose both if you pay the entwine cost"
 
 ```jsonc

@@ -82125,6 +82125,142 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            },
+            "right": {
+              "const": 8
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as there are fewer than eight cards in your graveyard, The Warring Triad isn't a creature.",
+          "types": [
+            "Artifact"
+          ]
+        },
+        {
+          "cost": {
+            "mill": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "chooser": {
+                "target": "t1"
+              },
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana",
+                      "player": {
+                        "target": "t1"
+                      }
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "{T}, Mill a card: Target player adds one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_warring_triad",
+      "keywords": [
+        "flying",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{3}",
+      "name": "The Warring Triad",
+      "oracle_text": "Flying, trample, haste\nAs long as there are fewer than eight cards in your graveyard, The Warring Triad isn't a creature.\n{T}, Mill a card: Target player adds one mana of any color.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
