@@ -2489,7 +2489,7 @@ COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_man
 #: Zones a cost reduction's filter may count.  Mirrors `costs.REDUCTION_ZONES`,
 #: which is what actually walks them; anything else would load and match nothing.
 #: `total_power` is battlefield-only whatever this says -- see below.
-COST_REDUCTION_ZONES = frozenset({"battlefield", "command"})
+COST_REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:

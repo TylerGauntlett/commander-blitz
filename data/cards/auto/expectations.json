@@ -1528,6 +1528,10 @@
   "custodian_of_the_trove": {
     "zone": "battlefield"
   },
+  "cyan_vengeful_samurai": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cyclonic_rift": {
     "graveyard_size": {
       "0": 3
