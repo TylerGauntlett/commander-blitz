@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**4 cards** blocked by **9** capabilities.
+**4 cards** blocked by **8** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,7 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
-| [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 
 ## copy-card-in-exile
@@ -126,20 +125,6 @@ Blocks **1** card.
 - **Emeritus of Woe // Demonic Tutor** (rank 3846) — `emeritus_of_woe_demonic_tutor`
   - This creature enters prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)
   - At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.
-
-</details>
-
-## reflexive-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a 'When you do, ...' reflexive trigger written inside a spell effect: after the preceding effect resolves it puts a delayed ability on the stack that chooses its own targets at that moment, from objects the earlier effect just moved (here, the cards exiled by 'Exile each opponent's graveyard')
-  <br>Why the existing vocabulary won't do: trigger_events has no reflexive/'when you do' event, and all of its entries are board events (self_enters, permanent_enters, dies, ...) fired by the game rather than by an earlier clause of the same spell. `delayed_trigger` and `delay` fire on a later step or turn and take no new targets, so neither can hand the player a target choice mid-resolution; and a card-level target spec is declared before the spell resolves, when the opponents' graveyards have not been exiled yet and there is nothing legal to point at.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Espers to Magicite** (rank 6897) — `espers_to_magicite`
-  - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
 
 </details>
 

@@ -482,6 +482,9 @@ class Ability:
     kind: AbilityKind
     index: int
     text: str = ""
+    #: The name a `reflexive_trigger` op calls a ``reflexive`` ability by.
+    #: Empty on every other kind.
+    reflex_id: str = ""
     # activated
     cost: Cost | None = None
     is_mana_ability: bool = False

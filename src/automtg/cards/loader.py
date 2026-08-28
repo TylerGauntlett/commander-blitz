@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -748,6 +748,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         for i, a in enumerate(model.grantable_abilities)
     )
     final_chapter = _final_chapter(model, abilities, where)
+    _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
         if ability.kind is AbilityKind.TRIGGERED:
@@ -1810,6 +1811,61 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
     )
 
 
+
+def _check_reflexive_wiring(
+    model: CardModel, abilities: tuple[Ability, ...], where: str
+) -> None:
+    """A reflexive ability and the op that fires it must name each other.
+
+    603.11's "when you do" has no event behind it, so the *only* thing that can
+    ever put this ability on the stack is a `reflexive_trigger` op somewhere in
+    the same card's effects. Both halves of that wire are silent when they go
+    wrong and both are the same bug in opposite directions: an ability nothing
+    fires is a printed line that never happens, and an op naming an id that is
+    not there is a spell whose second sentence is missing. Neither would fail
+    any other check -- the ability compiles, the op is a known name -- so this
+    is the only place either can be caught.
+
+    Every ability's effects are walked as well as `spell_effects`: the op is
+    written wherever the instruction it reflects on is written, which for a
+    creature's enters trigger is inside that trigger. Replacement effects have
+    no effect list of their own to walk -- they modify an arrival rather than
+    doing anything -- so there is nowhere for one to hide there.
+    """
+    declared = {
+        ability.reflex_id: ability
+        for ability in abilities
+        if ability.kind is AbilityKind.REFLEXIVE
+    }
+    named: set[str] = set()
+
+    def walk(effects: Any) -> None:
+        for effect in effects or ():
+            if not isinstance(effect, Mapping):
+                continue
+            if effect.get("op") == "reflexive_trigger":
+                named.add(str(effect.get("ability", "")))
+            for value in effect.values():
+                if isinstance(value, Sequence) and not isinstance(value, str):
+                    walk(value)
+
+    walk(model.spell_effects)
+    for ability in model.abilities:
+        walk(ability.effects)
+
+    for missing in sorted(named - set(declared)):
+        raise DslError(
+            f"{where}: 'reflexive_trigger' names {missing!r}, "
+            f"but no reflexive ability on this card has that id "
+            f"(declared: {sorted(declared) or 'none'})"
+        )
+    for unfired in sorted(set(declared) - named):
+        raise DslError(
+            f"{where}: reflexive ability {unfired!r} is never fired -- "
+            f"nothing on this card writes a 'reflexive_trigger' naming it, "
+            f"so the line would never happen"
+        )
+
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -1828,6 +1884,15 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         # misplaced-key refusal in this function.
         raise DslError(
             f"{where}: 'chapter' only means anything on a chapter ability, "
+            f"not on a {kind.value} one"
+        )
+
+    if model.id is not None and kind is not AbilityKind.REFLEXIVE:
+        # The id exists so a `reflexive_trigger` op can name *which* "when you
+        # do" it means. On any other kind nothing ever reads it, and a card that
+        # writes one is a card whose author believed something was wired up.
+        raise DslError(
+            f"{where}: 'id' only means anything on a reflexive ability, "
             f"not on a {kind.value} one"
         )
 
@@ -1926,6 +1991,30 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"(got {cost.describe()!r}); "
                 f"otherwise it can be activated repeatedly without ever leaving"
             )
+    elif kind is AbilityKind.REFLEXIVE:
+        # 603.11. The ability is printed on the card and lives in its abilities
+        # list -- which is what gets it modes, targets chosen as it is put on
+        # the stack, APNAP order and a window to respond in, all for free -- but
+        # nothing may ever match it off an *event*. "When you do" names the
+        # instruction above it, not something that happens on the board, so the
+        # effect that carries out that instruction is the only thing entitled to
+        # fire it. Hence no `TriggerSpec` at all: `_candidate_abilities` skips
+        # an ability whose `trigger` is None, and `Ability.is_triggered` is
+        # False for this kind, so the two independent gates both hold.
+        if not model.id:
+            raise DslError(
+                f"{where}: a reflexive ability needs an 'id' -- "
+                f"a 'reflexive_trigger' op has to be able to name it"
+            )
+        if model.trigger is not None:
+            raise DslError(
+                f"{where}: a reflexive ability is fired by a 'reflexive_trigger' op, "
+                f"so it does not write a trigger of its own"
+            )
+        if model.cost is not None:
+            raise DslError(f"{where}: a reflexive ability is triggered, so it has no cost")
+        if not model.effects:
+            raise DslError(f"{where}: a reflexive ability with no effects is a blank line")
     elif kind is AbilityKind.CHAPTER:
         # The trigger is **supplied**, not read. There is no word in "II --
         # Create two 2/2 red Human Knight creature tokens" saying when it
@@ -2162,6 +2251,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         kind=kind,
         index=index,
         text=model.text,
+        reflex_id=model.id or "",
         cost=cost,
         is_mana_ability=model.is_mana_ability,
         mana_options=mana_options,
@@ -4182,6 +4272,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
+    # "When you do" has to say which do. Without the key the op names the empty
+    # id, no ability matches it, and the second half of the card never happens.
+    if op == "reflexive_trigger" and not effect.get("ability"):
+        raise DslError(
+            f"{where}: 'reflexive_trigger' needs an 'ability' -- "
+            f"the id of the reflexive ability it fires"
+        )
     # `grant_playable` writes the permission on the cards it selects and does
     # nothing else, so with no selection it is a line that reads as a grant and
     # grants nothing.

@@ -7,12 +7,6 @@
   ],
   "needs": [
     {
-      "capability": "reflexive_trigger",
-      "kind": "trigger_event",
-      "what": "a 'When you do, ...' reflexive trigger written inside a spell effect: after the preceding effect resolves it puts a delayed ability on the stack that chooses its own targets at that moment, from objects the earlier effect just moved (here, the cards exiled by 'Exile each opponent's graveyard')",
-      "why_existing_wont_do": "trigger_events has no reflexive/'when you do' event, and all of its entries are board events (self_enters, permanent_enters, dies, ...) fired by the game rather than by an earlier clause of the same spell. `delayed_trigger` and `delay` fire on a later step or turn and take no new targets, so neither can hand the player a target choice mid-resolution; and a card-level target spec is declared before the spell resolves, when the opponents' graveyards have not been exiled yet and there is nothing legal to point at."
-    },
-    {
       "capability": "copy_with_type_change",
       "kind": "op",
       "what": "an `except_` clause on `copy_permanent` (or an equivalent token-copy op) that overwrites the copy's card types -- '...except it's an artifact and it loses all other card types', i.e. set types to exactly [Artifact] on the token copy rather than adding to them",
@@ -25,6 +19,13 @@
       "why_existing_wont_do": "`exiled_with` filters to cards a source exiled and `optional` gives 'up to one', so the *filter* is sayable, but there is no way to bind it as a target: the target would have to be chosen after the exile happens, which is the reflexive trigger above. Without that, the target spec is evaluated on cast against an exile zone that does not yet contain the cards."
     }
   ],
-  "closest_existing": ["copy_permanent", "exile", "exiled_with", "delayed_trigger", "set_types", "add_subtype"],
+  "closest_existing": [
+    "copy_permanent",
+    "exile",
+    "exiled_with",
+    "delayed_trigger",
+    "set_types",
+    "add_subtype"
+  ],
   "confidence": "high"
 }

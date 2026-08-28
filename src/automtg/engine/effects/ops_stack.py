@@ -277,3 +277,73 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
                 # graveyard, since 715.3c exiles it only *as it resolves*.
                 obj.showing_second_face = False
                 move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="countered")
+
+@register("reflexive_trigger")
+def op_reflexive_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Fire a reflexive triggered ability (603.11) -- "**When you do**, …".
+
+    Espers to Magicite: "Exile each opponent's graveyard. When you do, choose up
+    to one target creature card exiled this way. Create a token that's a copy of
+    that card…"
+
+    The rest of that sentence is a real ability on the card
+    (``kind: "reflexive"``) and this queues it, which is the whole of the op.
+    Everything that matters about 603.11 then comes from the pipeline the card's
+    other triggers already use: it goes on the stack when a player would next
+    receive priority -- so **after** the spell that fired it has finished
+    resolving -- it chooses its targets as it is put there (603.3d), and the
+    other players get a window to respond before it resolves.
+
+    **Not more effects inline.** Written that way the choice would be made
+    mid-resolution and would not be a *target* at all: nothing would be
+    announced, nothing could respond, and 608.2b would never re-check it. The
+    difference is visible on this very card, whose reflexive half targets a card
+    an opponent may still be able to reach.
+
+    **Not `delayed_trigger`.** That watches an `EventType`, and "when you do"
+    has none: what it means is "when the instruction immediately above this one
+    is carried out", which is a fact about *this* resolution and not about
+    anything the board could be watched for. It is also fired unconditionally
+    here, because the effect above it did happen -- an exiled-nothing case is
+    the reflexive ability's own business, not this op's.
+
+    The bindings are copied at this instant, so "…exiled **this way**" still
+    names the cards the earlier op recorded once the ability is on the stack.
+    """
+    from ..structs import TriggerInstance
+
+    state = ctx.state
+    source_oid = ctx.source_oid
+    if source_oid is None:
+        return
+    obj = state.objects.get(source_oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    wanted = str(spec.get("ability", ""))
+    ability = next(
+        (a for a in card.abilities if a.reflex_id and a.reflex_id == wanted), None
+    )
+    if ability is None:  # pragma: no cover -- the loader refuses this
+        return
+    state.pending_triggers.append(
+        TriggerInstance(
+            source_oid=source_oid,
+            ability_index=ability.index,
+            controller=ctx.controller,
+            bindings=dict(ctx.bindings),
+            description=f"{card.name}: {ability.text or wanted}",
+            # The same snapshot every other trigger keeps, and it earns its keep
+            # here: the source is usually a *spell*, which is in a graveyard by
+            # the time this reaches the stack.
+            def_id=obj.def_id,
+        )
+    )
+    state.emit(
+        EventType.ABILITY_TRIGGERED,
+        player=ctx.controller,
+        source=source_oid,
+        card=card.id,
+        ability=ability.index,
+        trigger="reflexive",
+    )
