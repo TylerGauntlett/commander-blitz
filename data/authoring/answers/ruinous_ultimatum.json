@@ -4,16 +4,28 @@
     "name": "Ruinous Ultimatum",
     "oracle_text": "Destroy all nonland permanents your opponents control.",
     "mana_cost": "{R}{R}{W}{W}{W}{B}{B}",
-    "types": ["Sorcery"],
-    "colors": ["B", "R", "W"],
-    "color_identity": ["B", "R", "W"],
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "B",
+      "R",
+      "W"
+    ],
+    "color_identity": [
+      "B",
+      "R",
+      "W"
+    ],
     "spell_effects": [
       {
         "op": "destroy",
         "objects": {
           "zone": "battlefield",
           "controller": "opponent",
-          "not_types": ["Land"],
+          "not_types": [
+            "Land"
+          ],
           "count": "all"
         }
       }
@@ -23,6 +35,8 @@
     "zone": "graveyard",
     "opponent_battlefield_count": 2,
     "battlefield_count": 32,
-    "hand_size": {"0": 0}
+    "hand_size": {
+      "0": 1
+    }
   }
 }

@@ -463,11 +463,16 @@ class Game:
         # Deadly Dispute's artifact. Paid after the mana (rule 601.2g), the same
         # order emerge's sacrifice and retrace's discard use, so a creature that
         # tapped for mana can still be the one that is eaten.
-        if action.additional_times and card.additional_cost is not None:
+        # `chosen_additional` rather than `card.additional_cost`, so a modal
+        # cost -- "discard a card **or** pay 3 life" -- charges the branch the
+        # player was offered. Legality prices the line through the same helper,
+        # so the price shown and the price taken cannot disagree.
+        from .legality import chosen_additional
+
+        additional = chosen_additional(card, action.additional_choice)
+        if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
-                ok = yield from pay(
-                    state, pid, card.additional_cost.without_mana(), oid
-                )
+                ok = yield from pay(state, pid, additional.without_mana(), oid)
                 if not ok:  # pragma: no cover - legality already proved payability
                     return
             obj.cast_additional = action.additional_times

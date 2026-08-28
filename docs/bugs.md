@@ -2,6 +2,26 @@
 
 ### Fixed
 
+- **A spell could pay its own mandatory additional cost by discarding itself.**
+  601.2a moves a spell to the stack before any of its costs are paid, so a card
+  can never be fodder for its own "discard a card". Legality priced the cost
+  while the card was still in hand, though, so it counted itself: Bitter Triumph
+  ("discard a card **or** pay 3 life") could eat the very spell being cast,
+  which then never resolved, and a card whose hand held nothing else had the
+  cost charge silently *nothing* -- a free Laughing Mad. `costs._discard_pool`
+  now takes `source_oid` and excludes it. Cycling is unaffected (`discard_self`
+  is its own flag) and an activated ability's source is on the battlefield, so
+  excluding it from a hand pool is a no-op there.
+
+  The knock-on was the bigger half: with the fix, a sandbox hand holding only
+  the card under test leaves every mandatory discard unpayable, so
+  `verify.build_sandbox` now deals a spare **land** beside it. A land and not a
+  spell -- a castable card in hand keeps the player on priority while the card
+  under test is on the stack, and 169 cards then fail with "never left the
+  stack". Every authored `hand_size` counts the spare, which is why they read
+  one higher than the printed card suggests.
+
+
 - **Clicking Mind Stone sacrificed it.**
   Mind Stone reads "{T}: Add {C}" and "{1}, {T}, Sacrifice this artifact: Draw a
   card", and the panel showed one option. `legality._activate_actions` withholds
@@ -71,24 +91,6 @@
   now only ever says what the click is for.
 
 ### Known, not fixed
-
-- **A spell can pay its own mandatory additional cost by discarding itself.**
-  Found while wiring 601.2f onto the non-hand cast lines (`shares` nothing with
-  that change, which is correct and covered by
-  `tests/unit/test_additional_cost_every_cast.py`). Legality prices the cost
-  while the card is *still in hand*, so `costs._discard_pool` counts the card
-  being cast as legal fodder for its own "discard a card" and offers the line;
-  by the time `Game._cast` pays, 601.2a has moved the card to the stack, the
-  pool is empty, and the discard silently charges **nothing**. Repro: Laughing
-  Mad as the only card in hand -- it casts, draws two, and discards nothing,
-  which is a free draw-two. The authoring sandbox hits this on every card with
-  a mandatory discard, because its hand holds only the card under test; Big
-  Score's answer records the same artifact from the other side.
-
-  The fix is to exclude the card being cast from `_discard_pool` when pricing
-  its own additional cost, but it is a *different* capability from the one that
-  found it and it moves at least one shipped expectation, so it is recorded
-  rather than bundled.
 
 - **The RL policy has never seen an equip action.** `ai/action_space.py` caps
   `ABIL_CAP = 2` and indexes `action.ability_index`, which counts *all*

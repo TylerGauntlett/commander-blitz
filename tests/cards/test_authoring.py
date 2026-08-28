@@ -84,7 +84,10 @@ class TestTheGateThatMatters:
         assert "playable" in verdict.passed
 
     def test_a_correct_card_passes_every_gate(self, pool):
-        verdict = V.verify(DIVINATION, {"hand_size": {"0": 2}}, pool)
+        # Three, not two: the sandbox hand holds a spare land beside the card
+        # under test, so a mandatory "discard a card" has fodder. Divination
+        # draws two on top of that spare.
+        verdict = V.verify(DIVINATION, {"hand_size": {"0": 3}}, pool)
         assert verdict.ok, str(verdict)
         assert set(verdict.passed) == set(V.GATES)
 

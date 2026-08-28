@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**21 cards** blocked by **36** capabilities.
+**20 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
-| [modal-cost](#modal-cost) | 1 | 869 | cost |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
 | [pay-x-life-additional-cost](#pay-x-life-additional-cost) | 1 | 67 | cost, value |
 | [per-player-choice-memory](#per-player-choice-memory) | 1 | 5124 | selector |
@@ -471,20 +470,6 @@ Blocks **1** card.
   - {1}{W}, {T}, Exile this artifact: Choose one —
   - • Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.
   - • Exile target Skeleton, Spirit, or Zombie.
-
-</details>
-
-## modal-cost
-
-Blocks **1** card.
-
-- **(cost)** a cost that is a choice between two whole alternative payments -- 'discard a card OR pay 3 life' -- where the caster picks one branch as the spell is cast and only that branch is paid and checked for payability
-  <br>Why the existing vocabulary won't do: A cost is a single flat record whose entries are conjunctive: writing both `discard` and `pay_life` on the same cost charges the player both, which is a strictly worse card, and writing only one silently drops the other half of the printed line. `additional_optional` is the nearest thing and only makes one fixed cost skippable (a yes/no on paying it), not a choice between two different prices; `choose_mode` is an effect op that runs on resolution, so it can neither be a cost nor gate whether the spell is castable
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bitter Triumph** (rank 869) — `bitter_triumph`
-  - As an additional cost to cast this spell, discard a card or pay 3 life.
 
 </details>
 

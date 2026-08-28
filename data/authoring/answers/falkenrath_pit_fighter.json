@@ -4,12 +4,21 @@
     "name": "Falkenrath Pit Fighter",
     "oracle_text": "{1}{R}, Discard a card, Sacrifice a Vampire: Draw two cards. Activate only if an opponent lost life this turn.",
     "mana_cost": "{R}",
-    "types": ["Creature"],
-    "subtypes": ["Vampire", "Warrior"],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Warrior"
+    ],
     "power": 2,
     "toughness": 1,
-    "colors": ["R"],
-    "color_identity": ["R"],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
     "abilities": [
       {
         "kind": "activated",
@@ -20,17 +29,29 @@
           "sacrifice": {
             "zone": "battlefield",
             "controller": "you",
-            "subtypes": ["Vampire"],
+            "subtypes": [
+              "Vampire"
+            ],
             "count": 1
           }
         },
         "condition": {
           "cmp": ">=",
-          "left": {"life_lost_this_turn": "each_opponent"},
-          "right": {"const": 1}
+          "left": {
+            "life_lost_this_turn": "each_opponent"
+          },
+          "right": {
+            "const": 1
+          }
         },
         "effects": [
-          {"op": "draw", "player": "you", "amount": {"const": 2}}
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 2
+            }
+          }
         ]
       }
     ]
@@ -38,6 +59,8 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 0}
+    "hand_size": {
+      "0": 1
+    }
   }
 }

@@ -4,13 +4,23 @@
     "name": "Mirkwood Bats",
     "oracle_text": "Flying\nWhenever you create or sacrifice a token, each opponent loses 1 life.",
     "mana_cost": "{3}{B}",
-    "types": ["Creature"],
-    "subtypes": ["Bat"],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Bat"
+    ],
     "power": 2,
     "toughness": 3,
-    "colors": ["B"],
-    "color_identity": ["B"],
-    "keywords": ["flying"],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "keywords": [
+      "flying"
+    ],
     "abilities": [
       {
         "kind": "triggered",
@@ -23,7 +33,9 @@
           {
             "op": "lose_life",
             "player": "each_opponent",
-            "amount": {"const": 1}
+            "amount": {
+              "const": 1
+            }
           }
         ]
       },
@@ -33,13 +45,17 @@
         "trigger": {
           "event": "sacrificed",
           "controller": "you",
-          "filter": {"is_token": true}
+          "filter": {
+            "is_token": true
+          }
         },
         "effects": [
           {
             "op": "lose_life",
             "player": "each_opponent",
-            "amount": {"const": 1}
+            "amount": {
+              "const": 1
+            }
           }
         ]
       }
@@ -48,6 +64,8 @@
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 0}
+    "hand_size": {
+      "0": 1
+    }
   }
 }

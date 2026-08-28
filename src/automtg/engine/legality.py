@@ -445,9 +445,12 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
                     state, pid, oid, card, ft_tuples,
                     extra_generic=0, foretold=True,
                 ),
-                lambda times, oid=oid, card=card, tuples=ft_tuples: _cast_variant(
-                    state, pid, oid, card, tuples,
-                    extra_generic=0, foretold=True, additional_times=times,
+                lambda times, choice, oid=oid, card=card, tuples=ft_tuples: (
+                    _cast_variant(
+                        state, pid, oid, card, tuples,
+                        extra_generic=0, foretold=True,
+                        additional_times=times, additional_choice=choice,
+                    )
                 ),
             )
         )
@@ -486,9 +489,12 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
                         state, pid, oid, card, fb_tuples,
                         extra_generic=0, flashback=True,
                     ),
-                    lambda times, oid=oid, card=card, tuples=fb_tuples: _cast_variant(
-                        state, pid, oid, card, tuples,
-                        extra_generic=0, flashback=True, additional_times=times,
+                    lambda times, choice, oid=oid, card=card, tuples=fb_tuples: (
+                        _cast_variant(
+                            state, pid, oid, card, tuples,
+                            extra_generic=0, flashback=True,
+                            additional_times=times, additional_choice=choice,
+                        )
                     ),
                 )
             )
@@ -679,9 +685,9 @@ def _cast_options(
     # genuinely are.
     out = _charge_additional_cost(
         state, pid, oid, card, out,
-        lambda times: _cast_variant(
+        lambda times, choice: _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic,
-            additional_times=times,
+            additional_times=times, additional_choice=choice,
         ),
     )
     # Morph: "you may cast this card face down as a 2/2 creature for {3}"
@@ -738,6 +744,20 @@ def _cast_options(
 MAX_ADDITIONAL_TIMES = 6
 
 
+def chosen_additional(card: CardDef, choice: int | None) -> Cost | None:
+    """The additional cost this cast line pays -- the branch, or the only one.
+
+    "Discard a card **or** pay 3 life" is `additional_cost_options`; everything
+    else is the single `additional_cost`. Both `legality` and `Game._cast` price
+    a line through here, so the branch offered is the branch charged.
+    """
+    if card.additional_cost_options:
+        if choice is None or not (0 <= choice < len(card.additional_cost_options)):
+            return None
+        return card.additional_cost_options[choice]
+    return card.additional_cost
+
+
 def _charge_additional_cost(
     state: GameState,
     pid: int,
@@ -772,16 +792,28 @@ def _charge_additional_cost(
     used to skip this, so a flashed-back Laughing Mad drew two and discarded
     nothing.
     """
-    if card.additional_cost is None:
+    branches = (
+        list(range(len(card.additional_cost_options)))
+        if card.additional_cost_options
+        else ([None] if card.additional_cost is not None else [])
+    )
+    if not branches:
         return out
     if not card.additional_optional:
         out = []
-    for times in range(1, _additional_ceiling(state, pid, oid, card) + 1):
-        out = out + build(times)
+    for choice in branches:
+        # One line per **payable** branch, exactly as emerge offers one per
+        # sacrificeable creature: a branch nobody can pay is not a price on
+        # offer, and with a mandatory cost a card whose every branch is
+        # unpayable is simply not castable.
+        for times in range(1, _additional_ceiling(state, pid, oid, card, choice) + 1):
+            out = out + build(times, choice)
     return out
 
 
-def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+def _additional_ceiling(
+    state: GameState, pid: int, oid: int, card: CardDef, choice: int | None = None
+) -> int:
     """How many times this card's additional cost may be paid on this cast.
 
     One unless the card says ``additional_repeatable`` -- replicate is the only
@@ -797,9 +829,8 @@ def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> 
     # decided: a casualty line offered with no creature big enough to sacrifice
     # would be an action the player could take and the engine could not honour.
     # The mana half is folded into the price and answered by the solver.
-    if card.additional_cost is not None and not can_pay(
-        state, pid, card.additional_cost.without_mana(), oid
-    ):
+    branch = chosen_additional(card, choice)
+    if branch is not None and not can_pay(state, pid, branch.without_mana(), oid):
         return 0
     if not card.additional_repeatable:
         return 1
@@ -931,6 +962,7 @@ def _cast_variant(
     alternative: bool = False,
     overloaded: bool = False,
     additional_times: int = 0,
+    additional_choice: int | None = None,
     foretold: bool = False,
     face_down: bool = False,
     second_face: bool = False,
@@ -986,11 +1018,14 @@ def _cast_variant(
         cost = card.mana_cost.plus(card.kicker)
     else:
         cost = card.mana_cost
-    if additional_times and card.additional_cost is not None:
+    branch = chosen_additional(card, additional_choice)
+    if additional_times and branch is not None:
         # The mana half of the additional cost, charged `additional_times` over.
         # Folded into the price *here* rather than paid separately, so legality
         # and the solver price the line the player is actually being offered.
-        cost = cost.plus(card.additional_cost.mana.scaled(additional_times))
+        # `branch` rather than `card.additional_cost`, so a modal cost prices
+        # the option this line is offering and not some other one.
+        cost = cost.plus(branch.mana.scaled(additional_times))
     discount = cost_reduction(state, pid, card) + variant_less
     # Convoke and delve reduce the generic part, exactly as a cost reduction
     # does -- and go through the same clamp, so neither can make a spell free
@@ -1059,6 +1094,11 @@ def _cast_variant(
         label_base = "Cast a face-down creature"
     if additional_times:
         label_base += f" (+{additional_times} additional)"
+    if additional_choice is not None and branch is not None:
+        # The branches are two prices for one spell, so the panel has to say
+        # which one this row buys -- otherwise Bitter Triumph draws two
+        # identical rows and the player picks blind.
+        label_base += f" ({branch.describe()})"
     if pay_generic:
         word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
         label_base += f" ({word} {pay_generic})"
@@ -1085,6 +1125,7 @@ def _cast_variant(
                 alternative=alternative,
                 overloaded=overloaded,
                 additional_times=additional_times,
+                additional_choice=additional_choice,
                 foretold=foretold,
                 face_down=face_down,
                 second_face=second_face,

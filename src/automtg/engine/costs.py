@@ -683,7 +683,7 @@ def can_pay(
     life = life_cost(state, pid, cost, source_oid)
     if life and player.life < life:
         return False
-    if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
+    if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
     if cost.discard_self:
         # The card must be the payer's to throw away and still be in the zone it
@@ -743,14 +743,29 @@ def can_pay(
     return True
 
 
-def _discard_pool(state: GameState, pid: int, cost: Cost) -> list[int]:
+def _discard_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> list[int]:
     """Which cards in hand this cost is allowed to throw away.
 
     The whole hand unless the cost narrows it -- "by discarding a **land**
     card".  Kept as a pool rather than a count so `can_pay` and `pay` cannot
     disagree about whether the cost is payable.
+
+    **The source is never its own fodder.** 601.2a moves a spell to the stack
+    before any of its costs are paid, so a card can never discard *itself* to
+    pay its own additional cost. Legality prices the cost while the card is
+    still in hand, though, so without this the card was offered as fodder --
+    and Bitter Triumph ("discard a card or pay 3 life") could eat the very
+    spell being cast, which then never resolved. On a card whose hand held
+    nothing else the cost instead charged silently nothing, which is a free
+    Laughing Mad.
+
+    Cycling is unaffected: `discard_self` is its own flag and does not come
+    through here. An activated ability's source is on the battlefield, so
+    excluding it from a *hand* pool is a no-op there.
     """
-    hand = list(state.players[pid].hand)
+    hand = [oid for oid in state.players[pid].hand if oid != source_oid]
     if cost.discard_selector is None:
         return hand
     from .effects.selectors import matches
@@ -968,7 +983,7 @@ def pay(
         lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
 
     if cost.discard:
-        pool = _discard_pool(state, pid, cost)
+        pool = _discard_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(
             ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )

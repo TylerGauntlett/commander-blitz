@@ -4,9 +4,15 @@
     "name": "Malakir Rebirth // Malakir Mire",
     "oracle_text": "Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"",
     "mana_cost": "{B}",
-    "types": ["Instant"],
-    "colors": ["B"],
-    "color_identity": ["B"],
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
     "second_face": "malakir_mire",
     "second_face_zone": "hand",
     "targets": [
@@ -14,52 +20,100 @@
         "id": "t1",
         "kind": "permanent",
         "count": 1,
-        "selector": {"zone": "battlefield", "types": ["Creature"]}
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        }
       }
     ],
     "grantable_abilities": [
       {
         "kind": "triggered",
         "text": "When this creature dies, return it to the battlefield tapped under its owner's control.",
-        "trigger": {"event": "dies", "source": "self", "controller": "any"},
+        "trigger": {
+          "event": "dies",
+          "source": "self",
+          "controller": "any"
+        },
         "effects": [
           {
             "op": "return_from_graveyard",
             "destination": "battlefield",
             "tapped": true,
-            "objects": {"zone": "graveyard", "self_only": true}
+            "objects": {
+              "zone": "graveyard",
+              "self_only": true
+            }
           }
         ]
       }
     ],
     "spell_effects": [
-      {"op": "lose_life", "player": "you", "amount": {"const": 2}},
-      {"op": "grant_ability", "objects": {"target": "t1"}, "ability_index": 0}
+      {
+        "op": "lose_life",
+        "player": "you",
+        "amount": {
+          "const": 2
+        }
+      },
+      {
+        "op": "grant_ability",
+        "objects": {
+          "target": "t1"
+        },
+        "ability_index": 0
+      }
     ]
   },
   "back": {
     "id": "malakir_mire",
     "name": "Malakir Mire",
     "oracle_text": "This land enters tapped.\n{T}: Add {B}.",
-    "types": ["Land"],
-    "color_identity": ["B"],
-    "replacements": [{"event": "self_enters_tapped"}],
+    "types": [
+      "Land"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
     "abilities": [
       {
         "kind": "activated",
         "text": "{T}: Add {B}.",
         "is_mana_ability": true,
-        "cost": {"tap": true},
-        "effects": [{"op": "add_mana", "mana": "{B}"}]
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{B}"
+          }
+        ]
       }
     ]
   },
   "expectation": {
     "zone": "graveyard",
-    "life": {"0": 38, "1": 40},
-    "hand_size": {"0": 0},
-    "library_size": {"0": 40},
-    "graveyard_size": {"0": 3},
+    "life": {
+      "0": 38,
+      "1": 40
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "graveyard_size": {
+      "0": 3
+    },
     "battlefield_count": 32,
     "opponent_battlefield_count": 6
   }

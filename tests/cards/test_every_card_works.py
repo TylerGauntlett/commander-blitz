@@ -91,10 +91,28 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     builder.battlefield(0, OWN_BOARD)
     builder.battlefield(1, OPPONENT_BOARD)
     builder.graveyard(0, OWN_GRAVEYARD)
-    builder.library(0, ["forest", "island", "swamp", "mountain", "plains"] * 8)
+    # The second card is deliberately not a land -- see `verify.build_sandbox`.
+    # Cultivator Colossus puts a land from hand onto the battlefield, draws, and
+    # repeats; against forty basic lands and a spare land in hand it decked the
+    # player. Second rather than first, so the cards that reveal the *top* and
+    # branch on whether it is a land still see one.
+    library = ["forest", "island", "swamp", "mountain", "plains"] * 8
+    library[1] = "t_bolt"
+    builder.library(0, library)
     builder.library(1, ["forest", "island"] * 10)
     if in_hand:
-        builder.hand(0, [card_id])
+        # A spare land beside the card under test, mirroring
+        # `verify.build_sandbox`. 601.2a moves a spell to the stack before its
+        # costs are paid, so a card can never discard *itself* to pay its own
+        # additional cost -- and a hand of one leaves every mandatory "as an
+        # additional cost, discard a card" with no fodder and unplayable here.
+        # Big Score, Laughing Mad, Thrill of Possibility, Tormenting Voice,
+        # Wild Guess and Mardu Outrider are the six that found it.
+        #
+        # A land rather than a spell: a castable card in hand keeps the player
+        # on priority while the card under test is on the stack, and every card
+        # then fails with "never left the stack".
+        builder.hand(0, [card_id, "forest"])
     return builder.build(advance=False)
 
 

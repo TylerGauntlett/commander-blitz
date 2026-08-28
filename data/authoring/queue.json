@@ -25262,12 +25262,12 @@
     },
     "Bitter Triumph": {
       "edhrec_rank": 869,
-      "gate": "template",
+      "gate": null,
       "name": "Bitter Triumph",
-      "reason": "no template for: As an additional cost to cast this spell, discard a card or pay 3 life",
+      "reason": "",
       "scryfall_id": "db465858-0593-4850-8f1d-400fe230a18d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bitter Work": {
