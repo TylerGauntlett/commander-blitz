@@ -93,6 +93,7 @@ VALUE_KEYS = frozenset(
         "life_lost_this_turn",
         "spells_cast_this_turn",
         "cards_to_graveyard_this_turn",
+        "cards_from_graveyard_this_turn",
         # "…if this is the second time this ability has resolved this turn."
         # Keyed by ability rather than by player, and counting the resolution in
         # progress, so it is the one ledger tally read off the effect context
@@ -419,6 +420,14 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # Every graveyard, so it takes no player spec: gravestorm counts cards
         # put into *a* graveyard, not into yours.
         return ledger.cards_to_graveyard
+    if "cards_from_graveyard_this_turn" in expr:
+        # The mirror, and it *does* take a player spec: Gau asks about "**your**
+        # graveyard", and the one number the engine already kept counts the
+        # opposite direction across every yard at the table -- true in exactly
+        # the wrong cases. Keyed by the graveyard's owner (400.3), so a card an
+        # opponent reanimated out of your yard still counts as having left it.
+        pids = _players(ctx, expr["cards_from_graveyard_this_turn"])
+        return sum(ledger.cards_from_graveyard.get(p, 0) for p in pids)
     if "sum" in expr:
         return sum(evaluate_value(ctx, e) for e in expr["sum"])
     if "minus" in expr:

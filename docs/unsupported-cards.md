@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**23 cards** blocked by **36** capabilities.
+**22 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
 | [discard-binding](#discard-binding) | 2 | 3959 | op, value |
-| [graveyard-movement-ledger](#graveyard-movement-ledger) | 2 | 6878 | engine, selector |
 | [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
@@ -37,6 +36,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [extreme-value](#extreme-value) | 1 | 9647 | value |
 | [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
+| [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
@@ -95,24 +95,6 @@ Blocks **2** cards.
 - **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
   - When Celes enters, discard any number of cards, then draw that many cards plus one.
   - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-
-</details>
-
-## graveyard-movement-ledger
-
-Blocks **2** cards.
-
-- **(selector)** a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from ("from anywhere other than the battlefield") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from
-  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago
-- **(engine)** a per-turn ledger of cards that left a player's graveyard this turn (to any zone -- exile, hand, library, battlefield), exposed both as a condition an intervening-if can ask ("if a card left your graveyard this turn") and as a count value, keyed by the graveyard's owner
-  <br>Why the existing vocabulary won't do: value_keys has `cards_to_graveyard_this_turn`, which counts movement in the opposite direction (cards put *into* the graveyard) and so is true in exactly the wrong cases. `cast_from_graveyard` only asks about the source spell itself, not about any card. `has_turn_flag` reads a flag written by `set_turn_flag` on the same source, so it cannot observe a zone change caused by some other card. `exists`/`zone_is`/`cmp` only read the graveyard's current contents, which says nothing about what departed it. The engine keeps only `cards_drawn_this_turn`, `resolutions_this_turn` and `triggers_this_turn` as per-turn ledgers -- no graveyard-departure tracking exists to read.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
-  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
-- **Gau, Feral Youth** (rank 8270) — `gau_feral_youth`
-  - At the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.
 
 </details>
 
@@ -418,6 +400,20 @@ Blocks **1** card.
 - **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
   - This spell costs {1} less to cast for each creature card in your graveyard.
   - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
+
+</details>
+
+## graveyard-movement-ledger
+
+Blocks **1** card.
+
+- **(selector)** a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from ("from anywhere other than the battlefield") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from
+  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago
+
+<details><summary>Cards waiting on this</summary>
+
+- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
+  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
 
 </details>
 

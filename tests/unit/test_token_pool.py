@@ -73,16 +73,23 @@ class TestTheMoogleCarriesItsSubtype:
         assert "lifelink" in moogle.keywords
         assert moogle.is_creature and moogle.is_token
 
-    def test_no_other_token_answers_to_moogle(self, pool):
-        """"Put a +1/+1 counter on each Moogle you control" must count one.
+    def test_it_is_the_only_moogle_token(self, pool):
+        """"Put a +1/+1 counter on each Moogle you control" reads the subtype.
 
-        If a second Moogle token ever enters the pool this test should be
-        updated deliberately rather than deleted — the card's last clause reads
-        the subtype off the battlefield, so the set of things that answer to it
-        is part of the card's behaviour.
+        Only the *token* pool is pinned. Mog itself is a Moogle — correctly, and
+        that is the point: its last clause counts Moogles on the battlefield,
+        so it puts a counter on itself as well as on what it just made. A second
+        Moogle *token* would silently change which permanents that clause
+        reaches, so if one ever arrives this test should be updated
+        deliberately rather than deleted.
         """
-        moogles = [c.id for c in pool if "Moogle" in c.subtypes]
-        assert moogles == ["moogle_1_2_w_lifelink"]
+        tokens = [c.id for c in pool if "Moogle" in c.subtypes and c.is_token]
+        assert tokens == ["moogle_1_2_w_lifelink"]
+
+    def test_the_card_that_makes_them_is_one_too(self, pool):
+        """Guards the half above from being read as "nothing else is a Moogle"."""
+        mog = pool.get("mog_moogle_warrior")
+        assert mog is not None and "Moogle" in mog.subtypes
 
 
 class TestEveryNamedTokenResolves:
