@@ -48,6 +48,11 @@ RECORDING_OPS = frozenset(
         "exile",
         "gain_control",
         "join_forces",
+        #: The cards actually **cast**, which is neither the cards offered nor
+        #: the cards exiled -- one with no legal target is never cast at all.
+        #: Kefka turns on that distinction: "each player who owns a spell you
+        #: cast this way loses life equal to its mana value".
+        "play_exiled",
         "reveal",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than

@@ -1034,16 +1034,37 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     Shares `suspend.cast_for_free`, so it is a real cast -- it uses the stack
     and can be countered -- and shares its documented simplification: the
     targets are the first legal tuple rather than a choice.
+
+    ``as`` records the cards that were actually **cast**, which is a different
+    set from the ones offered and from the ones exiled. Kefka needs exactly that
+    distinction: "each player who owns a spell you cast this way loses life
+    equal to its mana value". `exiled_with: "self"` is wrong in both directions
+    at once -- a card that was cast has left exile and stops matching, and a
+    card the player declined still matches -- so it names "exiled this way" and
+    never "cast this way". A card with no legal target is not cast at all, which
+    is why the binding is built from `cast_for_free`'s answer rather than from
+    the chosen list.
     """
     from ..suspend import cast_for_free
 
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "exile")
     selector.setdefault("controller", "any")
-    selector.setdefault("exiled_with", "self")
+    if "binding" not in selector:
+        # "The exiled card" is `exiled_with: "self"` by default -- hideaway, and
+        # every card that exiles and then offers back what it exiled. A pool
+        # named by a **binding** has already said which cards those are, and the
+        # default would then narrow it to nothing: only `until_leaves` sets the
+        # `exiled_by` link that `exiled_with` reads, so a plain `exile` followed
+        # by a `play_exiled` over its own `as` matched no card at all.
+        selector.setdefault("exiled_with", "self")
     oids = yield from choose_objects(ctx, selector, "Play the exiled card", "play_exiled")
+    cast: list[int] = []
     for oid in oids:
-        cast_for_free(ctx.state, ctx.controller, oid)
+        if cast_for_free(ctx.state, ctx.controller, oid):
+            cast.append(oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = cast
 
 
 @register("cascade")

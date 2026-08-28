@@ -591,6 +591,16 @@ no-op — is not one of "those creatures".
 { "op": "draw", "player": "you",
   "amount": { "count": { "binding": "pitched" } } }
 
+// Kefka — "each player who owns a spell YOU CAST this way loses life…"
+// `play_exiled`'s `as` is the cards actually cast, which is neither the cards
+// offered nor the cards exiled: one with no legal target is never cast at all.
+{ "op": "exile", "as": "banished", "objects": { … } },
+{ "op": "play_exiled", "as": "cast",
+  "objects": { "binding": "banished", "count": "any" } },
+{ "op": "for_each", "objects": { "binding": "cast" },
+  "effects": [ { "op": "lose_life", "player": { "owner_of": "each" },
+                 "amount": { "mana_value_of": { "binding": "each" } } } ] }
+
 // Mog — "each player may discard a card … if a creature card was discarded this way"
 // `"each_player"` as a plain string, and ONE discard op: the binding is written
 // once at the end, so it accumulates across every seat the op touched. A

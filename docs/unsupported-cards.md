@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**20 cards** blocked by **35** capabilities.
+**19 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
-| [cast-this-way](#cast-this-way) | 1 | 4170 | selector |
 | [choose-permanents](#choose-permanents) | 1 | 2867 | op, selector |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
@@ -184,20 +183,6 @@ Blocks **1** card.
 - **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
   - You may play lands and cast spells from the top of your library.
   - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
-
-</details>
-
-## cast-this-way
-
-Blocks **1** card.
-
-- **(selector)** A selector key that names exactly the cards a free-cast op (`play_exiled`) actually cast during this resolution -- e.g. `{"cast_this_way": "self"}` -- so a following `for_each` can loop them and a `lose_life` inside can use the existing `{"owner_of": "each"}` player spec with `{"mana_value_of": {"binding": "each"}}` as its amount.
-  <br>Why the existing vocabulary won't do: `play_exiled` chooses its cards, calls `cast_for_free` on each and binds nothing, so no later effect can see which ones were taken. The closest selector is `exiled_with: "self"`, which is the wrong set in both directions at once: a card that was cast has left exile and no longer matches, and a card the player declined to cast still does -- so it names 'exiled this way' and never 'cast this way'. `was_cast` is a condition about the ability's own source, not a pool, and `snapshot` captures one object chosen in advance rather than an unknown-size set decided mid-resolution.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kefka, Dancing Mad** (rank 4170) — `kefka_dancing_mad`
-  - Then each player who owns a spell you cast this way loses life equal to its mana value.
 
 </details>
 
