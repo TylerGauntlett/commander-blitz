@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "cyan_vengeful_samurai",
+    "name": "Cyan, Vengeful Samurai",
+    "oracle_text": "This spell costs {1} less to cast for each creature card in your graveyard.\nDouble strike\nWhenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.",
+    "mana_cost": "{6}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Samurai"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "power": 3,
+    "toughness": 3,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "double_strike"
+    ],
+    "cost_reduction": {
+      "count": {
+        "zone": "graveyard",
+        "controller": "you",
+        "types": [
+          "Creature"
+        ]
+      }
+    },
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.",
+        "trigger": {
+          "event": "leaves_graveyard",
+          "controller": "you",
+          "batched": true,
+          "filter": {
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "zone": "battlefield",
+              "self_only": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -1394,7 +1394,14 @@ def variant_reduction(
 #: where a commander sits for most of a game, so a reduction written about "a
 #: commander you own" and evaluated over the battlefield alone would read zero
 #: at exactly the moment the printed card is about it.
-REDUCTION_ZONES = frozenset({"battlefield", "command"})
+#: The graveyard joined them on the same test: it is public, and it is readable
+#: before anything is on the stack. Cyan, Vengeful Samurai -- "This spell costs
+#: {1} less to cast for each creature card in your graveyard" -- is the card
+#: that wanted it, and there was no third place a spell's own price could be
+#: lowered from: the battlefield `spell_cost_reduction` static discounts a
+#: *different* card and its `count` is filtered by `static_filter_keys`, which
+#: has no `zone` key at all.
+REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
 
 
 def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
@@ -1410,6 +1417,12 @@ def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
     if "command" in zones:
         for player in state.players:
             yield from player.command
+    if "graveyard" in zones:
+        # Every seat's, narrowed by the ownership keys below exactly as the
+        # command zone is -- "in **your** graveyard" is `controller: "you"`,
+        # and a card in a graveyard is in its owner's (400.3).
+        for player in state.players:
+            yield from player.graveyard
 
 
 def _reduction_matches(state: GameState, pid: int, filt: Any):

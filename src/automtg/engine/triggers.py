@@ -221,6 +221,14 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "sacrificed",
         "token_created",
         "leaves_battlefield",
+        # The card that left the graveyard, so a filter may ask what it was --
+        # Cyan, Vengeful Samurai's "whenever one or more **creature cards**
+        # leave your graveyard". The card has already reached its new zone when
+        # the event fires and `matches_card_filter` reads the printed face, so
+        # the subject is still there to be asked about, exactly as it is for
+        # `discard`. Without this the filter had no subject and matched nothing,
+        # so the trigger silently never fired.
+        "leaves_graveyard",
         "spell_cast",
         "attacks",
         "blocks",

@@ -59032,12 +59032,12 @@
     },
     "Cyan, Vengeful Samurai": {
       "edhrec_rank": 10518,
-      "gate": "template",
+      "gate": null,
       "name": "Cyan, Vengeful Samurai",
-      "reason": "no template for: This spell costs {1} less to cast for each creature card in your graveyard",
+      "reason": "",
       "scryfall_id": "a1e779b4-32dd-406b-8b68-48f6df458005",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cyber Conversion": {

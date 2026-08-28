@@ -167,3 +167,51 @@ class TestTheCounterIsReal:
         empty_my_graveyard(game)
         settle(game)
         assert chars(game.state, oid).power == before + 1
+
+
+class TestTheFilterAsksWhatLeft:
+    """Cyan, Vengeful Samurai: "one or more **creature cards**".
+
+    A trigger filter is matched against the event's *subject*, and
+    `_subject_oid` returns one only for events listed in
+    `OBJECT_SUBJECT_TRIGGERS`. `leaves_graveyard` was not, so the filter had
+    nothing to match and the trigger silently never fired -- a card that loads,
+    prints its line, and does nothing at all. The card has already reached its
+    new zone when the event fires and `matches_card_filter` reads the printed
+    face, so the subject is still there to be asked about, exactly as it is for
+    `discard`.
+    """
+
+    PICKY = "t_picky_mascot"
+
+    def test_creature_cards_leaving_trigger_it(self, builder):
+        game, oid = board(builder, self.PICKY, buried=3)
+        empty_my_graveyard(game)
+        settle(game)
+        assert counters(game, oid) == 1
+
+    def test_lands_leaving_do_not(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.PICKY])
+            .graveyard(0, ["forest", "forest"])
+            .build(advance=False)
+        )
+        oid = only_oid(game, self.PICKY)
+        empty_my_graveyard(game)
+        settle(game)
+        assert counters(game, oid) == 0
+
+    def test_a_mixed_departure_fires_once(self, builder):
+        """One creature among lands is still "one or more creature cards"."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.PICKY])
+            .graveyard(0, [BEAR, "forest"])
+            .build(advance=False)
+        )
+        oid = only_oid(game, self.PICKY)
+        empty_my_graveyard(game)
+        settle(game)
+        assert counters(game, oid) == 1
+

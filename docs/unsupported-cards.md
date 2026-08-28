@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**15 cards** blocked by **30** capabilities.
+**14 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,9 +32,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [extreme-value](#extreme-value) | 1 | 9647 | value |
-| [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
-| [leaves-graveyard](#leaves-graveyard) | 1 | 10518 | trigger_event |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
@@ -332,21 +330,6 @@ Blocks **1** card.
 
 </details>
 
-## graveyard-cost-reduction
-
-Blocks **1** card.
-
-- **(cost)** a self cost reduction whose 'for each' filter may count cards in the caster's graveyard -- i.e. add 'graveyard' to the zones a cost reduction filter may name, and let the counting walk that zone at pricing time the way it already walks the battlefield and command zone
-  <br>Why the existing vocabulary won't do: The only two reduction languages are the card-level 'cost_reduction' / cost 'mana_reduction' (reference cost_keys 'mana_reduction') and the battlefield static 'spell_cost_reduction'. The former's counting filter is restricted to COST_REDUCTION_ZONES = {battlefield, command}, so a graveyard filter is a load error rather than a silent zero; the latter is a battlefield static that discounts a *different* card and its magnitude comes from static_value_keys, whose 'count' is filtered by static_filter_keys -- a set with no 'zone' key at all, so it cannot be scoped to a graveyard either. There is no third place a spell's own price can be lowered from.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
-  - This spell costs {1} less to cast for each creature card in your graveyard.
-  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
-
-</details>
-
 ## graveyard-movement-ledger
 
 Blocks **1** card.
@@ -358,21 +341,6 @@ Blocks **1** card.
 
 - **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
   - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
-
-</details>
-
-## leaves-graveyard
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event fired when one or more cards leave a specified player's graveyard, batched so that a single move of several cards fires the ability once, and filterable by the leaving cards' printed characteristics (here: creature cards, your graveyard)
-  <br>Why the existing vocabulary won't do: trigger_events has 'leaves_battlefield' and 'dies', which watch the battlefield and fire on cards arriving in a graveyard rather than departing it; 'discard' and 'sacrificed' likewise only ever put cards *into* a graveyard. Nothing in the list observes the graveyard as a source zone, so the many ways a card leaves it -- reanimation via return_from_graveyard or put_onto_battlefield, exile via the exile op or an exile_from_graveyard cost, a graveyard cast, a shuffle-back -- all happen unobserved. The batching ('one or more ... leave') is a second requirement no existing event carries: every listed event fires per object.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
-  - This spell costs {1} less to cast for each creature card in your graveyard.
-  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
 
 </details>
 

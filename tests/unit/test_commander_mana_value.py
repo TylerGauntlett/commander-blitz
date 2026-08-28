@@ -320,11 +320,20 @@ class TestTheLoaderRefusesTheSilentShapes:
         assert compile_spec(flashback_card({"greatest_mana_value": {}})) is not None
 
     def test_a_zone_nothing_walks_is_refused(self):
-        """`costs._reduction_matches` walks the battlefield and the command zone.
-        A graveyard filter would load clean and match nothing, for ever."""
-        with pytest.raises(DslError, match="counts \\['battlefield', 'command'\\] only"):
+        """`costs._reduction_matches` walks the battlefield, the command zone
+        and the graveyard. Anything else would load clean and match nothing.
+
+        The graveyard was the example here until Cyan, Vengeful Samurai needed
+        it counted; the **hand** replaced it, and is the better example anyway
+        -- it is hidden, where all three walked zones are public and readable
+        before anything is on the stack.
+        """
+        with pytest.raises(
+            DslError,
+            match="counts \\['battlefield', 'command', 'graveyard'\\] only",
+        ):
             compile_spec(
-                flashback_card({"greatest_mana_value": {"zone": ["command", "graveyard"]}})
+                flashback_card({"greatest_mana_value": {"zone": ["command", "hand"]}})
             )
 
     def test_an_empty_zone_list_is_refused(self):
