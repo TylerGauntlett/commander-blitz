@@ -531,6 +531,13 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
+        if obj.playable_group is not None and obj.playable_turn == state.turn:
+            # "…you may cast **a spell** from among those cards." Billed to the
+            # permanent that granted the permission, through the same ledger
+            # slot a `cast_from_graveyard` permission uses, so legality's cap
+            # and this agree about what has been spent.
+            state.turn_ledger.activated(obj.playable_group, legality.GRAVEYARD_CAST_SLOT)
+
         permission = None
         enters_tapped = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:

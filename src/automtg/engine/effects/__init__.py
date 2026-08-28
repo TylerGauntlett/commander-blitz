@@ -61,6 +61,11 @@ RECORDING_OPS = frozenset(
         #: empty hand who takes the free draw-five has discarded their hand, of
         #: nothing, and is still burned.
         "may",
+        #: The cards actually milled, across every player one op touched --
+        #: Locke, Treasure Hunter's "if a land card was milled **this way**".
+        #: An `exists` over a graveyard is a different card: it matches a land
+        #: that was already lying there.
+        "mill",
         #: The cards actually **cast**, which is neither the cards offered nor
         #: the cards exiled -- one with no legal target is never cast at all.
         #: Kefka turns on that distinction: "each player who owns a spell you

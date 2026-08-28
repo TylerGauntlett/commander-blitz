@@ -17,6 +17,7 @@ from .selectors import (
     ZONE_NAMES,
     choose_objects,
     pick_from_pool,
+    resolve_pool,
     select_players,
 )
 from .values import evaluate_value
@@ -106,9 +107,52 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("mill")
 def op_mill(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put cards from the top of a library into its owner's graveyard.
+
+    ``as`` records the cards this op actually milled, accumulating across the
+    players it touched -- Locke, Treasure Hunter: "each player mills a card. If
+    a **land card was milled this way**, create a Treasure token."
+
+    The binding is what makes that sentence sayable at all. `exists` over a
+    graveyard selector is a different card: it matches a land that was already
+    sitting in somebody's graveyard, so Locke would make a Treasure every attack
+    whatever the mill turned up. Milling less than asked is not an error either
+    (701.13b), so the record is what was moved rather than what was requested.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    milled: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
-        mill_cards(ctx.state, pid, amount)
+        milled.extend(mill_cards(ctx.state, pid, amount))
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + milled
+
+
+@register("grant_playable")
+def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Until end of turn, you may cast a spell from among those cards."
+
+    Locke, Treasure Hunter. A **standing permission** left on cards where they
+    already are, which is what separates it from every neighbouring op:
+    `play_exiled` casts one card there and then, for free, out of exile;
+    `exile`'s `playable_this_turn` grants the same permission but only to cards
+    it has just exiled. Locke's cards stay in their owners' graveyards --
+    including an opponent's -- and are paid for at their printed price.
+
+    ``limit`` is "a spell", singular. Counted per granting permanent in the turn
+    ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
+    spells and one Locke milling three cards is still one.
+    """
+    oids = resolve_pool(ctx, spec.get("objects"))
+    limit = int(spec.get("limit", 0) or 0)
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        obj.playable_by = ctx.controller
+        obj.playable_turn = ctx.state.turn
+        obj.playable_group = ctx.source_oid if limit else None
 
 
 @register("shuffle")
