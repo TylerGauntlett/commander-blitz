@@ -9082,12 +9082,12 @@
     },
     "Anger": {
       "edhrec_rank": 351,
-      "gate": "template",
+      "gate": null,
       "name": "Anger",
-      "reason": "no template for: As long as this card is in your graveyard and you control a Mountain, creatures you contro",
+      "reason": "",
       "scryfall_id": "e886a604-e3ce-4c6a-b63e-2c7f910a177a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Anger of the Gods": {

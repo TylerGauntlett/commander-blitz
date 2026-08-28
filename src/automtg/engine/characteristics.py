@@ -542,8 +542,50 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
         if obj is None:
             continue
         for ability in abilities_of(state, oid):
-            if ability.is_static and ability.static and _static_active(state, obj, ability.static):
+            if not (ability.is_static and ability.static):
+                continue
+            if Zone.BATTLEFIELD not in ability.active_zones:
+                # A graveyard-only static on a permanent that has somehow
+                # reached the battlefield -- Anger itself, as a 2/2. It is not
+                # active here, and letting it through is precisely the inverse
+                # of the printed card.
+                continue
+            if _static_active(state, obj, ability.static):
                 out.append((obj, ability.static))
+    out.extend(_graveyard_statics(state))
+    return out
+
+
+def _graveyard_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Statics that work from a graveyard -- Anger, and the Incarnation cycle.
+
+    "As long as this card is in your graveyard and you control a Mountain,
+    creatures you control have haste." The zone half of that sentence is *this
+    function*: an ability is collected only while its card sits in a graveyard,
+    so the clause needs no condition of its own.
+
+    Read off the **printed** face rather than through `abilities_of`, which
+    resolves granted and lost abilities against the battlefield and has nothing
+    to say about a card in a graveyard. Nothing grants an ability to a card in a
+    graveyard, so there is no case being missed.
+
+    Appended after the battlefield walk rather than interleaved, because the
+    order of this list is the order effects apply in and a graveyard card has no
+    battlefield timestamp to sort against.
+    """
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    for player in state.players:
+        for oid in player.graveyard:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                if not (ability.is_static and ability.static):
+                    continue
+                if Zone.GRAVEYARD not in ability.active_zones:
+                    continue
+                if _static_active(state, obj, ability.static):
+                    out.append((obj, ability.static))
     return out
 
 

@@ -2429,6 +2429,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Mountain"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "As long as this card is in your graveyard and you control a Mountain, creatures you control have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "anger",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Anger",
+      "oracle_text": "Haste\nAs long as this card is in your graveyard and you control a Mountain, creatures you control have haste.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Incarnation"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"

@@ -2447,7 +2447,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # quoted static makes ordinary.
         static["ability"] = int(model.ability or 0)
 
-    return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
+    # "As long as this card is **in your graveyard** and you control a
+    # Mountain..." -- Anger. `active_zones` was read on the activated and
+    # triggered branches and dropped here, so every static was pinned to the
+    # battlefield default: a static written on Anger switched on the moment it
+    # resolved as a 2/2, granting the team haste from play, and switched off
+    # when it died -- the exact inverse of the printed card.
+    #
+    # The zone clause needs no separate condition. Being gathered only while the
+    # card sits there *is* "as long as this card is in your graveyard", and
+    # `characteristics._active_statics` is what enforces it.
+    zones = tuple(Zone(z) for z in model.active_zones)
+    unsupported = set(zones) - {Zone.BATTLEFIELD, Zone.GRAVEYARD}
+    if unsupported:
+        # Only the two the walk actually visits. A static declaring `hand` or
+        # `exile` would load clean and never once be collected, which is the
+        # inert-card failure this pass exists to refuse.
+        raise DslError(
+            f"{where}: a static can be active on the battlefield or in a "
+            f"graveyard; nothing collects one in {sorted(z.value for z in unsupported)}"
+        )
+    return Ability(
+        kind=AbilityKind.STATIC,
+        index=index,
+        text=model.text,
+        static=static,
+        active_zones=zones,
+    )
 
 
 #: Ways a card may say how much less it costs.  ``count`` is "{1} less for each
