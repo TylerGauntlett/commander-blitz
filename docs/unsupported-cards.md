@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **42** capabilities.
+**29 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
-| [sandbox-graveyard-props](#sandbox-graveyard-props) | 1 | 5461 | engine |
 | [shares-a-name-with](#shares-a-name-with) | 1 | 6823 | selector |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
 | [target-player-chooses](#target-player-chooses) | 1 | 3427 | decision |
@@ -648,20 +647,6 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## sandbox-graveyard-props
-
-Blocks **1** card.
-
-- **(engine)** A verification sandbox whose graveyard contains at least one cheap creature card -- mana value 3 or less -- so a targeted reanimation spell with a printed mana-value restriction has a legal target and can be cast at gate 4. Concretely: OWN_GRAVEYARD_ROLES in src/automtg/cards/authoring/verify.py needs a 'small_creature' role (a non-token creature with mana value <= 3) alongside the existing 'creature' and 'flier' roles, and _ROLES needs the matching predicate.
-  <br>Why the existing vocabulary won't do: The DSL itself is sufficient: a targets entry of kind 'card_in_graveyard' with selector {zone: graveyard, controller: you, types: [Creature], mana_value: {op: '<=', value: {const: 3}}} feeding put_onto_battlefield with controller 'you' and tapped true says the printed line exactly -- it is the same construction bishop_of_rebirth already ships in data/cards/edgar.cards.json. What blocks the card is the fixed position: OWN_GRAVEYARD_ROLES = ('creature', 'flier') resolves against the shipped pool to acidic_slime ({3}{G}{G}, mana value 5) and air_elemental ({3}{U}{U}, mana value 5), so no card in any graveyard satisfies 'mana value 3 or less'. With no legal target the spell is never offered and gate 4 reports 'not playable in the sandbox; offered: [Attack p1 ...]'. The only ways to make it castable in the present position are to drop the mana-value clause or to add 'optional' to a target the card does not print as 'up to one' -- both misrepresent the printed card, which the brief forbids.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Helping Hand** (rank 5461) — `helping_hand`
-  - Return target creature card with mana value 3 or less from your graveyard to the battlefield tapped.
 
 </details>
 

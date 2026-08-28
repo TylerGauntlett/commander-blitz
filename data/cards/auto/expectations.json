@@ -214,9 +214,9 @@
     "zone": "battlefield"
   },
   "angel_of_glory_s_rise": {
-    "battlefield_count": 33,
+    "battlefield_count": 34,
     "graveyard_size": {
-      "0": 2
+      "0": 1
     },
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
@@ -2594,10 +2594,13 @@
     "zone": "battlefield"
   },
   "general_leo_cristophe": {
-    "battlefield_count": 33,
+    "battlefield_count": 34,
     "counters": {
-      "amount": 3,
+      "amount": 4,
       "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -3140,6 +3143,13 @@
     "hand_size": {
       "0": 1
     }
+  },
+  "helping_hand": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
   },
   "henchbots": {
     "zone": "battlefield"
@@ -5265,9 +5275,9 @@
     "zone": "battlefield"
   },
   "pre_war_formalwear": {
-    "battlefield_count": 33,
+    "battlefield_count": 34,
     "graveyard_size": {
-      "0": 2
+      "0": 1
     },
     "hand_size": {
       "0": 0
