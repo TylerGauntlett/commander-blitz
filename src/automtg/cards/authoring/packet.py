@@ -78,6 +78,19 @@ class Packet:
     #: Why the template tier could not finish it, so the reader does not retrace
     #: a path already known to be a dead end.
     template_said: str
+    #: The **back face**, for a card that turns over or carries a second
+    #: castable face -- `transform`, `modal_dfc`, `prepare`. Its own name, type
+    #: line, cost, power/toughness and printed text.
+    #:
+    #: Empty for every other layout, including `split` and `adventure`, whose
+    #: two halves are halves of one object and are joined into `oracle_text`.
+    #:
+    #: Without it a worker handed a transforming card was shown half of it and
+    #: had no way to tell: the front face's text loaded, validated and rendered
+    #: perfectly, and `todo` listed only the sentences the front prints. The one
+    #: thing a worker must never do is invent a line, and this is the field that
+    #: keeps the other half from having to be invented.
+    back_face: dict = field(default_factory=dict)
     #: Cards already in the pool with a similar shape, as worked examples.
     examples: list[dict] = field(default_factory=list)
     #: The vocabulary. Copied in rather than referenced, because the API worker
@@ -260,6 +273,25 @@ def _as_payload(card) -> dict:
     }
 
 
+
+def back_face_of(entry: IndexEntry) -> dict:
+    """The back face as a plain dict, or ``{}`` for a single-faced card.
+
+    Read straight off the index rather than looked up by name: the back is not
+    a row of its own -- the table is keyed ``(name, is_token)`` and a row under
+    the back face's name would be a card the deck importer could add.
+    """
+    if not entry.back_name:
+        return {}
+    return {
+        "name": entry.back_name,
+        "type_line": entry.back_type_line,
+        "mana_cost": entry.back_mana_cost,
+        "power": entry.back_power,
+        "toughness": entry.back_toughness,
+        "oracle_text": entry.back_oracle_text,
+    }
+
 def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) -> Packet:
     facts = facts_from_index(entry)
     proxy = build_proxy(facts)
@@ -282,6 +314,7 @@ def build_packet(entry: IndexEntry, registry: CardRegistry, template_said: str) 
         color_identity=entry.color_identity,
         oracle_text=entry.oracle_text,
         starting_point=starting_point,
+        back_face=back_face_of(entry),
         todo=todo or [entry.oracle_text],
         template_said=template_said,
         examples=examples_for(facts, registry),

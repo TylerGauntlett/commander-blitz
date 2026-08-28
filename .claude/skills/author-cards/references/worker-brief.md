@@ -13,6 +13,14 @@ sentence, decide whether it can be said **exactly** with the vocabulary in the
 packet's `reference` block — its `ops`, `keywords`, `types`, `trigger_events`,
 `static_effects`, `static_filter_keys`.
 
+**If your packet has a `back_face`, that half of the card is your job too.** It
+carries the back's own name, type line, mana cost, power/toughness and printed
+text, and its sentences are not in `todo` — `todo` is derived from the front.
+The card is not finished while the back is unimplemented, and its lines are as
+un-inventable as the front's: write what `back_face.oracle_text` says or write a
+gap record. A `back_face` is empty for a single-faced card and for split and
+adventure cards, whose halves are already joined into `oracle_text`.
+
 If every sentence can: go to step 2.
 
 If any sentence cannot: go to step 3. **Do not approximate.** Do not drop a clause,

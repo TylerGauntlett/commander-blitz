@@ -121,6 +121,30 @@ class IndexEntry:
     #: there are 32k cards and finite effort, so the ones people actually play
     #: are worth implementing first, and alphabetical order is worth nothing.
     edhrec_rank: int | None = None
+    #: The **back face** of a double-faced card, whose two faces are separate
+    #: objects -- `transform` and `modal_dfc`. Empty for every other layout,
+    #: including `split` and `adventure`, whose halves are two halves of one
+    #: object and are joined into `oracle_text` instead.
+    #:
+    #: There is one row per physical card and the back is not a card of its own,
+    #: so it rides along in columns of its own rather than as a second row: a
+    #: row keyed `(name, is_token)` on the back face's name would be a card the
+    #: importer could put in a deck.
+    #:
+    #: Without these the back face's printed lines existed **nowhere in the
+    #: repo** for 488 cards. Nothing said so -- the front face's text loaded,
+    #: validated and rendered perfectly well -- and an authoring worker handed
+    #: only the front had no way to know the rest of the card was missing.
+    back_name: str = ""
+    back_type_line: str = ""
+    back_mana_cost: str = ""
+    back_power: str | None = None
+    back_toughness: str | None = None
+    back_oracle_text: str = ""
+
+    @property
+    def has_back_face(self) -> bool:
+        return bool(self.back_name)
 
     def art_url(self) -> str:
         return image_url(self.scryfall_id, ART_CROP)
@@ -156,6 +180,12 @@ COLUMNS = (
     "keywords",
     "produced_mana",
     "edhrec_rank",
+    "back_name",
+    "back_type_line",
+    "back_mana_cost",
+    "back_power",
+    "back_toughness",
+    "back_oracle_text",
 )
 
 SCHEMA = f"""
@@ -179,6 +209,12 @@ CREATE TABLE cards (
     {COLUMNS[16]} TEXT,
     {COLUMNS[17]} TEXT,
     {COLUMNS[18]} INTEGER,
+    {COLUMNS[19]} TEXT,
+    {COLUMNS[20]} TEXT,
+    {COLUMNS[21]} TEXT,
+    {COLUMNS[22]} TEXT,
+    {COLUMNS[23]} TEXT,
+    {COLUMNS[24]} TEXT,
     -- Not `name` alone.  87 names are printed both as a real card and as a
     -- token -- Tarmogoyf, Champion of Wits, Adorned Pouncer -- and with `name`
     -- as the sole key whichever printing happened to win the sort evicted the
@@ -218,6 +254,12 @@ def _row_to_entry(row: sqlite3.Row | tuple) -> IndexEntry:
         keywords=values[16] or "",
         produced_mana=values[17] or "",
         edhrec_rank=values[18],
+        back_name=values[19] or "",
+        back_type_line=values[20] or "",
+        back_mana_cost=values[21] or "",
+        back_power=values[22],
+        back_toughness=values[23],
+        back_oracle_text=values[24] or "",
     )
 
 
@@ -225,7 +267,20 @@ def _row_to_entry(row: sqlite3.Row | tuple) -> IndexEntry:
 #: perfectly good for art, which is all the game path wants, so :class:`CardIndex`
 #: selects ``NULL`` for whichever are absent rather than failing to open -- a
 #: fresh clone must boot on whatever it was handed.
-LATE_COLUMNS = frozenset({"oracle_text", "keywords", "produced_mana", "edhrec_rank"})
+LATE_COLUMNS = frozenset(
+    {
+        "oracle_text",
+        "keywords",
+        "produced_mana",
+        "edhrec_rank",
+        "back_name",
+        "back_type_line",
+        "back_mana_cost",
+        "back_power",
+        "back_toughness",
+        "back_oracle_text",
+    }
+)
 
 
 def _select_for(present: set[str]) -> str:
