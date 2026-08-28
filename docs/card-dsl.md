@@ -3024,6 +3024,30 @@ somebody's payment, so there is no window in which to stop and ask; the loader
 refuses it. The cards that look like they want it target, and a mana ability
 cannot target (605.1a), so they were never mana abilities to begin with.
 
+### A static that works from the graveyard
+
+```jsonc
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["haste"],
+  "active_zones": ["graveyard"],
+  "affects": { "controller": "you", "types": ["Creature"] },
+  "condition": { "exists": { "zone": "battlefield", "controller": "you",
+                             "subtypes": ["Mountain"] } } }
+```
+
+Anger, and the Incarnation cycle. `active_zones` was already read on activated
+and triggered abilities; a static reads it too, and only `battlefield` (the
+default) and `graveyard` are accepted — those are the two zones the engine walks
+for statics, and one declaring `hand` would load clean and never be gathered.
+
+**The zone clause needs no condition.** Being collected only while the card sits
+in a graveyard *is* "as long as this card is in your graveyard", so
+`static_condition_keys` gained nothing. Everything after the "and" is an
+ordinary static `condition`.
+
+Getting this wrong is not a card that does nothing, it is a card that does the
+**inverse**: without `active_zones` the anthem switches on while Anger is a 2/2
+in play and switches off when it dies, which is exactly when it should start.
+
 ### Entwine — "choose both if you pay the entwine cost"
 
 ```jsonc

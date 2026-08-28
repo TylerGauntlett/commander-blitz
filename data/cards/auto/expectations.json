@@ -243,6 +243,16 @@
   "angelic_wall": {
     "zone": "battlefield"
   },
+  "anger": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "anguished_unmaking": {
     "battlefield_count": 31,
     "life": {

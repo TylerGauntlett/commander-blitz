@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**18 cards** blocked by **33** capabilities.
+**17 cards** blocked by **32** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extreme-value](#extreme-value) | 1 | 9647 | value |
 | [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
-| [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [leaves-graveyard](#leaves-graveyard) | 1 | 10518 | trigger_event |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
@@ -378,22 +377,6 @@ Blocks **1** card.
 
 - **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
   - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
-
-</details>
-
-## graveyard-static
-
-Blocks **1** card.
-
-- **(engine)** a static ability that applies while its source card sits in a graveyard -- the static-ability walk must gather statics from graveyard cards as well as battlefield permanents, and the ability must be able to declare that graveyard is where it is active
-  <br>Why the existing vocabulary won't do: `active_zones` exists on the ability schema and accepts "graveyard", but the loader only reads it on the activated and triggered branches; `_compile_static` builds its Ability without it, so every static is pinned to the battlefield default. The pipeline agrees: `_battlefield_statics` is documented as 'every active static ability on the battlefield' and is the only source of statics, so a static written on Anger would switch on the moment Anger resolved as a 2/2 -- granting the team haste from play, which the card never does -- and switch off the moment it died, which is exactly when the card is supposed to work.
-- **(static_effect)** a static `condition` predicate that asks which zone the static's own source is in, so "as long as this card is in your graveyard" can gate the grant rather than being implied by where the card happens to be
-  <br>Why the existing vocabulary won't do: `zone_is` is in `condition_keys` and in the cost-reduction condition heads, but `static_condition_keys` is a separate, smaller language (all, any, cmp, counters, exists, has_city_s_blessing, is_attached, is_your_turn, not, top_of_library) and carries no zone predicate at all. `exists` can only ask about other objects via a selector, not about the source's own zone, so the graveyard half of the condition cannot be written even if the engine gathered the static.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Anger** (rank 351) — `anger`
-  - As long as this card is in your graveyard and you control a Mountain, creatures you control have haste.
 
 </details>
 
