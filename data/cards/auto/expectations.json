@@ -3690,6 +3690,19 @@
   "keepers_of_the_faith": {
     "zone": "battlefield"
   },
+  "kefka_dancing_mad": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kelinore_bat": {
     "zone": "battlefield"
   },

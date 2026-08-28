@@ -41609,6 +41609,104 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "During your turn, Kefka has indestructible."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "banished",
+                  "objects": {
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "random": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "as": "cast",
+              "objects": {
+                "binding": "banished",
+                "count": "any"
+              },
+              "op": "play_exiled"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "binding": "each"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "owner_of": "each"
+                  }
+                }
+              ],
+              "objects": {
+                "binding": "cast"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, exile a card at random from each opponent's graveyard. You may cast any number of spells from among cards exiled this way without paying their mana costs. Then each player who owns a spell you cast this way loses life equal to its mana value.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kefka_dancing_mad",
+      "mana_cost": "{5}{B}{R}",
+      "name": "Kefka, Dancing Mad",
+      "oracle_text": "During your turn, Kefka has indestructible.\nAt the beginning of your end step, exile a card at random from each opponent's graveyard. You may cast any number of spells from among cards exiled this way without paying their mana costs. Then each player who owns a spell you cast this way loses life equal to its mana value.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

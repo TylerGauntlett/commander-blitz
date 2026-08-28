@@ -146472,12 +146472,12 @@
     },
     "Kefka, Dancing Mad": {
       "edhrec_rank": 4170,
-      "gate": "template",
+      "gate": null,
       "name": "Kefka, Dancing Mad",
-      "reason": "no template for: During your turn, Kefka has indestructible",
+      "reason": "",
       "scryfall_id": "21cfc161-11b8-4253-a872-3b08a13b6991",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kefnet the Mindful": {

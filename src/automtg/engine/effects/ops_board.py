@@ -147,7 +147,18 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
         # Written before the move, so the binding records what this op exiled
         # rather than whatever is in exile once it is done -- exactly where
         # `op_sacrifice` writes its own.
-        ctx.bindings[str(name)] = list(oids)
+        #
+        # **Extended, not replaced.** Kefka exiles "a card at random from each
+        # opponent's graveyard", which is a `for_each_player` loop around this
+        # op, and a plain assignment kept only the last opponent's card: the
+        # other was exiled and then stranded, because the `play_exiled` that
+        # follows could no longer name it. `discard` accumulates across the
+        # seats one op touches for the same reason; this is the same fact one
+        # loop out. Bindings live for a single resolution, so nothing carries
+        # into the next.
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + list(oids)
     for oid in oids:
         exile(ctx.state, oid, by=ctx.source_oid)
         if playable:
