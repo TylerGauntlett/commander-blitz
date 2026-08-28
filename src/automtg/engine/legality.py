@@ -473,7 +473,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # unlike flashback and retrace it is not a property of the card being
         # cast and legality has to ask the board. Offered at the **printed**
         # price, which is what separates it from flashback's alternative cost.
-        if _graveyard_cast_permission(state, pid, card) is not None:
+        if _graveyard_cast_permission(state, pid, card, oid) is not None:
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
@@ -751,7 +751,9 @@ def _cast_options(
 MAX_ADDITIONAL_TIMES = 6
 
 
-def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef):
+def _graveyard_cast_permission(
+    state: GameState, pid: int, card: CardDef, oid: int | None = None
+):
     """The permission that would let ``card`` be cast from a graveyard, if any.
 
     Returns the granting permanent, or ``None``. Both `legality` and
@@ -762,10 +764,19 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef):
     The first unspent one wins. Which of two identical Edgars is billed is not a
     choice any card asks the player to make, and they are interchangeable.
     """
-    from .characteristics import graveyard_cast_allows, graveyard_cast_permissions
+    from .characteristics import (
+        graveyard_cast_allows,
+        graveyard_cast_arrival_ok,
+        graveyard_cast_permissions,
+    )
 
+    subject = state.objects.get(oid) if oid is not None else None
     for source_obj, static in graveyard_cast_permissions(state, pid):
         if not graveyard_cast_allows(state, source_obj, static, card):
+            continue
+        # "…put there from anywhere other than the battlefield this turn" is a
+        # fact about *this copy* of the card, so it is asked of the object.
+        if subject is not None and not graveyard_cast_arrival_ok(state, static, subject):
             continue
         cap = int(static.get("max_per_turn") or 1)
         # Billed against the granting permanent through the ordinary activation

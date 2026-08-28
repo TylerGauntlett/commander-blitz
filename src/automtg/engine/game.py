@@ -515,7 +515,7 @@ class Game:
         permission = None
         enters_tapped = False
         if obj.zone is Zone.GRAVEYARD and not action.flashback and not card.retrace:
-            granting = legality._graveyard_cast_permission(state, pid, card)
+            granting = legality._graveyard_cast_permission(state, pid, card, oid)
             if granting is not None:
                 permission = granting.oid
                 state.turn_ledger.activated(granting.oid, legality.GRAVEYARD_CAST_SLOT)

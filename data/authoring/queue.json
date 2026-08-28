@@ -19982,12 +19982,12 @@
     },
     "Banon, the Returners' Leader": {
       "edhrec_rank": 6878,
-      "gate": "template",
+      "gate": null,
       "name": "Banon, the Returners' Leader",
-      "reason": "no template for: Pray — Once during each of your turns, you may cast a creature spell from among cards in y",
+      "reason": "",
       "scryfall_id": "63e84ece-b129-457d-84ed-b4280120f08b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Banquet Guests": {

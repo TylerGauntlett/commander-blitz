@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**10 cards** blocked by **24** capabilities.
+**9 cards** blocked by **22** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
-| [cast-from-graveyard](#cast-from-graveyard) | 1 | 6878 | engine, static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
@@ -30,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
-| [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
@@ -94,22 +92,6 @@ Blocks **1** card.
 
 - **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
   - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
-
-</details>
-
-## cast-from-graveyard
-
-Blocks **1** card.
-
-- **(static_effect)** a static ability that grants its controller permission to cast *other* cards from their own graveyard, with a filter naming which cards qualify (here `types: ["Creature"]`) -- the Muldrotha/Karador/Gisa and Geralf shape
-  <br>Why the existing vocabulary won't do: `play_lands_from_graveyard` is the only graveyard-casting permission in `static_effects`, and it is hard-wired to the land drop: `legality.py` reads it through `player_plays_lands_from_graveyard` solely to widen the land-play action, so it can neither be pointed at creature spells nor at casting at all. The `cast_from_graveyard` in `condition_keys` is not a permission -- it reads the `cast_from_graveyard` flag the stack sets on a spell, and the loader refuses it on any card without its own `flashback`, so it only ever asks about the source card itself, never about other cards in the yard
-- **(engine)** a per-turn use limit on such a casting permission -- "Once during each of your turns" must let exactly one qualifying spell be cast per turn of the permission's controller, and the used-up state must reset each turn
-  <br>Why the existing vocabulary won't do: `set_turn_flag`/`has_turn_flag` can record that something happened this turn, but they are effect ops and conditions readable only while an ability resolves; nothing consults them when legality enumerates castable spells, so there is no way to make a standing permission stop offering itself after its first use
-
-<details><summary>Cards waiting on this</summary>
-
-- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
-  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
 
 </details>
 
@@ -274,20 +256,6 @@ Blocks **1** card.
 
 - **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
   - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
-
-## graveyard-movement-ledger
-
-Blocks **1** card.
-
-- **(selector)** a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from ("from anywhere other than the battlefield") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from
-  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago
-
-<details><summary>Cards waiting on this</summary>
-
-- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
-  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
 
 </details>
 

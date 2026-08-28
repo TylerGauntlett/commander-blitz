@@ -1866,6 +1866,35 @@ def graveyard_cast_allows(
     return _matches_printed(card, resolved)
 
 
+def graveyard_cast_arrival_ok(
+    state: GameState, static: Mapping[str, Any], obj: GameObject
+) -> bool:
+    """"…put there **from anywhere other than the battlefield this turn**".
+
+    Banon, the Returners' Leader. Asked of the *object* rather than the printed
+    card, because when a card reached a graveyard and from where are facts about
+    this copy of it and not about the card -- which is why they could not go in
+    `affects_spells` beside the type filter.
+
+    Absent from the static, every card in the yard qualifies, which is Edgar.
+    """
+    arrival = static.get("arrived_this_turn_from")
+    if arrival is None:
+        return True
+    if obj.graveyard_turn != state.turn:
+        return False
+    allowed = [str(z) for z in arrival]
+    if allowed == ["any"]:
+        return True
+    forbidden = [z[1:] for z in allowed if z.startswith("!")]
+    if forbidden:
+        # "from anywhere **other than** the battlefield" -- a complement, and
+        # written as one because the printed line is: listing the four zones a
+        # card could otherwise have come from would silently miss the fifth.
+        return obj.graveyard_from not in forbidden
+    return obj.graveyard_from in allowed
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 
