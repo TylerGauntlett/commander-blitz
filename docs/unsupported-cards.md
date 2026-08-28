@@ -10,19 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**7 cards** blocked by **18** capabilities.
+**6 cards** blocked by **15** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
 | [deferred-batch-choice](#deferred-batch-choice) | 1 | 8473 | op |
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
-| [discard-binding](#discard-binding) | 1 | 5132 | op, value |
-| [entered-from-graveyard](#entered-from-graveyard) | 1 | 5132 | trigger_event |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
@@ -32,21 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
-
-## batched-enters-trigger
-
-Blocks **1** card.
-
-- **(engine)** one trigger per simultaneous batch of entering permanents -- "Whenever one or more other creatures you control enter" must fire exactly once when three creatures are reanimated together, on a card that prints no once-per-turn clause
-  <br>Why the existing vocabulary won't do: `permanent_enters` fires once per entering permanent, so a mass reanimation would put three +1/+1 counters on each creature instead of one. `max_per_turn: 1` is documented as the stand-in that buys "whenever one or more … enter", and the same note says a card printing "one or more" *without* a cap would still be wrong -- Celes prints no cap, so the cap would additionally delete every later batch in the turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
-  - When Celes enters, discard any number of cards, then draw that many cards plus one.
-  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-
-</details>
 
 ## cast-exiled-with
 
@@ -132,38 +114,6 @@ Blocks **1** card.
 - **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
   - When Joshua enters, discard up to two cards, then draw that many cards.
   - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-
-</details>
-
-## discard-binding
-
-Blocks **1** card.
-
-- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
-  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
-- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
-  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
-
-<details><summary>Cards waiting on this</summary>
-
-- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
-  - When Celes enters, discard any number of cards, then draw that many cards plus one.
-  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-
-</details>
-
-## entered-from-graveyard
-
-Blocks **1** card.
-
-- **(trigger_event)** an enters trigger that can ask which zone the entering permanent came from -- "if one or more of them entered from a graveyard" -- covering every route out of the yard (reanimation, `put_onto_battlefield` from a graveyard, `return_from_graveyard`), plus the ability to read the entering object's own cast-from-a-graveyard flag for the "or was cast from a graveyard" half. Needs the origin zone on the ENTERS_BATTLEFIELD payload and a positive filter/condition over it that is evaluated about the *triggering* object
-  <br>Why the existing vocabulary won't do: `zones._enter_battlefield` fires ENTERS_BATTLEFIELD with `player`, `source`, `oid`, `card`, `was_creature` and `cause` only -- the origin zone is put on the separate ZONE_CHANGE event as `from`, and no trigger event maps to ZONE_CHANGE. `cause` names the mechanism (`put_onto_battlefield`, `manifest`, `meld`), not the zone, and the only clause that reads it is `not_cause`, a single cause to *refuse*; there is no positive cause match, and matching on causes would in any case miss a reanimation and catch a battlefield-to-battlefield blink. In `condition_keys`, `zone_is` reports the source's *current* zone (`obj.zone.value`), `was_cast` is restricted by `WAS_CAST_TRIGGERS` to `self_enters` because it answers about the ability's own permanent, and `cast_from_graveyard` reads `obj.cast_from_graveyard` off the ability's source and is refused by the loader on any card without its own `flashback` -- so none of the three can be pointed at the creature that just entered. `static_filter_keys` and `selector_keys` have no origin-zone or arrival-history key either
-
-<details><summary>Cards waiting on this</summary>
-
-- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
-  - When Celes enters, discard any number of cards, then draw that many cards plus one.
-  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
 
 </details>
 

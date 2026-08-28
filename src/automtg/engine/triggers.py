@@ -777,6 +777,13 @@ def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict
 #: Event payload keys carried into a trigger's bindings.
 EVENT_BINDING_KEYS = (
     "amount",
+    # Which zone the permanent came from -- Celes, Rune Knight: "if one or more
+    # of them **entered from a graveyard**". `cause` names the *mechanism*
+    # (`put_onto_battlefield`, `manifest`, `meld`) and the same mechanism
+    # reaches the battlefield from any zone, so it cannot answer this. The
+    # origin was on the separate ZONE_CHANGE event all along, which no trigger
+    # maps to, so nothing could reach it.
+    "from_zone",
     "damage",
     "life",
     "sid",

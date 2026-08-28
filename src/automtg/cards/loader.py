@@ -1291,7 +1291,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"dice, so it would always read 0"
         )
 
-    reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
+    # `of` names a *different* permanent to ask about -- Celes, Rune Knight's
+    # "…or was cast from a graveyard", which is about the creature that just
+    # entered rather than about Celes. The guard below is about a card asking
+    # after **itself**, so a mention carrying `of` is not one of those and does
+    # not need a graveyard cost of its own.
+    reads_from_graveyard = _mentions(
+        model, lambda node: "cast_from_graveyard" in node and "of" not in node
+    )
     if reads_from_graveyard and flashback is None:
         raise DslError(
             f"{where}: reads the 'cast_from_graveyard' condition but has no "

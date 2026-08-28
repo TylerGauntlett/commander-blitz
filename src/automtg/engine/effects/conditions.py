@@ -27,6 +27,10 @@ if TYPE_CHECKING:  # pragma: no cover
 
 CONDITION_KEYS = frozenset(
     {
+        "entered_from",
+        #: Not a condition of its own: a sibling key on `cast_from_graveyard`
+        #: naming the binding to ask about instead of the ability's own source.
+        "of",
         "cmp",
         "left",
         "right",
@@ -170,7 +174,18 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         # `zone_is` cannot answer this: it reports the source's *current* zone,
         # which for any resolving sorcery is the stack, identically whether it
         # was cast from hand or from the graveyard.
-        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        # `of` names a **binding** to ask instead of the source -- Celes, Rune
+        # Knight's "…or was cast from a graveyard", which is about the creature
+        # that just entered and not about Celes. It is the other half of
+        # `entered_from` and cannot be folded into it: a creature *cast* from a
+        # graveyard enters from the **stack**, so the zone it entered from
+        # answers "stack" and the card would miss exactly the case it names
+        # second.
+        who = cond.get("of")
+        target = ctx.bindings.get(str(who)) if who is not None else ctx.source_oid
+        if isinstance(target, list):
+            target = target[0] if target else None
+        obj = ctx.state.objects.get(target) if isinstance(target, int) else None
         from_graveyard = obj is not None and obj.cast_from_graveyard
         return from_graveyard == bool(cond["cast_from_graveyard"])
     if "cast_during" in cond:
@@ -236,6 +251,15 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         # that cannot tell whose turn it is must not fire.
         pids = select_players(ctx, cond["is_active_player"])
         return any(ctx.state.active_player == p for p in pids)
+    if "entered_from" in cond:
+        # "…if one or more of them **entered from a graveyard**." Celes.
+        # Read off the trigger's own binding rather than the object, because by
+        # the time the condition is asked the permanent is on the battlefield
+        # and nothing on it remembers where it came from -- `cause` names the
+        # mechanism and the same mechanism reaches play from any zone.
+        want = cond["entered_from"]
+        zones = [want] if isinstance(want, str) else list(want)
+        return ctx.bindings.get("from_zone") in zones
     if "was_cast" in cond:
         # 603.6e. Asked of the ability's own source, which for the enters
         # trigger this clause lives on is the permanent that just arrived.
