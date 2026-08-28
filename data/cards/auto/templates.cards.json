@@ -77874,6 +77874,135 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "knight_2_2_w"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II, III, IV — Create three 2/2 white Knight creature tokens."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "knight_2_2_w"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II, III, IV — Create three 2/2 white Knight creature tokens."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "knight_2_2_w"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II, III, IV — Create three 2/2 white Knight creature tokens."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "knight_2_2_w"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I, II, III, IV — Create three 2/2 white Knight creature tokens."
+        },
+        {
+          "chapter": 5,
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "indestructible",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "text": "V — Ultimate End — Other creatures you control get +2/+2 until end of turn. Put an indestructible counter on each of them."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "summon_knights_of_round",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{6}{W}{W}",
+      "name": "Summon: Knights of Round",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after V.)\nI, II, III, IV — Create three 2/2 white Knight creature tokens.\nV — Ultimate End — Other creatures you control get +2/+2 until end of turn. Put an indestructible counter on each of them.\nIndestructible",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
