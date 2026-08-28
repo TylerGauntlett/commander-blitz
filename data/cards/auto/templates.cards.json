@@ -31352,6 +31352,142 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "target": "t1",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "effects": [
+                {
+                  "copying": {
+                    "target": "t1"
+                  },
+                  "duration": "end_of_turn",
+                  "except_name": "Gogo, Mysterious Mime",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "become_copy"
+                },
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                },
+                {
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "duration": "this_turn",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "must_attack"
+                },
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                },
+                {
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "duration": "this_turn",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "must_attack"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime. If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gogo_mysterious_mime",
+      "mana_cost": "{3}{R}",
+      "name": "Gogo, Mysterious Mime",
+      "oracle_text": "At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime. If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

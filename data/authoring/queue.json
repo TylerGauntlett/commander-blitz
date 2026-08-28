@@ -113392,12 +113392,12 @@
     },
     "Gogo, Mysterious Mime": {
       "edhrec_rank": 2769,
-      "gate": "template",
+      "gate": null,
       "name": "Gogo, Mysterious Mime",
-      "reason": "no template for: At the beginning of combat on your turn, you may have Gogo become a copy of another target",
+      "reason": "",
       "scryfall_id": "0db05dc8-03f8-4ab4-9ca3-2aaaa0099eb4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goham Djinn": {
