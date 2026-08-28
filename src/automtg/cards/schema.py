@@ -332,6 +332,21 @@ class AbilityModel(BaseModel):
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
+    #: "**Once during each of your turns**, you may cast an artifact spell from
+    #: your graveyard." Edgar, Master Machinist. How many times a
+    #: `cast_from_graveyard` permission may be used per turn, counted per
+    #: granting permanent -- two Edgars are two casts, the way two Welcoming
+    #: Vampires each draw.
+    #:
+    #: Required on that static, because a permission with no rate limit is an
+    #: unbounded engine rather than the printed line. Named for the trigger
+    #: field it mirrors and meaning the same thing one ability kind over.
+    static_max_per_turn: int | None = None
+    #: "…that artifact **enters tapped**." A rider on the permission, applied to
+    #: the permanent that was cast under it rather than to the permanent
+    #: granting it -- `self_enters_tapped` is a card's own replacement and is
+    #: the wrong permanent entirely here.
+    enters_tapped: bool = False
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)

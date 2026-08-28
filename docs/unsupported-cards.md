@@ -10,15 +10,15 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**11 cards** blocked by **25** capabilities.
+**10 cards** blocked by **24** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
+| [cast-from-graveyard](#cast-from-graveyard) | 1 | 6878 | engine, static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
-| [extreme-value](#extreme-value) | 1 | 9647 | value |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
@@ -39,29 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
-
-## cast-from-graveyard
-
-Blocks **2** cards.
-
-- **(static_effect)** a static ability that grants its controller permission to cast *other* cards from their own graveyard, with a filter naming which cards qualify (here `types: ["Creature"]`) -- the Muldrotha/Karador/Gisa and Geralf shape
-  <br>Why the existing vocabulary won't do: `play_lands_from_graveyard` is the only graveyard-casting permission in `static_effects`, and it is hard-wired to the land drop: `legality.py` reads it through `player_plays_lands_from_graveyard` solely to widen the land-play action, so it can neither be pointed at creature spells nor at casting at all. The `cast_from_graveyard` in `condition_keys` is not a permission -- it reads the `cast_from_graveyard` flag the stack sets on a spell, and the loader refuses it on any card without its own `flashback`, so it only ever asks about the source card itself, never about other cards in the yard
-- **(engine)** a per-turn use limit on such a casting permission -- "Once during each of your turns" must let exactly one qualifying spell be cast per turn of the permission's controller, and the used-up state must reset each turn
-  <br>Why the existing vocabulary won't do: `set_turn_flag`/`has_turn_flag` can record that something happened this turn, but they are effect ops and conditions readable only while an ability resolves; nothing consults them when legality enumerates castable spells, so there is no way to make a standing permission stop offering itself after its first use
-- **(static_effect)** a static ability on one permanent that lets its controller cast OTHER cards from their graveyard, filtered by card type (here artifact spells) and rate-limited to once during each of that player's turns
-  <br>Why the existing vocabulary won't do: `play_lands_from_graveyard` is the only graveyard-play permission in `static_effects`, and legality.py reads it solely through `player_plays_lands_from_graveyard` for the land drop -- it cannot authorize a spell cast, cannot be narrowed by type, and carries no per-turn counter. Flashback is the only other graveyard cast route and it is a property of the card being cast (`card.flashback`, read off the card in legality.py), so it cannot be conferred on arbitrary artifact cards by a different permanent.
-- **(replacement)** an enters-tapped replacement applied to a DIFFERENT permanent than the ability's source -- the artifact that was cast from the graveyard under this permission -- conditioned on that permanent having been cast this way
-  <br>Why the existing vocabulary won't do: The only enters-tapped replacement is `self_enters_tapped` (zones.py), which fires on the source's own entry; the free tier mis-templated this clause onto Edgar himself, which is not what the card says. The `cast_from_graveyard` CONDITION key exists but only reads `obj.cast_from_graveyard` during a resolution -- there is no replacement event keyed on a permanent entering that was cast from a graveyard.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
-  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
-- **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
-  - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
-  - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
-
-</details>
 
 ## alternative-cost-pay-life
 
@@ -118,6 +94,22 @@ Blocks **1** card.
 
 - **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
   - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
+
+</details>
+
+## cast-from-graveyard
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability that grants its controller permission to cast *other* cards from their own graveyard, with a filter naming which cards qualify (here `types: ["Creature"]`) -- the Muldrotha/Karador/Gisa and Geralf shape
+  <br>Why the existing vocabulary won't do: `play_lands_from_graveyard` is the only graveyard-casting permission in `static_effects`, and it is hard-wired to the land drop: `legality.py` reads it through `player_plays_lands_from_graveyard` solely to widen the land-play action, so it can neither be pointed at creature spells nor at casting at all. The `cast_from_graveyard` in `condition_keys` is not a permission -- it reads the `cast_from_graveyard` flag the stack sets on a spell, and the loader refuses it on any card without its own `flashback`, so it only ever asks about the source card itself, never about other cards in the yard
+- **(engine)** a per-turn use limit on such a casting permission -- "Once during each of your turns" must let exactly one qualifying spell be cast per turn of the permission's controller, and the used-up state must reset each turn
+  <br>Why the existing vocabulary won't do: `set_turn_flag`/`has_turn_flag` can record that something happened this turn, but they are effect ops and conditions readable only while an ability resolves; nothing consults them when legality enumerates castable spells, so there is no way to make a standing permission stop offering itself after its first use
+
+<details><summary>Cards waiting on this</summary>
+
+- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
+  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
 
 </details>
 
@@ -282,21 +274,6 @@ Blocks **1** card.
 
 - **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
   - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
-
-## extreme-value
-
-Blocks **1** card.
-
-- **(value)** a value leaf that returns the greatest (or least) power/toughness/mana value across a selected pool as a SINGLE number -- e.g. {"extreme_value": {"of": "mana_value", "pick": "greatest", "objects": {...}}}
-  <br>Why the existing vocabulary won't do: `mana_value_of` with an `objects` ref SUMS over the pool (values.py `_characteristic`), and the `extreme` selector key keeps every object tied for the extremum on purpose (selectors.py `_narrow_to_extreme`, so `choose_objects` can break the tie). Combining them therefore reads 2X when two artifacts tie for the greatest mana value, and 3X when three do -- a silent overcount on a very common board, not an edge case. `max` in `value_keys` takes a fixed literal list of sub-expressions, so it cannot aggregate over a pool whose size is unknown until resolution, and `max_count_of` aggregates a COUNT of objects per player, not a characteristic.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
-  - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
-  - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
 
 </details>
 

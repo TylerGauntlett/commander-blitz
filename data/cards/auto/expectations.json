@@ -1968,6 +1968,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "edgar_master_machinist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ekundu_griffin": {
     "zone": "battlefield"
   },
