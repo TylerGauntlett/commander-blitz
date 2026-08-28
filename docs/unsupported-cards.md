@@ -10,28 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**2 cards** blocked by **3** capabilities.
+**2 cards** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
-
-## dfc-back-face-text
-
-Blocks **1** card.
-
-- **(engine)** The card index must store a transforming card's BACK FACE text. `data/catalog/cards.sqlite` has one `oracle_text` column per card and for layout 'transform' it holds only the front face, so the back face's printed lines exist nowhere in the repo. Joshua's back is a Saga with chapters that cannot be invented. Fixing it is `scripts/build_card_index.py` reading `card_faces[1]` (text, type line, mana cost, power/toughness), a re-pull of the Scryfall bulk dump -- none is cached under data/catalog/bulk -- and a `authoring/packet.py` change to pass it through.
-  <br>Why the existing vocabulary won't do: Not a DSL gap at all: `back_face` in schema.py already supports a second card entry and henrika_domnathi ships one. The data is missing rather than the vocabulary. It affects 488 transform/modal_dfc cards in the catalog, so it is its own build item rather than something to solve inside one card's authoring run.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
-  - When Joshua enters, discard up to two cards, then draw that many cards.
-  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-
-</details>
 
 ## exile-and-return-transformed
 
