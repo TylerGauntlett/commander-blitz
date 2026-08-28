@@ -289,7 +289,9 @@ def move_object(
             )
 
     if to_zone is Zone.BATTLEFIELD:
-        _enter_battlefield(state, obj, card, forced_tapped=tapped, cause=cause)
+        _enter_battlefield(
+            state, obj, card, forced_tapped=tapped, cause=cause, from_zone=from_zone
+        )
 
     return obj
 
@@ -379,6 +381,7 @@ def _enter_battlefield(
     *,
     forced_tapped: bool = False,
     cause: str = "",
+    from_zone: Zone | None = None,
 ) -> None:
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
@@ -474,6 +477,22 @@ def _enter_battlefield(
         # way to tell its own output from anything else's -- it would trigger on
         # the permanent it just put down, and again on that one's, forever.
         cause=cause,
+        # **Where** it came from, which `cause` does not say: that names the
+        # mechanism (`put_onto_battlefield`, `manifest`, `meld`) and the same
+        # mechanism reaches the battlefield from any zone. Celes, Rune Knight
+        # asks "if one or more of them **entered from a graveyard**", which is a
+        # question about the zone and covers every route out of it --
+        # reanimation, `return_from_graveyard`, a cast from the yard.
+        #
+        # The origin was on the separate ZONE_CHANGE event all along, and no
+        # trigger maps to that one, so nothing could reach it.
+        from_zone=from_zone.value if from_zone is not None else None,
+        # One firing per **simultaneous** batch, for "whenever one or more
+        # creatures enter". `permanent_enters` fires once per permanent, so a
+        # mass reanimation would put three counters where the card prints one.
+        # See `triggers._queue`; without this the batched flag had nothing to
+        # group by on this event.
+        batch=state.event_batch,
     )
     # A Saga entered with its first lore counter (714.2b), so chapter I triggers
     # (714.2c). The counter itself was put on by the replacement loop above, which

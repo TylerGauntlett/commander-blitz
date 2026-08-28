@@ -1102,6 +1102,13 @@
   "caves_of_koilos": {
     "zone": "battlefield"
   },
+  "celes_rune_knight": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "celestial_colonnade": {
     "zone": "battlefield"
   },

@@ -41752,12 +41752,12 @@
     },
     "Celes, Rune Knight": {
       "edhrec_rank": 5132,
-      "gate": "template",
+      "gate": null,
       "name": "Celes, Rune Knight",
-      "reason": "no template for: When Celes enters, discard any number of cards, then draw that many cards plus one",
+      "reason": "",
       "scryfall_id": "30584c53-533b-4dc7-b07c-8600164a99b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Celestial Ancient": {
