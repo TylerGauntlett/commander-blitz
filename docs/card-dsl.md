@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-103 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+104 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -200,7 +200,7 @@ it, but a card that needed correcting was authored wrong.
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` `copy_spell` `return_spell_to_hand` |
+| Stack | `counter` `copy_spell` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
@@ -3746,6 +3746,67 @@ never dies and there is nothing to replace.
 damage ledger the trigger filter reads. `damaged` cannot stand in: it means
 "has damage marked on it", which is true of a creature something else burned a
 moment ago and false of one this spell killed outright.
+
+## "When you do" — reflexive triggered abilities
+
+Espers to Magicite — *"Exile each opponent's graveyard. **When you do**, choose
+up to one target creature card exiled this way. Create a token that's a copy of
+that card…"*
+
+```jsonc
+"spell_effects": [
+  { "op": "exile", "as": "banished",
+    "objects": { "zone": "graveyard", "controller": "opponent", "count": "all" } },
+  { "op": "reflexive_trigger", "ability": "magicite" }
+],
+"abilities": [
+  { "kind": "reflexive", "id": "magicite",
+    "text": "When you do, choose up to one target creature card exiled this way.",
+    "targets": [ ... ],
+    "effects": [ ... ] }
+]
+```
+
+Rule 603.11. The second sentence is a **separate object**: it goes on the stack
+when a player would next receive priority — so after the spell that fired it has
+finished resolving — it chooses its targets as it is put there (603.3d), and the
+other players get a window to answer it.
+
+**A fifth `AbilityKind`, for the reason there is a fourth.** "When you do" names
+no event. It means "when the instruction immediately above this one is carried
+out", which is a fact about one resolution rather than anything the board can be
+watched for. So the ability carries **no `TriggerSpec` at all**, and the effect
+that carries out the instruction fires it by name. Two independent gates keep it
+from firing on its own: `_candidate_abilities` skips an ability whose `trigger`
+is None, and `Ability.is_triggered` is False for this kind.
+
+Writing it as an ability on the card rather than as more effects inside the op
+is what buys everything downstream for nothing — APNAP queueing, modes, targets
+at 603.3d, the responder's window — because it becomes an ordinary
+`TriggerInstance` the moment it is queued.
+
+**Not more effects inline**, which is the shape it is easiest to mistake for:
+
+| | inline effects | `reflexive_trigger` |
+|---|---|---|
+| when the choice is made | mid-resolution | as the ability goes on the stack |
+| is it a *target* | no — nothing announced | yes, announced and re-checked (608.2b) |
+| may anyone respond | no | yes |
+| what the log shows | one resolution | a spell and then an ability |
+
+**Not `delayed_trigger`.** That watches an `EventType`, and there is none for
+"the thing I just did".
+
+The bindings are copied when the op runs, so "…exiled **this way**" still names
+the cards the earlier op recorded once the ability reaches the stack.
+
+**The wiring is checked in both directions at load time**, because both
+directions are silent. An ability nothing fires is a printed line that never
+happens; an op naming an id that is not there is a spell missing its second
+sentence. Neither fails any other check — the ability compiles cleanly and the
+op is a known name — so `_check_reflexive_wiring` is the only place either can
+be caught. `id` is required on a reflexive ability and refused on every other
+kind.
 
 ## Sagas
 

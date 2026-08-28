@@ -253,7 +253,13 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static", "chapter"]
+    kind: Literal["activated", "triggered", "static", "chapter", "reflexive"]
+    #: The name a `reflexive_trigger` op calls this ability by -- "when you do"
+    #: has to point at *which* do. Required on ``kind: "reflexive"`` and refused
+    #: on every other kind, and the loader checks the two halves name each
+    #: other, so a reflexive ability nothing fires is a load error rather than a
+    #: line of the card that never happens.
+    id: str | None = None
     text: str = ""
     #: **A Saga's chapter number** -- the "II" in "II — Create two 2/2 red Human
     #: Knight creature tokens with trample and haste". Required on
