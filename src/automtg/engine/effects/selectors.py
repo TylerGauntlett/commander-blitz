@@ -803,9 +803,38 @@ def pick_from_pool(
         chooser = ctx.controller
         if chooser_spec == "owner" and pool:
             chooser = ctx.state.objects[pool[0]].owner
+        elif chooser_spec not in ("controller", "owner"):
+            # An arbitrary **player spec** -- Rejoin the Fight: "each opponent
+            # chooses a creature card in **your** graveyard". Both existing
+            # names resolve to the spell's controller for a pool in your own
+            # yard, so the caster would pick the cards an opponent is supposed
+            # to, which is the whole card.
+            #
+            # Resolved through `select_players`, so the ordinary vocabulary
+            # works -- `{"binding": "each_player"}` inside a `for_each_player`
+            # loop is the shape that card needs.
+            seats = select_players(ctx, chooser_spec)
+            if not seats:
+                # Nobody to ask, so nothing is chosen -- rather than quietly
+                # letting the controller decide.
+                return []
+            chooser = seats[0]
 
     picked = yield from ask_objects(ctx, prompt, pool, min_count, max_count, chooser, purpose)
     return picked
+
+
+def _validate_player_spec_shape(who: Any, where: str) -> None:
+    """A `chooser` that is not one of the three names must be a player spec.
+
+    Shape only: a mapping is left to the loader's own `_validate_player_spec`,
+    which is the one that can check a target id against the card's declarations.
+    """
+    if isinstance(who, Mapping):
+        return
+    if isinstance(who, str) and who in PLAYER_SPEC_NAMES:
+        return
+    raise DslError(f"{where}: unknown chooser {who!r}")
 
 
 #: The **string** forms :func:`select_players` accepts, named so a load-time
@@ -1007,7 +1036,10 @@ def validate_selector(selector: Any, where: str) -> None:
         raise DslError(f"{where}: unknown zone {zone!r}")
     chooser = selector.get("chooser")
     if chooser is not None and chooser not in ("controller", "owner", "none"):
-        raise DslError(f"{where}: unknown chooser {chooser!r}")
+        # Anything else is an ordinary player spec -- "each opponent chooses a
+        # creature card in your graveyard". Validated as one so a typo is
+        # refused at load time rather than resolving to nobody mid-game.
+        _validate_player_spec_shape(chooser, f"{where}.chooser")
     controller = selector.get("controller")
     if (
         controller is not None

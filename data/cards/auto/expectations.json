@@ -5712,6 +5712,15 @@
   "regathan_firecat": {
     "zone": "battlefield"
   },
+  "rejoin_the_fight": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "rejuvenate": {
     "life": {
       "0": 46

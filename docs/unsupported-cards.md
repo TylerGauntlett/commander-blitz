@@ -10,21 +10,18 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**6 cards** blocked by **15** capabilities.
+**5 cards** blocked by **12** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
-| [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
-| [deferred-batch-choice](#deferred-batch-choice) | 1 | 8473 | op |
 | [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
-| [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
@@ -69,36 +66,6 @@ Blocks **1** card.
 
 - **Espers to Magicite** (rank 6897) — `espers_to_magicite`
   - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
-
-</details>
-
-## cumulative-choice-exclusion
-
-Blocks **1** card.
-
-- **(selector)** a way for a sequence of choices made in one resolution to accumulate, so a later choice can exclude everything already chosen -- e.g. an `as` binding on the choosing op that APPENDS across `for_each_player` iterations, readable by `exclude_binding`, giving "a creature card in your graveyard that hasn't been chosen"
-  <br>Why the existing vocabulary won't do: `exclude_binding` reads a binding written once by `as`, and `return_from_graveyard` sets no binding at all; even ops that do write `as` overwrite it each iteration, so iteration N could only exclude iteration N-1's pick, not the whole set. Nothing in `selector_keys` records "already chosen this resolution".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
-  - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
-  - Return each card chosen this way to the battlefield under your control.
-
-</details>
-
-## deferred-batch-choice
-
-Blocks **1** card.
-
-- **(op)** choices gathered from several players first and the effect applied once to the whole set -- "each opponent chooses ... Return EACH card chosen this way to the battlefield" is one simultaneous return after all choices are made
-  <br>Why the existing vocabulary won't do: The only player-shaped loop, `for_each_player`, executes its whole body per player, so a `return_from_graveyard` inside it returns each creature as its own event; the cards would enter one at a time between choices rather than together, changing enters-the-battlefield ordering and letting each opponent see the previous card already on the battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
-  - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
-  - Return each card chosen this way to the battlefield under your control.
 
 </details>
 
@@ -173,21 +140,6 @@ Blocks **1** card.
 - **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
   - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
   - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
-
-</details>
-
-## opponent-chooser
-
-Blocks **1** card.
-
-- **(selector)** a selector `chooser` that can name an arbitrary player -- a player spec such as {"binding": "each_player"} or "opponent" -- so that inside a `for_each_player` loop the looped opponent is the one asked to pick from a pool of cards that are in YOUR graveyard (and hence owned and controlled by you)
-  <br>Why the existing vocabulary won't do: `chooser` in `selector_keys` is validated at load time to exactly "controller", "owner" or "none" (selectors.validate_selector). For a pool of `{"zone": "graveyard", "controller": "you"}` both "controller" and "owner" resolve to the spell's controller, so the caster picks the creature cards instead of each opponent. `for_each_player` binds `each_player` only for the selector's `controller`/`player` filters, not for who is asked; `scry` is the only op with a separate `chooser` player spec and it is hard-wired to scry/fateseal, not to object selection.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
-  - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
-  - Return each card chosen this way to the battlefield under your control.
 
 </details>
 
