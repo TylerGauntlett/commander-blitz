@@ -2009,6 +2009,22 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             raise DslError(f"{where}: only activated abilities can be mana abilities")
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
+        if any(
+            isinstance(e, Mapping)
+            and e.get("op") == "choose_mode"
+            and e.get("chooser") is not None
+            for e in model.effects or ()
+        ):
+            # 605.1a/605.3: a mana ability does not use the stack and resolves
+            # inside somebody's payment. Stopping there to ask a *different*
+            # player a question has no window to happen in, and the cards that
+            # look like they want it -- The Warring Triad's "Target player adds
+            # one mana of any color" -- target, so they are not mana abilities
+            # in the first place.
+            raise DslError(
+                f"{where}: a mana ability cannot hand its 'choose_mode' to "
+                f"another player; it resolves without the stack, inside a payment"
+            )
         mana_effects, mana_rider = _split_mana_rider(model.effects, where)
         # "Add one mana of any color that a land an opponent controls could
         # produce." The colours are a question about the board, so the card
@@ -3525,6 +3541,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # covered before it is written.
     if "player" in effect:
         _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+    if effect.get("op") == "choose_mode" and "chooser" in effect:
+        # "Target player adds one mana of any color" -- the player adding picks
+        # the colour. An ordinary player spec, so "target" reaches the targeted
+        # seat and the usual vocabulary is available.
+        _validate_player_spec(effect["chooser"], f"{where}.chooser", target_kinds)
 
     if op == "may" and "pay" in effect:
         # "You may pay {2}. If you do, draw a card." Validated through the same

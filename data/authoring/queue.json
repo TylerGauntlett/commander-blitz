@@ -280672,12 +280672,12 @@
     },
     "The Warring Triad": {
       "edhrec_rank": 3427,
-      "gate": "template",
+      "gate": null,
       "name": "The Warring Triad",
-      "reason": "no template for: As long as there are fewer than eight cards in your graveyard, isn't a creature",
+      "reason": "",
       "scryfall_id": "59c9633d-484c-4bce-ac86-696791afd6a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Wasp, Janet Van Dyne": {

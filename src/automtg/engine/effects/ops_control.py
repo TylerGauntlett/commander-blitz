@@ -324,6 +324,23 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     # says a permanent that left and came back is a new object that may choose
     # again -- the same rule flip and transform already lean on.
     once_each = bool(spec.get("once_each"))
+    # "**Target player** adds one mana of any color" -- The Warring Triad. The
+    # player who adds the mana is the one who picks its colour, so the question
+    # goes to them and not to us. `ask_mode` always took an arbitrary chooser,
+    # the way `ask_objects` did for Fact or Fiction's pile-splitter, so this
+    # costs nothing but the resolution. Absent, it is our own choice as before.
+    #
+    # `carddef.asks_another_player` keeps such a mode out of `cast_time_modes`,
+    # so it is never pre-answered by the controller at 601.2b/602.2b time and
+    # always reaches the ask below.
+    chooser = ctx.controller
+    if (who := spec.get("chooser")) is not None:
+        picked_players = select_players(ctx, who)
+        if not picked_players:
+            # No player to ask -- the target is gone. Nothing is chosen and
+            # nothing happens, rather than the controller quietly deciding.
+            return
+        chooser = picked_players[0]
     source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     offered = list(range(len(modes)))
     if once_each and source is not None:
@@ -347,14 +364,14 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             ctx,
             "Choose",
             [labels[i] for i in offered],
-            ctx.controller,
+            chooser,
             floor,
             up_to,
         )
         chosen = [offered[i] for i in picked]
     else:
         chosen = yield from ask_mode(
-            ctx, "Choose", labels, ctx.controller, floor, up_to
+            ctx, "Choose", labels, chooser, floor, up_to
         )
 
     # 700.2e: "the modes are executed in the order written on the card", not the

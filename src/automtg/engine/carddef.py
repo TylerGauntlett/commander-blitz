@@ -401,6 +401,20 @@ def top_level_mode_spec(effects: Any) -> Mapping[str, Any] | None:
     return None
 
 
+def asks_another_player(spec: Mapping[str, Any] | None) -> bool:
+    """Does this ``choose_mode`` hand the choice to somebody other than us?
+
+    The Warring Triad: "Target player adds one mana of any color." "Any color"
+    is spelled as a `choose_mode` over five `add_mana` modes, and the player
+    *adding* the mana is the one who picks -- so the question cannot be
+    pre-answered by the ability's controller at 601.2b/602.2b time, the way an
+    ordinary modal spell's is. It belongs to resolution, for the same reason a
+    nested `choose_mode` does, and both `cast_time_modes` properties decline it
+    on that ground.
+    """
+    return bool(spec) and spec.get("chooser") is not None
+
+
 def _specs_for_modes(
     base: tuple[TargetSpec, ...],
     mode_targets: Mapping[int, tuple[TargetSpec, ...]],
@@ -538,7 +552,8 @@ class Ability:
         """
         if self.is_static or count_mode_specs(self.effects) != 1:
             return None
-        return top_level_mode_spec(self.effects)
+        spec = top_level_mode_spec(self.effects)
+        return None if asks_another_player(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs this ability actually declared -- see
@@ -808,7 +823,8 @@ class CardDef:
         """
         if count_mode_specs(self.spell_effects) != 1:
             return None
-        return top_level_mode_spec(self.spell_effects)
+        spec = top_level_mode_spec(self.spell_effects)
+        return None if asks_another_player(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.

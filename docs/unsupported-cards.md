@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **40** capabilities.
+**25 cards** blocked by **38** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
-| [mill-cost](#mill-cost) | 1 | 3427 | cost |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [missing-token](#missing-token) | 1 | 7573 | engine |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
@@ -52,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
-| [target-player-chooses](#target-player-chooses) | 1 | 3427 | decision |
 | [unearth](#unearth) | 1 | 2622 | replacement |
 
 ## discard-binding
@@ -476,20 +474,6 @@ Blocks **1** card.
 
 </details>
 
-## mill-cost
-
-Blocks **1** card.
-
-- **(cost)** a `mill` entry on an activated ability's cost -- "Mill a card" (a fixed number, milled from the activating player's own library) paid as part of activation, so the ability cannot be activated with an empty library and the cards are in the graveyard before the ability resolves
-  <br>Why the existing vocabulary won't do: `cost_keys` carries tap, sacrifice, discard/discard_self, exile_from_graveyard, return_to_hand, pay_life, remove_counters, tap_permanents/untap_permanents and the mana forms -- none of which moves cards from library to graveyard. `discard` is the nearest shape (a fixed count off a zone you own) but it empties the hand, not the library, and the hand is not what this card is metering. Writing the mill as a `mill` op in `effects` instead is explicitly the wrong answer per the packet notes: it moves the payment to resolution, so the ability could be activated (and responded to) with an empty library and the graveyard would fill after the ability had already been put on the stack -- which matters on this exact card, whose other ability counts cards in that graveyard.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Warring Triad** (rank 3427) — `the_warring_triad`
-  - {T}, Mill a card: Target player adds one mana of any color.
-
-</details>
-
 ## milled-this-way
 
 Blocks **1** card.
@@ -652,20 +636,6 @@ Blocks **1** card.
 
 - **Summon: Esper Valigarmanda** (rank 5429) — `summon_esper_valigarmanda`
   - II, III, IV — Add {R} for each lore counter on this Saga. You may cast an instant or sorcery card exiled with this Saga, and mana of any type can be spent to cast that spell.
-
-</details>
-
-## target-player-chooses
-
-Blocks **1** card.
-
-- **(decision)** a way to direct a modal/colour choice to a player other than the ability's controller -- e.g. a `chooser` on `choose_mode` (or on `choose_color`) naming a target player -- so "target player adds one mana of any color" asks the targeted player which colour they add
-  <br>Why the existing vocabulary won't do: "Add one mana of any color" is spelled as one `choose_mode` over five `add_mana` modes (Arcane Signet, Command Tower). `op_choose_mode` always calls `ask_mode(..., ctx.controller, ...)` and has no chooser field, and `op_choose_color` likewise asks `ctx.controller` and stores the colour on its own source. `add_mana` can send the mana to another player via its `player` spec, but the colour would still be picked by the ability's controller, which is a different card: the mana lands in the target player's pool in a colour they did not choose.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Warring Triad** (rank 3427) — `the_warring_triad`
-  - {T}, Mill a card: Target player adds one mana of any color.
 
 </details>
 

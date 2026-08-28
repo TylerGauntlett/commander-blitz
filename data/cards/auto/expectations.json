@@ -7302,6 +7302,18 @@
   "the_terror_of_serpent_s_pass": {
     "zone": "battlefield"
   },
+  "the_warring_triad": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "trample",
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "the_wasp_janet_van_dyne": {
     "zone": "battlefield"
   },
