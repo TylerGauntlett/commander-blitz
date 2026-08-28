@@ -347,6 +347,16 @@ class AbilityModel(BaseModel):
     #: granting it -- `self_enters_tapped` is a card's own replacement and is
     #: the wrong permanent entirely here.
     enters_tapped: bool = False
+    #: "…cards in your graveyard that were **put there from anywhere other than
+    #: the battlefield this turn**." Banon, the Returners' Leader. A list of
+    #: zone names the card must have arrived from, this turn; prefix one with
+    #: `!` for the complement, which is what Banon prints -- listing the four
+    #: zones a card could otherwise have come from would silently miss a fifth.
+    #:
+    #: Beside `affects_spells` rather than inside it, because when a card
+    #: reached a graveyard and from where are facts about *this copy* and not
+    #: about the card, and `affects_spells` may only read the printed face.
+    arrived_this_turn_from: list[str] | None = None
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)

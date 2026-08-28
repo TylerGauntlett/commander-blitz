@@ -125,6 +125,21 @@ class GameObject:
     #: Whether the copy above expires at cleanup. Clone copies permanently;
     #: Gogo copies "until end of turn", and only that form is cleared.
     copying_until_eot: bool = False
+    #: When this card reached a graveyard, and from where -- Banon, the
+    #: Returners' Leader: "cards in your graveyard that were put there **from
+    #: anywhere other than the battlefield this turn**".
+    #:
+    #: Per card, which is the whole point: `TurnLedger.cards_to_graveyard` is a
+    #: bare integer across every graveyard at the table and retains neither
+    #: which cards arrived nor where they came from, so a selector reading it
+    #: could only ever see the whole yard -- and Banon would recur a creature
+    #: that died in combat five turns ago.
+    #:
+    #: Set by `zones.move_object` on the way in and left alone afterwards.
+    #: `reset_permanent_state` does not clear it, because a card that leaves the
+    #: graveyard has no use for it and one that comes back is written again.
+    graveyard_turn: int = -1
+    graveyard_from: str | None = None
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same

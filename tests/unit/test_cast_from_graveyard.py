@@ -189,3 +189,90 @@ def _permission(**overrides):
             "abilities": [static],
         }
     )
+
+
+class TestTheArrivalClause:
+    """Banon: "…put there **from anywhere other than the battlefield this turn**".
+
+    A fact about *this copy* of the card -- when it reached the graveyard and
+    from where -- so it cannot live in `affects_spells`, which may only read the
+    printed face. `TurnLedger.cards_to_graveyard` is the only this-turn
+    graveyard fact the engine kept and it is a bare integer over every yard at
+    the table: it retains neither which card arrived nor whence, so a selector
+    reading it could only see the whole graveyard and Banon would recur a
+    creature that died in combat five turns ago.
+
+    Written as a complement (`!battlefield`) because the printed line is one:
+    listing the four zones a card could otherwise have come from would silently
+    miss the fifth.
+    """
+
+    PRAY = "t_pray"
+    GREEN_BEAR = "t_bear"
+
+    def board(self, builder):
+        return (
+            builder(players=2)
+            .battlefield(0, [self.PRAY])
+            .battlefield(0, ["forest"] * 4)
+            .hand(0, ["plains"])
+            .library(0, [self.GREEN_BEAR] + ["forest"] * 10)
+            .build()
+        )
+
+    def bury(self, game, *, via: str):
+        from automtg.engine.enums import Zone
+        from automtg.engine.zones import move_object
+
+        state = game.state
+        oid = state.players[0].library[0]
+        if via == "battlefield":
+            move_object(state, oid, Zone.BATTLEFIELD, to_player=0, cause="test")
+        move_object(state, oid, Zone.GRAVEYARD, to_player=0, cause="test")
+        return game
+
+    def test_a_milled_creature_is_castable(self, builder):
+        game = self.bury(self.board(builder), via="library")
+        assert castable(game) == [self.GREEN_BEAR]
+
+    def test_one_that_died_on_the_battlefield_is_not(self, builder):
+        """The clause's whole content, and the case a plain graveyard selector
+        would have let through."""
+        game = self.bury(self.board(builder), via="battlefield")
+        assert castable(game) == []
+
+    def test_the_arrival_is_recorded_on_the_card(self, builder):
+        game = self.bury(self.board(builder), via="library")
+        oid = game.state.players[0].graveyard[0]
+        obj = game.state.objects[oid]
+        assert obj.graveyard_from == "library"
+        assert obj.graveyard_turn == game.state.turn
+
+    def test_a_permission_without_the_clause_takes_either(self, builder):
+        """Edgar has no arrival clause, and every card in the yard qualifies."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [MACHINIST])
+            .battlefield(0, ["plains"] * 4)
+            .hand(0, ["forest"])
+            .library(0, [ARTIFACT] + ["forest"] * 10)
+            .build()
+        )
+        self.bury(game, via="battlefield")
+        assert castable(game) == [ARTIFACT]
+
+    def test_the_loader_refuses_an_unknown_zone(self):
+        from automtg.cards.loader import compile_card
+        from automtg.engine.errors import DslError
+
+        with pytest.raises(DslError, match="unknown zone"):
+            compile_card(_permission(arrived_this_turn_from=["!nowhere"]), source="t")
+
+    def test_the_loader_refuses_an_empty_list(self):
+        """Nothing in the graveyard would ever qualify."""
+        from automtg.cards.loader import compile_card
+        from automtg.engine.errors import DslError
+
+        with pytest.raises(DslError, match="names no zone"):
+            compile_card(_permission(arrived_this_turn_from=[]), source="t")
+

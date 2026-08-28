@@ -5035,6 +5035,78 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "arrived_this_turn_from": [
+            "!battlefield"
+          ],
+          "effect": "cast_from_graveyard",
+          "kind": "static",
+          "static_max_per_turn": 1,
+          "text": "Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1,
+                "mana": "{1}"
+              },
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack, you may pay {1} and discard a card. If you do, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "banon_the_returners_leader",
+      "mana_cost": "{R}{W}",
+      "name": "Banon, the Returners' Leader",
+      "oracle_text": "Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.\nWhenever you attack, you may pay {1} and discard a card. If you do, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

@@ -482,6 +482,10 @@
   "banehound": {
     "zone": "battlefield"
   },
+  "banon_the_returners_leader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bant_panorama": {
     "zone": "battlefield"
   },

@@ -2483,6 +2483,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["max_per_turn"] = int(model.static_max_per_turn or 1)
         if model.enters_tapped:
             static["enters_tapped"] = True
+        if model.arrived_this_turn_from is not None:
+            zones = [str(z) for z in model.arrived_this_turn_from]
+            if not zones:
+                raise DslError(
+                    f"{where}: 'arrived_this_turn_from' names no zone at all, so "
+                    f"nothing in the graveyard would ever qualify"
+                )
+            from automtg.engine.effects.selectors import ZONE_NAMES as _ZONES
+
+            known = {z.lstrip("!") for z in zones} - set(_ZONES) - {"any"}
+            if known:
+                raise DslError(
+                    f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}"
+                )
+            static["arrived_this_turn_from"] = zones
     if model.effect == "grant_ability":
         # Which of the card's `grantable_abilities` is handed over. Carried onto
         # the compiled mapping rather than left on the model, because the

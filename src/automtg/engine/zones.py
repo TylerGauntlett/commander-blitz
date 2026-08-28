@@ -210,6 +210,13 @@ def move_object(
         },
     )
 
+    # "…put there from anywhere other than the battlefield **this turn**" --
+    # Banon. Recorded per card as it arrives, because the turn ledger's count is
+    # a bare integer over every graveyard and cannot say which card or whence.
+    if to_zone is Zone.GRAVEYARD and from_zone is not Zone.GRAVEYARD:
+        obj.graveyard_turn = state.turn
+        obj.graveyard_from = from_zone.value
+
     # "Whenever one or more cards leave your graveyard" -- Spirit Mascot, Cyan.
     # Narrow on purpose: `ZONE_CHANGE` above records *every* move and stays off
     # the trigger bus, because routing it through `fire` would run the trigger
