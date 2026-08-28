@@ -364,6 +364,10 @@
       "0": 41
     }
   },
+  "ash_barrens": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "asha_s_favor": {
     "zone": [
       "battlefield",
@@ -588,6 +592,20 @@
       ]
     },
     "zone": "battlefield"
+  },
+  "big_score": {
+    "battlefield_count": 34,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 2,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
   },
   "bird_maiden": {
     "zone": "battlefield"
@@ -1385,6 +1403,13 @@
   "cowl_prowler": {
     "zone": "battlefield"
   },
+  "crackling_doom": {
+    "life": {
+      "1": 38
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "crash_of_rhinos": {
     "zone": "battlefield"
   },
@@ -1656,6 +1681,10 @@
     "zone": "battlefield"
   },
   "deft_duelist": {
+    "zone": "battlefield"
+  },
+  "demolition_field": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "demon_of_catastrophes": {
@@ -2262,6 +2291,10 @@
   "field_of_ruin": {
     "zone": "battlefield"
   },
+  "fields_of_strife": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fiend_hunter": {
     "battlefield_count": 32,
     "zone": "battlefield"
@@ -2558,6 +2591,14 @@
     "zone": "battlefield"
   },
   "geist_of_the_moors": {
+    "zone": "battlefield"
+  },
+  "general_leo_cristophe": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "generous_stray": {
@@ -7084,6 +7125,10 @@
     "life": {
       "0": 44
     }
+  },
+  "terra_herald_of_hope": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "terrain_elemental": {
     "zone": "battlefield"

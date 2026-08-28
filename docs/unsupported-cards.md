@@ -10,25 +10,334 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **1** capability.
+**11 cards** blocked by **20** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [gift](#gift) | 1 | 1672 | cost, value |
+| [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
+| [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
+| [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
+| [card-left-graveyard-this-turn](#card-left-graveyard-this-turn) | 1 | 8270 | engine |
+| [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
+| [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
+| [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
+| [discard-any-number](#discard-any-number) | 1 | 5132 | op, value |
+| [entered-from-graveyard](#entered-from-graveyard) | 1 | 5132 | trigger_event |
+| [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
+| [extreme-value](#extreme-value) | 1 | 9647 | value |
+| [graveyard-arrival-this-turn](#graveyard-arrival-this-turn) | 1 | 6878 | selector |
+| [graveyard-cost-reduction](#graveyard-cost-reduction) | 1 | 10518 | cost |
+| [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
+| [leaves-graveyard](#leaves-graveyard) | 1 | 10518 | trigger_event |
+| [linked-targets](#linked-targets) | 1 | 21778 | selector |
+| [modal-cost](#modal-cost) | 1 | 869 | cost |
+| [prepared](#prepared) | 1 | 3846 | engine, op |
+| [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
+| [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 
-## gift
+## cast-from-graveyard
 
-Blocks **1** card.
+Blocks **2** cards.
 
-- **(cost)** a card-level `gift` declaration -- the kicker slot in `legality._cast_variant` / `game._cast`, but for a promise that costs the caster **nothing**: it offers a second cast line at the printed price, asks the caster to name one opponent (rule 702.164a -- the promise is made to a chosen player, not to all of them), and records both the promise and the recipient on the spell object the way `obj.cast_kicked` records a kick. The gift itself is then an ordinary effect the card writes first in `spell_effects` -- for this card `{"op": "create_token", "token": "fish_1_1_u", "tapped": true, "controller": <the promised opponent>}` -- so no new op is needed for the reward, only a way to aim `controller` at the promisee. The authoring harness must also cast the promised line: `verify._play_and_check` measures a kicker card kicked precisely so a `{"kicked": true}` branch cannot ship inert, and a `gift` flag needs the same treatment or it inherits that hole.
-  <br>Why the existing vocabulary won't do: `kicker` is the only free-standing optional cast-time flag an effect can read back (`{"kicked": true}`), and it is mana-only: `loader` line 417 refuses a kicker whose mana value is 0 -- verified, `kicker: "{0}"` raises `DslError: kicker '{0}' costs nothing` -- so it cannot carry a promise that is paid for with nothing. `additional_cost` is a full `CostModel`, and every key in it (`mana`, `sacrifice`, `discard`, `pay_life`, `tap`, `tap_permanents`, `return_to_hand`, `exile_from_graveyard`, `remove_counters`, `untap`, `loyalty`) is a payment the **caster** makes from their own side of the board; none of them can express "an opponent gets a tapped 1/1 blue Fish", and nothing in the cost language names a recipient. The empty-`CostModel` hack is worse than useless and was measured: `additional_cost: {}` + `additional_optional: true` loads, and the card *passes all six gates* while the gift branch never runs once -- `_additional_ceiling` offers times 0 and 1 at the same price, and `verify._play_and_check` picks its cast line with `kicked=card.kicker is not None`, which is False here, so the harness always takes the times=0 line. That is exactly the quiet wrong-card failure a gap record exists to prevent.
-- **(value)** a condition head -- `{"gift_promised": true}` alongside `kicked` / `evoked` / `overloaded` in `effects/conditions.py`'s CONDITION_KEYS -- so the second sentence can branch on whether the promise was made, and the same flag on the object (like `obj.cast_kicked`) so it survives into the delayed trigger.
-  <br>Why the existing vocabulary won't do: `kicked` is the only condition of this shape and is bound to a mana kicker cost the loader will not let cost nothing (`loader` refuses both a zero kicker and a kicker no effect reads via `kicked`). `additional_paid` is not a condition head at all -- it is a `value_keys` entry counting *how many times* an additional cost was paid, so reading it needs a `cmp` against an `additional_cost` that, per the need above, cannot be written.
+- **(static_effect)** a static ability that grants its controller permission to cast *other* cards from their own graveyard, with a filter naming which cards qualify (here `types: ["Creature"]`) -- the Muldrotha/Karador/Gisa and Geralf shape
+  <br>Why the existing vocabulary won't do: `play_lands_from_graveyard` is the only graveyard-casting permission in `static_effects`, and it is hard-wired to the land drop: `legality.py` reads it through `player_plays_lands_from_graveyard` solely to widen the land-play action, so it can neither be pointed at creature spells nor at casting at all. The `cast_from_graveyard` in `condition_keys` is not a permission -- it reads the `cast_from_graveyard` flag the stack sets on a spell, and the loader refuses it on any card without its own `flashback`, so it only ever asks about the source card itself, never about other cards in the yard
+- **(engine)** a per-turn use limit on such a casting permission -- "Once during each of your turns" must let exactly one qualifying spell be cast per turn of the permission's controller, and the used-up state must reset each turn
+  <br>Why the existing vocabulary won't do: `set_turn_flag`/`has_turn_flag` can record that something happened this turn, but they are effect ops and conditions readable only while an ability resolves; nothing consults them when legality enumerates castable spells, so there is no way to make a standing permission stop offering itself after its first use
+- **(static_effect)** a static ability on one permanent that lets its controller cast OTHER cards from their graveyard, filtered by card type (here artifact spells) and rate-limited to once during each of that player's turns
+  <br>Why the existing vocabulary won't do: `play_lands_from_graveyard` is the only graveyard-play permission in `static_effects`, and legality.py reads it solely through `player_plays_lands_from_graveyard` for the land drop -- it cannot authorize a spell cast, cannot be narrowed by type, and carries no per-turn counter. Flashback is the only other graveyard cast route and it is a property of the card being cast (`card.flashback`, read off the card in legality.py), so it cannot be conferred on arbitrary artifact cards by a different permanent.
+- **(replacement)** an enters-tapped replacement applied to a DIFFERENT permanent than the ability's source -- the artifact that was cast from the graveyard under this permission -- conditioned on that permanent having been cast this way
+  <br>Why the existing vocabulary won't do: The only enters-tapped replacement is `self_enters_tapped` (zones.py), which fires on the source's own entry; the free tier mis-templated this clause onto Edgar himself, which is not what the card says. The `cast_from_graveyard` CONDITION key exists but only reads `obj.cast_from_graveyard` during a resolution -- there is no replacement event keyed on a permanent entering that was cast from a graveyard.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Parting Gust** (rank 1672) — `parting_gust`
-  - Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)
-  - Exile target nontoken creature. If the gift wasn't promised, return that card to the battlefield under its owner's control with a +1/+1 counter on it at the beginning of the next end step.
+- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
+  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
+- **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
+  - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
+  - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
+
+</details>
+
+## alternative-cost-pay-life
+
+Blocks **1** card.
+
+- **(replacement)** An alternative cost that REPLACES a spell's mana cost with a life payment computed from that spell's own mana value, applied automatically to every spell cast under the permission above. Needs (a) alternative-cost machinery that substitutes for the whole mana cost rather than reducing it, (b) the substituted cost to be paid in life, and (c) its amount to be read from the spell being cast (its mana value), not from the source granting the permission. The life payment is a cost, so a player who cannot pay that much life cannot cast the spell that way.
+  <br>Why the existing vocabulary won't do: `pay_life` exists in `cost_keys`, but `cost_keys` is only what an ACTIVATED ABILITY'S OWN cost may contain -- it cannot be attached to some other spell being cast from a zone. `spell_cost_reduction` in `static_effects` is the only static that touches what other spells cost, and it reduces a mana cost by an amount; it cannot swap the payment to a different resource, and reducing to {0} would be a different card (it would not drain the caster's life, so Citadel's self-limiting downside would vanish). Nothing in `static_effects` or `condition_keys` can read the mana value of the spell currently being cast at payment time; `mana_value_of` is a `value_key` for effects at resolution, not a payment-time hook.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
+  - You may play lands and cast spells from the top of your library.
+  - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
+
+</details>
+
+## batched-enters-trigger
+
+Blocks **1** card.
+
+- **(engine)** one trigger per simultaneous batch of entering permanents -- "Whenever one or more other creatures you control enter" must fire exactly once when three creatures are reanimated together, on a card that prints no once-per-turn clause
+  <br>Why the existing vocabulary won't do: `permanent_enters` fires once per entering permanent, so a mass reanimation would put three +1/+1 counters on each creature instead of one. `max_per_turn: 1` is documented as the stand-in that buys "whenever one or more … enter", and the same note says a card printing "one or more" *without* a cap would still be wrong -- Celes prints no cap, so the cap would additionally delete every later batch in the turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
+  - When Celes enters, discard any number of cards, then draw that many cards plus one.
+  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+
+</details>
+
+## card-left-graveyard-this-turn
+
+Blocks **1** card.
+
+- **(engine)** a per-turn ledger of cards that left a player's graveyard this turn (to any zone -- exile, hand, library, battlefield), exposed both as a condition an intervening-if can ask ("if a card left your graveyard this turn") and as a count value, keyed by the graveyard's owner
+  <br>Why the existing vocabulary won't do: value_keys has `cards_to_graveyard_this_turn`, which counts movement in the opposite direction (cards put *into* the graveyard) and so is true in exactly the wrong cases. `cast_from_graveyard` only asks about the source spell itself, not about any card. `has_turn_flag` reads a flag written by `set_turn_flag` on the same source, so it cannot observe a zone change caused by some other card. `exists`/`zone_is`/`cmp` only read the graveyard's current contents, which says nothing about what departed it. The engine keeps only `cards_drawn_this_turn`, `resolutions_this_turn` and `triggers_this_turn` as per-turn ledgers -- no graveyard-departure tracking exists to read.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gau, Feral Youth** (rank 8270) — `gau_feral_youth`
+  - At the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.
+
+</details>
+
+## cast-from-library-top
+
+Blocks **1** card.
+
+- **(static_effect)** A player-wide continuous static that widens the zones a player may CAST NONLAND SPELLS from to include the top card of their own library -- the casting twin of `play_lands_from_library_top`, covering instants, sorceries, creatures and any other spell, playable at the times that spell's own timing rules allow. It must also make the top card legal to see for the purpose of casting it (Bolas's Citadel pairs it with its own `look_at_library_top` line), and it must be true continuously rather than at one moment.
+  <br>Why the existing vocabulary won't do: `play_lands_from_library_top` in `static_effects` is the closest thing and is lands only -- `player_plays_lands_from_library_top` is documented as 'whether this player may play the top card of their library, IF IT IS A LAND', so it grants no permission for a nonland spell. `play_lands_from_graveyard` is the same permission aimed at a different zone, also lands only. On the op side, `play_exiled` lets a card be played from exile but only for cards a resolving effect has already exiled, so it cannot reach an untouched library top, and it is a one-shot resolution effect rather than a continuous permission. `look_at_library_top` grants visibility and is explicitly documented as granting 'no permission to play or move the card'.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
+  - You may play lands and cast spells from the top of your library.
+  - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
+
+</details>
+
+## copy-card-in-exile
+
+Blocks **1** card.
+
+- **(selector)** targeting an individual card in exile that the same spell put there, as the source for a token copy -- 'up to one target creature card exiled this way'
+  <br>Why the existing vocabulary won't do: `exiled_with` filters to cards a source exiled and `optional` gives 'up to one', so the *filter* is sayable, but there is no way to bind it as a target: the target would have to be chosen after the exile happens, which is the reflexive trigger above. Without that, the target spec is evaluated on cast against an exile zone that does not yet contain the cards.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Espers to Magicite** (rank 6897) — `espers_to_magicite`
+  - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
+
+</details>
+
+## copy-with-type-change
+
+Blocks **1** card.
+
+- **(op)** an `except_` clause on `copy_permanent` (or an equivalent token-copy op) that overwrites the copy's card types -- '...except it's an artifact and it loses all other card types', i.e. set types to exactly [Artifact] on the token copy rather than adding to them
+  <br>Why the existing vocabulary won't do: `copy_permanent` accepts only `colors`, `add_subtypes` and `no_mana_cost` in `except_` (loader rejects any other key), so it can recolour and add subtypes but never change the copy's card types; the copy would come back a creature. `set_types` exists but only as a *static_effect*, which a resolving instant cannot apply as a one-shot copy modification, and a static ability may only read printed characteristics of an object that already exists. `add_subtype` explicitly refuses a `types` key. `create_token` needs a pre-declared token id and so cannot copy an arbitrary exiled card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Espers to Magicite** (rank 6897) — `espers_to_magicite`
+  - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
+
+</details>
+
+## discard-any-number
+
+Blocks **1** card.
+
+- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
+  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
+- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
+  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
+
+<details><summary>Cards waiting on this</summary>
+
+- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
+  - When Celes enters, discard any number of cards, then draw that many cards plus one.
+  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+
+</details>
+
+## entered-from-graveyard
+
+Blocks **1** card.
+
+- **(trigger_event)** an enters trigger that can ask which zone the entering permanent came from -- "if one or more of them entered from a graveyard" -- covering every route out of the yard (reanimation, `put_onto_battlefield` from a graveyard, `return_from_graveyard`), plus the ability to read the entering object's own cast-from-a-graveyard flag for the "or was cast from a graveyard" half. Needs the origin zone on the ENTERS_BATTLEFIELD payload and a positive filter/condition over it that is evaluated about the *triggering* object
+  <br>Why the existing vocabulary won't do: `zones._enter_battlefield` fires ENTERS_BATTLEFIELD with `player`, `source`, `oid`, `card`, `was_creature` and `cause` only -- the origin zone is put on the separate ZONE_CHANGE event as `from`, and no trigger event maps to ZONE_CHANGE. `cause` names the mechanism (`put_onto_battlefield`, `manifest`, `meld`), not the zone, and the only clause that reads it is `not_cause`, a single cause to *refuse*; there is no positive cause match, and matching on causes would in any case miss a reanimation and catch a battlefield-to-battlefield blink. In `condition_keys`, `zone_is` reports the source's *current* zone (`obj.zone.value`), `was_cast` is restricted by `WAS_CAST_TRIGGERS` to `self_enters` because it answers about the ability's own permanent, and `cast_from_graveyard` reads `obj.cast_from_graveyard` off the ability's source and is refused by the loader on any card without its own `flashback` -- so none of the three can be pointed at the creature that just entered. `static_filter_keys` and `selector_keys` have no origin-zone or arrival-history key either
+
+<details><summary>Cards waiting on this</summary>
+
+- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
+  - When Celes enters, discard any number of cards, then draw that many cards plus one.
+  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+
+</details>
+
+## exile-until-leaves-return-to-origin
+
+Blocks **1** card.
+
+- **(op)** an exile-until-this-permanent-leaves link that returns each exiled card to the zone it came from -- the nonland card exiled out of a hand goes back to its owner's hand, the creature exiled off the battlefield goes back to the battlefield -- from a single return, since one printed sentence covers both
+  <br>Why the existing vocabulary won't do: exile's 'until_leaves' only records the link; the return is an ordinary leaves_battlefield trigger whose op hardwires one destination (Oblivion Ring uses put_onto_battlefield over {'zone':'exile','exiled_with':'self'}, return_to_hand always moves to Zone.HAND). Nothing on the exiled object records the zone it was exiled from, so no condition or selector can split the returned cards by origin, and picking either op would send half the cases to the wrong zone
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
+  - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
+  - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
+
+</details>
+
+## extreme-value
+
+Blocks **1** card.
+
+- **(value)** a value leaf that returns the greatest (or least) power/toughness/mana value across a selected pool as a SINGLE number -- e.g. {"extreme_value": {"of": "mana_value", "pick": "greatest", "objects": {...}}}
+  <br>Why the existing vocabulary won't do: `mana_value_of` with an `objects` ref SUMS over the pool (values.py `_characteristic`), and the `extreme` selector key keeps every object tied for the extremum on purpose (selectors.py `_narrow_to_extreme`, so `choose_objects` can break the tie). Combining them therefore reads 2X when two artifacts tie for the greatest mana value, and 3X when three do -- a silent overcount on a very common board, not an edge case. `max` in `value_keys` takes a fixed literal list of sub-expressions, so it cannot aggregate over a pool whose size is unknown until resolution, and `max_count_of` aggregates a COUNT of objects per player, not a characteristic.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
+  - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
+  - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
+
+</details>
+
+## graveyard-arrival-this-turn
+
+Blocks **1** card.
+
+- **(selector)** a selector key over graveyard cards that matches only those put there this turn, and that can further restrict which zone they came from ("from anywhere other than the battlefield") -- i.e. the engine must remember, per card now in a graveyard, the turn it arrived and the zone it arrived from
+  <br>Why the existing vocabulary won't do: `cards_to_graveyard_this_turn` is the only this-turn graveyard fact the engine keeps, and `values.py` returns `ledger.cards_to_graveyard`, a bare integer across all graveyards -- it retains neither which cards arrived nor where they came from. No key in `selector_keys` reads arrival time or previous zone, so a graveyard selector can only see the whole yard, which would let this ability recur a creature that died in combat five turns ago
+
+<details><summary>Cards waiting on this</summary>
+
+- **Banon, the Returners' Leader** (rank 6878) — `banon_the_returners_leader`
+  - Pray — Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.
+
+</details>
+
+## graveyard-cost-reduction
+
+Blocks **1** card.
+
+- **(cost)** a self cost reduction whose 'for each' filter may count cards in the caster's graveyard -- i.e. add 'graveyard' to the zones a cost reduction filter may name, and let the counting walk that zone at pricing time the way it already walks the battlefield and command zone
+  <br>Why the existing vocabulary won't do: The only two reduction languages are the card-level 'cost_reduction' / cost 'mana_reduction' (reference cost_keys 'mana_reduction') and the battlefield static 'spell_cost_reduction'. The former's counting filter is restricted to COST_REDUCTION_ZONES = {battlefield, command}, so a graveyard filter is a load error rather than a silent zero; the latter is a battlefield static that discounts a *different* card and its magnitude comes from static_value_keys, whose 'count' is filtered by static_filter_keys -- a set with no 'zone' key at all, so it cannot be scoped to a graveyard either. There is no third place a spell's own price can be lowered from.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
+  - This spell costs {1} less to cast for each creature card in your graveyard.
+  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
+
+</details>
+
+## graveyard-static
+
+Blocks **1** card.
+
+- **(engine)** a static ability that applies while its source card sits in a graveyard -- the static-ability walk must gather statics from graveyard cards as well as battlefield permanents, and the ability must be able to declare that graveyard is where it is active
+  <br>Why the existing vocabulary won't do: `active_zones` exists on the ability schema and accepts "graveyard", but the loader only reads it on the activated and triggered branches; `_compile_static` builds its Ability without it, so every static is pinned to the battlefield default. The pipeline agrees: `_battlefield_statics` is documented as 'every active static ability on the battlefield' and is the only source of statics, so a static written on Anger would switch on the moment Anger resolved as a 2/2 -- granting the team haste from play, which the card never does -- and switch off the moment it died, which is exactly when the card is supposed to work.
+- **(static_effect)** a static `condition` predicate that asks which zone the static's own source is in, so "as long as this card is in your graveyard" can gate the grant rather than being implied by where the card happens to be
+  <br>Why the existing vocabulary won't do: `zone_is` is in `condition_keys` and in the cost-reduction condition heads, but `static_condition_keys` is a separate, smaller language (all, any, cmp, counters, exists, has_city_s_blessing, is_attached, is_your_turn, not, top_of_library) and carries no zone predicate at all. `exists` can only ask about other objects via a selector, not about the source's own zone, so the graveyard half of the condition cannot be written even if the engine gathered the static.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Anger** (rank 351) — `anger`
+  - As long as this card is in your graveyard and you control a Mountain, creatures you control have haste.
+
+</details>
+
+## leaves-graveyard
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired when one or more cards leave a specified player's graveyard, batched so that a single move of several cards fires the ability once, and filterable by the leaving cards' printed characteristics (here: creature cards, your graveyard)
+  <br>Why the existing vocabulary won't do: trigger_events has 'leaves_battlefield' and 'dies', which watch the battlefield and fire on cards arriving in a graveyard rather than departing it; 'discard' and 'sacrificed' likewise only ever put cards *into* a graveyard. Nothing in the list observes the graveyard as a source zone, so the many ways a card leaves it -- reanimation via return_from_graveyard or put_onto_battlefield, exile via the exile op or an exile_from_graveyard cost, a graveyard cast, a shuffle-back -- all happen unobserved. The batching ('one or more ... leave') is a second requirement no existing event carries: every listed event fires per object.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cyan, Vengeful Samurai** (rank 10518) — `cyan_vengeful_samurai`
+  - This spell costs {1} less to cast for each creature card in your graveyard.
+  - Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on Cyan.
+
+</details>
+
+## linked-targets
+
+Blocks **1** card.
+
+- **(selector)** a target spec whose selector is filtered by another target of the same ability -- 'up to one target creature THEY control', where 'they' is the target opponent chosen by the sibling target spec, so the creature's legality is decided by the seat picked for the first target
+  <br>Why the existing vocabulary won't do: selector_keys has 'controller', and it accepts a player-spec mapping, but neither form reaches a sibling target: the loader validates a target's own 'controller' clause with an empty target table on purpose ('Checked with no sibling targets in scope ... a card that tried would rather be told so than load'), and even if it loaded, {'target': 'opp'} resolves through ctx.target_players, which targeting.candidates builds with no targets bound yet -- so the creature spec would enumerate zero legal candidates and the clause would be silently inert. 'controller': 'opponent' is the near miss and is strictly wider: at a pod it offers creatures controlled by opponents the card never chose
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
+  - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
+  - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
+
+</details>
+
+## modal-cost
+
+Blocks **1** card.
+
+- **(cost)** a cost that is a choice between two whole alternative payments -- 'discard a card OR pay 3 life' -- where the caster picks one branch as the spell is cast and only that branch is paid and checked for payability
+  <br>Why the existing vocabulary won't do: A cost is a single flat record whose entries are conjunctive: writing both `discard` and `pay_life` on the same cost charges the player both, which is a strictly worse card, and writing only one silently drops the other half of the printed line. `additional_optional` is the nearest thing and only makes one fixed cost skippable (a yes/no on paying it), not a choice between two different prices; `choose_mode` is an effect op that runs on resolution, so it can neither be a cost nor gate whether the spell is castable
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bitter Triumph** (rank 869) — `bitter_triumph`
+  - As an additional cost to cast this spell, discard a card or pay 3 life.
+
+</details>
+
+## prepared
+
+Blocks **1** card.
+
+- **(engine)** a per-permanent 'prepared' state that is itself a standing casting permission: while a permanent you control is prepared, you may cast a copy of that card's *other castable face* (here the {1}{B} sorcery half of a Creature // Sorcery card) from the battlefield, paying that face's own cost at that face's own timing, with the permanent staying on the battlefield, and the act of casting it clearing the state
+  <br>Why the existing vocabulary won't do: Every piece the engine has is one step off. `second_face`/`second_face_zone` already model a second castable face, but the zone is `Literal["hand", "graveyard"]` -- split and Adventure halves cast from hand, Aftermath from the graveyard -- and there is no battlefield option, which is the only zone prepared ever casts from. `cast_copy` is an *effect op*: it runs during a resolution somebody else started, copies the ability's own source card, and puts the copy on the stack for free via `put_copy_on_stack`; prepared is instead a player-initiated cast of the other face at its printed cost, offered every time the player has priority at sorcery speed, so it belongs to the legal-actions enumerator and not to any op. `play_exiled`/`cast_for_free` is the nearest cast permission and is wrong twice over: it casts one specific card out of exile without paying, not a copy of a face of a permanent on the battlefield for its cost. The static permissions are all lands (`play_lands_from_graveyard`, `play_lands_from_library_top`); none of them offers a spell, and none is scoped to a face of the permanent it sits on
+- **(op)** an effect that turns the prepared state on -- 'this creature becomes prepared' from a triggered ability, and 'this creature enters prepared' as an enters-with characteristic in the same slot enters-tapped occupies -- plus the matching turn-off used when the copy is cast ('doing so unprepares it')
+  <br>Why the existing vocabulary won't do: `set_flag` writes an arbitrary word onto a permanent and `has_flag` reads it back, which is exactly how renown is stored, but a flag is inert bookkeeping: nothing in the casting-permission path consults `obj.flags`, so a permanent flagged 'prepared' would gain no ability to cast anything and the card would silently do nothing. `set_flag` is also one-way by design -- there is no clear/remove counterpart in `ops`, and `set_turn_flag` expires at the turn boundary rather than on use -- so even a flag-backed implementation could not express 'doing so unprepares it', which is what stops the copy being cast every turn for ever
+
+<details><summary>Cards waiting on this</summary>
+
+- **Emeritus of Woe // Demonic Tutor** (rank 3846) — `emeritus_of_woe_demonic_tutor`
+  - This creature enters prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)
+  - At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.
+
+</details>
+
+## reflexive-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a 'When you do, ...' reflexive trigger written inside a spell effect: after the preceding effect resolves it puts a delayed ability on the stack that chooses its own targets at that moment, from objects the earlier effect just moved (here, the cards exiled by 'Exile each opponent's graveyard')
+  <br>Why the existing vocabulary won't do: trigger_events has no reflexive/'when you do' event, and all of its entries are board events (self_enters, permanent_enters, dies, ...) fired by the game rather than by an earlier clause of the same spell. `delayed_trigger` and `delay` fire on a later step or turn and take no new targets, so neither can hand the player a target choice mid-resolution; and a card-level target spec is declared before the spell resolves, when the opponents' graveyards have not been exiled yet and there is nothing legal to point at.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Espers to Magicite** (rank 6897) — `espers_to_magicite`
+  - Exile each opponent's graveyard. When you do, choose up to one target creature card exiled this way. Create a token that's a copy of that card, except it's an artifact and it loses all other card types.
+
+</details>
+
+## resolution-choice-across-zones
+
+Blocks **1** card.
+
+- **(decision)** one optional 'you may' choice, made on resolution, that picks a single object from either of two disjoint pools -- a nonland card in the revealed hand, or the creature this ability targeted -- and offers the creature half only when the optional target was actually chosen
+  <br>Why the existing vocabulary won't do: 'may' wraps a single fixed effect, and a 'choose_mode' of two exile effects is announced as a mode list whose entries do not know whether the 'up to one target creature' was taken: with no creature targeted, the second mode would still be offered and its exile would resolve over an empty target list, doing nothing while reading as a choice. Two 'may'-wrapped exiles in sequence is also wrong -- it lets the controller exile a hand card AND the creature, where the printed card exiles exactly one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloak and Dagger, Entwined** (rank 21778) — `cloak_and_dagger_entwined`
+  - When Cloak and Dagger enter, choose target opponent and up to one target creature they control.
+  - You may exile a nonland card from their hand or the chosen creature until Cloak and Dagger leave the battlefield.
 
 </details>

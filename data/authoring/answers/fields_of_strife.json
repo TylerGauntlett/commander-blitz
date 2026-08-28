@@ -1,0 +1,77 @@
+{
+  "card": {
+    "id": "fields_of_strife",
+    "name": "Fields of Strife",
+    "oracle_text": "This land enters tapped.\n{T}: Add {R} or {W}.\n{2}{R}{W}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "R",
+      "W"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {R} or {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "Red",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "White",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}{R}{W}, {T}: Surveil 1.",
+        "cost": {
+          "mana": "{2}{R}{W}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "surveil",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

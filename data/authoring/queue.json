@@ -14312,12 +14312,12 @@
     },
     "Ash Barrens": {
       "edhrec_rank": 201,
-      "gate": "template",
+      "gate": null,
       "name": "Ash Barrens",
-      "reason": "no template for: Basic landcycling {1}",
+      "reason": "",
       "scryfall_id": "e8510205-4baa-4f1c-bf64-5d931e2ddf48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ash Zealot": {
@@ -24412,12 +24412,12 @@
     },
     "Big Score": {
       "edhrec_rank": 147,
-      "gate": "template",
+      "gate": null,
       "name": "Big Score",
-      "reason": "no template for: Draw two cards and create two Treasure tokens",
+      "reason": "",
       "scryfall_id": "3383a939-4ab3-4546-9995-6c65cd3f4441",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Big Wheel": {
@@ -54692,12 +54692,12 @@
     },
     "Crackling Doom": {
       "edhrec_rank": 2106,
-      "gate": "template",
+      "gate": null,
       "name": "Crackling Doom",
-      "reason": "no template for: deals 2 damage to each opponent. Each opponent sacrifices a creature with the greatest pow",
+      "reason": "",
       "scryfall_id": "e7674039-7640-4f70-84e9-d1fa76a59dbe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crackling Drake": {
@@ -65562,12 +65562,12 @@
     },
     "Demolition Field": {
       "edhrec_rank": 397,
-      "gate": "template",
+      "gate": null,
       "name": "Demolition Field",
-      "reason": "no template for: {2}, {T}, Sacrifice this land: Destroy target nonbasic land an opponent controls. That lan",
+      "reason": "",
       "scryfall_id": "7f6d8cae-face-4bff-8c0a-348cefe1e9dd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Demolition Stomper": {
@@ -93742,12 +93742,12 @@
     },
     "Fields of Strife": {
       "edhrec_rank": 10471,
-      "gate": "template",
+      "gate": null,
       "name": "Fields of Strife",
-      "reason": "no template for: {2}{R}{W}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "3dc7a4c3-c356-4fba-bea0-e8788da3eb57",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fiend Artisan": {
@@ -105802,12 +105802,12 @@
     },
     "General Leo Cristophe": {
       "edhrec_rank": 8440,
-      "gate": "template",
+      "gate": null,
       "name": "General Leo Cristophe",
-      "reason": "no template for: When enters, return up to one target creature card with mana value 3 or less from your gra",
+      "reason": "",
       "scryfall_id": "39384ab7-54da-43e3-8fbc-5c171b7ca7f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "General Marhault Elsdragon": {
@@ -276202,12 +276202,12 @@
     },
     "Terra, Herald of Hope": {
       "edhrec_rank": 5529,
-      "gate": "template",
+      "gate": null,
       "name": "Terra, Herald of Hope",
-      "reason": "no template for: Trance — At the beginning of combat on your turn, mill two cards. Terra gains flying until",
+      "reason": "",
       "scryfall_id": "4f36f28b-b9c9-42a2-a2e5-d1b532e482a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Terra, Magical Adept // Esper Terra": {

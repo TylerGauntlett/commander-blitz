@@ -1,0 +1,40 @@
+{
+  "card": {
+    "id": "crackling_doom",
+    "name": "Crackling Doom",
+    "oracle_text": "Crackling Doom deals 2 damage to each opponent. Each opponent sacrifices a creature with the greatest power among creatures that player controls.",
+    "mana_cost": "{R}{W}{B}",
+    "types": ["Instant"],
+    "colors": ["B", "R", "W"],
+    "color_identity": ["B", "R", "W"],
+    "spell_effects": [
+      {
+        "op": "damage",
+        "amount": {"const": 2},
+        "player": "each_opponent"
+      },
+      {
+        "op": "for_each_player",
+        "players": "each_opponent",
+        "effects": [
+          {
+            "op": "sacrifice",
+            "objects": {
+              "zone": "battlefield",
+              "controller": {"binding": "each_player"},
+              "types": ["Creature"],
+              "extreme": {"of": "power", "pick": "greatest"},
+              "count": 1,
+              "chooser": "owner"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {"1": 38},
+    "opponent_battlefield_count": 5
+  }
+}
