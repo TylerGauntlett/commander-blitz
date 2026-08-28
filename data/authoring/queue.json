@@ -288202,12 +288202,12 @@
     },
     "Toxic Deluge": {
       "edhrec_rank": 67,
-      "gate": "template",
+      "gate": null,
       "name": "Toxic Deluge",
-      "reason": "no template for: As an additional cost to cast this spell, pay X life",
+      "reason": "",
       "scryfall_id": "ab3ab559-5e16-44d9-97be-a4251c6e2b94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Toxic Iguanar": {

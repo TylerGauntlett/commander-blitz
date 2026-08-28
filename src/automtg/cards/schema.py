@@ -70,6 +70,18 @@ class CostModel(BaseModel):
     #: your commanders' color identity", the only life cost that is not fixed
     #: when the card is written.
     pay_life: int | dict[str, Any] = 0
+    #: "As an additional cost to cast this spell, **pay X life**" -- Toxic
+    #: Deluge. The caster announces X as the spell is cast (601.2b), and the
+    #: spell's own effects read it back with ``{"x": true}``.
+    #:
+    #: A flag rather than a value expression, because every other `pay_life` is
+    #: a number the *board* decides -- a literal, or War Room's count of
+    #: commander colours -- and this one is the player's choice. And not
+    #: `additional_repeatable` with ``pay_life: 1``, which produces the same set
+    #: of outcomes but caps at `legality.MAX_ADDITIONAL_TIMES` (six), turns one
+    #: payment of X life into X payments of one, and describes an *optional*
+    #: cost paid a number of times rather than one mandatory announced number.
+    pay_life_x: bool = False
     remove_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it

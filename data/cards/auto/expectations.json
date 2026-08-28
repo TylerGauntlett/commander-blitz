@@ -7532,6 +7532,12 @@
   "towering_indrik": {
     "zone": "battlefield"
   },
+  "toxic_deluge": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "trailblazer_s_boots": {
     "zone": "battlefield"
   },

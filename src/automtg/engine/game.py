@@ -470,6 +470,24 @@ class Game:
         from .legality import chosen_additional
 
         additional = chosen_additional(card, action.additional_choice)
+        if additional is not None and additional.pay_life_x:
+            # "As an additional cost to cast this spell, pay X life" -- Toxic
+            # Deluge. 601.2b puts the announcement here, with the rest of the
+            # costs, and 118.4 lets a player pay life down to exactly 0, so the
+            # ceiling is the whole life total. `x` is then carried on the stack
+            # item, which is how the sweep reads `{"x": true}` on resolution.
+            from .effects.context import EffectContext, ask_x
+
+            ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+            # Reassigns `x`, which is 0 for these cards: `_ask_x` above returns
+            # early unless the *mana* cost has an {X}, and Toxic Deluge's is
+            # {2}{B}. The one X a spell has is the one the player announced,
+            # whichever half of the cost it belongs to, and `push_spell` carries
+            # it below.
+            x = yield from ask_x(
+                ctx, f"Choose X for {card.name}", state.players[pid].life, pid
+            )
+            yield from pay(state, pid, Cost(pay_life=x), oid)
         if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
                 ok = yield from pay(state, pid, additional.without_mana(), oid)

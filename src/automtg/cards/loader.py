@@ -2941,6 +2941,13 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
+    if model.pay_life_x and model.pay_life:
+        # Two numbers for one payment. Whichever won would be the card and the
+        # other would load clean and never be charged.
+        raise DslError(
+            f"{where}.cost: 'pay_life_x' is the announced X, so there is no "
+            f"'pay_life' amount to give as well (got {model.pay_life!r})"
+        )
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "

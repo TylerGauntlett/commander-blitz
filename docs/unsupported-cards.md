@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**19 cards** blocked by **34** capabilities.
+**18 cards** blocked by **33** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
-| [pay-x-life-additional-cost](#pay-x-life-additional-cost) | 1 | 67 | cost, value |
 | [per-player-choice-memory](#per-player-choice-memory) | 1 | 5124 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
@@ -470,23 +469,6 @@ Blocks **1** card.
 - **Rejoin the Fight** (rank 8473) — `rejoin_the_fight`
   - Then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen.
   - Return each card chosen this way to the battlefield under your control.
-
-</details>
-
-## pay-x-life-additional-cost
-
-Blocks **1** card.
-
-- **(cost)** an additional cost whose amount is a number the caster announces while casting (601.2b), for a spell with no {X} in its mana cost -- 'pay X life' where X is chosen freely from 0 up to the caster's life total
-  <br>Why the existing vocabulary won't do: `pay_life` in a cost is a fixed integer or a board-derived value expression (War Room), never a player-announced number, and `x_value` is refused outside an activated ability that has a literal '{X}' in its own mana. The nearest shape, `additional_cost` + `additional_optional` + `additional_repeatable` (replicate/multikicker), is an optional cost paid a number of times rather than one mandatory announced X, so it is a different printed sentence and a different legality offer.
-- **(value)** a value leaf that reads the X announced for a non-mana additional cost, so the spell's effects can be sized by it
-  <br>Why the existing vocabulary won't do: The `x` leaf returns `ctx.x`, and `ctx.x` is only ever filled by `game._ask_x`, which returns 0 unless the cost's mana has an `{X}` symbol (`cost.mana.x_count`). Toxic Deluge's mana cost is {2}{B}, so `x` would silently evaluate to 0 and the sweep would be -0/-0. `additional_paid` counts repeatable optional payments, not an announced X.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Toxic Deluge** (rank 67) — `toxic_deluge`
-  - As an additional cost to cast this spell, pay X life.
-  - All creatures get -X/-X until end of turn.
 
 </details>
 
