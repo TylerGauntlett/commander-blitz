@@ -743,6 +743,8 @@ Anywhere a number is expected:
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
+{ "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
+                     "objects": { … } } }                      //   where `mana_value_of` sums
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
