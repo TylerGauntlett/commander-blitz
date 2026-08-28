@@ -19383,6 +19383,30 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "demonic_tutor",
+      "mana_cost": "{1}{B}",
+      "name": "Demonic Tutor",
+      "oracle_text": "Search your library for a card, put that card into your hand, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "hand",
+          "op": "search_library",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -22992,6 +23016,61 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "creatures_died_this_turn": "all"
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "emeritus_of_woe_demonic_tutor",
+      "mana_cost": "{3}{B}",
+      "name": "Emeritus of Woe // Demonic Tutor",
+      "oracle_text": "This creature enters prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)\nAt the beginning of your end step, if two or more creatures died this turn, this creature becomes prepared.",
+      "power": 5,
+      "prepared_face": "demonic_tutor",
+      "replacements": [
+        {
+          "event": "self_enters_prepared"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Warlock"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

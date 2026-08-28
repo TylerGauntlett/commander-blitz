@@ -402,6 +402,11 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
+    # "While it's prepared, you may cast a copy of its spell." The battlefield
+    # is not one of the zones above and must not be: every zone in that list is
+    # one the spell then *leaves*, and a prepared permanent stays where it is.
+    out.extend(_prepared_actions(state, pid, sorcery_speed))
+
     # "You may play lands and cast spells from the top of your library" --
     # Bolas's Citadel. A fifth zone a spell may be cast from, and the only one
     # that is *hidden*: the top card and nothing below it, which is what the
@@ -563,6 +568,43 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         out.extend(
             _cast_options(state, pid, oid, card, extra_generic=commander_cost(state, oid))
+        )
+    return out
+
+
+def _prepared_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
+    """"While it's prepared, you may cast a copy of its spell."
+
+    A cast offered from the **battlefield**, which no other cast line is: every
+    zone `_cast_actions` walks is a zone the spell then leaves, and a prepared
+    permanent stays exactly where it is. So this is its own walk rather than
+    another entry in `zones` -- putting the battlefield in that list would offer
+    every permanent on it as a spell.
+
+    Priced, timed and targeted off the **spell face**, the way
+    `_second_face_actions` prices the Adventure half: `_cast_variant` never
+    assumed the card it was pricing was the one the object is printed as. The
+    permanent's own oid is what the action names, because that is what
+    `Game._cast` has to find again to unprepare it.
+
+    "Doing so unprepares it" is why no rate limit is needed here and none is
+    written: the permission is spent by using it, which is the state itself.
+    """
+    out: list[Action] = []
+    for obj in state.battlefield_objects(pid):
+        if not obj.prepared:
+            continue
+        card = state.card_of(obj)
+        if card.prepared_face is None:
+            continue
+        face = state.registry.get(card.prepared_face)
+        if not _timing_ok(face, sorcery_speed):
+            continue
+        tuples = enumerate_target_tuples(state, pid, face.targets, obj.oid)
+        if not tuples:
+            continue
+        out.extend(
+            _cast_variant(state, pid, obj.oid, face, tuples, extra_generic=0, prepared=True)
         )
     return out
 
@@ -1065,6 +1107,7 @@ def _cast_variant(
     foretold: bool = False,
     face_down: bool = False,
     second_face: bool = False,
+    prepared: bool = False,
     fused: bool = False,
     bestowed: bool = False,
     mutated: bool = False,
@@ -1244,6 +1287,7 @@ def _cast_variant(
                 foretold=foretold,
                 face_down=face_down,
                 second_face=second_face,
+                prepared=prepared,
                 fused=fused,
                 bestowed=bestowed,
                 mutated=mutated,

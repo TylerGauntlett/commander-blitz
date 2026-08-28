@@ -93,6 +93,13 @@ class Action:
     #: prices for one spell, they are two different spells with different names,
     #: different type lines and different effects.
     second_face: bool = False
+    #: Cast as a **copy of a prepared permanent's spell** -- "While it's
+    #: prepared, you may cast a copy of its spell" (Emeritus of Woe // Demonic
+    #: Tutor). Part of the identity like `second_face`, and one step further
+    #: again: `source` is a permanent that **stays on the battlefield**, and
+    #: what goes on the stack is a fresh token copy of a different card. Every
+    #: other cast line moves the object it names.
+    prepared: bool = False
     #: Cast **fused** -- both halves of a split card as one spell (702.102a).
     #: Part of the identity like `second_face`, and a third thing again: it is
     #: not either half, it is both, at both prices and with both target lists.

@@ -1056,4 +1056,11 @@ def _covered(card: CardDef, line: str) -> bool:
             return True
         if event == "self_enters_with_counters" and "counter" in lowered and "enters" in lowered:
             return True
+        if event == "self_enters_prepared" and "prepared" in lowered and "enters" in lowered:
+            # "This creature enters prepared. (While it's prepared, you may cast
+            # a copy of its spell. Doing so unprepares it.)" -- one printed line
+            # holding the replacement *and* its reminder text, which is the
+            # rules rather than anything the card implements. Claimed by the
+            # replacement, the way "enters tapped" above is.
+            return True
     return False

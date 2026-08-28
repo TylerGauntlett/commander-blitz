@@ -2027,6 +2027,10 @@
     "artist": "Sidharth Chaturvedi",
     "scryfall_id": "861100dd-376a-4a8b-862a-76ad4edda725"
   },
+  "demonic_tutor": {
+    "artist": "Jodie Muir",
+    "scryfall_id": "26156da4-1ec3-4702-bded-9868af3026b5"
+  },
   "deputy_of_detention": {
     "artist": "G-host Lee",
     "scryfall_id": "7e362055-78a1-48fa-a4ef-6cf7e0b21b14"
@@ -2451,6 +2455,10 @@
   "emeria_angel": {
     "artist": "Jim Murray",
     "scryfall_id": "563bf277-5bb1-4df7-bebb-d6d7dbec1cf6"
+  },
+  "emeritus_of_woe_demonic_tutor": {
+    "artist": "Jodie Muir",
+    "scryfall_id": "26156da4-1ec3-4702-bded-9868af3026b5"
   },
   "empyrean_eagle": {
     "artist": "Jason A. Engle",

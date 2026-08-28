@@ -1,0 +1,140 @@
+{
+  "_comment": "Cards that exist only for the prepared test (tests/unit/test_prepared.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_emeritus` is Emeritus of Woe // Demonic Tutor: it enters prepared, and while it is you may cast a copy of `t_tutor`. `t_unprepared` is the counterfactual -- the same creature without the entering clause. `t_tutor_two` exists only because a spell face belongs to exactly one card, the way a second face does.",
+  "cards": [
+    {
+      "id": "t_emeritus",
+      "name": "Test Emeritus",
+      "oracle_text": "This creature enters prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)\nAt the beginning of your end step, this creature becomes prepared.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire",
+        "Warlock"
+      ],
+      "power": 5,
+      "toughness": 4,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "prepared_face": "t_tutor",
+      "replacements": [
+        {
+          "event": "self_enters_prepared"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {
+            "event": "end_step",
+            "controller": "you"
+          },
+          "text": "At the beginning of your end step, this creature becomes prepared.",
+          "effects": [
+            {
+              "op": "become_prepared",
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_unprepared",
+      "name": "Test Unprepared",
+      "oracle_text": "At the beginning of your end step, this creature becomes prepared.",
+      "mana_cost": "{3}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire",
+        "Warlock"
+      ],
+      "power": 5,
+      "toughness": 4,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "prepared_face": "t_tutor_two",
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {
+            "event": "end_step",
+            "controller": "you"
+          },
+          "text": "At the beginning of your end step, this creature becomes prepared.",
+          "effects": [
+            {
+              "op": "become_prepared",
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tutor",
+      "name": "Test Tutor",
+      "oracle_text": "Search your library for a card, put that card into your hand, then shuffle.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "player": "you",
+          "destination": "hand",
+          "objects": {
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_tutor_two",
+      "name": "Test Tutor Two",
+      "oracle_text": "Search your library for a card, put that card into your hand, then shuffle.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "player": "you",
+          "destination": "hand",
+          "objects": {
+            "count": 1
+          }
+        }
+      ]
+    }
+  ]
+}

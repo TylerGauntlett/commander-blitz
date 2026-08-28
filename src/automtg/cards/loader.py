@@ -709,6 +709,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
 
     for i, replacement in enumerate(model.replacements):
+        if replacement.event == "self_enters_prepared" and model.prepared_face is None:
+            # The state is a permission to cast one particular spell, so a
+            # permanent that enters prepared with no spell to cast has entered
+            # with nothing -- a printed line, a reminder paragraph, and no
+            # difference to any game.
+            raise DslError(
+                f"{where}.replacements[{i}]: 'self_enters_prepared' needs a "
+                f"'prepared_face' -- there is no spell to cast a copy of"
+            )
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
             # counter on it." Checked here for the reason the condition below
@@ -1340,6 +1349,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         toughness=model.toughness,
         loyalty=model.loyalty,
         final_chapter=final_chapter,
+        prepared_face=model.prepared_face,
         keywords=frozenset(model.keywords),
         colors=colors,
         color_identity=identity,
@@ -4370,6 +4380,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
+    # The state is a casting permission, so a permanent given it with no spell
+    # to cast is a printed line that does nothing at all.
+    if op == "become_prepared" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'become_prepared' needs 'objects' -- "
+            f"there is nothing to prepare"
+        )
     # Which face it comes back as. Defaulted to "turn it over" the op reads
     # correctly on a card's front and silently wrongly on its back, where the
     # same sentence turns it the other way -- and both faces of the Dominant
@@ -4947,8 +4964,48 @@ def link_faces(cards: dict[str, CardDef]) -> None:
             )
         cards[back.id] = dataclasses.replace(back, front_face=card.id)
     link_second_faces(cards)
+    link_prepared_faces(cards)
     link_meld_results(cards)
 
+
+
+def link_prepared_faces(cards: dict[str, CardDef]) -> None:
+    """Check every ``prepared_face`` points at a real spell, and only at one.
+
+    The same derived back-link `link_second_faces` writes, reusing
+    ``parent_face`` for the reason that one reuses it: what it guards is a
+    **deck**. This entry is Emeritus's spell half and not a card anybody owns --
+    the physical card is one card -- so leaving it deck-legal would let a player
+    shuffle in a Demonic Tutor that has no printing of its own here.
+
+    That it is *copied* rather than moved does not change the question. The copy
+    is a token and vanishes on its own (111.7); the entry it copies is still a
+    face.
+
+    Two ways the pointer can be wrong and say nothing are refused outright:
+    naming a card that is not there, and naming a **permanent**, which would put
+    a creature on the stack as a spell that never leaves it.
+    """
+    for card in cards.values():
+        if card.prepared_face is None:
+            continue
+        face = cards.get(card.prepared_face)
+        if face is None:
+            raise DslError(
+                f"{card.id}: prepared_face references unknown card "
+                f"{card.prepared_face!r}"
+            )
+        if face.is_permanent:
+            raise DslError(
+                f"{card.id}: prepared_face {face.id!r} is a permanent -- "
+                f"'a copy of its spell' is an instant or a sorcery"
+            )
+        if face.parent_face is not None and face.parent_face != card.id:
+            raise DslError(
+                f"{face.id}: is the spell face of both {face.parent_face!r} "
+                f"and {card.id!r}"
+            )
+        cards[face.id] = dataclasses.replace(face, parent_face=card.id)
 
 def link_second_faces(cards: dict[str, CardDef]) -> None:
     """Point every second castable face at the card that prints it.

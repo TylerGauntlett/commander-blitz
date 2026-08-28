@@ -717,6 +717,15 @@ class CardDef:
     #: one is *cast*, so ``showing_second_face`` on the object is set as the
     #: spell goes on the stack rather than by anything on the battlefield.
     second_face: str | None = None
+    #: The card id of the **spell** a prepared permanent may cast a copy of --
+    #: Emeritus of Woe's {1}{B} Demonic Tutor half.
+    #:
+    #: A field of its own rather than a third `second_face_zone`, because it
+    #: breaks the invariant that field's whole docstring rests on: casting a
+    #: second face takes the object out of its zone, and this leaves the
+    #: permanent exactly where it is and puts a **copy** on the stack. One card,
+    #: two objects, which no other face relationship in the engine has.
+    prepared_face: str | None = None
     #: Which zone the second face may be cast from -- ``"hand"`` for a split
     #: half or an Adventure, ``"graveyard"`` for aftermath.
     second_face_zone: str = "hand"

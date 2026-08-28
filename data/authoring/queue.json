@@ -82402,12 +82402,12 @@
     },
     "Emeritus of Woe // Demonic Tutor": {
       "edhrec_rank": 3846,
-      "gate": "template",
+      "gate": null,
       "name": "Emeritus of Woe // Demonic Tutor",
-      "reason": "no template for: This creature enters prepared",
+      "reason": "",
       "scryfall_id": "26156da4-1ec3-4702-bded-9868af3026b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emet-Selch of the Third Seat": {
