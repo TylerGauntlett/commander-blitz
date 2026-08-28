@@ -5205,6 +5205,10 @@
   "pheres_band_centaurs": {
     "zone": "battlefield"
   },
+  "phoenix_down": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "phyresis": {
     "zone": [
       "battlefield",

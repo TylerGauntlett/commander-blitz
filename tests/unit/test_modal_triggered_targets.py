@@ -314,14 +314,17 @@ class TestTheLoaderRefusals:
     def test_the_shape_it_is_meant_to_allow_still_loads(self):
         self.compile(self.ability())
 
-    def test_an_activated_ability_still_cannot_own_one(self):
-        """`legality` enumerates one activation per legal target tuple, which
-        is before `Game._activate` asks which mode -- the reverse of the
-        printed order, and no moment to declare a mode's target in."""
-        with pytest.raises(DslError, match="triggered ability's"):
-            self.compile(
-                self.ability(kind="activated", cost={"mana": "{1}"}, trigger=None)
-            )
+    def test_an_activated_ability_may_own_one_now(self):
+        """It could not, and Phoenix Down is what changed it.
+
+        `legality` used to enumerate one activation per legal target tuple, so
+        the targets were fixed before `Game._activate` asked which mode -- the
+        reverse of the printed order, and no moment to declare a mode's target
+        in. `_ability_aims` now offers one activation *per mode*, each carrying
+        only the targets that mode owns, so the bullet is part of the action the
+        way `kicked` is part of a cast. See tests/unit/test_modal_activated.py.
+        """
+        self.compile(self.ability(kind="activated", cost={"mana": "{1}"}, trigger=None))
 
     def test_a_mode_owned_target_needs_a_single_top_level_choose_mode(self):
         with pytest.raises(DslError, match="top-level 'choose_mode'"):

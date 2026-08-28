@@ -564,9 +564,11 @@ class Ability:
     #: :attr:`CardDef.mode_targets`.  Only a *triggered* ability may have them:
     #: 603.3d puts both the modes and the targets at the moment the ability is
     #: put on the stack, so there is one moment that owns both questions.  An
-    #: activated ability has no such moment -- `legality` enumerates one
-    #: activation per legal target tuple, which is before `Game._activate` asks
-    #: which mode -- so `loader._check_mode_targets` refuses it there.
+    #: activated ability had no such moment for a long time -- `legality`
+    #: enumerated one activation per legal target tuple, which is before
+    #: `Game._activate` asks which mode. It has one now: `_ability_aims` offers
+    #: one activation per **mode**, each with only that mode's targets, so the
+    #: bullet is part of the action the way `kicked` is part of a cast.
     mode_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     effects: tuple[Mapping[str, Any], ...] = ()
     # static

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**12 cards** blocked by **27** capabilities.
+**11 cards** blocked by **25** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -28,14 +28,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-binding](#discard-binding) | 1 | 5132 | op, value |
 | [entered-from-graveyard](#entered-from-graveyard) | 1 | 5132 | trigger_event |
 | [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
-| [exile-self-cost](#exile-self-cost) | 1 | 8547 | cost |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
 | [extreme-value](#extreme-value) | 1 | 9647 | value |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 1 | 6878 | selector |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
-| [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
 | [prepared](#prepared) | 1 | 3846 | engine, op |
 | [reflexive-trigger](#reflexive-trigger) | 1 | 6897 | trigger_event |
@@ -258,22 +256,6 @@ Blocks **1** card.
 
 </details>
 
-## exile-self-cost
-
-Blocks **1** card.
-
-- **(cost)** an activation cost component that exiles the source permanent itself, the exile twin of the existing 'sacrifice' cost -- Cost needs a boolean flag (e.g. exile_self) that both can_pay and pay honour, moving the source to exile as the cost is paid rather than to the graveyard
-  <br>Why the existing vocabulary won't do: cost_keys carries 'sacrifice', which puts the source in the graveyard, and 'exile_from_graveyard', which exiles a chosen card already in a graveyard. Neither exiles the source from the battlefield, and the difference is load-bearing here: Phoenix Down is meant to be one-shot and graveyard-proof, so paying with 'sacrifice' would leave it recurrable and would also feed its own first mode. Paying with the 'exile' op instead moves the payment to resolution, so the ability could be activated when the source is already gone and the exile could be countered or fizzle.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Phoenix Down** (rank 8547) — `phoenix_down`
-  - {1}{W}, {T}, Exile this artifact: Choose one —
-  - • Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.
-  - • Exile target Skeleton, Spirit, or Zombie.
-
-</details>
-
 ## exile-until-leaves-return-to-origin
 
 Blocks **1** card.
@@ -358,22 +340,6 @@ Blocks **1** card.
 
 - **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
   - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
-
-</details>
-
-## modal-activated-targets
-
-Blocks **1** card.
-
-- **(engine)** per-mode target declaration on an *activated* ability: a moment during activation that chooses the mode first (601.2b) and then declares only that mode's targets, so an activated ability's TargetSpec may carry 'mode' the way a spell's and a triggered ability's already can
-  <br>Why the existing vocabulary won't do: The 'mode' field on a target spec exists but loader._check_mode_targets explicitly refuses it on an activated ability, because legality enumerates one activation per legal target tuple before Game._activate asks which mode -- the reverse of the printed order. Putting both bullets' targets on the ability unconditionally is not the same card: it would demand a legal creature card in the graveyard *and* a legal Skeleton/Spirit/Zombie before the ability could ever be activated, and would bind a target the chosen mode never uses. Moving the choose_mode below the top level makes the mode question resolution-time, by which point targets can no longer be declared at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Phoenix Down** (rank 8547) — `phoenix_down`
-  - {1}{W}, {T}, Exile this artifact: Choose one —
-  - • Return target creature card with mana value 4 or less from your graveyard to the battlefield tapped.
-  - • Exile target Skeleton, Spirit, or Zombie.
 
 </details>
 

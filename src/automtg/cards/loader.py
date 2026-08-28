@@ -1657,27 +1657,28 @@ def _check_mode_targets(
     """Every restriction on ``mode``, each one a card that would load wrong.
 
     A mode-owned target needs one moment that owns both questions -- the modes
-    first (601.2b), the targets they own straight after (601.2c) -- and there
-    are exactly two of them.  A **spell** has it inside the cast, between
-    choosing the modes and paying.  A **triggered ability** has it when the
-    ability is put on the stack, which 603.3d says is where both choices
-    happen.  An *activated* ability has neither: `legality` enumerates one
-    activation per legal target tuple, so its targets are fixed before
-    `Game._activate` asks which mode -- the reverse of the printed order.  And
-    a modal question that is not the effect tree's single top-level one is
-    asked as the thing resolves, by which time targets can no longer be
-    declared at all.
+    first (601.2b), the targets they own straight after (601.2c).  A **spell**
+    has it inside the cast, between choosing the modes and paying.  A
+    **triggered ability** has it when the ability is put on the stack, which
+    603.3d says is where both choices happen.
+
+    An **activated** ability had neither for a long time, and this is where it
+    was refused: `legality` enumerated one activation per legal target tuple, so
+    its targets were fixed before `Game._activate` asked which mode -- the
+    reverse of the printed order.  Phoenix Down is what changed it.
+    `legality._ability_aims` now offers one activation *per mode*, each carrying
+    only the targets that mode owns, so the bullet is part of the action the way
+    `kicked` is part of a cast and `Game._activate` reads it off the action
+    instead of asking.  A bullet with no legal target is simply not offered,
+    which is 601.2b's other half.
+
+    What is still refused is a modal question that is **not** the effect tree's
+    single top-level one: that is asked as the thing resolves, by which time
+    targets can no longer be declared at all.
     """
     owned = [spec for spec in specs if spec.mode is not None]
     if not owned:
         return
-    if not (on_spell or on_trigger):
-        raise DslError(
-            f"{where}: 'mode' only works on a card's own 'targets' (601.2b) or "
-            f"on a triggered ability's (603.3d) -- an activated ability's "
-            f"targets are enumerated by legality before its modes are chosen, "
-            f"so there is no moment left to declare one in"
-        )
     if mode_count is None:
         raise DslError(
             f"{where}: 'mode' needs the whole effect tree to be one "

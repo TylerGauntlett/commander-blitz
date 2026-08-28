@@ -590,7 +590,16 @@ class Game:
                 cost_source=oid,
             )
 
-        modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
+        if action.ability_modes:
+            # A modal ability whose bullets own their targets -- Phoenix Down.
+            # The bullet was chosen when the action was: legality offers one
+            # activation per mode, each carrying only that mode's targets, which
+            # is the only way round that satisfies 601.2b before 601.2c. Asking
+            # again here would ask a question the player has already answered
+            # and could contradict the targets already declared.
+            modes = action.ability_modes
+        else:
+            modes = yield from self._ask_modes(pid, card.name, ability.cast_time_modes)
 
         # `fire`, not `emit`: emit only writes the log, and an activation event
         # nothing listens for is the same silent no-op the cycling event below
