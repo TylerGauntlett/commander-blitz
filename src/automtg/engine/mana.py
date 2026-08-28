@@ -153,6 +153,34 @@ class ManaCost:
             hybrid=self.hybrid * n,
         )
 
+    def as_any_type(self) -> ManaCost:
+        """This cost with every coloured demand relaxed -- "mana of any type can
+        be spent to cast that spell".
+
+        Summing the pips into ``generic`` *is* the rule rather than an
+        approximation of it: a generic pip is the one demand any mana already
+        satisfies, so a cost whose colour requirements have all been waived is
+        exactly a generic cost of the same size. ``{C}`` goes with them, since
+        "any type" names the colourless type too.
+
+        ``X`` is left alone -- it is a number the caster chooses and not a
+        colour -- and so is ``text``, which is the printed cost and still what
+        the card says.
+
+        Not a `spell_cost_reduction`: this changes nothing about how *much* is
+        owed, only which mana may be handed over, and every reduction in the
+        engine is clamped so that it can never reach into the coloured pips.
+        """
+        return ManaCost(
+            generic=self.generic
+            + sum(self.colored)
+            + sum(pip.value for pip in self.hybrid),
+            colored=(0,) * N_SYMBOLS,
+            x_count=self.x_count,
+            text=self.text,
+            hybrid=(),
+        )
+
     def symbols_of(self, color: str) -> int:
         """How many mana symbols of one colour appear in this cost — chroma.
 

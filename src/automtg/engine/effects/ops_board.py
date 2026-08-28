@@ -216,7 +216,15 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     afterwards. Not ``until_leaves``, which is the O-Ring *link* and declares a
     return; a card that only counts what it exiled hands nothing back.
     """
-    link = bool(spec.get("until_leaves"))
+    # `until_leaves` is the O-Ring name for the link and `link` is the neutral
+    # one. The same record either way -- `exiled_by`, which a later
+    # `{"zone": "exile", "exiled_with": "self"}` selector reads back -- because
+    # the *return* was always a separate `leaves_battlefield` trigger on the
+    # card and never anything this op did. Valigarmanda exiles from every
+    # graveyard at the table and is sacrificed after its last chapter; written
+    # `until_leaves` it would read as promising those cards back to the
+    # opponents they were taken from, which is a different card.
+    link = bool(spec.get("until_leaves")) or bool(spec.get("link"))
     # "You may play the exiled card this turn." Florian, and the impulse-draw
     # family. Not `play_exiled`, which casts the card for *free* and does it
     # there and then: this is a permission the player may take later, at the

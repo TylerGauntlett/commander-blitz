@@ -373,6 +373,13 @@ class Game:
         else:
             cost = card.mana_cost
 
+        granted = state.objects[oid]
+        if granted.playable_any_type and granted.playable_turn == state.turn:
+            # The paying half of the relaxation `_cast_variant` priced the line
+            # with. Both sides read the same flag off the same card, so a line
+            # that was offered is a line that can be paid.
+            cost = cost.as_any_type()
+
         # Convoke and delve. Netted into `extra` alongside the commander tax
         # and emerge's sacrifice, so it goes through the same clamp: `pay`
         # floors the generic part at zero, and no amount of convoking makes a

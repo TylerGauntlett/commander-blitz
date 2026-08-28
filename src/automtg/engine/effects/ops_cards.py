@@ -140,12 +140,17 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     it has just exiled. Locke's cards stay in their owners' graveyards --
     including an opponent's -- and are paid for at their printed price.
 
+    ``any_type`` is the clause Valigarmanda prints beside the permission --
+    "and mana of any type can be spent to cast that spell" -- and belongs to
+    the same grant rather than to the player or the turn.
+
     ``limit`` is "a spell", singular. Counted per granting permanent in the turn
     ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
     spells and one Locke milling three cards is still one.
     """
     oids = resolve_pool(ctx, spec.get("objects"))
     limit = int(spec.get("limit", 0) or 0)
+    any_type = bool(spec.get("any_type"))
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -153,6 +158,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_by = ctx.controller
         obj.playable_turn = ctx.state.turn
         obj.playable_group = ctx.source_oid if limit else None
+        # "…and mana of any type can be spent to cast that spell" travels with
+        # the permission it is printed beside, and expires with it: the flag is
+        # read only where `playable_turn` already gates the offer.
+        obj.playable_any_type = any_type
 
 
 @register("shuffle")
