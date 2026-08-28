@@ -91,6 +91,25 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
                 # must not run -- the same contract `else` has for a refusal.
                 yield from execute(ctx, spec.get("else") or [])
                 return
+        if name := spec.get("as"):
+            # "Then Snort deals 5 damage to each opponent **who discarded their
+            # hand this way**." The set of players who said yes, accumulated
+            # across a `for_each_player` loop and read back with the
+            # `{"binding": …}` player spec.
+            #
+            # Recorded here, after the cost is paid and before the effects run,
+            # so it means "accepted" and not "was asked". And it is the
+            # *acceptance* rather than anything the effects moved, which is the
+            # whole point on this card: a player with an empty hand who takes
+            # the free draw-five has discarded their hand -- of nothing -- and
+            # is still one of the opponents Snort burns. Deriving the set from
+            # the cards discarded would quietly spare exactly the player the
+            # card is aimed at.
+            previous = ctx.bindings.get(str(name))
+            seats = list(previous) if isinstance(previous, list) else []
+            if chooser not in seats:
+                seats.append(chooser)
+            ctx.bindings[str(name)] = seats
         yield from execute(ctx, spec.get("effects") or [])
         if not spec.get("repeat") or not evaluate(ctx, condition):
             return

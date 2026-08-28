@@ -898,6 +898,14 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return [pid] if pid is not None and state.is_alive(pid) else []
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
+        if "except" in spec:
+            # "each **opponent** who did this" -- the recorded set minus a seat.
+            # `not` is the complement over the whole table and cannot narrow an
+            # inclusive spec, so an intersection had no spelling: the seats a
+            # binding holds include you whenever you took the same option.
+            rest = {k: v for k, v in spec.items() if k != "except"}
+            excluded = set(select_players(ctx, spec["except"]))
+            return [pid for pid in select_players(ctx, rest) if pid not in excluded]
         if "not" in spec:
             # "target player **other than** its controller."
             #
@@ -971,7 +979,17 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return [obj.owner] if obj else []
         if "binding" in spec:
             value = ctx.bindings.get(str(spec["binding"]))
-            return [int(value)] if isinstance(value, int) else []
+            if isinstance(value, int):
+                return [value] if state.is_alive(value) else []
+            if isinstance(value, list):
+                # A **set of seats**, which `may`'s `as` writes: "each opponent
+                # who discarded their hand this way". Deduped and returned in
+                # seat order rather than acceptance order, so the damage lands
+                # in a stable sequence, and filtered to the living for the
+                # reason `not` takes its complement over `alive()`.
+                seats = {int(v) for v in value if isinstance(v, int)}
+                return [pid for pid in state.alive() if pid in seats]
+            return []
     raise DslError(f"unparsable player spec {spec!r}")
 
 

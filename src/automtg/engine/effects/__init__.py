@@ -54,6 +54,13 @@ RECORDING_OPS = frozenset(
         "exile",
         "gain_control",
         "join_forces",
+        #: The only recorder whose binding is a **set of seats**: `may` writes
+        #: the players who said yes, read back with the `{"binding": …}` player
+        #: spec. Snort's "each opponent who discarded their hand this way" is
+        #: the acceptance and not anything the effects moved -- a player with an
+        #: empty hand who takes the free draw-five has discarded their hand, of
+        #: nothing, and is still burned.
+        "may",
         #: The cards actually **cast**, which is neither the cards offered nor
         #: the cards exiled -- one with no legal target is never cast at all.
         #: Kefka turns on that distinction: "each player who owns a spell you

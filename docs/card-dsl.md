@@ -3074,6 +3074,35 @@ Its binding **accumulates**, which is what makes the per-type quota sayable.
 choice of four would happily keep four creatures; four choices sharing one name
 keep one of each, and the single `exclude_binding` on the sweep spares them all.
 
+### `may`'s `as`, and `except` on a player spec
+
+```jsonc
+// Snort — "…then deals 5 damage to each opponent who discarded their hand this way."
+{ "op": "for_each_player", "players": "each_player", "effects": [
+    { "op": "may", "as": "wheeled", "player": { "binding": "each_player" },
+      "effects": [ …discard the hand, draw five… ] } ] },
+{ "op": "damage", "amount": { "const": 5 },
+  "player": { "binding": "wheeled", "except": "you" } }
+```
+
+`may`'s `as` records **the players who said yes** -- the only binding that is a
+set of seats rather than of objects -- accumulated across a `for_each_player`
+loop and read back with the `{"binding": …}` player spec. Nothing else could:
+`set_flag` and `set_turn_flag` are object-scoped and `has_flag` is always asked
+of the ability's own source, and `each_player` is overwritten each iteration and
+restored when the loop ends.
+
+**It records the acceptance, not what the effects moved.** Deriving the set from
+the cards discarded looks equivalent and is wrong in both directions on this
+card: a player with an empty hand who takes the free draw-five has discarded
+their hand -- of nothing -- and is still burned, while a player with three cards
+would be burned once per card.
+
+`except` narrows an inclusive spec by a seat. `not` cannot do it: `not` is the
+complement over the whole table, and the recorded set contains you whenever you
+took the same option. It needs a spec to narrow -- a bare `{"except": "you"}` is
+just `{"not": "you"}` written the long way, and the loader says so.
+
 ### Entwine — "choose both if you pay the entwine cost"
 
 ```jsonc
