@@ -4473,6 +4473,10 @@
   "moat_piranhas": {
     "zone": "battlefield"
   },
+  "mog_moogle_warrior": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "moldering_karok": {
     "zone": "battlefield"
   },

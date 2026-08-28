@@ -10,12 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**24 cards** blocked by **37** capabilities.
+**23 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [discard-binding](#discard-binding) | 3 | 3959 | op, value |
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
+| [discard-binding](#discard-binding) | 2 | 3959 | op, value |
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 2 | 6878 | engine, selector |
 | [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
-| [missing-token](#missing-token) | 1 | 7573 | engine |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
 | [modal-cost](#modal-cost) | 1 | 869 | cost |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
@@ -51,35 +50,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [resolution-choice-across-zones](#resolution-choice-across-zones) | 1 | 21778 | decision |
 | [spend-mana-as-any-type](#spend-mana-as-any-type) | 1 | 5429 | engine |
 | [unearth](#unearth) | 1 | 2622 | replacement |
-
-## discard-binding
-
-Blocks **3** cards.
-
-- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
-  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
-- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
-  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
-- **(op)** an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- "discard up to two cards" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves
-  <br>Why the existing vocabulary won't do: `op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count
-- **(value)** a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so "then draw that many cards" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{"count": {"binding": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free
-  <br>Why the existing vocabulary won't do: `discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant
-- **(value)** a condition/value leaf that names the cards discarded during this ability's own resolution and filters them by card type, so an `if` can ask "was a creature card discarded this way" and "was a noncreature card discarded this way" — e.g. a `discarded_this_way` value taking a selector and returning a count, usable inside `cmp`/`exists`, populated by the `discard` op for the duration of the resolution (and across a `for_each_player` loop, since this card asks about every player's discard, not just the controller's)
-  <br>Why the existing vocabulary won't do: `discard` records nothing and returns nothing. `cards_to_graveyard_this_turn` is the closest value key and is wrong twice over: it is turn-scoped rather than resolution-scoped and it counts every graveyard at the table and every earlier discard, mill or death this turn. `count` over `{"zone": "graveyard"}` counts what was already there — in the verification sandbox that is two creature cards, so the creature branch would fire unconditionally. `connive` is the only op that reads its own discard, but it is a fused draw+discard+counter-on-self op with "nonland" hardcoded; it cannot gate an arbitrary effect, cannot ask about "creature" vs "noncreature", and cannot see another player's discard. Its own docstring states the case: "the cards that were just discarded, which nothing in the condition or value language can name".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
-  - When Joshua enters, discard up to two cards, then draw that many cards.
-  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
-  - When Celes enters, discard any number of cards, then draw that many cards plus one.
-  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
-  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
-  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
-
-</details>
 
 ## cast-from-graveyard
 
@@ -101,6 +71,30 @@ Blocks **2** cards.
 - **Edgar, Master Machinist** (rank 9647) — `edgar_master_machinist`
   - Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.
   - Tools — Whenever Edgar attacks, it gets +X/+0 until end of turn, where X is the greatest mana value among artifacts you control.
+
+</details>
+
+## discard-binding
+
+Blocks **2** cards.
+
+- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
+  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
+- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
+  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
+- **(op)** an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- "discard up to two cards" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves
+  <br>Why the existing vocabulary won't do: `op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count
+- **(value)** a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so "then draw that many cards" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{"count": {"binding": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free
+  <br>Why the existing vocabulary won't do: `discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant
+
+<details><summary>Cards waiting on this</summary>
+
+- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
+  - When Joshua enters, discard up to two cards, then draw that many cards.
+  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
+- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
+  - When Celes enters, discard any number of cards, then draw that many cards plus one.
+  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
 
 </details>
 
@@ -469,21 +463,6 @@ Blocks **1** card.
 
 - **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
   - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
-
-</details>
-
-## missing-token
-
-Blocks **1** card.
-
-- **(engine)** a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name
-  <br>Why the existing vocabulary won't do: `create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
-  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
-  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
 
 </details>
 
