@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import TYPE_CHECKING, Any
 
 from .actions import PendingDecision
@@ -381,6 +381,19 @@ class GameState:
         # several cards in the pile.
         if obj.merged_card is not None:
             return obj.merged_card
+        # A copy effect (706) applied in place -- Gogo. Asked before the printed
+        # card is even fetched, because while it is copying, the copied card
+        # *is* what this permanent is: its name, types, power, abilities and
+        # everything else follow from here, which is the whole reason this
+        # method exists as the single funnel.
+        if obj.copying is not None:
+            copied = self.registry.get(obj.copying)
+            if obj.copying_name is not None and obj.copying_name != copied.name:
+                # "…except its name is Gogo, Mysterious Mime." A copy may
+                # override individual characteristics (706.2), and the name is
+                # the one this cycle overrides.
+                copied = replace(copied, name=obj.copying_name)
+            return copied
         card = self.registry.get(obj.def_id)
         # A second castable face -- adventure, aftermath, a split half -- is
         # asked first, because it is the face the card is *currently being cast

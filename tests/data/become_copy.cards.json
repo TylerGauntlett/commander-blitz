@@ -1,0 +1,52 @@
+{
+  "_comment": "Cards that exist only for the become_copy test (tests/unit/test_become_copy.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mime` is Gogo's shape -- become a copy of another creature you control until end of turn, except the name. `t_token_mime` is the near miss the DSL could already write, using copy_permanent, which leaves the original untouched and adds a permanent the card never creates.",
+  "cards": [
+    {
+      "id": "t_mime",
+      "name": "Test Mime",
+      "oracle_text": "When this creature enters, you may have it become a copy of another target creature you control until end of turn, except its name is Test Mime.",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Shapeshifter"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may have it become a copy of another target creature you control until end of turn, except its name is Test Mime.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {"op": "become_copy", "except_name": "Test Mime", "duration": "end_of_turn",
+             "objects": {"zone": "battlefield", "self_only": true},
+             "copying": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "exclude_self": true, "count": 1}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_token_mime",
+      "name": "Test Token Mime",
+      "oracle_text": "When this creature enters, you may have it become a copy of another target creature you control until end of turn, except its name is Test Token Mime.",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Shapeshifter"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, you may have it become a copy of another target creature you control until end of turn, except its name is Test Token Mime.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {"op": "copy_permanent",
+             "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "exclude_self": true, "count": 1}}
+          ]
+        }
+      ]
+    }
+  ]
+}

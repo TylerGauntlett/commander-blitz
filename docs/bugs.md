@@ -92,6 +92,24 @@
 
 ### Known, not fixed
 
+- **A triggered ability with no legal target still resolves.**
+  603.3d and 608.2b: a triggered ability that requires targets and can choose
+  none is removed from the stack and does nothing.
+  `game._choose_trigger_targets` returns `()` instead, and the ability resolves
+  with an empty target list -- so every effect in it that does *not* read the
+  target runs anyway. Found while authoring Gogo, Mysterious Mime: with the
+  "If you do" rider written as a plain sibling of the copy, a lone Gogo with no
+  other creature to copy was still asked the question and still got +2/+0,
+  haste and attacks-this-turn-if-able, none of which the printed card gives it.
+
+  Gogo works around it at the card level, with an `exists` condition on the
+  `may` that gates the whole clause on there being a legal creature to copy.
+  That is correct for this card and is not the general fix: any targeted trigger
+  whose non-target effects are unconditional has the same hole. Fixing it
+  properly means dropping such an ability at resolution, which would change
+  behaviour for every targeted trigger in the pool and so wants its own run and
+  its own re-collect.
+
 - **The RL policy has never seen an equip action.** `ai/action_space.py` caps
   `ABIL_CAP = 2` and indexes `action.ability_index`, which counts *all*
   abilities including statics and triggers. Twelve cards (eleven Equipment plus

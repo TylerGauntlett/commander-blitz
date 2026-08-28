@@ -8,28 +8,16 @@
   ],
   "needs": [
     {
-      "capability": "discard_binding",
-      "kind": "op",
-      "what": "an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- \"discard up to two cards\" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves",
-      "why_existing_wont_do": "`op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count"
-    },
-    {
-      "capability": "discard_binding",
-      "kind": "value",
-      "what": "a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so \"then draw that many cards\" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{\"count\": {\"binding\": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free",
-      "why_existing_wont_do": "`discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant"
-    },
-    {
       "capability": "exile_and_return_transformed",
       "kind": "op",
       "what": "an op that exiles a permanent and immediately returns it to the battlefield **transformed, under its owner's control** -- as a new object, so it enters, its enters triggers fire, it is summoning sick, and counters/auras/control effects on the old object are gone. The Final Fantasy \"Dominant\" transforming cycle prints this line on both faces",
       "why_existing_wont_do": "`transform` (ops_board.py `op_transform`) turns the permanent over **in place**: it calls `primitives.transform` on the live object, so the permanent never changes zones, keeps its counters, attachments and summoning-sickness state, and fires no leaves-the-battlefield or enters triggers. That is a materially stronger and differently-timed card. `exile` can move it out but has no return path other than `until_leaves` (the O-Ring link, which hands back on a later trigger, untransformed), and neither `put_onto_battlefield` nor `return_from_graveyard` accepts any \"arrives on its back face\" flag -- the only back-face-on-arrival path in the engine is `graveyard_cast_transformed`, which is disturb/`stack.py` and applies to *casting* the card from the graveyard, not to an activated ability on the battlefield. `meld` is the one op that does the exile-and-re-enter dance, but it is hard-wired to `melds_with`/`melds_into` and needs a partner permanent"
     },
     {
-      "capability": "exile_and_return_transformed",
+      "capability": "dfc_back_face_text",
       "kind": "engine",
-      "what": "the packet for a transforming double-faced card must carry the **back face's printed text**. This packet gives only the front face's `oracle_text` while `type_line` names a back face (\"Legendary Enchantment Creature -- Saga Phoenix\"), so the `back` half of the answer -- which the answer format does support, see `henrika_domnathi_henrika_infernal_seer.json` -- cannot be written without inventing the Saga's chapters",
-      "why_existing_wont_do": "`back_face` in `schema.py` requires a real second card entry in the pool, and the residual gate holds every printed line to an ability. With no back-face oracle text in the packet there is nothing to author it from, and a `transform`-family ability pointing at an absent or guessed back face is worse than no card"
+      "what": "The card index must store a transforming card's BACK FACE text. `data/catalog/cards.sqlite` has one `oracle_text` column per card and for layout 'transform' it holds only the front face, so the back face's printed lines exist nowhere in the repo. Joshua's back is a Saga with chapters that cannot be invented. Fixing it is `scripts/build_card_index.py` reading `card_faces[1]` (text, type line, mana cost, power/toughness), a re-pull of the Scryfall bulk dump -- none is cached under data/catalog/bulk -- and a `authoring/packet.py` change to pass it through.",
+      "why_existing_wont_do": "Not a DSL gap at all: `back_face` in schema.py already supports a second card entry and henrika_domnathi ships one. The data is missing rather than the vocabulary. It affects 488 transform/modal_dfc cards in the catalog, so it is its own build item rather than something to solve inside one card's authoring run."
     }
   ],
   "closest_existing": [

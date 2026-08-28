@@ -10,15 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**13 cards** blocked by **27** capabilities.
+**12 cards** blocked by **27** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-from-graveyard](#cast-from-graveyard) | 2 | 6878 | engine, replacement, static_effect |
-| [discard-binding](#discard-binding) | 2 | 3959 | op, value |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
-| [become-copy](#become-copy) | 1 | 2769 | engine, op |
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
@@ -26,8 +24,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
 | [deferred-batch-choice](#deferred-batch-choice) | 1 | 8473 | op |
+| [dfc-back-face-text](#dfc-back-face-text) | 1 | 3959 | engine |
+| [discard-binding](#discard-binding) | 1 | 5132 | op, value |
 | [entered-from-graveyard](#entered-from-graveyard) | 1 | 5132 | trigger_event |
-| [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | engine, op |
+| [exile-and-return-transformed](#exile-and-return-transformed) | 1 | 3959 | op |
 | [exile-self-cost](#exile-self-cost) | 1 | 8547 | cost |
 | [exile-until-leaves-return-to-origin](#exile-until-leaves-return-to-origin) | 1 | 21778 | op |
 | [exiled-with-link](#exiled-with-link) | 1 | 5429 | op |
@@ -65,30 +65,6 @@ Blocks **2** cards.
 
 </details>
 
-## discard-binding
-
-Blocks **2** cards.
-
-- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
-  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
-- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
-  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
-- **(op)** an `up_to` (or optional-count) form of the `discard` op, letting the discarding player choose any number from zero to N -- "discard up to two cards" must be satisfiable with 0, 1 or 2 cards, chosen by the player as the effect resolves
-  <br>Why the existing vocabulary won't do: `op_discard` evaluates `amount` to a single number and calls `ask_objects(..., take, take, ...)` with the same value as both floor and ceiling, so the count is always exact and never declinable. The `optional` key in `selector_keys` is a *target* modifier and `discard` takes no target spec; `up_to` exists in the codebase only on `choose_mode` bounds and on `TargetSpec`, neither of which reaches a discard count
-- **(value)** a value leaf reading how many cards the *immediately preceding discard in this same resolution* actually put into the graveyard, so "then draw that many cards" can be written as the `amount` of a following `draw`. The `as`-binding shape `exile`, `sacrifice` and `reveal` already use (record the chosen objects, read them back with `{"count": {"binding": ...}}`) is the obvious road: give `discard` an `as` and the value follows for free
-  <br>Why the existing vocabulary won't do: `discard` writes no binding at all, so nothing downstream can name what it took. The nearest `value_keys` entry, `cards_to_graveyard_this_turn`, is a turn-wide integer counting every card that reached any graveyard this turn -- creatures dying, spells resolving, other discards -- so it is a different number in every game state but the empty one. `cards_in_hand` measured before and after cannot be subtracted: there is no arithmetic over two snapshots of a value, only `minus` over two leaves evaluated at the same instant
-
-<details><summary>Cards waiting on this</summary>
-
-- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
-  - When Joshua enters, discard up to two cards, then draw that many cards.
-  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
-- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
-  - When Celes enters, discard any number of cards, then draw that many cards plus one.
-  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-
-</details>
-
 ## alternative-cost-pay-life
 
 Blocks **1** card.
@@ -116,23 +92,6 @@ Blocks **1** card.
 - **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
   - When Celes enters, discard any number of cards, then draw that many cards plus one.
   - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
-
-</details>
-
-## become-copy
-
-Blocks **1** card.
-
-- **(op)** an op that makes an existing permanent already on the battlefield become a copy of another permanent (layer 1 copy effect), with a duration (until end of turn as well as permanently) and an `except_` override block so the copy can keep its own name -- e.g. {"op": "become_copy", "objects": {"self_only": true}, "copying": {"target": "creature"}, "duration": "end_of_turn", "except_": {"name": "Gogo, Mysterious Mime"}}
-  <br>Why the existing vocabulary won't do: `copy_permanent` is the only copy op for permanents and it always calls `create_token` with the source's def_id -- it makes a NEW token copy and never alters the object it is pointed at, so it cannot turn Gogo itself into a copy, and it has no duration at all. `animate` overwrites power/toughness, colors, types and keywords with literal values, so it cannot take another object's whole printed characteristics, and `transform` only flips a double-faced card to its own back face. Making a token instead would leave the real Gogo unchanged and add a permanent the card never creates.
-- **(engine)** a copy effect applied in place must re-derive the target permanent's characteristics from the copied CardDef while leaving counters, damage, attachments and status on the object, and must expire cleanly at end of turn, restoring Gogo's printed characteristics
-  <br>Why the existing vocabulary won't do: The object model derives identity from a fixed `def_id` set when the object is created (`copy_permanent` relies on exactly that), and there is no continuous-effect layer that rewrites an existing object's def_id for a duration; `lose_all_abilities` and `set_pt` are the only statics that overwrite characteristics and neither can source them from another object.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gogo, Mysterious Mime** (rank 2769) — `gogo_mysterious_mime`
-  - At the beginning of combat on your turn, you may have Gogo become a copy of another target creature you control until end of turn, except its name is Gogo, Mysterious Mime.
-  - If you do, Gogo and that creature each get +2/+0 and gain haste until end of turn and attack this turn if able.
 
 </details>
 
@@ -237,6 +196,38 @@ Blocks **1** card.
 
 </details>
 
+## dfc-back-face-text
+
+Blocks **1** card.
+
+- **(engine)** The card index must store a transforming card's BACK FACE text. `data/catalog/cards.sqlite` has one `oracle_text` column per card and for layout 'transform' it holds only the front face, so the back face's printed lines exist nowhere in the repo. Joshua's back is a Saga with chapters that cannot be invented. Fixing it is `scripts/build_card_index.py` reading `card_faces[1]` (text, type line, mana cost, power/toughness), a re-pull of the Scryfall bulk dump -- none is cached under data/catalog/bulk -- and a `authoring/packet.py` change to pass it through.
+  <br>Why the existing vocabulary won't do: Not a DSL gap at all: `back_face` in schema.py already supports a second card entry and henrika_domnathi ships one. The data is missing rather than the vocabulary. It affects 488 transform/modal_dfc cards in the catalog, so it is its own build item rather than something to solve inside one card's authoring run.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Joshua, Phoenix's Dominant // Phoenix, Warden of Fire** (rank 3959) — `joshua_phoenix_s_dominant_phoenix_warden_of_fire`
+  - When Joshua enters, discard up to two cards, then draw that many cards.
+  - {3}{R}{W}, {T}: Exile Joshua, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.
+
+</details>
+
+## discard-binding
+
+Blocks **1** card.
+
+- **(op)** a discard whose count is chosen by the discarding player at resolution -- any number from 0 up to their hand size -- rather than a number the card fixes in advance; i.e. `discard` accepting a variable size (a `count: "any"`/`up_to` form, or an `objects` selector with `optional`) and asking the player which cards, not how many the card said
+  <br>Why the existing vocabulary won't do: `discard` in `ops` reads only `amount`, `random` and `player`: `op_discard` evaluates `amount` to an integer, sets `take = min(amount, len(hand))` and calls `ask_objects(ctx, "Discard", hand, take, take, ...)` with the same number as both floor and ceiling, so the player is forced to pitch exactly that many and can never choose zero or their whole hand. No value in `value_keys` can stand in, because the number is a decision, not a board fact -- `cards_in_hand` would make it a mandatory full discard. `may` wrapping `discard: 1` gives "you may discard a card", a different sentence. `repeat`'s `amount` is likewise a value, not a prompt, so it cannot loop until the player stops. The cost-side `discard_selector`/`discard` in `cost_keys` are payments for an activated ability and cannot be an effect of a triggered ability
+- **(value)** a value naming how many cards that discard just discarded, so the follow-up draw can be "that many cards plus one" -- the discard needs to publish its count as a binding (the way `clash` writes one) that a later `draw` amount can read and add 1 to
+  <br>Why the existing vocabulary won't do: `discard` returns nothing and writes no binding, and every existing near-value is wrong for the same reasons `connive` is documented as an op rather than draw+discard+add_counters: `cards_to_graveyard_this_turn` is `ledger.cards_to_graveyard`, a single integer across every graveyard at the table including earlier discards this turn; `count` over your graveyard counts what was already there (2 cards in the sandbox alone); `cards_in_hand` read after the discard is the rest of the hand, not what left it. All three load and all three draw a number nobody would recognise as wrong
+
+<details><summary>Cards waiting on this</summary>
+
+- **Celes, Rune Knight** (rank 5132) — `celes_rune_knight`
+  - When Celes enters, discard any number of cards, then draw that many cards plus one.
+  - Whenever one or more other creatures you control enter, if one or more of them entered from a graveyard or was cast from a graveyard, put a +1/+1 counter on each creature you control.
+
+</details>
+
 ## entered-from-graveyard
 
 Blocks **1** card.
@@ -258,8 +249,6 @@ Blocks **1** card.
 
 - **(op)** an op that exiles a permanent and immediately returns it to the battlefield **transformed, under its owner's control** -- as a new object, so it enters, its enters triggers fire, it is summoning sick, and counters/auras/control effects on the old object are gone. The Final Fantasy "Dominant" transforming cycle prints this line on both faces
   <br>Why the existing vocabulary won't do: `transform` (ops_board.py `op_transform`) turns the permanent over **in place**: it calls `primitives.transform` on the live object, so the permanent never changes zones, keeps its counters, attachments and summoning-sickness state, and fires no leaves-the-battlefield or enters triggers. That is a materially stronger and differently-timed card. `exile` can move it out but has no return path other than `until_leaves` (the O-Ring link, which hands back on a later trigger, untransformed), and neither `put_onto_battlefield` nor `return_from_graveyard` accepts any "arrives on its back face" flag -- the only back-face-on-arrival path in the engine is `graveyard_cast_transformed`, which is disturb/`stack.py` and applies to *casting* the card from the graveyard, not to an activated ability on the battlefield. `meld` is the one op that does the exile-and-re-enter dance, but it is hard-wired to `melds_with`/`melds_into` and needs a partner permanent
-- **(engine)** the packet for a transforming double-faced card must carry the **back face's printed text**. This packet gives only the front face's `oracle_text` while `type_line` names a back face ("Legendary Enchantment Creature -- Saga Phoenix"), so the `back` half of the answer -- which the answer format does support, see `henrika_domnathi_henrika_infernal_seer.json` -- cannot be written without inventing the Saga's chapters
-  <br>Why the existing vocabulary won't do: `back_face` in `schema.py` requires a real second card entry in the pool, and the residual gate holds every printed line to an ability. With no back-face oracle text in the packet there is nothing to author it from, and a `transform`-family ability pointing at an absent or guessed back face is worse than no card
 
 <details><summary>Cards waiting on this</summary>
 

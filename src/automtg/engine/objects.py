@@ -110,6 +110,21 @@ class GameObject:
     #: replacement that expired at end of turn would let the card be unearthed
     #: again next turn, which is the loop the printed clause exists to close.
     leaves_to: str | None = None
+    #: "…become a copy of another target creature you control, **except its name
+    #: is Gogo, Mysterious Mime**." A layer-1 copy effect applied *in place*.
+    #:
+    #: The def id this permanent is currently copying, read by `state.card_of`
+    #: -- the one place a permanent's current face is decided, so a copy shows
+    #: everywhere at once exactly as a transform does, and no reader of a card
+    #: needed changing. `copy_permanent` is a different thing entirely: it makes
+    #: a new **token** and never alters the object it points at.
+    copying: str | None = None
+    #: The name the copy keeps, for the "except its name is…" clause. `None`
+    #: takes the copied card's own name, which is the ordinary case.
+    copying_name: str | None = None
+    #: Whether the copy above expires at cleanup. Clone copies permanently;
+    #: Gogo copies "until end of turn", and only that form is cleared.
+    copying_until_eot: bool = False
     #: Which **permanents' mana abilities made the mana that paid for this** --
     #: Path of Ancestry, Opal Palace, "when that mana is spent". Recorded by
     #: `pay_mana` alongside `colors_spent`, for the same reason and at the same
@@ -563,6 +578,9 @@ class GameObject:
         self.until_eot = []
         self.dies_to = None
         self.leaves_to = None
+        self.copying = None
+        self.copying_name = None
+        self.copying_until_eot = False
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the
         # rules are concerned, so it is no longer renowned either.

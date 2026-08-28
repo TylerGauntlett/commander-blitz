@@ -92,6 +92,53 @@ def op_replace_deaths(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.dies_to = destination
 
 
+@register("become_copy")
+def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…become a copy of another target creature you control." Rule 706.
+
+    A copy effect applied **in place**, which is a different thing from every
+    copy the DSL could already make. `copy_permanent` calls `create_token` with
+    the source's def id: it makes a *new* permanent and never alters the object
+    it is pointed at, so it cannot turn Gogo into anything. `animate` overwrites
+    power, toughness, colors, types and keywords with literals, so it cannot
+    take another object's whole printed face. `transform` only flips a
+    double-faced card to its own back.
+
+    Implemented as a def id on the object, read by `state.card_of` -- the one
+    place a permanent's current face is decided, and already the single funnel
+    for transforming cards, so a copy shows up in the characteristics layers,
+    legality, combat and the serializer at once without any of them changing.
+
+    ``except_name`` is the "except its name is Gogo, Mysterious Mime" clause,
+    which 706.2 allows a copy effect to override. ``duration`` defaults to
+    ``end_of_turn``; ``permanent`` is Clone's shape, and only the timed form is
+    cleared by `clear_until_eot`.
+    """
+    objects = spec.get("objects") or {"self_only": True}
+    subjects = yield from choose_objects(ctx, objects, "Become a copy", "become_copy")
+    if not subjects:
+        return
+    sources = yield from choose_objects(ctx, spec.get("copying"), "Copy which permanent")
+    if not sources:
+        # "you may have Gogo become a copy of **another target creature**" --
+        # with nothing to copy the whole clause does nothing, and the "if you
+        # do" rider that follows is false.
+        return
+    model = ctx.state.objects.get(sources[0])
+    if model is None:
+        return
+    copied = ctx.state.card_of(model)
+    until_eot = str(spec.get("duration", "end_of_turn")) != "permanent"
+    for oid in subjects:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.copying = copied.id
+        obj.copying_name = spec.get("except_name")
+        obj.copying_until_eot = until_eot
+    ctx.state.bump_chars()
+
+
 @register("replace_leaves_battlefield")
 def op_replace_leaves_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Exile it ... if it would **leave the battlefield**." Unearth (702.83a).

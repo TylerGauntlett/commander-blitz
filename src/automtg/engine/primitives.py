@@ -1579,6 +1579,15 @@ def clear_until_eot(state: GameState) -> None:
         # make every creature Gallifrey Falls ever touched permanently
         # un-buriable.
         obj.dies_to = None
+        # "…become a copy of another target creature **until end of turn**."
+        # Only the timed form is cleared here; a permanent copying something
+        # indefinitely -- Clone's shape -- carries `copying_until_eot` false and
+        # keeps its borrowed face, which is what makes the duration a real
+        # distinction rather than a comment.
+        if obj.copying_until_eot:
+            obj.copying = None
+            obj.copying_name = None
+            obj.copying_until_eot = False
         handbacks.extend((oid, temp) for temp in obj.until_eot if temp.kind == "control")
         obj.until_eot.clear()
     state.bump_chars()
