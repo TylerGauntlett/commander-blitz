@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**17 cards** blocked by **32** capabilities.
+**16 cards** blocked by **31** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-exiled-with](#cast-exiled-with) | 1 | 5429 | op |
 | [cast-from-among-milled](#cast-from-among-milled) | 1 | 4443 | op |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 265 | static_effect |
-| [choose-permanents](#choose-permanents) | 1 | 2867 | op, selector |
 | [copy-card-in-exile](#copy-card-in-exile) | 1 | 6897 | selector |
 | [copy-with-type-change](#copy-with-type-change) | 1 | 6897 | op |
 | [cumulative-choice-exclusion](#cumulative-choice-exclusion) | 1 | 8473 | selector |
@@ -181,23 +180,6 @@ Blocks **1** card.
 - **Bolas's Citadel** (rank 265) — `bolas_s_citadel`
   - You may play lands and cast spells from the top of your library.
   - If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.
-
-</details>
-
-## choose-permanents
-
-Blocks **1** card.
-
-- **(op)** an op that has a named chooser pick permanents out of a pool and records them as a binding without doing anything to them -- here the spell's controller picking survivors on another player's battlefield, so a later `sacrifice` can spare them with `exclude_binding`
-  <br>Why the existing vocabulary won't do: Every op that writes a binding via `as` also acts on what it picked: `sacrifice`, `exile`, `gain_control`, `reveal`, `create_token`, `copy_permanent`, `search_zones`. `snapshot` writes a binding without acting, but it takes `oids[0]` of its pool with no `count`/`chooser` narrowing at all, so it cannot be a choice and cannot hold four picks. There is no way to mark the four kept permanents before the mass sacrifice, and inverting the card into 'choose the ones to sacrifice' is a different choice -- the printed card names one survivor per type, not an all-but-one selection.
-- **(selector)** a per-type quota on a single choice: 'at most one artifact, at most one creature, at most one enchantment and at most one planeswalker', each skipped when that player controls none, with a permanent that is two of those types eligible as either
-  <br>Why the existing vocabulary won't do: `count` is one flat number applied to a pool that `types`/`any_types` filter uniformly, so `{"any_types": ["Artifact","Creature","Enchantment","Planeswalker"], "count": 4}` would happily take four creatures. Splitting it into four separate one-of-each-type choices is not a workaround either: `exclude_binding` reads a single binding name, and every binding write assigns the name outright rather than appending, so the one `sacrifice` that follows can spare only the last of the four.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tragic Arrogance** (rank 2867) — `tragic_arrogance`
-  - For each player, you choose from among the permanents that player controls an artifact, a creature, an enchantment, and a planeswalker.
-  - Then each player sacrifices all other nonland permanents they control.
 
 </details>
 

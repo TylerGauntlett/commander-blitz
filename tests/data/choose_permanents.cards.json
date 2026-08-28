@@ -1,0 +1,45 @@
+{
+  "_comment": "Cards that exist only for the choose_permanents test (tests/unit/test_choose_permanents.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tragic` is Tragic Arrogance's shape -- four per-type marks into one binding, then a mass sacrifice that spares them. `t_flat_tragic` is the near-miss the DSL could already write: one choice of four over a merged pool, which happily keeps four creatures.",
+  "cards": [
+    {
+      "id": "t_tragic",
+      "name": "Test Tragic",
+      "oracle_text": "For each player, you choose from among the permanents that player controls an artifact, a creature, an enchantment, and a planeswalker. Then each player sacrifices all other nonland permanents they control.",
+      "mana_cost": "{4}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {"op": "for_each_player", "players": "each_player", "effects": [
+          {"op": "choose_permanents", "as": "kept", "prompt": "Keep an artifact",
+           "objects": {"zone": "battlefield", "controller": {"binding": "each_player"}, "types": ["Artifact"], "count": 1, "optional": true}},
+          {"op": "choose_permanents", "as": "kept", "prompt": "Keep a creature",
+           "objects": {"zone": "battlefield", "controller": {"binding": "each_player"}, "types": ["Creature"], "count": 1, "optional": true}},
+          {"op": "choose_permanents", "as": "kept", "prompt": "Keep an enchantment",
+           "objects": {"zone": "battlefield", "controller": {"binding": "each_player"}, "types": ["Enchantment"], "count": 1, "optional": true}},
+          {"op": "choose_permanents", "as": "kept", "prompt": "Keep a planeswalker",
+           "objects": {"zone": "battlefield", "controller": {"binding": "each_player"}, "types": ["Planeswalker"], "count": 1, "optional": true}}
+        ]},
+        {"op": "sacrifice", "chooser": "none",
+         "objects": {"zone": "battlefield", "controller": "any", "not_types": ["Land"], "count": "all", "exclude_binding": "kept"}}
+      ]
+    },
+    {
+      "id": "t_flat_tragic",
+      "name": "Test Flat Tragic",
+      "oracle_text": "For each player, you choose from among the permanents that player controls an artifact, a creature, an enchantment, and a planeswalker. Then each player sacrifices all other nonland permanents they control.",
+      "mana_cost": "{4}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {"op": "for_each_player", "players": "each_player", "effects": [
+          {"op": "choose_permanents", "as": "kept", "prompt": "Keep four",
+           "objects": {"zone": "battlefield", "controller": {"binding": "each_player"}, "not_types": ["Land"], "count": 4, "optional": true}}
+        ]},
+        {"op": "sacrifice", "chooser": "none",
+         "objects": {"zone": "battlefield", "controller": "any", "not_types": ["Land"], "count": "all", "exclude_binding": "kept"}}
+      ]
+    }
+  ]
+}

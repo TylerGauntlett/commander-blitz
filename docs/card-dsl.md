@@ -203,7 +203,7 @@ it, but a card that needed correcting was authored wrong.
 | Stack | `counter` `copy_spell` `return_spell_to_hand` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
-| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
+| Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
 ## Selectors — "which objects"
 
@@ -3047,6 +3047,32 @@ ordinary static `condition`.
 Getting this wrong is not a card that does nothing, it is a card that does the
 **inverse**: without `active_zones` the anthem switches on while Anger is a 2/2
 in play and switches off when it dies, which is exactly when it should start.
+
+### `choose_permanents` — marking without acting
+
+```jsonc
+// Tragic Arrogance — one survivor of each type, per player, then the sweep.
+{ "op": "for_each_player", "players": "each_player", "effects": [
+    { "op": "choose_permanents", "as": "kept", "prompt": "Keep an artifact",
+      "objects": { "zone": "battlefield", "controller": { "binding": "each_player" },
+                   "types": ["Artifact"], "count": 1, "optional": true } },
+    …one each for Creature, Enchantment and Planeswalker… ] },
+{ "op": "sacrifice", "chooser": "none",
+  "objects": { "zone": "battlefield", "controller": "any", "not_types": ["Land"],
+               "count": "all", "exclude_binding": "kept" } }
+```
+
+The only recorder that does **nothing** to what it picked. Every other one acts
+— `sacrifice`, `exile`, `gain_control`, `reveal`, `create_token`,
+`copy_permanent`, `search_zones` — and `snapshot` records without acting but
+takes `oids[0]` with no `count` or `chooser`, so it is neither a choice nor four
+picks. It needs an `as`; a choice nobody reads back is a prompt for nothing, and
+the loader refuses it.
+
+Its binding **accumulates**, which is what makes the per-type quota sayable.
+`count` is one flat number over a pool `types` filters uniformly, so a single
+choice of four would happily keep four creatures; four choices sharing one name
+keep one of each, and the single `exclude_binding` on the sweep spares them all.
 
 ### Entwine — "choose both if you pay the entwine cost"
 

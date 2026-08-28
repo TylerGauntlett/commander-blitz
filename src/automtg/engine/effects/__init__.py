@@ -36,6 +36,12 @@ RECORDING_OPS = frozenset(
         #: one for which `as` is *required* -- the answer is unreachable
         #: otherwise. See `ops_control.op_choose_player`.
         "choose_player",
+        #: The one recorder that does **nothing** to what it picked. Tragic
+        #: Arrogance marks the survivors before the mass sacrifice; every other
+        #: recorder acts on its pick, and marking-without-acting had no
+        #: spelling. Accumulates, so four per-type choices share one name and a
+        #: single `exclude_binding` spares them all.
+        "choose_permanents",
         "copy_permanent",
         "create_token",
         #: "…then draw that many cards" -- Joshua; "draw that many cards **plus

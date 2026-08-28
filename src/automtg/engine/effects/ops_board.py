@@ -725,6 +725,39 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.bindings[str(name)] = taken
 
 
+@register("choose_permanents")
+def op_choose_permanents(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Pick permanents and remember them, without doing anything to them.
+
+    Tragic Arrogance: "For each player, you choose from among the permanents
+    that player controls an artifact, a creature, an enchantment, and a
+    planeswalker. Then each player sacrifices all other nonland permanents they
+    control."
+
+    Every other op that writes a binding also *acts* on what it picked --
+    `sacrifice`, `exile`, `gain_control`, `reveal`, `create_token`,
+    `copy_permanent`, `search_zones`. `snapshot` records without acting but
+    takes `oids[0]` of its pool with no `count` or `chooser`, so it can be
+    neither a choice nor four picks. There was no way to mark the survivors
+    *before* the mass sacrifice, and inverting the card into "choose the ones to
+    sacrifice" is a different choice: the printed card names one survivor per
+    type, not an all-but-one selection.
+
+    The binding **accumulates**, which is what lets the four per-type choices be
+    written as four ops sharing one name -- `count` is a single flat number over
+    a uniformly filtered pool, so one choice cannot express "at most one of each
+    of four types" and would happily take four creatures. The `sacrifice` that
+    follows then spares all four with a single `exclude_binding`.
+    """
+    picked = yield from choose_objects(
+        ctx, spec.get("objects"), str(spec.get("prompt") or "Choose"), "choose_permanents"
+    )
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + list(picked)
+
+
 @register("regenerate")
 def op_regenerate(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 701.15 — "Regenerate this creature."
