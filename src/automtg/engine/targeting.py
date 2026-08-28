@@ -37,8 +37,18 @@ def candidates(
     *,
     exclude_sid: int | None = None,
     bindings: Mapping[str, Any] | None = None,
+    chosen: Mapping[str, Sequence[TargetRef]] | None = None,
 ) -> list[TargetRef]:
     """Every legal choice for one target spec, in deterministic order.
+
+    ``chosen`` is the **sibling targets already picked for this same spell or
+    ability** -- "choose target opponent and up to one target creature **they**
+    control" (Cloak and Dagger, Entwined). 601.2c chooses every target at once,
+    which is what makes the pair legal or not *together*; enumerated one spec at
+    a time, the second one's `{"controller": {"target": "t1"}}` would resolve
+    against nobody and offer nothing. `enumerate_target_tuples` fills this in
+    per partial combination, and only for the specs that actually name a
+    sibling.
 
     ``bindings`` is what the *event* carried, for a triggered ability whose
     target line names something the trigger found -- "target player other than
@@ -53,6 +63,7 @@ def candidates(
         controller=controller,
         source_oid=source_oid,
         bindings=dict(bindings or {}),
+        targets={k: tuple(v) for k, v in (chosen or {}).items()},
     )
 
     if spec.kind == "player":
@@ -265,6 +276,103 @@ def target_count(
     return max(0, evaluate_value(ctx, spec.count))
 
 
+def _names_a_sibling(node: Any, ids: set[str]) -> bool:
+    """Does this selector name one of ``ids`` as a target?
+
+    "…up to one target creature **they** control" is
+    ``{"controller": {"target": "t1"}}``, and that clause is the whole of what
+    makes the second spec depend on the first. Walked rather than read off one
+    key, because a player spec may sit anywhere a selector accepts one --
+    inside `any_of`, inside a nested `objects`.
+    """
+    if isinstance(node, Mapping):
+        if isinstance(node.get("target"), str) and node["target"] in ids:
+            return True
+        return any(_names_a_sibling(v, ids) for v in node.values())
+    if isinstance(node, Sequence) and not isinstance(node, str):
+        return any(_names_a_sibling(v, ids) for v in node)
+    return False
+
+
+def _spec_options(
+    state: GameState,
+    controller: int,
+    spec: TargetSpec,
+    source_oid: int | None,
+    *,
+    exclude_sid: int | None,
+    limit: int,
+    bindings: Mapping[str, Any] | None,
+    chosen: Mapping[str, Sequence[TargetRef]] | None,
+) -> list[tuple[TargetRef, ...]]:
+    """Every choice one spec offers, including declining where that is allowed.
+
+    An empty list means this spec cannot be satisfied at all, which kills the
+    partial combination it was asked for.
+    """
+    options = candidates(
+        state,
+        controller,
+        spec,
+        source_oid,
+        exclude_sid=exclude_sid,
+        bindings=bindings,
+        chosen=chosen,
+    )
+    # Declining comes *last*, and that is load-bearing rather than cosmetic:
+    # whatever picks a tuple without asking -- an AI seat, a trigger resolving
+    # on its own -- takes the first, and a Shipbreaker Kraken whose "tap up to
+    # four target creatures" defaulted to tapping none would be a different
+    # card.
+    empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
+    count = target_count(state, controller, spec, source_oid)
+    if count == "any" or spec.up_to:
+        # "Any number of target creatures", and "up to X target creature
+        # cards". A size the caster picks, so every subset up to the ceiling is
+        # a legal choice -- ordered **largest first**, for the reason above:
+        # whatever takes a tuple without asking takes the first, and "any
+        # number" defaulting to none is a spell that does nothing. The empty
+        # subset comes last and always exists, because both readings include
+        # zero whether or not the spec is `optional`.
+        #
+        # The two differ only in where the ceiling comes from: "any number" has
+        # none beyond the board, and "up to X" is capped by the value -- which
+        # is the whole of the difference between Marshal's Anthem cast with no
+        # kicks and a {2}{W}{W} full-graveyard reanimation.
+        ceiling = len(options) if count == "any" else min(int(count), len(options))
+        subsets = [
+            tuple(c)
+            for size in range(ceiling, 0, -1)
+            for c in itertools.combinations(options, size)
+            if not spec.one_per_player or _one_each(state, c)
+        ]
+        return list(dict.fromkeys([*subsets[: _room(limit, [()])], ()]))
+    if count <= 0:
+        # A computed count of zero -- "one target for each time this was
+        # kicked", kicked no times. Not the same as no legal choice: the ability
+        # asks for nothing and resolves, where an empty list would say it cannot
+        # be put on the stack at all.
+        return [()]
+    if count > 1:
+        combos = [
+            tuple(c) for c in itertools.combinations(options, min(count, len(options)))
+        ]
+        if not combos and not spec.optional:
+            return []
+        # `combinations(x, 0)` is `[()]`, so an optional spec with nothing to
+        # choose would otherwise offer the empty choice twice -- and two
+        # identical actions is the very thing this list must not produce. The
+        # cap eats candidates, never the choice to decline -- but it never eats
+        # the last candidate either: `stack.push_trigger` and `suspend` ask with
+        # `limit=1` and take `options[0]`, so trading the one real choice for
+        # "no targets" would silently fizzle every triggered ability with an
+        # optional target.
+        return list(dict.fromkeys(combos[: _room(limit, empty)] + empty))
+    if not options and not spec.optional:
+        return []
+    return [(o,) for o in options][: _room(limit, empty)] + empty
+
+
 def enumerate_target_tuples(
     state: GameState,
     controller: int,
@@ -285,76 +393,78 @@ def enumerate_target_tuples(
     made declining impossible the moment anything legal was on the battlefield
     -- so Simic Charm's "permanents you control gain hexproof" mode, whose
     target is optional, could not be reached in any game with a creature in it.
+
+    **A spec may name a sibling.** "Choose target opponent and up to one target
+    creature **they** control" (Cloak and Dagger, Entwined) is one selector
+    reading another spec's answer, and 601.2c is why it can: every target is
+    chosen at once, so what is legal is the *pair*. The combinations are
+    therefore grown one spec at a time rather than multiplied at the end, and a
+    linked spec is enumerated **per partial combination** -- against the
+    opponent that branch actually picked, rather than against a spec with no
+    answer yet, which offers nothing at all.
+
+    Only a linked spec pays for that. An independent one is enumerated once and
+    reused across every partial, which is what the old product did and is the
+    shape of every card in the pool but this one.
+
+    A partial whose next required spec has nothing legal is dropped -- 601.2c
+    read the other way round: a target you cannot complete is not a legal choice
+    of the ones before it. With no linked spec in sight that is exactly the old
+    "return []", since every partial saw the same options and so dies together.
     """
     if not specs:
         return [()]
 
-    per_spec: list[list[tuple[TargetRef, ...]]] = []
+    prior: set[str] = set()
+    partials: list[
+        tuple[dict[str, tuple[TargetRef, ...]], tuple[TargetRef, ...]]
+    ] = [({}, ())]
     for spec in specs:
-        options = candidates(
-            state, controller, spec, source_oid, exclude_sid=exclude_sid, bindings=bindings
+        linked = bool(prior) and _names_a_sibling(spec.selector, prior)
+        shared = (
+            None
+            if linked
+            else _spec_options(
+                state,
+                controller,
+                spec,
+                source_oid,
+                exclude_sid=exclude_sid,
+                limit=limit,
+                bindings=bindings,
+                chosen=None,
+            )
         )
-        # Declining comes *last*, and that is load-bearing rather than
-        # cosmetic: whatever picks a tuple without asking -- an AI seat, a
-        # trigger resolving on its own -- takes the first, and a Shipbreaker
-        # Kraken whose "tap up to four target creatures" defaulted to tapping
-        # none would be a different card.
-        empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-        count = target_count(state, controller, spec, source_oid)
-        if count == "any" or spec.up_to:
-            # "Any number of target creatures", and "up to X target creature
-            # cards". A size the caster picks, so every subset up to the
-            # ceiling is a legal choice -- ordered **largest first**, for the
-            # reason above: whatever takes a tuple without asking takes the
-            # first, and "any number" defaulting to none is a spell that does
-            # nothing. The empty subset comes last and always exists, because
-            # both readings include zero whether or not the spec is `optional`.
-            #
-            # The two differ only in where the ceiling comes from: "any number"
-            # has none beyond the board, and "up to X" is capped by the value --
-            # which is the whole of the difference between Marshal's Anthem cast
-            # with no kicks and a {2}{W}{W} full-graveyard reanimation.
-            ceiling = len(options) if count == "any" else min(int(count), len(options))
-            subsets = [
-                tuple(c)
-                for size in range(ceiling, 0, -1)
-                for c in itertools.combinations(options, size)
-                if not spec.one_per_player or _one_each(state, c)
-            ]
-            per_spec.append(list(dict.fromkeys([*subsets[: _room(limit, [()])], ()])))
-        elif count <= 0:
-            # A computed count of zero -- "one target for each time this was
-            # kicked", kicked no times. Not the same as no legal choice: the
-            # ability asks for nothing and resolves, where `[]` would say it
-            # cannot be put on the stack at all.
-            per_spec.append([()])
-        elif count > 1:
-            combos = [tuple(c) for c in itertools.combinations(options, min(count, len(options)))]
-            if not combos and not spec.optional:
-                return []
-            # `combinations(x, 0)` is `[()]`, so an optional spec with nothing to
-            # choose would otherwise offer the empty choice twice -- and two
-            # identical actions is the very thing this list must not produce.
-            # The cap eats candidates, never the choice to decline -- but it
-            # never eats the last candidate either: `stack.push_trigger` and
-            # `suspend` ask with `limit=1` and take `options[0]`, so trading the
-            # one real choice for "no targets" would silently fizzle every
-            # triggered ability with an optional target.
-            per_spec.append(list(dict.fromkeys(combos[: _room(limit, empty)] + empty)))
-        else:
-            if not options and not spec.optional:
-                return []
-            per_spec.append([(o,) for o in options][: _room(limit, empty)] + empty)
+        grown: list[
+            tuple[dict[str, tuple[TargetRef, ...]], tuple[TargetRef, ...]]
+        ] = []
+        for chosen, flat in partials:
+            options = (
+                shared
+                if shared is not None
+                else _spec_options(
+                    state,
+                    controller,
+                    spec,
+                    source_oid,
+                    exclude_sid=exclude_sid,
+                    limit=limit,
+                    bindings=bindings,
+                    chosen=chosen,
+                )
+            )
+            for option in options:
+                if set(option) & set(flat):
+                    continue  # the same object cannot fill two targets
+                grown.append(({**chosen, spec.id: option}, flat + option))
+            if len(grown) >= limit:
+                break
+        partials = grown
+        if not partials:
+            return []
+        prior.add(spec.id)
 
-    out: list[tuple[TargetRef, ...]] = []
-    for combo in itertools.product(*per_spec):
-        flat = tuple(ref for part in combo for ref in part)
-        if len(set(flat)) != len(flat):
-            continue  # the same object cannot fill two targets
-        out.append(flat)
-        if len(out) >= limit:
-            break
-    return out
+    return [flat for _, flat in partials][:limit]
 
 
 def selectable_modes(
@@ -392,13 +502,22 @@ def still_legal(
     source_oid: int | None,
     *,
     bindings: Mapping[str, Any] | None = None,
+    chosen: Mapping[str, Sequence[TargetRef]] | None = None,
 ) -> bool:
-    """Re-check a chosen target as the spell or ability resolves."""
+    """Re-check a chosen target as the spell or ability resolves.
+
+    ``chosen`` is the sibling targets, for a spec that names one: 608.2b asks
+    "is this still a creature **that player** controls", and the player is the
+    other target. `filter_legal` accumulates the buckets as it goes and hands
+    over the ones already settled, which is the same order they were declared
+    in.
+    """
     ctx = EffectContext(
         state=state,
         controller=controller,
         source_oid=source_oid,
         bindings=dict(bindings or {}),
+        targets={k: tuple(v) for k, v in (chosen or {}).items()},
     )
     if ref.kind == "player":
         return state.is_alive(ref.id) and _player_allowed(ctx, ref.id, spec)
@@ -470,10 +589,17 @@ def filter_legal(
         take = len(refs) - index if spec.variable_size else max(1, spec.count)
         chunk = list(refs[index : index + take])
         index += take
+        # The buckets settled so far, for a spec whose selector names a sibling
+        # -- "up to one target creature **they** control". The declaration order
+        # is the spec order, so by the time a linked spec is re-checked the
+        # target it depends on is already in `buckets`, dropped or not.
+        settled = {k: tuple(v) for k, v in buckets.items()}
         kept = [
             r
             for r in chunk
-            if still_legal(state, controller, spec, r, source_oid, bindings=bindings)
+            if still_legal(
+                state, controller, spec, r, source_oid, bindings=bindings, chosen=settled
+            )
         ]
         if chunk:
             had_targets = True

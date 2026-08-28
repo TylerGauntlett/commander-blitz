@@ -1591,6 +1591,16 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
     )
 
 
+
+def _before(models: Sequence[Any], target_id: str) -> set[str]:
+    """The ids declared ahead of ``target_id`` in one target list."""
+    out: set[str] = set()
+    for model in models:
+        if model.id == target_id:
+            break
+        out.add(model.id)
+    return out
+
 def _compile_targets(
     models,
     where: str,
@@ -1627,7 +1637,35 @@ def _compile_targets(
     spec carrying ``mode`` belongs to that mode alone and is declared only if it
     is chosen -- see `carddef.TargetSpec.mode`.
     """
-    specs = tuple(_compile_target(t, where) for t in models)
+    models = list(models)
+    declared = {t.id for t in models}
+    # Asked before anything compiles, so the one way a linked target goes wrong
+    # that is *not* a typo gets its own sentence rather than the generic "the
+    # card does not declare it": naming a sibling that comes later. The
+    # combinations are grown in declaration order (601.2c chooses them all at
+    # once, but something has to go first), so the answer this spec depends on
+    # would not exist yet -- and a spec with no answer offers nothing, which
+    # reads on the board as a target that simply cannot be chosen.
+    for model in models:
+        controller = model.selector.get("controller")
+        if not isinstance(controller, Mapping):
+            continue
+        named = controller.get("target") or controller.get("controller_of_target")
+        if (
+            isinstance(named, str)
+            and named in declared
+            and named not in _before(models, model.id)
+        ):
+            raise DslError(
+                f"{where}.target[{model.id}]: names target {named!r}, which is "
+                f"declared after it -- put the target it depends on first"
+            )
+    seen_ids: dict[str, str] = {}
+    compiled: list[TargetSpec] = []
+    for model in models:
+        compiled.append(_compile_target(model, where, seen_ids))
+        seen_ids[model.id] = model.kind
+    specs = tuple(compiled)
     # Sibling specs are told apart by id -- `filter_legal` buckets by it and
     # every effect names one -- so two specs sharing an id is one target
     # silently swallowing another's refs. Never possible to notice on a board.
@@ -1741,7 +1779,9 @@ def _check_mode_targets(
         )
 
 
-def _compile_target(model: TargetModel, where: str) -> TargetSpec:
+def _compile_target(
+    model: TargetModel, where: str, siblings: Mapping[str, str] | None = None
+) -> TargetSpec:
     """One target spec, and the three ways of saying "or fewer" kept apart.
 
     ``optional`` is "exactly N, or none"; ``count: "any"`` is "any number of",
@@ -1751,15 +1791,26 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
     """
     validate_selector(model.selector, f"{where}.target[{model.id}]")
     label = f"{where}.target[{model.id}]"
+    controller_clause = model.selector.get("controller")
     if (
-        model.kind in ("player", "any")
         # `"any"` is a *target* word, not a player spec: `_player_allowed`
         # answers it before `select_players` is asked, and `select_players` has
         # no name for "everyone who could be targeted". So it is spelled out
         # here rather than added to `PLAYER_SPEC_NAMES`, where it would start
         # meaning something to every effect's `player` key too.
-        and model.selector.get("controller") != "any"
+        controller_clause != "any"
         and "controller" in model.selector
+        # A `player` or `any` spec resolves the clause through
+        # `_player_allowed`; every other kind resolves it through `matches`,
+        # which honours a Mapping here just the same. So a **Mapping** is
+        # checked whatever the kind, which is what a linked target is -- Cloak
+        # and Dagger's second spec is a `permanent`, and under the old gate its
+        # `{"target": "who"}` was never looked at. A bare *string* on a
+        # non-player kind stays where it was: `matches` reads those names
+        # itself, and they are not player specs.
+        and (
+            model.kind in ("player", "any") or isinstance(controller_clause, Mapping)
+        )
     ):
         # `targeting._player_allowed` resolves this clause through
         # `select_players`, so it is a full player spec and has to be checked as
@@ -1770,11 +1821,20 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
         # "target player other than its controller" that played as "target any
         # player", strictly wider than the printing, with nothing to say so.
         #
-        # Checked with no sibling targets in scope: the forms a *target's own*
-        # controller clause takes name the trigger's bindings, not another
-        # target of the same card, and a card that tried would rather be told
-        # so than load.
-        _validate_player_spec(model.selector["controller"], f"{label}.controller", {})
+        # Checked against the siblings declared **before** this one -- "choose
+        # target opponent and up to one target creature **they** control"
+        # (Cloak and Dagger, Entwined), where "they" is the other target. 601.2c
+        # chooses every target at once, which is what makes the pair legal
+        # together, and `enumerate_target_tuples` grows the combinations in
+        # declaration order so a linked spec sees the answer it depends on.
+        #
+        # Earlier ones only, so a forward reference is refused rather than
+        # silently resolving against a spec with no answer yet -- which offers
+        # nothing, and reads on the board as a card whose second target can
+        # never be chosen.
+        _validate_player_spec(
+            model.selector["controller"], f"{label}.controller", dict(siblings or {})
+        )
     zone = model.selector.get("zone")
     if model.kind == "permanent" and zone not in (None, "battlefield"):
         # A card in a graveyard, a hand or exile is not a permanent (110.1), and
