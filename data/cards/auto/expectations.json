@@ -6991,6 +6991,14 @@
     },
     "zone": "battlefield"
   },
+  "summon_knights_of_round": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 3,
+      "id": "knight_2_2_w"
+    },
+    "zone": "battlefield"
+  },
   "sun_sentinel": {
     "zone": "battlefield"
   },

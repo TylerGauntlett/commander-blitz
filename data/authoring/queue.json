@@ -266952,12 +266952,12 @@
     },
     "Summon: Knights of Round": {
       "edhrec_rank": 2308,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Knights of Round",
-      "reason": "no template for: I, II, III, IV — Create three 2/2 white Knight creature tokens",
+      "reason": "",
       "scryfall_id": "44d23652-077e-4c1f-b640-b284685db911",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Kujata": {

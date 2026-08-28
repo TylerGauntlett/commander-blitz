@@ -4465,6 +4465,10 @@
     "artist": "Mark Poole",
     "scryfall_id": "ce76f38f-566e-49ff-b197-510cfa1cb51c"
   },
+  "knight_2_2_w": {
+    "artist": "Joshua Raphael",
+    "scryfall_id": "a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad"
+  },
   "knight_2_2_w_vigilance": {
     "artist": "Joshua Raphael",
     "scryfall_id": "a7758a0b-9e85-4b4a-bf1c-ffcc6761dbad"
@@ -5329,6 +5333,10 @@
   "monster_virtuous": {
     "artist": "Rovina Cai",
     "scryfall_id": "27927100-2587-4e05-9957-eb183d46c1f0"
+  },
+  "moogle_1_2_w_lifelink": {
+    "artist": "Ignatius Budi",
+    "scryfall_id": "20a709d5-4be5-487b-bfba-4b1821f2ebd3"
   },
   "moon_heron": {
     "artist": "Charles Urbach",
@@ -8177,6 +8185,10 @@
   "summon_bahamut": {
     "artist": "Arif Wijaya",
     "scryfall_id": "95318d85-4a08-47ac-a43d-ea83c0bea81c"
+  },
+  "summon_knights_of_round": {
+    "artist": "Takayama Toshiaki",
+    "scryfall_id": "44d23652-077e-4c1f-b640-b284685db911"
   },
   "sun_sentinel": {
     "artist": "James Ryman",

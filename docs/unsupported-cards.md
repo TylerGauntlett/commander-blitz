@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**29 cards** blocked by **41** capabilities.
+**28 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-movement-ledger](#graveyard-movement-ledger) | 2 | 6878 | engine, selector |
 | [leaves-graveyard](#leaves-graveyard) | 2 | 10518 | trigger_event |
 | [mill-cost](#mill-cost) | 2 | 1226 | cost |
-| [missing-token](#missing-token) | 2 | 2308 | engine |
 | [additional-cost-on-alternative-cast](#additional-cost-on-alternative-cast) | 1 | 2357 | engine |
 | [alternative-cost-pay-life](#alternative-cost-pay-life) | 1 | 265 | replacement |
 | [batched-enters-trigger](#batched-enters-trigger) | 1 | 5132 | engine |
@@ -43,6 +42,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-static](#graveyard-static) | 1 | 351 | engine, static_effect |
 | [linked-targets](#linked-targets) | 1 | 21778 | selector |
 | [milled-this-way](#milled-this-way) | 1 | 4443 | selector |
+| [missing-token](#missing-token) | 1 | 7573 | engine |
 | [modal-activated-targets](#modal-activated-targets) | 1 | 8547 | engine |
 | [modal-cost](#modal-cost) | 1 | 869 | cost |
 | [opponent-chooser](#opponent-chooser) | 1 | 8473 | selector |
@@ -160,25 +160,6 @@ Blocks **2** cards.
   - {T}, Mill a card: Add {C}.
 - **The Warring Triad** (rank 3427) — `the_warring_triad`
   - {T}, Mill a card: Target player adds one mana of any color.
-
-</details>
-
-## missing-token
-
-Blocks **2** cards.
-
-- **(engine)** a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name
-  <br>Why the existing vocabulary won't do: `create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control.
-- **(engine)** a vanilla 2/2 white Knight creature token in the token pool (data/cards/tokens.cards.json), id in the style of the existing entries — `knight_2_2_w` — with types ["Creature"], subtypes ["Knight"], power 2, toughness 2, colors ["W"] and no keywords, so `create_token` has an id to name for this chapter
-  <br>Why the existing vocabulary won't do: `create_token` can only name a token already defined in data/cards/tokens.cards.json, and the pool has no plain 2/2 white Knight. The two nearest entries are both wrong: `knight_2_2_w_vigilance` is the right size, color and subtype but carries vigilance, which this card does not print — twelve tokens across the four chapters would each gain an evasion-relevant ability the card never grants; and `human_knight_2_2_r_trample_haste` is red, adds the Human subtype, and has trample and haste. The other 2/2 white tokens (`ox_2_2_w`, `cat_beast_2_2_w`) have the wrong subtype, which is load-bearing on a Knight-tribal card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Summon: Knights of Round** (rank 2308) — `summon_knights_of_round`
-  - I, II, III, IV — Create three 2/2 white Knight creature tokens.
-- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
-  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
-  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
 
 </details>
 
@@ -525,6 +506,21 @@ Blocks **1** card.
 
 - **Locke, Treasure Hunter** (rank 4443) — `locke_treasure_hunter`
   - Mug — Whenever Locke attacks, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.
+
+</details>
+
+## missing-token
+
+Blocks **1** card.
+
+- **(engine)** a 1/2 white Moogle creature token with lifelink in the token pool (id in the style of the existing entries, e.g. `moogle_1_2_w_lifelink`), so `create_token` has an id to name
+  <br>Why the existing vocabulary won't do: `create_token` only creates tokens already defined in data/cards/tokens.cards.json, and that file has no Moogle of any size — the nearest lifelink tokens are `vampire_1_1_b_lifelink`, `vampire_1_1_wb_lifelink` and `vampire_rogue_1_1_b_lifelink`, all 1/1 Vampires of the wrong subtype and colors. The subtype is load-bearing here, because the card's last clause puts counters on each Moogle you control.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mog, Moogle Warrior** (rank 7573) — `mog_moogle_warrior`
+  - If a creature card was discarded this way, you create a 1/2 white Moogle creature token with lifelink.
+  - Then if a noncreature card was discarded this way, put a +1/+1 counter on each Moogle you control.
 
 </details>
 
