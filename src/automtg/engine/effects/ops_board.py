@@ -92,6 +92,39 @@ def op_replace_deaths(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.dies_to = destination
 
 
+@register("replace_leaves_battlefield")
+def op_replace_leaves_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Exile it ... if it would **leave the battlefield**." Unearth (702.83a).
+
+    `replace_deaths` is the near miss and it is not a rounding error on the
+    cards that want this. `move_object` gates that one on a battlefield ->
+    graveyard move, so it catches a death and nothing else, while this clause is
+    the *whole* departure: bounced to hand, exiled by removal, shuffled into a
+    library, sent to the command zone. Priest of Fell Rites is the witness --
+    its own ability sacrifices it, and the printed replacement is what makes
+    that a one-way trip. Read as death-only, an opponent's bounce leaves a card
+    that can be unearthed all over again, which is the loop the clause closes.
+
+    The other half is the **lifetime**, and it is why this is a separate marker
+    rather than a wider gate on the same one. `dies_to` says "would die *this
+    turn*" and is cleared at cleanup; this lasts exactly as long as the
+    permanent is on the battlefield, so only `reset_permanent_state` clears it
+    -- on the very zone change it replaces.
+    """
+    destination = str(spec.get("destination", "exile"))
+    if destination not in ZONE_NAMES:
+        raise DslError(
+            f"replace_leaves_battlefield: unknown destination {destination!r}"
+        )
+    oids = yield from choose_objects(
+        ctx, spec.get("objects"), "Redirect on leaving", "replace"
+    )
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.leaves_to = destination
+
+
 @register("phase_out")
 def op_phase_out(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Target creature phases out." (702.26)

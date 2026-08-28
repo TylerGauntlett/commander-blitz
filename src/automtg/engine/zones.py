@@ -99,6 +99,16 @@ def move_object(
         to_zone = Zone(obj.dies_to)
         target_player = owner
 
+    # "…or **if it would leave the battlefield**" -- unearth. The whole
+    # departure and not just the death: bounced, exiled, shuffled away, sent to
+    # the command zone. After `dies_to` so the wider clause wins when a card
+    # carries both, which changes nothing when they name the same zone and is
+    # the right way round when they do not -- this one is what the card printed
+    # about *leaving*, and dying is one way of leaving.
+    if obj.leaves_to and from_zone is Zone.BATTLEFIELD:
+        to_zone = Zone(obj.leaves_to)
+        target_player = owner
+
     was_creature = from_zone is Zone.BATTLEFIELD and "Creature" in chars(state, oid).types
     was_on_battlefield = from_zone is Zone.BATTLEFIELD
     # Snapshotted here for the same reason `was_creature` is: by the time a
