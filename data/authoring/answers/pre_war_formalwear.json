@@ -120,12 +120,12 @@
   },
   "expectation": {
     "zone": "battlefield",
-    "battlefield_count": 33,
+    "battlefield_count": 34,
     "graveyard_size": {
-      "0": 2
+      "0": 1
     },
     "hand_size": {
-      "0": 0
+      "0": 1
     }
   }
 }

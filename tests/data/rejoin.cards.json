@@ -1,0 +1,24 @@
+{
+  "_comment": "A card that exists only for the opponent-chooser test (tests/unit/test_opponent_chooser.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_rejoin` is Rejoin the Fight: each opponent picks a creature card in YOUR graveyard that nobody has picked yet, and all the picks come back together.",
+  "cards": [
+    {
+      "id": "t_rejoin",
+      "name": "Test Rejoin",
+      "oracle_text": "Each opponent chooses a creature card in your graveyard that hasn't been chosen. Return each card chosen this way to the battlefield under your control.",
+      "mana_cost": "{3}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {"op": "for_each_player", "players": "each_opponent", "effects": [
+          {"op": "choose_permanents", "as": "chosen", "prompt": "Choose a creature card",
+           "objects": {"zone": "graveyard", "controller": "you", "types": ["Creature"],
+                       "count": 1, "chooser": {"binding": "each_player"},
+                       "exclude_binding": "chosen"}}
+        ]},
+        {"op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+         "objects": {"binding": "chosen"}}
+      ]
+    }
+  ]
+}

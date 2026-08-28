@@ -91,10 +91,28 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     builder.battlefield(0, OWN_BOARD)
     builder.battlefield(1, OPPONENT_BOARD)
     builder.graveyard(0, OWN_GRAVEYARD)
-    builder.library(0, ["forest", "island", "swamp", "mountain", "plains"] * 8)
+    # The second card is deliberately not a land -- see `verify.build_sandbox`.
+    # Cultivator Colossus puts a land from hand onto the battlefield, draws, and
+    # repeats; against forty basic lands and a spare land in hand it decked the
+    # player. Second rather than first, so the cards that reveal the *top* and
+    # branch on whether it is a land still see one.
+    library = ["forest", "island", "swamp", "mountain", "plains"] * 8
+    library[1] = "t_bolt"
+    builder.library(0, library)
     builder.library(1, ["forest", "island"] * 10)
     if in_hand:
-        builder.hand(0, [card_id])
+        # A spare land beside the card under test, mirroring
+        # `verify.build_sandbox`. 601.2a moves a spell to the stack before its
+        # costs are paid, so a card can never discard *itself* to pay its own
+        # additional cost -- and a hand of one leaves every mandatory "as an
+        # additional cost, discard a card" with no fodder and unplayable here.
+        # Big Score, Laughing Mad, Thrill of Possibility, Tormenting Voice,
+        # Wild Guess and Mardu Outrider are the six that found it.
+        #
+        # A land rather than a spell: a castable card in hand keeps the player
+        # on priority while the card under test is on the stack, and every card
+        # then fails with "never left the stack".
+        builder.hand(0, [card_id, "forest"])
     return builder.build(advance=False)
 
 
@@ -147,6 +165,17 @@ def _answer(game: Game, decision: PendingDecision):
     # the board could pay for.
     if decision.kind is DecisionKind.CHOOSE_X:
         choices = [a for a in actions if a.kind is ActionKind.CHOOSE]
+        # ...but never an X that ends the game, mirroring
+        # `verify._answer`. Toxic Deluge's X is paid in **life** and 118.4 puts
+        # the whole total on offer, so the maximum is suicide: the player hits 0,
+        # loses to a state-based action, and the spell never resolves. Inert for
+        # a mana X, whose ceiling is bounded by the board's 30 lands against 40
+        # life.
+        pid = decision.player
+        life = game.state.players[pid].life if pid is not None else 0
+        alive = [a for a in choices if (a.choice or 0) < life]
+        if alive:
+            return max(alive, key=lambda a: a.choice or 0)
         if choices:
             return max(choices, key=lambda a: a.choice or 0)
 
@@ -344,8 +373,15 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     )
     if match is None:
         return
-    fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
-    game.state.battlefield.append(fodder.oid)
+    # As many as the cost asks for, not one. Bolas's Citadel sacrifices **ten**
+    # nonland permanents, and a board handed a single creature reported a
+    # working card as unusable -- the same false negative this helper exists to
+    # prevent, one order of magnitude up.
+    count = spec.get("count", 1)
+    wanted = int(count) if isinstance(count, int) else 1
+    for _ in range(max(1, wanted)):
+        fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(fodder.oid)
 
 
 def _provide_the_tap_fodder(game: Game, registry, ability) -> None:

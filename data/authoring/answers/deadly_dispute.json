@@ -41,7 +41,7 @@
   "expectation": {
     "zone": "graveyard",
     "hand_size": {
-      "0": 2
+      "0": 3
     },
     "library_size": {
       "0": 38

@@ -1,0 +1,42 @@
+{
+  "_comment": "Cards that exist only for the modal-additional-cost test (tests/unit/test_modal_cost.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_bitter` is Bitter Triumph's shape -- 'discard a card or pay 3 life'. `t_bitter_both` is the card the DSL could write before this existed, with both prices on one conjunctive cost, and is the counterfactual that charges both.",
+  "cards": [
+    {
+      "id": "t_bitter",
+      "name": "Test Bitter",
+      "oracle_text": "As an additional cost to cast this spell, discard a card or pay 3 life.\nDestroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "additional_cost_options": [
+        {"discard": 1},
+        {"pay_life": 3}
+      ],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "destroy", "objects": {"target": "t1"}}
+      ]
+    },
+    {
+      "id": "t_bitter_both",
+      "name": "Test Bitter Both",
+      "oracle_text": "As an additional cost to cast this spell, discard a card and pay 3 life.\nDestroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "additional_cost": {"discard": 1, "pay_life": 3},
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "destroy", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

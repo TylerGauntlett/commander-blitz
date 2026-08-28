@@ -62,6 +62,19 @@ SELECTOR_KEYS = frozenset(
         #: complement is only equal for single-typed permanents, so it would
         #: refuse artifact creatures, which the printed line accepts.
         "any_types",
+        #: **One pool built from several**, each with its own zone -- "you may
+        #: exile a nonland card from their **hand** or the chosen creature"
+        #: (Cloak and Dagger, Entwined), where the two halves are a hand and the
+        #: battlefield. Every branch is resolved in its own right and the
+        #: results are concatenated, so one `count`/`chooser` then asks across
+        #: the lot.
+        #:
+        #: Not `any_of`, which is the near miss and is a *filter*: it narrows
+        #: the pool the outer selector already gathered from one zone, and
+        #: refuses a `zone` inside a branch for exactly that reason. A card
+        #: choosing "from their hand or the battlefield" has no one zone to
+        #: gather from, so there is nothing for `any_of` to narrow.
+        "union",
         #: A union of whole sub-selectors: matches when *any* of them does.
         #: "…among it and any number of commanders" is not a filter that can
         #: be narrowed into -- `self_only` and `is_commander` are both true
@@ -137,6 +150,16 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "…and all tokens that player controls **with the same name as that
+        #: permanent**" -- Legions to Ashes. The dynamic twin of `name`, which
+        #: takes a literal string fixed when the card is written; which name
+        #: matters here is decided by whatever was targeted at cast time.
+        #: Compared on `card.name`, since nothing in the characteristics layer
+        #: renames an object, and tolerant of a target that has already left the
+        #: battlefield -- the spell exiles the target and its copies together,
+        #: so a reading that needed the target still in play would sweep nothing
+        #: whenever the ops ran in the other order.
+        "shares_a_name_with",
         #: "…a creature spell that shares a creature type with **your
         #: commander**." Path of Ancestry. Takes a *player* rather than a
         #: binding name, which is why it is not a spelling of the clause above:
@@ -264,6 +287,25 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
             ],
             selector,
         )
+
+    if (branches := selector.get("union")) is not None:
+        # One pool assembled from several, each branch resolved in its own
+        # right -- so each may name its own zone, which is the whole difference
+        # from `any_of` beside it. Order is the written order and duplicates are
+        # dropped, because a branch that overlaps another is one card offered
+        # once, not twice.
+        #
+        # The outer selector carries nothing but the pool-shaping keys (the
+        # loader refuses the rest), so there is no filtering to do here and no
+        # default zone to apply: a filter written outside would have to mean
+        # something for a card in a hand *and* for a permanent, and the two
+        # answer to different layers.
+        pooled: list[int] = []
+        for branch in branches:
+            for oid in resolve_pool(ctx, branch):
+                if oid not in pooled:
+                    pooled.append(oid)
+        return pooled
 
     state = ctx.state
     zone_name = selector.get("zone", "battlefield")
@@ -566,6 +608,28 @@ def matches(
         return False
     if (want := selector.get("name")) and card.name != want:
         return False
+    if (bound := selector.get("shares_a_name_with")) is not None:
+        # Legions to Ashes: "…and all tokens that player controls **with the
+        # same name as that permanent**." The dynamic twin of the literal
+        # `name` clause directly above -- that one is a string the card author
+        # writes at load time, this one is read off an object bound at cast
+        # time, which is the only way to say "the same name as the thing I just
+        # targeted".
+        #
+        # `card.name`, not a characteristics lookup: the characteristics layer
+        # models types, colours, power and keywords, and nothing in it renames
+        # an object, so the card's name is the name.
+        other = _bound_oid(ctx, str(bound))
+        if other is None:
+            return False
+        target = state.objects.get(other)
+        # Deliberately tolerant of an object that has already left the
+        # battlefield. Legions to Ashes exiles its target and the tokens in one
+        # breath, and an implementation that read the name only while the
+        # target was still in play would sweep nothing whenever the ops ran in
+        # the other order -- a spell that silently did half its job.
+        if target is None or state.card_of(target).name != card.name:
+            return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
         return False
@@ -771,9 +835,38 @@ def pick_from_pool(
         chooser = ctx.controller
         if chooser_spec == "owner" and pool:
             chooser = ctx.state.objects[pool[0]].owner
+        elif chooser_spec not in ("controller", "owner"):
+            # An arbitrary **player spec** -- Rejoin the Fight: "each opponent
+            # chooses a creature card in **your** graveyard". Both existing
+            # names resolve to the spell's controller for a pool in your own
+            # yard, so the caster would pick the cards an opponent is supposed
+            # to, which is the whole card.
+            #
+            # Resolved through `select_players`, so the ordinary vocabulary
+            # works -- `{"binding": "each_player"}` inside a `for_each_player`
+            # loop is the shape that card needs.
+            seats = select_players(ctx, chooser_spec)
+            if not seats:
+                # Nobody to ask, so nothing is chosen -- rather than quietly
+                # letting the controller decide.
+                return []
+            chooser = seats[0]
 
     picked = yield from ask_objects(ctx, prompt, pool, min_count, max_count, chooser, purpose)
     return picked
+
+
+def _validate_player_spec_shape(who: Any, where: str) -> None:
+    """A `chooser` that is not one of the three names must be a player spec.
+
+    Shape only: a mapping is left to the loader's own `_validate_player_spec`,
+    which is the one that can check a target id against the card's declarations.
+    """
+    if isinstance(who, Mapping):
+        return
+    if isinstance(who, str) and who in PLAYER_SPEC_NAMES:
+        return
+    raise DslError(f"{where}: unknown chooser {who!r}")
 
 
 #: The **string** forms :func:`select_players` accepts, named so a load-time
@@ -866,6 +959,14 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return [pid] if pid is not None and state.is_alive(pid) else []
         raise DslError(f"unknown player spec {spec!r}")
     if isinstance(spec, Mapping):
+        if "except" in spec:
+            # "each **opponent** who did this" -- the recorded set minus a seat.
+            # `not` is the complement over the whole table and cannot narrow an
+            # inclusive spec, so an intersection had no spelling: the seats a
+            # binding holds include you whenever you took the same option.
+            rest = {k: v for k, v in spec.items() if k != "except"}
+            excluded = set(select_players(ctx, spec["except"]))
+            return [pid for pid in select_players(ctx, rest) if pid not in excluded]
         if "not" in spec:
             # "target player **other than** its controller."
             #
@@ -939,7 +1040,17 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             return [obj.owner] if obj else []
         if "binding" in spec:
             value = ctx.bindings.get(str(spec["binding"]))
-            return [int(value)] if isinstance(value, int) else []
+            if isinstance(value, int):
+                return [value] if state.is_alive(value) else []
+            if isinstance(value, list):
+                # A **set of seats**, which `may`'s `as` writes: "each opponent
+                # who discarded their hand this way". Deduped and returned in
+                # seat order rather than acceptance order, so the damage lands
+                # in a stable sequence, and filtered to the living for the
+                # reason `not` takes its complement over `alive()`.
+                seats = {int(v) for v in value if isinstance(v, int)}
+                return [pid for pid in state.alive() if pid in seats]
+            return []
     raise DslError(f"unparsable player spec {spec!r}")
 
 
@@ -957,7 +1068,10 @@ def validate_selector(selector: Any, where: str) -> None:
         raise DslError(f"{where}: unknown zone {zone!r}")
     chooser = selector.get("chooser")
     if chooser is not None and chooser not in ("controller", "owner", "none"):
-        raise DslError(f"{where}: unknown chooser {chooser!r}")
+        # Anything else is an ordinary player spec -- "each opponent chooses a
+        # creature card in your graveyard". Validated as one so a typo is
+        # refused at load time rather than resolving to nobody mid-game.
+        _validate_player_spec_shape(chooser, f"{where}.chooser")
     controller = selector.get("controller")
     if (
         controller is not None
@@ -1039,6 +1153,27 @@ def validate_selector(selector: Any, where: str) -> None:
                     f"{where}: unknown supertype {name!r} in {key!r} "
                     f"(known: {sorted(KNOWN_SUPERTYPES)})"
                 )
+    union = selector.get("union")
+    if union is not None:
+        if not isinstance(union, (list, tuple)) or len(union) < 2:
+            raise DslError(f"{where}: union takes a list of at least two selectors")
+        extra = set(selector) - {"union", "count", "chooser", "optional", "random"}
+        if extra:
+            # A branch brings its own zone, so a characteristic clause written
+            # outside would have to mean one thing for a card in a hand and
+            # another for a permanent on the battlefield -- and `matches` reads
+            # derived characteristics for one and printed ones for the other.
+            # Whatever it was meant to narrow, it belongs in the branches.
+            raise DslError(
+                f"{where}: union assembles whole selectors, so {sorted(extra)} "
+                f"belong inside a branch -- only 'count', 'chooser', 'optional' "
+                f"and 'random' may sit beside it"
+            )
+        for i, branch in enumerate(union):
+            if not isinstance(branch, Mapping):
+                raise DslError(f"{where}.union[{i}]: each branch is a selector")
+            validate_selector(branch, f"{where}.union[{i}]")
+
     branches = selector.get("any_of")
     if branches is not None:
         if not isinstance(branches, (list, tuple)) or len(branches) < 2:

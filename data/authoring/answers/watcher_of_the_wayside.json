@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "watcher_of_the_wayside",
+    "name": "Watcher of the Wayside",
+    "oracle_text": "When this creature enters, target player mills two cards. You gain 2 life. (To mill two cards, a player puts the top two cards of their library into their graveyard.)",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact",
+      "Creature"
+    ],
+    "subtypes": [
+      "Golem"
+    ],
+    "power": 3,
+    "toughness": 2,
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, target player mills two cards. You gain 2 life.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "player",
+            "count": 1,
+            "selector": {}
+          }
+        ],
+        "effects": [
+          {
+            "op": "mill",
+            "player": {
+              "target": "t1"
+            },
+            "amount": {
+              "const": 2
+            }
+          },
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {
+              "const": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "life": {
+      "0": 42
+    },
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  }
+}

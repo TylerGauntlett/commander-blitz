@@ -182,6 +182,12 @@ const SILENT = new Set([
   // one creature, on top of the `zone_change` that already owns the departure.
   "sacrificed",
   "leaves_battlefield",
+  // The graveyard's counterpart, and silent for the identical reason: fired
+  // beside the `zone_change` that already owns the departure, for the very same
+  // card, so that "whenever one or more cards leave your graveyard" has
+  // something to hear. A beat here would toll a second time for one card and
+  // flash an oid that has already left the graveyard pile in the DOM.
+  "leaves_graveyard",
   "untapped",
   "ability_resolved",
   // Fired beside `attackers_declared` for the very same declaration -- one per

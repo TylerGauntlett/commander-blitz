@@ -1,0 +1,35 @@
+{
+  "card": {
+    "id": "ravenous_chupacabra",
+    "name": "Ravenous Chupacabra",
+    "oracle_text": "When this creature enters, destroy target creature an opponent controls.",
+    "mana_cost": "{2}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Beast", "Horror"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, destroy target creature an opponent controls.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]},
+            "count": 1
+          }
+        ],
+        "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5
+  }
+}

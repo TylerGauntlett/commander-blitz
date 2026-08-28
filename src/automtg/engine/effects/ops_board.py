@@ -92,6 +92,86 @@ def op_replace_deaths(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.dies_to = destination
 
 
+@register("become_copy")
+def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"…become a copy of another target creature you control." Rule 706.
+
+    A copy effect applied **in place**, which is a different thing from every
+    copy the DSL could already make. `copy_permanent` calls `create_token` with
+    the source's def id: it makes a *new* permanent and never alters the object
+    it is pointed at, so it cannot turn Gogo into anything. `animate` overwrites
+    power, toughness, colors, types and keywords with literals, so it cannot
+    take another object's whole printed face. `transform` only flips a
+    double-faced card to its own back.
+
+    Implemented as a def id on the object, read by `state.card_of` -- the one
+    place a permanent's current face is decided, and already the single funnel
+    for transforming cards, so a copy shows up in the characteristics layers,
+    legality, combat and the serializer at once without any of them changing.
+
+    ``except_name`` is the "except its name is Gogo, Mysterious Mime" clause,
+    which 706.2 allows a copy effect to override. ``duration`` defaults to
+    ``end_of_turn``; ``permanent`` is Clone's shape, and only the timed form is
+    cleared by `clear_until_eot`.
+    """
+    objects = spec.get("objects") or {"self_only": True}
+    subjects = yield from choose_objects(ctx, objects, "Become a copy", "become_copy")
+    if not subjects:
+        return
+    sources = yield from choose_objects(ctx, spec.get("copying"), "Copy which permanent")
+    if not sources:
+        # "you may have Gogo become a copy of **another target creature**" --
+        # with nothing to copy the whole clause does nothing, and the "if you
+        # do" rider that follows is false.
+        return
+    model = ctx.state.objects.get(sources[0])
+    if model is None:
+        return
+    copied = ctx.state.card_of(model)
+    until_eot = str(spec.get("duration", "end_of_turn")) != "permanent"
+    for oid in subjects:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.copying = copied.id
+        obj.copying_name = spec.get("except_name")
+        obj.copying_until_eot = until_eot
+    ctx.state.bump_chars()
+
+
+@register("replace_leaves_battlefield")
+def op_replace_leaves_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Exile it ... if it would **leave the battlefield**." Unearth (702.83a).
+
+    `replace_deaths` is the near miss and it is not a rounding error on the
+    cards that want this. `move_object` gates that one on a battlefield ->
+    graveyard move, so it catches a death and nothing else, while this clause is
+    the *whole* departure: bounced to hand, exiled by removal, shuffled into a
+    library, sent to the command zone. Priest of Fell Rites is the witness --
+    its own ability sacrifices it, and the printed replacement is what makes
+    that a one-way trip. Read as death-only, an opponent's bounce leaves a card
+    that can be unearthed all over again, which is the loop the clause closes.
+
+    The other half is the **lifetime**, and it is why this is a separate marker
+    rather than a wider gate on the same one. `dies_to` says "would die *this
+    turn*" and is cleared at cleanup; this lasts exactly as long as the
+    permanent is on the battlefield, so only `reset_permanent_state` clears it
+    -- on the very zone change it replaces.
+    """
+    destination = str(spec.get("destination", "exile"))
+    if destination not in ZONE_NAMES:
+        raise DslError(
+            f"replace_leaves_battlefield: unknown destination {destination!r}"
+        )
+    oids = yield from choose_objects(
+        ctx, spec.get("objects"), "Redirect on leaving", "replace"
+    )
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is not None and obj.on_battlefield:
+            obj.leaves_to = destination
+
+
 @register("phase_out")
 def op_phase_out(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Target creature phases out." (702.26)
@@ -136,7 +216,15 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     afterwards. Not ``until_leaves``, which is the O-Ring *link* and declares a
     return; a card that only counts what it exiled hands nothing back.
     """
-    link = bool(spec.get("until_leaves"))
+    # `until_leaves` is the O-Ring name for the link and `link` is the neutral
+    # one. The same record either way -- `exiled_by`, which a later
+    # `{"zone": "exile", "exiled_with": "self"}` selector reads back -- because
+    # the *return* was always a separate `leaves_battlefield` trigger on the
+    # card and never anything this op did. Valigarmanda exiles from every
+    # graveyard at the table and is sacrificed after its last chapter; written
+    # `until_leaves` it would read as promising those cards back to the
+    # opponents they were taken from, which is a different card.
+    link = bool(spec.get("until_leaves")) or bool(spec.get("link"))
     # "You may play the exiled card this turn." Florian, and the impulse-draw
     # family. Not `play_exiled`, which casts the card for *free* and does it
     # there and then: this is a permission the player may take later, at the
@@ -147,7 +235,18 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
         # Written before the move, so the binding records what this op exiled
         # rather than whatever is in exile once it is done -- exactly where
         # `op_sacrifice` writes its own.
-        ctx.bindings[str(name)] = list(oids)
+        #
+        # **Extended, not replaced.** Kefka exiles "a card at random from each
+        # opponent's graveyard", which is a `for_each_player` loop around this
+        # op, and a plain assignment kept only the last opponent's card: the
+        # other was exiled and then stranded, because the `play_exiled` that
+        # follows could no longer name it. `discard` accumulates across the
+        # seats one op touches for the same reason; this is the same fact one
+        # loop out. Bindings live for a single resolution, so nothing carries
+        # into the next.
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + list(oids)
     for oid in oids:
         exile(ctx.state, oid, by=ctx.source_oid)
         if playable:
@@ -164,6 +263,97 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
                 obj.exiled_by = ctx.source_oid
+
+
+@register("become_prepared")
+def op_become_prepared(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"This creature **becomes prepared**." Emeritus of Woe // Demonic Tutor.
+
+    The turning-on half of the state; the turning-off is the rules' own -- "you
+    may cast a copy of its spell. **Doing so unprepares it**" is reminder text,
+    so `Game._cast` clears it and no card ever writes that.
+
+    **Not `set_flag`.** A flag is inert bookkeeping -- renown is stored that way
+    -- and nothing in the casting-permission path reads `obj.flags`, so a
+    permanent flagged "prepared" would gain no ability to cast anything and the
+    card would silently do nothing. `set_flag` also has no counterpart that
+    clears one, and `set_turn_flag` expires at the turn boundary rather than on
+    use, which is a different card again: prepared survives until it is spent.
+
+    **Not a counter**, either. The reminder text is the whole of the mechanic
+    and says nothing about a number: a permanent is prepared or it is not, and
+    preparing an already-prepared one changes nothing.
+    """
+    for oid in resolve_pool(ctx, spec.get("objects")):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.prepared = True
+    ctx.state.bump_chars()
+
+
+@register("exile_and_return")
+def op_exile_and_return(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Exile it, then return it to the battlefield **transformed** under its
+    owner's control."
+
+    Joshua, Phoenix's Dominant, and the Final Fantasy "Dominant" cycle, which
+    prints this line on both faces -- the front returns it transformed and the
+    back returns it "(front face up)". So ``face`` is written out rather than
+    inferred from where it started: on the back the sentence turns it *back*,
+    and an op that only ever flipped would say the same thing twice.
+
+    **Not `transform`.** That turns the permanent over in place: it never
+    changes zones, so it keeps its counters, its Auras and its summoning
+    sickness, fires no leaves-the-battlefield trigger and no enters trigger, and
+    stays under whoever controls it. Every one of those is a difference this
+    card prints the other way, and together they make a materially stronger and
+    differently-timed permanent.
+
+    It is a **new object** (400.7): what comes back is summoning sick, has no
+    counters, carries no attachments, and is under its **owner's** control --
+    which is the clause that makes this a removal answer for a stolen permanent
+    and is written on the card.
+
+    ``face`` is required. Defaulted to "turn it over" the op would be right on
+    Joshua's front and silently wrong on the Saga's third chapter, which is the
+    same card and the reading a player would never see going wrong.
+
+    The face is passed **into** the move rather than set afterwards: the
+    arriving face is what every enters-replacement and enters-trigger must see,
+    and the back of this very card is a Saga whose lore counter is a
+    replacement.
+    """
+    face = str(spec.get("face", ""))
+    for oid in resolve_pool(ctx, spec.get("objects")):
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        owner = obj.owner
+        exile(ctx.state, oid, cause="exiled", by=ctx.source_oid)
+        moved = ctx.state.objects.get(oid)
+        if moved is None or moved.zone is not Zone.EXILE:
+            # A commander its owner sent to the command zone instead, or
+            # anything else that replaced the exile. It did not end up where the
+            # return would read it from, so the second half simply does not
+            # happen -- which is what 400.7 says about an object that is no
+            # longer the one the effect was tracking.
+            continue
+        # Set before the move, the way `put_onto_battlefield` sets it: control
+        # is not something `move_object` decides -- `to_player` says whose copy
+        # of a zone the card joins, and the battlefield is shared -- and the
+        # enters-the-battlefield event carries the controller, so an arrival
+        # under the wrong seat would fire its own triggers for the wrong player.
+        moved.controller = owner
+        move_object(
+            ctx.state,
+            oid,
+            Zone.BATTLEFIELD,
+            to_player=owner,
+            cause="returned",
+            by=ctx.source_oid,
+            as_face=face,
+        )
 
 
 @register("sacrifice")
@@ -712,6 +902,39 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     ]
     if name := spec.get("as"):
         ctx.bindings[str(name)] = taken
+
+
+@register("choose_permanents")
+def op_choose_permanents(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Pick permanents and remember them, without doing anything to them.
+
+    Tragic Arrogance: "For each player, you choose from among the permanents
+    that player controls an artifact, a creature, an enchantment, and a
+    planeswalker. Then each player sacrifices all other nonland permanents they
+    control."
+
+    Every other op that writes a binding also *acts* on what it picked --
+    `sacrifice`, `exile`, `gain_control`, `reveal`, `create_token`,
+    `copy_permanent`, `search_zones`. `snapshot` records without acting but
+    takes `oids[0]` of its pool with no `count` or `chooser`, so it can be
+    neither a choice nor four picks. There was no way to mark the survivors
+    *before* the mass sacrifice, and inverting the card into "choose the ones to
+    sacrifice" is a different choice: the printed card names one survivor per
+    type, not an all-but-one selection.
+
+    The binding **accumulates**, which is what lets the four per-type choices be
+    written as four ops sharing one name -- `count` is a single flat number over
+    a uniformly filtered pool, so one choice cannot express "at most one of each
+    of four types" and would happily take four creatures. The `sacrifice` that
+    follows then spares all four with a single `exclude_binding`.
+    """
+    picked = yield from choose_objects(
+        ctx, spec.get("objects"), str(spec.get("prompt") or "Choose"), "choose_permanents"
+    )
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + list(picked)
 
 
 @register("regenerate")

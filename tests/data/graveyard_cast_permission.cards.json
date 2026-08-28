@@ -1,0 +1,111 @@
+{
+  "_comment": "Cards that exist only for the graveyard-cast-permission test (tests/unit/test_cast_from_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_machinist` is Edgar's shape: once per turn you may cast an artifact spell from your graveyard, and it enters tapped. `t_untapped_machinist` is the same permission without the rider.",
+  "cards": [
+    {
+      "id": "t_machinist",
+      "name": "Test Machinist",
+      "oracle_text": "Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Once during each of your turns, you may cast an artifact spell from your graveyard. If you cast a spell this way, that artifact enters tapped.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "static_max_per_turn": 1,
+          "enters_tapped": true
+        }
+      ]
+    },
+    {
+      "id": "t_untapped_machinist",
+      "name": "Test Untapped Machinist",
+      "oracle_text": "Once during each of your turns, you may cast an artifact spell from your graveyard.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Once during each of your turns, you may cast an artifact spell from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "static_max_per_turn": 1
+        }
+      ]
+    },
+    {
+      "id": "t_pray",
+      "name": "Test Pray",
+      "oracle_text": "Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "static_max_per_turn": 1,
+          "arrived_this_turn_from": [
+            "!battlefield"
+          ]
+        }
+      ]
+    }
+  ]
+}

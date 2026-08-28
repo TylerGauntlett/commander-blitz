@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "zombify",
+    "name": "Zombify",
+    "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+    "mana_cost": "{3}{B}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "card_in_graveyard",
+        "count": 1,
+        "selector": {
+          "zone": "graveyard",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "return_from_graveyard",
+        "destination": "battlefield",
+        "controller": "you",
+        "objects": {
+          "target": "t1"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    }
+  }
+}

@@ -36,6 +36,18 @@ class EventType:
     #: sacrifice from a removal spell, which is most of what the printed line is
     #: about.
     SACRIFICED = "sacrificed"
+    #: "Whenever one or more cards leave your graveyard…" -- Spirit Mascot,
+    #: Cyan. `ZONE_CHANGE` already records every move and is deliberately *not*
+    #: on the trigger bus: routing every zone change through `fire` would run
+    #: the trigger scan on every draw, discard, shuffle and land drop in the
+    #: game. This is the one departure worth watching, fired narrowly from
+    #: `zones.move_object` so nothing else pays for it.
+    #:
+    #: Carries the graveyard's **owner** as `player` (400.3), so
+    #: `controller: "you"` restricts it to your own yard, and `batch` so the
+    #: "one or more" batching in `triggers._queue` can fire it once for a
+    #: single move of several cards.
+    LEAVES_GRAVEYARD = "leaves_graveyard"
 
     # cards and the stack
     #: One card drawn. ``data["nth"]`` is that draw's **ordinal** for its player

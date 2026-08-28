@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "rise_of_the_dark_realms",
+    "name": "Rise of the Dark Realms",
+    "oracle_text": "Put all creature cards from all graveyards onto the battlefield under your control.",
+    "mana_cost": "{7}{B}{B}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "spell_effects": [
+      {
+        "op": "return_from_graveyard",
+        "destination": "battlefield",
+        "controller": "you",
+        "objects": {
+          "zone": "graveyard",
+          "controller": "any",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    }
+  }
+}

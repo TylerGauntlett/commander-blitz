@@ -1,0 +1,84 @@
+{
+  "card": {
+    "id": "gau_feral_youth",
+    "name": "Gau, Feral Youth",
+    "oracle_text": "Rage — Whenever Gau attacks, put a +1/+1 counter on it.\nAt the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.",
+    "mana_cost": "{1}{R}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Human",
+      "Berserker"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Rage — Whenever Gau attacks, put a +1/+1 counter on it.",
+        "trigger": {
+          "event": "attacks",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "zone": "battlefield",
+              "self_only": true
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "any",
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "cards_from_graveyard_this_turn": "you"
+            },
+            "right": {
+              "const": 1
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "damage",
+            "amount": {
+              "power_of": {
+                "self": true
+              }
+            },
+            "player": "each_opponent"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

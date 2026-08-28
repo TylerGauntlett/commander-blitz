@@ -48,17 +48,50 @@ class CostModel(BaseModel):
     #: ``total_power``: crew is a printed sum, and no printed line unbends a
     #: board by power.
     untap_permanents: dict[str, Any] | None = None
+    #: "**Mill a card**" as part of an activation cost -- Millikin, Deranged
+    #: Assistant, The Warring Triad. Cards come off the top of the *activating*
+    #: player's library, so there is nothing to choose and no selector.
+    #:
+    #: Deliberately not the ``mill`` **op**. Writing it in ``effects`` moves the
+    #: payment to resolution, so the ability could be activated and responded to
+    #: before the cards moved -- which is observable on The Warring Triad, whose
+    #: other ability counts cards in that same graveyard. It is doubly wrong on
+    #: Millikin, a mana ability, since a mana ability may contain only
+    #: ``add_mana``.
+    mill: int = 0
     discard: int = 0
     #: Narrows what ``discard`` may throw away -- "discarding a land card".
     #: A selector over the hand; omitted, any card will do.
     discard_selector: dict[str, Any] | None = None
     #: Cycling's "Discard this card": the source discards itself, no choice.
     discard_self: bool = False
+    #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
+    #: of `discard_self`, and deliberately not `sacrifice`, which puts the
+    #: source in the graveyard. The difference is the whole card here: Phoenix
+    #: Down is meant to be one-shot and graveyard-proof, and sacrificing it
+    #: would leave it recurrable *and* feed its own first mode.
+    #:
+    #: Not the `exile` op either -- an op runs at resolution, so the ability
+    #: could be activated and responded to with the source still on the
+    #: battlefield, and 601.2h pays costs before any of that.
+    exile_self: bool = False
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed
     #: when the card is written.
     pay_life: int | dict[str, Any] = 0
+    #: "As an additional cost to cast this spell, **pay X life**" -- Toxic
+    #: Deluge. The caster announces X as the spell is cast (601.2b), and the
+    #: spell's own effects read it back with ``{"x": true}``.
+    #:
+    #: A flag rather than a value expression, because every other `pay_life` is
+    #: a number the *board* decides -- a literal, or War Room's count of
+    #: commander colours -- and this one is the player's choice. And not
+    #: `additional_repeatable` with ``pay_life: 1``, which produces the same set
+    #: of outcomes but caps at `legality.MAX_ADDITIONAL_TIMES` (six), turns one
+    #: payment of X life into X payments of one, and describes an *optional*
+    #: cost paid a number of times rather than one mandatory announced number.
+    pay_life_x: bool = False
     remove_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
@@ -122,7 +155,16 @@ class TargetModel(BaseModel):
     model_config = Strict
 
     id: str
-    kind: Literal["permanent", "player", "spell", "card_in_graveyard", "any"]
+    kind: Literal[
+        "permanent", "player", "spell", "card_in_graveyard", "card_in_exile", "any"
+    ]
+    #: "…any number of target creature cards **with total mana value 6 or
+    #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
+    #: on each of them: no selector clause can say it, because every clause is
+    #: evaluated against one candidate in isolation and `mana_value: {"op":
+    #: "<=", "value": 6}` is a different and much wider card -- six one-drops
+    #: pass it and are six mana of creatures.
+    total_mana_value: int | None = None
     selector: dict[str, Any] = Field(default_factory=dict)
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.
@@ -197,6 +239,17 @@ class TriggerModel(BaseModel):
     #: "This ability triggers only once each turn." A per-permanent cap on how
     #: many times this ability may queue in one turn.
     max_per_turn: int | None = None
+    #: "Whenever **one or more** cards leave your graveyard…" -- Spirit Mascot.
+    #: The event fires once per card, because that is how cards move; this says
+    #: the *ability* fires once per simultaneous group. Without it, Rise of the
+    #: Dark Realms emptying a five-card graveyard would put five +1/+1 counters
+    #: on the Mascot instead of one.
+    #:
+    #: Deliberately not `max_per_turn: 1`, which the codebase already documents
+    #: as the stand-in for this shape and which is a *different card*: a printed
+    #: "one or more" fires again later the same turn for a second, separate
+    #: departure, and a per-turn cap does not.
+    batched: bool = False
 
 
 class AbilityModel(BaseModel):
@@ -209,7 +262,13 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static", "chapter"]
+    kind: Literal["activated", "triggered", "static", "chapter", "reflexive"]
+    #: The name a `reflexive_trigger` op calls this ability by -- "when you do"
+    #: has to point at *which* do. Required on ``kind: "reflexive"`` and refused
+    #: on every other kind, and the loader checks the two halves name each
+    #: other, so a reflexive ability nothing fires is a load error rather than a
+    #: line of the card that never happens.
+    id: str | None = None
     text: str = ""
     #: **A Saga's chapter number** -- the "II" in "II — Create two 2/2 red Human
     #: Knight creature tokens with trample and haste". Required on
@@ -288,6 +347,40 @@ class AbilityModel(BaseModel):
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
+    #: "**Once during each of your turns**, you may cast an artifact spell from
+    #: your graveyard." Edgar, Master Machinist. How many times a
+    #: `cast_from_graveyard` permission may be used per turn, counted per
+    #: granting permanent -- two Edgars are two casts, the way two Welcoming
+    #: Vampires each draw.
+    #:
+    #: Required on that static, because a permission with no rate limit is an
+    #: unbounded engine rather than the printed line. Named for the trigger
+    #: field it mirrors and meaning the same thing one ability kind over.
+    static_max_per_turn: int | None = None
+    #: "…that artifact **enters tapped**." A rider on the permission, applied to
+    #: the permanent that was cast under it rather than to the permanent
+    #: granting it -- `self_enters_tapped` is a card's own replacement and is
+    #: the wrong permanent entirely here.
+    enters_tapped: bool = False
+    #: "…cards in your graveyard that were **put there from anywhere other than
+    #: the battlefield this turn**." Banon, the Returners' Leader. A list of
+    #: zone names the card must have arrived from, this turn; prefix one with
+    #: `!` for the complement, which is what Banon prints -- listing the four
+    #: zones a card could otherwise have come from would silently miss a fifth.
+    #:
+    #: Beside `affects_spells` rather than inside it, because when a card
+    #: reached a graveyard and from where are facts about *this copy* and not
+    #: about the card, and `affects_spells` may only read the printed face.
+    arrived_this_turn_from: list[str] | None = None
+    #: "…pay life equal to its **mana value** rather than pay its mana cost."
+    #: Bolas's Citadel, on a `cast_from_library_top` static. An alternative cost
+    #: imposed on somebody else's spell, which `spell_cost_reduction` cannot
+    #: express: that one lowers a mana cost by an amount and cannot swap the
+    #: payment to a different resource entirely.
+    #:
+    #: Required on that static, because the permission without its price is
+    #: every spell in the deck castable off the top at its printed cost.
+    pay_life_instead: bool = False
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)
@@ -360,7 +453,12 @@ class ReplacementModel(BaseModel):
 
     model_config = Strict
 
-    event: Literal["self_enters", "self_enters_tapped", "self_enters_with_counters"]
+    event: Literal[
+        "self_enters",
+        "self_enters_tapped",
+        "self_enters_with_counters",
+        "self_enters_prepared",
+    ]
     modify: dict[str, Any] = Field(default_factory=dict)
     counter: str | None = None
     #: How many, as a plain integer or a **value expression** -- "enters with a
@@ -447,6 +545,12 @@ class CardModel(BaseModel):
     #: cast from hand; an **Aftermath** half may be cast *only* from the
     #: graveyard (702.127a), which is the whole of what that keyword says.
     second_face_zone: Literal["hand", "graveyard"] = "hand"
+    #: The card id of the **spell** a prepared permanent may cast a copy of --
+    #: "While it's prepared, you may cast a copy of its spell" (Emeritus of Woe
+    #: // Demonic Tutor). Its own field rather than a third `second_face_zone`
+    #: value: casting a second face takes the object out of its zone, and this
+    #: leaves the permanent where it is and puts a copy on the stack.
+    prepared_face: str | None = None
     #: **Fuse** (702.102a): "You may cast one or both halves of this card from
     #: your hand." The third cast line on a split card, and the only one that is
     #: **one spell made of two faces** -- both costs paid together, both halves'
@@ -502,6 +606,22 @@ class CardModel(BaseModel):
     #: the price and is the player's to choose. How many times it was paid is
     #: read back with ``{"additional_paid": true}``.
     additional_cost: CostModel | None = None
+    #: "As an additional cost to cast this spell, discard a card **or** pay 3
+    #: life" -- Bitter Triumph. Two whole alternative payments, one of which the
+    #: caster picks as the spell is cast.
+    #:
+    #: A sibling of ``additional_cost`` rather than a shape of it, because a
+    #: `CostModel`'s entries are **conjunctive**: writing `discard` and
+    #: `pay_life` on one cost charges both, which is a strictly worse card, and
+    #: writing either alone silently drops half the printed line.
+    #: ``additional_optional`` is the nearest existing thing and only makes one
+    #: fixed price skippable; `choose_mode` runs at resolution and so can
+    #: neither be a cost nor decide whether the spell is castable.
+    #:
+    #: Legality offers one cast line per **payable** branch, exactly as emerge
+    #: offers one per sacrificeable creature: the player is choosing, and the
+    #: choice changes the price.
+    additional_cost_options: list[CostModel] = Field(default_factory=list)
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What that additional cost is called on screen. `kicker` is the engine's

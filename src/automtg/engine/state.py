@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import TYPE_CHECKING, Any
 
 from .actions import PendingDecision
@@ -136,6 +136,17 @@ class GameState:
     ability_static_version: int = -1
 
     triggers_this_step: int = 0
+    #: Which "simultaneous" group the moves happening right now belong to.
+    #: Bumped once per effect op and once per cost payment -- the two places a
+    #: card can move several cards at once -- so a trigger that reads "one or
+    #: more cards" can fire once for the whole group. See `triggers._queue`.
+    event_batch: int = 0
+    #: (oid, ability index, batch) triples a batched trigger has already queued,
+    #: so "one or more" fires once per simultaneous group. Never cleared during
+    #: a game: the batch counter only increases, so an old triple can never be
+    #: matched again, and the set is bounded by how many batched triggers
+    #: actually fired rather than by the length of the game.
+    batched_triggers: set = field(default_factory=set)
     #: "Whenever a creature dealt damage by this creature this turn dies…"
     #:
     #: victim oid -> the oids of everything that has damaged it this turn.
@@ -370,6 +381,19 @@ class GameState:
         # several cards in the pile.
         if obj.merged_card is not None:
             return obj.merged_card
+        # A copy effect (706) applied in place -- Gogo. Asked before the printed
+        # card is even fetched, because while it is copying, the copied card
+        # *is* what this permanent is: its name, types, power, abilities and
+        # everything else follow from here, which is the whole reason this
+        # method exists as the single funnel.
+        if obj.copying is not None:
+            copied = self.registry.get(obj.copying)
+            if obj.copying_name is not None and obj.copying_name != copied.name:
+                # "…except its name is Gogo, Mysterious Mime." A copy may
+                # override individual characteristics (706.2), and the name is
+                # the one this cycle overrides.
+                copied = replace(copied, name=obj.copying_name)
+            return copied
         card = self.registry.get(obj.def_id)
         # A second castable face -- adventure, aftermath, a split half -- is
         # asked first, because it is the face the card is *currently being cast
@@ -642,6 +666,20 @@ class GameState:
             obj = self.objects.get(data.get("oid"))
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
+            # The departure half. Keyed by the graveyard's **owner** rather than
+            # by whoever moved the card: "a card left *your* graveyard" is a
+            # fact about the yard, and a Reanimate cast by an opponent on your
+            # creature still emptied your graveyard by one.
+            if (
+                data.get("from") == Zone.GRAVEYARD.value
+                and data.get("to") != Zone.GRAVEYARD.value
+                and obj is not None
+                and not obj.is_token
+                and pid is not None
+            ):
+                ledger.cards_from_graveyard[pid] = (
+                    ledger.cards_from_graveyard.get(pid, 0) + 1
+                )
 
     def bump_chars(self) -> None:
         """Invalidate the derived-characteristics cache."""

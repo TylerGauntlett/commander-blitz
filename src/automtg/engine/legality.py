@@ -402,6 +402,37 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
+    # "While it's prepared, you may cast a copy of its spell." The battlefield
+    # is not one of the zones above and must not be: every zone in that list is
+    # one the spell then *leaves*, and a prepared permanent stays where it is.
+    out.extend(_prepared_actions(state, pid, sorcery_speed))
+
+    # "You may play lands and cast spells from the top of your library" --
+    # Bolas's Citadel. A fifth zone a spell may be cast from, and the only one
+    # that is *hidden*: the top card and nothing below it, which is what the
+    # card says and the only part of a library anybody is entitled to see.
+    # Lands are the neighbouring `play_lands_from_library_top` permission and
+    # are offered by `_land_actions`, so this covers only what that one cannot.
+    from .characteristics import library_top_cast_permission
+
+    top_permission = library_top_cast_permission(state, pid)
+    if top_permission is not None and state.players[pid].library:
+        oid = state.players[pid].library[0]
+        card = state.card(oid)
+        # 118.4: a player may pay life down to exactly 0, so the test is on
+        # having that much and not on surviving it. A line offered and then
+        # unpayable would be an action the engine could not honour.
+        affordable = state.players[pid].life >= card.mana_value
+        if not card.is_land and affordable and _timing_ok(card, sorcery_speed):
+            out.extend(
+                _cast_variant(
+                    state, pid, oid, card,
+                    enumerate_target_tuples(state, pid, card.targets, oid),
+                    extra_generic=0,
+                    from_library_top=True,
+                )
+            )
+
     # Adventure (715.3d): the card is in exile having gone on one, and its
     # *front* face may be cast from there. A fourth zone a card may be cast
     # from, widened the way retrace widens the graveyard -- and it is the front
@@ -420,9 +451,31 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # left in exile with a bare flag would stay castable for the rest of the
     # game. The price is the printed one -- this grants permission, not a
     # discount, which is the whole difference from `play_exiled`.
-    for oid in state.players[pid].exile:
+    # Every graveyard as well as your own exile: Locke, Treasure Hunter mills
+    # one card from **each** player and then lets you cast one of them, so the
+    # permission has to reach an opponent's yard. The flag is the permission, so
+    # walking a wider set of zones offers nothing extra -- nothing carries it
+    # that was not granted it.
+    permitted: list[int] = []
+    for player in state.players:
+        # Both zones, and every seat's copy of them. Exile is kept per owner, so
+        # a card taken out of an *opponent's* graveyard sits in that opponent's
+        # exile -- Valigarmanda exiles "an instant or sorcery card from each
+        # graveyard" and then offers you one of them. The flag is the
+        # permission, so walking a wider set of zones offers nothing extra:
+        # nothing carries it that was not granted it.
+        permitted.extend(player.exile)
+        permitted.extend(player.graveyard)
+    for oid in permitted:
         obj = state.objects[oid]
         if obj.playable_by != pid or obj.playable_turn != state.turn:
+            continue
+        # "…you may cast **a spell** from among those cards", singular out of
+        # however many were milled. Counted per granting permanent, so two
+        # Lockes are two spells and one Locke milling three cards is still one.
+        if obj.playable_group is not None and state.turn_ledger.activations(
+            obj.playable_group, GRAVEYARD_CAST_SLOT
+        ):
             continue
         card = state.card(oid)
         if card.is_land or not _timing_ok(card, sorcery_speed):
@@ -437,12 +490,21 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         card = state.card(oid)
         if not _timing_ok(card, sorcery_speed):
             continue
+        ft_tuples = enumerate_target_tuples(state, pid, card.targets, oid)
         out.extend(
-            _cast_variant(
+            _charge_additional_cost(
                 state, pid, oid, card,
-                enumerate_target_tuples(state, pid, card.targets, oid),
-                extra_generic=0,
-                foretold=True,
+                _cast_variant(
+                    state, pid, oid, card, ft_tuples,
+                    extra_generic=0, foretold=True,
+                ),
+                lambda times, choice, oid=oid, card=card, tuples=ft_tuples: (
+                    _cast_variant(
+                        state, pid, oid, card, tuples,
+                        extra_generic=0, foretold=True,
+                        additional_times=times, additional_choice=choice,
+                    )
+                ),
             )
         )
 
@@ -459,6 +521,13 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         out.extend(_second_face_actions(state, pid, oid, card, Zone.GRAVEYARD, sorcery_speed))
         if not _timing_ok(card, sorcery_speed):
             continue
+        # "Once during each of your turns, you may cast an artifact spell from
+        # your graveyard" -- Edgar. A permission granted by a *permanent*, so
+        # unlike flashback and retrace it is not a property of the card being
+        # cast and legality has to ask the board. Offered at the **printed**
+        # price, which is what separates it from flashback's alternative cost.
+        if _graveyard_cast_permission(state, pid, card, oid) is not None:
+            out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         if card.retrace and can_pay(state, pid, card.retrace_cost, oid):
             out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
         # Flashback is the same widening with a different price: an alternative
@@ -467,18 +536,26 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if card.flashback is not None and can_pay(
             state, pid, card.flashback.without_mana(), oid
         ):
+            fb_tuples = enumerate_target_tuples(
+                state, pid, card.targets, oid,
+                exclude_sid=state.objects[oid].stack_id,
+            )
+            # "…for its flashback cost **and any additional costs**" is printed
+            # in flashback's own reminder text, and 601.2f says it anyway.
             out.extend(
-                _cast_variant(
-                    state,
-                    pid,
-                    oid,
-                    card,
-                    enumerate_target_tuples(
-                        state, pid, card.targets, oid,
-                        exclude_sid=state.objects[oid].stack_id,
+                _charge_additional_cost(
+                    state, pid, oid, card,
+                    _cast_variant(
+                        state, pid, oid, card, fb_tuples,
+                        extra_generic=0, flashback=True,
                     ),
-                    extra_generic=0,
-                    flashback=True,
+                    lambda times, choice, oid=oid, card=card, tuples=fb_tuples: (
+                        _cast_variant(
+                            state, pid, oid, card, tuples,
+                            extra_generic=0, flashback=True,
+                            additional_times=times, additional_choice=choice,
+                        )
+                    ),
                 )
             )
 
@@ -491,6 +568,43 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
             continue
         out.extend(
             _cast_options(state, pid, oid, card, extra_generic=commander_cost(state, oid))
+        )
+    return out
+
+
+def _prepared_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Action]:
+    """"While it's prepared, you may cast a copy of its spell."
+
+    A cast offered from the **battlefield**, which no other cast line is: every
+    zone `_cast_actions` walks is a zone the spell then leaves, and a prepared
+    permanent stays exactly where it is. So this is its own walk rather than
+    another entry in `zones` -- putting the battlefield in that list would offer
+    every permanent on it as a spell.
+
+    Priced, timed and targeted off the **spell face**, the way
+    `_second_face_actions` prices the Adventure half: `_cast_variant` never
+    assumed the card it was pricing was the one the object is printed as. The
+    permanent's own oid is what the action names, because that is what
+    `Game._cast` has to find again to unprepare it.
+
+    "Doing so unprepares it" is why no rate limit is needed here and none is
+    written: the permission is spent by using it, which is the state itself.
+    """
+    out: list[Action] = []
+    for obj in state.battlefield_objects(pid):
+        if not obj.prepared:
+            continue
+        card = state.card_of(obj)
+        if card.prepared_face is None:
+            continue
+        face = state.registry.get(card.prepared_face)
+        if not _timing_ok(face, sorcery_speed):
+            continue
+        tuples = enumerate_target_tuples(state, pid, face.targets, obj.oid)
+        if not tuples:
+            continue
+        out.extend(
+            _cast_variant(state, pid, obj.oid, face, tuples, extra_generic=0, prepared=True)
         )
     return out
 
@@ -661,35 +775,18 @@ def _cast_options(
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
             )
-    # An additional cost -- casualty, replicate, "sacrifice an artifact". One
-    # line per number of times paid, for the reason convoke offers one per
-    # number convoked: the count changes the price and is the player's to
-    # choose. A *mandatory* one starts at 1, so the free line above is not
-    # offered at all -- which is the whole difference between Deadly Dispute and
-    # a card that may pay.
-    if card.additional_cost is not None and state.objects[oid].zone is Zone.HAND:
-        first = 0 if card.additional_optional else 1
-        last = _additional_ceiling(state, pid, oid, card)
-        if not card.additional_optional:
-            # The free line is withdrawn *whenever* the cost is mandatory, not
-            # only when it happens to be unpayable. Clearing it just in the
-            # unpayable case is the same thing as never charging it: a player
-            # holding a creature was offered both Village Rites lines and
-            # `find_play` took the first, so the card was a one-mana draw-two
-            # that sacrificed nothing. An unpayable cost then falls out of the
-            # same statement, because the loop below adds nothing when
-            # `last` is 0 and the printed spell is simply not castable.
-            #
-            # Everything is dropped, not just the plain variant: with a
-            # mandatory additional cost, *every* way of casting the spell owes
-            # it (601.2f), so an evoke or kicker line that skipped it would be
-            # the same bug wearing a different name.
-            out = []
-        for times in range(max(first, 1), last + 1):
-            out += _cast_variant(
-                state, pid, oid, card, tuples, extra_generic=extra_generic,
-                additional_times=times,
-            )
+    # An additional cost -- casualty, replicate, "sacrifice an artifact". No
+    # zone gate: 601.2f charges it on every cast, so a retrace line out of the
+    # graveyard and a commander cast out of the command zone owe it too. The
+    # blocks below stay hand-only because morph, overload, emerge and convoke
+    # genuinely are.
+    out = _charge_additional_cost(
+        state, pid, oid, card, out,
+        lambda times, choice: _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic,
+            additional_times=times, additional_choice=choice,
+        ),
+    )
     # Morph: "you may cast this card face down as a 2/2 creature for {3}"
     # (702.37a). A cast variant with **no targets** -- a face-down spell is a
     # nameless 2/2 with no text, so there is nothing on it to target with -- and
@@ -744,7 +841,119 @@ def _cast_options(
 MAX_ADDITIONAL_TIMES = 6
 
 
-def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
+def _graveyard_cast_permission(
+    state: GameState, pid: int, card: CardDef, oid: int | None = None
+):
+    """The permission that would let ``card`` be cast from a graveyard, if any.
+
+    Returns the granting permanent, or ``None``. Both `legality` and
+    `Game._cast` go through here, so the permission a line was offered under is
+    the one its use is billed to -- the same agreement `chosen_additional` keeps
+    for a modal cost.
+
+    The first unspent one wins. Which of two identical Edgars is billed is not a
+    choice any card asks the player to make, and they are interchangeable.
+    """
+    from .characteristics import (
+        graveyard_cast_allows,
+        graveyard_cast_arrival_ok,
+        graveyard_cast_permissions,
+    )
+
+    subject = state.objects.get(oid) if oid is not None else None
+    for source_obj, static in graveyard_cast_permissions(state, pid):
+        if not graveyard_cast_allows(state, source_obj, static, card):
+            continue
+        # "…put there from anywhere other than the battlefield this turn" is a
+        # fact about *this copy* of the card, so it is asked of the object.
+        if subject is not None and not graveyard_cast_arrival_ok(state, static, subject):
+            continue
+        cap = int(static.get("max_per_turn") or 1)
+        # Billed against the granting permanent through the ordinary activation
+        # ledger, keyed on a sentinel index no real ability can occupy, so a
+        # permanent that also has activated abilities does not share a counter
+        # with them.
+        if state.turn_ledger.activations(source_obj.oid, GRAVEYARD_CAST_SLOT) >= cap:
+            continue
+        return source_obj
+    return None
+
+
+#: The `ability_index` a graveyard-cast permission's per-turn count is filed
+#: under. Negative, so it can never collide with a real ability's index.
+GRAVEYARD_CAST_SLOT = -1
+
+
+def chosen_additional(card: CardDef, choice: int | None) -> Cost | None:
+    """The additional cost this cast line pays -- the branch, or the only one.
+
+    "Discard a card **or** pay 3 life" is `additional_cost_options`; everything
+    else is the single `additional_cost`. Both `legality` and `Game._cast` price
+    a line through here, so the branch offered is the branch charged.
+    """
+    if card.additional_cost_options:
+        if choice is None or not (0 <= choice < len(card.additional_cost_options)):
+            return None
+        return card.additional_cost_options[choice]
+    return card.additional_cost
+
+
+def _charge_additional_cost(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    out: list[Action],
+    build,
+) -> list[Action]:
+    """601.2f: **every** way of casting a spell owes its additional cost.
+
+    ``build(times)`` makes the same cast line again with the cost charged
+    ``times`` over; ``out`` is the free line or lines the caller already built.
+
+    One line per number of times paid, for the reason convoke offers one per
+    number convoked: the count changes the price and is the player's to choose.
+
+    A *mandatory* cost withdraws the free lines entirely -- not merely when it
+    happens to be unpayable. Clearing it only in the unpayable case is the same
+    thing as never charging it: a player holding a creature was offered both
+    Village Rites lines and `find_play` took the first, so the card was a
+    one-mana draw-two that sacrificed nothing. An unpayable cost then falls out
+    of the same statement, because the loop adds nothing when the ceiling is 0
+    and the spell is simply not castable.
+
+    Everything is dropped, not just the plain variant: an evoke or kicker line
+    that skipped the cost would be the same bug wearing a different name -- and
+    so is a **flashback** line, which is why this is a helper rather than a
+    block inside `_cast_options`. Laughing Mad is the witness: "As an additional
+    cost to cast this spell, discard a card" plus "Flashback {3}{R}", whose own
+    reminder text spells out "for its flashback cost *and any additional
+    costs*". Flashback, foretell and retrace all reach the stack by paths that
+    used to skip this, so a flashed-back Laughing Mad drew two and discarded
+    nothing.
+    """
+    branches = (
+        list(range(len(card.additional_cost_options)))
+        if card.additional_cost_options
+        else ([None] if card.additional_cost is not None else [])
+    )
+    if not branches:
+        return out
+    if not card.additional_optional:
+        out = []
+    for choice in branches:
+        # One line per **payable** branch, exactly as emerge offers one per
+        # sacrificeable creature: a branch nobody can pay is not a price on
+        # offer, and with a mandatory cost a card whose every branch is
+        # unpayable is simply not castable.
+        for times in range(1, _additional_ceiling(state, pid, oid, card, choice) + 1):
+            out = out + build(times, choice)
+    return out
+
+
+def _additional_ceiling(
+    state: GameState, pid: int, oid: int, card: CardDef, choice: int | None = None
+) -> int:
     """How many times this card's additional cost may be paid on this cast.
 
     One unless the card says ``additional_repeatable`` -- replicate is the only
@@ -760,9 +969,8 @@ def _additional_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> 
     # decided: a casualty line offered with no creature big enough to sacrifice
     # would be an action the player could take and the engine could not honour.
     # The mana half is folded into the price and answered by the solver.
-    if card.additional_cost is not None and not can_pay(
-        state, pid, card.additional_cost.without_mana(), oid
-    ):
+    branch = chosen_additional(card, choice)
+    if branch is not None and not can_pay(state, pid, branch.without_mana(), oid):
         return 0
     if not card.additional_repeatable:
         return 1
@@ -894,9 +1102,12 @@ def _cast_variant(
     alternative: bool = False,
     overloaded: bool = False,
     additional_times: int = 0,
+    additional_choice: int | None = None,
+    from_library_top: bool = False,
     foretold: bool = False,
     face_down: bool = False,
     second_face: bool = False,
+    prepared: bool = False,
     fused: bool = False,
     bestowed: bool = False,
     mutated: bool = False,
@@ -949,11 +1160,29 @@ def _cast_variant(
         cost = card.mana_cost.plus(card.kicker)
     else:
         cost = card.mana_cost
-    if additional_times and card.additional_cost is not None:
+    if from_library_top:
+        # "…pay life equal to its mana value **rather than** pay its mana cost."
+        # A whole substitution rather than a reduction, which is what
+        # `spell_cost_reduction` cannot do: the mana half becomes free here and
+        # `Game._cast` charges the life. Priced before every discount below, so
+        # nothing reduces a cost that is no longer being paid.
+        cost = ManaCost.parse("")
+    permission = state.objects[oid]
+    if permission.playable_any_type and permission.playable_turn == state.turn:
+        # "…and mana of any type can be spent to cast that spell." The colours
+        # are relaxed once the price has been chosen, so it is the price this
+        # line is actually offering that gets relaxed rather than the printed
+        # cost -- and the discounts below still only touch the generic part,
+        # which by now is all there is.
+        cost = cost.as_any_type()
+    branch = chosen_additional(card, additional_choice)
+    if additional_times and branch is not None:
         # The mana half of the additional cost, charged `additional_times` over.
         # Folded into the price *here* rather than paid separately, so legality
         # and the solver price the line the player is actually being offered.
-        cost = cost.plus(card.additional_cost.mana.scaled(additional_times))
+        # `branch` rather than `card.additional_cost`, so a modal cost prices
+        # the option this line is offering and not some other one.
+        cost = cost.plus(branch.mana.scaled(additional_times))
     discount = cost_reduction(state, pid, card) + variant_less
     # Convoke and delve reduce the generic part, exactly as a cost reduction
     # does -- and go through the same clamp, so neither can make a spell free
@@ -1022,6 +1251,11 @@ def _cast_variant(
         label_base = "Cast a face-down creature"
     if additional_times:
         label_base += f" (+{additional_times} additional)"
+    if additional_choice is not None and branch is not None:
+        # The branches are two prices for one spell, so the panel has to say
+        # which one this row buys -- otherwise Bitter Triumph draws two
+        # identical rows and the player picks blind.
+        label_base += f" ({branch.describe()})"
     if pay_generic:
         word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
         label_base += f" ({word} {pay_generic})"
@@ -1048,9 +1282,12 @@ def _cast_variant(
                 alternative=alternative,
                 overloaded=overloaded,
                 additional_times=additional_times,
+                additional_choice=additional_choice,
+                from_library_top=from_library_top,
                 foretold=foretold,
                 face_down=face_down,
                 second_face=second_face,
+                prepared=prepared,
                 fused=fused,
                 bestowed=bestowed,
                 mutated=mutated,
@@ -1226,6 +1463,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             tuples = _ability_aims(state, pid, oid, ability, zone, sorcery_speed)
             if tuples is None:
                 continue
+            aims = tuples
             # "Add one mana of any colour" is five different things to do, and
             # which one is the player's call -- the solver is not making it,
             # because it never sees this ability at all. One action per yield,
@@ -1234,7 +1472,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             label_base = f"{card.name}: {ability.text or 'activate'}"
             for mana_option in _mana_option_indices(state, oid, ability):
                 option_label = _mana_option_label(state, oid, ability, mana_option)
-                for targets in tuples:
+                for ability_modes, targets in aims:
                     label = label_base
                     if option_label:
                         label += f" ({option_label})"
@@ -1249,6 +1487,7 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                             ability_index=ability.index,
                             targets=targets,
                             x=x,
+                            ability_modes=ability_modes,
                             mana_option=mana_option,
                             label=label,
                             # Shared across the yields on purpose: it is the row
@@ -1303,13 +1542,17 @@ def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
 def _ability_aims(
     state: GameState, pid: int, oid: int, ability, zone: Zone, sorcery_speed: bool
 ) -> list[tuple] | None:
-    """The target tuples this ability could be activated with, or ``None``.
+    """How this ability could be activated: ``(modes, targets)`` pairs, or ``None``.
+
+    ``modes`` is empty for everything except a modal ability whose bullets own
+    their targets, where it names the one bullet this activation takes -- see
+    the per-mode enumeration at the end.
 
     Every condition an offer depends on *except* the mana gate: being activated
     at all, the zone saying so, timing, X being payable, the cost being payable,
     and there being a legal target. ``None`` rather than ``[]`` because an
-    untargeted ability legitimately returns ``[()]`` -- one way to aim it, naming
-    nothing.
+    untargeted ability legitimately returns ``[((), ())]`` -- one way to aim it,
+    naming nothing.
 
     Split out of :func:`_activate_actions` so :func:`_offers_something_else` can
     ask the identical question. If the two drifted, a Mind Stone would show its
@@ -1383,7 +1626,36 @@ def _ability_aims(
     # so the number legality tests is the number `costs.pay` charges.
     if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose):
         return None
-    return enumerate_target_tuples(state, pid, ability.targets, oid) or None
+    # `mode_targets`, not `targets`: the loader lifts a mode-owned spec out of
+    # the flat list into the per-mode map, so `ability.targets` holds only the
+    # card-level ones and is empty on a card whose every target belongs to a
+    # bullet.
+    if not ability.mode_targets:
+        tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
+        return [((), targets) for targets in tuples] if tuples else None
+
+    # A **modal** activated ability whose bullets own their targets -- Phoenix
+    # Down. 601.2b picks the mode before 601.2c declares its targets, and the
+    # reverse was the whole reason `loader._check_mode_targets` refused `mode`
+    # here: legality enumerated one activation per target tuple, so the targets
+    # were fixed before `Game._activate` could ask which bullet.
+    #
+    # So the mode becomes part of the *action*, the way `kicked` is on a cast,
+    # and each mode is offered only with the targets it owns. A bullet with no
+    # legal target is not offered at all, which is 601.2b's other half: a mode
+    # that cannot be chosen is not among the choices, and Phoenix Down with an
+    # empty graveyard offers only its second bullet rather than being
+    # unactivatable.
+    out: list[tuple] = []
+    spec = ability.cast_time_modes
+    modes = list((spec or {}).get("modes") or ())
+    for mode in range(len(modes)):
+        specs = ability.specs_for_modes((mode,))
+        tuples = enumerate_target_tuples(state, pid, specs, oid)
+        if not tuples:
+            continue
+        out.extend(((mode,), targets) for targets in tuples)
+    return out or None
 
 
 def _activation_allowed(state: GameState, pid: int, oid: int, ability) -> bool:

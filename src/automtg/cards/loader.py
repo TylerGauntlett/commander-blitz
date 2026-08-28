@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -112,6 +112,24 @@ STATIC_EFFECTS = frozenset(
         # than a characteristic, with no object for it to attach to.
         "no_hand_limit",
         "play_lands_from_graveyard",
+        # "Once during each of your turns, you may cast an artifact spell from
+        # your graveyard." Edgar, Master Machinist. Player-wide like
+        # `play_lands_from_graveyard` and strictly wider than it: that one is
+        # read only by the land drop, cannot be narrowed by card type and
+        # carries no per-turn count. Filters the spells it permits with
+        # `affects_spells`, the same filter `spell_cost_reduction` matches a
+        # card in hand with, and counts its uses per granting permanent.
+        "cast_from_graveyard",
+        # "You may play lands and **cast spells** from the top of your library.
+        # If you cast a spell this way, pay life equal to its mana value rather
+        # than pay its mana cost." Bolas's Citadel. The casting twin of
+        # `play_lands_from_library_top`, which is lands only and grants nothing
+        # for a nonland spell.
+        #
+        # The life price belongs to the same static rather than a second one:
+        # the permission without it is every spell in the deck castable off the
+        # top at its printed cost, which is a different and much stronger card.
+        "cast_from_library_top",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -234,6 +252,8 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "extra_land_drops",
         "no_hand_limit",
         "play_lands_from_graveyard",
+        "cast_from_graveyard",
+        "cast_from_library_top",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
@@ -689,6 +709,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
 
     for i, replacement in enumerate(model.replacements):
+        if replacement.event == "self_enters_prepared" and model.prepared_face is None:
+            # The state is a permission to cast one particular spell, so a
+            # permanent that enters prepared with no spell to cast has entered
+            # with nothing -- a printed line, a reminder paragraph, and no
+            # difference to any game.
+            raise DslError(
+                f"{where}.replacements[{i}]: 'self_enters_prepared' needs a "
+                f"'prepared_face' -- there is no spell to cast a copy of"
+            )
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
             # counter on it." Checked here for the reason the condition below
@@ -728,6 +757,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         for i, a in enumerate(model.grantable_abilities)
     )
     final_chapter = _final_chapter(model, abilities, where)
+    _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
         if ability.kind is AbilityKind.TRIGGERED:
@@ -964,6 +994,34 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"reduction on the card's 'cost_reduction' instead"
         )
     additional_cost = _compile_cost(model.additional_cost, where) if model.additional_cost else None
+    additional_cost_options: tuple = ()
+    if model.additional_cost_options:
+        if model.additional_cost is not None:
+            # Two spellings of one slot; whichever won would be the card and the
+            # other would load clean and never be charged.
+            raise DslError(
+                f"{where}: give 'additional_cost' or 'additional_cost_options', "
+                f"not both -- the options list already holds every branch"
+            )
+        if len(model.additional_cost_options) < 2:
+            # One branch is not a choice, and writing it this way hides an
+            # ordinary additional cost behind machinery nobody needs to read.
+            raise DslError(
+                f"{where}: 'additional_cost_options' is a choice between prices, "
+                f"so it needs at least two -- use 'additional_cost' for one"
+            )
+        if model.additional_repeatable:
+            # "Discard a card or pay 3 life, any number of times" is not a
+            # printed shape, and the two features disagree about what a cast
+            # line means: one per branch against one per number of times paid.
+            raise DslError(
+                f"{where}: 'additional_repeatable' does not compose with "
+                f"'additional_cost_options'"
+            )
+        additional_cost_options = tuple(
+            _compile_cost(option, f"{where}.additional_cost_options[{i}]")
+            for i, option in enumerate(model.additional_cost_options)
+        )
     additional_optional = model.additional_optional
     additional_repeatable = model.additional_repeatable
 
@@ -1243,7 +1301,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"dice, so it would always read 0"
         )
 
-    reads_from_graveyard = _mentions_condition(model, "cast_from_graveyard")
+    # `of` names a *different* permanent to ask about -- Celes, Rune Knight's
+    # "…or was cast from a graveyard", which is about the creature that just
+    # entered rather than about Celes. The guard below is about a card asking
+    # after **itself**, so a mention carrying `of` is not one of those and does
+    # not need a graveyard cost of its own.
+    reads_from_graveyard = _mentions(
+        model, lambda node: "cast_from_graveyard" in node and "of" not in node
+    )
     if reads_from_graveyard and flashback is None:
         raise DslError(
             f"{where}: reads the 'cast_from_graveyard' condition but has no "
@@ -1284,6 +1349,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         toughness=model.toughness,
         loyalty=model.loyalty,
         final_chapter=final_chapter,
+        prepared_face=model.prepared_face,
         keywords=frozenset(model.keywords),
         colors=colors,
         color_identity=identity,
@@ -1316,6 +1382,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         splice=ManaCost.parse(model.splice) if model.splice else None,
         splice_onto=model.splice_onto,
         additional_cost=additional_cost,
+        additional_cost_options=additional_cost_options,
         additional_optional=additional_optional,
         additional_repeatable=additional_repeatable,
         kicker_label=model.kicker_label,
@@ -1534,6 +1601,16 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
     )
 
 
+
+def _before(models: Sequence[Any], target_id: str) -> set[str]:
+    """The ids declared ahead of ``target_id`` in one target list."""
+    out: set[str] = set()
+    for model in models:
+        if model.id == target_id:
+            break
+        out.add(model.id)
+    return out
+
 def _compile_targets(
     models,
     where: str,
@@ -1570,7 +1647,35 @@ def _compile_targets(
     spec carrying ``mode`` belongs to that mode alone and is declared only if it
     is chosen -- see `carddef.TargetSpec.mode`.
     """
-    specs = tuple(_compile_target(t, where) for t in models)
+    models = list(models)
+    declared = {t.id for t in models}
+    # Asked before anything compiles, so the one way a linked target goes wrong
+    # that is *not* a typo gets its own sentence rather than the generic "the
+    # card does not declare it": naming a sibling that comes later. The
+    # combinations are grown in declaration order (601.2c chooses them all at
+    # once, but something has to go first), so the answer this spec depends on
+    # would not exist yet -- and a spec with no answer offers nothing, which
+    # reads on the board as a target that simply cannot be chosen.
+    for model in models:
+        controller = model.selector.get("controller")
+        if not isinstance(controller, Mapping):
+            continue
+        named = controller.get("target") or controller.get("controller_of_target")
+        if (
+            isinstance(named, str)
+            and named in declared
+            and named not in _before(models, model.id)
+        ):
+            raise DslError(
+                f"{where}.target[{model.id}]: names target {named!r}, which is "
+                f"declared after it -- put the target it depends on first"
+            )
+    seen_ids: dict[str, str] = {}
+    compiled: list[TargetSpec] = []
+    for model in models:
+        compiled.append(_compile_target(model, where, seen_ids))
+        seen_ids[model.id] = model.kind
+    specs = tuple(compiled)
     # Sibling specs are told apart by id -- `filter_legal` buckets by it and
     # every effect names one -- so two specs sharing an id is one target
     # silently swallowing another's refs. Never possible to notice on a board.
@@ -1628,27 +1733,28 @@ def _check_mode_targets(
     """Every restriction on ``mode``, each one a card that would load wrong.
 
     A mode-owned target needs one moment that owns both questions -- the modes
-    first (601.2b), the targets they own straight after (601.2c) -- and there
-    are exactly two of them.  A **spell** has it inside the cast, between
-    choosing the modes and paying.  A **triggered ability** has it when the
-    ability is put on the stack, which 603.3d says is where both choices
-    happen.  An *activated* ability has neither: `legality` enumerates one
-    activation per legal target tuple, so its targets are fixed before
-    `Game._activate` asks which mode -- the reverse of the printed order.  And
-    a modal question that is not the effect tree's single top-level one is
-    asked as the thing resolves, by which time targets can no longer be
-    declared at all.
+    first (601.2b), the targets they own straight after (601.2c).  A **spell**
+    has it inside the cast, between choosing the modes and paying.  A
+    **triggered ability** has it when the ability is put on the stack, which
+    603.3d says is where both choices happen.
+
+    An **activated** ability had neither for a long time, and this is where it
+    was refused: `legality` enumerated one activation per legal target tuple, so
+    its targets were fixed before `Game._activate` asked which mode -- the
+    reverse of the printed order.  Phoenix Down is what changed it.
+    `legality._ability_aims` now offers one activation *per mode*, each carrying
+    only the targets that mode owns, so the bullet is part of the action the way
+    `kicked` is part of a cast and `Game._activate` reads it off the action
+    instead of asking.  A bullet with no legal target is simply not offered,
+    which is 601.2b's other half.
+
+    What is still refused is a modal question that is **not** the effect tree's
+    single top-level one: that is asked as the thing resolves, by which time
+    targets can no longer be declared at all.
     """
     owned = [spec for spec in specs if spec.mode is not None]
     if not owned:
         return
-    if not (on_spell or on_trigger):
-        raise DslError(
-            f"{where}: 'mode' only works on a card's own 'targets' (601.2b) or "
-            f"on a triggered ability's (603.3d) -- an activated ability's "
-            f"targets are enumerated by legality before its modes are chosen, "
-            f"so there is no moment left to declare one in"
-        )
     if mode_count is None:
         raise DslError(
             f"{where}: 'mode' needs the whole effect tree to be one "
@@ -1683,7 +1789,9 @@ def _check_mode_targets(
         )
 
 
-def _compile_target(model: TargetModel, where: str) -> TargetSpec:
+def _compile_target(
+    model: TargetModel, where: str, siblings: Mapping[str, str] | None = None
+) -> TargetSpec:
     """One target spec, and the three ways of saying "or fewer" kept apart.
 
     ``optional`` is "exactly N, or none"; ``count: "any"`` is "any number of",
@@ -1693,15 +1801,26 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
     """
     validate_selector(model.selector, f"{where}.target[{model.id}]")
     label = f"{where}.target[{model.id}]"
+    controller_clause = model.selector.get("controller")
     if (
-        model.kind in ("player", "any")
         # `"any"` is a *target* word, not a player spec: `_player_allowed`
         # answers it before `select_players` is asked, and `select_players` has
         # no name for "everyone who could be targeted". So it is spelled out
         # here rather than added to `PLAYER_SPEC_NAMES`, where it would start
         # meaning something to every effect's `player` key too.
-        and model.selector.get("controller") != "any"
+        controller_clause != "any"
         and "controller" in model.selector
+        # A `player` or `any` spec resolves the clause through
+        # `_player_allowed`; every other kind resolves it through `matches`,
+        # which honours a Mapping here just the same. So a **Mapping** is
+        # checked whatever the kind, which is what a linked target is -- Cloak
+        # and Dagger's second spec is a `permanent`, and under the old gate its
+        # `{"target": "who"}` was never looked at. A bare *string* on a
+        # non-player kind stays where it was: `matches` reads those names
+        # itself, and they are not player specs.
+        and (
+            model.kind in ("player", "any") or isinstance(controller_clause, Mapping)
+        )
     ):
         # `targeting._player_allowed` resolves this clause through
         # `select_players`, so it is a full player spec and has to be checked as
@@ -1712,11 +1831,55 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
         # "target player other than its controller" that played as "target any
         # player", strictly wider than the printing, with nothing to say so.
         #
-        # Checked with no sibling targets in scope: the forms a *target's own*
-        # controller clause takes name the trigger's bindings, not another
-        # target of the same card, and a card that tried would rather be told
-        # so than load.
-        _validate_player_spec(model.selector["controller"], f"{label}.controller", {})
+        # Checked against the siblings declared **before** this one -- "choose
+        # target opponent and up to one target creature **they** control"
+        # (Cloak and Dagger, Entwined), where "they" is the other target. 601.2c
+        # chooses every target at once, which is what makes the pair legal
+        # together, and `enumerate_target_tuples` grows the combinations in
+        # declaration order so a linked spec sees the answer it depends on.
+        #
+        # Earlier ones only, so a forward reference is refused rather than
+        # silently resolving against a spec with no answer yet -- which offers
+        # nothing, and reads on the board as a card whose second target can
+        # never be chosen.
+        _validate_player_spec(
+            model.selector["controller"], f"{label}.controller", dict(siblings or {})
+        )
+    if model.total_mana_value is not None:
+        if model.total_mana_value < 1:
+            # A cap of zero is a spec that can only ever choose nothing, which
+            # is a target line that reads as though it did something.
+            raise DslError(
+                f"{label}: 'total_mana_value' is a cap on the picks together, "
+                f"so {model.total_mana_value} would allow nothing to be chosen"
+            )
+        if model.kind in ("player", "spell"):
+            # A player has no mana value, and a spell's is the one thing about
+            # it that is already on the stack -- neither card exists, and the
+            # clause would be read against zero for every candidate.
+            raise DslError(
+                f"{label}: 'total_mana_value' caps the mana value of the objects "
+                f"chosen, which a {model.kind!r} target does not have"
+            )
+
+    zone = model.selector.get("zone")
+    if model.kind == "permanent" and zone not in (None, "battlefield"):
+        # A card in a graveyard, a hand or exile is not a permanent (110.1), and
+        # the kind is what the rest of the engine reads the target *by*. Left
+        # accepted, `candidates` would happily enumerate the other zone and the
+        # card would play correctly while calling the thing it targets something
+        # it is not -- which is the state a later reader of either half acts
+        # wrongly on. `card_in_graveyard` and `card_in_exile` are the spellings.
+        raise DslError(
+            f"{label}: a 'permanent' target is on the battlefield, not in {zone!r} "
+            f"-- use 'card_in_graveyard' or 'card_in_exile'"
+        )
+    if model.kind == "card_in_exile" and zone not in (None, "exile"):
+        raise DslError(f"{label}: a 'card_in_exile' target is in exile, not in {zone!r}")
+    if model.kind == "card_in_graveyard" and zone not in (None, "graveyard"):
+        raise DslError(
+            f"{label}: a 'card_in_graveyard' target is in a graveyard, not in {zone!r}"
+        )
     if isinstance(model.count, dict):
         validate_value(model.count, f"{label}.count")
     if model.up_to:
@@ -1749,9 +1912,65 @@ def _compile_target(model: TargetModel, where: str) -> TargetSpec:
         up_to=model.up_to,
         one_per_player=model.one_per_player,
         optional=model.optional,
+        total_mana_value=model.total_mana_value,
         mode=model.mode,
     )
 
+
+
+def _check_reflexive_wiring(
+    model: CardModel, abilities: tuple[Ability, ...], where: str
+) -> None:
+    """A reflexive ability and the op that fires it must name each other.
+
+    603.11's "when you do" has no event behind it, so the *only* thing that can
+    ever put this ability on the stack is a `reflexive_trigger` op somewhere in
+    the same card's effects. Both halves of that wire are silent when they go
+    wrong and both are the same bug in opposite directions: an ability nothing
+    fires is a printed line that never happens, and an op naming an id that is
+    not there is a spell whose second sentence is missing. Neither would fail
+    any other check -- the ability compiles, the op is a known name -- so this
+    is the only place either can be caught.
+
+    Every ability's effects are walked as well as `spell_effects`: the op is
+    written wherever the instruction it reflects on is written, which for a
+    creature's enters trigger is inside that trigger. Replacement effects have
+    no effect list of their own to walk -- they modify an arrival rather than
+    doing anything -- so there is nowhere for one to hide there.
+    """
+    declared = {
+        ability.reflex_id: ability
+        for ability in abilities
+        if ability.kind is AbilityKind.REFLEXIVE
+    }
+    named: set[str] = set()
+
+    def walk(effects: Any) -> None:
+        for effect in effects or ():
+            if not isinstance(effect, Mapping):
+                continue
+            if effect.get("op") == "reflexive_trigger":
+                named.add(str(effect.get("ability", "")))
+            for value in effect.values():
+                if isinstance(value, Sequence) and not isinstance(value, str):
+                    walk(value)
+
+    walk(model.spell_effects)
+    for ability in model.abilities:
+        walk(ability.effects)
+
+    for missing in sorted(named - set(declared)):
+        raise DslError(
+            f"{where}: 'reflexive_trigger' names {missing!r}, "
+            f"but no reflexive ability on this card has that id "
+            f"(declared: {sorted(declared) or 'none'})"
+        )
+    for unfired in sorted(set(declared) - named):
+        raise DslError(
+            f"{where}: reflexive ability {unfired!r} is never fired -- "
+            f"nothing on this card writes a 'reflexive_trigger' naming it, "
+            f"so the line would never happen"
+        )
 
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
@@ -1771,6 +1990,15 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         # misplaced-key refusal in this function.
         raise DslError(
             f"{where}: 'chapter' only means anything on a chapter ability, "
+            f"not on a {kind.value} one"
+        )
+
+    if model.id is not None and kind is not AbilityKind.REFLEXIVE:
+        # The id exists so a `reflexive_trigger` op can name *which* "when you
+        # do" it means. On any other kind nothing ever reads it, and a card that
+        # writes one is a card whose author believed something was wired up.
+        raise DslError(
+            f"{where}: 'id' only means anything on a reflexive ability, "
             f"not on a {kind.value} one"
         )
 
@@ -1857,6 +2085,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         gated_once = model.once_each_turn and bool(model.activate_steps)
         removes_source = (
             cost.discard_self
+            or cost.exile_self
             or cost.exile_from_graveyard is not None
             or _effects_move_source(model.effects)
             or gated_once
@@ -1868,6 +2097,30 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"(got {cost.describe()!r}); "
                 f"otherwise it can be activated repeatedly without ever leaving"
             )
+    elif kind is AbilityKind.REFLEXIVE:
+        # 603.11. The ability is printed on the card and lives in its abilities
+        # list -- which is what gets it modes, targets chosen as it is put on
+        # the stack, APNAP order and a window to respond in, all for free -- but
+        # nothing may ever match it off an *event*. "When you do" names the
+        # instruction above it, not something that happens on the board, so the
+        # effect that carries out that instruction is the only thing entitled to
+        # fire it. Hence no `TriggerSpec` at all: `_candidate_abilities` skips
+        # an ability whose `trigger` is None, and `Ability.is_triggered` is
+        # False for this kind, so the two independent gates both hold.
+        if not model.id:
+            raise DslError(
+                f"{where}: a reflexive ability needs an 'id' -- "
+                f"a 'reflexive_trigger' op has to be able to name it"
+            )
+        if model.trigger is not None:
+            raise DslError(
+                f"{where}: a reflexive ability is fired by a 'reflexive_trigger' op, "
+                f"so it does not write a trigger of its own"
+            )
+        if model.cost is not None:
+            raise DslError(f"{where}: a reflexive ability is triggered, so it has no cost")
+        if not model.effects:
+            raise DslError(f"{where}: a reflexive ability with no effects is a blank line")
     elif kind is AbilityKind.CHAPTER:
         # The trigger is **supplied**, not read. There is no word in "II --
         # Create two 2/2 red Human Knight creature tokens" saying when it
@@ -1990,6 +2243,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             mana_ability=model.trigger.mana_ability,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
+            batched=model.trigger.batched,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(
@@ -2009,6 +2263,22 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             raise DslError(f"{where}: only activated abilities can be mana abilities")
         if targets:
             raise DslError(f"{where}: a mana ability cannot have targets")
+        if any(
+            isinstance(e, Mapping)
+            and e.get("op") == "choose_mode"
+            and e.get("chooser") is not None
+            for e in model.effects or ()
+        ):
+            # 605.1a/605.3: a mana ability does not use the stack and resolves
+            # inside somebody's payment. Stopping there to ask a *different*
+            # player a question has no window to happen in, and the cards that
+            # look like they want it -- The Warring Triad's "Target player adds
+            # one mana of any color" -- target, so they are not mana abilities
+            # in the first place.
+            raise DslError(
+                f"{where}: a mana ability cannot hand its 'choose_mode' to "
+                f"another player; it resolves without the stack, inside a payment"
+            )
         mana_effects, mana_rider = _split_mana_rider(model.effects, where)
         # "Add one mana of any color that a land an opponent controls could
         # produce." The colours are a question about the board, so the card
@@ -2087,6 +2357,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         kind=kind,
         index=index,
         text=model.text,
+        reflex_id=model.id or "",
         cost=cost,
         is_mana_ability=model.is_mana_ability,
         mana_options=mana_options,
@@ -2185,7 +2456,39 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f"{{\"controller\": \"any\", \"subtypes\": [\"Inkling\"]}}"
         )
-    if model.effect == "spell_cost_reduction":
+    if model.effect == "cast_from_library_top" and not model.pay_life_instead:
+        raise DslError(
+            f"{where}: cast_from_library_top needs 'pay_life_instead' -- "
+            f"the permission without its price is a different card"
+        )
+    if model.effect == "cast_from_graveyard":
+        # Both halves required, for `spell_cost_reduction`'s reason: a
+        # permission that named no card type would let every spell out of the
+        # graveyard, and one with no `max_per_turn` would be an unbounded engine
+        # rather than the printed "once during each of your turns".
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: cast_from_graveyard needs 'affects_spells' naming which "
+                f"spells it lets out -- without one it frees the whole graveyard"
+            )
+        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a card in a graveyard has a printed face "
+                f"and an owner and no board state; unsupported keys {sorted(unknown)}"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: cast_from_graveyard filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if not model.static_max_per_turn:
+            raise DslError(
+                f"{where}: cast_from_graveyard needs 'max_per_turn' -- "
+                f"'once during each of your turns' is the whole rate limit, and "
+                f"without it the permission is an unbounded engine"
+            )
+    elif model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
         # in hand while legality prices it, so it may only read the printed
         # face. A static that reduced nothing would load clean and show
@@ -2391,6 +2694,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "attack_tax":
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.effect == "cast_from_library_top":
+        static["pay_life_instead"] = True
+    if model.effect == "cast_from_graveyard":
+        # Carried onto the compiled mapping rather than left on the model, for
+        # `grant_ability`'s reason a few lines down: the mapping is all
+        # `characteristics` ever sees, and a rate limit left behind would read
+        # as no limit at all.
+        static["max_per_turn"] = int(model.static_max_per_turn or 1)
+        if model.enters_tapped:
+            static["enters_tapped"] = True
+        if model.arrived_this_turn_from is not None:
+            zones = [str(z) for z in model.arrived_this_turn_from]
+            if not zones:
+                raise DslError(
+                    f"{where}: 'arrived_this_turn_from' names no zone at all, so "
+                    f"nothing in the graveyard would ever qualify"
+                )
+            from automtg.engine.effects.selectors import ZONE_NAMES as _ZONES
+
+            known = {z.lstrip("!") for z in zones} - set(_ZONES) - {"any"}
+            if known:
+                raise DslError(
+                    f"{where}.arrived_this_turn_from: unknown zone(s) {sorted(known)}"
+                )
+            static["arrived_this_turn_from"] = zones
     if model.effect == "grant_ability":
         # Which of the card's `grantable_abilities` is handed over. Carried onto
         # the compiled mapping rather than left on the model, because the
@@ -2401,7 +2729,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # quoted static makes ordinary.
         static["ability"] = int(model.ability or 0)
 
-    return Ability(kind=AbilityKind.STATIC, index=index, text=model.text, static=static)
+    # "As long as this card is **in your graveyard** and you control a
+    # Mountain..." -- Anger. `active_zones` was read on the activated and
+    # triggered branches and dropped here, so every static was pinned to the
+    # battlefield default: a static written on Anger switched on the moment it
+    # resolved as a 2/2, granting the team haste from play, and switched off
+    # when it died -- the exact inverse of the printed card.
+    #
+    # The zone clause needs no separate condition. Being gathered only while the
+    # card sits there *is* "as long as this card is in your graveyard", and
+    # `characteristics._active_statics` is what enforces it.
+    zones = tuple(Zone(z) for z in model.active_zones)
+    unsupported = set(zones) - {Zone.BATTLEFIELD, Zone.GRAVEYARD}
+    if unsupported:
+        # Only the two the walk actually visits. A static declaring `hand` or
+        # `exile` would load clean and never once be collected, which is the
+        # inert-card failure this pass exists to refuse.
+        raise DslError(
+            f"{where}: a static can be active on the battlefield or in a "
+            f"graveyard; nothing collects one in {sorted(z.value for z in unsupported)}"
+        )
+    return Ability(
+        kind=AbilityKind.STATIC,
+        index=index,
+        text=model.text,
+        static=static,
+        active_zones=zones,
+    )
 
 
 #: Ways a card may say how much less it costs.  ``count`` is "{1} less for each
@@ -2417,7 +2771,7 @@ COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_man
 #: Zones a cost reduction's filter may count.  Mirrors `costs.REDUCTION_ZONES`,
 #: which is what actually walks them; anything else would load and match nothing.
 #: `total_power` is battlefield-only whatever this says -- see below.
-COST_REDUCTION_ZONES = frozenset({"battlefield", "command"})
+COST_REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:
@@ -2895,6 +3249,18 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
+    if model.pay_life_x and model.pay_life:
+        # Two numbers for one payment. Whichever won would be the card and the
+        # other would load clean and never be charged.
+        raise DslError(
+            f"{where}.cost: 'pay_life_x' is the announced X, so there is no "
+            f"'pay_life' amount to give as well (got {model.pay_life!r})"
+        )
+    if model.mill < 0:
+        raise DslError(
+            f"{where}.cost: 'mill' is how many cards go from the top of your "
+            f"library to your graveyard, so it cannot be negative (got {model.mill})"
+        )
     # `total_power` is crew's, and it is a property of the *cost* rather than a
     # test on any one candidate -- a selector cannot say "these together" -- so
     # it is lifted out before the selector language sees it.
@@ -3261,7 +3627,9 @@ PLAYER_TARGET_KINDS = frozenset({"player", "any"})
 #: :data:`PLAYER_TARGET_KINDS` rather than a list of its own, and deliberately
 #: so: exactly one of the two keys is right for any given target spec, which is
 #: what makes the pair a checkable choice instead of two ways to be wrong.
-CONTROLLED_TARGET_KINDS = frozenset({"permanent", "spell", "card_in_graveyard"})
+CONTROLLED_TARGET_KINDS = frozenset(
+    {"permanent", "spell", "card_in_graveyard", "card_in_exile"}
+)
 
 
 def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
@@ -3291,6 +3659,22 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
         )
     if not isinstance(who, Mapping):
+        return
+    if "except" in who:
+        # "each **opponent** who discarded their hand this way" -- Snort. An
+        # inclusive spec narrowed by a seat, which `not` cannot do: `not` is the
+        # complement over the whole table, and the set a binding holds includes
+        # you whenever you took the same option. Both halves are validated in
+        # their own right, and the rest of the mapping has to be a real spec --
+        # a bare `{"except": "you"}` names everyone the long way round.
+        _validate_player_spec(who["except"], f"{where}.except", target_kinds)
+        rest = {k: v for k, v in who.items() if k != "except"}
+        if not rest:
+            raise DslError(
+                f"{where}: 'except' narrows another spec, so there has to be one "
+                f"to narrow -- use {{'not': ...}} for a bare complement"
+            )
+        _validate_player_spec(rest, where, target_kinds)
         return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
@@ -3520,6 +3904,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # covered before it is written.
     if "player" in effect:
         _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+    if effect.get("op") == "choose_mode" and "chooser" in effect:
+        # "Target player adds one mana of any color" -- the player adding picks
+        # the colour. An ordinary player spec, so "target" reaches the targeted
+        # seat and the usual vocabulary is available.
+        _validate_player_spec(effect["chooser"], f"{where}.chooser", target_kinds)
 
     if op == "may" and "pay" in effect:
         # "You may pay {2}. If you do, draw a card." Validated through the same
@@ -3979,13 +4368,62 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # The link is written on the exiled card and points at the source of the
     # ability that exiled it. With nothing to exile there is nothing to link,
     # and the card would load as a permanent exile with no way to say so.
-    if op == "exile" and effect.get("until_leaves") and "objects" not in effect:
+    if (
+        op == "exile"
+        and (effect.get("until_leaves") or effect.get("link"))
+        and "objects" not in effect
+    ):
+        key = "until_leaves" if effect.get("until_leaves") else "link"
         raise DslError(
-            f"{where}: 'until_leaves' needs 'objects' -- there is nothing to link"
+            f"{where}: {key!r} needs 'objects' -- there is nothing to link"
         )
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
+    # The state is a casting permission, so a permanent given it with no spell
+    # to cast is a printed line that does nothing at all.
+    if op == "become_prepared" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'become_prepared' needs 'objects' -- "
+            f"there is nothing to prepare"
+        )
+    # Which face it comes back as. Defaulted to "turn it over" the op reads
+    # correctly on a card's front and silently wrongly on its back, where the
+    # same sentence turns it the other way -- and both faces of the Dominant
+    # cycle print one.
+    if op == "exile_and_return":
+        if "objects" not in effect:
+            raise DslError(
+                f"{where}: 'exile_and_return' needs 'objects' -- "
+                f"there is nothing to exile"
+            )
+        face = effect.get("face")
+        if face not in ("front", "back"):
+            raise DslError(
+                f"{where}: 'exile_and_return' needs a 'face' of 'front' or 'back' "
+                f"(got {face!r})"
+            )
+    # The op reads each card's recorded origin and moves it; with nothing
+    # selected it is a return that returns nothing.
+    if op == "return_to_origin" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'return_to_origin' needs 'objects' -- there is nothing to return"
+        )
+    # "When you do" has to say which do. Without the key the op names the empty
+    # id, no ability matches it, and the second half of the card never happens.
+    if op == "reflexive_trigger" and not effect.get("ability"):
+        raise DslError(
+            f"{where}: 'reflexive_trigger' needs an 'ability' -- "
+            f"the id of the reflexive ability it fires"
+        )
+    # `grant_playable` writes the permission on the cards it selects and does
+    # nothing else, so with no selection it is a line that reads as a grant and
+    # grants nothing.
+    if op == "grant_playable" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'grant_playable' needs 'objects' -- "
+            f"there is nothing to grant permission on"
+        )
     if op == "exile" and effect.get("playable_this_turn") and "objects" not in effect:
         raise DslError(
             f"{where}: 'playable_this_turn' needs 'objects' -- "
@@ -3998,15 +4436,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # somebody reads its colour.
         if not isinstance(overrides, Mapping):
             raise DslError(f"{where}: 'except_' must be an object")
-        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost"}
+        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost", "types"}
         if unknown:
             raise DslError(
                 f"{where}.except_: unsupported keys {sorted(unknown)} "
-                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost')"
+                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost', 'types')"
             )
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "types" in overrides:
+            # A **replacement**, unlike `add_subtypes` beside it -- "it's an
+            # artifact and it loses all other card types". So an empty list is a
+            # copy with no card type at all, which no printing says and which
+            # nothing downstream is written to survive.
+            if not overrides["types"]:
+                raise DslError(
+                    f"{where}.except_.types: replaces the copy's card types, "
+                    f"so an empty list is a permanent with none"
+                )
+            for t in overrides["types"]:
+                if t not in KNOWN_TYPES:
+                    raise DslError(f"{where}.except_.types: unknown card type {t!r}")
     if op == "add_subtype":
         # An op that names no subtype is a printed sentence that does nothing,
         # and it would load and resolve exactly like one that works.
@@ -4039,6 +4490,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown gain_control duration {effect['duration']!r} "
                 f"(use 'until_end_of_turn' or 'permanent')"
             )
+    if op == "discard":
+        if "up_to" in effect and not isinstance(effect["up_to"], bool):
+            raise DslError(f"{where}: discard's 'up_to' is a boolean")
+        if effect.get("up_to") and effect.get("random"):
+            # Nobody is choosing, so there is no floor to relax -- and a card
+            # that printed both would be saying two different things about who
+            # decides.
+            raise DslError(
+                f"{where}: discard cannot be both 'random' and 'up_to' -- "
+                f"a random discard has no choice to make"
+            )
+        if "as" in effect and not isinstance(effect["as"], str):
+            raise DslError(f"{where}: discard's 'as' is a binding name")
+    if op == "choose_permanents" and "as" not in effect:
+        # It changes nothing on the board, so a choice nobody reads back is a
+        # question put to the player for no reason -- and a card written that
+        # way would load, prompt, and do nothing with the answer.
+        raise DslError(
+            f"{where}: 'choose_permanents' only marks permanents, so it needs an "
+            f"'as' for something later to read"
+        )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "create_token" and "controller" in effect:
@@ -4155,12 +4627,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # `up_to_if` (conditional, floor of one) between them could not say. The
         # name is `TargetSpec`'s, where it has meant the same thing since "up to
         # X target creatures".
-        if op != "choose_mode":
+        if op not in ("choose_mode", "discard"):
             raise DslError(
-                f"{where}: 'up_to' only means anything on choose_mode, not {op!r}"
+                f"{where}: 'up_to' only means anything on choose_mode or "
+                f"discard, not {op!r}"
             )
         if not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: 'up_to' is a boolean, got {effect['up_to']!r}")
+        if op == "discard":
+            # "Discard up to two cards" -- the same word doing the same job one
+            # op over: `amount` becomes a ceiling and the floor drops to zero.
+            # The mode-count checks below are `choose_mode`'s own and read
+            # `count`, which a discard does not have.
+            return
         count = effect.get("count", 1)
         if isinstance(count, dict) and "const" in count:
             count = count["const"]
@@ -4485,8 +4964,48 @@ def link_faces(cards: dict[str, CardDef]) -> None:
             )
         cards[back.id] = dataclasses.replace(back, front_face=card.id)
     link_second_faces(cards)
+    link_prepared_faces(cards)
     link_meld_results(cards)
 
+
+
+def link_prepared_faces(cards: dict[str, CardDef]) -> None:
+    """Check every ``prepared_face`` points at a real spell, and only at one.
+
+    The same derived back-link `link_second_faces` writes, reusing
+    ``parent_face`` for the reason that one reuses it: what it guards is a
+    **deck**. This entry is Emeritus's spell half and not a card anybody owns --
+    the physical card is one card -- so leaving it deck-legal would let a player
+    shuffle in a Demonic Tutor that has no printing of its own here.
+
+    That it is *copied* rather than moved does not change the question. The copy
+    is a token and vanishes on its own (111.7); the entry it copies is still a
+    face.
+
+    Two ways the pointer can be wrong and say nothing are refused outright:
+    naming a card that is not there, and naming a **permanent**, which would put
+    a creature on the stack as a spell that never leaves it.
+    """
+    for card in cards.values():
+        if card.prepared_face is None:
+            continue
+        face = cards.get(card.prepared_face)
+        if face is None:
+            raise DslError(
+                f"{card.id}: prepared_face references unknown card "
+                f"{card.prepared_face!r}"
+            )
+        if face.is_permanent:
+            raise DslError(
+                f"{card.id}: prepared_face {face.id!r} is a permanent -- "
+                f"'a copy of its spell' is an instant or a sorcery"
+            )
+        if face.parent_face is not None and face.parent_face != card.id:
+            raise DslError(
+                f"{face.id}: is the spell face of both {face.parent_face!r} "
+                f"and {card.id!r}"
+            )
+        cards[face.id] = dataclasses.replace(face, parent_face=card.id)
 
 def link_second_faces(cards: dict[str, CardDef]) -> None:
     """Point every second castable face at the card that prints it.

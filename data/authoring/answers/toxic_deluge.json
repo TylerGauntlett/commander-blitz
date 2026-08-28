@@ -1,0 +1,24 @@
+{
+  "card": {
+    "id": "toxic_deluge",
+    "name": "Toxic Deluge",
+    "oracle_text": "As an additional cost to cast this spell, pay X life.\nAll creatures get -X/-X until end of turn.",
+    "mana_cost": "{2}{B}",
+    "types": ["Sorcery"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "additional_cost": {"pay_life_x": true},
+    "spell_effects": [
+      {
+        "op": "pump",
+        "power": {"minus": [{"const": 0}, {"x": true}]},
+        "toughness": {"minus": [{"const": 0}, {"x": true}]},
+        "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"], "count": "all"}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1}
+  }
+}

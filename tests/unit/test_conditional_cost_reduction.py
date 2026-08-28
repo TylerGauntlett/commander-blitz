@@ -469,18 +469,31 @@ class TestTheLoaderRefusesTheSilentShapes:
         assert card.abilities[0].cost.mana_reduction["amount"] == 2
 
     def test_a_filter_may_only_count_the_zones_that_are_walked(self):
-        """`costs._reduction_matches` walks the battlefield and the command zone,
-        and nothing else, so any other zone would load and match nothing.
+        """`costs._reduction_matches` walks three zones, and nothing else, so
+        any other would load and match nothing.
 
-        (The command zone arrived with `greatest_mana_value` --
-        `tests/unit/test_commander_mana_value.py` is where that half is pinned.
-        The graveyard is still refused, which is what this test was always
-        about.)
+        The set has grown twice and this test moved with it rather than being
+        deleted, because the *claim* is unchanged: a filter naming a zone that
+        nothing walks is a silent zero. The command zone arrived with
+        `greatest_mana_value` (`tests/unit/test_commander_mana_value.py`), and
+        the graveyard with Cyan, Vengeful Samurai -- "costs {1} less to cast for
+        each creature card in your graveyard". Both are public and both are
+        readable before anything is on the stack, which is the whole
+        requirement; the **hand** is neither, so it stands in here.
         """
-        with pytest.raises(DslError, match="counts \\['battlefield', 'command'\\] only"):
+        with pytest.raises(
+            DslError,
+            match="counts \\['battlefield', 'command', 'graveyard'\\] only",
+        ):
             compile_spec(
-                ability_card({"count": {"types": ["Creature"], "zone": "graveyard"}})
+                ability_card({"count": {"types": ["Creature"], "zone": "hand"}})
             )
+
+    def test_the_graveyard_is_counted_now(self):
+        """The zone Cyan added: it loads rather than raising."""
+        compile_spec(
+            ability_card({"count": {"types": ["Creature"], "zone": "graveyard"}})
+        )
 
     def test_an_unreadable_node_is_refused_rather_than_ignored(self):
         """An additional cost's mana is folded into the spell's price, so nothing

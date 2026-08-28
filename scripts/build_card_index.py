@@ -236,6 +236,21 @@ def better(candidate: dict, incumbent: dict) -> bool:
 #: which is its own piece of work rather than a rider on this one.
 _HALVES_LAYOUTS = frozenset({"split"})
 
+#: Layouts whose ``card_faces`` are two faces of **one object that turns over**
+#: -- a permanent is one of them at a time, and each face has its own name, type
+#: line, cost and rules text. The back is not a card in its own right, so it
+#: cannot be a row of its own (the table is keyed ``(name, is_token)``, and a
+#: row under the back's name is a card a deck importer would happily add); it
+#: rides along in the ``back_*`` columns instead.
+#:
+#: `prepare` belongs with them: the permanent is the creature and the spell face
+#: is a separate object -- a copy on the stack -- with its own name, cost, type
+#: line and text, so the front face alone is half the card.
+#:
+#: `meld` is deliberately out: its back is a *third* physical card with its own
+#: Scryfall entry, so it is already a row.
+_TWO_FACED_LAYOUTS = frozenset({"transform", "modal_dfc", "prepare"})
+
 
 def _oracle_text(record: dict, front: dict) -> str:
     """The printed text of the card, both halves where there are two.
@@ -259,9 +274,26 @@ def _oracle_text(record: dict, front: dict) -> str:
     return front.get("oracle_text", "") or ""
 
 
+def _back_face(record: dict) -> dict:
+    """The back face of a card that turns over, or ``{}``.
+
+    Read here rather than left to a second lookup, because there is nowhere else
+    to read it *from*: the bulk dump is the only place the text exists, and a
+    card index built without it left the printed lines of 488 cards nowhere in
+    the repo at all. Nothing announced that -- the front face loaded, validated
+    and rendered -- so an authoring worker handed a transforming card was shown
+    half of it and had no way to tell.
+    """
+    if record.get("layout") not in _TWO_FACED_LAYOUTS:
+        return {}
+    faces = record.get("card_faces") or []
+    return faces[1] if len(faces) > 1 else {}
+
+
 def to_row(record: dict) -> tuple:
     faces = record.get("card_faces") or []
     front = faces[0] if faces else {}
+    back = _back_face(record)
 
     def pick(key: str, default=None):
         value = record.get(key)
@@ -294,6 +326,12 @@ def to_row(record: dict) -> tuple:
         # Popularity, for the card-authoring queue: 32k cards and finite effort,
         # so implement the ones people play. Absent for ~12% of printings.
         record.get("edhrec_rank"),
+        back.get("name", "") or "",
+        back.get("type_line", "") or "",
+        back.get("mana_cost", "") or "",
+        back.get("power"),
+        back.get("toughness"),
+        back.get("oracle_text", "") or "",
     )
 
 

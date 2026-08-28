@@ -21,8 +21,22 @@ an `if` or a `may` might not run, and an ability whose only way out is a branch
 the player can decline is activatable again from the same graveyard — which is
 exactly the shape the guard exists to refuse.
 
-*Divergence*: the printed reminder also says "or if it would leave the
-battlefield", which is a replacement effect. Only the end-step half is modelled.
+The reminder's other half — "**or if it would leave the battlefield**" — is a
+replacement effect, and it was the recorded divergence here for a long time.
+`replace_deaths` was the only zone-change redirect in the DSL and `move_object`
+gates it on a battlefield → graveyard move, so it catches a death and nothing
+else. Unearth's clause is the *whole* departure: bounced to hand, exiled by
+removal, shuffled into a library, sent to the command zone.
+
+That is now `replace_leaves_battlefield`, and the difference is not cosmetic on
+the card that asked for it. Priest of Fell Rites sacrifices *itself* to
+reanimate, and the replacement is what makes that a one-way trip; read as
+death-only, an opponent's bounce hands the card back to be unearthed again.
+
+The two markers stay separate because their **lifetimes** differ, which is the
+part a wider gate on `dies_to` would have got wrong: "would die this turn" is
+cleared at cleanup, while unearth's lasts exactly as long as the permanent is on
+the battlefield. `t_unearther_death_only` is the counterfactual.
 """
 
 from __future__ import annotations
@@ -180,3 +194,54 @@ class TestTheWidenedGuard:
                 cost={"mana": "{1}", "exile_from_graveyard": {"self_only": True, "count": 1}},
             )
         )
+
+
+class TestItIsExiledHoweverItLeaves:
+    """The half that used to be the recorded divergence.
+
+    Every route off the battlefield, not just the death: the printed clause says
+    "leave", and dying is one way of leaving.
+    """
+
+    def bounced(self, builder, card: str, to: Zone):
+        game = (
+            builder(players=2)
+            .battlefield(0, [SWAMP] * 4)
+            .graveyard(0, [card])
+            .build()
+        )
+        oid = game.state.players[0].graveyard[0]
+        game.apply(find_action(game, ActionKind.ACTIVATE, source=oid))
+        pass_until(game, lambda g: not g.state.stack)
+        assert game.state.objects[oid].zone is Zone.BATTLEFIELD
+
+        from automtg.engine.zones import move_object
+
+        move_object(game.state, oid, to, to_player=0, cause="test")
+        return game.state.objects[oid].zone
+
+    def test_a_bounce_exiles_it_instead(self, builder):
+        assert self.bounced(builder, ZOMBIE, Zone.HAND) is Zone.EXILE
+
+    def test_a_shuffle_back_exiles_it_instead(self, builder):
+        assert self.bounced(builder, ZOMBIE, Zone.LIBRARY) is Zone.EXILE
+
+    def test_a_death_still_exiles_it(self, builder):
+        """The case `replace_deaths` already covered, and still does."""
+        assert self.bounced(builder, ZOMBIE, Zone.GRAVEYARD) is Zone.EXILE
+
+    def test_the_death_only_version_hands_the_card_back(self, builder):
+        """The counterfactual, and the loop the printed clause closes.
+
+        A bounced card sits in hand, ready to be cast and unearthed all over
+        again -- which is a strictly better card than the printed one.
+        """
+        assert self.bounced(builder, "t_unearther_death_only", Zone.HAND) is Zone.HAND
+
+    def test_and_still_gets_the_death_right(self, builder):
+        """Which is why the near miss is so easy to ship: half of it works."""
+        assert (
+            self.bounced(builder, "t_unearther_death_only", Zone.GRAVEYARD)
+            is Zone.EXILE
+        )
+

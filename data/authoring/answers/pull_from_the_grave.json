@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "pull_from_the_grave",
+    "name": "Pull from the Grave",
+    "oracle_text": "Return up to two target creature cards from your graveyard to your hand. You gain 2 life.",
+    "mana_cost": "{2}{B}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "targets": [
+      {
+        "id": "gy_creatures",
+        "kind": "card_in_graveyard",
+        "count": 2,
+        "up_to": true,
+        "selector": {
+          "zone": "graveyard",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "return_from_graveyard",
+        "destination": "hand",
+        "objects": {
+          "target": "gy_creatures"
+        }
+      },
+      {
+        "op": "gain_life",
+        "player": "you",
+        "amount": {
+          "const": 2
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {
+      "0": 42
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "graveyard_size": {
+      "0": 1
+    }
+  }
+}

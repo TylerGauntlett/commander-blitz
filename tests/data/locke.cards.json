@@ -1,0 +1,31 @@
+{
+  "_comment": "A card that exists only for the mill-binding and grant-playable test (tests/unit/test_grant_playable.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_locke` is Locke's Mug ability as an ETB rather than an attack trigger, so the sandbox can reach it.",
+  "cards": [
+    {
+      "id": "t_locke",
+      "name": "Test Locke",
+      "oracle_text": "When this creature enters, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Rogue"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, each player mills a card. If a land card was milled this way, create a Treasure token. Until end of turn, you may cast a spell from among those cards.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {"op": "mill", "player": "each_player", "amount": {"const": 1}, "as": "mugged"},
+            {"op": "if", "condition": {"exists": {"binding": "mugged", "types": ["Land"]}},
+             "then": [{"op": "create_token", "token": "treasure_token", "controller": "you",
+                       "amount": {"const": 1}}]},
+            {"op": "grant_playable", "limit": 1, "objects": {"binding": "mugged"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

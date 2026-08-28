@@ -36,11 +36,41 @@ RECORDING_OPS = frozenset(
         #: one for which `as` is *required* -- the answer is unreachable
         #: otherwise. See `ops_control.op_choose_player`.
         "choose_player",
+        #: The one recorder that does **nothing** to what it picked. Tragic
+        #: Arrogance marks the survivors before the mass sacrifice; every other
+        #: recorder acts on its pick, and marking-without-acting had no
+        #: spelling. Accumulates, so four per-type choices share one name and a
+        #: single `exclude_binding` spares them all.
+        "choose_permanents",
         "copy_permanent",
         "create_token",
+        #: "…then draw that many cards" -- Joshua; "draw that many cards **plus
+        #: one**" -- Celes; "if a **creature card** was discarded this way" --
+        #: Mog. The binding **accumulates** across the players a single discard
+        #: touches, because Mog asks one card of each player in one resolution
+        #: and then asks what was discarded at all, not what the last player
+        #: pitched. See `ops_cards.op_discard`.
+        "discard",
         "exile",
         "gain_control",
         "join_forces",
+        #: The only recorder whose binding is a **set of seats**: `may` writes
+        #: the players who said yes, read back with the `{"binding": …}` player
+        #: spec. Snort's "each opponent who discarded their hand this way" is
+        #: the acceptance and not anything the effects moved -- a player with an
+        #: empty hand who takes the free draw-five has discarded their hand, of
+        #: nothing, and is still burned.
+        "may",
+        #: The cards actually milled, across every player one op touched --
+        #: Locke, Treasure Hunter's "if a land card was milled **this way**".
+        #: An `exists` over a graveyard is a different card: it matches a land
+        #: that was already lying there.
+        "mill",
+        #: The cards actually **cast**, which is neither the cards offered nor
+        #: the cards exiled -- one with no legal target is never cast at all.
+        #: Kefka turns on that distinction: "each player who owns a spell you
+        #: cast this way loses life equal to its mana value".
+        "play_exiled",
         "reveal",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than
@@ -85,6 +115,11 @@ def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any, None]:
     fn = OPS.get(op_name)
     if fn is None:
         raise DslError(f"unknown effect op {op_name!r}")
+    # One op is one "simultaneous" group: an `exile` over a whole graveyard
+    # moves every card at once, and "whenever one or more cards leave your
+    # graveyard" has to fire once for it rather than once per card. See
+    # `triggers._queue` and `state.event_batch`.
+    ctx.state.event_batch += 1
     result = fn(ctx, spec)
     if inspect.isgenerator(result):
         yield from result

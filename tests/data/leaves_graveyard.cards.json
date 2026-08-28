@@ -1,0 +1,141 @@
+{
+  "_comment": "Cards that exist only for the leaves-graveyard trigger test (tests/unit/test_leaves_graveyard.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mascot` is Spirit Mascot's shape, with the 'one or more' batching; `t_greedy_mascot` is the same trigger WITHOUT `batched`, and is the counterfactual that over-counts.",
+  "cards": [
+    {
+      "id": "t_mascot",
+      "name": "Test Mascot",
+      "oracle_text": "Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "leaves_graveyard",
+            "controller": "you",
+            "batched": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_greedy_mascot",
+      "name": "Test Greedy Mascot",
+      "oracle_text": "Whenever a card leaves your graveyard, put a +1/+1 counter on this creature.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a card leaves your graveyard, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "leaves_graveyard",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_picky_mascot",
+      "name": "Test Picky Mascot",
+      "oracle_text": "Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on this creature.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creature cards leave your graveyard, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "leaves_graveyard",
+            "controller": "you",
+            "batched": true,
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

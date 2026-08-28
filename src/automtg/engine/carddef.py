@@ -28,7 +28,8 @@ class TargetSpec:
     """A single target requirement of a spell or ability."""
 
     id: str
-    kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard" | "any"
+    kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
+    #        | "card_in_exile" | "any"
     selector: Mapping[str, Any] = field(default_factory=dict)
     #: A number, or ``"any"`` for "any number of target …" -- a size the caster
     #: chooses. At most one spec per card may be ``"any"``, and it must be the
@@ -46,6 +47,14 @@ class TargetSpec:
     #: ``count == "any"``.
     one_per_player: bool = False
     optional: bool = False
+    #: A cap on the combined mana value of everything chosen for this spec --
+    #: "any number of target creature cards **with total mana value 6 or
+    #: less**" (Phoenix, Warden of Fire). A constraint *between* the picks, so
+    #: it is applied where the combinations are built rather than in the
+    #: selector: every selector clause is evaluated against one candidate in
+    #: isolation, and `mana_value: {"op": "<=", "value": 6}` is a different and
+    #: far wider card -- six one-drops pass it. ``None`` for no cap.
+    total_mana_value: int | None = None
     #: The index of the **mode** that owns this target, or ``None`` for the
     #: ordinary card-level kind.  "Choose up to two. Return those cards from
     #: your graveyard to your hand. * Target artifact card. * Target creature
@@ -134,6 +143,9 @@ class Cost:
     #: Halo Fountain's cost carries ``tap`` *and* this, and they name different
     #: permanents.
     untap_permanents: Mapping[str, Any] | None = None
+    #: "Mill a card" as a cost -- see `CostModel.mill`. No selector: the cards
+    #: come off the top of the activating player's own library.
+    mill: int = 0
     discard: int = 0
     #: "…by discarding a **land** card": narrows what ``discard`` may take.
     discard_selector: Mapping[str, Any] | None = None
@@ -143,10 +155,32 @@ class Cost:
     #: lets the player pick, so a Krosan Tusker could be "cycled" by pitching
     #: something else and staying in hand.
     discard_self: bool = False
+    #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
+    #: of `discard_self`, and deliberately not `sacrifice`, which puts the
+    #: source in the graveyard. The difference is the whole card here: Phoenix
+    #: Down is meant to be one-shot and graveyard-proof, and sacrificing it
+    #: would leave it recurrable *and* feed its own first mode.
+    #:
+    #: Not the `exile` op either -- an op runs at resolution, so the ability
+    #: could be activated and responded to with the source still on the
+    #: battlefield, and 601.2h pays costs before any of that.
+    exile_self: bool = False
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
     pay_life: int | Mapping[str, Any] = 0
+    #: "As an additional cost to cast this spell, **pay X life**" -- Toxic
+    #: Deluge. The caster announces X as the spell is cast (601.2b), and the
+    #: spell's own effects read it back with ``{"x": true}``.
+    #:
+    #: A flag rather than a value expression, because every other `pay_life` is
+    #: a number the *board* decides -- a literal, or War Room's count of
+    #: commander colours -- and this one is the player's choice. And not
+    #: `additional_repeatable` with ``pay_life: 1``, which produces the same set
+    #: of outcomes but caps at `legality.MAX_ADDITIONAL_TIMES` (six), turns one
+    #: payment of X life into X payments of one, and describes an *optional*
+    #: cost paid a number of times rather than one mandatory announced number.
+    pay_life_x: bool = False
     remove_counters: Mapping[str, Any] | None = None
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
@@ -228,6 +262,9 @@ class Cost:
             exile_from_graveyard=(
                 dict(spec["exile_from_graveyard"]) if spec.get("exile_from_graveyard") else None
             ),
+            mill=int(spec.get("mill", 0) or 0),
+            pay_life_x=bool(spec.get("pay_life_x")),
+            exile_self=bool(spec.get("exile_self")),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -255,6 +292,14 @@ class Cost:
             and self.untap_permanents is None
             and self.discard == 0
             and not self.discard_self
+            # Without this the payment solver would treat Millikin as a plain
+            # tap-for-mana source and take the {C} without ever milling.
+            # `costs.solver_taps` reads this, and `legality._activate_actions`
+            # reads its complement, so a mill cost moves the ability from
+            # "tapped silently by the solver" to "offered to the player" --
+            # the same place a Signet's {1} and a Vivid land's counter sit.
+            and self.mill == 0
+            and not self.exile_self
             and not self.pay_life
             and self.remove_counters is None
             and self.loyalty is None
@@ -279,10 +324,14 @@ class Cost:
             parts.append(
                 f"Untap {self.untap_permanents.get('count', 1)} tapped permanents"
             )
+        if self.mill:
+            parts.append(f"Mill {self.mill}")
         if self.discard:
             parts.append(f"Discard {self.discard}")
         if self.discard_self:
             parts.append("Discard this card")
+        if self.exile_self:
+            parts.append("Exile this permanent")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")
@@ -352,6 +401,17 @@ class TriggerSpec:
     #: A card printing "one or more" *without* a per-turn cap would still be
     #: wrong, and is still a gap.
     max_per_turn: int | None = None
+    #: "Whenever **one or more** cards leave your graveyard…" -- Spirit Mascot.
+    #: The event fires once per card, because that is how cards move; this says
+    #: the *ability* fires once per simultaneous group. Without it, Rise of the
+    #: Dark Realms emptying a five-card graveyard would put five +1/+1 counters
+    #: on the Mascot instead of one.
+    #:
+    #: Deliberately not `max_per_turn: 1`, which the codebase already documents
+    #: as the stand-in for this shape and which is a *different card*: a printed
+    #: "one or more" fires again later the same turn for a second, separate
+    #: departure, and a per-turn cap does not.
+    batched: bool = False
     #: Which chapter number a ``chapter`` trigger fires on -- the "II" in "II --
     #: Create two 2/2 red Human Knight creature tokens".
     #:
@@ -388,6 +448,20 @@ def top_level_mode_spec(effects: Any) -> Mapping[str, Any] | None:
     return None
 
 
+def asks_another_player(spec: Mapping[str, Any] | None) -> bool:
+    """Does this ``choose_mode`` hand the choice to somebody other than us?
+
+    The Warring Triad: "Target player adds one mana of any color." "Any color"
+    is spelled as a `choose_mode` over five `add_mana` modes, and the player
+    *adding* the mana is the one who picks -- so the question cannot be
+    pre-answered by the ability's controller at 601.2b/602.2b time, the way an
+    ordinary modal spell's is. It belongs to resolution, for the same reason a
+    nested `choose_mode` does, and both `cast_time_modes` properties decline it
+    on that ground.
+    """
+    return bool(spec) and spec.get("chooser") is not None
+
+
 def _specs_for_modes(
     base: tuple[TargetSpec, ...],
     mode_targets: Mapping[int, tuple[TargetSpec, ...]],
@@ -417,6 +491,9 @@ class Ability:
     kind: AbilityKind
     index: int
     text: str = ""
+    #: The name a `reflexive_trigger` op calls a ``reflexive`` ability by.
+    #: Empty on every other kind.
+    reflex_id: str = ""
     # activated
     cost: Cost | None = None
     is_mana_ability: bool = False
@@ -499,9 +576,11 @@ class Ability:
     #: :attr:`CardDef.mode_targets`.  Only a *triggered* ability may have them:
     #: 603.3d puts both the modes and the targets at the moment the ability is
     #: put on the stack, so there is one moment that owns both questions.  An
-    #: activated ability has no such moment -- `legality` enumerates one
-    #: activation per legal target tuple, which is before `Game._activate` asks
-    #: which mode -- so `loader._check_mode_targets` refuses it there.
+    #: activated ability had no such moment for a long time -- `legality`
+    #: enumerated one activation per legal target tuple, which is before
+    #: `Game._activate` asks which mode. It has one now: `_ability_aims` offers
+    #: one activation per **mode**, each with only that mode's targets, so the
+    #: bullet is part of the action the way `kicked` is part of a cast.
     mode_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     effects: tuple[Mapping[str, Any], ...] = ()
     # static
@@ -525,7 +604,8 @@ class Ability:
         """
         if self.is_static or count_mode_specs(self.effects) != 1:
             return None
-        return top_level_mode_spec(self.effects)
+        spec = top_level_mode_spec(self.effects)
+        return None if asks_another_player(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs this ability actually declared -- see
@@ -637,6 +717,15 @@ class CardDef:
     #: one is *cast*, so ``showing_second_face`` on the object is set as the
     #: spell goes on the stack rather than by anything on the battlefield.
     second_face: str | None = None
+    #: The card id of the **spell** a prepared permanent may cast a copy of --
+    #: Emeritus of Woe's {1}{B} Demonic Tutor half.
+    #:
+    #: A field of its own rather than a third `second_face_zone`, because it
+    #: breaks the invariant that field's whole docstring rests on: casting a
+    #: second face takes the object out of its zone, and this leaves the
+    #: permanent exactly where it is and puts a **copy** on the stack. One card,
+    #: two objects, which no other face relationship in the engine has.
+    prepared_face: str | None = None
     #: Which zone the second face may be cast from -- ``"hand"`` for a split
     #: half or an Adventure, ``"graveyard"`` for aftermath.
     second_face_zone: str = "hand"
@@ -676,6 +765,9 @@ class CardDef:
     #: Dispute. A full `Cost`, where `kicker` is mana-only, and offered as one
     #: cast line per number of times paid.
     additional_cost: Cost | None = None
+    #: "…discard a card **or** pay 3 life" -- one cast line per payable branch.
+    #: See `CostModel.additional_cost_options`.
+    additional_cost_options: tuple[Cost, ...] = ()
     additional_optional: bool = False
     additional_repeatable: bool = False
     #: What the kicker is called on screen -- "kicked", "buyback".
@@ -795,7 +887,8 @@ class CardDef:
         """
         if count_mode_specs(self.spell_effects) != 1:
             return None
-        return top_level_mode_spec(self.spell_effects)
+        spec = top_level_mode_spec(self.spell_effects)
+        return None if asks_another_player(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.

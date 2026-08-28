@@ -683,8 +683,15 @@ def can_pay(
     life = life_cost(state, pid, cost, source_oid)
     if life and player.life < life:
         return False
-    if cost.discard and len(_discard_pool(state, pid, cost)) < cost.discard:
+    if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
+    if cost.exile_self:
+        # "Exile this artifact" -- the source has to still be on the battlefield
+        # to exile, checked for the same reason `discard_self` checks the hand:
+        # legality offered the action and the board can move before `pay` runs.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or not obj.on_battlefield:
+            return False
     if cost.discard_self:
         # The card must be the payer's to throw away and still be in the zone it
         # is activated from. Checked rather than assumed because legality offers
@@ -722,6 +729,14 @@ def can_pay(
     ):
         return False
 
+    # `cost.mill` is deliberately **not** tested, and the asymmetry with
+    # `discard` above is the whole point. 701.13b: "If a player is instructed to
+    # mill a number of cards greater than the number of cards in their library,
+    # that player mills their entire library." Milling more than you have is a
+    # legal action that mills fewer, so the cost is always payable and Millikin
+    # still taps for {C} on an empty library. There is no equivalent rule for
+    # discarding, which is why an empty hand *does* make `discard` unpayable.
+
     # Mana last: it is the most expensive check.
     if not cost.mana.is_free() or cost.mana.x_count:
         sources = mana_sources(state, pid, purpose=purpose)
@@ -735,14 +750,29 @@ def can_pay(
     return True
 
 
-def _discard_pool(state: GameState, pid: int, cost: Cost) -> list[int]:
+def _discard_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> list[int]:
     """Which cards in hand this cost is allowed to throw away.
 
     The whole hand unless the cost narrows it -- "by discarding a **land**
     card".  Kept as a pool rather than a count so `can_pay` and `pay` cannot
     disagree about whether the cost is payable.
+
+    **The source is never its own fodder.** 601.2a moves a spell to the stack
+    before any of its costs are paid, so a card can never discard *itself* to
+    pay its own additional cost. Legality prices the cost while the card is
+    still in hand, though, so without this the card was offered as fodder --
+    and Bitter Triumph ("discard a card or pay 3 life") could eat the very
+    spell being cast, which then never resolved. On a card whose hand held
+    nothing else the cost instead charged silently nothing, which is a free
+    Laughing Mad.
+
+    Cycling is unaffected: `discard_self` is its own flag and does not come
+    through here. An activated ability's source is on the battlefield, so
+    excluding it from a *hand* pool is a no-op there.
     """
-    hand = list(state.players[pid].hand)
+    hand = [oid for oid in state.players[pid].hand if oid != source_oid]
     if cost.discard_selector is None:
         return hand
     from .effects.selectors import matches
@@ -916,6 +946,10 @@ def pay(
     legality used when it decided this was payable -- restricted mana is offered
     or withheld by that alone.
     """
+    # A payment is one group, the way an effect op is: an
+    # `exile_from_graveyard` cost that takes three cards takes them at
+    # once. See `triggers._queue`.
+    state.event_batch += 1
     if cost is None and not extra_generic:
         return True
     cost = cost or Cost()
@@ -956,7 +990,7 @@ def pay(
         lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
 
     if cost.discard:
-        pool = _discard_pool(state, pid, cost)
+        pool = _discard_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(
             ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )
@@ -967,6 +1001,13 @@ def pay(
         # That is the whole difference from `discard`, and asking would let the
         # player cycle by pitching something else.
         yield from _discard(state, pid, [source_oid])
+
+    if cost.exile_self and source_oid is not None:
+        # No `ask_objects` and no selector: which permanent goes is not a
+        # choice, it is *this* one -- the same reason `discard_self` asks
+        # nothing. Paid here, as the ability goes on the stack, so the source is
+        # gone before it can be responded to or feed its own effects.
+        exile_object(state, source_oid, cause="cost")
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
@@ -1046,6 +1087,14 @@ def pay(
             add_counters(state, source_oid, "loyalty", cost.loyalty)
         elif cost.loyalty < 0:
             remove_counters(state, source_oid, "loyalty", -cost.loyalty)
+
+    if cost.mill:
+        # No `ask_objects`: the cards come off the top of the library, so there
+        # is nothing to choose. `mill_cards` already stops at an empty library,
+        # which is 701.13b and the reason `can_pay` does not gate on this.
+        from .primitives import mill_cards
+
+        mill_cards(state, pid, cost.mill)
 
     if cost.exile_from_graveyard is not None:
         spec = dict(cost.exile_from_graveyard)
@@ -1359,7 +1408,14 @@ def variant_reduction(
 #: where a commander sits for most of a game, so a reduction written about "a
 #: commander you own" and evaluated over the battlefield alone would read zero
 #: at exactly the moment the printed card is about it.
-REDUCTION_ZONES = frozenset({"battlefield", "command"})
+#: The graveyard joined them on the same test: it is public, and it is readable
+#: before anything is on the stack. Cyan, Vengeful Samurai -- "This spell costs
+#: {1} less to cast for each creature card in your graveyard" -- is the card
+#: that wanted it, and there was no third place a spell's own price could be
+#: lowered from: the battlefield `spell_cost_reduction` static discounts a
+#: *different* card and its `count` is filtered by `static_filter_keys`, which
+#: has no `zone` key at all.
+REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
 
 
 def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
@@ -1375,6 +1431,12 @@ def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
     if "command" in zones:
         for player in state.players:
             yield from player.command
+    if "graveyard" in zones:
+        # Every seat's, narrowed by the ownership keys below exactly as the
+        # command zone is -- "in **your** graveyard" is `controller: "you"`,
+        # and a card in a graveyard is in its owner's (400.3).
+        for player in state.players:
+            yield from player.graveyard
 
 
 def _reduction_matches(state: GameState, pid: int, filt: Any):

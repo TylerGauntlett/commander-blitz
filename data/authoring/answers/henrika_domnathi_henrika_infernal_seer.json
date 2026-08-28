@@ -4,20 +4,35 @@
     "name": "Henrika Domnathi // Henrika, Infernal Seer",
     "oracle_text": "Flying\nAt the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.",
     "mana_cost": "{2}{B}{B}",
-    "supertypes": ["Legendary"],
-    "types": ["Creature"],
-    "subtypes": ["Vampire"],
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire"
+    ],
     "power": 1,
     "toughness": 3,
-    "keywords": ["flying"],
-    "colors": ["B"],
-    "color_identity": ["B"],
+    "keywords": [
+      "flying"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
     "back_face": "henrika_infernal_seer",
     "abilities": [
       {
         "kind": "triggered",
         "text": "At the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.",
-        "trigger": {"event": "begin_combat", "controller": "you"},
+        "trigger": {
+          "event": "begin_combat",
+          "controller": "you"
+        },
         "effects": [
           {
             "op": "choose_mode",
@@ -35,8 +50,12 @@
                         "op": "sacrifice",
                         "objects": {
                           "zone": "battlefield",
-                          "controller": {"binding": "each_player"},
-                          "types": ["Creature"],
+                          "controller": {
+                            "binding": "each_player"
+                          },
+                          "types": [
+                            "Creature"
+                          ],
                           "count": 1,
                           "chooser": "owner"
                         }
@@ -48,13 +67,30 @@
               {
                 "label": "You draw a card and you lose 1 life.",
                 "effects": [
-                  {"op": "draw", "player": "you", "amount": {"const": 1}},
-                  {"op": "lose_life", "player": "you", "amount": {"const": 1}}
+                  {
+                    "op": "draw",
+                    "player": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "op": "lose_life",
+                    "player": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  }
                 ]
               },
               {
                 "label": "Transform Henrika.",
-                "effects": [{"op": "transform", "to_back": true}]
+                "effects": [
+                  {
+                    "op": "transform",
+                    "to_back": true
+                  }
+                ]
               }
             ]
           }
@@ -66,34 +102,68 @@
     "id": "henrika_infernal_seer",
     "name": "Henrika, Infernal Seer",
     "oracle_text": "Flying, deathtouch, lifelink\n{1}{B}{B}: Each creature you control with flying, deathtouch, and/or lifelink gets +1/+0 until end of turn.",
-    "supertypes": ["Legendary"],
-    "types": ["Creature"],
-    "subtypes": ["Vampire"],
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire"
+    ],
     "power": 3,
     "toughness": 4,
-    "keywords": ["flying", "deathtouch", "lifelink"],
-    "colors": ["B"],
-    "color_identity": ["B"],
+    "keywords": [
+      "flying",
+      "deathtouch",
+      "lifelink"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
     "abilities": [
       {
         "kind": "activated",
         "text": "{1}{B}{B}: Each creature you control with flying, deathtouch, and/or lifelink gets +1/+0 until end of turn.",
-        "cost": {"mana": "{1}{B}{B}"},
+        "cost": {
+          "mana": "{1}{B}{B}"
+        },
         "effects": [
           {
             "op": "pump",
             "objects": {
               "zone": "battlefield",
               "controller": "you",
-              "types": ["Creature"],
+              "types": [
+                "Creature"
+              ],
               "any_of": [
-                {"keywords": ["flying"]},
-                {"keywords": ["deathtouch"]},
-                {"keywords": ["lifelink"]}
+                {
+                  "keywords": [
+                    "flying"
+                  ]
+                },
+                {
+                  "keywords": [
+                    "deathtouch"
+                  ]
+                },
+                {
+                  "keywords": [
+                    "lifelink"
+                  ]
+                }
               ]
             },
-            "power": {"const": 1},
-            "toughness": {"const": 0}
+            "power": {
+              "const": 1
+            },
+            "toughness": {
+              "const": 0
+            }
           }
         ]
       }
@@ -101,11 +171,20 @@
   },
   "expectation": {
     "zone": "battlefield",
-    "battlefield_count": 32,
-    "opponent_battlefield_count": 5,
-    "graveyard_size": {"0": 3},
-    "hand_size": {"0": 0},
-    "library_size": {"0": 40},
-    "life": {"0": 40, "1": 40}
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    }
   }
 }

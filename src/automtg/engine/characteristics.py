@@ -174,6 +174,17 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             subtypes.update(added)
         if (repaint := obj.copy_overrides.get("colors")) is not None:
             colors = set(repaint)
+        if (retyped := obj.copy_overrides.get("types")) is not None:
+            # "…except it's an artifact and it **loses all other card types**."
+            # A replacement, where `add_subtypes` above is an addition, and the
+            # printed clause is what decides which: Espers to Magicite's token
+            # is an Artifact and nothing else, so a union would leave it a
+            # creature that could attack and die -- a strictly better card.
+            #
+            # Card types only. The subtypes are the copied card's and stay,
+            # which is also what the printing says: it loses its card types and
+            # is not told to lose its creature types.
+            types = set(retyped)
 
     # Bestow (702.103b): "it's an Aura spell with enchant creature... it becomes
     # a creature again if it's not attached to a creature". Applied to the
@@ -542,8 +553,50 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
         if obj is None:
             continue
         for ability in abilities_of(state, oid):
-            if ability.is_static and ability.static and _static_active(state, obj, ability.static):
+            if not (ability.is_static and ability.static):
+                continue
+            if Zone.BATTLEFIELD not in ability.active_zones:
+                # A graveyard-only static on a permanent that has somehow
+                # reached the battlefield -- Anger itself, as a 2/2. It is not
+                # active here, and letting it through is precisely the inverse
+                # of the printed card.
+                continue
+            if _static_active(state, obj, ability.static):
                 out.append((obj, ability.static))
+    out.extend(_graveyard_statics(state))
+    return out
+
+
+def _graveyard_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """Statics that work from a graveyard -- Anger, and the Incarnation cycle.
+
+    "As long as this card is in your graveyard and you control a Mountain,
+    creatures you control have haste." The zone half of that sentence is *this
+    function*: an ability is collected only while its card sits in a graveyard,
+    so the clause needs no condition of its own.
+
+    Read off the **printed** face rather than through `abilities_of`, which
+    resolves granted and lost abilities against the battlefield and has nothing
+    to say about a card in a graveyard. Nothing grants an ability to a card in a
+    graveyard, so there is no case being missed.
+
+    Appended after the battlefield walk rather than interleaved, because the
+    order of this list is the order effects apply in and a graveyard card has no
+    battlefield timestamp to sort against.
+    """
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    for player in state.players:
+        for oid in player.graveyard:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            for ability in state.card_of(obj).abilities:
+                if not (ability.is_static and ability.static):
+                    continue
+                if Zone.GRAVEYARD not in ability.active_zones:
+                    continue
+                if _static_active(state, obj, ability.static):
+                    out.append((obj, ability.static))
     return out
 
 
@@ -1782,6 +1835,90 @@ def player_plays_lands_from_graveyard(state: GameState, pid: int) -> bool:
     enforced by `lands_played`.
     """
     return _player_static(state, pid, "play_lands_from_graveyard")
+
+
+def graveyard_cast_permissions(
+    state: GameState, pid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """"…you may cast an artifact spell from your graveyard." Edgar.
+
+    The permissions currently reaching ``pid``, each with the permanent granting
+    it -- the source matters because the rate limit is counted per granting
+    permanent, so two Edgars are two casts a turn the way two Welcoming Vampires
+    each draw.
+
+    A list rather than a bool, which is the whole difference from
+    `player_plays_lands_from_graveyard`: that one answers a yes/no the land drop
+    asks, while this has to say *which* spells and *how many times*.
+    """
+    return [
+        (obj, static)
+        for obj, static in _active_player_statics(state, "cast_from_graveyard")
+        if _reaches_player(obj, static, pid)
+    ]
+
+
+def graveyard_cast_allows(
+    state: GameState, source_obj: GameObject, static: Mapping[str, Any], card: CardDef
+) -> bool:
+    """Does this permission let *this* card out of the graveyard?
+
+    The same `affects_spells` filter `spell_cost_reduction` matches a card in
+    hand with, and matched the same way -- `_matches_printed`, because a card in
+    a graveyard has a printed face and an owner and no board state.
+    """
+    filt = static.get("affects_spells")
+    if not filt:
+        # The loader requires one. Defaulting to `{}` would make an empty filter
+        # free the whole graveyard, so a compile bug would hand over everything
+        # rather than nothing.
+        return False
+    resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+    return _matches_printed(card, resolved)
+
+
+def graveyard_cast_arrival_ok(
+    state: GameState, static: Mapping[str, Any], obj: GameObject
+) -> bool:
+    """"…put there **from anywhere other than the battlefield this turn**".
+
+    Banon, the Returners' Leader. Asked of the *object* rather than the printed
+    card, because when a card reached a graveyard and from where are facts about
+    this copy of it and not about the card -- which is why they could not go in
+    `affects_spells` beside the type filter.
+
+    Absent from the static, every card in the yard qualifies, which is Edgar.
+    """
+    arrival = static.get("arrived_this_turn_from")
+    if arrival is None:
+        return True
+    if obj.graveyard_turn != state.turn:
+        return False
+    allowed = [str(z) for z in arrival]
+    if allowed == ["any"]:
+        return True
+    forbidden = [z[1:] for z in allowed if z.startswith("!")]
+    if forbidden:
+        # "from anywhere **other than** the battlefield" -- a complement, and
+        # written as one because the printed line is: listing the four zones a
+        # card could otherwise have come from would silently miss the fifth.
+        return obj.graveyard_from not in forbidden
+    return obj.graveyard_from in allowed
+
+
+def library_top_cast_permission(state: GameState, pid: int):
+    """The permanent letting this player cast off the top of their library.
+
+    Bolas's Citadel. The casting twin of
+    `player_plays_lands_from_library_top`, which is documented as lands only and
+    so grants nothing for a nonland spell -- and unlike it this returns the
+    granting permanent rather than a bool, because the price rides on the same
+    static and `Game._cast` has to read it.
+    """
+    for obj, static in _active_player_statics(state, "cast_from_library_top"):
+        if _reaches_player(obj, static, pid):
+            return obj, static
+    return None
 
 
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:

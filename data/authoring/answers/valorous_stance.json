@@ -89,7 +89,7 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,
     "hand_size": {
-      "0": 0
+      "0": 1
     },
     "graveyard_size": {
       "0": 3

@@ -24,11 +24,46 @@
           {
             "op": "choose_mode",
             "modes": [
-              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{G}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
-              {"effects": [{"op": "add_mana", "mana": "{W}"}]}
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -62,7 +97,7 @@
     "zone": "battlefield",
     "battlefield_count": 33,
     "hand_size": {
-      "0": 0
+      "0": 1
     }
   }
 }
