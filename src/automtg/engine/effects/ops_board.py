@@ -190,9 +190,44 @@ def op_phase_out(ctx: EffectContext, spec: Mapping[str, Any]):
     """
     from ..turn import phase_out
 
+    # `until_leaves` is the O-Ring name for the link and `link` is the neutral
+    # one, exactly as on `exile`, and the same two halves: this op records the
+    # link and nothing else, and the *return* is an ordinary
+    # `leaves_battlefield` trigger on the same card reading the link back
+    # through a `{"phased_out_with": "self"}` selector. Two abilities because
+    # the card really is two, and a player can respond between them.
+    #
+    # Without a link the permanent comes back at its controller's next untap
+    # step, which is what the plain printed one-shot says. With one it waits on
+    # this permanent, and `turn._phasing` skips it.
+    link = bool(spec.get("until_leaves")) or bool(spec.get("link"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Phase out", "phase_out")
     for oid in oids:
-        phase_out(ctx.state, oid)
+        phase_out(ctx.state, oid, by=ctx.source_oid if link else None)
+    ctx.state.bump_chars()
+
+
+@register("phase_in")
+def op_phase_in(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Phase a permanent back in -- the return half of a linked `phase_out`.
+
+    Oubliette: "target creature phases out until this enchantment leaves the
+    battlefield. Tap that creature as it phases in this way." The second
+    sentence is ``tapped``, and it is a parameter here rather than a `tap` op
+    afterwards because "as it phases in" is one event -- a separate tap happens
+    to a creature that has already returned untapped.
+
+    Its `objects` selector is normally `{"phased_out_with": "self"}`, which is
+    the only way to name a phased-out permanent: one is out of
+    `state.battlefield` entirely, so no ordinary battlefield selector reaches
+    it.
+    """
+    from ..turn import phase_in
+
+    tapped = bool(spec.get("tapped"))
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Phase in", "phase_in")
+    for oid in oids:
+        phase_in(ctx.state, oid, tapped=tapped)
     ctx.state.bump_chars()
 
 

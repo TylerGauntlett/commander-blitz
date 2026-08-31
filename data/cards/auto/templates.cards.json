@@ -57604,6 +57604,71 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "phase_out",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "phased_out_with": "self"
+              },
+              "op": "phase_in",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Tap that creature as it phases in this way.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "oubliette",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Oubliette",
+      "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield. Tap that creature as it phases in this way. (Auras and Equipment phase out with it. While permanents are phased out, they're treated as though they don't exist.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "controller": "enchanted_player",
               "op": "create_token",
               "token": "clue_token"

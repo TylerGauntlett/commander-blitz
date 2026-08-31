@@ -5117,6 +5117,10 @@
   "orzhov_signet": {
     "zone": "battlefield"
   },
+  "oubliette": {
+    "battlefield_count": 32,
+    "zone": "battlefield"
+  },
   "overencumbered": {
     "battlefield_count": 33,
     "hand_size": {
