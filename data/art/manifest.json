@@ -460,6 +460,12 @@
     "file": "ankle_biter.jpg",
     "scryfall_id": "424972d6-3b2c-449b-b786-749a77020fa1"
   },
+  "anowon_the_ruin_sage": {
+    "artist": "Dan Murayama Scott",
+    "bytes": 66694,
+    "file": "anowon_the_ruin_sage.jpg",
+    "scryfall_id": "b8630ae1-8fe9-4d6e-899b-a28d86d4d729"
+  },
   "anticipate": {
     "artist": "Kieran Yanner",
     "bytes": 83812,
@@ -1355,6 +1361,12 @@
     "file": "bloodghast.jpg",
     "scryfall_id": "97d42d32-c9c8-4def-a48b-0590ea572e33"
   },
+  "bloodletter_of_aclazotz": {
+    "artist": "Michael Walsh",
+    "bytes": 107907,
+    "file": "bloodletter_of_aclazotz.jpg",
+    "scryfall_id": "89dda260-836d-44e7-9540-13c352a1526c"
+  },
   "bloodline_keeper": {
     "artist": "Jason Chan",
     "bytes": 44691,
@@ -2101,6 +2113,12 @@
     "bytes": 49734,
     "file": "charisma_bobblehead.jpg",
     "scryfall_id": "35f61330-869f-448c-8374-1cbac7c23454"
+  },
+  "charismatic_conqueror": {
+    "artist": "Bram Sels",
+    "bytes": 52529,
+    "file": "charismatic_conqueror.jpg",
+    "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515"
   },
   "charity_extractor": {
     "artist": "Matt Stewart",
@@ -3572,6 +3590,12 @@
     "bytes": 59030,
     "file": "elementalist_adept.jpg",
     "scryfall_id": "d9768cc6-8f53-4922-ae32-376a2f32d719"
+  },
+  "elenda_the_dusk_rose": {
+    "artist": "rishxxv",
+    "bytes": 99403,
+    "file": "elenda_the_dusk_rose.jpg",
+    "scryfall_id": "41c42be7-84fe-4d9d-bf5c-e75e4d5635fa"
   },
   "elephant_3_3_g": {
     "artist": "David \u00c1lvarez",
@@ -5184,6 +5208,12 @@
     "bytes": 71258,
     "file": "grasslands.jpg",
     "scryfall_id": "ecf52798-b2e0-4d0a-a41b-8927bfa60375"
+  },
+  "grave_pact": {
+    "artist": "BODAX",
+    "bytes": 114331,
+    "file": "grave_pact.jpg",
+    "scryfall_id": "9aaced6e-f656-49d3-9130-ba255800e0a5"
   },
   "grave_titan": {
     "artist": "Nils Hamm",
@@ -7577,6 +7607,12 @@
     "file": "makindi_griffin.jpg",
     "scryfall_id": "05c4a9c4-20d5-457d-9127-c27b8768255a"
   },
+  "malakir_bloodwitch": {
+    "artist": "Shelly Wan",
+    "bytes": 67512,
+    "file": "malakir_bloodwitch.jpg",
+    "scryfall_id": "b91ceead-5071-43e8-bf90-f379d683acdf"
+  },
   "malakir_mire": {
     "artist": "Marta Nael",
     "bytes": 84665,
@@ -9001,6 +9037,12 @@
     "file": "orzhov_signet.jpg",
     "scryfall_id": "ca0d3984-fbb3-4661-a424-f79d2253e057"
   },
+  "oubliette": {
+    "artist": "Will Sweeney",
+    "bytes": 81778,
+    "file": "oubliette.jpg",
+    "scryfall_id": "87149eb8-7935-4e45-8092-6baa2a6fb8d2"
+  },
   "overencumbered": {
     "artist": "Elizabeth Peir\u00f3",
     "bytes": 42101,
@@ -9677,6 +9719,12 @@
     "bytes": 85378,
     "file": "python.jpg",
     "scryfall_id": "84fbe194-1d9b-4d3f-b7a0-aa058945aca1"
+  },
+  "qarsi_revenant": {
+    "artist": "Lorenzo Mastroianni",
+    "bytes": 45976,
+    "file": "qarsi_revenant.jpg",
+    "scryfall_id": "a99e8c07-fcf7-448c-b71c-5eb1c6005a96"
   },
   "quakestrider_ceratops": {
     "artist": "Josiah \"Jo\" Cameron",
@@ -13854,6 +13902,12 @@
     "artist": "Volkan Ba\u01f5a",
     "bytes": 86766,
     "file": "vampire_1_1_bw.jpg",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
+  "vampire_1_1_w_lifelink": {
+    "artist": "Volkan Ba\u01f5a",
+    "bytes": 86766,
+    "file": "vampire_1_1_w_lifelink.jpg",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
   "vampire_1_1_wb_lifelink": {

@@ -440,6 +440,15 @@ class AbilityModel(BaseModel):
     #: each" is a list of three and "that many are created instead" is a list of
     #: one. See `primitives._token_creation_plan`.
     create_instead: list[str] = Field(default_factory=list)
+    #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
+    #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
+    #:
+    #: A multiplier rather than a flat amount because that is what the printed
+    #: line says, and because the replaced event carries an amount the card
+    #: never names. Required, and refused below at 0 and 1: a multiplier of 1
+    #: replaces a loss with itself, and 0 is "they lose no life" -- a
+    #: prevention, which is a different sentence and a much stronger card.
+    loss_multiplier: int | None = None
 
 
 class ReplacementModel(BaseModel):

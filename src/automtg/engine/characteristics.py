@@ -1433,6 +1433,35 @@ def _reaches_player(source: GameObject, static: Mapping[str, Any], pid: int) -> 
     return True
 
 
+def life_loss_multiplier(state: GameState, pid: int) -> int:
+    """What a life loss by ``pid`` is multiplied by right now.  Usually 1.
+
+    Bloodletter of Aclazotz: "If an opponent would lose life during your turn,
+    they lose twice that much life instead."  The "during your turn" half is an
+    ordinary ``condition`` on the static and is honoured by
+    `_active_player_statics`, which is the whole reason this reads through that
+    function rather than walking the battlefield itself -- a condition written
+    beside a player-wide static and never asked is the silent over-grant that
+    function exists to stop.
+
+    **Multiplied, not summed.**  Two Bloodletters are two separate replacements
+    of one event, each applying once (614.5), and a loss doubled twice is
+    quadrupled -- which is also why the empty case has to return 1 rather than
+    0.  616.1 lets the affected player order two applicable replacements and
+    this engine does not ask, the same divergence `_token_creation_plan`
+    records; for a product the order cannot show, so here it costs nothing.
+
+    Short-circuits on an empty battlefield walk, because this is asked on every
+    point of life any player loses -- every damage to a player, every paid life,
+    every drain -- so the games playing none of these cards must pay nothing.
+    """
+    multiplier = 1
+    for obj, static in _active_player_statics(state, "replace_life_loss"):
+        if _reaches_player(obj, static, pid):
+            multiplier *= int(static.get("loss_multiplier", 1))
+    return multiplier
+
+
 def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     """Vorinclex: "whenever you tap a land for mana, add one mana of any type
     that land produced"."""

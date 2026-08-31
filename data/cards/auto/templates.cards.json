@@ -2630,6 +2630,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_subtypes": [
+                      "Vampire"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "anowon_the_ruin_sage",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Anowon, the Ruin Sage",
+      "oracle_text": "At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their choice.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -7649,6 +7709,115 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "replace_life_loss",
+          "kind": "static",
+          "loss_multiplier": 2,
+          "text": "If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodletter_of_aclazotz",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}{B}{B}",
+      "name": "Bloodletter of Aclazotz",
+      "oracle_text": "Flying\nIf an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_2_2_b_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 2/2 black Vampire creature token with flying."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "subtypes": [
+                  "Vampire"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "op": "transform",
+              "to_back": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Transform this creature. Activate only if you control five or more Vampires."
+        }
+      ],
+      "back_face": "lord_of_lineage",
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodline_keeper",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Bloodline Keeper // Lord of Lineage",
+      "oracle_text": "Flying\n{T}: Create a 2/2 black Vampire creature token with flying.\n{B}: Transform this creature. Activate only if you control five or more Vampires.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -13149,6 +13318,75 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "vampire_1_1_w_lifelink"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Tap that permanent to stop Charismatic Conqueror's Vampire token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "controller": "opponent",
+              "tapped": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "charismatic_conqueror",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Charismatic Conqueror",
+      "oracle_text": "Vigilance\nWhenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -22579,6 +22817,78 @@
       "subtypes": [
         "Human",
         "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, put a +1/+1 counter on Elenda.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "create_token",
+              "token": "vampire_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "elenda_the_dusk_rose",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{B}",
+      "name": "Elenda, the Dusk Rose",
+      "oracle_text": "Lifelink\nWhenever another creature dies, put a +1/+1 counter on Elenda.\nWhen Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 1,
       "types": [
@@ -33062,6 +33372,58 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "not": "you"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, each other player sacrifices a creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "grave_pact",
+      "mana_cost": "{1}{B}{B}{B}",
+      "name": "Grave Pact",
+      "oracle_text": "Whenever a creature you control dies, each other player sacrifices a creature of their choice.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -46578,6 +46940,69 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Vampire"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Other Vampire creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_2_2_b_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 2/2 black Vampire creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "lord_of_lineage",
+      "keywords": [
+        "flying"
+      ],
+      "name": "Lord of Lineage",
+      "oracle_text": "Flying\nOther Vampire creatures you control get +2/+2.\n{T}: Create a 2/2 black Vampire creature token with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -48409,6 +48834,88 @@
       "source": "auto",
       "subtypes": [
         "Griffin"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "W"
+          ],
+          "kind": "static",
+          "text": "Flying, protection from white"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Vampire"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Vampire"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "malakir_bloodwitch",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Malakir Bloodwitch",
+      "oracle_text": "Flying, protection from white\nWhen this creature enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Shaman"
       ],
       "toughness": 4,
       "types": [
@@ -57301,6 +57808,71 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "phase_out",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "phased_out_with": "self"
+              },
+              "op": "phase_in",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Tap that creature as it phases in this way.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "oubliette",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Oubliette",
+      "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield. Tap that creature as it phases in this way. (Auras and Equipment phase out with it. While permanents are phased out, they're treated as though they don't exist.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "controller": "enchanted_player",
               "op": "create_token",
               "token": "clue_token"
@@ -62048,6 +62620,94 @@
         "Snake"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "flying",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "deathtouch",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "lifelink",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Renew — {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch counter, and a lifelink counter on target creature. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "qarsi_revenant",
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Qarsi Revenant",
+      "oracle_text": "Flying, deathtouch, lifelink\nRenew — {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch counter, and a lifelink counter on target creature. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

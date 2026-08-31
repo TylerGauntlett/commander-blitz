@@ -403,7 +403,15 @@ def _phase(state: GameState, pid: int) -> None:
     going_in = [
         oid
         for oid, obj in state.objects.items()
-        if obj.phased_out and obj.controller == pid and not obj.phased_out_indirectly
+        if obj.phased_out
+        and obj.controller == pid
+        and not obj.phased_out_indirectly
+        # Oubliette: a permanent phased out *until its source leaves the
+        # battlefield* is waiting on that permanent, not on this clock. Without
+        # this the creature comes back at its controller's very next untap step
+        # with the enchantment still on the board, which is a materially
+        # different and much weaker card -- and one that looks right for a turn.
+        and obj.phased_out_by is None
     ]
     going_out = [
         oid
@@ -419,7 +427,9 @@ def _phase(state: GameState, pid: int) -> None:
     state.bump_chars()
 
 
-def phase_out(state: GameState, oid: int, *, indirect: bool = False) -> None:
+def phase_out(
+    state: GameState, oid: int, *, indirect: bool = False, by: int | None = None
+) -> None:
     """Phase a permanent out (702.26).
 
     Public because phasing is no longer only the untap step's business: "target
@@ -435,6 +445,7 @@ def phase_out(state: GameState, oid: int, *, indirect: bool = False) -> None:
     state.battlefield.remove(oid)
     obj.phased_out = True
     obj.phased_out_indirectly = indirect
+    obj.phased_out_by = by
     state.emit("phased_out", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
     # 702.26e: whatever is attached to it phases out with it, and is marked as
     # having done so indirectly -- so it comes back when its host does rather
@@ -442,21 +453,31 @@ def phase_out(state: GameState, oid: int, *, indirect: bool = False) -> None:
     for other_id in list(state.battlefield):
         other = state.objects.get(other_id)
         if other is not None and other.attached_to == oid:
-            phase_out(state, other_id, indirect=True)
+            phase_out(state, other_id, indirect=True, by=by)
 
 
-def phase_in(state: GameState, oid: int) -> None:
-    """Phase a permanent back in, and whatever went out attached to it."""
+def phase_in(state: GameState, oid: int, *, tapped: bool = False) -> None:
+    """Phase a permanent back in, and whatever went out attached to it.
+
+    ``tapped`` is Oubliette's second sentence -- "tap that creature as it phases
+    in this way". Applied here rather than by a `tap` op afterwards because
+    "as it phases in" is one event: a separate tap would be a second thing that
+    happens to a creature that has already returned untapped, which any
+    "becomes tapped" trigger would see and which a replacement could stop.
+    """
     obj = state.objects.get(oid)
     if obj is None or not obj.phased_out:
         return
     obj.phased_out = False
     obj.phased_out_indirectly = False
+    obj.phased_out_by = None
+    if tapped:
+        obj.tapped = True
     state.battlefield.append(oid)
     state.emit("phased_in", player=obj.controller, source=oid, oid=oid, card=state.card_of(obj).id)
     for other_id, other in state.objects.items():
         if other.phased_out and other.phased_out_indirectly and other.attached_to == oid:
-            phase_in(state, other_id)
+            phase_in(state, other_id, tapped=tapped)
 
 
 def _epic_copy(state: GameState, pid: int) -> None:

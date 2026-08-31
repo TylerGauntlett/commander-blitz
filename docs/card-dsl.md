@@ -195,7 +195,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
@@ -1641,6 +1641,23 @@ needs both, and needs them in the narrowing direction: `types` is a conjunction,
 so "an artifact, creature, or land" written with it matches nothing, and without
 `zone` the card fires when an opponent *cycles* a land card out of hand.
 
+**`tapped`** in a trigger filter is the third of that family and the same trap:
+legal to write, and read by nothing until now. It is how "whenever an artifact
+or creature an opponent controls enters **untapped**" is said (Charismatic
+Conqueror), and it is the one clause `matches_card_filter` answers from object
+*state* rather than from a printed face.
+
+That is sound because a trigger filter is asked **once, as the ability is
+collected**, and `zones._enter_battlefield` writes `tapped` before it fires the
+event — so the flag it reads is the permanent's arrival state. It is therefore
+only meaningful on an arrival: a `dies` filter writing it reads a permanent
+whose state `reset_permanent_state` has already cleared.
+
+Not a trigger `condition`, which would be a **different card**. A condition is
+re-checked on resolution (603.4), so an opponent tapping the fresh artifact in
+response would make the ability do nothing — the opposite of the printed ruling,
+which pays you off precisely when they cannot tap it.
+
 **`becomes_monarch`** fires when the crown changes hands, whichever way it got
 there — the `become_monarch` op and the game's own combat-damage rule alike, since
 both go through one primitive. Its subject is a **player**, not an object, so
@@ -1795,6 +1812,7 @@ characteristics — the loader rejects anything else. See
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
 `block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
+[`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
 `extra_land_drops`, plus the player-wide ones below.
@@ -2237,6 +2255,49 @@ already arriving, and a `token_created` trigger fires after the token is on the
 battlefield, so it would add tokens *alongside* rather than instead — a strictly
 stronger card — and a Manufactor written that way would re-trigger on its own
 Treasure forever.
+
+## "If a player would lose life, they lose twice that much instead"
+
+```jsonc
+// Bloodletter of Aclazotz
+{ "kind": "static",
+  "text": "If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+  "effect": "replace_life_loss",
+  "affects_player": "opponent",
+  "loss_multiplier": 2,
+  "condition": { "is_your_turn": true } }
+```
+
+The engine's **second** replacement hook, and like `replace_token_creation` a
+named one rather than a general rule-616 system — see
+[rules-coverage.md](rules-coverage.md). It is read by `primitives.lose_life` and
+by the life-loss half of `primitives.damage_player`, which are the only two
+places a player's life goes down.
+
+**Both halves, or the card is half a card.** A replacement wired into only
+`lose_life` works against Village Rites and does nothing against a Lightning
+Bolt; wired into only `damage_player` it is the reverse. The parenthetical
+"(Damage causes loss of life.)" is printed on the card because rule 120.3c is
+not obvious, and paying life is a loss of life too (118.4), so a life-payment
+cost is doubled as well.
+
+**Only the loss is multiplied, never the damage.** A lifelinking source dealing
+3 to a doubled opponent takes 6 life off them and gains its controller **3**
+(702.15b), `DAMAGE_DEALT` still carries 3, and the commander-damage tally still
+counts 3. This is the same separation wither and infect make — it is still
+damage, and only where the number lands changes. Doubling the damage instead
+passes every life-total check but one, and quietly makes every lifelinking
+attacker gain twice what it prints.
+
+`loss_multiplier` is required and must be **2 or more**. A multiplier of 1
+replaces a loss with an identical loss, and 0 is "they lose no life" — a
+prevention, which is a different sentence and a much stronger card. Both would
+load clean, so both are refused at load, the same refusal `ward` makes about
+ward {0}.
+
+Two doublers **multiply**: each replacement applies once (614.5), so a loss
+doubled twice is quadrupled. 616.1 lets the affected player order two applicable
+replacements and this engine does not ask — for a product the order cannot show.
 
 ## Making a token that is already attacking
 
@@ -4541,6 +4602,45 @@ Neither workaround is this card:
 
 `objects` is required, for `regenerate`'s reason: with no selector
 `choose_objects` finds nothing and the spell resolves having phased nobody out.
+
+## "…phases out until this enchantment leaves the battlefield"
+
+```jsonc
+// Oubliette, the enters trigger
+{"op": "phase_out", "objects": {"target": "t1"}, "until_leaves": true}
+
+// Oubliette, the leaves-the-battlefield trigger on the same card
+{"op": "phase_in", "objects": {"phased_out_with": "self"}, "tapped": true}
+```
+
+`until_leaves` (or the neutral `link`) is the phasing twin of the same key on
+[`exile`](#three-exile-links), and it works the same way: the op records the
+link and nothing else, and the **return is a separate `leaves_battlefield`
+trigger on the same card**. Two abilities because the card really is two, and a
+player can respond between them.
+
+Without the link, the untap walk hands the permanent back at its controller’s
+very next untap step — which is what the plain one-shot above says, and which is
+a materially weaker card here. With it, `turn._phasing` skips the permanent: it
+is waiting on a source, not on a clock.
+
+`phased_out_with` is the only way to name a phased-out permanent. One is
+"treated as though it does not exist" (702.26c) and is **out of**
+`state.battlefield`, so an ordinary battlefield selector reaches nothing — which
+is precisely why this card could not be written before. The filter is narrow for
+the same reason `exiled_with` is: one matching every phased-out permanent would
+hand back creatures this card never touched, including any phasing on its own
+keyword.
+
+`tapped` on `phase_in` is Oubliette’s second sentence, "tap that creature as it
+phases in this way". A parameter rather than a `tap` op afterwards because "as
+it phases in" is **one event**: a separate tap happens to a creature that has
+already returned untapped, which a "becomes tapped" trigger would see and a
+replacement could stop.
+
+Exile is not a substitute even though `until_leaves` is exactly the O-Ring
+shape: exiling loses counters, attachments and continuous effects and fires zone
+changes, and phasing deliberately does none of that.
 
 ## "Enchanted permanent is a colorless land … and loses all other card types and abilities"
 

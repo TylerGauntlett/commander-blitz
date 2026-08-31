@@ -1,0 +1,66 @@
+{
+  "card": {
+    "id": "qarsi_revenant",
+    "name": "Qarsi Revenant",
+    "oracle_text": "Flying, deathtouch, lifelink\nRenew \u2014 {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch counter, and a lifelink counter on target creature. Activate only as a sorcery.",
+    "mana_cost": "{1}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Vampire"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying", "deathtouch", "lifelink"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Renew \u2014 {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch counter, and a lifelink counter on target creature. Activate only as a sorcery.",
+        "active_zones": ["graveyard"],
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{2}{B}",
+          "exile_from_graveyard": {
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "types": ["Creature"]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "flying",
+            "amount": {"const": 1},
+            "objects": {"target": "t1"}
+          },
+          {
+            "op": "add_counters",
+            "counter": "deathtouch",
+            "amount": {"const": 1},
+            "objects": {"target": "t1"}
+          },
+          {
+            "op": "add_counters",
+            "counter": "lifelink",
+            "amount": {"const": 1},
+            "objects": {"target": "t1"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["flying", "deathtouch", "lifelink"], "count": 1}
+  }
+}

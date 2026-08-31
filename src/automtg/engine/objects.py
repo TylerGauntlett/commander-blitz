@@ -386,6 +386,17 @@ class GameObject:
     #: did (702.26e, "indirectly phases out"). It phases back in with its host
     #: rather than on its own schedule, which is the whole of the difference.
     phased_out_indirectly: bool = False
+    #: Which permanent phased this one out "until it leaves the battlefield" --
+    #: Oubliette. The phasing twin of `exiled_by`, and it does the same two
+    #: jobs: it suspends the ordinary return, since the untap walk skips a
+    #: permanent that is waiting on a source rather than on a clock, and it is
+    #: what a `{"phased_out_with": "self"}` selector reads back, since a
+    #: phased-out permanent is out of `state.battlefield` and no ordinary
+    #: selector can otherwise name it.
+    #:
+    #: ``None`` is the plain printed one-shot, which really does come back at
+    #: its controller's next untap step.
+    phased_out_by: int | None = None
     #: **Mutate** (702.140a): the synthesised card this merged permanent *is* --
     #: the card on top, carrying the abilities of everything under it.
     #:
@@ -640,6 +651,7 @@ class GameObject:
         self.frozen_by = None
         self.skip_next_untap = False
         self.exiled_by = None
+        self.phased_out_by = None
         self.chosen_type = None
         self.chosen_color = None
         self.added_subtypes = ()

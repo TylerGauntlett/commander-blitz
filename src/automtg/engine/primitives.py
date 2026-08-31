@@ -11,7 +11,12 @@ from collections.abc import Iterable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
-from .characteristics import chars, printed_token_matches, token_creation_replacements
+from .characteristics import (
+    chars,
+    life_loss_multiplier,
+    printed_token_matches,
+    token_creation_replacements,
+)
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
@@ -138,8 +143,21 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
 
 
 def lose_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
+    """Take life off a player, applying any replacement of the loss.
+
+    Returns **what was actually lost**, not what was asked for, and the
+    difference is load-bearing: "each opponent loses life equal to the number of
+    Vampires you control. You gain life equal to the life lost this way"
+    (Malakir Bloodwitch) reads this number back, so a doubled loss has to gain
+    the doubled amount or the two halves of one sentence disagree.
+
+    The multiplier applies to life paid as a *cost* too (`costs.pay_life`),
+    which is right: 118.4 makes paying life a loss of life like any other, and
+    Bloodletter of Aclazotz says "would lose life" without naming a source.
+    """
     if amount <= 0:
         return 0
+    amount *= life_loss_multiplier(state, pid)
     state.players[pid].life -= amount
     fire(state, EventType.LIFE_LOST, player=pid, source=source, amount=amount)
     return amount
@@ -206,7 +224,20 @@ def damage_player(
             total=state.players[pid].poison,
         )
     else:
-        state.players[pid].life -= amount
+        # "Damage causes loss of life", so a replacement of the *loss* reaches
+        # damage too -- Bloodletter of Aclazotz prints that reminder precisely
+        # because it is not obvious.
+        #
+        # **Only the life loss is multiplied, never the damage.** The damage
+        # dealt is still `amount`, and everything below this branch reads that
+        # unchanged: lifelink gains what was dealt (702.15b), `DAMAGE_DEALT`
+        # carries what was dealt, and the commander-damage tally counts what was
+        # dealt. This is the same separation the wither and infect rows make --
+        # it is still damage, and only where the number lands changes -- and
+        # getting it wrong would make a doubled hit from a lifelinking commander
+        # gain double life and kill on half the commander damage.
+        lost = amount * life_loss_multiplier(state, pid)
+        state.players[pid].life -= lost
         # "Whenever an opponent loses life… (Damage causes loss of life.)"
         # Bloodthirsty Conqueror. Damage really is a loss of life, so it fires
         # the same event a `lose_life` does rather than a second one a card
@@ -214,7 +245,7 @@ def damage_player(
         #
         # Inside the else on purpose: infect damage becomes poison counters and
         # no life is lost at all, so an infect hit must not fire this.
-        fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=amount)
+        fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
     fire(
         state,
         EventType.DAMAGE_DEALT,
