@@ -9702,12 +9702,12 @@
     },
     "Anowon, the Ruin Sage": {
       "edhrec_rank": 5073,
-      "gate": "template",
+      "gate": null,
       "name": "Anowon, the Ruin Sage",
-      "reason": "no template for: At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their ch",
+      "reason": "",
       "scryfall_id": "b8630ae1-8fe9-4d6e-899b-a28d86d4d729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Anowon, the Ruin Thief": {
@@ -115542,12 +115542,12 @@
     },
     "Grave Pact": {
       "edhrec_rank": 576,
-      "gate": "template",
+      "gate": null,
       "name": "Grave Pact",
-      "reason": "no template for: Whenever a creature you control dies, each other player sacrifices a creature of their cho",
+      "reason": "",
       "scryfall_id": "9aaced6e-f656-49d3-9130-ba255800e0a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grave Peril": {
@@ -164382,12 +164382,12 @@
     },
     "Malakir Bloodwitch": {
       "edhrec_rank": 3490,
-      "gate": "template",
+      "gate": null,
       "name": "Malakir Bloodwitch",
-      "reason": "no template for: Flying, protection from white",
+      "reason": "",
       "scryfall_id": "b91ceead-5071-43e8-bf90-f379d683acdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malakir Cullblade": {
@@ -209472,12 +209472,12 @@
     },
     "Qarsi Revenant": {
       "edhrec_rank": 2482,
-      "gate": "template",
+      "gate": null,
       "name": "Qarsi Revenant",
-      "reason": "no template for: Renew — {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch co",
+      "reason": "",
       "scryfall_id": "a99e8c07-fcf7-448c-b71c-5eb1c6005a96",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Qarsi Sadist": {

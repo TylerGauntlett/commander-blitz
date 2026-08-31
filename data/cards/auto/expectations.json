@@ -266,6 +266,10 @@
   "ankle_biter": {
     "zone": "battlefield"
   },
+  "anowon_the_ruin_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anurid_murkdiver": {
     "zone": "battlefield"
   },
@@ -2969,6 +2973,10 @@
   "grasslands": {
     "zone": "battlefield"
   },
+  "grave_pact": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grave_titan": {
     "battlefield_count": 35,
     "tokens": {
@@ -4271,6 +4279,14 @@
   "makindi_griffin": {
     "zone": "battlefield"
   },
+  "malakir_bloodwitch": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 41,
+      "1": 39
+    },
+    "zone": "battlefield"
+  },
   "malakir_rebirth_malakir_mire": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -5532,6 +5548,18 @@
     "zone": "battlefield"
   },
   "python": {
+    "zone": "battlefield"
+  },
+  "qarsi_revenant": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ]
+    },
     "zone": "battlefield"
   },
   "quakestrider_ceratops": {

@@ -1,0 +1,65 @@
+{
+  "card": {
+    "id": "anowon_the_ruin_sage",
+    "name": "Anowon, the Ruin Sage",
+    "oracle_text": "At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their choice.",
+    "mana_cost": "{3}{B}{B}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Shaman"
+    ],
+    "power": 4,
+    "toughness": 3,
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their choice.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": "each_player",
+            "effects": [
+              {
+                "op": "sacrifice",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": {
+                    "binding": "each_player"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "not_subtypes": [
+                    "Vampire"
+                  ],
+                  "count": 1,
+                  "chooser": "owner"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

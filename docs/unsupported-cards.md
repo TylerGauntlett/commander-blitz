@@ -10,5 +10,55 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**3 cards** blocked by **3** capabilities.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [life-loss-replacement](#life-loss-replacement) | 1 | 840 | replacement |
+| [missing-token](#missing-token) | 1 | 1231 | engine |
+| [phasing](#phasing) | 1 | 3944 | op |
+
+## life-loss-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a static ability on a permanent that replaces life-loss events for a chosen set of players -- an event-modifying continuous effect that intercepts every life-loss a player is about to suffer (including the life loss caused by damage, and life paid as a cost) and substitutes a scaled amount, here doubled, gated by an 'as long as it is your turn' condition
+  <br>Why the existing vocabulary won't do: static_effects has no entry that touches life totals at all -- the only replacement-shaped members of the vocabulary are prevent_damage (which reduces damage, is not a doubler, and would miss non-damage life loss such as Sign in Blood or paid life), plus the ops replace_deaths and replace_leaves_battlefield, which replace zone changes for permanents rather than events on players. The life_lost trigger event is a trigger, not a replacement: it fires after the loss has already been applied, so an additional lose_life op would deal the second half as a separate later event (visible to other life-loss triggers, and re-triggering itself), which is not the same as the printed 'lose twice that much life instead'.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bloodletter of Aclazotz** (rank 840) — `bloodletter_of_aclazotz`
+  - If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)
+
+</details>
+
+## missing-token
+
+Blocks **1** card.
+
+- **(engine)** a token pool entry for a mono-white 1/1 Vampire creature token with lifelink -- id in the house style `vampire_1_1_w_lifelink`, name "Vampire", types ["Creature"], subtypes ["Vampire"], power 1, toughness 1, keywords ["lifelink"], colors ["W"], color_identity ["W"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it
+  <br>Why the existing vocabulary won't do: `create_token` is validated by `validate_token_references` in src/automtg/cards/loader.py, which raises a load error for any token id that is not already a card marked `is_token`, so a card worker cannot define the token inline. The pool's nearest Vampire lifelink tokens are the wrong color: `vampire_1_1_wb_lifelink` is white AND black and `vampire_1_1_b_lifelink` is mono-black, while `vampire_1_1_b`, `vampire_1_1_bw`, `vampire_rogue_1_1_b_lifelink` and `vampire_demon_4_3_wb_flying` each miss on color, keywords, subtypes or size. Colour is not cosmetic on these tokens -- Elenda sits in a Vampire/lifegain shell where protection from black, colour-matters counts and devotion all read the token's colour -- so substituting the white-and-black one would silently print a different card. Nothing else about the sentence is missing: the `dies` trigger with `source: "self"`, the `create_token` op and the `power_had` value key already express "create a number of tokens equal to its power" exactly as Goldvein Hydra does.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elenda, the Dusk Rose** (rank 1231) — `elenda_the_dusk_rose`
+  - When Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.
+
+</details>
+
+## phasing
+
+Blocks **1** card.
+
+- **(op)** an `until_leaves` (or `link`) option on the `phase_out` op that suspends the untap-step phase-in for as long as the source permanent is on the battlefield, plus the linked selector that reads those permanents back -- the phasing twin of exile's O-Ring link, so a `leaves_battlefield` trigger on the same card can name what its own `phase_out` sent away and phase it back in
+  <br>Why the existing vocabulary won't do: `phase_out` in src/automtg/engine/effects/ops_board.py takes only `objects` and calls `turn.phase_out`, which sets `obj.phased_out` with no record of what caused it; the untap walk in src/automtg/engine/turn.py (`going_in`) then phases the permanent back in at its controller's very next untap step unconditionally. That is a fixed one-turn duration, not "until this enchantment leaves the battlefield" -- the creature would come back with Oubliette still on the battlefield, which is a materially different card. `exile`'s `until_leaves` is the right shape but the wrong zone: exiling instead of phasing loses counters, attachments and continuous effects, and fires zone-change triggers that phasing deliberately does not. `selector_keys` has `exiled_with` for the exile link and nothing equivalent for phasing, and no selector can name a phased-out permanent at all, so even a `leaves_battlefield` trigger on Oubliette cannot find its victim.
+- **(op)** a way to say "tap that creature as it phases in this way" -- either a `tapped: true` option on the linked phase-in that applies as the permanent returns, or a `phased_in` trigger event exposing the returning permanent so a `tap` can be aimed at it
+  <br>Why the existing vocabulary won't do: `turn.phase_in` restores the permanent untouched and only emits a `phased_in` state event; `phased_in` is not in `trigger_events`, so no ability can see it. The `tap` op exists but has no object to name: nothing links the returning creature to Oubliette, and by the time Oubliette's `leaves_battlefield` trigger would resolve the creature is still phased out and unselectable. Sequencing a plain `tap` at the enters trigger instead would tap it now rather than on the way back, which is a different card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oubliette** (rank 3944) — `oubliette`
+  - When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.
+  - Tap that creature as it phases in this way.
+
+</details>
