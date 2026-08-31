@@ -1189,6 +1189,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "charismatic_conqueror": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "charity_extractor": {
     "zone": "battlefield"
   },

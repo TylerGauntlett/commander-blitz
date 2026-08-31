@@ -13249,6 +13249,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "vampire_1_1_w_lifelink"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Tap that permanent to stop Charismatic Conqueror's Vampire token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "any_types": [
+                "Artifact",
+                "Creature"
+              ],
+              "controller": "opponent",
+              "tapped": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "charismatic_conqueror",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Charismatic Conqueror",
+      "oracle_text": "Vigilance\nWhenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

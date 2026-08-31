@@ -1,0 +1,74 @@
+{
+  "card": {
+    "id": "charismatic_conqueror",
+    "name": "Charismatic Conqueror",
+    "oracle_text": "Vigilance\nWhenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+    "mana_cost": "{1}{W}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Vampire",
+      "Soldier"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "vigilance"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "any",
+          "filter": {
+            "controller": "opponent",
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "tapped": false
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": {
+              "controller_of": "subject"
+            },
+            "prompt": "Tap that permanent to stop Charismatic Conqueror's Vampire token?",
+            "effects": [
+              {
+                "op": "tap",
+                "objects": {
+                  "binding": "subject"
+                }
+              }
+            ],
+            "else": [
+              {
+                "op": "create_token",
+                "token": "vampire_1_1_w_lifelink",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

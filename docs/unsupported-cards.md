@@ -10,22 +10,5 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **1** capability.
-
-| capability | cards | best EDHREC rank | kind |
-|---|---:|---:|---|
-| [enters-untapped](#enters-untapped) | 1 | 1035 | trigger_event |
-
-## enters-untapped
-
-Blocks **1** card.
-
-- **(trigger_event)** a way for a `permanent_enters` trigger to match only on the permanent's tapped state *as it arrives*, checked once when the ability queues and never again -- either by having `matches_card_filter` honour the `tapped` key it already accepts and then discards, or by putting the arrival's tapped state on the ENTERS_BATTLEFIELD event and adding it to `EVENT_BINDING_KEYS` so a filter clause can read it
-  <br>Why the existing vocabulary won't do: Two near misses, both wrong. (1) `filter: {"tapped": false}` LOADS and does nothing: `loader` validates a trigger filter with `validate_selector` against `SELECTOR_KEYS`, which contains `tapped`, but `triggers.matches_card_filter` reads controller, zone, types, subtypes, supertypes, colors, keywords, is_token, is_commander, mana_value, power and toughness and never looks at `tapped` at all. The clause is silently dropped, so the card would also trigger on every artifact and creature an opponent plays *tapped* -- strictly wider than the printed line, and wider is the dangerous direction the surrounding comments in that same function call out. (2) The trigger's `condition`, `{"exists": {"binding": "subject", "tapped": false}}`, does read the state correctly at queue time (`zones.enter_battlefield` sets `obj.tapped` before it fires the event, and `selectors.matches` honours `tapped`) but it makes the clause an intervening-if, and `stack.py` re-evaluates a trigger's `condition` on resolution per 603.4. This card's own printed ruling is the opposite: if the permanent is tapped by the time the ability resolves, its controller cannot tap it, so you DO create the token. Under the condition spelling the ability instead resolves as `skipped="condition"` and makes nothing -- and that is not a corner case, it is the line an opponent takes by simply tapping the freshly-arrived artifact for mana in response. There is no third spelling: no condition key, value key or event binding reports how a permanent arrived, and moving the check into the ability's effects as an `if` asks it at resolution rather than at arrival, which is wrong in both directions at once.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Charismatic Conqueror** (rank 1035) — `charismatic_conqueror`
-  - Whenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.
-
-</details>
+No gap records. Either nothing has been triaged yet, or the DSL
+covers everything attempted so far.

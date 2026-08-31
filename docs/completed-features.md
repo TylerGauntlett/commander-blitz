@@ -1313,6 +1313,50 @@ the Equip regression test passes under both, which is the point of it.
 stand-in rites that drive the same effects at a chosen moment, an Equipment, an
 Aura and a vanilla bear).
 
+## `tapped` in a trigger filter — reading how a permanent arrived
+
+### Overview
+
+Charismatic Conqueror: *"Whenever an artifact or creature an opponent controls
+enters **untapped**, they may tap that permanent. If they don't, you create a
+1/1 white Vampire creature token with lifelink."*
+
+The third member of the family `zone` and `any_types` already belong to, and the
+same trap all three sprang. `tapped` is in `SELECTOR_KEYS`, so
+`validate_selector` accepted it on a trigger filter and the card loaded clean —
+and `matches_card_filter` read controller, zone, types, colors, keywords, power,
+toughness and several relationships, and never looked at it.
+
+So the clause vanished. The card printed "enters untapped", and triggered on
+permanents entering tapped as well: **strictly wider than the printed line**.
+Wider is the dangerous direction, and no authoring gate can see it — the card
+compiles, resolves, does something, and does slightly too much of it.
+
+### Why object state is legitimate here
+
+This is the one clause in `matches_card_filter` answered from an object's state
+rather than its printed face, which the function's own docstring warns against —
+trigger subjects are frequently gone by the time it looks.
+
+It holds because a trigger filter is asked **once, as the ability is collected**,
+and `zones._enter_battlefield` writes `obj.tapped` before it fires
+ENTERS_BATTLEFIELD. At match time the flag is the permanent's arrival state,
+which is exactly the question. It is therefore only meaningful on an arrival: a
+`dies` filter writing it reads a permanent whose state `reset_permanent_state`
+has already cleared.
+
+### Why not a trigger `condition`
+
+The near miss, and it makes a different card. A condition reads the right state
+at queue time, but 603.4 **re-checks it on resolution** — so an opponent who taps
+the fresh artifact in response makes the ability do nothing.
+
+That inverts the printed ruling exactly: Charismatic Conqueror pays you the
+token precisely *because* they could not or would not tap it. Under the
+condition spelling the ability resolves as skipped and makes nothing, and the
+case is not a corner — it is what an opponent gets for free by tapping the
+artifact for mana in response.
+
 ## `until_leaves` on `phase_out` — phasing tied to a permanent, not to a clock
 
 ### Overview
