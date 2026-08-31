@@ -32,6 +32,8 @@ from __future__ import annotations
 
 import pytest
 
+from automtg.cards.authoring.packet import CARD_LEVEL_COST_KEYS
+from automtg.cards.authoring.verify import residual_text
 from automtg.cards.loader import DslError, compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.characteristics import chars
@@ -216,3 +218,103 @@ class TestTheLoaderGuards:
     def test_a_card_that_is_already_an_aura_is_refused(self):
         with pytest.raises(DslError, match="already an Aura"):
             compile_card(self._card(types=["Creature", "Enchantment"], subtypes=["Aura"]))
+
+
+class TestTheResidualGateClaimsThePrintedLine:
+    """"Bestow {1}{G}" is a printed line, and something has to claim it.
+
+    Gate 3 (`verify.residual_text`) asks which printed sentence each part of a
+    card implements and rejects anything left over, so that a card doing half of
+    what it prints cannot ship looking finished. Bestow is a *card-level* cost:
+    an `AbilityModel` is activated, triggered or static and a cost is none of
+    those, and `lift_keywords` will not consume the line either because "bestow"
+    is not one of the 34 ability keywords the loader accepts. So without a
+    claimant of its own the line is permanently residual, and a fully correct
+    bestow creature is rejected on the one line it has no way to answer.
+
+    Springheart Nantuko is the witness: every other line of it -- the static
+    "+1/+1" and the landfall trigger -- was implemented and verified, and the
+    card still failed gate 3 on "Bestow {1}{G}".
+
+    Instants and sorceries never hit this, which is why it went unnoticed for so
+    long: `claimed_lines` consumes every line of a card that has `spell_effects`,
+    so a convoke *sorcery* like Hour of Reckoning needs no claimant. A creature
+    has no `spell_effects` and must account for each line individually.
+    """
+
+    def _card(self, **extra) -> CardModel:
+        base = {
+            "id": "t_bestow_residual",
+            "name": "Bestow Residual",
+            "mana_cost": "{1}{G}",
+            "oracle_text": "Bestow {1}{G}\nEnchanted creature gets +1/+1.",
+            "types": ["Creature"],
+            "power": 1,
+            "toughness": 1,
+            "bestow": "{1}{G}",
+            "abilities": [
+                {
+                    "kind": "static",
+                    "text": "Enchanted creature gets +1/+1.",
+                    "effect": "buff",
+                    "power": {"const": 1},
+                    "toughness": {"const": 1},
+                    "affects": {"attached": True},
+                }
+            ],
+        }
+        base.update(extra)
+        return CardModel.model_validate(base)
+
+    def test_the_printed_bestow_line_is_claimed(self):
+        card = compile_card(self._card())
+        assert residual_text(card, card.oracle_text) == ""
+
+    def test_a_card_without_bestow_leaves_the_line_residual(self):
+        """The claimant is the field, not the word: no field, no claim."""
+        card = compile_card(self._card(id="t_bestow_absent", bestow=None))
+        assert "Bestow {1}{G}" in residual_text(card, card.oracle_text)
+
+    def test_a_cheaper_declared_cost_cannot_claim_a_dearer_printed_one(self):
+        """The strictness that stops the exemption laundering a better card.
+
+        A card charging {1}{G} while printing "Bestow {5}{W}" is strictly
+        cheaper than the real one wearing its words, so the line stays residual
+        rather than being waved through on the first word alone.
+        """
+        card = compile_card(
+            self._card(oracle_text="Bestow {5}{W}\nEnchanted creature gets +1/+1.")
+        )
+        assert "Bestow {5}{W}" in residual_text(card, card.oracle_text)
+
+    def test_the_same_price_spelled_differently_still_claims(self):
+        """Compared on the parsed cost, so "{G}{1}" and "{1}{G}" are one price."""
+        card = compile_card(
+            self._card(oracle_text="Bestow {G}{1}\nEnchanted creature gets +1/+1.")
+        )
+        assert residual_text(card, card.oracle_text) == ""
+
+    def test_an_unparsable_printed_cost_fails_closed(self):
+        card = compile_card(
+            self._card(oracle_text="Bestow sunshine\nEnchanted creature gets +1/+1.")
+        )
+        assert "Bestow sunshine" in residual_text(card, card.oracle_text)
+
+
+class TestThePacketAdvertisesBestow:
+    """A mechanic a worker is never shown is a mechanic that gets filed as a gap.
+
+    Springheart Nantuko's worker reasoned correctly from what it was given: the
+    packet lists `keywords`, `ops` and `cost_keys`, "bestow" is in none of them,
+    so the line looked unsayable. The gate fix alone would not have changed that
+    answer -- the card would have been refused a second time by the next worker,
+    for the same stated reason.
+    """
+
+    def test_bestow_is_in_the_advertised_card_level_costs(self):
+        assert "bestow" in CARD_LEVEL_COST_KEYS
+
+    def test_every_advertised_key_is_a_real_card_field(self):
+        """Stops the curated list rotting into names the loader would refuse."""
+        unknown = sorted(set(CARD_LEVEL_COST_KEYS) - set(CardModel.model_fields))
+        assert not unknown, f"advertised but not on CardModel: {unknown}"

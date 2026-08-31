@@ -10,27 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**2 cards** blocked by **3** capabilities.
+**1 card** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [bestow](#bestow) | 1 | 685 | cost |
 | [life-total-cant-change](#life-total-cant-change) | 1 | 107 | replacement |
 | [protection](#protection) | 1 | 107 | op |
-
-## bestow
-
-Blocks **1** card.
-
-- **(cost)** A claimant for the printed "Bestow {N}" line in the residual gate. verify._covered has a one-line exemption for every other card-level alternative/additional cost that no AbilityModel can honestly carry -- kicker, multikicker, gift, ascend, cost_reduction, emerge, evoke, additional_cost, devoid -- but none for the card-level `bestow` field. Add `if card.bestow is not None and stripped.lower().startswith("bestow "): return _declares_printed_cost(stripped[len("bestow "):], card.bestow)`, i.e. the strict form used by multikicker so a card declaring bestow {1}{G} cannot claim a printed "Bestow {5}{W}". `bestow` should also be surfaced in the packet reference block (it is in neither `keywords` nor `cost_keys`), so a worker has sanctioned vocabulary for the line.
-  <br>Why the existing vocabulary won't do: The mechanic itself is already fully built -- CardModel.bestow, carddef.BESTOW_TARGET, the loader's two type-line guards, the attached_to-driven Aura/creature switch in characteristics, and tests/unit/test_bestow.py -- and the finished card loads and compiles cleanly (gates 1 and 2 pass). It is gate 3 that rejects it: residual_text returns 'Bestow {1}{G}' because lift_keywords is strict against card.keywords and 'bestow' is not in loader.KNOWN_KEYWORDS, while _covered's exemption list stops at evoke/emerge. The nearest existing claimants, `evoke` and `emerge`, match only the literal words 'evoke '/'emerge ', so neither reaches this line, and no honest ability `text` can claim it either -- an AbilityModel is activated, triggered or static, and an alternative cost is none of those. Declaring keywords: ["bestow"] to make lift_keywords consume the line is not available: the loader rejects unknown keywords.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Springheart Nantuko** (rank 685) — `springheart_nantuko`
-  - Bestow {1}{G}
-
-</details>
 
 ## life-total-cant-change
 

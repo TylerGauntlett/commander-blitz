@@ -1021,6 +1021,29 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.evoke is not None and stripped.lower().startswith("evoke "):
         return True
 
+    # "Bestow {1}{G}" is that same card-level alternative cost once more, and
+    # the one this list had simply never reached -- Springheart Nantuko is the
+    # first bestow card the pipeline tried to author, and it failed gate 3 with
+    # every other line implemented. No ability can honestly claim the line: an
+    # AbilityModel is activated, triggered or static, and bestow is none of the
+    # three. `lift_keywords` cannot consume it either, because "bestow" is not
+    # in `KNOWN_KEYWORDS` and the loader rejects a card that declares it as one.
+    #
+    # Declaring the field is not a way to *look* implemented. The loader parses
+    # it, refuses it on a non-creature and on a card that is already an Aura,
+    # and `legality`/`stack` then offer the bestow cast line with the
+    # rules-supplied `BESTOW_TARGET` attached -- so the word cannot be written
+    # without the mechanic behind it.
+    #
+    # Strict like `multikicker`'s claimant rather than permissive like `evoke`'s
+    # directly above, and for multikicker's stated reason: bestow's whole line
+    # is its price, so a card declaring `bestow: "{1}{G}"` must not be able to
+    # claim a printed "Bestow {5}{W}" -- that is a strictly cheaper card wearing
+    # the right words. An unparsable or mismatched cost fails closed and the
+    # line stays residual.
+    if card.bestow is not None and stripped.lower().startswith("bestow "):
+        return _declares_printed_cost(stripped[len("bestow ") :], card.bestow)
+
     # "As an additional cost to cast this spell, sacrifice a creature" is the
     # same shape again: a card-level `Cost` charged by `_cast_variant`, with no
     # ability that could honestly claim it. This did not surface while the only

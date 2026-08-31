@@ -57,6 +57,24 @@ Gate 3 is how a *partially* translated card is caught. Abilities carry the
 printed sentence they implement in their `text`, and anything unclaimed is
 leftover — the inert-proxy problem one sentence smaller.
 
+A **card-level cost** is the one thing on a card that no ability can claim: an
+`AbilityModel` is activated, triggered or static, and a price is none of the
+three. So gate 3 keeps a claimant per cost — `kicker`, `multikicker`, `gift`,
+`ascend`, `cost_reduction`, `emerge`, `evoke`, `bestow`, `additional_cost` —
+matched against the card's own declared field. The strict ones compare the
+symbols printed on the line with the symbols actually charged, so a card
+declaring `bestow: "{1}{G}"` cannot claim a printed "Bestow {5}{W}": that is a
+strictly cheaper card wearing the right words.
+
+Instants and sorceries never reach any of this. `claimed_lines` treats
+`spell_effects` as accounting for the whole card, so a convoke *sorcery* needs no
+claimant and gate 5 is what catches it under-implemented. A permanent has no
+`spell_effects` and must account for each printed line on its own — which is why
+`bestow` surfaced only when Springheart Nantuko, a bestow *creature*, became the
+first of its kind the pipeline tried to author. Every other line of it was
+implemented and verified, and it still failed gate 3 on the one line it had no
+way to answer.
+
 Gate 6 exists because a naive merge lets an authored card **replace** a
 hand-written one, and every deck referencing that id would silently change.
 
