@@ -7754,6 +7754,78 @@
       "abilities": [
         {
           "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_2_2_b_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 2/2 black Vampire creature token with flying."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "subtypes": [
+                  "Vampire"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "op": "transform",
+              "to_back": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: Transform this creature. Activate only if you control five or more Vampires."
+        }
+      ],
+      "back_face": "lord_of_lineage",
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodline_keeper",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Bloodline Keeper // Lord of Lineage",
+      "oracle_text": "Flying\n{T}: Create a 2/2 black Vampire creature token with flying.\n{B}: Transform this creature. Activate only if you control five or more Vampires.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "mana": "{8}"
           },
           "effects": [
@@ -46861,6 +46933,69 @@
         "Dinosaur"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Vampire"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Other Vampire creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "vampire_2_2_b_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create a 2/2 black Vampire creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "lord_of_lineage",
+      "keywords": [
+        "flying"
+      ],
+      "name": "Lord of Lineage",
+      "oracle_text": "Flying\nOther Vampire creatures you control get +2/+2.\n{T}: Create a 2/2 black Vampire creature token with flying.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
