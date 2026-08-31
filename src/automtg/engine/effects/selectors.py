@@ -222,6 +222,7 @@ SELECTOR_KEYS = frozenset(
         # "…until this permanent leaves the battlefield." Cards in exile that
         # *this* source put there, read back by its own leaves-trigger.
         "exiled_with",
+        "phased_out_with",
         # "…dealt damage by this creature this turn." A trigger filter rather
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
@@ -314,7 +315,15 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         raise DslError(f"unknown zone {zone_name!r} in selector")
 
     candidates: list[int] = []
-    if zone is Zone.BATTLEFIELD:
+    if "phased_out_with" in selector:
+        # A phased-out permanent is "treated as though it does not exist"
+        # (702.26c) and is *out of* `state.battlefield`, so the ordinary
+        # battlefield pool cannot reach it -- which is why Oubliette could not
+        # be written before this. The link is what makes naming it safe: this
+        # pool is every phased-out object, and the `phased_out_with` filter
+        # below narrows it to the ones this permanent itself sent away.
+        candidates = [oid for oid, obj in state.objects.items() if obj.phased_out]
+    elif zone is Zone.BATTLEFIELD:
         candidates = list(state.battlefield)
     elif zone is Zone.STACK:
         candidates = [item.oid for item in state.stack if item.oid is not None]
@@ -658,6 +667,16 @@ def matches(
         who = selector["exiled_with"]
         want = ctx.source_oid if who == "self" else who
         if obj.exiled_by is None or obj.exiled_by != want:
+            return False
+    if "phased_out_with" in selector:
+        # "…until this enchantment leaves the battlefield" -- the permanents
+        # *this* card phased out, and no others. The phasing twin of
+        # `exiled_with`, and narrow for the same reason: a filter that matched
+        # every phased-out permanent would hand back creatures this card never
+        # touched, including ones phasing on their own keyword.
+        who = selector["phased_out_with"]
+        want = ctx.source_oid if who == "self" else who
+        if obj.phased_out_by is None or obj.phased_out_by != want:
             return False
 
     # Deliberately *outside* the combat block below, because it is the one attack

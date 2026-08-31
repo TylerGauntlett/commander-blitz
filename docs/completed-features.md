@@ -1313,6 +1313,66 @@ the Equip regression test passes under both, which is the point of it.
 stand-in rites that drive the same effects at a chosen moment, an Equipment, an
 Aura and a vanilla bear).
 
+## `until_leaves` on `phase_out` — phasing tied to a permanent, not to a clock
+
+### Overview
+
+Oubliette: *"When this enchantment enters, target creature phases out **until
+this enchantment leaves the battlefield**. Tap that creature as it phases in
+this way."*
+
+`phase_out` already shipped as a printed one-shot. Two things were missing, and
+they fail in opposite directions — which is why neither could be skipped.
+
+### The duration
+
+`turn.phase_out` recorded nothing about its cause, and the untap walk phased
+every phased-out permanent back in at its controller's **next** untap step,
+unconditionally. Written with the plain op, Oubliette returns the creature with
+the enchantment still on the battlefield.
+
+That is the worst shape a bug can take: the card is right for a whole turn and
+then quietly wrong, and nothing on the board says so. `phased_out_by` is the
+fix, and `turn._phasing` skips a permanent that has one — it is waiting on a
+source, not on a clock.
+
+### Naming it again
+
+702.26c takes a phased-out permanent *out of* `state.battlefield` — that list
+membership **is** "treated as though it does not exist", and it is what makes
+phasing cheap to implement, since targeting, the state-based actions, combat and
+the serializer all walk that list and miss it for free.
+
+It is also what made this card impossible: the enchantment's own
+`leaves_battlefield` trigger had no way to find the creature it had sent away.
+`phased_out_with` draws its candidate pool from `state.objects` instead, and is
+narrow for the reason `exiled_with` is narrow — a filter matching every
+phased-out permanent would hand back creatures this card never touched,
+including any phasing on its own keyword.
+
+### "As it phases in"
+
+`tapped` is a parameter on the new `phase_in` op rather than a `tap` op run
+afterwards, because "as it phases in this way" is **one event**. A separate tap
+happens to a creature that has already returned untapped: a "becomes tapped"
+trigger would see it, and a replacement could stop it.
+
+### Why not exile
+
+`until_leaves` is exactly the O-Ring shape and the temptation is to reuse the
+exile machinery whole. It is the wrong zone: exiling loses counters,
+attachments and continuous effects, and fires the zone-change triggers phasing
+deliberately does not. `test_phase_out_until_leaves.py` re-asserts all three
+across the round trip for that reason.
+
+### Two details that show on no board
+
+The link is **inherited** by whatever phased out attached to the victim
+(702.26e) — without that the Aura comes back a turn early on its own clock,
+leaving the creature phased out and naked. And it is **cleared on the way in**,
+or the permanent is invisible to the untap walk forever and a second phase-out
+strands it permanently.
+
 ## `replace_life_loss` — doubling a life loss, but not the damage that caused it
 
 ### Overview

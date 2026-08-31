@@ -4414,6 +4414,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: {key!r} needs 'objects' -- there is nothing to link"
         )
+    # The phasing twin of the link above, and the same silent failure: the link
+    # is written on the permanent that phased out, so with nothing selected
+    # there is nothing to write it on and the "until this leaves" clause is
+    # dropped -- leaving a card that phases a creature out for one turn.
+    if (
+        op == "phase_out"
+        and (effect.get("until_leaves") or effect.get("link"))
+        and "objects" not in effect
+    ):
+        key = "until_leaves" if effect.get("until_leaves") else "link"
+        raise DslError(
+            f"{where}: {key!r} needs 'objects' -- there is nothing to link"
+        )
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
@@ -4806,6 +4819,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: phase_out needs 'objects' naming what phases out "
             f"(use {{\"self_only\": true}} for \"this permanent phases out\")"
+        )
+    if op == "phase_in" and not effect.get("objects"):
+        # A phased-out permanent is out of `state.battlefield`, so an absent
+        # selector does not merely find the wrong thing -- it finds nothing at
+        # all, and the return half of an Oubliette would silently strand the
+        # creature phased out forever with its enchantment already gone.
+        raise DslError(
+            f"{where}: phase_in needs 'objects' naming what phases in "
+            f"(use {{\"phased_out_with\": \"self\"}} for \"the creature this "
+            f"card phased out\")"
         )
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on

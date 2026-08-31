@@ -193902,12 +193902,12 @@
     },
     "Oubliette": {
       "edhrec_rank": 3944,
-      "gate": "template",
+      "gate": null,
       "name": "Oubliette",
-      "reason": "no template for: When this enchantment enters, target creature phases out until this enchantment leaves the",
+      "reason": "",
       "scryfall_id": "87149eb8-7935-4e45-8092-6baa2a6fb8d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ouphe Vandals": {

@@ -195,7 +195,7 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
@@ -4585,6 +4585,45 @@ Neither workaround is this card:
 
 `objects` is required, for `regenerate`'s reason: with no selector
 `choose_objects` finds nothing and the spell resolves having phased nobody out.
+
+## "…phases out until this enchantment leaves the battlefield"
+
+```jsonc
+// Oubliette, the enters trigger
+{"op": "phase_out", "objects": {"target": "t1"}, "until_leaves": true}
+
+// Oubliette, the leaves-the-battlefield trigger on the same card
+{"op": "phase_in", "objects": {"phased_out_with": "self"}, "tapped": true}
+```
+
+`until_leaves` (or the neutral `link`) is the phasing twin of the same key on
+[`exile`](#three-exile-links), and it works the same way: the op records the
+link and nothing else, and the **return is a separate `leaves_battlefield`
+trigger on the same card**. Two abilities because the card really is two, and a
+player can respond between them.
+
+Without the link, the untap walk hands the permanent back at its controller’s
+very next untap step — which is what the plain one-shot above says, and which is
+a materially weaker card here. With it, `turn._phasing` skips the permanent: it
+is waiting on a source, not on a clock.
+
+`phased_out_with` is the only way to name a phased-out permanent. One is
+"treated as though it does not exist" (702.26c) and is **out of**
+`state.battlefield`, so an ordinary battlefield selector reaches nothing — which
+is precisely why this card could not be written before. The filter is narrow for
+the same reason `exiled_with` is: one matching every phased-out permanent would
+hand back creatures this card never touched, including any phasing on its own
+keyword.
+
+`tapped` on `phase_in` is Oubliette’s second sentence, "tap that creature as it
+phases in this way". A parameter rather than a `tap` op afterwards because "as
+it phases in" is **one event**: a separate tap happens to a creature that has
+already returned untapped, which a "becomes tapped" trigger would see and a
+replacement could stop.
+
+Exile is not a substitute even though `until_leaves` is exactly the O-Ring
+shape: exiling loses counters, attachments and continuous effects and fires zone
+changes, and phasing deliberately does none of that.
 
 ## "Enchanted permanent is a colorless land … and loses all other card types and abilities"
 

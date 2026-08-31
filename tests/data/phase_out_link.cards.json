@@ -1,0 +1,90 @@
+{
+  "_comment": "Cards that exist only for the linked-phase-out test (tests/unit/test_phase_out_until_leaves.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_oubliette` is Oubliette's shape -- phase out until this leaves, and tap on the way back. `t_loose_oubliette` writes the same card WITHOUT the link, which is the card the engine could already say and the one the untap step hands back after a turn; the pair is what pins that the link is doing the work. `t_untapped_oubliette` drops the `tapped` rider only.",
+  "cards": [
+    {
+      "id": "t_oubliette",
+      "name": "Test Oubliette",
+      "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield. Tap that creature as it phases in this way.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "phase_out", "objects": {"target": "t1"}, "until_leaves": true}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Tap that creature as it phases in this way.",
+          "trigger": {"event": "leaves_battlefield", "source": "self"},
+          "effects": [
+            {"op": "phase_in", "objects": {"phased_out_with": "self"}, "tapped": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_untapped_oubliette",
+      "name": "Test Untapped Oubliette",
+      "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "phase_out", "objects": {"target": "t1"}, "until_leaves": true}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Tap that creature as it phases in this way.",
+          "trigger": {"event": "leaves_battlefield", "source": "self"},
+          "effects": [
+            {"op": "phase_in", "objects": {"phased_out_with": "self"}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_loose_oubliette",
+      "name": "Test Loose Oubliette",
+      "oracle_text": "When this enchantment enters, target creature phases out.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this enchantment enters, target creature phases out.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "phase_out", "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    }
+  ]
+}
