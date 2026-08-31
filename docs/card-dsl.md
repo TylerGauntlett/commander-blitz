@@ -1795,6 +1795,7 @@ characteristics — the loader rejects anything else. See
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
 `block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
+[`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
 `extra_land_drops`, plus the player-wide ones below.
@@ -2237,6 +2238,49 @@ already arriving, and a `token_created` trigger fires after the token is on the
 battlefield, so it would add tokens *alongside* rather than instead — a strictly
 stronger card — and a Manufactor written that way would re-trigger on its own
 Treasure forever.
+
+## "If a player would lose life, they lose twice that much instead"
+
+```jsonc
+// Bloodletter of Aclazotz
+{ "kind": "static",
+  "text": "If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+  "effect": "replace_life_loss",
+  "affects_player": "opponent",
+  "loss_multiplier": 2,
+  "condition": { "is_your_turn": true } }
+```
+
+The engine's **second** replacement hook, and like `replace_token_creation` a
+named one rather than a general rule-616 system — see
+[rules-coverage.md](rules-coverage.md). It is read by `primitives.lose_life` and
+by the life-loss half of `primitives.damage_player`, which are the only two
+places a player's life goes down.
+
+**Both halves, or the card is half a card.** A replacement wired into only
+`lose_life` works against Village Rites and does nothing against a Lightning
+Bolt; wired into only `damage_player` it is the reverse. The parenthetical
+"(Damage causes loss of life.)" is printed on the card because rule 120.3c is
+not obvious, and paying life is a loss of life too (118.4), so a life-payment
+cost is doubled as well.
+
+**Only the loss is multiplied, never the damage.** A lifelinking source dealing
+3 to a doubled opponent takes 6 life off them and gains its controller **3**
+(702.15b), `DAMAGE_DEALT` still carries 3, and the commander-damage tally still
+counts 3. This is the same separation wither and infect make — it is still
+damage, and only where the number lands changes. Doubling the damage instead
+passes every life-total check but one, and quietly makes every lifelinking
+attacker gain twice what it prints.
+
+`loss_multiplier` is required and must be **2 or more**. A multiplier of 1
+replaces a loss with an identical loss, and 0 is "they lose no life" — a
+prevention, which is a different sentence and a much stronger card. Both would
+load clean, so both are refused at load, the same refusal `ward` makes about
+ward {0}.
+
+Two doublers **multiply**: each replacement applies once (614.5), so a loss
+doubled twice is quadrupled. 616.1 lets the affected player order two applicable
+replacements and this engine does not ask — for a product the order cannot show.
 
 ## Making a token that is already attacking
 

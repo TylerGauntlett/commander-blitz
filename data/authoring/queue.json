@@ -28602,12 +28602,12 @@
     },
     "Bloodletter of Aclazotz": {
       "edhrec_rank": 840,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodletter of Aclazotz",
-      "reason": "no template for: If an opponent would lose life during your turn, they lose twice that much life instead",
+      "reason": "",
       "scryfall_id": "89dda260-836d-44e7-9540-13c352a1526c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodline Bidding": {

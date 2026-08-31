@@ -365,6 +365,7 @@
       "play_lands_from_library_top",
       "prevent_damage",
       "protection",
+      "replace_life_loss",
       "replace_token_creation",
       "reveal_library_top",
       "set_colors",
