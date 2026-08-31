@@ -6973,6 +6973,10 @@
       "0": 48
     }
   },
+  "springheart_nantuko": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "springmane_cervin": {
     "life": {
       "0": 42

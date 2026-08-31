@@ -31,6 +31,46 @@ from ..proxy import CardFacts, build_proxy, facts_from_index
 from ..registry import CardRegistry, data_dir
 from .verify import EXPECTATION_KEYS
 
+#: The card-level alternative and additional costs, which live on the *card*
+#: rather than inside an ability's ``cost``.  A packet advertised ``cost_keys``
+#: -- what an activated ability may charge -- and stopped there, so a printed
+#: "Bestow {1}{G}" or "Evoke {2}{U}" had no sanctioned vocabulary at all: the
+#: word is not a keyword, not an op, and not a ``CostModel`` field, and a worker
+#: reading only those three lists correctly concludes it cannot say the line.
+#: Springheart Nantuko was filed as a gap on exactly that reasoning, with the
+#: mechanic already built and shipping.
+#:
+#: Curated rather than derived, because ``CardModel`` carries sixty-odd fields
+#: and only these are a *price*: handing a worker the whole model would bury the
+#: dozen that answer "what else can this line be?" among faces, splices and
+#: bookkeeping.  Each one is a bare mana cost unless noted.
+CARD_LEVEL_COST_KEYS = (
+    "additional_cost",  # a non-mana Cost, e.g. "sacrifice a creature"
+    "additional_optional",
+    "additional_repeatable",
+    "alternative_cost",
+    "ascend",  # bool; a state trigger, not a price
+    "bestow",
+    "buyback",
+    "cost_reduction",  # int; "this spell costs {X} less to cast"
+    "dredge",  # int
+    "emerge",
+    "evoke",
+    "flashback",
+    "foretell",
+    "gift",  # str; the noun phrase promised
+    "kicker",
+    "madness",
+    "morph",
+    "multikicker",
+    "mutate",
+    "overload",
+    "pay_generic_with",  # str; convoke and its relatives
+    "retrace",  # bool
+    "splice",
+    "suspend",
+)
+
 
 def packets_dir() -> Path:
     return data_dir() / "authoring" / "packets"
@@ -160,6 +200,11 @@ def reference() -> dict:
         # cost that already exists. Derived from the model the loader
         # validates against, for the same reason `static_effects` is.
         "cost_keys": sorted(CostModel.model_fields),
+        # What the *card* may charge, as opposed to what an ability may. See
+        # CARD_LEVEL_COST_KEYS: without this list a printed "Bestow {1}{G}"
+        # matches nothing a worker has been shown and becomes a gap record for
+        # a mechanic that already works.
+        "card_level_cost_keys": list(CARD_LEVEL_COST_KEYS),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
@@ -191,6 +236,15 @@ def reference() -> dict:
             " unclaimed means the card is only half implemented.",
             "An instant or sorcery puts its effects in `spell_effects`; a"
             " permanent puts them in `abilities`.",
+            "`card_level_cost_keys` is what the *card* may charge -- an"
+            " alternative or additional cost, set as a field on the card"
+            " itself rather than inside an ability. A printed line that is"
+            " just a mechanic and a price (\"Bestow {1}{G}\", \"Evoke"
+            " {2}{U}\", \"Kicker {1}{R}\") is one of these, and no ability"
+            " can carry it: an ability is activated, triggered or static, and"
+            " a cost is none of the three. Do not invent an ability to hold"
+            " the line, and do not put the mechanic in `keywords` -- the"
+            " loader knows only the 34 ability keywords and rejects the rest.",
             "`cost_keys` is what an activated ability's `cost` may contain."
             " A printed \"<cost>: <effect>\" line splits into a `cost` from"
             " that list and `effects` from `ops` -- paying with an op instead"

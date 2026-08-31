@@ -259252,12 +259252,12 @@
     },
     "Springheart Nantuko": {
       "edhrec_rank": 685,
-      "gate": "template",
+      "gate": null,
       "name": "Springheart Nantuko",
-      "reason": "no template for: Bestow {1}{G}",
+      "reason": "",
       "scryfall_id": "54a3ea87-005e-4985-b2a5-21711d0b71c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Springing Tiger": {
