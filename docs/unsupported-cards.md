@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**3 cards** blocked by **3** capabilities.
+**2 cards** blocked by **2** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [life-loss-replacement](#life-loss-replacement) | 1 | 840 | replacement |
-| [missing-token](#missing-token) | 1 | 1231 | engine |
 | [phasing](#phasing) | 1 | 3944 | op |
 
 ## life-loss-replacement
@@ -29,20 +28,6 @@ Blocks **1** card.
 
 - **Bloodletter of Aclazotz** (rank 840) — `bloodletter_of_aclazotz`
   - If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)
-
-</details>
-
-## missing-token
-
-Blocks **1** card.
-
-- **(engine)** a token pool entry for a mono-white 1/1 Vampire creature token with lifelink -- id in the house style `vampire_1_1_w_lifelink`, name "Vampire", types ["Creature"], subtypes ["Vampire"], power 1, toughness 1, keywords ["lifelink"], colors ["W"], color_identity ["W"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it
-  <br>Why the existing vocabulary won't do: `create_token` is validated by `validate_token_references` in src/automtg/cards/loader.py, which raises a load error for any token id that is not already a card marked `is_token`, so a card worker cannot define the token inline. The pool's nearest Vampire lifelink tokens are the wrong color: `vampire_1_1_wb_lifelink` is white AND black and `vampire_1_1_b_lifelink` is mono-black, while `vampire_1_1_b`, `vampire_1_1_bw`, `vampire_rogue_1_1_b_lifelink` and `vampire_demon_4_3_wb_flying` each miss on color, keywords, subtypes or size. Colour is not cosmetic on these tokens -- Elenda sits in a Vampire/lifegain shell where protection from black, colour-matters counts and devotion all read the token's colour -- so substituting the white-and-black one would silently print a different card. Nothing else about the sentence is missing: the `dies` trigger with `source: "self"`, the `create_token` op and the `power_had` value key already express "create a number of tokens equal to its power" exactly as Goldvein Hydra does.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elenda, the Dusk Rose** (rank 1231) — `elenda_the_dusk_rose`
-  - When Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.
 
 </details>
 

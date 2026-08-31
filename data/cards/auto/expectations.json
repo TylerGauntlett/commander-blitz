@@ -2013,6 +2013,10 @@
   "elementalist_adept": {
     "zone": "battlefield"
   },
+  "elenda_the_dusk_rose": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elephant_rat": {
     "zone": "battlefield"
   },

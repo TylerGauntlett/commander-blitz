@@ -22646,6 +22646,78 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature dies, put a +1/+1 counter on Elenda.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "create_token",
+              "token": "vampire_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "elenda_the_dusk_rose",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{B}",
+      "name": "Elenda, the Dusk Rose",
+      "oracle_text": "Lifelink\nWhenever another creature dies, put a +1/+1 counter on Elenda.\nWhen Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

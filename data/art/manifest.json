@@ -3579,6 +3579,12 @@
     "file": "elementalist_adept.jpg",
     "scryfall_id": "d9768cc6-8f53-4922-ae32-376a2f32d719"
   },
+  "elenda_the_dusk_rose": {
+    "artist": "rishxxv",
+    "bytes": 99403,
+    "file": "elenda_the_dusk_rose.jpg",
+    "scryfall_id": "41c42be7-84fe-4d9d-bf5c-e75e4d5635fa"
+  },
   "elephant_3_3_g": {
     "artist": "David \u00c1lvarez",
     "bytes": 79573,
@@ -13878,6 +13884,12 @@
     "artist": "Volkan Ba\u01f5a",
     "bytes": 86766,
     "file": "vampire_1_1_bw.jpg",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
+  "vampire_1_1_w_lifelink": {
+    "artist": "Volkan Ba\u01f5a",
+    "bytes": 86766,
+    "file": "vampire_1_1_w_lifelink.jpg",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
   "vampire_1_1_wb_lifelink": {
