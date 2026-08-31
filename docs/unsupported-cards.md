@@ -10,5 +10,52 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**2 cards** blocked by **3** capabilities.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [bestow](#bestow) | 1 | 685 | cost |
+| [life-total-cant-change](#life-total-cant-change) | 1 | 107 | replacement |
+| [protection](#protection) | 1 | 107 | op |
+
+## bestow
+
+Blocks **1** card.
+
+- **(cost)** A claimant for the printed "Bestow {N}" line in the residual gate. verify._covered has a one-line exemption for every other card-level alternative/additional cost that no AbilityModel can honestly carry -- kicker, multikicker, gift, ascend, cost_reduction, emerge, evoke, additional_cost, devoid -- but none for the card-level `bestow` field. Add `if card.bestow is not None and stripped.lower().startswith("bestow "): return _declares_printed_cost(stripped[len("bestow "):], card.bestow)`, i.e. the strict form used by multikicker so a card declaring bestow {1}{G} cannot claim a printed "Bestow {5}{W}". `bestow` should also be surfaced in the packet reference block (it is in neither `keywords` nor `cost_keys`), so a worker has sanctioned vocabulary for the line.
+  <br>Why the existing vocabulary won't do: The mechanic itself is already fully built -- CardModel.bestow, carddef.BESTOW_TARGET, the loader's two type-line guards, the attached_to-driven Aura/creature switch in characteristics, and tests/unit/test_bestow.py -- and the finished card loads and compiles cleanly (gates 1 and 2 pass). It is gate 3 that rejects it: residual_text returns 'Bestow {1}{G}' because lift_keywords is strict against card.keywords and 'bestow' is not in loader.KNOWN_KEYWORDS, while _covered's exemption list stops at evoke/emerge. The nearest existing claimants, `evoke` and `emerge`, match only the literal words 'evoke '/'emerge ', so neither reaches this line, and no honest ability `text` can claim it either -- an AbilityModel is activated, triggered or static, and an alternative cost is none of those. Declaring keywords: ["bestow"] to make lift_keywords consume the line is not available: the loader rejects unknown keywords.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Springheart Nantuko** (rank 685) — `springheart_nantuko`
+  - Bestow {1}{G}
+
+</details>
+
+## life-total-cant-change
+
+Blocks **1** card.
+
+- **(replacement)** a player-scoped, duration-bounded (`until_your_next_turn`) replacement that stops *every* change to a life total in both directions -- life gain, life loss, life paid as a cost, and the life-loss half of damage -- so the total is frozen rather than merely shielded
+  <br>Why the existing vocabulary won't do: `replace_life_loss` is the closest thing and falls short three ways: it is a `static_effect`, so only a permanent can carry it and an Instant's `spell_effects` cannot install one; it multiplies the magnitude of a loss (`loss_multiplier`) rather than forbidding the change, and a multiplier of 0 would still be a downward-only rewrite; and it is wired only into `primitives.lose_life` and the loss half of `primitives.damage_player`, so `gain_life` moves the total straight past it. The `prevent_damage` op is player-scoped but stops only damage -- its docstring states the only implemented duration is `this_turn` -- leaving ordinary life loss and all life gain free to move the total.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi's Protection** (rank 107) — `teferi_s_protection`
+  - Until your next turn, your life total can't change and you gain protection from everything.
+
+</details>
+
+## protection
+
+Blocks **1** card.
+
+- **(op)** grant_protection must be able to name a *player* as the recipient (a `player` spec beside `objects`), to grant the quality "everything" rather than only a list of colours/types/subtypes, and to last `until_your_next_turn` instead of only until end of turn -- and every rule that reads protection (targeting, damage, enchanting, blocking) has to consult a player's protection set, not just an object's
+  <br>Why the existing vocabulary won't do: grant_protection resolves its recipients through choose_objects and then skips any oid that is not `on_battlefield`, so a player can never receive it; its qualities are built only from `from_colors` (each entry loader-validated against KNOWN_COLORS), `from_types` and `from_subtypes`, none of which can express "everything"; and it writes an `until_eot` TempEffect that cleanup ends this turn, so the "until your next turn" clock does not exist for it. `characteristics.protection_from(state, oid)` is object-keyed throughout, so there is no player-side reader either. `grant_keyword` is not a substitute: protection is parameterised and a Keyword is a bare string.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi's Protection** (rank 107) — `teferi_s_protection`
+  - Until your next turn, your life total can't change and you gain protection from everything.
+
+</details>
