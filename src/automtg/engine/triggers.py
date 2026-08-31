@@ -1072,6 +1072,30 @@ def matches_card_filter(
         return False
     if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
         return False
+    # "Whenever an artifact or creature an opponent controls enters **untapped**"
+    # -- Charismatic Conqueror. The one clause here that reads object *state*
+    # rather than a printed characteristic, and it is sound for the reason the
+    # rest of this function is not: a trigger filter is evaluated once, when the
+    # ability is collected, and `zones.enter_battlefield` sets `tapped` before it
+    # fires ENTERS_BATTLEFIELD -- so at match time this is the permanent's
+    # arrival state, which is exactly what the printed line asks about.
+    #
+    # It has to be here rather than in a trigger `condition`, which would be a
+    # different card: 603.4 re-checks a condition on resolution, so an opponent
+    # tapping the fresh artifact in response would make the ability do nothing --
+    # the exact opposite of the printed ruling, which gives you the token
+    # precisely when they cannot tap it.
+    #
+    # Until this existed the key **loaded and was silently dropped**:
+    # `validate_selector` accepts `tapped` because it is in `SELECTOR_KEYS`, and
+    # nothing here read it -- so the clause vanished and the card triggered on
+    # permanents entering tapped as well, strictly wider than printed. Wider is
+    # the dangerous direction, and no gate could see it.
+    #
+    # Only meaningful on an arrival; a `dies` filter writing it reads a
+    # permanent whose state `reset_permanent_state` has already cleared.
+    if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
+        return False
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False

@@ -44582,12 +44582,12 @@
     },
     "Charismatic Conqueror": {
       "edhrec_rank": 1035,
-      "gate": "template",
+      "gate": null,
       "name": "Charismatic Conqueror",
-      "reason": "no template for: Whenever an artifact or creature an opponent controls enters untapped, they may tap that p",
+      "reason": "",
       "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Charismatic Vanguard": {

@@ -1641,6 +1641,23 @@ needs both, and needs them in the narrowing direction: `types` is a conjunction,
 so "an artifact, creature, or land" written with it matches nothing, and without
 `zone` the card fires when an opponent *cycles* a land card out of hand.
 
+**`tapped`** in a trigger filter is the third of that family and the same trap:
+legal to write, and read by nothing until now. It is how "whenever an artifact
+or creature an opponent controls enters **untapped**" is said (Charismatic
+Conqueror), and it is the one clause `matches_card_filter` answers from object
+*state* rather than from a printed face.
+
+That is sound because a trigger filter is asked **once, as the ability is
+collected**, and `zones._enter_battlefield` writes `tapped` before it fires the
+event — so the flag it reads is the permanent's arrival state. It is therefore
+only meaningful on an arrival: a `dies` filter writing it reads a permanent
+whose state `reset_permanent_state` has already cleared.
+
+Not a trigger `condition`, which would be a **different card**. A condition is
+re-checked on resolution (603.4), so an opponent tapping the fresh artifact in
+response would make the ability do nothing — the opposite of the printed ruling,
+which pays you off precisely when they cannot tap it.
+
 **`becomes_monarch`** fires when the crown changes hands, whichever way it got
 there — the `become_monarch` op and the game's own combat-damage rule alike, since
 both go through one primitive. Its subject is a **player**, not an object, so

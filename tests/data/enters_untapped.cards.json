@@ -1,0 +1,77 @@
+{
+  "_comment": "Cards that exist only for the enters-untapped trigger-filter test (tests/unit/test_enters_untapped.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_untapped_conqueror` is Charismatic Conqueror's trigger shape, cut down to a bare life-gain payload so the test measures the FILTER and not a token pool or a may-decision. `t_loose_conqueror` writes the identical card with the `tapped` clause removed -- the card the engine used to produce silently, since the key loaded and was dropped. `t_tapped_conqueror` asks the opposite question, to pin that the key is read as a value rather than as a mere presence check.",
+  "cards": [
+    {
+      "id": "t_untapped_conqueror",
+      "name": "Test Untapped Conqueror",
+      "oracle_text": "Whenever an artifact or creature an opponent controls enters untapped, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an artifact or creature an opponent controls enters untapped, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "any",
+            "filter": {"controller": "opponent", "any_types": ["Artifact", "Creature"], "tapped": false}
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_loose_conqueror",
+      "name": "Test Loose Conqueror",
+      "oracle_text": "Whenever an artifact or creature an opponent controls enters, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an artifact or creature an opponent controls enters, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "any",
+            "filter": {"controller": "opponent", "any_types": ["Artifact", "Creature"]}
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_tapped_conqueror",
+      "name": "Test Tapped Conqueror",
+      "oracle_text": "Whenever an artifact or creature an opponent controls enters tapped, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an artifact or creature an opponent controls enters tapped, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "any",
+            "filter": {"controller": "opponent", "any_types": ["Artifact", "Creature"], "tapped": true}
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}
