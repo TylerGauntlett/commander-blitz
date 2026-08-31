@@ -80322,12 +80322,12 @@
     },
     "Elenda, the Dusk Rose": {
       "edhrec_rank": 1231,
-      "gate": "template",
+      "gate": null,
       "name": "Elenda, the Dusk Rose",
-      "reason": "no template for: Whenever another creature dies, put a +1/+1 counter on Elenda",
+      "reason": "",
       "scryfall_id": "41c42be7-84fe-4d9d-bf5c-e75e4d5635fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elephant Ambush": {

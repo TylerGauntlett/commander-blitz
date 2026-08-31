@@ -707,6 +707,29 @@
       "is_token": true
     },
     {
+      "id": "vampire_1_1_w_lifelink",
+      "name": "Vampire Lifelink Token",
+      "oracle_text": "1/1 white Vampire creature token with lifelink.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "lifelink"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "moogle_1_2_w_lifelink",
       "name": "Moogle Token",
       "oracle_text": "1/2 white Moogle creature token with lifelink.",
