@@ -1,0 +1,70 @@
+{
+  "card": {
+    "id": "oubliette",
+    "name": "Oubliette",
+    "oracle_text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield. Tap that creature as it phases in this way. (Auras and Equipment phase out with it. While permanents are phased out, they're treated as though they don't exist.)",
+    "mana_cost": "{1}{B}{B}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this enchantment enters, target creature phases out until this enchantment leaves the battlefield.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "phase_out",
+            "objects": {
+              "target": "t1"
+            },
+            "until_leaves": true
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Tap that creature as it phases in this way.",
+        "trigger": {
+          "event": "leaves_battlefield",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "phase_in",
+            "objects": {
+              "phased_out_with": "self"
+            },
+            "tapped": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 32
+  }
+}

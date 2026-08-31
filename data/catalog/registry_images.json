@@ -307,6 +307,10 @@
     "artist": "Monztre",
     "scryfall_id": "424972d6-3b2c-449b-b786-749a77020fa1"
   },
+  "anowon_the_ruin_sage": {
+    "artist": "Dan Murayama Scott",
+    "scryfall_id": "b8630ae1-8fe9-4d6e-899b-a28d86d4d729"
+  },
   "anticipate": {
     "artist": "Kieran Yanner",
     "scryfall_id": "46b6dfb2-ffe4-44fb-bfd9-df11bc3193df"
@@ -903,6 +907,10 @@
     "artist": "Mica Angela Hendricks",
     "scryfall_id": "97d42d32-c9c8-4def-a48b-0590ea572e33"
   },
+  "bloodletter_of_aclazotz": {
+    "artist": "Michael Walsh",
+    "scryfall_id": "89dda260-836d-44e7-9540-13c352a1526c"
+  },
   "bloodline_keeper": {
     "artist": "Jason Chan",
     "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00"
@@ -1402,6 +1410,10 @@
   "charisma_bobblehead": {
     "artist": "Micha\u0142 Mi\u0142kowski",
     "scryfall_id": "35f61330-869f-448c-8374-1cbac7c23454"
+  },
+  "charismatic_conqueror": {
+    "artist": "Bram Sels",
+    "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515"
   },
   "charity_extractor": {
     "artist": "Matt Stewart",
@@ -2383,6 +2395,10 @@
   "elementalist_adept": {
     "artist": "L.A. Draws",
     "scryfall_id": "d9768cc6-8f53-4922-ae32-376a2f32d719"
+  },
+  "elenda_the_dusk_rose": {
+    "artist": "rishxxv",
+    "scryfall_id": "41c42be7-84fe-4d9d-bf5c-e75e4d5635fa"
   },
   "elephant_3_3_g": {
     "artist": "David \u00c1lvarez",
@@ -3451,6 +3467,10 @@
   "grasslands": {
     "artist": "John Avon",
     "scryfall_id": "ecf52798-b2e0-4d0a-a41b-8927bfa60375"
+  },
+  "grave_pact": {
+    "artist": "BODAX",
+    "scryfall_id": "9aaced6e-f656-49d3-9130-ba255800e0a5"
   },
   "grave_titan": {
     "artist": "Nils Hamm",
@@ -5050,6 +5070,10 @@
     "artist": "Izzy",
     "scryfall_id": "05c4a9c4-20d5-457d-9127-c27b8768255a"
   },
+  "malakir_bloodwitch": {
+    "artist": "Shelly Wan",
+    "scryfall_id": "b91ceead-5071-43e8-bf90-f379d683acdf"
+  },
   "malakir_mire": {
     "artist": "Marta Nael",
     "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60"
@@ -5990,6 +6014,10 @@
     "artist": "Greg Hildebrandt",
     "scryfall_id": "ca0d3984-fbb3-4661-a424-f79d2253e057"
   },
+  "oubliette": {
+    "artist": "Will Sweeney",
+    "scryfall_id": "87149eb8-7935-4e45-8092-6baa2a6fb8d2"
+  },
   "overencumbered": {
     "artist": "Elizabeth Peir\u00f3",
     "scryfall_id": "1c6ab676-2437-4927-8f30-dd234298f190"
@@ -6446,6 +6474,10 @@
   "python": {
     "artist": "Steve White",
     "scryfall_id": "84fbe194-1d9b-4d3f-b7a0-aa058945aca1"
+  },
+  "qarsi_revenant": {
+    "artist": "Lorenzo Mastroianni",
+    "scryfall_id": "a99e8c07-fcf7-448c-b71c-5eb1c6005a96"
   },
   "quakestrider_ceratops": {
     "artist": "Josiah \"Jo\" Cameron",
@@ -9184,6 +9216,10 @@
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },
   "vampire_1_1_bw": {
+    "artist": "Volkan Ba\u01f5a",
+    "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
+  },
+  "vampire_1_1_w_lifelink": {
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "73690930-4b00-4f35-aa6f-bbfeeb711330"
   },

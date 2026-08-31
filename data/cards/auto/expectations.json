@@ -266,6 +266,10 @@
   "ankle_biter": {
     "zone": "battlefield"
   },
+  "anowon_the_ruin_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anurid_murkdiver": {
     "zone": "battlefield"
   },
@@ -713,6 +717,15 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "bloodletter_of_aclazotz": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bloodline_keeper": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "bloodrite_invoker": {
@@ -1178,6 +1191,10 @@
     "zone": "battlefield"
   },
   "charisma_bobblehead": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "charismatic_conqueror": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2007,6 +2024,10 @@
     "zone": "battlefield"
   },
   "elementalist_adept": {
+    "zone": "battlefield"
+  },
+  "elenda_the_dusk_rose": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elephant_rat": {
@@ -2967,6 +2988,10 @@
     "zone": "battlefield"
   },
   "grasslands": {
+    "zone": "battlefield"
+  },
+  "grave_pact": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "grave_titan": {
@@ -4271,6 +4296,14 @@
   "makindi_griffin": {
     "zone": "battlefield"
   },
+  "malakir_bloodwitch": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 41,
+      "1": 39
+    },
+    "zone": "battlefield"
+  },
   "malakir_rebirth_malakir_mire": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -5093,6 +5126,10 @@
   "orzhov_signet": {
     "zone": "battlefield"
   },
+  "oubliette": {
+    "battlefield_count": 32,
+    "zone": "battlefield"
+  },
   "overencumbered": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5532,6 +5569,18 @@
     "zone": "battlefield"
   },
   "python": {
+    "zone": "battlefield"
+  },
+  "qarsi_revenant": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ]
+    },
     "zone": "battlefield"
   },
   "quakestrider_ceratops": {

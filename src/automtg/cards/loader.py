@@ -237,6 +237,15 @@ STATIC_EFFECTS = frozenset(
         # `docs/rules-coverage.md`, which records that there is no general
         # rule-616 replacement system and that this is not the start of one.
         "replace_token_creation",
+        # Bloodletter of Aclazotz.  "If an opponent would lose life during your
+        # turn, they lose twice that much life instead."  The engine's *second*
+        # replacement hook and, like the first, a named one rather than the
+        # start of a rule-616 system: `docs/rules-coverage.md` records that a
+        # replacement of anything but a token creation is engine work, and this
+        # is that work done once, for life loss.  Read by `primitives.lose_life`
+        # and by the life-loss half of `primitives.damage_player`, which are
+        # the two places a player's life goes down.
+        "replace_life_loss",
     }
 )
 
@@ -260,6 +269,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "double_land_triggers",
         "double_land_mana",
         "freeze_opponent_lands",
+        "replace_life_loss",
     }
 )
 
@@ -2550,6 +2560,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_token'/'create_instead' only mean anything on a "
             f"replace_token_creation static, not on {model.effect!r}"
         )
+
+    if model.effect == "replace_life_loss":
+        # A multiplier of 1 replaces a loss with an identical loss, and 0 is a
+        # *prevention* -- "they lose no life" -- which is a different printed
+        # sentence and a strictly stronger card. Both would load clean and
+        # neither is what any card says, so both are refused here rather than
+        # left to read as a typo nobody notices. Same refusal `ward` makes
+        # about ward {0} and `replace_token_creation` about an empty
+        # `create_instead`.
+        if model.loss_multiplier is None:
+            raise DslError(
+                f"{where}: replace_life_loss needs 'loss_multiplier' -- what the "
+                f"life loss is multiplied by"
+            )
+        if model.loss_multiplier < 2:
+            raise DslError(
+                f"{where}.loss_multiplier: must be 2 or more; "
+                f"1 replaces a loss with itself and 0 is a prevention, "
+                f"which is a different effect"
+            )
+    elif model.loss_multiplier is not None:
+        raise DslError(
+            f"{where}: 'loss_multiplier' only means anything on a "
+            f"replace_life_loss static, not on {model.effect!r}"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
@@ -2666,6 +2701,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects_token"] = dict(model.affects_token)
     if model.create_instead:
         static["create_instead"] = list(model.create_instead)
+    if model.loss_multiplier is not None:
+        static["loss_multiplier"] = model.loss_multiplier
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     for field_name in ("power", "toughness", "amount"):
@@ -4377,6 +4414,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: {key!r} needs 'objects' -- there is nothing to link"
         )
+    # The phasing twin of the link above, and the same silent failure: the link
+    # is written on the permanent that phased out, so with nothing selected
+    # there is nothing to write it on and the "until this leaves" clause is
+    # dropped -- leaving a card that phases a creature out for one turn.
+    if (
+        op == "phase_out"
+        and (effect.get("until_leaves") or effect.get("link"))
+        and "objects" not in effect
+    ):
+        key = "until_leaves" if effect.get("until_leaves") else "link"
+        raise DslError(
+            f"{where}: {key!r} needs 'objects' -- there is nothing to link"
+        )
     # Same shape as the link above: the permission is written on the exiled
     # card, so with nothing selected there is no card to write it on and the
     # key is silently doing nothing.
@@ -4769,6 +4819,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: phase_out needs 'objects' naming what phases out "
             f"(use {{\"self_only\": true}} for \"this permanent phases out\")"
+        )
+    if op == "phase_in" and not effect.get("objects"):
+        # A phased-out permanent is out of `state.battlefield`, so an absent
+        # selector does not merely find the wrong thing -- it finds nothing at
+        # all, and the return half of an Oubliette would silently strand the
+        # creature phased out forever with its enchantment already gone.
+        raise DslError(
+            f"{where}: phase_in needs 'objects' naming what phases in "
+            f"(use {{\"phased_out_with\": \"self\"}} for \"the creature this "
+            f"card phased out\")"
         )
     if op == "unattach" and not effect.get("objects"):
         # Explore's trap once more: "unattach this permanent" is three words on

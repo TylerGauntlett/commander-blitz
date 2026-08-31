@@ -408,6 +408,21 @@ def collect_answers(queue: Queue, *, dry_run: bool, supersede: bool = False) -> 
                 cards[str(back["id"])] = back
         if replaces:
             superseded.add(card_id)
+            # **The back faces go too.** The write loop above puts every
+            # companion into `auto/` under its own id, so superseding only the
+            # front leaves the hand-written *back* sitting in `data/cards/`
+            # beside the new one -- two `lord_of_lineage` entries, and
+            # `CardRegistry.from_paths` raises `duplicate card id` on the next
+            # boot. The registry gate cannot catch it: it builds one merged
+            # dict, where the companion silently overwrites the incumbent
+            # rather than colliding with it.
+            #
+            # Only ids already in the pool, so a card whose back face is new
+            # does not quietly delete anything.
+            superseded.update(str(back["id"]) for back in backs if str(back["id"]) in in_pool)
+            # Counted per *card*, not per face: two entries are still one
+            # Bloodline Keeper, and the line this feeds says "hand-written
+            # card(s)".
             tally["superseded"] += 1
         if entry is not None:
             entry.status = "done"

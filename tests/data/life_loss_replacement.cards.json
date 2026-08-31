@@ -1,0 +1,108 @@
+{
+  "_comment": "Cards that exist only for the life-loss replacement test (tests/unit/test_life_loss_replacement.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_bloodletter` is Bloodletter of Aclazotz's shape -- an opponent's life loss doubled, but only during your turn. `t_always_bloodletter` drops the turn condition, so the pair pins that the condition is actually read rather than stored. `t_self_bloodletter` points the same replacement at its own controller, which is the half no printed card has and the only way to test `affects_player` here. `t_drain` and `t_drain_bolt` are the two ways life goes down -- a plain loss and damage -- and `t_lifelink_bolt` is damage from a lifelinking source, which is where doubling the damage rather than the loss would show.",
+  "cards": [
+    {
+      "id": "t_bloodletter",
+      "name": "Test Bloodletter",
+      "oracle_text": "Flying\nIf an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+          "effect": "replace_life_loss",
+          "affects_player": "opponent",
+          "loss_multiplier": 2,
+          "condition": {"is_your_turn": true}
+        }
+      ]
+    },
+    {
+      "id": "t_always_bloodletter",
+      "name": "Test Unconditional Bloodletter",
+      "oracle_text": "If an opponent would lose life, they lose twice that much life instead.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an opponent would lose life, they lose twice that much life instead.",
+          "effect": "replace_life_loss",
+          "affects_player": "opponent",
+          "loss_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "t_self_bloodletter",
+      "name": "Test Self Bloodletter",
+      "oracle_text": "If you would lose life, you lose twice that much life instead.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Vampire"],
+      "power": 2,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would lose life, you lose twice that much life instead.",
+          "effect": "replace_life_loss",
+          "affects_player": "you",
+          "loss_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "t_drain",
+      "name": "Test Drain",
+      "oracle_text": "Target player loses 3 life.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "lose_life", "player": "opponent", "amount": {"const": 3}}
+      ]
+    },
+    {
+      "id": "t_drain_bolt",
+      "name": "Test Drain Bolt",
+      "oracle_text": "Test Drain Bolt deals 3 damage to target player.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}],
+      "spell_effects": [
+        {"op": "damage", "target": "t1", "amount": {"const": 3}}
+      ]
+    },
+    {
+      "id": "t_lifelink_bear",
+      "name": "Test Lifelink Bear",
+      "oracle_text": "Lifelink",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": ["lifelink"]
+    }
+  ]
+}

@@ -9702,12 +9702,12 @@
     },
     "Anowon, the Ruin Sage": {
       "edhrec_rank": 5073,
-      "gate": "template",
+      "gate": null,
       "name": "Anowon, the Ruin Sage",
-      "reason": "no template for: At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their ch",
+      "reason": "",
       "scryfall_id": "b8630ae1-8fe9-4d6e-899b-a28d86d4d729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Anowon, the Ruin Thief": {
@@ -28602,12 +28602,12 @@
     },
     "Bloodletter of Aclazotz": {
       "edhrec_rank": 840,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodletter of Aclazotz",
-      "reason": "no template for: If an opponent would lose life during your turn, they lose twice that much life instead",
+      "reason": "",
       "scryfall_id": "89dda260-836d-44e7-9540-13c352a1526c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodline Bidding": {
@@ -28632,12 +28632,12 @@
     },
     "Bloodline Keeper // Lord of Lineage": {
       "edhrec_rank": 2517,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodline Keeper // Lord of Lineage",
-      "reason": "no template for: {T}: Create a 2/2 black Vampire creature token with flying",
+      "reason": "",
       "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bloodline Necromancer": {
@@ -44582,12 +44582,12 @@
     },
     "Charismatic Conqueror": {
       "edhrec_rank": 1035,
-      "gate": "template",
+      "gate": null,
       "name": "Charismatic Conqueror",
-      "reason": "no template for: Whenever an artifact or creature an opponent controls enters untapped, they may tap that p",
+      "reason": "",
       "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Charismatic Vanguard": {
@@ -80322,12 +80322,12 @@
     },
     "Elenda, the Dusk Rose": {
       "edhrec_rank": 1231,
-      "gate": "template",
+      "gate": null,
       "name": "Elenda, the Dusk Rose",
-      "reason": "no template for: Whenever another creature dies, put a +1/+1 counter on Elenda",
+      "reason": "",
       "scryfall_id": "41c42be7-84fe-4d9d-bf5c-e75e4d5635fa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elephant Ambush": {
@@ -115542,12 +115542,12 @@
     },
     "Grave Pact": {
       "edhrec_rank": 576,
-      "gate": "template",
+      "gate": null,
       "name": "Grave Pact",
-      "reason": "no template for: Whenever a creature you control dies, each other player sacrifices a creature of their cho",
+      "reason": "",
       "scryfall_id": "9aaced6e-f656-49d3-9130-ba255800e0a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grave Peril": {
@@ -164382,12 +164382,12 @@
     },
     "Malakir Bloodwitch": {
       "edhrec_rank": 3490,
-      "gate": "template",
+      "gate": null,
       "name": "Malakir Bloodwitch",
-      "reason": "no template for: Flying, protection from white",
+      "reason": "",
       "scryfall_id": "b91ceead-5071-43e8-bf90-f379d683acdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malakir Cullblade": {
@@ -193902,12 +193902,12 @@
     },
     "Oubliette": {
       "edhrec_rank": 3944,
-      "gate": "template",
+      "gate": null,
       "name": "Oubliette",
-      "reason": "no template for: When this enchantment enters, target creature phases out until this enchantment leaves the",
+      "reason": "",
       "scryfall_id": "87149eb8-7935-4e45-8092-6baa2a6fb8d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ouphe Vandals": {
@@ -209472,12 +209472,12 @@
     },
     "Qarsi Revenant": {
       "edhrec_rank": 2482,
-      "gate": "template",
+      "gate": null,
       "name": "Qarsi Revenant",
-      "reason": "no template for: Renew — {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch co",
+      "reason": "",
       "scryfall_id": "a99e8c07-fcf7-448c-b71c-5eb1c6005a96",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Qarsi Sadist": {
