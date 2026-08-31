@@ -2630,6 +2630,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "not_subtypes": [
+                      "Vampire"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "anowon_the_ruin_sage",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Anowon, the Ruin Sage",
+      "oracle_text": "At the beginning of your upkeep, each player sacrifices a non-Vampire creature of their choice.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -33069,6 +33129,58 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "not": "you"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, each other player sacrifices a creature of their choice.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "grave_pact",
+      "mana_cost": "{1}{B}{B}{B}",
+      "name": "Grave Pact",
+      "oracle_text": "Whenever a creature you control dies, each other player sacrifices a creature of their choice.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -48418,6 +48530,88 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "W"
+          ],
+          "kind": "static",
+          "text": "Flying, protection from white"
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Vampire"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Vampire"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "malakir_bloodwitch",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Malakir Bloodwitch",
+      "oracle_text": "Flying, protection from white\nWhen this creature enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Shaman"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -62048,6 +62242,94 @@
         "Snake"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "flying",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "deathtouch",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "lifelink",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Renew — {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch counter, and a lifelink counter on target creature. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "qarsi_revenant",
+      "keywords": [
+        "flying",
+        "deathtouch",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Qarsi Revenant",
+      "oracle_text": "Flying, deathtouch, lifelink\nRenew — {2}{B}, Exile this card from your graveyard: Put a flying counter, a deathtouch counter, and a lifelink counter on target creature. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

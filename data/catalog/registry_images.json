@@ -307,6 +307,10 @@
     "artist": "Monztre",
     "scryfall_id": "424972d6-3b2c-449b-b786-749a77020fa1"
   },
+  "anowon_the_ruin_sage": {
+    "artist": "Dan Murayama Scott",
+    "scryfall_id": "b8630ae1-8fe9-4d6e-899b-a28d86d4d729"
+  },
   "anticipate": {
     "artist": "Kieran Yanner",
     "scryfall_id": "46b6dfb2-ffe4-44fb-bfd9-df11bc3193df"
@@ -3452,6 +3456,10 @@
     "artist": "John Avon",
     "scryfall_id": "ecf52798-b2e0-4d0a-a41b-8927bfa60375"
   },
+  "grave_pact": {
+    "artist": "BODAX",
+    "scryfall_id": "9aaced6e-f656-49d3-9130-ba255800e0a5"
+  },
   "grave_titan": {
     "artist": "Nils Hamm",
     "scryfall_id": "3b4faa6e-5013-4c59-80f5-662a386672eb"
@@ -5050,6 +5058,10 @@
     "artist": "Izzy",
     "scryfall_id": "05c4a9c4-20d5-457d-9127-c27b8768255a"
   },
+  "malakir_bloodwitch": {
+    "artist": "Shelly Wan",
+    "scryfall_id": "b91ceead-5071-43e8-bf90-f379d683acdf"
+  },
   "malakir_mire": {
     "artist": "Marta Nael",
     "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60"
@@ -6446,6 +6458,10 @@
   "python": {
     "artist": "Steve White",
     "scryfall_id": "84fbe194-1d9b-4d3f-b7a0-aa058945aca1"
+  },
+  "qarsi_revenant": {
+    "artist": "Lorenzo Mastroianni",
+    "scryfall_id": "a99e8c07-fcf7-448c-b71c-5eb1c6005a96"
   },
   "quakestrider_ceratops": {
     "artist": "Josiah \"Jo\" Cameron",

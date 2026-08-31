@@ -460,6 +460,12 @@
     "file": "ankle_biter.jpg",
     "scryfall_id": "424972d6-3b2c-449b-b786-749a77020fa1"
   },
+  "anowon_the_ruin_sage": {
+    "artist": "Dan Murayama Scott",
+    "bytes": 66694,
+    "file": "anowon_the_ruin_sage.jpg",
+    "scryfall_id": "b8630ae1-8fe9-4d6e-899b-a28d86d4d729"
+  },
   "anticipate": {
     "artist": "Kieran Yanner",
     "bytes": 83812,
@@ -5185,6 +5191,12 @@
     "file": "grasslands.jpg",
     "scryfall_id": "ecf52798-b2e0-4d0a-a41b-8927bfa60375"
   },
+  "grave_pact": {
+    "artist": "BODAX",
+    "bytes": 114331,
+    "file": "grave_pact.jpg",
+    "scryfall_id": "9aaced6e-f656-49d3-9130-ba255800e0a5"
+  },
   "grave_titan": {
     "artist": "Nils Hamm",
     "bytes": 46770,
@@ -7577,6 +7589,12 @@
     "file": "makindi_griffin.jpg",
     "scryfall_id": "05c4a9c4-20d5-457d-9127-c27b8768255a"
   },
+  "malakir_bloodwitch": {
+    "artist": "Shelly Wan",
+    "bytes": 67512,
+    "file": "malakir_bloodwitch.jpg",
+    "scryfall_id": "b91ceead-5071-43e8-bf90-f379d683acdf"
+  },
   "malakir_mire": {
     "artist": "Marta Nael",
     "bytes": 84665,
@@ -9677,6 +9695,12 @@
     "bytes": 85378,
     "file": "python.jpg",
     "scryfall_id": "84fbe194-1d9b-4d3f-b7a0-aa058945aca1"
+  },
+  "qarsi_revenant": {
+    "artist": "Lorenzo Mastroianni",
+    "bytes": 45976,
+    "file": "qarsi_revenant.jpg",
+    "scryfall_id": "a99e8c07-fcf7-448c-b71c-5eb1c6005a96"
   },
   "quakestrider_ceratops": {
     "artist": "Josiah \"Jo\" Cameron",
