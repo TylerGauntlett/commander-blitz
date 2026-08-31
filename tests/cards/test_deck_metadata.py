@@ -128,8 +128,26 @@ class TestDerivedFields:
         assert "Mortify and Bedevil" in two
 
     def test_signature_cards_carry_a_name_and_art(self, client):
+        """The joined name is the house spelling for a double-faced card.
+
+        It reads "Bloodline Keeper // Lord of Lineage" and not "Bloodline
+        Keeper" because the card is now authored rather than hand-written, and
+        every authored double-faced card carries the joined name -- Edgar,
+        Charmed Groom, Henrika Domnathi and Joshua all do. The hand-written
+        pair was the one exception, and it was also the one carrying a
+        `Legendary` supertype the printed card does not have and an upkeep
+        trigger where the back face prints `{T}`.
+
+        The joined name is not cosmetic: the residual gate reads a card's
+        oracle text through `index.lookup(name)`, and the catalog knows this
+        card only under both halves -- "Bloodline Keeper" and "Lord of
+        Lineage" each resolve to nothing. A front-face-only name here would
+        mean a card whose printed text no gate could check.
+        """
         signature = client.get("/api/decks/edgar").json()["signature"]
-        assert next(row["name"] for row in signature) == "Bloodline Keeper"
+        assert next(row["name"] for row in signature) == (
+            "Bloodline Keeper // Lord of Lineage"
+        )
         assert all(row["art_url"] for row in signature)
 
     def test_the_summary_list_stays_light(self, client):

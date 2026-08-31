@@ -28632,12 +28632,12 @@
     },
     "Bloodline Keeper // Lord of Lineage": {
       "edhrec_rank": 2517,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodline Keeper // Lord of Lineage",
-      "reason": "no template for: {T}: Create a 2/2 black Vampire creature token with flying",
+      "reason": "",
       "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bloodline Necromancer": {

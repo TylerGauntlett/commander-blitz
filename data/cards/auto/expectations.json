@@ -723,6 +723,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bloodline_keeper": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "bloodrite_invoker": {
     "battlefield_count": 33,
     "life": {
