@@ -79,7 +79,7 @@ It is checked by casting your card in one fixed position and reading the board.
 | You are player 0, at **40 life**; the opponent is player 1, at **40 life** |
 | Your battlefield | **32 permanents** — 30 lands (6 each of Plains, Island, Swamp, Mountain, Forest) + 2 creatures |
 | Opponent's battlefield | **6 permanents** — a **legendary** creature, a flier, an artifact, an enchantment, a Forest and an Island |
-| Your hand | **just the card under test** — so `hand_size` is 0 after you cast it |
+| Your hand | the card under test **and one spare Forest** — so `hand_size` is **1** after you cast it, not 0. The Forest is deliberate: a card can never discard itself to pay its own additional cost (601.2a), so a hand of one would make every mandatory "as an additional cost, discard a card" unplayable. Every `hand_size` you assert counts it |
 | Your library | **40 cards**, all basic lands |
 | Opponent's library | 20 cards |
 | Your graveyard | **2 creature cards** — one of **mana value 3 or less**, one of **mana value 5**, so a printed cost ceiling *and* a printed floor each have something to reach |
@@ -120,7 +120,7 @@ one.
 | key | shape | notes |
 |---|---|---|
 | `life` | `{"0": 42}` | per player id |
-| `hand_size` | `{"0": 2}` | |
+| `hand_size` | `{"0": 2}` | starts at 2 (the card under test + a spare Forest); a card that draws one and casts itself leaves 2 |
 | `library_size` | `{"0": 38}` | starts at 40 |
 | `graveyard_size` | `{"0": 3}` | starts at 2 |
 | `counters` | `{"kind": "+1/+1", "amount": 2}` | on **your card**, not any object |

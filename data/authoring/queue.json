@@ -47752,13 +47752,13 @@
     },
     "Clever Concealment": {
       "edhrec_rank": 595,
-      "gate": "template",
+      "gate": null,
       "name": "Clever Concealment",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "41d45a8a-ea1d-4fbc-86d2-5d6340f3b639",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Clever Conjurer": {
       "edhrec_rank": 9545,
@@ -259252,13 +259252,13 @@
     },
     "Springheart Nantuko": {
       "edhrec_rank": 685,
-      "gate": "template",
+      "gate": null,
       "name": "Springheart Nantuko",
-      "reason": "no template for: Bestow {1}{G}",
+      "reason": "",
       "scryfall_id": "54a3ea87-005e-4985-b2a5-21711d0b71c0",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Springing Tiger": {
       "edhrec_rank": 30816,
@@ -274318,7 +274318,7 @@
       "scryfall_id": "c54d5ea1-0cc9-4e84-b712-642d55915dae",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Teferi's Protege": {
       "edhrec_rank": 24153,

@@ -1250,6 +1250,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "clever_concealment": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "cliff_threader": {
     "zone": "battlefield"
   },
@@ -6965,6 +6972,10 @@
     "life": {
       "0": 48
     }
+  },
+  "springheart_nantuko": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "springmane_cervin": {
     "life": {

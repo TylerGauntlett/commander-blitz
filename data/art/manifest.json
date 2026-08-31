@@ -2204,6 +2204,12 @@
     "file": "clavileno_first_of_the_blessed.jpg",
     "scryfall_id": "4e87c55b-897f-4997-adbc-2620993669be"
   },
+  "clever_concealment": {
+    "artist": "Jurijus Chitrovas",
+    "bytes": 52988,
+    "file": "clever_concealment.jpg",
+    "scryfall_id": "41d45a8a-ea1d-4fbc-86d2-5d6340f3b639"
+  },
   "cliff_threader": {
     "artist": "Paul Bonner",
     "bytes": 69455,
@@ -12172,6 +12178,12 @@
     "bytes": 99878,
     "file": "spring_of_eternal_peace.jpg",
     "scryfall_id": "f6862d7a-04ee-48ac-a5b3-46a4e8694d5b"
+  },
+  "springheart_nantuko": {
+    "artist": "Valera Lutfullina",
+    "bytes": 83472,
+    "file": "springheart_nantuko.jpg",
+    "scryfall_id": "54a3ea87-005e-4985-b2a5-21711d0b71c0"
   },
   "springmane_cervin": {
     "artist": "Ilse Gort",

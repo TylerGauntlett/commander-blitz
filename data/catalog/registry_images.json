@@ -1471,6 +1471,10 @@
     "artist": "Chun Lo",
     "scryfall_id": "4e87c55b-897f-4997-adbc-2620993669be"
   },
+  "clever_concealment": {
+    "artist": "Jurijus Chitrovas",
+    "scryfall_id": "41d45a8a-ea1d-4fbc-86d2-5d6340f3b639"
+  },
   "cliff_threader": {
     "artist": "Paul Bonner",
     "scryfall_id": "1743b625-e937-4cac-8701-9e2dd709a9a4"
@@ -8094,6 +8098,10 @@
   "spring_of_eternal_peace": {
     "artist": "Wang Yuqun",
     "scryfall_id": "f6862d7a-04ee-48ac-a5b3-46a4e8694d5b"
+  },
+  "springheart_nantuko": {
+    "artist": "Valera Lutfullina",
+    "scryfall_id": "54a3ea87-005e-4985-b2a5-21711d0b71c0"
   },
   "springmane_cervin": {
     "artist": "Ilse Gort",
