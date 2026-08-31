@@ -10,26 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**2 cards** blocked by **2** capabilities.
+**1 card** blocked by **1** capability.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [life-loss-replacement](#life-loss-replacement) | 1 | 840 | replacement |
 | [phasing](#phasing) | 1 | 3944 | op |
-
-## life-loss-replacement
-
-Blocks **1** card.
-
-- **(replacement)** a static ability on a permanent that replaces life-loss events for a chosen set of players -- an event-modifying continuous effect that intercepts every life-loss a player is about to suffer (including the life loss caused by damage, and life paid as a cost) and substitutes a scaled amount, here doubled, gated by an 'as long as it is your turn' condition
-  <br>Why the existing vocabulary won't do: static_effects has no entry that touches life totals at all -- the only replacement-shaped members of the vocabulary are prevent_damage (which reduces damage, is not a doubler, and would miss non-damage life loss such as Sign in Blood or paid life), plus the ops replace_deaths and replace_leaves_battlefield, which replace zone changes for permanents rather than events on players. The life_lost trigger event is a trigger, not a replacement: it fires after the loss has already been applied, so an additional lose_life op would deal the second half as a separate later event (visible to other life-loss triggers, and re-triggering itself), which is not the same as the printed 'lose twice that much life instead'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bloodletter of Aclazotz** (rank 840) — `bloodletter_of_aclazotz`
-  - If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)
-
-</details>
 
 ## phasing
 

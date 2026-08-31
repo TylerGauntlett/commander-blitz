@@ -7716,6 +7716,43 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "replace_life_loss",
+          "kind": "static",
+          "loss_multiplier": 2,
+          "text": "If an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodletter_of_aclazotz",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}{B}{B}",
+      "name": "Bloodletter of Aclazotz",
+      "oracle_text": "Flying\nIf an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{8}"
           },

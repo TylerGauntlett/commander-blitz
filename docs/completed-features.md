@@ -1313,6 +1313,77 @@ the Equip regression test passes under both, which is the point of it.
 stand-in rites that drive the same effects at a chosen moment, an Equipment, an
 Aura and a vanilla bear).
 
+## `replace_life_loss` — doubling a life loss, but not the damage that caused it
+
+### Overview
+
+Bloodletter of Aclazotz: *"If an opponent would lose life during your turn, they
+lose **twice that much life instead**. (Damage causes loss of life.)"*
+
+The gap record had it exactly right: `static_effects` held nothing that touched
+life totals at all. The only replacement-shaped members of the vocabulary were
+`prevent_damage` (a *reduction*, of damage only, and so blind to a drain or to
+paid life) and the `replace_deaths` / `replace_leaves_battlefield` ops, which
+replace zone changes for permanents rather than events on players.
+
+The near miss is the `life_lost` **trigger**, and naming why it is wrong is most
+of the argument for building anything. It fires *after* the loss has been
+applied, so a `lose_life` op hung off it deals the second half as a separate,
+later event: visible to every other life-loss trigger on the board as a second
+drain, ordered on the stack where the printed card has no stack at all, and
+re-triggering itself into a loop, since nothing in the trigger vocabulary can
+tell a loss it caused from one it did not.
+
+### The two call sites, both required
+
+A player's life goes down in exactly two places, and they are unrelated:
+`primitives.lose_life`, which every drain and every life paid as a cost reaches
+(118.4 — paying life *is* losing life), and the life-loss half of
+`primitives.damage_player`, which 120.3c reaches. The card prints "(Damage
+causes loss of life.)" precisely because the second one is not obvious.
+
+Wired into only one of them, the result is a card that works against Village
+Rites and does nothing against a Lightning Bolt — or the reverse — and neither
+half looks wrong on a board. That is the whole reason
+`tests/unit/test_life_loss_replacement.py` covers both routes twice: once
+against the primitive directly and once through a real cast spell.
+
+### Only the loss is multiplied, never the damage
+
+The property that is easiest to get wrong. Lifelink gains life equal to the
+damage **dealt** (702.15b), which the replacement never touched, and the same
+goes for `DAMAGE_DEALT` and the commander-damage tally. A lifelinking source
+dealing 3 to a doubled opponent takes 6 life off them and gains its controller
+3.
+
+This is the separation the wither and infect keywords already make — it is still
+damage, and only where the number lands changes. Doubling `amount` at the top of
+`damage_player` would have been one line shorter and would pass every
+life-total assertion in the suite except that one, while quietly turning every
+lifelinking attacker in every game into twice the lifegain it prints.
+
+### What is refused, and why
+
+`loss_multiplier` is required and must be 2 or more. A multiplier of 1 replaces
+a loss with an identical loss; 0 is "they lose no life", which is a *prevention*
+— a different printed sentence and a much stronger card. Both would load clean
+and neither is anything a card says, so both are refused at load, the same
+refusal `ward` makes about ward {0} and `replace_token_creation` about an empty
+`create_instead`.
+
+### Divergences
+
+Two doublers **multiply**: each replacement applies once (614.5), so a loss
+doubled twice is quadrupled. 616.1 lets the affected player order two applicable
+replacements and this engine does not ask — the same divergence
+`_token_creation_plan` records, and for a product the order cannot show. There
+is no replacement of life *gain*, so Rhox Faithmender and Alhammarret's Archive
+stay blocked.
+
+This is the engine's **second** named replacement hook and, like the first, it
+is deliberately not the start of a rule-616 system — see
+[rules-coverage.md](rules-coverage.md).
+
 ## `replace_token_creation` — rewriting a token creation before the token exists
 
 ### Overview

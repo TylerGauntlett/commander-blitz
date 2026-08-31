@@ -719,6 +719,10 @@
     },
     "zone": "battlefield"
   },
+  "bloodletter_of_aclazotz": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodrite_invoker": {
     "battlefield_count": 33,
     "life": {
