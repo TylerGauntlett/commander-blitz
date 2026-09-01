@@ -1,3 +1,146 @@
+## `{W/P}` — phyrexian mana, and the cast line that carries the choice
+
+### Overview
+
+Gitaxian Probe: *"({U/P} can be paid with either {U} or 2 life.) / Look at target
+player's hand. / Draw a card."* A one-mana cantrip that, in practice, is cast for
+no mana at all.
+
+Three gap records named `phyrexian_mana` — Mental Misstep, Gitaxian Probe, Gut
+Shot — and the report's template-simplified queue named five more creatures for
+the same reason. All eight ship now.
+
+Two things were wrong and they pulled in opposite directions.
+
+**`ManaCost.parse` refused the symbol.** `_parse_hybrid` raised on any half of a
+hybrid that was not a digit or a colour, and its docstring said so on purpose:
+`HybridPip` modelled a *colour choice*, and reading the `P` as a colour would
+have made every card in the cycle castable off mana nobody has.
+
+**`cards/proxy.py` silently narrowed it.** `{U/P} -> {U}`, recorded as a "mana
+cost simplified" note, which is how the three cards' work packets arrived
+carrying a `starting_point` that had already deleted the clause the card is
+played for. A hard `{U}` makes Gitaxian Probe a strictly worse Peek and Gut Shot
+a strictly worse Shock — and unlike the parse failure, nothing about it was
+visible. It is the more instructive of the two bugs: rewriting a symbol to keep
+the loader quiet is only a simplification when what is dropped is decoration.
+
+### The shape
+
+`HybridPip` grew a third field, `life`, alongside `symbols` and `generic`. Three
+shapes of "either/or" inside a cost, one representation:
+
+| | alternative to the colour |
+|---|---|
+| `{W/U}` | another colour |
+| `{2/W}` | a number of generic mana |
+| `{W/P}` | **2 life** |
+
+A separate field rather than a reuse of `generic`, because life is not mana: no
+source produces it, no pool holds it, and the payment solver must never be able
+to spend it as though a land had made it. `_parse_hybrid` also splits on *every*
+slash now rather than partitioning at the first, which reads `{W/U/P}` exactly
+and closes a pre-existing hole where `{2/W/P}` raised out of the proxy generator.
+
+Everything that merely *reads* a cost is unchanged and correct by construction:
+`value` is 1, `colors` contributes the colour, `symbols_of` counts the chroma. A
+Gitaxian Probe cast for 2 life is still a blue, mana-value-1 spell — load-bearing,
+because Mental Misstep counters spells of mana value 1.
+
+### The decision this turned on: who chooses which half
+
+The first implementation made it a solver preference — pay with mana when mana is
+available, with life when it is not — on the argument that
+[ADR 0003](adr/0003-auto-mana-payment.md) already gives up the player's control
+over *which* mana pays. It was measured and it was wrong, in both directions at
+once:
+
+- `solve_payment` short-circuits on `satisfies(pool, req)` before it taps
+  anything, so with an empty pool the life branch always won. Vault Skirge cost
+  2 life with six Swamps untapped — a strictly worse card, quietly.
+- Even with that fixed, "life only when you must" never offers the play the card
+  is famous for: Gitaxian Probe for 2 life *with the Island still up*.
+
+So it is a **cast line**, the way kicker, evoke and overload are.
+`_cast_variant` loops over how many Phyrexian pips this line buys with life and
+emits one action each — two for the printed cycle, three for Thundering Tanadon's
+`{4}{G/P}{G/P}` — labelled *(paying 2 life)*. `Action.phyrexian` carries the
+number, exactly parallel to `Action.pay_generic` for convoke and delve, and it is
+in `key()` and `to_dict()` for the same reason: two lines at two prices are two
+different things to do with one card.
+
+Rule 118.4 bounds the offer, and it is the same boundary `test_pay_life.py`
+already pinned for Adanto Vanguard: life may be paid down to exactly 0 and no
+further. A player at 2 life is offered the line; a player at 1 is not. Thundering
+Tanadon off no green sources needs 4, not 3.
+
+### `paying_phyrexian` — the pip leaves the cost
+
+The mechanism is one method, and it is what kept the change small:
+
+```python
+remaining, owed = cost.paying_phyrexian(n)   # ({2}{U/P}, 1) -> ({2}, 2)
+```
+
+The bought pips are removed from the cost and the life is returned separately, so
+`satisfies`, `assign_hybrid`, `ManaPool.spend`, `solve_payment` and every cost
+reduction go on seeing a cost made only of mana. Nothing in the solver learned a
+third currency; `Requirement` gained no field. `Game._cast` charges the life in
+the *same* `pay` call as the mana — `Cost(mana=remaining, pay_life=owed)` — which
+is one payment and one event batch, because 107.4f makes this one symbol of the
+spell's own mana cost paid a different way.
+
+Removing the pip rather than replacing the cost is also the difference between
+this and the `alternative_cost` the gap records ruled out at length. `{2}{U/P}`
+paid the life way is still a `{2}`: Trinisphere taxes it, a cost reduction
+shrinks it, and "cast without paying its mana cost" means the same thing it
+always did. An alternative cost would have exempted all of that.
+
+`text` and `mana_value` are read off the printed cost and never off the
+remainder, so how one casting was paid changes neither.
+
+### The proxy, and the five cards behind it
+
+`_simplify_symbol` no longer rewrites `{X/P}` at all — the branch is gone, not
+guarded — and `--tier templates --retry` then harvested five creatures whose only
+block had been that note: Vault Skirge, Porcelain Legionnaire, Spined Thopter,
+Thundering Tanadon and Slash Panther, each now at its printed cost. The three gap
+cards were written by hand.
+
+### The sandbox needed a prop, not a smaller gate
+
+Mental Misstep's "with mana value 1" had nothing to point at: the authoring
+harness pushes three dummy spells for a `kind: "spell"` target and they are mana
+value 5, 2 and 3, so gate 4 reported "not playable in the sandbox". The role was
+added, as `add_dummy_spell`'s own docstring instructs — but **conditionally**,
+which is new. Every mana-value-1 spell in the pool is a cantrip, and appending
+one unconditionally folded a card drawn by the opponent into the measured outcome
+of every card that counters or bounces a spell: Reprieve's `hand_size` for the
+opponent moved from 2 to 3, an assertion about Opt sitting inside Reprieve's
+verdict. That is precisely what the `legendary_creature` prop's docstring warns
+about at length.
+
+So `DUMMY_ROLES` is what every spell-targeting card gets and `EXTRA_DUMMY_ROLES`
+is added only for a card none of them satisfies — asked with the very selector
+the target spec carries, through the same `matches` legality uses. Every card
+measured before this change sees the position it was measured in.
+
+### Frontend: nothing
+
+`{W/P}` through `{G/P}` were already in `manaSymbols.ts`'s `KNOWN` and their SVGs
+were already vendored — deck import made phyrexian notation reachable in *oracle
+text* long before a cost could carry one — so the symbol renders in the cost row
+the day the engine parses it. The cast lines are ordinary `LegalActionDTO`s that
+differ only by label.
+
+### One narrowing, recorded
+
+A Phyrexian pip in an **activated ability's** cost must be paid with mana. The
+choice is offered as a cast line and an activation is not one. No shipped card
+prints such an ability — Birthing Pod's `{1}{G/P}` is the first that would — and
+the direction is the safe one: the engine asks for more than the card does, never
+less. In `docs/rules-coverage.md`.
+
 ## `exile_from_hand` — the free-spell pitch cost, and the alternative cost that could hold it
 
 ### Overview
@@ -10100,7 +10243,8 @@ own with the 160-game arena run in between rather than all at once:
 Two things were deliberately **not** done, and fail loudly instead of silently:
 granting a *static* or *activated* ability (the loader rejects it rather than
 compiling something legality would never offer), and phyrexian mana (a life
-payment, not a colour choice).
+payment, not a colour choice). *Phyrexian mana has since shipped — see the
+`{W/P}` section at the top of this file.*
 
 ### What is left, beyond this deck
 

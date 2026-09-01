@@ -58,7 +58,10 @@ class TestParsing:
     def test_colors_property(self):
         assert {c.value for c in ManaCost.parse("{W}{B}{R}").colors} == {"W", "B", "R"}
 
-    @pytest.mark.parametrize("text", ["{G", "G}", "{S}", "{4}x", "{W/P}"])
+    # `{W/P}` was in this list and is deliberately no longer: phyrexian mana is
+    # implemented, and `tests/unit/test_phyrexian_mana.py` asserts the parse it
+    # now gets. `{S}` stays -- snow is still unmodelled.
+    @pytest.mark.parametrize("text", ["{G", "G}", "{S}", "{4}x", "{W/Q}"])
     def test_unsupported_symbols_raise(self, text: str):
         with pytest.raises(DslError):
             ManaCost.parse(text)

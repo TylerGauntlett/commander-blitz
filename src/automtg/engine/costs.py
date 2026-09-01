@@ -533,11 +533,7 @@ def can_pay_mana(
 ) -> bool:
     req = cost.with_x(x)
     if extra_generic:
-        req = Requirement(
-            colored=req.colored,
-            generic=max(0, req.generic + extra_generic),
-            hybrid=req.hybrid,
-        )
+        req = req.with_generic(req.generic + extra_generic)
     return (
         solve_payment(
             req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose)
@@ -612,11 +608,7 @@ def ability_mana(
     less = reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
     if not less:
         return req
-    return Requirement(
-        colored=req.colored,
-        generic=max(0, req.generic - less),
-        hybrid=req.hybrid,
-    )
+    return req.with_generic(req.generic - less)
 
 
 def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
@@ -1025,11 +1017,7 @@ def pay(
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the
         # coloured pips however large X gets.
-        req = Requirement(
-            colored=req.colored,
-            generic=max(0, req.generic + extra_generic),
-            hybrid=req.hybrid,
-        )
+        req = req.with_generic(req.generic + extra_generic)
     if req.total and not pay_mana(
         state,
         pid,
@@ -1041,6 +1029,12 @@ def pay(
         return False
 
     if cost.pay_life:
+        # A Phyrexian pip bought with life arrives here, as `pay_life` on a cost
+        # `Game._cast` assembles -- rule 107.4f is a *way of paying one symbol*,
+        # not a separate cost, and `ManaCost.paying_phyrexian` has already taken
+        # the symbol out of the mana half above. Paid in the same `pay` call and
+        # so in the same event batch, because the mana and the life are one
+        # payment however the printed symbol is read.
         lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
 
     if cost.discard:

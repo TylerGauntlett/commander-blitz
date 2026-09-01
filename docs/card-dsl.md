@@ -2520,8 +2520,41 @@ point of the symbol. Both colours count towards the card's colour identity, and
 Assignment is exhaustive rather than greedy, and shared by `satisfies` (can this
 be paid?) and `ManaPool.spend` (pay it). The choices interact: with one white and
 one blue, `{W/U}{W/U}` is payable only if the two pips take different symbols,
-and any "most plentiful first" rule gets that wrong. **Phyrexian** (`{W/P}`) is
-still rejected — it is a life payment, not a colour choice.
+and any "most plentiful first" rule gets that wrong.
+
+### Phyrexian costs
+
+`{W/P}` is a hybrid pip whose alternative half is **life**, not a colour and not
+a number: rule 107.4f, one white mana *or* 2 life, the caster's choice. It is a
+third field on `HybridPip` rather than a reuse of `generic`, because life is not
+mana — no source produces it, no pool holds it, and the payment solver must never
+be able to treat it as something a land could have made.
+
+Everything that merely *reads* the cost sees one white pip of mana value 1. A
+Gitaxian Probe cast for 2 life is still a blue, mana-value-1 spell, which is
+load-bearing: Mental Misstep counters spells of mana value 1, and the whole cycle
+is played in decks that could not otherwise produce the colour.
+
+**Which half is paid is a cast line, not a solver decision.** `_cast_variant`
+offers one action per number of pips bought with life — two for the printed
+cycle, three for Thundering Tanadon's `{4}{G/P}{G/P}` — labelled *(paying 2
+life)*. This is the one place the [auto-payment ADR](adr/0003-auto-mana-payment.md)
+does not apply, and deliberately: casting Gitaxian Probe off an Island and
+casting it for 2 life are two different plays, and picking one for the player
+would make the card either uncastable off no lands or strictly worse than
+printed. Rule 118.4 bounds the offer — life may be paid down to exactly 0 and no
+further — so a player at 2 is offered the life line and a player at 1 is not.
+
+`ManaCost.paying_phyrexian(n)` is the whole mechanism: it takes the bought pips
+*out* of the cost and returns the life owed, so the solver, `assign_hybrid` and
+`ManaPool.spend` all go on seeing a cost made only of mana, and `Game._cast`
+charges the life in the same `pay` call as the mana. Removing the pip rather than
+teaching the solver about life is also what keeps the rest honest: `{2}{U/P}`
+paid the life way is still a `{2}` that a tax raises and a cost reduction
+shrinks, which is precisely what an `alternative_cost` could never express.
+
+Phyrexian pips in an **activated ability's** cost are not offered as lines and so
+must be paid with mana. No shipped card prints one; see `docs/rules-coverage.md`.
 
 ### Restricted mana
 

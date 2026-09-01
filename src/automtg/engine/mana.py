@@ -34,23 +34,50 @@ def _zeros() -> list[int]:
     return [0] * N_SYMBOLS
 
 
+#: What one Phyrexian pip costs in life instead of mana (rule 107.4f).
+PHYREXIAN_LIFE = 2
+
+
 @dataclass(frozen=True)
 class HybridPip:
-    """One ``{W/U}``-style pip: pay any of ``symbols``, or ``generic`` generic.
+    """One ``{W/U}``-style pip: pay any of ``symbols``, ``generic`` generic, or
+    ``life`` life.
 
-    Two shapes of hybrid, one representation.  ``{W/U}`` is a choice between two
-    coloured symbols and has no generic alternative.  ``{2/W}`` is a choice
-    between one coloured symbol and two generic, which is why the alternative is
-    a *number* and not another symbol.
+    Three shapes of "either/or" inside a cost, one representation.  ``{W/U}`` is
+    a choice between two coloured symbols and has no other alternative.
+    ``{2/W}`` is a choice between one coloured symbol and two generic, which is
+    why *that* alternative is a number and not another symbol.  ``{W/P}`` --
+    Phyrexian, rule 107.4f -- is a choice between one coloured symbol and two
+    **life**, which is why ``life`` is a third field rather than a reuse of
+    ``generic``: life is not mana, no source produces it, and the solver may not
+    treat it as something a land could have made.
+
+    Keeping all three here is what makes a Phyrexian pip count correctly
+    everywhere a cost is *read* rather than paid.  ``{U/P}`` has mana value 1 and
+    is blue, and stays both however it was actually paid, because :attr:`value`
+    and :attr:`ManaCost.colors` never look at which half the payer chose.
     """
 
     symbols: frozenset[int] = frozenset()
     generic: int | None = None
+    #: Life the payer may hand over instead of one of ``symbols``.  ``None`` for
+    #: an ordinary hybrid; ``2`` for every printed Phyrexian symbol.
+    life: int | None = None
 
     @property
     def value(self) -> int:
-        """What this pip contributes to mana value: ``{W/U}`` 1, ``{2/W}`` 2."""
+        """What this pip contributes to mana value: ``{W/U}`` 1, ``{2/W}`` 2.
+
+        ``{W/P}`` is 1 -- the life half is not a *number of mana*, so rule
+        202.3b counts the symbol as the one coloured pip it also is.  Mental
+        Misstep is a mana-value-1 spell that can legally counter itself, and
+        that only works if the life branch changes nothing here.
+        """
         return self.generic if self.generic is not None else 1
+
+    @property
+    def phyrexian(self) -> bool:
+        return self.life is not None
 
 
 @dataclass(frozen=True)
@@ -95,7 +122,7 @@ class ManaCost:
             else:
                 raise DslError(
                     f"unsupported mana symbol {{{sym}}} in {text!r} "
-                    "(phyrexian and snow mana are not implemented)"
+                    "(snow mana is not implemented)"
                 )
         if pos != len(text):
             raise DslError(f"unparsable mana cost {text!r} (trailing {text[pos:]!r})")
@@ -210,6 +237,67 @@ class ManaCost:
             hybrid=self.hybrid,
         )
 
+    @property
+    def phyrexian_count(self) -> int:
+        """How many Phyrexian pips this cost has -- how many life lines it offers."""
+        return sum(1 for pip in self.hybrid if pip.phyrexian)
+
+    def paying_phyrexian(self, count: int) -> tuple[ManaCost, int]:
+        """This cost with ``count`` of its Phyrexian pips bought with life.
+
+        Returns the *remaining* cost and the life it owes, and that split is the
+        whole implementation of rule 107.4f here. A ``{W/P}`` is one symbol with
+        two ways to satisfy it; taking the life way is not a discount and not a
+        replacement of the cost, it is one pip of the cost being paid in a
+        different currency. So the pip leaves ``hybrid`` -- there is nothing left
+        of it for the mana solver to pay -- and 2 life is added to what the
+        payment charges.
+
+        Removing the pip rather than teaching the solver about life is what keeps
+        the rest of the engine honest. Nothing else has to learn a third kind of
+        payment: ``satisfies``, ``assign_hybrid``, ``ManaPool.spend`` and every
+        cost reduction go on seeing a cost made only of mana. And because it is
+        the *pip* that goes and not the cost, a ``{2}{U/P}`` paid the life way is
+        still a ``{2}`` that Trinisphere taxes and a cost reduction can shrink,
+        which is exactly what an ``alternative_cost`` could never express.
+
+        ``text`` is left as printed: it is what the card says, and it does not
+        change because of how one casting of it was paid. Mana value likewise --
+        a Gitaxian Probe cast for 2 life is still a mana-value-1 spell, so the
+        remaining cost is never what :meth:`mana_value` is read from.
+
+        Pips are taken in printed order. Every Phyrexian symbol costs the same 2
+        life, so which of two identical pips goes is not a choice; a cost mixing
+        colours (no card prints one) would want the caller to say which, and this
+        would be the place to widen.
+        """
+        if count <= 0:
+            return self, 0
+        kept: list[HybridPip] = []
+        owed = 0
+        left = count
+        for pip in self.hybrid:
+            if left > 0 and pip.phyrexian:
+                owed += pip.life or 0
+                left -= 1
+            else:
+                kept.append(pip)
+        if left:
+            raise DslError(
+                f"{self.text!r} has {self.phyrexian_count} phyrexian pips, "
+                f"cannot pay {count} of them with life"
+            )
+        return (
+            ManaCost(
+                generic=self.generic,
+                colored=self.colored,
+                x_count=self.x_count,
+                text=self.text,
+                hybrid=tuple(kept),
+            ),
+            owed,
+        )
+
     def is_free(self) -> bool:
         return (
             self.generic == 0
@@ -239,33 +327,49 @@ class ManaCost:
 
 
 def _parse_hybrid(sym: str, text: str) -> HybridPip:
-    """``"W/U"`` or ``"2/W"`` -> a :class:`HybridPip`.
+    """``"W/U"``, ``"2/W"`` or ``"W/P"`` -> a :class:`HybridPip`.
 
-    Phyrexian (``{W/P}``) is deliberately still rejected: it is a *life* payment
-    dressed as a mana symbol, and pretending it is a colour choice would make
-    every phyrexian card cheaper than it is printed.
+    Phyrexian (``{W/P}``) reads as a ``P`` half, and it is *not* folded into the
+    colour set: pretending the P were a second colour would make every Phyrexian
+    card castable off mana nobody has, and dropping it to a plain ``{W}`` --
+    which is what the proxy generator used to do -- deletes the alternative
+    payment the card is played for. It becomes :attr:`HybridPip.life` instead,
+    and only :func:`assign_hybrid` may spend it.
+
+    Split on every ``/`` rather than once, so a three-part symbol is read
+    exactly rather than mangled: ``{W/U/P}`` is one pip payable with white, with
+    blue, or with 2 life, and partitioning at the first slash left ``"U/P"`` as a
+    half that matched nothing and raised.
     """
-    left, _, right = sym.partition("/")
     symbols: set[int] = set()
     generic: int | None = None
-    for half in (left, right):
+    life: int | None = None
+    for half in sym.split("/"):
         if half.isdigit():
             generic = int(half)
         elif half in SYMBOL_INDEX:
             symbols.add(SYMBOL_INDEX[half])
+        elif half == "P":
+            life = PHYREXIAN_LIFE
         else:
             raise DslError(
                 f"unsupported mana symbol {{{sym}}} in {text!r} "
-                "(phyrexian and snow mana are not implemented)"
+                "(snow mana is not implemented)"
             )
     if not symbols:
         raise DslError(f"unparsable hybrid symbol {{{sym}}} in {text!r}")
-    return HybridPip(symbols=frozenset(symbols), generic=generic)
+    return HybridPip(symbols=frozenset(symbols), generic=generic, life=life)
 
 
 @dataclass(frozen=True)
 class Requirement:
-    """A mana cost with ``X`` already chosen -- what the solver actually pays."""
+    """A mana cost with ``X`` already chosen -- what the solver actually pays.
+
+    A Phyrexian pip that reaches here is one the payer chose to pay **with
+    mana**: the life half is settled before the requirement is built, by
+    :meth:`ManaCost.paying_phyrexian`, which takes the pip out of the cost
+    entirely. So nothing in the solver has to know what life is.
+    """
 
     colored: tuple[int, ...] = (0,) * N_SYMBOLS
     generic: int = 0
@@ -274,6 +378,18 @@ class Requirement:
     @property
     def total(self) -> int:
         return sum(self.colored) + self.generic + sum(pip.value for pip in self.hybrid)
+
+    def with_generic(self, generic: int) -> Requirement:
+        """This requirement repriced, keeping everything else. Commander tax,
+        convoke, delve and every cost reduction land here, and all of them are
+        clamped at zero: none may reach through the generic part into the pips."""
+        if generic == self.generic:
+            return self
+        return Requirement(
+            colored=self.colored,
+            generic=max(0, generic),
+            hybrid=self.hybrid,
+        )
 
 
 @dataclass(frozen=True)
@@ -620,6 +736,12 @@ def assign_hybrid(
     :meth:`ManaPool.spend` go through here, so the decision that a cost *can* be
     paid and the deduction that pays it can never disagree.
 
+    A Phyrexian pip has no branch here and needs none.  By the time a cost
+    reaches the solver, every pip the payer chose to buy with life has already
+    been taken out of it by :meth:`ManaCost.paying_phyrexian`, so a ``{W/P}``
+    still in ``pips`` is one being paid the white way -- which is why life,
+    which no mana source produces and no pool holds, never enters the solver.
+
     Exhaustive rather than greedy, because the choices interact: with one white
     and one blue mana, ``{W/U}{W/U}`` is payable only if the two pips take
     different symbols, and any rule-of-thumb that picks "most plentiful first"
@@ -690,11 +812,7 @@ def max_affordable_x(
     def probe(x: int) -> bool:
         req = cost.with_x(x)
         if extra_generic:
-            req = Requirement(
-                colored=req.colored,
-                generic=max(0, req.generic + extra_generic),
-                hybrid=req.hybrid,
-            )
+            req = req.with_generic(req.generic + extra_generic)
         return solve_payment(req, pool, sources) is not None
 
     if cost.x_count <= 0:

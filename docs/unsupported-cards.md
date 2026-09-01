@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**35 cards** blocked by **36** capabilities.
+**32 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [phyrexian-mana](#phyrexian-mana) | 3 | 456 | cost |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [cost-reduction-supertype-filter](#cost-reduction-supertype-filter) | 2 | 78 | cost |
@@ -50,28 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [token-definitions](#token-definitions) | 1 | 70 | engine |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-
-## phyrexian-mana
-
-Blocks **3** cards.
-
-- **(cost)** a Phyrexian pip in a printed mana cost: {U/P} parsed by ManaCost.parse into a pip payable either with one {U} or with 2 life, offered as a per-symbol choice while the cost is being paid, and still counted as one blue pip for mana value, colors and color identity whichever half is chosen. Concretely a sibling of HybridPip in src/automtg/engine/mana.py -- a pip whose alternative half is a life payment rather than a second colour or a generic amount -- plus the payment branch in the mana solver so a player with no blue source can still cast the spell for 2 life
-  <br>Why the existing vocabulary won't do: ManaCost.parse rejects {U/P} outright ('phyrexian and snow mana are not implemented'), and _parse_hybrid rejects it again by name with the comment that treating it as a colour choice 'would make every phyrexian card cheaper than it is printed' -- so the card cannot even load at its printed cost. The proxy's fallback narrows {U/P} to {U}, which is what the packet's starting_point carries, and that silently deletes the card: Gitaxian Probe is played as a free cantrip paid entirely in life, and a hard {U} makes it a strictly worse Peek. The card-level alternative_cost with a pay_life cost is the near miss and is still wrong: Phyrexian mana is paid as part of the spell's own mana cost, not instead of it, so an alternative_cost is exempt from cost increases and reductions, from Trinisphere-style taxes and from 'you may cast this without paying its mana cost', and it cannot express a Phyrexian pip that sits alongside other pips in a larger cost ({2}{U/P}, {G/P}{G/P}) where only that one symbol may be paid with life. cost_keys has pay_life, but cost_keys is what an activated ability's cost may hold and this is a printed mana cost on a sorcery, not an ability.
-- **(cost)** a Phyrexian pip in a printed mana cost: {R/P} parsed by ManaCost.parse into a pip payable either with one {R} or with 2 life, offered as a per-symbol choice while the cost is being paid, and still counted as one red pip for mana value, colors and color identity whichever half is chosen. Concretely a sibling of HybridPip in src/automtg/engine/mana.py -- a pip whose alternative half is a life payment rather than a second colour or a generic amount -- plus the payment branch in the mana solver so a player with no red source can still cast the spell for 2 life
-  <br>Why the existing vocabulary won't do: ManaCost.parse rejects {R/P} outright ('phyrexian and snow mana are not implemented', src/automtg/engine/mana.py:98), and _parse_hybrid rejects it a second time by name (mana.py:244) with the comment that treating it as a colour choice 'would make every phyrexian card cheaper than it is printed' -- so the card cannot load at its printed cost. The proxy narrows {R/P} to {R} (src/automtg/cards/proxy.py:290), which is exactly what the packet's starting_point carries, and that silently deletes the card: Gut Shot is played as a free red ping paid entirely in life, in decks that often have no red source at all, and a hard {R} makes it a strictly worse Shock. The card-level alternative_cost with a pay_life cost is the near miss and is still wrong: Phyrexian mana is paid as part of the spell's own mana cost, not instead of it, so an alternative_cost is exempt from cost increases and reductions and from Trinisphere-style taxes, it changes what 'cast without paying its mana cost' and cost-reduction effects apply to, and it cannot express a Phyrexian pip sitting alongside other pips in a larger cost ({2}{R/P}, {G/P}{G/P}) where only that one symbol may be paid with life. cost_keys has pay_life, but cost_keys is what an *activated ability's* cost may hold, and this is a printed mana cost on an instant, not an ability. Only the reminder line is blocked -- 'Gut Shot deals 1 damage to any target.' is a plain `damage` op -- so no partial answer was written. Same block already recorded for Gitaxian Probe and Mental Misstep.
-- **(cost)** a Phyrexian pip ({W/P}, {U/P}, {B/P}, {R/P}, {G/P}) inside a printed `mana_cost` string: a symbol the caster may satisfy either with one mana of that colour or by paying 2 life, while still counting 1 toward mana value and still contributing its colour to the card's colour and colour identity. The parser must accept it, the payer must be offered the life branch as a choice at cast time (Phyrexian mana is optional per-symbol, and the choice is made while paying costs, not on resolution), and the resulting spell must remain the printed colour even when no coloured mana was spent. Wanted by the whole Phyrexian cycle -- Mental Misstep, Gitaxian Probe, Mutagenic Growth, Dismember, Surgical Extraction, Apostle's Blessing, Birthing Pod, Vault Skirge, Porcelain Legionnaire and Norn's Choirmaster's descendants.
-  <br>Why the existing vocabulary won't do: `_parse_hybrid` (src/automtg/engine/mana.py:241-262) raises DslError on any half of a hybrid symbol that is not a digit or a colour, so `{U/P}` will not load at all: the comment there says the rejection is deliberate, because `HybridPip` models a *colour choice* and treating P as a colour would make every Phyrexian card cheaper than printed. Going the other way is no better: dropping to a plain `{U}` (what `starting_point` proposes) silently deletes the alternative payment that is the entire reason this card is played, and there is nothing in `card_level_cost_keys` to put it back. `alternative_cost` is a whole-cost replacement priced in mana, not a per-symbol substitution, and it cannot charge life -- Mental Misstep's life branch is `{U/P}` paid as 2 life, i.e. a *total* cost of `{0}` plus 2 life, which as an `alternative_cost` would need a mana-free entry the loader rejects (it hard-requires `mana`). `pay_life` exists only in `cost_keys`, which is the activated-ability cost language and has no reach into a spell's printed mana cost. Every workaround also gets the mana value wrong or the colour wrong, and this card's own mana value of 1 is load-bearing: Mental Misstep is legal targeting itself. The shape to extend is HybridPip itself, which already models 'either/or' inside a cost -- with life rather than a second colour on the right-hand side.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mental Misstep** (rank 456) — `mental_misstep`
-  - ({U/P} can be paid with either {U} or 2 life.)
-- **Gitaxian Probe** (rank 523) — `gitaxian_probe`
-  - ({U/P} can be paid with either {U} or 2 life.)
-- **Gut Shot** (rank 2262) — `gut_shot`
-  - ({R/P} can be paid with either {R} or 2 life.)
-
-</details>
 
 ## cast-as-though-flash
 

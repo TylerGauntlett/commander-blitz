@@ -3296,6 +3296,10 @@
     "artist": "Sidharth Chaturvedi",
     "scryfall_id": "5afc0319-9e17-4e81-a0b6-e76645bacb04"
   },
+  "gitaxian_probe": {
+    "artist": "Pedro Correa",
+    "scryfall_id": "1fbb4493-23db-4c91-a3e0-17b139f5d00f"
+  },
   "glacial_floodplain": {
     "artist": "Sarah Finnigan",
     "scryfall_id": "9de5fadd-4559-479f-b45d-abe792f0f6e5"
@@ -3707,6 +3711,10 @@
   "gurmag_swiftwing": {
     "artist": "Jeff Simpson",
     "scryfall_id": "6e068e80-ab5d-41b8-add9-bd49905e4992"
+  },
+  "gut_shot": {
+    "artist": "Greg Staples",
+    "scryfall_id": "98423ff9-48e3-4985-9fe4-7c095c3ceee0"
   },
   "gutter_skulk": {
     "artist": "Mark Winters",
@@ -5354,6 +5362,10 @@
     "artist": "Li Tie",
     "scryfall_id": "e1642802-055e-44d2-a261-c2a45ad515e8"
   },
+  "mental_misstep": {
+    "artist": "Kelogsloops & Scott Okumura",
+    "scryfall_id": "ab8741ca-43cb-4b4c-890d-0a363524bd13"
+  },
   "merchant_of_secrets": {
     "artist": "Greg Hildebrandt",
     "scryfall_id": "10227a24-d4f7-4dfa-a54d-eaf183fd7e79"
@@ -6430,6 +6442,10 @@
   "pongify": {
     "artist": "Dominik Mayer",
     "scryfall_id": "5780936e-629d-4737-9005-651234f5426d"
+  },
+  "porcelain_legionnaire": {
+    "artist": "Eric Deschamps",
+    "scryfall_id": "a377ec34-2da6-420a-b35e-7f380a413dcf"
   },
   "port_town": {
     "artist": "Arthur Yuan",
@@ -7995,6 +8011,10 @@
     "artist": "Justin Sweet",
     "scryfall_id": "684a6e3f-909a-4ca0-a6aa-7354b9476df2"
   },
+  "slash_panther": {
+    "artist": "Matt Stewart",
+    "scryfall_id": "2f510946-34de-4c12-8998-f61887d1a0e1"
+  },
   "slimebind": {
     "artist": "Mark Behm",
     "scryfall_id": "20f2b109-0d13-41a2-ba76-d75e417b39e8"
@@ -8198,6 +8218,10 @@
   "spined_karok": {
     "artist": "Filip Burburan",
     "scryfall_id": "c37ae6b5-225a-410e-ab22-13e923bdfb65"
+  },
+  "spined_thopter": {
+    "artist": "Pete Venters",
+    "scryfall_id": "0414f577-00cd-4f7a-b969-3e7efb6bc31b"
   },
   "spined_wurm": {
     "artist": "Carl Critchlow",
@@ -8987,6 +9011,10 @@
     "artist": "Mark Zug",
     "scryfall_id": "ddbcc6e9-b5f4-4f20-9c15-b690b4f64304"
   },
+  "thundering_tanadon": {
+    "artist": "Dan Murayama Scott",
+    "scryfall_id": "e2fab443-0f4b-45ea-8a6d-435b93803409"
+  },
   "tidehollow_strix": {
     "artist": "Cyril Van Der Haegen",
     "scryfall_id": "17be4a4e-5f11-4c3e-b447-9feb5ccbc448"
@@ -9498,6 +9526,10 @@
   "vault_of_whispers": {
     "artist": "Rob Alexander",
     "scryfall_id": "62d35729-de2c-44d8-b274-3eb2394563f3"
+  },
+  "vault_skirge": {
+    "artist": "Brad Rigney",
+    "scryfall_id": "f254239c-c07a-4c41-98f7-8f4de539c73e"
   },
   "vector_imperial_capital": {
     "artist": "Lordigan",

@@ -313,9 +313,9 @@ commander plinth, the action panel and the deck picker. They were a letter on a
 coloured disc, which is a mark nobody who plays the game recognises.
 
 A code with no SVG falls back to that disc rather than a broken image. Nothing in
-a real game reaches it — the engine rejects hybrid and phyrexian costs at load
-time and generic never passes 16 — and `e2e/cycle3.spec.ts` fails the run if
-anything does, which is the signal that `fetch_symbols.py`'s `WANTED` has fallen
+a real game reaches it — hybrid and phyrexian costs are now parsed rather than
+rejected, and both are in `KNOWN` with their SVGs vendored, while generic never
+passes 16 — and `e2e/cycle3.spec.ts` fails the run if anything does, which is the signal that `fetch_symbols.py`'s `WANTED` has fallen
 behind.
 
 The player orb's mana panel used to be the exception — 9px discs coloured by
