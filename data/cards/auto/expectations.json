@@ -2976,6 +2976,21 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gitaxian_probe": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "glacial_floodplain": {
     "zone": "battlefield"
   },
@@ -3304,6 +3319,17 @@
   },
   "gurmag_swiftwing": {
     "zone": "battlefield"
+  },
+  "gut_shot": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "gutter_skulk": {
     "zone": "battlefield"
@@ -4704,6 +4730,19 @@
   "meng_huo_s_horde": {
     "zone": "battlefield"
   },
+  "mental_misstep": {
+    "hand_size": {
+      "0": 1,
+      "1": 1
+    },
+    "library_size": {
+      "1": 19
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "merchant_of_secrets": {
     "hand_size": {
       "0": 2
@@ -5682,6 +5721,9 @@
       "id": "ape_3_3_g"
     },
     "zone": "graveyard"
+  },
+  "porcelain_legionnaire": {
+    "zone": "battlefield"
   },
   "port_town": {
     "zone": "battlefield"
@@ -7057,6 +7099,9 @@
   "slagwurm_armor": {
     "zone": "battlefield"
   },
+  "slash_panther": {
+    "zone": "battlefield"
+  },
   "slimebind": {
     "zone": [
       "battlefield",
@@ -7233,6 +7278,9 @@
     "zone": "battlefield"
   },
   "spined_karok": {
+    "zone": "battlefield"
+  },
+  "spined_thopter": {
     "zone": "battlefield"
   },
   "spined_wurm": {
@@ -7934,6 +7982,9 @@
   "thundering_giant": {
     "zone": "battlefield"
   },
+  "thundering_tanadon": {
+    "zone": "battlefield"
+  },
   "tidehollow_strix": {
     "zone": "battlefield"
   },
@@ -8377,6 +8428,9 @@
     "zone": "battlefield"
   },
   "vault_of_whispers": {
+    "zone": "battlefield"
+  },
+  "vault_skirge": {
     "zone": "battlefield"
   },
   "vector_imperial_capital": {

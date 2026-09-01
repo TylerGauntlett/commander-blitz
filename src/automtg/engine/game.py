@@ -382,6 +382,14 @@ class Game:
         else:
             cost = card.mana_cost
 
+        # 107.4f, and the paying half of the line `_cast_variant` offered. The
+        # bought pips leave the cost here, before every relaxation and discount
+        # below, exactly as legality priced them -- so a line offered as "paying
+        # 2 life" is charged 2 life and one blue pip fewer, and a line offered
+        # without it is charged the printed cost. `action.phyrexian` is the
+        # player's answer, the way `action.x` is; nothing re-decides it.
+        cost, phyrexian_life = cost.paying_phyrexian(action.phyrexian)
+
         granted = state.objects[oid]
         if granted.playable_any_type and granted.playable_turn == state.turn:
             # The paying half of the relaxation `_cast_variant` priced the line
@@ -420,7 +428,12 @@ class Game:
         ok = yield from pay(
             state,
             pid,
-            Cost(mana=cost),
+            # The Phyrexian life rides in the *same* cost node as the mana, not
+            # in a `pay` call of its own: 107.4f makes it one symbol of the
+            # spell's mana cost paid a different way, so it is one payment and
+            # one event batch. Contrast flashback's "Pay 3 life", which is a
+            # genuinely separate additional cost and is paid below.
+            Cost(mana=cost, pay_life=phyrexian_life) if phyrexian_life else Cost(mana=cost),
             None,
             x=x,
             extra_generic=extra,

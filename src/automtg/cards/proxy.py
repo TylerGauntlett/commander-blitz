@@ -286,12 +286,12 @@ def _simplify_symbol(symbol: str, identity: str) -> str | None:
     if sym.startswith("H"):  # half mana, un-sets only
         return "{1}"
     if "/" in sym:
-        left, _, right = sym.partition("/")
-        if right == "P":  # phyrexian: paying life is not a mana payment here
-            return f"{{{left}}}"
-        # Ordinary hybrid -- {W/U} and {2/W} -- is parsed and paid properly now,
-        # so it is left exactly as printed. Narrowing it to one half was always a
-        # loss of the card's real flexibility; it only ever happened because
+        # Hybrid -- {W/U}, {2/W} -- and phyrexian -- {W/P}, {W/U/P} -- are parsed
+        # and paid properly now, so both are left exactly as printed. Narrowing
+        # was always a loss of the card's real flexibility, and for phyrexian it
+        # was worse than that: {U/P} -> {U} deletes the "or 2 life" clause that
+        # is the entire reason a Gitaxian Probe or a Gut Shot is played, and
+        # nothing downstream could put it back. Both only ever happened because
         # `parse` used to raise.
         return None
     # Something unrecognised entirely.  One generic keeps the curve plausible

@@ -262,7 +262,7 @@ the card and shown at import; the full list is in
 |---|---|
 | **Non-keyword rules text is inert** | The card is a real permanent with the right name, cost, types and stats. Its printed abilities do nothing |
 | **Front faces only** | A transform or modal DFC generates as its front face. An MDFC land loses the land half |
-| **Phyrexian and snow costs are rewritten** | `{W/P}` becomes `{W}`, `{S}` becomes `{1}`. Mana value is always preserved. Ordinary hybrid (`{W/U}`, `{2/W}`) is now kept exactly as printed |
+| **Snow costs are rewritten** | `{S}` becomes `{1}`. Mana value is always preserved. Ordinary hybrid (`{W/U}`, `{2/W}`) and **phyrexian** (`{W/P}`) are now kept exactly as printed |
 | **No loyalty, no defence** | Planeswalkers and Battles enter play and then sit there |
 | **One mana per activation** | Scryfall records *which* mana a permanent makes, not how much. A generated Sol Ring taps for one |
 | **Some taplands are unconditional** | "Enters tapped unless…" is now read exactly for the three printed shapes that carry the cycle — a basic land subtype test ("a Mountain or a Plains"), a count of other lands, and a count of basic lands — so checklands, slowlands, fastlands and battle lands are the cards in the deck list. The shapes still not read ("unless you have two or more opponents", "unless a player has 13 or less life") enter tapped unconditionally. That fallback direction is fixed on purpose: generating the *upgrade* would hand every imported deck a better mana base than it was built with |
@@ -287,8 +287,17 @@ is implemented as a third cast line built from both halves at once.  **Partner**
 keyword: it is a deck-construction rule, and the engine is handed a finished deck
 
 **Costs and casting**
-Alternative costs in general (evoke is implemented) · phyrexian and snow mana ·
+Alternative costs in general (evoke is implemented) · snow mana ·
 convoke and similar · overload
+
+**Phyrexian mana** is implemented (107.4f): `{W/P}` parses as a hybrid pip whose
+alternative half is 2 life, and legality offers one cast line per number of pips
+bought that way, bounded by 118.4. One narrowing is recorded here: a Phyrexian
+pip in an **activated ability's** cost must be paid with mana, because the choice
+is offered as a *cast* line and an activation is not one. No shipped card prints
+such an ability — Birthing Pod's `{1}{G/P}` is the first that would — so nothing
+in the pool is worse than printed, and the direction of the narrowing is the safe
+one: the engine asks for more than the card does, never less.
 
 **Effects**
 Copying a permanent as anything but a token ·

@@ -108982,12 +108982,12 @@
     },
     "Gitaxian Probe": {
       "edhrec_rank": 523,
-      "gate": "template",
+      "gate": null,
       "name": "Gitaxian Probe",
-      "reason": "no template for: Look at target player's hand",
+      "reason": "",
       "scryfall_id": "1fbb4493-23db-4c91-a3e0-17b139f5d00f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gitaxian Raptor": {
@@ -119772,12 +119772,12 @@
     },
     "Gut Shot": {
       "edhrec_rank": 2262,
-      "gate": "template",
+      "gate": null,
       "name": "Gut Shot",
-      "reason": "no template for: deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "98423ff9-48e3-4985-9fe4-7c095c3ceee0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gut, True Soul Zealot": {
@@ -169692,12 +169692,12 @@
     },
     "Mental Misstep": {
       "edhrec_rank": 456,
-      "gate": "template",
+      "gate": null,
       "name": "Mental Misstep",
-      "reason": "no template for: Counter target spell with mana value 1",
+      "reason": "",
       "scryfall_id": "ab8741ca-43cb-4b4c-890d-0a363524bd13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mental Modulation": {
@@ -203512,12 +203512,12 @@
     },
     "Porcelain Legionnaire": {
       "edhrec_rank": 24344,
-      "gate": "template",
+      "gate": null,
       "name": "Porcelain Legionnaire",
-      "reason": "proxy simplified it: mana cost simplified: {W/P} -> {W}",
+      "reason": "",
       "scryfall_id": "a377ec34-2da6-420a-b35e-7f380a413dcf",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Porcelain Zealot": {
@@ -249462,12 +249462,12 @@
     },
     "Slash Panther": {
       "edhrec_rank": 28813,
-      "gate": "template",
+      "gate": null,
       "name": "Slash Panther",
-      "reason": "proxy simplified it: mana cost simplified: {R/P} -> {R}",
+      "reason": "",
       "scryfall_id": "2f510946-34de-4c12-8998-f61887d1a0e1",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Slash of Light": {
@@ -257492,12 +257492,12 @@
     },
     "Spined Thopter": {
       "edhrec_rank": 24923,
-      "gate": "template",
+      "gate": null,
       "name": "Spined Thopter",
-      "reason": "proxy simplified it: mana cost simplified: {U/P} -> {U}",
+      "reason": "",
       "scryfall_id": "0414f577-00cd-4f7a-b969-3e7efb6bc31b",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Spined Tyrranax": {
@@ -284052,12 +284052,12 @@
     },
     "Thundering Tanadon": {
       "edhrec_rank": 26282,
-      "gate": "template",
+      "gate": null,
       "name": "Thundering Tanadon",
-      "reason": "proxy simplified it: mana cost simplified: {G/P} -> {G}; mana cost simplified: {G/P} -> {G}",
+      "reason": "",
       "scryfall_id": "e2fab443-0f4b-45ea-8a6d-435b93803409",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Thundering Wurm": {
@@ -299272,12 +299272,12 @@
     },
     "Vault Skirge": {
       "edhrec_rank": 11705,
-      "gate": "template",
+      "gate": null,
       "name": "Vault Skirge",
-      "reason": "proxy simplified it: mana cost simplified: {B/P} -> {B}",
+      "reason": "",
       "scryfall_id": "f254239c-c07a-4c41-98f7-8f4de539c73e",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Vault Skyward": {

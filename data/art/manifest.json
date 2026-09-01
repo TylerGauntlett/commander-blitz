@@ -4951,6 +4951,12 @@
     "file": "gimli_of_the_glittering_caves.jpg",
     "scryfall_id": "5afc0319-9e17-4e81-a0b6-e76645bacb04"
   },
+  "gitaxian_probe": {
+    "artist": "Pedro Correa",
+    "bytes": 109096,
+    "file": "gitaxian_probe.jpg",
+    "scryfall_id": "1fbb4493-23db-4c91-a3e0-17b139f5d00f"
+  },
   "glacial_floodplain": {
     "artist": "Sarah Finnigan",
     "bytes": 74067,
@@ -5568,6 +5574,12 @@
     "bytes": 31500,
     "file": "gurmag_swiftwing.jpg",
     "scryfall_id": "6e068e80-ab5d-41b8-add9-bd49905e4992"
+  },
+  "gut_shot": {
+    "artist": "Greg Staples",
+    "bytes": 88887,
+    "file": "gut_shot.jpg",
+    "scryfall_id": "98423ff9-48e3-4985-9fe4-7c095c3ceee0"
   },
   "gutter_skulk": {
     "artist": "Mark Winters",
@@ -8035,6 +8047,12 @@
     "file": "meng_huo_s_horde.jpg",
     "scryfall_id": "e1642802-055e-44d2-a261-c2a45ad515e8"
   },
+  "mental_misstep": {
+    "artist": "Kelogsloops & Scott Okumura",
+    "bytes": 67876,
+    "file": "mental_misstep.jpg",
+    "scryfall_id": "ab8741ca-43cb-4b4c-890d-0a363524bd13"
+  },
   "merchant_of_secrets": {
     "artist": "Greg Hildebrandt",
     "bytes": 81478,
@@ -9654,6 +9672,12 @@
     "bytes": 78620,
     "file": "pongify.jpg",
     "scryfall_id": "5780936e-629d-4737-9005-651234f5426d"
+  },
+  "porcelain_legionnaire": {
+    "artist": "Eric Deschamps",
+    "bytes": 79061,
+    "file": "porcelain_legionnaire.jpg",
+    "scryfall_id": "a377ec34-2da6-420a-b35e-7f380a413dcf"
   },
   "port_town": {
     "artist": "Arthur Yuan",
@@ -12005,6 +12029,12 @@
     "file": "slagwurm_armor.jpg",
     "scryfall_id": "684a6e3f-909a-4ca0-a6aa-7354b9476df2"
   },
+  "slash_panther": {
+    "artist": "Matt Stewart",
+    "bytes": 80642,
+    "file": "slash_panther.jpg",
+    "scryfall_id": "2f510946-34de-4c12-8998-f61887d1a0e1"
+  },
   "slimebind": {
     "artist": "Mark Behm",
     "bytes": 46885,
@@ -12322,6 +12352,12 @@
     "bytes": 87595,
     "file": "spined_karok.jpg",
     "scryfall_id": "c37ae6b5-225a-410e-ab22-13e923bdfb65"
+  },
+  "spined_thopter": {
+    "artist": "Pete Venters",
+    "bytes": 79901,
+    "file": "spined_thopter.jpg",
+    "scryfall_id": "0414f577-00cd-4f7a-b969-3e7efb6bc31b"
   },
   "spined_wurm": {
     "artist": "Carl Critchlow",
@@ -13526,6 +13562,12 @@
     "file": "thundering_giant.jpg",
     "scryfall_id": "ddbcc6e9-b5f4-4f20-9c15-b690b4f64304"
   },
+  "thundering_tanadon": {
+    "artist": "Dan Murayama Scott",
+    "bytes": 88136,
+    "file": "thundering_tanadon.jpg",
+    "scryfall_id": "e2fab443-0f4b-45ea-8a6d-435b93803409"
+  },
   "tidehollow_strix": {
     "artist": "Cyril Van Der Haegen",
     "bytes": 89221,
@@ -14305,6 +14347,12 @@
     "bytes": 65489,
     "file": "vault_of_whispers.jpg",
     "scryfall_id": "62d35729-de2c-44d8-b274-3eb2394563f3"
+  },
+  "vault_skirge": {
+    "artist": "Brad Rigney",
+    "bytes": 88489,
+    "file": "vault_skirge.jpg",
+    "scryfall_id": "f254239c-c07a-4c41-98f7-8f4de539c73e"
   },
   "vector_imperial_capital": {
     "artist": "Lordigan",

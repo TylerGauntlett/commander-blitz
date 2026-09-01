@@ -63,12 +63,14 @@ implements, `{T}: Add` mana abilities, and enters-tapped.
   Called out loudly for MDFC lands, because the deck loses a land it thought it
   had.
 - **The second half of a split or adventure card.**
-- **Hybrid, phyrexian and snow mana**, rewritten to something `ManaCost.parse`
-  accepts — `{W/U}` to a half the deck can produce, `{2/W}` to `{2}`, `{W/P}` to
-  `{W}`, `{S}` to `{1}`. Mana value is always preserved. This is not politeness:
-  `parse` *raises* on those symbols and the exception travels out through
-  `CardRegistry.from_paths`, so one hybrid card would stop the whole registry
-  loading at boot.
+- **Snow mana**, rewritten to something `ManaCost.parse` accepts — `{S}` to
+  `{1}`. Mana value is always preserved. This is not politeness: `parse` *raises*
+  on a symbol it does not know and the exception travels out through
+  `CardRegistry.from_paths`, so one such card would stop the whole registry
+  loading at boot. Hybrid (`{W/U}`, `{2/W}`) and **phyrexian** (`{W/P}`) are no
+  longer rewritten at all: both are parsed and paid properly now, and narrowing
+  `{U/P}` to `{U}` was worse than a simplification — it deleted the "or 2 life"
+  clause that is the whole reason a Gitaxian Probe or a Gut Shot is played.
 - **Loyalty and defence.** Planeswalkers and Battles enter play as inert
   permanents.
 - **Mana quantity.** Scryfall's `produced_mana` carries no amount, so a generated
