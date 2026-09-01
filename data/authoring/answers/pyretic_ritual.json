@@ -1,0 +1,32 @@
+{
+  "card": {
+    "id": "pyretic_ritual",
+    "name": "Pyretic Ritual",
+    "oracle_text": "Add {R}{R}{R}.",
+    "mana_cost": "{1}{R}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "spell_effects": [
+      {
+        "op": "add_mana",
+        "mana": "{R}{R}{R}"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

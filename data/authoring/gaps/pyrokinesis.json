@@ -1,0 +1,32 @@
+{
+  "card_id": "pyrokinesis",
+  "name": "Pyrokinesis",
+  "oracle_text": "You may exile a red card from your hand rather than pay this spell's mana cost.\nPyrokinesis deals 4 damage divided as you choose among any number of target creatures.",
+  "blocked_sentences": [
+    "You may exile a red card from your hand rather than pay this spell's mana cost.",
+    "Pyrokinesis deals 4 damage divided as you choose among any number of target creatures."
+  ],
+  "needs": [
+    {
+      "capability": "exile_from_hand",
+      "kind": "cost",
+      "what": "a cost key that exiles a card from the payer's hand chosen by a selector (here: a red card other than this spell), usable inside a card-level `alternative_cost`, so the free-spell 'pitch' costs of Pyrokinesis / Force of Will / Force of Negation / Misdirection / Contagion can be paid. Pyrokinesis adds one requirement Force of Will does not: its pitch cost is the *entire* alternative cost with no mana and no life component at all, so `alternative_cost` must also stop insisting on a `mana` key.",
+      "why_existing_wont_do": "`cost_keys` carries `discard_selector`, which picks a hand card by exactly this kind of filter but sends it to the graveyard rather than exile -- a visible rules difference (graveyard recursion, delirium, threshold, madness, Tarmogoyf) that makes it an approximation, not the printed cost. The only exile costs are `exile_self` (the source itself, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` is card-level and already loads, but src/automtg/cards/loader.py:1217 raises `alternative_cost: needs 'mana'` and src/automtg/cards/loader.py:1218 parses that value straight into a `ManaCost`, so the mechanism can express only a cheaper *mana* price -- it has no slot for a non-mana payment, and Pyrokinesis's alternative cost is nothing but a non-mana payment. Same block already recorded for Force of Will and Force of Negation."
+    },
+    {
+      "capability": "divided_damage",
+      "kind": "decision",
+      "what": "damage divided as the caster chooses among a variable-size target spec (601.2d): the division is announced while the spell is being cast, at the same time targets are chosen, each chosen target must be assigned at least 1, and the assignments must total the printed amount -- which is what caps 'any number of target creatures' at four here. Concretely a `divided: true` flag on the `damage` op paired with the target spec it consumes, a decision asked during casting that records an amount per chosen ref, and a resolution path in `op_damage` that deals each ref its own recorded share (and deals nothing to a ref that has since become illegal, rather than redistributing).",
+      "why_existing_wont_do": "`op_damage` (src/automtg/engine/effects/ops_life.py:110-134) evaluates one `amount` and deals that full amount to every object in the pool, so `{\"op\": \"damage\", \"amount\": {\"const\": 4}, \"objects\": {\"target\": \"t1\"}}` over an `\"any\"`-count spec is 4 damage to *each* target -- unbounded damage from a six-mana instant, not 4 total. The target machinery is not the gap: `TargetSpec.count` already accepts `\"any\"` (src/automtg/engine/carddef.py:38) for 'any number of target creatures'. Nothing in `ops`, `value_keys` or `selector_keys` can split one amount across a chosen set: `for_each` iterates a pool but re-runs the same fixed amount per member, `x_value` fixes a single number rather than a vector of them, and no `divide`/`division` concept exists anywhere in src (a grep for it finds only combat damage *assignment order*, 510.1c/banding, which is a different rule and carries no player-chosen split of a spell's damage). Splitting the op into four fixed `damage` ops with four fixed targets would be a different card -- it would forbid 4-to-one and 3/1 and force exactly four legal targets to exist."
+    }
+  ],
+  "closest_existing": [
+    "alternative_cost",
+    "discard_selector",
+    "exile_from_graveyard",
+    "exile_self",
+    "damage",
+    "for_each"
+  ],
+  "confidence": "high"
+}

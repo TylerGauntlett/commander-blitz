@@ -1,0 +1,76 @@
+{
+  "card": {
+    "id": "chromatic_lantern",
+    "name": "Chromatic Lantern",
+    "oracle_text": "Lands you control have \"{T}: Add one mana of any color.\"\n{T}: Add one mana of any color.",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Lands you control have \"{T}: Add one mana of any color.\"",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Land"
+          ]
+        }
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{W}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}"}]}
+            ]
+          }
+        ]
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{W}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}"}]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "lion_s_eye_diamond",
+  "name": "Lion's Eye Diamond",
+  "oracle_text": "Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.",
+  "blocked_sentences": ["Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant."],
+  "needs": [
+    {
+      "capability": "discard_your_hand",
+      "kind": "cost",
+      "what": "a cost key that throws away the payer's entire hand, whatever its size -- 'discard_hand: true' (or a 'discard' that accepts a value expression rather than a literal) -- payable with any hand including an empty one, and pricing itself at activation time rather than at load time",
+      "why_existing_wont_do": "'discard' is a fixed integer: Cost.discard is loaded as int(spec.get('discard', 0)) and can_pay refuses the cost when _discard_pool is smaller than that number, so no constant is right -- 'discard: 7' is unpayable holding six cards, and 'discard: 0' charges nothing at all and hands over three mana for free. The cost language has no value leaf, so 'cards_in_hand' (a value_key, usable only in an amount) cannot be spent there. 'discard_selector' only narrows *which* cards may go, never how many. 'discard_self' throws the source alone, and this source is an artifact on the battlefield, not a card in hand. Writing it as the 'discard' op with amount {\"cards_in_hand\": ...} in the ability's effects moves the payment to resolution, which the packet forbids for exactly the reason this card demonstrates: the hand would still be intact while the ability is on the stack, turning a card whose whole design is 'the hand is gone before the mana arrives' into a free three-mana ritual you may respond to by casting the cards first."
+    },
+    {
+      "capability": "activate_only_as_an_instant",
+      "kind": "engine",
+      "what": "a timing restriction on an activated mana ability that bars it from being activated during the casting or cost-payment of a spell (rule 605.3a / the Lion's Eye Diamond ruling) while leaving it activatable whenever the player has priority: a flag legality and the mana solver both read, so costs.solver_taps and the payment planner never reach for it and only a priority activation can",
+      "why_existing_wont_do": "'sorcery_speed_only' is the opposite restriction -- it narrows activation to the main phase with an empty stack, where this line needs the *wider* instant timing minus the mid-cast window mana abilities uniquely get. 'activation_condition' is documented as a board question ('Activate only if you control five or more Vampires'), checked by legality against the game state, and cannot ask what the player is in the middle of doing. Nothing else in cost_keys or the ability fields describes when an ability may be activated. Dropping the sentence is not neutral: a plain is_mana_ability would be picked up by the solver while paying for another spell, so the engine would discard the player's hand on its own to help pay for a spell -- the precise thing the printed restriction forbids. The near-miss of setting is_mana_ability false hides it from the solver but pays a different price: the mana would then be produced on resolution from the stack, so the ability could be countered or responded to and could not be used to pay for a spell already being cast, which is the only reason anyone plays this card."
+    }
+  ],
+  "closest_existing": ["discard", "discard_selector", "discard_self", "sorcery_speed_only", "activation_condition"],
+  "confidence": "high"
+}

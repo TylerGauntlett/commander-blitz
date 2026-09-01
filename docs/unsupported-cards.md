@@ -10,5 +10,667 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-No gap records. Either nothing has been triaged yet, or the DSL
-covers everything attempted so far.
+**41 cards** blocked by **39** capabilities.
+
+| capability | cards | best EDHREC rank | kind |
+|---|---:|---:|---|
+| [exile-from-hand](#exile-from-hand) | 5 | 193 | cost |
+| [deals-damage-to-player](#deals-damage-to-player) | 3 | 587 | trigger_event |
+| [phyrexian-mana](#phyrexian-mana) | 3 | 456 | cost |
+| [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
+| [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [cost-reduction-supertype-filter](#cost-reduction-supertype-filter) | 2 | 78 | cost |
+| [enters-replacement](#enters-replacement) | 2 | 172 | replacement |
+| [lose-the-game](#lose-the-game) | 2 | 361 | op |
+| [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
+| [alternative-cost-nonmana](#alternative-cost-nonmana) | 1 | 3121 | cost |
+| [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
+| [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
+| [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [delirium](#delirium) | 1 | 1799 | value |
+| [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [divided-damage](#divided-damage) | 1 | 5389 | decision |
+| [doesnt-untap](#doesnt-untap) | 1 | 145 | static_effect |
+| [escape](#escape) | 1 | 388 | static_effect |
+| [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
+| [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [first-spell-each-turn](#first-spell-each-turn) | 1 | 77 | trigger_event |
+| [imprint](#imprint) | 1 | 146 | engine |
+| [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [impulse-until-next-turn](#impulse-until-next-turn) | 1 | 1214 | engine |
+| [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [multikicker](#multikicker) | 1 | 251 | cost |
+| [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [protection](#protection) | 1 | 92 | op |
+| [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
+| [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [spell-or-permanent-target](#spell-or-permanent-target) | 1 | 172 | selector |
+| [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [token-definitions](#token-definitions) | 1 | 70 | engine |
+| [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
+
+## exile-from-hand
+
+Blocks **5** cards.
+
+- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), payable as a card-level `alternative_cost` -- which means `alternative_cost` must also be able to charge something other than mana. Today the loader restricts `alternative_cost` to exactly {`mana`, `condition`} and hard-requires `mana` (src/automtg/cards/loader.py:1205-1228), so even a new exile-from-hand cost key would have nowhere on the card to live. Both halves are needed for the whole 'pitch' family: Force of Will, Force of Negation, Misdirection, Commandeer, the Modern Horizons free elementals.
+  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard_selector`, which picks a hand card by exactly this kind of filter but sends it to the graveyard rather than exile -- a visible rules difference (graveyard recursion, delirium, threshold) that makes it an approximation, not the printed cost. The only exile costs are `exile_self` (the source, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `card_level_cost_keys` has `alternative_cost`, but its validator accepts no payment except a mana string, and `evoke`/`madness`/`overload` are likewise bare mana prices. The 'If it's not your turn' half is NOT the blocker: `alternative_cost.condition` already exists and `condition_keys` has `is_your_turn` and `not`.
+- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), usable inside a card-level `alternative_cost` alongside `pay_life`, so the whole 'pitch' alternative cost of Force of Will / Force of Negation / Misdirection / the Modern Horizons elementals can be paid
+  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard_selector`, which picks a hand card by the same kind of filter but puts it in the graveyard, not exile -- a visible rules difference (graveyard recursion, delirium, threshold, Tarmogoyf) that makes it an approximation rather than the printed cost. The only exile costs are `exile_self` (the source itself, and the source here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` itself already works and already accepts `pay_life` and a `condition`; the single missing piece is the exile-a-card-from-hand payment.
+- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), usable inside a card-level `alternative_cost`, so the 'pitch' alternative cost shared by Misdirection, Force of Will, Force of Negation and the Modern Horizons free elementals can be paid
+  <br>Why the existing vocabulary won't do: `cost_keys` has `discard_selector`, which picks a hand card by the same kind of filter but puts it in the graveyard instead of exile -- a visible rules difference (graveyard recursion, delirium, threshold, Tarmogoyf), so it is an approximation, not the printed cost. The only exile costs are `exile_self` (the source, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` itself already exists and works; the one missing piece is the exile-a-card-from-hand payment.
+- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a red card other than this spell), usable inside a card-level `alternative_cost`, so the free-spell 'pitch' costs of Pyrokinesis / Force of Will / Force of Negation / Misdirection / Contagion can be paid. Pyrokinesis adds one requirement Force of Will does not: its pitch cost is the *entire* alternative cost with no mana and no life component at all, so `alternative_cost` must also stop insisting on a `mana` key.
+  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard_selector`, which picks a hand card by exactly this kind of filter but sends it to the graveyard rather than exile -- a visible rules difference (graveyard recursion, delirium, threshold, madness, Tarmogoyf) that makes it an approximation, not the printed cost. The only exile costs are `exile_self` (the source itself, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` is card-level and already loads, but src/automtg/cards/loader.py:1217 raises `alternative_cost: needs 'mana'` and src/automtg/cards/loader.py:1218 parses that value straight into a `ManaCost`, so the mechanism can express only a cheaper *mana* price -- it has no slot for a non-mana payment, and Pyrokinesis's alternative cost is nothing but a non-mana payment. Same block already recorded for Force of Will and Force of Negation.
+- **(cost)** an activated ability, activatable from hand, whose cost exiles the source card out of the hand -- the exile twin of cycling's discard_self. Concretely: let Cost.exile_self be payable from a non-battlefield zone (costs.can_pay currently hard-requires obj.on_battlefield at costs.py:688-694, while costs.pay at costs.py:1005 already calls exile_object(source_oid) which works from any zone), or add a sibling exile_self_from_hand flag so 'exile this artifact' on the battlefield keeps its stricter check. The loader already accepts the shape -- loader.py:2098 counts exile_self as a cost that removes the source, so an ability with active_zones: ['hand'] passes the outside-the-battlefield guard -- and the ability itself is an ordinary mana ability holding only add_mana {R}
+  <br>Why the existing vocabulary won't do: cost_keys has exile_self, but it is documented and implemented as 'Exile this artifact' -- Phoenix Down -- and costs.can_pay returns False unless the source is on the battlefield, so an active_zones: ['hand'] ability written with it loads cleanly and can never be activated: a silently inert card, which is worse than none. discard_self is the only cost that is legal from hand, and it is the wrong zone -- Simian Spirit Guide must end in exile, not the graveyard, which is the entire difference between it and a card that could be dredged or reanimated back. The exile op is not an alternative either: an op runs at resolution, so 601.2h would be violated and, worse, a mana ability may contain only add_mana, so no op other than add_mana can appear here at all. Separately, costs.mana_sources walks only state.battlefield and only tap-only abilities, so even once the cost is payable the payment solver will not find this ability -- it is reachable only through the explicit activation path in legality._activate_zones, which does already walk the player's own hand.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Force of Will** (rank 193) — `force_of_will`
+  - You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
+- **Force of Negation** (rank 266) — `force_of_negation`
+  - If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+  - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+- **Simian Spirit Guide** (rank 434) — `simian_spirit_guide`
+  - Exile this card from your hand: Add {R}.
+- **Misdirection** (rank 1562) — `misdirection`
+  - You may exile a blue card from your hand rather than pay this spell's mana cost.
+  - Change the target of target spell with a single target.
+- **Pyrokinesis** (rank 5389) — `pyrokinesis`
+  - You may exile a red card from your hand rather than pay this spell's mana cost.
+  - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
+
+</details>
+
+## deals-damage-to-player
+
+Blocks **3** cards.
+
+- **(trigger_event)** a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject (so an Aura's `filter: {"attached": true}` can scope it to the enchanted creature) and the damaged player available to a `defending` clause so "to an opponent" can be said
+  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is combat-only by construction: `primitives.damage_player` fires EventType.COMBAT_DAMAGE_TO_PLAYER only inside `if is_combat`, so a pinger, a Fireball, a fight or any triggered burn under this Aura draws nothing -- and pingers are precisely what this card is played with, so the substitution is a different card, not a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT already carries every damage to a player with `to="player"` and a `combat` flag, but `triggers._matches` explicitly rejects `event.data.get("to") != "permanent"` for it, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the victim rather than the dealer -- so it can never see damage aimed at a player, and even on the permanent half it would identify the wrong object. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to the enchanted creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all.
+- **(trigger_event)** a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject (so an Aura's `filter: {"attached": true}` can scope it to the enchanted creature) and the damaged player available to a `defending` clause so "to an opponent" can be said
+  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is combat-only by construction: EventType.COMBAT_DAMAGE_TO_PLAYER is fired only on the combat path, so a pinger, a Fireball, a fight or any triggered burn under this Aura draws nothing -- and this card is played precisely for the noncombat half (it is Curiosity with flash, the Niv-Mizzet piece), so the substitution is a different card rather than a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT does carry damage to a player, but `triggers._matches` rejects it with `event.data.get("to") != "permanent"`, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the creature that was *hurt* rather than the one that dealt it, so it can neither see damage aimed at a player nor identify the enchanted creature as the dealer. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to the enchanted creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all.
+- **(trigger_event)** a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject so `source: "self"` scopes it to the creature that has the ability, and the damaged player available to a `defending`/controller clause so "to an opponent" can be said. Tandem Lookout needs it inside a `grantable_abilities` entry, so the subject must resolve against the *recipient* of a static `grant_ability` (the paired creature) rather than the granter
+  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is combat-only by construction: `primitives.damage_player` fires EventType.COMBAT_DAMAGE_TO_PLAYER only on the combat path, so a pinger, a Fireball, a fight or any triggered burn draws nothing -- and the pair-a-pinger line is the whole reason this card is played, so the substitution is a different card rather than a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT already carries damage to a player with `to="player"`, but `triggers._matches` rejects it outright with `event.data.get("to") != "permanent"`, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the permanent that was *hurt* rather than the one that dealt the damage -- so it can neither see damage aimed at a player nor identify the paired creature as the dealer. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to either paired creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Curiosity** (rank 587) — `curiosity`
+  - Whenever enchanted creature deals damage to an opponent, you may draw a card.
+- **Ophidian Eye** (rank 1653) — `ophidian_eye`
+  - Whenever enchanted creature deals damage to an opponent, you may draw a card.
+- **Tandem Lookout** (rank 2251) — `tandem_lookout`
+  - As long as Tandem Lookout is paired with another creature, each of those creatures has "Whenever this creature deals damage to an opponent, draw a card."
+
+</details>
+
+## phyrexian-mana
+
+Blocks **3** cards.
+
+- **(cost)** a Phyrexian pip in a printed mana cost: {U/P} parsed by ManaCost.parse into a pip payable either with one {U} or with 2 life, offered as a per-symbol choice while the cost is being paid, and still counted as one blue pip for mana value, colors and color identity whichever half is chosen. Concretely a sibling of HybridPip in src/automtg/engine/mana.py -- a pip whose alternative half is a life payment rather than a second colour or a generic amount -- plus the payment branch in the mana solver so a player with no blue source can still cast the spell for 2 life
+  <br>Why the existing vocabulary won't do: ManaCost.parse rejects {U/P} outright ('phyrexian and snow mana are not implemented'), and _parse_hybrid rejects it again by name with the comment that treating it as a colour choice 'would make every phyrexian card cheaper than it is printed' -- so the card cannot even load at its printed cost. The proxy's fallback narrows {U/P} to {U}, which is what the packet's starting_point carries, and that silently deletes the card: Gitaxian Probe is played as a free cantrip paid entirely in life, and a hard {U} makes it a strictly worse Peek. The card-level alternative_cost with a pay_life cost is the near miss and is still wrong: Phyrexian mana is paid as part of the spell's own mana cost, not instead of it, so an alternative_cost is exempt from cost increases and reductions, from Trinisphere-style taxes and from 'you may cast this without paying its mana cost', and it cannot express a Phyrexian pip that sits alongside other pips in a larger cost ({2}{U/P}, {G/P}{G/P}) where only that one symbol may be paid with life. cost_keys has pay_life, but cost_keys is what an activated ability's cost may hold and this is a printed mana cost on a sorcery, not an ability.
+- **(cost)** a Phyrexian pip in a printed mana cost: {R/P} parsed by ManaCost.parse into a pip payable either with one {R} or with 2 life, offered as a per-symbol choice while the cost is being paid, and still counted as one red pip for mana value, colors and color identity whichever half is chosen. Concretely a sibling of HybridPip in src/automtg/engine/mana.py -- a pip whose alternative half is a life payment rather than a second colour or a generic amount -- plus the payment branch in the mana solver so a player with no red source can still cast the spell for 2 life
+  <br>Why the existing vocabulary won't do: ManaCost.parse rejects {R/P} outright ('phyrexian and snow mana are not implemented', src/automtg/engine/mana.py:98), and _parse_hybrid rejects it a second time by name (mana.py:244) with the comment that treating it as a colour choice 'would make every phyrexian card cheaper than it is printed' -- so the card cannot load at its printed cost. The proxy narrows {R/P} to {R} (src/automtg/cards/proxy.py:290), which is exactly what the packet's starting_point carries, and that silently deletes the card: Gut Shot is played as a free red ping paid entirely in life, in decks that often have no red source at all, and a hard {R} makes it a strictly worse Shock. The card-level alternative_cost with a pay_life cost is the near miss and is still wrong: Phyrexian mana is paid as part of the spell's own mana cost, not instead of it, so an alternative_cost is exempt from cost increases and reductions and from Trinisphere-style taxes, it changes what 'cast without paying its mana cost' and cost-reduction effects apply to, and it cannot express a Phyrexian pip sitting alongside other pips in a larger cost ({2}{R/P}, {G/P}{G/P}) where only that one symbol may be paid with life. cost_keys has pay_life, but cost_keys is what an *activated ability's* cost may hold, and this is a printed mana cost on an instant, not an ability. Only the reminder line is blocked -- 'Gut Shot deals 1 damage to any target.' is a plain `damage` op -- so no partial answer was written. Same block already recorded for Gitaxian Probe and Mental Misstep.
+- **(cost)** a Phyrexian pip ({W/P}, {U/P}, {B/P}, {R/P}, {G/P}) inside a printed `mana_cost` string: a symbol the caster may satisfy either with one mana of that colour or by paying 2 life, while still counting 1 toward mana value and still contributing its colour to the card's colour and colour identity. The parser must accept it, the payer must be offered the life branch as a choice at cast time (Phyrexian mana is optional per-symbol, and the choice is made while paying costs, not on resolution), and the resulting spell must remain the printed colour even when no coloured mana was spent. Wanted by the whole Phyrexian cycle -- Mental Misstep, Gitaxian Probe, Mutagenic Growth, Dismember, Surgical Extraction, Apostle's Blessing, Birthing Pod, Vault Skirge, Porcelain Legionnaire and Norn's Choirmaster's descendants.
+  <br>Why the existing vocabulary won't do: `_parse_hybrid` (src/automtg/engine/mana.py:241-262) raises DslError on any half of a hybrid symbol that is not a digit or a colour, so `{U/P}` will not load at all: the comment there says the rejection is deliberate, because `HybridPip` models a *colour choice* and treating P as a colour would make every Phyrexian card cheaper than printed. Going the other way is no better: dropping to a plain `{U}` (what `starting_point` proposes) silently deletes the alternative payment that is the entire reason this card is played, and there is nothing in `card_level_cost_keys` to put it back. `alternative_cost` is a whole-cost replacement priced in mana, not a per-symbol substitution, and it cannot charge life -- Mental Misstep's life branch is `{U/P}` paid as 2 life, i.e. a *total* cost of `{0}` plus 2 life, which as an `alternative_cost` would need a mana-free entry the loader rejects (it hard-requires `mana`). `pay_life` exists only in `cost_keys`, which is the activated-ability cost language and has no reach into a spell's printed mana cost. Every workaround also gets the mana value wrong or the colour wrong, and this card's own mana value of 1 is load-bearing: Mental Misstep is legal targeting itself. The shape to extend is HybridPip itself, which already models 'either/or' inside a cost -- with life rather than a second colour on the right-hand side.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mental Misstep** (rank 456) — `mental_misstep`
+  - ({U/P} can be paid with either {U} or 2 life.)
+- **Gitaxian Probe** (rank 523) — `gitaxian_probe`
+  - ({U/P} can be paid with either {U} or 2 life.)
+- **Gut Shot** (rank 2262) — `gut_shot`
+  - ({R/P} can be paid with either {R} or 2 life.)
+
+</details>
+
+## cast-as-though-flash
+
+Blocks **2** cards.
+
+- **(op)** an effect op that writes a turn-scoped, per-player timing permission -- "you may cast spells this turn as though they had flash" -- that `legality._timing_ok` consults alongside the printed keyword. It must cover every spell cast for the rest of the turn, including cards not yet in hand when it resolved, and ideally carry an optional selector so narrower printings ("cast creature spells", "cast this spell as though it had flash") reach the same permission
+  <br>Why the existing vocabulary won't do: Casting speed is decided entirely by `legality._timing_ok` (src/automtg/engine/legality.py:680), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef -- and otherwise defers to the sorcery-speed window from `_can_act_at_sorcery_speed`. Nothing writable from an effect widens it. `grant_keyword` with `flash` is the tempting substitute and is wrong twice: `_timing_ok` never reads an object's granted keywords, and even if it did, an `objects` pool resolved at resolution would reach only the cards already in hand, while this line covers the whole turn -- including the card this very spell draws, which is the point of the pairing. `grant_playable` (ops_cards.py:132) is a *zone* permission (`playable_by`/`playable_turn`), letting a card be cast from somewhere other than hand at its printed timing; it moves no timing restriction. `set_turn_flag` writes a flag only `has_turn_flag` conditions read, and no legality path consults the turn ledger for casting speed. `static_effects` has `cast_from_graveyard` and `cast_from_library_top` -- again zone permissions, not timing ones. The second sentence, "Draw a card.", is plain `draw`, so only the first line is blocked and no partial answer was written. Identical to the block already recorded for Emergence Zone.
+- **(op)** an effect op that writes a turn-scoped, per-player timing permission -- "you may cast spells this turn as though they had flash" -- that `legality._timing_ok` consults alongside the printed keyword, ideally with an optional selector so the narrower printings ("cast creature spells", "cast Spirit spells", "cast this spell as though it had flash") and the permanent/static form ("During each opponent's end step, you may cast spells as though they had flash") land on the same permission
+  <br>Why the existing vocabulary won't do: Timing is decided entirely by `legality._timing_ok` (src/automtg/engine/legality.py:680), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef -- and otherwise falls back to the sorcery-speed window from `_can_act_at_sorcery_speed`. Nothing in the game state can widen it. `grant_keyword` with `flash` is the tempting substitute and is wrong twice: `_timing_ok` never reads an object's granted keywords, and even if it did, the grant would reach only the cards sitting in hand when the ability resolved, while the printed line covers every spell cast for the rest of the turn -- cards drawn later, cards cast from other zones, cards that were not yet visible. `grant_playable` (ops_cards.py:132) is a *zone* permission, not a timing one: it sets `playable_by`/`playable_turn` so a card may be cast from somewhere other than hand, at its printed timing, and it moves no timing restriction at all. `set_turn_flag` writes a flag only `has_turn_flag` conditions read; no legality path consults the turn ledger for casting speed. `become_prepared` and `play_exiled` are both about a specific stashed card, not a standing permission over the whole turn. The rest of the line -- the `{1}` + `tap` + `sacrifice` cost and the mana ability -- is fully expressible; only the effect is missing, so no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Emergence Zone** (rank 536) — `emergence_zone`
+  - {1}, {T}, Sacrifice this land: You may cast spells this turn as though they had flash.
+- **Borne Upon a Wind** (rank 649) — `borne_upon_a_wind`
+  - You may cast spells this turn as though they had flash.
+
+</details>
+
+## choose-new-targets
+
+Blocks **2** cards.
+
+- **(op)** an op that retargets an object already on the stack -- given a targeted spell or ability the resolving effect points at, let its controller optionally choose new legal targets for it (114.6/115.7), leaving the original object on the stack rather than copying it
+  <br>Why the existing vocabulary won't do: The only retargeting in the engine is the `new_targets` boolean on `copy_spell` (src/automtg/engine/effects/ops_stack.py `_choose_new_targets`), and the loader refuses `new_targets` on any other op -- it retargets a freshly made copy, never the original, so `copy_spell` would leave the opposing spell still aimed where it was. No op in `ops` mutates the target list of an existing stack object; `counter` is the nearest thing that touches another spell at all and it removes it instead of redirecting it.
+- **(op)** an op that retargets an object already on the stack -- given the targeted spell the resolving effect points at, change its target to another legal one (114.6), leaving the original spell on the stack rather than copying it. Misdirection's version is mandatory ('Change the target'), not the optional 'you may choose new targets', so the op needs a non-optional single-target redirect mode as well
+  <br>Why the existing vocabulary won't do: The only retargeting in `ops` is the `new_targets` flag on `copy_spell`, which retargets a freshly created copy and leaves the original spell aimed where it was -- the opposite of what Misdirection prints. No op mutates the target list of an existing stack object; `counter` is the only other op that touches another spell and it removes it instead of redirecting it. `return_spell_to_hand` likewise takes the spell off the stack.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deflecting Swat** (rank 75) — `deflecting_swat`
+  - You may choose new targets for target spell or ability.
+- **Misdirection** (rank 1562) — `misdirection`
+  - You may exile a blue card from your hand rather than pay this spell's mana cost.
+  - Change the target of target spell with a single target.
+
+</details>
+
+## cost-reduction-supertype-filter
+
+Blocks **2** cards.
+
+- **(cost)** the "costs {N} less" filter language -- `Cost.mana_reduction`, a card's `cost_reduction` and a graveyard cast's `mana_reduction`, all counted by `costs._reduction_matches` -- has to be able to select on a *supertype*, so "for each legendary creature you control" counts only legends; and the loader must stop accepting a filter key the counter never reads
+  <br>Why the existing vocabulary won't do: `mana_reduction: {"count": {...}}` on the channel ability's cost is the right shape, but `costs._reduction_matches` (src/automtg/engine/costs.py:1442) reads only `zone`, `owner`, `controller`, `is_commander`, `types` and `subtypes` off the filter -- there is no `supertypes` branch. This is worse than a rejection: `loader._validate_cost_reduction` (src/automtg/cards/loader.py:2917) checks the filter against `STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS`, and `supertypes` is in STATIC_FILTER_KEYS, so `{"count": {"controller": "you", "types": ["Creature"], "supertypes": ["Legendary"]}}` loads clean and then silently discounts {1} for *every* creature you control -- in the sandbox that is two creatures rather than zero legends. `Legendary` is a supertype and is not reachable through `types` or `subtypes`. A flat `{"amount": N, "condition": ...}` cannot stand in: it is one fixed number, not one per legend, and `condition_keys` has no "count your legendary creatures" head that could scale it. `spell_cost_reduction` is not a substitute either -- it prices spells its controller casts, and this is an activated ability paid from hand.
+- **(cost)** the "costs {N} less" filter language (`Cost.mana_reduction`, a card's `cost_reduction`, and a graveyard cast's `mana_reduction`, all read by `costs.reduction_amount`) has to be able to select on a *supertype*, so "for each legendary creature you control" counts only legends -- and the loader must stop accepting a key the counter never reads
+  <br>Why the existing vocabulary won't do: `mana_reduction: {"count": {...}}` is the right shape and the counting is done by `costs._reduction_matches` (src/automtg/engine/costs.py:1442), which reads only `zone`, `owner`, `controller`, `is_commander`, `types` and `subtypes` off the filter -- there is no `supertypes` branch. Worse than a rejection: `loader._validate_cost_reduction` (src/automtg/cards/loader.py:2917) checks the filter against `STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS`, and `supertypes` is in STATIC_FILTER_KEYS (loader.py:363), so `{"count": {"controller": "you", "types": ["Creature"], "supertypes": ["Legendary"]}}` loads clean and then silently discounts {1} for *every* creature you control. `Legendary` is a supertype and not reachable through `types` or `subtypes`, and no existing card writes the key (the only shipped reduction filters are Voldaren Estate's `subtypes: ["Vampire"]`, Crown of Gondor's flat `amount`+`condition`, and Visions of Glory's `greatest_mana_value`). A flat `{"amount": N, "condition": ...}` cannot stand in -- it is one fixed number, not one per legend. The `spell_cost_reduction` static_effect is not a substitute either: it prices *spells its controller casts*, and this is an activated ability paid from hand.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Boseiju, Who Endures** (rank 78) — `boseiju_who_endures`
+  - This ability costs {1} less to activate for each legendary creature you control.
+- **Otawara, Soaring City** (rank 88) — `otawara_soaring_city`
+  - This ability costs {1} less to activate for each legendary creature you control.
+
+</details>
+
+## enters-replacement
+
+Blocks **2** cards.
+
+- **(replacement)** a card-level replacement of the permanent's own arrival that can (a) offer its controller an optional cost as the entry is being replaced -- here discarding a land card from hand, i.e. the `discard_selector` vocabulary of an activated cost reused as a replacement's price -- and (b) choose the destination zone on the answer: paid, the permanent finishes entering the battlefield; declined, it goes to its owner's graveyard instead and never enters at all, so no `self_enters`/`permanent_enters` trigger anywhere sees it and it is never on the battlefield to be sacrificed or bounced in response. It must apply on every arrival, from any zone (cast, reanimated, blinked), not only when the card is cast
+  <br>Why the existing vocabulary won't do: The four whitelisted replacements (`self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared`) all only decorate a permanent that is already arriving -- ReplacementModel's own docstring says so, and `zones` runs them after the object has been added to the battlefield, reading nothing from `modify` but `tapped` and `counters`. None of them can charge a cost, ask the controller anything, or redirect the arrival to another zone, and there is no `graveyard` destination in that code path at all. The card-level cost keys are the wrong layer twice over: `additional_optional` / `additional_cost` are cast costs, so they would not apply to a Mox Diamond returning from the graveyard or blinked, and neither branch matches the printed card -- a mandatory discard would make the artifact uncastable with no land in hand (it is castable, it just dies on the way), and an optional one that goes unpaid would still let it enter. `replace_leaves_battlefield` and `replace_deaths` are the only existing destination-rewriting replacements and both fire on the way *out* of the battlefield, so they cannot see a permanent that must never arrive; `replace_token_creation` rewrites what is created but, as its docstring notes, deliberately handles the no-object-yet case only for tokens. Carrying the line as a `self_enters` triggered ability running `may` + `discard` + `sacrifice` is exactly the approximation the rules forbid: the artifact would really enter, other enters triggers would see it, and it would reach the graveyard from the battlefield rather than never having been there.
+- **(replacement)** the `self_enters_tapped` replacement has to be able to carry an optional price the controller is asked about as the permanent enters -- "you may pay 3 life; if you don't, it enters tapped" -- i.e. a `cost` (here `pay_life`, and `pay_life`/`sacrifice`/`discard` for the rest of the cycle) offered at replacement time, with the tapped rewrite applied only when the offer is declined. That means the enters-replacement path must be able to suspend for a decision the way dredge/madness/miracle do, rather than being applied inline
+  <br>Why the existing vocabulary won't do: `ReplacementModel` (src/automtg/cards/schema.py:454) accepts only `event`, `modify`, `counter`, `amount` and `condition`, and `condition` is a board-state tree ("unless you control a Mountain") with no room for a payment or a player choice. `zones._enter_battlefield` applies it synchronously -- `if event == "self_enters_tapped": obj.tapped = True` (zones.py:445) -- and `replacements.py`'s module docstring states outright that every whitelisted enters replacement "is applied synchronously and asks nothing", which is why dredge, madness and miracle had to be moved out of that whitelist to be able to stop and ask. `pay_life` exists in `cost_keys` but only an *activated ability's* `cost` may hold it; there is no card-level or replacement-level slot for it. The two reachable approximations are both a different card: writing the bare `{"event": "self_enters_tapped"}` (what every shockland in the shipped pool does today, e.g. `blood_crypt`) deletes the printed choice and makes the land unconditionally tapped, and a `self_enters` trigger running `may` + `lose_life` + `untap` puts the decision on the stack after the land has already entered tapped -- it can be responded to, `permanent_enters` watchers see a tapped land, and `lose_life` is not a payment that can be refused for want of life.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sink into Stupor // Soporific Springs** (rank 172) — `sink_into_stupor_soporific_springs`
+  - Return target spell or nonland permanent an opponent controls to its owner's hand.
+  - As this land enters, you may pay 3 life. If you don't, it enters tapped.
+- **Mox Diamond** (rank 246) — `mox_diamond`
+  - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
+
+</details>
+
+## lose-the-game
+
+Blocks **2** cards.
+
+- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba` path a lethal life total reaches -- the mirror of `win_game`, needed here as the scheduled payment for the extra turn
+  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result, and `src/automtg/engine/effects/ops_player.py` states outright that there is no `lose_game` op. Spelling this clause as `win_game` on the opponent is a different sentence: `sba.declare_win` eliminates every other seat, so in a pod Final Fortune's controller would survive and both innocent opponents would be knocked out. Nothing else reduces a specific player to a loss on purpose -- `lose_life` and `damage` only reach zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
+- **(op)** a `lose_game` op taking the usual player spec (defaulting to "you"), eliminating exactly the named seat through the same `sba._eliminate` a lethal life total reaches and then calling `check_game_over` -- the mirror of `win_game`, needed as the `else` branch of the Pact cycle's unpaid upkeep and by Demonic Pact / Door to Nothingness
+  <br>Why the existing vocabulary won't do: `win_game` is the only op in `ops` that reaches a game result and there is no losing counterpart -- `src/automtg/engine/effects/ops_player.py` says so in as many words ("There is no `lose_game` op"). Writing the clause as `win_game` on the opponent is not the same sentence: `sba.declare_win` eliminates every *other* seat, so in a pod one unpaid Pact would knock out the two innocent opponents as well as its controller, and it also silently reverses which seat the result belongs to. Nothing else can reduce a specific player to a loss on purpose: `lose_life` and `damage` only take a seat to zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Pact of Negation** (rank 361) — `pact_of_negation`
+  - At the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.
+- **Final Fortune** (rank 1512) — `final_fortune`
+  - Take an extra turn after this one.
+  - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## activate-only-as-an-instant
+
+Blocks **1** card.
+
+- **(engine)** a timing restriction on an activated mana ability that bars it from being activated during the casting or cost-payment of a spell (rule 605.3a / the Lion's Eye Diamond ruling) while leaving it activatable whenever the player has priority: a flag legality and the mana solver both read, so costs.solver_taps and the payment planner never reach for it and only a priority activation can
+  <br>Why the existing vocabulary won't do: 'sorcery_speed_only' is the opposite restriction -- it narrows activation to the main phase with an empty stack, where this line needs the *wider* instant timing minus the mid-cast window mana abilities uniquely get. 'activation_condition' is documented as a board question ('Activate only if you control five or more Vampires'), checked by legality against the game state, and cannot ask what the player is in the middle of doing. Nothing else in cost_keys or the ability fields describes when an ability may be activated. Dropping the sentence is not neutral: a plain is_mana_ability would be picked up by the solver while paying for another spell, so the engine would discard the player's hand on its own to help pay for a spell -- the precise thing the printed restriction forbids. The near-miss of setting is_mana_ability false hides it from the solver but pays a different price: the mana would then be produced on resolution from the stack, so the ability could be countered or responded to and could not be used to pay for a spell already being cast, which is the only reason anyone plays this card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
+  - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## alternative-cost-nonmana
+
+Blocks **1** card.
+
+- **(cost)** card-level `alternative_cost` must accept a full `Cost` node rather than a bare mana string, so a non-mana payment -- here `return_to_hand: {"subtypes": ["Island"], "controller": "you", "zone": "battlefield"}` -- can replace the printed mana cost outright, with `mana: "{0}"` and no `condition` required. The payment must be checked at cast time by `legality` (the card is only castable this way while a matching Island is on the battlefield) and collected by `costs.pay_cost` while the spell goes on the stack, exactly as the same key already works inside an activated ability. This one change also unblocks Gush, Foil, Snapback, Commandeer, Contagion and the rest of the Nemesis/Prophecy free-spell cycle, whose alternative costs are all returns, discards and sacrifices rather than mana
+  <br>Why the existing vocabulary won't do: `return_to_hand` already exists as a `cost_keys` entry and already resolves a battlefield pool with a selector (`costs._return_pool` defaults `controller: you` and `zone: battlefield`, so "an Island you control" is exactly expressible as a selector) -- but it can only live inside an activated ability's `cost`, and Daze's line is a cast-time alternative cost, not an ability. The card-level slot that would hold it, `alternative_cost`, is validated at `src/automtg/cards/loader.py:1209` to the two keys `mana` and `condition`, is parsed straight into a `ManaCost` (`loader.py:1218`, `carddef.alternative_cost: ManaCost | None`), and raises `alternative_cost: needs 'mana'` when mana is absent -- there is no node on it to hang a return. `costs.py:1394` states the position outright: `flashback`/`graveyard_cost` is the only alternative cost modelled as a full `Cost`, and `evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana strings with no node to hang a rider on. The near substitutes are each a different card: `alternative_cost: {"mana": "{0}", "condition": {"exists": {...Island...}}}` would make Daze free whenever any Island is on the battlefield without ever bouncing one, which is the whole cost and the whole drawback; `additional_cost` with `return_to_hand` charges the return *on top of* {1}{U} instead of instead of it, and would make the printed hard-cast illegal with no Island out; `flashback` reaches a real `Cost` but casts from the graveyard, the wrong zone. The second printed line, "Counter target spell unless its controller pays {1}.", is fully expressible today (the Flusterstorm shape: a `may` op with `pay: {"mana": "{1}"}`, `player: {"controller_of_target": "t1"}` and `counter` in its `else`), so only the first line is blocked and no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Daze** (rank 3121) — `daze`
+  - You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
+
+</details>
+
+## basic-land-type-mana
+
+Blocks **1** card.
+
+- **(engine)** Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.
+  <br>Why the existing vocabulary won't do: The static effect `add_subtype` says the printed sentence exactly -- {"effect": "add_subtype", "affects": {"types": ["Land"], "controller": "any"}, "subtypes": ["Swamp"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints "{T}: Add {B}" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads "Land -- Swamp", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any "nonbasic land" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
+  - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## becomes-tapped
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped, for any reason -- paying a tap cost, attacking, or being tapped by another effect -- with the tapped permanent as the source so it can deal the damage
+  <br>Why the existing vocabulary won't do: trigger_events has becomes_untapped but no tapped counterpart, so the exact inverse is simply absent. ability_activated is the nearest reachable substitute and is wrong twice over: it fires on activation of the mana ability rather than on the tap itself, so it would miss every other way the land becomes tapped (attacking, Sunken Ruins-style outside taps) and would still fire on a hypothetical untapped-cost ability that never taps.
+
+<details><summary>Cards waiting on this</summary>
+
+- **City of Brass** (rank 97) — `city_of_brass`
+  - Whenever this land becomes tapped, it deals 1 damage to you.
+
+</details>
+
+## cant-be-countered
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability on a permanent that makes *other* spells uncounterable -- a `cant_be_countered` static whose filter picks the spells it protects (here every spell its controller controls), consulted by the `counter` op against the stack item's controller and characteristics rather than against the casting card's own printed flag, so that a spell cast after this creature is already on the battlefield survives being countered
+  <br>Why the existing vocabulary won't do: The engine's only uncounterable-ness is the card-level `uncounterable` boolean (src/automtg/cards/schema.py:577 -> src/automtg/engine/carddef.py:747), which the `counter` op reads straight off the spell's own registry definition (src/automtg/engine/effects/ops_stack.py:253) -- it is a printed property of one card, so it can say line 1 ("This spell can't be countered") and nothing more; it cannot be granted, and there is no filter or controller on it. Nothing in `static_effects` reaches the stack at all: `ward` and `protection` are the closest, and both tax or forbid *targeting* a permanent while leaving countering untouched, and `spell_cost_reduction` is the only static that looks at spells and it only changes their price. As docs/card-dsl.md:9110 says outright, statics do not reach a spell on the stack, so this needs new plumbing in the `counter` op, not a new card field.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hexing Squelcher** (rank 717) — `hexing_squelcher`
+  - Spells you control can't be countered.
+
+</details>
+
+## conditional-mana-ability
+
+Blocks **1** card.
+
+- **(engine)** a mana ability whose production is switched by a condition on its source at activation time -- "Add {C}; if this has a luck counter on it, instead add one mana of any color". `mana_options_of` and the payment solver must be able to evaluate a per-branch condition against live game state (here `counters_on` for a luck counter on the source) and offer only the branch that is currently true, in both the automatic tap path and the manual-mana path
+  <br>Why the existing vocabulary won't do: `_split_mana_rider` (src/automtg/cards/loader.py:3385) allows only leading `add_mana`/`choose_mode` effects plus a rider drawn from MANA_RIDER_OPS = {add_counters, add_poison, damage, gain_life, lose_life, remove_counters}; `if` is not in that set, so the printed conditional is a load error, not a card. `_mana_options` freezes production into a fixed tuple of 6-tuples at load time and `_mana_amount` may only scale one `add_mana`'s symbols, so no state can change *which* symbol is produced -- only how many. The three state-dependent forms that do exist (`mana_reflects`, `mana_identity`, `mana_chosen_color`) are each hardcoded questions about the board, the command zone or the permanent's chosen colour, and each is required to be the ability's only effect; none can be a condition on counters and none can pick between two branches. `choose_mode` is not a substitute and would be an approximation, because a mode is a free choice at activation: the land would offer any colour with no luck counter on it. Splitting the line into two mana abilities gated by `activation_condition` is silently wrong rather than merely ugly: `costs._sources_of` (src/automtg/engine/costs.py:225) collects solver mana sources on `solver_taps` plus tapped/summoning-sickness/abilities_locked alone and never consults `activation_condition`, so the payment solver would happily tap the counter-less Caverns for any colour; `activation_condition` is only read on the offered-action path in `legality` (src/automtg/engine/legality.py:1589). It would also leave one printed line claimed by two abilities, which the residual gate reads as text nobody owns.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gemstone Caverns** (rank 180) — `gemstone_caverns`
+  - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
+  - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+
+</details>
+
+## counter-to-exile
+
+Blocks **1** card.
+
+- **(op)** an option on the `counter` op -- e.g. `to: "exile"` -- that sends the countered spell to exile instead of its owner's graveyard, applying only to spells this instance actually countered ('countered this way'). Wanted by Force of Negation, Dissipate, Void Shatter, Nullify-style exile counters and Hindering Light's cousins.
+  <br>Why the existing vocabulary won't do: `op_counter` (src/automtg/engine/effects/ops_stack.py:223) unconditionally calls `move_object(..., Zone.GRAVEYARD, cause="countered")` after pulling the item off the stack; the spec accepts only `target`/`sid` and there is no destination key. Chaining `exile` after `counter` cannot reach it either: once countered the spell is no longer a stack object, and `selector_keys` has no way to name the card that a preceding `counter` in the same effect list just moved -- `snapshot` reads a value off an object, not a zone-change replacement. `replace_leaves_battlefield` and `replace_deaths` are battlefield-only and would not see a stack-to-graveyard move.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Force of Negation** (rank 266) — `force_of_negation`
+  - If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+  - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+
+</details>
+
+## delirium
+
+Blocks **1** card.
+
+- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/automtg/cards/loader.py:3169) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
+  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
+  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+
+</details>
+
+## discard-your-hand
+
+Blocks **1** card.
+
+- **(cost)** a cost key that throws away the payer's entire hand, whatever its size -- 'discard_hand: true' (or a 'discard' that accepts a value expression rather than a literal) -- payable with any hand including an empty one, and pricing itself at activation time rather than at load time
+  <br>Why the existing vocabulary won't do: 'discard' is a fixed integer: Cost.discard is loaded as int(spec.get('discard', 0)) and can_pay refuses the cost when _discard_pool is smaller than that number, so no constant is right -- 'discard: 7' is unpayable holding six cards, and 'discard: 0' charges nothing at all and hands over three mana for free. The cost language has no value leaf, so 'cards_in_hand' (a value_key, usable only in an amount) cannot be spent there. 'discard_selector' only narrows *which* cards may go, never how many. 'discard_self' throws the source alone, and this source is an artifact on the battlefield, not a card in hand. Writing it as the 'discard' op with amount {"cards_in_hand": ...} in the ability's effects moves the payment to resolution, which the packet forbids for exactly the reason this card demonstrates: the hand would still be intact while the ability is on the stack, turning a card whose whole design is 'the hand is gone before the mana arrives' into a free three-mana ritual you may respond to by casting the cards first.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
+  - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## divided-damage
+
+Blocks **1** card.
+
+- **(decision)** damage divided as the caster chooses among a variable-size target spec (601.2d): the division is announced while the spell is being cast, at the same time targets are chosen, each chosen target must be assigned at least 1, and the assignments must total the printed amount -- which is what caps 'any number of target creatures' at four here. Concretely a `divided: true` flag on the `damage` op paired with the target spec it consumes, a decision asked during casting that records an amount per chosen ref, and a resolution path in `op_damage` that deals each ref its own recorded share (and deals nothing to a ref that has since become illegal, rather than redistributing).
+  <br>Why the existing vocabulary won't do: `op_damage` (src/automtg/engine/effects/ops_life.py:110-134) evaluates one `amount` and deals that full amount to every object in the pool, so `{"op": "damage", "amount": {"const": 4}, "objects": {"target": "t1"}}` over an `"any"`-count spec is 4 damage to *each* target -- unbounded damage from a six-mana instant, not 4 total. The target machinery is not the gap: `TargetSpec.count` already accepts `"any"` (src/automtg/engine/carddef.py:38) for 'any number of target creatures'. Nothing in `ops`, `value_keys` or `selector_keys` can split one amount across a chosen set: `for_each` iterates a pool but re-runs the same fixed amount per member, `x_value` fixes a single number rather than a vector of them, and no `divide`/`division` concept exists anywhere in src (a grep for it finds only combat damage *assignment order*, 510.1c/banding, which is a different rule and carries no player-chosen split of a spell's damage). Splitting the op into four fixed `damage` ops with four fixed targets would be a different card -- it would forbid 4-to-one and 3/1 and force exactly four legal targets to exist.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Pyrokinesis** (rank 5389) — `pyrokinesis`
+  - You may exile a red card from your hand rather than pay this spell's mana cost.
+  - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
+
+</details>
+
+## doesnt-untap
+
+Blocks **1** card.
+
+- **(static_effect)** a static effect -- say `skip_untap_step` -- that a permanent prints on itself (and, with a filter, on others: Winter Orb, Kismet, Stasis-likes) meaning "doesn't untap during its controller's untap step", read by the untap step alongside `skip_next_untap` and `frozen_by`. It must be a printed characteristic with no lifetime of its own: it holds for exactly as long as the ability is on the battlefield, is spent by nothing, and must not fight `skip_next_untap` (the untap step must not consume that one-shot on a permanent already held by the static), while leaving explicit `untap` effects -- Mana Vault's own upkeep payment -- free to untap it
+  <br>Why the existing vocabulary won't do: `static_effects` carries `untap_during_each_untap_step`, the exact inverse, and nothing that suppresses untapping; `characteristics.untap_also` is the only untap-related static reader and it only adds permanents to the untap set. The two engine fields that do suppress untapping are both written by resolution, not by a printed static: `skip_untap` sets `skip_next_untap`, which `primitives.untap_all` clears in the very untap step it skips (a one-shot -- it would hold Mana Vault for one turn and release it on the next), and `freeze` sets `frozen_by` to the source oid for its source's lifetime. Both are `ops`, so the only way to reach either is to invent a triggered ability (`self_enters` + `freeze` on `self_only`) to carry a line that is printed as a static -- which the residual gate would see as a triggered ability claiming a static sentence, and which would additionally sit on the stack, be responded to, and be re-installed on every re-entry rather than simply being true while the artifact is on the battlefield.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mana Vault** (rank 145) — `mana_vault`
+  - This artifact doesn't untap during your untap step.
+
+</details>
+
+## escape
+
+Blocks **1** card.
+
+- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
+- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
+  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Underworld Breach** (rank 388) — `underworld_breach`
+  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+
+</details>
+
+## exile-target-spell
+
+Blocks **1** card.
+
+- **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
+  <br>Why the existing vocabulary won't do: `op_exile` (src/automtg/engine/effects/ops_board.py:235) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/automtg/engine/effects/context.py:62). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and it hard-codes the destination: after `state.stack = [it for it in state.stack if it.sid != sid]` it calls `move_object(..., Zone.GRAVEYARD, cause="countered")`, and its spec accepts only `target`/`sid` -- no destination key (the same gap force_of_negation.json records as `counter_to_exile`, though that card genuinely counters and this one does not). Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/automtg/engine/effects/selectors.py:329), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mindbreak Trap** (rank 539) — `mindbreak_trap`
+  - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
+  - Exile any number of target spells.
+
+</details>
+
+## extra-turn
+
+Blocks **1** card.
+
+- **(op)** an `extra_turn` op that queues one additional turn for the named player (usual player spec, defaulting to "you") immediately after the current one, taken before the turn order would otherwise advance and stacking if several resolve; plus a way for a delayed trigger created by the same resolution to be scoped to *that* queued turn rather than to the turn it was created in, which is what "at the beginning of that turn's end step" names
+  <br>Why the existing vocabulary won't do: `ops` has `extra_combat` and `extra_land_drop` -- both extra *sub-steps inside* the turn already in progress -- but nothing that adds a turn to the turn sequence, and no `value_key`, `condition_key` or `trigger_event` refers to a scheduled turn either. `delayed_trigger` cannot stand in for the second half: its only durations are `this_turn` and `until_it_fires` (`src/automtg/engine/structs.py:666`), so a delayed `end_step` watcher created by this spell fires at the end step of the turn Final Fortune was cast in -- one whole turn early, and exactly the misfire that makes the card read as printed while doing something else. There is no duration, condition or trigger field that says "the extra turn this effect created".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Final Fortune** (rank 1512) — `final_fortune`
+  - Take an extra turn after this one.
+  - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## first-spell-each-turn
+
+Blocks **1** card.
+
+- **(trigger_event)** a per-player once-each-turn restriction on a trigger -- say `max_per_turn_per_player: 1` on TriggerSpec (src/automtg/cards/schema.py:241), counted in `triggers._queue` under a key of `(obj.oid, ability.index, actor_pid)` instead of `(obj.oid, ability.index)`, where `actor_pid` is the seat the event was about (`event.player`, the same seat `_actor` already computes for the `controller: "you"/"opponent"` check and that `bindings["event_player"]` exposes). With it, Esper Sentinel is one `spell_cast` trigger: `controller: "opponent"`, `filter: {"not_types": ["Creature"]}`, `max_per_turn_per_player: 1`. It is the clause the whole Rhystic/tax family is printed with -- Rhystic Study is "whenever an opponent casts a spell" with no cap, but Esper Sentinel, Archivist of Oghma-likes and every "the first <X> an opponent does each turn" line need exactly this key
+  <br>Why the existing vocabulary won't do: `max_per_turn` exists and is documented as a *per-permanent* cap: `triggers._queue` (src/automtg/engine/triggers.py:1164) keys `state.triggers_this_turn` by `(obj.oid, ability.index)`, so `max_per_turn: 1` means "the first noncreature spell **any** opponent casts each turn". In a duel that coincides with the printed card; at a pod it silently eats the tax on every opponent after the first, which is where this card is actually played -- so it is an approximation, not the line. The three near substitutes each fail differently: (1) `nth`, the ordinal filter that would say "their first", is restricted to draw triggers at src/automtg/cards/loader.py:2226 (`'nth' only means anything on a draw trigger`) because only `draw_cards` stamps `data["nth"]` on its event; `game._cast` fires SPELL_CAST (src/automtg/engine/game.py:623) with player/source/oid/sid/card/kicked and no ordinal. (2) A `condition` on `{"cmp": [{"spells_cast_this_turn": {"binding": "event_player"}}, ...]}` counts the wrong things twice over: `TurnLedger.spells_cast` (src/automtg/engine/structs.py:798) is a flat per-player tally of **all** spells with no type filter, so an opponent who casts a creature first and an artifact second is at 2 and the tax never applies, while the printed card taxes that artifact; and 603.4 re-checks an intervening-if at resolution, the failure already recorded on `nth`. (3) The turn-flag route is not per player either: `set_turn_flag`/`has_turn_flag` write and read `TurnLedger.object_flags` keyed by the ability's own `ctx.source_oid` (src/automtg/engine/effects/conditions.py:220), i.e. by the Sentinel, so it reproduces `max_per_turn: 1` exactly. Nothing in `condition_keys`, `value_keys` or the trigger spec can ask "is this the first noncreature spell **this** player has cast this turn".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Esper Sentinel** (rank 77) — `esper_sentinel`
+  - Whenever an opponent casts their first noncreature spell each turn, draw a card unless that player pays {X}, where X is this creature's power.
+
+</details>
+
+## imprint
+
+Blocks **1** card.
+
+- **(engine)** a fourth dynamic-colour family for mana abilities, alongside 'reflecting' and 'in_commander_identity' and 'chosen_color_of': an add_mana whose producible colours are the printed colours of the cards a selector matches -- here {"zone": "exile", "exiled_with": "self"} -- narrowed at activation time in costs.mana_options_of so the solver plans against the real colours, and empty (the ability makes nothing) while nothing is imprinted
+  <br>Why the existing vocabulary won't do: A mana ability may hold only add_mana or one choose_mode of add_mana, and each of the three existing narrowings asks the wrong question. 'reflecting' resolves a pool and asks each object's own mana abilities what it could produce, so an imprinted Lightning Bolt -- a card with no mana abilities at all -- would offer nothing rather than {R}; 'in_commander_identity' asks the command zone; 'chosen_color_of: self' reads a colour the permanent chose, and Chrome Mox names no colour, it reads the colours off another card. The colours of an exiled card are not a value the mana language can reach at all: value_keys has mana_value_of and colors_of_mana_spent but no colours-of-an-object leaf, and an op that could compute one (choose_color) is forbidden inside a mana ability. Leaving the packet's five-colour choose_mode in place would be a Mox Opal that taps for any colour with nothing imprinted -- the unconditional any-colour approximation the reflecting capability exists to refuse.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chrome Mox** (rank 146) — `chrome_mox`
+  - {T}: Add one mana of any of the exiled card's colors.
+
+</details>
+
+## impulse-from-opponent-library
+
+Blocks **1** card.
+
+- **(op)** a way to exile the top N cards of a *named* player's library and leave the impulse permission on the ability's controller rather than on that library's owner. Either a new key on look_at_top -- a 'playable_by' (or 'playable_controller') that makes _move_found write obj.playable_by = ctx.controller instead of the pid it looped over -- or, more generally, an 'as' binding on look_at_top recording the cards it moved (the way mill and exile already record theirs), so a following grant_playable can name them. Ragavan needs exactly one of these; with the binding, 'exile the top card of that player's library' becomes look_at_top {player: {binding: 'event_player'}, amount: 1, destination: 'exile', as: 'pilfered'} and 'until end of turn, you may cast that card' becomes grant_playable over {binding: 'pilfered'}
+  <br>Why the existing vocabulary won't do: look_at_top is the only op that reaches the top of a library, and its playable_this_turn branch in effects/ops_cards.py _move_found hardcodes obj.playable_by = pid -- the player whose library was looked at. On Ragavan that library is the *opponent's*, so the printed 'you may cast that card' would grant the permission to the very player whose card was stolen: the opposite of the card. The exile op does set playable_by = ctx.controller, which is the right seat, but it takes a selector and selector_keys has no way to name the top of a library (no 'top'/'from_top' key; zone: 'library' with a count resolves to a chosen card from the whole deck, which is a tutor, not the top card). Composing the two also fails: look_at_top calls move_object without a 'by', so nothing records exiled_by and a follow-up grant_playable over {zone: 'exile', exiled_with: 'self'} matches nothing, while {zone: 'exile', player: ...} would match every card that player has ever had exiled. look_at_top has no 'as' binding either -- mill has one (Locke, Treasure Hunter) and exile has one, so this op is the odd one out. Naming 'that player' is NOT the gap: {"binding": "event_player"} already resolves to the damaged player, since primitives.damage_player fires COMBAT_DAMAGE_TO_PLAYER with player=pid.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
+  - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
+
+</details>
+
+## impulse-until-next-turn
+
+Blocks **1** card.
+
+- **(engine)** an impulse-exile permission whose clock runs to the end of the granting player's NEXT turn instead of the current one. Concretely: replace the single `playable_turn: int` on GameObject (src/automtg/engine/objects.py:450) with a permission that also records its duration -- e.g. a `playable_until_next_turn: bool` alongside it, or a `playable_expires_after` marker the turn boundary clears -- and have every reader honour it: legality._playable_zones (src/automtg/engine/legality.py:325-336), the exile-permission filter at src/automtg/engine/legality.py:471, the any-type relaxation at src/automtg/engine/legality.py:1171 and src/automtg/engine/game.py:383, and the group cap at src/automtg/engine/game.py:547. Then surface it on the card side as a duration on `exile`'s `playable_this_turn` (a `playable: "until_your_next_turn"` form, or a sibling `playable_until_next_turn` flag) and the same on `grant_playable`, so the two impulse families -- "you may play that card this turn" and "until the end of your next turn, you may play those cards" -- stay one op with two clocks.
+  <br>Why the existing vocabulary won't do: The permission the engine has is hard-wired to a single turn. `exile` with `playable_this_turn` (src/automtg/engine/effects/ops_board.py:267,293-294) and `grant_playable` (src/automtg/engine/effects/ops_cards.py:132-165) both write `obj.playable_turn = ctx.state.turn`, and every consumer gates on the equality `playable_turn == state.turn`, so the offer vanishes at the turn boundary -- a card written with `playable_this_turn` would let the player use the two exiled cards only on the turn Light Up the Stage resolved, which is strictly narrower than printed and is exactly the approximation the brief forbids. `play_exiled` is a different card entirely: it casts immediately and for free, while this line is a deferred permission at the printed price. `delay`/`delayed_trigger` cannot re-grant it either -- there is no way to re-select the two specific exiled cards from a later resolution, since bindings live for one resolution only (ops_board.py comment at :275-282) and the `exiled_with: "self"` selector reads `exiled_by`, which `exile` sets only under `until_leaves`/`link`, a flag that means "return them" rather than "they are still playable". The duration vocabulary the engine already has for other effects -- `until_your_next_turn` on detain/goad/cant_block (src/automtg/engine/effects/ops_board.py:1939,1996) -- proves the clock is representable; it simply has never been wired to the impulse permission. Note the first printed line, "Spectacle {R}", is NOT blocked: it is expressible as a card-level `alternative_cost` of {R} whose `condition` is a `cmp` of `{"life_lost_this_turn": "opponent"}` greater than `{"const": 0}`, which the loader accepts (src/automtg/cards/loader.py:1205-1228). Only the impulse duration blocks the card, so no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Light Up the Stage** (rank 1214) — `light_up_the_stage`
+  - Until the end of your next turn, you may play those cards.
+
+</details>
+
+## look-at-random-card-in-hand
+
+Blocks **1** card.
+
+- **(op)** a private look at a chosen number of cards picked at random from a hand -- either an `objects` selector on `look_at_hand` (zone hand, a `player` spec, `random: true`, `count: 1`) so the entitlement is granted per card instead of per hand, or an `amount`/`random` pair on the op. The seen card must be picked uniformly at random by the engine rather than chosen by anybody, the entitlement (`GameObject.revealed_to`) must land on exactly that one card, and it must be the controller of the ability who sees it while the hand's owner and every other seat still get `hand: null` and a count. Chosen-count variants of the same shape (Ostracize-style 'look at N cards at random') fall out of it, as does the empty-hand case: zero cards is a legal resolution, not a failure
+  <br>Why the existing vocabulary won't do: `look_at_hand` is the only private-information op and it is all-or-nothing: its sole argument is `player`, the loader hard-requires it (`look_at_hand needs a 'player' -- whose hand`), and the op body walks the entire `players[pid].hand` adding `ctx.controller` to every card's `revealed_to`. There is no `objects`, `count`, `amount` or `random` key on it, so the selector language's `random` -- which exists and is honoured by `choose_objects` -- has nothing to attach to here. Writing the line as a bare `look_at_hand` would show the whole hand, which is not a smaller version of the printed effect but a strictly larger one: Urza's Bauble would become Peek/Glasses of Urza on an artifact that costs {0}, and the information asymmetry the op exists to model would be handed away for free. `reveal` is the other near miss -- it does route through `choose_objects`, so a `{"zone": "hand", "player": {"target": "t1"}, "random": true, "count": 1}` selector would pick the right card -- but revealing is public by construction (it emits a `reveal` event carrying `def_id`s to the table), and 'look at' shows the card to the ability's controller alone; at a pod that difference decides who is ahead, and it is the exact distinction `op_look_at_hand`'s docstring was written to preserve.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urza's Bauble** (rank 2856) — `urza_s_bauble`
+  - Look at a card at random in target player's hand.
+
+</details>
+
+## multikicker
+
+Blocks **1** card.
+
+- **(cost)** the multikicker guard must accept a card whose only reader of 'additional_paid' is a 'self_enters_with_counters' replacement -- i.e. loader._mentions should walk model.replacements (their 'amount' and 'condition' value expressions) the way it already walks spell_effects, targets, ability effects, ability targets and trigger conditions. The same walk feeds the mirrored check just below it ('reads additional_paid but has no additional_cost'), so both should be fixed together. Nothing else is missing: with _mentions patched to see replacements, the card {multikicker: "{2}", replacements: [{event: self_enters_with_counters, counter: "charge", amount: {additional_paid: true}}], plus a mana ability {op: add_mana, mana: "{C}", amount: {counters_on: {counter: "charge", objects: {self_only: true}}}}} passes schema, compile, residual and playable, and the sandbox measures 6 charge counters (MAX_ADDITIONAL_TIMES) -- so the fix is one walk, and the answer that follows it asserts counters {kind: "charge", amount: 6}.
+  <br>Why the existing vocabulary won't do: The printed 'Multikicker {2}' line has exactly one claimant -- the card-level 'multikicker' field (verify._covered matches it against card.multikicker; fidelity declares it). Spelling it as 'additional_cost' + 'additional_optional' + 'additional_repeatable' loads, but leaves the printed line unclaimed at the residual gate, and gate 5 only casts the card multikicked when card.multikicker is not None, so the kicks would never be paid or measured. But setting 'multikicker' fails compile with "has a 'multikicker' cost that no effect reads via 'additional_paid'", because loader._mentions never descends into model.replacements -- and a replacement is where 614.1c requires 'enters with a charge counter ... for each time it was kicked' to live. The only shape that satisfies the guard is a 'self_enters' triggered ability running add_counters {additional_paid: true}, which loads and would probably pass every gate while being the wrong card: the artifact would be seen on the battlefield at zero counters, the counters would arrive from a separate object on the stack that can be responded to or removed, and they would fire counter_placed watchers that a replacement does not. That is the approximation the brief forbids, so no answer is written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Everflowing Chalice** (rank 251) — `everflowing_chalice`
+  - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
+  - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## noted-mana-type
+
+Blocks **1** card.
+
+- **(op)** an effect that records which mana type was actually spent to pay the activation cost of the ability being resolved, and stores that type on the source permanent as a persistent note that survives until it is overwritten by a later activation
+  <br>Why the existing vocabulary won't do: The closest value is `colors_of_mana_spent`, which returns the *number* of distinct colors spent to cast the object at `source_oid` (sunburst/converge) -- it is a count, not a type, it is read off a cast spell rather than an activation payment, and nothing writes it onto a permanent as durable state. `set_flag` records only a named boolean, and `add_counters` records only a count of a fixed counter kind, so neither can hold a mana type.
+- **(value)** a mana specification for `add_mana` that resolves to the mana type previously noted on the source permanent, so the second ability produces exactly that type
+  <br>Why the existing vocabulary won't do: `add_mana` takes a literal mana string parsed by `parse_mana_production`, and `add_mana_per` only scales a literal unit by a selector count; neither can read state off the source. A mana ability may contain only `add_mana` or one `choose_mode` of `add_mana` modes, so the only expressible shape is a free choice among the five colors -- that is a strictly better card than the printed one, which is locked to the type banked earlier, so it is an approximation, not a translation. `choose_color` is likewise a fresh choice at resolution and is not legal inside a mana ability.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
+  - Note the type of mana spent to pay this activation cost.
+  - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
+
+</details>
+
+## opening-hand-ability
+
+Blocks **1** card.
+
+- **(engine)** an ability that functions from the opening hand during game setup (103.6): after mulligans and before turn 1, each player who is not the starting player must be offered a yes/no decision for every card in hand carrying one, and answering yes must move that card from hand to the battlefield, apply its enters rider (a luck counter), and then run the follow-up effect (exile a card from your hand). It needs three new pieces -- a setup window that walks opening hands, a card-level spelling for the ability (a `begin_the_game` block, or an ability whose active_zones include `hand` with a game-start evaluation site), and a condition that can ask "you are not the starting player"
+  <br>Why the existing vocabulary won't do: `_opening_sequence` (src/automtg/engine/game.py:1293) draws STARTING_HAND, runs London mulligans, and goes straight to turn 1; it never looks at what is in anyone's opening hand, so there is no window in which a card in hand can act at all. `active_zones` defaults to `(Zone.BATTLEFIELD,)` (src/automtg/cards/loader.py:2052) and the non-battlefield zones it is used for are graveyard/exile statics and activated abilities offered by `legality._activate_zones` -- both of which run once the game is already under way, so a HAND-zone ability would have no evaluator during setup. No entry in `trigger_events` is a game-start event: the earliest is `upkeep`, which is turn 1's upkeep and therefore after the starting player has already begun, and a trigger uses the stack rather than moving its own source out of hand. No entry in `condition_keys` asks who is on the play: `is_active_player` and `is_your_turn` are questions about the current turn, and both read true on the non-starting player's own turn, so neither can gate on "you're not the starting player". `put_onto_battlefield` can move a card, but it is a resolution op and there is nothing at setup to resolve it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gemstone Caverns** (rank 180) — `gemstone_caverns`
+  - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
+  - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+
+</details>
+
+## protection
+
+Blocks **1** card.
+
+- **(op)** grant_protection must be able to name a *player* as the recipient (a `player` spec beside `objects`), to grant the quality "everything" rather than only a list of colours/types/subtypes, and to last `until_your_next_turn` instead of only until end of turn -- and every rule that reads protection (targeting, damage, enchanting, blocking) has to consult a player's protection set, not just an object's
+  <br>Why the existing vocabulary won't do: grant_protection resolves its recipients through choose_objects and then skips any oid that is not `on_battlefield`, so a player can never receive it; its qualities are built only from `from_colors` (each entry loader-validated against KNOWN_COLORS), `from_types` and `from_subtypes`, none of which can express "everything"; and it writes an `until_eot` TempEffect that cleanup ends this turn, so the "until your next turn" clock does not exist for it. `characteristics.protection_from(state, oid)` is object-keyed throughout, so there is no player-side reader either. The `protection` static_effect has the same three limits and is a printed static on a permanent besides, not something a self_enters trigger can install. `grant_keyword` is not a substitute: protection is parameterised and a Keyword is a bare string.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The One Ring** (rank 92) — `the_one_ring`
+  - When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+
+</details>
+
+## search-opponent-chooses
+
+Blocks **1** card.
+
+- **(decision)** a `chooser` on `search_library`/`search_zones` (a player spec, so it can be `{"target": ...}`) naming who picks from among the cards the search turned up -- the search itself is still performed and seen by the library's owner, but a *different*, targeted player makes the selection out of the revealed pool. Gifts Ungiven, Intuition and Plea for Power's kin all hang on it
+  <br>Why the existing vocabulary won't do: `_search` (src/automtg/engine/effects/ops_cards.py:208) hardcodes the asker: it iterates `select_players(ctx, spec.get("player", "you"))` and passes that same `pid` into `ask_objects(ctx, prompt, pool, 0, take, pid, "search")`, so the searcher is always the chooser. The selector's `chooser` key exists (selectors.py:850, and it accepts an arbitrary player spec) but a search never routes its selector through `pick_from_pool` -- the selector is only a match test via `_matches_in_zone` -- so writing `chooser` on a search's selector is silently ignored and the caster would pick their own card, which is the entire card. `two_piles` (ops_cards.py:1339) is the only op whose first decision belongs to somebody else, and its splitter is `ctx.opponents()[0]` rather than a target, it reads `library[:amount]` off the top instead of a searched pool, and the *controller* still decides which pile is taken -- the opposite of "target opponent chooses one".
+
+<details><summary>Cards waiting on this</summary>
+
+- **Intuition** (rank 1971) — `intuition`
+  - Target opponent chooses one.
+  - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## search-split-destinations
+
+Blocks **1** card.
+
+- **(op)** a second destination on `search_library`/`search_zones` for the found-but-not-chosen cards (e.g. `destination: "hand"` plus `rest: "graveyard"`), so one search reveals N, a chosen subset goes one place and the remainder another, with the shuffle still happening once at the end
+  <br>Why the existing vocabulary won't do: `_search` resolves one `DESTINATIONS[spec.get("destination", "hand")]` and hands every picked card to `_move_found` (ops_cards.py:323); cards that were revealed and not taken simply stay in the library. `look_at_top` is the only lookup with a remainder key, `rest_to_bottom` (ops_cards.py:418), and it is a boolean hardwired to `_bottom_in_random_order` -- bottom of library, never the graveyard -- besides reading the top N rather than searching. `two_piles` does carry `to`/`other`, but only over the top of the library and only as a pile split. Sequencing two ops instead is an approximation, not the card: `search_library` to the graveyard followed by a `return_from_graveyard` would put all three cards through the graveyard, firing `leaves_graveyard` and inflating `cards_to_graveyard_this_turn` from 2 to 3, and `search_library` to hand followed by a `discard` would emit two `discard` events (madness, discard triggers) for cards the printing never discards.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Intuition** (rank 1971) — `intuition`
+  - Target opponent chooses one.
+  - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## single-target-spell-restriction
+
+Blocks **1** card.
+
+- **(selector)** a target-spec predicate on how many targets the spell being targeted has, so 'target spell with a single target' binds only spells with exactly one target
+  <br>Why the existing vocabulary won't do: `selector_keys` has `count`, but that is how many objects this effect chooses, not a restriction on the chosen spell's own target count; nothing in `selector_keys` reads the target list of a spell on the stack. Without it the spell would legally target multi-target spells the printed card cannot touch.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Misdirection** (rank 1562) — `misdirection`
+  - You may exile a blue card from your hand rather than pay this spell's mana cost.
+  - Change the target of target spell with a single target.
+
+</details>
+
+## spell-or-permanent-target
+
+Blocks **1** card.
+
+- **(selector)** one target spec whose legal choices span the stack and the battlefield at once -- "target spell or nonland permanent an opponent controls" is a single target the caster may point at either a spell on the stack or a permanent, so `TargetModel.kind` needs a value (or `selector` needs a `union` that survives the kind switch) that pools `TargetRef.stack(sid)` and `TargetRef.obj(oid)` refs together, `still_legal` must re-check whichever kind the chosen ref turned out to be, and the bounce op must send a spell to its owner's hand via `pull_spell_off_stack` and a permanent via `move_object` from the one binding
+  <br>Why the existing vocabulary won't do: `TargetModel.kind` is a closed Literal of six mutually exclusive values -- permanent, player, spell, card_in_graveyard, card_in_exile, any (src/automtg/cards/schema.py:158) -- and `targeting.candidates` branches on it: `kind: "spell"` walks `state.stack` only (targeting.py:76) and every object kind walks a zone pool, with `kind: "any"` hard-overriding the selector's zone to `battlefield` in both `candidates` (targeting.py:96) and `still_legal` (targeting.py:596), so it is creatures/planeswalkers/players and can never reach the stack. `selector.union` can name a zone per branch, but it is consulted only after the kind has already decided which universe is walked, so a stack branch under a permanent-kind spec yields nothing. The ops are split the same way and neither covers both: `return_spell_to_hand` (ops_cards.py:591) reads `ctx.target_sids` and its own docstring records that `return_to_hand` (ops_cards.py:532) "cannot see a spell" -- `resolve_pool`'s `{"target": ...}` branch keeps only object refs, so a stack ref makes it a silent no-op. Two target specs, or one top-level `choose_mode` with a per-mode `mode`-tagged target on each branch, is the closest reachable shape and is a different card: it prints a mode line the card does not have, forbids a copy from choosing a new target of the other kind (706.10), and in the two-spec spelling lets the caster take a spell *and* a permanent, where the printed card takes exactly one object of either kind.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sink into Stupor // Soporific Springs** (rank 172) — `sink_into_stupor_soporific_springs`
+  - Return target spell or nonland permanent an opponent controls to its owner's hand.
+  - As this land enters, you may pay 3 life. If you don't, it enters tapped.
+
+</details>
+
+## spells-cast-per-player
+
+Blocks **1** card.
+
+- **(value)** a value leaf that reports spells cast this turn *per player* rather than summed -- e.g. a `max_spells_cast_of: "each_opponent"`, or a per-player quantifier over a condition -- so "if **an opponent** cast three or more spells this turn" asks whether any single opponent reached three. Wanted by the whole Trap cycle and by storm-watching cards (Mindbreak Trap, Archmage Ascension-style counters, Guttersnipe-adjacent per-seat thresholds).
+  <br>Why the existing vocabulary won't do: `alternative_cost` with `{"mana": "{0}"}` and a `condition` is exactly the right home for this line -- that half is not the blocker. The condition itself is: `spells_cast_this_turn` (src/automtg/engine/effects/values.py:417) resolves its player spec through `select_players` and then **sums** the ledger across every seat it names, so `{"spells_cast_this_turn": "each_opponent"}` is the *total* spells cast by all opponents. At a pod that is a strictly wider card than the printing: three opponents casting one spell each would switch on the free cast, which Mindbreak Trap does not do. The per-player machinery that exists, `max_count_of`/`min_count_of` via `_counts_per_player` (values.py:509), counts *objects* matching a selector one seat at a time and has no reach into the turn ledger's `spells_cast`; `condition_keys`' `any`/`all` combine sibling conditions and do not quantify over players.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mindbreak Trap** (rank 539) — `mindbreak_trap`
+  - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
+  - Exile any number of target spells.
+
+</details>
+
+## target-ability-on-stack
+
+Blocks **1** card.
+
+- **(selector)** a target kind for an activated or triggered ability on the stack, so "target spell or ability" can bind either an ability object or a spell
+  <br>Why the existing vocabulary won't do: Target kinds are limited to permanent, spell, card_in_graveyard, card_in_exile and player (src/automtg/cards/loader.py ~3668); a spell target cannot bind an ability on the stack, so half of "target spell or ability" is unsayable even once retargeting exists.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Deflecting Swat** (rank 75) — `deflecting_swat`
+  - You may choose new targets for target spell or ability.
+
+</details>
+
+## token-definitions
+
+Blocks **1** card.
+
+- **(engine)** a token definition for a 2/2 blue Bird creature token with flying -- id `bird_2_2_u_flying`, name "Bird Token", types ["Creature"], subtypes ["Bird"], colors ["U"], power 2, toughness 2, keywords ["flying"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it
+  <br>Why the existing vocabulary won't do: `create_token` takes only a `token` id string naming a card already in the pool (src/automtg/engine/effects/ops_board.py op_create_token -> primitives.create_token); there is no inline token body and no size/colour/subtype overrides on the op, and `loader.validate_token_references` raises `references unknown card` at load time for any id that is not present and marked `is_token`, so the card cannot ship ahead of the definition. The pool's only Bird is `bird_1_1_w_flying` in data/cards/isperia.cards.json -- a 1/1 white Bird, wrong power, toughness and colour -- and the only 2/2 blue flier is `illusion_1_1_u_flying`'s neighbour set, none of which is a 2/2 blue Bird. Substituting any of them would make the card hand its victim a different creature than it prints, and a token definition is data the worker may not write.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Swan Song** (rank 70) — `swan_song`
+  - Its controller creates a 2/2 blue Bird creature token with flying.
+
+</details>
+
+## variant-dependent-targets
+
+Blocks **1** card.
+
+- **(engine)** a way for a card's own target spec to be declared only under a particular cast-time variant, so one printed target word can have two different selectors -- e.g. a `variant` field on a TargetModel/TargetSpec taking a cast-choice name ("gift_promised", "unpromised", "kicked", "unkicked", "overloaded"), parallel to the existing `mode` field, plus target enumeration in `legality._cast_options` that builds a separate tuple set per variant from the specs that variant activates. Into the Flood Maw needs exactly one target either way: `{types: ["Creature"], controller: "opponent"}` when unpromised and `{not_types: ["Land"], controller: "opponent"}` when the gift was promised, with legality, fizzling and the resolution-time `return_to_hand` all reading whichever one was declared
+  <br>Why the existing vocabulary won't do: `legality._cast_options` (src/automtg/engine/legality.py:701) computes `tuples = enumerate_target_tuples(state, pid, card.targets, ...)` **once**, before any variant exists, and hands the identical tuple list to every `_cast_variant` call -- unkicked and kicked, unpromised and each gift promisee. So the promise cannot widen or narrow what the spell may point at; `gift_to` only rides along on the Action. `TargetModel`/`TargetSpec` carry no condition of any kind: `selector` clauses (`selector_keys`) are evaluated against one candidate object in isolation and none of them can ask about the cast, and `gift_promised`/`kicked` live in `condition_keys`, which only an `if` op may read at resolution -- far too late, since the target was locked in at 601.2c. The nearest existing thing is `mode`, which does gate a spec on a cast-time choice, but it is the wrong choice and is refused here twice: `loader._compile_targets` accepts `mode` only on a card whose whole effect tree is a single top-level `choose_mode`, and a mode is a free player election, not the gift promise -- writing the two lines as modes would let a player take the wide nonland-permanent bounce without ever promising the Fish. `bestow` is the one variant that does change what a spell points at, but its list is the fixed rules constant `BESTOW_TARGET` (carddef.py), not a per-variant selector a card may write. The workaround of declaring two specs (t1 creature, t2 nonland permanent) and branching with `if {gift_promised: ...}` at resolution is not the card: both specs would have to be legal and locked at cast time, so an unpromised cast would still require and announce a nonland-permanent target and a promised cast would still require a creature -- two target words where the card prints one, changing legality, what opponents can respond to, and when the spell fizzles. `optional: true` on the second spec does not save it either: it makes the extra target the caster's free choice rather than the promise's consequence. The first printed line, "Gift a tapped Fish", is fully expressible (`gift: "a tapped Fish"` plus a `create_token` of `fish_1_1_u`, tapped, `controller: "gift_recipient"`, exactly as parting_gust writes it), so only the second line is blocked and no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
+  - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
+
+</details>

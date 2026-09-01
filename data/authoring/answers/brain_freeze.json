@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "brain_freeze",
+    "name": "Brain Freeze",
+    "oracle_text": "Target player mills three cards.\nStorm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+    "mana_cost": "{1}{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [
+      {"id": "t1", "kind": "player", "selector": {"controller": "any"}, "count": 1}
+    ],
+    "spell_effects": [
+      {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 3}}
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "active_zones": ["stack"],
+        "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+        "trigger": {"event": "spell_cast", "controller": "you", "source": "self"},
+        "effects": [
+          {
+            "op": "copy_spell",
+            "new_targets": true,
+            "amount": {"minus": [{"spells_cast_this_turn": "all"}, {"const": 1}]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "library_size": {"0": 37},
+    "graveyard_size": {"0": 6},
+    "hand_size": {"0": 1}
+  }
+}

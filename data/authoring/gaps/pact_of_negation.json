@@ -1,0 +1,18 @@
+{
+  "card_id": "pact_of_negation",
+  "name": "Pact of Negation",
+  "oracle_text": "Counter target spell.\nAt the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.",
+  "blocked_sentences": [
+    "At the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game."
+  ],
+  "needs": [
+    {
+      "capability": "lose_the_game",
+      "kind": "op",
+      "what": "a `lose_game` op taking the usual player spec (defaulting to \"you\"), eliminating exactly the named seat through the same `sba._eliminate` a lethal life total reaches and then calling `check_game_over` -- the mirror of `win_game`, needed as the `else` branch of the Pact cycle's unpaid upkeep and by Demonic Pact / Door to Nothingness",
+      "why_existing_wont_do": "`win_game` is the only op in `ops` that reaches a game result and there is no losing counterpart -- `src/automtg/engine/effects/ops_player.py` says so in as many words (\"There is no `lose_game` op\"). Writing the clause as `win_game` on the opponent is not the same sentence: `sba.declare_win` eliminates every *other* seat, so in a pod one unpaid Pact would knock out the two innocent opponents as well as its controller, and it also silently reverses which seat the result belongs to. Nothing else can reduce a specific player to a loss on purpose: `lose_life` and `damage` only take a seat to zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter."
+    }
+  ],
+  "closest_existing": ["win_game", "lose_life", "may", "delayed_trigger"],
+  "confidence": "high"
+}

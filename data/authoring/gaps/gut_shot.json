@@ -1,0 +1,14 @@
+{
+  "card_id": "gut_shot",
+  "name": "Gut Shot",
+  "oracle_text": "({R/P} can be paid with either {R} or 2 life.)\nGut Shot deals 1 damage to any target.",
+  "blocked_sentences": ["({R/P} can be paid with either {R} or 2 life.)"],
+  "needs": [{
+    "capability": "phyrexian_mana",
+    "kind": "cost",
+    "what": "a Phyrexian pip in a printed mana cost: {R/P} parsed by ManaCost.parse into a pip payable either with one {R} or with 2 life, offered as a per-symbol choice while the cost is being paid, and still counted as one red pip for mana value, colors and color identity whichever half is chosen. Concretely a sibling of HybridPip in src/automtg/engine/mana.py -- a pip whose alternative half is a life payment rather than a second colour or a generic amount -- plus the payment branch in the mana solver so a player with no red source can still cast the spell for 2 life",
+    "why_existing_wont_do": "ManaCost.parse rejects {R/P} outright ('phyrexian and snow mana are not implemented', src/automtg/engine/mana.py:98), and _parse_hybrid rejects it a second time by name (mana.py:244) with the comment that treating it as a colour choice 'would make every phyrexian card cheaper than it is printed' -- so the card cannot load at its printed cost. The proxy narrows {R/P} to {R} (src/automtg/cards/proxy.py:290), which is exactly what the packet's starting_point carries, and that silently deletes the card: Gut Shot is played as a free red ping paid entirely in life, in decks that often have no red source at all, and a hard {R} makes it a strictly worse Shock. The card-level alternative_cost with a pay_life cost is the near miss and is still wrong: Phyrexian mana is paid as part of the spell's own mana cost, not instead of it, so an alternative_cost is exempt from cost increases and reductions and from Trinisphere-style taxes, it changes what 'cast without paying its mana cost' and cost-reduction effects apply to, and it cannot express a Phyrexian pip sitting alongside other pips in a larger cost ({2}{R/P}, {G/P}{G/P}) where only that one symbol may be paid with life. cost_keys has pay_life, but cost_keys is what an *activated ability's* cost may hold, and this is a printed mana cost on an instant, not an ability. Only the reminder line is blocked -- 'Gut Shot deals 1 damage to any target.' is a plain `damage` op -- so no partial answer was written. Same block already recorded for Gitaxian Probe and Mental Misstep."
+  }],
+  "closest_existing": ["alternative_cost", "pay_life", "hybrid"],
+  "confidence": "high"
+}

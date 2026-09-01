@@ -1,0 +1,17 @@
+{
+  "card_id": "everflowing_chalice",
+  "name": "Everflowing Chalice",
+  "oracle_text": "Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)\nThis artifact enters with a charge counter on it for each time it was kicked.\n{T}: Add {C} for each charge counter on this artifact.",
+  "blocked_sentences": [
+    "Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)",
+    "This artifact enters with a charge counter on it for each time it was kicked."
+  ],
+  "needs": [{
+    "capability": "multikicker",
+    "kind": "cost",
+    "what": "the multikicker guard must accept a card whose only reader of 'additional_paid' is a 'self_enters_with_counters' replacement -- i.e. loader._mentions should walk model.replacements (their 'amount' and 'condition' value expressions) the way it already walks spell_effects, targets, ability effects, ability targets and trigger conditions. The same walk feeds the mirrored check just below it ('reads additional_paid but has no additional_cost'), so both should be fixed together. Nothing else is missing: with _mentions patched to see replacements, the card {multikicker: \"{2}\", replacements: [{event: self_enters_with_counters, counter: \"charge\", amount: {additional_paid: true}}], plus a mana ability {op: add_mana, mana: \"{C}\", amount: {counters_on: {counter: \"charge\", objects: {self_only: true}}}}} passes schema, compile, residual and playable, and the sandbox measures 6 charge counters (MAX_ADDITIONAL_TIMES) -- so the fix is one walk, and the answer that follows it asserts counters {kind: \"charge\", amount: 6}.",
+    "why_existing_wont_do": "The printed 'Multikicker {2}' line has exactly one claimant -- the card-level 'multikicker' field (verify._covered matches it against card.multikicker; fidelity declares it). Spelling it as 'additional_cost' + 'additional_optional' + 'additional_repeatable' loads, but leaves the printed line unclaimed at the residual gate, and gate 5 only casts the card multikicked when card.multikicker is not None, so the kicks would never be paid or measured. But setting 'multikicker' fails compile with \"has a 'multikicker' cost that no effect reads via 'additional_paid'\", because loader._mentions never descends into model.replacements -- and a replacement is where 614.1c requires 'enters with a charge counter ... for each time it was kicked' to live. The only shape that satisfies the guard is a 'self_enters' triggered ability running add_counters {additional_paid: true}, which loads and would probably pass every gate while being the wrong card: the artifact would be seen on the battlefield at zero counters, the counters would arrive from a separate object on the stack that can be responded to or removed, and they would fire counter_placed watchers that a replacement does not. That is the approximation the brief forbids, so no answer is written."
+  }],
+  "closest_existing": ["multikicker", "kicker", "additional_repeatable", "self_enters_with_counters", "additional_paid"],
+  "confidence": "high"
+}

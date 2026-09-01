@@ -1,0 +1,14 @@
+{
+  "card_id": "gitaxian_probe",
+  "name": "Gitaxian Probe",
+  "oracle_text": "({U/P} can be paid with either {U} or 2 life.)\nLook at target player's hand.\nDraw a card.",
+  "blocked_sentences": ["({U/P} can be paid with either {U} or 2 life.)"],
+  "needs": [{
+    "capability": "phyrexian_mana",
+    "kind": "cost",
+    "what": "a Phyrexian pip in a printed mana cost: {U/P} parsed by ManaCost.parse into a pip payable either with one {U} or with 2 life, offered as a per-symbol choice while the cost is being paid, and still counted as one blue pip for mana value, colors and color identity whichever half is chosen. Concretely a sibling of HybridPip in src/automtg/engine/mana.py -- a pip whose alternative half is a life payment rather than a second colour or a generic amount -- plus the payment branch in the mana solver so a player with no blue source can still cast the spell for 2 life",
+    "why_existing_wont_do": "ManaCost.parse rejects {U/P} outright ('phyrexian and snow mana are not implemented'), and _parse_hybrid rejects it again by name with the comment that treating it as a colour choice 'would make every phyrexian card cheaper than it is printed' -- so the card cannot even load at its printed cost. The proxy's fallback narrows {U/P} to {U}, which is what the packet's starting_point carries, and that silently deletes the card: Gitaxian Probe is played as a free cantrip paid entirely in life, and a hard {U} makes it a strictly worse Peek. The card-level alternative_cost with a pay_life cost is the near miss and is still wrong: Phyrexian mana is paid as part of the spell's own mana cost, not instead of it, so an alternative_cost is exempt from cost increases and reductions, from Trinisphere-style taxes and from 'you may cast this without paying its mana cost', and it cannot express a Phyrexian pip that sits alongside other pips in a larger cost ({2}{U/P}, {G/P}{G/P}) where only that one symbol may be paid with life. cost_keys has pay_life, but cost_keys is what an activated ability's cost may hold and this is a printed mana cost on a sorcery, not an ability."
+  }],
+  "closest_existing": ["alternative_cost", "pay_life", "hybrid"],
+  "confidence": "high"
+}

@@ -1,0 +1,27 @@
+{
+  "card_id": "mindbreak_trap",
+  "name": "Mindbreak Trap",
+  "oracle_text": "If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.\nExile any number of target spells.",
+  "blocked_sentences": [
+    "If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.",
+    "Exile any number of target spells."
+  ],
+  "needs": [
+    {
+      "capability": "exile_target_spell",
+      "kind": "op",
+      "what": "a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: \"spell\"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: \"exile\"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats \"this spell can't be countered\" and \"when this spell is countered\" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.",
+      "why_existing_wont_do": "`op_exile` (src/automtg/engine/effects/ops_board.py:235) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{\"target\": \"t1\"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == \"object\"` (src/automtg/engine/effects/context.py:62). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and it hard-codes the destination: after `state.stack = [it for it in state.stack if it.sid != sid]` it calls `move_object(..., Zone.GRAVEYARD, cause=\"countered\")`, and its spec accepts only `target`/`sid` -- no destination key (the same gap force_of_negation.json records as `counter_to_exile`, though that card genuinely counters and this one does not). Reaching for `{\"zone\": \"stack\"}` in the `exile` op's `objects` does return stack oids (src/automtg/engine/effects/selectors.py:329), but that is \"exile every spell on the stack\", not \"exile any number of *target* spells\" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.",
+      "confidence": "high"
+    },
+    {
+      "capability": "spells_cast_per_player",
+      "kind": "value",
+      "what": "a value leaf that reports spells cast this turn *per player* rather than summed -- e.g. a `max_spells_cast_of: \"each_opponent\"`, or a per-player quantifier over a condition -- so \"if **an opponent** cast three or more spells this turn\" asks whether any single opponent reached three. Wanted by the whole Trap cycle and by storm-watching cards (Mindbreak Trap, Archmage Ascension-style counters, Guttersnipe-adjacent per-seat thresholds).",
+      "why_existing_wont_do": "`alternative_cost` with `{\"mana\": \"{0}\"}` and a `condition` is exactly the right home for this line -- that half is not the blocker. The condition itself is: `spells_cast_this_turn` (src/automtg/engine/effects/values.py:417) resolves its player spec through `select_players` and then **sums** the ledger across every seat it names, so `{\"spells_cast_this_turn\": \"each_opponent\"}` is the *total* spells cast by all opponents. At a pod that is a strictly wider card than the printing: three opponents casting one spell each would switch on the free cast, which Mindbreak Trap does not do. The per-player machinery that exists, `max_count_of`/`min_count_of` via `_counts_per_player` (values.py:509), counts *objects* matching a selector one seat at a time and has no reach into the turn ledger's `spells_cast`; `condition_keys`' `any`/`all` combine sibling conditions and do not quantify over players.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": ["counter", "counter_to_exile", "exile", "alternative_cost", "spells_cast_this_turn", "max_count_of"],
+  "confidence": "high"
+}

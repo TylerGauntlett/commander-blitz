@@ -1,0 +1,29 @@
+{
+  "card_id": "intuition",
+  "name": "Intuition",
+  "oracle_text": "Search your library for three cards and reveal them. Target opponent chooses one. Put that card into your hand and the rest into your graveyard. Then shuffle.",
+  "blocked_sentences": [
+    "Target opponent chooses one.",
+    "Put that card into your hand and the rest into your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "search_opponent_chooses",
+      "kind": "decision",
+      "what": "a `chooser` on `search_library`/`search_zones` (a player spec, so it can be `{\"target\": ...}`) naming who picks from among the cards the search turned up -- the search itself is still performed and seen by the library's owner, but a *different*, targeted player makes the selection out of the revealed pool. Gifts Ungiven, Intuition and Plea for Power's kin all hang on it",
+      "why_existing_wont_do": "`_search` (src/automtg/engine/effects/ops_cards.py:208) hardcodes the asker: it iterates `select_players(ctx, spec.get(\"player\", \"you\"))` and passes that same `pid` into `ask_objects(ctx, prompt, pool, 0, take, pid, \"search\")`, so the searcher is always the chooser. The selector's `chooser` key exists (selectors.py:850, and it accepts an arbitrary player spec) but a search never routes its selector through `pick_from_pool` -- the selector is only a match test via `_matches_in_zone` -- so writing `chooser` on a search's selector is silently ignored and the caster would pick their own card, which is the entire card. `two_piles` (ops_cards.py:1339) is the only op whose first decision belongs to somebody else, and its splitter is `ctx.opponents()[0]` rather than a target, it reads `library[:amount]` off the top instead of a searched pool, and the *controller* still decides which pile is taken -- the opposite of \"target opponent chooses one\"."
+    },
+    {
+      "capability": "search_split_destinations",
+      "kind": "op",
+      "what": "a second destination on `search_library`/`search_zones` for the found-but-not-chosen cards (e.g. `destination: \"hand\"` plus `rest: \"graveyard\"`), so one search reveals N, a chosen subset goes one place and the remainder another, with the shuffle still happening once at the end",
+      "why_existing_wont_do": "`_search` resolves one `DESTINATIONS[spec.get(\"destination\", \"hand\")]` and hands every picked card to `_move_found` (ops_cards.py:323); cards that were revealed and not taken simply stay in the library. `look_at_top` is the only lookup with a remainder key, `rest_to_bottom` (ops_cards.py:418), and it is a boolean hardwired to `_bottom_in_random_order` -- bottom of library, never the graveyard -- besides reading the top N rather than searching. `two_piles` does carry `to`/`other`, but only over the top of the library and only as a pile split. Sequencing two ops instead is an approximation, not the card: `search_library` to the graveyard followed by a `return_from_graveyard` would put all three cards through the graveyard, firing `leaves_graveyard` and inflating `cards_to_graveyard_this_turn` from 2 to 3, and `search_library` to hand followed by a `discard` would emit two `discard` events (madness, discard triggers) for cards the printing never discards."
+    }
+  ],
+  "closest_existing": [
+    "two_piles",
+    "search_library",
+    "look_at_top"
+  ],
+  "confidence": "high"
+}

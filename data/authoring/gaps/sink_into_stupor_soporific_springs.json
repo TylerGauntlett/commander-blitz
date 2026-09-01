@@ -1,0 +1,32 @@
+{
+  "card_id": "sink_into_stupor_soporific_springs",
+  "name": "Sink into Stupor // Soporific Springs",
+  "oracle_text": "Return target spell or nonland permanent an opponent controls to its owner's hand.",
+  "blocked_sentences": [
+    "Return target spell or nonland permanent an opponent controls to its owner's hand.",
+    "As this land enters, you may pay 3 life. If you don't, it enters tapped."
+  ],
+  "needs": [
+    {
+      "capability": "spell_or_permanent_target",
+      "kind": "selector",
+      "what": "one target spec whose legal choices span the stack and the battlefield at once -- \"target spell or nonland permanent an opponent controls\" is a single target the caster may point at either a spell on the stack or a permanent, so `TargetModel.kind` needs a value (or `selector` needs a `union` that survives the kind switch) that pools `TargetRef.stack(sid)` and `TargetRef.obj(oid)` refs together, `still_legal` must re-check whichever kind the chosen ref turned out to be, and the bounce op must send a spell to its owner's hand via `pull_spell_off_stack` and a permanent via `move_object` from the one binding",
+      "why_existing_wont_do": "`TargetModel.kind` is a closed Literal of six mutually exclusive values -- permanent, player, spell, card_in_graveyard, card_in_exile, any (src/automtg/cards/schema.py:158) -- and `targeting.candidates` branches on it: `kind: \"spell\"` walks `state.stack` only (targeting.py:76) and every object kind walks a zone pool, with `kind: \"any\"` hard-overriding the selector's zone to `battlefield` in both `candidates` (targeting.py:96) and `still_legal` (targeting.py:596), so it is creatures/planeswalkers/players and can never reach the stack. `selector.union` can name a zone per branch, but it is consulted only after the kind has already decided which universe is walked, so a stack branch under a permanent-kind spec yields nothing. The ops are split the same way and neither covers both: `return_spell_to_hand` (ops_cards.py:591) reads `ctx.target_sids` and its own docstring records that `return_to_hand` (ops_cards.py:532) \"cannot see a spell\" -- `resolve_pool`'s `{\"target\": ...}` branch keeps only object refs, so a stack ref makes it a silent no-op. Two target specs, or one top-level `choose_mode` with a per-mode `mode`-tagged target on each branch, is the closest reachable shape and is a different card: it prints a mode line the card does not have, forbids a copy from choosing a new target of the other kind (706.10), and in the two-spec spelling lets the caster take a spell *and* a permanent, where the printed card takes exactly one object of either kind."
+    },
+    {
+      "capability": "enters-replacement",
+      "kind": "replacement",
+      "what": "the `self_enters_tapped` replacement has to be able to carry an optional price the controller is asked about as the permanent enters -- \"you may pay 3 life; if you don't, it enters tapped\" -- i.e. a `cost` (here `pay_life`, and `pay_life`/`sacrifice`/`discard` for the rest of the cycle) offered at replacement time, with the tapped rewrite applied only when the offer is declined. That means the enters-replacement path must be able to suspend for a decision the way dredge/madness/miracle do, rather than being applied inline",
+      "why_existing_wont_do": "`ReplacementModel` (src/automtg/cards/schema.py:454) accepts only `event`, `modify`, `counter`, `amount` and `condition`, and `condition` is a board-state tree (\"unless you control a Mountain\") with no room for a payment or a player choice. `zones._enter_battlefield` applies it synchronously -- `if event == \"self_enters_tapped\": obj.tapped = True` (zones.py:445) -- and `replacements.py`'s module docstring states outright that every whitelisted enters replacement \"is applied synchronously and asks nothing\", which is why dredge, madness and miracle had to be moved out of that whitelist to be able to stop and ask. `pay_life` exists in `cost_keys` but only an *activated ability's* `cost` may hold it; there is no card-level or replacement-level slot for it. The two reachable approximations are both a different card: writing the bare `{\"event\": \"self_enters_tapped\"}` (what every shockland in the shipped pool does today, e.g. `blood_crypt`) deletes the printed choice and makes the land unconditionally tapped, and a `self_enters` trigger running `may` + `lose_life` + `untap` puts the decision on the stack after the land has already entered tapped -- it can be responded to, `permanent_enters` watchers see a tapped land, and `lose_life` is not a payment that can be refused for want of life."
+    }
+  ],
+  "closest_existing": [
+    "return_spell_to_hand",
+    "return_to_hand",
+    "choose_mode",
+    "self_enters_tapped",
+    "pay_life",
+    "second_face"
+  ],
+  "confidence": "high"
+}
