@@ -1548,7 +1548,7 @@ the ability's own controller, so that key can only ever ask about you. See
     "source": "self",                // restrict to this permanent
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
     "condition": { ... },            // intervening "if", re-checked on resolution
-    "defending": "you",              // `attacks` only: whom it is attacking
+    "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
     "mana_ability": false            // `ability_activated` only: exclude mana abilities
@@ -1577,6 +1577,12 @@ creature attacks you" needs the second, and in a duel the two are
 indistinguishable — which is exactly why writing it with `controller:
 "opponent"` looks right until a pod draws you a card for a combat you were not
 in. The loader rejects `defending` on any other event rather than ignoring it.
+
+Three events carry a defending player and so accept the clause: `attacks`,
+`creatures_attack_player` and `deals_damage_to_player`. The last is the one that
+is not about combat — Curiosity's "whenever enchanted creature deals damage to
+**an opponent**" asks who took the damage, and `controller` there is a question
+about whose *creature* dealt it.
 
 `counter` names which kind a `counter_placed` trigger cares about. The event has
 always carried the kind and nothing read it, so the only trigger that could be
@@ -1632,7 +1638,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
-`ability_activated` · `damage_prevented`
+`ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
 **`precombat_main`** is "at the beginning of your **first** main phase" — Black
 Market Connections. `upkeep` is the near miss and is a step too early: it is
@@ -1651,6 +1657,29 @@ player half of the event: absorb and protection fire the same event about a
 *permanent*, and without the scoping a blocked absorb creature would pay out too.
 See "Preventing all damage to a player for the turn" below for the op that
 installs the shield.
+
+**`deals_damage_to_player`** fires whenever a permanent deals damage of **any**
+kind to a player — combat, a ping, a Fireball, a fight, a triggered burn spell.
+Curiosity, Ophidian Eye and Tandem Lookout. Its subject is the permanent that
+**dealt** the damage, so `filter: {"attached": true}` is how an Aura says
+"enchanted creature" and `source: "self"` is how a granted copy says "this
+creature"; `defending` says who took it, and `controller` whose creature dealt
+it.
+
+The other half of the same event `dealt_damage` takes, and the pair is worth
+reading together: DAMAGE_DEALT covers damage to a permanent and damage to a
+player, says which in `to`, and the two triggers are scoped to one half each and
+take opposite subjects — the victim for enrage, the dealer for this.
+
+`deals_combat_damage_to_player` is the near miss and is combat-only by
+construction, so a pinger under Curiosity draws nothing — and a pinger is what
+the card is played with, which makes the substitution a different card rather
+than a weaker one. Combat damage fires *both* events, so nothing is given up by
+writing the broader one. `life_lost` is the other near miss and reaches the loss
+without the dealer: its subject is a player, it fires for discards and taxes as
+readily as for damage, and an infect hit deals damage while costing no life at
+all.
+
 `ability_activated` · `chapter`
 
 **`ability_activated`** fires when a player activates an activated ability —

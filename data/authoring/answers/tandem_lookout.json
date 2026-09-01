@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "tandem_lookout",
+    "name": "Tandem Lookout",
+    "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\"",
+    "mana_cost": "{2}{U}",
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "types": ["Creature"],
+    "subtypes": ["Human", "Scout"],
+    "power": 2,
+    "toughness": 1,
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature deals damage to an opponent, draw a card.",
+        "trigger": {
+          "event": "deals_damage_to_player",
+          "source": "self",
+          "defending": "opponent"
+        },
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "pair",
+            "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {"types": ["Creature"], "exclude_self": true}
+        },
+        "effects": [{"op": "pair", "objects": {"binding": "subject"}}]
+      },
+      {
+        "kind": "static",
+        "text": "As long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\"",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"paired": true}
+      },
+      {
+        "kind": "static",
+        "text": "As long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\"",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"paired_with_source": true}
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

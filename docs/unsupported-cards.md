@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**38 cards** blocked by **37** capabilities.
+**35 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [deals-damage-to-player](#deals-damage-to-player) | 3 | 587 | trigger_event |
 | [phyrexian-mana](#phyrexian-mana) | 3 | 456 | cost |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -51,28 +50,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [token-definitions](#token-definitions) | 1 | 70 | engine |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-
-## deals-damage-to-player
-
-Blocks **3** cards.
-
-- **(trigger_event)** a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject (so an Aura's `filter: {"attached": true}` can scope it to the enchanted creature) and the damaged player available to a `defending` clause so "to an opponent" can be said
-  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is combat-only by construction: `primitives.damage_player` fires EventType.COMBAT_DAMAGE_TO_PLAYER only inside `if is_combat`, so a pinger, a Fireball, a fight or any triggered burn under this Aura draws nothing -- and pingers are precisely what this card is played with, so the substitution is a different card, not a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT already carries every damage to a player with `to="player"` and a `combat` flag, but `triggers._matches` explicitly rejects `event.data.get("to") != "permanent"` for it, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the victim rather than the dealer -- so it can never see damage aimed at a player, and even on the permanent half it would identify the wrong object. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to the enchanted creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all.
-- **(trigger_event)** a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject (so an Aura's `filter: {"attached": true}` can scope it to the enchanted creature) and the damaged player available to a `defending` clause so "to an opponent" can be said
-  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is combat-only by construction: EventType.COMBAT_DAMAGE_TO_PLAYER is fired only on the combat path, so a pinger, a Fireball, a fight or any triggered burn under this Aura draws nothing -- and this card is played precisely for the noncombat half (it is Curiosity with flash, the Niv-Mizzet piece), so the substitution is a different card rather than a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT does carry damage to a player, but `triggers._matches` rejects it with `event.data.get("to") != "permanent"`, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the creature that was *hurt* rather than the one that dealt it, so it can neither see damage aimed at a player nor identify the enchanted creature as the dealer. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to the enchanted creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all.
-- **(trigger_event)** a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject so `source: "self"` scopes it to the creature that has the ability, and the damaged player available to a `defending`/controller clause so "to an opponent" can be said. Tandem Lookout needs it inside a `grantable_abilities` entry, so the subject must resolve against the *recipient* of a static `grant_ability` (the paired creature) rather than the granter
-  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is combat-only by construction: `primitives.damage_player` fires EventType.COMBAT_DAMAGE_TO_PLAYER only on the combat path, so a pinger, a Fireball, a fight or any triggered burn draws nothing -- and the pair-a-pinger line is the whole reason this card is played, so the substitution is a different card rather than a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT already carries damage to a player with `to="player"`, but `triggers._matches` rejects it outright with `event.data.get("to") != "permanent"`, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the permanent that was *hurt* rather than the one that dealt the damage -- so it can neither see damage aimed at a player nor identify the paired creature as the dealer. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to either paired creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Curiosity** (rank 587) — `curiosity`
-  - Whenever enchanted creature deals damage to an opponent, you may draw a card.
-- **Ophidian Eye** (rank 1653) — `ophidian_eye`
-  - Whenever enchanted creature deals damage to an opponent, you may draw a card.
-- **Tandem Lookout** (rank 2251) — `tandem_lookout`
-  - As long as Tandem Lookout is paired with another creature, each of those creatures has "Whenever this creature deals damage to an opponent, draw a card."
-
-</details>
 
 ## phyrexian-mana
 

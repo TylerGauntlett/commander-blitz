@@ -2778,6 +2778,11 @@
     "file": "curio_vendor.jpg",
     "scryfall_id": "dadeaf38-901b-49ce-a989-57cbd4216d83"
   },
+  "curiosity": {
+    "artist": "Jim Nelson",
+    "file": "curiosity.jpg",
+    "scryfall_id": "566ac9ab-f62f-4bc9-bb5b-8f8c7e397e0a"
+  },
   "cursed_flesh": {
     "artist": "Ron Spencer",
     "bytes": 99387,
@@ -9107,6 +9112,12 @@
     "file": "opaline_unicorn.jpg",
     "scryfall_id": "160d39b0-76c5-4218-97e5-5903f781dafc"
   },
+  "ophidian_eye": {
+    "artist": "Zoltan Boros & Gabor Szikszai",
+    "bytes": 71981,
+    "file": "ophidian_eye.jpg",
+    "scryfall_id": "d3c58997-5555-423a-822e-749fac90e392"
+  },
   "opportunity": {
     "artist": "Allen Williams",
     "bytes": 25843,
@@ -13095,6 +13106,12 @@
     "bytes": 86011,
     "file": "talruum_minotaur.jpg",
     "scryfall_id": "2d2d1e5b-7757-46e4-b42d-76c28785f835"
+  },
+  "tandem_lookout": {
+    "artist": "Kev Walker",
+    "bytes": 75429,
+    "file": "tandem_lookout.jpg",
+    "scryfall_id": "a9953e53-3d56-4129-8fab-df33c69b8a95"
   },
   "tangle_mantis": {
     "artist": "Chris Rahn",

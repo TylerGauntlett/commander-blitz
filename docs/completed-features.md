@@ -1618,6 +1618,99 @@ the Equip regression test passes under both, which is the point of it.
 stand-in rites that drive the same effects at a chosen moment, an Equipment, an
 Aura and a vanilla bear).
 
+## `deals_damage_to_player` — damage to a player, combat or not
+
+### Overview
+
+Curiosity: *"Enchant creature / Whenever enchanted creature deals damage to an
+opponent, you may draw a card."* Ophidian Eye is the same card with flash, and
+Tandem Lookout is the same trigger handed to two paired creatures. Three cards,
+the top entry in `docs/unsupported-cards.md`, all waiting on one trigger.
+
+The engine could say "deals **combat** damage to a player" and nothing else.
+`primitives.damage_player` fires `COMBAT_DAMAGE_TO_PLAYER` inside `if is_combat`,
+so under Curiosity a pinger, a Fireball, a fight and every triggered burn spell
+drew nothing at all — and the pinger is what all three cards are played with, so
+the substitution is a different card rather than a weaker one.
+
+### No new event type
+
+`DAMAGE_DEALT` has been fired through the trigger bus by `damage_player` since
+damage existed, with `to="player"` telling it apart from the permanent half.
+Every route by which damage reaches a player goes through that one function, so
+the event was already complete and already correct; what it had never had was a
+name in `TRIGGER_EVENTS`.
+
+This is the same shape `dealt_damage` (enrage) took over the *other* half, and
+the two are now scoped by one table rather than two open-coded comparisons:
+
+```python
+EVENT_HALVES = {
+    "dealt_damage": "permanent",        # enrage: the victim is the subject
+    "deals_damage_to_player": "player", # Curiosity: the dealer is the subject
+    "damage_prevented": "player",       # Selfless Squire
+}
+```
+
+`_matches` and `_delayed_matches` both read it. The delayed matcher never had the
+scoping at all, so a delayed subscription was silently wider than a hosted
+trigger of the same name — it would have woken a `deals_damage_to_player` watcher
+on a Shock aimed at a creature.
+
+### The subject is the dealer, which is the whole of the Aura
+
+`dealt_damage` takes the **victim** as its subject, because enrage is a fact
+about the creature being hurt. This takes the **dealer**, because "enchanted
+creature deals damage" is a fact about the creature doing the hurting — and the
+subject is what `filter: {"attached": true}` and `source: "self"` are compared
+against. The player half of the event carries no `oid`, so `_subject_oid` reaches
+it through the `event.source` fallthrough, and a hit with no source object at all
+matches nothing rather than matching everything.
+
+Two keys joined the payload, on the player half only:
+
+- `controller` — the dealing permanent's controller, so `controller: "you"` reads
+  "a creature **you control** deals damage". Without it the `controller` clause
+  falls through to `event.player`, which on a damage event is the seat that was
+  **hit**: the clause would mean the opposite of itself.
+- `defender` — the seat that was hit, which is what a `defending` clause compares
+  against. `deals_damage_to_player` is the third entry in `DEFENDING_TRIGGERS`
+  and the first that is not about combat. Two-player play hides the difference
+  between "a player" and "an opponent"; a pod does not.
+
+### The granted path, and a resolution bug it uncovered
+
+Tandem Lookout reaches the trigger through a **static** `grant_ability`, and that
+path had never carried a triggered ability before — the two shipped cards that
+grant one use the one-shot op. It queued and then resolved as nothing.
+
+`stack.ability_of` looks a granted ability up in the granter's
+`grantable_abilities` and needs `granted_by` to know where to look, and
+`triggers._granter_of` could only see op-granted abilities: those leave a
+`TempEffect` on the recipient, while a static grant leaves nothing behind and is
+recomputed from the granter's "as long as…" every time anybody asks. So
+`characteristics.granted_ability_origin` answers the same question for the
+continuous half, off the very list `abilities_of` builds.
+
+It returns **both** halves of the answer, because the two lists are indexed
+differently: `abilities_of` appends a granted ability to the recipient's own list
+and renumbers it, so Tandem Lookout's granted trigger is number 2 on the creature
+that has it and number 0 in the pool it came from. Recording the recipient's
+number would resolve a different ability, or — as here — none at all, with no
+error anywhere.
+
+### Test
+
+`tests/unit/test_deals_damage_to_player.py`: 20 tests. The noncombat half through
+both the primitive and a real activated ability; combat damage firing it too;
+the combat-only trigger asserted *not* to fire on a ping, so the difference
+between the two events is measured rather than argued; infect (damage that costs
+no life, which is why this is not `life_lost`); prevention, zero damage, damage
+to a permanent and damage to yourself all firing nothing; a three-player position
+where "an opponent" is the Aura controller's opponent and not the enchanted
+creature's controller's; and the granted copy on both halves of a pair, plus its
+wearing off when the pair breaks.
+
 ## `tapped` in a trigger filter — reading how a permanent arrived
 
 ### Overview

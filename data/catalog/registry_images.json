@@ -1859,6 +1859,10 @@
     "artist": "Igor Kieryluk",
     "scryfall_id": "dadeaf38-901b-49ce-a989-57cbd4216d83"
   },
+  "curiosity": {
+    "artist": "Jim Nelson",
+    "scryfall_id": "566ac9ab-f62f-4bc9-bb5b-8f8c7e397e0a"
+  },
   "cursed_flesh": {
     "artist": "Ron Spencer",
     "scryfall_id": "d13520c4-d151-470e-9f30-b91f188a8192"
@@ -6058,6 +6062,10 @@
     "artist": "Christine Choi",
     "scryfall_id": "160d39b0-76c5-4218-97e5-5903f781dafc"
   },
+  "ophidian_eye": {
+    "artist": "Zoltan Boros & Gabor Szikszai",
+    "scryfall_id": "d3c58997-5555-423a-822e-749fac90e392"
+  },
   "opportunity": {
     "artist": "Allen Williams",
     "scryfall_id": "2237063a-2c2a-44fc-9103-c6e5db171ae5"
@@ -8714,6 +8722,10 @@
   "talruum_minotaur": {
     "artist": "Pete Venters",
     "scryfall_id": "2d2d1e5b-7757-46e4-b42d-76c28785f835"
+  },
+  "tandem_lookout": {
+    "artist": "Kev Walker",
+    "scryfall_id": "a9953e53-3d56-4129-8fab-df33c69b8a95"
   },
   "tangle_mantis": {
     "artist": "Chris Rahn",
