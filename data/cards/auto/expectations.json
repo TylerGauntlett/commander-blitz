@@ -868,6 +868,10 @@
   "boros_swiftblade": {
     "zone": "battlefield"
   },
+  "boseiju_who_endures": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "botanical_sanctum": {
     "zone": "battlefield"
   },
@@ -2099,6 +2103,10 @@
     "zone": "battlefield"
   },
   "edgar_master_machinist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "eiganjo_seat_of_the_empire": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5421,6 +5429,10 @@
     "zone": "battlefield"
   },
   "orzhov_signet": {
+    "zone": "battlefield"
+  },
+  "otawara_soaring_city": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "oubliette": {

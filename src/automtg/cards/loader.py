@@ -32,6 +32,7 @@ from automtg.engine.carddef import (
     top_level_mode_spec,
 )
 from automtg.engine.characteristics import ABILITY_STATICS
+from automtg.engine.costs import REDUCTION_ZONES
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
@@ -2909,10 +2910,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 #: values together and quietly hand out a bigger discount than the card says.
 COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_mana_value"})
 
-#: Zones a cost reduction's filter may count.  Mirrors `costs.REDUCTION_ZONES`,
-#: which is what actually walks them; anything else would load and match nothing.
+#: Zones a cost reduction's filter may count.  **Imported** from
+#: `costs.REDUCTION_ZONES`, which is what actually walks them, rather than
+#: restated here: this was a hand-copied mirror, and a mirror of a list is a list
+#: that will one day disagree with the code it mirrors -- a zone this file
+#: accepted and `_reduction_zone_oids` did not walk would load and match nothing.
 #: `total_power` is battlefield-only whatever this says -- see below.
-COST_REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
+COST_REDUCTION_ZONES = REDUCTION_ZONES
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:
@@ -3031,6 +3035,27 @@ def _validate_reduction_zones(filt: Mapping[str, Any], key: str, where: str) -> 
         )
 
 
+def _check_reduction_type_names(filt: Mapping[str, Any], where: str) -> None:
+    """A misspelled type or supertype in a reduction filter matches nothing.
+
+    The same guard `effects.selectors.validate_selector` applies to every
+    selector, and it is needed here for a sharper reason: a selector that matches
+    nothing fails visibly the first time a card is played, while a *reduction*
+    that matches nothing is simply a discount of zero -- a card that is quietly
+    priced at the number it prints, on a board where nothing looks wrong.
+
+    ``subtypes`` is not checked, here or in the selector language: creature and
+    land types are open-ended and there is no closed set to check against.
+    """
+    for key, known in (("types", KNOWN_TYPES), ("supertypes", KNOWN_SUPERTYPES)):
+        for name in filt.get(key) or ():
+            if name not in known:
+                raise DslError(
+                    f"{where}.{key}: unknown {key[:-1]} {name!r} would count nothing "
+                    f"and read as a discount of zero (known: {sorted(known)})"
+                )
+
+
 def _validate_cost_reduction(spec: Any, where: str) -> None:
     """One validator for every "costs {N} less", wherever it is written.
 
@@ -3084,6 +3109,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
                 f"permanent, and a reduction counts a board"
             )
         _check_owner_key(filt, f"{where}.{key}")
+        _check_reduction_type_names(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
         _validate_cost_condition(spec["condition"], f"{where}.condition")

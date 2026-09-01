@@ -1071,6 +1071,10 @@
     "artist": "Doug Chaffee",
     "scryfall_id": "0b1056b8-84a0-439c-bf63-8e18a58c648f"
   },
+  "boseiju_who_endures": {
+    "artist": "Esuthio",
+    "scryfall_id": "0055ea30-20fb-4324-a632-8fed87628f05"
+  },
   "botanical_sanctum": {
     "artist": "Piotr Dura",
     "scryfall_id": "82670072-9851-48c7-a8f5-7842bff6c252"
@@ -2419,6 +2423,10 @@
   "edgar_master_machinist": {
     "artist": "Immanuela Crovius",
     "scryfall_id": "098a8025-6454-45d8-abe3-2c3dada3f582"
+  },
+  "eiganjo_seat_of_the_empire": {
+    "artist": "ZOUNOSE",
+    "scryfall_id": "7c31c48f-6275-4430-8dc9-05d70c332b7a"
   },
   "ekundu_griffin": {
     "artist": "David A. Cherry",
@@ -6141,6 +6149,10 @@
   "orzhov_signet": {
     "artist": "Greg Hildebrandt",
     "scryfall_id": "ca0d3984-fbb3-4661-a424-f79d2253e057"
+  },
+  "otawara_soaring_city": {
+    "artist": "Alayna Danner",
+    "scryfall_id": "486d7edc-d983-41f0-8b78-c99aecd72996"
   },
   "oubliette": {
     "artist": "Will Sweeney",

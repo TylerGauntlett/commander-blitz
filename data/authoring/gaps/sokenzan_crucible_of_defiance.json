@@ -1,0 +1,24 @@
+{
+  "card_id": "sokenzan_crucible_of_defiance",
+  "name": "Sokenzan, Crucible of Defiance",
+  "oracle_text": "{T}: Add {R}.\nChannel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They gain haste until end of turn. This ability costs {1} less to activate for each legendary creature you control.",
+  "blocked_sentences": [
+    "Create two 1/1 colorless Spirit creature tokens."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "engine",
+      "what": "a token definition for a 1/1 colorless Spirit creature token -- id `spirit_1_1_c`, name \"Spirit Token\", types [\"Creature\"], subtypes [\"Spirit\"], colors [], power 1, toughness 1, is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it",
+      "why_existing_wont_do": "`create_token` takes only a `token` id string naming a card already in the pool, and `loader.validate_token_references` raises `references unknown card` at load time for any id not present and marked `is_token`, so the card cannot ship ahead of the definition. The pool has 44 tokens and no Spirit at all; the only 1/1 colorless bodies are `hero_1_1_c` and `gnome_1_1_c`, whose subtypes are wrong, and substituting one would hand the player a creature type the card does not print -- which matters, because Spirit is a tribe cards care about. A token definition is data a card worker may not write, and this is the same block already recorded for Swan Song's Bird.",
+      "blocks_only": "the token clause; everything else on the card is expressible today"
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "hero_1_1_c",
+    "gnome_1_1_c"
+  ],
+  "confidence": "high",
+  "notes": "The rest of the channel line needs nothing new, and the cost-reduction clause it shares with the other four Kamigawa channel legends now works: `cost: {\"mana\": \"{3}{R}\", \"discard_self\": true, \"mana_reduction\": {\"count\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Creature\"], \"supertypes\": [\"Legendary\"]}}}` on an `active_zones: [\"hand\"]` activated ability, exactly as shipped on Boseiju, Otawara, Takenuma and Eiganjo. \"They gain haste until end of turn\" is `create_token` with `as: \"them\"` and a `grant_keyword` over `{\"binding\": \"them\"}` -- the Flamerush Rider idiom -- so this card is one token definition away from shipping."
+}

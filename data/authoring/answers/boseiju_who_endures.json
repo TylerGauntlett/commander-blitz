@@ -1,0 +1,124 @@
+{
+  "card": {
+    "abilities": [
+      {
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "mana": "{G}",
+            "op": "add_mana"
+          }
+        ],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {G}."
+      },
+      {
+        "active_zones": [
+          "hand"
+        ],
+        "cost": {
+          "discard_self": true,
+          "mana": "{1}{G}",
+          "mana_reduction": {
+            "count": {
+              "controller": "you",
+              "supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        },
+        "effects": [
+          {
+            "as": "victim",
+            "op": "snapshot",
+            "target": "t1"
+          },
+          {
+            "objects": {
+              "target": "t1"
+            },
+            "op": "destroy"
+          },
+          {
+            "count": 1,
+            "destination": "battlefield",
+            "op": "search_library",
+            "player": {
+              "controller_of": "victim"
+            },
+            "selector": {
+              "subtypes": [
+                "Plains",
+                "Island",
+                "Swamp",
+                "Mountain",
+                "Forest"
+              ],
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        ],
+        "kind": "activated",
+        "targets": [
+          {
+            "count": 1,
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "types": [
+                    "Enchantment"
+                  ]
+                },
+                {
+                  "not_supertypes": [
+                    "Basic"
+                  ],
+                  "types": [
+                    "Land"
+                  ]
+                }
+              ],
+              "controller": "opponent",
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "text": "Channel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control."
+      }
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "colors": [],
+    "id": "boseiju_who_endures",
+    "name": "Boseiju, Who Endures",
+    "oracle_text": "{T}: Add {G}.\nChannel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control.",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Land"
+    ]
+  },
+  "expectation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  }
+}

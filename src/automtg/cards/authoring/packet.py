@@ -151,6 +151,9 @@ def reference() -> dict:
     from automtg.engine.triggers import TRIGGER_EVENTS
 
     from ..loader import (
+        COST_REDUCTION_FILTER_KEYS,
+        COST_REDUCTION_KEYS,
+        COST_REDUCTION_REFUSED_FILTER_KEYS,
         STATIC_CONDITION_HEADS,
         STATIC_EFFECTS,
         STATIC_FILTER_KEYS,
@@ -170,6 +173,17 @@ def reference() -> dict:
         # blocked on a mechanic that already shipped.  Tromokratis was.
         "static_effects": sorted(STATIC_EFFECTS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
+        # "This spell costs {1} less to cast for each ..." -- the arithmetic
+        # heads, and the filter language beside them. The filter is
+        # `static_filter_keys` plus `zone` and minus the three relational keys a
+        # count cannot mean anything by, so a worker shown the static list alone
+        # has no way to know that `zone` is available (a reduction may count a
+        # graveyard or the command zone) or that `attached` is refused.
+        "cost_reduction_keys": sorted(COST_REDUCTION_KEYS),
+        "cost_reduction_filter_keys": sorted(
+            (STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS)
+            - COST_REDUCTION_REFUSED_FILTER_KEYS
+        ),
         # What a static's "as long as ..." clause may ask. A *third* language,
         # neither `condition_keys` (which is the effect-side `if`) nor
         # `static_filter_keys` -- and absent from the packet until Vampire
@@ -231,6 +245,17 @@ def reference() -> dict:
             " set a *static ability* may read, because a static may only read"
             " printed characteristics -- do not mistake it for the whole"
             " selector language.",
+            "\"This spell/ability costs {N} less\" is `cost_reduction` on the"
+            " card, or `mana_reduction` on an activated ability's `cost` or a"
+            " `flashback` node. It takes exactly one of `cost_reduction_keys`"
+            " -- `count`, `total_power` and `greatest_mana_value` each take a"
+            " filter, `amount` is a flat number and needs a `condition` -- and"
+            " a filter may use `cost_reduction_filter_keys` only. Every key in"
+            " that list is honoured, so \"for each legendary creature you"
+            " control\" is"
+            " `{\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"],"
+            " \"supertypes\": [\"Legendary\"]}}`; anything outside it is a load"
+            " error rather than a discount counted wrong.",
             "An ability's `text` must be the printed sentence it implements: the"
             " residual gate asks each ability which line it claims, and anything"
             " unclaimed means the card is only half implemented.",

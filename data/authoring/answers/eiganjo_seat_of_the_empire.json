@@ -1,0 +1,90 @@
+{
+  "card": {
+    "abilities": [
+      {
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "mana": "{W}",
+            "op": "add_mana"
+          }
+        ],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {W}."
+      },
+      {
+        "active_zones": [
+          "hand"
+        ],
+        "cost": {
+          "discard_self": true,
+          "mana": "{2}{W}",
+          "mana_reduction": {
+            "count": {
+              "controller": "you",
+              "supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        },
+        "effects": [
+          {
+            "amount": {
+              "const": 4
+            },
+            "op": "damage",
+            "target": "t1"
+          }
+        ],
+        "kind": "activated",
+        "targets": [
+          {
+            "count": 1,
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {
+              "any_of": [
+                {
+                  "attacking": true
+                },
+                {
+                  "blocking": true
+                }
+              ],
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "text": "Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control."
+      }
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "colors": [],
+    "id": "eiganjo_seat_of_the_empire",
+    "name": "Eiganjo, Seat of the Empire",
+    "oracle_text": "{T}: Add {W}.\nChannel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Land"
+    ]
+  },
+  "expectation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  }
+}

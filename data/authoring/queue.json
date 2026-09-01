@@ -31902,12 +31902,12 @@
     },
     "Boseiju, Who Endures": {
       "edhrec_rank": 78,
-      "gate": "template",
+      "gate": null,
       "name": "Boseiju, Who Endures",
-      "reason": "no template for: Channel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic lan",
+      "reason": "",
       "scryfall_id": "0055ea30-20fb-4324-a632-8fed87628f05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boseiju, Who Shelters All": {
@@ -79322,12 +79322,12 @@
     },
     "Eiganjo, Seat of the Empire": {
       "edhrec_rank": 384,
-      "gate": "template",
+      "gate": null,
       "name": "Eiganjo, Seat of the Empire",
-      "reason": "no template for: Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking cre",
+      "reason": "",
       "scryfall_id": "7c31c48f-6275-4430-8dc9-05d70c332b7a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eight-and-a-Half-Tails": {
@@ -193772,12 +193772,12 @@
     },
     "Otawara, Soaring City": {
       "edhrec_rank": 88,
-      "gate": "template",
+      "gate": null,
       "name": "Otawara, Soaring City",
-      "reason": "no template for: Channel — {3}{U}, Discard this card: Return target artifact, creature, enchantment, or pla",
+      "reason": "",
       "scryfall_id": "486d7edc-d983-41f0-8b78-c99aecd72996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oteclan Landmark // Oteclan Levitator": {

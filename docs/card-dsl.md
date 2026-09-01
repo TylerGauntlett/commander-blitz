@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-107 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+108 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -3899,6 +3899,38 @@ All four readers — the card-level field, an ability's cost, a graveyard cast's
 cost, and the maximum above — go through one function,
 `costs.reduction_amount`, so "for each", "if" and "the greatest" cannot come to
 mean different things in different slots.
+
+### …for each **legendary** creature you control
+
+```jsonc
+// Boseiju, Who Endures — "Channel — {1}{G}, Discard this card: … This ability
+//  costs {1} less to activate for each legendary creature you control."
+"cost": {"mana": "{1}{G}", "discard_self": true,
+         "mana_reduction": {"count": {"zone": "battlefield", "controller": "you",
+                                      "types": ["Creature"],
+                                      "supertypes": ["Legendary"]}}}
+```
+
+`Legendary` is a **supertype** (205.4a) and 205.4b makes it an independent part
+of the type line, so "legendary creature" is two clauses ANDed and no arrangement
+of `types` and `subtypes` can say it. `supertypes` is a subset test and
+`subtypes` is an intersection, the same split the effect-side selector makes: a
+permanent has one supertype line a filter names part of, while "for each Vampire"
+means any of the named creature types.
+
+`supertypes` was one of the fourteen keys the reduction filter validated and
+then ignored — see [what the filter may say](#what-the-filter-may-say) above for
+the whole list and for why an ignored *narrowing* key always makes a card
+cheaper than it prints. A **misspelled** type or supertype is a load error for
+the same reason one layer down: it would count nothing and read as a discount of
+zero, which is a card priced at exactly what it says on a board where nothing
+looks wrong. `subtypes` is deliberately unchecked, here and in the selector
+language — creature and land types are open-ended and there is no closed set to
+check against.
+
+This is what the whole Kamigawa channel-legend cycle waited on: Boseiju, Otawara,
+Takenuma and Eiganjo all print the same clause on a `discard_self` ability
+activated from hand.
 
 ## A granted ability that fires on its own creature's death
 
