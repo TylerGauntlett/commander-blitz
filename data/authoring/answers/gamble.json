@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "gamble",
+    "name": "Gamble",
+    "oracle_text": "Search your library for a card, put that card into your hand, discard a card at random, then shuffle.",
+    "mana_cost": "{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "spell_effects": [
+      {
+        "op": "search_library",
+        "player": "you",
+        "count": 1,
+        "destination": "hand",
+        "shuffle": false
+      },
+      {
+        "op": "discard",
+        "player": "you",
+        "amount": 1,
+        "random": true
+      },
+      {
+        "op": "shuffle",
+        "player": "you"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "graveyard_size": {
+      "0": 4
+    }
+  }
+}

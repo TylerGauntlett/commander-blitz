@@ -1,0 +1,22 @@
+{
+  "card_id": "tandem_lookout",
+  "name": "Tandem Lookout",
+  "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\"",
+  "blocked_sentences": [
+    "As long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\""
+  ],
+  "needs": [
+    {
+      "capability": "deals_damage_to_player",
+      "kind": "trigger_event",
+      "what": "a trigger event fired whenever a permanent deals damage of any kind -- combat or noncombat -- to a player, with the damaging permanent as the subject so `source: \"self\"` scopes it to the creature that has the ability, and the damaged player available to a `defending`/controller clause so \"to an opponent\" can be said. Tandem Lookout needs it inside a `grantable_abilities` entry, so the subject must resolve against the *recipient* of a static `grant_ability` (the paired creature) rather than the granter",
+      "why_existing_wont_do": "`deals_combat_damage_to_player` is the near miss and is combat-only by construction: `primitives.damage_player` fires EventType.COMBAT_DAMAGE_TO_PLAYER only on the combat path, so a pinger, a Fireball, a fight or any triggered burn draws nothing -- and the pair-a-pinger line is the whole reason this card is played, so the substitution is a different card rather than a weaker one. `dealt_damage` is the other candidate and is the wrong half of the right event: EventType.DAMAGE_DEALT already carries damage to a player with `to=\"player\"`, but `triggers._matches` rejects it outright with `event.data.get(\"to\") != \"permanent\"`, and its OBJECT_SUBJECT_TRIGGERS entry makes the subject the permanent that was *hurt* rather than the one that dealt the damage -- so it can neither see damage aimed at a player nor identify the paired creature as the dealer. `life_lost` reaches the loss but not the dealer: its subject is a player, so nothing ties the loss back to either paired creature, and it fires for discards, taxes and Phyrexian mana as readily as for damage while an infect hit deals damage and fires it not at all."
+    }
+  ],
+  "closest_existing": [
+    "deals_combat_damage_to_player",
+    "dealt_damage",
+    "life_lost"
+  ],
+  "confidence": "high"
+}

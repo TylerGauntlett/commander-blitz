@@ -1,0 +1,19 @@
+{
+  "card_id": "ragavan_nimble_pilferer",
+  "name": "Ragavan, Nimble Pilferer",
+  "oracle_text": "Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.\nDash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+  "blocked_sentences": [
+    "Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card."
+  ],
+  "needs": [
+    {
+      "capability": "impulse_from_opponent_library",
+      "kind": "op",
+      "what": "a way to exile the top N cards of a *named* player's library and leave the impulse permission on the ability's controller rather than on that library's owner. Either a new key on look_at_top -- a 'playable_by' (or 'playable_controller') that makes _move_found write obj.playable_by = ctx.controller instead of the pid it looped over -- or, more generally, an 'as' binding on look_at_top recording the cards it moved (the way mill and exile already record theirs), so a following grant_playable can name them. Ragavan needs exactly one of these; with the binding, 'exile the top card of that player's library' becomes look_at_top {player: {binding: 'event_player'}, amount: 1, destination: 'exile', as: 'pilfered'} and 'until end of turn, you may cast that card' becomes grant_playable over {binding: 'pilfered'}",
+      "why_existing_wont_do": "look_at_top is the only op that reaches the top of a library, and its playable_this_turn branch in effects/ops_cards.py _move_found hardcodes obj.playable_by = pid -- the player whose library was looked at. On Ragavan that library is the *opponent's*, so the printed 'you may cast that card' would grant the permission to the very player whose card was stolen: the opposite of the card. The exile op does set playable_by = ctx.controller, which is the right seat, but it takes a selector and selector_keys has no way to name the top of a library (no 'top'/'from_top' key; zone: 'library' with a count resolves to a chosen card from the whole deck, which is a tutor, not the top card). Composing the two also fails: look_at_top calls move_object without a 'by', so nothing records exiled_by and a follow-up grant_playable over {zone: 'exile', exiled_with: 'self'} matches nothing, while {zone: 'exile', player: ...} would match every card that player has ever had exiled. look_at_top has no 'as' binding either -- mill has one (Locke, Treasure Hunter) and exile has one, so this op is the odd one out. Naming 'that player' is NOT the gap: {\"binding\": \"event_player\"} already resolves to the damaged player, since primitives.damage_player fires COMBAT_DAMAGE_TO_PLAYER with player=pid."
+    }
+  ],
+  "closest_existing": ["look_at_top", "grant_playable", "exile", "mill"],
+  "confidence": "high",
+  "notes": "The rest of the card is expressible and was deliberately not written as a partial answer. 'Dash {1}{R}' is NOT blocked: it is evoke: \"{1}{R}\" with evoke_label: \"dash\", plus a self_enters triggered ability conditioned on {\"evoked\": true} that grants haste and delays a return_to_hand to end_step -- the Flamerush Rider shape already in data/cards/auto/templates.cards.json. 'Create a Treasure token' is create_token with token: \"treasure_token\", which exists in data/cards/tokens.cards.json."
+}

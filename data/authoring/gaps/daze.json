@@ -1,0 +1,18 @@
+{
+  "card_id": "daze",
+  "name": "Daze",
+  "oracle_text": "You may return an Island you control to its owner's hand rather than pay this spell's mana cost.\nCounter target spell unless its controller pays {1}.",
+  "blocked_sentences": [
+    "You may return an Island you control to its owner's hand rather than pay this spell's mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "alternative_cost_nonmana",
+      "kind": "cost",
+      "what": "card-level `alternative_cost` must accept a full `Cost` node rather than a bare mana string, so a non-mana payment -- here `return_to_hand: {\"subtypes\": [\"Island\"], \"controller\": \"you\", \"zone\": \"battlefield\"}` -- can replace the printed mana cost outright, with `mana: \"{0}\"` and no `condition` required. The payment must be checked at cast time by `legality` (the card is only castable this way while a matching Island is on the battlefield) and collected by `costs.pay_cost` while the spell goes on the stack, exactly as the same key already works inside an activated ability. This one change also unblocks Gush, Foil, Snapback, Commandeer, Contagion and the rest of the Nemesis/Prophecy free-spell cycle, whose alternative costs are all returns, discards and sacrifices rather than mana",
+      "why_existing_wont_do": "`return_to_hand` already exists as a `cost_keys` entry and already resolves a battlefield pool with a selector (`costs._return_pool` defaults `controller: you` and `zone: battlefield`, so \"an Island you control\" is exactly expressible as a selector) -- but it can only live inside an activated ability's `cost`, and Daze's line is a cast-time alternative cost, not an ability. The card-level slot that would hold it, `alternative_cost`, is validated at `src/automtg/cards/loader.py:1209` to the two keys `mana` and `condition`, is parsed straight into a `ManaCost` (`loader.py:1218`, `carddef.alternative_cost: ManaCost | None`), and raises `alternative_cost: needs 'mana'` when mana is absent -- there is no node on it to hang a return. `costs.py:1394` states the position outright: `flashback`/`graveyard_cost` is the only alternative cost modelled as a full `Cost`, and `evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana strings with no node to hang a rider on. The near substitutes are each a different card: `alternative_cost: {\"mana\": \"{0}\", \"condition\": {\"exists\": {...Island...}}}` would make Daze free whenever any Island is on the battlefield without ever bouncing one, which is the whole cost and the whole drawback; `additional_cost` with `return_to_hand` charges the return *on top of* {1}{U} instead of instead of it, and would make the printed hard-cast illegal with no Island out; `flashback` reaches a real `Cost` but casts from the graveyard, the wrong zone. The second printed line, \"Counter target spell unless its controller pays {1}.\", is fully expressible today (the Flusterstorm shape: a `may` op with `pay: {\"mana\": \"{1}\"}`, `player: {\"controller_of_target\": \"t1\"}` and `counter` in its `else`), so only the first line is blocked and no partial answer was written."
+    }
+  ],
+  "closest_existing": ["alternative_cost", "return_to_hand", "additional_cost", "flashback", "pay_generic_with"],
+  "confidence": "high"
+}

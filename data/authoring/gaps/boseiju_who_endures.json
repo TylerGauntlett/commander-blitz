@@ -1,0 +1,24 @@
+{
+  "card_id": "boseiju_who_endures",
+  "name": "Boseiju, Who Endures",
+  "oracle_text": "{T}: Add {G}.\nChannel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control.",
+  "blocked_sentences": [
+    "This ability costs {1} less to activate for each legendary creature you control."
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_supertype_filter",
+      "kind": "cost",
+      "what": "the \"costs {N} less\" filter language -- `Cost.mana_reduction`, a card's `cost_reduction` and a graveyard cast's `mana_reduction`, all counted by `costs._reduction_matches` -- has to be able to select on a *supertype*, so \"for each legendary creature you control\" counts only legends; and the loader must stop accepting a filter key the counter never reads",
+      "why_existing_wont_do": "`mana_reduction: {\"count\": {...}}` on the channel ability's cost is the right shape, but `costs._reduction_matches` (src/automtg/engine/costs.py:1442) reads only `zone`, `owner`, `controller`, `is_commander`, `types` and `subtypes` off the filter -- there is no `supertypes` branch. This is worse than a rejection: `loader._validate_cost_reduction` (src/automtg/cards/loader.py:2917) checks the filter against `STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS`, and `supertypes` is in STATIC_FILTER_KEYS, so `{\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"supertypes\": [\"Legendary\"]}}` loads clean and then silently discounts {1} for *every* creature you control -- in the sandbox that is two creatures rather than zero legends. `Legendary` is a supertype and is not reachable through `types` or `subtypes`. A flat `{\"amount\": N, \"condition\": ...}` cannot stand in: it is one fixed number, not one per legend, and `condition_keys` has no \"count your legendary creatures\" head that could scale it. `spell_cost_reduction` is not a substitute either -- it prices spells its controller casts, and this is an activated ability paid from hand.",
+      "blocks_only": "the cost-reduction clause; the rest of the card is expressible today"
+    }
+  ],
+  "closest_existing": [
+    "mana_reduction",
+    "cost_reduction",
+    "spell_cost_reduction"
+  ],
+  "confidence": "high",
+  "notes": "The channel ability itself needs nothing new: `kind: \"activated\"` with `active_zones: [\"hand\"]` and `cost: {\"mana\": \"{1}{G}\", \"discard_self\": true}` is the shipped cycling/landcycling shape (Ash Barrens), the target is `any_of` over [{types:[Artifact]}, {types:[Enchantment]}, {types:[Land], not_supertypes:[Basic]}] with `controller: \"opponent\"`, and the rebuild is the Ghost Quarter / Demolition Field idiom -- `snapshot` the target, `destroy` it, then `search_library` with `player: {\"controller_of\": \"victim\"}`, `destination: \"battlefield\"` and `selector: {types:[Land], subtypes:[Plains,Island,Swamp,Mountain,Forest]}` (a land card *with a basic land type*, not `supertypes: [Basic]`). Same blocker and same slug as data/authoring/gaps/otawara_soaring_city.json -- one fix clears the whole Kamigawa channel-legend cycle (Boseiju, Otawara, Takenuma, Sokenzan, Eiganjo)."
+}
