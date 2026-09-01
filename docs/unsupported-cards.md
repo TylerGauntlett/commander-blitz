@@ -10,15 +10,15 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**32 cards** blocked by **35** capabilities.
+**31 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [cost-reduction-supertype-filter](#cost-reduction-supertype-filter) | 2 | 78 | cost |
 | [enters-replacement](#enters-replacement) | 2 | 172 | replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
+| [token-definitions](#token-definitions) | 2 | 70 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
@@ -47,7 +47,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spell-or-permanent-target](#spell-or-permanent-target) | 1 | 172 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
-| [token-definitions](#token-definitions) | 1 | 70 | engine |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
 ## cast-as-though-flash
@@ -86,24 +85,6 @@ Blocks **2** cards.
 
 </details>
 
-## cost-reduction-supertype-filter
-
-Blocks **2** cards.
-
-- **(cost)** the "costs {N} less" filter language -- `Cost.mana_reduction`, a card's `cost_reduction` and a graveyard cast's `mana_reduction`, all counted by `costs._reduction_matches` -- has to be able to select on a *supertype*, so "for each legendary creature you control" counts only legends; and the loader must stop accepting a filter key the counter never reads
-  <br>Why the existing vocabulary won't do: `mana_reduction: {"count": {...}}` on the channel ability's cost is the right shape, but `costs._reduction_matches` (src/automtg/engine/costs.py:1442) reads only `zone`, `owner`, `controller`, `is_commander`, `types` and `subtypes` off the filter -- there is no `supertypes` branch. This is worse than a rejection: `loader._validate_cost_reduction` (src/automtg/cards/loader.py:2917) checks the filter against `STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS`, and `supertypes` is in STATIC_FILTER_KEYS, so `{"count": {"controller": "you", "types": ["Creature"], "supertypes": ["Legendary"]}}` loads clean and then silently discounts {1} for *every* creature you control -- in the sandbox that is two creatures rather than zero legends. `Legendary` is a supertype and is not reachable through `types` or `subtypes`. A flat `{"amount": N, "condition": ...}` cannot stand in: it is one fixed number, not one per legend, and `condition_keys` has no "count your legendary creatures" head that could scale it. `spell_cost_reduction` is not a substitute either -- it prices spells its controller casts, and this is an activated ability paid from hand.
-- **(cost)** the "costs {N} less" filter language (`Cost.mana_reduction`, a card's `cost_reduction`, and a graveyard cast's `mana_reduction`, all read by `costs.reduction_amount`) has to be able to select on a *supertype*, so "for each legendary creature you control" counts only legends -- and the loader must stop accepting a key the counter never reads
-  <br>Why the existing vocabulary won't do: `mana_reduction: {"count": {...}}` is the right shape and the counting is done by `costs._reduction_matches` (src/automtg/engine/costs.py:1442), which reads only `zone`, `owner`, `controller`, `is_commander`, `types` and `subtypes` off the filter -- there is no `supertypes` branch. Worse than a rejection: `loader._validate_cost_reduction` (src/automtg/cards/loader.py:2917) checks the filter against `STATIC_FILTER_KEYS | COST_REDUCTION_FILTER_KEYS`, and `supertypes` is in STATIC_FILTER_KEYS (loader.py:363), so `{"count": {"controller": "you", "types": ["Creature"], "supertypes": ["Legendary"]}}` loads clean and then silently discounts {1} for *every* creature you control. `Legendary` is a supertype and not reachable through `types` or `subtypes`, and no existing card writes the key (the only shipped reduction filters are Voldaren Estate's `subtypes: ["Vampire"]`, Crown of Gondor's flat `amount`+`condition`, and Visions of Glory's `greatest_mana_value`). A flat `{"amount": N, "condition": ...}` cannot stand in -- it is one fixed number, not one per legend. The `spell_cost_reduction` static_effect is not a substitute either: it prices *spells its controller casts*, and this is an activated ability paid from hand.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Boseiju, Who Endures** (rank 78) — `boseiju_who_endures`
-  - This ability costs {1} less to activate for each legendary creature you control.
-- **Otawara, Soaring City** (rank 88) — `otawara_soaring_city`
-  - This ability costs {1} less to activate for each legendary creature you control.
-
-</details>
-
 ## enters-replacement
 
 Blocks **2** cards.
@@ -139,6 +120,24 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## token-definitions
+
+Blocks **2** cards.
+
+- **(engine)** a token definition for a 1/1 colorless Spirit creature token -- id `spirit_1_1_c`, name "Spirit Token", types ["Creature"], subtypes ["Spirit"], colors [], power 1, toughness 1, is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it
+  <br>Why the existing vocabulary won't do: `create_token` takes only a `token` id string naming a card already in the pool, and `loader.validate_token_references` raises `references unknown card` at load time for any id not present and marked `is_token`, so the card cannot ship ahead of the definition. The pool has 44 tokens and no Spirit at all; the only 1/1 colorless bodies are `hero_1_1_c` and `gnome_1_1_c`, whose subtypes are wrong, and substituting one would hand the player a creature type the card does not print -- which matters, because Spirit is a tribe cards care about. A token definition is data a card worker may not write, and this is the same block already recorded for Swan Song's Bird.
+- **(engine)** a token definition for a 2/2 blue Bird creature token with flying -- id `bird_2_2_u_flying`, name "Bird Token", types ["Creature"], subtypes ["Bird"], colors ["U"], power 2, toughness 2, keywords ["flying"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it
+  <br>Why the existing vocabulary won't do: `create_token` takes only a `token` id string naming a card already in the pool (src/automtg/engine/effects/ops_board.py op_create_token -> primitives.create_token); there is no inline token body and no size/colour/subtype overrides on the op, and `loader.validate_token_references` raises `references unknown card` at load time for any id that is not present and marked `is_token`, so the card cannot ship ahead of the definition. The pool's only Bird is `bird_1_1_w_flying` in data/cards/isperia.cards.json -- a 1/1 white Bird, wrong power, toughness and colour -- and the only 2/2 blue flier is `illusion_1_1_u_flying`'s neighbour set, none of which is a 2/2 blue Bird. Substituting any of them would make the card hand its victim a different creature than it prints, and a token definition is data the worker may not write.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Swan Song** (rank 70) — `swan_song`
+  - Its controller creates a 2/2 blue Bird creature token with flying.
+- **Sokenzan, Crucible of Defiance** (rank 977) — `sokenzan_crucible_of_defiance`
+  - Create two 1/1 colorless Spirit creature tokens.
 
 </details>
 
@@ -545,20 +544,6 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
-
-</details>
-
-## token-definitions
-
-Blocks **1** card.
-
-- **(engine)** a token definition for a 2/2 blue Bird creature token with flying -- id `bird_2_2_u_flying`, name "Bird Token", types ["Creature"], subtypes ["Bird"], colors ["U"], power 2, toughness 2, keywords ["flying"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it
-  <br>Why the existing vocabulary won't do: `create_token` takes only a `token` id string naming a card already in the pool (src/automtg/engine/effects/ops_board.py op_create_token -> primitives.create_token); there is no inline token body and no size/colour/subtype overrides on the op, and `loader.validate_token_references` raises `references unknown card` at load time for any id that is not present and marked `is_token`, so the card cannot ship ahead of the definition. The pool's only Bird is `bird_1_1_w_flying` in data/cards/isperia.cards.json -- a 1/1 white Bird, wrong power, toughness and colour -- and the only 2/2 blue flier is `illusion_1_1_u_flying`'s neighbour set, none of which is a 2/2 blue Bird. Substituting any of them would make the card hand its victim a different creature than it prints, and a token definition is data the worker may not write.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Swan Song** (rank 70) — `swan_song`
-  - Its controller creates a 2/2 blue Bird creature token with flying.
 
 </details>
 

@@ -722,6 +722,28 @@ def _target_fodder(registry, spec):
     return next((c for c in sorted(registry, key=lambda c: c.id) if eligible(c)), None)
 
 
+def _selector_branches(selector):
+    """A selector, and each of its ``any_of`` branches merged onto it.
+
+    "It deals 4 damage to target **attacking or blocking** creature" (Eiganjo,
+    Seat of the Empire) is one `any_of` over two branches, and the only clause
+    the helper below can act on -- `attacking` -- lives inside a branch rather
+    than on the outer selector. Without this it read nothing, declared no
+    attacker, and a card whose ability is exactly right reported as unusable.
+
+    Still only ever read far enough to *choose* a candidate and a seat, which is
+    the standing contract of this family of helpers: whether the result is a
+    legal target stays `enumerate_target_tuples`' answer, so no second copy of
+    `matches` moves into the tests. Narrowing the card to plain "attacking" so
+    the old reader could see it would have been the other way round -- a
+    strictly weaker card written to suit the harness.
+    """
+    yield selector
+    for branch in selector.get("any_of") or ():
+        if isinstance(branch, dict):
+            yield {**selector, **branch}
+
+
 def _provide_the_attacker(game: Game, registry, ability) -> None:
     """Declare an attacker when the ability can only point at one.
 
@@ -739,12 +761,20 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
     `enumerate_target_tuples`' answer, so no second copy of `matches` moves into
     the tests.
     """
-    wants = next((s for s in ability.targets if s.selector.get("attacking")), None)
+    wants = next(
+        (
+            branch
+            for spec in ability.targets
+            for branch in _selector_branches(spec.selector)
+            if branch.get("attacking")
+        ),
+        None,
+    )
     if wants is None:
         return
 
-    subtypes = {str(s) for s in wants.selector.get("subtypes") or []}
-    types = {str(t) for t in wants.selector.get("types") or ["Creature"]}
+    subtypes = {str(s) for s in wants.get("subtypes") or []}
+    types = {str(t) for t in wants.get("types") or ["Creature"]}
     match = next(
         (
             c

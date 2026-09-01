@@ -25,8 +25,9 @@ from __future__ import annotations
 
 import pytest
 
-from automtg.cards.loader import DslError, _validate_cost_reduction
-from automtg.engine.costs import ability_mana
+from automtg.cards.loader import DslError, _validate_cost_reduction, compile_card
+from automtg.cards.schema import CardModel
+from automtg.engine.costs import ability_mana, reduction_amount
 from tests.conftest import oids_of
 
 LEGEND_SCALER = "t_legend_scaling_ability"  # {5}, {T}: draw; {1} less per legendary creature
@@ -34,6 +35,13 @@ FLYING_SCALER = "t_flying_scaling_ability"  # {5}, {T}: draw; {1} less per flier
 LEGEND = "t_legend"  # Legendary Creature — Human 2/2
 OTHER_LEGEND = "t_commander"  # Legendary Creature — Serpent; a *different* legend
 BEAR = "t_bear"  # Creature — Bear 2/2, no supertype
+
+#: "…for each legendary creature you control", spelled as the loader accepts it.
+LEGENDARY_CREATURES = {
+    "controller": "you",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+}
 FLIER = "t_flier"
 
 
@@ -87,6 +95,81 @@ class TestTheOtherKeysAreReadToo:
 
     def test_a_creature_with_it_takes_one_off(self, builder):
         assert price(board(builder, FLYING_SCALER, FLIER), FLYING_SCALER) == 4
+
+
+class TestOutsideTheBattlefield:
+    """A reduction may count the graveyard and the command zone, where there is
+    no characteristics pipeline and the printed face answers instead. The
+    Kamigawa channel legends are why the zones are reachable at all, and the
+    printed-face path has to read the same keys the derived one does or the
+    filter means two different things depending on where it looks."""
+
+    def counted(self, game, filt) -> int:
+        return reduction_amount(game.state, 0, {"count": filt})
+
+    def test_a_legend_in_your_graveyard_counts_when_the_zone_says_so(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["swamp"] * 5)
+            .graveyard(0, [LEGEND, BEAR])
+            .build()
+        )
+        filt = dict(LEGENDARY_CREATURES, zone="graveyard")
+        assert self.counted(game, filt) == 1, "the bear is in there too"
+
+    def test_a_legendary_commander_counts_from_the_command_zone(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["swamp"] * 5)
+            .commander(0, [OTHER_LEGEND])
+            .build()
+        )
+        filt = dict(LEGENDARY_CREATURES, zone=["battlefield", "command"])
+        assert self.counted(game, filt) == 1
+
+    def test_the_default_zone_is_still_the_battlefield(self, builder):
+        """A filter naming no zone means what it always meant, so teaching the
+        counter a new key cannot have widened an existing card's reach."""
+        game = builder(players=2).battlefield(0, ["swamp"] * 5).graveyard(0, [LEGEND]).build()
+        assert self.counted(game, LEGENDARY_CREATURES) == 0
+
+
+class TestAMisspelledNameIsRefused:
+    """One layer below the rest of this file, and the same failure shape.
+
+    A misspelled type matches nothing, and a reduction that matches nothing is a
+    discount of zero -- a card quietly priced at exactly what it prints, on a
+    board where nothing looks wrong. A *selector* that matches nothing fails
+    visibly the first time somebody plays the card; a reduction never does.
+
+    `subtypes` is deliberately unchecked, here and in the selector language:
+    creature and land types are open-ended and there is no closed set to check.
+    """
+
+    def _card(self, filt):
+        return CardModel.model_validate(
+            {
+                "id": "t_reduction_probe",
+                "name": "Reduction Probe",
+                "mana_cost": "{4}{G}",
+                "types": ["Creature"],
+                "power": 1,
+                "toughness": 1,
+                "cost_reduction": {"count": filt},
+            }
+        )
+
+    def test_a_misspelled_supertype(self):
+        filt = {"controller": "you", "types": ["Creature"], "supertypes": ["Legendarry"]}
+        with pytest.raises(DslError, match="unknown supertype"):
+            compile_card(self._card(filt))
+
+    def test_a_misspelled_type(self):
+        with pytest.raises(DslError, match="unknown type"):
+            compile_card(self._card({"controller": "you", "types": ["Creatures"]}))
+
+    def test_the_real_spelling_loads(self):
+        compile_card(self._card(LEGENDARY_CREATURES))
 
 
 class TestTheRelationalKeysAreRefused:

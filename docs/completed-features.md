@@ -1,3 +1,66 @@
+## A cost reduction that counts a supertype — the Kamigawa channel legends
+
+### Overview
+
+Boseiju, Who Endures and Otawara, Soaring City: *"Channel — {1}{G}, Discard this
+card: … This ability costs {1} less to activate for each legendary creature you
+control."* Two gap records, both naming `cost_reduction_supertype_filter`, and
+between them the whole Kamigawa channel-legend cycle — Boseiju, Otawara, Takenuma
+and Eiganjo all print the same clause on a `discard_self` ability activated from
+hand.
+
+`Legendary` is a **supertype** (205.4a), and 205.4b makes it an independent part
+of the type line rather than a kind of type. So "legendary creature" is two
+clauses ANDed, and no arrangement of `types` and `subtypes` says it.
+
+### Where the fix lives now
+
+The missing branch was one of fourteen: the loader validated a reduction filter
+against `STATIC_FILTER_KEYS` and `costs._reduction_matches` read six of those
+keys. That whole story, and the fix for it, is
+**"A cost reduction's filter reads every key it accepts"** below — it landed
+first, with the Markov Chains deck, because Takenuma needed it too. This section
+is what is left once that is in place: the cards, and two smaller things.
+
+**A subset test, not an intersection.** `supertypes` is `issubset` where
+`subtypes` is `&`, the same split `effects.selectors.matches` makes: a permanent
+has one supertype line a filter names part of, while "for each Vampire" means any
+of the named creature types. Written as an *alternative* to the type check rather
+than an addition, a legendary planeswalker would count.
+
+**A misspelled name is a load error.** `{"supertypes": ["Legendarry"]}` would
+count nothing and read as a discount of zero — a card priced at exactly what it
+prints, which is invisible. That is the same failure shape as the dropped key,
+one layer down, so it gets the same answer. `subtypes` is not checked, here or in
+the selector language, because creature and land types are open-ended and there
+is no closed set to check against.
+
+### One import cycle, broken
+
+Reaching `costs.REDUCTION_ZONES` from the loader meant breaking a cycle.
+`effects/ops_control.py` imported `can_pay` and `pay` from `..costs` at module
+level while `costs` imports `effects.context`, so `costs` could only ever be
+imported *after* `effects` — anything reaching for it first got a partially
+initialised module. The two ops that charge a cost import them in the function
+body now, which is what `combat`, `game`, `legality` and `replacements` already
+do.
+
+### The packet learned the distinction
+
+The authoring packet showed workers `static_filter_keys` and nothing else, so a
+worker reading it wrote `supertypes` into a reduction because the list said the
+word was legal — and had no way to know that `zone` is available there, or that
+the relational keys are refused. `cost_reduction_keys` and
+`cost_reduction_filter_keys` travel with every packet now.
+
+### One test helper changed
+
+`_provide_the_attacker` read `attacking` at the top level only, and Eiganjo's
+"attacking or blocking" is one `any_of` over two branches — so the harness
+declared no attacker and a correct card reported as unusable. The assertion is
+untouched; the alternative was narrowing Eiganjo to plain "attacking", which is a
+weaker card written to suit the harness.
+
 ## `{W/P}` — phyrexian mana, and the cast line that carries the choice
 
 ### Overview

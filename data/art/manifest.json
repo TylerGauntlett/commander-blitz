@@ -1598,6 +1598,12 @@
     "file": "boros_swiftblade.jpg",
     "scryfall_id": "0b1056b8-84a0-439c-bf63-8e18a58c648f"
   },
+  "boseiju_who_endures": {
+    "artist": "Esuthio",
+    "bytes": 95422,
+    "file": "boseiju_who_endures.jpg",
+    "scryfall_id": "0055ea30-20fb-4324-a632-8fed87628f05"
+  },
   "botanical_sanctum": {
     "artist": "Piotr Dura",
     "bytes": 55599,
@@ -3621,6 +3627,12 @@
     "bytes": 51174,
     "file": "edgar_master_machinist.jpg",
     "scryfall_id": "098a8025-6454-45d8-abe3-2c3dada3f582"
+  },
+  "eiganjo_seat_of_the_empire": {
+    "artist": "ZOUNOSE",
+    "bytes": 96002,
+    "file": "eiganjo_seat_of_the_empire.jpg",
+    "scryfall_id": "7c31c48f-6275-4430-8dc9-05d70c332b7a"
   },
   "ekundu_griffin": {
     "artist": "David A. Cherry",
@@ -9231,6 +9243,11 @@
     "file": "orzhov_signet.jpg",
     "scryfall_id": "ca0d3984-fbb3-4661-a424-f79d2253e057"
   },
+  "otawara_soaring_city": {
+    "artist": "Alayna Danner",
+    "file": "otawara_soaring_city.jpg",
+    "scryfall_id": "486d7edc-d983-41f0-8b78-c99aecd72996"
+  },
   "oubliette": {
     "artist": "Will Sweeney",
     "bytes": 81778,
@@ -13048,6 +13065,12 @@
     "bytes": 84196,
     "file": "tajuru_snarecaster.jpg",
     "scryfall_id": "e1894cf9-7d53-4b7e-aaae-8db42bdd8e49"
+  },
+  "takenuma_abandoned_mire": {
+    "artist": "Sam Burley",
+    "bytes": 99192,
+    "file": "takenuma_abandoned_mire.jpg",
+    "scryfall_id": "13410bd5-acee-4cc9-90e3-dbcf8415bcaf"
   },
   "talarian_hook_spider": {
     "artist": "Zoltan Boros",
