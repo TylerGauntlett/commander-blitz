@@ -771,7 +771,18 @@ def _cast_options(
     if card.alternative_cost is not None and state.objects[oid].zone is Zone.HAND:
         from .effects.conditions import evaluate_condition
 
-        if evaluate_condition(state, card.alternative_condition, controller=pid, source=oid):
+        # The non-mana half -- Force of Will's "pay 1 life and exile a blue
+        # card from your hand" -- is priced here alongside the condition, and
+        # for the same reason: a pitch spell held with no other blue card is
+        # not castable this way at all, and offering the line and then failing
+        # the payment would show a price the player can never pay. `oid` is
+        # passed as the source so `_hand_exile_pool` excludes the spell itself
+        # (601.2a) -- Force of Will is a blue card in hand and must not pitch
+        # itself.
+        payable = can_pay(state, pid, card.alternative_cost.without_mana(), oid)
+        if payable and evaluate_condition(
+            state, card.alternative_condition, controller=pid, source=oid
+        ):
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
             )
@@ -1155,7 +1166,10 @@ def _cast_variant(
     elif overloaded and card.overload is not None:
         cost = card.overload
     elif alternative and card.alternative_cost is not None:
-        cost = card.alternative_cost
+        # The mana half only. Everything else on the node -- the life and the
+        # pitched card -- is charged by `game._cast` after the mana, the same
+        # split flashback uses and the order 601.2g gives.
+        cost = card.alternative_cost.mana
     elif kicked:
         cost = card.mana_cost.plus(card.kicker)
     else:

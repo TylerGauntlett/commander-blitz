@@ -165,6 +165,26 @@ class Cost:
     #: could be activated and responded to with the source still on the
     #: battlefield, and 601.2h pays costs before any of that.
     exile_self: bool = False
+    #: "**Exile a blue card from your hand**" -- the pitch cost of Force of
+    #: Will, Misdirection, Pyrokinesis and the Modern Horizons elementals. A
+    #: selector over the payer's own hand, with an optional ``count``.
+    #:
+    #: The exile twin of `discard` + `discard_selector`, and deliberately not
+    #: that pair: a discarded card lands in the graveyard, where delirium,
+    #: threshold, Tarmogoyf and every reanimation spell can see it. The printed
+    #: cost exiles, and that difference is why these spells are priced as they
+    #: are.
+    exile_from_hand: Mapping[str, Any] | None = None
+    #: "**Exile this card from your hand**: Add {R}" -- Simian Spirit Guide.
+    #: The exile twin of `discard_self`.
+    #:
+    #: A separate flag from `exile_self`, which is "Exile this artifact" and
+    #: whose `costs.can_pay` check requires the source to be on the
+    #: battlefield -- Phoenix Down keeps that, and this one requires the hand.
+    #: Merging them would mean either loosening Phoenix Down's check to any
+    #: zone, or leaving a Spirit Guide that loads clean and can never be
+    #: activated.
+    exile_self_from_hand: bool = False
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
@@ -265,6 +285,10 @@ class Cost:
             mill=int(spec.get("mill", 0) or 0),
             pay_life_x=bool(spec.get("pay_life_x")),
             exile_self=bool(spec.get("exile_self")),
+            exile_from_hand=(
+                dict(spec["exile_from_hand"]) if spec.get("exile_from_hand") else None
+            ),
+            exile_self_from_hand=bool(spec.get("exile_self_from_hand")),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -279,6 +303,17 @@ class Cost:
         different moments and legality has to test them separately.
         """
         return replace(self, mana=ManaCost.parse(""))
+
+    def charges_nothing(self) -> bool:
+        """True when this node takes nothing but (possibly) mana.
+
+        Asked of an *alternative* cost, which replaces the printed one: a node
+        with neither mana nor anything else on it is a card castable for free,
+        and one with only mana on it is `evoke` under a second name. Written as
+        an equality against a default cost carrying this one's mana, so a cost
+        key added later is covered without anyone remembering to list it here.
+        """
+        return self == Cost(mana=self.mana)
 
     def is_tap_only(self) -> bool:
         """True when the only cost is ``{T}`` -- the shape mana sources must have."""
@@ -300,6 +335,12 @@ class Cost:
             # the same place a Signet's {1} and a Vivid land's counter sit.
             and self.mill == 0
             and not self.exile_self
+            # Simian Spirit Guide is a mana ability that costs a card, not a
+            # tap. Left out of `is_tap_only` it would be invisible to the
+            # payment solver *and* to the player; counted in, the solver would
+            # exile cards out of a hand it was never asked about.
+            and not self.exile_self_from_hand
+            and self.exile_from_hand is None
             and not self.pay_life
             and self.remove_counters is None
             and self.loyalty is None
@@ -332,6 +373,11 @@ class Cost:
             parts.append("Discard this card")
         if self.exile_self:
             parts.append("Exile this permanent")
+        if self.exile_self_from_hand:
+            parts.append("Exile this card from your hand")
+        if self.exile_from_hand:
+            count = self.exile_from_hand.get("count", 1)
+            parts.append(f"Exile {count} from your hand")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")
@@ -812,10 +858,21 @@ class CardDef:
     melds_into: str | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
-    #: Prowl and spectacle: an alternative mana cost offered from hand only
-    #: *while* ``alternative_condition`` holds.
-    alternative_cost: ManaCost | None = None
-    #: The condition gating it, in the ordinary `if`-effect language.
+    #: Prowl and spectacle: an alternative cost offered from hand, optionally
+    #: only *while* ``alternative_condition`` holds.
+    #:
+    #: A full `Cost` rather than a bare `ManaCost`, which is what it was until
+    #: the pitch spells arrived. Force of Will's alternative cost is "pay 1
+    #: life and exile a blue card from your hand" and Pyrokinesis's has no mana
+    #: component at all, so there has to be somewhere on the node to hang a
+    #: payment that is not mana. `flashback` was the only alternative cost
+    #: modelled this way; this is the second, and the two are now charged by
+    #: the same halves in the same order -- the mana replaces the printed cost,
+    #: and everything else on the node is paid after it (601.2g).
+    alternative_cost: Cost | None = None
+    #: The condition gating it, in the ordinary `if`-effect language. ``None``
+    #: is unconditional, which only a cost charging something other than mana
+    #: may be: an unconditional cheaper *mana* price is `evoke`.
     alternative_condition: Any = None
     #: "Emerge {5}{U}{U}".  An alternative cost paid by sacrificing a
     #: creature, reduced by that creature's mana value.  The reduction is

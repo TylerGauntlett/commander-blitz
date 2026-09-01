@@ -1,3 +1,108 @@
+## `exile_from_hand` — the free-spell pitch cost, and the alternative cost that could hold it
+
+### Overview
+
+Force of Will: *"**You may pay 1 life and exile a blue card from your hand rather
+than pay this spell's mana cost.** / Counter target spell."*
+
+Five cards in `docs/unsupported-cards.md` named `exile_from_hand`, and every one
+of them needed the same two things. Neither is useful without the other, which is
+why they shipped together.
+
+**1. A cost that exiles a card out of hand.** `cost_keys` already had
+`discard_selector`, which picks a hand card by exactly this kind of filter — and
+sends it to the **graveyard**, where delirium, threshold, Tarmogoyf and every
+reanimation spell can still see it. The printed pitch exiles, and that difference
+is the entire reason these spells are priced at nothing. The only exile costs
+were `exile_self` (the source, which here is the spell being cast) and
+`exile_from_graveyard` (the wrong zone).
+
+**2. Somewhere on the card for a payment that is not mana.** `alternative_cost`
+was validated to exactly `{mana, condition}`, parsed straight into a `ManaCost`,
+and raised `needs 'mana'` when mana was absent. Force of Will's alternative cost
+is a life and a card; Pyrokinesis's has no mana component at all. There was no
+node to hang either on.
+
+### Two keys, mirroring `discard` and `discard_self`
+
+```jsonc
+"exile_from_hand": { "colors": ["U"] }   // "a blue card": a selector, optional "count"
+"exile_self_from_hand": true             // "Exile this card from your hand": no choice
+```
+
+`exile_self_from_hand` is kept apart from `exile_self` deliberately. That one is
+Phoenix Down's "Exile this artifact", and `costs.can_pay` requires *its* source
+to be on the battlefield — so a Simian Spirit Guide written with it loaded clean
+and could never be activated. A silently inert card is worse than no card.
+Merging them would have meant loosening Phoenix Down's check to any zone; the
+sibling flag checks the hand instead, the same check `discard_self` makes.
+
+And it is not `exile_from_hand` narrowed by a selector, for the reason cycling is
+not `discard: 1`: the pool would offer the whole hand, and the player could
+"activate" the Guide by exiling something else and keeping it in hand.
+
+The pool is the payer's own hand and nothing else — `costs._hand_exile_pool`
+walks that list rather than resolving a `zone: "hand"` selector, because the hand
+is hidden and an opponent's card must never be fodder or leak into a count the
+client can read. Writing `zone` on the selector is a load error rather than a
+value overwritten in silence.
+
+**The source is never its own fodder.** 601.2a moves a spell to the stack before
+any of its costs are paid, and Force of Will is itself a blue card sitting in the
+hand it pitches from — so without the exclusion it pays for itself, is exiled by
+its own cost, and never resolves. `_discard_pool` had already learned this on
+Bitter Triumph; the new pool learns it in the same place, because legality prices
+the line while the card is still in hand.
+
+### `alternative_cost` becomes a full `Cost`
+
+The second alternative cost modelled that way, after `graveyard_cost`, and the
+two are now charged in the same halves in the same order: the mana replaces the
+printed cost in `legality._cast_variant` and `game._cast`, and everything else on
+the node is paid after it (601.2g), with the spell's own oid as the source so the
+pool excludes it.
+
+Legality prices the non-mana half through `can_pay` as well as the condition,
+because both answer the same question — permission to cast the card this way at
+all. A Force of Will held beside nothing blue is not castable that way, and
+offering the line and then failing the payment would show a price the player can
+never pay.
+
+Two guards, and only the second moved:
+
+- A node that charges **nothing** is refused: it replaces the printed cost, so an
+  empty one is a free spell.
+- A node that charges **only mana** still needs a `condition`, because that is
+  exactly `evoke` and a card spelling it that way is offered twice at two prices
+  with nothing to choose between. A node charging something else is exempt —
+  Force of Will's line is unconditional and printed, and what it takes instead of
+  mana is the reason it is a fair card.
+
+`mana_reduction` is refused on it. "Costs {X} less to cast **this way**" is the
+graveyard cost's rider and only `costs.variant_reduction` reads it, off the
+flashback branch alone; written here it would load clean and never apply.
+
+### Simian Spirit Guide is invisible to the payment solver, on purpose
+
+`costs.mana_sources` collects only `Cost.is_tap_only()` abilities on the
+battlefield, so the Guide's mana ability reaches the player through
+`legality._activate_zones`, which already walks their own hand. That is the right
+answer as well as the only one available: a solver that exiled cards out of a
+hand it was never asked about would spend the card to help pay for a spell.
+
+### Harvest
+
+Force of Will, Daze and Simian Spirit Guide ship. Daze was filed under
+`alternative_cost_nonmana` — the same blocker seen from a card whose pitch is a
+returned Island rather than an exiled card — and the widened node answers it
+whole.
+
+Force of Negation, Misdirection and Pyrokinesis stay blocked, each on a *second*
+capability their gap records already name: `counter_to_exile`,
+`choose_new_targets` (plus a "spell with a single target" restriction) and
+`divided_damage`. Their records keep only those needs.
+
+`tests/unit/test_exile_from_hand.py`: 26 tests.
 ## "Your life total can't change" -- a two-way lock on a life total -- 118.5
 
 ### Overview

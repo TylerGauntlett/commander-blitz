@@ -1743,6 +1743,19 @@
   "daybreak_chaplain": {
     "zone": "battlefield"
   },
+  "daze": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "dead_weight": {
     "zone": [
       "battlefield",
@@ -2623,6 +2636,15 @@
   },
   "forbidding_watchtower": {
     "zone": "battlefield"
+  },
+  "force_of_will": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "foreboding_landscape": {
     "zone": "battlefield"
@@ -6892,6 +6914,10 @@
     "zone": "battlefield"
   },
   "silverquill_lecturer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "simian_spirit_guide": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

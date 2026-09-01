@@ -1149,6 +1149,8 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "exile_self": true,                             // Phoenix Down: exiles the source, not to the graveyard
+  "exile_from_hand": { "colors": ["U"] },         // Force of Will: a selector over *your* hand
+  "exile_self_from_hand": true,                   // Simian Spirit Guide: *this* card, out of hand
   "mill": 1,                                      // Millikin: off *your* library's top
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
@@ -1191,6 +1193,57 @@ for each age counter on it". It is read only by `may`'s `pay`, and that location
 is forced rather than convenient: an activated ability's cost is settled by
 legality *before* any effect has run, so a value expression there would have
 nothing to read.
+
+### `exile_from_hand` — the pitch cost, and why it is not a discard
+
+"You may pay 1 life and **exile a blue card from your hand** rather than pay this
+spell's mana cost." — Force of Will, Misdirection, Pyrokinesis, the Modern
+Horizons elementals.
+
+`discard` narrowed by `discard_selector` picks a hand card by exactly this kind
+of filter, and it is a *different cost*: a discarded card is in the graveyard,
+where delirium, threshold, Tarmogoyf and every reanimation spell can still see
+it. The printed pitch exiles, and that difference is the whole reason these
+spells are priced at nothing.
+
+Two keys, mirroring `discard` and `discard_self` one zone over:
+
+```jsonc
+"exile_from_hand": { "colors": ["U"] }   // "a blue card": a selector, optional "count"
+"exile_self_from_hand": true             // "Exile this card from your hand": no choice
+```
+
+The selector is resolved against the **paying player's own hand and nothing
+else** — `costs._hand_exile_pool` walks that list rather than resolving a
+`zone: "hand"` selector, because the hand is hidden and an opponent's card must
+never become fodder or leak into a pool the client can count. Writing `zone` on
+it is a load error rather than a value silently overwritten.
+
+**The source is never its own fodder.** Rule 601.2a moves a spell to the stack
+before any of its costs are paid, and Force of Will is itself a blue card sitting
+in the hand it is pitching from — so without the exclusion it pays for itself,
+exiles itself, and never resolves. Legality prices the line while the card is
+still in hand, which is why the exclusion lives in the pool rather than in the
+zone check. `_discard_pool` does the same thing for the same rule.
+
+`exile_self_from_hand` is deliberately **not** `exile_self`, which is Phoenix
+Down's "Exile this artifact" and whose `costs.can_pay` requires the source to be
+on the battlefield. Merging them would mean either loosening Phoenix Down's check
+to any zone, or shipping a Simian Spirit Guide that loads clean and can never be
+activated. And it is not `exile_from_hand` narrowed by a selector, for the reason
+cycling is not `discard: 1`: the pool would offer the whole hand, and the player
+could "activate" the Guide by exiling something else and keeping it.
+
+Like cycling, it is what makes an ability in hand safe. `active_zones: ["hand"]`
+is refused unless the cost or an unconditional effect removes the source from
+that zone — otherwise a card in hand with a free ability is an infinite engine.
+
+The Guide's ability is a mana ability, and it is invisible to the payment solver
+on purpose: `costs.mana_sources` collects only `Cost.is_tap_only()` abilities on
+the battlefield, so this one reaches the player through
+`legality._activate_zones`, which already walks their own hand. That is the right
+answer as well as the only one — the solver exiling cards out of a hand it was
+never asked about is not a thing anybody wants.
 
 ### `x_value` — an X the card fixes, not the player
 
@@ -3729,12 +3782,14 @@ price it was offered at. Not a second key meaning the same thing: a key that can
 be written in the wrong slot is a key that will be, and it would be ignored in
 silence.
 
-`flashback`/`graveyard_cost` is the only alternative cost that can carry one,
-because it is the only one modelled as a full `Cost`. `evoke`, `emerge`,
-`overload`, `bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana
-strings with no node to hang a rider on. It is also refused on
-`additional_cost`, whose mana is folded into the spell's price and never priced
-on its own.
+`flashback`/`graveyard_cost` is the only alternative cost that can carry one.
+`evoke`, `emerge`, `overload`, `bestow`, `foretell` and `mutate` are bare mana
+strings with no node to hang a rider on. `alternative_cost` is a full `Cost` and
+so has the node, but the rider is refused there too: nothing prices that branch
+through `variant_reduction`, and no printed prowl or pitch cost says "costs {X}
+less to cast this way", so a key written there would load clean and be ignored.
+It is likewise refused on `additional_cost`, whose mana is folded into the
+spell's price and never priced on its own.
 
 ### …by the greatest mana value of a commander you own
 
@@ -8306,12 +8361,13 @@ remove its source from that zone. Without that it is an infinite engine — a ca
 in hand whose ability costs only mana could be activated forever without ever
 leaving.
 
-Four things satisfy it, and the last two arrived with **unearth** and
+Five things satisfy it, and the last two arrived with **unearth** and
 **forecast**:
 
 | | |
 |---|---|
 | `discard_self` on the cost | cycling |
+| `exile_self_from_hand` on the cost | Simian Spirit Guide |
 | `exile_from_graveyard` on the cost | embalm |
 | an **unconditional top-level effect** moving `self_only` out | unearth — "return this card from your graveyard to the battlefield" |
 | `activate_steps` **and** `once_each_turn` together | forecast — "activate only during your upkeep and only once each turn" |
@@ -8388,6 +8444,7 @@ them where it is sitting:
 "buyback": true                             // …and it returns to hand instead of the graveyard
 "evoke": "{2}{U}", "evoke_label": "dash"    // an alternative cost, and its printed name
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
+"alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
 "pay_generic_with": "tap_creatures"         // convoke; "exile_from_graveyard" is delve
@@ -8441,6 +8498,65 @@ means exactly `graveyard_cost`. A card giving both is refused rather than
 resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
+
+#### An *alternative* cost that is not mana
+
+```jsonc
+// Force of Will -- "You may pay 1 life and exile a blue card from your hand
+//  rather than pay this spell's mana cost."  No mana, and no condition.
+"alternative_cost": { "pay_life": 1, "exile_from_hand": { "colors": ["U"] } }
+
+// Daze -- "You may return an Island you control to its owner's hand rather
+//  than pay this spell's mana cost."
+"alternative_cost": { "return_to_hand": { "controller": "you",
+                                          "subtypes": ["Island"] } }
+
+// Spectacle, unchanged: a cheaper *mana* price behind a gate.
+"alternative_cost": { "mana": "{R}", "condition": { ... } }
+```
+
+`alternative_cost` is a full `Cost` plus an optional `condition` — the second
+alternative cost modelled that way, after `graveyard_cost`. It was a bare mana
+string until the pitch spells arrived, and there was simply nowhere on the card
+for a payment that is not mana to live: Force of Will's price is a life and a
+card, and Pyrokinesis's has no mana component at all.
+
+The mana half **replaces** the printed cost and everything else on the node is
+paid after it — 601.2g, and the same split `graveyard_cost` uses, with
+`legality._cast_variant` pricing the mana and `game._cast` charging the rest.
+Legality prices the non-mana half too, through `can_pay`: a Force of Will held
+beside nothing blue is not castable this way at all, and offering the line and
+then failing the payment would show a price the player can never pay.
+
+Two guards, and the second is the one that moved:
+
+- A node that charges **nothing** is refused. It replaces the printed cost, so an
+  empty one is a free spell.
+- A node that charges **only mana** still needs a `condition`, because that is
+  exactly `evoke` and a card spelling it this way would be offered twice at two
+  prices with nothing to choose between them. A node that charges something else
+  is exempt: Force of Will's line is unconditional and printed, and what it takes
+  instead of mana is the reason it is a fair card.
+
+`mana_reduction` is refused here. "Costs {X} less to cast **this way**" is
+`graveyard_cost`'s rider and only `costs.variant_reduction` reads it, off the
+flashback branch alone — written here it would load clean and never apply.
+
+So is every cost that charges the **source permanent** — `tap`, `untap`,
+`loyalty`, `remove_counters`, `exile_self`, `exile_self_from_hand`,
+`discard_self`, `pay_life_x` and `x_value` (`loader.NOT_A_CAST_TIME_COST`). The
+source of a cast-time cost is the spell itself, on its way from hand to stack:
+there is no permanent to tap, and the card a self-cost would take is the one
+being cast. `costs.can_pay` fails closed on all of them, so a card written that
+way would load clean and never once be offered the line — silently inert, which
+is the failure mode `exile_self` on a hand ability used to produce and the reason
+`exile_self_from_hand` exists at all.
+
+The near substitutes are each a different card. `{"mana": "{0}", "condition":
+{"exists": {…Island…}}}` makes Daze free whenever any Island is on the
+battlefield and never bounces one, which is the whole cost and the whole
+drawback; `additional_cost` charges the return *on top of* {1}{U} rather than
+instead of it, and makes the printed hard-cast illegal with no Island out.
 
 #### An additional cost that is not mana
 

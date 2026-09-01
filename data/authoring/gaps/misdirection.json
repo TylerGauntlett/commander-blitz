@@ -3,16 +3,9 @@
   "name": "Misdirection",
   "oracle_text": "You may exile a blue card from your hand rather than pay this spell's mana cost.\nChange the target of target spell with a single target.",
   "blocked_sentences": [
-    "You may exile a blue card from your hand rather than pay this spell's mana cost.",
     "Change the target of target spell with a single target."
   ],
   "needs": [
-    {
-      "capability": "exile_from_hand",
-      "kind": "cost",
-      "what": "a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), usable inside a card-level `alternative_cost`, so the 'pitch' alternative cost shared by Misdirection, Force of Will, Force of Negation and the Modern Horizons free elementals can be paid",
-      "why_existing_wont_do": "`cost_keys` has `discard_selector`, which picks a hand card by the same kind of filter but puts it in the graveyard instead of exile -- a visible rules difference (graveyard recursion, delirium, threshold, Tarmogoyf), so it is an approximation, not the printed cost. The only exile costs are `exile_self` (the source, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` itself already exists and works; the one missing piece is the exile-a-card-from-hand payment."
-    },
     {
       "capability": "choose_new_targets",
       "kind": "op",
@@ -26,6 +19,10 @@
       "why_existing_wont_do": "`selector_keys` has `count`, but that is how many objects this effect chooses, not a restriction on the chosen spell's own target count; nothing in `selector_keys` reads the target list of a spell on the stack. Without it the spell would legally target multi-target spells the printed card cannot touch."
     }
   ],
-  "closest_existing": ["discard_selector", "exile_self", "alternative_cost", "copy_spell", "counter"],
+  "closest_existing": [
+    "alternative_cost",
+    "copy_spell",
+    "counter"
+  ],
   "confidence": "high"
 }

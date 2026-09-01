@@ -2988,6 +2988,12 @@
     "file": "daybreak_chaplain.jpg",
     "scryfall_id": "ab4065f4-e33e-4834-9813-5e9518d9f410"
   },
+  "daze": {
+    "artist": "Lenka \u0160ime\u010dkov\u00e1",
+    "bytes": 85390,
+    "file": "daze.jpg",
+    "scryfall_id": "9d9a5654-6795-4799-ae3b-5827bfdf7a97"
+  },
   "dead_weight": {
     "artist": "Lake Hurwitz",
     "bytes": 83127,
@@ -4442,6 +4448,12 @@
     "bytes": 70564,
     "file": "forbidding_watchtower.jpg",
     "scryfall_id": "97b2c000-a4ee-4b7b-b42d-e538de6896df"
+  },
+  "force_of_will": {
+    "artist": "Rovina Cai",
+    "bytes": 79537,
+    "file": "force_of_will.jpg",
+    "scryfall_id": "7a87f8bc-1b3e-4cb2-9343-5f008e942411"
   },
   "foreboding_landscape": {
     "artist": "Erikas Perl",
@@ -11742,6 +11754,12 @@
     "bytes": 63055,
     "file": "silverquill_lecturer.jpg",
     "scryfall_id": "507e34d0-cdc5-4226-9664-b725b702044d"
+  },
+  "simian_spirit_guide": {
+    "artist": "Lucas Graciano",
+    "bytes": 56590,
+    "file": "simian_spirit_guide.jpg",
+    "scryfall_id": "9d367aa4-e85f-402e-b781-527808edcc0a"
   },
   "simic_charm": {
     "artist": "Zoltan Boros",

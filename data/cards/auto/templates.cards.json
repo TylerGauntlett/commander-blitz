@@ -19460,6 +19460,56 @@
       ]
     },
     {
+      "alternative_cost": {
+        "return_to_hand": {
+          "controller": "you",
+          "subtypes": [
+            "Island"
+          ]
+        }
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "daze",
+      "mana_cost": "{1}{U}",
+      "name": "Daze",
+      "oracle_text": "You may return an Island you control to its owner's hand rather than pay this spell's mana cost.\nCounter target spell unless its controller pays {1}.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "else": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "mana": "{1}"
+          },
+          "player": {
+            "controller_of_target": "t1"
+          },
+          "prompt": "Pay {1} to stop Daze countering your spell?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -28806,6 +28856,44 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "exile_from_hand": {
+          "colors": [
+            "U"
+          ]
+        },
+        "pay_life": 1
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "force_of_will",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Force of Will",
+      "oracle_text": "You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.\nCounter target spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -76366,6 +76454,46 @@
         "Wizard"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "exile_self_from_hand": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "kind": "activated",
+          "text": "Exile this card from your hand: Add {R}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "simian_spirit_guide",
+      "mana_cost": "{2}{R}",
+      "name": "Simian Spirit Guide",
+      "oracle_text": "Exile this card from your hand: Add {R}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Ape",
+        "Spirit"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
