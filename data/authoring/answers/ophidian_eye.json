@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "ophidian_eye",
+    "name": "Ophidian Eye",
+    "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\nWhenever enchanted creature deals damage to an opponent, you may draw a card.",
+    "mana_cost": "{2}{U}",
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "types": ["Enchantment"],
+    "subtypes": ["Aura"],
+    "keywords": ["flash"],
+    "targets": [
+      {
+        "id": "enchanted",
+        "kind": "permanent",
+        "selector": {"zone": "battlefield", "types": ["Creature"]}
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever enchanted creature deals damage to an opponent, you may draw a card.",
+        "trigger": {
+          "event": "deals_damage_to_player",
+          "controller": "any",
+          "filter": {"attached": true},
+          "defending": "opponent"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

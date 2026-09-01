@@ -76,7 +76,17 @@ from .schema import AbilityModel, CardModel, CostModel, DeckModel, TargetModel
 #: and the per-declaration-per-seat `creatures_attack_player`; `you_attack` is
 #: deliberately absent, because it is fired once for the whole declaration and
 #: has no one player to compare against.
-DEFENDING_TRIGGERS = frozenset({"attacks", "creatures_attack_player"})
+#:
+#: `deals_damage_to_player` is the third, and it is the one that is not about
+#: combat: "whenever enchanted creature deals damage to **an opponent**"
+#: (Curiosity) asks who took the damage, and `controller` cannot answer it --
+#: that clause is about whose *creature* dealt it. `damage_player` carries the
+#: damaged seat as `defender` for exactly this comparison. Two-player play hides
+#: the difference; a pod does not, and neither does a creature you control that
+#: somehow damages you.
+DEFENDING_TRIGGERS = frozenset(
+    {"attacks", "creatures_attack_player", "deals_damage_to_player"}
+)
 
 #: Cost keys that charge the **source permanent**, and so may not appear on a
 #: card-level `alternative_cost`.

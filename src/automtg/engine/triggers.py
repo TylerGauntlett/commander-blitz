@@ -127,6 +127,33 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: the event covers damage to players as well, and this half of it is the
     #: half with an object to hang a trigger on.
     "dealt_damage": EventType.DAMAGE_DEALT,
+    #: "Whenever enchanted creature deals damage to an opponent, you may draw a
+    #: card" -- Curiosity, Ophidian Eye, and Tandem Lookout's granted copy of the
+    #: same line. The **other half** of DAMAGE_DEALT, and the half the note on
+    #: `dealt_damage` above named without claiming: that one is scoped to damage
+    #: dealt *to a permanent* and takes the victim as its subject, and this one
+    #: is scoped to damage dealt *to a player* and takes the **dealer**.
+    #:
+    #: No new event type, for the reason `dealt_damage` needed none: every
+    #: player-damage site in the engine goes through `primitives.damage_player`,
+    #: which has fired DAMAGE_DEALT with `to="player"` through the trigger bus
+    #: since damage existed. What it lacked was a name, a subject and the two
+    #: payload keys a `controller`/`defending` clause compares against.
+    #:
+    #: `deals_combat_damage_to_player` is the near miss and is combat-only by
+    #: construction -- COMBAT_DAMAGE_TO_PLAYER is fired inside `if is_combat`, so
+    #: a pinger, a Fireball, a fight or a triggered burn spell under Curiosity
+    #: draws nothing, and a pinger is precisely what the card is played with.
+    #: The substitution is a different card rather than a weaker one. Combat
+    #: damage still fires *this* event too, so nothing is lost by using it: a
+    #: creature connecting fires both, one per printed reading.
+    #:
+    #: `life_lost` reaches the loss and not the dealer: its subject is a player,
+    #: so nothing ties the loss back to the enchanted creature, and it fires for
+    #: discards and taxes as readily as for damage while an infect hit deals
+    #: damage and fires it not at all -- infect is why this is hung on the damage
+    #: and not on the life total.
+    "deals_damage_to_player": EventType.DAMAGE_DEALT,
     #: Heroic (702.109) and ward (702.21): "whenever this becomes the target of
     #: a spell…".  Fired as the spell goes on the stack (603.2d), which is the
     #: timing that makes ward mean anything.
@@ -254,6 +281,17 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # enrage is a fact about the creature being hurt, and `source: "self"`
         # has to scope it to that creature rather than to everything it hits.
         "dealt_damage",
+        # The permanent that **dealt** the damage -- the exact opposite of the
+        # line above, off the same event. Damage to a player has no victim
+        # object for the subject to be, and the whole point of the trigger is to
+        # say which permanent connected: `filter: {"attached": true}` is how
+        # Curiosity means "enchanted creature", and `source: "self"` is how
+        # Tandem Lookout's granted copy means "this creature".
+        #
+        # Reached through the `event.source` fallthrough in `_subject_oid`,
+        # because the player half of DAMAGE_DEALT carries no `oid` -- there is
+        # no permanent on the receiving end to carry one.
+        "deals_damage_to_player",
         # The permanent that was targeted, for the same reason: `source: "self"`
         # on heroic means "a spell targeting *me*", and the event's `source` is
         # the spell doing the targeting.
@@ -280,6 +318,50 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "chapter",
     }
 )
+
+#: DSL trigger name -> which half of a two-shaped damage event it is about.
+#:
+#: `DAMAGE_DEALT` and `DAMAGE_PREVENTED` each cover two different sentences and
+#: say which they are with a ``to`` key: damage to a **permanent** has an object
+#: on the receiving end, and damage to a **player** does not. Three trigger names
+#: take one half each, and every one of them is silently wrong on the other:
+#:
+#: * ``dealt_damage`` is enrage (702.131), "whenever **this creature** is dealt
+#:   damage". Its subject is the victim, so on the player half there is no victim
+#:   to be about and `player` is the seat that was hit rather than a controller
+#:   -- letting it through fires every enrage on the board off a Lightning Bolt
+#:   to the face.
+#: * ``deals_damage_to_player`` is Curiosity, and takes the same event from the
+#:   other end: its subject is the **dealer**, which on the permanent half would
+#:   make a Shock aimed at a Bear draw a card.
+#: * ``damage_prevented`` is Selfless Squire, "damage that would be dealt to
+#:   **you**". Absorb and protection fire the same event about a *permanent*, so
+#:   without the scoping a creature with absorb blocking a Grizzly Bears would
+#:   pay the Squire, and so would protection turning aside a Shock aimed at a
+#:   teammate's permanent.
+#:
+#: Compared with ``==`` against the required value rather than ``!=`` against the
+#: other one, for the reason the ``mana_ability`` check in `_matches` spells out:
+#: an emission that forgot to say would otherwise pass, and wider is the
+#: dangerous direction.
+EVENT_HALVES: dict[str, str] = {
+    "dealt_damage": "permanent",
+    "deals_damage_to_player": "player",
+    "damage_prevented": "player",
+}
+
+
+def _half_matches(dsl_event: str, event: GameEvent) -> bool:
+    """Whether this event is the half of itself that ``dsl_event`` is about.
+
+    Shared by `_matches` and `_delayed_matches` so a delayed subscription cannot
+    be wider than the hosted trigger of the same name -- which it was, because
+    the delayed path compares only the event type and would have woken a
+    ``deals_damage_to_player`` watcher on a Shock aimed at a creature.
+    """
+    half = EVENT_HALVES.get(dsl_event)
+    return half is None or event.data.get("to") == half
+
 
 #: Triggers that keep working while their source is in the graveyard, because the
 #: source has just left the battlefield.
@@ -406,6 +488,11 @@ def _delayed_matches(
     """
     expected = TRIGGER_EVENTS.get(spec.event)
     if expected is None or expected != event.type:
+        return False
+
+    # The one restriction here that is not read off a hosting permanent, and so
+    # the one a delayed ability can still be asked. See `_half_matches`.
+    if not _half_matches(spec.event, event):
         return False
 
     actor = _actor(state, spec.event, event, _subject_oid(spec.event, event))
@@ -641,34 +728,28 @@ def _matches(
     if spec.event == "creature_dies" and not event.data.get("was_creature", False):
         return False
 
-    if spec.event == "dealt_damage":
-        # `DAMAGE_DEALT` covers both shapes and says which it is. Damage to a
-        # player has no permanent for the trigger to be about, and `player` on
-        # that event is the one being hit rather than a controller, so letting
-        # it through would fire every enrage on the board off a Lightning Bolt
-        # to the face.
-        if event.data.get("to") != "permanent":
-            return False
-        # `source: "self"` here means *this creature was dealt damage*, never
-        # "this creature dealt it". The generic check above accepts either,
-        # because for most events the subject and the source are the same
-        # object -- for this one they are the victim and the attacker, so a
-        # bear would trigger its own enrage every time it hit something.
-        if spec.source == "self" and subject_oid != obj.oid:
-            return False
+    # Which half of a two-shaped damage event this trigger is about -- see
+    # `EVENT_HALVES`. Three names take one half each, and letting the other one
+    # through fires every enrage on the board off a Lightning Bolt to the face.
+    if not _half_matches(spec.event, event):
+        return False
 
-    # The mirror of the `dealt_damage` check above, taking the other half.
-    # `DAMAGE_PREVENTED` covers a shield over a player and absorb or protection on
-    # a permanent, and says which with the same `to` key `DAMAGE_DEALT` uses.
-    # Selfless Squire's line is "damage that would be dealt to **you**", so the
-    # permanent half is not it: without this, a creature with absorb blocking a
-    # Grizzly Bears would hand the Squire a counter, and so would protection
-    # turning aside a Shock aimed at a teammate's permanent.
-    #
-    # `!=` against the value rather than `== "permanent"` for the reason the
-    # `mana_ability` check below spells out: an emission that forgot to say would
-    # otherwise pass, and wider is the dangerous direction.
-    if spec.event == "damage_prevented" and event.data.get("to") != "player":
+    # `source: "self"` on `dealt_damage` means *this creature was dealt damage*,
+    # never "this creature dealt it". The generic check above accepts either,
+    # because for most events the subject and the source are the same object --
+    # for this one they are the victim and the attacker, so a bear would trigger
+    # its own enrage every time it hit something.
+    if spec.event == "dealt_damage" and spec.source == "self" and subject_oid != obj.oid:
+        return False
+
+    if spec.event == "deals_damage_to_player" and subject_oid is None:
+        # "Whenever **enchanted creature** deals damage" is a claim about a
+        # permanent, and the subject is the only thing that names it. Damage can
+        # reach a player with no source object at all (`source_oid=None`), and
+        # such an event answers no filter and no `source: "self"` -- so an
+        # unfiltered trigger would be the one shape that fires off it, which is
+        # the wide direction. There is no card that means "whenever damage is
+        # dealt to a player by nothing".
         return False
 
     # "…if it wasn't put onto the battlefield with this ability." The loop guard,
@@ -906,7 +987,14 @@ def _actor(
     # grouped by. Whom they hit is `damaged`, and never this.
     if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage"):
         return event.player
-    if dsl_event == "deals_combat_damage_to_player":
+    # `deals_damage_to_player` is here beside the combat-only trigger it
+    # generalises, and for the same reason: `event.player` on a damage event is
+    # the seat that was **hit**, so the fallthrough below would compare a
+    # `controller` clause against the victim and make "a creature you control
+    # deals damage" mean "…deals damage to you". `damage_player` puts the
+    # dealing permanent's controller on the event, which is the answer, and the
+    # separate `defending` clause is what asks who was hit.
+    if dsl_event in ("deals_combat_damage_to_player", "deals_damage_to_player"):
         controller = event.data.get("controller")
         return int(controller) if controller is not None else None
     if subject_oid is not None:
@@ -1145,19 +1233,39 @@ def _compare(value: int, spec: Mapping[str, Any]) -> bool:
     return value == other
 
 
-def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> int | None:
-    """Which permanent granted ``obj`` this ability, if any.
+def _granter_of(state: GameState, obj: GameObject, ability: Ability) -> tuple[int | None, int]:
+    """Where this ability's definition lives: ``(granter oid, index there)``.
 
-    Identity, not equality: two grants of the same ability are the same object
-    here, and that is fine -- resolution only needs somewhere to look the
-    definition up.
+    ``(None, ability.index)`` for one the permanent prints itself, which is
+    nearly every trigger in the game.
+
+    Identity, not equality, for the **op**-granted half: two grants of the same
+    ability are the same object here, and that is fine -- resolution only needs
+    somewhere to look the definition up. Their index needs no translation
+    either, because `primitives.granted_abilities` yields straight out of the
+    granter's pool and `Ability.index` is that pool position.
+
+    The **statically** granted half is the one that needs both halves of the
+    answer. `characteristics.abilities_of` appends such an ability to the
+    recipient's list and renumbers it, so the index the trigger fired with is a
+    position on the *recipient* -- 2 on Tandem Lookout, whose two statics come
+    first -- while `stack.ability_of` will look it up in the granter's
+    ``grantable_abilities``, where it is 0. Recording the recipient's number
+    there resolves a different ability or, more often, none: the trigger goes on
+    the stack, resolves, and does nothing, with no error anywhere.
     """
     from .primitives import granted_abilities
 
     for granter, granted in granted_abilities(state, obj.oid):
         if granted is ability:
-            return granter.oid
-    return None
+            return granter.oid, ability.index
+
+    from .characteristics import granted_ability_origin
+
+    origin = granted_ability_origin(state, obj.oid, ability.index)
+    if origin is not None:
+        return origin
+    return None, ability.index
 
 
 def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent) -> None:
@@ -1207,17 +1315,20 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     bindings = event_bindings(obj, spec, event)
 
     card = state.card_of(obj)
+    # `ability_index` is read back against whichever list `granted_by` names, so
+    # the two are settled together -- see `_granter_of`.
+    granted_by, ability_index = _granter_of(state, obj, ability)
     state.pending_triggers.append(
         TriggerInstance(
             source_oid=obj.oid,
-            ability_index=ability.index,
+            ability_index=ability_index,
             controller=obj.controller,
             bindings=bindings,
             description=f"{card.name}: {ability.text or spec.event}",
             # Snapshotted now, while the object still exists -- see
             # `TriggerInstance.def_id`.
             def_id=obj.def_id,
-            granted_by=_granter_of(state, obj, ability),
+            granted_by=granted_by,
         )
     )
     state.emit(

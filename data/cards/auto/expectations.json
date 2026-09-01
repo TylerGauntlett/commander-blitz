@@ -1620,6 +1620,10 @@
   "curio_vendor": {
     "zone": "battlefield"
   },
+  "curiosity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cursed_flesh": {
     "zone": [
       "battlefield",
@@ -5325,6 +5329,10 @@
   "opaline_unicorn": {
     "zone": "battlefield"
   },
+  "ophidian_eye": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "opportunity": {
     "hand_size": {
       "0": 5
@@ -7694,6 +7702,10 @@
     "zone": "battlefield"
   },
   "talruum_minotaur": {
+    "zone": "battlefield"
+  },
+  "tandem_lookout": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tangle_mantis": {

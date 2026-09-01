@@ -58092,12 +58092,12 @@
     },
     "Curiosity": {
       "edhrec_rank": 587,
-      "gate": "template",
+      "gate": null,
       "name": "Curiosity",
-      "reason": "no template for: Whenever enchanted creature deals damage to an opponent, you may draw a card",
+      "reason": "",
       "scryfall_id": "566ac9ab-f62f-4bc9-bb5b-8f8c7e397e0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Curiosity Crafter": {
@@ -191922,12 +191922,12 @@
     },
     "Ophidian Eye": {
       "edhrec_rank": 1653,
-      "gate": "template",
+      "gate": null,
       "name": "Ophidian Eye",
-      "reason": "no template for: Whenever enchanted creature deals damage to an opponent, you may draw a card",
+      "reason": "",
       "scryfall_id": "d3c58997-5555-423a-822e-749fac90e392",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ophiomancer": {
@@ -272812,12 +272812,12 @@
     },
     "Tandem Lookout": {
       "edhrec_rank": 2251,
-      "gate": "template",
+      "gate": null,
       "name": "Tandem Lookout",
-      "reason": "no template for: Soulbond",
+      "reason": "",
       "scryfall_id": "a9953e53-3d56-4129-8fab-df33c69b8a95",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tandem Tactics": {
