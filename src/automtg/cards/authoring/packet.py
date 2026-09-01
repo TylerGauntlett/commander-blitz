@@ -250,6 +250,20 @@ def reference() -> dict:
             " that list and `effects` from `ops` -- paying with an op instead"
             " moves the payment to resolution and lets the ability be"
             " activated when it could not be paid for.",
+            "`alternative_cost` takes a whole cost from `cost_keys` plus an"
+            " optional `condition`, not just a mana string: \"You may pay 1"
+            " life and exile a blue card from your hand rather than pay this"
+            " spell's mana cost\" is `{\"pay_life\": 1, \"exile_from_hand\":"
+            " {\"colors\": [\"U\"]}}`, with no mana at all. The `condition` is"
+            " needed only when the price is mana and nothing else -- an"
+            " unconditional cheaper mana price is `evoke`.",
+            "Exiling from hand as a cost is two keys, the way discarding is:"
+            " `exile_from_hand` picks a card by selector (\"a blue card\"),"
+            " and `exile_self_from_hand` is \"Exile this card from your hand\""
+            " with no choice about which card goes -- Simian Spirit Guide, on"
+            " an ability with `active_zones: [\"hand\"]`. `exile_self` is a"
+            " different cost: it is \"Exile this artifact\" and requires the"
+            " source to be on the battlefield.",
             "A static ability's filter may only read printed characteristics.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",

@@ -3,16 +3,9 @@
   "name": "Pyrokinesis",
   "oracle_text": "You may exile a red card from your hand rather than pay this spell's mana cost.\nPyrokinesis deals 4 damage divided as you choose among any number of target creatures.",
   "blocked_sentences": [
-    "You may exile a red card from your hand rather than pay this spell's mana cost.",
     "Pyrokinesis deals 4 damage divided as you choose among any number of target creatures."
   ],
   "needs": [
-    {
-      "capability": "exile_from_hand",
-      "kind": "cost",
-      "what": "a cost key that exiles a card from the payer's hand chosen by a selector (here: a red card other than this spell), usable inside a card-level `alternative_cost`, so the free-spell 'pitch' costs of Pyrokinesis / Force of Will / Force of Negation / Misdirection / Contagion can be paid. Pyrokinesis adds one requirement Force of Will does not: its pitch cost is the *entire* alternative cost with no mana and no life component at all, so `alternative_cost` must also stop insisting on a `mana` key.",
-      "why_existing_wont_do": "`cost_keys` carries `discard_selector`, which picks a hand card by exactly this kind of filter but sends it to the graveyard rather than exile -- a visible rules difference (graveyard recursion, delirium, threshold, madness, Tarmogoyf) that makes it an approximation, not the printed cost. The only exile costs are `exile_self` (the source itself, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` is card-level and already loads, but src/automtg/cards/loader.py:1217 raises `alternative_cost: needs 'mana'` and src/automtg/cards/loader.py:1218 parses that value straight into a `ManaCost`, so the mechanism can express only a cheaper *mana* price -- it has no slot for a non-mana payment, and Pyrokinesis's alternative cost is nothing but a non-mana payment. Same block already recorded for Force of Will and Force of Negation."
-    },
     {
       "capability": "divided_damage",
       "kind": "decision",
@@ -22,9 +15,6 @@
   ],
   "closest_existing": [
     "alternative_cost",
-    "discard_selector",
-    "exile_from_graveyard",
-    "exile_self",
     "damage",
     "for_each"
   ],

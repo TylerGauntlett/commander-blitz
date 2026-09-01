@@ -1,0 +1,27 @@
+{
+  "card": {
+    "id": "simian_spirit_guide",
+    "name": "Simian Spirit Guide",
+    "oracle_text": "Exile this card from your hand: Add {R}.",
+    "mana_cost": "{2}{R}",
+    "types": ["Creature"],
+    "subtypes": ["Ape", "Spirit"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Exile this card from your hand: Add {R}.",
+        "active_zones": ["hand"],
+        "cost": { "exile_self_from_hand": true },
+        "effects": [{ "op": "add_mana", "mana": "{R}" }]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

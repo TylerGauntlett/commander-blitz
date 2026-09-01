@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**41 cards** blocked by **39** capabilities.
+**38 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [exile-from-hand](#exile-from-hand) | 5 | 193 | cost |
 | [deals-damage-to-player](#deals-damage-to-player) | 3 | 587 | trigger_event |
 | [phyrexian-mana](#phyrexian-mana) | 3 | 456 | cost |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -23,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-replacement](#enters-replacement) | 2 | 172 | replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
-| [alternative-cost-nonmana](#alternative-cost-nonmana) | 1 | 3121 | cost |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -53,39 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [token-definitions](#token-definitions) | 1 | 70 | engine |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-
-## exile-from-hand
-
-Blocks **5** cards.
-
-- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), payable as a card-level `alternative_cost` -- which means `alternative_cost` must also be able to charge something other than mana. Today the loader restricts `alternative_cost` to exactly {`mana`, `condition`} and hard-requires `mana` (src/automtg/cards/loader.py:1205-1228), so even a new exile-from-hand cost key would have nowhere on the card to live. Both halves are needed for the whole 'pitch' family: Force of Will, Force of Negation, Misdirection, Commandeer, the Modern Horizons free elementals.
-  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard_selector`, which picks a hand card by exactly this kind of filter but sends it to the graveyard rather than exile -- a visible rules difference (graveyard recursion, delirium, threshold) that makes it an approximation, not the printed cost. The only exile costs are `exile_self` (the source, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `card_level_cost_keys` has `alternative_cost`, but its validator accepts no payment except a mana string, and `evoke`/`madness`/`overload` are likewise bare mana prices. The 'If it's not your turn' half is NOT the blocker: `alternative_cost.condition` already exists and `condition_keys` has `is_your_turn` and `not`.
-- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), usable inside a card-level `alternative_cost` alongside `pay_life`, so the whole 'pitch' alternative cost of Force of Will / Force of Negation / Misdirection / the Modern Horizons elementals can be paid
-  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard_selector`, which picks a hand card by the same kind of filter but puts it in the graveyard, not exile -- a visible rules difference (graveyard recursion, delirium, threshold, Tarmogoyf) that makes it an approximation rather than the printed cost. The only exile costs are `exile_self` (the source itself, and the source here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` itself already works and already accepts `pay_life` and a `condition`; the single missing piece is the exile-a-card-from-hand payment.
-- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a blue card other than this spell), usable inside a card-level `alternative_cost`, so the 'pitch' alternative cost shared by Misdirection, Force of Will, Force of Negation and the Modern Horizons free elementals can be paid
-  <br>Why the existing vocabulary won't do: `cost_keys` has `discard_selector`, which picks a hand card by the same kind of filter but puts it in the graveyard instead of exile -- a visible rules difference (graveyard recursion, delirium, threshold, Tarmogoyf), so it is an approximation, not the printed cost. The only exile costs are `exile_self` (the source, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` itself already exists and works; the one missing piece is the exile-a-card-from-hand payment.
-- **(cost)** a cost key that exiles a card from the payer's hand chosen by a selector (here: a red card other than this spell), usable inside a card-level `alternative_cost`, so the free-spell 'pitch' costs of Pyrokinesis / Force of Will / Force of Negation / Misdirection / Contagion can be paid. Pyrokinesis adds one requirement Force of Will does not: its pitch cost is the *entire* alternative cost with no mana and no life component at all, so `alternative_cost` must also stop insisting on a `mana` key.
-  <br>Why the existing vocabulary won't do: `cost_keys` carries `discard_selector`, which picks a hand card by exactly this kind of filter but sends it to the graveyard rather than exile -- a visible rules difference (graveyard recursion, delirium, threshold, madness, Tarmogoyf) that makes it an approximation, not the printed cost. The only exile costs are `exile_self` (the source itself, which here is the spell being cast) and `exile_from_graveyard` (wrong zone). `alternative_cost` is card-level and already loads, but src/automtg/cards/loader.py:1217 raises `alternative_cost: needs 'mana'` and src/automtg/cards/loader.py:1218 parses that value straight into a `ManaCost`, so the mechanism can express only a cheaper *mana* price -- it has no slot for a non-mana payment, and Pyrokinesis's alternative cost is nothing but a non-mana payment. Same block already recorded for Force of Will and Force of Negation.
-- **(cost)** an activated ability, activatable from hand, whose cost exiles the source card out of the hand -- the exile twin of cycling's discard_self. Concretely: let Cost.exile_self be payable from a non-battlefield zone (costs.can_pay currently hard-requires obj.on_battlefield at costs.py:688-694, while costs.pay at costs.py:1005 already calls exile_object(source_oid) which works from any zone), or add a sibling exile_self_from_hand flag so 'exile this artifact' on the battlefield keeps its stricter check. The loader already accepts the shape -- loader.py:2098 counts exile_self as a cost that removes the source, so an ability with active_zones: ['hand'] passes the outside-the-battlefield guard -- and the ability itself is an ordinary mana ability holding only add_mana {R}
-  <br>Why the existing vocabulary won't do: cost_keys has exile_self, but it is documented and implemented as 'Exile this artifact' -- Phoenix Down -- and costs.can_pay returns False unless the source is on the battlefield, so an active_zones: ['hand'] ability written with it loads cleanly and can never be activated: a silently inert card, which is worse than none. discard_self is the only cost that is legal from hand, and it is the wrong zone -- Simian Spirit Guide must end in exile, not the graveyard, which is the entire difference between it and a card that could be dredged or reanimated back. The exile op is not an alternative either: an op runs at resolution, so 601.2h would be violated and, worse, a mana ability may contain only add_mana, so no op other than add_mana can appear here at all. Separately, costs.mana_sources walks only state.battlefield and only tap-only abilities, so even once the cost is payable the payment solver will not find this ability -- it is reachable only through the explicit activation path in legality._activate_zones, which does already walk the player's own hand.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Force of Will** (rank 193) — `force_of_will`
-  - You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
-- **Force of Negation** (rank 266) — `force_of_negation`
-  - If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
-  - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-- **Simian Spirit Guide** (rank 434) — `simian_spirit_guide`
-  - Exile this card from your hand: Add {R}.
-- **Misdirection** (rank 1562) — `misdirection`
-  - You may exile a blue card from your hand rather than pay this spell's mana cost.
-  - Change the target of target spell with a single target.
-- **Pyrokinesis** (rank 5389) — `pyrokinesis`
-  - You may exile a red card from your hand rather than pay this spell's mana cost.
-  - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
 
 ## deals-damage-to-player
 
@@ -163,7 +128,6 @@ Blocks **2** cards.
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
-  - You may exile a blue card from your hand rather than pay this spell's mana cost.
   - Change the target of target spell with a single target.
 
 </details>
@@ -238,20 +202,6 @@ Blocks **1** card.
 
 </details>
 
-## alternative-cost-nonmana
-
-Blocks **1** card.
-
-- **(cost)** card-level `alternative_cost` must accept a full `Cost` node rather than a bare mana string, so a non-mana payment -- here `return_to_hand: {"subtypes": ["Island"], "controller": "you", "zone": "battlefield"}` -- can replace the printed mana cost outright, with `mana: "{0}"` and no `condition` required. The payment must be checked at cast time by `legality` (the card is only castable this way while a matching Island is on the battlefield) and collected by `costs.pay_cost` while the spell goes on the stack, exactly as the same key already works inside an activated ability. This one change also unblocks Gush, Foil, Snapback, Commandeer, Contagion and the rest of the Nemesis/Prophecy free-spell cycle, whose alternative costs are all returns, discards and sacrifices rather than mana
-  <br>Why the existing vocabulary won't do: `return_to_hand` already exists as a `cost_keys` entry and already resolves a battlefield pool with a selector (`costs._return_pool` defaults `controller: you` and `zone: battlefield`, so "an Island you control" is exactly expressible as a selector) -- but it can only live inside an activated ability's `cost`, and Daze's line is a cast-time alternative cost, not an ability. The card-level slot that would hold it, `alternative_cost`, is validated at `src/automtg/cards/loader.py:1209` to the two keys `mana` and `condition`, is parsed straight into a `ManaCost` (`loader.py:1218`, `carddef.alternative_cost: ManaCost | None`), and raises `alternative_cost: needs 'mana'` when mana is absent -- there is no node on it to hang a return. `costs.py:1394` states the position outright: `flashback`/`graveyard_cost` is the only alternative cost modelled as a full `Cost`, and `evoke`, `emerge`, `overload`, `bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana strings with no node to hang a rider on. The near substitutes are each a different card: `alternative_cost: {"mana": "{0}", "condition": {"exists": {...Island...}}}` would make Daze free whenever any Island is on the battlefield without ever bouncing one, which is the whole cost and the whole drawback; `additional_cost` with `return_to_hand` charges the return *on top of* {1}{U} instead of instead of it, and would make the printed hard-cast illegal with no Island out; `flashback` reaches a real `Cost` but casts from the graveyard, the wrong zone. The second printed line, "Counter target spell unless its controller pays {1}.", is fully expressible today (the Flusterstorm shape: a `may` op with `pay: {"mana": "{1}"}`, `player: {"controller_of_target": "t1"}` and `counter` in its `else`), so only the first line is blocked and no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Daze** (rank 3121) — `daze`
-  - You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
-
-</details>
-
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -319,7 +269,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Force of Negation** (rank 266) — `force_of_negation`
-  - If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
 
 </details>
@@ -362,7 +311,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
-  - You may exile a red card from your hand rather than pay this spell's mana cost.
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
 
 </details>
@@ -598,7 +546,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Misdirection** (rank 1562) — `misdirection`
-  - You may exile a blue card from your hand rather than pay this spell's mana cost.
   - Change the target of target spell with a single target.
 
 </details>

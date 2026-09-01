@@ -357,7 +357,10 @@ class Game:
             # is not re-checked: legality asked it a moment ago, and a spell
             # whose price changed between being offered and being paid is the
             # bug `spell_purpose` exists to prevent elsewhere.
-            cost = card.alternative_cost
+            #
+            # The mana half only -- Force of Will's life and pitched card are
+            # charged below, after the mana, the way flashback's rider is.
+            cost = card.alternative_cost.mana
         elif action.face_down:
             from .legality import MORPH_COST
 
@@ -444,6 +447,17 @@ class Game:
         # the same reason and in the same order retrace's discard is.
         if action.flashback and card.flashback is not None:
             ok = yield from pay(state, pid, card.flashback.without_mana(), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+
+        # The pitch costs. The alternative cost's mana replaced the printed one
+        # above; "pay 1 life and exile a blue card from your hand" is the rest
+        # of the node, paid here for the same reason and in the same order --
+        # and with `oid` as the source, so `_hand_exile_pool` excludes the very
+        # spell being cast (601.2a). Legality priced the same half through
+        # `can_pay`, so a line that was offered is a line that can be paid.
+        if action.alternative and card.alternative_cost is not None:
+            ok = yield from pay(state, pid, card.alternative_cost.without_mana(), oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 

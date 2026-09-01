@@ -62222,12 +62222,12 @@
     },
     "Daze": {
       "edhrec_rank": 3121,
-      "gate": "template",
+      "gate": null,
       "name": "Daze",
-      "reason": "no template for: You may return an Island you control to its owner's hand rather than pay this spell's mana",
+      "reason": "",
       "scryfall_id": "9d9a5654-6795-4799-ae3b-5827bfdf7a97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Dazzling Angel": {
@@ -99372,12 +99372,12 @@
     },
     "Force of Will": {
       "edhrec_rank": 193,
-      "gate": "template",
+      "gate": null,
       "name": "Force of Will",
-      "reason": "no template for: You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana ",
+      "reason": "",
       "scryfall_id": "7a87f8bc-1b3e-4cb2-9343-5f008e942411",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Forced Adaptation": {
@@ -246122,12 +246122,12 @@
     },
     "Simian Spirit Guide": {
       "edhrec_rank": 434,
-      "gate": "template",
+      "gate": null,
       "name": "Simian Spirit Guide",
-      "reason": "no template for: Exile this card from your hand: Add {R}",
+      "reason": "",
       "scryfall_id": "9d367aa4-e85f-402e-b781-527808edcc0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Simic Ascendancy": {
