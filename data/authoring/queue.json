@@ -272132,12 +272132,12 @@
     },
     "Takenuma, Abandoned Mire": {
       "edhrec_rank": 249,
-      "gate": "template",
+      "gate": null,
       "name": "Takenuma, Abandoned Mire",
-      "reason": "no template for: Channel — {3}{B}, Discard this card: Mill three cards, then return a creature or planeswal",
+      "reason": "",
       "scryfall_id": "13410bd5-acee-4cc9-90e3-dbcf8415bcaf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Takklemaggot": {

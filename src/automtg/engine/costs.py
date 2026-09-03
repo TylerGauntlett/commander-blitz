@@ -1351,11 +1351,11 @@ def reduction_amount(
     if "amount" in spec:
         return max(0, int(spec["amount"]))
     if "count" in spec:
-        return sum(1 for _ in _reduction_matches(state, pid, spec["count"]))
+        return sum(1 for _ in _reduction_matches(state, pid, spec["count"], source_oid))
     if "total_power" in spec:
         return sum(
             max(0, chars(state, oid).power)
-            for oid in _reduction_matches(state, pid, spec["total_power"])
+            for oid in _reduction_matches(state, pid, spec["total_power"], source_oid)
         )
     if "greatest_mana_value" in spec:
         # The **printed** mana value, off the card rather than the object, and
@@ -1365,7 +1365,7 @@ def reduction_amount(
         return max(
             (
                 state.card(oid).mana_value
-                for oid in _reduction_matches(state, pid, spec["greatest_mana_value"])
+                for oid in _reduction_matches(state, pid, spec["greatest_mana_value"], source_oid)
             ),
             default=0,
         )
@@ -1439,7 +1439,9 @@ def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
             yield from player.graveyard
 
 
-def _reduction_matches(state: GameState, pid: int, filt: Any):
+def _reduction_matches(
+    state: GameState, pid: int, filt: Any, source_oid: int | None = None
+):
     """The objects one reduction filter picks out, across the zones it names.
 
     ``controller`` and ``owner`` are both here and they are not the same
@@ -1454,11 +1456,21 @@ def _reduction_matches(state: GameState, pid: int, filt: Any):
     ``zone`` defaults to the battlefield, so every filter written before the
     command zone was reachable means what it always meant.
 
-    Types and subtypes come from `chars` on the battlefield and from the printed
-    face anywhere else.  A card in the command zone is not a permanent: no
-    continuous effect applies to it, and asking the characteristics pipeline
-    would let a static that forgot to say "creatures you control" reach into a
-    zone no static can touch.
+    Types, subtypes, supertypes, colours and keywords come from `chars` on the
+    battlefield and from the printed face anywhere else.  A card in the command
+    zone is not a permanent: no continuous effect applies to it, and asking the
+    characteristics pipeline would let a static that forgot to say "creatures
+    you control" reach into a zone no static can touch.
+
+    **Every key the loader accepts is read here.**  It used to read six of
+    twenty and ignore the rest in silence, so "for each **legendary** creature
+    you control" -- Takenuma's channel ability -- priced itself off every
+    creature instead, and nothing on a board or in a test would have said so: a
+    reduction that counts too much simply makes the ability cheaper. The three
+    keys `STATIC_FILTER_KEYS` carries that are *not* here -- `attached`,
+    `paired` and `paired_with_source` -- are refused by the loader rather than
+    implemented, because each names a relation to one particular permanent and
+    a reduction counts a board.
     """
     zones = _filter_zones(filt)
     for oid in _reduction_zone_oids(state, zones):
@@ -1484,15 +1496,48 @@ def _reduction_matches(state: GameState, pid: int, filt: Any):
             continue
         if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
             continue
+        if filt.get("self_only") and oid != source_oid:
+            continue
+        if filt.get("exclude_self") and oid == source_oid:
+            continue
         if obj.on_battlefield:
             c = chars(state, oid)
-            types, subtypes = c.types, c.subtypes
+            types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
+            keywords, colors = c.keywords, c.colors
         else:
             card = state.card_of(obj)
-            types, subtypes = card.types, card.subtypes
+            types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
+            keywords, colors = card.keywords, card.colors
         if (want := filt.get("types")) and not set(want).issubset(types):
             continue
+        if (want := filt.get("not_types")) and set(want) & set(types):
+            continue
         if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
+            continue
+        if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
+            continue
+        if (want := filt.get("colors")) and not set(want) & set(colors):
+            continue
+        if (want := filt.get("keywords")) and not set(want).issubset(keywords):
+            continue
+        if (want := filt.get("not_keywords")) and set(want) & set(keywords):
+            continue
+        # Board state, and only the three kinds of it a reduction can see. Each
+        # is a pipeline *input* -- nothing in the characteristics layer writes
+        # a tapped flag, a token flag or a combat assignment -- so reading them
+        # while pricing cannot depend on a static that has not run.
+        if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
+            continue
+        if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
+            continue
+        combat = state.combat
+        if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
+            filt["attacking"]
+        ):
+            continue
+        if "blocking" in filt and bool(combat and combat.blocking(oid)) != bool(
+            filt["blocking"]
+        ):
             continue
         yield oid
 

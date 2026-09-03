@@ -3552,6 +3552,29 @@ is priced with no event and no bindings behind it.
 Splitting the printed line into two abilities — equip {4} and equip {1} — is not
 the same card: nothing could switch the cheap one off.
 
+### What the filter may say
+
+The filter is the same language a static ability's `affects` speaks
+(`static_filter_keys`), read by `costs._reduction_matches`, plus `zone`. Every
+key in it is honoured — `types`, `not_types`, `subtypes`, `supertypes`,
+`colors`, `keywords`, `not_keywords`, `controller`, `owner`, `is_commander`,
+`is_token`, `tapped`, `attacking`, `blocking`, `self_only`, `exclude_self`.
+Takenuma's channel ability is the card that made that true: "{1} less for each
+**legendary** creature you control" wrote `supertypes` in a filter that read six
+keys and ignored the other fourteen, so it priced itself off every creature
+instead. An ignored *narrowing* key always fails in the same direction — the
+filter gets wider and the ability gets cheaper than it prints — and nothing on a
+board or in a gate would say so.
+
+Types, subtypes, supertypes, colours and keywords come from `chars` on the
+battlefield and from the printed face in the command zone or a graveyard, where
+no continuous effect applies.
+
+Three keys the static language has are **refused** here rather than
+implemented — `attached`, `paired`, `paired_with_source`. Each names a relation
+to one particular permanent, and a reduction counts a board: in a `count` they
+ask how many permanents are *the* permanent, which no printed line is about.
+
 ### …only when cast one particular way
 
 ```jsonc

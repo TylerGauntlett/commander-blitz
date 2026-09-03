@@ -2826,6 +2826,19 @@ COST_REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
 #: zone" still counts the commander an opponent stole from you.
 COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
 
+#: Filter keys a cost reduction *refuses*, though a static ability accepts them.
+#:
+#: Each names a relation to one particular permanent -- the thing the source is
+#: attached to, or its soulbond partner -- and a reduction counts a board. On a
+#: static's `affects` that relation is the whole point ("enchanted creature gets
+#: +2/+2"); in a `count` it asks how many permanents are the one permanent, an
+#: answer of nought or one that no printed reduction is about. They were
+#: accepted and silently ignored before `costs._reduction_matches` learned to
+#: read the rest of the list, and being refused is the safer half of that fix:
+#: a key that means nothing here should say so at load time rather than price
+#: an ability off a filter nobody honoured.
+COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset({"attached", "paired", "paired_with_source"})
+
 #: Condition heads a *cost* reduction may use.
 #:
 #: A reduction is evaluated while deciding what is castable or activatable --
@@ -2960,6 +2973,12 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
+        refused = set(filt) & COST_REDUCTION_REFUSED_FILTER_KEYS
+        if refused:
+            raise DslError(
+                f"{where}.{key}: {sorted(refused)} name a relation to one "
+                f"permanent, and a reduction counts a board"
+            )
         _check_owner_key(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
