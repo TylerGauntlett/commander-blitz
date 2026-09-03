@@ -200422,12 +200422,12 @@
     },
     "Phyrexian Tower": {
       "edhrec_rank": 199,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Tower",
-      "reason": "no template for: {T}, Sacrifice a creature: Add {B}{B}",
+      "reason": "",
       "scryfall_id": "0b47f6d2-9f65-47a4-bfc4-15619befe53d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Tribute": {
