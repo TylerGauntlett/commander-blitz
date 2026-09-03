@@ -8861,7 +8861,85 @@
         }
       ]
     },
+        {
+      "id": "t_legend_scaling_ability",
+      "name": "Test Legend Scaling Ability",
+      "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each legendary creature you control.",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each legendary creature you control.",
+          "cost": {
+            "mana": "{5}",
+            "tap": true,
+            "mana_reduction": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "supertypes": [
+                  "Legendary"
+                ]
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
     {
+      "id": "t_flying_scaling_ability",
+      "name": "Test Flying Scaling Ability",
+      "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each creature you control with flying.",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each creature you control with flying.",
+          "cost": {
+            "mana": "{5}",
+            "tap": true,
+            "mana_reduction": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "flying"
+                ]
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+{
       "id": "t_scaling_ability",
       "name": "Test Scaling Ability",
       "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each Vampire you control.",

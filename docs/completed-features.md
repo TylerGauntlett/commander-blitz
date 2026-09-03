@@ -1,3 +1,44 @@
+## A cost reduction's filter reads every key it accepts — 601.2f
+
+### Overview
+
+Takenuma, Abandoned Mire: *"Channel — {3}{B}, Discard this card: Mill three
+cards, then return a creature or planeswalker card from your graveyard to your
+hand. **This ability costs {1} less to activate for each legendary creature you
+control.**"*
+
+`loader._validate_cost_reduction` checked a reduction's filter against the whole
+of `STATIC_FILTER_KEYS`; `costs._reduction_matches` read six of those keys and
+dropped the other fourteen without a word. So Takenuma's `supertypes` validated
+at load time and vanished at pricing time, and the ability counted every creature
+its controller had.
+
+### Why it had to be the filter and not the card
+
+There was no way to write the sentence around it. "Legendary" is not a subtype,
+so `subtypes` cannot approximate it; a `condition` is a gate rather than a count,
+and gating the whole reduction on "you control a legend" would have made one
+legend worth the same as four. Splitting the ability in two is the shape the
+Crown of Gondor record already refused: nothing switches the cheap copy off.
+
+### The failure direction is what makes it worth a section
+
+An ignored **narrowing** key always widens the filter, so the ability is cheaper
+than it prints. Nothing fails: not the loader, not a gate, not a game. The card
+simply costs less than the card. That is the same class of silent-wrong the
+authoring pipeline's six gates exist to catch, arriving from underneath them.
+
+### What is deliberately still absent
+
+`attached`, `paired` and `paired_with_source` are refused at load time rather
+than implemented. Each names a relation to one particular permanent — the thing
+the source is attached to, its soulbond partner — and a reduction counts a board;
+in a `count` they ask how many permanents are *the* permanent. Refusing is the
+half of the fix that stops the silent drop returning under a different key.
+
+`tests/unit/test_reduction_filter_keys.py` is the witness, and it pins the
+regression directly: a lone non-legendary creature must take nothing off.
+
 ## `gift` — a cast-time promise that costs nothing and names a seat — 702.164a
 
 ### Overview

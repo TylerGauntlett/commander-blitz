@@ -7334,6 +7334,10 @@
   "tajuru_snarecaster": {
     "zone": "battlefield"
   },
+  "takenuma_abandoned_mire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "talarian_hook_spider": {
     "zone": "battlefield"
   },
