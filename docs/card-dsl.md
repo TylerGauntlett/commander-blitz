@@ -1573,12 +1573,22 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
-`draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
+`draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
+`end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented`
+
+**`precombat_main`** is "at the beginning of your **first** main phase" — Black
+Market Connections. `upkeep` is the near miss and is a step too early: it is
+before the draw, so a card hung there pays its life and hands out its Treasure
+before its controller has seen the card they drew. The printed word "first"
+needs no ordinal of its own, because 505.1b makes every main phase after a
+combat a *postcombat* one — including an inserted extra — so this event can fire
+only once in a turn. That is also why its twin reads "each of your postcombat
+main phases" and is fired per phase.
 
 **`damage_prevented`** fires when damage that would have been dealt to a player
 is prevented — Selfless Squire's second line, with the amount readable as

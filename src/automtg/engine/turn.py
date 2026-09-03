@@ -62,6 +62,12 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         # hand out priority -- and the reason a Saga's advance belongs here rather
         # than on the card is that nothing is printed on the card to hang it on.
         sagas.turn_based_lore(state)
+        # "At the beginning of your first main phase." Fired after the lore
+        # counters, because 714.2d's turn-based action happens as the phase
+        # begins and a triggered ability waits for a player to receive priority
+        # -- so a Saga that advanced into a chapter this turn has its trigger on
+        # the stack alongside this one, in APNAP order rather than under it.
+        fire(state, EventType.PRECOMBAT_MAIN, player=state.active_player)
     elif step is Step.BEGIN_COMBAT:
         combat_mod.start_combat(state)
         fire(state, EventType.BEGIN_COMBAT, player=state.active_player)

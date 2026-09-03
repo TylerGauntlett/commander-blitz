@@ -9372,7 +9372,46 @@
         }
       ]
     },
-    {
+        {
+      "id": "t_precombat",
+      "name": "Test Precombat",
+      "oracle_text": "At the beginning of your first main phase, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, you gain 1 life.",
+          "trigger": {
+            "event": "precombat_main",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+{
       "id": "t_postcombat",
       "name": "Test Postcombat",
       "oracle_text": "At the beginning of each of your postcombat main phases, you gain 1 life.",
