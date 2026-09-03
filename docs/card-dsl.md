@@ -3250,6 +3250,26 @@ whole card whenever taking one mode is the better line.
 `min_count == max_count` and short-circuited when `len(labels) <= count`, so
 "choose up to two of two" silently became "take both" without asking.
 
+## "Choose one or more --"
+
+```jsonc
+{"op": "choose_mode", "count": 1, "or_more": true, "modes": [...]}
+```
+
+A floor and a ceiling at once: `count` stays the minimum and every mode is on
+offer. Black Market Connections is the card, and the other four spellings cannot
+say it between them — `count` is exact and deletes the words "or more", `all_if`
+is entwine and forces the lot, `up_to` drops the floor to nothing, and `up_to_if`
+has the shape but demands a `condition` that this sentence does not have.
+
+The floor is not a technicality here: every one of Black Market Connections'
+modes costs life, so a spelling that permitted choosing none would be a
+materially better card than the printed one, resolving each turn for free.
+
+Refused with `up_to` on the same op — one keeps a floor, the other removes it —
+and refused when `count` already reaches every mode, which is "choose them all"
+written the long way.
+
 ## "Choose up to two --"
 
 ```jsonc

@@ -277,6 +277,11 @@ def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int 
       floor**. Taking none is a real line: Call Damage Control with an empty
       graveyard is cast for its other half, and a floor of one would force a
       mode that does nothing.
+    * ``or_more`` -- "choose one **or more**". The floor `count` gives, with the
+      ceiling opened to every mode. The fifth spelling because the other four
+      cannot say it between them: `count` is exact, `all_if` forces the lot,
+      `up_to` drops the floor to nothing, and `up_to_if` has the shape but
+      demands a `condition` -- and "one or more" is not conditional on anything.
 
     ``None`` for the ceiling means "exactly the floor".  Lives here, beside the
     op, because three callers need the same answer -- this op for a triggered or
@@ -290,6 +295,10 @@ def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int 
     up_to = None
     if (more := spec.get("up_to_if")) is not None and evaluate(ctx, more.get("condition")):
         up_to = evaluate_value(ctx, more.get("count", len(modes)))
+    # "Choose one or more --". Every mode is on offer and `count` is the floor,
+    # so a wider `up_to_if` still wins if a card ever prints both.
+    if spec.get("or_more"):
+        up_to = len(modes) if up_to is None else max(up_to, len(modes))
     if spec.get("up_to"):
         up_to = count if up_to is None else max(up_to, count)
         return 0, up_to

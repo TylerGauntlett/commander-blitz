@@ -11894,7 +11894,64 @@
         }
       ]
     },
-    {
+        {
+      "id": "t_choose_one_or_more",
+      "name": "Test Choose One Or More",
+      "oracle_text": "Choose one or more. You gain 3 life. Draw a card. You lose 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "or_more": true,
+          "modes": [
+            {
+              "label": "You gain 3 life.",
+              "effects": [
+                {
+                  "op": "gain_life",
+                  "amount": {
+                    "const": 3
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Draw a card.",
+              "effects": [
+                {
+                  "op": "draw",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            },
+            {
+              "label": "You lose 1 life.",
+              "effects": [
+                {
+                  "op": "lose_life",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+{
       "id": "t_choose_up_to_two",
       "name": "Test Choose Up To Two",
       "oracle_text": "Choose up to two. You gain 3 life. Draw a card. You lose 1 life.",

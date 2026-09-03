@@ -4717,6 +4717,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'up_to' needs a 'count' of at least 1; got {count}"
             )
+    if "or_more" in effect:
+        # "Choose one or more --" (Black Market Connections). A floor and a
+        # ceiling at once: `count` stays the minimum and every mode is on offer.
+        if op != "choose_mode":
+            raise DslError(
+                f"{where}: 'or_more' only means anything on choose_mode, not {op!r}"
+            )
+        if not isinstance(effect["or_more"], bool):
+            raise DslError(f"{where}: 'or_more' is a boolean, got {effect['or_more']!r}")
+        if effect.get("up_to"):
+            # One says "you must take at least `count`" and the other says "you
+            # may take none". A card printing both is a card saying two things,
+            # and `modal_bounds` would silently let `up_to` win.
+            raise DslError(
+                f"{where}: 'or_more' and 'up_to' contradict each other -- "
+                f"one keeps a floor, the other removes it"
+            )
+        modes = effect.get("modes") or []
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count >= len(modes):
+            # "Choose two or more" of two modes is "choose both", written the
+            # long way -- and it would load, offering a question with one answer.
+            raise DslError(
+                f"{where}: 'or_more' needs a 'count' below the number of modes; "
+                f"got {count} of {len(modes)}"
+            )
     if "up_to_if" in effect:
         # The same guard for entwine's mirror image, and it was missing -- which
         # is how a card carrying `up_to_if` compiled, played and cleared every
