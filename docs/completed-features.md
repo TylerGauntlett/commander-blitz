@@ -1,3 +1,40 @@
+## "Choose one or more --" — the fifth modal count — 700.2
+
+### Overview
+
+Black Market Connections: *"At the beginning of your first main phase, **choose
+one or more** — • Sell Contraband — Create a Treasure token, and you lose 1
+life. • Sell Rare Pets — Create a 3/2 black Demon creature token with flying,
+and you lose 2 life. • Sell Your Soul — Draw a card and you lose 2 life."*
+
+`modal_bounds` knew four clauses and none of them is this sentence:
+
+| written | says | why not |
+|---|---|---|
+| `count: 1` | choose exactly one | deletes the words "or more" |
+| `all_if` | choose every mode | entwine — a floor, and it is paid for |
+| `up_to: true` | choose up to N, **none allowed** | every mode here costs life, so "none" is a better card |
+| `up_to_if` | a conditional ceiling, floor of one | needs a `condition`, and this sentence has none |
+
+`or_more: true` keeps `count` as the floor and opens the ceiling to every mode.
+
+### Why the floor is the load-bearing half
+
+Each of Black Market Connections' modes costs life. Written with `up_to`, the
+trigger would be free to choose nothing every turn, which is a strictly better
+enchantment than the one printed and would look entirely normal on screen. This
+is the same asymmetry the `up_to` section already records, pointing the other
+way: a missing floor and a missing ceiling are both silent, and each favours a
+different card.
+
+### The guards
+
+`or_more` and `up_to` on one op are refused: one keeps a floor, the other
+removes it, and `modal_bounds` would silently let `up_to` win. A `count` that
+already reaches every mode is refused too — "choose two or more" of two modes is
+"choose both", written the long way, and it would load as a question with one
+answer.
+
 ## A cost reduction's filter reads every key it accepts — 601.2f
 
 ### Overview
