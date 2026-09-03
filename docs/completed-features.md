@@ -1,3 +1,37 @@
+## "At the beginning of your first main phase" — the precombat main event — 505.1b
+
+### Overview
+
+Black Market Connections: *"**At the beginning of your first main phase**,
+choose one or more — …"*
+
+Five phase boundaries were in `TRIGGER_EVENTS` — `upkeep`, `draw_step`,
+`begin_combat`, `postcombat_main`, `end_step` — and the precombat main was not
+one of them. `Step.PRECOMBAT_MAIN` already had a branch in `turn.begin_step` for
+714.2d's Saga lore counters and emitted no event beside it.
+
+### Why not `upkeep`
+
+It is a step too early, and on the wrong side of the draw. A Black Market
+Connections hung on the upkeep hands its controller the turn's Treasure and
+charges the life *before* they have seen the card they drew, which changes which
+mode a player takes. The test pins the ordering rather than only the firing, for
+that reason.
+
+### Why "first" needs no ordinal
+
+505.1b makes every main phase after a combat a **postcombat** main, inserted
+ones included — the same rule that makes `postcombat_main` fire per phase and
+print the word "each". So PRECOMBAT_MAIN can happen at most once in a turn and
+the printed word "first" is already exact. No turn flag, no counter.
+
+### Frontend: nothing, deliberately
+
+A new `EventType` is the change that normally forces `describeEvent` and
+`beatsFor` work. Not this one: its four siblings have no case in either, because
+a log line saying "a phase began" adds nothing to a log that already shows the
+step. Checked rather than skipped.
+
 ## "Choose one or more --" — the fifth modal count — 700.2
 
 ### Overview
