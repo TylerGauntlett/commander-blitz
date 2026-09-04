@@ -357,7 +357,10 @@ class Game:
             # is not re-checked: legality asked it a moment ago, and a spell
             # whose price changed between being offered and being paid is the
             # bug `spell_purpose` exists to prevent elsewhere.
-            cost = card.alternative_cost
+            #
+            # The mana half only -- Force of Will's life and pitched card are
+            # charged below, after the mana, the way flashback's rider is.
+            cost = card.alternative_cost.mana
         elif action.face_down:
             from .legality import MORPH_COST
 
@@ -378,6 +381,14 @@ class Game:
             cost = ManaCost.parse("")
         else:
             cost = card.mana_cost
+
+        # 107.4f, and the paying half of the line `_cast_variant` offered. The
+        # bought pips leave the cost here, before every relaxation and discount
+        # below, exactly as legality priced them -- so a line offered as "paying
+        # 2 life" is charged 2 life and one blue pip fewer, and a line offered
+        # without it is charged the printed cost. `action.phyrexian` is the
+        # player's answer, the way `action.x` is; nothing re-decides it.
+        cost, phyrexian_life = cost.paying_phyrexian(action.phyrexian)
 
         granted = state.objects[oid]
         if granted.playable_any_type and granted.playable_turn == state.turn:
@@ -417,7 +428,12 @@ class Game:
         ok = yield from pay(
             state,
             pid,
-            Cost(mana=cost),
+            # The Phyrexian life rides in the *same* cost node as the mana, not
+            # in a `pay` call of its own: 107.4f makes it one symbol of the
+            # spell's mana cost paid a different way, so it is one payment and
+            # one event batch. Contrast flashback's "Pay 3 life", which is a
+            # genuinely separate additional cost and is paid below.
+            Cost(mana=cost, pay_life=phyrexian_life) if phyrexian_life else Cost(mana=cost),
             None,
             x=x,
             extra_generic=extra,
@@ -444,6 +460,17 @@ class Game:
         # the same reason and in the same order retrace's discard is.
         if action.flashback and card.flashback is not None:
             ok = yield from pay(state, pid, card.flashback.without_mana(), oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
+
+        # The pitch costs. The alternative cost's mana replaced the printed one
+        # above; "pay 1 life and exile a blue card from your hand" is the rest
+        # of the node, paid here for the same reason and in the same order --
+        # and with `oid` as the source, so `_hand_exile_pool` excludes the very
+        # spell being cast (601.2a). Legality priced the same half through
+        # `can_pay`, so a line that was offered is a line that can be paid.
+        if action.alternative and card.alternative_cost is not None:
+            ok = yield from pay(state, pid, card.alternative_cost.without_mana(), oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 

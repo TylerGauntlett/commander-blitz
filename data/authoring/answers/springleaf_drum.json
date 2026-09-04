@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "springleaf_drum",
+    "name": "Springleaf Drum",
+    "oracle_text": "{T}, Tap an untapped creature you control: Add one mana of any color.",
+    "mana_cost": "{1}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Tap an untapped creature you control: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true,
+          "tap_permanents": {
+            "controller": "you",
+            "types": ["Creature"],
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+              { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+              { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+              { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+              { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "card_id": "urborg_tomb_of_yawgmoth",
+  "name": "Urborg, Tomb of Yawgmoth",
+  "oracle_text": "Each land is a Swamp in addition to its other land types.",
+  "blocked_sentences": ["Each land is a Swamp in addition to its other land types."],
+  "needs": [{
+    "capability": "basic_land_type_mana",
+    "kind": "engine",
+    "what": "Rule 305.6 -- a land with a basic land type has the corresponding intrinsic mana ability ({T}: Add {W}/{U}/{B}/{R}/{G}) by virtue of carrying the subtype, derived in the characteristics pipeline (characteristics.abilities_of) rather than printed on the card, so that a subtype a static ability *grants* brings the mana ability with it. The derived ability must be visible to legality, the payment solver and activation, exactly as the `grant_ability` static already is.",
+    "why_existing_wont_do": "The static effect `add_subtype` says the printed sentence exactly -- {\"effect\": \"add_subtype\", \"affects\": {\"types\": [\"Land\"], \"controller\": \"any\"}, \"subtypes\": [\"Swamp\"]} -- but the engine never derives a mana ability from a subtype. data/cards/basics.cards.json prints \"{T}: Add {B}\" on Swamp as an ordinary ability, and characteristics.abilities_of returns the printed list plus statics-granted abilities only; nothing consults subtypes. So the static loads clean, every land on the board correctly reads \"Land -- Swamp\", and not one of them can tap for {B} -- the whole reason the card is played. Urborg itself would also be a land with no mana ability at all, since its {T}: Add {B} is likewise only the 305.6 consequence of being a Swamp. The nearest workaround, a `grant_ability` static handing every land a {T}: Add {B} ability, is not what the card says: it would leave the lands not actually Swamps (invisible to swampwalk, domain, Swamp-fetching searches, and any \"nonbasic land\" test) while adding an ability the printed line never mentions, and the residual gate would have no printed sentence for it to claim. Dryad of the Ilysian Grove (data/cards/auto/templates.cards.json) already ships with the same construction and the same silent inertness, so closing this fixes both."
+  }],
+  "closest_existing": ["add_subtype", "grant_ability"],
+  "confidence": "high"
+}

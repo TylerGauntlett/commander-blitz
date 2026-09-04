@@ -308,6 +308,7 @@ def damage_player(
         # Teferi's Protection prints both sentences because they differ.
         if lost:
             fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
+    src = state.objects.get(source_oid) if source_oid is not None else None
     fire(
         state,
         EventType.DAMAGE_DEALT,
@@ -316,24 +317,40 @@ def damage_player(
         amount=amount,
         to="player",
         combat=is_combat,
+        # The two keys `deals_damage_to_player` needs, and neither is a second
+        # way of saying `player`. `player` on this event is *whom the damage
+        # landed on*, which the trigger layer reads as the actor for every event
+        # whose subject is a player -- so a trigger asking "damage **I** dealt"
+        # would compare against the victim and mean the opposite of itself.
+        # `controller` is the dealing permanent's, matching the key
+        # COMBAT_DAMAGE_TO_PLAYER below has carried for the same reason, and
+        # `defender` is what a `defending` clause compares against so
+        # "…deals damage to **an opponent**" can be said in a pod, where the
+        # difference between "an opponent" and "a player" is visible.
+        #
+        # Written on the player half only. `damage_permanent` fires its own
+        # DAMAGE_DEALT with `to="permanent"`, and neither key means anything
+        # there -- there is no defending player when a Shock hits a Bear.
+        controller=None if src is None else src.controller,
+        defender=pid,
     )
     _apply_lifelink(state, source_oid, amount)
 
-    if is_combat and source_oid is not None:
-        src = state.objects.get(source_oid)
-        if src is not None:
-            if src.is_commander:
-                taken = state.players[pid].commander_damage_taken
-                taken[src.controller] = taken.get(src.controller, 0) + amount
-            fire(
-                state,
-                EventType.COMBAT_DAMAGE_TO_PLAYER,
-                player=pid,
-                source=source_oid,
-                amount=amount,
-                controller=src.controller,
-                defender=pid,
-            )
+    # `src is not None` implies `source_oid is not None`, which the lookup above
+    # is the only source of.
+    if is_combat and src is not None:
+        if src.is_commander:
+            taken = state.players[pid].commander_damage_taken
+            taken[src.controller] = taken.get(src.controller, 0) + amount
+        fire(
+            state,
+            EventType.COMBAT_DAMAGE_TO_PLAYER,
+            player=pid,
+            source=source_oid,
+            amount=amount,
+            controller=src.controller,
+            defender=pid,
+        )
     return amount
 
 

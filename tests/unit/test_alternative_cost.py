@@ -21,6 +21,11 @@ and then refusing the payment would show a price the player can never pay. The
 loader refuses an `alternative_cost` with no condition, because that is exactly
 `evoke` and a card spelling it this way would be offered twice at two prices
 with nothing to choose between them.
+
+The node later grew into a full `Cost` for the pitch spells, which *are*
+unconditional — see `test_exile_from_hand.py`. The guard survives unchanged for
+the cost this file is about: an alternative cost that charges nothing but mana
+still needs a condition.
 """
 
 from __future__ import annotations
@@ -212,6 +217,17 @@ class TestTheLoaderGuardsIt:
 
     def test_an_unknown_key_is_refused(self):
         with pytest.raises(DslError, match="unsupported keys"):
+            compile_card(
+                CardModel.model_validate(
+                    self.base(mana="{U}", condition={"is_your_turn": True}, wibble=True)
+                )
+            )
+
+    def test_a_malformed_cost_key_is_refused(self):
+        """The node is a whole `Cost` now, so a real key with a nonsense value
+        has to fail at load the way it does inside an ability's cost -- as a
+        `DslError`, not a raw pydantic traceback out of the card loader."""
+        with pytest.raises(DslError, match="sacrifice"):
             compile_card(
                 CardModel.model_validate(
                     self.base(mana="{U}", condition={"is_your_turn": True}, sacrifice=True)

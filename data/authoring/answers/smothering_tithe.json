@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "smothering_tithe",
+    "name": "Smothering Tithe",
+    "oracle_text": "Whenever an opponent draws a card, that player may pay {2}. If the player doesn't, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "mana_cost": "{3}{W}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent draws a card, that player may pay {2}. If the player doesn't, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+        "trigger": {
+          "event": "draw",
+          "controller": "opponent"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": {
+              "binding": "event_player"
+            },
+            "prompt": "Pay {2}? (If you don't, Smothering Tithe's controller creates a Treasure token.)",
+            "pay": {
+              "mana": "{2}"
+            },
+            "else": [
+              {
+                "op": "create_token",
+                "token": "treasure_token",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

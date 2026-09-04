@@ -7582,12 +7582,12 @@
     },
     "An Offer You Can't Refuse": {
       "edhrec_rank": 35,
-      "gate": "template",
+      "gate": null,
       "name": "An Offer You Can't Refuse",
-      "reason": "no template for: Counter target noncreature spell. Its controller creates two Treasure tokens",
+      "reason": "",
       "scryfall_id": "fe1023a2-c096-4c62-8627-e865b348ba02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "An Unearthly Child": {
@@ -26172,12 +26172,12 @@
     },
     "Blasphemous Act": {
       "edhrec_rank": 22,
-      "gate": "template",
+      "gate": null,
       "name": "Blasphemous Act",
-      "reason": "no template for: This spell costs {1} less to cast for each creature on the battlefield",
+      "reason": "",
       "scryfall_id": "7d4b1d44-126e-4987-9a9f-f0f9627a09cb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blasphemous Edict": {
@@ -31902,12 +31902,12 @@
     },
     "Boseiju, Who Endures": {
       "edhrec_rank": 78,
-      "gate": "template",
+      "gate": null,
       "name": "Boseiju, Who Endures",
-      "reason": "no template for: Channel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic lan",
+      "reason": "",
       "scryfall_id": "0055ea30-20fb-4324-a632-8fed87628f05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boseiju, Who Shelters All": {
@@ -32602,12 +32602,12 @@
     },
     "Brain Freeze": {
       "edhrec_rank": 782,
-      "gate": "template",
+      "gate": null,
       "name": "Brain Freeze",
-      "reason": "no template for: Target player mills three cards",
+      "reason": "",
       "scryfall_id": "f403af12-6114-4121-b421-3448e084864c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Brain Gorgers": {
@@ -32712,12 +32712,12 @@
     },
     "Brainstorm": {
       "edhrec_rank": 72,
-      "gate": "template",
+      "gate": null,
       "name": "Brainstorm",
-      "reason": "no template for: Draw three cards, then put two cards from your hand on top of your library in any order",
+      "reason": "",
       "scryfall_id": "8bb0a0cf-5b04-4d68-bf7a-7131ae50d06b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainsurge": {
@@ -44202,12 +44202,12 @@
     },
     "Chaos Warp": {
       "edhrec_rank": 29,
-      "gate": "template",
+      "gate": null,
       "name": "Chaos Warp",
-      "reason": "no template for: The owner of target permanent shuffles it into their library, then reveals the top card of",
+      "reason": "",
       "scryfall_id": "fb8d8106-b9bd-405c-886e-72fc301c65e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chaoslace": {
@@ -45882,12 +45882,12 @@
     },
     "Chromatic Lantern": {
       "edhrec_rank": 84,
-      "gate": "template",
+      "gate": null,
       "name": "Chromatic Lantern",
-      "reason": "no template for: Lands you control have \"{T}: Add one mana of any color.\"",
+      "reason": "",
       "scryfall_id": "9b29492a-8bdd-4806-8d1b-3058ed277cc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chromatic Orrery": {
@@ -46892,12 +46892,12 @@
     },
     "City of Traitors": {
       "edhrec_rank": 1202,
-      "gate": "template",
+      "gate": null,
       "name": "City of Traitors",
-      "reason": "no template for: When you play another land, sacrifice this land",
+      "reason": "",
       "scryfall_id": "a7a8b6b8-b95f-4014-b17a-a6d44d965995",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "City on Fire": {
@@ -56242,12 +56242,12 @@
     },
     "Crowd's Favor": {
       "edhrec_rank": 17528,
-      "gate": "template",
+      "gate": null,
       "name": "Crowd's Favor",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "c976d0a5-0f17-40e9-93c9-362b59252202",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Crowd-Control Warden": {
@@ -58092,12 +58092,12 @@
     },
     "Curiosity": {
       "edhrec_rank": 587,
-      "gate": "template",
+      "gate": null,
       "name": "Curiosity",
-      "reason": "no template for: Whenever enchanted creature deals damage to an opponent, you may draw a card",
+      "reason": "",
       "scryfall_id": "566ac9ab-f62f-4bc9-bb5b-8f8c7e397e0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Curiosity Crafter": {
@@ -62222,12 +62222,12 @@
     },
     "Daze": {
       "edhrec_rank": 3121,
-      "gate": "template",
+      "gate": null,
       "name": "Daze",
-      "reason": "no template for: You may return an Island you control to its owner's hand rather than pay this spell's mana",
+      "reason": "",
       "scryfall_id": "9d9a5654-6795-4799-ae3b-5827bfdf7a97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Dazzling Angel": {
@@ -65912,12 +65912,12 @@
     },
     "Demonic Tutor": {
       "edhrec_rank": 61,
-      "gate": "template",
+      "gate": null,
       "name": "Demonic Tutor",
-      "reason": "no template for: Search your library for a card, put that card into your hand, then shuffle",
+      "reason": "",
       "scryfall_id": "9ab384fe-1935-4e6e-a3a2-aed932ed6643",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Demonic Vigor": {
@@ -79322,12 +79322,12 @@
     },
     "Eiganjo, Seat of the Empire": {
       "edhrec_rank": 384,
-      "gate": "template",
+      "gate": null,
       "name": "Eiganjo, Seat of the Empire",
-      "reason": "no template for: Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking cre",
+      "reason": "",
       "scryfall_id": "7c31c48f-6275-4430-8dc9-05d70c332b7a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eight-and-a-Half-Tails": {
@@ -89742,12 +89742,12 @@
     },
     "Faithless Looting": {
       "edhrec_rank": 95,
-      "gate": "template",
+      "gate": null,
       "name": "Faithless Looting",
-      "reason": "no template for: Draw two cards, then discard two cards",
+      "reason": "",
       "scryfall_id": "5aeda464-e71e-4e89-b355-237680bc1a7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Faithless Salvaging": {
@@ -91002,12 +91002,12 @@
     },
     "Farseek": {
       "edhrec_rank": 23,
-      "gate": "template",
+      "gate": null,
       "name": "Farseek",
-      "reason": "no template for: Search your library for a Plains, Island, Swamp, or Mountain card, put it onto the battlef",
+      "reason": "",
       "scryfall_id": "598f6334-4baf-4f9a-a70c-0cc1e8af68c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Farsight Adept": {
@@ -93842,12 +93842,12 @@
     },
     "Fierce Guardianship": {
       "edhrec_rank": 81,
-      "gate": "template",
+      "gate": null,
       "name": "Fierce Guardianship",
-      "reason": "no template for: If you control a commander, you may cast this spell without paying its mana cost",
+      "reason": "",
       "scryfall_id": "ac4fc06d-50b8-455f-8d14-85c0c791c422",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Fierce Invocation": {
@@ -98352,12 +98352,12 @@
     },
     "Flusterstorm": {
       "edhrec_rank": 305,
-      "gate": "template",
+      "gate": null,
       "name": "Flusterstorm",
-      "reason": "no template for: Counter target instant or sorcery spell unless its controller pays {1}",
+      "reason": "",
       "scryfall_id": "ba8fa9db-f24f-46d4-add1-71b7f77636e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Flutterfox": {
@@ -99372,12 +99372,12 @@
     },
     "Force of Will": {
       "edhrec_rank": 193,
-      "gate": "template",
+      "gate": null,
       "name": "Force of Will",
-      "reason": "no template for: You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana ",
+      "reason": "",
       "scryfall_id": "7a87f8bc-1b3e-4cb2-9343-5f008e942411",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Forced Adaptation": {
@@ -104072,12 +104072,12 @@
     },
     "Gamble": {
       "edhrec_rank": 236,
-      "gate": "template",
+      "gate": null,
       "name": "Gamble",
-      "reason": "no template for: Search your library for a card, put that card into your hand, discard a card at random, th",
+      "reason": "",
       "scryfall_id": "3bce6015-a7df-43d4-849b-0f306d501658",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Game Over": {
@@ -104622,12 +104622,12 @@
     },
     "Garruk's Uprising": {
       "edhrec_rank": 90,
-      "gate": "template",
+      "gate": null,
       "name": "Garruk's Uprising",
-      "reason": "no template for: When this enchantment enters, if you control a creature with power 4 or greater, draw a ca",
+      "reason": "",
       "scryfall_id": "b58c4033-f764-42f6-966f-b7202a2babbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Garruk's Warsteed": {
@@ -105902,12 +105902,12 @@
     },
     "Generous Gift": {
       "edhrec_rank": 59,
-      "gate": "template",
+      "gate": null,
       "name": "Generous Gift",
-      "reason": "no template for: Destroy target permanent. Its controller creates a 3/3 green Elephant creature token",
+      "reason": "",
       "scryfall_id": "c3f9b454-97e9-4c77-b37a-e974221ae385",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Generous Patron": {
@@ -108982,12 +108982,12 @@
     },
     "Gitaxian Probe": {
       "edhrec_rank": 523,
-      "gate": "template",
+      "gate": null,
       "name": "Gitaxian Probe",
-      "reason": "no template for: Look at target player's hand",
+      "reason": "",
       "scryfall_id": "1fbb4493-23db-4c91-a3e0-17b139f5d00f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gitaxian Raptor": {
@@ -119772,12 +119772,12 @@
     },
     "Gut Shot": {
       "edhrec_rank": 2262,
-      "gate": "template",
+      "gate": null,
       "name": "Gut Shot",
-      "reason": "no template for: deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "98423ff9-48e3-4985-9fe4-7c095c3ceee0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gut, True Soul Zealot": {
@@ -130262,12 +130262,12 @@
     },
     "Hullbreaker Horror": {
       "edhrec_rank": 269,
-      "gate": "template",
+      "gate": null,
       "name": "Hullbreaker Horror",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "08fd6904-c497-40de-b3cf-a427e5bed264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hullcarver": {
@@ -141532,12 +141532,12 @@
     },
     "Jeska's Will": {
       "edhrec_rank": 103,
-      "gate": "template",
+      "gate": null,
       "name": "Jeska's Will",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "aa1e5db0-4cd8-4d42-bde1-3e3d0041339f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Jeska, Thrice Reborn": {
@@ -160672,12 +160672,12 @@
     },
     "Lotus Petal": {
       "edhrec_rank": 118,
-      "gate": "template",
+      "gate": null,
       "name": "Lotus Petal",
-      "reason": "no template for: {T}, Sacrifice this artifact: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "133dac2f-ef50-460e-89c4-a23870faac06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Lotus Ring": {
@@ -164862,12 +164862,12 @@
     },
     "Mana Confluence": {
       "edhrec_rank": 119,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Confluence",
-      "reason": "no template for: {T}, Pay 1 life: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "263aac65-b18b-45ed-80c1-12428dfc5a4c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mana Crypt": {
@@ -169692,12 +169692,12 @@
     },
     "Mental Misstep": {
       "edhrec_rank": 456,
-      "gate": "template",
+      "gate": null,
       "name": "Mental Misstep",
-      "reason": "no template for: Counter target spell with mana value 1",
+      "reason": "",
       "scryfall_id": "ab8741ca-43cb-4b4c-890d-0a363524bd13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mental Modulation": {
@@ -178892,12 +178892,12 @@
     },
     "Mox Opal": {
       "edhrec_rank": 240,
-      "gate": "template",
+      "gate": null,
       "name": "Mox Opal",
-      "reason": "no template for: Metalcraft — {T}: Add one mana of any color. Activate only if you control three or more ar",
+      "reason": "",
       "scryfall_id": "6a2dbb1a-4b83-47b6-92ca-145fa5c9c16b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mox Pearl": {
@@ -180942,12 +180942,12 @@
     },
     "Mystic Remora": {
       "edhrec_rank": 99,
-      "gate": "template",
+      "gate": null,
       "name": "Mystic Remora",
-      "reason": "no template for: Cumulative upkeep {1}",
+      "reason": "",
       "scryfall_id": "fce23be6-787a-43bb-8bfd-c6672fad9105",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mystic Repeal": {
@@ -181112,12 +181112,12 @@
     },
     "Mystical Tutor": {
       "edhrec_rank": 156,
-      "gate": "template",
+      "gate": null,
       "name": "Mystical Tutor",
-      "reason": "no template for: Search your library for an instant or sorcery card, reveal it, then shuffle and put that c",
+      "reason": "",
       "scryfall_id": "f3054d9f-7080-46dc-aa2f-804f8120c094",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mystifying Maze": {
@@ -182432,12 +182432,12 @@
     },
     "Nature's Lore": {
       "edhrec_rank": 28,
-      "gate": "template",
+      "gate": null,
       "name": "Nature's Lore",
-      "reason": "no template for: Search your library for a Forest card, put that card onto the battlefield, then shuffle",
+      "reason": "",
       "scryfall_id": "7afc4a15-5ff8-457a-aa62-803b2d78d912",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nature's Panoply": {
@@ -191922,12 +191922,12 @@
     },
     "Ophidian Eye": {
       "edhrec_rank": 1653,
-      "gate": "template",
+      "gate": null,
       "name": "Ophidian Eye",
-      "reason": "no template for: Whenever enchanted creature deals damage to an opponent, you may draw a card",
+      "reason": "",
       "scryfall_id": "d3c58997-5555-423a-822e-749fac90e392",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ophiomancer": {
@@ -193772,12 +193772,12 @@
     },
     "Otawara, Soaring City": {
       "edhrec_rank": 88,
-      "gate": "template",
+      "gate": null,
       "name": "Otawara, Soaring City",
-      "reason": "no template for: Channel — {3}{U}, Discard this card: Return target artifact, creature, enchantment, or pla",
+      "reason": "",
       "scryfall_id": "486d7edc-d983-41f0-8b78-c99aecd72996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Oteclan Landmark // Oteclan Levitator": {
@@ -196062,12 +196062,12 @@
     },
     "Paradise Mantle": {
       "edhrec_rank": 1842,
-      "gate": "template",
+      "gate": null,
       "name": "Paradise Mantle",
-      "reason": "no template for: Equipped creature has \"{T}: Add one mana of any color.\"",
+      "reason": "",
       "scryfall_id": "a3bb5de4-7838-465a-8ed9-0b217593703c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Paradise Plume": {
@@ -203512,12 +203512,12 @@
     },
     "Porcelain Legionnaire": {
       "edhrec_rank": 24344,
-      "gate": "template",
+      "gate": null,
       "name": "Porcelain Legionnaire",
-      "reason": "proxy simplified it: mana cost simplified: {W/P} -> {W}",
+      "reason": "",
       "scryfall_id": "a377ec34-2da6-420a-b35e-7f380a413dcf",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Porcelain Zealot": {
@@ -209092,12 +209092,12 @@
     },
     "Pyretic Ritual": {
       "edhrec_rank": 762,
-      "gate": "template",
+      "gate": null,
       "name": "Pyretic Ritual",
-      "reason": "no template for: Add {R}{R}{R}",
+      "reason": "",
       "scryfall_id": "e4507ef5-0d30-42ca-b305-f99c6e10432b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Pyrewild Shaman": {
@@ -209142,12 +209142,12 @@
     },
     "Pyroblast": {
       "edhrec_rank": 463,
-      "gate": "template",
+      "gate": null,
       "name": "Pyroblast",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "2dea1e46-9786-429f-ad57-d608c006f508",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Pyroceratops": {
@@ -216712,12 +216712,12 @@
     },
     "Red Elemental Blast": {
       "edhrec_rank": 431,
-      "gate": "template",
+      "gate": null,
       "name": "Red Elemental Blast",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "70a45e9b-699e-425a-9f3d-267274830d3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Red Ghost, Intangible Genius": {
@@ -223352,12 +223352,12 @@
     },
     "Rite of Flame": {
       "edhrec_rank": 660,
-      "gate": "template",
+      "gate": null,
       "name": "Rite of Flame",
-      "reason": "no template for: Add {R}{R}, then add {R} for each card named in each graveyard",
+      "reason": "",
       "scryfall_id": "cbd00730-3137-4a75-a061-0508d1882eff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Rite of Harmony": {
@@ -246122,12 +246122,12 @@
     },
     "Simian Spirit Guide": {
       "edhrec_rank": 434,
-      "gate": "template",
+      "gate": null,
       "name": "Simian Spirit Guide",
-      "reason": "no template for: Exile this card from your hand: Add {R}",
+      "reason": "",
       "scryfall_id": "9d367aa4-e85f-402e-b781-527808edcc0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Simic Ascendancy": {
@@ -249462,12 +249462,12 @@
     },
     "Slash Panther": {
       "edhrec_rank": 28813,
-      "gate": "template",
+      "gate": null,
       "name": "Slash Panther",
-      "reason": "proxy simplified it: mana cost simplified: {R/P} -> {R}",
+      "reason": "",
       "scryfall_id": "2f510946-34de-4c12-8998-f61887d1a0e1",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Slash of Light": {
@@ -251182,12 +251182,12 @@
     },
     "Smothering Tithe": {
       "edhrec_rank": 63,
-      "gate": "template",
+      "gate": null,
       "name": "Smothering Tithe",
-      "reason": "no template for: Whenever an opponent draws a card, that player may pay {2}. If the player doesn't, you cre",
+      "reason": "",
       "scryfall_id": "7839cdc8-0cc9-4a17-9642-fb23f6e0be06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smuggler Captain": {
@@ -257492,12 +257492,12 @@
     },
     "Spined Thopter": {
       "edhrec_rank": 24923,
-      "gate": "template",
+      "gate": null,
       "name": "Spined Thopter",
-      "reason": "proxy simplified it: mana cost simplified: {U/P} -> {U}",
+      "reason": "",
       "scryfall_id": "0414f577-00cd-4f7a-b969-3e7efb6bc31b",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Spined Tyrranax": {
@@ -259312,12 +259312,12 @@
     },
     "Springleaf Drum": {
       "edhrec_rank": 579,
-      "gate": "template",
+      "gate": null,
       "name": "Springleaf Drum",
-      "reason": "no template for: {T}, Tap an untapped creature you control: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "e15ab0aa-4059-4923-9816-6f7a9e5b5a18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Springleaf Parade": {
@@ -266052,12 +266052,12 @@
     },
     "Submerge": {
       "edhrec_rank": 4305,
-      "gate": "template",
+      "gate": null,
       "name": "Submerge",
-      "reason": "no template for: If an opponent controls a Forest and you control an Island, you may cast this spell withou",
+      "reason": "",
       "scryfall_id": "a720f867-eb3e-4b42-835a-1bdc19de8f7c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Submerged Boneyard": {
@@ -272812,12 +272812,12 @@
     },
     "Tandem Lookout": {
       "edhrec_rank": 2251,
-      "gate": "template",
+      "gate": null,
       "name": "Tandem Lookout",
-      "reason": "no template for: Soulbond",
+      "reason": "",
       "scryfall_id": "a9953e53-3d56-4129-8fab-df33c69b8a95",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tandem Tactics": {
@@ -279702,12 +279702,12 @@
     },
     "The One Ring": {
       "edhrec_rank": 92,
-      "gate": "template",
+      "gate": null,
       "name": "The One Ring",
-      "reason": "no template for: When enters, if you cast it, you gain protection from everything until your next turn",
+      "reason": "",
       "scryfall_id": "bdd2c783-1483-490a-ae93-c4664a0a9564",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Ooze": {
@@ -283062,12 +283062,12 @@
     },
     "Three Visits": {
       "edhrec_rank": 42,
-      "gate": "template",
+      "gate": null,
       "name": "Three Visits",
-      "reason": "no template for: Search your library for a Forest card, put it onto the battlefield, then shuffle",
+      "reason": "",
       "scryfall_id": "99bf792f-963e-4509-8d3c-7db129c6a77f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Three Wishes": {
@@ -284052,12 +284052,12 @@
     },
     "Thundering Tanadon": {
       "edhrec_rank": 26282,
-      "gate": "template",
+      "gate": null,
       "name": "Thundering Tanadon",
-      "reason": "proxy simplified it: mana cost simplified: {G/P} -> {G}; mana cost simplified: {G/P} -> {G}",
+      "reason": "",
       "scryfall_id": "e2fab443-0f4b-45ea-8a6d-435b93803409",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Thundering Wurm": {
@@ -287462,12 +287462,12 @@
     },
     "Tormod's Crypt": {
       "edhrec_rank": 1829,
-      "gate": "template",
+      "gate": null,
       "name": "Tormod's Crypt",
-      "reason": "no template for: {T}, Sacrifice this artifact: Exile target player's graveyard",
+      "reason": "",
       "scryfall_id": "3d75c583-4150-406b-b0e2-5c7610e77a6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tormod's Cryptkeeper": {
@@ -299272,12 +299272,12 @@
     },
     "Vault Skirge": {
       "edhrec_rank": 11705,
-      "gate": "template",
+      "gate": null,
       "name": "Vault Skirge",
-      "reason": "proxy simplified it: mana cost simplified: {B/P} -> {B}",
+      "reason": "",
       "scryfall_id": "f254239c-c07a-4c41-98f7-8f4de539c73e",
-      "source": "",
-      "status": "unexpressible",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Vault Skyward": {
@@ -311072,12 +311072,12 @@
     },
     "Wheel of Fortune": {
       "edhrec_rank": 567,
-      "gate": "template",
+      "gate": null,
       "name": "Wheel of Fortune",
-      "reason": "no template for: Each player discards their hand, then draws seven cards",
+      "reason": "",
       "scryfall_id": "3f3c77ad-fce8-4506-90e1-7ef71552a71c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Wheel of Misfortune": {
@@ -318112,12 +318112,12 @@
     },
     "Yavimaya, Cradle of Growth": {
       "edhrec_rank": 79,
-      "gate": "template",
+      "gate": null,
       "name": "Yavimaya, Cradle of Growth",
-      "reason": "no template for: Each land is a Forest in addition to its other land types",
+      "reason": "",
       "scryfall_id": "13c4a320-aaed-4577-87c2-8dd206ddd99f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yawgmoth Demon": {

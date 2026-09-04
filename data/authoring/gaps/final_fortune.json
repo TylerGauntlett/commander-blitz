@@ -1,0 +1,25 @@
+{
+  "card_id": "final_fortune",
+  "name": "Final Fortune",
+  "oracle_text": "Take an extra turn after this one. At the beginning of that turn's end step, you lose the game.",
+  "blocked_sentences": [
+    "Take an extra turn after this one.",
+    "At the beginning of that turn's end step, you lose the game."
+  ],
+  "needs": [
+    {
+      "capability": "extra_turn",
+      "kind": "op",
+      "what": "an `extra_turn` op that queues one additional turn for the named player (usual player spec, defaulting to \"you\") immediately after the current one, taken before the turn order would otherwise advance and stacking if several resolve; plus a way for a delayed trigger created by the same resolution to be scoped to *that* queued turn rather than to the turn it was created in, which is what \"at the beginning of that turn's end step\" names",
+      "why_existing_wont_do": "`ops` has `extra_combat` and `extra_land_drop` -- both extra *sub-steps inside* the turn already in progress -- but nothing that adds a turn to the turn sequence, and no `value_key`, `condition_key` or `trigger_event` refers to a scheduled turn either. `delayed_trigger` cannot stand in for the second half: its only durations are `this_turn` and `until_it_fires` (`src/automtg/engine/structs.py:666`), so a delayed `end_step` watcher created by this spell fires at the end step of the turn Final Fortune was cast in -- one whole turn early, and exactly the misfire that makes the card read as printed while doing something else. There is no duration, condition or trigger field that says \"the extra turn this effect created\"."
+    },
+    {
+      "capability": "lose_the_game",
+      "kind": "op",
+      "what": "a `lose_game` op taking the usual player spec (defaulting to \"you\"), eliminating exactly the named seat through the same `sba` path a lethal life total reaches -- the mirror of `win_game`, needed here as the scheduled payment for the extra turn",
+      "why_existing_wont_do": "`win_game` is the only op in `ops` that reaches a game result, and `src/automtg/engine/effects/ops_player.py` states outright that there is no `lose_game` op. Spelling this clause as `win_game` on the opponent is a different sentence: `sba.declare_win` eliminates every other seat, so in a pod Final Fortune's controller would survive and both innocent opponents would be knocked out. Nothing else reduces a specific player to a loss on purpose -- `lose_life` and `damage` only reach zero by arithmetic and would need an unbounded amount to be reliable against any life total, and `add_poison` is the same approximation with a different counter."
+    }
+  ],
+  "closest_existing": ["extra_combat", "extra_land_drop", "delayed_trigger", "delay", "win_game", "lose_life"],
+  "confidence": "high"
+}

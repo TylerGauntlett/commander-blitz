@@ -533,11 +533,7 @@ def can_pay_mana(
 ) -> bool:
     req = cost.with_x(x)
     if extra_generic:
-        req = Requirement(
-            colored=req.colored,
-            generic=max(0, req.generic + extra_generic),
-            hybrid=req.hybrid,
-        )
+        req = req.with_generic(req.generic + extra_generic)
     return (
         solve_payment(
             req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose)
@@ -612,11 +608,7 @@ def ability_mana(
     less = reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
     if not less:
         return req
-    return Requirement(
-        colored=req.colored,
-        generic=max(0, req.generic - less),
-        hybrid=req.hybrid,
-    )
+    return req.with_generic(req.generic - less)
 
 
 def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
@@ -713,6 +705,19 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or obj.owner != pid or source_oid not in state.players[pid].hand:
             return False
+    if cost.exile_self_from_hand:
+        # "Exile this card from your hand" -- the same check `discard_self`
+        # makes, for the same reason and against the same zone. Not folded into
+        # `exile_self` above: that one is Phoenix Down's "exile this artifact",
+        # and a card on the battlefield must not be exiled out of a hand it is
+        # not in.
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or obj.owner != pid or source_oid not in state.players[pid].hand:
+            return False
+    if cost.exile_from_hand is not None and not _hand_exile_pool(
+        state, pid, cost, source_oid
+    ):
+        return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
@@ -793,6 +798,34 @@ def _discard_pool(
     spec = {**dict(cost.discard_selector), "zone": "hand"}
     ctx = EffectContext(state=state, controller=pid)
     return [oid for oid in hand if matches(ctx, oid, spec)]
+
+
+def _hand_exile_pool(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> list[int]:
+    """Which cards in hand this cost is allowed to exile -- "a **blue** card".
+
+    Empty when there are fewer than ``count`` of them, the way `_graveyard_pool`
+    is, so `can_pay` is a truthiness test and cannot disagree with `pay` about
+    whether the cost is payable.
+
+    **The source is never its own fodder**, exactly as in `_discard_pool` and
+    for the same rule: 601.2a moves a spell to the stack before any of its costs
+    are paid, so Force of Will -- itself a blue card, and still sitting in hand
+    while `legality` prices the line -- can never pitch itself.
+
+    Only the payer's own hand is walked, rather than `resolve_pool` over a
+    ``zone: "hand"`` selector: the hand is hidden, and an opponent's card must
+    not become fodder or leak into a pool the client can count.
+    """
+    hand = [oid for oid in state.players[pid].hand if oid != source_oid]
+    from .effects.selectors import matches
+
+    spec = {**dict(cost.exile_from_hand or {}), "zone": "hand"}
+    count = int(spec.pop("count", 1) or 1)
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    pool = [oid for oid in hand if matches(ctx, oid, spec)]
+    return pool if len(pool) >= count else []
 
 
 def _sacrifice_pool(
@@ -984,11 +1017,7 @@ def pay(
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the
         # coloured pips however large X gets.
-        req = Requirement(
-            colored=req.colored,
-            generic=max(0, req.generic + extra_generic),
-            hybrid=req.hybrid,
-        )
+        req = req.with_generic(req.generic + extra_generic)
     if req.total and not pay_mana(
         state,
         pid,
@@ -1000,6 +1029,12 @@ def pay(
         return False
 
     if cost.pay_life:
+        # A Phyrexian pip bought with life arrives here, as `pay_life` on a cost
+        # `Game._cast` assembles -- rule 107.4f is a *way of paying one symbol*,
+        # not a separate cost, and `ManaCost.paying_phyrexian` has already taken
+        # the symbol out of the mana half above. Paid in the same `pay` call and
+        # so in the same event batch, because the mana and the life are one
+        # payment however the printed symbol is read.
         lose_life(state, pid, life_cost(state, pid, cost, source_oid), source=source_oid)
 
     if cost.discard:
@@ -1021,6 +1056,24 @@ def pay(
         # nothing. Paid here, as the ability goes on the stack, so the source is
         # gone before it can be responded to or feed its own effects.
         exile_object(state, source_oid, cause="cost")
+
+    if cost.exile_self_from_hand and source_oid is not None:
+        # "Exile this card from your hand" -- `discard_self`'s shape with the
+        # other destination. No `ask_objects` and no selector for the same
+        # reason: which card goes is not a choice, it is *this* one, and asking
+        # would let a Simian Spirit Guide be "activated" by exiling something
+        # else and staying in hand.
+        exile_object(state, source_oid, cause="cost")
+
+    if cost.exile_from_hand is not None:
+        spec = dict(cost.exile_from_hand)
+        count = int(spec.pop("count", 1) or 1)
+        pool = _hand_exile_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(
+            ctx, "Exile from your hand", pool, count, count, pid, "exile_cost"
+        )
+        for oid in picked:
+            exile_object(state, oid, cause="cost")
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)
@@ -1403,10 +1456,16 @@ def variant_reduction(
     in the wrong slot and silently ignored.
 
     Only `flashback`/`graveyard_cost` can carry one today, and that is a fact
-    about the schema rather than about this function: it is the only alternative
-    cost modelled as a full `Cost`.  `evoke`, `emerge`, `overload`, `bestow`,
-    `foretell`, `mutate` and `alternative_cost` are bare mana strings with no
+    about the schema rather than about this function: `evoke`, `emerge`,
+    `overload`, `bestow`, `foretell` and `mutate` are bare mana strings with no
     node to hang a rider on, and the loader says so rather than accepting one.
+
+    `alternative_cost` is the second full `Cost` -- Force of Will's pitch needs
+    somewhere to put a payment that is not mana -- but it is deliberately *not*
+    read here. A discount belongs to the branch that priced the line, and no
+    printed prowl or pitch cost says "costs {X} less to cast this way"; the
+    loader refuses `mana_reduction` on it rather than leaving a key that loads
+    and is ignored.
     """
     if cost is None:
         return 0

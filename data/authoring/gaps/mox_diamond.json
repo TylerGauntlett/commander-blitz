@@ -1,0 +1,26 @@
+{
+  "card_id": "mox_diamond",
+  "name": "Mox Diamond",
+  "oracle_text": "If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.\n{T}: Add one mana of any color.",
+  "blocked_sentences": [
+    "If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "enters-replacement",
+      "kind": "replacement",
+      "what": "a card-level replacement of the permanent's own arrival that can (a) offer its controller an optional cost as the entry is being replaced -- here discarding a land card from hand, i.e. the `discard_selector` vocabulary of an activated cost reused as a replacement's price -- and (b) choose the destination zone on the answer: paid, the permanent finishes entering the battlefield; declined, it goes to its owner's graveyard instead and never enters at all, so no `self_enters`/`permanent_enters` trigger anywhere sees it and it is never on the battlefield to be sacrificed or bounced in response. It must apply on every arrival, from any zone (cast, reanimated, blinked), not only when the card is cast",
+      "why_existing_wont_do": "The four whitelisted replacements (`self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared`) all only decorate a permanent that is already arriving -- ReplacementModel's own docstring says so, and `zones` runs them after the object has been added to the battlefield, reading nothing from `modify` but `tapped` and `counters`. None of them can charge a cost, ask the controller anything, or redirect the arrival to another zone, and there is no `graveyard` destination in that code path at all. The card-level cost keys are the wrong layer twice over: `additional_optional` / `additional_cost` are cast costs, so they would not apply to a Mox Diamond returning from the graveyard or blinked, and neither branch matches the printed card -- a mandatory discard would make the artifact uncastable with no land in hand (it is castable, it just dies on the way), and an optional one that goes unpaid would still let it enter. `replace_leaves_battlefield` and `replace_deaths` are the only existing destination-rewriting replacements and both fire on the way *out* of the battlefield, so they cannot see a permanent that must never arrive; `replace_token_creation` rewrites what is created but, as its docstring notes, deliberately handles the no-object-yet case only for tokens. Carrying the line as a `self_enters` triggered ability running `may` + `discard` + `sacrifice` is exactly the approximation the rules forbid: the artifact would really enter, other enters triggers would see it, and it would reach the graveyard from the battlefield rather than never having been there."
+    }
+  ],
+  "closest_existing": [
+    "self_enters",
+    "self_enters_tapped",
+    "replace_leaves_battlefield",
+    "replace_deaths",
+    "replace_token_creation",
+    "additional_optional",
+    "discard_selector"
+  ],
+  "confidence": "high"
+}

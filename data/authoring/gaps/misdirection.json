@@ -1,0 +1,28 @@
+{
+  "card_id": "misdirection",
+  "name": "Misdirection",
+  "oracle_text": "You may exile a blue card from your hand rather than pay this spell's mana cost.\nChange the target of target spell with a single target.",
+  "blocked_sentences": [
+    "Change the target of target spell with a single target."
+  ],
+  "needs": [
+    {
+      "capability": "choose_new_targets",
+      "kind": "op",
+      "what": "an op that retargets an object already on the stack -- given the targeted spell the resolving effect points at, change its target to another legal one (114.6), leaving the original spell on the stack rather than copying it. Misdirection's version is mandatory ('Change the target'), not the optional 'you may choose new targets', so the op needs a non-optional single-target redirect mode as well",
+      "why_existing_wont_do": "The only retargeting in `ops` is the `new_targets` flag on `copy_spell`, which retargets a freshly created copy and leaves the original spell aimed where it was -- the opposite of what Misdirection prints. No op mutates the target list of an existing stack object; `counter` is the only other op that touches another spell and it removes it instead of redirecting it. `return_spell_to_hand` likewise takes the spell off the stack."
+    },
+    {
+      "capability": "single_target_spell_restriction",
+      "kind": "selector",
+      "what": "a target-spec predicate on how many targets the spell being targeted has, so 'target spell with a single target' binds only spells with exactly one target",
+      "why_existing_wont_do": "`selector_keys` has `count`, but that is how many objects this effect chooses, not a restriction on the chosen spell's own target count; nothing in `selector_keys` reads the target list of a spell on the stack. Without it the spell would legally target multi-target spells the printed card cannot touch."
+    }
+  ],
+  "closest_existing": [
+    "alternative_cost",
+    "copy_spell",
+    "counter"
+  ],
+  "confidence": "high"
+}

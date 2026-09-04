@@ -75,6 +75,29 @@ class CostModel(BaseModel):
     #: could be activated and responded to with the source still on the
     #: battlefield, and 601.2h pays costs before any of that.
     exile_self: bool = False
+    #: "**Exile a blue card from your hand**" -- Force of Will's pitch. A
+    #: selector over the payer's own hand with an optional ``count``, and the
+    #: exile twin of ``discard`` + ``discard_selector``.
+    #:
+    #: Deliberately not that pair: a discarded card is in the graveyard, where
+    #: delirium, threshold, Tarmogoyf and every reanimation spell can see it.
+    #: The printed pitch costs exile, and the difference is the whole reason
+    #: they are priced the way they are.
+    #:
+    #: The source is never its own fodder -- see `costs._hand_exile_pool`.
+    exile_from_hand: dict[str, Any] | None = None
+    #: "**Exile this card from your hand**: Add {R}" -- Simian Spirit Guide.
+    #: The exile twin of ``discard_self``, and a separate flag from
+    #: ``exile_self`` because that one is "Exile this artifact" and
+    #: `costs.can_pay` requires its source to be on the *battlefield*. Phoenix
+    #: Down keeps that stricter check; this one requires the source to be in
+    #: the activating player's hand instead.
+    #:
+    #: Not ``exile_from_hand`` narrowed by a selector, for the same reason
+    #: cycling is not ``discard: 1``: the pool would offer the whole hand and
+    #: the player could "activate" the Spirit Guide by exiling something else
+    #: and keeping it.
+    exile_self_from_hand: bool = False
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed

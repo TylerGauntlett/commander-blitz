@@ -1,0 +1,25 @@
+{
+  "card_id": "jeweled_amulet",
+  "name": "Jeweled Amulet",
+  "oracle_text": "{1}, {T}: Put a charge counter on this artifact. Note the type of mana spent to pay this activation cost. Activate only if there are no charge counters on this artifact.\n{T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.",
+  "blocked_sentences": [
+    "Note the type of mana spent to pay this activation cost.",
+    "{T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type."
+  ],
+  "needs": [
+    {
+      "capability": "noted_mana_type",
+      "kind": "op",
+      "what": "an effect that records which mana type was actually spent to pay the activation cost of the ability being resolved, and stores that type on the source permanent as a persistent note that survives until it is overwritten by a later activation",
+      "why_existing_wont_do": "The closest value is `colors_of_mana_spent`, which returns the *number* of distinct colors spent to cast the object at `source_oid` (sunburst/converge) -- it is a count, not a type, it is read off a cast spell rather than an activation payment, and nothing writes it onto a permanent as durable state. `set_flag` records only a named boolean, and `add_counters` records only a count of a fixed counter kind, so neither can hold a mana type."
+    },
+    {
+      "capability": "noted_mana_type",
+      "kind": "value",
+      "what": "a mana specification for `add_mana` that resolves to the mana type previously noted on the source permanent, so the second ability produces exactly that type",
+      "why_existing_wont_do": "`add_mana` takes a literal mana string parsed by `parse_mana_production`, and `add_mana_per` only scales a literal unit by a selector count; neither can read state off the source. A mana ability may contain only `add_mana` or one `choose_mode` of `add_mana` modes, so the only expressible shape is a free choice among the five colors -- that is a strictly better card than the printed one, which is locked to the type banked earlier, so it is an approximation, not a translation. `choose_color` is likewise a fresh choice at resolution and is not legal inside a mana ability."
+    }
+  ],
+  "closest_existing": ["colors_of_mana_spent", "choose_color", "set_flag"],
+  "confidence": "high"
+}

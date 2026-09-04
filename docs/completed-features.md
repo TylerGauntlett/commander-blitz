@@ -1,3 +1,314 @@
+## A cost reduction that counts a supertype — the Kamigawa channel legends
+
+### Overview
+
+Boseiju, Who Endures and Otawara, Soaring City: *"Channel — {1}{G}, Discard this
+card: … This ability costs {1} less to activate for each legendary creature you
+control."* Two gap records, both naming `cost_reduction_supertype_filter`, and
+between them the whole Kamigawa channel-legend cycle — Boseiju, Otawara, Takenuma
+and Eiganjo all print the same clause on a `discard_self` ability activated from
+hand.
+
+`Legendary` is a **supertype** (205.4a), and 205.4b makes it an independent part
+of the type line rather than a kind of type. So "legendary creature" is two
+clauses ANDed, and no arrangement of `types` and `subtypes` says it.
+
+### Where the fix lives now
+
+The missing branch was one of fourteen: the loader validated a reduction filter
+against `STATIC_FILTER_KEYS` and `costs._reduction_matches` read six of those
+keys. That whole story, and the fix for it, is
+**"A cost reduction's filter reads every key it accepts"** below — it landed
+first, with the Markov Chains deck, because Takenuma needed it too. This section
+is what is left once that is in place: the cards, and two smaller things.
+
+**A subset test, not an intersection.** `supertypes` is `issubset` where
+`subtypes` is `&`, the same split `effects.selectors.matches` makes: a permanent
+has one supertype line a filter names part of, while "for each Vampire" means any
+of the named creature types. Written as an *alternative* to the type check rather
+than an addition, a legendary planeswalker would count.
+
+**A misspelled name is a load error.** `{"supertypes": ["Legendarry"]}` would
+count nothing and read as a discount of zero — a card priced at exactly what it
+prints, which is invisible. That is the same failure shape as the dropped key,
+one layer down, so it gets the same answer. `subtypes` is not checked, here or in
+the selector language, because creature and land types are open-ended and there
+is no closed set to check against.
+
+### One import cycle, broken
+
+Reaching `costs.REDUCTION_ZONES` from the loader meant breaking a cycle.
+`effects/ops_control.py` imported `can_pay` and `pay` from `..costs` at module
+level while `costs` imports `effects.context`, so `costs` could only ever be
+imported *after* `effects` — anything reaching for it first got a partially
+initialised module. The two ops that charge a cost import them in the function
+body now, which is what `combat`, `game`, `legality` and `replacements` already
+do.
+
+### The packet learned the distinction
+
+The authoring packet showed workers `static_filter_keys` and nothing else, so a
+worker reading it wrote `supertypes` into a reduction because the list said the
+word was legal — and had no way to know that `zone` is available there, or that
+the relational keys are refused. `cost_reduction_keys` and
+`cost_reduction_filter_keys` travel with every packet now.
+
+### One test helper changed
+
+`_provide_the_attacker` read `attacking` at the top level only, and Eiganjo's
+"attacking or blocking" is one `any_of` over two branches — so the harness
+declared no attacker and a correct card reported as unusable. The assertion is
+untouched; the alternative was narrowing Eiganjo to plain "attacking", which is a
+weaker card written to suit the harness.
+
+## `{W/P}` — phyrexian mana, and the cast line that carries the choice
+
+### Overview
+
+Gitaxian Probe: *"({U/P} can be paid with either {U} or 2 life.) / Look at target
+player's hand. / Draw a card."* A one-mana cantrip that, in practice, is cast for
+no mana at all.
+
+Three gap records named `phyrexian_mana` — Mental Misstep, Gitaxian Probe, Gut
+Shot — and the report's template-simplified queue named five more creatures for
+the same reason. All eight ship now.
+
+Two things were wrong and they pulled in opposite directions.
+
+**`ManaCost.parse` refused the symbol.** `_parse_hybrid` raised on any half of a
+hybrid that was not a digit or a colour, and its docstring said so on purpose:
+`HybridPip` modelled a *colour choice*, and reading the `P` as a colour would
+have made every card in the cycle castable off mana nobody has.
+
+**`cards/proxy.py` silently narrowed it.** `{U/P} -> {U}`, recorded as a "mana
+cost simplified" note, which is how the three cards' work packets arrived
+carrying a `starting_point` that had already deleted the clause the card is
+played for. A hard `{U}` makes Gitaxian Probe a strictly worse Peek and Gut Shot
+a strictly worse Shock — and unlike the parse failure, nothing about it was
+visible. It is the more instructive of the two bugs: rewriting a symbol to keep
+the loader quiet is only a simplification when what is dropped is decoration.
+
+### The shape
+
+`HybridPip` grew a third field, `life`, alongside `symbols` and `generic`. Three
+shapes of "either/or" inside a cost, one representation:
+
+| | alternative to the colour |
+|---|---|
+| `{W/U}` | another colour |
+| `{2/W}` | a number of generic mana |
+| `{W/P}` | **2 life** |
+
+A separate field rather than a reuse of `generic`, because life is not mana: no
+source produces it, no pool holds it, and the payment solver must never be able
+to spend it as though a land had made it. `_parse_hybrid` also splits on *every*
+slash now rather than partitioning at the first, which reads `{W/U/P}` exactly
+and closes a pre-existing hole where `{2/W/P}` raised out of the proxy generator.
+
+Everything that merely *reads* a cost is unchanged and correct by construction:
+`value` is 1, `colors` contributes the colour, `symbols_of` counts the chroma. A
+Gitaxian Probe cast for 2 life is still a blue, mana-value-1 spell — load-bearing,
+because Mental Misstep counters spells of mana value 1.
+
+### The decision this turned on: who chooses which half
+
+The first implementation made it a solver preference — pay with mana when mana is
+available, with life when it is not — on the argument that
+[ADR 0003](adr/0003-auto-mana-payment.md) already gives up the player's control
+over *which* mana pays. It was measured and it was wrong, in both directions at
+once:
+
+- `solve_payment` short-circuits on `satisfies(pool, req)` before it taps
+  anything, so with an empty pool the life branch always won. Vault Skirge cost
+  2 life with six Swamps untapped — a strictly worse card, quietly.
+- Even with that fixed, "life only when you must" never offers the play the card
+  is famous for: Gitaxian Probe for 2 life *with the Island still up*.
+
+So it is a **cast line**, the way kicker, evoke and overload are.
+`_cast_variant` loops over how many Phyrexian pips this line buys with life and
+emits one action each — two for the printed cycle, three for Thundering Tanadon's
+`{4}{G/P}{G/P}` — labelled *(paying 2 life)*. `Action.phyrexian` carries the
+number, exactly parallel to `Action.pay_generic` for convoke and delve, and it is
+in `key()` and `to_dict()` for the same reason: two lines at two prices are two
+different things to do with one card.
+
+Rule 118.4 bounds the offer, and it is the same boundary `test_pay_life.py`
+already pinned for Adanto Vanguard: life may be paid down to exactly 0 and no
+further. A player at 2 life is offered the line; a player at 1 is not. Thundering
+Tanadon off no green sources needs 4, not 3.
+
+### `paying_phyrexian` — the pip leaves the cost
+
+The mechanism is one method, and it is what kept the change small:
+
+```python
+remaining, owed = cost.paying_phyrexian(n)   # ({2}{U/P}, 1) -> ({2}, 2)
+```
+
+The bought pips are removed from the cost and the life is returned separately, so
+`satisfies`, `assign_hybrid`, `ManaPool.spend`, `solve_payment` and every cost
+reduction go on seeing a cost made only of mana. Nothing in the solver learned a
+third currency; `Requirement` gained no field. `Game._cast` charges the life in
+the *same* `pay` call as the mana — `Cost(mana=remaining, pay_life=owed)` — which
+is one payment and one event batch, because 107.4f makes this one symbol of the
+spell's own mana cost paid a different way.
+
+Removing the pip rather than replacing the cost is also the difference between
+this and the `alternative_cost` the gap records ruled out at length. `{2}{U/P}`
+paid the life way is still a `{2}`: Trinisphere taxes it, a cost reduction
+shrinks it, and "cast without paying its mana cost" means the same thing it
+always did. An alternative cost would have exempted all of that.
+
+`text` and `mana_value` are read off the printed cost and never off the
+remainder, so how one casting was paid changes neither.
+
+### The proxy, and the five cards behind it
+
+`_simplify_symbol` no longer rewrites `{X/P}` at all — the branch is gone, not
+guarded — and `--tier templates --retry` then harvested five creatures whose only
+block had been that note: Vault Skirge, Porcelain Legionnaire, Spined Thopter,
+Thundering Tanadon and Slash Panther, each now at its printed cost. The three gap
+cards were written by hand.
+
+### The sandbox needed a prop, not a smaller gate
+
+Mental Misstep's "with mana value 1" had nothing to point at: the authoring
+harness pushes three dummy spells for a `kind: "spell"` target and they are mana
+value 5, 2 and 3, so gate 4 reported "not playable in the sandbox". The role was
+added, as `add_dummy_spell`'s own docstring instructs — but **conditionally**,
+which is new. Every mana-value-1 spell in the pool is a cantrip, and appending
+one unconditionally folded a card drawn by the opponent into the measured outcome
+of every card that counters or bounces a spell: Reprieve's `hand_size` for the
+opponent moved from 2 to 3, an assertion about Opt sitting inside Reprieve's
+verdict. That is precisely what the `legendary_creature` prop's docstring warns
+about at length.
+
+So `DUMMY_ROLES` is what every spell-targeting card gets and `EXTRA_DUMMY_ROLES`
+is added only for a card none of them satisfies — asked with the very selector
+the target spec carries, through the same `matches` legality uses. Every card
+measured before this change sees the position it was measured in.
+
+### Frontend: nothing
+
+`{W/P}` through `{G/P}` were already in `manaSymbols.ts`'s `KNOWN` and their SVGs
+were already vendored — deck import made phyrexian notation reachable in *oracle
+text* long before a cost could carry one — so the symbol renders in the cost row
+the day the engine parses it. The cast lines are ordinary `LegalActionDTO`s that
+differ only by label.
+
+### One narrowing, recorded
+
+A Phyrexian pip in an **activated ability's** cost must be paid with mana. The
+choice is offered as a cast line and an activation is not one. No shipped card
+prints such an ability — Birthing Pod's `{1}{G/P}` is the first that would — and
+the direction is the safe one: the engine asks for more than the card does, never
+less. In `docs/rules-coverage.md`.
+
+## `exile_from_hand` — the free-spell pitch cost, and the alternative cost that could hold it
+
+### Overview
+
+Force of Will: *"**You may pay 1 life and exile a blue card from your hand rather
+than pay this spell's mana cost.** / Counter target spell."*
+
+Five cards in `docs/unsupported-cards.md` named `exile_from_hand`, and every one
+of them needed the same two things. Neither is useful without the other, which is
+why they shipped together.
+
+**1. A cost that exiles a card out of hand.** `cost_keys` already had
+`discard_selector`, which picks a hand card by exactly this kind of filter — and
+sends it to the **graveyard**, where delirium, threshold, Tarmogoyf and every
+reanimation spell can still see it. The printed pitch exiles, and that difference
+is the entire reason these spells are priced at nothing. The only exile costs
+were `exile_self` (the source, which here is the spell being cast) and
+`exile_from_graveyard` (the wrong zone).
+
+**2. Somewhere on the card for a payment that is not mana.** `alternative_cost`
+was validated to exactly `{mana, condition}`, parsed straight into a `ManaCost`,
+and raised `needs 'mana'` when mana was absent. Force of Will's alternative cost
+is a life and a card; Pyrokinesis's has no mana component at all. There was no
+node to hang either on.
+
+### Two keys, mirroring `discard` and `discard_self`
+
+```jsonc
+"exile_from_hand": { "colors": ["U"] }   // "a blue card": a selector, optional "count"
+"exile_self_from_hand": true             // "Exile this card from your hand": no choice
+```
+
+`exile_self_from_hand` is kept apart from `exile_self` deliberately. That one is
+Phoenix Down's "Exile this artifact", and `costs.can_pay` requires *its* source
+to be on the battlefield — so a Simian Spirit Guide written with it loaded clean
+and could never be activated. A silently inert card is worse than no card.
+Merging them would have meant loosening Phoenix Down's check to any zone; the
+sibling flag checks the hand instead, the same check `discard_self` makes.
+
+And it is not `exile_from_hand` narrowed by a selector, for the reason cycling is
+not `discard: 1`: the pool would offer the whole hand, and the player could
+"activate" the Guide by exiling something else and keeping it in hand.
+
+The pool is the payer's own hand and nothing else — `costs._hand_exile_pool`
+walks that list rather than resolving a `zone: "hand"` selector, because the hand
+is hidden and an opponent's card must never be fodder or leak into a count the
+client can read. Writing `zone` on the selector is a load error rather than a
+value overwritten in silence.
+
+**The source is never its own fodder.** 601.2a moves a spell to the stack before
+any of its costs are paid, and Force of Will is itself a blue card sitting in the
+hand it pitches from — so without the exclusion it pays for itself, is exiled by
+its own cost, and never resolves. `_discard_pool` had already learned this on
+Bitter Triumph; the new pool learns it in the same place, because legality prices
+the line while the card is still in hand.
+
+### `alternative_cost` becomes a full `Cost`
+
+The second alternative cost modelled that way, after `graveyard_cost`, and the
+two are now charged in the same halves in the same order: the mana replaces the
+printed cost in `legality._cast_variant` and `game._cast`, and everything else on
+the node is paid after it (601.2g), with the spell's own oid as the source so the
+pool excludes it.
+
+Legality prices the non-mana half through `can_pay` as well as the condition,
+because both answer the same question — permission to cast the card this way at
+all. A Force of Will held beside nothing blue is not castable that way, and
+offering the line and then failing the payment would show a price the player can
+never pay.
+
+Two guards, and only the second moved:
+
+- A node that charges **nothing** is refused: it replaces the printed cost, so an
+  empty one is a free spell.
+- A node that charges **only mana** still needs a `condition`, because that is
+  exactly `evoke` and a card spelling it that way is offered twice at two prices
+  with nothing to choose between. A node charging something else is exempt —
+  Force of Will's line is unconditional and printed, and what it takes instead of
+  mana is the reason it is a fair card.
+
+`mana_reduction` is refused on it. "Costs {X} less to cast **this way**" is the
+graveyard cost's rider and only `costs.variant_reduction` reads it, off the
+flashback branch alone; written here it would load clean and never apply.
+
+### Simian Spirit Guide is invisible to the payment solver, on purpose
+
+`costs.mana_sources` collects only `Cost.is_tap_only()` abilities on the
+battlefield, so the Guide's mana ability reaches the player through
+`legality._activate_zones`, which already walks their own hand. That is the right
+answer as well as the only one available: a solver that exiled cards out of a
+hand it was never asked about would spend the card to help pay for a spell.
+
+### Harvest
+
+Force of Will, Daze and Simian Spirit Guide ship. Daze was filed under
+`alternative_cost_nonmana` — the same blocker seen from a card whose pitch is a
+returned Island rather than an exiled card — and the widened node answers it
+whole.
+
+Force of Negation, Misdirection and Pyrokinesis stay blocked, each on a *second*
+capability their gap records already name: `counter_to_exile`,
+`choose_new_targets` (plus a "spell with a single target" restriction) and
+`divided_damage`. Their records keep only those needs.
+
+`tests/unit/test_exile_from_hand.py`: 26 tests.
 ## "Your life total can't change" -- a two-way lock on a life total -- 118.5
 
 ### Overview
@@ -1512,6 +1823,99 @@ the Equip regression test passes under both, which is the point of it.
 `tests/data/attach_another.cards.json` (a Saga in Vault 101's exact shape, two
 stand-in rites that drive the same effects at a chosen moment, an Equipment, an
 Aura and a vanilla bear).
+
+## `deals_damage_to_player` — damage to a player, combat or not
+
+### Overview
+
+Curiosity: *"Enchant creature / Whenever enchanted creature deals damage to an
+opponent, you may draw a card."* Ophidian Eye is the same card with flash, and
+Tandem Lookout is the same trigger handed to two paired creatures. Three cards,
+the top entry in `docs/unsupported-cards.md`, all waiting on one trigger.
+
+The engine could say "deals **combat** damage to a player" and nothing else.
+`primitives.damage_player` fires `COMBAT_DAMAGE_TO_PLAYER` inside `if is_combat`,
+so under Curiosity a pinger, a Fireball, a fight and every triggered burn spell
+drew nothing at all — and the pinger is what all three cards are played with, so
+the substitution is a different card rather than a weaker one.
+
+### No new event type
+
+`DAMAGE_DEALT` has been fired through the trigger bus by `damage_player` since
+damage existed, with `to="player"` telling it apart from the permanent half.
+Every route by which damage reaches a player goes through that one function, so
+the event was already complete and already correct; what it had never had was a
+name in `TRIGGER_EVENTS`.
+
+This is the same shape `dealt_damage` (enrage) took over the *other* half, and
+the two are now scoped by one table rather than two open-coded comparisons:
+
+```python
+EVENT_HALVES = {
+    "dealt_damage": "permanent",        # enrage: the victim is the subject
+    "deals_damage_to_player": "player", # Curiosity: the dealer is the subject
+    "damage_prevented": "player",       # Selfless Squire
+}
+```
+
+`_matches` and `_delayed_matches` both read it. The delayed matcher never had the
+scoping at all, so a delayed subscription was silently wider than a hosted
+trigger of the same name — it would have woken a `deals_damage_to_player` watcher
+on a Shock aimed at a creature.
+
+### The subject is the dealer, which is the whole of the Aura
+
+`dealt_damage` takes the **victim** as its subject, because enrage is a fact
+about the creature being hurt. This takes the **dealer**, because "enchanted
+creature deals damage" is a fact about the creature doing the hurting — and the
+subject is what `filter: {"attached": true}` and `source: "self"` are compared
+against. The player half of the event carries no `oid`, so `_subject_oid` reaches
+it through the `event.source` fallthrough, and a hit with no source object at all
+matches nothing rather than matching everything.
+
+Two keys joined the payload, on the player half only:
+
+- `controller` — the dealing permanent's controller, so `controller: "you"` reads
+  "a creature **you control** deals damage". Without it the `controller` clause
+  falls through to `event.player`, which on a damage event is the seat that was
+  **hit**: the clause would mean the opposite of itself.
+- `defender` — the seat that was hit, which is what a `defending` clause compares
+  against. `deals_damage_to_player` is the third entry in `DEFENDING_TRIGGERS`
+  and the first that is not about combat. Two-player play hides the difference
+  between "a player" and "an opponent"; a pod does not.
+
+### The granted path, and a resolution bug it uncovered
+
+Tandem Lookout reaches the trigger through a **static** `grant_ability`, and that
+path had never carried a triggered ability before — the two shipped cards that
+grant one use the one-shot op. It queued and then resolved as nothing.
+
+`stack.ability_of` looks a granted ability up in the granter's
+`grantable_abilities` and needs `granted_by` to know where to look, and
+`triggers._granter_of` could only see op-granted abilities: those leave a
+`TempEffect` on the recipient, while a static grant leaves nothing behind and is
+recomputed from the granter's "as long as…" every time anybody asks. So
+`characteristics.granted_ability_origin` answers the same question for the
+continuous half, off the very list `abilities_of` builds.
+
+It returns **both** halves of the answer, because the two lists are indexed
+differently: `abilities_of` appends a granted ability to the recipient's own list
+and renumbers it, so Tandem Lookout's granted trigger is number 2 on the creature
+that has it and number 0 in the pool it came from. Recording the recipient's
+number would resolve a different ability, or — as here — none at all, with no
+error anywhere.
+
+### Test
+
+`tests/unit/test_deals_damage_to_player.py`: 20 tests. The noncombat half through
+both the primitive and a real activated ability; combat damage firing it too;
+the combat-only trigger asserted *not* to fire on a ping, so the difference
+between the two events is measured rather than argued; infect (damage that costs
+no life, which is why this is not `life_lost`); prevention, zero damage, damage
+to a permanent and damage to yourself all firing nothing; a three-player position
+where "an opponent" is the Aura controller's opponent and not the enchanted
+creature's controller's; and the granted copy on both halves of a pair, plus its
+wearing off when the pair breaks.
 
 ## `tapped` in a trigger filter — reading how a permanent arrived
 
@@ -9902,7 +10306,8 @@ own with the 160-game arena run in between rather than all at once:
 Two things were deliberately **not** done, and fail loudly instead of silently:
 granting a *static* or *activated* ability (the loader rejects it rather than
 compiling something legality would never offer), and phyrexian mana (a life
-payment, not a colour choice).
+payment, not a colour choice). *Phyrexian mana has since shipped — see the
+`{W/P}` section at the top of this file.*
 
 ### What is left, beyond this deck
 

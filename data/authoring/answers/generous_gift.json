@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "generous_gift",
+    "name": "Generous Gift",
+    "oracle_text": "Destroy target permanent. Its controller creates a 3/3 green Elephant creature token.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield"
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "snapshot",
+        "target": "t1",
+        "as": "victim"
+      },
+      {
+        "op": "destroy",
+        "objects": {
+          "target": "t1"
+        }
+      },
+      {
+        "op": "create_token",
+        "token": "elephant_3_3_g",
+        "amount": {
+          "const": 1
+        },
+        "controller": {
+          "controller_of": "victim"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "tokens": {
+      "id": "elephant_3_3_g",
+      "count": 1
+    },
+    "graveyard_size": {
+      "0": 4
+    },
+    "battlefield_count": 32
+  }
+}

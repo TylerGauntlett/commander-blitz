@@ -74,6 +74,21 @@ _ROLES: dict[str, Any] = {
     "x_spell": lambda c: (c.is_instant or c.is_sorcery)
     and not c.targets
     and c.mana_cost.x_count > 0,
+    #: Something for "counter target spell **with mana value 1**" to point at --
+    #: Mental Misstep, and the rest of the cheap-interaction shelf behind it.
+    #: The role `add_dummy_spell`'s docstring said the next unrepresented
+    #: selector would need, added rather than the gate relaxed: the three
+    #: incumbent dummies are mana value 5, 2 and 3, so a printed mana-value
+    #: ceiling of 1 left the card with no legal target and gate 4 reported "not
+    #: playable in the sandbox".
+    #:
+    #: ``x_count == 0`` as well as the mana value, because `mana_value` scores
+    #: an announced X as 0 (202.3b) -- Secure the Wastes would otherwise qualify
+    #: as a one-drop here and be a second, wrong answer to the `x_spell` role.
+    "one_drop_spell": lambda c: (c.is_instant or c.is_sorcery)
+    and not c.targets
+    and c.mana_cost.x_count == 0
+    and c.mana_value == 1,
     #: Something for "destroy target **legendary** permanent" to point at --
     #: Commander Sofia Daguerre. :func:`_play_once` carries the argument for
     #: why this is a prop and not a carve-out; the two clauses of the predicate
@@ -254,7 +269,18 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     return builder.build(advance=False)
 
 
-def add_dummy_spell(game: Game, registry: CardRegistry) -> None:
+#: The spells every card with a `kind: "spell"` target finds on the stack.
+DUMMY_ROLES = ("creature", "noncreature_spell", "x_spell")
+
+#: Pushed on top of :data:`DUMMY_ROLES` only for a card none of them satisfies.
+#: See :func:`add_dummy_spell` for why this list is conditional and that one is
+#: not.
+EXTRA_DUMMY_ROLES = ("one_drop_spell",)
+
+
+def add_dummy_spell(
+    game: Game, registry: CardRegistry, card: CardDef | None = None
+) -> None:
     """Put spells on the stack so a counterspell has something to target.
 
     Picked from the pool by role, like the board props: naming a test-only card
@@ -272,11 +298,57 @@ def add_dummy_spell(game: Game, registry: CardRegistry) -> None:
     added exactly as this paragraph asked: Frontline Medic put the selector into
     the pool, and the "Counter target spell with {X} in its mana cost" *instant*
     behind it in the queue is the first card that will reach this list with it.
+    `one_drop_spell` is the second time, for Mental Misstep's "with mana value
+    1" -- the three incumbents are mana value 5, 2 and 3.
+
+    **The extras are pushed only when the card needs them**, which is the one
+    thing that stops this list growing into a tax on every other counterspell.
+    A dummy is a prop, and `legendary_creature` above spells out at length what
+    an *acting* prop costs: no mana-value-1 spell in the pool is inert -- the
+    three there are all cantrips -- so pushing one unconditionally would fold a
+    card drawn by the opponent into the measured outcome of every card that
+    counters, bounces or copies a spell. Reprieve is the worked example: its
+    `hand_size` for the opponent moved from 2 to 3 when this was appended
+    unconditionally, an assertion about Opt sitting inside Reprieve's verdict.
+
+    So :data:`DUMMY_ROLES` is what every spell-targeting card gets, and
+    :data:`EXTRA_DUMMY_ROLES` is added only for a card that none of them can
+    satisfy -- asked with the very selector the target spec carries, so the test
+    is exact rather than a guess about which cards are "the counterspells".
+    Every card measured before this change sees the position it was measured in.
     """
-    for pick in _props(registry, ("creature", "noncreature_spell", "x_spell")):
+    _push_dummies(game, registry, DUMMY_ROLES)
+    if card is not None and _has_unmatched_spell_spec(game, card):
+        _push_dummies(game, registry, EXTRA_DUMMY_ROLES)
+
+
+def _push_dummies(game: Game, registry: CardRegistry, roles: tuple[str, ...]) -> None:
+    for pick in _props(registry, roles):
         obj = new_object(game.state, pick, owner=1, zone=Zone.HAND)
         game.state.players[1].hand.append(obj.oid)
         push_spell(game.state, obj.oid, 1)
+
+
+def _has_unmatched_spell_spec(game: Game, card: CardDef) -> bool:
+    """Does this card want a spell nothing on the stack can be?
+
+    The same question `targeting._spell_allowed` asks when it decides whether a
+    stack item may be chosen, asked with the same `matches` and the same
+    ``default_zone``, so "the harness thinks a dummy fits" and "legality offers
+    it as a target" cannot come apart.
+    """
+    from automtg.engine.effects.context import EffectContext
+    from automtg.engine.effects.selectors import matches
+
+    ctx = EffectContext(state=game.state, controller=0, source_oid=None)
+    on_stack = [item.oid for item in game.state.stack if item.oid is not None]
+    return any(
+        not any(
+            matches(ctx, oid, spec.selector, default_zone="stack") for oid in on_stack
+        )
+        for spec in card.targets
+        if spec.kind == "spell"
+    )
 
 
 def drive(game: Game, limit: int = 60) -> None:
@@ -822,7 +894,7 @@ def _cast(
     # in its own gate. A permanent's ability wants the dummies present later --
     # when it is activated -- which is not a thing this harness does.
     if any(spec.kind == "spell" for spec in card.targets):
-        add_dummy_spell(game, registry)
+        add_dummy_spell(game, registry, card)
     game._advance()
 
     action = find_play(

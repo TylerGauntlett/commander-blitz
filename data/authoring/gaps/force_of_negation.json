@@ -1,0 +1,22 @@
+{
+  "card_id": "force_of_negation",
+  "name": "Force of Negation",
+  "oracle_text": "If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.\nCounter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+  "blocked_sentences": [
+    "If that spell is countered this way, exile it instead of putting it into its owner's graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "counter_to_exile",
+      "kind": "op",
+      "what": "an option on the `counter` op -- e.g. `to: \"exile\"` -- that sends the countered spell to exile instead of its owner's graveyard, applying only to spells this instance actually countered ('countered this way'). Wanted by Force of Negation, Dissipate, Void Shatter, Nullify-style exile counters and Hindering Light's cousins.",
+      "why_existing_wont_do": "`op_counter` (src/automtg/engine/effects/ops_stack.py:223) unconditionally calls `move_object(..., Zone.GRAVEYARD, cause=\"countered\")` after pulling the item off the stack; the spec accepts only `target`/`sid` and there is no destination key. Chaining `exile` after `counter` cannot reach it either: once countered the spell is no longer a stack object, and `selector_keys` has no way to name the card that a preceding `counter` in the same effect list just moved -- `snapshot` reads a value off an object, not a zone-change replacement. `replace_leaves_battlefield` and `replace_deaths` are battlefield-only and would not see a stack-to-graveyard move."
+    }
+  ],
+  "closest_existing": [
+    "alternative_cost",
+    "evoke",
+    "counter"
+  ],
+  "confidence": "high"
+}

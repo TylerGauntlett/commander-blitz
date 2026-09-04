@@ -1,0 +1,23 @@
+{
+  "card": {
+    "id": "gut_shot",
+    "name": "Gut Shot",
+    "oracle_text": "({R/P} can be paid with either {R} or 2 life.)\nGut Shot deals 1 damage to any target.",
+    "mana_cost": "{R/P}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "targets": [
+      {"id": "t1", "kind": "any", "count": 1, "selector": {"types": ["Creature"]}}
+    ],
+    "spell_effects": [
+      {"op": "damage", "target": "t1", "amount": {"const": 1}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "graveyard_size": {"0": 3},
+    "battlefield_count": 32,
+    "life": {"0": 40, "1": 40}
+  }
+}

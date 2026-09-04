@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-107 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+108 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -1149,6 +1149,8 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
   "exile_self": true,                             // Phoenix Down: exiles the source, not to the graveyard
+  "exile_from_hand": { "colors": ["U"] },         // Force of Will: a selector over *your* hand
+  "exile_self_from_hand": true,                   // Simian Spirit Guide: *this* card, out of hand
   "mill": 1,                                      // Millikin: off *your* library's top
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
@@ -1191,6 +1193,57 @@ for each age counter on it". It is read only by `may`'s `pay`, and that location
 is forced rather than convenient: an activated ability's cost is settled by
 legality *before* any effect has run, so a value expression there would have
 nothing to read.
+
+### `exile_from_hand` — the pitch cost, and why it is not a discard
+
+"You may pay 1 life and **exile a blue card from your hand** rather than pay this
+spell's mana cost." — Force of Will, Misdirection, Pyrokinesis, the Modern
+Horizons elementals.
+
+`discard` narrowed by `discard_selector` picks a hand card by exactly this kind
+of filter, and it is a *different cost*: a discarded card is in the graveyard,
+where delirium, threshold, Tarmogoyf and every reanimation spell can still see
+it. The printed pitch exiles, and that difference is the whole reason these
+spells are priced at nothing.
+
+Two keys, mirroring `discard` and `discard_self` one zone over:
+
+```jsonc
+"exile_from_hand": { "colors": ["U"] }   // "a blue card": a selector, optional "count"
+"exile_self_from_hand": true             // "Exile this card from your hand": no choice
+```
+
+The selector is resolved against the **paying player's own hand and nothing
+else** — `costs._hand_exile_pool` walks that list rather than resolving a
+`zone: "hand"` selector, because the hand is hidden and an opponent's card must
+never become fodder or leak into a pool the client can count. Writing `zone` on
+it is a load error rather than a value silently overwritten.
+
+**The source is never its own fodder.** Rule 601.2a moves a spell to the stack
+before any of its costs are paid, and Force of Will is itself a blue card sitting
+in the hand it is pitching from — so without the exclusion it pays for itself,
+exiles itself, and never resolves. Legality prices the line while the card is
+still in hand, which is why the exclusion lives in the pool rather than in the
+zone check. `_discard_pool` does the same thing for the same rule.
+
+`exile_self_from_hand` is deliberately **not** `exile_self`, which is Phoenix
+Down's "Exile this artifact" and whose `costs.can_pay` requires the source to be
+on the battlefield. Merging them would mean either loosening Phoenix Down's check
+to any zone, or shipping a Simian Spirit Guide that loads clean and can never be
+activated. And it is not `exile_from_hand` narrowed by a selector, for the reason
+cycling is not `discard: 1`: the pool would offer the whole hand, and the player
+could "activate" the Guide by exiling something else and keeping it.
+
+Like cycling, it is what makes an ability in hand safe. `active_zones: ["hand"]`
+is refused unless the cost or an unconditional effect removes the source from
+that zone — otherwise a card in hand with a free ability is an infinite engine.
+
+The Guide's ability is a mana ability, and it is invisible to the payment solver
+on purpose: `costs.mana_sources` collects only `Cost.is_tap_only()` abilities on
+the battlefield, so this one reaches the player through
+`legality._activate_zones`, which already walks their own hand. That is the right
+answer as well as the only one — the solver exiling cards out of a hand it was
+never asked about is not a thing anybody wants.
 
 ### `x_value` — an X the card fixes, not the player
 
@@ -1495,7 +1548,7 @@ the ability's own controller, so that key can only ever ask about you. See
     "source": "self",                // restrict to this permanent
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
     "condition": { ... },            // intervening "if", re-checked on resolution
-    "defending": "you",              // `attacks` only: whom it is attacking
+    "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
     "mana_ability": false            // `ability_activated` only: exclude mana abilities
@@ -1524,6 +1577,12 @@ creature attacks you" needs the second, and in a duel the two are
 indistinguishable — which is exactly why writing it with `controller:
 "opponent"` looks right until a pod draws you a card for a combat you were not
 in. The loader rejects `defending` on any other event rather than ignoring it.
+
+Three events carry a defending player and so accept the clause: `attacks`,
+`creatures_attack_player` and `deals_damage_to_player`. The last is the one that
+is not about combat — Curiosity's "whenever enchanted creature deals damage to
+**an opponent**" asks who took the damage, and `controller` there is a question
+about whose *creature* dealt it.
 
 `counter` names which kind a `counter_placed` trigger cares about. The event has
 always carried the kind and nothing read it, so the only trigger that could be
@@ -1579,7 +1638,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
-`ability_activated` · `damage_prevented`
+`ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
 **`precombat_main`** is "at the beginning of your **first** main phase" — Black
 Market Connections. `upkeep` is the near miss and is a step too early: it is
@@ -1598,6 +1657,29 @@ player half of the event: absorb and protection fire the same event about a
 *permanent*, and without the scoping a blocked absorb creature would pay out too.
 See "Preventing all damage to a player for the turn" below for the op that
 installs the shield.
+
+**`deals_damage_to_player`** fires whenever a permanent deals damage of **any**
+kind to a player — combat, a ping, a Fireball, a fight, a triggered burn spell.
+Curiosity, Ophidian Eye and Tandem Lookout. Its subject is the permanent that
+**dealt** the damage, so `filter: {"attached": true}` is how an Aura says
+"enchanted creature" and `source: "self"` is how a granted copy says "this
+creature"; `defending` says who took it, and `controller` whose creature dealt
+it.
+
+The other half of the same event `dealt_damage` takes, and the pair is worth
+reading together: DAMAGE_DEALT covers damage to a permanent and damage to a
+player, says which in `to`, and the two triggers are scoped to one half each and
+take opposite subjects — the victim for enrage, the dealer for this.
+
+`deals_combat_damage_to_player` is the near miss and is combat-only by
+construction, so a pinger under Curiosity draws nothing — and a pinger is what
+the card is played with, which makes the substitution a different card rather
+than a weaker one. Combat damage fires *both* events, so nothing is given up by
+writing the broader one. `life_lost` is the other near miss and reaches the loss
+without the dealer: its subject is a player, it fires for discards and taxes as
+readily as for damage, and an infect hit deals damage while costing no life at
+all.
+
 `ability_activated` · `chapter`
 
 **`ability_activated`** fires when a player activates an activated ability —
@@ -2438,8 +2520,41 @@ point of the symbol. Both colours count towards the card's colour identity, and
 Assignment is exhaustive rather than greedy, and shared by `satisfies` (can this
 be paid?) and `ManaPool.spend` (pay it). The choices interact: with one white and
 one blue, `{W/U}{W/U}` is payable only if the two pips take different symbols,
-and any "most plentiful first" rule gets that wrong. **Phyrexian** (`{W/P}`) is
-still rejected — it is a life payment, not a colour choice.
+and any "most plentiful first" rule gets that wrong.
+
+### Phyrexian costs
+
+`{W/P}` is a hybrid pip whose alternative half is **life**, not a colour and not
+a number: rule 107.4f, one white mana *or* 2 life, the caster's choice. It is a
+third field on `HybridPip` rather than a reuse of `generic`, because life is not
+mana — no source produces it, no pool holds it, and the payment solver must never
+be able to treat it as something a land could have made.
+
+Everything that merely *reads* the cost sees one white pip of mana value 1. A
+Gitaxian Probe cast for 2 life is still a blue, mana-value-1 spell, which is
+load-bearing: Mental Misstep counters spells of mana value 1, and the whole cycle
+is played in decks that could not otherwise produce the colour.
+
+**Which half is paid is a cast line, not a solver decision.** `_cast_variant`
+offers one action per number of pips bought with life — two for the printed
+cycle, three for Thundering Tanadon's `{4}{G/P}{G/P}` — labelled *(paying 2
+life)*. This is the one place the [auto-payment ADR](adr/0003-auto-mana-payment.md)
+does not apply, and deliberately: casting Gitaxian Probe off an Island and
+casting it for 2 life are two different plays, and picking one for the player
+would make the card either uncastable off no lands or strictly worse than
+printed. Rule 118.4 bounds the offer — life may be paid down to exactly 0 and no
+further — so a player at 2 is offered the life line and a player at 1 is not.
+
+`ManaCost.paying_phyrexian(n)` is the whole mechanism: it takes the bought pips
+*out* of the cost and returns the life owed, so the solver, `assign_hybrid` and
+`ManaPool.spend` all go on seeing a cost made only of mana, and `Game._cast`
+charges the life in the same `pay` call as the mana. Removing the pip rather than
+teaching the solver about life is also what keeps the rest honest: `{2}{U/P}`
+paid the life way is still a `{2}` that a tax raises and a cost reduction
+shrinks, which is precisely what an `alternative_cost` could never express.
+
+Phyrexian pips in an **activated ability's** cost are not offered as lines and so
+must be paid with mana. No shipped card prints one; see `docs/rules-coverage.md`.
 
 ### Restricted mana
 
@@ -3729,12 +3844,14 @@ price it was offered at. Not a second key meaning the same thing: a key that can
 be written in the wrong slot is a key that will be, and it would be ignored in
 silence.
 
-`flashback`/`graveyard_cost` is the only alternative cost that can carry one,
-because it is the only one modelled as a full `Cost`. `evoke`, `emerge`,
-`overload`, `bestow`, `foretell`, `mutate` and `alternative_cost` are bare mana
-strings with no node to hang a rider on. It is also refused on
-`additional_cost`, whose mana is folded into the spell's price and never priced
-on its own.
+`flashback`/`graveyard_cost` is the only alternative cost that can carry one.
+`evoke`, `emerge`, `overload`, `bestow`, `foretell` and `mutate` are bare mana
+strings with no node to hang a rider on. `alternative_cost` is a full `Cost` and
+so has the node, but the rider is refused there too: nothing prices that branch
+through `variant_reduction`, and no printed prowl or pitch cost says "costs {X}
+less to cast this way", so a key written there would load clean and be ignored.
+It is likewise refused on `additional_cost`, whose mana is folded into the
+spell's price and never priced on its own.
 
 ### …by the greatest mana value of a commander you own
 
@@ -3782,6 +3899,38 @@ All four readers — the card-level field, an ability's cost, a graveyard cast's
 cost, and the maximum above — go through one function,
 `costs.reduction_amount`, so "for each", "if" and "the greatest" cannot come to
 mean different things in different slots.
+
+### …for each **legendary** creature you control
+
+```jsonc
+// Boseiju, Who Endures — "Channel — {1}{G}, Discard this card: … This ability
+//  costs {1} less to activate for each legendary creature you control."
+"cost": {"mana": "{1}{G}", "discard_self": true,
+         "mana_reduction": {"count": {"zone": "battlefield", "controller": "you",
+                                      "types": ["Creature"],
+                                      "supertypes": ["Legendary"]}}}
+```
+
+`Legendary` is a **supertype** (205.4a) and 205.4b makes it an independent part
+of the type line, so "legendary creature" is two clauses ANDed and no arrangement
+of `types` and `subtypes` can say it. `supertypes` is a subset test and
+`subtypes` is an intersection, the same split the effect-side selector makes: a
+permanent has one supertype line a filter names part of, while "for each Vampire"
+means any of the named creature types.
+
+`supertypes` was one of the fourteen keys the reduction filter validated and
+then ignored — see [what the filter may say](#what-the-filter-may-say) above for
+the whole list and for why an ignored *narrowing* key always makes a card
+cheaper than it prints. A **misspelled** type or supertype is a load error for
+the same reason one layer down: it would count nothing and read as a discount of
+zero, which is a card priced at exactly what it says on a board where nothing
+looks wrong. `subtypes` is deliberately unchecked, here and in the selector
+language — creature and land types are open-ended and there is no closed set to
+check against.
+
+This is what the whole Kamigawa channel-legend cycle waited on: Boseiju, Otawara,
+Takenuma and Eiganjo all print the same clause on a `discard_self` ability
+activated from hand.
 
 ## A granted ability that fires on its own creature's death
 
@@ -8306,12 +8455,13 @@ remove its source from that zone. Without that it is an infinite engine — a ca
 in hand whose ability costs only mana could be activated forever without ever
 leaving.
 
-Four things satisfy it, and the last two arrived with **unearth** and
+Five things satisfy it, and the last two arrived with **unearth** and
 **forecast**:
 
 | | |
 |---|---|
 | `discard_self` on the cost | cycling |
+| `exile_self_from_hand` on the cost | Simian Spirit Guide |
 | `exile_from_graveyard` on the cost | embalm |
 | an **unconditional top-level effect** moving `self_only` out | unearth — "return this card from your graveyard to the battlefield" |
 | `activate_steps` **and** `once_each_turn` together | forecast — "activate only during your upkeep and only once each turn" |
@@ -8388,6 +8538,7 @@ them where it is sitting:
 "buyback": true                             // …and it returns to hand instead of the graveyard
 "evoke": "{2}{U}", "evoke_label": "dash"    // an alternative cost, and its printed name
 "alternative_cost": { "mana": "{R}", "condition": {...} }  // spectacle: only sometimes offered
+"alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
 "pay_generic_with": "tap_creatures"         // convoke; "exile_from_graveyard" is delve
@@ -8441,6 +8592,65 @@ means exactly `graveyard_cost`. A card giving both is refused rather than
 resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
+
+#### An *alternative* cost that is not mana
+
+```jsonc
+// Force of Will -- "You may pay 1 life and exile a blue card from your hand
+//  rather than pay this spell's mana cost."  No mana, and no condition.
+"alternative_cost": { "pay_life": 1, "exile_from_hand": { "colors": ["U"] } }
+
+// Daze -- "You may return an Island you control to its owner's hand rather
+//  than pay this spell's mana cost."
+"alternative_cost": { "return_to_hand": { "controller": "you",
+                                          "subtypes": ["Island"] } }
+
+// Spectacle, unchanged: a cheaper *mana* price behind a gate.
+"alternative_cost": { "mana": "{R}", "condition": { ... } }
+```
+
+`alternative_cost` is a full `Cost` plus an optional `condition` — the second
+alternative cost modelled that way, after `graveyard_cost`. It was a bare mana
+string until the pitch spells arrived, and there was simply nowhere on the card
+for a payment that is not mana to live: Force of Will's price is a life and a
+card, and Pyrokinesis's has no mana component at all.
+
+The mana half **replaces** the printed cost and everything else on the node is
+paid after it — 601.2g, and the same split `graveyard_cost` uses, with
+`legality._cast_variant` pricing the mana and `game._cast` charging the rest.
+Legality prices the non-mana half too, through `can_pay`: a Force of Will held
+beside nothing blue is not castable this way at all, and offering the line and
+then failing the payment would show a price the player can never pay.
+
+Two guards, and the second is the one that moved:
+
+- A node that charges **nothing** is refused. It replaces the printed cost, so an
+  empty one is a free spell.
+- A node that charges **only mana** still needs a `condition`, because that is
+  exactly `evoke` and a card spelling it this way would be offered twice at two
+  prices with nothing to choose between them. A node that charges something else
+  is exempt: Force of Will's line is unconditional and printed, and what it takes
+  instead of mana is the reason it is a fair card.
+
+`mana_reduction` is refused here. "Costs {X} less to cast **this way**" is
+`graveyard_cost`'s rider and only `costs.variant_reduction` reads it, off the
+flashback branch alone — written here it would load clean and never apply.
+
+So is every cost that charges the **source permanent** — `tap`, `untap`,
+`loyalty`, `remove_counters`, `exile_self`, `exile_self_from_hand`,
+`discard_self`, `pay_life_x` and `x_value` (`loader.NOT_A_CAST_TIME_COST`). The
+source of a cast-time cost is the spell itself, on its way from hand to stack:
+there is no permanent to tap, and the card a self-cost would take is the one
+being cast. `costs.can_pay` fails closed on all of them, so a card written that
+way would load clean and never once be offered the line — silently inert, which
+is the failure mode `exile_self` on a hand ability used to produce and the reason
+`exile_self_from_hand` exists at all.
+
+The near substitutes are each a different card. `{"mana": "{0}", "condition":
+{"exists": {…Island…}}}` makes Daze free whenever any Island is on the
+battlefield and never bounces one, which is the whole cost and the whole
+drawback; `additional_cost` charges the return *on top of* {1}{U} rather than
+instead of it, and makes the printed hard-cast illegal with no Island out.
 
 #### An additional cost that is not mana
 

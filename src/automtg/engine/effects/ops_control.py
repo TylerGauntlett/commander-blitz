@@ -7,7 +7,14 @@ from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from ..carddef import Cost
-from ..costs import can_pay, pay
+
+# `can_pay` and `pay` are imported inside the two ops that charge a cost rather
+# than here, the way `combat`, `game`, `legality` and `replacements` already
+# import them. `costs` imports `effects.context`, so a module-level import here
+# closes a cycle: `costs` could then only ever be imported *after* `effects`, and
+# anything that reached for it first -- the card loader, wanting the reduction
+# filter's vocabulary from the function that reads it -- got a partially
+# initialised module instead.
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
@@ -57,6 +64,8 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     A cost the player cannot afford is not offered at all rather than offered
     and then failing -- 601.2 in spirit, and it keeps the yes/no honest.
     """
+    from ..costs import can_pay, pay
+
     players = select_players(ctx, spec.get("player", "you"))
     chooser = players[0] if players else ctx.controller
     prompt = str(spec.get("prompt") or ctx.source_name or "Optional effect")
@@ -447,6 +456,8 @@ def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
     ``as`` names the binding the total lands in; the card reads it back with
     ``{"binding": …}``, the way clash reads `clash_won`.
     """
+    from ..costs import can_pay, pay
+
     unit = cost_from_spec(spec.get("pay") or {"mana": "{1}"})
     prompt = str(spec.get("prompt") or "Pay one more into the pool?")
     total = 0

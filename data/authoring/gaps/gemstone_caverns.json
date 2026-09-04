@@ -1,0 +1,33 @@
+{
+  "card_id": "gemstone_caverns",
+  "name": "Gemstone Caverns",
+  "oracle_text": "If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.\n{T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.",
+  "blocked_sentences": [
+    "If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.",
+    "{T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color."
+  ],
+  "needs": [
+    {
+      "capability": "opening_hand_ability",
+      "kind": "engine",
+      "what": "an ability that functions from the opening hand during game setup (103.6): after mulligans and before turn 1, each player who is not the starting player must be offered a yes/no decision for every card in hand carrying one, and answering yes must move that card from hand to the battlefield, apply its enters rider (a luck counter), and then run the follow-up effect (exile a card from your hand). It needs three new pieces -- a setup window that walks opening hands, a card-level spelling for the ability (a `begin_the_game` block, or an ability whose active_zones include `hand` with a game-start evaluation site), and a condition that can ask \"you are not the starting player\"",
+      "why_existing_wont_do": "`_opening_sequence` (src/automtg/engine/game.py:1293) draws STARTING_HAND, runs London mulligans, and goes straight to turn 1; it never looks at what is in anyone's opening hand, so there is no window in which a card in hand can act at all. `active_zones` defaults to `(Zone.BATTLEFIELD,)` (src/automtg/cards/loader.py:2052) and the non-battlefield zones it is used for are graveyard/exile statics and activated abilities offered by `legality._activate_zones` -- both of which run once the game is already under way, so a HAND-zone ability would have no evaluator during setup. No entry in `trigger_events` is a game-start event: the earliest is `upkeep`, which is turn 1's upkeep and therefore after the starting player has already begun, and a trigger uses the stack rather than moving its own source out of hand. No entry in `condition_keys` asks who is on the play: `is_active_player` and `is_your_turn` are questions about the current turn, and both read true on the non-starting player's own turn, so neither can gate on \"you're not the starting player\". `put_onto_battlefield` can move a card, but it is a resolution op and there is nothing at setup to resolve it."
+    },
+    {
+      "capability": "conditional_mana_ability",
+      "kind": "engine",
+      "what": "a mana ability whose production is switched by a condition on its source at activation time -- \"Add {C}; if this has a luck counter on it, instead add one mana of any color\". `mana_options_of` and the payment solver must be able to evaluate a per-branch condition against live game state (here `counters_on` for a luck counter on the source) and offer only the branch that is currently true, in both the automatic tap path and the manual-mana path",
+      "why_existing_wont_do": "`_split_mana_rider` (src/automtg/cards/loader.py:3385) allows only leading `add_mana`/`choose_mode` effects plus a rider drawn from MANA_RIDER_OPS = {add_counters, add_poison, damage, gain_life, lose_life, remove_counters}; `if` is not in that set, so the printed conditional is a load error, not a card. `_mana_options` freezes production into a fixed tuple of 6-tuples at load time and `_mana_amount` may only scale one `add_mana`'s symbols, so no state can change *which* symbol is produced -- only how many. The three state-dependent forms that do exist (`mana_reflects`, `mana_identity`, `mana_chosen_color`) are each hardcoded questions about the board, the command zone or the permanent's chosen colour, and each is required to be the ability's only effect; none can be a condition on counters and none can pick between two branches. `choose_mode` is not a substitute and would be an approximation, because a mode is a free choice at activation: the land would offer any colour with no luck counter on it. Splitting the line into two mana abilities gated by `activation_condition` is silently wrong rather than merely ugly: `costs._sources_of` (src/automtg/engine/costs.py:225) collects solver mana sources on `solver_taps` plus tapped/summoning-sickness/abilities_locked alone and never consults `activation_condition`, so the payment solver would happily tap the counter-less Caverns for any colour; `activation_condition` is only read on the offered-action path in `legality` (src/automtg/engine/legality.py:1589). It would also leave one printed line claimed by two abilities, which the residual gate reads as text nobody owns."
+    }
+  ],
+  "closest_existing": [
+    "add_mana",
+    "choose_mode",
+    "counters_on",
+    "activation_condition",
+    "active_zones",
+    "put_onto_battlefield",
+    "is_active_player"
+  ],
+  "confidence": "high"
+}

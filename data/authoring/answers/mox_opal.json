@@ -1,0 +1,57 @@
+{
+  "card": {
+    "id": "mox_opal",
+    "name": "Mox Opal",
+    "oracle_text": "Metalcraft — {T}: Add one mana of any color. Activate only if you control three or more artifacts.",
+    "mana_cost": "{0}",
+    "types": [
+      "Artifact"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Metalcraft — {T}: Add one mana of any color. Activate only if you control three or more artifacts.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "right": {
+            "const": 3
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{W}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}"}]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
