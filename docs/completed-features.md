@@ -1,3 +1,47 @@
+## "Your life total can't change" -- a two-way lock on a life total -- 118.5
+
+### Overview
+
+Teferi's Protection: *"Until your next turn, **your life total can't change**
+and you gain protection from everything."*
+
+The gap record named the closest thing and its three misses, and all three held.
+`replace_life_loss` is a `static_effect`, so only a permanent can carry one and
+an Instant's `spell_effects` cannot install it; it multiplies the magnitude of a
+loss rather than forbidding a change, and a multiplier of zero would still be a
+downward-only rewrite; and it is wired into `primitives.lose_life` and the loss
+half of `primitives.damage_player` only, so `gain_life` moves the total straight
+past it. The `prevent_damage` op is player-scoped and stops damage alone.
+
+### Four doors, because there is no fifth place and no first one
+
+`gain_life`, `lose_life`, the loss half of `damage_player`, and `costs.can_pay`.
+
+The third is the one a single choke point would have implied and does not exist:
+`damage_player` subtracts life itself rather than calling `lose_life`, and that
+is deliberate -- only the loss is multiplied, never the damage, so a lifelinking
+doubled hit gains what was dealt. A lock in two of the three is a life total that
+holds still until somebody attacks.
+
+The fourth is not a call at all. 118.4 makes paying life a loss of life, so a
+lock makes the cost unpayable; refusing it in `can_pay` means the action is never
+offered, which is the difference between a War Room that cannot be activated and
+one that draws for nothing.
+
+### No event for a change that did not happen
+
+`LIFE_GAINED` and `LIFE_LOST` are what Marauding Blight-Priest and Bloodthirsty
+Conqueror listen for. A lock that moved no life but fired the event would pay out
+for a gain nobody made -- the same class of silent-wrong as the change itself.
+
+### What it deliberately leaves alone
+
+The damage. `DAMAGE_DEALT` still fires and commander damage is still tallied;
+only the life total holds still. Protection is the effect that stops damage, and
+Teferi's Protection prints both sentences precisely because they are different
+things. Implementing the lock as a prevention would have been one sentence doing
+both jobs and the other one doing nothing.
+
 ## Protection over a **player** -- 702.16b/d/i
 
 ### Overview

@@ -180,6 +180,12 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
         for p in state.player_protections
         if not (p.duration == "until_your_next_turn" and p.player == pid)
     ]
+    # And the same hole once more, for the other half of the same card.
+    state.life_locks = [
+        lock
+        for lock in state.life_locks
+        if not (lock.duration == "until_your_next_turn" and lock.player == pid)
+    ]
     # And the same hole in goad's mark. It is *more* than a stale flag here:
     # a goad nobody can clear compels every combat for the rest of the game, and
     # its target restriction would keep pointing at an empty seat -- which, with

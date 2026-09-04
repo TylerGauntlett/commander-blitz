@@ -20,6 +20,7 @@ from .structs import (
     DamageShield,
     DelayedTrigger,
     EnteredPermanent,
+    LifeLock,
     PlayerProtection,
     SacrificeRestriction,
     StackItem,
@@ -299,6 +300,15 @@ class GameState:
     #: the object side already hands them. Normally empty, which is why both
     #: readers short-circuit on it before doing any work.
     player_protections: list[PlayerProtection] = field(default_factory=list)
+    #: "Until your next turn, your life total can't change" -- see
+    #: :class:`structs.LifeLock`.
+    #:
+    #: The timed table beside `player_protections`, installed by the same
+    #: Instant and cleared in the same untap step. A list rather than a
+    #: per-player flag because two locks over one seat are two effects, and the
+    #: three life-changing sites short-circuit on the empty list, which is what
+    #: it is in every game that plays none of these cards.
+    life_locks: list[LifeLock] = field(default_factory=list)
     #: "You can't sacrifice those creatures this turn" -- see
     #: :class:`structs.SacrificeRestriction`.
     #:

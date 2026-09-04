@@ -22,6 +22,7 @@ from .primitives import (
     clear_block_prohibitions,
     clear_damage_shields,
     clear_goad,
+    clear_life_locks,
     clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
@@ -295,6 +296,8 @@ def _untap_step(state: GameState) -> None:
     # protection has already ended. Both cards say "until your next turn" about
     # both halves, so the two wearings-off belong in the same step.
     clear_player_protections(state, "until_your_next_turn", player.pid)
+    # The other half of the same printed sentence, on the same clock.
+    clear_life_locks(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -605,6 +608,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # it keeps the evasion until this line runs.
     clear_unblockables(state, "this_turn")
     clear_player_protections(state, "this_turn")
+    clear_life_locks(state, "this_turn")
     # "Prevent all damage that would be dealt to you **this turn**." (Selfless
     # Squire, Fog.) Beside the three above and owned by no permanent for the same
     # reason -- Fog is an instant and leaves nothing behind, and the Squire's

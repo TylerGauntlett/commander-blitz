@@ -61,6 +61,7 @@ from automtg.engine.structs import (
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
+    LIFE_LOCK_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
@@ -4991,6 +4992,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: unknown protection duration {duration!r} "
                     f"(implemented: {sorted(PLAYER_PROTECTION_DURATIONS)})"
                 )
+    if op == "lock_life_total":
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        duration = str(effect.get("duration", "until_your_next_turn"))
+        if duration not in LIFE_LOCK_DURATIONS:
+            # A misspelled duration would fall back to the default and last a
+            # turn longer than the card says, which is the wrong direction for
+            # a prohibition: it is a strictly better card, silently.
+            raise DslError(
+                f"{where}: unknown lock_life_total duration {duration!r} "
+                f"(implemented: {sorted(LIFE_LOCK_DURATIONS)})"
+            )
+        if "amount" in effect:
+            # "Your life total can't change" has no magnitude. A number here
+            # would read as a shield of that size and be ignored entirely.
+            raise DslError(
+                f"{where}: lock_life_total takes no 'amount' -- it forbids the "
+                f"change rather than sizing it"
+            )
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the

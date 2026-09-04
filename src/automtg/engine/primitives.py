@@ -135,8 +135,34 @@ def become_monarch(state: GameState, pid: int, source: int | None = None) -> boo
 # ----------------------------------------------------------------------
 
 
+def life_locked(state: GameState, pid: int) -> bool:
+    """Is ``pid``'s life total unable to change right now?  Usually false.
+
+    "Until your next turn, your life total can't change" (Teferi's Protection).
+    Read by the three places a life total moves -- `gain_life`, `lose_life` and
+    the loss half of `damage_player` -- and by `costs.can_pay`, because 118.4
+    makes paying life a loss of life and a loss that cannot happen is a cost
+    that cannot be paid.
+
+    Three readers and not one, because there is no single choke point: the
+    engine subtracts life in `damage_player` directly rather than routing damage
+    through `lose_life`, on purpose (only the loss is multiplied, never the
+    damage). A lock installed in two of the three would be a life total that
+    holds still until somebody attacks.
+    """
+    if not state.life_locks:
+        return False
+    return any(lock.player == pid for lock in state.life_locks)
+
+
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
     if amount <= 0:
+        return 0
+    # "Your life total can't change" (118.5). Nothing gained, and **no event**:
+    # `LIFE_GAINED` is what Marauding Blight-Priest and its kin trigger off, and
+    # a gain that fired the event while moving no life would pay out for a gain
+    # that did not happen.
+    if life_locked(state, pid):
         return 0
     state.players[pid].life += amount
     fire(state, EventType.LIFE_GAINED, player=pid, source=source, amount=amount)
@@ -157,6 +183,11 @@ def lose_life(state: GameState, pid: int, amount: int, source: int | None = None
     Bloodletter of Aclazotz says "would lose life" without naming a source.
     """
     if amount <= 0:
+        return 0
+    # The lock is checked before the multiplier, not after: a doubled loss of
+    # nothing is still nothing, and reading `life_loss_multiplier` first would
+    # be a walk of the battlefield for an answer that cannot matter.
+    if life_locked(state, pid):
         return 0
     amount *= life_loss_multiplier(state, pid)
     state.players[pid].life -= amount
@@ -260,7 +291,7 @@ def damage_player(
         # it is still damage, and only where the number lands changes -- and
         # getting it wrong would make a doubled hit from a lifelinking commander
         # gain double life and kill on half the commander damage.
-        lost = amount * life_loss_multiplier(state, pid)
+        lost = 0 if life_locked(state, pid) else amount * life_loss_multiplier(state, pid)
         state.players[pid].life -= lost
         # "Whenever an opponent loses life… (Damage causes loss of life.)"
         # Bloodthirsty Conqueror. Damage really is a loss of life, so it fires
@@ -269,7 +300,14 @@ def damage_player(
         #
         # Inside the else on purpose: infect damage becomes poison counters and
         # no life is lost at all, so an infect hit must not fire this.
-        fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
+        # Not fired when the life total is locked: the damage was dealt and
+        # `DAMAGE_DEALT` below still says so, but no life was lost, and
+        # Bloodthirsty Conqueror paying out for a loss that did not happen is
+        # the failure this branch exists to avoid. The lock stops the *change*,
+        # not the damage -- protection is the effect that stops the damage, and
+        # Teferi's Protection prints both sentences because they differ.
+        if lost:
+            fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
     fire(
         state,
         EventType.DAMAGE_DEALT,
@@ -1394,6 +1432,37 @@ def grant_player_protection(
     if added:
         state.bump_chars()
     return added
+
+
+def lock_life_total(
+    state: GameState,
+    pid: int,
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Freeze ``pid``'s life total for ``duration``.  One rules-relevant thing.
+
+    Deduplicated on the whole entry the way `grant_player_protection` is: two
+    Teferi's Protections in a turn are two identical records and the second
+    changes nothing observable.
+    """
+    from .structs import LifeLock
+
+    entry = LifeLock(player=pid, duration=duration, source=source)
+    if entry in state.life_locks:
+        return False
+    state.life_locks.append(entry)
+    return True
+
+
+def clear_life_locks(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the life locks of one duration -- their wearing-off.
+
+    The two hooks and two clocks every timed table beside it uses, and it is
+    swept in the same breath as `clear_player_protections` because one card
+    installs both and says "until your next turn" about both halves.
+    """
+    state.life_locks = _expired(state.life_locks, duration, player)
 
 
 def clear_player_protections(

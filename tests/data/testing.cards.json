@@ -1415,7 +1415,29 @@
         }
       ]
     },
+            {
+      "id": "t_life_lock",
+      "name": "Test Life Lock",
+      "oracle_text": "Until your next turn, your life total can't change.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
         {
+          "op": "lock_life_total",
+          "player": "you",
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+{
       "id": "t_player_protection",
       "name": "Test Player Protection",
       "oracle_text": "Until your next turn, you gain protection from everything.",

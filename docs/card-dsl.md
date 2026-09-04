@@ -3335,6 +3335,41 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
 
+## "Your life total can't change"
+
+```jsonc
+{"op": "lock_life_total", "player": "you", "duration": "until_your_next_turn"}
+```
+
+Teferi's Protection's first clause. A prohibition on the **change**, in both
+directions, which is what separates it from everything that came close:
+
+| near miss | why it is not this |
+|---|---|
+| `replace_life_loss` | a `static_effect`, so an Instant cannot install one; it *multiplies* a loss rather than forbidding a change, and a multiplier of 0 is still a downward-only rewrite; and it is wired into `lose_life` and the loss half of `damage_player` only, so `gain_life` walks past it |
+| `prevent_damage` (op) | player-scoped, but stops only damage — every ordinary loss and all gain move the total freely |
+
+It installs a `structs.LifeLock` and modifies nothing else, the way
+`prevent_damage` installs a shield: it resolves before there is anything to
+change.
+
+**Four doors, and there is no single choke point.** `gain_life`, `lose_life`, the
+loss half of `damage_player` — which subtracts directly rather than calling
+`lose_life`, on purpose, since only the loss is multiplied and never the damage —
+and `costs.can_pay`, because 118.4 makes paying life a loss of life and a loss
+that cannot happen is a cost that cannot be paid. A lock wired into three of the
+four is a life total that holds still until somebody attacks.
+
+**No event is fired for a change that did not happen.** `LIFE_GAINED` and
+`LIFE_LOST` are what Marauding Blight-Priest and Bloodthirsty Conqueror trigger
+off, and firing one while moving no life would pay out for a gain nobody made.
+
+Two things it deliberately does not do. It does not stop the **damage** —
+`DAMAGE_DEALT` still fires and commander damage is still tallied; only the life
+total holds still, and protection is the sentence that stops damage, which is why
+Teferi's Protection prints both. And it does not make paying life *free*: the
+cost is refused, not zeroed.
+
 ## Protection for a **player**, from everything, until your next turn
 
 ```jsonc
