@@ -7899,6 +7899,10 @@
   "the_lady_of_the_mountain": {
     "zone": "battlefield"
   },
+  "the_one_ring": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_terror_of_serpent_s_pass": {
     "zone": "battlefield"
   },
