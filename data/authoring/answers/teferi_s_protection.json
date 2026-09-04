@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "teferi_s_protection",
+    "name": "Teferi's Protection",
+    "oracle_text": "Until your next turn, your life total can't change and you gain protection from everything. All permanents you control phase out. (While they're phased out, they're treated as though they don't exist. They phase in before you untap during your untap step.)\nExile Teferi's Protection.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "exiles_itself": true,
+    "spell_effects": [
+      {
+        "op": "lock_life_total",
+        "player": "you",
+        "duration": "until_your_next_turn"
+      },
+      {
+        "op": "grant_protection",
+        "player": "you",
+        "from_everything": true,
+        "duration": "until_your_next_turn"
+      },
+      {
+        "op": "phase_out",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "exile",
+    "battlefield_count": 0
+  }
+}

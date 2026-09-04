@@ -655,6 +655,10 @@
   "bitterbow_sharpshooters": {
     "zone": "battlefield"
   },
+  "black_market_connections": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "black_widow_natasha_romanoff": {
     "zone": "battlefield"
   },
@@ -5306,6 +5310,10 @@
   "phyrexian_hulk": {
     "zone": "battlefield"
   },
+  "phyrexian_tower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "phyrexian_walker": {
     "zone": "battlefield"
   },
@@ -7330,6 +7338,10 @@
   "tajuru_snarecaster": {
     "zone": "battlefield"
   },
+  "takenuma_abandoned_mire": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "talarian_hook_spider": {
     "zone": "battlefield"
   },
@@ -7412,6 +7424,10 @@
   },
   "teferi_s_isle": {
     "zone": "battlefield"
+  },
+  "teferi_s_protection": {
+    "battlefield_count": 0,
+    "zone": "exile"
   },
   "tempest_drake": {
     "zone": "battlefield"

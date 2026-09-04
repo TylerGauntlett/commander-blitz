@@ -1415,7 +1415,77 @@
         }
       ]
     },
-    {
+                {
+      "id": "t_exiles_itself",
+      "name": "Test Exiles Itself",
+      "oracle_text": "You gain 2 life.\nExile Test Exiles Itself.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+{
+      "id": "t_life_lock",
+      "name": "Test Life Lock",
+      "oracle_text": "Until your next turn, your life total can't change.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "lock_life_total",
+          "player": "you",
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+{
+      "id": "t_player_protection",
+      "name": "Test Player Protection",
+      "oracle_text": "Until your next turn, you gain protection from everything.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "grant_protection",
+          "player": "you",
+          "from_everything": true,
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+{
       "id": "t_bolt",
       "name": "Test Bolt",
       "oracle_text": "Test Bolt deals 3 damage to any target.",
@@ -8861,7 +8931,85 @@
         }
       ]
     },
+        {
+      "id": "t_legend_scaling_ability",
+      "name": "Test Legend Scaling Ability",
+      "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each legendary creature you control.",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each legendary creature you control.",
+          "cost": {
+            "mana": "{5}",
+            "tap": true,
+            "mana_reduction": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "supertypes": [
+                  "Legendary"
+                ]
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
     {
+      "id": "t_flying_scaling_ability",
+      "name": "Test Flying Scaling Ability",
+      "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each creature you control with flying.",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each creature you control with flying.",
+          "cost": {
+            "mana": "{5}",
+            "tap": true,
+            "mana_reduction": {
+              "count": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "keywords": [
+                  "flying"
+                ]
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+{
       "id": "t_scaling_ability",
       "name": "Test Scaling Ability",
       "oracle_text": "{5}, {T}: Draw a card. This ability costs {1} less to activate for each Vampire you control.",
@@ -9294,7 +9442,46 @@
         }
       ]
     },
-    {
+        {
+      "id": "t_precombat",
+      "name": "Test Precombat",
+      "oracle_text": "At the beginning of your first main phase, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, you gain 1 life.",
+          "trigger": {
+            "event": "precombat_main",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+{
       "id": "t_postcombat",
       "name": "Test Postcombat",
       "oracle_text": "At the beginning of each of your postcombat main phases, you gain 1 life.",
@@ -11816,7 +12003,64 @@
         }
       ]
     },
-    {
+        {
+      "id": "t_choose_one_or_more",
+      "name": "Test Choose One Or More",
+      "oracle_text": "Choose one or more. You gain 3 life. Draw a card. You lose 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "or_more": true,
+          "modes": [
+            {
+              "label": "You gain 3 life.",
+              "effects": [
+                {
+                  "op": "gain_life",
+                  "amount": {
+                    "const": 3
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Draw a card.",
+              "effects": [
+                {
+                  "op": "draw",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            },
+            {
+              "label": "You lose 1 life.",
+              "effects": [
+                {
+                  "op": "lose_life",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+{
       "id": "t_choose_up_to_two",
       "name": "Test Choose Up To Two",
       "oracle_text": "Choose up to two. You gain 3 life. Draw a card. You lose 1 life.",

@@ -1,3 +1,203 @@
+## "Your life total can't change" -- a two-way lock on a life total -- 118.5
+
+### Overview
+
+Teferi's Protection: *"Until your next turn, **your life total can't change**
+and you gain protection from everything."*
+
+The gap record named the closest thing and its three misses, and all three held.
+`replace_life_loss` is a `static_effect`, so only a permanent can carry one and
+an Instant's `spell_effects` cannot install it; it multiplies the magnitude of a
+loss rather than forbidding a change, and a multiplier of zero would still be a
+downward-only rewrite; and it is wired into `primitives.lose_life` and the loss
+half of `primitives.damage_player` only, so `gain_life` moves the total straight
+past it. The `prevent_damage` op is player-scoped and stops damage alone.
+
+### Four doors, because there is no fifth place and no first one
+
+`gain_life`, `lose_life`, the loss half of `damage_player`, and `costs.can_pay`.
+
+The third is the one a single choke point would have implied and does not exist:
+`damage_player` subtracts life itself rather than calling `lose_life`, and that
+is deliberate -- only the loss is multiplied, never the damage, so a lifelinking
+doubled hit gains what was dealt. A lock in two of the three is a life total that
+holds still until somebody attacks.
+
+The fourth is not a call at all. 118.4 makes paying life a loss of life, so a
+lock makes the cost unpayable; refusing it in `can_pay` means the action is never
+offered, which is the difference between a War Room that cannot be activated and
+one that draws for nothing.
+
+### No event for a change that did not happen
+
+`LIFE_GAINED` and `LIFE_LOST` are what Marauding Blight-Priest and Bloodthirsty
+Conqueror listen for. A lock that moved no life but fired the event would pay out
+for a gain nobody made -- the same class of silent-wrong as the change itself.
+
+### What it deliberately leaves alone
+
+The damage. `DAMAGE_DEALT` still fires and commander damage is still tallied;
+only the life total holds still. Protection is the effect that stops damage, and
+Teferi's Protection prints both sentences precisely because they are different
+things. Implementing the lock as a prevention would have been one sentence doing
+both jobs and the other one doing nothing.
+
+## Protection over a **player** -- 702.16b/d/i
+
+### Overview
+
+Teferi's Protection: *"Until your next turn, your life total can't change and
+**you gain protection from everything**. All permanents you control phase out."*
+The One Ring: *"…**you gain protection from everything until your next turn**."*
+
+The gap record named three limits and all three were real. `grant_protection`
+resolved its recipients through `choose_objects` and skipped every oid that was
+not `on_battlefield`, so a seat could never receive it. Its qualities were built
+only from `from_colors` (each entry validated against `KNOWN_COLORS`),
+`from_types` and `from_subtypes`, none of which can express "everything". And it
+wrote an `until_eot` `TempEffect`, which the cleanup step ends this turn -- so
+the "until your next turn" clock did not exist for it. `protection_from` was
+object-keyed throughout, so there was no player-side reader either.
+
+### Three decisions
+
+**"Everything" is a quality, not a flag.** It goes into the same flat set of
+strings every other protection quality lives in, as `PROTECTION_EVERYTHING`.
+Four rules read that set; a boolean beside it would be a second question asked
+in four places, which is how one of them comes to be forgotten. The comparison
+short-circuits on it before the source is read at all -- which is the whole
+content of 702.16i, since no set built from types, subtypes and colours can hold
+a colourless source.
+
+**A table, not a player field.** `GameState.player_protections`, beside
+`damage_shields`, for that record's reason: Teferi's Protection is an Instant
+and leaves nothing behind to own the effect. One entry per quality, so the
+readers get the same flat set the object side already hands them.
+
+**Two readers, and knowing it is two.** Targeting and damage. A player cannot be
+blocked; the "can't be enchanted" half comes through targeting, because an Aura
+that enchants a player targets it as it is cast. Writing four readers to match
+the object side would have been two of them dead.
+
+### The half that a hexproof shape gets wrong
+
+Protection stops **anyone**, its controller included: your own Bolt cannot be
+pointed at you. So the check in `_player_allowed` sits *above* the
+"you"/"opponent" clause rather than beside it -- the same line `can_be_targeted`
+already draws, and the test pins it directly.
+
+## "At the beginning of your first main phase" — the precombat main event — 505.1b
+
+### Overview
+
+Black Market Connections: *"**At the beginning of your first main phase**,
+choose one or more — …"*
+
+Five phase boundaries were in `TRIGGER_EVENTS` — `upkeep`, `draw_step`,
+`begin_combat`, `postcombat_main`, `end_step` — and the precombat main was not
+one of them. `Step.PRECOMBAT_MAIN` already had a branch in `turn.begin_step` for
+714.2d's Saga lore counters and emitted no event beside it.
+
+### Why not `upkeep`
+
+It is a step too early, and on the wrong side of the draw. A Black Market
+Connections hung on the upkeep hands its controller the turn's Treasure and
+charges the life *before* they have seen the card they drew, which changes which
+mode a player takes. The test pins the ordering rather than only the firing, for
+that reason.
+
+### Why "first" needs no ordinal
+
+505.1b makes every main phase after a combat a **postcombat** main, inserted
+ones included — the same rule that makes `postcombat_main` fire per phase and
+print the word "each". So PRECOMBAT_MAIN can happen at most once in a turn and
+the printed word "first" is already exact. No turn flag, no counter.
+
+### Frontend: nothing, deliberately
+
+A new `EventType` is the change that normally forces `describeEvent` and
+`beatsFor` work. Not this one: its four siblings have no case in either, because
+a log line saying "a phase began" adds nothing to a log that already shows the
+step. Checked rather than skipped.
+
+## "Choose one or more --" — the fifth modal count — 700.2
+
+### Overview
+
+Black Market Connections: *"At the beginning of your first main phase, **choose
+one or more** — • Sell Contraband — Create a Treasure token, and you lose 1
+life. • Sell Rare Pets — Create a 3/2 black Demon creature token with flying,
+and you lose 2 life. • Sell Your Soul — Draw a card and you lose 2 life."*
+
+`modal_bounds` knew four clauses and none of them is this sentence:
+
+| written | says | why not |
+|---|---|---|
+| `count: 1` | choose exactly one | deletes the words "or more" |
+| `all_if` | choose every mode | entwine — a floor, and it is paid for |
+| `up_to: true` | choose up to N, **none allowed** | every mode here costs life, so "none" is a better card |
+| `up_to_if` | a conditional ceiling, floor of one | needs a `condition`, and this sentence has none |
+
+`or_more: true` keeps `count` as the floor and opens the ceiling to every mode.
+
+### Why the floor is the load-bearing half
+
+Each of Black Market Connections' modes costs life. Written with `up_to`, the
+trigger would be free to choose nothing every turn, which is a strictly better
+enchantment than the one printed and would look entirely normal on screen. This
+is the same asymmetry the `up_to` section already records, pointing the other
+way: a missing floor and a missing ceiling are both silent, and each favours a
+different card.
+
+### The guards
+
+`or_more` and `up_to` on one op are refused: one keeps a floor, the other
+removes it, and `modal_bounds` would silently let `up_to` win. A `count` that
+already reaches every mode is refused too — "choose two or more" of two modes is
+"choose both", written the long way, and it would load as a question with one
+answer.
+
+## A cost reduction's filter reads every key it accepts — 601.2f
+
+### Overview
+
+Takenuma, Abandoned Mire: *"Channel — {3}{B}, Discard this card: Mill three
+cards, then return a creature or planeswalker card from your graveyard to your
+hand. **This ability costs {1} less to activate for each legendary creature you
+control.**"*
+
+`loader._validate_cost_reduction` checked a reduction's filter against the whole
+of `STATIC_FILTER_KEYS`; `costs._reduction_matches` read six of those keys and
+dropped the other fourteen without a word. So Takenuma's `supertypes` validated
+at load time and vanished at pricing time, and the ability counted every creature
+its controller had.
+
+### Why it had to be the filter and not the card
+
+There was no way to write the sentence around it. "Legendary" is not a subtype,
+so `subtypes` cannot approximate it; a `condition` is a gate rather than a count,
+and gating the whole reduction on "you control a legend" would have made one
+legend worth the same as four. Splitting the ability in two is the shape the
+Crown of Gondor record already refused: nothing switches the cheap copy off.
+
+### The failure direction is what makes it worth a section
+
+An ignored **narrowing** key always widens the filter, so the ability is cheaper
+than it prints. Nothing fails: not the loader, not a gate, not a game. The card
+simply costs less than the card. That is the same class of silent-wrong the
+authoring pipeline's six gates exist to catch, arriving from underneath them.
+
+### What is deliberately still absent
+
+`attached`, `paired` and `paired_with_source` are refused at load time rather
+than implemented. Each names a relation to one particular permanent — the thing
+the source is attached to, its soulbond partner — and a reduction counts a board;
+in a `count` they ask how many permanents are *the* permanent. Refusing is the
+half of the fix that stops the silent drop returning under a different key.
+
+`tests/unit/test_reduction_filter_keys.py` is the witness, and it pins the
+regression directly: a lone non-legendary creature must take nothing off.
+
 ## `gift` — a cast-time promise that costs nothing and names a seat — 702.164a
 
 ### Overview

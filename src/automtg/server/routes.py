@@ -302,6 +302,16 @@ def _wanted_ids(session: GameSession, registry) -> set[str]:
     The seats' decks, plus every token they can make -- a token is never in a
     deck list but is very much on the board, and missing one is a blank plate
     the first time somebody attacks.
+
+    And every **other face** of those cards, for exactly the same reason. A deck
+    list names `henrika_domnathi_henrika_infernal_seer`; the moment that
+    creature transforms, `state.card_of` starts answering with the back face and
+    `card_view` sends `henrika_infernal_seer` as the `card_id`. That id was not
+    in this map, so `cardArt.artUrl` read `undefined`, decided the card has no
+    printing, and drew the hatched "no art" plate -- on a card whose art is
+    sitting in `data/art` under exactly that name. The same applies to
+    `second_face`: an adventure or a modal DFC's other half is serialized under
+    its own id while it is the face being shown.
     """
     ids: set[str] = set()
     for seat in session.seats:
@@ -309,7 +319,32 @@ def _wanted_ids(session: GameSession, registry) -> set[str]:
     for card in registry:
         if card.is_token:
             ids.add(card.id)
-    return ids
+    return _with_other_faces(ids, registry)
+
+
+def _with_other_faces(ids: set[str], registry) -> set[str]:
+    """``ids`` plus every face reachable from them.
+
+    Transitive and loop-guarded rather than one hop: nothing prints a chain
+    today, and a map that quietly stopped one face short is the bug this
+    function exists to fix.
+    """
+    out = set(ids)
+    pending = list(ids)
+    while pending:
+        card_id = pending.pop()
+        # `registry.get` raises on a miss, and a deck naming an unknown card is
+        # already refused at load time -- so the membership test is a guard
+        # against a *generated* pool that has moved under us, not against a
+        # typo, and it costs one dict lookup.
+        if card_id not in registry:  # pragma: no cover
+            continue
+        card = registry.get(card_id)
+        for face in (card.back_face, card.second_face):
+            if face and face not in out:
+                out.add(face)
+                pending.append(face)
+    return out
 
 
 # ----------------------------------------------------------------------

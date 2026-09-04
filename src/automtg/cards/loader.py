@@ -61,6 +61,8 @@ from automtg.engine.structs import (
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
+    LIFE_LOCK_DURATIONS,
+    PLAYER_PROTECTION_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
@@ -988,6 +990,29 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: 'rebound' only means anything on an instant or sorcery -- "
             f"a permanent spell enters the battlefield and never reaches the rider"
         )
+    if model.exiles_itself and set(model.types) & {
+        "Creature",
+        "Land",
+        "Artifact",
+        "Enchantment",
+    }:
+        # Rebound's guard, for rebound's reason: the rider replaces the
+        # graveyard, and a permanent spell enters the battlefield instead. A
+        # permanent carrying it would load, read as implemented, and never
+        # exile itself once.
+        raise DslError(
+            f"{where}: 'exiles_itself' only means anything on an instant or "
+            f"sorcery -- a permanent spell enters the battlefield instead"
+        )
+    if model.exiles_itself and model.rebound:
+        # Both replace the graveyard with exile, and rebound also promises the
+        # card back at the next upkeep. Written together, whichever the code
+        # read first would decide whether the spell is cast again for free --
+        # and no printing says both.
+        raise DslError(
+            f"{where}: 'exiles_itself' and 'rebound' both send the spell to "
+            f"exile, and only one of them hands it back"
+        )
     # An additional cost paid at cast time -- casualty, replicate, Deadly
     # Dispute. Unlike kicker it is a full `Cost`, and unlike kicker it need not
     # be read by anything: "sacrifice an artifact" is the whole of Deadly
@@ -1380,6 +1405,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         buyback=model.buyback,
         rebound=model.rebound,
+        exiles_itself=model.exiles_itself,
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
@@ -2826,6 +2852,19 @@ COST_REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
 #: zone" still counts the commander an opponent stole from you.
 COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
 
+#: Filter keys a cost reduction *refuses*, though a static ability accepts them.
+#:
+#: Each names a relation to one particular permanent -- the thing the source is
+#: attached to, or its soulbond partner -- and a reduction counts a board. On a
+#: static's `affects` that relation is the whole point ("enchanted creature gets
+#: +2/+2"); in a `count` it asks how many permanents are the one permanent, an
+#: answer of nought or one that no printed reduction is about. They were
+#: accepted and silently ignored before `costs._reduction_matches` learned to
+#: read the rest of the list, and being refused is the safer half of that fix:
+#: a key that means nothing here should say so at load time rather than price
+#: an ability off a filter nobody honoured.
+COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset({"attached", "paired", "paired_with_source"})
+
 #: Condition heads a *cost* reduction may use.
 #:
 #: A reduction is evaluated while deciding what is castable or activatable --
@@ -2960,6 +2999,12 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
+        refused = set(filt) & COST_REDUCTION_REFUSED_FILTER_KEYS
+        if refused:
+            raise DslError(
+                f"{where}.{key}: {sorted(refused)} name a relation to one "
+                f"permanent, and a reduction counts a board"
+            )
         _check_owner_key(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
@@ -4698,6 +4743,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'up_to' needs a 'count' of at least 1; got {count}"
             )
+    if "or_more" in effect:
+        # "Choose one or more --" (Black Market Connections). A floor and a
+        # ceiling at once: `count` stays the minimum and every mode is on offer.
+        if op != "choose_mode":
+            raise DslError(
+                f"{where}: 'or_more' only means anything on choose_mode, not {op!r}"
+            )
+        if not isinstance(effect["or_more"], bool):
+            raise DslError(f"{where}: 'or_more' is a boolean, got {effect['or_more']!r}")
+        if effect.get("up_to"):
+            # One says "you must take at least `count`" and the other says "you
+            # may take none". A card printing both is a card saying two things,
+            # and `modal_bounds` would silently let `up_to` win.
+            raise DslError(
+                f"{where}: 'or_more' and 'up_to' contradict each other -- "
+                f"one keeps a floor, the other removes it"
+            )
+        modes = effect.get("modes") or []
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count >= len(modes):
+            # "Choose two or more" of two modes is "choose both", written the
+            # long way -- and it would load, offering a question with one answer.
+            raise DslError(
+                f"{where}: 'or_more' needs a 'count' below the number of modes; "
+                f"got {count} of {len(modes)}"
+            )
     if "up_to_if" in effect:
         # The same guard for entwine's mirror image, and it was missing -- which
         # is how a card carrying `up_to_if` compiled, played and cleared every
@@ -4898,6 +4971,70 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     )
             elif entry not in KNOWN_COLORS:
                 raise DslError(f"{where}.from_colors[{i}]: unknown colour {entry!r}")
+        # A grant with no recipient. `objects` alone was once the only shape, so
+        # its absence used to be caught by `choose_objects` finding nothing --
+        # which is the silent kind of nothing this pass exists to refuse now
+        # that the op has a second half.
+        if effect.get("player") is None and effect.get("objects") is None:
+            raise DslError(
+                f"{where}: grant_protection needs 'objects' or 'player' naming "
+                f"who gains it"
+            )
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if (
+            not effect.get("from_colors")
+            and not effect.get("from_types")
+            and not effect.get("from_subtypes")
+            and not effect.get("from_everything")
+        ):
+            # Protection *from* nothing. It would install no qualities and read
+            # on screen as a spell that resolved and did nothing at all.
+            raise DslError(
+                f"{where}: grant_protection needs a quality -- 'from_colors', "
+                f"'from_types', 'from_subtypes' or 'from_everything'"
+            )
+        if "from_everything" in effect and not isinstance(effect["from_everything"], bool):
+            raise DslError(
+                f"{where}: 'from_everything' is a boolean, got "
+                f"{effect['from_everything']!r}"
+            )
+        duration = effect.get("duration")
+        if duration is not None:
+            if effect.get("player") is None:
+                # An object's grant is one `TempEffect` on `until_eot`, which
+                # the cleanup step sweeps and nothing else does. Reading a
+                # duration there and storing it anyway would be a protection
+                # that claims to last past the turn and does not.
+                raise DslError(
+                    f"{where}: 'duration' only means anything on the 'player' "
+                    f"half of grant_protection -- an object's grant is until "
+                    f"end of turn"
+                )
+            if duration not in PLAYER_PROTECTION_DURATIONS:
+                raise DslError(
+                    f"{where}: unknown protection duration {duration!r} "
+                    f"(implemented: {sorted(PLAYER_PROTECTION_DURATIONS)})"
+                )
+    if op == "lock_life_total":
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        duration = str(effect.get("duration", "until_your_next_turn"))
+        if duration not in LIFE_LOCK_DURATIONS:
+            # A misspelled duration would fall back to the default and last a
+            # turn longer than the card says, which is the wrong direction for
+            # a prohibition: it is a strictly better card, silently.
+            raise DslError(
+                f"{where}: unknown lock_life_total duration {duration!r} "
+                f"(implemented: {sorted(LIFE_LOCK_DURATIONS)})"
+            )
+        if "amount" in effect:
+            # "Your life total can't change" has no magnitude. A number here
+            # would read as a shield of that size and be ignored entirely.
+            raise DslError(
+                f"{where}: lock_life_total takes no 'amount' -- it forbids the "
+                f"change rather than sizing it"
+            )
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the

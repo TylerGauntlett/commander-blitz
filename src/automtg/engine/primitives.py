@@ -14,6 +14,7 @@ from . import sagas
 from .characteristics import (
     chars,
     life_loss_multiplier,
+    player_protected_from,
     printed_token_matches,
     token_creation_replacements,
 )
@@ -134,8 +135,34 @@ def become_monarch(state: GameState, pid: int, source: int | None = None) -> boo
 # ----------------------------------------------------------------------
 
 
+def life_locked(state: GameState, pid: int) -> bool:
+    """Is ``pid``'s life total unable to change right now?  Usually false.
+
+    "Until your next turn, your life total can't change" (Teferi's Protection).
+    Read by the three places a life total moves -- `gain_life`, `lose_life` and
+    the loss half of `damage_player` -- and by `costs.can_pay`, because 118.4
+    makes paying life a loss of life and a loss that cannot happen is a cost
+    that cannot be paid.
+
+    Three readers and not one, because there is no single choke point: the
+    engine subtracts life in `damage_player` directly rather than routing damage
+    through `lose_life`, on purpose (only the loss is multiplied, never the
+    damage). A lock installed in two of the three would be a life total that
+    holds still until somebody attacks.
+    """
+    if not state.life_locks:
+        return False
+    return any(lock.player == pid for lock in state.life_locks)
+
+
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
     if amount <= 0:
+        return 0
+    # "Your life total can't change" (118.5). Nothing gained, and **no event**:
+    # `LIFE_GAINED` is what Marauding Blight-Priest and its kin trigger off, and
+    # a gain that fired the event while moving no life would pay out for a gain
+    # that did not happen.
+    if life_locked(state, pid):
         return 0
     state.players[pid].life += amount
     fire(state, EventType.LIFE_GAINED, player=pid, source=source, amount=amount)
@@ -156,6 +183,11 @@ def lose_life(state: GameState, pid: int, amount: int, source: int | None = None
     Bloodletter of Aclazotz says "would lose life" without naming a source.
     """
     if amount <= 0:
+        return 0
+    # The lock is checked before the multiplier, not after: a doubled loss of
+    # nothing is still nothing, and reading `life_loss_multiplier` first would
+    # be a walk of the battlefield for an answer that cannot matter.
+    if life_locked(state, pid):
         return 0
     amount *= life_loss_multiplier(state, pid)
     state.players[pid].life -= amount
@@ -208,6 +240,29 @@ def damage_player(
             reason="damage_shield",
         )
         return 0
+    # Protection over a seat (702.16d): "any damage that would be dealt to it is
+    # prevented". Beside the shield rather than below it, because it prevents in
+    # exactly the same way and for exactly the same reasons -- no life, no
+    # poison, no lifelink, no commander tally -- and the infect branch two lines
+    # down is again the sharpest: a protected player who still took the poison
+    # would lose through Teferi's Protection.
+    #
+    # A separate branch and not a widening of `shielded`, because the two are
+    # different questions: a shield stops *all* damage this turn whatever dealt
+    # it, and protection is parameterised by the source. Only the second needs
+    # `source_oid`.
+    if player_protected_from(state, pid, source_oid):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=amount,
+            to="player",
+            reason="protection",
+        )
+        return 0
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -236,7 +291,7 @@ def damage_player(
         # it is still damage, and only where the number lands changes -- and
         # getting it wrong would make a doubled hit from a lifelinking commander
         # gain double life and kill on half the commander damage.
-        lost = amount * life_loss_multiplier(state, pid)
+        lost = 0 if life_locked(state, pid) else amount * life_loss_multiplier(state, pid)
         state.players[pid].life -= lost
         # "Whenever an opponent loses life… (Damage causes loss of life.)"
         # Bloodthirsty Conqueror. Damage really is a loss of life, so it fires
@@ -245,7 +300,14 @@ def damage_player(
         #
         # Inside the else on purpose: infect damage becomes poison counters and
         # no life is lost at all, so an infect hit must not fire this.
-        fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
+        # Not fired when the life total is locked: the damage was dealt and
+        # `DAMAGE_DEALT` below still says so, but no life was lost, and
+        # Bloodthirsty Conqueror paying out for a loss that did not happen is
+        # the failure this branch exists to avoid. The lock stops the *change*,
+        # not the damage -- protection is the effect that stops the damage, and
+        # Teferi's Protection prints both sentences because they differ.
+        if lost:
+            fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
     fire(
         state,
         EventType.DAMAGE_DEALT,
@@ -1336,6 +1398,87 @@ def clear_block_prohibitions(
     moves, so the entry names the player and the untap step asks.
     """
     state.block_prohibitions = _expired(state.block_prohibitions, duration, player)
+
+
+def grant_player_protection(
+    state: GameState,
+    pid: int,
+    qualities: Iterable[str],
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Give ``pid`` protection from each of ``qualities``.  One entry each.
+
+    One rules-relevant thing and it asks no questions -- which quality, which
+    seat and how long are all the effect layer's business, the way
+    `make_unblockable` and `shield_player` are arranged.
+
+    Deduplicated on the whole entry: two copies of Teferi's Protection resolved
+    in one turn are two identical records, and a second one changes nothing that
+    can be observed. `protection_from` on the object side has the same property
+    for free, being a set.
+    """
+    from .structs import PlayerProtection
+
+    added = False
+    for quality in qualities:
+        entry = PlayerProtection(
+            player=pid, quality=str(quality), duration=duration, source=source
+        )
+        if entry in state.player_protections:
+            continue
+        state.player_protections.append(entry)
+        added = True
+    if added:
+        state.bump_chars()
+    return added
+
+
+def lock_life_total(
+    state: GameState,
+    pid: int,
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Freeze ``pid``'s life total for ``duration``.  One rules-relevant thing.
+
+    Deduplicated on the whole entry the way `grant_player_protection` is: two
+    Teferi's Protections in a turn are two identical records and the second
+    changes nothing observable.
+    """
+    from .structs import LifeLock
+
+    entry = LifeLock(player=pid, duration=duration, source=source)
+    if entry in state.life_locks:
+        return False
+    state.life_locks.append(entry)
+    return True
+
+
+def clear_life_locks(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the life locks of one duration -- their wearing-off.
+
+    The two hooks and two clocks every timed table beside it uses, and it is
+    swept in the same breath as `clear_player_protections` because one card
+    installs both and says "until your next turn" about both halves.
+    """
+    state.life_locks = _expired(state.life_locks, duration, player)
+
+
+def clear_player_protections(
+    state: GameState, duration: str, player: int | None = None
+) -> None:
+    """Drop the player protections of one duration -- their wearing-off.
+
+    The same two hooks on the same two clocks the tables beside it use:
+    `turn._cleanup_step` for ``this_turn``, `turn._untap_step` for the
+    ``until_your_next_turn`` entries belonging to whoever is untapping. Both
+    printed cards say "until your next turn", so the second is the one that
+    matters, and it is keyed by the player rather than by a turn number for
+    detain's reason: eliminate somebody and "your next turn" moves.
+    """
+    state.player_protections = _expired(state.player_protections, duration, player)
+    state.bump_chars()
 
 
 def make_unblockable(

@@ -217,6 +217,11 @@ class EventType:
     UPKEEP = "upkeep"
     DRAW_STEP = "draw_step"
     BEGIN_COMBAT = "begin_combat"
+    #: The beginning of a **precombat** main phase -- "at the beginning of your
+    #: first main phase". Exactly once a turn, because an extra main phase
+    #: inserted after a combat is a *postcombat* one by 505.1b, so the word
+    #: "first" needs no ordinal of its own.
+    PRECOMBAT_MAIN = "precombat_main"
     #: The beginning of a **postcombat** main phase. Distinct from BEGIN_COMBAT,
     #: which is the other side of combat and reads a life-loss tally that has
     #: not happened yet -- Florian, Voldaren Scion counts what your opponents

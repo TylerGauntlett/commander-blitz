@@ -25472,12 +25472,12 @@
     },
     "Black Market Connections": {
       "edhrec_rank": 131,
-      "gate": "template",
+      "gate": null,
       "name": "Black Market Connections",
-      "reason": "no template for: At the beginning of your first main phase, choose one or more —",
+      "reason": "",
       "scryfall_id": "71880a6a-4fac-4d4b-9bc3-a11d31466352",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Market Tycoon": {
@@ -200422,12 +200422,12 @@
     },
     "Phyrexian Tower": {
       "edhrec_rank": 199,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Tower",
-      "reason": "no template for: {T}, Sacrifice a creature: Add {B}{B}",
+      "reason": "",
       "scryfall_id": "0b47f6d2-9f65-47a4-bfc4-15619befe53d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Tribute": {
@@ -272132,12 +272132,12 @@
     },
     "Takenuma, Abandoned Mire": {
       "edhrec_rank": 249,
-      "gate": "template",
+      "gate": null,
       "name": "Takenuma, Abandoned Mire",
-      "reason": "no template for: Channel — {3}{B}, Discard this card: Mill three cards, then return a creature or planeswal",
+      "reason": "",
       "scryfall_id": "13410bd5-acee-4cc9-90e3-dbcf8415bcaf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Takklemaggot": {
@@ -274312,12 +274312,12 @@
     },
     "Teferi's Protection": {
       "edhrec_rank": 107,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi's Protection",
-      "reason": "no template for: Until your next turn, your life total can't change and you gain protection from everything",
+      "reason": "",
       "scryfall_id": "c54d5ea1-0cc9-4e84-b712-642d55915dae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Teferi's Protege": {

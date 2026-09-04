@@ -1,0 +1,99 @@
+{
+  "card": {
+    "id": "black_market_connections",
+    "name": "Black Market Connections",
+    "oracle_text": "At the beginning of your first main phase, choose one or more —\n• Sell Contraband — Create a Treasure token. You lose 1 life.\n• Buy Information — Draw a card. You lose 2 life.\n• Hire a Mercenary — Create a 3/2 colorless Shapeshifter creature token with changeling. You lose 3 life. (It is every creature type.)",
+    "mana_cost": "{2}{B}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your first main phase, choose one or more —\n• Sell Contraband — Create a Treasure token. You lose 1 life.\n• Buy Information — Draw a card. You lose 2 life.\n• Hire a Mercenary — Create a 3/2 colorless Shapeshifter creature token with changeling. You lose 3 life. (It is every creature type.)",
+        "trigger": {
+          "event": "precombat_main",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "or_more": true,
+            "modes": [
+              {
+                "label": "Sell Contraband — Create a Treasure token. You lose 1 life.",
+                "effects": [
+                  {
+                    "op": "create_token",
+                    "token": "treasure_token",
+                    "controller": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "op": "lose_life",
+                    "player": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "label": "Buy Information — Draw a card. You lose 2 life.",
+                "effects": [
+                  {
+                    "op": "draw",
+                    "player": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "op": "lose_life",
+                    "player": "you",
+                    "amount": {
+                      "const": 2
+                    }
+                  }
+                ]
+              },
+              {
+                "label": "Hire a Mercenary — Create a 3/2 colorless Shapeshifter creature token with changeling. You lose 3 life. (It is every creature type.)",
+                "effects": [
+                  {
+                    "op": "create_token",
+                    "token": "shapeshifter_3_2_c_changeling",
+                    "controller": "you",
+                    "amount": {
+                      "const": 1
+                    }
+                  },
+                  {
+                    "op": "lose_life",
+                    "player": "you",
+                    "amount": {
+                      "const": 3
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

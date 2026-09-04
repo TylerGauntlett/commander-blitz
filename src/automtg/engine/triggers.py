@@ -39,6 +39,12 @@ TRIGGER_EVENTS: dict[str, str] = {
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
+    #: "At the beginning of your first main phase…" Black Market Connections.
+    #: Not `upkeep`, which is a step earlier and before the draw -- a card hung
+    #: there would hand its controller the turn's Treasure before they had seen
+    #: the card they drew, and a "you lose 1 life" mode would be paid a step
+    #: sooner than the printed one.
+    "precombat_main": EventType.PRECOMBAT_MAIN,
     #: "At the beginning of each of your postcombat main phases…" Florian.
     #: `begin_combat` is the nearest existing phase event and is on the wrong
     #: side of combat -- a card hung on it would read a life-loss tally from

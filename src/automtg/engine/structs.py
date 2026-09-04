@@ -400,6 +400,124 @@ class DamageShield:
         }
 
 
+#: The quality "protection from **everything**" (Teferi's Protection, The One
+#: Ring, Progenitus).  A sentinel in the same flat set of strings every other
+#: protection quality lives in, rather than a second field: four rules already
+#: ask "is this source one of the qualities?" and a boolean beside the set would
+#: mean adding a second question to all four, which is exactly how one of them
+#: comes to be forgotten.  It cannot collide -- no card type, subtype or colour
+#: is called "everything".
+PROTECTION_EVERYTHING = "everything"
+
+#: The durations a :class:`PlayerProtection` can carry.  Both printed sentences
+#: say "until your next turn"; ``this_turn`` is here because the cleanup step
+#: already sweeps every other timed table on that word and a protection that
+#: could not say it would be the one exception.
+PLAYER_PROTECTION_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class PlayerProtection:
+    """"You gain protection from everything until your next turn."
+
+    Protection over a **player**, which the existing protection cannot be.
+    `characteristics.protection_from` walks `_battlefield_statics` and matches
+    each static's `affects` against a *permanent*; `static_filter_keys` has no
+    way to name a seat, and `grant_protection` resolved its recipients through
+    `choose_objects` and skipped anything not `on_battlefield`. So a player
+    could never receive it from either end.
+
+    Lives on the table (:attr:`GameState.player_protections`) beside
+    `damage_shields`, for that record's reason: the effect belongs to no
+    permanent and outlives whatever installed it. Teferi's Protection is an
+    Instant that leaves nothing behind at all.
+
+    **One entry per quality**, the way granted object protection is one
+    `TempEffect` per quality -- so `player_protection_from` returns the same flat
+    set of strings `protection_from` does and the rules that read protection do
+    not learn a second shape. :data:`PROTECTION_EVERYTHING` is one of those
+    strings.
+
+    ``duration`` is ``"this_turn"`` (cleared by the cleanup step) or
+    ``"until_your_next_turn"`` (cleared in :attr:`player`'s untap step, beside
+    detain, block prohibitions and unblockables). The second is not a turn
+    *number*: eliminate a player and "your next turn" moves, which is why the
+    player is recorded and the deadline is not.
+    """
+
+    #: The protected seat. Also whose next turn ends it -- both printed cards
+    #: say "**you** gain protection … until **your** next turn", one sentence
+    #: about one player, so splitting recipient from clock would be inventing a
+    #: card.
+    player: int
+    quality: str = PROTECTION_EVERYTHING
+    duration: str = "until_your_next_turn"
+    #: The spell or permanent that granted it, for the log. Not part of the
+    #: lifetime: Teferi's Protection is in the graveyard before its protection
+    #: has done anything at all.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "quality": self.quality,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
+#: The durations a :class:`LifeLock` can carry.  Both are here for the reason
+#: :data:`PLAYER_PROTECTION_DURATIONS` carries both: the printed sentence says
+#: "until your next turn", and a table the cleanup step cannot sweep on
+#: ``this_turn`` would be the one exception among the timed tables.
+LIFE_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class LifeLock:
+    """"Until your next turn, your life total can't change." -- 118.5, 614.
+
+    A prohibition on the *change*, in **both** directions, and that is what
+    separates it from everything the engine already had. `replace_life_loss` is
+    the nearest miss and misses three ways: it is a `static_effect`, so only a
+    permanent can carry one and an Instant's `spell_effects` cannot install it;
+    it multiplies a loss rather than forbidding a change, and a multiplier of
+    zero would still be a downward-only rewrite; and it is wired into
+    `lose_life` and the loss half of `damage_player` only, so `gain_life` walks
+    straight past it. `DamageShield` is player-scoped but stops only damage.
+
+    Damage is still **dealt** while this stands. The lock is on the life total,
+    not on the damage: lifelink still gains nothing (that gain is a life change
+    too, on whoever has the lock), commander damage is still tallied, and
+    `DAMAGE_DEALT` still fires. Only the life total holds still. Protection is
+    the effect that stops the damage itself, and Teferi's Protection prints both
+    sentences precisely because they are two different things.
+
+    Paying life becomes impossible rather than free (118.4 makes paying life a
+    loss of life, and a cost that cannot be paid cannot be paid), so `can_pay`
+    refuses it -- which is the difference between a War Room that draws for
+    nothing and one that cannot be activated.
+
+    Lives on the table (:attr:`GameState.life_locks`) beside `player_protections`
+    and `damage_shields`, for their reason, and shares their clock: cleared in
+    :attr:`player`'s untap step, keyed by the seat and never by a turn number.
+    """
+
+    #: The seat whose life total is frozen. Also whose next turn ends it: the
+    #: printed sentence is one sentence about one player.
+    player: int
+    duration: str = "until_your_next_turn"
+    #: The spell that installed it, for the log. Not part of the lifetime.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 #: The durations a :class:`SacrificeRestriction` can carry.  One word, and only
 #: one, is printed: "you can't sacrifice those creatures **this turn**" (Call for
 #: Aid).  A tuple of one for the reason :data:`DAMAGE_SHIELD_DURATIONS` is one --

@@ -819,6 +819,10 @@
     "artist": "Bram Sels",
     "scryfall_id": "753d2393-ce5a-422f-858c-25e3f61d52bd"
   },
+  "black_market_connections": {
+    "artist": "Xabi Gaztelua",
+    "scryfall_id": "71880a6a-4fac-4d4b-9bc3-a11d31466352"
+  },
   "black_widow_natasha_romanoff": {
     "artist": "Julia Vasilyeva",
     "scryfall_id": "2f3e2f33-9c31-4107-b9b4-a7e1d2d43bab"
@@ -6187,6 +6191,10 @@
     "artist": "Steven Belledin",
     "scryfall_id": "a761426e-2138-438e-8f3b-024486165260"
   },
+  "phyrexian_tower": {
+    "artist": "Martin de Diego S\u00e1daba",
+    "scryfall_id": "0b47f6d2-9f65-47a4-bfc4-15619befe53d"
+  },
   "phyrexian_walker": {
     "artist": "Bryan Talbot",
     "scryfall_id": "7aef15b6-3655-4daa-8236-ecfcb349c077"
@@ -7479,6 +7487,10 @@
     "artist": "Eric Peterson",
     "scryfall_id": "90e8ff87-22e8-4c04-84bc-f0ea2c12a86c"
   },
+  "shapeshifter_3_2_c_changeling": {
+    "artist": "Lixin Yin",
+    "scryfall_id": "049048af-9945-4b73-9aa3-7f09bf4c22b3"
+  },
   "shared_animosity": {
     "artist": "Chuck Lukacs",
     "scryfall_id": "1bd77ae9-c5ba-44af-80e9-7c852722ef6c"
@@ -8499,6 +8511,10 @@
     "artist": "Rudy Siswanto",
     "scryfall_id": "e1894cf9-7d53-4b7e-aaae-8db42bdd8e49"
   },
+  "takenuma_abandoned_mire": {
+    "artist": "Sam Burley",
+    "scryfall_id": "13410bd5-acee-4cc9-90e3-dbcf8415bcaf"
+  },
   "talarian_hook_spider": {
     "artist": "Zoltan Boros",
     "scryfall_id": "f49df857-5488-455e-8ac1-b000f600eda7"
@@ -8610,6 +8626,10 @@
   "teferi_s_isle": {
     "artist": "Gerry Grace",
     "scryfall_id": "b6ed7ca8-fd91-46e3-9149-a3de23c7078e"
+  },
+  "teferi_s_protection": {
+    "artist": "Jack Kirby",
+    "scryfall_id": "c54d5ea1-0cc9-4e84-b712-642d55915dae"
   },
   "tempest_drake": {
     "artist": "Gerry Grace",
