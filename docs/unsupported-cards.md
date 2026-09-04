@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**31 cards** blocked by **34** capabilities.
+**30 cards** blocked by **33** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [protection](#protection) | 1 | 92 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -442,20 +441,6 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
-
-</details>
-
-## protection
-
-Blocks **1** card.
-
-- **(op)** grant_protection must be able to name a *player* as the recipient (a `player` spec beside `objects`), to grant the quality "everything" rather than only a list of colours/types/subtypes, and to last `until_your_next_turn` instead of only until end of turn -- and every rule that reads protection (targeting, damage, enchanting, blocking) has to consult a player's protection set, not just an object's
-  <br>Why the existing vocabulary won't do: grant_protection resolves its recipients through choose_objects and then skips any oid that is not `on_battlefield`, so a player can never receive it; its qualities are built only from `from_colors` (each entry loader-validated against KNOWN_COLORS), `from_types` and `from_subtypes`, none of which can express "everything"; and it writes an `until_eot` TempEffect that cleanup ends this turn, so the "until your next turn" clock does not exist for it. `characteristics.protection_from(state, oid)` is object-keyed throughout, so there is no player-side reader either. The `protection` static_effect has the same three limits and is a printed static on a permanent besides, not something a self_enters trigger can install. `grant_keyword` is not a substitute: protection is parameterised and a Keyword is a bare string.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The One Ring** (rank 92) — `the_one_ring`
-  - When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
 
 </details>
 

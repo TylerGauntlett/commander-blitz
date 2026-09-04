@@ -1,0 +1,97 @@
+{
+  "card": {
+    "id": "the_one_ring",
+    "name": "The One Ring",
+    "oracle_text": "Indestructible\nWhen The One Ring enters, if you cast it, you gain protection from everything until your next turn.\nAt the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.\n{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",
+    "mana_cost": "{4}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "keywords": [
+      "indestructible"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When The One Ring enters, if you cast it, you gain protection from everything until your next turn.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "condition": {
+          "was_cast": true
+        },
+        "effects": [
+          {
+            "op": "grant_protection",
+            "player": "you",
+            "from_everything": true,
+            "duration": "until_your_next_turn"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "lose_life",
+            "player": "you",
+            "amount": {
+              "counters_on": {
+                "counter": "burden",
+                "objects": {
+                  "self_only": true
+                }
+              }
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "burden",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "self_only": true
+            }
+          },
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "counters_on": {
+                "counter": "burden",
+                "objects": {
+                  "self_only": true
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -279702,12 +279702,12 @@
     },
     "The One Ring": {
       "edhrec_rank": 92,
-      "gate": "template",
+      "gate": null,
       "name": "The One Ring",
-      "reason": "no template for: When enters, if you cast it, you gain protection from everything until your next turn",
+      "reason": "",
       "scryfall_id": "bdd2c783-1483-490a-ae93-c4664a0a9564",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Ooze": {
