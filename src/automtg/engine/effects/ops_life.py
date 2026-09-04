@@ -107,6 +107,39 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
         shield_player(ctx.state, pid, duration, source=ctx.source_oid)
 
 
+@register("lock_life_total")
+def op_lock_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Until your next turn, your life total can't change." (Teferi's Protection.)
+
+    A prohibition on the *change*, both ways, which is what nothing else in the
+    engine could say. `replace_life_loss` is the near miss and misses three
+    ways: it is a `static_effect`, so an Instant cannot install one; it
+    multiplies a loss rather than forbidding a change, and a multiplier of zero
+    would still be a downward-only rewrite; and it is wired into `lose_life` and
+    the loss half of `damage_player` only, so `gain_life` moves the total
+    straight past it. `prevent_damage` the op is player-scoped and stops damage
+    alone, leaving every ordinary loss and all gain free.
+
+    Like `prevent_damage`, it modifies nothing and resolves before there is
+    anything to modify: the whole of its behaviour is the `structs.LifeLock` it
+    leaves behind for `primitives.life_locked` to answer from.
+
+    ``player`` is the usual player spec and defaults to ``"you"``, which is what
+    both printed sentences say. ``duration`` defaults to ``until_your_next_turn``
+    for the same reason -- there is no printed life lock that ends at cleanup --
+    and the cleanup word is implemented so that this table is not the one
+    exception among the timed tables.
+    """
+    from ..primitives import lock_life_total
+    from ..structs import LIFE_LOCK_DURATIONS
+
+    duration = str(spec.get("duration", "until_your_next_turn"))
+    if duration not in LIFE_LOCK_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown lock_life_total duration {duration!r}")
+    for pid in select_players(ctx, spec.get("player", "you")):
+        lock_life_total(ctx.state, pid, duration, source=ctx.source_oid)
+
+
 @register("damage")
 def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     """Deal damage to objects, players, or both.

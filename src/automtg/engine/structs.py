@@ -466,6 +466,58 @@ class PlayerProtection:
         }
 
 
+#: The durations a :class:`LifeLock` can carry.  Both are here for the reason
+#: :data:`PLAYER_PROTECTION_DURATIONS` carries both: the printed sentence says
+#: "until your next turn", and a table the cleanup step cannot sweep on
+#: ``this_turn`` would be the one exception among the timed tables.
+LIFE_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class LifeLock:
+    """"Until your next turn, your life total can't change." -- 118.5, 614.
+
+    A prohibition on the *change*, in **both** directions, and that is what
+    separates it from everything the engine already had. `replace_life_loss` is
+    the nearest miss and misses three ways: it is a `static_effect`, so only a
+    permanent can carry one and an Instant's `spell_effects` cannot install it;
+    it multiplies a loss rather than forbidding a change, and a multiplier of
+    zero would still be a downward-only rewrite; and it is wired into
+    `lose_life` and the loss half of `damage_player` only, so `gain_life` walks
+    straight past it. `DamageShield` is player-scoped but stops only damage.
+
+    Damage is still **dealt** while this stands. The lock is on the life total,
+    not on the damage: lifelink still gains nothing (that gain is a life change
+    too, on whoever has the lock), commander damage is still tallied, and
+    `DAMAGE_DEALT` still fires. Only the life total holds still. Protection is
+    the effect that stops the damage itself, and Teferi's Protection prints both
+    sentences precisely because they are two different things.
+
+    Paying life becomes impossible rather than free (118.4 makes paying life a
+    loss of life, and a cost that cannot be paid cannot be paid), so `can_pay`
+    refuses it -- which is the difference between a War Room that draws for
+    nothing and one that cannot be activated.
+
+    Lives on the table (:attr:`GameState.life_locks`) beside `player_protections`
+    and `damage_shields`, for their reason, and shares their clock: cleared in
+    :attr:`player`'s untap step, keyed by the seat and never by a turn number.
+    """
+
+    #: The seat whose life total is frozen. Also whose next turn ends it: the
+    #: printed sentence is one sentence about one player.
+    player: int
+    duration: str = "until_your_next_turn"
+    #: The spell that installed it, for the log. Not part of the lifetime.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 #: The durations a :class:`SacrificeRestriction` can carry.  One word, and only
 #: one, is printed: "you can't sacrifice those creatures **this turn**" (Call for
 #: Aid).  A tuple of one for the reason :data:`DAMAGE_SHIELD_DURATIONS` is one --

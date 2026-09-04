@@ -37,7 +37,13 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
-from .primitives import lose_life, sacrifice_forbidden, tap_permanent, untap_permanent
+from .primitives import (
+    life_locked,
+    lose_life,
+    sacrifice_forbidden,
+    tap_permanent,
+    untap_permanent,
+)
 from .zones import bounce as bounce_object
 from .zones import exile as exile_object
 from .zones import sacrifice as sacrifice_object
@@ -682,6 +688,13 @@ def can_pay(
     # to.
     life = life_cost(state, pid, cost, source_oid)
     if life and player.life < life:
+        return False
+    # "Your life total can't change" makes paying life impossible rather than
+    # free: 118.4 makes paying life a loss of life, and a cost that cannot be
+    # paid cannot be paid (601.2h). Refused here rather than in `pay`, so the
+    # action is never offered -- a War Room offered and then drawing for nothing
+    # is the strictly better card this check exists to refuse.
+    if life and life_locked(state, pid):
         return False
     if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
