@@ -7425,6 +7425,10 @@
   "teferi_s_isle": {
     "zone": "battlefield"
   },
+  "teferi_s_protection": {
+    "battlefield_count": 0,
+    "zone": "exile"
+  },
   "tempest_drake": {
     "zone": "battlefield"
   },
