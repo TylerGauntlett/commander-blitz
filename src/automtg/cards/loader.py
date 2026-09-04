@@ -990,6 +990,29 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: 'rebound' only means anything on an instant or sorcery -- "
             f"a permanent spell enters the battlefield and never reaches the rider"
         )
+    if model.exiles_itself and set(model.types) & {
+        "Creature",
+        "Land",
+        "Artifact",
+        "Enchantment",
+    }:
+        # Rebound's guard, for rebound's reason: the rider replaces the
+        # graveyard, and a permanent spell enters the battlefield instead. A
+        # permanent carrying it would load, read as implemented, and never
+        # exile itself once.
+        raise DslError(
+            f"{where}: 'exiles_itself' only means anything on an instant or "
+            f"sorcery -- a permanent spell enters the battlefield instead"
+        )
+    if model.exiles_itself and model.rebound:
+        # Both replace the graveyard with exile, and rebound also promises the
+        # card back at the next upkeep. Written together, whichever the code
+        # read first would decide whether the spell is cast again for free --
+        # and no printing says both.
+        raise DslError(
+            f"{where}: 'exiles_itself' and 'rebound' both send the spell to "
+            f"exile, and only one of them hands it back"
+        )
     # An additional cost paid at cast time -- casualty, replicate, Deadly
     # Dispute. Unlike kicker it is a full `Cost`, and unlike kicker it need not
     # be read by anything: "sacrifice an artifact" is the whole of Deadly
@@ -1382,6 +1405,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         split_second=model.split_second,
         buyback=model.buyback,
         rebound=model.rebound,
+        exiles_itself=model.exiles_itself,
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
