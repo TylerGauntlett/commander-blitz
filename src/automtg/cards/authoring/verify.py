@@ -745,8 +745,18 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
     allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if played.is_aura else {Zone.BATTLEFIELD}
     if played.is_permanent and obj.zone not in allowed:
         return [f"{card.id} is a permanent but ended in {obj.zone.value}"]
-    if not played.is_permanent and obj.zone is not Zone.GRAVEYARD:
-        return [f"{card.id} is a spell but ended in {obj.zone.value}"]
+    if not played.is_permanent:
+        # A spell goes to its owner's graveyard -- unless the card itself says
+        # otherwise, which two riders do: "Exile Teferi's Protection" and
+        # rebound's "exile it as it resolves". The gate asks whether the card
+        # ended where a card of *its* kind ends, so it has to read the card
+        # rather than the type. Widened only by a declared flag: a spell that
+        # merely finds itself in exile still fails, which is what this catches.
+        spell_zones = {Zone.GRAVEYARD}
+        if played.exiles_itself or played.rebound:
+            spell_zones.add(Zone.EXILE)
+        if obj.zone not in spell_zones:
+            return [f"{card.id} is a spell but ended in {obj.zone.value}"]
     return []
 
 

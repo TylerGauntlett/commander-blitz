@@ -10,37 +10,5 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**1 card** blocked by **2** capabilities.
-
-| capability | cards | best EDHREC rank | kind |
-|---|---:|---:|---|
-| [life-total-cant-change](#life-total-cant-change) | 1 | 107 | replacement |
-| [protection](#protection) | 1 | 107 | op |
-
-## life-total-cant-change
-
-Blocks **1** card.
-
-- **(replacement)** a player-scoped, duration-bounded (`until_your_next_turn`) replacement that stops *every* change to a life total in both directions -- life gain, life loss, life paid as a cost, and the life-loss half of damage -- so the total is frozen rather than merely shielded
-  <br>Why the existing vocabulary won't do: `replace_life_loss` is the closest thing and falls short three ways: it is a `static_effect`, so only a permanent can carry it and an Instant's `spell_effects` cannot install one; it multiplies the magnitude of a loss (`loss_multiplier`) rather than forbidding the change, and a multiplier of 0 would still be a downward-only rewrite; and it is wired only into `primitives.lose_life` and the loss half of `primitives.damage_player`, so `gain_life` moves the total straight past it. The `prevent_damage` op is player-scoped but stops only damage -- its docstring states the only implemented duration is `this_turn` -- leaving ordinary life loss and all life gain free to move the total.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi's Protection** (rank 107) — `teferi_s_protection`
-  - Until your next turn, your life total can't change and you gain protection from everything.
-
-</details>
-
-## protection
-
-Blocks **1** card.
-
-- **(op)** grant_protection must be able to name a *player* as the recipient (a `player` spec beside `objects`), to grant the quality "everything" rather than only a list of colours/types/subtypes, and to last `until_your_next_turn` instead of only until end of turn -- and every rule that reads protection (targeting, damage, enchanting, blocking) has to consult a player's protection set, not just an object's
-  <br>Why the existing vocabulary won't do: grant_protection resolves its recipients through choose_objects and then skips any oid that is not `on_battlefield`, so a player can never receive it; its qualities are built only from `from_colors` (each entry loader-validated against KNOWN_COLORS), `from_types` and `from_subtypes`, none of which can express "everything"; and it writes an `until_eot` TempEffect that cleanup ends this turn, so the "until your next turn" clock does not exist for it. `characteristics.protection_from(state, oid)` is object-keyed throughout, so there is no player-side reader either. `grant_keyword` is not a substitute: protection is parameterised and a Keyword is a bare string.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi's Protection** (rank 107) — `teferi_s_protection`
-  - Until your next turn, your life total can't change and you gain protection from everything.
-
-</details>
+No gap records. Either nothing has been triaged yet, or the DSL
+covers everything attempted so far.
