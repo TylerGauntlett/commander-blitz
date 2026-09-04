@@ -486,13 +486,42 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     statics = _ability_statics(state)
     if not statics:
         return printed
-    out: list[Ability] = []
+    out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
+    if out == list(printed):
+        return printed
+    import dataclasses
+
+    return tuple(
+        dataclasses.replace(ability, index=i) for i, ability in enumerate(out)
+    )
+
+
+def _derived_abilities(
+    state: GameState, obj: GameObject, statics: list[tuple[GameObject, Mapping[str, Any]]]
+) -> list[tuple[Ability, tuple[int, int] | None]]:
+    """Every ability this permanent has, each with **where it came from**.
+
+    ``None`` for a printed one; ``(granter oid, index into that card's
+    ``grantable_abilities``)`` for one a static handed over. The provenance is
+    not decoration: a granted ability does not live on the card of the permanent
+    that has it, so `stack.ability_of` looks it up in the granter's pool, and
+    the two index spaces are different -- Tandem Lookout's granted trigger sits
+    at position 2 on the creature that has it and at position 0 in the pool it
+    came from. Resolving the recipient's position against the granter's pool
+    reads whatever happens to be there, which is another ability or nothing at
+    all.
+
+    Shared with `abilities_of` above rather than walked twice, because the two
+    answers have to agree about which ability is at which position.
+    """
+    printed = state.card_of(obj).abilities
+    out: list[tuple[Ability, tuple[int, int] | None]] = []
     if not any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in statics
     ):
-        out.extend(printed)
+        out.extend((ability, None) for ability in printed)
     for source_obj, static in statics:
         if static.get("effect") != "grant_ability":
             continue
@@ -501,14 +530,36 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
         granted = state.card_of(source_obj).grantable_abilities
         index = int(static.get("ability", 0))
         if 0 <= index < len(granted):
-            out.append(granted[index])
-    if list(out) == list(printed):
-        return printed
-    import dataclasses
+            out.append((granted[index], (source_obj.oid, index)))
+    return out
 
-    return tuple(
-        dataclasses.replace(ability, index=i) for i, ability in enumerate(out)
-    )
+
+def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int, int] | None:
+    """Who granted the ability now sitting at ``index``, and where it lives.
+
+    ``(granter oid, index into that granter's ``grantable_abilities``)``, or
+    ``None`` when the position holds an ordinary printed ability.
+
+    The continuous counterpart of `primitives.granted_abilities`, which answers
+    the same question for the one-shot `grant_ability` **op** and cannot answer
+    it here: that one reads `TempEffect`s off the recipient, and a static grant
+    leaves nothing on the recipient to read -- it is recomputed from the
+    granter's "as long as…" every time anybody asks. Without this a statically
+    granted *triggered* ability queued and then resolved as nothing at all,
+    silently, because resolution could not find its definition.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    if obj.face_down:
+        return None
+    statics = _ability_statics(state)
+    if not statics:
+        return None
+    derived = _derived_abilities(state, obj, statics)
+    if 0 <= index < len(derived):
+        return derived[index][1]
+    return None
 
 
 def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, Any]]]:

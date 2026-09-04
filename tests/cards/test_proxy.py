@@ -410,7 +410,12 @@ class TestManaCostSimplification:
             ("{W/U}", "WU", "{W/U}"),  # hybrid is kept
             ("{W/U}", "U", "{W/U}"),
             ("{2/W}", "W", "{2/W}"),
-            ("{W/P}", "W", "{W}"),  # life is not a mana payment here
+            # Phyrexian used to be narrowed to "{W}" here, on the argument that
+            # life is not a mana payment. It is now parsed and paid properly, and
+            # the narrowing was worse than a simplification: it deleted the "or 2
+            # life" clause the card is played for.
+            ("{W/P}", "W", "{W/P}"),
+            ("{W/U/P}", "WU", "{W/U/P}"),
             ("{S}", "", "{1}"),
             ("{1}{G}", "G", "{1}{G}"),  # untouched
         ],

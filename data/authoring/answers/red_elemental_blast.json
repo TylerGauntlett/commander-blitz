@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "red_elemental_blast",
+    "name": "Red Elemental Blast",
+    "oracle_text": "Choose one —\n• Counter target blue spell.\n• Destroy target blue permanent.",
+    "mana_cost": "{R}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "modes": [
+          {
+            "label": "Counter target blue spell.",
+            "effects": [
+              {"op": "counter", "objects": {"target": "countered"}}
+            ]
+          },
+          {
+            "label": "Destroy target blue permanent.",
+            "effects": [
+              {"op": "destroy", "objects": {"target": "doomed"}}
+            ]
+          }
+        ]
+      }
+    ],
+    "targets": [
+      {
+        "id": "countered",
+        "kind": "spell",
+        "mode": 0,
+        "count": 1,
+        "selector": {"colors": ["U"]}
+      },
+      {
+        "id": "doomed",
+        "kind": "permanent",
+        "mode": 1,
+        "count": 1,
+        "selector": {"colors": ["U"], "zone": "battlefield"}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 5
+  }
+}

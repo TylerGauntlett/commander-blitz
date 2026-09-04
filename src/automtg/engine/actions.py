@@ -126,6 +126,17 @@ class Action:
     #: three are two different things to do with the same card, at two
     #: different prices.
     pay_generic: int = 0
+    #: How many of the spell's **Phyrexian** pips are being paid with 2 life each
+    #: rather than with mana (rule 107.4f). Part of the action's identity for the
+    #: same reason ``pay_generic`` is: casting Gitaxian Probe off an Island and
+    #: casting it for 2 life are two different things to do with one card, at two
+    #: prices, and a player at 3 life may want the first and not the second.
+    #:
+    #: A count rather than a flag, because a cost can print more than one --
+    #: Thundering Tanadon's ``{4}{G/P}{G/P}`` offers three lines, at 0, 2 and 4
+    #: life. Which *pips* those are is not asked: every printed Phyrexian symbol
+    #: costs the same 2 life, so only how many is a choice.
+    phyrexian: int = 0
     #: The creature sacrificed to emerge, chosen as part of the action: how
     #: much the spell costs depends on which one, so two emerge lines with
     #: different sacrifices are two different things to do.
@@ -171,6 +182,7 @@ class Action:
             flashback=self.flashback,
             alternative=self.alternative,
             pay_generic=self.pay_generic,
+            phyrexian=self.phyrexian,
             emerge_oid=self.emerge_oid,
             mana_option=self.mana_option,
             label=label,
@@ -194,6 +206,7 @@ class Action:
             self.flashback,
             self.alternative,
             self.pay_generic,
+            self.phyrexian,
             -1 if self.emerge_oid is None else self.emerge_oid,
             -1 if self.mana_option is None else self.mana_option,
         )
@@ -211,6 +224,7 @@ class Action:
             "evoked": self.evoked,
             "alternative": self.alternative,
             "pay_generic": self.pay_generic,
+            "phyrexian": self.phyrexian,
             "emerge_oid": self.emerge_oid,
             "mana_option": self.mana_option,
             "label": self.label,

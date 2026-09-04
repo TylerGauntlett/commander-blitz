@@ -1,0 +1,19 @@
+{
+  "card_id": "swan_song",
+  "name": "Swan Song",
+  "oracle_text": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying.",
+  "blocked_sentences": [
+    "Its controller creates a 2/2 blue Bird creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "engine",
+      "what": "a token definition for a 2/2 blue Bird creature token with flying -- id `bird_2_2_u_flying`, name \"Bird Token\", types [\"Creature\"], subtypes [\"Bird\"], colors [\"U\"], power 2, toughness 2, keywords [\"flying\"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it",
+      "why_existing_wont_do": "`create_token` takes only a `token` id string naming a card already in the pool (src/automtg/engine/effects/ops_board.py op_create_token -> primitives.create_token); there is no inline token body and no size/colour/subtype overrides on the op, and `loader.validate_token_references` raises `references unknown card` at load time for any id that is not present and marked `is_token`, so the card cannot ship ahead of the definition. The pool's only Bird is `bird_1_1_w_flying` in data/cards/isperia.cards.json -- a 1/1 white Bird, wrong power, toughness and colour -- and the only 2/2 blue flier is `illusion_1_1_u_flying`'s neighbour set, none of which is a 2/2 blue Bird. Substituting any of them would make the card hand its victim a different creature than it prints, and a token definition is data the worker may not write.",
+      "note": "The rest of the card is expressible: `counter` on a `kind: \"spell\"` target whose selector is `{\"any_types\": [\"Enchantment\", \"Instant\", \"Sorcery\"]}`, and `create_token` with `controller: {\"controller_of_target\": \"t1\"}` for \"Its controller\"."
+    }
+  ],
+  "closest_existing": ["create_token", "bird_1_1_w_flying"],
+  "confidence": "high"
+}

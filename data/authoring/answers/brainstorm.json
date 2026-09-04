@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "brainstorm",
+    "name": "Brainstorm",
+    "oracle_text": "Draw three cards, then put two cards from your hand on top of your library in any order.",
+    "mana_cost": "{U}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "draw",
+        "player": "you",
+        "amount": {
+          "const": 3
+        }
+      },
+      {
+        "op": "put_on_top",
+        "objects": {
+          "zone": "hand",
+          "controller": "you",
+          "count": 2
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    }
+  }
+}

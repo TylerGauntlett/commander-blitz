@@ -1,0 +1,89 @@
+{
+  "card": {
+    "id": "lotus_petal",
+    "name": "Lotus Petal",
+    "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
+    "mana_cost": "{0}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice this artifact: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "White",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "Blue",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "Black",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "Red",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "Green",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

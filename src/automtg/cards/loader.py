@@ -32,6 +32,7 @@ from automtg.engine.carddef import (
     top_level_mode_spec,
 )
 from automtg.engine.characteristics import ABILITY_STATICS
+from automtg.engine.costs import REDUCTION_ZONES
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
@@ -76,7 +77,41 @@ from .schema import AbilityModel, CardModel, CostModel, DeckModel, TargetModel
 #: and the per-declaration-per-seat `creatures_attack_player`; `you_attack` is
 #: deliberately absent, because it is fired once for the whole declaration and
 #: has no one player to compare against.
-DEFENDING_TRIGGERS = frozenset({"attacks", "creatures_attack_player"})
+#:
+#: `deals_damage_to_player` is the third, and it is the one that is not about
+#: combat: "whenever enchanted creature deals damage to **an opponent**"
+#: (Curiosity) asks who took the damage, and `controller` cannot answer it --
+#: that clause is about whose *creature* dealt it. `damage_player` carries the
+#: damaged seat as `defender` for exactly this comparison. Two-player play hides
+#: the difference; a pod does not, and neither does a creature you control that
+#: somehow damages you.
+DEFENDING_TRIGGERS = frozenset(
+    {"attacks", "creatures_attack_player", "deals_damage_to_player"}
+)
+
+#: Cost keys that charge the **source permanent**, and so may not appear on a
+#: card-level `alternative_cost`.
+#:
+#: The source of a cast-time cost is the spell itself, on its way from hand to
+#: stack -- there is no permanent to tap, no loyalty to spend, and the card the
+#: self-costs would take is the one being cast. `costs.can_pay` refuses every
+#: one of them in that position, so a card written this way loads clean and is
+#: never once offered the line: the silently inert card, which is worse than a
+#: load error. `x_value` is here for the neighbouring reason -- only
+#: `costs.ability_mana` reads it, and a cast variant is never priced through it.
+NOT_A_CAST_TIME_COST = frozenset(
+    {
+        "tap",
+        "untap",
+        "loyalty",
+        "remove_counters",
+        "exile_self",
+        "exile_self_from_hand",
+        "discard_self",
+        "pay_life_x",
+        "x_value",
+    }
+)
 
 KNOWN_TYPES = frozenset(t.value for t in CardType)
 KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
@@ -1231,26 +1266,68 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     alternative_condition = None
     if model.alternative_cost is not None:
         spec = dict(model.alternative_cost)
-        unknown = set(spec) - {"mana", "condition"}
+        # A full cost node plus the gate. `CostModel` is the same vocabulary an
+        # activated ability's `cost` uses, so "pay 1 life and exile a blue card
+        # from your hand" needs no second spelling and a typo here fails at
+        # load exactly where it fails there.
+        unknown = set(spec) - {"condition"} - set(CostModel.model_fields)
         if unknown:
             raise DslError(
                 f"{where}.alternative_cost: unsupported keys {sorted(unknown)}"
             )
-        if not spec.get("mana"):
-            # It *replaces* the printed cost, so without mana the card would be
-            # castable for free whenever the condition happened to hold.
-            raise DslError(f"{where}.alternative_cost: needs 'mana'")
-        alternative_cost = ManaCost.parse(str(spec["mana"]))
-        alternative_condition = spec.get("condition")
-        if alternative_condition is None:
+        # …minus the keys that charge the **source permanent**. The source a
+        # cast-time cost is paid with is the *spell*, sitting in hand on its way
+        # to the stack -- so these each name something that is not there.
+        # `costs.can_pay` fails closed on every one of them, which means a card
+        # written this way would load clean and never once be offered the line:
+        # exactly the silently inert card `exile_self` on an `active_zones:
+        # ["hand"]` ability used to produce.
+        misplaced = set(spec) & NOT_A_CAST_TIME_COST
+        if misplaced:
+            raise DslError(
+                f"{where}.alternative_cost: {sorted(misplaced)} charge the source "
+                f"permanent, and the source of a cast-time cost is the spell "
+                f"itself -- the line would load and never be castable"
+            )
+        alternative_condition = spec.pop("condition", None)
+        try:
+            cost_model = CostModel.model_validate(spec)
+        except Exception as exc:  # pydantic ValidationError
+            raise DslError(f"{where}.alternative_cost: {exc}") from exc
+        alternative_cost = _compile_cost(cost_model, f"{where}.alternative_cost")
+        if alternative_cost.mana_reduction is not None:
+            # "Costs {X} less to cast this way" is flashback's, and only
+            # `costs.variant_reduction` reads it -- off the flashback branch
+            # alone. Written here it would load clean and never be applied.
+            raise DslError(
+                f"{where}.alternative_cost: 'mana_reduction' is the graveyard "
+                f"cost's rider; nothing prices this branch through "
+                f"`variant_reduction`, so it would load and be ignored"
+            )
+        pays_something = not alternative_cost.charges_nothing()
+        if not alternative_cost.mana.text and not pays_something:
+            # It *replaces* the printed cost, so with nothing on the node the
+            # card would be castable for free whenever the condition held.
+            raise DslError(
+                f"{where}.alternative_cost: needs 'mana' or a non-mana payment"
+            )
+        if alternative_condition is None and not pays_something:
             # Unconditional is what `evoke` already is. A card spelling it this
             # way would be offered twice at two prices with nothing to choose
             # between them.
+            #
+            # A cost that charges something *other* than mana is exempt: Force
+            # of Will's pitch is unconditional and printed, and it is not evoke
+            # -- there is no mana price on it at all, and what it takes instead
+            # is the reason it is a fair card.
             raise DslError(
                 f"{where}.alternative_cost: needs a 'condition' -- an "
-                f"unconditional alternative cost is 'evoke'"
+                f"unconditional alternative *mana* cost is 'evoke'"
             )
-        validate_condition(alternative_condition, f"{where}.alternative_cost.condition")
+        if alternative_condition is not None:
+            validate_condition(
+                alternative_condition, f"{where}.alternative_cost.condition"
+            )
 
     # `flashback` and `graveyard_cost` are one slot under two names -- the
     # keyword that shipped first, and the mechanic it turned out to be. Escape
@@ -2106,8 +2183,9 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"{where}: 'is_cycling' needs a cost that discards this card "
                 f"(got {cost.describe()!r})"
             )
-        # Two costs remove the source from a non-battlefield zone: cycling
-        # discards this card from hand, embalm exiles it from the graveyard.
+        # Three costs remove the source from a non-battlefield zone: cycling
+        # discards this card from hand, Simian Spirit Guide exiles it from
+        # hand, and embalm exiles it from the graveyard.
         # Unearth is the third shape and pays neither -- its *effect* is what
         # takes the card out ("return this card from your graveyard to the
         # battlefield"), so the property the guard is really after is that the
@@ -2122,6 +2200,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         removes_source = (
             cost.discard_self
             or cost.exile_self
+            or cost.exile_self_from_hand
             or cost.exile_from_graveyard is not None
             or _effects_move_source(model.effects)
             or gated_once
@@ -2831,10 +2910,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 #: values together and quietly hand out a bigger discount than the card says.
 COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_mana_value"})
 
-#: Zones a cost reduction's filter may count.  Mirrors `costs.REDUCTION_ZONES`,
-#: which is what actually walks them; anything else would load and match nothing.
+#: Zones a cost reduction's filter may count.  **Imported** from
+#: `costs.REDUCTION_ZONES`, which is what actually walks them, rather than
+#: restated here: this was a hand-copied mirror, and a mirror of a list is a list
+#: that will one day disagree with the code it mirrors -- a zone this file
+#: accepted and `_reduction_zone_oids` did not walk would load and match nothing.
 #: `total_power` is battlefield-only whatever this says -- see below.
-COST_REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
+COST_REDUCTION_ZONES = REDUCTION_ZONES
 
 #: Extra filter keys a cost reduction accepts on top of `STATIC_FILTER_KEYS`.
 #:
@@ -2953,6 +3035,27 @@ def _validate_reduction_zones(filt: Mapping[str, Any], key: str, where: str) -> 
         )
 
 
+def _check_reduction_type_names(filt: Mapping[str, Any], where: str) -> None:
+    """A misspelled type or supertype in a reduction filter matches nothing.
+
+    The same guard `effects.selectors.validate_selector` applies to every
+    selector, and it is needed here for a sharper reason: a selector that matches
+    nothing fails visibly the first time a card is played, while a *reduction*
+    that matches nothing is simply a discount of zero -- a card that is quietly
+    priced at the number it prints, on a board where nothing looks wrong.
+
+    ``subtypes`` is not checked, here or in the selector language: creature and
+    land types are open-ended and there is no closed set to check against.
+    """
+    for key, known in (("types", KNOWN_TYPES), ("supertypes", KNOWN_SUPERTYPES)):
+        for name in filt.get(key) or ():
+            if name not in known:
+                raise DslError(
+                    f"{where}.{key}: unknown {key[:-1]} {name!r} would count nothing "
+                    f"and read as a discount of zero (known: {sorted(known)})"
+                )
+
+
 def _validate_cost_reduction(spec: Any, where: str) -> None:
     """One validator for every "costs {N} less", wherever it is written.
 
@@ -3006,6 +3109,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
                 f"permanent, and a reduction counts a board"
             )
         _check_owner_key(filt, f"{where}.{key}")
+        _check_reduction_type_names(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
         _validate_cost_condition(spec["condition"], f"{where}.condition")
@@ -3331,6 +3435,33 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
     validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
+    exile_hand = dict(model.exile_from_hand) if model.exile_from_hand is not None else None
+    if exile_hand is not None:
+        if "zone" in exile_hand:
+            # The pool is the payer's own hand and nothing else -- see
+            # `costs._hand_exile_pool`, which walks that list directly rather
+            # than resolving a zone, because the hand is hidden and an
+            # opponent's cards must not become fodder. A `zone` written here
+            # would read as a knob that works and be overwritten in silence.
+            raise DslError(
+                f"{where}.cost.exile_from_hand: 'zone' is implied and may not be "
+                f"set; this cost always exiles from the paying player's hand"
+            )
+        exile_hand.pop("count", None)
+        validate_selector(exile_hand, f"{where}.cost.exile_from_hand")
+    if model.exile_self_from_hand and model.exile_self:
+        # One source, two zones. Whichever `can_pay` checked first would decide
+        # where the card had to be, and the other half would be dead text.
+        raise DslError(
+            f"{where}.cost: give 'exile_self' or 'exile_self_from_hand', not both -- "
+            f"they are the same card leaving two different zones"
+        )
+    if model.exile_self_from_hand and model.discard_self:
+        # The same card cannot go to two destinations, and which one it reached
+        # is the whole difference between cycling and a pitch.
+        raise DslError(
+            f"{where}.cost: give 'discard_self' or 'exile_self_from_hand', not both"
+        )
     if model.pay_life_x and model.pay_life:
         # Two numbers for one payment. Whichever won would be the card and the
         # other would load clean and never be charged.

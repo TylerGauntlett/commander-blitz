@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "flusterstorm",
+    "name": "Flusterstorm",
+    "oracle_text": "Counter target instant or sorcery spell unless its controller pays {1}.\nStorm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+    "mana_cost": "{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "spell",
+        "count": 1,
+        "selector": {"any_types": ["Instant", "Sorcery"]}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "may",
+        "player": {"controller_of_target": "t1"},
+        "pay": {"mana": "{1}"},
+        "prompt": "Pay {1} to stop Flusterstorm countering your spell?",
+        "else": [{"op": "counter", "target": "t1"}]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "active_zones": ["stack"],
+        "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+        "trigger": {"event": "spell_cast", "source": "self", "controller": "you"},
+        "effects": [
+          {
+            "op": "copy_spell",
+            "new_targets": true,
+            "amount": {"minus": [{"spells_cast_this_turn": "all"}, {"const": 1}]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1},
+    "library_size": {"0": 40},
+    "life": {"0": 40, "1": 40}
+  }
+}

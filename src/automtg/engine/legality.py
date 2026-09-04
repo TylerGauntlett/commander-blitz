@@ -22,7 +22,7 @@ from .costs import (
     offerable_mana_ability,
 )
 from .enums import ActionKind, DecisionKind, Keyword, Step, Zone
-from .mana import ManaCost, Requirement, max_affordable_x, solve_payment
+from .mana import ManaCost, max_affordable_x, solve_payment
 from .primitives import sacrifice_forbidden
 from .structs import TargetRef
 from .targeting import describe_ref, enumerate_target_tuples
@@ -771,7 +771,18 @@ def _cast_options(
     if card.alternative_cost is not None and state.objects[oid].zone is Zone.HAND:
         from .effects.conditions import evaluate_condition
 
-        if evaluate_condition(state, card.alternative_condition, controller=pid, source=oid):
+        # The non-mana half -- Force of Will's "pay 1 life and exile a blue
+        # card from your hand" -- is priced here alongside the condition, and
+        # for the same reason: a pitch spell held with no other blue card is
+        # not castable this way at all, and offering the line and then failing
+        # the payment would show a price the player can never pay. `oid` is
+        # passed as the source so `_hand_exile_pool` excludes the spell itself
+        # (601.2a) -- Force of Will is a blue card in hand and must not pitch
+        # itself.
+        payable = can_pay(state, pid, card.alternative_cost.without_mana(), oid)
+        if payable and evaluate_condition(
+            state, card.alternative_condition, controller=pid, source=oid
+        ):
             out += _cast_variant(
                 state, pid, oid, card, tuples, extra_generic=extra_generic, alternative=True
             )
@@ -1155,7 +1166,10 @@ def _cast_variant(
     elif overloaded and card.overload is not None:
         cost = card.overload
     elif alternative and card.alternative_cost is not None:
-        cost = card.alternative_cost
+        # The mana half only. Everything else on the node -- the life and the
+        # pitched card -- is charged by `game._cast` after the mana, the same
+        # split flashback uses and the order 601.2g gives.
+        cost = card.alternative_cost.mana
     elif kicked:
         cost = card.mana_cost.plus(card.kicker)
     else:
@@ -1167,138 +1181,163 @@ def _cast_variant(
         # `Game._cast` charges the life. Priced before every discount below, so
         # nothing reduces a cost that is no longer being paid.
         cost = ManaCost.parse("")
-    permission = state.objects[oid]
-    if permission.playable_any_type and permission.playable_turn == state.turn:
-        # "…and mana of any type can be spent to cast that spell." The colours
-        # are relaxed once the price has been chosen, so it is the price this
-        # line is actually offering that gets relaxed rather than the printed
-        # cost -- and the discounts below still only touch the generic part,
-        # which by now is all there is.
-        cost = cost.as_any_type()
-    branch = chosen_additional(card, additional_choice)
-    if additional_times and branch is not None:
-        # The mana half of the additional cost, charged `additional_times` over.
-        # Folded into the price *here* rather than paid separately, so legality
-        # and the solver price the line the player is actually being offered.
-        # `branch` rather than `card.additional_cost`, so a modal cost prices
-        # the option this line is offering and not some other one.
-        cost = cost.plus(branch.mana.scaled(additional_times))
-    discount = cost_reduction(state, pid, card) + variant_less
-    # Convoke and delve reduce the generic part, exactly as a cost reduction
-    # does -- and go through the same clamp, so neither can make a spell free
-    # of its coloured pips.
-    discount += pay_generic
-    if emerge_oid is not None:
-        # The sacrifice pays for part of the spell. Generic-only and clamped by
-        # `pay`, like every other reduction here.
-        discount += state.card(emerge_oid).mana_cost.mana_value()
+    # 107.4f: a Phyrexian pip is one mana of its colour **or** 2 life, and the
+    # choice is the caster's, made while the cost is being paid. So it is a
+    # *line* -- the way kicker, overload and flashback are -- and not something
+    # the payment solver decides on the player's behalf: casting Gitaxian Probe
+    # off an Island and casting it for 2 life are two different things to do,
+    # and a player at 3 life wants one of them and not the other.
+    #
+    # `paying_phyrexian` takes the bought pips out of the cost entirely, so
+    # everything below prices a cost made only of mana and the life is charged
+    # by `Game._cast` alongside it. One line per number of pips bought, which
+    # is two for the whole printed cycle and three for Thundering Tanadon.
+    printed = cost
+    out: list[Action] = []
+    for phyrexian in range(printed.phyrexian_count + 1):
+        cost, phyrexian_life = printed.paying_phyrexian(phyrexian)
+        # 118.4: life may be paid down to exactly 0 and no further, so a player
+        # at 1 is not offered the line a player at 2 is.
+        if phyrexian_life > state.players[pid].life:
+            continue
+        permission = state.objects[oid]
+        if permission.playable_any_type and permission.playable_turn == state.turn:
+            # "…and mana of any type can be spent to cast that spell." The colours
+            # are relaxed once the price has been chosen, so it is the price this
+            # line is actually offering that gets relaxed rather than the printed
+            # cost -- and the discounts below still only touch the generic part,
+            # which by now is all there is.
+            cost = cost.as_any_type()
+        branch = chosen_additional(card, additional_choice)
+        if additional_times and branch is not None:
+            # The mana half of the additional cost, charged `additional_times` over.
+            # Folded into the price *here* rather than paid separately, so legality
+            # and the solver price the line the player is actually being offered.
+            # `branch` rather than `card.additional_cost`, so a modal cost prices
+            # the option this line is offering and not some other one.
+            cost = cost.plus(branch.mana.scaled(additional_times))
+        discount = cost_reduction(state, pid, card) + variant_less
+        # Convoke and delve reduce the generic part, exactly as a cost reduction
+        # does -- and go through the same clamp, so neither can make a spell free
+        # of its coloured pips.
+        discount += pay_generic
+        if emerge_oid is not None:
+            # The sacrifice pays for part of the spell. Generic-only and clamped by
+            # `pay`, like every other reduction here.
+            discount += state.card(emerge_oid).mana_cost.mana_value()
 
-    # X is a *gate* here, not a value.  Legality asks only "is there any X this
-    # is castable at", and `game._cast` then asks the player which one -- so the
-    # action carries X = 0 and the forecast below is the floor.  Pinning it to
-    # the maximum, as this used to, meant every Fireball was cast for everything
-    # the player had and the choice was never offered at all.
-    if cost.x_count and max_affordable_x(
-        cost, pool, sources, extra_generic=extra_generic - discount
-    ) < 0:
-        return []
-    x = 0
+        # X is a *gate* here, not a value.  Legality asks only "is there any X this
+        # is castable at", and `game._cast` then asks the player which one -- so the
+        # action carries X = 0 and the forecast below is the floor.  Pinning it to
+        # the maximum, as this used to, meant every Fireball was cast for everything
+        # the player had and the choice was never offered at all.
+        if cost.x_count and max_affordable_x(
+            cost, pool, sources, extra_generic=extra_generic - discount
+        ) < 0:
+            continue
+        x = 0
 
-    # Solve rather than merely test: the solution names the permanents that
-    # would tap, which is what lets the client show a hovered spell eating into
-    # the mana row.  `can_pay_mana` would run the same solver and discard it.
-    req = cost.with_x(x)
-    generic = max(0, req.generic + extra_generic - discount)
-    if generic != req.generic:
-        req = Requirement(colored=req.colored, generic=generic, hybrid=req.hybrid)
-    payment = solve_payment(req, pool, sources)
-    if payment is None:
-        return []
-    # Sources only.  `Payment` does not itemise which floating mana it spent, so
-    # claiming a pool pip here would be a guess; the client dims source pips and
-    # says nothing about the pool.
-    pays = tuple(dict.fromkeys(tap[0] for tap in payment.taps))
+        # Solve rather than merely test: the solution names the permanents that
+        # would tap, which is what lets the client show a hovered spell eating into
+        # the mana row.  `can_pay_mana` would run the same solver and discard it.
+        req = cost.with_x(x)
+        req = req.with_generic(req.generic + extra_generic - discount)
+        payment = solve_payment(req, pool, sources)
+        if payment is None:
+            continue
+        # Sources only.  `Payment` does not itemise which floating mana it spent, so
+        # claiming a pool pip here would be a guess; the client dims source pips and
+        # says nothing about the pool.
+        pays = tuple(dict.fromkeys(tap[0] for tap in payment.taps))
 
-    label_base = f"Cast {card.name}"
-    if kicked:
-        # The card's own word: "kicked", "buyback".
-        label_base += f" ({card.kicker_label})"
-    if gift_to is not None:
-        # The card's own words for what is promised, and the seat it is promised
-        # to. Both belong on the chip: a player choosing this line is giving a
-        # named opponent a named thing, and neither half is guessable from the
-        # card name.
-        promisee = state.players[gift_to].name or f"p{gift_to}"
-        label_base += f" (gift {card.gift} to {promisee})"
-    if evoked:
-        # The card's own word for the cost: "evoked", "dash", "blitz". They are
-        # one mechanism, and only the label tells the player which they are
-        # buying.
-        label_base += f" ({card.evoke_label})"
-    if fused:
-        label_base += " (fused)"
-    if bestowed:
-        label_base += " (bestowed)"
-    if mutated:
-        label_base += " (mutating)"
-    if alternative:
-        label_base += " (alternative cost)"
-    if overloaded:
-        label_base += " (overloaded)"
-    if foretold:
-        label_base += " (foretold)"
-    if face_down:
-        label_base = "Cast a face-down creature"
-    if additional_times:
-        label_base += f" (+{additional_times} additional)"
-    if additional_choice is not None and branch is not None:
-        # The branches are two prices for one spell, so the panel has to say
-        # which one this row buys -- otherwise Bitter Triumph draws two
-        # identical rows and the player picks blind.
-        label_base += f" ({branch.describe()})"
-    if pay_generic:
-        word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
-        label_base += f" ({word} {pay_generic})"
-    if flashback:
-        label_base += " (flashback)"
-    if emerge_oid is not None:
-        label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
-    if extra_generic:
-        label_base += f" (+{extra_generic})"
-    out = []
-    for targets in tuples:
-        label = label_base
-        if targets:
-            label += " -> " + ", ".join(describe_ref(state, ref) for ref in targets)
-        out.append(
-            Action(
-                kind=ActionKind.CAST,
-                source=oid,
-                targets=targets,
-                x=x,
-                kicked=kicked,
-                gift_to=gift_to,
-                evoked=evoked,
-                alternative=alternative,
-                overloaded=overloaded,
-                additional_times=additional_times,
-                additional_choice=additional_choice,
-                from_library_top=from_library_top,
-                foretold=foretold,
-                face_down=face_down,
-                second_face=second_face,
-                prepared=prepared,
-                fused=fused,
-                bestowed=bestowed,
-                mutated=mutated,
-                pay_generic=pay_generic,
-                flashback=flashback,
-                emerge_oid=emerge_oid,
-                label=label,
-                base_label=label_base,
-                pays=pays,
+        label_base = f"Cast {card.name}"
+        if kicked:
+            # The card's own word: "kicked", "buyback".
+            label_base += f" ({card.kicker_label})"
+        if gift_to is not None:
+            # The card's own words for what is promised, and the seat it is promised
+            # to. Both belong on the chip: a player choosing this line is giving a
+            # named opponent a named thing, and neither half is guessable from the
+            # card name.
+            promisee = state.players[gift_to].name or f"p{gift_to}"
+            label_base += f" (gift {card.gift} to {promisee})"
+        if evoked:
+            # The card's own word for the cost: "evoked", "dash", "blitz". They are
+            # one mechanism, and only the label tells the player which they are
+            # buying.
+            label_base += f" ({card.evoke_label})"
+        if fused:
+            label_base += " (fused)"
+        if bestowed:
+            label_base += " (bestowed)"
+        if mutated:
+            label_base += " (mutating)"
+        if alternative:
+            label_base += " (alternative cost)"
+        if overloaded:
+            label_base += " (overloaded)"
+        if foretold:
+            label_base += " (foretold)"
+        if face_down:
+            label_base = "Cast a face-down creature"
+        if additional_times:
+            label_base += f" (+{additional_times} additional)"
+        if additional_choice is not None and branch is not None:
+            # The branches are two prices for one spell, so the panel has to say
+            # which one this row buys -- otherwise Bitter Triumph draws two
+            # identical rows and the player picks blind.
+            label_base += f" ({branch.describe()})"
+        if pay_generic:
+            word = "convoking" if card.pay_generic_with == "tap_creatures" else "delving"
+            label_base += f" ({word} {pay_generic})"
+        if flashback:
+            label_base += " (flashback)"
+        if emerge_oid is not None:
+            label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
+        if extra_generic:
+            label_base += f" (+{extra_generic})"
+        if phyrexian:
+            # The price in life, in the label, because the client groups rows by
+            # `base_label`: "Cast Gitaxian Probe" and "Cast Gitaxian Probe (paying
+            # 2 life)" are two rows a player has to be able to tell apart before
+            # clicking either, and they are otherwise identical.
+            label_base += f" (paying {phyrexian_life} life)"
+        actions: list[Action] = []
+        for targets in tuples:
+            label = label_base
+            if targets:
+                label += " -> " + ", ".join(describe_ref(state, ref) for ref in targets)
+            actions.append(
+                Action(
+                    kind=ActionKind.CAST,
+                    source=oid,
+                    targets=targets,
+                    x=x,
+                    kicked=kicked,
+                    gift_to=gift_to,
+                    evoked=evoked,
+                    alternative=alternative,
+                    overloaded=overloaded,
+                    additional_times=additional_times,
+                    additional_choice=additional_choice,
+                    from_library_top=from_library_top,
+                    foretold=foretold,
+                    face_down=face_down,
+                    second_face=second_face,
+                    prepared=prepared,
+                    fused=fused,
+                    bestowed=bestowed,
+                    mutated=mutated,
+                    pay_generic=pay_generic,
+                    phyrexian=phyrexian,
+                    flashback=flashback,
+                    emerge_oid=emerge_oid,
+                    label=label,
+                    base_label=label_base,
+                    pays=pays,
+                )
             )
-        )
+        out.extend(actions)
     return out
 
 

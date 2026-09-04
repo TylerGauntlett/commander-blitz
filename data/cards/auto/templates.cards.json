@@ -1833,6 +1833,50 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "an_offer_you_can_t_refuse",
+      "mana_cost": "{U}",
+      "name": "An Offer You Can't Refuse",
+      "oracle_text": "Counter target noncreature spell. Its controller creates two Treasure tokens. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "controller": {
+            "controller_of_target": "t1"
+          },
+          "op": "create_token",
+          "token": "treasure_token"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -7312,6 +7356,45 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "any",
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "blasphemous_act",
+      "mana_cost": "{8}{R}",
+      "name": "Blasphemous Act",
+      "oracle_text": "This spell costs {1} less to cast for each creature on the battlefield.\nBlasphemous Act deals 13 damage to each creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 13
+          },
+          "objects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -9316,6 +9399,125 @@
           },
           "effects": [
             {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{1}{G}",
+            "mana_reduction": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": {
+                "controller_of": "victim"
+              },
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Island",
+                  "Swamp",
+                  "Mountain",
+                  "Forest"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Enchantment"
+                    ]
+                  },
+                  {
+                    "not_supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Channel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "boseiju_who_endures",
+      "name": "Boseiju, Who Endures",
+      "oracle_text": "{T}: Add {G}.\nChannel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -9531,6 +9733,106 @@
             ],
             "zone": "battlefield"
           }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "brain_freeze",
+      "mana_cost": "{1}{U}",
+      "name": "Brain Freeze",
+      "oracle_text": "Target player mills three cards.\nStorm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "mill",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "brainstorm",
+      "mana_cost": "{U}",
+      "name": "Brainstorm",
+      "oracle_text": "Draw three cards, then put two cards from your hand on top of your library in any order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": 2,
+            "zone": "hand"
+          },
+          "op": "put_on_top"
         }
       ],
       "types": [
@@ -13106,6 +13408,92 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "chaos_warp",
+      "mana_cost": "{2}{R}",
+      "name": "Chaos Warp",
+      "oracle_text": "The owner of target permanent shuffles it into their library, then reveals the top card of their library. If it's a permanent card, they put it onto the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "warped",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "op": "shuffle",
+          "player": {
+            "owner_of": "warped"
+          }
+        },
+        {
+          "as": "top_card",
+          "objects": {
+            "player": {
+              "owner_of": "warped"
+            },
+            "zone": "library"
+          },
+          "op": "snapshot"
+        },
+        {
+          "objects": {
+            "binding": "top_card"
+          },
+          "op": "reveal"
+        },
+        {
+          "condition": {
+            "exists": {
+              "any_types": [
+                "Artifact",
+                "Battle",
+                "Creature",
+                "Enchantment",
+                "Land",
+                "Planeswalker"
+              ],
+              "binding": "top_card",
+              "zone": "library"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "binding": "top_card"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -13702,6 +14090,144 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Lands you control have \"{T}: Add one mana of any color.\""
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "id": "chromatic_lantern",
+      "mana_cost": "{3}",
+      "name": "Chromatic Lantern",
+      "oracle_text": "Lands you control have \"{T}: Add one mana of any color.\"\n{T}: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -13906,6 +14432,52 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you play another land, sacrifice this land.",
+          "trigger": {
+            "controller": "you",
+            "event": "land_played",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "city_of_traitors",
+      "name": "City of Traitors",
+      "oracle_text": "When you play another land, sacrifice this land.\n{T}: Add {C}{C}.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -16987,6 +17559,59 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "crowd_s_favor",
+      "mana_cost": "{R}",
+      "name": "Crowd's Favor",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nTarget creature gets +1/+0 and gains first strike until end of turn. (It deals combat damage before creatures without first strike.)",
+      "pay_generic_with": "tap_creatures",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "keywords": [
+            "first_strike"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -17703,6 +18328,65 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature deals damage to an opponent, you may draw a card.",
+          "trigger": {
+            "controller": "any",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "curiosity",
+      "mana_cost": "{U}",
+      "name": "Curiosity",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature deals damage to an opponent, you may draw a card.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -18951,6 +19635,56 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "return_to_hand": {
+          "controller": "you",
+          "subtypes": [
+            "Island"
+          ]
+        }
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "daze",
+      "mana_cost": "{1}{U}",
+      "name": "Daze",
+      "oracle_text": "You may return an Island you control to its owner's hand rather than pay this spell's mana cost.\nCounter target spell unless its controller pays {1}.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "else": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "mana": "{1}"
+          },
+          "player": {
+            "controller_of_target": "t1"
+          },
+          "prompt": "Pay {1} to stop Daze countering your spell?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -22728,6 +23462,91 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}{W}",
+            "mana_reduction": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "attacking": true
+                  },
+                  {
+                    "blocking": true
+                  }
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "eiganjo_seat_of_the_empire",
+      "name": "Eiganjo, Seat of the Empire",
+      "oracle_text": "{T}: Add {W}.\nChannel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -25173,6 +25992,41 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flashback": {
+        "mana": "{2}{R}"
+      },
+      "id": "faithless_looting",
+      "mana_cost": "{R}",
+      "name": "Faithless Looting",
+      "oracle_text": "Draw two cards, then discard two cards.\nFlashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "discard",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "condition": {
@@ -25425,6 +26279,42 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "farseek",
+      "mana_cost": "{1}{G}",
+      "name": "Farseek",
+      "oracle_text": "Search your library for a Plains, Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "subtypes": [
+              "Plains",
+              "Island",
+              "Swamp",
+              "Mountain"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -26735,6 +27625,50 @@
       ]
     },
     {
+      "alternative_cost": {
+        "condition": {
+          "exists": {
+            "controller": "you",
+            "is_commander": true,
+            "zone": "battlefield"
+          }
+        },
+        "mana": "{0}"
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "fierce_guardianship",
+      "mana_cost": "{2}{U}",
+      "name": "Fierce Guardianship",
+      "oracle_text": "If you control a commander, you may cast this spell without paying its mana cost.\nCounter target noncreature spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -27790,6 +28724,83 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "spells_cast_this_turn": "all"
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flusterstorm",
+      "mana_cost": "{U}",
+      "name": "Flusterstorm",
+      "oracle_text": "Counter target instant or sorcery spell unless its controller pays {1}.\nStorm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "else": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "mana": "{1}"
+          },
+          "player": {
+            "controller_of_target": "t1"
+          },
+          "prompt": "Pay {1} to stop Flusterstorm countering your spell?"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -28108,6 +29119,44 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "exile_from_hand": {
+          "colors": [
+            "U"
+          ]
+        },
+        "pay_life": 1
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "force_of_will",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Force of Will",
+      "oracle_text": "You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.\nCounter target spell.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -29709,6 +30758,41 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gamble",
+      "mana_cost": "{R}",
+      "name": "Gamble",
+      "oracle_text": "Search your library for a card, put that card into your hand, discard a card at random, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "hand",
+          "op": "search_library",
+          "player": "you",
+          "shuffle": false
+        },
+        {
+          "amount": 1,
+          "op": "discard",
+          "player": "you",
+          "random": true
+        },
+        {
+          "op": "shuffle",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -29936,6 +31020,98 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, if you control a creature with power 4 or greater, draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have trample. (Each of those creatures can deal excess combat damage to the player or planeswalker it's attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control with power 4 or greater enters, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "garruk_s_uprising",
+      "mana_cost": "{2}{G}",
+      "name": "Garruk's Uprising",
+      "oracle_text": "When this enchantment enters, if you control a creature with power 4 or greater, draw a card.\nCreatures you control have trample. (Each of those creatures can deal excess combat damage to the player or planeswalker it's attacking.)\nWhenever a creature you control with power 4 or greater enters, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -30188,6 +31364,55 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "generous_gift",
+      "mana_cost": "{2}{W}",
+      "name": "Generous Gift",
+      "oracle_text": "Destroy target permanent. Its controller creates a 3/3 green Elephant creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of": "victim"
+          },
+          "op": "create_token",
+          "token": "elephant_3_3_g"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -31309,6 +32534,45 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "gitaxian_probe",
+      "mana_cost": "{U/P}",
+      "name": "Gitaxian Probe",
+      "oracle_text": "({U/P} can be paid with either {U} or 2 life.)\nLook at target player's hand.\nDraw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "look_at_hand",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -35096,6 +36360,43 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "gut_shot",
+      "mana_cost": "{R/P}",
+      "name": "Gut Shot",
+      "oracle_text": "({R/P} can be paid with either {R} or 2 life.)\nGut Shot deals 1 damage to any target.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -38724,6 +40025,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "op": "return_spell_to_hand",
+                      "target": "sp"
+                    }
+                  ],
+                  "label": "Return target spell you don't control to its owner's hand."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "perm"
+                      },
+                      "op": "return_to_hand"
+                    }
+                  ],
+                  "label": "Return target nonland permanent to its owner's hand."
+                }
+              ],
+              "op": "choose_mode",
+              "up_to": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "sp",
+              "kind": "spell",
+              "mode": 0,
+              "selector": {
+                "controller": "opponent"
+              }
+            },
+            {
+              "count": 1,
+              "id": "perm",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a spell, choose up to one —\n• Return target spell you don't control to its owner's hand.\n• Return target nonland permanent to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hullbreaker_horror",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{5}{U}{U}",
+      "name": "Hullbreaker Horror",
+      "oracle_text": "Flash\nThis spell can't be countered.\nWhenever you cast a spell, choose up to one —\n• Return target spell you don't control to its owner's hand.\n• Return target nonland permanent to its owner's hand.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Kraken",
+        "Horror"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ],
+      "uncounterable": true
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -41327,6 +42716,84 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "jeska_s_will",
+      "mana_cost": "{2}{R}",
+      "name": "Jeska's Will",
+      "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Add {R} for each card in target opponent's hand.\n• Exile the top three cards of your library. You may play them this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "mana": "{R}",
+                  "op": "add_mana_per",
+                  "per": {
+                    "player": {
+                      "target": "t1"
+                    },
+                    "zone": "hand"
+                  },
+                  "player": "you"
+                }
+              ],
+              "label": "Add {R} for each card in target opponent's hand."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top",
+                  "playable_this_turn": true,
+                  "player": "you"
+                }
+              ],
+              "label": "Exile the top three cards of your library. You may play them this turn."
+            }
+          ],
+          "op": "choose_mode",
+          "up_to_if": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "zone": "battlefield"
+              }
+            },
+            "count": 2
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -47652,6 +49119,87 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Sacrifice this artifact: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "lotus_petal",
+      "mana_cost": "{0}",
+      "name": "Lotus Petal",
+      "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -49179,6 +50727,81 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mana_confluence",
+      "name": "Mana Confluence",
+      "oracle_text": "{T}, Pay 1 life: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -50788,6 +52411,38 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mental_misstep",
+      "mana_cost": "{U/P}",
+      "name": "Mental Misstep",
+      "oracle_text": "({U/P} can be paid with either {U} or 2 life.)\nCounter target spell with mana value 1.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "mana_value": 1
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -53246,6 +54901,93 @@
     {
       "abilities": [
         {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Metalcraft — {T}: Add one mana of any color. Activate only if you control three or more artifacts."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mox_opal",
+      "mana_cost": "{0}",
+      "name": "Mox Opal",
+      "oracle_text": "Metalcraft — {T}: Add one mana of any color. Activate only if you control three or more artifacts.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -54108,6 +55850,141 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "age",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}",
+                "times": {
+                  "counters_on": {
+                    "counter": "age",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                }
+              },
+              "player": "you",
+              "prompt": "Pay cumulative upkeep {1} for each age counter on Mystic Remora?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Draw a card?"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{4}"
+              },
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Pay {4} to stop Mystic Remora's draw?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a noncreature spell, you may draw a card unless that player pays {4}.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mystic_remora",
+      "mana_cost": "{U}",
+      "name": "Mystic Remora",
+      "oracle_text": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nWhenever an opponent casts a noncreature spell, you may draw a card unless that player pays {4}.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mystical_tutor",
+      "mana_cost": "{U}",
+      "name": "Mystical Tutor",
+      "oracle_text": "Search your library for an instant or sorcery card, reveal it, then shuffle and put that card on top.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "library_top",
+          "op": "search_library",
+          "player": "you",
+          "reveal": true,
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -54261,6 +56138,38 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nature_s_lore",
+      "mana_cost": "{1}{G}",
+      "name": "Nature's Lore",
+      "oracle_text": "Search your library for a Forest card, put that card onto the battlefield, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": {
+            "const": 1
+          },
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "subtypes": [
+              "Forest"
+            ]
+          },
+          "tapped": false
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -57412,6 +59321,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature deals damage to an opponent, you may draw a card.",
+          "trigger": {
+            "controller": "any",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ophidian_eye",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Ophidian Eye",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\nWhenever enchanted creature deals damage to an opponent, you may draw a card.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -57934,6 +59905,85 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{3}{U}",
+            "mana_reduction": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment",
+                  "Planeswalker"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Channel — {3}{U}, Discard this card: Return target artifact, creature, enchantment, or planeswalker to its owner's hand. This ability costs {1} less to activate for each legendary creature you control."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "otawara_soaring_city",
+      "name": "Otawara, Soaring City",
+      "oracle_text": "{T}: Add {U}.\nChannel — {3}{U}, Discard this card: Return target artifact, creature, enchantment, or planeswalker to its owner's hand. This ability costs {1} less to activate for each legendary creature you control.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -58737,6 +60787,119 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has \"{T}: Add one mana of any color.\""
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "id": "paradise_mantle",
+      "mana_cost": "{0}",
+      "name": "Paradise Mantle",
+      "oracle_text": "Equipped creature has \"{T}: Add one mana of any color.\"\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -61019,6 +63182,32 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "porcelain_legionnaire",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W/P}",
+      "name": "Porcelain Legionnaire",
+      "oracle_text": "({W/P} can be paid with either {W} or 2 life.)\nFirst strike",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Soldier"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -62731,6 +64920,117 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "pyretic_ritual",
+      "mana_cost": "{1}{R}",
+      "name": "Pyretic Ritual",
+      "oracle_text": "Add {R}{R}{R}.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "mana": "{R}{R}{R}",
+          "op": "add_mana"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "pyroblast",
+      "mana_cost": "{R}",
+      "name": "Pyroblast",
+      "oracle_text": "Choose one —\n• Counter target spell if it's blue.\n• Destroy target permanent if it's blue.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "exists": {
+                      "colors": [
+                        "U"
+                      ],
+                      "target": "spell",
+                      "zone": "stack"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "op": "counter",
+                      "target": "spell"
+                    }
+                  ]
+                }
+              ],
+              "label": "Counter target spell if it's blue."
+            },
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "exists": {
+                      "colors": [
+                        "U"
+                      ],
+                      "target": "perm"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "target": "perm"
+                      },
+                      "op": "destroy"
+                    }
+                  ]
+                }
+              ],
+              "label": "Destroy target permanent if it's blue."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "spell",
+          "kind": "spell",
+          "mode": 0,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "perm",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -64938,6 +67238,77 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "red_elemental_blast",
+      "mana_cost": "{R}",
+      "name": "Red Elemental Blast",
+      "oracle_text": "Choose one —\n• Counter target blue spell.\n• Destroy target blue permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "countered"
+                  },
+                  "op": "counter"
+                }
+              ],
+              "label": "Counter target blue spell."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "doomed"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target blue permanent."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "spell",
+          "mode": 0,
+          "selector": {
+            "colors": [
+              "U"
+            ]
+          }
+        },
+        {
+          "count": 1,
+          "id": "doomed",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "colors": [
+              "U"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -66437,6 +68808,39 @@
       "toughness": 8,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rite_of_flame",
+      "mana_cost": "{R}",
+      "name": "Rite of Flame",
+      "oracle_text": "Add {R}{R}, then add {R} for each card named Rite of Flame in each graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "mana": "{R}{R}",
+          "op": "add_mana",
+          "player": "you"
+        },
+        {
+          "mana": "{R}",
+          "op": "add_mana_per",
+          "per": {
+            "controller": "any",
+            "name": "Rite of Flame",
+            "zone": "graveyard"
+          },
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -74593,6 +76997,46 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "exile_self_from_hand": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "kind": "activated",
+          "text": "Exile this card from your hand: Add {R}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "simian_spirit_guide",
+      "mana_cost": "{2}{R}",
+      "name": "Simian Spirit Guide",
+      "oracle_text": "Exile this card from your hand: Add {R}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Ape",
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U"
@@ -75829,6 +78273,32 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "slash_panther",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{4}{R/P}",
+      "name": "Slash Panther",
+      "oracle_text": "({R/P} can be paid with either {R} or 2 life.)\nHaste",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Cat"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -76293,6 +78763,53 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay {2}? (If you don't, Smothering Tithe's controller creates a Treasure token.)"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, that player may pay {2}. If the player doesn't, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "smothering_tithe",
+      "mana_cost": "{3}{W}",
+      "name": "Smothering Tithe",
+      "oracle_text": "Whenever an opponent draws a card, that player may pay {2}. If the player doesn't, you create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -77772,6 +80289,32 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spined_thopter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U/P}",
+      "name": "Spined Thopter",
+      "oracle_text": "({U/P} can be paid with either {U} or 2 life.)\nFlying",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Thopter"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -78324,6 +80867,88 @@
       "types": [
         "Enchantment",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true,
+            "tap_permanents": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Tap an untapped creature you control: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "springleaf_drum",
+      "mana_cost": "{1}",
+      "name": "Springleaf Drum",
+      "oracle_text": "{T}, Tap an untapped creature you control: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -80318,6 +82943,68 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "condition": {
+          "all": [
+            {
+              "exists": {
+                "controller": "opponent",
+                "subtypes": [
+                  "Forest"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "exists": {
+                "controller": "you",
+                "subtypes": [
+                  "Island"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ]
+        },
+        "mana": "{0}"
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "submerge",
+      "mana_cost": "{4}{U}",
+      "name": "Submerge",
+      "oracle_text": "If an opponent controls a Forest and you control an Island, you may cast this spell without paying its mana cost.\nPut target creature on top of its owner's library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -83457,6 +86144,110 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pair"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pair"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "paired": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "paired_with_source": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals damage to an opponent, draw a card.",
+          "trigger": {
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "tandem_lookout",
+      "mana_cost": "{2}{U}",
+      "name": "Tandem Lookout",
+      "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Tandem Lookout is paired with another creature, each of those creatures has \"Whenever this creature deals damage to an opponent, draw a card.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -85199,6 +87990,98 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "condition": {
+            "was_cast": true
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "from_everything": true,
+              "op": "grant_protection",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When The One Ring enters, if you cast it, you gain protection from everything until your next turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "burden",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "burden",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "burden",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_one_ring",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{4}",
+      "name": "The One Ring",
+      "oracle_text": "Indestructible\nWhen The One Ring enters, if you cast it, you gain protection from everything until your next turn.\nAt the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.\n{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -85798,6 +88681,38 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "three_visits",
+      "mana_cost": "{1}{G}",
+      "name": "Three Visits",
+      "oracle_text": "Search your library for a Forest card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": {
+            "const": 1
+          },
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "subtypes": [
+              "Forest"
+            ]
+          },
+          "tapped": false
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "additional_cost": {
         "discard": 1
       },
@@ -85984,6 +88899,32 @@
       ],
       "toughness": 3,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "thundering_tanadon",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{4}{G/P}{G/P}",
+      "name": "Thundering Tanadon",
+      "oracle_text": "({G/P} can be paid with either {G} or 2 life.)\nTrample",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Beast"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -86741,6 +89682,53 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "{T}, Sacrifice this artifact: Exile target player's graveyard."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "tormod_s_crypt",
+      "mana_cost": "{0}",
+      "name": "Tormod's Crypt",
+      "oracle_text": "{T}, Sacrifice this artifact: Exile target player's graveyard.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -90661,6 +93649,33 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vault_skirge",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{1}{B/P}",
+      "name": "Vault Skirge",
+      "oracle_text": "({B/P} can be paid with either {B} or 2 life.)\nFlying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Imp"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -95158,6 +98173,48 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wheel_of_fortune",
+      "mana_cost": "{2}{R}",
+      "name": "Wheel of Fortune",
+      "oracle_text": "Each player discards their hand, then draws seven cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": {
+                  "binding": "each_player"
+                }
+              },
+              "op": "discard",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "amount": {
+            "const": 7
+          },
+          "op": "draw",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -97693,6 +100750,36 @@
       "name": "Yavimaya Coast",
       "oracle_text": "{T}: Add {C}.\n{T}: Add {G} or {U}. This land deals 1 damage to you.",
       "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Forest"
+          ],
+          "text": "Each land is a Forest in addition to its other land types."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "yavimaya_cradle_of_growth",
+      "name": "Yavimaya, Cradle of Growth",
+      "oracle_text": "Each land is a Forest in addition to its other land types.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
       "types": [
         "Land"
       ]

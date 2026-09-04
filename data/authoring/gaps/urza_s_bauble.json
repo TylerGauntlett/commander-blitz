@@ -1,0 +1,14 @@
+{
+  "card_id": "urza_s_bauble",
+  "name": "Urza's Bauble",
+  "oracle_text": "{T}, Sacrifice this artifact: Look at a card at random in target player's hand. You draw a card at the beginning of the next turn's upkeep.",
+  "blocked_sentences": ["Look at a card at random in target player's hand."],
+  "needs": [{
+    "capability": "look_at_random_card_in_hand",
+    "kind": "op",
+    "what": "a private look at a chosen number of cards picked at random from a hand -- either an `objects` selector on `look_at_hand` (zone hand, a `player` spec, `random: true`, `count: 1`) so the entitlement is granted per card instead of per hand, or an `amount`/`random` pair on the op. The seen card must be picked uniformly at random by the engine rather than chosen by anybody, the entitlement (`GameObject.revealed_to`) must land on exactly that one card, and it must be the controller of the ability who sees it while the hand's owner and every other seat still get `hand: null` and a count. Chosen-count variants of the same shape (Ostracize-style 'look at N cards at random') fall out of it, as does the empty-hand case: zero cards is a legal resolution, not a failure",
+    "why_existing_wont_do": "`look_at_hand` is the only private-information op and it is all-or-nothing: its sole argument is `player`, the loader hard-requires it (`look_at_hand needs a 'player' -- whose hand`), and the op body walks the entire `players[pid].hand` adding `ctx.controller` to every card's `revealed_to`. There is no `objects`, `count`, `amount` or `random` key on it, so the selector language's `random` -- which exists and is honoured by `choose_objects` -- has nothing to attach to here. Writing the line as a bare `look_at_hand` would show the whole hand, which is not a smaller version of the printed effect but a strictly larger one: Urza's Bauble would become Peek/Glasses of Urza on an artifact that costs {0}, and the information asymmetry the op exists to model would be handed away for free. `reveal` is the other near miss -- it does route through `choose_objects`, so a `{\"zone\": \"hand\", \"player\": {\"target\": \"t1\"}, \"random\": true, \"count\": 1}` selector would pick the right card -- but revealing is public by construction (it emits a `reveal` event carrying `def_id`s to the table), and 'look at' shows the card to the ability's controller alone; at a pod that difference decides who is ahead, and it is the exact distinction `op_look_at_hand`'s docstring was written to preserve."
+  }],
+  "closest_existing": ["look_at_hand", "reveal"],
+  "confidence": "high"
+}

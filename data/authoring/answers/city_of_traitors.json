@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "city_of_traitors",
+    "name": "City of Traitors",
+    "oracle_text": "When you play another land, sacrifice this land.\n{T}: Add {C}{C}.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When you play another land, sacrifice this land.",
+        "trigger": {
+          "event": "land_played",
+          "controller": "you",
+          "filter": {
+            "exclude_self": true
+          }
+        },
+        "effects": [
+          {
+            "op": "sacrifice",
+            "objects": {
+              "self_only": true
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}{C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}{C}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

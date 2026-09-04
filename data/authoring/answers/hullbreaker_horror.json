@@ -1,0 +1,93 @@
+{
+  "card": {
+    "id": "hullbreaker_horror",
+    "name": "Hullbreaker Horror",
+    "oracle_text": "Flash\nThis spell can't be countered.\nWhenever you cast a spell, choose up to one —\n• Return target spell you don't control to its owner's hand.\n• Return target nonland permanent to its owner's hand.",
+    "mana_cost": "{5}{U}{U}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Kraken",
+      "Horror"
+    ],
+    "power": 7,
+    "toughness": 8,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [
+      "flash"
+    ],
+    "uncounterable": true,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a spell, choose up to one —\n• Return target spell you don't control to its owner's hand.\n• Return target nonland permanent to its owner's hand.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you"
+        },
+        "targets": [
+          {
+            "id": "sp",
+            "kind": "spell",
+            "count": 1,
+            "mode": 0,
+            "selector": {
+              "controller": "opponent"
+            }
+          },
+          {
+            "id": "perm",
+            "kind": "permanent",
+            "count": 1,
+            "mode": 1,
+            "selector": {
+              "zone": "battlefield",
+              "not_types": [
+                "Land"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "up_to": true,
+            "modes": [
+              {
+                "label": "Return target spell you don't control to its owner's hand.",
+                "effects": [
+                  {
+                    "op": "return_spell_to_hand",
+                    "target": "sp"
+                  }
+                ]
+              },
+              {
+                "label": "Return target nonland permanent to its owner's hand.",
+                "effects": [
+                  {
+                    "op": "return_to_hand",
+                    "objects": {
+                      "target": "perm"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
