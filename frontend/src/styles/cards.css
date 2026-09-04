@@ -735,11 +735,25 @@
   font-weight: 600;
 }
 
+/* A column of at most two lines: the counters, then the keyword chip and the
+   P/T. It was one row, and on a ~100px board card a creature with two kinds of
+   counter on it had spent the whole width before the P/T asked for its corner
+   -- so the number pushed off the card exactly when counters made it worth
+   reading. `CardPreview` had already reached the same arrangement one size up
+   and says so in its own comment. */
 .face__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  margin-top: auto;
+}
+
+/* The lower line. The row the footer used to be, minus the counters. */
+.face__footrow {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: auto;
 }
 
 /* P/T as a dark lozenge rather than a pale one. Everything on this card is now
@@ -762,9 +776,13 @@
   color: #ff8f7f;
 }
 
+/* Hard against the right edge, on the line above the P/T that is also hard
+   against it -- so the badges read as belonging to the number rather than to
+   the card's left-hand furniture. */
 .face__counters {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 2px;
 }
 
