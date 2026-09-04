@@ -61,6 +61,7 @@ from automtg.engine.structs import (
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
+    PLAYER_PROTECTION_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
@@ -4945,6 +4946,51 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     )
             elif entry not in KNOWN_COLORS:
                 raise DslError(f"{where}.from_colors[{i}]: unknown colour {entry!r}")
+        # A grant with no recipient. `objects` alone was once the only shape, so
+        # its absence used to be caught by `choose_objects` finding nothing --
+        # which is the silent kind of nothing this pass exists to refuse now
+        # that the op has a second half.
+        if effect.get("player") is None and effect.get("objects") is None:
+            raise DslError(
+                f"{where}: grant_protection needs 'objects' or 'player' naming "
+                f"who gains it"
+            )
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if (
+            not effect.get("from_colors")
+            and not effect.get("from_types")
+            and not effect.get("from_subtypes")
+            and not effect.get("from_everything")
+        ):
+            # Protection *from* nothing. It would install no qualities and read
+            # on screen as a spell that resolved and did nothing at all.
+            raise DslError(
+                f"{where}: grant_protection needs a quality -- 'from_colors', "
+                f"'from_types', 'from_subtypes' or 'from_everything'"
+            )
+        if "from_everything" in effect and not isinstance(effect["from_everything"], bool):
+            raise DslError(
+                f"{where}: 'from_everything' is a boolean, got "
+                f"{effect['from_everything']!r}"
+            )
+        duration = effect.get("duration")
+        if duration is not None:
+            if effect.get("player") is None:
+                # An object's grant is one `TempEffect` on `until_eot`, which
+                # the cleanup step sweeps and nothing else does. Reading a
+                # duration there and storing it anyway would be a protection
+                # that claims to last past the turn and does not.
+                raise DslError(
+                    f"{where}: 'duration' only means anything on the 'player' "
+                    f"half of grant_protection -- an object's grant is until "
+                    f"end of turn"
+                )
+            if duration not in PLAYER_PROTECTION_DURATIONS:
+                raise DslError(
+                    f"{where}: unknown protection duration {duration!r} "
+                    f"(implemented: {sorted(PLAYER_PROTECTION_DURATIONS)})"
+                )
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the

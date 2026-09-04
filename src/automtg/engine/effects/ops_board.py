@@ -1332,8 +1332,17 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
     `TempEffect.keyword` is already a single string and `protection_from`
     already returns a flat set of qualities: three colours is three entries and
     nothing had to learn a new shape.
+
+    Three things arrived with Teferi's Protection and The One Ring, and all
+    three are additions to this one op rather than a second one: a ``player``
+    recipient, the quality ``from_everything``, and a ``duration`` that outlasts
+    the turn. A separate "grant protection to a player" op would have been a
+    second place for "protection from black" to mean something, and the two
+    would drift the first time a quality was added.
     """
     from ..characteristics import resolve_chosen_color_list
+    from ..primitives import grant_player_protection
+    from ..structs import PROTECTION_EVERYTHING
 
     # "…protection from the color of your choice" -- Brave the Elements, whose
     # colour is named by a `choose_color` earlier in the same effect list and
@@ -1346,7 +1355,27 @@ def op_grant_protection(ctx: EffectContext, spec: Mapping[str, Any]):
         *(spec.get("from_types") or ()),
         *(spec.get("from_subtypes") or ()),
     ]
+    # "…protection from **everything**" (702.16i) -- Teferi's Protection, The
+    # One Ring. A quality in the same flat list rather than a flag beside it,
+    # because every rule that reads protection reads that list; a boolean would
+    # be a second question asked in four places, which is how one of them comes
+    # to be forgotten.
+    if spec.get("from_everything"):
+        qualities.append(PROTECTION_EVERYTHING)
     if not qualities:
+        return
+    # "**You** gain protection from everything until your next turn." A seat
+    # cannot come out of `choose_objects` -- it resolves object ids and the loop
+    # below skips anything not on the battlefield -- so the player half is its
+    # own clause, reading the ordinary player spec and writing to the table
+    # instead of to an object's `until_eot`.
+    if (who := spec.get("player")) is not None:
+        duration = str(spec.get("duration", "until_your_next_turn"))
+        for pid in select_players(ctx, who):
+            grant_player_protection(
+                ctx.state, pid, qualities, duration, source=ctx.source_oid
+            )
+    if spec.get("objects") is None:
         return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Grant protection to")
     for oid in oids:

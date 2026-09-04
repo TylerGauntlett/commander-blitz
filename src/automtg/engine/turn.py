@@ -22,6 +22,7 @@ from .primitives import (
     clear_block_prohibitions,
     clear_damage_shields,
     clear_goad,
+    clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
     clear_until_eot,
@@ -287,6 +288,13 @@ def _untap_step(state: GameState) -> None:
     # blocked." (Sly Instigator.) The same clock read from the other end of the
     # block, so it is cleared in the same breath and keyed the same way.
     clear_unblockables(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, you gain protection from everything." Teferi's
+    # Protection and The One Ring, on the same clock as the three above and
+    # keyed the same way -- and it is cleared *before* `_phase` below, so the
+    # permanents phasing back in this same step arrive into a turn whose
+    # protection has already ended. Both cards say "until your next turn" about
+    # both halves, so the two wearings-off belong in the same step.
+    clear_player_protections(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -596,6 +604,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # granted it may have been destroyed in response, and the creature that has
     # it keeps the evasion until this line runs.
     clear_unblockables(state, "this_turn")
+    clear_player_protections(state, "this_turn")
     # "Prevent all damage that would be dealt to you **this turn**." (Selfless
     # Squire, Fog.) Beside the three above and owned by no permanent for the same
     # reason -- Fog is an instant and leaves nothing behind, and the Squire's

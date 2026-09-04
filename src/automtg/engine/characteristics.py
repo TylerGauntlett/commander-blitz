@@ -56,7 +56,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
-from .structs import Characteristics
+from .structs import PROTECTION_EVERYTHING, Characteristics
 
 #: What ``min_life_of`` reports when its player spec selects nobody.
 #:
@@ -1354,14 +1354,34 @@ def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
     on the battlefield or a spell on the stack.  A quality it does not have
     cannot be protected against, so a missing source is never protection.
     """
+    return _matches_protection(state, protection_from(state, oid), source_oid)
+
+
+def _matches_protection(
+    state: GameState, qualities: frozenset[str], source_oid: int | None
+) -> bool:
+    """Is ``source_oid`` one of the ``qualities`` something has protection from?
+
+    Split out of :func:`protected_from` when protection learned to cover a
+    *player* as well as a permanent: the two differ only in where the set of
+    qualities comes from, and the comparison against the source is the half that
+    must not drift -- "protection from everything" has to mean the same thing on
+    a seat as it does on Progenitus.
+    """
     if source_oid is None:
         return False
-    qualities = protection_from(state, oid)
     if not qualities:
         return False
     source = state.objects.get(source_oid)
     if source is None:
         return False
+    # "Protection from everything" (702.16i). Answered before the source's
+    # characteristics are read at all, because the whole point is that they do
+    # not matter -- a colourless artifact spell with no subtypes is stopped by
+    # it, and no set of qualities built from types, subtypes and colours could
+    # contain one.
+    if PROTECTION_EVERYTHING in qualities:
+        return True
     c = chars(state, source_oid)
     card = state.card_of(source)
     # Derived characteristics on the battlefield, printed ones anywhere else --
@@ -1372,6 +1392,38 @@ def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
     else:
         have = set(card.types) | set(card.subtypes) | set(card.colors)
     return bool(have & qualities)
+
+
+def player_protection_from(state: GameState, pid: int) -> frozenset[str]:
+    """The qualities this **player** has protection from.
+
+    The seat-side twin of :func:`protection_from`, and it returns the same flat
+    set of strings so the rules that read protection ask one kind of question.
+    Its entries come from `GameState.player_protections` rather than from
+    `_battlefield_statics`: no static can name a seat, and the effect outlives
+    whatever installed it.
+
+    Only two rules read this, against the four that read the object side. A
+    player cannot be blocked, and the "can't be enchanted" half is reached
+    through targeting -- an Aura that enchants a player targets it as it is cast
+    (303.4a), so the target check already refuses it.
+    """
+    if not state.player_protections:
+        return frozenset()
+    return frozenset(
+        entry.quality for entry in state.player_protections if entry.player == pid
+    )
+
+
+def player_protected_from(state: GameState, pid: int, source_oid: int | None) -> bool:
+    """Does ``pid`` have protection from ``source_oid``?
+
+    Protection stops **anyone**, its controller included: Teferi's Protection
+    means your own Lightning Bolt cannot be pointed at you either. That is the
+    same rule `can_be_targeted` already applies on the object side, and the half
+    a hexproof-shaped implementation would silently get wrong.
+    """
+    return _matches_protection(state, player_protection_from(state, pid), source_oid)
 
 
 def _active_player_statics(

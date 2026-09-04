@@ -1,3 +1,47 @@
+## Protection over a **player** -- 702.16b/d/i
+
+### Overview
+
+Teferi's Protection: *"Until your next turn, your life total can't change and
+**you gain protection from everything**. All permanents you control phase out."*
+The One Ring: *"…**you gain protection from everything until your next turn**."*
+
+The gap record named three limits and all three were real. `grant_protection`
+resolved its recipients through `choose_objects` and skipped every oid that was
+not `on_battlefield`, so a seat could never receive it. Its qualities were built
+only from `from_colors` (each entry validated against `KNOWN_COLORS`),
+`from_types` and `from_subtypes`, none of which can express "everything". And it
+wrote an `until_eot` `TempEffect`, which the cleanup step ends this turn -- so
+the "until your next turn" clock did not exist for it. `protection_from` was
+object-keyed throughout, so there was no player-side reader either.
+
+### Three decisions
+
+**"Everything" is a quality, not a flag.** It goes into the same flat set of
+strings every other protection quality lives in, as `PROTECTION_EVERYTHING`.
+Four rules read that set; a boolean beside it would be a second question asked
+in four places, which is how one of them comes to be forgotten. The comparison
+short-circuits on it before the source is read at all -- which is the whole
+content of 702.16i, since no set built from types, subtypes and colours can hold
+a colourless source.
+
+**A table, not a player field.** `GameState.player_protections`, beside
+`damage_shields`, for that record's reason: Teferi's Protection is an Instant
+and leaves nothing behind to own the effect. One entry per quality, so the
+readers get the same flat set the object side already hands them.
+
+**Two readers, and knowing it is two.** Targeting and damage. A player cannot be
+blocked; the "can't be enchanted" half comes through targeting, because an Aura
+that enchants a player targets it as it is cast. Writing four readers to match
+the object side would have been two of them dead.
+
+### The half that a hexproof shape gets wrong
+
+Protection stops **anyone**, its controller included: your own Bolt cannot be
+pointed at you. So the check in `_player_allowed` sits *above* the
+"you"/"opponent" clause rather than beside it -- the same line `can_be_targeted`
+already draws, and the test pins it directly.
+
 ## "At the beginning of your first main phase" — the precombat main event — 505.1b
 
 ### Overview
