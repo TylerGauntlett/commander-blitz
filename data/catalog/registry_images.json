@@ -819,6 +819,10 @@
     "artist": "Bram Sels",
     "scryfall_id": "753d2393-ce5a-422f-858c-25e3f61d52bd"
   },
+  "black_market_connections": {
+    "artist": "Xabi Gaztelua",
+    "scryfall_id": "71880a6a-4fac-4d4b-9bc3-a11d31466352"
+  },
   "black_widow_natasha_romanoff": {
     "artist": "Julia Vasilyeva",
     "scryfall_id": "2f3e2f33-9c31-4107-b9b4-a7e1d2d43bab"
@@ -7482,6 +7486,10 @@
   "shanodin_dryads": {
     "artist": "Eric Peterson",
     "scryfall_id": "90e8ff87-22e8-4c04-84bc-f0ea2c12a86c"
+  },
+  "shapeshifter_3_2_c_changeling": {
+    "artist": "Lixin Yin",
+    "scryfall_id": "049048af-9945-4b73-9aa3-7f09bf4c22b3"
   },
   "shared_animosity": {
     "artist": "Chuck Lukacs",

@@ -25472,12 +25472,12 @@
     },
     "Black Market Connections": {
       "edhrec_rank": 131,
-      "gate": "template",
+      "gate": null,
       "name": "Black Market Connections",
-      "reason": "no template for: At the beginning of your first main phase, choose one or more —",
+      "reason": "",
       "scryfall_id": "71880a6a-4fac-4d4b-9bc3-a11d31466352",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Market Tycoon": {
