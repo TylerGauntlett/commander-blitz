@@ -1415,7 +1415,32 @@
         }
       ]
     },
-            {
+                {
+      "id": "t_exiles_itself",
+      "name": "Test Exiles Itself",
+      "oracle_text": "You gain 2 life.\nExile Test Exiles Itself.",
+      "mana_cost": "{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+{
       "id": "t_life_lock",
       "name": "Test Life Lock",
       "oracle_text": "Until your next turn, your life total can't change.",

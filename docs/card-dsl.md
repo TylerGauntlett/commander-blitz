@@ -3335,6 +3335,25 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
 
+## "Exile <this card>." -- a spell that exiles itself
+
+```jsonc
+"exiles_itself": true
+```
+
+Teferi's Protection's last printed line. A card-level rider on the destination
+`stack._place_after_resolution` picks, and the sixth on that slot beside
+flashback's exile, buyback's hand, rebound's exile, cipher's and adventure's.
+Like all five it only ever replaces the **graveyard**, so the loader refuses it
+on a permanent, which enters the battlefield and never reaches the rider. It is
+also refused beside `rebound`: both send the spell to exile and only one hands
+it back.
+
+**Not the `exile` op.** A resolving spell has already been popped off
+`state.stack` by the time its effects run, so `{"zone": "stack", "self_only":
+true}` reaches nothing and the printed line would load cleanly and do nothing.
+`exile_self` is a **cost** key and is a different sentence again.
+
 ## "Your life total can't change"
 
 ```jsonc
