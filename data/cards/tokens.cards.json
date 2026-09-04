@@ -618,6 +618,64 @@
       "is_token": true
     },
     {
+      "id": "shapeshifter_3_2_c_changeling",
+      "name": "Shapeshifter Token",
+      "oracle_text": "3/2 colorless Shapeshifter creature token with changeling. (It is every creature type.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Changeling (This card is every creature type.)",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ]
+        }
+      ]
+    },
+    {
       "id": "vampire_demon_4_3_wb_flying",
       "name": "Vampire Demon Token",
       "oracle_text": "4/3 white and black Vampire Demon creature token with flying.",

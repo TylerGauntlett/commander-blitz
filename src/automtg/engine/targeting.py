@@ -14,7 +14,7 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import TargetSpec
-from .characteristics import chars, protected_from
+from .characteristics import chars, player_protected_from, protected_from
 from .effects.context import EffectContext
 from .effects.selectors import matches, resolve_pool, select_players
 from .effects.values import evaluate_value
@@ -176,6 +176,13 @@ def _player_allowed(ctx: EffectContext, pid: int, spec: TargetSpec) -> bool:
     resolves (608.2b) -- which matters for a spec that names a player off a
     binding, since control of the bound permanent can change in between.
     """
+    # Protection over a *seat* (702.16b), checked before the controller clause
+    # and not after: it stops **anyone** targeting, its own controller included,
+    # so folding it in beside a "you"/"opponent" test would let a protected
+    # player still be the target of their own spell. The object side draws the
+    # same line, in `can_be_targeted`, and for the same reason.
+    if player_protected_from(ctx.state, pid, ctx.source_oid):
+        return False
     clause = spec.selector.get("controller", "any")
     if clause == "any":
         return True

@@ -595,6 +595,16 @@ class CardModel(BaseModel):
     #: and like both it only ever replaces the *graveyard*. "From your hand" is
     #: the loop guard rather than flavour: the free cast happens from exile.
     rebound: bool = False
+    #: "**Exile Teferi's Protection.**" -- the printed last line of a spell that
+    #: exiles *itself* as it finishes resolving.
+    #:
+    #: The sixth rider on the same slot as flashback's exile, buyback's hand,
+    #: rebound's exile, cipher's and adventure's, and like all of them it only
+    #: ever replaces the *graveyard*. Not the `exile` op: a spell is off the
+    #: stack list by the time its effects run, so `{"zone": "stack",
+    #: "self_only": true}` reaches nothing and the line would silently do
+    #: nothing at all. Not `exile_self` either, which is a **cost** key.
+    exiles_itself: bool = False
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text

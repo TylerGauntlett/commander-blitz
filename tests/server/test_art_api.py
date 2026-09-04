@@ -100,12 +100,38 @@ class TestScopingToAGame:
         assert tokens
         assert tokens <= set(scoped)
 
+    def test_it_covers_the_other_face_of_a_double_faced_card(
+        self, client, game_id, game_data
+    ):
+        """The regression: a transformed permanent is serialized under the *back
+        face's* id, and an id missing from this map is one the client reads as a
+        card with no printing -- so a transformed Bloodline Keeper (or Henrika
+        Domnathi, in a deck that plays her) drew the hatched plate, with its art
+        sitting in `data/art` under exactly that name."""
+        scoped = client.get(f"/api/images?game_id={game_id}").json()["images"]
+        front = "bloodline_keeper"
+        assert front in scoped, "the deck's own card"
+        assert game_data.registry.get(front).back_face == "lord_of_lineage"
+        # Present *and* carrying a URL. A key mapped to `null` is the map saying
+        # "this card has no printing", which draws the same hatched plate a
+        # missing key does -- so key presence alone would not be the claim.
+        assert scoped.get("lord_of_lineage"), "the back face resolves to art"
+        assert scoped["lord_of_lineage"]["art"]
+
     def test_it_leaves_out_cards_no_seat_can_draw(self, client, game_id, game_data):
         scoped = set(client.get(f"/api/images?game_id={game_id}").json()["images"])
         reachable = {c.id for c in game_data.registry if c.is_token}
         for deck_id in ("aesi", "edgar"):
             reachable |= game_data.deck(deck_id).unique_ids()
-        assert scoped == reachable
+        # Plus the other faces of everything reachable, which is what a seat can
+        # actually put on the board: a card in a deck list can transform, and a
+        # card cast as its adventure or its second half is serialized under that
+        # face's own id.
+        faces = set(reachable)
+        for card_id in reachable:
+            card = game_data.registry.get(card_id)
+            faces |= {f for f in (card.back_face, card.second_face) if f}
+        assert scoped == faces
 
     def test_the_unscoped_form_is_unchanged(self, client, game_id, game_data):
         # Scripts depend on it, and "every card the engine has" is a genuinely

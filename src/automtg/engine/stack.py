@@ -796,6 +796,13 @@ def _place_after_resolution(
     # `spell_effects`, which is the only moment a creature is there to name.
     if obj.encoded_on is not None and destination is Zone.GRAVEYARD:
         destination = Zone.EXILE
+    # "Exile Teferi's Protection." The sixth rider on this slot, and the
+    # simplest: no condition on where it was cast from and nothing promised
+    # back. Written as an `exile` op in the card's own effects it would reach
+    # nothing -- the stack list is already popped by the time they run -- and
+    # the printed line would silently do nothing.
+    if card.exiles_itself and destination is Zone.GRAVEYARD:
+        destination = Zone.EXILE
     rebounds = card.rebound and obj.cast_from_hand and destination is Zone.GRAVEYARD
     if rebounds:
         destination = Zone.EXILE

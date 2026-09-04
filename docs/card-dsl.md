@@ -1573,12 +1573,22 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
-`draw_step` · `begin_combat` · `postcombat_main` · `end_step` · `you_gain_life` ·
+`draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
+`end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
 `creatures_deal_combat_damage` · `becomes_monstrous` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented`
+
+**`precombat_main`** is "at the beginning of your **first** main phase" — Black
+Market Connections. `upkeep` is the near miss and is a step too early: it is
+before the draw, so a card hung there pays its life and hands out its Treasure
+before its controller has seen the card they drew. The printed word "first"
+needs no ordinal of its own, because 505.1b makes every main phase after a
+combat a *postcombat* one — including an inserted extra — so this event can fire
+only once in a turn. That is also why its twin reads "each of your postcombat
+main phases" and is fired per phase.
 
 **`damage_prevented`** fires when damage that would have been dealt to a player
 is prevented — Selfless Squire's second line, with the amount readable as
@@ -3250,6 +3260,26 @@ whole card whenever taking one mode is the better line.
 `min_count == max_count` and short-circuited when `len(labels) <= count`, so
 "choose up to two of two" silently became "take both" without asking.
 
+## "Choose one or more --"
+
+```jsonc
+{"op": "choose_mode", "count": 1, "or_more": true, "modes": [...]}
+```
+
+A floor and a ceiling at once: `count` stays the minimum and every mode is on
+offer. Black Market Connections is the card, and the other four spellings cannot
+say it between them — `count` is exact and deletes the words "or more", `all_if`
+is entwine and forces the lot, `up_to` drops the floor to nothing, and `up_to_if`
+has the shape but demands a `condition` that this sentence does not have.
+
+The floor is not a technicality here: every one of Black Market Connections'
+modes costs life, so a spelling that permitted choosing none would be a
+materially better card than the printed one, resolving each turn for free.
+
+Refused with `up_to` on the same op — one keeps a floor, the other removes it —
+and refused when `count` already reaches every mode, which is "choose them all"
+written the long way.
+
 ## "Choose up to two --"
 
 ```jsonc
@@ -3304,6 +3334,105 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 `TempEffect.keyword` is already a single string and `protection_from` already
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
+
+## "Exile <this card>." -- a spell that exiles itself
+
+```jsonc
+"exiles_itself": true
+```
+
+Teferi's Protection's last printed line. A card-level rider on the destination
+`stack._place_after_resolution` picks, and the sixth on that slot beside
+flashback's exile, buyback's hand, rebound's exile, cipher's and adventure's.
+Like all five it only ever replaces the **graveyard**, so the loader refuses it
+on a permanent, which enters the battlefield and never reaches the rider. It is
+also refused beside `rebound`: both send the spell to exile and only one hands
+it back.
+
+**Not the `exile` op.** A resolving spell has already been popped off
+`state.stack` by the time its effects run, so `{"zone": "stack", "self_only":
+true}` reaches nothing and the printed line would load cleanly and do nothing.
+`exile_self` is a **cost** key and is a different sentence again.
+
+## "Your life total can't change"
+
+```jsonc
+{"op": "lock_life_total", "player": "you", "duration": "until_your_next_turn"}
+```
+
+Teferi's Protection's first clause. A prohibition on the **change**, in both
+directions, which is what separates it from everything that came close:
+
+| near miss | why it is not this |
+|---|---|
+| `replace_life_loss` | a `static_effect`, so an Instant cannot install one; it *multiplies* a loss rather than forbidding a change, and a multiplier of 0 is still a downward-only rewrite; and it is wired into `lose_life` and the loss half of `damage_player` only, so `gain_life` walks past it |
+| `prevent_damage` (op) | player-scoped, but stops only damage — every ordinary loss and all gain move the total freely |
+
+It installs a `structs.LifeLock` and modifies nothing else, the way
+`prevent_damage` installs a shield: it resolves before there is anything to
+change.
+
+**Four doors, and there is no single choke point.** `gain_life`, `lose_life`, the
+loss half of `damage_player` — which subtracts directly rather than calling
+`lose_life`, on purpose, since only the loss is multiplied and never the damage —
+and `costs.can_pay`, because 118.4 makes paying life a loss of life and a loss
+that cannot happen is a cost that cannot be paid. A lock wired into three of the
+four is a life total that holds still until somebody attacks.
+
+**No event is fired for a change that did not happen.** `LIFE_GAINED` and
+`LIFE_LOST` are what Marauding Blight-Priest and Bloodthirsty Conqueror trigger
+off, and firing one while moving no life would pay out for a gain nobody made.
+
+Two things it deliberately does not do. It does not stop the **damage** —
+`DAMAGE_DEALT` still fires and commander damage is still tallied; only the life
+total holds still, and protection is the sentence that stops damage, which is why
+Teferi's Protection prints both. And it does not make paying life *free*: the
+cost is refused, not zeroed.
+
+## Protection for a **player**, from everything, until your next turn
+
+```jsonc
+{"op": "grant_protection", "player": "you", "from_everything": true,
+ "duration": "until_your_next_turn"}
+```
+
+Teferi's Protection and The One Ring. Three additions to the one op rather than
+a second op, because a separate "grant protection to a player" would be a second
+place for "protection from black" to mean something and the two would drift.
+
+- **`player`** — an ordinary player spec, resolved by `select_players`. A seat
+  cannot come out of `choose_objects`, which resolves object ids and then skips
+  anything not on the battlefield, so this is its own clause. `objects` and
+  `player` may both be written; at least one must be.
+- **`from_everything`** — 702.16i, stored as one more *quality* in the same flat
+  set the colours and types go into (`PROTECTION_EVERYTHING`). Not a boolean
+  beside the set: four rules ask "is the source one of these qualities?", and a
+  second question would be four places for one of them to be forgotten. It
+  short-circuits before the source's characteristics are read at all, which is
+  the point — no set of types, subtypes and colours contains a colourless
+  source.
+- **`duration`** — `until_your_next_turn` or `this_turn`, and only on the
+  `player` half. An object's grant is a `TempEffect` on `until_eot` and nothing
+  but the cleanup step sweeps that, so a duration read there would be a
+  protection claiming to outlast a turn it does not.
+
+Player protection lives in `GameState.player_protections`, beside
+`damage_shields` and for that table's reason: the effect belongs to no permanent
+— Teferi's Protection is an Instant — and it ends at a fixed moment rather than
+when a source leaves the battlefield. "Until your next turn" is keyed to the
+**seat**, never to a turn number: eliminate a player and everybody's next turn
+moves, which is the clock detain, block prohibitions and unblockables already
+share and the untap step already sweeps.
+
+**Two readers, not four.** `targeting._player_allowed` and
+`primitives.damage_player`. A player cannot be blocked, and the "can't be
+enchanted" half arrives through targeting anyway: an Aura that enchants a player
+targets it as it is cast (303.4a). In `_player_allowed` the check sits **above**
+the controller clause, because protection stops anyone — your own Bolt cannot be
+pointed at you — which is the same line `can_be_targeted` draws on the object
+side and the half a hexproof-shaped implementation gets wrong.
+
+`from_everything` works on the `objects` half too, which is Progenitus.
 
 ## Preventing all damage to a player for the turn
 
@@ -3551,6 +3680,29 @@ is priced with no event and no bindings behind it.
 
 Splitting the printed line into two abilities — equip {4} and equip {1} — is not
 the same card: nothing could switch the cheap one off.
+
+### What the filter may say
+
+The filter is the same language a static ability's `affects` speaks
+(`static_filter_keys`), read by `costs._reduction_matches`, plus `zone`. Every
+key in it is honoured — `types`, `not_types`, `subtypes`, `supertypes`,
+`colors`, `keywords`, `not_keywords`, `controller`, `owner`, `is_commander`,
+`is_token`, `tapped`, `attacking`, `blocking`, `self_only`, `exclude_self`.
+Takenuma's channel ability is the card that made that true: "{1} less for each
+**legendary** creature you control" wrote `supertypes` in a filter that read six
+keys and ignored the other fourteen, so it priced itself off every creature
+instead. An ignored *narrowing* key always fails in the same direction — the
+filter gets wider and the ability gets cheaper than it prints — and nothing on a
+board or in a gate would say so.
+
+Types, subtypes, supertypes, colours and keywords come from `chars` on the
+battlefield and from the printed face in the command zone or a graveyard, where
+no continuous effect applies.
+
+Three keys the static language has are **refused** here rather than
+implemented — `attached`, `paired`, `paired_with_source`. Each names a relation
+to one particular permanent, and a reduction counts a board: in a `count` they
+ask how many permanents are *the* permanent, which no printed line is about.
 
 ### …only when cast one particular way
 

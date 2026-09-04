@@ -245,7 +245,16 @@ class TestEveryCardIsPlayable:
                 f"{card_id} is a permanent but ended in {obj.zone.value}"
             )
         else:
-            assert obj.zone is Zone.GRAVEYARD, (
+            # A spell goes to its owner's graveyard -- unless the card says
+            # otherwise, which two riders do: "Exile Teferi's Protection" and
+            # rebound's "exile it as it resolves". `authoring/verify.py` makes
+            # the same allowance and reads the same two flags, because the two
+            # harnesses have to agree or a card passes one gate and fails the
+            # other for the same behaviour.
+            spell_zones = {Zone.GRAVEYARD}
+            if played.exiles_itself or played.rebound:
+                spell_zones.add(Zone.EXILE)
+            assert obj.zone in spell_zones, (
                 f"{card_id} is a spell but ended in {obj.zone.value}"
             )
 

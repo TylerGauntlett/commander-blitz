@@ -22,6 +22,8 @@ from .primitives import (
     clear_block_prohibitions,
     clear_damage_shields,
     clear_goad,
+    clear_life_locks,
+    clear_player_protections,
     clear_sacrifice_restrictions,
     clear_unblockables,
     clear_until_eot,
@@ -62,6 +64,12 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         # hand out priority -- and the reason a Saga's advance belongs here rather
         # than on the card is that nothing is printed on the card to hang it on.
         sagas.turn_based_lore(state)
+        # "At the beginning of your first main phase." Fired after the lore
+        # counters, because 714.2d's turn-based action happens as the phase
+        # begins and a triggered ability waits for a player to receive priority
+        # -- so a Saga that advanced into a chapter this turn has its trigger on
+        # the stack alongside this one, in APNAP order rather than under it.
+        fire(state, EventType.PRECOMBAT_MAIN, player=state.active_player)
     elif step is Step.BEGIN_COMBAT:
         combat_mod.start_combat(state)
         fire(state, EventType.BEGIN_COMBAT, player=state.active_player)
@@ -281,6 +289,15 @@ def _untap_step(state: GameState) -> None:
     # blocked." (Sly Instigator.) The same clock read from the other end of the
     # block, so it is cleared in the same breath and keyed the same way.
     clear_unblockables(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, you gain protection from everything." Teferi's
+    # Protection and The One Ring, on the same clock as the three above and
+    # keyed the same way -- and it is cleared *before* `_phase` below, so the
+    # permanents phasing back in this same step arrive into a turn whose
+    # protection has already ended. Both cards say "until your next turn" about
+    # both halves, so the two wearings-off belong in the same step.
+    clear_player_protections(state, "until_your_next_turn", player.pid)
+    # The other half of the same printed sentence, on the same clock.
+    clear_life_locks(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -590,6 +607,8 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     # granted it may have been destroyed in response, and the creature that has
     # it keeps the evasion until this line runs.
     clear_unblockables(state, "this_turn")
+    clear_player_protections(state, "this_turn")
+    clear_life_locks(state, "this_turn")
     # "Prevent all damage that would be dealt to you **this turn**." (Selfless
     # Squire, Fog.) Beside the three above and owned by no permanent for the same
     # reason -- Fog is an instant and leaves nothing behind, and the Squire's

@@ -170,6 +170,22 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
         for u in state.unblockables
         if not (u.duration == "until_your_next_turn" and u.player == pid)
     ]
+    # And the same hole again: "until your next turn, you gain protection from
+    # everything" is cleared in that player's untap step, so a protection keyed
+    # to a seat that has left would stand for the rest of the game -- and unlike
+    # the two above it, it would keep protecting nobody while still answering
+    # `player_protected_from` for a pid `alive()` never offers.
+    state.player_protections = [
+        p
+        for p in state.player_protections
+        if not (p.duration == "until_your_next_turn" and p.player == pid)
+    ]
+    # And the same hole once more, for the other half of the same card.
+    state.life_locks = [
+        lock
+        for lock in state.life_locks
+        if not (lock.duration == "until_your_next_turn" and lock.player == pid)
+    ]
     # And the same hole in goad's mark. It is *more* than a stale flag here:
     # a goad nobody can clear compels every combat for the rest of the game, and
     # its target restriction would keep pointing at an empty seat -- which, with
