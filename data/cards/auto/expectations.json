@@ -655,6 +655,10 @@
   "bitterbow_sharpshooters": {
     "zone": "battlefield"
   },
+  "black_market_connections": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "black_widow_natasha_romanoff": {
     "zone": "battlefield"
   },
