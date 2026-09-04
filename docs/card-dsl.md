@@ -3335,6 +3335,51 @@ Stored as one `TempEffect` per quality rather than one carrying a list, because
 returns a flat set — so five colours is five entries and the four rules that read
 protection see granted and printed alike.
 
+## Protection for a **player**, from everything, until your next turn
+
+```jsonc
+{"op": "grant_protection", "player": "you", "from_everything": true,
+ "duration": "until_your_next_turn"}
+```
+
+Teferi's Protection and The One Ring. Three additions to the one op rather than
+a second op, because a separate "grant protection to a player" would be a second
+place for "protection from black" to mean something and the two would drift.
+
+- **`player`** — an ordinary player spec, resolved by `select_players`. A seat
+  cannot come out of `choose_objects`, which resolves object ids and then skips
+  anything not on the battlefield, so this is its own clause. `objects` and
+  `player` may both be written; at least one must be.
+- **`from_everything`** — 702.16i, stored as one more *quality* in the same flat
+  set the colours and types go into (`PROTECTION_EVERYTHING`). Not a boolean
+  beside the set: four rules ask "is the source one of these qualities?", and a
+  second question would be four places for one of them to be forgotten. It
+  short-circuits before the source's characteristics are read at all, which is
+  the point — no set of types, subtypes and colours contains a colourless
+  source.
+- **`duration`** — `until_your_next_turn` or `this_turn`, and only on the
+  `player` half. An object's grant is a `TempEffect` on `until_eot` and nothing
+  but the cleanup step sweeps that, so a duration read there would be a
+  protection claiming to outlast a turn it does not.
+
+Player protection lives in `GameState.player_protections`, beside
+`damage_shields` and for that table's reason: the effect belongs to no permanent
+— Teferi's Protection is an Instant — and it ends at a fixed moment rather than
+when a source leaves the battlefield. "Until your next turn" is keyed to the
+**seat**, never to a turn number: eliminate a player and everybody's next turn
+moves, which is the clock detain, block prohibitions and unblockables already
+share and the untap step already sweeps.
+
+**Two readers, not four.** `targeting._player_allowed` and
+`primitives.damage_player`. A player cannot be blocked, and the "can't be
+enchanted" half arrives through targeting anyway: an Aura that enchants a player
+targets it as it is cast (303.4a). In `_player_allowed` the check sits **above**
+the controller clause, because protection stops anyone — your own Bolt cannot be
+pointed at you — which is the same line `can_be_targeted` draws on the object
+side and the half a hexproof-shaped implementation gets wrong.
+
+`from_everything` works on the `objects` half too, which is Progenitus.
+
 ## Preventing all damage to a player for the turn
 
 ```jsonc

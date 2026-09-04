@@ -14,6 +14,7 @@ from . import sagas
 from .characteristics import (
     chars,
     life_loss_multiplier,
+    player_protected_from,
     printed_token_matches,
     token_creation_replacements,
 )
@@ -206,6 +207,29 @@ def damage_player(
             amount=amount,
             to="player",
             reason="damage_shield",
+        )
+        return 0
+    # Protection over a seat (702.16d): "any damage that would be dealt to it is
+    # prevented". Beside the shield rather than below it, because it prevents in
+    # exactly the same way and for exactly the same reasons -- no life, no
+    # poison, no lifelink, no commander tally -- and the infect branch two lines
+    # down is again the sharpest: a protected player who still took the poison
+    # would lose through Teferi's Protection.
+    #
+    # A separate branch and not a widening of `shielded`, because the two are
+    # different questions: a shield stops *all* damage this turn whatever dealt
+    # it, and protection is parameterised by the source. Only the second needs
+    # `source_oid`.
+    if player_protected_from(state, pid, source_oid):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=amount,
+            to="player",
+            reason="protection",
         )
         return 0
     # Infect (702.90c): damage to a *player* is poison counters instead of life
@@ -1336,6 +1360,56 @@ def clear_block_prohibitions(
     moves, so the entry names the player and the untap step asks.
     """
     state.block_prohibitions = _expired(state.block_prohibitions, duration, player)
+
+
+def grant_player_protection(
+    state: GameState,
+    pid: int,
+    qualities: Iterable[str],
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Give ``pid`` protection from each of ``qualities``.  One entry each.
+
+    One rules-relevant thing and it asks no questions -- which quality, which
+    seat and how long are all the effect layer's business, the way
+    `make_unblockable` and `shield_player` are arranged.
+
+    Deduplicated on the whole entry: two copies of Teferi's Protection resolved
+    in one turn are two identical records, and a second one changes nothing that
+    can be observed. `protection_from` on the object side has the same property
+    for free, being a set.
+    """
+    from .structs import PlayerProtection
+
+    added = False
+    for quality in qualities:
+        entry = PlayerProtection(
+            player=pid, quality=str(quality), duration=duration, source=source
+        )
+        if entry in state.player_protections:
+            continue
+        state.player_protections.append(entry)
+        added = True
+    if added:
+        state.bump_chars()
+    return added
+
+
+def clear_player_protections(
+    state: GameState, duration: str, player: int | None = None
+) -> None:
+    """Drop the player protections of one duration -- their wearing-off.
+
+    The same two hooks on the same two clocks the tables beside it use:
+    `turn._cleanup_step` for ``this_turn``, `turn._untap_step` for the
+    ``until_your_next_turn`` entries belonging to whoever is untapping. Both
+    printed cards say "until your next turn", so the second is the one that
+    matters, and it is keyed by the player rather than by a turn number for
+    detain's reason: eliminate somebody and "your next turn" moves.
+    """
+    state.player_protections = _expired(state.player_protections, duration, player)
+    state.bump_chars()
 
 
 def make_unblockable(

@@ -20,6 +20,7 @@ from .structs import (
     DamageShield,
     DelayedTrigger,
     EnteredPermanent,
+    PlayerProtection,
     SacrificeRestriction,
     StackItem,
     TriggerInstance,
@@ -285,6 +286,19 @@ class GameState:
     #: moment a second duration exists. Normally empty, which is why
     #: `primitives.damage_player` short-circuits on it before doing any work.
     damage_shields: list[DamageShield] = field(default_factory=list)
+    #: "You gain protection from everything until your next turn" -- see
+    #: :class:`structs.PlayerProtection`.
+    #:
+    #: A timed table for the reason the ones above it are: Teferi's Protection
+    #: is an Instant and leaves no permanent behind to own the effect, and the
+    #: protection ends at a fixed moment rather than when a source leaves the
+    #: battlefield. `protection_from` is keyed to an *object id* throughout and
+    #: reads `_battlefield_statics`, so it cannot be aimed at a seat.
+    #:
+    #: One entry per quality, so the readers get the same flat set of strings
+    #: the object side already hands them. Normally empty, which is why both
+    #: readers short-circuit on it before doing any work.
+    player_protections: list[PlayerProtection] = field(default_factory=list)
     #: "You can't sacrifice those creatures this turn" -- see
     #: :class:`structs.SacrificeRestriction`.
     #:

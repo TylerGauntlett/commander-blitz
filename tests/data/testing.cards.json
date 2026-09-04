@@ -1415,7 +1415,30 @@
         }
       ]
     },
-    {
+        {
+      "id": "t_player_protection",
+      "name": "Test Player Protection",
+      "oracle_text": "Until your next turn, you gain protection from everything.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "grant_protection",
+          "player": "you",
+          "from_everything": true,
+          "duration": "until_your_next_turn"
+        }
+      ]
+    },
+{
       "id": "t_bolt",
       "name": "Test Bolt",
       "oracle_text": "Test Bolt deals 3 damage to any target.",
