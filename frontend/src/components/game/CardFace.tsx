@@ -270,12 +270,16 @@ export function CardFace({ card, variant = "board" }: Props) {
         )}
 
         <div className="face__footer">
-          {/* Keywords have no row of their own; they share the footer with the
-              counters and the P/T. Only where there is no rules box --
-              otherwise the text already says them. */}
-          {!showsRules && card.keywords.length > 0 && (
-            <span className="face__kwline">{card.keywords.map(keywordLabel).join(" · ")}</span>
-          )}
+          {/*
+            STACKED, NOT SIDE BY SIDE -- the same arrangement `CardPreview`
+            already makes, for the same reason one size up. A board card is
+            ~100px wide, and a creature carrying "+1/+1 x3" and a stun counter
+            has spent all of it before the P/T asks for its corner: in one row
+            the badges pushed the number clean off the card, so the one number
+            a player reads mid-combat was the one that disappeared exactly when
+            counters made it matter. The counters take the upper line, the P/T
+            keeps its corner, and neither can crowd the other out.
+          */}
           {badges.length > 0 && (
             <span className="face__counters">
               {badges.map((badge) => (
@@ -285,15 +289,25 @@ export function CardFace({ card, variant = "board" }: Props) {
               ))}
             </span>
           )}
-          <span className="spacer" />
-          {stats && (
-            <span
-              className={hurt ? "face__stats face__stats--hurt" : "face__stats"}
-              data-hint={hurt ? `${damage} damage marked` : undefined}
-            >
-              {stats}
-            </span>
-          )}
+          <span className="face__footrow">
+            {/* Keywords have no row of their own; they share the lower line
+                with the P/T. Only where there is no rules box -- otherwise the
+                text already says them. */}
+            {!showsRules && card.keywords.length > 0 && (
+              <span className="face__kwline">
+                {card.keywords.map(keywordLabel).join(" · ")}
+              </span>
+            )}
+            <span className="spacer" />
+            {stats && (
+              <span
+                className={hurt ? "face__stats face__stats--hurt" : "face__stats"}
+                data-hint={hurt ? `${damage} damage marked` : undefined}
+              >
+                {stats}
+              </span>
+            )}
+          </span>
         </div>
       </div>
 
