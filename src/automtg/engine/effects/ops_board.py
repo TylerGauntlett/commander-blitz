@@ -637,7 +637,7 @@ def _attacking_player(ctx: EffectContext, spec: Mapping[str, Any], fallback) -> 
 
     A creature attacks exactly one player, so a spec that names several is an
     authoring error rather than something to pick from. The plural *names* are
-    refused at load time (`loader._validate_effect`); this catches the one shape
+    refused at load time (`loader.effects._validate_effect`); this catches the one shape
     load time cannot see, a multi-ref target. Naming nobody -- an unbound
     binding, a player who has left -- is the boolean's own "nobody to join": the
     permanent simply arrives.

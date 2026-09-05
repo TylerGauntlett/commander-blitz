@@ -81,7 +81,7 @@ class TargetSpec:
         number is computed from the game rather than printed. `filter_legal`
         slices the stored refs spec by spec, so every one of them has to be the
         last spec in its list and there may be only one -- see
-        `loader._compile_targets`.
+        `loader.targets._compile_targets`.
         """
         return self.up_to or not isinstance(self.count, int)
 

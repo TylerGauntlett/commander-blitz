@@ -1291,7 +1291,7 @@ def _run_mana_rider(state: GameState, oid: int, pid: int, ability: Any) -> None:
     would make the land painless exactly when the engine used it for you.
 
     Run to exhaustion rather than suspended.  Nothing here can ask a question
-    (`loader.MANA_RIDER_OPS` is the whitelist that guarantees it), and there is
+    (`loader.vocabulary.MANA_RIDER_OPS` is the whitelist that guarantees it), and there is
     nowhere to suspend to: this is inside cost payment, with no stack and no
     priority window.
     """

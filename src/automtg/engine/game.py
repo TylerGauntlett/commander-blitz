@@ -1019,7 +1019,7 @@ class Game:
                     (describe_ref(state, ref), ref)
                     for ref in candidates(state, pid, spec, oid)
                 ]
-                # An int by construction: `loader._check_mode_targets` refuses a
+                # An int by construction: `loader.targets._check_mode_targets` refuses a
                 # caster-chosen or computed size on a mode-owned spec, because
                 # `filter_legal` splits the stored refs by position.
                 want = int(target_count(state, pid, spec, oid))

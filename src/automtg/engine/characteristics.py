@@ -577,7 +577,7 @@ def _battlefield_statics(state: GameState) -> list[tuple[GameObject, Mapping[str
        `grant_ability` or `lose_all_abilities` is never collected at all. That
        severed edge -- already there, and already paid for as the one recorded
        divergence from 613.8 -- is what stops static-grants-static recursion,
-       and `loader.GRANTABLE_STATIC_EFFECTS` refuses the two by name rather
+       and `loader.vocabulary.GRANTABLE_STATIC_EFFECTS` refuses the two by name rather
        than letting a card load clean and do nothing.
 
     So the only thing a grant changes is *which permanent a static is sourced
@@ -757,7 +757,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     magnitude that silently reads 0 is an anthem that loads clean, prints as the
     card does and does nothing -- the exact failure the whole validation pass
     exists to refuse -- and every expression reaching here has been through
-    :func:`automtg.cards.loader._validate_static_value`, so an unknown leaf means
+    :func:`automtg.cards.loader.statics._validate_static_value`, so an unknown leaf means
     the two languages have drifted and the loader is the thing to fix. ``None``
     is still 0, because a `buff` with no `toughness` is a real card.
     """

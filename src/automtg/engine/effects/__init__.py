@@ -26,7 +26,7 @@ OPS: dict[str, Callable[..., Any]] = {}
 #: revealed this way", "the number of creature cards exiled this way", "exile
 #: **the token**".  Every other op ignores an ``as`` entirely, and an `as` that
 #: nothing writes reads back as 0 rather than as an error, so the loader refuses
-#: it (see `loader._validate_effect`).  Listed here, beside `OPS`, so the guard
+#: it (see `loader.effects._validate_effect`).  Listed here, beside `OPS`, so the guard
 #: and the implementations cannot drift apart.
 RECORDING_OPS = frozenset(
     {

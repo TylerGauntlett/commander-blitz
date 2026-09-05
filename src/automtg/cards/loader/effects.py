@@ -1,0 +1,1485 @@
+"""Validation of effect specs: one check per op, and the player and delay grammar.
+
+``_validate_effect`` is the loader's largest function -- a check per effect op
+-- and the reason this module exists on its own.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Mapping
+from typing import Any
+
+from automtg.engine.effects import RECORDING_OPS, known_ops
+from automtg.engine.effects.conditions import validate_condition
+from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
+from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
+from automtg.engine.effects.values import (
+    validate_value,
+)
+from automtg.engine.errors import DslError
+from automtg.engine.structs import (
+    ATTACK_RESTRICTION_DURATIONS,
+    BLOCK_PROHIBITION_DURATIONS,
+    CONTROL_DURATIONS,
+    DAMAGE_SHIELD_DURATIONS,
+    DELAYED_DURATIONS,
+    LIFE_LOCK_DURATIONS,
+    PLAYER_PROTECTION_DURATIONS,
+    SACRIFICE_RESTRICTION_DURATIONS,
+    UNBLOCKABLE_DURATIONS,
+)
+from automtg.engine.triggers import TRIGGER_EVENTS
+from automtg.engine.turn import DELAY_STEPS
+
+from ..schema import CardModel, CostModel
+from .statics import (
+    _validate_cost_reduction,
+)
+from .vocabulary import (
+    ATTACKING_OPS,
+    CONTROLLED_TARGET_KINDS,
+    COUNTERS_ON_ARRIVAL_OPS,
+    DELAYED_TRIGGER_KEYS,
+    KNOWN_COLORS,
+    KNOWN_KEYWORDS,
+    KNOWN_TYPES,
+    PLAYER_TARGET_KINDS,
+    PLURAL_PLAYER_SPEC_NAMES,
+    WAS_CAST_TRIGGERS,
+)
+from .walk import (
+    _check_counter_kind,
+)
+
+
+def _validate_enchanted_player(model: CardModel, where: str) -> None:
+    """``"enchanted_player"`` only on a card that can *be* attached to a player.
+
+    The spec resolves to `GameObject.attached_to_player`, which only
+    `stack._attach_aura` and the `attach_to_player` primitive ever write, and
+    only for an **Aura**. On anything else it resolves to `[]` for the whole
+    game -- and an empty player list is the quietest failure in the effect
+    layer: a `gain_life` aimed at nobody logs nothing, a `create_token` makes no
+    token, and the card reads on screen as though it has an ability.
+
+    "Enchant player" is one of the Aura's enchant clauses (303.4a), so the
+    subtype is the whole test. Whether the card also *declares* a player target
+    is not checked here: an Aura can be put onto the battlefield attached by an
+    effect rather than cast, and the target line is only how a cast one says it.
+
+    Walks the whole card rather than going through `_mentions`, which searches
+    effects, targets and trigger conditions. A **static** flattens its
+    parameters onto the ability (``effect``, ``affects``, ``power``) and has no
+    ``effects`` list at all, so `_mentions` cannot see an ``affects`` filter --
+    and ``{"controller": "enchanted_player"}`` inside one is the exact spelling
+    this refuses, since `characteristics._matches` would read an unknown
+    controller word as matching every permanent on the table.
+    """
+    if "Aura" in model.subtypes:
+        return
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return "enchanted_player" in node.values() or any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    if walk(model.model_dump()):
+        raise DslError(
+            f"{where}: 'enchanted_player' names the player this **Aura** is "
+            f"attached to (303.4a), and only an Aura is ever attached to one -- "
+            f"on {model.subtypes or 'this card'} it resolves to nobody, every "
+            f"time, and the ability silently does nothing"
+        )
+
+
+def _validate_was_cast_placement(model: CardModel, where: str) -> None:
+    """``was_cast`` only on this permanent's own enters trigger (603.6e)."""
+
+    def reads(node: Any) -> bool:
+        return isinstance(node, Mapping) and "was_cast" in node
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return reads(node) or any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    stray = walk(model.spell_effects) or walk([t.model_dump() for t in model.targets])
+    for ability in model.abilities:
+        event = ability.trigger.event if ability.trigger is not None else None
+        if event in WAS_CAST_TRIGGERS:
+            continue
+        stray = (
+            stray
+            or walk(ability.effects)
+            or walk([t.model_dump() for t in ability.targets])
+            or walk(ability.trigger.condition if ability.trigger else None)
+        )
+    if stray:
+        raise DslError(
+            f"{where}: {{'was_cast': …}} reads how the ability's **own source** "
+            f"arrived on the battlefield, so it belongs on a "
+            f"{sorted(WAS_CAST_TRIGGERS)} trigger (603.6e) and nowhere else -- "
+            f"anywhere else it answers about the wrong object, or about one that "
+            f"has not entered at all"
+        )
+
+
+def _refuse_targets_inside_a_delay(effects: Any, where: str) -> None:
+    """A ``target`` selector inside a ``delay`` names nothing when it fires.
+
+    "Exile another target creature you control… at the beginning of the next end
+    step, return **that card** to the battlefield" -- Gilraen, Dúnedain Protector,
+    and the whole Flickerwisp family behind her.  The obvious way to write the
+    second half is to point it at the same ``t1`` the first half targeted, and it
+    reads correctly, loads correctly, and does nothing at all: ``turn._run_delayed``
+    builds the delayed context with ``targets={}``, because the delayed half is a
+    separate ability that never chose a target of its own (603.7 -- the delayed
+    trigger is created by the resolving ability, it does not inherit its targets),
+    and rule 608.2b's re-check has nothing to re-check against.
+
+    Filling the targets in instead would be the wrong repair twice over.  It would
+    invent a legality check no rule asks for, and it would not even reach this
+    card: a ``target`` selector defaults its zone to the battlefield precisely
+    because a target *is* re-checked, and the object a delay is about has by
+    construction just changed zones.  The idiom that works is the one
+    ``effect_result_binding`` shipped -- ``as`` on the op that moved the card, and
+    ``binding`` on the op that brings it back, which is a record rather than a
+    reference and so survives the zone change.  So this is a refusal that names it.
+    """
+
+    def walk(node: Any, path: str) -> None:
+        if isinstance(node, Mapping):
+            if "target" in node:
+                raise DslError(
+                    f"{path}: a 'target' inside a delay resolves to nothing -- the "
+                    f"delayed trigger has no targets of its own. Record the object "
+                    f"with 'as' on the op that moved it and name it with 'binding'."
+                )
+            for key, value in node.items():
+                walk(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for i, value in enumerate(node):
+                walk(value, f"{path}[{i}]")
+
+    walk(list(effects), where)
+
+
+def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check one *player* spec -- an effect's ``player``, or a side of one.
+
+    Every way of writing this wrong is silent, and one of them was a shipped
+    card doing the opposite of what it printed.
+
+    A misspelled **name** (``"each_oponent"``) raises only once the ability
+    resolves. A **target id the card never declared** resolves to nobody:
+    Hellrider's ``{"target": "defender"}`` named a trigger *binding*, which
+    `select_players` never reads, so the card dealt no damage at all and every
+    board it was on looked like a board where nothing had happened.
+
+    And the case this validator was written for: ``{"target": "t1"}`` pointed at
+    a **spell** target. `ctx.target_players` keeps only refs of kind
+    ``"player"`` and a spell's ref is kind ``"stack"``, so it returns ``[]`` --
+    and `op_may` reads "nobody" as "me" (``chooser = ctx.controller``) and bills
+    the *counterspell's* controller. "Counter target spell unless its controller
+    pays {3}" became "unless **you** pay {3}", which is a legal-looking card
+    that plays as its own opposite. `controller_of_target` is the key that says
+    it, and this refuses the near miss by name rather than letting it load.
+    """
+    if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+        raise DslError(
+            f"{where}: unknown player spec {who!r} "
+            f"(implemented: {sorted(PLAYER_SPEC_NAMES)}, or a target)"
+        )
+    if not isinstance(who, Mapping):
+        return
+    if "except" in who:
+        # "each **opponent** who discarded their hand this way" -- Snort. An
+        # inclusive spec narrowed by a seat, which `not` cannot do: `not` is the
+        # complement over the whole table, and the set a binding holds includes
+        # you whenever you took the same option. Both halves are validated in
+        # their own right, and the rest of the mapping has to be a real spec --
+        # a bare `{"except": "you"}` names everyone the long way round.
+        _validate_player_spec(who["except"], f"{where}.except", target_kinds)
+        rest = {k: v for k, v in who.items() if k != "except"}
+        if not rest:
+            raise DslError(
+                f"{where}: 'except' narrows another spec, so there has to be one "
+                f"to narrow -- use {{'not': ...}} for a bare complement"
+            )
+        _validate_player_spec(rest, where, target_kinds)
+        return
+    if "not" in who:
+        # "target player **other than** its controller." The complement of a
+        # spec, so whatever it wraps has to be a legal spec in its own right --
+        # otherwise `{"not": {"target": "t9"}}` names an undeclared target and
+        # excludes nobody, which reads as "target any player".
+        _validate_player_spec(who["not"], f"{where}.not", target_kinds)
+        if len(who) > 1:
+            raise DslError(
+                f"{where}: 'not' is the whole spec -- it cannot be combined with "
+                f"{sorted(set(who) - {'not'})}"
+            )
+        return
+    for key in ("target", "controller_of_target"):
+        if key not in who:
+            continue
+        tid = str(who[key])
+        if tid not in target_kinds:
+            raise DslError(f"{where}: references target {tid!r} which the card does not declare")
+        kind = target_kinds[tid]
+        if key == "target" and kind not in PLAYER_TARGET_KINDS:
+            raise DslError(
+                f"{where}: target {tid!r} is a {kind!r}, which is never a player -- "
+                f"use {{'controller_of_target': {tid!r}}} to bill the one who controls it"
+            )
+        if key == "controller_of_target" and kind not in CONTROLLED_TARGET_KINDS:
+            raise DslError(
+                f"{where}: target {tid!r} is a {kind!r}, which has no controller -- "
+                f"use {{'target': {tid!r}}} to name the player it chose"
+            )
+
+
+def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check an ``attacking`` clause: the boolean, or a player spec.
+
+    ``true`` is the original and much the commonest spelling -- "wherever the
+    source is already pointed" -- and it is checked here only so that the *other*
+    forms can be. A player spec says "attacking **that player**", which the
+    boolean cannot: Ainok Strike Leader points one token at each opponent, and
+    Combat Calligrapher points one at a defender while never attacking itself.
+
+    Both failures this refuses are silent at runtime. A plural spec has no
+    single answer -- a creature attacks exactly one player -- and picking one
+    would make a card that reads "each opponent" and hits one seat. A bare
+    number would be a *seat*, which no printed card names, and ``0`` is
+    indistinguishable from ``false``.
+    """
+    if isinstance(who, bool):
+        return
+    if isinstance(who, str) and who in PLURAL_PLAYER_SPEC_NAMES:
+        raise DslError(
+            f"{where}: {who!r} can name several players and a creature attacks one -- "
+            f"name the seat ({{'binding': 'each_player'}} inside a for_each_player, "
+            f"a trigger binding, or a target)"
+        )
+    if not isinstance(who, str | Mapping):
+        raise DslError(f"{where}: must be true/false or a player spec, got {who!r}")
+    _validate_player_spec(who, where, target_kinds)
+
+
+def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
+    """Check the ``trigger`` half of a ``delayed_trigger`` op.
+
+    A misnamed event here fails in exactly the way `delay`'s misspelled step
+    does -- the subscription is installed, nothing ever satisfies it, and the
+    card reads as printed while doing nothing at all.
+    """
+    trigger = effect.get("trigger")
+    if not isinstance(trigger, Mapping) or not trigger.get("event"):
+        raise DslError(
+            f"{where}: delayed_trigger needs a 'trigger' naming the event it "
+            f"watches (implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    event = str(trigger["event"])
+    if event not in TRIGGER_EVENTS:
+        raise DslError(
+            f"{where}: unknown trigger event {event!r} (implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
+    if unsupported:
+        raise DslError(
+            f"{where}.trigger: {unsupported[0]!r} is not supported on a delayed "
+            f"trigger -- it is read off the permanent hosting the ability, and a "
+            f"delayed one has none. Supported: {sorted(DELAYED_TRIGGER_KEYS)}"
+        )
+    controller = str(trigger.get("controller", "you"))
+    if controller not in ("you", "opponent", "any"):
+        raise DslError(f"{where}.trigger: unknown controller {controller!r}")
+    validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
+    # How long the subscription lasts, and what firing does to it. A misspelled
+    # value would fall through to the `this_turn` default and quietly retime the
+    # card: Palace Jailer's exile would end at cleanup instead of when the crown
+    # moves, which is a materially weaker card that reads identically.
+    duration = str(effect.get("duration", "this_turn"))
+    if duration not in DELAYED_DURATIONS:
+        raise DslError(
+            f"{where}: unknown delayed_trigger duration {duration!r} "
+            f"(implemented: {sorted(DELAYED_DURATIONS)})"
+        )
+    if not effect.get("effects"):
+        raise DslError(f"{where}: delayed_trigger needs 'effects' to schedule")
+    # The same refusal `delay` carries, and for the same reason: 603.7 says the
+    # resolving ability *creates* the delayed one, so what it creates never
+    # chose a target -- `triggers.run_armed_delays` builds its context with
+    # `targets={}` exactly as `turn._run_delayed` does.
+    _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
+
+
+def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Recursively validate one effect dict."""
+    if not isinstance(effect, Mapping):
+        raise DslError(f"{where}: effect must be an object")
+    op = effect.get("op")
+    if op is None:
+        raise DslError(f"{where}: effect is missing 'op'")
+    if op not in known_ops():
+        raise DslError(f"{where}: unknown effect op {op!r} (implemented: {sorted(known_ops())})")
+
+    for key in ("objects", "per", "selector", "affects"):
+        if key in effect:
+            validate_selector(effect[key], f"{where}.{key}")
+    for key in ("amount", "count", "power", "toughness"):
+        if key in effect:
+            validate_value(effect[key], f"{where}.{key}")
+    if "condition" in effect:
+        validate_condition(effect["condition"], f"{where}.condition")
+    # Every op that names a counter kind spells it `counter` -- `add_counters`,
+    # `remove_counters`, `move_counters` -- so this is checked once here rather
+    # than per op, and the next op to grow one is covered before it is written.
+    if "counter" in effect:
+        _check_counter_kind(effect["counter"], f"{where}.counter")
+    # `return_from_graveyard`'s "return it with a lifelink counter on it" spells
+    # the same thing as a kind-keyed map, so both spellings are covered.
+    if isinstance(effect.get("counters"), Mapping):
+        for kind in effect["counters"]:
+            _check_counter_kind(kind, f"{where}.counters")
+        # And the map has to be written on an op that reads it. Only the two
+        # ops that *move a card onto the battlefield* do -- "with a vigilance
+        # counter and a lifelink counter on it" is a clause about arriving --
+        # and anywhere else it is accepted, ignored, and the card silently
+        # comes back bare. That is the failure this whole pass exists to stop,
+        # and it is the one shape of it a keyword counter makes invisible: the
+        # creature simply does not have vigilance, and nothing says why.
+        if op not in COUNTERS_ON_ARRIVAL_OPS:
+            raise DslError(
+                f"{where}: 'counters' is what a permanent arrives with and only "
+                f"{sorted(COUNTERS_ON_ARRIVAL_OPS)} read it, not {op!r} "
+                f"(use a separate add_counters)"
+            )
+
+    if "target" in effect and str(effect["target"]) not in target_kinds:
+        raise DslError(
+            f"{where}: references target {effect['target']!r} which the card does not declare"
+        )
+    for key in ("objects", "per", "selector"):
+        sub = effect.get(key)
+        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
+            )
+    if op == "return_spell_to_hand":
+        # "Return target **spell** to its owner's hand." The op reads
+        # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed
+        # at a `permanent` or `player` target it returns nothing, silently, and
+        # the card resolves having done exactly half of what it says. Both
+        # halves of that are checked: the target has to exist, and it has to be
+        # the kind that can *be* a spell.
+        tid = str(effect.get("target", "t1"))
+        if tid not in target_kinds:
+            raise DslError(
+                f"{where}: return_spell_to_hand references target {tid!r} "
+                f"which the card does not declare"
+            )
+        if target_kinds[tid] != "spell":
+            raise DslError(
+                f"{where}: return_spell_to_hand needs a target of kind 'spell', "
+                f"and {tid!r} is {target_kinds[tid]!r} "
+                f"(a permanent goes back with return_to_hand)"
+            )
+        if "objects" in effect:
+            # The obvious thing to write, copied off `return_to_hand`, and it is
+            # accepted and ignored: a spell is named by the target it was cast
+            # at, not by a selector over a zone. Refused rather than dropped,
+            # because "return every spell on the stack" is a different card.
+            raise DslError(
+                f"{where}: return_spell_to_hand reads no 'objects' -- it takes "
+                f"the spell its 'target' names"
+            )
+    # Every op that names a player spells it `player` and every one of them
+    # feeds `select_players`, so this is checked once here rather than per op --
+    # the way `counter` is. `become_monarch`, `goad` and `cant_attack_player`
+    # each grew their own copy of this check because there was no general one;
+    # they now call the same validator, and the next op to take a player is
+    # covered before it is written.
+    if "player" in effect:
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+    if effect.get("op") == "choose_mode" and "chooser" in effect:
+        # "Target player adds one mana of any color" -- the player adding picks
+        # the colour. An ordinary player spec, so "target" reaches the targeted
+        # seat and the usual vocabulary is available.
+        _validate_player_spec(effect["chooser"], f"{where}.chooser", target_kinds)
+
+    if op == "may" and "pay" in effect:
+        # "You may pay {2}. If you do, draw a card." Validated through the same
+        # CostModel an activated ability's cost uses, so an unknown key here is a
+        # load error rather than a cost quietly dropped -- which would turn a
+        # card that draws for {2} into one that draws free.
+        if not isinstance(effect["pay"], dict):
+            raise DslError(f"{where}: 'pay' must be an object")
+        try:
+            CostModel.model_validate(effect["pay"])
+        except Exception as exc:  # pydantic ValidationError
+            raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+        # A payment has to buy *something*, but there are two things it can buy.
+        # "You may pay {2}. If you do, draw a card" buys the `effects`. Rhystic
+        # Study's "unless that player pays {1}" buys the **absence** of the
+        # `else` -- the payer gets nothing and that is the whole point, because
+        # what they are paying for is to stop the other branch happening. So
+        # `effects` alone is not the test; having neither branch is.
+        if not effect.get("effects") and not effect.get("else"):
+            raise DslError(
+                f"{where}: 'pay' needs 'effects' or 'else' -- paying for nothing is not a card"
+            )
+        if effect["pay"].get("mana_reduction") is not None:
+            # Read: an optional `pay` is charged through `pay`, which prices its
+            # mana half with `ability_mana` like any other cost node. Validated
+            # here for the same reason an ability's is -- a malformed reduction
+            # should be a load error, not a mid-resolution crash.
+            _validate_cost_reduction(effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction")
+        if effect["pay"].get("x_value") is not None:
+            # `x_value` fills in the `{X}` of an *activated ability's* cost, and
+            # an optional `pay` is not one: nothing announces X for it either,
+            # so `{"mana": "{X}"}` here is already a cost of nothing. Refused
+            # rather than quietly honoured, because no printed "you may pay"
+            # names an X the card computes, and a field that works in a place
+            # nothing tested it is a price nobody checked.
+            raise DslError(
+                f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
+                f"not to an optional payment"
+            )
+        if (times := effect["pay"].get("times")) is not None:
+            # Cumulative upkeep's multiplier. It scales the *mana* half and
+            # nothing else, so a `times` beside a cost with no mana would load
+            # and multiply nothing -- a card that reads "for each age counter"
+            # and charges a flat price.
+            validate_value(times, f"{where}.pay.times")
+            if not effect["pay"].get("mana"):
+                raise DslError(f"{where}.pay: 'times' multiplies the mana cost, and there is none")
+    if op == "win_game" and "condition" in effect:
+        # "**If you rolled 6 exactly seven times**, you win the game" (Luck
+        # Bobblehead). A top-level `condition` is read by `if` and by `may` and
+        # by nobody else, so written on this op it is accepted,
+        # ignored, and the card wins the game unconditionally -- the single worst
+        # silent misread in the whole vocabulary, and the *first* way anybody
+        # will try to write the printed sentence, since the condition is where
+        # the card's entire cost lives. Wrapped in an `if` it is one more line
+        # and it means what it says.
+        raise DslError(
+            f"{where}: win_game reads no 'condition' -- wrap it in an "
+            f"{{'op': 'if', 'condition': …, 'then': [{{'op': 'win_game'}}]}}"
+        )
+    if "from_top" in effect:
+        # "…into its owner's library second from the top." The depth is the whole
+        # of the difference between Hinder and a plain tuck, and both ways of
+        # getting it wrong are silent: written on an op that does not read it the
+        # card is a strictly better one than printed (the permanent comes back
+        # next turn), and a zero or a negative ordinal is not a position on a
+        # library at all -- `put_on_top` clamps it, but a card that says it meant
+        # something the engine had to correct is a card that was authored wrong.
+        if op != "put_on_top":
+            raise DslError(
+                f"{where}: 'from_top' is a library depth and only put_on_top reads it, not {op!r}"
+            )
+        validate_value(effect["from_top"], f"{where}.from_top")
+        depth = effect["from_top"]
+        if isinstance(depth, Mapping) and "const" in depth:
+            depth = depth["const"]
+        if isinstance(depth, int) and not isinstance(depth, bool) and depth < 1:
+            raise DslError(
+                f"{where}.from_top: depth counts from 1 (1 is the top card); got {depth}"
+            )
+    if "cast_free" in effect and op != "look_at_top":
+        # "…without paying its mana cost" is free, and every other op that could
+        # plausibly be written with it (`exile`, `search_library`, `reveal`)
+        # ignores unknown keys -- so the card would load, resolve, and quietly
+        # charge full price for a spell the printing gives away.
+        raise DslError(
+            f"{where}: 'cast_free' is a look_at_top key and only it reads the "
+            f"free cast, not {op!r} (see `play_exiled` for a free cast from exile)"
+        )
+    if op == "look_at_hand" and "player" not in effect:
+        # Whose hand is the whole ability. Defaulted, Glasses of Urza would
+        # silently pick a player instead of targeting one.
+        raise DslError(f"{where}: look_at_hand needs a 'player' -- whose hand")
+    if op == "search_zones":
+        zones = effect.get("zones")
+        # A missing or single-zone list is `search_library` spelled the long way,
+        # and the whole point of this op is that the count is over the *union*.
+        if not isinstance(zones, (list, tuple)) or len(zones) < 2:
+            raise DslError(
+                f"{where}: search_zones needs 'zones' with at least two of "
+                f"{list(SEARCHABLE)}; use search_library for one"
+            )
+        unknown = [z for z in zones if z not in SEARCHABLE]
+        if unknown:
+            raise DslError(f"{where}: cannot search {unknown} (searchable: {list(SEARCHABLE)})")
+        if len(set(zones)) != len(zones):
+            # A repeated zone would put every card in it into the pool twice.
+            raise DslError(f"{where}: search_zones lists a zone twice: {list(zones)}")
+        # The op builds its pool one zone at a time and tests each half against
+        # the zone that half came from, so a `zone` written here is overridden
+        # rather than honoured -- a card asking for one would not get it.
+        if isinstance(effect.get("selector"), Mapping) and "zone" in effect["selector"]:
+            raise DslError(
+                f"{where}.selector: drop 'zone' -- search_zones takes its zones "
+                f"from 'zones', and each half is matched in its own"
+            )
+    if "share_subtype" in effect:
+        # "…for up to two basic land cards **that share a land type**" (Myriad
+        # Landscape). A constraint between the picks, staged inside the search
+        # rather than expressed as a selector clause -- so it only means anything
+        # on the two ops that do the staging, and only when more than one card is
+        # being taken. Written on anything else it would read as a promise the op
+        # never keeps, and the card would fetch a Forest and a Swamp.
+        if op not in ("search_library", "search_zones"):
+            raise DslError(
+                f"{where}: 'share_subtype' only applies to search_library and "
+                f"search_zones, not {op!r}"
+            )
+        if not isinstance(effect["share_subtype"], bool):
+            raise DslError(
+                f"{where}: 'share_subtype' is a boolean, got {effect['share_subtype']!r}"
+            )
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count < 2:
+            # One card shares a type with itself vacuously, so the clause would
+            # be decoration on a card that reads as if it constrained something.
+            raise DslError(f"{where}: 'share_subtype' needs a 'count' above 1; got {count}")
+    if "attachment" in effect:
+        # "…you may attach **it** to a creature you control" (Vault 101:
+        # Birthday Party). Which permanent is doing the attaching, as against
+        # `objects`, which is the host it lands on. Only `attach` reads it, and
+        # this is the one guard that has to exist: written on `put_onto_battle-
+        # field` -- the first place anybody will try it, since that is the op
+        # that just put the Equipment down -- it is accepted, ignored, and the
+        # Equipment arrives equipping nobody. Nothing on screen says so; the
+        # card simply grants no bonus.
+        if op != "attach":
+            raise DslError(
+                f"{where}: 'attachment' names the permanent being attached and "
+                f"only attach reads it, not {op!r}"
+            )
+        validate_selector(effect["attachment"], f"{where}.attachment")
+        sub = effect["attachment"]
+        if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.attachment: references target {sub['target']!r} "
+                f"which the card does not declare"
+            )
+    if "new_targets" in effect:
+        # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on
+        # `copy_spell` alone: the choice is a decision per copy, and storm,
+        # replicate, conspire and gravestorm all go through the same op without
+        # wanting nine prompts. Written anywhere else it would read as a promise
+        # nothing keeps.
+        if op != "copy_spell":
+            raise DslError(f"{where}: 'new_targets' only applies to copy_spell, not {op!r}")
+        if not isinstance(effect["new_targets"], bool):
+            raise DslError(f"{where}: 'new_targets' is a boolean, got {effect['new_targets']!r}")
+    if op == "copy_spell" and "controller" in effect:
+        # Demonstrate's "choose an opponent to **also** copy it". A full player
+        # spec, so it is checked as one: until the op read this key it loaded
+        # clean and was dropped on the floor, which made every copy the
+        # resolving player's and turned the half of demonstrate that balances
+        # it into no clause at all.
+        _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op == "choose_player":
+        # The chosen seat exists only as the binding it is written to -- nothing
+        # else on the card can reach it -- so an omitted 'as' is a prompt whose
+        # answer is thrown away, and two of them sharing a default name would
+        # silently overwrite each other on a card that chose twice.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: choose_player needs an 'as' -- the chosen player is "
+                f"only reachable through the binding it is stored under"
+            )
+        if "players" in effect:
+            _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+    if op == "look_at_top":
+        # The depth is the card. Without an amount the op would look at one
+        # card and Through the Forest Gate would silently become a cantrip,
+        # so it is required rather than defaulted.
+        if "amount" not in effect:
+            raise DslError(f"{where}: look_at_top needs an 'amount' -- how deep it looks")
+        destination = str(effect.get("destination", "hand"))
+        if destination not in DESTINATIONS:
+            raise DslError(
+                f"{where}: unknown look_at_top destination {destination!r} "
+                f"(implemented: {sorted(DESTINATIONS)})"
+            )
+        # `cast_free` sends what was picked to the **stack**; `destination`,
+        # `tapped` and `playable_this_turn` all describe a card arriving in a
+        # zone and are read only on the branch `cast_free` replaces. Written
+        # together they load clean and one half is silently dropped -- and
+        # `playable_this_turn` is the impulse permission, "play it later at its
+        # printed cost", which is the opposite card from "cast it now for free".
+        if effect.get("cast_free"):
+            clashing = [
+                key for key in ("destination", "tapped", "playable_this_turn") if key in effect
+            ]
+            if clashing:
+                raise DslError(
+                    f"{where}: look_at_top 'cast_free' takes no {sorted(clashing)} -- "
+                    f"the picked card goes to the stack, not to a zone"
+                )
+    if op == "reveal_until":
+        # The selector *is* the "until", so an omitted one is not a smaller
+        # version of the card -- an empty selector matches the very first card
+        # revealed, and "reveal until you reveal a creature card that shares a
+        # type" would quietly become "put the top card into your hand".
+        selector = effect.get("objects") or effect.get("selector")
+        if not isinstance(selector, Mapping) or not selector:
+            raise DslError(
+                f"{where}: reveal_until needs a non-empty 'objects' -- "
+                f"the selector is the card it stops at"
+            )
+        # An `amount` would be read by nobody: the depth is the library's, not
+        # the card's, and a card that wrote one would believe it was bounded.
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: reveal_until takes no 'amount' -- the scan is unbounded; "
+                f"use look_at_top for a bounded window"
+            )
+        destination = str(effect.get("destination", "hand"))
+        if destination not in DESTINATIONS:
+            raise DslError(
+                f"{where}: unknown reveal_until destination {destination!r} "
+                f"(implemented: {sorted(DESTINATIONS)})"
+            )
+    # Same argument as look_at_top, and the printed keyword is *named* for the
+    # number -- "hideaway 4". Defaulted it would look at one card, and the
+    # ability that later plays it would still work, so nothing downstream would
+    # ever complain.
+    if op == "hideaway" and "amount" not in effect:
+        raise DslError(f"{where}: hideaway needs an 'amount' -- hideaway N")
+    if op == "cant_attack_player":
+        # All three keys are required, and each omission is silent in its own
+        # way. Without `attacker`/`defender` the spec defaults to the controller
+        # on both sides, which `restrict_attack` refuses as a self-restriction --
+        # the card would load, resolve, log nothing and prohibit nothing. And the
+        # two durations are not a long and a short version of one restriction:
+        # `this_turn` read for `this_combat` blanks the extra combat a Relentless
+        # Assault bought, `this_combat` read for `this_turn` gives it away free.
+        for side in ("attacker", "defender"):
+            if side not in effect:
+                raise DslError(
+                    f"{where}: cant_attack_player needs '{side}' -- "
+                    f"the restriction names both players"
+                )
+            _validate_player_spec(effect[side], f"{where}.{side}", target_kinds)
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: cant_attack_player needs a 'duration' "
+                f"(implemented: 'this_turn', 'this_combat')"
+            )
+        if str(effect["duration"]) not in ATTACK_RESTRICTION_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
+                f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
+            )
+        # `planeswalkers` decides whether the prohibition reaches 506.2's third
+        # attack target, and it is checked for the reason `no_monarch` and
+        # `was_cast` are: `"false"` is a non-empty string and would read as
+        # `true`, turning "you can't attack that player" into a line strictly
+        # stronger than the printing -- invisibly, since no board shows a
+        # prohibition that was never tested.
+        if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
+            raise DslError(
+                f"{where}.planeswalkers: must be true or false -- true is for the "
+                f"sentence naming no defender at all ('creatures can't attack this "
+                f"combat'), false for every line that names a seat (506.2)"
+            )
+    if op == "goad":
+        # A goad with no selector goads nobody: the spell resolves, the log says
+        # nothing, and every creature attacks exactly as it pleases. Detain's
+        # guard, for detain's reason.
+        if not effect.get("objects"):
+            raise DslError(f"{where}: goad needs 'objects' naming the creatures goaded")
+        # No `duration` key at all, and that is the point of the op rather than an
+        # omission: 701.38a has exactly one clock ("until your next turn") and it
+        # is keyed to the goading *player*, not to a turn number. Accepting a
+        # duration would invite `this_turn` -- which is `must_attack`, a strictly
+        # weaker card that looks identical in a one-turn test.
+        if "duration" in effect:
+            raise DslError(
+                f"{where}: goad takes no 'duration' -- it lasts until the goading "
+                f"player's next turn (701.38a), which is a player and not a number. "
+                f"Use must_attack for a one-combat requirement"
+            )
+        # The goader defaults to the effect's controller, which is every printed
+        # goad; when a card does spell it out it must be a player the engine can
+        # resolve -- which the general `player` check above now does for every
+        # op, goad included.
+    if op == "cant_block":
+        # Two keys, and every way of getting them wrong loads cleanly and plays
+        # a different card.
+        #
+        # Exactly one of `objects` and `all_creatures`, because the two are not
+        # a general and a special case: a `cant_block` with neither would have
+        # to guess, and both guesses are bad -- "nobody" makes the ability do
+        # nothing, "everybody" turns Aragorn's *targeted* half into a one-sided
+        # Falter. Both together is a card that says two things at once.
+        #
+        # And the duration is required for the reason `cant_attack_player`'s is:
+        # `this_turn` read for `until_your_next_turn` gives the blockers back a
+        # turn early, and the reverse keeps them away for a whole turn cycle.
+        has_objects = "objects" in effect
+        has_all = bool(effect.get("all_creatures"))
+        if has_objects == has_all:
+            raise DslError(
+                f"{where}: cant_block needs exactly one of 'objects' "
+                f"(the creatures chosen when it resolves) and 'all_creatures': true "
+                f"(every creature, including ones that enter later)"
+            )
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: cant_block needs a 'duration' "
+                f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in BLOCK_PROHIBITION_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_block duration {effect['duration']!r} "
+                f"(implemented: {sorted(BLOCK_PROHIBITION_DURATIONS)})"
+            )
+    if op == "unblockable":
+        # `objects` is required and there is no wildcard shorthand, which is the
+        # one difference from `cant_block` above. Defaulting an absent `objects`
+        # to "every creature" there would be a one-sided Falter; here it would be
+        # a one-sided *unblockable board*, which is worse, and no printed card
+        # says it -- so the omission is a mistake and is refused as one.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: unblockable needs 'objects' (the creatures that "
+                f"can't be blocked, chosen when it resolves)"
+            )
+        # And the duration is required for the reason `cant_block`'s is: an
+        # evasion read a turn long when it was a turn cycle, or the reverse, is a
+        # different card both ways round.
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: unblockable needs a 'duration' "
+                f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in UNBLOCKABLE_DURATIONS:
+            raise DslError(
+                f"{where}: unknown unblockable duration {effect['duration']!r} "
+                f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
+            )
+    if op == "cant_sacrifice":
+        # `objects` is required and there is no wildcard shorthand, for the
+        # reason `unblockable`'s is and harder: an absent `objects` read as
+        # "every permanent" would be a one-sided Sigarda for the turn, and read
+        # as "nothing" would be a card that silently does not protect what it
+        # says it protects. Both readings are wrong, so the omission is a
+        # mistake and is refused as one.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: cant_sacrifice needs 'objects' (the permanents that "
+                f"can't be sacrificed, chosen when it resolves)"
+            )
+        # And the duration is required for the reason the three above it are.
+        # `this_turn` is the only word implemented; a card that wanted a longer
+        # one would be a strictly better card than any printed sacrifice
+        # prohibition, so a second word is added to
+        # `SACRIFICE_RESTRICTION_DURATIONS` rather than defaulted to here.
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: cant_sacrifice needs a 'duration' "
+                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in SACRIFICE_RESTRICTION_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_sacrifice duration {effect['duration']!r} "
+                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+            )
+    if op == "prevent_damage":
+        # The op, not the `static_effects` entry of the same name. That one is
+        # absorb N and is guarded further up (line ~1183, "'prevent_damage' needs
+        # an 'amount'"); this one is the player shield and refuses the very key
+        # that one requires, which is the whole distinction between them.
+        #
+        # `amount` is refused rather than read, and this is the guard that
+        # matters. The shield prevents *all* damage for the turn; a card written
+        # `{"op": "prevent_damage", "amount": 3}` for Healing Salve would load
+        # clean and prevent everything -- a strictly better card, silently, and
+        # the exact failure this whole validation pass exists to catch. Absorb-N
+        # over a player has a pool that drains and a target that may be a
+        # creature instead, so it is a different effect and not a parameter of
+        # this one; see `docs/rules-coverage.md`.
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: the 'prevent_damage' op prevents ALL damage to a player "
+                f"for the turn and takes no 'amount' -- absorb N is the "
+                f"'prevent_damage' *static effect* on a permanent, and "
+                f'"prevent the next N damage" over a player is not implemented'
+            )
+        # Required for the reason `cant_block`'s is: a prevention read as lasting
+        # longer than it does is a fog that never ends, and there is no safe
+        # guess for an omitted one.
+        if "duration" not in effect:
+            raise DslError(
+                f"{where}: prevent_damage needs a 'duration' "
+                f"(implemented: {sorted(DAMAGE_SHIELD_DURATIONS)})"
+            )
+        if str(effect["duration"]) not in DAMAGE_SHIELD_DURATIONS:
+            raise DslError(
+                f"{where}: unknown prevent_damage duration {effect['duration']!r} "
+                f"(implemented: {sorted(DAMAGE_SHIELD_DURATIONS)})"
+            )
+        # `objects` would look like "prevent all damage that would be dealt to
+        # the creatures you control", which this op does not do -- the shield is
+        # keyed to a seat. Accepted and ignored it would be a card that shields
+        # nothing it claims to.
+        if "objects" in effect:
+            raise DslError(
+                f"{where}: prevent_damage shields a *player* and takes no 'objects' "
+                f"-- prevention over permanents is the 'prevent_damage' static "
+                f"effect (absorb N) or 'protection'"
+            )
+    if op == "must_attack":
+        duration = str(effect.get("duration", "next_combat"))
+        if duration not in ("this_turn", "next_combat"):
+            # A misspelled duration would set a requirement nothing ever
+            # discharges, or one that expires before the combat it names.
+            raise DslError(
+                f"{where}: unknown must_attack duration {duration!r} "
+                f"(implemented: 'this_turn', 'next_combat')"
+            )
+    # The link is written on the exiled card and points at the source of the
+    # ability that exiled it. With nothing to exile there is nothing to link,
+    # and the card would load as a permanent exile with no way to say so.
+    if (
+        op == "exile"
+        and (effect.get("until_leaves") or effect.get("link"))
+        and "objects" not in effect
+    ):
+        key = "until_leaves" if effect.get("until_leaves") else "link"
+        raise DslError(f"{where}: {key!r} needs 'objects' -- there is nothing to link")
+    # The phasing twin of the link above, and the same silent failure: the link
+    # is written on the permanent that phased out, so with nothing selected
+    # there is nothing to write it on and the "until this leaves" clause is
+    # dropped -- leaving a card that phases a creature out for one turn.
+    if (
+        op == "phase_out"
+        and (effect.get("until_leaves") or effect.get("link"))
+        and "objects" not in effect
+    ):
+        key = "until_leaves" if effect.get("until_leaves") else "link"
+        raise DslError(f"{where}: {key!r} needs 'objects' -- there is nothing to link")
+    # Same shape as the link above: the permission is written on the exiled
+    # card, so with nothing selected there is no card to write it on and the
+    # key is silently doing nothing.
+    # The state is a casting permission, so a permanent given it with no spell
+    # to cast is a printed line that does nothing at all.
+    if op == "become_prepared" and "objects" not in effect:
+        raise DslError(f"{where}: 'become_prepared' needs 'objects' -- there is nothing to prepare")
+    # Which face it comes back as. Defaulted to "turn it over" the op reads
+    # correctly on a card's front and silently wrongly on its back, where the
+    # same sentence turns it the other way -- and both faces of the Dominant
+    # cycle print one.
+    if op == "exile_and_return":
+        if "objects" not in effect:
+            raise DslError(
+                f"{where}: 'exile_and_return' needs 'objects' -- there is nothing to exile"
+            )
+        face = effect.get("face")
+        if face not in ("front", "back"):
+            raise DslError(
+                f"{where}: 'exile_and_return' needs a 'face' of 'front' or 'back' (got {face!r})"
+            )
+    # The op reads each card's recorded origin and moves it; with nothing
+    # selected it is a return that returns nothing.
+    if op == "return_to_origin" and "objects" not in effect:
+        raise DslError(f"{where}: 'return_to_origin' needs 'objects' -- there is nothing to return")
+    # "When you do" has to say which do. Without the key the op names the empty
+    # id, no ability matches it, and the second half of the card never happens.
+    if op == "reflexive_trigger" and not effect.get("ability"):
+        raise DslError(
+            f"{where}: 'reflexive_trigger' needs an 'ability' -- "
+            f"the id of the reflexive ability it fires"
+        )
+    # `grant_playable` writes the permission on the cards it selects and does
+    # nothing else, so with no selection it is a line that reads as a grant and
+    # grants nothing.
+    if op == "grant_playable" and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'grant_playable' needs 'objects' -- there is nothing to grant permission on"
+        )
+    if op == "exile" and effect.get("playable_this_turn") and "objects" not in effect:
+        raise DslError(
+            f"{where}: 'playable_this_turn' needs 'objects' -- "
+            f"there is nothing to grant permission on"
+        )
+    if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
+        # "…except it's a white Zombie Angel with no mana cost." A misspelled
+        # key here would be silently dropped, and the token would come back a
+        # plain copy -- which is a different card and looks identical until
+        # somebody reads its colour.
+        if not isinstance(overrides, Mapping):
+            raise DslError(f"{where}: 'except_' must be an object")
+        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost", "types"}
+        if unknown:
+            raise DslError(
+                f"{where}.except_: unsupported keys {sorted(unknown)} "
+                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost', 'types')"
+            )
+        for color in overrides.get("colors") or ():
+            if color not in KNOWN_COLORS:
+                raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+        if "types" in overrides:
+            # A **replacement**, unlike `add_subtypes` beside it -- "it's an
+            # artifact and it loses all other card types". So an empty list is a
+            # copy with no card type at all, which no printing says and which
+            # nothing downstream is written to survive.
+            if not overrides["types"]:
+                raise DslError(
+                    f"{where}.except_.types: replaces the copy's card types, "
+                    f"so an empty list is a permanent with none"
+                )
+            for t in overrides["types"]:
+                if t not in KNOWN_TYPES:
+                    raise DslError(f"{where}.except_.types: unknown card type {t!r}")
+    if op == "add_subtype":
+        # An op that names no subtype is a printed sentence that does nothing,
+        # and it would load and resolve exactly like one that works.
+        if not effect.get("subtypes"):
+            raise DslError(f"{where}: add_subtype needs 'subtypes'")
+        if "objects" not in effect:
+            raise DslError(f"{where}: add_subtype needs 'objects' -- there is nothing to change")
+        if "types" in effect:
+            # Only subtypes. "Becomes an artifact in addition to its other
+            # types" is a different sentence and would need the type to reach
+            # the same places subtypes do; accepting the key and dropping it is
+            # how a card silently half-works.
+            raise DslError(
+                f"{where}: add_subtype changes subtypes only; use 'animate' for card types"
+            )
+    if op == "gain_control":
+        # "Gain control of" with nothing named is a card that reads like removal
+        # and does nothing at all.
+        if "objects" not in effect:
+            raise DslError(f"{where}: gain_control needs 'objects' -- there is nothing to take")
+        # Both forms exist now, and the guard stays for the reason it was
+        # written: a `duration` nobody checked would be read as "until end of
+        # turn" by whoever wrote it and ignored by the engine, which turns Act
+        # of Treason into a strictly better card than the printed one. What
+        # changed is that `until_end_of_turn` is now implemented rather than
+        # refused -- every other spelling is still a load error, exactly as
+        # `grant_keyword`'s is below.
+        if "duration" in effect and str(effect["duration"]) not in CONTROL_DURATIONS:
+            raise DslError(
+                f"{where}: unknown gain_control duration {effect['duration']!r} "
+                f"(use 'until_end_of_turn' or 'permanent')"
+            )
+    if op == "discard":
+        if "up_to" in effect and not isinstance(effect["up_to"], bool):
+            raise DslError(f"{where}: discard's 'up_to' is a boolean")
+        if effect.get("up_to") and effect.get("random"):
+            # Nobody is choosing, so there is no floor to relax -- and a card
+            # that printed both would be saying two different things about who
+            # decides.
+            raise DslError(
+                f"{where}: discard cannot be both 'random' and 'up_to' -- "
+                f"a random discard has no choice to make"
+            )
+        if "as" in effect and not isinstance(effect["as"], str):
+            raise DslError(f"{where}: discard's 'as' is a binding name")
+    if op == "choose_permanents" and "as" not in effect:
+        # It changes nothing on the board, so a choice nobody reads back is a
+        # question put to the player for no reason -- and a card written that
+        # way would load, prompt, and do nothing with the answer.
+        raise DslError(
+            f"{where}: 'choose_permanents' only marks permanents, so it needs an "
+            f"'as' for something later to read"
+        )
+    if op == "create_token" and "token" not in effect:
+        raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and "controller" in effect:
+        # Whose tokens these are, as a full player spec -- `op_create_token`
+        # loops `select_players` over it. Unchecked until gift needed to aim one
+        # at a promised opponent, and a misspelling here is the quietest error
+        # the op has: `select_players` raises `DslError` mid-resolution for a
+        # bad *string*, which is a crash in the middle of a game rather than a
+        # refusal at load, and every mapping form fails silently by resolving to
+        # nobody -- a card that prints "they create a token" and creates none.
+        _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
+    if op in ATTACKING_OPS and "attacking" in effect:
+        _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
+    # A misspelled duration would silently fall back to until-end-of-turn,
+    # which is the *wrong half* of riot rather than a smaller version of it.
+    if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
+        "until_end_of_turn",
+        "permanent",
+    ):
+        raise DslError(
+            f"{where}: unknown grant_keyword duration {effect['duration']!r} "
+            f"(use 'until_end_of_turn' or 'permanent')"
+        )
+    if op == "add_poison" and "amount" in effect:
+        validate_value(effect["amount"], f"{where}.amount")
+    if op == "detain" and not effect.get("objects"):
+        # Detain with no selector restricts nobody: the card resolves, the log
+        # says nothing, and the creature attacks anyway.
+        raise DslError(f"{where}: detain needs 'objects' naming what is detained")
+    if op == "extra_combat":
+        # "…followed by an additional main phase" is half of what Relentless
+        # Assault and Resurgence print, and a misspelled key here drops it
+        # silently -- leaving a four-mana sorcery that grants a bare extra
+        # combat, which is a different and worse card. So the flag is checked by
+        # name and by type.
+        if "extra_main" in effect and not isinstance(effect["extra_main"], bool):
+            raise DslError(
+                f"{where}: extra_combat's 'extra_main' is a flag (true/false), "
+                f"got {effect['extra_main']!r}"
+            )
+        # A phase belongs to the *turn*, not to a player: an extra combat granted
+        # during somebody else's turn is theirs (Seize the Day). Accepting a
+        # `player` and ignoring it would read as "your extra combat" and be
+        # neither.
+        for key in ("player", "controller"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: extra_combat takes no {key!r} -- an extra phase belongs "
+                    f"to the turn in progress, whoever's turn that is"
+                )
+    if op == "set_flag" and not effect.get("flag"):
+        # A flag with no name writes nothing, so renown's once-only guard never
+        # closes and the creature grows on every combat damage for ever.
+        raise DslError(f"{where}: set_flag needs a 'flag' to write")
+    if op == "set_turn_flag":
+        if not effect.get("flag"):
+            # Same failure as `set_flag` above with a worse tell: the guard that
+            # reads it back never bites, so Combat Celebrant offers its exert on
+            # every attack of the turn and the card that prints a once-per-turn
+            # clause plays as though it does not.
+            raise DslError(f"{where}: set_turn_flag needs a 'flag' to write")
+        if "duration" in effect:
+            # There is exactly one duration here, and it is in the name. A card
+            # asking for another one is asking for `set_flag`, whose word is
+            # permanent -- accepting and ignoring the key would give whichever
+            # of the two the author did not want.
+            raise DslError(
+                f"{where}: set_turn_flag takes no 'duration' -- it lasts the turn "
+                f"(use set_flag for a word that never wears off)"
+            )
+    if op == "move_counters":
+        # Without a destination the counters come off the source and go
+        # nowhere, which is a card that reads "move a +1/+1 counter onto it"
+        # and quietly shrinks its own creature.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: move_counters needs 'objects' naming where the counters go "
+                f"(the source is 'from', defaulting to this permanent)"
+            )
+        if "amount" in effect:
+            validate_value(effect["amount"], f"{where}.amount")
+        if "from" in effect:
+            validate_selector(effect["from"], f"{where}.from")
+    if op == "must_block" and not effect.get("objects"):
+        # Without `objects` the op resolves an empty pool and requires nothing
+        # of anybody, which is a provoke that loads clean and does nothing --
+        # the failure this whole pass exists to refuse.
+        raise DslError(
+            f"{where}: must_block needs 'objects' naming who has to block "
+            f"(the attacker defaults to the ability's own source)"
+        )
+    if op == "counter" and "sid" in effect:
+        # Ward's "counter it": the victim is named by value, not chosen. A
+        # malformed expression here would evaluate to 0, match no stack item and
+        # counter nothing -- a ward that reads as printed and never protects
+        # anything, which is the failure this whole pass exists to refuse.
+        validate_value(effect["sid"], f"{where}.sid")
+        if "target" in effect:
+            raise DslError(
+                f"{where}: counter takes 'sid' or 'target', not both -- one names "
+                f"the spell that targeted this permanent, the other lets its "
+                f"controller pick a different spell"
+            )
+    if "all_if" in effect:
+        # Entwine. Only `choose_mode` has modes to take all of, so anywhere else
+        # the key would load, be ignored, and leave a card that reads "choose
+        # both" and chooses one.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'all_if' only means anything on choose_mode, not {op!r}")
+        validate_condition(effect["all_if"], f"{where}.all_if")
+    if "up_to" in effect:
+        # "Choose up to two --" (Call Damage Control). The unconditional ceiling
+        # with no floor, which `count` (exact), `all_if` (every mode) and
+        # `up_to_if` (conditional, floor of one) between them could not say. The
+        # name is `TargetSpec`'s, where it has meant the same thing since "up to
+        # X target creatures".
+        if op not in ("choose_mode", "discard"):
+            raise DslError(
+                f"{where}: 'up_to' only means anything on choose_mode or discard, not {op!r}"
+            )
+        if not isinstance(effect["up_to"], bool):
+            raise DslError(f"{where}: 'up_to' is a boolean, got {effect['up_to']!r}")
+        if op == "discard":
+            # "Discard up to two cards" -- the same word doing the same job one
+            # op over: `amount` becomes a ceiling and the floor drops to zero.
+            # The mode-count checks below are `choose_mode`'s own and read
+            # `count`, which a discard does not have.
+            return
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count < 1:
+            # "Up to zero modes" is a card that does nothing.
+            raise DslError(f"{where}: 'up_to' needs a 'count' of at least 1; got {count}")
+    if "or_more" in effect:
+        # "Choose one or more --" (Black Market Connections). A floor and a
+        # ceiling at once: `count` stays the minimum and every mode is on offer.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'or_more' only means anything on choose_mode, not {op!r}")
+        if not isinstance(effect["or_more"], bool):
+            raise DslError(f"{where}: 'or_more' is a boolean, got {effect['or_more']!r}")
+        if effect.get("up_to"):
+            # One says "you must take at least `count`" and the other says "you
+            # may take none". A card printing both is a card saying two things,
+            # and `modal_bounds` would silently let `up_to` win.
+            raise DslError(
+                f"{where}: 'or_more' and 'up_to' contradict each other -- "
+                f"one keeps a floor, the other removes it"
+            )
+        modes = effect.get("modes") or []
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if isinstance(count, int) and not isinstance(count, bool) and count >= len(modes):
+            # "Choose two or more" of two modes is "choose both", written the
+            # long way -- and it would load, offering a question with one answer.
+            raise DslError(
+                f"{where}: 'or_more' needs a 'count' below the number of modes; "
+                f"got {count} of {len(modes)}"
+            )
+    if "up_to_if" in effect:
+        # The same guard for entwine's mirror image, and it was missing -- which
+        # is how a card carrying `up_to_if` compiled, played and cleared every
+        # gate while its first printed sentence did nothing at all.
+        if op != "choose_mode":
+            raise DslError(f"{where}: 'up_to_if' only means anything on choose_mode, not {op!r}")
+        more = effect["up_to_if"]
+        if not isinstance(more, Mapping) or "condition" not in more:
+            raise DslError(
+                f"{where}: 'up_to_if' takes a 'condition' saying when the extra "
+                f"modes are offered, and optionally a 'count'"
+            )
+        validate_condition(more["condition"], f"{where}.up_to_if.condition")
+        if "count" in more:
+            validate_value(more["count"], f"{where}.up_to_if.count")
+    if "as" in effect:
+        # `as` names a binding -- `snapshot`'s, and the record `reveal`,
+        # `sacrifice`, `exile` and the two token-making ops write of what they
+        # consumed or produced. A non-string would be stringified into a name
+        # nothing reads back, so the count it feeds would be 0 and amplify would
+        # enter with no counters.
+        if not (isinstance(effect["as"], str) and effect["as"]):
+            raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
+        if op not in RECORDING_OPS:
+            # And an `as` on an op that writes no binding fails exactly the same
+            # way while looking right on the page: "destroy the creatures, then
+            # draw a card for each destroyed this way" would load, resolve, and
+            # draw nothing. Only these ops record, so only these may be asked
+            # to -- the next op to grow one adds itself here.
+            raise DslError(
+                f"{where}: {op!r} records no binding, so its 'as' would name one "
+                f"nothing writes and every read of it would be 0 "
+                f"(ops that record: {sorted(RECORDING_OPS)})"
+            )
+    if "snapshot" in effect:
+        # `sacrifice`'s LKI twin of `as`: the characteristics the chosen
+        # permanent had while it was still on the battlefield. Only `sacrifice`
+        # reads the key, and an unread key is the silent failure this pass
+        # exists to catch -- Entrapment Maneuver would load with `snapshot` on
+        # the wrong op, resolve, and make zero tokens because
+        # `{"toughness_of": {"binding": …}}` found nothing under that name.
+        # (An effect whose *op* is `snapshot` spells its binding `as`, like
+        # every other recording op, so it never reaches here.)
+        if op != "sacrifice":
+            raise DslError(
+                f"{where}: 'snapshot' captures what a sacrificed permanent had "
+                f"and only sacrifice reads it, not {op!r} "
+                f"(use a separate snapshot op)"
+            )
+        if not (isinstance(effect["snapshot"], str) and effect["snapshot"]):
+            raise DslError(
+                f"{where}: 'snapshot' must be a non-empty binding name, got {effect['snapshot']!r}"
+            )
+    if op == "roll_dice":
+        # The same refusal `join_forces` carries below, for the same reason: a
+        # roll is never the effect, it is what the sentences after it read. A
+        # `roll_dice` with no `as` throws dice into a binding nothing can name,
+        # and every `{"rolled": …}` on the card answers 0 however they fell.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: roll_dice needs an 'as' naming the binding its results "
+                f"land in; without it nothing can read what was rolled"
+            )
+        # "Roll X six-sided dice" -- the *number* of dice is a board count and is
+        # a value expression (checked with `count` above), but the die itself is
+        # printed on the card and never varies. Written as a value it would be
+        # accepted, stringified and silently rolled as a d0.
+        sides = effect.get("sides", 6)
+        if not isinstance(sides, int) or isinstance(sides, bool) or sides < 2:
+            raise DslError(
+                f"{where}: 'sides' is the printed size of the die -- a plain "
+                f"integer of at least 2, got {sides!r}"
+            )
+    if op == "join_forces":
+        # The total is the card -- "for each mana paid this way" -- so an effect
+        # that collects it and names no binding has taxed the whole table for
+        # nothing, and would resolve without complaint.
+        if not effect.get("as"):
+            raise DslError(
+                f"{where}: join_forces needs an 'as' naming the binding the total "
+                f"lands in; without it nothing can read what was paid"
+            )
+        if "pay" in effect:
+            if not isinstance(effect["pay"], dict):
+                raise DslError(f"{where}: 'pay' must be an object")
+            try:
+                CostModel.model_validate(effect["pay"])
+            except Exception as exc:  # pydantic ValidationError
+                raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+            if effect["pay"].get("mana_reduction") is not None:
+                _validate_cost_reduction(
+                    effect["pay"]["mana_reduction"], f"{where}.pay.mana_reduction"
+                )
+    if effect.get("no_regeneration") is not None and op != "destroy":
+        # "It can't be regenerated." belongs to a destruction, and `op_destroy`
+        # is the only op that performs one. Written on anything else -- a
+        # `damage` that will kill, a `sacrifice`, a `replace_deaths` -- it is
+        # read by nobody, which is precisely how the clause came to be silently
+        # dropped by every card that printed it in the first place.
+        raise DslError(
+            f"{where}: 'no_regeneration' only works on 'destroy' -- "
+            f"nothing else replaces a destruction, so here it would be ignored"
+        )
+    if op == "regenerate" and not effect.get("objects"):
+        # A shield with nothing to put it on. The ability would cost mana, log
+        # nothing and save nobody -- and "Regenerate this creature" is three
+        # words away from being right.
+        raise DslError(
+            f"{where}: regenerate needs 'objects' naming what is shielded "
+            f'(use {{"self_only": true}} for "regenerate this creature")'
+        )
+    if op == "phase_out" and not effect.get("objects"):
+        # The same trap as `regenerate` below. `choose_objects` with no selector
+        # finds nothing, so the spell would resolve, log nothing and phase
+        # nobody out -- and "this permanent phases out" is three words away.
+        raise DslError(
+            f"{where}: phase_out needs 'objects' naming what phases out "
+            f'(use {{"self_only": true}} for "this permanent phases out")'
+        )
+    if op == "phase_in" and not effect.get("objects"):
+        # A phased-out permanent is out of `state.battlefield`, so an absent
+        # selector does not merely find the wrong thing -- it finds nothing at
+        # all, and the return half of an Oubliette would silently strand the
+        # creature phased out forever with its enchantment already gone.
+        raise DslError(
+            f"{where}: phase_in needs 'objects' naming what phases in "
+            f'(use {{"phased_out_with": "self"}} for "the creature this '
+            f'card phased out")'
+        )
+    if op == "unattach" and not effect.get("objects"):
+        # Explore's trap once more: "unattach this permanent" is three words on
+        # the Equipment that prints it, and a default would silently unattach
+        # the spell object on anything that is not a permanent's own ability.
+        raise DslError(
+            f"{where}: unattach needs 'objects' naming what comes off "
+            f'(use {{"self_only": true}} for "unattach this permanent")'
+        )
+    if op == "explore" and not effect.get("objects"):
+        # 701.40a puts the +1/+1 counter on the *exploring* permanent, so the op
+        # has to be told which one that is. Defaulted to this permanent it would
+        # read correctly on a creature and silently do nothing on a sorcery,
+        # whose source is a spell on the stack -- so the card would reveal no
+        # card, place no counter, and load perfectly cleanly.
+        raise DslError(
+            f"{where}: explore needs 'objects' naming what explores "
+            f'(use {{"self_only": true}} for "it explores")'
+        )
+    if op == "connive" and not effect.get("objects"):
+        # Same trap as explore, and the same three words fix it: the +1/+1
+        # counters go on the *conniving* permanent, so a defaulted `self_only`
+        # would be right on "whenever this creature attacks, it connives" and
+        # would draw and discard for nobody on "target creature connives".
+        raise DslError(
+            f"{where}: connive needs 'objects' naming what connives "
+            f'(use {{"self_only": true}} for "it connives")'
+        )
+    # `reflecting` is the one add_mana that names no symbols: "one mana of any
+    # color that a land an opponent controls could produce" reads them off the
+    # board, so the card names the permanents to ask instead.
+    if (
+        op == "add_mana"
+        and "mana" not in effect
+        and "reflecting" not in effect
+        and not effect.get("in_commander_identity")
+    ):
+        raise DslError(
+            f"{where}: add_mana needs 'mana' (or 'reflecting', or 'in_commander_identity')"
+        )
+    if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
+        # The one non-literal `mana`, and validated as such for the reason
+        # `_restriction_name` validates its twin: a near-miss spelling that fell
+        # through would be read as "no colour chosen" for ever, and the card
+        # would load clean and tap for nothing at the table.
+        entry = effect["mana"]
+        if op != "add_mana":
+            raise DslError(
+                f'{where}: \'mana\' may only be {{"chosen_color_of": "self"}} on '
+                f"'add_mana' -- there is no chosen colour to scale per object"
+            )
+        if set(entry) != {"chosen_color_of"} or entry["chosen_color_of"] != "self":
+            raise DslError(
+                f'{where}: the only dynamic add_mana is {{"chosen_color_of": "self"}}, '
+                f"not {dict(entry)!r}"
+            )
+    if op == "grant_protection":
+        # The same leaf, and the same silent failure it would otherwise have:
+        # "protection from the color of your choice" that fell through the
+        # substitution grants protection from nothing and looks like a card.
+        for i, entry in enumerate(effect.get("from_colors") or ()):
+            if isinstance(entry, Mapping):
+                if set(entry) != {"chosen_color_of"} or entry["chosen_color_of"] != "self":
+                    raise DslError(
+                        f"{where}.from_colors[{i}]: the only dynamic colour is "
+                        f'{{"chosen_color_of": "self"}}, not {dict(entry)!r}'
+                    )
+            elif entry not in KNOWN_COLORS:
+                raise DslError(f"{where}.from_colors[{i}]: unknown colour {entry!r}")
+        # A grant with no recipient. `objects` alone was once the only shape, so
+        # its absence used to be caught by `choose_objects` finding nothing --
+        # which is the silent kind of nothing this pass exists to refuse now
+        # that the op has a second half.
+        if effect.get("player") is None and effect.get("objects") is None:
+            raise DslError(
+                f"{where}: grant_protection needs 'objects' or 'player' naming who gains it"
+            )
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if (
+            not effect.get("from_colors")
+            and not effect.get("from_types")
+            and not effect.get("from_subtypes")
+            and not effect.get("from_everything")
+        ):
+            # Protection *from* nothing. It would install no qualities and read
+            # on screen as a spell that resolved and did nothing at all.
+            raise DslError(
+                f"{where}: grant_protection needs a quality -- 'from_colors', "
+                f"'from_types', 'from_subtypes' or 'from_everything'"
+            )
+        if "from_everything" in effect and not isinstance(effect["from_everything"], bool):
+            raise DslError(
+                f"{where}: 'from_everything' is a boolean, got {effect['from_everything']!r}"
+            )
+        duration = effect.get("duration")
+        if duration is not None:
+            if effect.get("player") is None:
+                # An object's grant is one `TempEffect` on `until_eot`, which
+                # the cleanup step sweeps and nothing else does. Reading a
+                # duration there and storing it anyway would be a protection
+                # that claims to last past the turn and does not.
+                raise DslError(
+                    f"{where}: 'duration' only means anything on the 'player' "
+                    f"half of grant_protection -- an object's grant is until "
+                    f"end of turn"
+                )
+            if duration not in PLAYER_PROTECTION_DURATIONS:
+                raise DslError(
+                    f"{where}: unknown protection duration {duration!r} "
+                    f"(implemented: {sorted(PLAYER_PROTECTION_DURATIONS)})"
+                )
+    if op == "lock_life_total":
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        duration = str(effect.get("duration", "until_your_next_turn"))
+        if duration not in LIFE_LOCK_DURATIONS:
+            # A misspelled duration would fall back to the default and last a
+            # turn longer than the card says, which is the wrong direction for
+            # a prohibition: it is a strictly better card, silently.
+            raise DslError(
+                f"{where}: unknown lock_life_total duration {duration!r} "
+                f"(implemented: {sorted(LIFE_LOCK_DURATIONS)})"
+            )
+        if "amount" in effect:
+            # "Your life total can't change" has no magnitude. A number here
+            # would read as a shield of that size and be ignored entirely.
+            raise DslError(
+                f"{where}: lock_life_total takes no 'amount' -- it forbids the "
+                f"change rather than sizing it"
+            )
+    if op == "animate":
+        # "Becomes a 4/4 creature" is the whole point, and an animation with no
+        # size would silently make a 0/0 that dies to state-based actions the
+        # moment it arrives.
+        if "power" not in effect or "toughness" not in effect:
+            raise DslError(f"{where}: animate needs 'power' and 'toughness'")
+        for t in effect.get("types", ()) or ():
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}: unknown card type {t!r}")
+        for k in effect.get("keywords", ()) or ():
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}: unknown keyword {k!r}")
+        for c in effect.get("colors", ()) or ():
+            if c not in KNOWN_COLORS:
+                raise DslError(f"{where}: unknown colour {c!r}")
+    if op == "delay":
+        # A misspelled step would schedule something that never comes due -- a
+        # card that reads "at the beginning of the next upkeep, draw a card" and
+        # silently draws nothing, which is exactly what this pass exists to stop.
+        step = str(effect.get("step", "end_step"))
+        if step not in DELAY_STEPS:
+            raise DslError(
+                f"{where}: unknown delay step {step!r} (implemented: {sorted(DELAY_STEPS)})"
+            )
+        if not effect.get("effects"):
+            raise DslError(f"{where}: delay needs 'effects' to schedule")
+        _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
+    if op == "delayed_trigger":
+        _validate_delayed_trigger(effect, where)
+
+    # A grant naming an ability the card does not have is a silent no-op: the
+    # index defaults to 0 and every miss lands on the first grantable, or on
+    # nothing at all. Both spellings are accepted by the op, so both are checked.
+    if op == "grant_ability" and "ability" not in effect and "ability_index" not in effect:
+        raise DslError(
+            f"{where}: grant_ability needs 'ability' -- the index into the "
+            f"card's own 'grantable_abilities'"
+        )
+
+    # A loop with no body is a card that does nothing, and the whole point of
+    # this op is the body -- without it the printed "each opponent sacrifices"
+    # silently becomes "nobody does".
+    if op == "for_each_player" and not effect.get("effects"):
+        raise DslError(f"{where}: for_each_player needs 'effects' to run per player")
+
+    # "Choose one that hasn't been chosen" belongs to a permanent's repeated
+    # ability, not to a spell. A spell's top-level modes are picked at *cast*
+    # time (601.2b, `Game._ask_modes`), which never sees this filter -- so the
+    # spent modes would still be offered and the flag written for nothing. And
+    # the clause is meaningless there anyway: a spell is a new object each cast,
+    # with no record of the last one.
+    if op == "choose_mode" and effect.get("once_each") and ".spell_effects[" in where:
+        raise DslError(
+            f"{where}: 'once_each' is for a permanent's repeated modal ability; "
+            f"a spell chooses its modes as it is cast and remembers nothing"
+        )
+
+    for key in ("then", "else", "effects"):
+        if key in effect:
+            for i, sub in enumerate(effect[key] or []):
+                _validate_effect(sub, f"{where}.{key}[{i}]", target_kinds)
+    for i, mode in enumerate(effect.get("modes", []) or []):
+        if not isinstance(mode, Mapping):
+            raise DslError(f"{where}.modes[{i}]: must be an object")
+        for j, sub in enumerate(mode.get("effects", []) or []):
+            _validate_effect(sub, f"{where}.modes[{i}].effects[{j}]", target_kinds)

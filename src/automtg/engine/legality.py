@@ -1675,7 +1675,7 @@ def _ability_aims(
 
     # A **modal** activated ability whose bullets own their targets -- Phoenix
     # Down. 601.2b picks the mode before 601.2c declares its targets, and the
-    # reverse was the whole reason `loader._check_mode_targets` refused `mode`
+    # reverse was the whole reason `loader.targets._check_mode_targets` refused `mode`
     # here: legality enumerated one activation per target tuple, so the targets
     # were fixed before `Game._activate` could ask which bullet.
     #

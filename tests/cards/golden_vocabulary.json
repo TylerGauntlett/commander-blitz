@@ -1,31 +1,15 @@
 {
  "loader": {
-  "ABILITY_STATICS": [
-   "lose_all_abilities",
-   "grant_ability"
-  ],
   "ATTACKING_OPS": [
    "copy_permanent",
    "create_token",
    "put_onto_battlefield"
-  ],
-  "ATTACK_RESTRICTION_DURATIONS": [
-   "this_turn",
-   "this_combat"
-  ],
-  "BLOCK_PROHIBITION_DURATIONS": [
-   "this_turn",
-   "until_your_next_turn"
   ],
   "CONTROLLED_TARGET_KINDS": [
    "card_in_exile",
    "card_in_graveyard",
    "permanent",
    "spell"
-  ],
-  "CONTROL_DURATIONS": [
-   "permanent",
-   "until_end_of_turn"
   ],
   "COST_CONDITION_HEADS": [
    "all",
@@ -66,38 +50,16 @@
    "put_onto_battlefield",
    "return_from_graveyard"
   ],
-  "DAMAGE_SHIELD_DURATIONS": [
-   "this_turn"
-  ],
   "DEFENDING_TRIGGERS": [
    "attacks",
    "creatures_attack_player",
    "deals_damage_to_player"
-  ],
-  "DELAYED_DURATIONS": [
-   "this_turn",
-   "until_it_fires"
   ],
   "DELAYED_TRIGGER_KEYS": [
    "condition",
    "controller",
    "event"
   ],
-  "DELAY_STEPS": {
-   "begin_combat": 4,
-   "draw_step": 2,
-   "end_of_combat": 9,
-   "end_step": 11,
-   "upkeep": 1
-  },
-  "DESTINATIONS": {
-   "battlefield": "battlefield",
-   "exile": "exile",
-   "graveyard": "graveyard",
-   "hand": "hand",
-   "library_bottom": "library",
-   "library_top": "library"
-  },
   "GRANTABLE_STATIC_EFFECTS": [
    "add_subtype",
    "attack_tax",
@@ -177,10 +139,6 @@
    "Planeswalker",
    "Sorcery"
   ],
-  "LIFE_LOCK_DURATIONS": [
-   "this_turn",
-   "until_your_next_turn"
-  ],
   "MANA_AMOUNT_FORBIDDEN": [
    "binding",
    "loop_value",
@@ -206,25 +164,6 @@
    "untap",
    "x_value"
   ],
-  "PER_PLAYER_COUNT_KEYS": [
-   "max_count_of",
-   "min_count_of"
-  ],
-  "PLAYER_PROTECTION_DURATIONS": [
-   "this_turn",
-   "until_your_next_turn"
-  ],
-  "PLAYER_SPEC_NAMES": [
-   "active_player",
-   "all",
-   "controller",
-   "each_opponent",
-   "each_player",
-   "enchanted_player",
-   "gift_recipient",
-   "opponent",
-   "you"
-  ],
   "PLAYER_TARGET_KINDS": [
    "any",
    "player"
@@ -248,39 +187,6 @@
    "each_opponent",
    "each_player",
    "opponent"
-  ],
-  "RECORDING_OPS": [
-   "choose_permanents",
-   "choose_player",
-   "copy_permanent",
-   "create_token",
-   "discard",
-   "exile",
-   "gain_control",
-   "join_forces",
-   "may",
-   "mill",
-   "play_exiled",
-   "reveal",
-   "roll_dice",
-   "sacrifice",
-   "search_library",
-   "search_zones",
-   "snapshot"
-  ],
-  "REDUCTION_ZONES": [
-   "battlefield",
-   "command",
-   "graveyard"
-  ],
-  "SACRIFICE_RESTRICTION_DURATIONS": [
-   "this_turn"
-  ],
-  "SEARCHABLE": [
-   "library",
-   "graveyard",
-   "hand",
-   "exile"
   ],
   "SOURCE_MOVING_OPS": [
    "exile",
@@ -451,51 +357,6 @@
    "subtypes",
    "supertypes",
    "types"
-  ],
-  "TRIGGER_EVENTS": {
-   "ability_activated": "ability_activated",
-   "attacks": "attacks",
-   "attacks_unblocked": "attacked_unblocked",
-   "becomes_blocked": "became_blocked",
-   "becomes_monarch": "became_monarch",
-   "becomes_monstrous": "became_monstrous",
-   "becomes_target": "became_target",
-   "becomes_untapped": "untapped",
-   "begin_combat": "begin_combat",
-   "blocks": "blocks",
-   "chapter": "chapter_reached",
-   "counter_placed": "counter_placed",
-   "creature_dies": "dies",
-   "creatures_attack_player": "creatures_attacked_player",
-   "creatures_deal_combat_damage": "creatures_dealt_combat_damage",
-   "cycle": "cycled",
-   "damage_prevented": "damage_prevented",
-   "deals_combat_damage_to_player": "combat_damage_to_player",
-   "deals_damage_to_player": "damage_dealt",
-   "dealt_damage": "damage_dealt",
-   "dies": "dies",
-   "discard": "discard",
-   "draw": "draw",
-   "draw_step": "draw_step",
-   "end_step": "end_step",
-   "land_played": "land_played",
-   "leaves_battlefield": "leaves_battlefield",
-   "leaves_graveyard": "leaves_graveyard",
-   "life_lost": "life_lost",
-   "permanent_enters": "enters_battlefield",
-   "postcombat_main": "postcombat_main",
-   "precombat_main": "precombat_main",
-   "sacrificed": "sacrificed",
-   "self_enters": "enters_battlefield",
-   "spell_cast": "spell_cast",
-   "token_created": "token_created",
-   "upkeep": "upkeep",
-   "you_attack": "attackers_declared",
-   "you_gain_life": "life_gained"
-  },
-  "UNBLOCKABLE_DURATIONS": [
-   "this_turn",
-   "until_your_next_turn"
   ],
   "UNGRANTABLE_STATIC_EFFECTS": [
    "cast_from_graveyard",
