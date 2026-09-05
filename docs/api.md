@@ -281,6 +281,9 @@ moves or `timeout` (max 25 s) elapses.
 - **A timeout is not an error.** You get the current view with a 200 and re-poll. A
   long poll is indistinguishable from a slow one, and a dropped connection costs at
   most one round trip.
+- **`since` is a different cursor.** For a game it is the `event_cursor` of the last
+  response you absorbed, and the reply carries only the events after it. Send both:
+  the version says when to wake, the cursor says what is new.
 
 Rationale and the alternatives in
 [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md).

@@ -2,6 +2,33 @@
 
 ### Fixed
 
+- **A pod game stalled until somebody reloaded, and the reload replayed the game.**
+  Four faults in one twenty-five-line block of `useGame`. The long poll was a
+  one-shot effect rather than a loop: a poll that times out comes back with
+  the *same* version, `absorb` was skipped, nothing it depended on changed and
+  it never ran again -- so an opponent who thought for longer than the 25 s
+  ceiling left the waiting tab deaf, silently, until it was reloaded. It sent
+  `?since=0` on every poll, so the one poll that did land after a reload got
+  the whole event log back, appended it to the log a second time and narrated
+  the entire game as beats; `event_cursor` had never been read. `GameRoute`
+  passed a fresh session literal every render, so the effect was torn down and
+  re-issued on every re-render with no `AbortController`, each abandoned poll
+  parking a server thread for the full ceiling. And with two people at a table
+  and an AI on the clock, both pumped it: each reply carried only its own
+  call's events -- the POST routes read their `since` cursor *outside* the
+  session lock -- so each screen missed the other's slices, and the
+  wait-for-narration gate on one screen was defeated by the other's pump.
+
+  The listener is now the same self-rescheduling loop as `usePod`, carries both
+  cursors from the last response it absorbed, aborts on unmount, waits for
+  narration to drain rather than re-issuing, and gives up on a 403 or 404
+  instead of retrying forever. `absorb` trims a response against the cursor,
+  so a reply that overlaps something already seen narrates nothing twice. The
+  lowest human seat pumps an AI and everyone else listens; a listener whose
+  poll times out takes over. The four POST routes read their cursor under the
+  lock. `tests/useGame.test.tsx` pins the loop; `TestConcurrentMutations`
+  pins the cursor.
+
 - **A spell could pay its own mandatory additional cost by discarding itself.**
   601.2a moves a spell to the stack before any of its costs are paid, so a card
   can never be fodder for its own "discard a card". Legality priced the cost

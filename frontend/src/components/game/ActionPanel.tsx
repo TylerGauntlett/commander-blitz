@@ -91,6 +91,8 @@ interface Props {
   onSkipNarration: () => void;
   busy: boolean;
   aiThinking: boolean;
+  /** Another person is deciding; name them the way an AI on the clock is named. */
+  waitingForPlayer?: boolean;
   /**
    * A modal owns the decision, so the list renders no action ids at all.
    *
@@ -116,6 +118,7 @@ export function ActionPanel({
   onSkipNarration,
   busy,
   aiThinking,
+  waitingForPlayer = false,
   standDown,
 }: Props) {
   /*
@@ -486,9 +489,10 @@ export function ActionPanel({
             </span>
           )}
           <AnimatePresence>
-            {(narrating || aiThinking) && (
+            {(narrating || aiThinking || waitingForPlayer) && (
               <motion.span
                 className="acts__thinking"
+                data-testid="waiting-on"
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0 }}
