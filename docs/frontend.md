@@ -28,20 +28,33 @@ frontend/src/
 ├── api/         client.ts, types.ts        - fetch wrapper and DTO mirrors
 ├── state/       uiStore.ts (zustand), useGame.ts (react-query), usePod.ts,
 │                usePodSession.ts, narration.ts, useImages.ts, useCardBase.ts,
-│                useZoomFit.ts
+│                useZoomFit.ts, useHandheld.ts, useHandLift.ts, library.ts,
+│                useTableDerived.ts, useNarrationSkip.ts   - what Table derives
+├── input/       pad.ts, cursor.ts, stops.ts, groups.ts, nav.ts, ring.ts,
+│                buttons.ts, repeat.ts, inputMode.ts       - the controller layer
+│                useCursorNav.ts, useDismiss.ts, useTableInput.ts,
+│                useTableRegions.ts, useGroupDial.ts, useOpponentReading.ts
 ├── logic/       zoneGrouping, actionMatch, labels, stacking, cardStyle, events,
-│                cardArt, cardSize, cardStackGeometry, zoomFit, zones, routes
+│                cardArt, cardSize, cardStackGeometry, zoomFit, zones, routes,
+│                autoAttack, autoBlock, choreography, commit, focusGroup,
+│                followUp, mana, removals, verbs, threat, openingHand, ...
+├── fx/          scheduler.ts, actuators.ts, particles.ts, presets.ts
+├── audio/       sfx.ts                     - the synthesised palette
 ├── motion/      springs.ts                 - every transition in the app
 ├── screens/     HomeRoute, PodRoute, GameRoute, DecksRoute, DeckDossierRoute,
 │                NotFound                   - one per address; App.tsx is the table
-├── styles/      cards.css, board.css, ui.css  (+ src/theme.css for tokens)
+├── styles/      cards.css, board.css, ui.css, handheld.css, ...  (+ theme.css)
 └── components/
-    ├── game/    Table, PlayerMat, Lane, CardStack, Card, CardFace, HandFan,
-    │            PlayerOrb, PhaseTrack, CombatPanel, CombatArrows, ActionBar,
-    │            PromptDialog, StackPanel, CardPreview, FxLayer, EventTicker,
-    │            ZonePeek, GameOverScreen
-    ├── lobby/   HomeScreen, doorArt, PodLobby, PodSeat, DeckCatalog,
-    │            DeckDossier, InviteDialog, CommanderCard, CardBack, ReadyTrack
+    ├── game/    Table (+ TableFoot, TableOverlays), PlayerMat, Lane, CardStack,
+    │            Card, CardFace, CardGhost, CardHold, CardPreview, HandFan,
+    │            PlayerOrb, CommandZone, OpponentSeat, OpponentBoard, PhaseTrack,
+    │            ActionPanel (+ CommitDock, ToolStrip, SettingsMenu), ChoiceCombo,
+    │            PromptDialog, OpeningHand, StackPanel, EventTicker, ZonePeek,
+    │            GameOverScreen, HintBar, GroupDial, FocusRing, CombatArrows,
+    │            FxLayer, ParticleLayer, ManaSymbol, SymbolText, SeatIcon
+    ├── lobby/   HomeScreen, doorArt, PodLobby, PodSeat, DeckCatalog, DeckDossier,
+    │            InviteDialog, CommanderCard, CardBack, ReadyTrack, Room, Mark
+    ├── ui/      Glyph, ActionIcon, SchemePicker, ControllerPanel, Motes
     ├── screen/  Screen                     - the per-route motion wrapper
     └── menu/    DeckImport
 ```
