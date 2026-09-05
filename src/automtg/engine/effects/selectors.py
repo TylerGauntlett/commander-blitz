@@ -281,11 +281,7 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
             return seeded
         return _narrow_to_extreme(
             ctx,
-            [
-                oid
-                for oid in seeded
-                if matches(ctx, oid, selector, default_zone=default_zone)
-            ],
+            [oid for oid in seeded if matches(ctx, oid, selector, default_zone=default_zone)],
             selector,
         )
 
@@ -331,7 +327,9 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         for pid in _zone_owners(ctx, selector):
             candidates.extend(state.players[pid].zone_list(zone))
 
-    return _narrow_to_extreme(ctx, [oid for oid in candidates if matches(ctx, oid, selector)], selector)
+    return _narrow_to_extreme(
+        ctx, [oid for oid in candidates if matches(ctx, oid, selector)], selector
+    )
 
 
 #: What `extreme` may rank on. Derived characteristics only, and read through
@@ -518,9 +516,7 @@ def matches(
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
-    if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(
-        ctx, str(name)
-    ):
+    if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
         # a `snapshot`, and a **list** for an op that recorded what it produced.
         # Martial Coup writes X Soldiers with `as` and then says "destroy all
@@ -1116,9 +1112,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # accident, and `0`/`""` would quietly become `false`. A card that asks for
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
-    if "x_in_mana_cost" in selector and not isinstance(
-        selector["x_in_mana_cost"], bool
-    ):
+    if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
             f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"

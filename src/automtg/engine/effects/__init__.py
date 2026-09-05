@@ -128,12 +128,15 @@ def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any, None]:
 # Importing the op modules populates OPS.  Kept at the bottom so ``register`` and
 # ``OPS`` exist before the modules that use them are imported.
 from . import (
-    ops_board,  # noqa: F401
     ops_cards,  # noqa: F401
+    ops_characteristics,  # noqa: F401
+    ops_combat_flags,  # noqa: F401
     ops_control,  # noqa: F401
+    ops_counters,  # noqa: F401
     ops_life,  # noqa: F401
     ops_mana,  # noqa: F401
     ops_player,  # noqa: F401
+    ops_removal,  # noqa: F401
     ops_stack,  # noqa: F401
 )
 

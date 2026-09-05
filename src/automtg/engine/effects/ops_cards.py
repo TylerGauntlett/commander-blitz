@@ -1,4 +1,4 @@
-﻿"""Effect ops that move cards around: draw, discard, mill, search, recursion."""
+"""Effect ops that move cards around: draw, discard, mill, search, recursion."""
 
 from __future__ import annotations
 
@@ -96,9 +96,7 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
             picked = ctx.state.rng.shuffled(hand)[:take]
         else:
             floor = 0 if up_to else take
-            picked = yield from ask_objects(
-                ctx, "Discard", hand, floor, take, pid, "discard"
-            )
+            picked = yield from ask_objects(ctx, "Discard", hand, floor, take, pid, "discard")
         taken.extend(picked)
         yield from _replacements().discard(ctx.state, pid, picked)
     if name:
@@ -131,7 +129,7 @@ def op_mill(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("grant_playable")
 def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Until end of turn, you may cast a spell from among those cards."
+    """ "Until end of turn, you may cast a spell from among those cards."
 
     Locke, Treasure Hunter. A **standing permission** left on cards where they
     already are, which is what separates it from every neighbouring op:
@@ -236,9 +234,7 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
             if spec.get("share_subtype") and take > 1:
                 picked = yield from _search_sharing(ctx, prompt, pool, take, pid)
             else:
-                picked = yield from ask_objects(
-                    ctx, prompt, pool, 0, take, pid, "search"
-                )
+                picked = yield from ask_objects(ctx, prompt, pool, 0, take, pid, "search")
             if spec.get("reveal") and picked:
                 # "…search your library for a Vampire card, **reveal it**, then
                 # shuffle and put that card on top." Revealed on the way out, so
@@ -247,11 +243,7 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
                     "reveal",
                     player=pid,
                     source=ctx.source_oid,
-                    cards=[
-                        ctx.state.objects[o].def_id
-                        for o in picked
-                        if o in ctx.state.objects
-                    ],
+                    cards=[ctx.state.objects[o].def_id for o in picked if o in ctx.state.objects],
                 )
 
         # "…then shuffle **and** put that card on top" (Forerunner of the
@@ -281,10 +273,8 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         ctx.bindings[str(name)] = found
 
 
-def _search_sharing(
-    ctx: EffectContext, prompt: str, pool: list[int], take: int, pid: int
-):
-    """"…for up to two basic land cards **that share a land type**" (Myriad Landscape).
+def _search_sharing(ctx: EffectContext, prompt: str, pool: list[int], take: int, pid: int):
+    """ "…for up to two basic land cards **that share a land type**" (Myriad Landscape).
 
     A constraint between the picks, which no selector can state: every clause in
     `_matches_in_zone` is evaluated against one candidate in isolation, so
@@ -307,11 +297,7 @@ def _search_sharing(
         return []
     lead = first[0]
     shared = chars(ctx.state, lead).subtypes
-    rest = [
-        oid
-        for oid in pool
-        if oid != lead and (chars(ctx.state, oid).subtypes & shared)
-    ]
+    rest = [oid for oid in pool if oid != lead and (chars(ctx.state, oid).subtypes & shared)]
     if not rest:
         return list(first)
     more = yield from ask_objects(
@@ -394,11 +380,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             # "mana value 3 or less" is true of every land ever printed, so the
             # selector that spells Perception Bobblehead would otherwise offer a
             # free Forest-on-the-stack.
-            pool = [
-                oid
-                for oid in pool
-                if not ctx.state.card_of(ctx.state.objects[oid]).is_land
-            ]
+            pool = [oid for oid in pool if not ctx.state.card_of(ctx.state.objects[oid]).is_land]
         taken: set[int] = set()
         if pool:
             picked = yield from pick_from_pool(
@@ -423,7 +405,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):
-    """"You may cast a spell … from among them without paying its mana cost."
+    """ "You may cast a spell … from among them without paying its mana cost."
 
     Perception Bobblehead. Ripple's shape -- offer, cast, fold the refusals back
     into "the rest" -- with ripple's hardcoded "same name as this spell" test
@@ -460,15 +442,15 @@ def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):
         if obj is None:
             continue
         name = ctx.state.card_of(obj).name
-        if (yield from _offer_free_cast(
-            ctx, pid, oid, f"Cast {name} without paying its mana cost?"
-        )):
+        if (
+            yield from _offer_free_cast(ctx, pid, oid, f"Cast {name} without paying its mana cost?")
+        ):
             cast.append(oid)
     return cast
 
 
 def _bottom_in_random_order(ctx: EffectContext, pid: int, oids: list[int]) -> None:
-    """"…put the rest on the bottom of your library in a random order."
+    """ "…put the rest on the bottom of your library in a random order."
 
     Cascade, ripple, hideaway, `reveal_until`, and every "look at the top N"
     card that does not simply leave them there. Not a shuffle: shuffling
@@ -590,7 +572,7 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("return_spell_to_hand")
 def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Return target spell to its owner's hand." Reprieve is the witness.
+    """ "Return target spell to its owner's hand." Reprieve is the witness.
 
     **Not a counter, and not `return_to_hand` either.** Both near misses are
     wrong in ways that look right:
@@ -621,9 +603,7 @@ def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
 
     target_id = str(spec.get("target", "t1"))
     for sid in ctx.target_sids(target_id):
-        pull_spell_off_stack(
-            ctx.state, sid, Zone.HAND, cause="returned", by=ctx.source_oid
-        )
+        pull_spell_off_stack(ctx.state, sid, Zone.HAND, cause="returned", by=ctx.source_oid)
 
 
 @register("return_from_graveyard")
@@ -690,7 +670,7 @@ def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("look_at_hand")
 def op_look_at_hand(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Look at target player's hand." Private information, to one seat.
+    """ "Look at target player's hand." Private information, to one seat.
 
     Not ``reveal``, and the difference is the card. Revealing is public: a card
     that revealed an opponent's hand would tell that opponent's *other*
@@ -744,7 +724,9 @@ def op_scry(ctx: EffectContext, spec: Mapping[str, Any]):
         else:
             picked = select_players(ctx, chooser_spec)
             who = picked[0] if picked else ctx.controller
-        to_bottom = yield from ask_objects(ctx, "Put on the bottom", top, 0, len(top), who, "scry_bottom")
+        to_bottom = yield from ask_objects(
+            ctx, "Put on the bottom", top, 0, len(top), who, "scry_bottom"
+        )
         for oid in to_bottom:
             library.remove(oid)
             library.append(oid)
@@ -759,7 +741,9 @@ def op_surveil(ctx: EffectContext, spec: Mapping[str, Any]):
         top = list(ctx.state.players[pid].library[:amount])
         if not top:
             continue
-        to_bin = yield from ask_objects(ctx, "Put into your graveyard", top, 0, len(top), pid, "surveil")
+        to_bin = yield from ask_objects(
+            ctx, "Put into your graveyard", top, 0, len(top), pid, "surveil"
+        )
         for oid in to_bin:
             move_object(ctx.state, oid, Zone.GRAVEYARD, to_player=pid, cause="surveil")
         ctx.state.emit("surveil", player=pid, looked=len(top), binned=len(to_bin))
@@ -1071,7 +1055,7 @@ def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
-    """"You may cast it without paying its mana cost."  Returns whether it was.
+    """ "You may cast it without paying its mana cost."  Returns whether it was.
 
     Shares `suspend.cast_for_free`, which is what makes the copy a real cast --
     it uses the stack and can be countered. Haste is **not** shared: that flag
@@ -1110,9 +1094,7 @@ def op_hideaway(ctx: EffectContext, spec: Mapping[str, Any]):
     top = list(library[:amount])
     if not top:
         return
-    picked = yield from ask_objects(
-        ctx, "Exile one face down", top, 1, 1, pid, "hideaway"
-    )
+    picked = yield from ask_objects(ctx, "Exile one face down", top, 1, 1, pid, "hideaway")
     if not picked:
         return
     chosen = picked[0]
@@ -1126,7 +1108,7 @@ def op_hideaway(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("play_exiled")
 def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"You may play the exiled card without paying its mana cost."
+    """ "You may play the exiled card without paying its mana cost."
 
     The permission half of hideaway, and the one thing the keyword genuinely
     needed: the engine could exile a card and could cast one for free, and had
@@ -1268,7 +1250,7 @@ def op_ripple(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("reveal_until")
 def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Reveal cards from the top of your library until you reveal a creature
+    """ "Reveal cards from the top of your library until you reveal a creature
     card that shares a creature type with it. Put that card into your hand and
     the rest on the bottom of your library in a random order." — Heirloom Blade.
 
@@ -1337,7 +1319,7 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("two_piles")
 def op_two_piles(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"An opponent separates those cards into two piles. Put one pile into your
+    """ "An opponent separates those cards into two piles. Put one pile into your
     hand and the other into your graveyard."
 
     The only effect in the pool whose first decision belongs to somebody else,
