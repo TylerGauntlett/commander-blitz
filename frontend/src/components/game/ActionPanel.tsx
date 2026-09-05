@@ -42,42 +42,26 @@ import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardView, GameView, LegalAction } from "../../api/types";
-import { actionAttrs } from "../../input/stops";
 import {
   availableAttackers,
   availableBlockers,
-  blockableBy,
   defendersFor,
   groupPlayActions,
 } from "../../logic/actionMatch";
 import { sensibleAttacks } from "../../logic/autoAttack";
-import { type BlockTier, autoBlocks, blockTier } from "../../logic/autoBlock";
-import { keywordLabel, manaPips, statLine } from "../../logic/cardStyle";
+import { autoBlocks } from "../../logic/autoBlock";
+import { statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useHandheldLayout } from "../../state/useHandheld";
+import { AttackRows } from "./AttackRows";
+import { BlockGroups } from "./BlockGroups";
 import { CommitDock } from "./CommitDock";
-import { ManaSymbol } from "./ManaSymbol";
-import { SymbolText } from "./SymbolText";
+import { PlayRows } from "./PlayRows";
 import { ToolStrip } from "./ToolStrip";
-
-/**
- * What a block would actually achieve, in four words.
- *
- * Straight off `blockTier`, which is the ranking "All defend" already sorts by,
- * so the label and the suggestion can never disagree. Naming the outcome is the
- * whole point of the grouped blocker list: the numbers were always on the cards,
- * but working out "my 2/2 into their 2/2 is a trade" for six pairs is arithmetic
- * the player was being asked to do under time pressure.
- */
-const TIER_LABEL: Record<BlockTier, string> = {
-  1: "kills it, survives",
-  2: "survives",
-  3: "trades",
-  4: "chumps",
-};
+import { XStepper } from "./XStepper";
 
 /**
  * Actions big enough to be the slab rather than a row.
@@ -520,299 +504,58 @@ export function ActionPanel({
         {hint && <p className="acts__hint">{hint}</p>}
 
         <div className="acts__list" data-testid="action-list">
-          {mode === "attack" &&
-            attackers.map((attacker, index) => {
-              const defenders = defendersFor(actions, attacker);
-              const chosen = stagedAttacks[attacker];
-              const on = chosen !== undefined;
-              const single = defenders.length === 1;
-              const action = single ? attackActionFor(attacker, defenders[0]) : null;
-              const rowClass = ["act", "act--staged", on ? "act--on" : ""]
-                .filter(Boolean)
-                .join(" ");
-              const body = (
-                <>
-                  <span className="act__key">{index + 1}</span>
-                  <span className="act__name">{nameOf(attacker)}</span>
-                  {on && (
-                    <span className="act__aim">→ {state.players[chosen]?.name ?? chosen}</span>
-                  )}
-                  {ptOf(attacker) && <span className="act__pt tabular">{ptOf(attacker)}</span>}
-                </>
-              );
+          {mode === "attack" && (
+            <AttackRows
+              attackers={attackers}
+              actions={actions}
+              state={state}
+              stagedAttacks={stagedAttacks}
+              disabled={disabled}
+              onStage={onStage}
+              attackActionFor={attackActionFor}
+              nameOf={nameOf}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
 
-              // One legal defender: the row *is* the action, so attacking is a
-              // single click on the obvious thing.
-              if (single && action) {
-                return (
-                  <button
-                    type="button"
-                    key={attacker}
-                    className={rowClass}
-                    {...actionAttrs(action.id)}
-                    data-action-kind={action.kind}
-                    data-attacker={attacker}
-                    data-defender={defenders[0]}
-                    data-staged={on ? "true" : undefined}
-                    aria-pressed={on}
-                    disabled={disabled}
-                    onClick={() => onStage(action.id)}
-                    {...previewing(attacker)}
-                  >
-                    {body}
-                  </button>
-                );
-              }
+          {mode === "block" && (
+            <BlockGroups
+              blockers={blockers}
+              actions={actions}
+              stagedBlocks={stagedBlocks}
+              disabled={disabled}
+              onStage={onStage}
+              blockActionFor={blockActionFor}
+              card={card}
+              nameOf={nameOf}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
 
-              // Several: the row is inert and each defender carries its own id,
-              // which is what keeps N pairs on N controls. Only in a pod.
-              return (
-                <div
-                  key={attacker}
-                  className={`${rowClass} act--group`}
-                  data-attacker={attacker}
-                  data-staged={on ? "true" : undefined}
-                  {...previewing(attacker)}
-                >
-                  {body}
-                  <span className="act__aims">
-                    {defenders.map((pid) => {
-                      const pairAction = attackActionFor(attacker, pid);
-                      if (!pairAction) return null;
-                      const aimed = chosen === pid;
-                      return (
-                        <button
-                          type="button"
-                          key={pid}
-                          className={aimed ? "aim aim--on" : "aim"}
-                          {...actionAttrs(pairAction.id)}
-                          data-action-kind={pairAction.kind}
-                          data-attacker={attacker}
-                          data-defender={pid}
-                          // The pointer gets this from the group row it is
-                          // inside; the ring lands on the chip itself and needs
-                          // it said here. See `previewing`.
-                          data-preview-oid={attacker}
-                          aria-pressed={aimed}
-                          disabled={disabled}
-                          onClick={() => onStage(pairAction.id)}
-                          data-hint={
-                            aimed
-                              ? `Attacking ${state.players[pid]?.name} — click to call it back`
-                              : `Send at ${state.players[pid]?.name}`
-                          }
-                        >
-                          {state.players[pid]?.name ?? pid}
-                        </button>
-                      );
-                    })}
-                  </span>
-                </div>
-              );
-            })}
-
-          {mode === "block" &&
-            blockers.map((blocker) => {
-              const blockerCard = card(blocker);
-              const chosen = stagedBlocks[blocker];
-              const targets = blockableBy(actions, blocker);
-              return (
-                <div className="actgroup" key={blocker} data-blocker={blocker}>
-                  {/* The header previews *your* creature; each row below it
-                      previews the attacker that row would block. Deciding a
-                      block means reading both, and now neither needs finding on
-                      the board first. */}
-                  <div className="actgroup__head" {...previewing(blocker)}>
-                    <span className="actgroup__name">{nameOf(blocker)}</span>
-                    {blockerCard && blockerCard.keywords.length > 0 && (
-                      <span className="actgroup__kw">
-                        {blockerCard.keywords.map(keywordLabel).join(" · ")}
-                      </span>
-                    )}
-                    {ptOf(blocker) && (
-                      <span className="actgroup__pt tabular">{ptOf(blocker)}</span>
-                    )}
-                  </div>
-                  {targets.length === 0 ? (
-                    <p className="actgroup__none">Nothing this can block.</p>
-                  ) : (
-                    targets.map((attacker) => {
-                      const action = blockActionFor(blocker, attacker);
-                      const attackerCard = card(attacker);
-                      if (!action || !blockerCard || !attackerCard) return null;
-                      const tier = blockTier(blockerCard, attackerCard);
-                      const on = chosen === attacker;
-                      return (
-                        <button
-                          type="button"
-                          key={action.id}
-                          className={`act act--nested act--staged${on ? " act--on" : ""}`}
-                          {...actionAttrs(action.id)}
-                          data-action-kind={action.kind}
-                          data-blocker={blocker}
-                          data-attacker={attacker}
-                          data-tier={tier}
-                          data-staged={on ? "true" : undefined}
-                          aria-pressed={on}
-                          disabled={disabled}
-                          onClick={() => onStage(action.id)}
-                          data-hint={
-                            on
-                              ? `Blocking ${nameOf(attacker)} — click to release`
-                              : `Block ${nameOf(attacker)}`
-                          }
-                          {...previewing(attacker)}
-                        >
-                          <span className="act__name">{nameOf(attacker)}</span>
-                          {/* The attacker's P/T, next to the verdict it produced.
-                              Deciding a block means comparing two numbers, and
-                              only one of them used to be in the panel. */}
-                          <span className="act__pt tabular">{statLine(attackerCard)}</span>
-                          <span className={`verdict verdict--${tier}`}>{TIER_LABEL[tier]}</span>
-                        </button>
-                      );
-                    })
-                  )}
-                </div>
-              );
-            })}
-
-          {mode === "play" &&
-            playGroups.map(({ key: groupKey, head, actions: aims }) => {
-              const source = head.source_oid === null ? null : card(head.source_oid);
-              const isCard = head.kind === "cast" || head.kind === "play_land";
-              const tone = isCard
-                ? " act--playable"
-                : head.kind === "activate"
-                  ? " act--ability"
-                  : "";
-              const key = handKey(head.source_oid);
-              const single = aims.length === 1;
-              const body = (
-                <>
-                  {key && <span className="act__key">{key}</span>}
-                  {isCard && source ? (
-                    <>
-                      <span className="act__name">{source.name}</span>
-                      <span className="act__type">{source.type_line}</span>
-                      {manaPips(source.mana_cost).length > 0 && (
-                        <span className="act__cost">
-                          {manaPips(source.mana_cost).map((pip) => (
-                            <ManaSymbol
-                              code={pip.symbol}
-                              className={`pip--${pip.tone}`}
-                              key={pip.key}
-                            />
-                          ))}
-                        </span>
-                      )}
-                      {statLine(source) && (
-                        <span className="act__pt tabular">{statLine(source)}</span>
-                      )}
-                    </>
-                  ) : (
-                    // Activation costs live in these labels ("{2}, {T}, Sacrifice:
-                    // ..."), and they were the last place mana stayed raw text.
-                    // Grouped, the row names the ability and the chips name the
-                    // targets, so the `-> Bear` suffix would be one arbitrary
-                    // target repeated on every row of the same permanent.
-                    <span className="act__name">
-                      <SymbolText text={single ? head.label : head.base_label} />
-                    </span>
-                  )}
-                </>
-              );
-
-              // One way to aim it: the row *is* the action, exactly as before.
-              if (single) {
-                return (
-                  <button
-                    type="button"
-                    key={groupKey}
-                    className={`act${tone}`}
-                    {...actionAttrs(head.id)}
-                    data-action-kind={head.kind}
-                    data-source={head.source_oid ?? undefined}
-                    disabled={disabled}
-                    onClick={() => onAct(head.id)}
-                    {...previewing(head.source_oid)}
-                  >
-                    {body}
-                  </button>
-                );
-              }
-
-              // Several: the row is inert and each target carries its own id,
-              // which is what keeps N actions on N controls rather than on one.
-              // Same shape as an attacker with several legal defenders above.
-              return (
-                <div
-                  key={groupKey}
-                  className={`act${tone} act--group`}
-                  data-source={head.source_oid ?? undefined}
-                  {...previewing(head.source_oid)}
-                >
-                  {body}
-                  <span className="act__aims">
-                    {aims.map((aim) => (
-                      <button
-                        type="button"
-                        key={aim.id}
-                        className="aim"
-                        {...actionAttrs(aim.id)}
-                        data-action-kind={aim.kind}
-                        data-source={aim.source_oid ?? undefined}
-                        disabled={disabled}
-                        onClick={() => onAct(aim.id)}
-                        data-hint={aim.label}
-                        // Not `previewing`: this is a hovering child of a
-                        // hovering container, the case that comment warns
-                        // about. Falling back to the row's own card rather
-                        // than to null is what keeps the preview from going
-                        // blank on the way from a chip back onto the row.
-                        onMouseEnter={() => hover(targetOid(aim) ?? head.source_oid)}
-                        onMouseLeave={() => hover(head.source_oid)}
-                        onFocus={() => hover(targetOid(aim) ?? head.source_oid)}
-                        onBlur={() => hover(head.source_oid)}
-                        // The ring's copy of the line above -- see `previewing`.
-                        data-preview-oid={targetOid(aim) ?? head.source_oid ?? undefined}
-                      >
-                        <SymbolText text={chipLabel(aim)} />
-                      </button>
-                    ))}
-                  </span>
-                </div>
-              );
-            })}
+          {mode === "play" && (
+            <PlayRows
+              playGroups={playGroups}
+              disabled={disabled}
+              onAct={onAct}
+              hover={hover}
+              card={card}
+              handKey={handKey}
+              chipLabel={chipLabel}
+              targetOid={targetOid}
+              previewing={previewing}
+            />
+          )}
 
           {mode === "chooseX" && (
-            <div className="xstep" data-testid="choose-x" data-x={clampedX}>
-              <button
-                type="button"
-                className="xstep__btn"
-                data-testid="choose-x-down"
-                disabled={disabled || clampedX <= 0}
-                onClick={() => setChosenX(clampedX - 1)}
-                aria-label="One less"
-              >
-                −
-              </button>
-              <span className="xstep__value tabular">X = {clampedX}</span>
-              <button
-                type="button"
-                className="xstep__btn"
-                data-testid="choose-x-up"
-                disabled={disabled || clampedX >= maxX}
-                onClick={() => setChosenX(clampedX + 1)}
-                aria-label="One more"
-              >
-                +
-              </button>
-              <span className="xstep__hint">
-                up to {maxX}
-                {perPoint > 1 && ` · ${perPoint} mana per point`}
-              </span>
-            </div>
+            <XStepper
+              clampedX={clampedX}
+              maxX={maxX}
+              perPoint={perPoint}
+              disabled={disabled}
+              setChosenX={setChosenX}
+            />
           )}
 
           {mode === "attack" && attackers.length === 0 && (
