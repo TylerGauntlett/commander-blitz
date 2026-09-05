@@ -76,6 +76,13 @@ export function usePadBindings({
       /*
        * `Y` reads the card the ring is on, full screen.
        *
+       * OPEN (TECH_DEBT FB-08): this reads `parseStop(getCursor())` and answers
+       * only a `card:` or `orb:` stop. A panel row or a stack entry names its
+       * card through `data-preview-oid` -- which `cursor.ts:previewOidFor`
+       * already resolves for the rail -- and gets `deny` here instead. Left as
+       * it is on the refactor branch; the fix is to resolve through the same
+       * helper the rail uses.
+       *
        * `logic/verbs.ts` has returned `Y Read` on every card stop since it was
        * written and nothing was ever bound to it. An advertised button that
        * does nothing is worse than an unadvertised one: it teaches the player
