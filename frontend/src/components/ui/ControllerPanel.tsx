@@ -39,7 +39,7 @@ type Diagnostics = ReturnType<typeof padDiagnostics>;
  * wasted effort until it is served over https. It is also the one nobody thinks
  * of, because the same URL works perfectly on the machine serving it.
  */
-function causes(diag: Diagnostics): { when: boolean; title: string; body: string }[] {
+export function causes(diag: Diagnostics): { when: boolean; title: string; body: string }[] {
   return [
     {
       when: !diag.secure || !diag.supported,
