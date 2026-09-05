@@ -48,7 +48,8 @@ frontend/src/
     ├── game/    Table (+ TableFoot, TableOverlays), PlayerMat, Lane, CardStack,
     │            Card, CardFace, CardGhost, CardHold, CardPreview, HandFan,
     │            PlayerOrb, CommandZone, OpponentSeat, OpponentBoard, PhaseTrack,
-    │            ActionPanel (+ CommitDock, ToolStrip, SettingsMenu), ChoiceCombo,
+    │            ActionPanel (+ AttackRows, BlockGroups, PlayRows, XStepper,
+    │            CommitDock, ToolStrip, SettingsMenu), ChoiceCombo,
     │            PromptDialog, OpeningHand, StackPanel, EventTicker, ZonePeek,
     │            GameOverScreen, HintBar, GroupDial, FocusRing, CombatArrows,
     │            FxLayer, ParticleLayer, ManaSymbol, SymbolText, SeatIcon
