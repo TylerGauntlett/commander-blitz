@@ -11,7 +11,8 @@
  * action from the rest and puts the utilities in their own row -- so this is
  * styling only, and no component changed to get it.
  *
- *   1. `.btn--primary`  the commit slab: the one thing the turn is waiting on.
+ *   1. `.btn--primary`  the primary answer to a modal question (`ChoiceCombo`,
+ *                       `GameOverScreen`). The commit slab is `.commit`, below.
  *   2. `.btn`           contextual choices.
  *   3. `.btn--ghost`    utilities, demoted to the quietest thing on screen.
  */
