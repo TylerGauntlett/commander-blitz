@@ -439,7 +439,7 @@ test("an opponent's board filling up does not move the viewer's board", async ({
   // filled up" must not move anything; "a player was knocked out" plainly may,
   // and pretending otherwise would either weaken this assertion or demand the
   // loss line be drawn somewhere it does not belong. Recorded as an open defect
-  // in docs/mockup-fidelity.md so the question is not lost.
+  // in docs/design-record.md (Open fidelity findings) so the question is not lost.
   const eliminated = () => page.locator(".play__opponents .orb__loss").count();
 
   const samples = [await topOfMine()];

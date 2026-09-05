@@ -243,7 +243,7 @@
  * meant to solve, one level up.
  *
  * What carries the category instead is `.face__glyph` and `.face__type`. If you
- * are re-adding a colour encoding here, read `docs/mockup-fidelity.md` first --
+ * are re-adding a colour encoding here, read `docs/design-record.md` (Open fidelity findings) first --
  * this was a decision, not an oversight. */
 
 /* Land colours ----------------------------------------------------------

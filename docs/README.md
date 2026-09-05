@@ -12,6 +12,7 @@
 | [api.md](api.md) | The HTTP surface |
 | [frontend.md](frontend.md) | The playtest client |
 | [testing.md](testing.md) | Every gate, and the current measured results |
+| [design-record.md](design-record.md) | What the design rounds established, and the fidelity findings still open |
 | [spec.md](spec.md) | The original brief |
 | [playtest-feedback-01.md](playtest-feedback-01.md) | Cycle 1 playtest: findings, all now addressed |
 | [playtest-feedback-02.md](playtest-feedback-02.md) | **Cycle 2 playtest: what shipped, and the cycle-3 backlog** |

@@ -154,7 +154,7 @@ The bar lives in the foot, which sits under every dialog's backdrop. So the one
 moment it was hidden was the one moment a player does not yet know what `A` and
 `B` do. Lifted above `--z-modal`. It is not a control, so lifting it cannot make
 anything pressable that should not be — a narrower version of the problem
-`docs/mockup-fidelity.md` records as open defect #3.
+`docs/design-record.md` (Open fidelity findings) records as open defect #3.
 
 #### 2.3 The action list was 41px holding 197px of content — **fixed**
 

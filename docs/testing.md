@@ -261,7 +261,7 @@ Three of them, because the failure modes are all silent:
   clear a darkness floor; `frontend/e2e/legibility.spec.ts` checks the same against the
   *rendered* board, where an override from `theme.css` or a media query would show up
   and a stylesheet parse would not. (This replaces a type-ring luminance ladder, which
-  encoded card type as colour — see `docs/mockup-fidelity.md` for why it went.)
+  encoded card type as colour — see `docs/design-record.md` (Open fidelity findings) for why it went.)
 - **Self-ownership.** `e2e/art.spec.ts` fails if the page fetches from any host but
   this server. That is the property the whole build-time download exists to buy, and
   it would be easy to give away by accident.

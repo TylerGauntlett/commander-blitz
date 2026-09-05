@@ -92,6 +92,11 @@
 
 ### Known, not fixed
 
+- **Visual fidelity findings against the design rounds** -- the playable rim, the
+  combat arrows, the tools under a modal, the stale preview, the ring and a
+  descendant transform, and four density notes -- are kept with the rounds they
+  came from, in [design-record.md](design-record.md#open-fidelity-findings).
+
 - **A triggered ability with no legal target still resolves.**
   603.3d and 608.2b: a triggered ability that requires targets and can choose
   none is removed from the stack and does nothing.

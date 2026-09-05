@@ -19,7 +19,7 @@ comparison. Nothing builds or imports it.
 
 The board is themed against `mockups/05-planar-art.html`. Where the two still differ
 — and which of those differences are defects rather than decisions — is tracked in
-[mockup-fidelity.md](mockup-fidelity.md).
+[design-record.md](design-record.md#open-fidelity-findings).
 
 ## Layout
 
@@ -99,7 +99,7 @@ A ribbon across the top, **two** columns, and the hand under the left one.
   than spanning the screen. That is what lets the rail reach the bottom. Your
   commander used to sit to the hand's left; it is the hero of your info panel
   now, drawn as a plinth rather than a card. See `CommandZone` and
-  `docs/mockup-fidelity.md` defect #5.
+  `docs/design-record.md` (Open fidelity findings) defect #5.
 
 **There is no left rail, at any size.** It held two things and neither earned a
 permanent 232px column. The log is reference you consult rather than something
@@ -310,7 +310,7 @@ better and does it *per card* rather than per category -- twelve Forests are one
 recognisable picture rather than twelve of "the tan ones". What carries type at
 pod size now is the glyph and the type line. The full reasoning
 and the list of tests that changed is in
-[mockup-fidelity.md](mockup-fidelity.md) -- read it before re-adding a type tint.
+[design-record.md](design-record.md#open-fidelity-findings) -- read it before re-adding a type tint.
 
 **Colour identity is a different fact and it keeps the frame**: the border, and the
 gradient the art sits on, which on the ~4% of cards with no printing is the whole
@@ -369,7 +369,7 @@ one chip per opposing seat with a meter of its progress toward 21 — which
 answered "how close is each of them to killing me" and nothing about the other
 direction, at the cost of the loudest object in the column. Both directions are
 two small arrows on each opponent's own life gauge now (`OpponentSeat`, and
-`docs/mockup-fidelity.md` for the whole argument).
+`docs/design-record.md` (Open fidelity findings) for the whole argument).
 
 On a handheld this whole column is re-skinned to `mockups/handheld-board/`'s
 plinth: a 148x128 portrait rather than a 2:1 banner, a 64px conic life ring
@@ -619,7 +619,7 @@ face-down `.back` have to be the same rectangle, or the row stops reading as a h
 and `.podhand__felt` no longer lands under the cards' shoulders. The type scale comes
 back as ratios of `--card-w` at the same time, because `.face--big` pins `--card-w:
 150px` *on the face*, where no ancestor can beat it, and a 296px card was otherwise
-drawing 150px chrome. See `docs/mockup-fidelity.md`.
+drawing 150px chrome. See `docs/design-record.md` (Open fidelity findings).
 
 ## Watching the opponents
 

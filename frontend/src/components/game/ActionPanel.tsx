@@ -97,7 +97,7 @@ interface Props {
    * The prompt and the tools stay in the document. Note they are not *reachable*
    * while a dialog is up: `.prompt-backdrop` is fixed at `inset: 0` above
    * everything and swallows the clicks. That predates this panel and is recorded
-   * in docs/mockup-fidelity.md rather than worked around here.
+   * in docs/design-record.md (Open fidelity findings) rather than worked around here.
    */
   standDown: boolean;
 }
