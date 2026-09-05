@@ -1,40 +1,67 @@
 # Tech Debt Audit
 
-**Commit audited:** `0161573` (`main`)
-**Date:** 2026-08-25
+**Commit audited:** `6ac90652` (`main`)
+**Date:** 2026-09-04
 **Scope:** audit only — no source file was modified.
+**Supersedes:** the 2026-08-25 audit of `0161573`. Every finding below was re-measured
+against `6ac90652`; a finding's original ID is kept so the two reports can be read
+side by side.
 
 Every line number below is true *at this commit*. Evidence cells are re-derivable by
 running one command or opening one `file:line`.
 
+## What changed between the two audits
+
+86 commits landed on `main` between `0161573` and `6ac90652` (640 files, +119k lines,
+most of it card data and DSL work). Five of them are the ones this report cares about,
+because they closed findings from the first audit:
+
+| PR / commit | What it closed |
+|---|---|
+| #15 `6797c35c` — *Back out of one thing, reach the commander, and deal the rematch* | `FB-01`, `FB-14`, plus the 16 mid-audit working-tree edits the first report could not attribute (they were this PR in flight) |
+| #16 `318e73c7` — *Every game was dealt from seed zero* | `FB-05` |
+| #17 `552f9dba` — *The ring is drawn around the stop, so the stop is what has to move* | `FB-03`, `FB-07` |
+| #18 `f1c0f21d` — *fixed buttons* | `FB-11`, `FB-09` |
+| #19 `6070e254` — *Streamline the core controller journeys* | `CG-03` narrowed (handheld stories 22 → 35 tests), new press-budget gates, `X` became the commit shortcut |
+
+Also relevant: `4ea7521a` wrote `tests/unit/test_determinism_hygiene.py`, which three
+files already cited as existing (it did not — the first audit missed that);
+`docs/testing.md` had its frontend counts corrected (its Python counts were not);
+`frontend/tests/zzrepro*.test.tsx` (`LP-01`) are gone.
+
 ## The three riskiest areas
 
-**1. The controller / focus input layer — the least covered code and the most defective.**
-Ten of the fourteen defects reported from live play during this audit are
-controller-focus failures. The layer's core modules carry **zero tests**: `CardHold.tsx`,
-`useHandLift.ts`, `GroupDial.tsx`, `ChoiceCombo.tsx`, `GameRoute.tsx` (`CG-02`). One
-root cause is proven and mechanical — the combat confirm button carries no `data-stop`,
-so the ring can never land on it (`FB-11`) — and the e2e cases that assert exactly that
-button (`action-panel.spec.ts:107-121`) are among the ones that never run (`CG-01`).
-The whole handheld surface is gated by **22 tests over 5 of 37 story files** (`CG-03`).
+**1. Combat's e2e coverage is still an illusion — and the one combat test that does run
+still fails.** `acceptance.spec.ts:132` still asserts `/btn--primary/` against a button
+whose class has been `commit` since before the first audit (`FT-03`), and every
+attacker/blocker case in `action-panel.spec.ts` is still gated behind
+`test.skip(!(await reachDecision(page, "attackers")))` on fixed seeds, so it skips
+identically on every run (`CG-01`). What *has* changed: `journeys-handheld.spec.ts`
+(new in #19) reaches attack and block declarations against the live engine, so combat
+is no longer entirely unexercised end-to-end — it is exercised by a different file than
+the one that claims to.
 
-**2. Combat — a failing test, a permanently skipped suite, and four field defects.**
-`acceptance.spec.ts:132` fails outright (`FT-03`), and every attacker/blocker e2e case
-is gated behind `test.skip(!(await reachDecision(page, "attackers")))` with **fixed
-seeds**, so those specs skip identically on every run and have never executed
-(`CG-01`). Combat is simultaneously the least-exercised path and the source of
-`FB-02`, `FB-06`, `FB-09` and `FB-11`. The suite reports green while testing nothing.
+**2. The controller / focus layer is much better tested than it was, but its remaining
+defects are exactly the ones nothing tests.** Of the fourteen field defects, seven are
+now fixed with a regression test each (`FB-01`, `FB-03`, `FB-05`, `FB-07`, `FB-09`,
+`FB-11`, `FB-14`). The seven still open (`FB-02`, `FB-04`, `FB-06`, `FB-08`, `FB-10`,
+`FB-12`, `FB-13`) are all, without exception, in code that no test reaches: `CardHold.tsx`
+sits at **17%** unit coverage, `GroupDial.tsx` at **6%**, `OpponentBoard.tsx` at
+**14%**, and the commander-ready recompute in `CommandZone.tsx` is untouched since
+the first audit. Frontend coverage exists now (`CG-04`, **68.3%** of `src/`), so for the
+first time the gap is a number rather than a grep.
 
-**3. `sessions.py:432` — every unseeded game is byte-identical.**
-`seed=0 if seed is None else int(seed)` means a game dealt without a typed seed always
-uses seed **0** (`FB-05`). One line, trivially fixed, but it silently destroys the
-variety of every playtest — and every judgement made from playtesting since it landed
-was made against one deterministic game.
+**3. `loader.py` grew by 1,544 lines in ten days.** `src/automtg/cards/loader.py` went
+from 3,652 to **5,196** lines between the audits — a 42% increase in the largest file
+in the repository, with no per-module coverage floor. The DSL-extension cadence
+(≈40 `extend-dsl` commits in the window) lands in this one file, and `ops_board.py`
+(+462), `characteristics.py` (+460) and `legality.py` (+333) are following it. `OF-01`
+is the finding getting worse fastest.
 
 ## Disclosure: the only repo change made
 
-The audit was authorised to install one dev dependency so frontend coverage could be
-measured rather than guessed:
+This branch carries one dev dependency, installed for the first audit so frontend
+coverage could be measured rather than guessed, and still the only thing it changes:
 
 ```
 cd frontend && npm i -D @vitest/coverage-v8@3.2.7
@@ -48,62 +75,42 @@ Diff — `frontend/package.json` (+1 line), `frontend/package-lock.json` (+702 l
 
 The unpinned form (`@vitest/coverage-v8`) **fails to install**: it resolves to 4.1.11,
 whose peer is `vitest@4.1.11`, while this project pins `vitest@^3.2.7`. Pinning to
-3.2.7 installs cleanly. No other file was touched.
-
-Two further files appeared as untracked when the audit began. They were **pre-existing,
-not mine** — see `LP-01`.
-
-## ⚠ The working tree changed during this audit
-
-This audit was taken against a clean tree at `0161573`. **`HEAD` never moved**, but by
-the time the report was written a concurrent session had modified **16 tracked source
-files** and added two new ones:
-
-```
- M frontend/src/components/game/{CardPreview,CommandZone,PlayerOrb,Table,Table.stories}.tsx
- M frontend/src/components/lobby/{DeckCatalog,DeckCatalog.stories,DeckDossier,InviteDialog}.tsx
- M frontend/src/input/pad.ts            (+82)   M frontend/src/logic/verbs.ts       (+10)
- M frontend/src/styles/{board,handheld,reader}.css
- M frontend/tests/{pad,padTyping}.test.ts
- ?? frontend/src/input/useDismiss.ts    ?? frontend/tests/lobbyBack.test.tsx
-```
-
-Those edits are **not mine** — this session changed only the two package files above.
-They appear to be in-flight fixes for the field defects below (the touched files map
-onto `FB-01`, `FB-03`, `FB-07`, `FB-08`, `FB-10`).
-
-**Consequence for this report:** every Python citation and every measured suite result
-above is still valid, and the two load-bearing citations were re-checked by hand after
-the change and still hold verbatim — `sessions.py:432` (`FB-05`) and
-`ActionPanel.tsx:1207-1228` (`FB-11`). **Line numbers in the 16 modified frontend files
-may have shifted**, and the frontend suite results in the table were measured *before*
-those edits. Re-run before relying on them.
+3.2.7 installs cleanly. The rebase onto `6ac90652` was conflict-free; no other file is
+touched by this branch.
 
 ## Commands run, and their results
 
 Each stage was run individually rather than through `scripts/verify.py`, because
 `verify.py` stops at the first failure — correct for a gate, useless for an audit.
+Column three carries the 2026-08-25 result for comparison.
 
-| # | Command | Result |
-|---|---|---|
-| 1 | `python -m ruff check src scripts tests` | **pass** — `All checks passed!` (exit 0) |
-| 2 | `python scripts/validate_decks.py` | **pass** — 2426 cards, 4 decks legal |
-| 3 | `python scripts/build_card_index.py --check` | **pass** — `index is current (32,827 rows)` |
-| 4 | `python -m pytest tests/unit -q -o addopts=` | **pass** — `3460 passed in 18.21s` |
-| 5 | `python -m pytest tests/cards -q -o addopts=` | **pass** — `6092 passed, 3958 skipped in 155.12s` |
-| 6 | `python -m pytest tests/server -q -o addopts=` | **pass** — `300 passed in 94.70s` |
-| 7 | `python -m pytest tests/ai -q -o addopts=` | **pass** — `75 passed in 125.22s` |
-| 8 | `cd frontend && npm run build` | **FAIL (exit 2)** — see `FT-01` |
-| 9 | `cd frontend && npm run lint` | **FAIL (exit 1)** — 2 errors, 1 warning; see `FT-02`, `LS-01` |
-| 10 | `cd frontend && npm run test` | **pass** — `55 files, 1152 passed` |
-| 11 | `cd frontend && npm run build-storybook` | **pass** (exit 0) |
-| 12 | `cd frontend && npm run test:stories` | **pass** — `37 files, 365 passed` |
-| 13 | `cd frontend && npm run test:stories:handheld` | **pass** — `5 passed, 32 skipped (37 files), 22 tests` |
-| 14 | `npx playwright test --project=chromium` | **FAIL (exit 1)** — `3 failed, 14 skipped, 107 passed (20.4m)`; see `FT-03`, `FT-04`, `FT-05`, `CG-01` |
-| 15 | `npx playwright test --project=handheld` | **pass** — `15 passed (1.1m)` |
-| 16 | `python -m pytest tests -q -o addopts= --cov=src/automtg --cov-report=term` | **pass** — `9927 passed, 3958 skipped in 1694.80s (28:14)`; **TOTAL 91%** (14844 statements, 1296 missed) |
+| # | Command | Result at `6ac90652` | At `0161573` |
+|---|---|---|---|
+| 1 | `python -m ruff check src scripts tests` | **pass** — `All checks passed!` | pass |
+| 2 | `python scripts/validate_decks.py` | **pass** — 2562 cards (50 tokens), 4 decks legal | pass — 2426 cards |
+| 3 | `python scripts/build_card_index.py --check` | **pass** — `index is current (32,827 rows)` | pass |
+| 4 | `python -m pytest tests/unit -q -o addopts=` | **pass** — `4435 passed, 1 warning in 37.06s` (the warning: `UV-08`) | 3460 passed |
+| 5 | `python -m pytest tests/cards -q -o addopts=` | **pass** — `6423 passed, 4149 skipped, 1 warning in 145.33s` | 6092 passed, 3958 skipped |
+| 6 | `python -m pytest tests/server -q -o addopts=` | **pass** — `302 passed, 1 warning in 131.62s` (the warning: `UV-08`) | 300 passed |
+| 7 | `python -m pytest tests/ai -q -o addopts=` | **pass** — `75 passed in 173.18s` | 75 passed |
+| 8 | `python scripts/run_arena.py --games 60 --pods 2,4 --max-draw-rate 0.25` | **pass** (exit 0) — 60 duels + 60 four-player games (verify's stage label says *"120 duels + 40 pods"*; the command it runs plays 60 of each size), **0 draws** in both, heuristic beats random 76.7% at 2p / 36.7% at 4p, 255.7s | not run (`UV-05`) |
+| 9 | `verify.run_live_server_stage` (real uvicorn, 2p + 4p + one pod) | **pass** — `ok=True` in 7.7s: 2p seed 2 finished turn 16, 4p seed 4 finished turn 26 (with `WARN never reached a combat declaration`), pod `DRAKE-8740` 2p seed 5 finished turn 15; hidden information held in all three | not run (`UV-05`) |
+| 10 | `cd frontend && npm run build` | **pass** — `tsc` clean, `vite build` 3.0s; one chunk-size warning (595 kB JS) | **FAIL** (`FT-01`) |
+| 11 | `cd frontend && npm run lint` | **pass** (exit 0) — `Found 1 warning.`; see `LS-01` | **FAIL** (`FT-02`) |
+| 12 | `cd frontend && npm run test` | **pass** — `58 files, 1272 passed` | 55 files, 1152 |
+| 13 | `cd frontend && npm run build-storybook` | **pass** (exit 0) | pass |
+| 14 | `cd frontend && npm run test:stories` | **pass** — `38 files, 381 passed` | 37 files, 365 |
+| 15 | `cd frontend && npm run test:stories:handheld` | **pass** — `7 passed, 31 skipped (38 files), 35 tests` | 5 of 37 files, 22 tests |
+| 16 | `npx playwright test --project=chromium` | **FAIL (exit 1)** — `3 failed, 14 skipped, 107 passed (19.9m)`; the same three failures as before, see `FT-03`, `FT-04`, `FT-05`, `CG-01` | **FAIL** — 3 failed, 14 skipped, 107 passed |
+| 17 | `npx playwright test --project=handheld` | **pass** — `24 passed (3.2m)` (was 15; the nine new ones are `journeys-handheld.spec.ts`) | 15 passed |
+| 17b | `npx playwright test --project=deckfit` | **pass** — `8 passed (1.9m)` | not run — neither audit knew the third project existed |
+| 18 | `python -m pytest tests -q -o addopts= --cov=src/automtg --cov-report=term` | **pass** — `11235 passed, 4149 skipped, 2 warnings in 1826.22s (30:26)`; **TOTAL 92%** (16377 statements, 1324 missed) | 91% (14844 stmts, 1296 missed) |
+| 19 | `npx vitest run --project=unit --coverage --coverage.include='src/**'` | **68.30%** statements, 80.85% branches, 63.61% functions (unit project only — story and e2e runs are not instrumented) | never produced |
 
-`-o addopts=` is required to see counts at all — see `LS-02`.
+`-o addopts=` is required to see counts at all — see `LS-02`. Without
+`--coverage.include='src/**'`, stage 19 reports **7.02%** because the provider
+instruments the built `storybook-static/` bundles alongside `src/` — a trap worth
+recording for whoever adds the coverage flag to CI.
 
 Playwright and Storybook write to `frontend/test-results/`, `frontend/playwright-report/`,
 `frontend/storybook-static/` and `frontend/e2e-shots/`, all gitignored: build output,
@@ -111,73 +118,69 @@ not repo changes.
 
 ## Findings
 
-| ID | Category | Path(s) | Evidence | Est. risk of fixing | Blocking dependency |
-|---|---|---|---|---|---|
-| FT-01 | failing-test | `frontend/tests/zzrepro2.test.tsx` | `npm run build` exits 2: `tests/zzrepro2.test.tsx(3,43): error TS6133: 'expect' is declared but its value is never read.` Blocks the `tsc --noEmit` half of the build, so **`vite build` never runs**. | **RESOLVED** during the audit by another session (see `LP-01`); the file no longer exists | none |
-| FT-02 | failing-test | `frontend/tests/zzrepro.test.tsx`, `zzrepro2.test.tsx` | `npm run lint` exits 1: `Found 2 errors.` Both are biome `format` errors on these two files (multi-line `console.log` reflow). | **RESOLVED** during the audit by another session (see `LP-01`) | none |
-| FT-03 | failing-test | `frontend/e2e/acceptance.spec.ts:132` | `combat still works through the re-themed controls` — `expect(locator).toHaveClass(expected) failed. Expected pattern: /btn--primary/. Received string: "commit"`. The combat confirm button's class was renamed to `commit` and the assertion never followed. **Same button as `FB-11`.** | **High** — a genuine combat regression, and the assertion is measuring a class that no longer exists | none |
-| FT-04 | failing-test | `frontend/e2e/layout.spec.ts:183` | `the viewer's bands do not move as permanents enter and leave play` — `Error: the creatures band moved 17px within the mat; the board is jumping again. Expected: < 6. Received: 17.3675537109375`. A **relationship** assertion, which `docs/testing.md` states is *"a regression, not a baseline"* and must not be re-taken. | **High** — the doc's own rule forbids re-baselining this; the board really is moving | Correlates with `FB-07` (ring misaligns after cards lift) |
-| FT-05 | failing-test | `frontend/e2e/pod.spec.ts:592` | `the rail is one row: Lock in and Deal are neighbours` — `expect(received).toBe(expected). Expected: "lock-in". Received: "start-game"`. The pod rail's control order changed and the neighbour invariant broke. | **Medium** | Correlates with `FB-01` (pod/deck-selection focus traps) |
-| CG-01 | coverage-gap | `frontend/e2e/action-panel.spec.ts` lines 80, 127, 142, 167, 224, 269, 520, 661 | The completed chromium run reported **14 skipped** of 124. Every combat case is gated on `test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers")`. Seeds are **fixed** (`seed: 3`, `5`, `7`), so the branch is deterministic: these specs skip on *every* run and have therefore never executed. | **Medium** — needs a seed or scripted state that actually reaches combat | FT-03 (same surface) |
-| CG-02 | coverage-gap | 20 modules under `frontend/src/` | Zero references from any `*.test.ts(x)`, `*.spec.ts` or `*.stories.tsx`. Full list in *Untested frontend modules*. Includes `CardHold.tsx`, `useHandLift.ts`, `GroupDial.tsx`, `ChoiceCombo.tsx`, `GameRoute.tsx`. | **Medium** — writing tests is safe; the risk is what they reveal | none |
-| CG-03 | coverage-gap | `frontend/src/**/*.stories.tsx` (handheld project) | `npm run test:stories:handheld` runs `5 passed, 32 skipped (37)` — 22 tests. `docs/testing.md` calls this "**the only place the handheld floors are gated by CI**", and it exercises 5 of 37 story files. | **Medium** — un-skipping will surface real floor violations | none |
-| CG-05 | coverage-gap | `src/automtg/cards/authoring/` | Python line coverage is **91% overall** (14844 statements, 1296 missed), but the authoring package is the outlier and accounts for **405 of the 1296 missed lines — 31% of all uncovered code in the project**: `fidelity.py` **28%** (116/161 missed), `queue.py` **39%** (62/101), `packet.py` **46%** (51/94), `templates.py` **49%** (176/344). | **Medium** — it is developer tooling, not the engine or the served app, so the blast radius is contained | none |
-| CG-06 | coverage-gap | `src/automtg/engine/effects/ops_mana.py` | **73%** (8 of 30 statements missed) — the lowest-covered module in the **rules engine** itself, where everything else clears 84%. Rules code with untested branches is a different class of risk from tooling. | **Medium** | none |
-| CG-04 | coverage-gap | `frontend/` | No coverage provider existed at this commit, so no frontend coverage number has ever been produced. Installing `@vitest/coverage-v8@3.2.7` is what made measurement possible. | **Low** | none |
-| OF-01 | oversized-file (>600) | 45 files | Full ranked list in *Oversized files*. Worst: `src/automtg/cards/loader.py` **3652**, `frontend/src/components/game/Table.tsx` **1742**, `src/automtg/engine/effects/ops_board.py` **1619**, `src/automtg/engine/characteristics.py` **1583**, `src/automtg/engine/primitives.py` **1470**. | **High** for `loader.py` / `Table.tsx` (central, no per-module coverage floor); **Medium** for the rest | CG-04 for frontend files — no coverage baseline to split against |
-| DC-01 | dead-code | 20 symbols in `src/automtg/` | Public (non-underscore), defined exactly once, **zero references** anywhere in `src`, `tests`, `scripts`, `frontend/src`, `frontend/e2e`, `frontend/tests`. Decorated symbols (FastAPI routes) excluded. Full list in *Dead-code candidates*. | **Low** individually | Must be confirmed against the `register()` dynamic dispatch in `src/automtg/engine/effects/__init__.py` — see `UV-02` |
-| SD-01 | stale-doc | `docs/testing.md` | Every suite count in its table is wrong. Claimed → measured: unit **395 → 3460**; cards **3513 → 6092 (+3958 skipped)**; server **287 → 300**; frontend **1005 → 1152**; stories **328+18 → 365 desktop / 22 handheld**. Only `tests/ai` (**75**) is correct. | **Low** — documentation only | Re-run suites after FT-01/FT-02 so recorded numbers come from a green tree |
-| SD-02 | stale-doc | `.dockerignore` | Excludes `legacy-frontend`, a path that does not exist: `ls legacy-frontend` → no such file; `git ls-files legacy-frontend` → 0 results. | **Low** — dead exclusion line | none |
-| LP-01 | leftover-prototype | `frontend/tests/zzrepro.test.tsx`, `zzrepro2.test.tsx` | **RESOLVED DURING THE AUDIT — by another session, not by me.** When measured they were **untracked** (`git status` → `??`), **not gitignored** (`git check-ignore` → no match), mtimes `Aug 24 23:58` / `Aug 25 00:01`, and their bodies were `console.log` traces of deck-catalogue keyboard navigation with **no assertions at all in zzrepro2** — debugging scratch, not tests. They were the sole cause of `FT-01` and `FT-02`. Both files are now gone. | **Resolved** | none |
-| LP-02 | leftover-prototype | `frontend/src/components/game/GroupDial.tsx:13` | Comment: *"it was the prototype's name for exactly this control, carried into the…"* — a prototype name surviving into shipped code. | **Low** — rename only | CG-02 (module untested) |
-| LP-03 | leftover-prototype | `frontend/src/components/game/OpponentBoard.tsx:18` | Comment: *"this is a temporary overlay that…"* — self-declared temporary code on a shipped surface. | **Medium** — "temporary" with no replacement designed | none |
-| LS-01 | lint-suppression | `frontend/src/components/lobby/HomeScreen.tsx:323` | The **only** lint diagnostic in tracked source: `lint/correctness/useExhaustiveDependencies` — *"This hook specifies more dependencies than necessary: sel"* on `useLayoutEffect(() => { refollowCursor(); }, [sel])`. A warning, not an error. Sits in the deck-selection screen, the surface of field bug `FB-01`. | **Medium** — changing effect deps on cursor-following code can move focus behaviour | Diagnose `FB-01` first; the extra dep may be load-bearing |
-| LS-02 | lint-suppression | `pyproject.toml` → `addopts = "-q"` | `verify.py` also passes `-q` (`python_stages()`), making `-qq`, which **suppresses pytest's summary line**. The gate's own output never shows how many tests ran. Confirmed: with `-o addopts=` the same run prints `3460 passed`; without it, nothing. | **Low** | none |
-| LS-03 | lint-suppression | `src`, `scripts`, `tests` | 22 `# noqa`: 8×`F401`, 8×`E402`, 3×`RUF001`, 3×`E731`. Plus 6 project-wide ruff ignores in `pyproject.toml` (`E501`, `B008`, `RUF012`, `SIM108`, `UP042`, `SIM103`) and 3 `per-file-ignores` blocks. **Every config-level ignore carries a written rationale.** | **Low** — justified; recorded for completeness | none |
-| LS-04 | lint-suppression | `frontend/src`, `frontend/e2e`, `frontend/tests` | 19 `biome-ignore` comments across 17 files. Zero `@ts-ignore` / `@ts-expect-error` in the entire frontend. | **Low** | none |
+| ID | Category | Status | Path(s) | Evidence at `6ac90652` | Est. risk of fixing | Blocking dependency |
+|---|---|---|---|---|---|---|
+| FT-01 | failing-test | **RESOLVED** | `frontend/tests/zzrepro2.test.tsx` | File no longer exists; `npm run build` exits 0. | — | none |
+| FT-02 | failing-test | **RESOLVED** | `frontend/tests/zzrepro*.test.tsx` | Files no longer exist; `npm run lint` exits 0. | — | none |
+| FT-03 | failing-test | **OPEN, still failing** | `frontend/e2e/acceptance.spec.ts:132` | `await expect(confirm).toHaveClass(/btn--primary/)` is unchanged, and the button it targets (`ActionPanel.tsx:1298`) still has `className="commit"`. Re-run: `Expected pattern: /btn--primary/ · Received string: "commit"`. Identical failure to 2026-08-25. | **High** — the assertion measures a class that no longer exists; the fix is to assert `commit` or `data-empty` | none |
+| FT-04 | failing-test | **OPEN, still failing, worse** | `frontend/e2e/layout.spec.ts:183` | `the viewer's bands do not move as permanents enter and leave play` — the relationship assertion `docs/testing.md` says must not be re-baselined. Re-run: `the creatures band moved 21px within the mat; the board is jumping again · Expected: < 6 · Received: 21.42` (was 17.37). | **High** | `FB-07` was fixed in #17 for the opening hand; the battlefield bands are a separate mechanism |
+| FT-05 | failing-test | **OPEN, moved** | `frontend/e2e/pod.spec.ts:592` | `the rail is one row: Lock in and Deal are neighbours`. The neighbour assertions the first audit saw fail (`:624`, Left from Deal lands on Lock in) now **pass** — #19's rail nudge fixed that half. The test still fails, one step later: `:632` presses Up from Lock in and expects the ring on `change-deck`; it lands on `pod-copy` (the invite-code copy button). The test file is unchanged since `0161573`, so this is the app's spatial navigation, not the spec, that changed. | **Medium** | none |
+| CG-01 | coverage-gap | **OPEN, unchanged** | `frontend/e2e/action-panel.spec.ts` lines 80, 127, 142, 167, 224, 269, 520, 661 | Same eight `test.skip(!(await reachDecision(page, …)))` gates, same fixed seeds (`seed: 3`, `5`, `7` at lines 79–519). Deterministic, so they skip on every run. Re-run: still exactly **14 skipped** of 124. Note that `journeys-handheld.spec.ts:421` (new) *does* reach a block declaration against the live engine, so the capability exists — the seeds in this file are simply ones that never get there. | **Medium** — reuse the seed or the scripted path `journeys-handheld.spec.ts` uses | `FT-03` (same surface) |
+| CG-02 | coverage-gap | **OPEN, narrowed** | 20 modules under `frontend/src/` | The same 20 modules have zero references from any `*.test.ts(x)`, `*.spec.ts` or `*.stories.tsx` (list in the appendix). But unit coverage now shows the grep overstated it: `GameRoute.tsx` is **92%** covered (through `routing.test.tsx`), `ChoiceCombo.tsx` **91%**, `useHandLift.ts` **90%**. The real holes are `GroupDial.tsx` **6%**, `CardHold.tsx` **17%**, `OpponentBoard.tsx` **14%**, `ControllerPanel.tsx` **5%**, `NewGameScreen.tsx` **0%** — and, outside the original list, `OpeningHand.tsx` **4%**, `CardGhost.tsx` **4%**, `InviteDialog.tsx` **5%**, `StackPanel.tsx` **5%**, `EventTicker.tsx` **7%** (all unit-project numbers; several of these are exercised by stories, which are not instrumented). | **Medium** | `CG-04` is resolved, so coverage can now be gated per file |
+| CG-03 | coverage-gap | **OPEN, narrowed** | `frontend/src/**/*.stories.tsx` (handheld project) | `npm run test:stories:handheld` now runs `7 passed, 31 skipped (38 files)` — **35 tests**, up from 22 over 5 files. `Journeys.stories.tsx` (#19) added press-budget gates at 1280×800. Still 7 of 38 story files. | **Medium** | none |
+| CG-04 | coverage-gap | **RESOLVED** (on this branch) | `frontend/` | `@vitest/coverage-v8@3.2.7` is installed and stage 19 produced the first frontend number: **68.3%** of `src/`. Not yet wired into `verify.py` or `package.json`. | **Low** | none |
+| CG-05 | coverage-gap | **OPEN, unchanged in shape** | `src/automtg/cards/authoring/` | Overall Python coverage is **92%** (16377 statements, 1324 missed; was 91% / 14844 / 1296). The authoring package is still the outlier: **402 of the 1324 missed lines — 30% of all uncovered code** — `fidelity.py` **27%** (118/161 missed), `packet.py` **45%** (54/99), `queue.py` **48%** (54/103), `templates.py` **49%** (176/345). Every other module in `src/automtg` clears 70%. | **Medium** — developer tooling, contained blast radius | none |
+| CG-06 | coverage-gap | **OPEN, slightly worse** | `src/automtg/engine/effects/ops_mana.py` | **70%** (12 of 40 statements missed; was 73%, 8 of 30). Still the lowest-covered module in the rules engine, where the next lowest are `values.py` and `rng.py` at 89%. It grew by 10 statements in the window (`ops_mana.py` +36 lines) and the new lines are among the missed ones. | **Medium** | none |
+| OF-01 | oversized-file (>600) | **OPEN, worse** | 53 files (was 45; CSS excluded as before) | Full ranked list in the appendix. Worst: `loader.py` **5196** (was 3652), `ops_board.py` **2081** (1619), `characteristics.py` **2043** (1583), `Table.tsx` **2030** (1742), `legality.py` **1752** (1419), `primitives.py` **1730** (1470). Eight new entries crossed 600 in the window, among them `objects.py` (754), `zones.py` (717), `ops_control.py` (693), `targeting.py` (663), `PlayerOrb.tsx` (608). | **High** for `loader.py` / `Table.tsx`; **Medium** for the rest | `CG-04` is resolved for the frontend; Python coverage is per-module already |
+| DC-01 | dead-code | **OPEN, 19 of 20** | 19 symbols in `src/automtg/` | `remove_attacker` gained a caller (`combat.py:525`) and drops off the list. The other 19 still have zero references outside their own `def` across `src`, `tests`, `scripts`, `frontend/src`, `frontend/e2e`, `frontend/tests` (compiled `__pycache__` matches excluded). Updated line numbers in the appendix. | **Low** individually | `UV-02` — the `register()` dispatch caveat still applies |
+| SD-01 | stale-doc | **OPEN, half-fixed** | `docs/testing.md` | #19 corrected the three frontend rows (`1272`, `381 + 35`, `118`). The four Python rows were not touched and are now further off: unit **395 → 4435**, cards **3513 → 6423 (+4149 skipped)**, server **287 → 302**. `tests/ai` (**75**) is still the only correct Python row. | **Low** | none |
+| SD-02 | stale-doc | **OPEN, unchanged** | `.dockerignore:53` | Still excludes `legacy-frontend`; `ls legacy-frontend` → no such file. | **Low** | none |
+| LP-01 | leftover-prototype | **RESOLVED** | `frontend/tests/zzrepro*.test.tsx` | Gone. Their subject (`FB-01`) shipped as `lobbyBack.test.tsx` and `padTyping.test.ts` in #15. | — | none |
+| LP-02 | leftover-prototype | **OPEN, unchanged** | `frontend/src/components/game/GroupDial.tsx:13` | *"it was the prototype's name for exactly this control, carried into the trap and then not built"* — same comment, same line. `GroupDial.tsx` is at 6% unit coverage. | **Low** — rename only | `CG-02` |
+| LP-03 | leftover-prototype | **OPEN, unchanged** | `frontend/src/components/game/OpponentBoard.tsx:18` | *"this is a temporary overlay that owns the screen while it is up"* — same comment, same line. 14% unit coverage. | **Medium** — "temporary" with no replacement designed | none |
+| LS-01 | lint-suppression | **OPEN, unchanged** | `frontend/src/components/lobby/HomeScreen.tsx:323` | Still the only lint diagnostic: `useExhaustiveDependencies` — *"more dependencies than necessary: sel"* on `useLayoutEffect(() => { refollowCursor(); }, [sel])`. The comment above it (`:319-322`) now explains why `sel` is there: the ring must be told to watch on selection change even when nothing moved. So this is a documented, deliberate dep the linter cannot see. | **Low** — add a `biome-ignore` with that reason, or leave as is | none |
+| LS-02 | lint-suppression | **OPEN, unchanged** | `pyproject.toml:29` → `addopts = "-q"` | `verify.py` still adds its own `-q` (`python_stages()`, lines 181–191), making `-qq`; the gate's output never shows how many tests ran. | **Low** | none |
+| LS-03 | lint-suppression | **unchanged** | `src`, `scripts`, `tests` | 22 `# noqa`: 8×`F401`, 8×`E402`, 3×`RUF001`, 3×`E731`. Six project-wide ruff ignores and three `per-file-ignores`, each with a written rationale. | **Low** | none |
+| LS-04 | lint-suppression | **unchanged in kind** | `frontend/src`, `frontend/e2e`, `frontend/tests` | 20 `biome-ignore` comments across 15 files (was 19 / 17). Still zero `@ts-ignore` / `@ts-expect-error`. | **Low** | none |
+| NF-01 | noisy-test | **NEW** | `frontend/src/components/game/ParticleLayer.tsx:142` | `npm run test` prints a jsdom stack trace twice — `Not implemented: HTMLCanvasElement.prototype.getContext` — from `routing.test.tsx`'s two rematch cases, which mount the board and hit the particle canvas. Tests pass; the trace is stderr noise that will hide a real one. | **Low** — guard `getContext` behind a null check, or stub canvas in the jsdom setup | none |
 
 ### Categories with no findings
 
-- **duplicated-logic** — no confirmable instance. The strongest candidate,
-  `frontend/e2e/handheldAssert.ts` (665 lines) versus its stated origin
-  `mockups/handheld/assert.js` (212 lines), shares **zero function names**; the port
-  diverged rather than duplicating. Reported as checked-and-cleared. See `UV-03`.
-- **TODO/FIXME/HACK/XXX markers** — 4 matches, all in
-  `src/automtg/cards/authoring/packet.py` (lines 77, 267, 272, 285), and all the
-  literal dataclass field name `todo:`. No debt markers anywhere in the codebase.
+- **duplicated-logic** — no confirmable instance; `UV-03` still stands.
+- **TODO/FIXME/HACK/XXX markers** — zero outside the dataclass field name `todo:` in
+  `src/automtg/cards/authoring/packet.py` (lines 77, 299, 304, 318).
 - **broken documentation links** — every relative link in `README.md`, `docs/*.md`
-  and `docs/adr/*.md` resolves to a file that exists. Checked exhaustively.
+  and `docs/adr/*.md` resolves (0 broken; checked by script).
 
-## Field-reported defects (playtesting during this audit)
+## Field-reported defects (playtesting during the first audit)
 
-**14 defects reported.** 3 root-caused with certainty (`FB-05`, `FB-10`, `FB-11`),
-11 traced to a surface but not isolated.
+**14 defects reported on 2026-08-25.** At `6ac90652`: **7 fixed with a regression
+test**, **7 open**. Fixed ones name the commit and the test; open ones say what was
+looked for and not found.
 
-Reported by the user while the audit ran. **None is covered by any passing test** —
-which is this audit's central finding. Root cause given only where verified.
-
-| ID | Report | Root cause / status | Evidence |
+| ID | Report | Status at `6ac90652` | Evidence |
 |---|---|---|---|
-| FB-05 | Same opening hand every game — seed isn't random | **ROOT CAUSE CONFIRMED** | `src/automtg/server/sessions.py:432` — `seed=0 if seed is None else int(seed)`. An unseeded game gets the constant **0**. `lobby.py:235` defaults `Pod.seed = None` and `lobby.py:726` passes it straight through, so every game dealt without a typed seed is byte-identical. |
-| FB-10 | L2 triggers Steam Deck's native browser right-click | **CONFIRMED binding conflict** | `frontend/src/input/buttons.ts:104` maps `z: "l2"`; `Table.tsx:1133` notes *"`L2` was advertised by the hint bar and bound to nothing"*. On a Deck in gaming mode the shoulder arrives as a **keyboard** event — `buttons.ts:115-116` already special-cases `PageUp`/`PageDown` for exactly this reason — and the stock template's L2 is a right-click. Needs a different button. |
-| FB-02 | `400: unknown action id 'a1-play_land'`, then jumps to combat | **Partially traced** | Raised at `sessions.py:276`. Action ids are **positional** — `sessions.py:238`: `f"a{index}-{action.kind.value}"` — rebuilt from scratch on every `_refresh_actions()` and carrying **no version stamp**, so a click against a stale list is indistinguishable from an invalid one. The specific race is not isolated. |
-| FB-01 | Trapped in deck selection: entering the Name/Fastest/… dropdown, or moving left off the close button | **Not isolated** | Surface is `DeckCatalog.tsx` + `ChoiceCombo.tsx`. `ChoiceCombo.tsx` has **no test or story** (`CG-02`). `LS-01` is on the same screen. The two untracked scratch files (`LP-01`) show this was already under investigation. |
-| FB-04 | L1 fully quits the game | **Not isolated** | `Table.tsx:1087` binds `onPad("l1", () => stepGroup(-1))` — a region step, not a quit. The only quit path is `GameRoute.tsx:51` `navigate("/", { replace: true })`, reached via `Table`'s `onQuit` prop (`Table.tsx:1537`, `:1739`). How L1 reaches it is **not established** — flagged rather than guessed. |
-| FB-06 | B during combat closes the game to home | **Not isolated; `Table`'s own handler is innocent** | `Table.tsx:747-796` `back()` is a strict unwind that returns `false` at the bottom and does nothing — its docstring says *"it never quits from the top"*, and the code matches. The quit therefore comes from a handler **outside** `Table`. `GameRoute.tsx` has no test (`CG-02`). |
-| FB-03 | Focusing a card in the action panel shows no enlarged preview (hand cards do) | **Not isolated** | `CardHold.tsx` / `CardPreview.tsx`. `CardHold.tsx` has **no dedicated test or story** — it appears only inside `Table.stories.tsx` (`CG-02`). Note `e2e/action-panel.spec.ts:463` *"hovering a row fills the preview"* **passes**, so mouse hover works: the defect is specific to the focus/controller path, which is untested. |
-| FB-07 | Hover ring misaligns with hand cards after they lift | **Not isolated** | `frontend/src/state/useHandLift.ts` — **no test, no story** (`CG-02`). Ring geometry lives in `input/cursor.ts`; a lift that moves the card without re-measuring the ring matches the symptom. |
-| FB-08 | A/Y does not read cards to full screen on hover | **Not isolated** | `Table.tsx:1090-1120` binds `onPad("y", …)` → `setHeldCard(ref.id)`, guarded by `parseStop(getCursor()).kind === "card"`. Renders through `CardHold.tsx` — untested (`CG-02`). |
-| FB-09 | Focus cannot pass the disabled Attack button between "Skip attackers" and "All attackers" | **Same surface as FB-11; mechanism not fully isolated** | `ActionPanel.tsx` (1277 lines, `OF-01`). The button between the two reachable controls is the same stop-less `commit` button as `FB-11`, and it is also `disabled={disabled \|\| staged.length === 0}` (`:1210`). Whether the ring *stops at* it or *fails to route around* it was not determined — flagged rather than guessed. The e2e cases that assert exactly this (`action-panel.spec.ts:107-121`, `combat-confirm` enabled/disabled) are among the permanently skipped ones (`CG-01`). |
-| FB-11 | The Attack button cannot be focused even when enabled | **ROOT CAUSE CONFIRMED** | `input/stops.ts:44` — `actionAttrs(id)` returns `{"data-action-id": id, "data-stop": "act:<id>"}`, and `stops.ts:22` states the rule: a control is a ring stop only if it carries `data-stop`. The combat confirm button (`ActionPanel.tsx:1207-1228`) spreads **no `actionAttrs`** and carries **no `data-stop`** — its only identity is `data-testid="combat-confirm"`. Both siblings do carry it: the skip button (`:1234`, `{...actionAttrs(finish.id)}`) and the other commit slab (`:1252`, `{...actionAttrs(commit.id)}`). So the ring never registers "Attack"/"Block" as a stop, enabled or not. Note it legitimately has no *action* id — `onDeclare` submits a whole declaration rather than one server action — so the fix is a `data-stop`, **not** an `actionAttrs` spread. |
-| FB-13 | Commander does not flip to "Ready" when its mana becomes available, unless the pointer is over the commander orb | **Not isolated; surface identified** | `CommandZone.tsx:70-71` — `commanderState(card, castable)` returns `{key:"ready"}` **only** when `castable` is true, and `castable` is derived from `playableOids` (`:303`, `:341`: *"only when the server says so — `playableOids` is built…"*). The symptom — correct only while hovering — points at the recompute being driven by a pointer-triggered re-render rather than by the state version. ⚠ `CommandZone.tsx` is one of the **16 files a concurrent session modified mid-audit** (+30 lines), so these line numbers are from the working tree, not from `0161573`. |
-| FB-14 | Commander cannot be summoned from the player orb at Steam Deck resolution — focus + A does nothing | **Not isolated; a missing stop is RULED OUT** | Unlike `FB-11`, the plinth **does** register a stop: `CommandZone.tsx:175` — `data-stop={reachable ? stopId.card(card.oid) : undefined}`, with `reachable = card.zone === "command"` (`:151`). It is deliberately `aria-disabled` rather than `disabled` (`:190`) precisely so it stays focusable, and the click is gated by `clickable = castable && !disabled` (`:123`). **Suspect instead:** the region trap in `input/groups.ts` — the `orb` group is the CSS selector `.play__mine .mat__side` (`groups.ts:49`), so if the handheld layout renders the plinth outside that container the ring cannot enter it, and the trap is resolution-specific exactly as reported. **Not confirmed** — flagged for the fix session. Interacts with `FB-13` (same component) and `FB-12` (same trap mechanism). |
-| FB-12 | Settings popover (bottom left: "Sound on", "Undo") unreachable by controller focus; mouse works | **Not isolated** | `Table.tsx:1128-1132` binds `onPad("menu", () => setCursor(stopId.tool("settings")))` — the ring is moved to the settings *button*, but the stops **inside** the opened popover are a separate question. `input/stops.ts:15` documents `tool:<name>` for "mute, full control, manual mana, undo, quit". Same class of defect as `FB-01`: a container the ring can enter but not traverse. |
+| FB-05 | Same opening hand every game | **FIXED** — #16 `318e73c7` | `sessions.py:450` — `seed=new_seed() if seed is None else int(seed)`; `new_seed()` (`:413`) draws from `secrets`. Tests in `tests/server/test_api.py` (+34). |
+| FB-11 | The Attack button cannot be focused even when enabled | **FIXED** — #18 `f1c0f21d` | `ActionPanel.tsx:1299` — `data-stop={stopId.commit}` on the confirm slab; both `commit-mark` buttons carry `stopId.commitMark("all")` (`:1249`, `:1279`). `stops.test.tsx:211` asserts `combat-confirm` has `data-stop="commit"`. |
+| FB-09 | Focus cannot pass the disabled Attack button | **FIXED by construction** — #18 | Same button as `FB-11`, now a stop; `stops.ts:173-176` documents that a disabled control *is* a stop ("walking onto a greyed-out action to read why it is greyed out is how a player finds out"). No test targets the disabled case specifically. |
+| FB-14 | Commander cannot be summoned from the player orb by focus + A | **FIXED** — #15 `6797c35c` | `CommandZone.tsx:151,176` — `data-stop={reachable ? stopId.card(card.oid) : undefined}`; the commit's own words: *"the only control on the board with no `data-stop`"*. Story `HandheldTheCommanderIsReachable` (`Table.stories.tsx`, hardened in `ab7307da`). The first audit's "missing stop is ruled out" was measured against the working tree that already contained this fix. |
+| FB-01 | Trapped in deck selection (Sort dropdown, left off close) | **FIXED** — #15 `6797c35c` | The `<select>` no longer swallows left/right/Backspace (`pad.ts`, `padTyping.test.ts` +99) and `B` in the lobby is owned by `useDismiss.ts` (new, 83 lines; `lobbyBack.test.tsx` +192). |
+| FB-03 | Focusing a card in the action panel shows no preview | **FIXED** — #17 `552f9dba` | `previewing()`'s `onFocus` was dead because `hoverFor` ran after focus and cleared it. `data-preview-oid` is now written on every previewing row and the plinth (`CommandZone.tsx`), and `cursor.ts` reads it. Story `RowsDeclareWhatTheyPreview`; four cases in `cursor.test.ts`. |
+| FB-07 | Hover ring misaligns with hand cards after they lift | **FIXED for the opening hand** — #17 `552f9dba` | `.mull__slot` now carries the lift transform itself (`OpeningHand.tsx`, `opening.css`), so the ring measures the element that moved. Story `TheRingRisesWithTheCard`. The commit notes `HandFan`'s `.hand__slot` already had the fixed/moving parts the right way round, so the in-game hand was not the reporter's surface. `useHandLift.ts` is 90% unit-covered. |
+| FB-10 | L2 triggers the Deck's native right-click | **ADDRESSED IN DOCS, binding unchanged** | `buttons.ts:101` still maps `z: "l2"`. `docs/steamdeck.md` §2 now says to set the Steam Input template to *Gamepad* and, for a keyboard layout, to point L2 at `Z` (`:89`). In-app, L2 now jumps to the commit slab (`Table.tsx:1431`). Nothing was changed to survive the stock keyboard template; #15's message attributes the original controller report to that template. |
+| FB-02 | `400: unknown action id 'a1-play_land'`, then jumps to combat | **OPEN, unchanged** | `sessions.py:241` — `f"a{index}-{action.kind.value}"`: ids are still positional and unversioned, rebuilt on every `_refresh_actions()` (`:233`). A click against a stale list is still indistinguishable from an invalid one. No commit in the window touched this. |
+| FB-04 | L1 fully quits the game | **OPEN, likely the Steam template** | `Table.tsx:1378` still binds L1 to `stepGroup(-1)`; the only quit path is `GameRoute.tsx:68-72`. #15's message says the report it was chasing *"turned out to be a Steam Input template"* — under the keyboard template a shoulder arrives as a browser key, not an L1. Not reproduced with a real gamepad; not closed either, because no test asserts L1 cannot reach `quit`. |
+| FB-06 | B during combat closes the game to home | **OPEN, probably the same class as FB-01** | `Table.tsx:781` — `back()` still *"never quits from the top"*. #15 found that an unclaimed `B` fell through to the browser's own back navigation; `useDismiss.ts` now claims it on lobby surfaces. Whether the in-game path was the same fall-through was not established, and `GameRoute.tsx` has no test for it (its 92% unit coverage comes from `routing.test.tsx`, which does not press B). |
+| FB-08 | A/Y does not read a card to full screen on hover | **OPEN, unchanged** | `Table.tsx:1388-1394` binds `Y` → `setHeldCard(ref.id)` for a `card` stop, rendered by `CardHold.tsx` — **17%** unit coverage, no story, no e2e (`CG-02`). No commit in the window touched `CardHold.tsx`. |
+| FB-13 | Commander only flips to "Ready" while the pointer is over the orb | **OPEN, unchanged** | `CommandZone.tsx:70-71` still returns `ready` only from `castable`, derived from `playableOids` at `:347`. #15 and #17 added stops and preview attributes to this file and did not touch the recompute. |
+| FB-12 | Settings popover unreachable by controller focus | **OPEN, mechanism unclear** | Every control inside the popover carries a `tool:` stop (`ActionPanel.tsx:965-1038`: settings, mute, undo, quit) and did at `0161573` too, so the trap is not a missing stop. `closeSettings` (`:230-234`) now returns the ring to the settings button on close. #19's `escapeGroup` relaxed-retry (`stops.ts`) may have changed the traversal; nothing tests entering the popover by pad. |
 
-**Six** of the fourteen field-reported bugs (`FB-01`, `FB-03`, `FB-04`, `FB-06`, `FB-07`,
-`FB-08`) land in modules with **zero test coverage** (`CG-02`); two more (`FB-09`,
-`FB-11`) land on the one surface whose e2e tests are permanently skipped (`CG-01`).
-**Ten of the fourteen are controller/focus defects** — the input layer is the least
-covered and most defective area of the codebase.
+**Every one of the seven open defects lands in code with no targeted test** —
+`CardHold.tsx` (17%), `GroupDial.tsx` (6%), `OpponentBoard.tsx` (14%), the settings
+popover traversal, the commander-ready recompute, the positional action ids, and
+`GameRoute`'s B/L1 paths. The seven fixed ones each shipped with a test. That is the
+whole story of this section: the input layer stopped being the least-tested area
+where someone wrote tests, and stayed the most defective everywhere they did not.
 
 ## Disposable mockup / prototype candidates
 
@@ -185,156 +188,179 @@ covered and most defective area of the codebase.
 
 | Path | Size | Why it looks disposable | Why it may not be |
 |---|---|---|---|
-| `mockups/` (whole tree) | 390 files, **108 MB** | Static HTML/JS design exploration. No build, test or runtime step consumes it. Already excluded from the Docker build context. | **47 comments in shipped `frontend/src` and `frontend/e2e` code cite specific mockup files as the source of a number or decision** (e.g. `ActionPanel.tsx:151`, `CardFace.tsx:6`, `CardPreview.tsx:61`, `HandFan.tsx:195`, `orb.spec.ts:2`, `layout.spec.ts:7`, `handheldAssert.ts:4`). Deleting orphans all 47. |
-| `mockups/**/shots/` | 153 PNGs | Pure screenshots — most of the 108 MB, least referenced. Regenerable by opening the HTML. | Some READMEs embed them as the record of a design round. |
+| `mockups/` (whole tree) | 391 files, **108 MB** | Static HTML/JS design exploration. No build, test or runtime step consumes it. Already excluded from the Docker build context. | **82 citations across 46 files** in shipped `frontend/src` and `frontend/e2e` name specific mockup paths as the source of a number or decision (up from 47 at the first audit — the habit is growing, not fading). Deleting orphans every one. |
+| `mockups/**/shots/` | 158 PNGs | Pure screenshots — most of the 108 MB, least referenced. Regenerable by opening the HTML. | Some READMEs embed them as the record of a design round. |
 | `mockups/art/` + `mockups/fetch_art.py` | 67 JPGs + 1 script | Duplicates a subset of `data/art/`; used only by `05-planar-art.html`. | `fetch_art.py` re-downloads them; removal is reversible. |
-| `frontend/tests/zzrepro.test.tsx`, `zzrepro2.test.tsx` | 2 files | **Clearest disposal candidate.** Untracked, assertion-free `console.log` traces that break two CI gates. See `LP-01`. | They are an in-flight investigation of `FB-01`. Confirm with their author first. |
 
-`frontend/src/testing/scenarios.ts` (1008 lines) was assessed and is **not** a disposal
-candidate: it is imported by the story suite that runs 365 passing tests.
+`frontend/tests/zzrepro*.test.tsx`, the first audit's clearest candidate, are gone.
+`frontend/src/testing/scenarios.ts` (1008 lines) is imported by the story suite that
+runs 381 passing tests and is **not** a candidate.
 
 ## Unverified / ambiguous — flagged rather than guessed
 
-- **UV-01** — RESOLVED. Both Playwright projects completed: chromium `3 failed,
-  14 skipped, 107 passed (20.4m)`; handheld `15 passed (1.1m)`. Note the handheld
-  project runs only **15** tests against `docs/testing.md`'s claim of 112 e2e tests
-  overall, and it is the project the docs call the only CI gate on the handheld floors.
-- **UV-02** — the 20 `DC-01` dead-code candidates are **candidates only**. The engine
-  registers effect ops dynamically (`register()` in `engine/effects/__init__.py`, which
-  `pyproject.toml` grants an `E402` exemption for). A grep-based reference count cannot
-  see dispatch through a registry. Each needs hand-confirmation.
-- **UV-03** — duplication between `handheldAssert.ts` and the `mockups/*/assert.js`
-  files was checked by function-name intersection only (result: empty). Semantic
-  duplication of the 16/44/96 pixel floors across e2e, CSS and Storybook config is
-  plausible but **not** confirmed.
-- **UV-04** — `tests/cards` skips **3958** tests. Sampled skip reasons are per-card
-  conditionals (`"zodiac_ox produces no mana"`, `"… has no activated abilities"`) —
-  correct conditional sub-tests, not disabled coverage. Not counted as a coverage gap.
-  The full 3958 were not individually reviewed.
-- **UV-05** — the 160-game arena stage and the live-uvicorn stage from `verify.py` were
-  **not** run. They were deferred to keep CPU contention off the timing-sensitive
-  Playwright run, and by the time it finished the working tree was no longer the tree
-  being audited (see the concurrency warning above), so running them would have
-  measured different code. Their status at `0161573` is unknown.
-- **UV-06** — RESOLVED for Python: full-suite coverage completed at **91%** (see `CG-05`,
-  `CG-06`). **Frontend coverage was still not produced.** `@vitest/coverage-v8` is now
-  installed and `npx vitest run --project=unit --coverage` will work, but it was not run
-  — by the time the slot was free the working tree was no longer the tree being audited
-  (see the concurrency warning above), so any number would describe different code.
-  `CG-02`'s frontend gaps are therefore structural (no referencing test file), not
-  percentage-based.
-- **UV-07** — root causes for `FB-01`, `FB-02`, `FB-03`, `FB-04`, `FB-06`, `FB-07`,
-  `FB-08`, `FB-09`, `FB-12`, `FB-13`, `FB-14` are **not** established. `FB-05`, `FB-10` and
-  `FB-11` are confirmed.
+- **UV-01** — RESOLVED at both audits; chromium `3 failed, 14 skipped, 107 passed (19.9m)`, handheld `24 passed (3.2m)`. 148 cases across the two projects (124 + 24; they are disjoint — `chromium` ignores `handheld|pad|deckfit.spec.ts`, `handheld` matches `handheld|pad`) against `docs/testing.md`'s claim of 118 for `frontend/e2e/`. Adding `deckfit` (8) makes 156 cases across three projects. `verify.py` runs none of them — Playwright is not a verify stage (`docs/testing.md`: *"Playwright is not run here"*), so every `FT-` finding in this report is invisible to the gate.
+- **UV-02** — the 19 `DC-01` candidates are **candidates only**. The engine registers
+  effect ops dynamically (`register()` in `engine/effects/__init__.py`), and a grep
+  cannot see dispatch through a registry. `remove_attacker` leaving the list because
+  a caller appeared is the kind of thing this caveat exists for.
+- **UV-03** — duplication between `handheldAssert.ts` and `mockups/*/assert.js` was
+  checked by function-name intersection only. Unchanged.
+- **UV-04** — `tests/cards` skips **4149** tests. Sampled reasons are per-card
+  conditionals, not disabled coverage. Not counted as a gap; not individually reviewed.
+- **UV-05** — RESOLVED. Both stages the first audit deferred were run this time
+  (stages 8 and 9) and both pass. Two things worth noting from their output: the
+  arena stage's *label* in `verify.py:194` ("120 duels + 40 pods") does not match
+  what its command plays (60 games at each of two pod sizes), and the 4-player live
+  game prints `WARN never reached a combat declaration` — the same shape of gap as
+  `CG-01`, in the one smoke test that runs against a real socket.
+- **UV-06** — RESOLVED. Frontend unit coverage was produced this time (stage 19). It
+  covers the `unit` vitest project only: the two Storybook projects run in a real
+  Chromium and are not instrumented, so components whose only tests are stories
+  (`OpeningHand.tsx`, `StackPanel.tsx`, `EventTicker.tsx`, `InviteDialog.tsx`) read
+  lower than their true exercised fraction.
+- **UV-07** — root causes for `FB-02`, `FB-04`, `FB-06`, `FB-08`, `FB-12`, `FB-13`
+  are **not** established. `FB-10`'s cause is established and was answered with
+  documentation rather than code.
+- **UV-08** — RESOLVED, and worth a line each. The two Python warnings (stage 18's
+  `2 warnings`) are: `tests/unit/test_shield_counter.py::TestDiamondCity` defines a
+  class-scoped fixture as an instance method — `PytestRemovedIn10Warning`, i.e. it
+  will be an error on the next pytest major; and `fastapi/testclient.py:1` —
+  `StarletteDeprecationWarning: Using httpx with starlette.testclient is deprecated;
+  install httpx2 instead`, which is a dependency's problem, not this repo's.
 
 ## Appendices
 
 ### Untested frontend modules (CG-02)
 
-Zero references from any `*.test.ts(x)`, `*.spec.ts` or `*.stories.tsx`:
+Zero references from any `*.test.ts(x)`, `*.spec.ts` or `*.stories.tsx`, with the unit
+coverage each one actually gets (stage 19). The grep and the number disagree often
+enough that the number is the one to trust:
 
 ```
-frontend/src/audio/sfx.ts
-frontend/src/components/game/CardHold.tsx          <- FB-03, FB-08
-frontend/src/components/game/ChoiceCombo.tsx       <- FB-01
-frontend/src/components/game/GroupDial.tsx         <- FB-04
-frontend/src/components/game/OpponentBoard.tsx     <- LP-03
-frontend/src/components/game/SeatIcon.tsx
-frontend/src/components/lobby/Mark.tsx
-frontend/src/components/lobby/doorArt.tsx
-frontend/src/components/ui/ActionIcon.tsx
-frontend/src/components/ui/ControllerPanel.tsx
-frontend/src/components/ui/SchemePicker.tsx
-frontend/src/motion/springs.ts
-frontend/src/screens/DeckDossierRoute.tsx
-frontend/src/screens/GameRoute.tsx                 <- FB-04, FB-06
-frontend/src/screens/HomeRoute.tsx
-frontend/src/screens/NotFound.tsx
-frontend/src/screens/PodRoute.tsx
-frontend/src/state/useHandLift.ts                  <- FB-07
-frontend/src/state/useHandheld.ts
-frontend/src/state/useImages.ts
+frontend/src/audio/sfx.ts                            11%
+frontend/src/components/game/CardHold.tsx            17%   <- FB-08
+frontend/src/components/game/ChoiceCombo.tsx         91%
+frontend/src/components/game/GroupDial.tsx            6%   <- LP-02
+frontend/src/components/game/OpponentBoard.tsx       14%   <- LP-03
+frontend/src/components/game/SeatIcon.tsx           100%
+frontend/src/components/lobby/Mark.tsx                0%
+frontend/src/components/lobby/doorArt.tsx           100%
+frontend/src/components/ui/ActionIcon.tsx           100%
+frontend/src/components/ui/ControllerPanel.tsx        5%
+frontend/src/components/ui/SchemePicker.tsx         100%
+frontend/src/motion/springs.ts                      100%
+frontend/src/screens/DeckDossierRoute.tsx             —    (not in the report; route-only)
+frontend/src/screens/GameRoute.tsx                   92%   <- FB-04, FB-06 (B/L1 paths untested)
+frontend/src/screens/HomeRoute.tsx                   44%
+frontend/src/screens/NotFound.tsx                   100%
+frontend/src/screens/PodRoute.tsx                    64%
+frontend/src/state/useHandLift.ts                    90%
+frontend/src/state/useHandheld.ts                    89%
+frontend/src/state/useImages.ts                     100%
 ```
 
-`CardHold.tsx` appears only indirectly, inside `Table.stories.tsx`.
+Lowest-covered modules **not** in the grep list, because a story or an unrelated test
+imports them without exercising them: `NewGameScreen.tsx` 0%, `main.tsx` 0%,
+`CardGhost.tsx` 4%, `OpeningHand.tsx` 4%, `InviteDialog.tsx` 5%, `StackPanel.tsx` 5%,
+`EventTicker.tsx` 7%, `actuators.ts` 12%, `scheduler.ts` 16%, `ParticleLayer.tsx` 17%,
+`CombatArrows.tsx` 17%, `FxLayer.tsx` 17%, `CommanderCard.tsx` 25%.
+
+Per directory: `src/logic` **91%**, `src/input` **87%**, `src/components/lobby` 77%,
+`src/screens` 73%, `src/state` 67%, `src/components/game` 62%, `src/components/ui`
+61%, `src/fx` 55%, `src/api` 16%, `src/components/menu` 14%, `src/audio` 11%.
 
 ### Dead-code candidates (DC-01) — unconfirmed, see UV-02
 
 ```
-src/automtg/ai/action_space.py:324          decision_kind_of
-src/automtg/ai/action_space.py:328          creature_power
-src/automtg/cards/authoring/templates.py:953 sentence_patterns
-src/automtg/cards/images.py:128             normal_url
-src/automtg/engine/actions.py:241           chosen_refs
-src/automtg/engine/actions.py:244           chosen_values
-src/automtg/engine/carddef.py:788           color_set
-src/automtg/engine/characteristics.py:102   printed_chars
-src/automtg/engine/characteristics.py:976   effective_toughness
-src/automtg/engine/combat.py:420            remove_attacker
-src/automtg/engine/effects/selectors.py:963 sorted_candidates
-src/automtg/engine/game.py:1267             hand_size_limit
-src/automtg/engine/game.py:1271             target_ref
-src/automtg/engine/legality.py:1411         creature_can_attack
-src/automtg/engine/mana.py:174              total_required
-src/automtg/engine/primitives.py:1469       controlled_by
-src/automtg/engine/rng.py:55                spawn
-src/automtg/engine/state.py:337             maybe_obj
-src/automtg/engine/state.py:471             objects_in
-src/automtg/engine/state.py:688             sorted_oids
+src/automtg/ai/action_space.py:324           decision_kind_of
+src/automtg/ai/action_space.py:328           creature_power
+src/automtg/cards/authoring/templates.py:958 sentence_patterns
+src/automtg/cards/images.py:152              normal_url
+src/automtg/engine/actions.py:277            chosen_refs
+src/automtg/engine/actions.py:280            chosen_values
+src/automtg/engine/carddef.py:969            color_set
+src/automtg/engine/characteristics.py:102    printed_chars
+src/automtg/engine/characteristics.py:1177   effective_toughness
+src/automtg/engine/effects/selectors.py:1213 sorted_candidates
+src/automtg/engine/game.py:1415              hand_size_limit
+src/automtg/engine/game.py:1419              target_ref
+src/automtg/engine/legality.py:1744          creature_can_attack
+src/automtg/engine/mana.py:202               total_required
+src/automtg/engine/primitives.py:1729        controlled_by
+src/automtg/engine/rng.py:55                 spawn
+src/automtg/engine/state.py:348              maybe_obj
+src/automtg/engine/state.py:495              objects_in
+src/automtg/engine/state.py:735              sorted_oids
 ```
 
-### Oversized files (OF-01) — >600 lines, shipped code, mockups excluded
+Dropped since the first audit: `combat.py remove_attacker` — now called at `combat.py:525`.
 
-| Path | Lines |
-|---|---|
-| `src/automtg/cards/loader.py` | 3652 |
-| `frontend/src/components/game/Table.tsx` | 1742 |
-| `src/automtg/engine/effects/ops_board.py` | 1619 |
-| `src/automtg/engine/characteristics.py` | 1583 |
-| `src/automtg/engine/primitives.py` | 1470 |
-| `src/automtg/engine/legality.py` | 1419 |
-| `src/automtg/engine/combat.py` | 1390 |
-| `src/automtg/engine/costs.py` | 1341 |
-| `frontend/src/components/game/ActionPanel.tsx` | 1277 |
-| `src/automtg/engine/game.py` | 1272 |
-| `src/automtg/engine/triggers.py` | 1208 |
-| `src/automtg/engine/effects/ops_cards.py` | 1080 |
-| `frontend/src/testing/scenarios.ts` | 1008 |
-| `src/automtg/engine/structs.py` | 972 |
-| `src/automtg/engine/effects/selectors.py` | 965 |
-| `src/automtg/cards/authoring/templates.py` | 959 |
-| `src/automtg/cards/proxy.py` | 921 |
-| `src/automtg/engine/carddef.py` | 919 |
-| `frontend/src/input/pad.ts` | 912 |
-| `frontend/src/components/game/Table.stories.tsx` | 894 |
-| `src/automtg/cards/authoring/verify.py` | 831 |
-| `src/automtg/engine/mana.py` | 819 |
-| `frontend/src/logic/events.ts` | 814 |
-| `src/automtg/server/lobby.py` | 792 |
-| `tests/cards/test_proxy.py` | 787 |
-| `src/automtg/engine/effects/values.py` | 776 |
-| `frontend/e2e/cycle3.spec.ts` | 764 |
-| `src/automtg/engine/turn.py` | 762 |
-| `src/automtg/engine/stack.py` | 752 |
-| `src/automtg/cards/schema.py` | 732 |
-| `tests/cards/test_every_card_works.py` | 699 |
-| `src/automtg/engine/state.py` | 690 |
-| `tests/unit/test_saga.py` | 688 |
-| `frontend/tests/components.test.tsx` | 687 |
-| `frontend/e2e/pod.spec.ts` | 681 |
-| `frontend/src/input/cursor.ts` | 677 |
-| `frontend/e2e/action-panel.spec.ts` | 671 |
-| `frontend/src/components/lobby/HomeScreen.tsx` | 665 |
-| `frontend/e2e/handheldAssert.ts` | 665 |
-| `tests/unit/test_delayed_object_reference.py` | 644 |
-| `tests/unit/test_monarch.py` | 643 |
-| `src/automtg/server/routes.py` | 623 |
-| `tests/unit/test_goad.py` | 621 |
-| `frontend/src/logic/zoomFit.ts` | 608 |
-| `frontend/src/components/game/FxLayer.tsx` | 605 |
+### Oversized files (OF-01) — >600 lines, shipped code, mockups and CSS excluded
 
-## Out of scope: one feature request received
+| Path | Lines | At `0161573` |
+|---|---|---|
+| `src/automtg/cards/loader.py` | 5196 | 3652 |
+| `src/automtg/engine/effects/ops_board.py` | 2081 | 1619 |
+| `src/automtg/engine/characteristics.py` | 2043 | 1583 |
+| `frontend/src/components/game/Table.tsx` | 2030 | 1742 |
+| `src/automtg/engine/legality.py` | 1752 | 1419 |
+| `src/automtg/engine/primitives.py` | 1730 | 1470 |
+| `src/automtg/engine/combat.py` | 1559 | 1390 |
+| `src/automtg/engine/costs.py` | 1514 | 1341 |
+| `src/automtg/engine/effects/ops_cards.py` | 1429 | 1080 |
+| `src/automtg/engine/game.py` | 1420 | 1272 |
+| `frontend/src/components/game/ActionPanel.tsx` | 1367 | 1277 |
+| `src/automtg/engine/triggers.py` | 1266 | 1208 |
+| `src/automtg/engine/effects/selectors.py` | 1215 | 965 |
+| `src/automtg/engine/carddef.py` | 1100 | 919 |
+| `src/automtg/cards/authoring/verify.py` | 1066 | 831 |
+| `frontend/src/components/game/Table.stories.tsx` | 1024 | 894 |
+| `src/automtg/engine/structs.py` | 1021 | 972 |
+| `frontend/src/testing/scenarios.ts` | 1008 | 1008 |
+| `src/automtg/engine/stack.py` | 977 | 752 |
+| `src/automtg/cards/authoring/templates.py` | 964 | 959 |
+| `src/automtg/cards/schema.py` | 929 | 732 |
+| `src/automtg/cards/proxy.py` | 928 | 921 |
+| `frontend/src/input/pad.ts` | 927 | 912 |
+| `src/automtg/engine/effects/values.py` | 926 | 776 |
+| `src/automtg/engine/mana.py` | 847 | 819 |
+| `frontend/src/logic/events.ts` | 843 | 814 |
+| `tests/cards/test_every_card_works.py` | 822 | 699 |
+| `tests/cards/test_proxy.py` | 818 | 787 |
+| `src/automtg/server/lobby.py` | 792 | 792 |
+| `src/automtg/engine/turn.py` | 783 | 762 |
+| `frontend/e2e/cycle3.spec.ts` | 764 | 764 |
+| `src/automtg/engine/objects.py` | 754 | new |
+| `frontend/src/input/cursor.ts` | 739 | 677 |
+| `src/automtg/engine/state.py` | 737 | 690 |
+| `src/automtg/engine/zones.py` | 717 | new |
+| `frontend/e2e/pad.spec.ts` | 705 | new |
+| `tests/cards/test_authoring.py` | 700 | new |
+| `src/automtg/engine/effects/ops_control.py` | 693 | new |
+| `tests/unit/test_saga.py` | 688 | 688 |
+| `frontend/tests/components.test.tsx` | 687 | 687 |
+| `frontend/e2e/pod.spec.ts` | 681 | 681 |
+| `frontend/e2e/action-panel.spec.ts` | 671 | 671 |
+| `frontend/src/components/lobby/HomeScreen.tsx` | 665 | 665 |
+| `frontend/e2e/handheldAssert.ts` | 665 | 665 |
+| `src/automtg/engine/targeting.py` | 663 | new |
+| `tests/unit/test_delayed_object_reference.py` | 644 | 644 |
+| `tests/unit/test_monarch.py` | 643 | 643 |
+| `src/automtg/cards/images.py` | 624 | new |
+| `src/automtg/server/routes.py` | 623 | 623 |
+| `tests/unit/test_goad.py` | 621 | 621 |
+| `frontend/src/logic/zoomFit.ts` | 608 | 608 |
+| `frontend/src/components/game/PlayerOrb.tsx` | 608 | new |
+| `frontend/src/components/game/FxLayer.tsx` | 605 | 605 |
 
-During the audit the user also asked to **make the `X` button show an opponent's board,
-the same as clicking their orb does today**. That is a change request, not debt, and
-this audit made no source changes — recorded here so it is not lost.
+For the record, the stylesheets excluded above would add eight more: `handheld.css`
+2282, `board.css` 2278, `lobby.css` 1756, `ui.css` 1649, `cards.css` 1159, `seat.css`
+741, `door.css` 697.
+
+## Out of scope: the feature request from the first audit
+
+The user asked, during the first audit, to **make the `X` button show an opponent's
+board, the same as clicking their orb does today**. Not done — and #19 has since bound
+`X` to something else: it is now the commit shortcut (`Table.tsx:1368` → `secondary`;
+`docs/steamdeck.md` documents it as Pass / All attack / Attack / All defend / Block).
+The request is still open but needs a different button.
