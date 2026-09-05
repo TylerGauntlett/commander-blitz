@@ -11,7 +11,7 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { actionButtons, actionsOfKind, startGame, waitForOurTurn } from "./helpers";
+import { actionButtons, actionsOfKind, budget, startGame, waitForOurTurn } from "./helpers";
 
 test.describe("mana is visible", () => {
   test("the player orb counts every available mana in its panel", async ({ page }) => {
@@ -95,7 +95,7 @@ test.describe("card type is encoded on the card", () => {
 
 test.describe("a decision's buttons exist exactly once", () => {
   test("no two rendered actions share an action id", async ({ page }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(budget(300_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
 
     for (let i = 0; i < 260; i += 1) {

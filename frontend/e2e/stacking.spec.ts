@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { actionsOfKind, isOver, startGame, takeAction, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  budget,
+  isOver,
+  startGame,
+  takeAction,
+  waitForOurTurn,
+} from "./helpers";
 
 /**
  * Identical permanents collapse into one stack with a count badge.
@@ -9,7 +16,7 @@ import { actionsOfKind, isOver, startGame, takeAction, waitForOurTurn } from "./
  */
 test("duplicate lands collapse into a counted stack", async ({ page }) => {
   test.slow();
-  test.setTimeout(300_000);
+  test.setTimeout(budget(300_000));
 
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
@@ -56,7 +63,7 @@ test("duplicate lands collapse into a counted stack", async ({ page }) => {
 
 test("a stack fans out on hover so each copy stays reachable", async ({ page }) => {
   test.slow();
-  test.setTimeout(300_000);
+  test.setTimeout(budget(300_000));
 
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
