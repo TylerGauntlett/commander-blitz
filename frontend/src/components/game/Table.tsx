@@ -16,7 +16,7 @@ import { motion } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import { type SoundName, play } from "../../audio/sfx";
-import { drive, restAll } from "../../fx/actuators";
+import { drive } from "../../fx/actuators";
 import { getCursor, setCursor, setCursorContext, subscribeCursor } from "../../input/cursor";
 import {
   type GroupId,
@@ -30,8 +30,10 @@ import {
   resetGroups,
   setGroup,
 } from "../../input/groups";
-import { onAny as onAnyPad, on as onPad, onFrame as onPadFrame } from "../../input/pad";
+import { onAny as onAnyPad, on as onPad } from "../../input/pad";
 import { sendableIn, stopElement, stopId, stopRoot } from "../../input/stops";
+import { useGroupDial } from "../../input/useGroupDial";
+import { useOpponentReading } from "../../input/useOpponentReading";
 import {
   actionsForCard,
   availableBlockers,
@@ -50,6 +52,7 @@ import { commandersOf, findCard, seatOrder } from "../../logic/zoneGrouping";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
 import { useHandheldLayout } from "../../state/useHandheld";
+import { useNarrationSkip } from "../../state/useNarrationSkip";
 import { useTableDerived } from "../../state/useTableDerived";
 import { useZoomFit } from "../../state/useZoomFit";
 import { Glyph } from "../ui/Glyph";
@@ -67,7 +70,7 @@ import { HandFan } from "./HandFan";
 import { HintBar } from "./HintBar";
 import { OpeningHand } from "./OpeningHand";
 import { OpponentBoard } from "./OpponentBoard";
-import { ParticleLayer, clearParticles } from "./ParticleLayer";
+import { ParticleLayer } from "./ParticleLayer";
 import { PhaseTrack } from "./PhaseTrack";
 import { PlayerMat } from "./PlayerMat";
 import { PromptDialog, ownsDecision } from "./PromptDialog";
@@ -113,7 +116,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * reading hold is: a hold has no meaning across a re-render, and a hold kept
    * in a store is a hold that can get stuck.
    */
-  const [dialOpen, setDialOpen] = useState(false);
+  const [dialOpen, setDialOpen] = useGroupDial();
 
   /*
    * The card being read full screen, by oid.
@@ -179,6 +182,9 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    */
   const handheld = useHandheldLayout();
 
+  /** Which opponent is being read while `R2` is held. See `useOpponentReading`. */
+  const reading = useOpponentReading(handheld, opponents, state.seat);
+
   // Card positions are remembered globally, by oid, and oids restart with each
   // game. Leaving them behind would let the first death of a new table fly out
   // of wherever the last table's card #12 happened to be sitting.
@@ -204,36 +210,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const fullControlMutate = game.setFullControl.mutate;
   const manualManaMutate = game.setManualMana.mutate;
 
-  /**
-   * Empty the queue and put the board back at rest.
-   *
-   * Skipping used to leave whatever was mid-flight still flying: `narration`
-   * owns the beats, but the particles, the card actuators and the screen shake
-   * all run on their own clocks past the end of the beat that started them --
-   * which is exactly what makes a turn read as continuous, and exactly what you
-   * do not want the instant the player says "enough".
-   */
-  const skipNarration = narration.skip;
-  const skipAll = useCallback(() => {
-    skipNarration();
-    clearParticles();
-    restAll();
-  }, [skipNarration]);
-
-  /**
-   * Whether this gesture should be dropped, and the side effect of not dropping it.
-   *
-   * A click while narration is playing means "get on with it" -- *and* it means
-   * the thing that was clicked. It used to mean only the first: the queue was
-   * skipped and the gesture thrown away, so for the second or two after every
-   * action the board ignored you, and playing it felt like it needed spamming.
-   * Only a genuine in-flight request gates input now.
-   */
-  const narrationBusy = narration.busy;
-  const gateInput = useCallback(() => {
-    if (narrationBusy) skipAll();
-    return busy;
-  }, [busy, narrationBusy, skipAll]);
+  const { skipAll, gateInput } = useNarrationSkip(narration, busy);
 
   /** A sound the player's own hand caused, played without waiting for anybody. */
   const muted = useUiStore((s) => s.muted);
@@ -703,6 +680,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     if (unwind()) cue("back");
   }, [
     dialOpen,
+    setDialOpen,
     heldCard,
     logOverlay,
     toggleLogOverlay,
@@ -811,36 +789,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     onBarAct,
     act,
   ]);
-
-  /**
-   * Which opponent is being read, while `R2` is held.
-   *
-   * A hold rather than a toggle: a toggle needs a second press to put away and
-   * leaves the board covered if you forget, whereas letting go is not something
-   * you can forget to do. `onFrame` because a trigger is analog and has no
-   * press event -- 0.5 is past any resting value and well short of the click.
-   *
-   * The seat is whichever one the ring is on, falling back to the first
-   * opponent, so "look at them" needs no separate act of choosing.
-   */
-  const [reading, setReading] = useState<number | null>(null);
-  const readingRef = useRef<number | null>(null);
-  readingRef.current = reading;
-
-  useEffect(() => {
-    if (!handheld) return;
-    return onPadFrame((frame) => {
-      const held = frame.r2 > 0.5;
-      if (!held) {
-        if (readingRef.current !== null) setReading(null);
-        return;
-      }
-      if (readingRef.current !== null) return;
-      const ref = parseStop(getCursor());
-      const onSeat = ref.kind === "orb" && ref.id !== null && ref.id !== state.seat;
-      setReading(onSeat ? ref.id : (opponents[0] ?? null));
-    });
-  }, [handheld, opponents, state.seat]);
 
   /*
    * A staged attacker leans toward the seat it is aimed at, and holds.
@@ -1065,72 +1013,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     },
     [enterGroup, cue],
   );
-
-  /*
-   * The dial, on `L2` HELD.
-   *
-   * Not on a hold of `L1`, which is where this started and could not work:
-   * `pad.ts` reports PRESSES and has no release event for a shoulder, so a
-   * "hold" there is a timer with nothing to cancel it -- a tap would open the
-   * dial 260ms later, having already stepped.
-   *
-   * `L2` is a TRIGGER, and `onFrame` reports its analog position every frame.
-   * That is the same channel the `R2` opponent reader is held on, for the same
-   * stated reason: letting go is not something you can forget to do. 0.5 is
-   * past any resting value and well short of the click.
-   *
-   * A TAP MUST NOT FLASH IT, and "the tap is over before the dial is worth
-   * looking at" was not true enough to rely on.
-   *
-   * Opening on the press edge meant a tap -- which is a good 100ms of trigger,
-   * because that is how long a thumb takes -- mounted the dial and unmounted it
-   * again. Two things came out of those two frames, and only the first was
-   * cosmetic: a visible flicker across the middle of the screen, and a ring
-   * that moves twice. `GroupDial` puts the ring on its own landing spoke as it
-   * opens, and closing an overlay hands the ring back to the stop that was
-   * underneath -- which is a `resolveCursor` that lands AFTER the tap has
-   * finished. Any direction pressed inside that window is overwritten by the
-   * restore, so `L2` then right -- jump to the combat bar, step to the slab,
-   * which is the whole gesture `L2` exists for -- ate the second press about
-   * half the time. From the player's side the pad simply missed inputs.
-   *
-   * So the dial waits. `HOLD` is the same 260ms the shoulder taps were timed
-   * against, and unlike those this one has something to cancel it: a trigger is
-   * analog, `onFrame` reports its position every frame, and the release edge is
-   * a real event. A tap starts the timer and clears it; a hold lets it fire.
-   */
-  const HOLD = 260;
-  const l2Held = useRef(false);
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const off = onPadFrame((frame) => {
-      const held = frame.l2 > 0.5;
-      /*
-       * ON THE TRIGGER'S EDGE, NOT ON ITS LEVEL.
-       *
-       * This wrote `dialOpen = held` every frame, which is correct while `L2` is
-       * the only thing that opens the dial and wrong the moment anything else
-       * does: the button in the foot would set it true, the very next frame
-       * would read a resting trigger and set it straight back to false, and the
-       * dial would appear not to open at all. A press and a release are events;
-       * a trigger at rest is not one.
-       */
-      if (held === l2Held.current) return;
-      l2Held.current = held;
-      if (timer !== null) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      if (held) timer = setTimeout(() => setDialOpen(true), HOLD);
-      // The release closes it whether or not it ever opened, so a hold that is
-      // let go of never leaves the dial up.
-      else setDialOpen(false);
-    });
-    return () => {
-      if (timer !== null) clearTimeout(timer);
-      off();
-    };
-  }, []);
 
   /*
    * The ring keeps its own group in step with where it actually is.
