@@ -32,7 +32,7 @@ import { groupBattlefield } from "./zoneGrouping";
  *
  * The lands are why it exists. `Threat` never carried them, so "how many lands
  * has that seat got" was unanswerable from the summary at any density, which
- * `mockups/seat/` records as the failure mode the whole family of designs had:
+ * the seat round (`docs/design-record.md#seat`) records as the failure mode the whole family of designs had:
  * **the number was never in the payload, so nothing could contradict it.**
  *
  * Everything here is derived from the view the server already sends, and

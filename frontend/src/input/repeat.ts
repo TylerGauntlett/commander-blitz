@@ -27,7 +27,7 @@
  * Every number lives in `RAMP` as one object. They are reasoned rather than
  * measured -- nobody has held a Deck against this build -- so the first person
  * who does can settle them here without reading the polling loop.
- * `mockups/handheld/README.md` records that as an explicitly open question.
+ * the handheld round (`docs/design-record.md#handheld`) records that as an explicitly open question.
  */
 
 /** The ramp's tunables. One object, so a Deck can settle them in one place. */

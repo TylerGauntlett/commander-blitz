@@ -5,7 +5,7 @@
  * `scrollHeight === clientHeight` even while the board visibly runs under the
  * foot, so a naive overflow assertion is worthless here. Both of the bugs
  * below were present in the mockups and both passed exactly such a check --
- * see mockups/README.md, "Notes on fidelity".
+ * see the design record (`docs/design-record.md#board-themes`), "Notes on fidelity".
  *
  * The lesson these encode is the one docs/playtest-feedback-03.md draws from
  * the mana-pip bug: an assertion about *content* passes happily through a

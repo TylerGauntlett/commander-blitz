@@ -7,7 +7,7 @@
  * cannot reach into `components/` to ask. The inventory is data about the repo's
  * own vendored files, so it belongs on this side of the line either way.
  *
- * Kept in step with `mockups/cards/fetch_symbols.py`'s `WANTED` by hand. A
+ * Kept in step with `frontend/scripts/fetch-symbols.py`'s `WANTED` by hand. A
  * disagreement between the two is invisible in the DOM and shows up only as a
  * blank square, which is what `e2e/cycle3.spec.ts`'s `naturalWidth` check exists
  * to catch.

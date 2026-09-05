@@ -31,29 +31,23 @@ Principles that every round after the first inherited, and that the client's
 ported from.
 
 - **A stated design number is measured, not eyeballed.** Where a visual
-  property reduces to a number, assert the number. An assertion about content
-  passes happily through a layout failure; 2.11px text looked fine in every
-  screenshot taken of the board for months.
-- **`overflow: hidden` on `body` hides layout failure completely.** The page
-  reports `scrollHeight === clientHeight` while content visibly runs under the
-  foot. Two checks a naive overflow test misses:
-  - **escape / last-lane spill** -- a child wider or taller than its block does
-    not scroll the page, it paints over the next sibling. Measure the last
-    `.lane`'s `bottom` against the foot's `top`; measuring the mat does not
-    work because the mat is stretched to its grid row.
-  - **collapse** -- assert a scrolling region still has a height. At 950px the
-    action list silently flattened to 0 in three of five board mockups before a
-    `min-height` floor. Measure the element, not the class name.
-- **Inside a scroll container only the cross axis is an escape** (a row wider
-  than a vertically scrolling list is unreachable by any gesture); outside one,
-  both axes count. A gate that ignored this reported 18 escapes on a file with
-  nothing wrong.
-- **Font sizes are read unscaled and boxes are read through the stage scale.**
-  Getting that backwards reports a 16px floor as 17.9 and passes type that
-  fails on the device.
-- **A `+1` tolerance in an overflow check is the difference between "fits" and
-  "one ellipsis".** `text-overflow` fires the moment `scrollWidth` exceeds
-  `clientWidth` by anything.
+  property reduces to a number, assert the number: an assertion about content
+  passes happily through a layout failure, and 2.11px text looked fine in
+  every screenshot of the board for months.
+- **`overflow: hidden` on `body` hides layout failure completely** -- the page
+  reports `scrollHeight === clientHeight` while content runs under the foot.
+  Two checks a naive overflow test misses: **escape / last-lane spill** (a
+  child wider than its block paints over the next sibling; measure the last
+  `.lane`'s `bottom` against the foot's `top`, not the mat, which is stretched
+  to its grid row) and **collapse** (assert a scrolling region still has a
+  height; at 950px the action list flattened to 0 in three of five board
+  mockups). Measure the element, not the class name.
+- **Inside a scroll container only the cross axis is an escape**; outside one,
+  both axes count. A gate that ignored this reported 18 escapes on a clean file.
+- **Font sizes are read unscaled and boxes through the stage scale**; backwards,
+  a 16px floor reads as 17.9 and passes type that fails on the device.
+- **A `+1` tolerance in an overflow check approves a visible ellipsis** --
+  `text-overflow` fires the moment `scrollWidth` exceeds `clientWidth` at all.
 - **`getBoundingClientRect().width` of a rotated element is its axis-aligned
   box, not its width** (a 176px card measured as 202). A clip check asked of
   `overflow: visible` boxes counts hover labels in `scrollWidth`. `* {
@@ -91,26 +85,21 @@ Five static mockups of one board state (`01-arcane-slate`, `02-candlelit-table`,
 `03-neon-arena`, `04-ink-and-signal`, `05-planar-art`), for picking a direction
 before any component was touched.
 
-**What was wrong with the board it replaced**, in cost order:
-
-1. **The table was green, and green was already taken.** `--felt-0: #0a1410`
-   was a green ground while `--playable: #5ce08a` was the "you can do this" rim
-   and `.face--land-G` the Forest tone. Every mockup started by making the
-   table neutral.
-2. **Every control had the same weight.** One `.btn` served "Attack with 0",
-   "Quit", "Undo", "Auto-pass" and the speed toggle alike. All five split
-   controls into **three tiers**: one large non-rectangular commit button,
-   contextual choices, and a demoted utility strip.
-3. **Activated abilities had no presence on the card.** `Table.onBoardCard`
-   already routed a click to `kind === "activate"` actions; nothing drew it.
-   All five put a rune on the card and a popover behind it.
-4. **Two thirds of the screen was dead.** `.play` gave opponents `1.25fr`
-   against the viewer's `1fr` permanently. Every mockup sized the opponent row
-   to its content.
-5. **`--card-w` was hard-coded at 104px.** All five used `clamp()` **keyed off
-   viewport height, not width** -- the binding constraint on a 1600x950 laptop
-   is vertical, and the shipped `--hand-scale` only ever shrank the hand, so
-   the board was what spilled.
+**What was wrong with the board it replaced**, in cost order: **the table was
+green, and green was already taken** (`--felt-0: #0a1410` under a `--playable:
+#5ce08a` rim and a green Forest tone -- every mockup started by making the
+table neutral); **every control had the same weight** (one `.btn` for "Attack
+with 0", "Quit", "Undo" and the speed toggle alike -- all five split controls
+into **three tiers**: one large non-rectangular commit button, contextual
+choices, a demoted utility strip); **activated abilities had no presence on
+the card** (`Table.onBoardCard` already routed a click to `activate` actions;
+all five put a rune on the card and a popover behind it); **two thirds of the
+screen was dead** (`.play` gave opponents `1.25fr` permanently; every mockup
+sized the opponent row to its content); and **`--card-w` was hard-coded at
+104px** -- all five used `clamp()` **keyed off viewport height, not width**,
+because the binding constraint on a 1600x950 laptop is vertical and the
+shipped `--hand-scale` only ever shrank the hand, so the board was what
+spilled.
 
 **The five.** 01 Arcane Slate (graphite + brass, hex "priority stone", 13 phase
 ticks collapsed to 5 with only the live one expanded) was recommended as the
@@ -264,11 +253,10 @@ difficulty per seat, imported from Moxfield (fail then succeed), opened a chair
 to another player, and pressed Play, which committed visibly and did nothing
 else -- the rule for every interactive mockup after it.
 
-**What was wrong**: the menu was the last green surface in an indigo app
-(`.deck` still carried a literal felt gradient; the title was `--gold` at 46px
-with a 50px glow, the only place gold was a display face rather than a control
-tier); a 100-card deck rendered as about forty words in a 250px box while the
-deck files' `substitutions` arrays went undisplayed; Opponents, AI and Seed had
+**What was wrong**: the menu was the last green surface in an indigo app (and
+its 46px `--gold` title the only place gold was a display face rather than a
+control tier); a 100-card deck rendered as forty words in a 250px box while
+the deck files' `substitutions` went undisplayed; Opponents, AI and Seed had
 equal weight; the AI toggle leaked `heuristic | random`; and nothing could say
 where a deck came from.
 
@@ -1047,15 +1035,12 @@ is a cut), **`settleMs <= 320`** (past a third of a second a menu is making you
 wait), **`overshootPx <= 8`**. Four more things snapped and none was the
 spring: single-frame label teleports of 20-50% of a card, each a property with
 no in-between (a `data-side` flip, 02's `writing-mode`, 04's alignment flip, the
-face-up flip), each now a fraction of `s`. Worst single-frame movement is now
-**0.0-4.5%** of a card.
-
-**`will-change` on a static blurred backdrop was the cost.** 05 ran at a 33ms
-median (worst 83) with a `blur(26px)` wall; a quarter-size layer and a 3px
-blur changed nothing; **deleting `will-change: transform` fixed it**, because a
-promoted layer re-rasterises the blur while an un-promoted one is rasterised
-once and reused. Keep it on the three moving slots; never put it on a static
-backdrop.
+face-up flip), each now a fraction of `s`; worst single-frame movement is now
+**0.0-4.5%** of a card. And **`will-change: transform` on a static blurred
+backdrop was the frame-rate cost** -- 05 ran at a 33ms median with a
+`blur(26px)` wall, a quarter-size layer and a 3px blur changed nothing, and
+deleting the promotion fixed it, because an un-promoted blur is rasterised once
+and reused. Keep it on the moving slots; never on a static backdrop.
 
 **Three findings that hold whichever direction wins**:
 
@@ -1131,12 +1116,11 @@ that pays off -- **keepable, deliberately**), real oracle text from
 rectangle with an 18px title and two identical grey buttons over the hand,
 with a *gradient* backdrop whose comment admits "a flat dim over the whole
 viewport hid the one thing the player has to look at". Behind it the hand was
-at `clamp(68px, 9.2vh, 96px)` = **73.6px**, where rules text is 8.5px. Neither
-option was drawn as anything because `rowsFor` only draws a face for an option
-with a ref. The count the engine puts in the prompt string
-(`f"Mulligan? ({player.mulligans_taken} taken)"`) was thrown away for a
-constant. And the London mulligan's two questions -- keep, then bottom N --
-went through the same dialog looking like unrelated rooms.
+`clamp(68px, 9.2vh, 96px)` = **73.6px**, where rules text is 8.5px. Neither
+option was drawn as anything (`rowsFor` only draws a face for an option with a
+ref); the count in the engine's own prompt string (`Mulligan? (N taken)`) was
+thrown away for a constant; and the London mulligan's two questions went
+through the same dialog looking like unrelated rooms.
 
 **The round's real answer, from `probe.mjs`**, which binary-searched a real
 card in a real browser for the narrowest width at which it prints its own
@@ -1254,22 +1238,20 @@ or dim them while a modal owns the screen.
 **#4 The preview can pin itself to a stale card -- medium, a bug, partly
 closed.** `CardPreview` renders through `AnimatePresence mode="wait"` keyed on
 the hovered oid, and `hoveredOid` is only cleared by an element's own leave
-handler, so a hand card hovered and then cast unmounts without firing one; the
-rail then shows an earlier card and a new hover does not swap it. The commander
-plinth now clears `hoveredOid` on unmount when it still owns it
-(`tests/commandZone.test.tsx`), and `findCard` searches the stack; `Card.tsx`,
-`HandFan.tsx` and `mode="wait"` are untouched and are where the symptom lives.
-The blocker-list hover is asserted structurally, not behaviourally.
+handler -- a hand card hovered and then cast unmounts without firing one, so
+the rail shows an earlier card and a new hover does not swap it. The commander
+plinth now clears `hoveredOid` on unmount when it still owns it and `findCard`
+searches the stack; `Card.tsx`, `HandFan.tsx` and `mode="wait"` are untouched
+and are where the symptom lives. The blocker-list hover is asserted
+structurally, not behaviourally.
 
 **The focus ring cannot see a transform on a descendant -- low, a bug.**
-`input/ring.ts`'s `ringTargetFor` walks *ancestors* accumulating rotation and
-scale (which is why the hand fan works -- its rotation is on `.hand__lift`,
-above the card), but the tap rotation is on `.card__pivot` and the
-staged-attacker lean on `.card__actor`, both below the ring's node, so the ring
-is the axis-aligned envelope. Pad and keyboard only; the `::after` rim half is
-fixed (it moved onto `.card__actor`, inside both transforms). Fix direction: a
-descendant walk, or the actuators publishing their held transform. No test
-covers it.
+`ringTargetFor` walks *ancestors* accumulating rotation and scale (the hand fan
+works because its rotation is on `.hand__lift`, above the card), but the tap
+rotation is on `.card__pivot` and the staged lean on `.card__actor`, below the
+ring's node, so the ring is the axis-aligned envelope. Pad and keyboard only;
+the `::after` rim half is fixed (it moved onto `.card__actor`). Fix direction:
+a descendant walk, or the actuators publishing their held transform. Untested.
 
 **#6 Card type and keyword lines sit on their pixel floor -- low, a trade.**
 `.face__type` and `.face__kwline` measure exactly 8.5px on opponent mats at

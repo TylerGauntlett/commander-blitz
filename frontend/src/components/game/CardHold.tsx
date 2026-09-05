@@ -54,7 +54,7 @@ export function CardHold({ card }: Props) {
       aria-live="polite"
     >
       {/*
-        `variant="big"` at 330px, which is `mockups/handheld-board/`'s number
+        `variant="big"` at 330px, which is the handheld-board round's (`docs/design-record.md#handheld-board`) number
         and is the same component the desktop rail draws -- the roadmap's rule
         for this whole round is that the card sizes are fine as they are and
         what changes is which one is used where.

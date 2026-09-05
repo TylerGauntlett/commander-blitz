@@ -29,9 +29,9 @@ controller". The client is playable end to end on a gamepad at a Steam Deck's
 
 ## The opening hand — shipped
 
-`mockups/mulligan/01-the-deal.html` is meshed into the client as `OpeningHand`. See
+the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`) is meshed into the client as `OpeningHand`. See
 `docs/frontend.md` ("The first decision of every game has its own screen") for what it is
-and `mockups/mulligan/README.md` for why it looks that way.
+and the mulligan round (`docs/design-record.md#mulligan`) for why it looks that way.
 
 The first decision of every game was a centred rectangle with two identical grey buttons,
 drawn on top of a 73.6px hand whose rules text resolved to 8.5px and was dropped. It is now
@@ -58,7 +58,7 @@ Measured at 1280x800 against the mockup's own numbers:
 
 ### Deliberately not done
 
-**The other four directions.** `mockups/mulligan/` drew five and this ports one. 02's read
+**The other four directions.** the mulligan round (`docs/design-record.md#mulligan`) drew five and this ports one. 02's read
 panel is the one most worth revisiting — it answers "should I keep this" better than any
 card's rules text does — but it is a different screen rather than an addition to this one.
 
@@ -68,7 +68,7 @@ this direction does not need one, because the card you are on is already at that
 
 ## Steamdeck Full Game Support — shipped
 
-`mockups/handheld-board/` is meshed into the client. See `docs/frontend.md`
+the handheld-board round (`docs/design-record.md#handheld-board`) is meshed into the client. See `docs/frontend.md`
 ("Where things sit on screen", "What the compact layout gives up", "Jumping
 around the board") for what the board is now, and `docs/testing.md` for the
 gates that hold it.
@@ -99,7 +99,7 @@ What landed, and the measured numbers at 1280x800 against the mockup's:
 
 ### Deliberately not done
 
-**Lane overlap.** `mockups/handheld-board/` lays a lane out with a measured
+**Lane overlap.** the handheld-board round (`docs/design-record.md#handheld-board`) lays a lane out with a measured
 `--step` so cards overlap by exactly as much as they must; the client still
 wraps. Adopting it inverts `useZoomFit`, which is `flex-wrap` arithmetic end to
 end — with one card per lane the height budget stops binding and the constraint

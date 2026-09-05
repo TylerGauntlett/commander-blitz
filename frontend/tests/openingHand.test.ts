@@ -4,7 +4,7 @@
  * Two claims, and neither is provable by looking at the screen.
  *
  * **Nothing moves when the selection does.** That is the whole third pass of
- * `mockups/mulligan/01-the-deal.html`, and a screenshot cannot show it -- a
+ * the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`), and a screenshot cannot show it -- a
  * still of a row that slides is indistinguishable from a still of one that does
  * not. `handRow` not taking a selected index at all is the design; these tests
  * are what stop somebody adding one.

@@ -5,7 +5,7 @@
  *
  * They were `▣` and `▢` -- filled and empty of one shape, on the argument that
  * this *is* the relationship between "every legal choice" and "none of them".
- * The relationship is real; the reading of it is not. `mockups/handheld-board/`
+ * The relationship is real; the reading of it is not. the handheld-board round (`docs/design-record.md#handheld-board`)
  * is a document you study, and a player who has not read it sees two squares and
  * has no way to tell which is which, let alone that one of them ends the
  * declaration. Playtest called them out by name.
