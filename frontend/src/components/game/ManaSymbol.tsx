@@ -3,7 +3,7 @@
  *
  * These used to be a letter on a CSS disc -- a `G` in a green circle -- which is
  * a mark nobody who plays the game recognises. The real ones are published as
- * SVG from Scryfall's open `/symbology` endpoint, and `mockups/cards/fetch_symbols.py`
+ * SVG from Scryfall's open `/symbology` endpoint, and `frontend/scripts/fetch-symbols.py`
  * pulls them. They are vendored into `public/symbols/` under exactly the
  * architecture the card art uses (docs/card-catalog.md): fetch once, store in the
  * repo, skip on re-run, nothing running anywhere at render time. `e2e/art.spec.ts`

@@ -32,7 +32,7 @@ export const FALLBACK_BASE = 104;
 export const MIN_CARD_W = 52;
 
 /**
- * The floor on a handheld, from `mockups/handheld/assert.js`'s `CARD_FLOOR`.
+ * The floor on a handheld, from the handheld round's gate (`docs/design-record.md#gates-and-measurement`)'s `CARD_FLOOR`.
  *
  * Any card the focus ring can land on must be at least this wide. It is derived
  * from a 7-inch panel at 40-50cm rather than from a DPI number: below about

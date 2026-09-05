@@ -132,7 +132,7 @@ export function ActionPanel({
    * longer holds: the rail runs the full height of the screen now, 748px rather
    * than 514, so the 65px the slab costs is affordable and the list still comes
    * out at 363-398. Putting it back is also the arrangement
-   * `mockups/handheld-board/` draws and the one that reads better -- the thing
+   * the handheld-board round (`docs/design-record.md#handheld-board`) draws and the one that reads better -- the thing
    * you press to end a decision belongs under the list of that decision, not in
    * the corner of the hand.
    *

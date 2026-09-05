@@ -147,7 +147,7 @@
 }
 
 /*
- * 330px, which is `mockups/handheld-board/`'s number for this hold.
+ * 330px, which is the handheld-board round's (`docs/design-record.md#handheld-board`) number for this hold.
  *
  * The roadmap's rule for the whole round is that the card sizes are fine as
  * they are and what changes is which one is used where -- so this is the same

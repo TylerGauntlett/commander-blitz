@@ -1,7 +1,7 @@
 /**
  * The handheld gates, as numbers.
  *
- * Ported from `mockups/handheld/assert.js`, whose founding principle is the one
+ * Ported from the handheld round's gate (`docs/design-record.md#gates-and-measurement`), whose founding principle is the one
  * this file exists for:
  *
  * > Where a visual property reduces to a number, assert the number.
@@ -82,7 +82,7 @@ export interface HandheldReport {
    * Seats whose counts disagree with the board they summarise.
    *
    * THE FAILURE MODE THIS WHOLE FAMILY OF COMPONENTS HAS.
-   * `mockups/seat/README.md` records five of its six directions as unable to be
+   * the seat round (`docs/design-record.md#seat`) records five of its six directions as unable to be
    * WRONG about the board -- lands were never in the payload, so nothing could
    * contradict them, and "how many lands has that seat got" was unanswerable
    * from the strip at any density.
@@ -393,8 +393,8 @@ export function handheldAssert(): HandheldReport {
      * the feature; `docs/roadmap.md` asks for it by name.
      *
      * `offsetLeft` and `offsetWidth` are untransformed layout values, which is
-     * the same distinction `mockups/handheld-board/_board.js` records about its
-     * own `BOARD.lay()` -- and the same trap `mockups/seat/assert.js` fell into
+     * the same distinction the handheld-board round's layout code (`docs/design-record.md#handheld-board`) records about its
+     * own `BOARD.lay()` -- and the same trap the seat round's gate (`docs/design-record.md#gates-and-measurement`) fell into
      * when it divided a font size by a scale.
      */
     const kids = [...el.children] as HTMLElement[];
@@ -418,7 +418,7 @@ export function handheldAssert(): HandheldReport {
    * THE SEAT AND THE BOARD IT SUMMARISES, CHECKED AGAINST EACH OTHER.
    *
    * A summary that cannot be checked against the thing it summarises is the
-   * failure `mockups/seat/` names. Here it can be: every seat carries
+   * failure the seat round (`docs/design-record.md#seat`) names. Here it can be: every seat carries
    * `data-perm` cells with `data-total`/`data-open`, and that seat's own
    * permanents are in the document under `lane-<pid>-<Lane>` whether or not
    * they are drawn at a size anybody can see.
@@ -510,7 +510,7 @@ export function handheldAssert(): HandheldReport {
   const BUDGET: [string, number][] = [
     // One opponent's whole seat, and its lanes if it has any.
     [".mat--compact", 0.14],
-    // The seat itself, which is a stated 96px design: `mockups/seat/` measured
+    // The seat itself, which is a stated 96px design: the seat round (`docs/design-record.md#seat`) measured
     // every one of its directions inside 332x96, and a seat drawn at some other
     // height is a different design wearing the same name.
     [".seat", 0.13],

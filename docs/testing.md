@@ -323,7 +323,7 @@ unlocking while the host deals never yields a game with an unready seat. Every
 to catch and a hung test that never reports is not a caught deadlock.
 
 **A summary that cannot be checked against the thing it summarises.**
-`mockups/seat/README.md` names this as the failure mode its whole family of
+the seat round (`docs/design-record.md#seat`) names this as the failure mode its whole family of
 components had: five of six directions could not be WRONG about the board,
 because lands were never in the payload, so nothing could contradict them.
 `OpponentSeat` is the shipped answer, so `handheldAssert`'s `seatsDisagree`

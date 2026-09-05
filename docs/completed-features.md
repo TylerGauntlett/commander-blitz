@@ -10333,7 +10333,7 @@ machinery — casting from the graveyard — with a different additional cost.
 **Custom decks via Moxfield, end to end.** Paste a public deck link and play it.
 The whole loop is documented in [deck-import.md](deck-import.md); the short
 version is that `api2.moxfield.com/v3/decks/all/{publicId}` is open to a scripted
-client (the 403 recorded in `mockups/README.md` was a *different* endpoint), and
+client (the 403 recorded in the design record (`docs/design-record.md#board-themes`) was a *different* endpoint), and
 every card characteristic comes from our own catalog rather than from the payload.
 
 **"All cards" was mostly a catalog problem, and it split in two.** `cards.sqlite`
@@ -10549,7 +10549,7 @@ board renders perfectly well, so only a measurement notices a regression.
 
 ### Overview
 
-- Mockups were made for a new main page, in [mockups/menu/](../mockups/menu/README.md).
+- Mockups were made for a new main page, in [the menu round (`docs/design-record.md#menu`)](../the menu round (`docs/design-record.md#menu`)).
   All five are interactive: pick a deck, open a dossier, set difficulty, import
   from Moxfield, open a chair to another player.
 - Combine together elements of the mocks:
@@ -10573,7 +10573,7 @@ board renders perfectly well, so only a measurement notices a regression.
 
 ### Remaining gaps
 
-The board is built against `mockups/05-planar-art.html`. The phase ribbon, the card
+The board is built against the board-themes round's 05 'Planar Art' (`docs/design-record.md#board-themes`). The phase ribbon, the card
 layout, the enlarged rail card and the unified action panel have landed. What is
 still outstanding is enumerated, with severity and a fix direction, in
 [design-record.md](design-record.md#open-fidelity-findings) — read its "Deliberate divergences"

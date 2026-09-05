@@ -1,7 +1,7 @@
 /*
  * The opening hand, at every size.
  *
- * Ported from `mockups/mulligan/01-the-deal.html`, and `mockups/mulligan/README.md`
+ * Ported from the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`), and the mulligan round (`docs/design-record.md#mulligan`)
  * is the argument for it. Short version: the first decision of every game was a
  * centred rectangle with two identical grey buttons, drawn over a hand at
  * 73.6px whose rules text resolved to 8.5px and was dropped. Here the hand is
@@ -340,7 +340,7 @@
    nine times in ten: it is gold, it is the larger of the two, and it is on the
    right, which is where `A` physically sits on the pad. `ui.css`'s `.btn` gives
    both of these the same rectangle -- "the most-pressed control in the game
-   looks exactly like the least-pressed one", which is `mockups/README.md`'s
+   looks exactly like the least-pressed one", which is the design record (`docs/design-record.md#board-themes`)'s
    finding 2, at its most extreme here because these two are the only controls
    on the screen.
    ========================================================================== */

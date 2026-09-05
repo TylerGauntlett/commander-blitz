@@ -10,7 +10,7 @@ import { openCatalog } from "./helpers";
  * What is being tested here is the *screen* -- that the coverage report is
  * honest and legible, and that every failure says something a person can act on.
  *
- * Per `mockups/flow/_flow.js`: "The error state matters more than the happy
+ * Per the flow round's shared state (`docs/design-record.md#flow`): "The error state matters more than the happy
  * path, because it is the state the real feature will spend its life in." So
  * that is most of this file.
  */

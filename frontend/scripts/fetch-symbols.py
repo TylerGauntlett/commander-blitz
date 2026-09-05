@@ -1,8 +1,8 @@
 """Pull the real Magic mana symbols.
 
-Written for the card-face prototypes; direction D shipped, so these are now the
-client's symbols too and the script mirrors them into
-`frontend/public/symbols/` on every run.
+Written for the card-face design round (docs/design-record.md#cards); direction
+D shipped, so these are the client's symbols, written straight into
+`frontend/public/symbols/`.
 
 The client used to draw mana costs as a bare letter on a CSS disc -- `.pip` in
 `frontend/src/styles/cards.css`, fed by `manaPips` in `logic/cardStyle.ts`. It was
@@ -16,14 +16,14 @@ provenance as the card art this repo already vendors (see docs/card-catalog.md),
 and the same architecture: fetch once, store in the repo, skip on re-run, nothing
 running anywhere at render time.
 
-    python mockups/cards/fetch_symbols.py
+    python frontend/scripts/fetch-symbols.py
 
-Stdlib only, so it runs without the venv -- matching mockups/fetch_art.py, whose
-`get_json` / `download` shape this borrows.
+Stdlib only, so it runs without the venv -- matching scripts/fetch_card_art.py,
+whose `get_json` / `download` shape this borrows.
 
-The SVGs are consumed as `<img src="symbols/G.svg">`, never inlined. A mockup has
-to open standalone from `file://`, where `fetch()` is blocked by the opaque
-origin but `<img>` is not. Scryfall's symbols ship fully coloured, so nothing
+The SVGs are consumed as `<img src="symbols/G.svg">`, never inlined (the round
+that wrote this opened from `file://`, where `fetch()` is blocked and `<img>`
+is not, and the client kept the shape). Scryfall's symbols ship fully coloured, so nothing
 needs recolouring through `currentColor` -- which is just as well, because an
 `<img>` could not be recoloured anyway.
 """
@@ -37,21 +37,15 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-SYMBOL_DIR = Path(__file__).parent / "symbols"
+# `ManaSymbol` loads these from `/symbols/`, which Vite serves out of `public/`
+# in dev and copies into `dist/` on build. This script used to live in the
+# card-face mockup round and mirrored its output here; the mockups are gone
+# (see docs/design-record.md#cards) and the shipped copy is the only copy.
+SYMBOL_DIR = Path(__file__).resolve().parents[1] / "public" / "symbols"
 MANIFEST = SYMBOL_DIR / "manifest.json"
 
-# The client draws these too, now that direction D shipped -- `ManaSymbol` loads
-# them from `/symbols/`, which Vite serves out of `public/` in dev and copies
-# into `dist/` on build. Mirrored rather than symlinked or imported: the mockup
-# has to keep opening standalone from `file://` with no build step, and the
-# client has to keep shipping without reaching into `mockups/`.
-#
-# Kept in step here so a re-run cannot leave the shipped copy stale, which is a
-# failure that shows up as a blank square rather than as an error.
-MIRROR_DIR = Path(__file__).resolve().parents[2] / "frontend" / "public" / "symbols"
-
 # Scryfall asks for a descriptive User-Agent and ~50-100ms between requests.
-HEADERS = {"User-Agent": "AutoMTG-mockups/0.1", "Accept": "application/json"}
+HEADERS = {"User-Agent": "AutoMTG-symbols/0.1", "Accept": "application/json"}
 DELAY = 0.1
 
 SYMBOLOGY = "https://api.scryfall.com/symbology"
@@ -153,27 +147,6 @@ def write_manifest(manifest: dict) -> None:
     MANIFEST.write_text(collapsed + "\n", encoding="utf-8", newline="")
 
 
-def mirror() -> None:
-    """Copy the symbols the client draws into `frontend/public/symbols/`."""
-    if not MIRROR_DIR.parent.exists():
-        print(f"no {MIRROR_DIR.parent} -- skipping the client mirror")
-        return
-    MIRROR_DIR.mkdir(parents=True, exist_ok=True)
-    copied = 0
-    for source in [*sorted(SYMBOL_DIR.glob("*.svg")), MANIFEST]:
-        if not source.exists():
-            continue
-        target = MIRROR_DIR / source.name
-        payload = source.read_bytes()
-        # Only on a real difference, so a no-op run does not churn mtimes and
-        # set every watcher in the repo off.
-        if target.exists() and target.read_bytes() == payload:
-            continue
-        target.write_bytes(payload)
-        copied += 1
-    print(f"mirrored {copied} file(s) to {MIRROR_DIR}")
-
-
 def main() -> None:
     SYMBOL_DIR.mkdir(parents=True, exist_ok=True)
     manifest: dict[str, dict] = {}
@@ -190,7 +163,6 @@ def main() -> None:
         # that way until the next symbol is added, and the frontend lint fails on
         # a run that reported doing nothing.
         write_manifest(manifest)
-        mirror()
         return
 
     print(f"listing symbology ({len(missing)} missing)")
@@ -226,7 +198,6 @@ def main() -> None:
 
     write_manifest(manifest)
     print(f"\n{len(manifest)} entries in {MANIFEST}")
-    mirror()
 
 
 if __name__ == "__main__":

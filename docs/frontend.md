@@ -17,7 +17,7 @@ uvicorn automtg.server.app:get_app --factory --reload
 The previous text-tile playtest client is archived verbatim at `legacy-frontend/` for
 comparison. Nothing builds or imports it.
 
-The board is themed against `mockups/05-planar-art.html`. Where the two still differ
+The board is themed against the board-themes round's 05 'Planar Art' (`docs/design-record.md#board-themes`). Where the two still differ
 — and which of those differences are defects rather than decisions — is tracked in
 [design-record.md](design-record.md#open-fidelity-findings).
 
@@ -82,7 +82,7 @@ A ribbon across the top, **two** columns, and the hand under the left one.
 - **Middle** — opponents on a row that sizes to its content, then your own mat.
   Your mat's first column is your info panel (`PlayerOrb`): commander, life dial,
   mana, zone piles — on a handheld the same markup skinned as
-  `mockups/handheld-board/`'s plinth. **An opponent's is an `OpponentSeat`** — a 332x96 summary of
+  the handheld-board round's (`docs/design-record.md#handheld-board`) plinth. **An opponent's is an `OpponentSeat`** — a 332x96 summary of
   what they have on the battlefield, because none of an orb's controls is yours
   on somebody else's seat and a pod was three control panels for controls nobody
   could press. Card size is **solved against the space each area actually has**
@@ -91,7 +91,7 @@ A ribbon across the top, **two** columns, and the hand under the left one.
   the commit dock. **It runs the full height of the screen**, which is the single
   biggest thing about this layout: it used to stop where the hand started, 514px
   at 1280x800, of which the action list got 172.
-  `mockups/handheld-board/measure.mjs` measures the same rail at 748 when it runs
+  the handheld-board round's measurements (`docs/design-record.md#handheld-board`) measures the same rail at 748 when it runs
   to the bottom edge instead, and the list at 363-398. Whichever surface owns a
   decision renders its action ids and the other stands down (`standDown`), so a
   prompt is never printed twice.
@@ -294,7 +294,7 @@ in hand, `U` undo. Any key skips the narration while it is playing.
 **The illustration is the card.** It fills the frame, and the text sits on graded
 scrims at the top and bottom: head (type glyph, name, then the mana cost on a row
 of its own) and foot (type line, `oracle_text` where there is room, then keywords,
-counters and P/T). This is direction D, "Art Bleed", of `mockups/cards/index.html`.
+counters and P/T). This is direction D, "Art Bleed", of the card-face round (`docs/design-record.md#cards`).
 Everything is still proportioned 5:7 except the enlarged preview card.
 
 The art is served by this application, never by a third party -- the build script
@@ -318,7 +318,7 @@ card. A land's frame narrows to the colour it taps for and its produced-mana
 symbols go large and centre-frame, so a lane of lands reads without reading a name.
 
 **Mana symbols are the real ones.** Scryfall publishes every card symbol as SVG
-from an open endpoint; `mockups/cards/fetch_symbols.py` pulls them and they are
+from an open endpoint; `frontend/scripts/fetch-symbols.py` pulls them and they are
 vendored into `frontend/public/symbols/`, under the same architecture as the card
 art — fetch once, store in the repo, skip on re-run, nothing running anywhere at
 render time. `ManaSymbol` draws them, and every surface that shows mana notation
@@ -371,7 +371,7 @@ direction, at the cost of the loudest object in the column. Both directions are
 two small arrows on each opponent's own life gauge now (`OpponentSeat`, and
 `docs/design-record.md` (Open fidelity findings) for the whole argument).
 
-On a handheld this whole column is re-skinned to `mockups/handheld-board/`'s
+On a handheld this whole column is re-skinned to the handheld-board round's (`docs/design-record.md#handheld-board`)
 plinth: a 148x128 portrait rather than a 2:1 banner, a 64px conic life ring
 rather than a 52px brass seal, and the five zones as coloured chips rather than
 leaf stacks. Markup is identical either way — it is CSS in `handheld.css` and
@@ -421,10 +421,10 @@ that this was wrong. That backdrop is a *gradient* rather than a flat dim, and i
 says why: *"a flat dim over the whole viewport hid the one thing the player has to look
 at"*. A workaround for a modal that should not have been in front of the hand.
 
-`OpeningHand` is `mockups/mulligan/01-the-deal.html` ported. The hand IS the screen —
+`OpeningHand` is the mulligan round's 01 'The Deal' (`docs/design-record.md#mulligan`) ported. The hand IS the screen —
 seven cards at the size their own rules text needs — and the answers are face buttons.
 
-**296px is the number the whole thing is built on.** `mockups/mulligan/probe.mjs`
+**296px is the number the whole thing is built on.** the mulligan round's probe (`docs/design-record.md#mulligan`)
 binary-searches a real card in a real browser for the narrowest width at which it can
 print its own name, cost, type line and rules at the 16px floor. Seven of those laid flush
 is 2072px against a 1280px panel, so a hand you can read *all at once* is not available at
@@ -512,8 +512,8 @@ d-pad, since both `pad.ts:isTyping` and `Table.tsx` bail while one holds focus.
 
 ## The lobby
 
-Three screens before the table, ported from `mockups/flow/02-face-up.html` —
-except the front door, which is `mockups/door/01-the-hand.html`:
+Three screens before the table, ported from the flow round's 02 'Face Up' (`docs/design-record.md#flow`) —
+except the front door, which is the door round's 01 'The Hand' (`docs/design-record.md#door`):
 
 | File | What it is |
 |---|---|

@@ -3,7 +3,7 @@
  *
  * Two kinds of assertion here, and they fail for different reasons.
  *
- * **The numbers** are the whole reason this component exists. `mockups/seat/`
+ * **The numbers** are the whole reason this component exists. the seat round (`docs/design-record.md#seat`)
  * records the failure mode: five of its six directions could not be *wrong*
  * about the board, because the numbers were never in the payload -- so nothing
  * could contradict them. Every count here is checked against `musterOf`, which

@@ -24,7 +24,7 @@ paste  ->  moxfield.py   fetch the list        (names and quantities only)
 ```
 
 `GET https://api2.moxfield.com/v3/decks/all/{publicId}` is open to a plain
-`urllib` client. `mockups/README.md` records a Cloudflare 403 against
+`urllib` client. the design record (`docs/design-record.md#board-themes`) records a Cloudflare 403 against
 `api2.moxfield.com` — that was `/v2/cards/search/user`, a different endpoint, and
 it is still true of that one.
 

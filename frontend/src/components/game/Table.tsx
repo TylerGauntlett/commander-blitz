@@ -1215,7 +1215,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           It used to be a sibling, spanning the full width under both rails, so
           the right rail stopped where the hand started -- 514px at 1280x800,
           of which the rows the turn is actually spent in got 172.
-          `mockups/handheld-board/` measures the same rail at 748px when it runs
+          the handheld-board round (`docs/design-record.md#handheld-board`) measures the same rail at 748px when it runs
           to the foot instead, and the action list at 363-398.
 
           It also fixes something quietly: `data-fx-origin` is on this element,
