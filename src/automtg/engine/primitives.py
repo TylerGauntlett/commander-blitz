@@ -1616,7 +1616,7 @@ def sacrifice_forbidden(state: GameState, oid: int) -> bool:
       with nothing happening.  `legality._emerge_fodder` is the same road for
       emerge and offering, whose sacrifice is chosen as part of the cast action
       instead of out of a `Cost`.
-    * `effects.ops_board.op_sacrifice` -- the **effect** road.  "Each player
+    * `effects.ops_removal.op_sacrifice` -- the **effect** road.  "Each player
       sacrifices a creature" narrows the pool and the player picks something
       else; with nothing else to pick, the effect does nothing to that player.
 

@@ -96,7 +96,7 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None):
-    """"You may choose new targets for the copy" (706.10, via 115.7b).
+    """ "You may choose new targets for the copy" (706.10, via 115.7b).
 
     Offered as one pick from every legal target tuple, which is exactly the set
     the caster chose from -- so "change any number of them" and "each new target
@@ -154,12 +154,9 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
     if len(options) <= 1:
         return None
     labels = [
-        ", ".join(describe_ref(ctx.state, ref) for ref in tup) or "no targets"
-        for tup in options
+        ", ".join(describe_ref(ctx.state, ref) for ref in tup) or "no targets" for tup in options
     ]
-    picked = yield from ask_mode(
-        ctx, f"New targets for {card.name} (copy)?", labels, chooser
-    )
+    picked = yield from ask_mode(ctx, f"New targets for {card.name} (copy)?", labels, chooser)
     if not picked:
         return None
     return options[picked[0]]
@@ -278,6 +275,7 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.showing_second_face = False
                 move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="countered")
 
+
 @register("reflexive_trigger")
 def op_reflexive_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     """Fire a reflexive triggered ability (603.11) -- "**When you do**, …".
@@ -321,9 +319,7 @@ def op_reflexive_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     card = state.card_of(obj)
     wanted = str(spec.get("ability", ""))
-    ability = next(
-        (a for a in card.abilities if a.reflex_id and a.reflex_id == wanted), None
-    )
+    ability = next((a for a in card.abilities if a.reflex_id and a.reflex_id == wanted), None)
     if ability is None:  # pragma: no cover -- the loader refuses this
         return
     state.pending_triggers.append(

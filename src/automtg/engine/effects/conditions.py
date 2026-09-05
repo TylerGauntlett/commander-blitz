@@ -452,9 +452,7 @@ def validate_condition(cond: Any, where: str) -> None:
         wanted = cond["combat_damage_by"]
         names = [wanted] if isinstance(wanted, str) else wanted
         if not isinstance(names, (list, tuple)) or not names:
-            raise DslError(
-                f"{where}.combat_damage_by: needs a creature subtype, or a list of them"
-            )
+            raise DslError(f"{where}.combat_damage_by: needs a creature subtype, or a list of them")
         if not all(isinstance(n, str) and n for n in names):
             # An empty or non-string entry would match nothing, and prowl's whole
             # content is which types got through -- so the alternative cost would
