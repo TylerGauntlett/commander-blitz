@@ -3,15 +3,22 @@
     python scripts/verify.py                # everything
     python scripts/verify.py --quick        # skip the slow simulation stages
     python scripts/verify.py --no-frontend  # Python only
+    python scripts/verify.py --coverage     # ...and hold the coverage floors
+    python scripts/verify.py --e2e          # ...and the three Playwright projects
 
 Runs every check in dependency order and stops at the first failure, so the first
 thing it prints about a broken build is the thing that broke.
+
+``--coverage`` and ``--e2e`` are opt-in because each costs tens of minutes: the
+default gate is what runs on every push, and ``verify-slow`` in
+``.github/workflows/deploy.yml`` runs the two flags on pull requests.
 """
 
 from __future__ import annotations
 
 import argparse
 import contextlib
+import json
 import os
 import shutil
 import socket
@@ -51,12 +58,14 @@ class Stage:
         cwd: Path = ROOT,
         slow: bool = False,
         fn=None,
+        env: dict[str, str] | None = None,
     ):
         self.name = name
         self.command = command
         self.cwd = cwd
         self.slow = slow
         self.fn = fn
+        self.env = env
 
     def run(self, verbose: bool) -> tuple[bool, float, str]:
         if self.fn is not None:
@@ -69,6 +78,7 @@ class Stage:
             capture_output=not verbose,
             text=True,
             shell=False,
+            env={**os.environ, **self.env} if self.env else None,
             **DECODE,
         )
         elapsed = time.time() - started
@@ -170,7 +180,21 @@ def run_live_server_stage(verbose: bool) -> tuple[bool, float, str]:
     return True, time.time() - started, "\n".join(output)
 
 
-def python_stages(quick: bool) -> list[Stage]:
+#: The Python coverage floor, held by ``--coverage`` over ALL the suites at
+#: once. One number, one stage: each suite alone cannot reach it (``tests/ai``
+#: on its own covers a fraction of the engine), which is why the four pytest
+#: stages append into one data file and a final stage reads it back.
+PYTHON_COVERAGE_FLOOR = 92
+
+
+def python_stages(quick: bool, coverage: bool = False) -> list[Stage]:
+    def pytest(suite: str, *extra: str) -> list[str]:
+        command = [PY, "-m", "pytest", suite, *extra]
+        if coverage:
+            # No per-stage report: the summary comes once, from the floor stage.
+            command += ["--cov=src/automtg", "--cov-append", "--cov-report="]
+        return command
+
     stages = [
         Stage("lint", [PY, "-m", "ruff", "check", "src", "scripts", "tests"]),
         Stage("card files and deck legality", [PY, "scripts/validate_decks.py"]),
@@ -179,16 +203,26 @@ def python_stages(quick: bool) -> list[Stage]:
         # only fails when a dump *is* present and the committed index no longer
         # matches it -- which is the case worth catching before a commit.
         Stage("card index is current", [PY, "scripts/build_card_index.py", "--check"]),
-        Stage("unit tests", [PY, "-m", "pytest", "tests/unit"]),
-        Stage("every card works", [PY, "-m", "pytest", "tests/cards"]),
-        Stage("HTTP API", [PY, "-m", "pytest", "tests/server"]),
+    ]
+    if coverage:
+        stages.append(Stage("coverage: start fresh", [PY, "-m", "coverage", "erase"]))
+    stages += [
+        Stage("unit tests", pytest("tests/unit")),
+        Stage("every card works", pytest("tests/cards")),
+        Stage("HTTP API", pytest("tests/server")),
     ]
     if quick:
-        stages.append(
-            Stage("AI (fast)", [PY, "-m", "pytest", "tests/ai", "-m", "not slow"])
-        )
+        stages.append(Stage("AI (fast)", pytest("tests/ai", "-m", "not slow")))
     else:
-        stages.append(Stage("AI", [PY, "-m", "pytest", "tests/ai"]))
+        stages.append(Stage("AI", pytest("tests/ai")))
+    if coverage:
+        stages.append(
+            Stage(
+                f"coverage: src/automtg holds {PYTHON_COVERAGE_FLOOR}%",
+                [PY, "-m", "coverage", "report", f"--fail-under={PYTHON_COVERAGE_FLOOR}"],
+            )
+        )
+    if not quick:
         stages.append(
             Stage(
                 "arena: 60 duels + 60 four-player pods",
@@ -251,16 +285,125 @@ def chromium_installed() -> bool:
     return any(root.is_dir() and any(root.glob("chromium-*")) for root in roots)
 
 
-def frontend_stages(runner: str, quick: bool) -> list[Stage]:
+#: The three Playwright projects, in the order `playwright.config.ts` lists
+#: them. Each is its own stage so a failure names the viewport it happened at.
+E2E_PROJECTS = ("chromium", "handheld", "deckfit")
+
+
+def run_e2e_stage(project: str):
+    """One Playwright project, with its verdict sorted into the two kinds.
+
+    The suite's verdict was not reproducible: the same unchanged commit produced
+    three different *timeout* failures across two runs and no two runs agreed
+    on which test, while the two genuine assertion failures reproduced exactly
+    (TECH_DEBT FT-06). Telling the two apart took four extra runs by hand. So
+    this stage reads Playwright's JSON report and says, per test, which kind of
+    failure it was -- a timeout is a budget problem or a busy machine, an
+    assertion is a bug -- and the budgets themselves are scaled by `E2E_SLOW`,
+    because this stage runs after two Storybook browsers on the same box.
+    """
+
+    def run(verbose: bool) -> tuple[bool, float, str]:
+        started = time.time()
+        report = FRONTEND / "test-results" / f"e2e-{project}.json"
+        report.parent.mkdir(exist_ok=True)
+        result = subprocess.run(
+            ["npx", "playwright", "test", f"--project={project}", "--reporter=list,json"],
+            cwd=FRONTEND,
+            capture_output=not verbose,
+            text=True,
+            shell=True,  # npx is npx.cmd on Windows
+            env={
+                **os.environ,
+                "E2E_SLOW": os.environ.get("E2E_SLOW", "2"),
+                "PLAYWRIGHT_JSON_OUTPUT_NAME": str(report),
+            },
+            **DECODE,
+        )
+        output = "" if verbose else (result.stdout or "") + (result.stderr or "")
+        output += "\n" + e2e_verdict(report)
+        return result.returncode == 0, time.time() - started, output
+
+    return run
+
+
+def e2e_verdict(report: Path) -> str:
+    """Timeouts and assertions, counted apart, from a Playwright JSON report."""
+    try:
+        data = json.loads(report.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return "e2e: no JSON report was written"
+    kinds: dict[str, list[str]] = {"timedOut": [], "failed": [], "expected-failure": []}
+    counts: dict[str, int] = {}
+
+    def walk(suite, path):
+        for spec in suite.get("specs", []):
+            title = " > ".join([*path, spec["title"]])
+            for test in spec.get("tests", []):
+                last = (test.get("results") or [{}])[-1]
+                status = last.get("status", "unknown")
+                counts[status] = counts.get(status, 0) + 1
+                if test.get("expectedStatus") == "failed" and status == "failed":
+                    kinds["expected-failure"].append(title)
+                elif status in kinds:
+                    kinds[status].append(title)
+        for child in suite.get("suites", []):
+            walk(child, [*path, child.get("title", "")])
+
+    for suite in data.get("suites", []):
+        walk(suite, [suite.get("title", "")])
+    lines = ["e2e: " + ", ".join(f"{n} {k}" for k, n in sorted(counts.items()))]
+    if kinds["timedOut"]:
+        lines.append("  TIMED OUT (a budget or a busy machine, not an assertion):")
+        lines += [f"    {t}" for t in kinds["timedOut"]]
+    if kinds["failed"]:
+        lines.append("  FAILED an assertion (reproducible; treat as a bug):")
+        lines += [f"    {t}" for t in kinds["failed"]]
+    if kinds["expected-failure"]:
+        lines.append("  failed as expected (`test.fail()`, a known open finding):")
+        lines += [f"    {t}" for t in kinds["expected-failure"]]
+    return "\n".join(lines)
+
+
+def frontend_stages(
+    runner: str, quick: bool, coverage: bool = False, e2e: bool = False
+) -> list[Stage]:
     # Both runners accept `<runner> run <script>`, and the package's test script
     # goes through vitest, so one spelling works for both.
     stages = [
         Stage("frontend build", [runner, "run", "build"], cwd=FRONTEND),
         Stage("frontend lint", [runner, "run", "lint"], cwd=FRONTEND),
+    ]
+    if coverage and chromium_installed():
+        # Every vitest project in ONE process, so the jsdom run and the two
+        # Chromium story runs merge into one report and one set of floors. The
+        # story stages below are skipped in this mode: this stage IS them. The
+        # include list lives in `vite.config.ts`; without it the provider
+        # instruments `storybook-static/` beside `src/` and reports 7%.
+        stages.append(
+            Stage(
+                "frontend tests + stories, holding the coverage floors",
+                [runner, "run", "test:coverage"],
+                cwd=FRONTEND,
+                slow=True,
+            )
+        )
+    elif coverage:
+        # Without Chromium only the jsdom project can run, and most of the
+        # floors in `vite.config.ts` are only reachable with the stories in
+        # the same process -- so this measures and reports, and holds nothing.
+        stages.append(
+            Stage(
+                "frontend tests with coverage (jsdom only; floors not held)",
+                [runner, "run", "test:coverage", "--", "--project=unit"],
+                cwd=FRONTEND,
+                env={"COVERAGE_FLOORS": "off"},
+            )
+        )
+    else:
         # jsdom only. The stories are a separate vitest project and a separate
         # stage below, so this one keeps meaning exactly what it always meant.
-        Stage("frontend tests", [runner, "run", "test"], cwd=FRONTEND),
-    ]
+        stages.append(Stage("frontend tests", [runner, "run", "test"], cwd=FRONTEND))
 
     # The static build is pure -- it needs no browser -- so it can always run,
     # and it is what catches a story that no longer compiles.
@@ -274,7 +417,9 @@ def frontend_stages(runner: str, quick: bool) -> list[Stage]:
             )
         )
 
-    if chromium_installed():
+    if coverage and chromium_installed():
+        pass  # the coverage stage above already ran every story project
+    elif chromium_installed():
         stages.append(
             Stage(
                 "storybook stories",
@@ -303,6 +448,18 @@ def frontend_stages(runner: str, quick: bool) -> list[Stage]:
     else:
         print("SKIP storybook stories: run `npx playwright install chromium` in frontend/\n")
 
+    if e2e and chromium_installed():
+        for project in E2E_PROJECTS:
+            stages.append(
+                Stage(
+                    f"playwright: {project}",
+                    fn=run_e2e_stage(project),
+                    slow=True,
+                )
+            )
+    elif e2e:
+        print("SKIP playwright: run `npx playwright install chromium` in frontend/\n")
+
     return stages
 
 
@@ -324,9 +481,19 @@ def main() -> int:
     parser.add_argument("--quick", action="store_true", help="skip the slow stages")
     parser.add_argument("--no-frontend", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="stream each stage's output")
+    parser.add_argument(
+        "--coverage",
+        action="store_true",
+        help="measure coverage across the suites and fail under the floors",
+    )
+    parser.add_argument(
+        "--e2e",
+        action="store_true",
+        help="also run the three Playwright projects (needs Chromium; ~40 minutes)",
+    )
     args = parser.parse_args()
 
-    stages = python_stages(args.quick)
+    stages = python_stages(args.quick, coverage=args.coverage)
     if not args.no_frontend:
         runner = frontend_runner()
         if runner is None:
@@ -334,7 +501,7 @@ def main() -> int:
         elif not (FRONTEND / "node_modules").exists():
             print("SKIP frontend: run `bun install` (or `npm install`) in frontend/ first\n")
         else:
-            stages += frontend_stages(runner, args.quick)
+            stages += frontend_stages(runner, args.quick, coverage=args.coverage, e2e=args.e2e)
 
     print(f"Commander Blitz verification - {len(stages)} stages\n")
     total = 0.0
@@ -355,6 +522,19 @@ def main() -> int:
     print(f"\nAll {len(stages)} stages passed in {total:.1f}s.")
     if args.quick:
         print("(--quick skipped the arena and the training tests)")
+    else:
+        # Informational, never a failing stage: the suite counts in
+        # `docs/testing.md` drifted twice between two audits (TECH_DEBT SD-01).
+        # A stale number is a documentation bug; this says so and moves on.
+        counts = subprocess.run(
+            [PY, "scripts/test_counts.py", "--check", "--no-frontend"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            **DECODE,
+        )
+        verdict = (counts.stdout or "").strip().splitlines()
+        print(readable(verdict[-1]) if verdict else "docs/testing.md: count check gave no output")
     return 0
 
 
