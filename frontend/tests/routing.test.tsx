@@ -14,6 +14,8 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setPlayerToken } from "../src/api/client";
+import { resetInputMode } from "../src/input/inputMode";
+import { resetPad } from "../src/input/pad";
 import { storeToken } from "../src/state/usePod";
 import { linkGame } from "../src/state/usePodSession";
 import {
@@ -92,6 +94,12 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  // The app starts the pad poll on mount and nothing here unmounts it: its
+  // idle timer fired after this environment was torn down and reached for a
+  // `requestAnimationFrame` that no longer existed -- an "unhandled error"
+  // that failed a run in which every test had passed.
+  resetPad();
+  resetInputMode();
 });
 
 describe("the front door", () => {

@@ -47,3 +47,20 @@ if (typeof globalThis.requestAnimationFrame === "undefined") {
   globalThis.cancelAnimationFrame = (handle: number) =>
     clearTimeout(handle as unknown as ReturnType<typeof setTimeout>);
 }
+
+/*
+ * Stop the pad after every test. The lobby and the table start its poll loop
+ * on mount and nothing in a jsdom test unmounts the app, so the loop's idle
+ * timer fired after an environment was torn down and reached for the
+ * `requestAnimationFrame` above, which no longer existed -- an "unhandled
+ * error" that failed whole runs in which every test had passed, from
+ * whichever file happened to be last. Once, here, rather than per file.
+ */
+import { afterEach } from "vitest";
+import { resetInputMode } from "../src/input/inputMode";
+import { resetPad } from "../src/input/pad";
+
+afterEach(() => {
+  resetPad();
+  resetInputMode();
+});
