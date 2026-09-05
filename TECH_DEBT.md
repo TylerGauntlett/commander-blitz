@@ -35,6 +35,88 @@ from a draft of this report taken five days ago at `6ac90652`, and why the front
 numbers do not: engine coverage, suite counts and file sizes all moved, while every
 frontend percentage held to within a tenth of a point.
 
+## Remediation status (2026-09-05, branch `tech-debt`)
+
+Every open finding below was worked on this branch as a **refactor plus coverage
+effort with no behaviour change**: no defect was fixed, no visual moved, no API
+answered differently. Where a finding was a bug it was pinned as a known-failing
+test instead. The oracles for "nothing changed" are `tests/cards/test_golden_pool.py`
+(a hash over all 2,622 compiled cards and the op registry, pinned before the first
+split and unchanged after the last), the DOM-shape snapshots in
+`frontend/tests/tableShape.test.tsx` (every `data-testid`/`data-stop`/`data-action-id`
+the table and panel render, across ten positions and both layouts), and the seeded
+arena's tables.
+
+| ID | Status | What was done |
+|---|---|---|
+| FT-03 | **RESOLVED** | `acceptance.spec.ts` asserts the slab's real class and stop, and stages an attacker instead of looking for a kind the panel never emits. |
+| FT-04 | **OPEN, annotated** | The band still drifts ~22px. It is a layout change and out of scope; the test carries `test.fail()` so the suite reports it as a known failure and turns red the day the layout is fixed. |
+| FT-05 / FT-06 | **RESOLVED** | Every budget scales by `E2E_SLOW` (`verify.py --e2e` sets 2); the opening-hand helper polls instead of sleeping; the 54 symbol images are awaited on `decode()`. `verify.py --e2e` sorts failures into timed-out vs assertion from the JSON report. |
+| CG-01 | **RESOLVED** | An offline seed search found `edgar` seed 7 reaches attackers, blockers and a two-defender attack; `reachDeclaration` throws instead of skipping. 0 skipped where 14 were, in action-panel and cycle3. |
+| CG-02 | **RESOLVED** | Jsdom tests for every module under 20%: CardHold, GroupDial, OpponentBoard, ControllerPanel, InviteDialog, StackPanel, EventTicker, CardGhost, the fx scheduler and actuators, the API client, sfx, four more routing cases. Merged coverage (unit + both story projects in one process) is **88.5%** statements, floors held per file in `vite.config.ts`. `NewGameScreen.tsx` had no importer and is deleted. |
+| CG-03 | **RESOLVED** | 22 of 38 story files carry a `handheld` case (was 7). One new finding: `GameOverScreen`'s subtitle is 14px on the compact layout, under the 16px floor -- recorded in the story, not fixed. |
+| CG-04 | **RESOLVED** | `verify.py --coverage` and `npm run test:coverage`; a PR-only CI job (`verify-slow`) runs them with the Playwright projects. |
+| CG-05 | **RESOLVED** | `tests/cards/test_authoring_tools.py`: fidelity, packet, queue and templates. |
+| CG-06 | **RESOLVED** | `tests/unit/test_ops_mana.py` (all three ops and the chosen-colour helper), plus `values.py`'s refusals and `rng.py`'s round trip. |
+| OF-01 | **RESOLVED for the eight named files** | `loader.py` 5,464 → a package of seven modules (largest 1,981); `ops_board.py` 2,110 → four op modules + helpers; `characteristics` 2,146 → 1,483 + `player_statics`; `primitives` 1,890 → 1,379 + `temp_effects`; `legality` 1,791 → 825 + `casting`; `costs` 1,631 → 1,320 + `cost_reduction`; `Table.tsx` 2,030 → 1,286 + six hooks and two children; `ActionPanel.tsx` 1,367 → 640 + seven components. Every move is verbatim with a re-export; every import site in the repo is unchanged. |
+| DC-01 | **RESOLVED** | All 19 deleted. |
+| SD-01 | **RESOLVED** | `scripts/test_counts.py --write` rewrites the table from the runners; `verify.py` prints `--check`'s verdict as an informational line. |
+| SD-02 | **RESOLVED** | `.dockerignore` no longer names `legacy-frontend`. |
+| LP-01 | already resolved | -- |
+| LP-02 | **RESOLVED** | `GroupDial.tsx`'s header describes the shipped control; six tests and a handheld story. |
+| LP-03 | **RESOLVED as a comment, OPEN as a design** | `OpponentBoard.tsx`'s header says what it is (the R2 reader) rather than "temporary"; the missing modal root is pinned as a known-failing test (`it.fails`, named LP-03). Making it a modal is a behaviour change and was not done. |
+| LS-01 | **RESOLVED** | The one biome warning carries the `biome-ignore` its comment already justified. 0 warnings. |
+| LS-02 | **RESOLVED** | `verify.py` no longer doubles pytest's `-q`. |
+| NF-01 | **RESOLVED** | `frontend/tests/setup.ts` stubs canvas, `ResizeObserver` and `requestAnimationFrame`; the unit run prints no stack traces and reports 0 unhandled errors. |
+| UV-05 | **RESOLVED** | The arena stage is labelled with what it plays (60 duels + 60 pods), in `verify.py`, `docs/testing.md` and the workflow. |
+| UV-08 | **RESOLVED** | The class-scoped fixture is a classmethod. |
+| mockups/ | **RESOLVED** | Deleted (108 MB). The rounds' findings and every number the code cited live in `docs/design-record.md`; the 82 citations point there; `docs/mockup-fidelity.md` is retired into its final section. |
+| FB-02, FB-08, FB-12, FB-13 | **OPEN by decision** | Code defects, not fixed on a refactor branch. FB-13 is pinned as a known-failing case in `commandZone.test.tsx`; the others are documented at their code. |
+| FB-04, FB-06, FB-10 | **CLOSED -- environment** | Reproduced only under a non-standard Steam Input controller template; not app defects. |
+| X-button feature | **OPEN** | Out of scope. |
+
+### Re-measured at the branch tip
+
+`python scripts/verify.py --coverage --e2e --verbose` (the full gate plus both
+opt-in flags), with the frontend half re-run once after a teardown fix. Column
+three is the audit's number at `7ee6e8a0` for comparison.
+
+| Stage | At the branch tip | At `7ee6e8a0` |
+|---|---|---|
+| lint (ruff) | **pass** | pass |
+| card files and deck legality | **pass** — 2622 cards (51 tokens) | pass |
+| card index is current | **pass** | pass |
+| `tests/unit` | **4630 passed** in 118s | 4581 |
+| `tests/cards` | **6610 passed, 4248 skipped** in 804s (under coverage) | 6562 / 4248 |
+| `tests/server` | **303 passed** | 303 |
+| `tests/ai` | **75 passed** | 75 |
+| Python coverage floor (92) | **94%** — 16791 statements, 1065 missed, one number over all four suites | 92% / 16702 / 1340 (measured by hand) |
+| arena: 60 duels + 60 pods | **pass** — win/draw/seat tables **byte-identical** to the capture taken before the first engine split | pass |
+| live server: 2p, 4p, one pod | **pass** in 6.3s | pass |
+| frontend build | **pass** | pass |
+| frontend lint | **pass** — 305 files, **0 warnings** | 1 warning |
+| frontend tests + stories, one process | **1836 passed** (130 files, 18 story files skipped by tag), **0 unhandled errors**, **88.6%** statements with every per-file floor held | 1277 unit / 381 + 35 stories; 68.3% unit-only, never gated |
+| Playwright `chromium` | **121 passed, 3 skipped, 0 failed** in 13.4m; the band-drift case reports as an expected failure | 3 failed, 14 skipped, 107 passed in 24.5m |
+| Playwright `handheld` | **24 passed** in 3.3m | 1 failed (timeout), 23 passed in 5.2m |
+| Playwright `deckfit` | **8 passed** in 1.9m | 8 passed |
+| `docs/testing.md` counts | **current** (`scripts/test_counts.py --check`) | four rows stale |
+
+The three chromium skips are not the combat class this audit was about: two are
+`playtest.spec.ts`'s screenshot captures, which skip unless asked for, and one is
+`cycle3.spec.ts:233`, which needs a card-choosing prompt to come up on `aesi` seed 7
+and reports so. Every `reachDecision` gate is gone.
+
+Sizes after the splits (lines): `loader/__init__.py` 1956, `loader/effects.py` 1485,
+`characteristics.py` 1483, `primitives.py` 1379, `costs.py` 1320, `Table.tsx` 1273,
+`casting.py` 1019, `legality.py` 825, `player_statics.py` 694, `loader/vocabulary.py`
+656, `ActionPanel.tsx` 636, `ops_removal.py` 597, `ops_combat_flags.py` 577,
+`ops_counters.py` 565, `temp_effects.py` 522. Nothing over 2,000 remains.
+
+**Left undone, on purpose.** The plan's optional second step for the loader — turning
+`_validate_effect`'s ~65 `if op == …:` guards into a dispatch table — was not taken:
+the golden pool only pins cards that load, so nothing would have pinned the error
+messages invalid cards get, and changing those unpinned is not a pure move.
+
 ## The riskiest areas
 
 **1. Combat's e2e coverage is still an illusion — and the one combat test that does run
