@@ -42,6 +42,59 @@ export default defineConfig({
    * that has never downloaded a browser.
    */
   test: {
+    /*
+     * Coverage, for `npm run test:coverage` (`scripts/verify.py --coverage`).
+     *
+     * ONE PROCESS, ALL PROJECTS: the jsdom run and the two Chromium story runs
+     * merge into a single report, which is the only honest number -- a
+     * component whose tests are stories (`OpeningHand`, `StackPanel`) reads
+     * near zero from the unit project alone. `include` is load-bearing:
+     * without it the provider instruments `storybook-static/` beside `src/`
+     * and the total reads 7%. The thresholds are floors, not targets: each
+     * one is the number the file had when it was pinned, raised by the commit
+     * that earned more, so coverage can only ratchet up.
+     */
+    coverage: {
+      provider: "v8",
+      include: ["src/**"],
+      exclude: ["src/**/*.stories.tsx", "src/testing/**", "src/main.tsx"],
+      reporter: ["text-summary", "json-summary", "html"],
+      reportsDirectory: "coverage",
+      // `COVERAGE_FLOORS=off` drops the floors for a jsdom-only run: most of
+      // these numbers are only reachable with the story projects in the same
+      // process, so `scripts/verify.py` sets it on a machine without Chromium.
+      thresholds:
+        process.env.COVERAGE_FLOORS === "off"
+          ? undefined
+          : {
+              // Measured on 2026-09-05 with every project in one process. Global
+              // first; then the files TECH_DEBT CG-02 named, each at what it has.
+              statements: 88,
+              branches: 89,
+              functions: 82,
+              "src/api/client.ts": { statements: 100 },
+              "src/audio/sfx.ts": { statements: 98 },
+              "src/components/game/CardGhost.tsx": { statements: 97 },
+              "src/components/game/CardHold.tsx": { statements: 100 },
+              "src/components/game/CombatArrows.tsx": { statements: 98 },
+              "src/components/game/CommandZone.tsx": { statements: 98 },
+              "src/components/game/EventTicker.tsx": { statements: 100 },
+              "src/components/game/FxLayer.tsx": { statements: 70 },
+              "src/components/game/GroupDial.tsx": { statements: 100 },
+              "src/components/game/OpeningHand.tsx": { statements: 97 },
+              "src/components/game/OpponentBoard.tsx": { statements: 100 },
+              "src/components/game/ParticleLayer.tsx": { statements: 94 },
+              "src/components/game/StackPanel.tsx": { statements: 96 },
+              "src/components/game/Table.tsx": { statements: 82 },
+              "src/components/game/ActionPanel.tsx": { statements: 91 },
+              "src/components/lobby/InviteDialog.tsx": { statements: 100 },
+              "src/components/ui/ControllerPanel.tsx": { statements: 100 },
+              "src/fx/actuators.ts": { statements: 100 },
+              "src/fx/scheduler.ts": { statements: 100 },
+              "src/screens/HomeRoute.tsx": { statements: 76 },
+              "src/screens/PodRoute.tsx": { statements: 84 },
+            },
+    },
     projects: [
       {
         extends: true,
