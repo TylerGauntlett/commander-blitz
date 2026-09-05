@@ -321,7 +321,12 @@ def run_e2e_stage(project: str):
             **DECODE,
         )
         output = "" if verbose else (result.stdout or "") + (result.stderr or "")
-        output += "\n" + e2e_verdict(report)
+        verdict = e2e_verdict(report)
+        if verbose:
+            # The stage prints its own output as it goes; the sorted verdict
+            # is the one thing worth adding, whether or not the stage passed.
+            print(readable(verdict), flush=True)
+        output += "\n" + verdict
         return result.returncode == 0, time.time() - started, output
 
     return run
