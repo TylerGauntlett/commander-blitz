@@ -93,7 +93,7 @@ def _updating() -> bool:
 def test_every_shipped_card_compiles_to_what_it_did(shipped: CardRegistry) -> None:
     digest = pool_digest(shipped)
     if _updating():
-        POOL_HASH.write_text(digest + "\n", encoding="utf-8")
+        POOL_HASH.write_text(digest + "\n", encoding="utf-8", newline="\n")
     assert POOL_HASH.exists(), "no golden hash yet: run with AUTOMTG_UPDATE_GOLDEN=1"
     pinned = POOL_HASH.read_text(encoding="utf-8").strip()
     assert digest == pinned, (
@@ -105,7 +105,11 @@ def test_every_shipped_card_compiles_to_what_it_did(shipped: CardRegistry) -> No
 def test_the_ops_and_the_vocabulary_are_what_they_were() -> None:
     snapshot = vocabulary_snapshot()
     if _updating():
-        VOCABULARY.write_text(json.dumps(snapshot, indent=1, sort_keys=True) + "\n", encoding="utf-8")
+        VOCABULARY.write_text(
+            json.dumps(snapshot, indent=1, sort_keys=True) + "\n",
+            encoding="utf-8",
+            newline="\n",
+        )
     assert VOCABULARY.exists(), "no golden vocabulary yet: run with AUTOMTG_UPDATE_GOLDEN=1"
     pinned = json.loads(VOCABULARY.read_text(encoding="utf-8"))
 
