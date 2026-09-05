@@ -17,6 +17,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import { musterOf } from "../../logic/threat";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import { card, gameView, player } from "../../testing/fixtures";
 import { OpponentSeat } from "./OpponentSeat";
 
@@ -123,7 +124,7 @@ export const Developed: Story = {
     /*
      * The seat and the board it summarises, checked against each other.
      *
-     * `mockups/seat/` names this the failure mode the whole family of
+     * the seat round (`docs/design-record.md#seat`) names this the failure mode the whole family of
      * components has: a summary that cannot be checked against the thing it
      * summarises. Here it can, because both come off the same view.
      */
@@ -292,5 +293,16 @@ export const NoCommanderVisible: Story = {
     await canvas.findByTestId("player-1");
     expect(canvasElement.querySelector(".seat__ground")).toBeNull();
     expect(canvasElement.querySelector(".seat__win img")).toBeNull();
+  },
+};
+
+/** A developed opponent's strip on a Deck. */
+export const DevelopedHandheld: Story = {
+  args: Developed.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };

@@ -13,6 +13,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
+import { expectHandheldFloors } from "../../testing/asserts";
 import * as scenarios from "../../testing/scenarios";
 import { EventTicker } from "./EventTicker";
 
@@ -76,5 +77,17 @@ export const LongLog: Story = {
     state,
     events: Array.from({ length: 60 }, (_, i) => events[i % events.length]),
     cardName: (id: string) => names[id],
+  },
+};
+
+/** The log overlay on a Deck: 16px lines, a 44px title button. */
+export const MixedLogHandheld: Story = {
+  args: { state, events, cardName: (id: string) => names[id] },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findAllByText(/Thragtusk/);
+    expectHandheldFloors(canvasElement);
   },
 };

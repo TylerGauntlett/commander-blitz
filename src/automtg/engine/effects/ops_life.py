@@ -36,7 +36,7 @@ def op_lose_life(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("add_poison")
 def op_add_poison(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"That player gets N poison counters." Poisonous, and infect's other half.
+    """ "That player gets N poison counters." Poisonous, and infect's other half.
 
     A counter on the *player*, not a second life total. Ten of them is lethal
     (704.5c) and the loss has its own reason, because a player eliminated at 40
@@ -63,7 +63,7 @@ def op_add_poison(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("prevent_damage")
 def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Prevent all damage that would be dealt to you this turn." (Selfless
+    """ "Prevent all damage that would be dealt to you this turn." (Selfless
     Squire, Fog, Holy Day.)
 
     The same two words the `prevent_damage` **static** prints, and a different
@@ -109,7 +109,7 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("lock_life_total")
 def op_lock_life_total(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Until your next turn, your life total can't change." (Teferi's Protection.)
+    """ "Until your next turn, your life total can't change." (Teferi's Protection.)
 
     A prohibition on the *change*, both ways, which is what nothing else in the
     engine could say. `replace_life_loss` is the near miss and misses three

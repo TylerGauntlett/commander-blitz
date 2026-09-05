@@ -9,6 +9,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { gameView, player } from "../../testing/fixtures";
 import { CommandZone } from "./CommandZone";
@@ -129,5 +130,16 @@ export const Disabled: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByText(/Aesi/));
     expect(args.onActivate).not.toHaveBeenCalled();
+  },
+};
+
+/** The plinth, castable, in the compact orb. */
+export const PlayableHandheld: Story = {
+  args: Playable.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };

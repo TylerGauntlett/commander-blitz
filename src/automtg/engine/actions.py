@@ -288,12 +288,6 @@ class PendingDecision:
         taken = set(self.selected)
         return [i for i in range(len(self.options)) if i not in taken]
 
-    def chosen_refs(self) -> list[TargetRef]:
-        return [self.options[i].ref for i in self.selected if self.options[i].ref]
-
-    def chosen_values(self) -> list[Any]:
-        return [self.options[i].value for i in self.selected]
-
     def to_dict(self) -> dict[str, Any]:
         return {
             "kind": self.kind.value,

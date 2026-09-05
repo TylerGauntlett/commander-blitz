@@ -12,7 +12,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 import type { CardView, UnplayableReason } from "../../api/types";
 import { HAND_FAN_W } from "../../logic/zoomFit";
-import { settled } from "../../testing/asserts";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { HandFan } from "./HandFan";
 
@@ -261,5 +261,17 @@ export const ClickingACard: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(await canvas.findByText("Forest"));
     expect(args.onActivate).toHaveBeenCalled();
+  },
+};
+
+/** Seven cards in the compact foot: the fan still clears the card floor. */
+export const SevenCardsHandheld: Story = {
+  args: { cards: hand(7), playableOids: new Set([100, 101]) },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const fan = canvasElement.querySelector<HTMLElement>(".hand") ?? canvasElement;
+    await settled(fan);
+    expectHandheldFloors(canvasElement);
   },
 };

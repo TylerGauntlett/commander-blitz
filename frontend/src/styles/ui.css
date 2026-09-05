@@ -11,7 +11,8 @@
  * action from the rest and puts the utilities in their own row -- so this is
  * styling only, and no component changed to get it.
  *
- *   1. `.btn--primary`  the commit slab: the one thing the turn is waiting on.
+ *   1. `.btn--primary`  the primary answer to a modal question (`ChoiceCombo`,
+ *                       `GameOverScreen`). The commit slab is `.commit`, below.
  *   2. `.btn`           contextual choices.
  *   3. `.btn--ghost`    utilities, demoted to the quietest thing on screen.
  */
@@ -704,7 +705,7 @@
  *
  * This was a full-width slab with two outlined 12px pills under it: a whole
  * second row spent on the two answers nobody presses, and a dock that read as
- * one button with a caption. `mockups/handheld-board/` draws the relationship
+ * one button with a caption. the handheld-board round (`docs/design-record.md#handheld-board`) draws the relationship
  * those three controls actually have -- all of a set, the set, none of it --
  * as a filled and an empty of one shape flanking the thing you came here to
  * press. That puts all three at the 44px floor inside the height the slab was

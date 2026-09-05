@@ -720,7 +720,7 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
     if not spec.get("objects"):
         raise DslError(
             f"{where}: needs 'objects' -- an empty selector is not "
-            f"{{\"self_only\": true}}, it is every permanent the filter defaults to"
+            f'{{"self_only": true}}, it is every permanent the filter defaults to'
         )
     if validate_objects is None:
         from .selectors import validate_selector as validate_objects
@@ -816,8 +816,7 @@ def validate_rolled(spec: Any, where: str) -> None:
         )
     if "parity" in spec and str(spec["parity"]) not in ROLL_PARITIES:
         raise DslError(
-            f"{where}.parity: must be one of {list(ROLL_PARITIES)}, "
-            f"got {spec['parity']!r}"
+            f"{where}.parity: must be one of {list(ROLL_PARITIES)}, got {spec['parity']!r}"
         )
     if "face" in spec:
         validate_value(spec["face"], f"{where}.face")
@@ -913,9 +912,7 @@ def validate_value(expr: Any, where: str) -> None:
         if of not in DISTINCT_OF:
             # Defaulted or misspelled it would count powers when the card meant
             # land types, which is a plausible-looking number on every board.
-            raise DslError(
-                f"{where}.distinct: 'of' must be one of {list(DISTINCT_OF)}, got {of!r}"
-            )
+            raise DslError(f"{where}.distinct: 'of' must be one of {list(DISTINCT_OF)}, got {of!r}")
         if not spec.get("objects"):
             # An empty selector is the whole battlefield, so domain would count
             # an opponent's basics and coven would count their creatures.

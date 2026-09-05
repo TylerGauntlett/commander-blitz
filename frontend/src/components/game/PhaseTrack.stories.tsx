@@ -9,6 +9,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
+import { expectHandheldFloors } from "../../testing/asserts";
 import { gameView } from "../../testing/fixtures";
 import { PhaseTrack } from "./PhaseTrack";
 
@@ -91,5 +92,17 @@ export const UnknownStep: Story = {
     const canvas = within(canvasElement);
     await canvas.findByTestId("phase-track");
     expect(canvasElement.querySelectorAll(".track__step--now")).toHaveLength(0);
+  },
+};
+
+/** The ribbon at 1280 wide: thirteen steps, every label at the floor. */
+export const DeclareBlockersHandheld: Story = {
+  args: at("DECLARE_BLOCKERS", "combat"),
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByTestId("phase-track");
+    expectHandheldFloors(canvasElement);
   },
 };

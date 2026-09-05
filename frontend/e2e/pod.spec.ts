@@ -16,7 +16,7 @@
  */
 
 import { type BrowserContext, type Page, expect, test } from "@playwright/test";
-import { openCatalog, setInstant } from "./helpers";
+import { budget, openCatalog, setInstant } from "./helpers";
 
 /** One player's browser. */
 async function open(context: BrowserContext): Promise<Page> {
@@ -221,7 +221,7 @@ test.describe("a pod with two people in it", () => {
   test("both browsers land on the table, and each sees only its own hand", async ({
     browser,
   }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     const hostContext = await browser.newContext();
     const guestContext = await browser.newContext();
     const hostPage = await open(hostContext);

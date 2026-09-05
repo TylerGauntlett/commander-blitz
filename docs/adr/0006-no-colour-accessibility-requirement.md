@@ -17,7 +17,7 @@ Every mockup comparison table had a **Survives greyscale** row in it.
 justified a styling choice by what a colour-blind player or a monochrome capture
 would still receive.
 
-By the end it was not a check, it was the deciding argument. `mockups/README.md`
+By the end it was not a check, it was the deciding argument. the design record (`docs/design-record.md#board-themes`)
 called the greyscale twin "the verdict" for the board direction and rejected
 menu 05 on it. `docs/roadmap.md` ranked the two most urgent open UI defects as
 "both greyscale failures". A criterion nobody had signed up for was vetoing

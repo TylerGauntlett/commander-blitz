@@ -135,7 +135,7 @@ MAX_TYPE_CHOICES = 400
 
 @register("choose_type")
 def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"As this artifact enters, choose a creature type." Vanquisher's Banner.
+    """ "As this artifact enters, choose a creature type." Vanquisher's Banner.
 
     Stored on the permanent, read back by its own abilities through
     ``{"chosen_type_of": "self"}``.
@@ -183,7 +183,7 @@ COLOR_CHOICES: tuple[tuple[str, str], ...] = (
 
 @register("choose_color")
 def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"As this artifact enters, choose a color." Heraldic Banner.
+    """ "As this artifact enters, choose a color." Heraldic Banner.
 
     The colour twin of :func:`op_choose_type`, and deliberately the same shape
     down to the two decisions below. Stored on the permanent as a colour letter
@@ -206,9 +206,7 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
     after the permanent arrives rather than as it does.
     """
     prompt = str(spec.get("prompt") or "Choose a color")
-    picked = yield from ask_mode(
-        ctx, prompt, [label for _, label in COLOR_CHOICES], ctx.controller
-    )
+    picked = yield from ask_mode(ctx, prompt, [label for _, label in COLOR_CHOICES], ctx.controller)
     if not picked:
         return
     obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
@@ -219,7 +217,7 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("choose_player")
 def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Choose an opponent." Demonstrate, and the untargeted way to name a seat.
+    """ "Choose an opponent." Demonstrate, and the untargeted way to name a seat.
 
     The player twin of :func:`op_choose_type` and :func:`op_choose_color`: it
     asks a question and records the answer under ``as``, and every later spec
@@ -407,9 +405,7 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
         )
         chosen = [offered[i] for i in picked]
     else:
-        chosen = yield from ask_mode(
-            ctx, "Choose", labels, chooser, floor, up_to
-        )
+        chosen = yield from ask_mode(ctx, "Choose", labels, chooser, floor, up_to)
 
     # 700.2e: "the modes are executed in the order written on the card", not the
     # order they were clicked in -- which matters the moment one mode's effect
@@ -436,7 +432,7 @@ MAX_JOIN_FORCES = 100
 
 @register("join_forces")
 def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"Join forces — Starting with you, each player may pay any amount of mana."
+    """ "Join forces — Starting with you, each player may pay any amount of mana."
 
     The one effect in the pool whose cost is paid by **everybody**. Every other
     cost in the engine hangs off one player: `may`'s `pay` grew a `player` for
@@ -683,7 +679,7 @@ def _scheduled_combat(state: GameState) -> int:
 
 @register("extra_combat")
 def op_extra_combat(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"After this phase, there is an additional combat phase" (506.1).
+    """ "After this phase, there is an additional combat phase" (506.1).
 
     ``amount`` is how many, for Fury of the Horde's "two additional combat
     phases"; ``extra_main`` adds the additional **main** phase that Relentless

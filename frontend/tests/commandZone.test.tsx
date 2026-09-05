@@ -183,3 +183,52 @@ describe("the life seal", () => {
     expect(container.querySelector(".cmdplinth__art")).toBeNull();
   });
 });
+
+/*
+ * FB-13 (TECH_DEBT): the plinth only reads "Ready" while the pointer is over it.
+ *
+ * The render-time `castable` is right on every render, so `data-castable`
+ * flips the moment `playableOids` changes. What does NOT follow is the
+ * preview: the ring's path to the rail goes through a stop-driven hover, and a
+ * re-render that makes the commander castable fires no hover -- so the rail
+ * keeps whatever it had until the pointer moves. Pinned as a known failure
+ * rather than fixed; it flips to a passing test when the recompute lands.
+ */
+describe("FB-13: the plinth's preview follows an actions change", () => {
+  it("re-announces the commander when it becomes castable under the ring", () => {
+    const { rerender, hovered } = renderZone([commander()], { playable: [] });
+    const plinth = document.querySelector<HTMLElement>("[data-stop='card:99']");
+    expect(plinth?.dataset.castable).toBe("false");
+    // The ring lands: one announcement.
+    fireEvent.focus(plinth as HTMLElement);
+    expect(hovered).toEqual([99]);
+    // The engine pushes a state in which the commander is castable.
+    rerender(
+      <CommandZone
+        state={viewWith([commander()])}
+        pid={0}
+        playableOids={new Set([99])}
+        onHover={(oid) => hovered.push(oid)}
+      />,
+    );
+    expect(plinth?.dataset.castable).toBe("true");
+    expect(plinth?.dataset.cmdState).toBe("ready");
+  });
+
+  it.fails("FB-13: the rail is told again without a pointer event", () => {
+    const { rerender, hovered } = renderZone([commander()], { playable: [] });
+    const plinth = document.querySelector<HTMLElement>("[data-stop='card:99']");
+    fireEvent.focus(plinth as HTMLElement);
+    hovered.length = 0;
+    rerender(
+      <CommandZone
+        state={viewWith([commander()])}
+        pid={0}
+        playableOids={new Set([99])}
+        onHover={(oid) => hovered.push(oid)}
+      />,
+    );
+    // What a fix would do: re-announce the card now that its state changed.
+    expect(hovered).toEqual([99]);
+  });
+});

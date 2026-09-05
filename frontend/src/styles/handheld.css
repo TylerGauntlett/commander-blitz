@@ -411,7 +411,7 @@ html[data-input="keyboard"] .glyph--key {
 /*
  * NO PANE AROUND THE READER OR THE LIST.
  *
- * `mockups/handheld-board/` puts it plainly: the rows are already bordered
+ * the handheld-board round (`docs/design-record.md#handheld-board`) puts it plainly: the rows are already bordered
  * rectangles, and a well around the only content in a 243px column is a frame
  * around a frame. Three nested boxes is also what the rail looked like -- pane,
  * pane, dock -- where the mockup has two open regions and one well, and the
@@ -451,7 +451,7 @@ html[data-input="keyboard"] .glyph--key {
  * the hint bar's keycap at 18px around 11px, and both are right at those sizes.
  * The 16px floor raises the TYPE and leaves the BOX -- and a 16px Segoe line
  * box is about 21px, so the digit cannot centre inside 19 and sits hard against
- * the edges. `mockups/handheld-board/_board.css` records the same fix on its
+ * the edges. the handheld-board round's stylesheet (`docs/design-record.md#handheld-board`) records the same fix on its
  * own `.key` and calls 26 the number.
  *
  * `line-height: 1` is half the fix and the half that is easy to miss: `grid`
@@ -751,7 +751,7 @@ html[data-input="keyboard"] .hints {
  * ...AND ON A HANDHELD, ALL OF THEM. The pile becomes a chip.
  *
  * The cap above already accepts that the leaves are decoration and the top one
- * is the number. `mockups/handheld-board/` finishes the thought: at this size a
+ * is the number. the handheld-board round (`docs/design-record.md#handheld-board`) finishes the thought: at this size a
  * zone is a MARK AND A COUNT, and the stack under it is height the column does
  * not have. Measured at three seats, keeping the leaves put the viewer's mat
  * 43px past its row -- and `e2e/deckfit.spec.ts` is the gate that says the
@@ -782,10 +782,10 @@ html[data-input="keyboard"] .hints {
 }
 
 /* ==========================================================================
-   THE VIEWER'S ORB IS `mockups/handheld-board/`'s PLINTH
+   THE VIEWER'S ORB IS the handheld-board round's (`docs/design-record.md#handheld-board`) PLINTH
    ==========================================================================
 
-   `mockups/self/03-plinth.html` argued for this panel and `handheld-board/`
+   the self round's 03 'Plinth' (`docs/design-record.md#self`) argued for this panel and `handheld-board/`
    drew it beside the three seats it has to belong with: the commander's art as
    the panel's ground, the portrait as the button that casts them, life as a
    dial stamped over the portrait's corner, and the zones as chips the same
@@ -1504,7 +1504,7 @@ html[data-input="keyboard"] [data-cursor].card {
  * exactly where a player does not yet know what `A` and `B` do, and the bar's
  * whole job is answering that.
  *
- * This is a narrower version of the problem `docs/mockup-fidelity.md` records
+ * This is a narrower version of the problem `docs/design-record.md` (Open fidelity findings) records
  * as open defect #3: the tool strip is visible but unreachable behind a
  * backdrop. The bar is not a control, so lifting it costs nothing and cannot
  * make anything clickable that should not be.
@@ -1768,7 +1768,7 @@ html[data-input="keyboard"] .hints {
  * for an identity, and a shape carries an identity without being taught:
  * `SeatIcon` draws a headstone, a fan of three, a face-down card.
  *
- * `mockups/handheld-board/` reaches the same conclusion from the other side and
+ * the handheld-board round (`docs/design-record.md#handheld-board`) reaches the same conclusion from the other side and
  * calls it a legibility argument rather than a colour one. So the word goes and
  * the mark stays, which is what the first drop was trying to buy and could not.
  */
@@ -1986,7 +1986,7 @@ html[data-input="keyboard"] .hints {
    IT IS 139 NOW, AND THE FIVE THAT LEFT ARE THE POINT. `.hero__line`, `.or`,
    `.join__go`, `.join__in` and `.door__cap` were the front door, authored at
    11-14px and repaired here. The door was rebuilt from
-   `mockups/door/01-the-hand.html` and `styles/door.css` is written at the floor
+   the door round's 01 'The Hand' (`docs/design-record.md#door`) and `styles/door.css` is written at the floor
    -- every size on it is `max(16px, ...)` -- so there is nothing left on that
    screen for this list to reach. Shrinking this list by rewriting a screen is
    the only way it is meant to shrink; adding to it is the other way to pass the

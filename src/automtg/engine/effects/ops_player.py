@@ -1,7 +1,7 @@
 """Effect ops that write a **player-level designation**.
 
 Its own module rather than a corner of one of the others, because none of them
-describes this. `ops_board` acts on permanents, `ops_life` on life totals and
+describes this. `ops_removal`, `ops_counters`, `ops_characteristics` and `ops_combat_flags` act on permanents, `ops_life` on life totals and
 damage, `ops_mana` on the pool, `ops_control` on control flow -- and a
 designation is none of those: nothing on the board changes, no number moves, and
 the thing written outlives every permanent that granted it.
@@ -32,7 +32,7 @@ from .selectors import select_players
 
 @register("become_monarch")
 def op_become_monarch(ctx: EffectContext, spec: Mapping[str, Any]):
-    """"You become the monarch", or "target player becomes the monarch" (721.2).
+    """ "You become the monarch", or "target player becomes the monarch" (721.2).
 
     Takes a **player spec**, defaulting to ``"you"`` -- which is what seven of the
     eight cards that asked for this op print. The eighth is Éomer, King of Rohan's
@@ -57,7 +57,7 @@ def op_become_monarch(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("win_game")
 def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
-    """"You win the game." Halo Fountain and Luck Bobblehead.
+    """ "You win the game." Halo Fountain and Luck Bobblehead.
 
     The only op that ends the game on purpose, and the first thing to reach a
     game *result* at all. Everything else that has ever produced a winner did it
@@ -71,7 +71,7 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     cards print. The spec is here rather than hardcoded for the reason
     `become_monarch`'s is: a player is a first-class thing to name in this DSL,
     and every op that names one spells it the same way and validates through the
-    same `loader._validate_player_spec`.
+    same `loader.effects._validate_player_spec`.
 
     A spec naming more than one seat is not refused, and does not need to be:
     :func:`~automtg.engine.sba.declare_win` is a no-op once the game is over, so

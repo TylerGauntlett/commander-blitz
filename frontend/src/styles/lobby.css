@@ -1,5 +1,5 @@
 /*
- * The lobby -- ported from `mockups/flow/02-face-up.html`.
+ * The lobby -- ported from the flow round's 02 'Face Up' (`docs/design-record.md#flow`).
  *
  * Its tokens were already this app's tokens (`--void-*`, `--edge`, `--gold`,
  * `--text-*` are byte-identical in `theme.css`), so this is a port rather than
@@ -83,7 +83,7 @@
  * So the same rule collapsed to content sizing: a seat's card was as tall as
  * its own rules text, and the dossier's blew out the `auto` track beside it.
  *
- * `mockups/flow/02-face-up.html` calls this out by name and takes the other
+ * the flow round's 02 'Face Up' (`docs/design-record.md#flow`) calls this out by name and takes the other
  * trade: "a face-up seat and a face-down `.back` have to be the same
  * rectangle: the moment they are not, the row stops reading as a hand and
  * `.hand__felt` no longer lands under the cards' shoulders". So the lobby's
@@ -181,7 +181,7 @@
    door -- a fan of four card backs you could not select, a gold button, a text
    field and an 11px footer link -- and all of it is replaced by the row of three
    selectable cards in `styles/door.css`, ported from
-   `mockups/door/01-the-hand.html`.
+   the door round's 01 'The Hand' (`docs/design-record.md#door`).
 
    What is left is the lockup the POD LOBBY's header draws, which is the only
    other place the mark appears. */

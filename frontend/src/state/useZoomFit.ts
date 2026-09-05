@@ -67,7 +67,7 @@ const HAND_FRACTION = 0.26;
 /**
  * ...and what it may take on a handheld, which is more.
  *
- * `mockups/handheld-board/` gives the foot 270px of an 800px screen -- 0.34 --
+ * the handheld-board round (`docs/design-record.md#handheld-board`) gives the foot 270px of an 800px screen -- 0.34 --
  * and spends it on a hand at 152px, on the argument that the hand is the
  * surface a main phase is actually spent reading. The board can afford most of
  * that because an opponent is a 96px seat there rather than a board.
@@ -176,7 +176,7 @@ interface Measurements {
    * given the full height, so it is now the board's width rather than the
    * screen's -- about 1024 of 1600 on a desktop and 1017 of 1280 on a handheld.
    * Laying a 1180px fan inside it is exactly the failure
-   * `mockups/handheld-board/` records: six cards at 176px is 1056px in the 947
+   * the handheld-board round (`docs/design-record.md#handheld-board`) records: six cards at 176px is 1056px in the 947
    * the foot had, the hand ran 79px past it onto the commit panel's first
    * control, and `overflow: hidden` meant nothing reported it at all.
    *

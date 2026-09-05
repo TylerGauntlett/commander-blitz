@@ -7,7 +7,7 @@
 Normally you do not run this directly -- ``build_card_index.py`` calls it at the
 end, so one command takes a fresh Scryfall dump all the way to owned bytes.
 
-The architecture is the one ``mockups/fetch_art.py`` established and
+The architecture is the one the board-themes round's art fetcher (`docs/design-record.md#board-themes`) established and
 ``docs/card-hydration.md`` asked for: fetch once, store in the repo, skip what is
 already there, no service running anywhere.  What changed is that it makes **zero
 Scryfall API calls** -- the printing ids come from the committed index, so only

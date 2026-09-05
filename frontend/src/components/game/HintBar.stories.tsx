@@ -14,6 +14,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import { action, card, gameView, pending, player } from "../../testing/fixtures";
 import { HintBar } from "./HintBar";
 
@@ -160,5 +161,16 @@ export const MouseSeesNothing: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId("hint-bar").getBoundingClientRect().height).toBe(0);
+  },
+};
+
+/** The hint bar at 1280 wide: the verbs stay legible. */
+export const PlayingHandheld: Story = {
+  args: Playing.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };

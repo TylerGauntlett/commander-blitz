@@ -2,7 +2,7 @@
    The opponent seat
    ==========================================================================
 
-   `mockups/seat/06-muster.html`, carried over, and drawn at every size.
+   the seat round's 06 'Muster' (`docs/design-record.md#seat`), carried over, and drawn at every size.
 
    Its argument in one line: an opponent's panel should answer WHAT HAVE THEY
    GOT ON THE BATTLEFIELD, and none of the five directions before it did --
@@ -608,7 +608,7 @@
 
    An opponent's mat stops being `side | lanes` and becomes `seat over lanes`.
 
-   The seat is a strip, not a column: 332x96 is the shape `mockups/seat/`
+   The seat is a strip, not a column: 332x96 is the shape the seat round (`docs/design-record.md#seat`)
    measured every one of its directions inside, and standing it on end to fit a
    `--mat-side-compact` track would be a different component wearing the same
    name. Above the lanes rather than beside them also means the lanes get the

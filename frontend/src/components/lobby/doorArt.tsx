@@ -1,7 +1,7 @@
 /**
  * The front door's drawn room, card frame and three illustrations.
  *
- * Ported from `mockups/door/_art.js`, which argues the case for drawing this
+ * Ported from the door round's drawn ground (`docs/design-record.md#door`), which argues the case for drawing this
  * rather than fetching it: `art_crop` is 626x457 and it is the only art-only
  * asset published, so any field wider than about 780px is a deliberate blur --
  * and a front door has no card on it yet, so it has nothing to be a crop *of*.

@@ -3,7 +3,7 @@
  *
  * THE SCREEN AFTER THE FRONT DOOR HAS TO BE THE SAME GAME AS THE FRONT DOOR.
  *
- * The door was rebuilt from `mockups/door/01-the-hand.html` and came out
+ * The door was rebuilt from the door round's 01 'The Hand' (`docs/design-record.md#door`) and came out
  * looking like a first-party menu -- a hall, a floor sigil, three printed cards
  * lifting under a moving light. Pressing PLAY then landed on this screen, which
  * was a grey bar, a grey strip and eight identical grey buttons. Nobody

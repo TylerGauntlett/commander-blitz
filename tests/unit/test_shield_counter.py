@@ -494,7 +494,8 @@ class TestDiamondCity:
     passed every gate before this change, and the land still died."""
 
     @pytest.fixture(scope="class")
-    def city_registry(self, registry) -> CardRegistry:
+    @classmethod
+    def city_registry(cls, registry) -> CardRegistry:
         card = compile_card(CardModel.model_validate(DIAMOND_CITY))
         pool = CardRegistry.from_paths(authored_card_paths(Path("data/cards")))
         return CardRegistry({c.id: c for c in pool} | {card.id: card})

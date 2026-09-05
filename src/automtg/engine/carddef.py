@@ -16,7 +16,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from .enums import AbilityKind, CardType, Color, Keyword, Supertype, Zone
+from .enums import AbilityKind, CardType, Keyword, Supertype, Zone
 from .mana import ManaCost, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
@@ -81,7 +81,7 @@ class TargetSpec:
         number is computed from the game rather than printed. `filter_legal`
         slices the stored refs spec by spec, so every one of them has to be the
         last spec in its list and there may be only one -- see
-        `loader._compile_targets`.
+        `loader.targets._compile_targets`.
         """
         return self.up_to or not isinstance(self.count, int)
 
@@ -1026,9 +1026,6 @@ class CardDef:
 
     def mana_abilities(self) -> tuple[Ability, ...]:
         return tuple(a for a in self.abilities if a.is_mana_ability)
-
-    def color_set(self) -> frozenset[Color]:
-        return frozenset(Color(c) for c in self.colors)
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"<CardDef {self.id}>"

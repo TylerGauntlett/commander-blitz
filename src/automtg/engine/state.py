@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator
 from dataclasses import dataclass, field, replace
 from typing import TYPE_CHECKING, Any
 
@@ -369,11 +368,6 @@ class GameState:
     def obj(self, oid: int) -> GameObject:
         return self.objects[oid]
 
-    def maybe_obj(self, oid: int | None) -> GameObject | None:
-        if oid is None:
-            return None
-        return self.objects.get(oid)
-
     def card(self, oid: int) -> CardDef:
         """The :class:`CardDef` behind an object id -- the face it is showing.
 
@@ -515,12 +509,6 @@ class GameState:
             for o in self.battlefield_objects(controller)
             if "Creature" in chars(self, o.oid).types
         ]
-
-    def objects_in(self, zone: Zone, pid: int | None = None) -> Iterator[GameObject]:
-        for oid in self.zone_list(zone, pid):
-            o = self.objects.get(oid)
-            if o is not None:
-                yield o
 
     # ------------------------------------------------------------------
     # stack
@@ -754,8 +742,3 @@ def new_object(
     )
     state.objects[obj.oid] = obj
     return obj
-
-
-def sorted_oids(oids: Iterable[int]) -> list[int]:
-    """Deterministic ordering helper used wherever iteration order is observable."""
-    return sorted(oids)

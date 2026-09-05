@@ -19,6 +19,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
+import { expectHandheldFloors } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { gameView, stackItem } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
@@ -112,5 +113,17 @@ export const FiveDeep: Story = {
     // Each ply sits below the one above it, or the pile is a single card.
     const tops = [...items].map((i) => i.getBoundingClientRect().top);
     expect(new Set(tops).size, "the stack items are superimposed").toBe(5);
+  },
+};
+
+/** Three deep on a Deck: the pile's faces stay readable. */
+export const ThreeDeepHandheld: Story = {
+  args: { state: scenarios.stackThreeDeep().state },
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("next");
+    expectHandheldFloors(canvasElement);
   },
 };

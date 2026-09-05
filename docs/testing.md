@@ -8,17 +8,24 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 | Suite | Count | What it holds |
 |---|---|---|
-| `tests/unit/` | 395 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
-| `tests/cards/` | 3513 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
+| `tests/unit/` | 4630 | Mana, zones, casting, the stack, priority, turn structure, combat, keywords, triggers, static abilities, state-based actions, the commander rules, multiplayer |
+| `tests/cards/` | 10858 | Schema and vocabulary validation, deck legality and metadata, the every-card gate, and the card index + art resolution |
 | `tests/ai/` | 75 | Action-space correctness, the environment, agents, the arena, the model and trainer |
-| `tests/server/` | 287 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
-| `frontend/tests/` | 1272 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
-| `frontend/src/**/*.stories.tsx` | 381 + 35 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
-| `frontend/e2e/` | 118 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
+| `tests/server/` | 303 | The HTTP API end to end: hidden information, image serving, the catalog, the whole lobby, and serving the built client |
+| `frontend/tests/` | 1381 | The client's pure logic modules, the input layer, the palette ladders, the card face, the lobby, and the routes |
+| `frontend/src/**/*.stories.tsx` | 399 + 50 | Storybook, in a real Chromium: every component's states, and the geometry jsdom cannot see. **Two projects** — see below |
+| `frontend/e2e/` | 156 | Playwright: full games, combat, stacking, card art, legibility, layout, deep links, and a two-browser pod |
 
-`scripts/verify.py` runs 15 stages in dependency order and stops at the first failure:
+The Count column is what the runner *collects* -- parametrised cases included, so
+`tests/cards/` counts every card the every-card gate is parametrised over, of which
+a few thousand skip on a per-card condition. It is written by
+`python scripts/test_counts.py --write` and checked by `--check`; `verify.py` prints
+the check's verdict as a line rather than a stage, because a stale number is a
+documentation bug, not a build break.
+
+`scripts/verify.py` runs up to 15 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
-160-game arena, **a real uvicorn process playing full games at 2 players, 4 players and
+120-game arena (60 duels and 60 four-player pods), **a real uvicorn process playing full games at 2 players, 4 players and
 one pod driven entirely through the lobby**, then the frontend build, lint and tests,
 the Storybook build, and the story interaction tests **twice** — once at the desktop
 canvas and once at a Steam Deck's.
@@ -43,7 +50,33 @@ canvas and once at a Steam Deck's.
 > `data-desktop` or `data-handheld`, and both `styles/handheld.css` and
 > `state/useHandheld.ts` treat an explicit choice as beating the query.
 
-Playwright's own suite is still invoked separately (`cd frontend && npx playwright test`).
+### The two opt-in flags
+
+```bash
+python scripts/verify.py --coverage   # every suite under coverage, one floor each side
+python scripts/verify.py --e2e        # the three Playwright projects, after the stories
+```
+
+Both are off by default because each costs tens of minutes, and both run on every
+pull request in the `verify-slow` job of `.github/workflows/deploy.yml` (which does
+not gate the deploy; `verify` does).
+
+`--coverage` appends the four Python suites into one data file and holds the floor
+**once**, at the end, over all of them — no single suite can reach it alone, which is
+why there is no `fail_under` in `pyproject.toml`. On the frontend it runs every vitest
+project in one process (`npm run test:coverage`), so the jsdom run and both Chromium
+story runs merge into one report and one set of floors in `vite.config.ts`. The
+`include: ["src/**"]` there is load-bearing: without it the provider instruments
+`storybook-static/` beside `src/` and the total reads 7%.
+
+`--e2e` runs `chromium`, `handheld` and `deckfit` as three stages with `E2E_SLOW=2`,
+which doubles every budget in the suite because it runs after two Storybook browsers
+on the same machine. It then reads Playwright's JSON report and prints the failures
+sorted into **timed out** (a budget or a busy machine) and **failed an assertion**
+(reproducible; a bug) — the separation that used to take four extra runs by hand —
+plus any case marked `test.fail()` for a known open finding.
+
+Playwright's own suite can still be invoked directly (`cd frontend && npx playwright test`).
 
 It runs as **two projects at two viewports**, and the split is the safety
 argument for the handheld work rather than a convenience:
@@ -228,7 +261,7 @@ Three of them, because the failure modes are all silent:
   clear a darkness floor; `frontend/e2e/legibility.spec.ts` checks the same against the
   *rendered* board, where an override from `theme.css` or a media query would show up
   and a stylesheet parse would not. (This replaces a type-ring luminance ladder, which
-  encoded card type as colour — see `docs/mockup-fidelity.md` for why it went.)
+  encoded card type as colour — see `docs/design-record.md` (Open fidelity findings) for why it went.)
 - **Self-ownership.** `e2e/art.spec.ts` fails if the page fetches from any host but
   this server. That is the property the whole build-time download exists to buy, and
   it would be easy to give away by accident.
@@ -290,7 +323,7 @@ unlocking while the host deals never yields a game with an unready seat. Every
 to catch and a hung test that never reports is not a caught deadlock.
 
 **A summary that cannot be checked against the thing it summarises.**
-`mockups/seat/README.md` names this as the failure mode its whole family of
+the seat round (`docs/design-record.md#seat`) names this as the failure mode its whole family of
 components had: five of six directions could not be WRONG about the board,
 because lands were never in the payload, so nothing could contradict them.
 `OpponentSeat` is the shipped answer, so `handheldAssert`'s `seatsDisagree`
