@@ -30,10 +30,10 @@ import {
   resetGroups,
   setGroup,
 } from "../../input/groups";
-import { onAny as onAnyPad, on as onPad } from "../../input/pad";
 import { sendableIn, stopElement, stopId, stopRoot } from "../../input/stops";
 import { useGroupDial } from "../../input/useGroupDial";
 import { useOpponentReading } from "../../input/useOpponentReading";
+import { useKeyboardShortcuts, usePadBindings } from "../../input/useTableInput";
 import {
   actionsForCard,
   availableBlockers,
@@ -48,8 +48,8 @@ import { type Gesture, followUpStops } from "../../logic/followUp";
 import { removalsByOid } from "../../logic/removals";
 import { parseStop } from "../../logic/verbs";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
-import { commandersOf, findCard, seatOrder } from "../../logic/zoneGrouping";
-import { type PeekTarget, useUiStore } from "../../state/uiStore";
+import { findCard, seatOrder } from "../../logic/zoneGrouping";
+import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
 import { useHandheldLayout } from "../../state/useHandheld";
 import { useNarrationSkip } from "../../state/useNarrationSkip";
@@ -76,13 +76,6 @@ import { PlayerMat } from "./PlayerMat";
 import { PromptDialog, ownsDecision } from "./PromptDialog";
 import { StackPanel } from "./StackPanel";
 import { ZonePeek } from "./ZonePeek";
-
-/** Keyboard routes into the zone viewer, which previously had none. */
-const PEEK_KEYS: Record<string, PeekTarget["zone"]> = {
-  g: "graveyard",
-  e: "exile",
-  c: "command",
-};
 
 /** Decisions where clicking your own creatures means "commit it to combat". */
 const COMBAT_DECISIONS = new Set(["declare_attackers", "declare_blockers"]);
@@ -1107,182 +1100,35 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     if (wanted && wanted !== getGroup()) enterGroup(wanted);
   }, [state.pending?.kind, state.step, narration.busy]);
 
-  useEffect(() => {
-    const unbind = [
-      onPad("b", back),
-      onPad("x", secondary),
-      /*
-       * A tap steps, a hold opens the dial.
-       *
-       * `pad.ts` reports a press and this app has no release event, so the hold
-       * is a timer started on the press and cancelled by the next press of
-       * anything -- which `onAnyPad` below does. A tap therefore steps
-       * immediately AND arms a timer that the tap itself cancels; a hold leaves
-       * the timer to fire.
-       */
-      onPad("l1", () => stepGroup(-1)),
-      onPad("r1", () => stepGroup(1)),
-      /*
-       * `Y` reads the card the ring is on, full screen.
-       *
-       * `logic/verbs.ts` has returned `Y Read` on every card stop since it was
-       * written and nothing was ever bound to it. An advertised button that
-       * does nothing is worse than an unadvertised one: it teaches the player
-       * that the hint bar is not to be trusted.
-       */
-      onPad("y", () => {
-        const ref = parseStop(getCursor());
-        if (ref.kind === "card" && ref.id !== null) {
-          setHeldCard(ref.id);
-          return;
-        }
-        /*
-         * On a SEAT, `Read` means their commander.
-         *
-         * `verbsFor` returns `Y Read` for an orb stop as well as for a card,
-         * and a bar that promises a verb the button does not have is the exact
-         * defect this whole binding exists to close -- so the seat answers the
-         * only question it could be asking. In Commander the deck IS the
-         * commander, and a seat you are deciding whether to attack is one whose
-         * commander's text you want.
-         */
-        if (ref.kind === "orb" && ref.id !== null) {
-          const commander = commandersOf(state, ref.id)[0];
-          if (commander) {
-            setHeldCard(commander.oid);
-            return;
-          }
-        }
-        cue("deny");
-      }),
-      // `View` is the log and `Menu` jumps the ring to the tool strip. Neither
-      // renders a control of its own: they flip a flag an existing surface
-      // already reads, or move the ring to a button that already exists. That
-      // is what keeps `data-action-id` and `data-testid` unique for free.
-      onPad("view", toggleLogOverlay),
-      // The strip's first stop, which is the settings menu now that sound, undo
-      // and quit live inside it. It was `tool:mute`, and a stop that only
-      // exists while a menu is open is a jump that does nothing four times out
-      // of five.
-      onPad("menu", () => {
-        setCursor(stopId.tool("settings"));
-      }),
-      /*
-       * A PRESS jumps to the commit slab, and HOLDING it opens the region dial
-       * (the `onPadFrame` above). The two do not collide: a tap crosses and
-       * releases the analog threshold inside a frame or two, which is over long
-       * before the dial is worth looking at. See `jumpToCommit`.
-       */
-      onPad("l2", jumpToCommit),
-      /*
-       * Any press ends a hold and puts a held card down.
-       *
-       * `pad.ts` reports presses and has no release event, so "held" here means
-       * "until you do something else" -- which is how it behaves in practice
-       * anyway, because the thing you do next is the thing you were reading the
-       * card in order to decide.
-       */
-      onAnyPad((button) => {
-        if (narration.busy) skipAll();
-        if (button !== "y" && heldCard !== null) setHeldCard(null);
-      }),
-    ];
-    return () => {
-      for (const off of unbind) off();
-    };
-  }, [
+  usePadBindings({
     back,
     secondary,
-    toggleLogOverlay,
-    narration.busy,
-    skipAll,
     stepGroup,
     jumpToCommit,
+    toggleLogOverlay,
+    narration,
+    skipAll,
     heldCard,
+    setHeldCard,
     cue,
     state,
-  ]);
+  });
 
   // ------------------------------------------------------------- keyboard
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
-
-      /*
-       * `Escape` is handled as the pad's `B` rather than here.
-       *
-       * It used to cancel targeting and close the zone viewer in one go. `B` is
-       * a strict unwind instead -- peek, then targeting, then selection -- which
-       * is the behaviour a back button needs in order to be predictable, and
-       * which is now the same code whether the player pressed Escape,
-       * Backspace, or B on a controller. One button, one implementation.
-       */
-      if (narration.busy && event.key !== "Escape") {
-        skipAll();
-        return;
-      }
-      /*
-       * Zone peeking. `Esc` closed it and nothing opened it, so the only route
-       * in was a chip on the orb. Placed before `gateInput` on purpose: looking
-       * at your own graveyard asks the server nothing, so there is no reason to
-       * refuse it while a request is in flight.
-       */
-      const peekZone = PEEK_KEYS[event.key.toLowerCase()];
-      if (peekZone) {
-        setPeek(peek?.zone === peekZone ? null : { pid: state.seat, zone: peekZone });
-        return;
-      }
-
-      if (gateInput()) return;
-
-      if (event.key === " ") {
-        const pass = actions.find((a) => a.kind === "pass");
-        if (pass) {
-          event.preventDefault();
-          act(pass.id);
-        }
-        return;
-      }
-      /*
-       * `Enter` is deliberately not handled here any more.
-       *
-       * It is bound to the pad's `A`, which presses whatever the ring is on --
-       * and the ring rests on the commit slab whenever a decision is pending,
-       * so the same keystroke still confirms. Keeping this branch as well made
-       * one press post two actions: this one took the first `keep`/`yes`/
-       * `finish_declaration` in the list while `confirm()` posted the button
-       * under the ring.
-       *
-       * It is also strictly better than what it replaced. The old branch could
-       * only ever confirm those three kinds; `A` presses the control the player
-       * is actually looking at, which is every kind.
-       */
-      if (event.key.toLowerCase() === "u") {
-        undoMutate();
-        return;
-      }
-      if (/^[1-9]$/.test(event.key)) {
-        const card = viewer.hand?.[Number(event.key) - 1];
-        if (card) playFromHand(card);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [
+  useKeyboardShortcuts({
     actions,
     act,
     gateInput,
     narration,
     skipAll,
     setPeek,
-    playFromHand,
-    viewer.hand,
-    undoMutate,
     peek,
-    state.seat,
-  ]);
+    playFromHand,
+    viewer,
+    undoMutate,
+    state,
+  });
 
   // ---------------------------------------------------------------- render
 
