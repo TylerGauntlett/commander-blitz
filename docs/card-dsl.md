@@ -6,8 +6,8 @@ which means a card either uses vocabulary the engine implements, or it fails to 
 ```mermaid
 flowchart LR
     json["cards/*.cards.json"] --> pydantic["schema.py<br/>shape validation"]
-    pydantic --> vocab["loader.py<br/>vocabulary validation"]
-    vocab --> constraints["loader.py<br/>constraint checks"]
+    pydantic --> vocab["cards/loader/<br/>vocabulary validation"]
+    vocab --> constraints["cards/loader/<br/>constraint checks"]
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
