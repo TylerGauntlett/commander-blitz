@@ -170,6 +170,10 @@ export const api = {
    * client that arrived from a lobby learns which table seat it got. With
    * `sinceVersion` set the request blocks until somebody else moves -- that is
    * how the second human hears about the first one's turn.
+   *
+   * `since` is the `event_cursor` of the last response the caller absorbed, so
+   * the answer carries only the events it has not yet seen. `signal` lets a
+   * blocked poll be abandoned when the component that issued it goes away.
    */
   state: (
     gameId: string,
@@ -177,12 +181,13 @@ export const api = {
     since = 0,
     sinceVersion?: number,
     timeout?: number,
+    signal?: AbortSignal,
   ) => {
     const params = new URLSearchParams({ since: String(since) });
     if (seat !== null) params.set("seat", String(seat));
     if (sinceVersion !== undefined) params.set("since_version", String(sinceVersion));
     if (timeout !== undefined) params.set("timeout", String(timeout));
-    return request<StateResponse>(`/games/${gameId}/state?${params}`);
+    return request<StateResponse>(`/games/${gameId}/state?${params}`, { signal });
   },
 
   applyAction: (gameId: string, seat: number, actionId: string, aiSteps?: number) =>

@@ -557,14 +557,29 @@ the answer lands it asks again. A timed-out poll is a 200 with the same version,
 indistinguishable from a slow one. See
 [adr/0007-versioned-long-polling.md](adr/0007-versioned-long-polling.md).
 
-The same mechanism reaches the table. `useGame` now has two loops and picks between them
+The same mechanism reaches the table. `useGame` has two loops and picks between them
 by *who* it is waiting for, using `human_seats` from the state response:
 
-- **An AI seat** — the pump, unchanged. `?ai_steps=1` and one decision at a time, so its
-  turn is watchable.
-- **Another person** — `?since_version=`, and block. There is nothing to pump; the server
-  is not going to move that seat, a person is. Pumping here would be a busy-wait against
-  somebody's thinking time.
+- **An AI seat** — the pump. `?ai_steps=1` and one decision at a time, so its turn is
+  watchable. With several people at the table exactly one of them pumps — the lowest
+  human seat — and the rest listen; a listener whose poll times out while the AI is
+  still on the clock takes the pump over, because the pumper's tab has gone.
+- **Another person** — the listener: the same self-rescheduling loop as the pod. There
+  is nothing to pump; the server is not going to move that seat, a person is. Pumping
+  here would be a busy-wait against somebody's thinking time.
+
+The listener carries **two cursors** from the last response it absorbed, and both
+matter. `?since_version=` says *when* to wake; `?since=` (the response's `event_cursor`)
+says *what* is new, so the answer carries only the events this tab has not rendered. A
+response is self-describing — its events end at its `event_cursor` — so `absorb` trims
+anything it has already seen, and a pump reply and a poll reply that overlap cannot
+narrate a move twice. Once a fresh response lands the listener waits for the narration
+queue to drain before absorbing it, rather than dropping the request and asking again:
+every abandoned poll is a server thread parked for up to 25 s.
+
+The first version of this was a one-shot effect that sent `?since=0`. It went deaf the
+first time a poll timed out, and the one poll that did land replayed the whole game.
+`docs/bugs.md` has the account; `tests/useGame.test.tsx` pins the loop.
 
 ### Identity
 

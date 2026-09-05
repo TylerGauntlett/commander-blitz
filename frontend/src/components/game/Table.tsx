@@ -71,7 +71,7 @@ interface Props {
 }
 
 export function Table({ game, state, onQuit, onRematch }: Props) {
-  const { actions, events, narration, busy, aiThinking, stalled } = game;
+  const { actions, events, narration, busy, aiThinking, waitingForPlayer, stalled } = game;
   const boardRef = useRef<HTMLDivElement>(null);
   // The three the zoom measures. Each is a grid track whose size the cards inside
   // it cannot change, which is the only reason reading them is safe; see
@@ -1204,6 +1204,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
             onSkipNarration={skipAll}
             busy={busy}
             aiThinking={aiThinking}
+            waitingForPlayer={waitingForPlayer}
             standDown={modalOwnsDecision}
           />
         </aside>
