@@ -320,6 +320,7 @@ export function HomeScreen({
      same call for the same reason: the effect runs on the commit that STARTS
      the animation, when the element has not moved a pixel, so the ring needs
      telling to watch rather than to re-measure once. */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `sel` is a trigger, not a read; see above.
   useLayoutEffect(() => {
     refollowCursor();
   }, [sel]);

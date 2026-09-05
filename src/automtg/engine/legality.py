@@ -1780,12 +1780,6 @@ def summarize(state: GameState) -> list[str]:  # pragma: no cover - debug helper
     return [a.label or a.kind.value for a in legal_actions(state)]
 
 
-def creature_can_attack(state: GameState, oid: int) -> bool:
-    """Exposed for the heuristic agent and the UI."""
-    c = chars(state, oid)
-    return "Creature" in c.types and combat_mod.can_attack(state, oid)
-
-
 def zone_name(state: GameState, oid: int) -> str:
     obj = state.objects.get(oid)
     return obj.zone.value if obj else Zone.EXILE.value

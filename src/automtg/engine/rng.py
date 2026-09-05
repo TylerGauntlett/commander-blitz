@@ -52,9 +52,5 @@ class Rng:
     def setstate(self, state: tuple) -> None:
         self._r.setstate(state)
 
-    def spawn(self, salt: int) -> Rng:
-        """Derive an independent stream (used to give each seat its own agent RNG)."""
-        return Rng(self.seed * 1_000_003 + salt)
-
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"Rng(seed={self.seed})"

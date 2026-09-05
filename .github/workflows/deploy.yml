@@ -57,7 +57,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       # Runs every stage: ruff, deck legality, the card index check, the four
-      # pytest suites, the 60-game arena, a live uvicorn playing full games at
+      # pytest suites, the 120-game arena, a live uvicorn playing full games at
       # 2p and 4p, then the frontend build/lint/test and the storybook pair.
       - name: Verify
         run: python scripts/verify.py --verbose
