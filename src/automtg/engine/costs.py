@@ -1,4 +1,4 @@
-﻿"""Paying costs.
+"""Paying costs.
 
 Mana payment is automatic (see :mod:`automtg.engine.mana`): an action never
 carries a payment, and legality only offers a cast or activation when the solver
@@ -8,7 +8,7 @@ may need a choice, so :func:`pay` is a generator.
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
@@ -16,7 +16,6 @@ from .characteristics import (
     abilities_of,
     chars,
     player_doubles_land_mana,
-    spell_cost_reduction,
 )
 from .effects.context import EffectContext, ask_objects
 from .effects.selectors import resolve_pool
@@ -50,6 +49,15 @@ from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
+from .cost_reduction import (  # noqa: F401
+    REDUCTION_ZONES,
+    _filter_zones,
+    _reduction_matches,
+    _reduction_zone_oids,
+    cost_reduction,
+    reduction_amount,
+    variant_reduction,
+)
 
 
 def mana_sources(
@@ -73,9 +81,7 @@ def mana_sources(
         obj = state.objects.get(oid)
         if obj is None or obj.controller != pid or obj.tapped:
             continue
-        out.extend(
-            source for source in _sources_of(state, oid, obj) if source.permits(purpose)
-        )
+        out.extend(source for source in _sources_of(state, oid, obj) if source.permits(purpose))
     return out
 
 
@@ -223,11 +229,7 @@ def offerable_mana_ability(ability: Ability) -> bool:
     The complement of :func:`solver_taps` over mana abilities that actually
     produce something.
     """
-    return (
-        ability.is_mana_ability
-        and bool(ability.mana_options)
-        and not solver_taps(ability)
-    )
+    return ability.is_mana_ability and bool(ability.mana_options) and not solver_taps(ability)
 
 
 def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
@@ -390,14 +392,10 @@ def _chosen_color_options(
     index = SYMBOL_INDEX.get(chosen)
     if index is None:  # pragma: no cover - the loader only writes WUBRG here
         return ()
-    return tuple(
-        option for option in ability.mana_options if option[index]
-    )
+    return tuple(option for option in ability.mana_options if option[index])
 
 
-def _identity_options(
-    state: GameState, oid: int, ability: Ability
-) -> tuple[tuple[int, ...], ...]:
+def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
     """The five-colour superset narrowed to the controller's commanders' identity.
 
     Read off the **printed** `color_identity` rather than the object's current
@@ -506,9 +504,7 @@ def mana_availability(
                 # tell those apart, and the difference is a whole mana.
                 "options": [_option_symbols(option) for option in source.options],
                 # Sorted by SYMBOLS order so {G}{U} and {U}{G} render alike.
-                "symbols": sorted(
-                    (SYMBOLS[i] for i in source.producible()), key=SYMBOL_INDEX.get
-                ),
+                "symbols": sorted((SYMBOLS[i] for i in source.producible()), key=SYMBOL_INDEX.get),
                 "amount": source.max_output(),
             }
             for source in sources
@@ -535,16 +531,12 @@ def can_pay_mana(
     if extra_generic:
         req = req.with_generic(req.generic + extra_generic)
     return (
-        solve_payment(
-            req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose)
-        )
+        solve_payment(req, state.players[pid].mana_pool, mana_sources(state, pid, purpose=purpose))
         is not None
     )
 
 
-def defined_x(
-    state: GameState, pid: int, cost: Cost | None, source_oid: int | None
-) -> int | None:
+def defined_x(state: GameState, pid: int, cost: Cost | None, source_oid: int | None) -> int | None:
     """What X is, when the ability *says* rather than *asks*.
 
     "{X}, {T}: Create a token that's a copy of the exiled card. **X is the mana
@@ -714,9 +706,7 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or obj.owner != pid or source_oid not in state.players[pid].hand:
             return False
-    if cost.exile_from_hand is not None and not _hand_exile_pool(
-        state, pid, cost, source_oid
-    ):
+    if cost.exile_from_hand is not None and not _hand_exile_pool(state, pid, cost, source_oid):
         return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
@@ -724,9 +714,7 @@ def can_pay(
         return False
     if cost.tap_permanents is not None and not _tap_cost_pool(state, pid, cost, source_oid):
         return False
-    if cost.untap_permanents is not None and not _untap_cost_pool(
-        state, pid, cost, source_oid
-    ):
+    if cost.untap_permanents is not None and not _untap_cost_pool(state, pid, cost, source_oid):
         return False
     if cost.remove_counters is not None:
         obj = state.objects.get(source_oid) if source_oid is not None else None
@@ -742,9 +730,7 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or obj.counter("loyalty") < -cost.loyalty:
             return False
-    if cost.exile_from_graveyard is not None and not _graveyard_pool(
-        state, pid, cost, source_oid
-    ):
+    if cost.exile_from_graveyard is not None and not _graveyard_pool(state, pid, cost, source_oid):
         return False
 
     # `cost.mill` is deliberately **not** tested, and the asymmetry with
@@ -761,9 +747,10 @@ def can_pay(
         # A source that is about to be tapped for this cost cannot also pay for it.
         if cost.tap and source_oid is not None:
             sources = [s for s in sources if s.oid != source_oid]
-        if solve_payment(
-            ability_mana(state, pid, cost, x, source_oid), player.mana_pool, sources
-        ) is None:
+        if (
+            solve_payment(ability_mana(state, pid, cost, x, source_oid), player.mana_pool, sources)
+            is None
+        ):
             return False
     return True
 
@@ -828,9 +815,7 @@ def _hand_exile_pool(
     return pool if len(pool) >= count else []
 
 
-def _sacrifice_pool(
-    state: GameState, pid: int, cost: Cost, source_oid: int | None
-) -> list[int]:
+def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """Which permanents this cost is allowed to sacrifice.
 
     The **cost** half of "you can't sacrifice those creatures this turn"
@@ -859,9 +844,7 @@ def _sacrifice_pool(
     return pool if len(pool) >= count else []
 
 
-def _return_pool(
-    state: GameState, pid: int, cost: Cost, source_oid: int | None
-) -> list[int]:
+def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """Which permanents this cost may bounce -- "return a land you control".
 
     Deliberately a separate pool from ``_sacrifice_pool`` even though the
@@ -880,9 +863,7 @@ def _return_pool(
     return pool if len(pool) >= count else []
 
 
-def _tap_cost_pool(
-    state: GameState, pid: int, cost: Cost, source_oid: int | None
-) -> list[int]:
+def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """Which permanents this cost may tap -- "five untapped Vampires you control".
 
     ``tapped: False`` is forced rather than defaulted, because "untapped" is
@@ -926,9 +907,7 @@ def _total_power(state: GameState, oids: list[int]) -> int:
     return sum(chars(state, oid).power for oid in oids if oid in state.objects)
 
 
-def _untap_cost_pool(
-    state: GameState, pid: int, cost: Cost, source_oid: int | None
-) -> list[int]:
+def _untap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """Which permanents this cost may untap -- "two tapped creatures you control".
 
     The mirror of :func:`_tap_cost_pool`, and ``tapped: True`` is forced for the
@@ -958,9 +937,7 @@ def _untap_cost_pool(
     return pool if len(pool) >= count else []
 
 
-def _graveyard_pool(
-    state: GameState, pid: int, cost: Cost, source_oid: int | None
-) -> list[int]:
+def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     from .effects.selectors import resolve_pool
 
     spec = dict(cost.exile_from_graveyard or {})
@@ -1166,7 +1143,9 @@ def pay(
         spec = dict(cost.exile_from_graveyard)
         count = int(spec.pop("count", 1) or 1)
         pool = _graveyard_pool(state, pid, cost, source_oid)
-        picked = yield from ask_objects(ctx, "Exile from your graveyard", pool, count, count, pid, "exile_cost")
+        picked = yield from ask_objects(
+            ctx, "Exile from your graveyard", pool, count, count, pid, "exile_cost"
+        )
         for oid in picked:
             exile_object(state, oid, cause="cost")
 
@@ -1271,9 +1250,7 @@ def activate_mana_ability(
     # knowable only here -- a pool of six integers cannot say where a pip
     # came from once it has landed in it.
     state.players[pid].mana_pool.add_tuple(produced, source=oid)
-    state.emit(
-        EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced)
-    )
+    state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     if ability.mana_rider:
         _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:
@@ -1281,7 +1258,7 @@ def activate_mana_ability(
 
 
 def _run_mana_rider(state: GameState, oid: int, pid: int, ability: Any) -> None:
-    """"…This land deals 1 damage to you", inline and off the stack.
+    """ "…This land deals 1 damage to you", inline and off the stack.
 
     Every tap for mana reaches here -- the payment solver's automatic taps go
     through ``pay_mana`` and a player's own activation through ``Game.apply`` --
@@ -1337,294 +1314,6 @@ def commander_cost(state: GameState, oid: int) -> int:
     if obj is None:
         return 0
     return 2 * state.players[obj.owner].commander_tax.get(oid, 0)
-
-
-def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
-    """How much less this card costs its controller right now.
-
-    Generic only, and never below zero: "costs {X} less" does not touch coloured
-    pips, which is both what the rules say and the only thing the payment solver
-    could act on.  Read from the board rather than stored, because it changes
-    every time a creature arrives -- Ghalta is a 12-drop or a 2-drop depending on
-    what is already in play.
-    """
-    # Two sources, added together, and they point in opposite directions.
-    # `card.cost_reduction` is Ghalta -- "THIS spell costs {X} less", counting
-    # permanents. The statics are Warden of Evos Isle -- "creature spells with
-    # flying YOU CAST cost {1} less", discounting a different card, picked out
-    # by that card's own printed face.
-    total = spell_cost_reduction(state, pid, card)
-    return total + reduction_amount(state, pid, card.cost_reduction)
-
-
-def reduction_amount(
-    state: GameState,
-    pid: int,
-    spec: Mapping[str, Any] | None,
-    *,
-    source_oid: int | None = None,
-) -> int:
-    """How much less one *cost node* costs right now, as a plain integer.
-
-    The whole reduction language, in one place, because a cost node is priced
-    from three different callers and "costs {N} less" has to mean the same thing
-    in all three:
-
-    - a card's own `cost_reduction` -- Ghalta, "**this spell** costs {X} less";
-    - an activated ability's `Cost.mana_reduction`, via `ability_mana` --
-      Voldaren Estate and Crown of Gondor's equip;
-    - a graveyard cast's `Cost.mana_reduction`, via the flashback branch of
-      `legality._cast_variant` and `game._cast` -- "costs {X} less to cast
-      **this way**".
-
-    Three shapes of arithmetic, exactly one per spec:
-
-    - ``{"amount": 3}`` -- a **flat** number, which is what a conditional
-      reduction needs.  Not expressible as `count`: "costs {3} less if you're
-      the monarch" would need a filter matching exactly three permanents while
-      the crown is yours and none otherwise, and no filter over a board can say
-      that.
-    - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
-    - ``{"total_power": {filter}}`` -- Ghalta.
-    - ``{"greatest_mana_value": {filter}}`` -- Visions of Glory, "where X is the
-      greatest mana value of a commander you own".  A **maximum**, which is why
-      it is a fourth shape rather than a filter on `count`: the other two sum,
-      and a player with two partner commanders would have their mana values
-      added rather than the greater one taken -- a different and larger number,
-      quietly, on a card that reads as though it were right.
-
-    ``condition`` gates the whole thing: false, the reduction is zero, and the
-    printed price stands.  It is an ordinary condition from the condition DSL,
-    so `is_monarch`, `is_your_turn`, `exists` and `cmp` all come for free -- but
-    the loader restricts it to the heads that can be *answered at pricing time*,
-    because nothing is on the stack yet.
-
-    A condition rather than a second cost line, for the reason the Crown of
-    Gondor gap record gives: splitting "Equip {4}, {3} less if you're the
-    monarch" into two equip abilities leaves nothing able to switch the cheap
-    one off.
-    """
-    if not spec:
-        return 0
-    # The gate first, so a false condition costs one condition evaluation rather
-    # than a walk of the battlefield.
-    cond = spec.get("condition")
-    if cond is not None:
-        from .effects.conditions import evaluate_condition
-
-        if not evaluate_condition(state, cond, controller=pid, source=source_oid):
-            return 0
-    if "amount" in spec:
-        return max(0, int(spec["amount"]))
-    if "count" in spec:
-        return sum(1 for _ in _reduction_matches(state, pid, spec["count"], source_oid))
-    if "total_power" in spec:
-        return sum(
-            max(0, chars(state, oid).power)
-            for oid in _reduction_matches(state, pid, spec["total_power"], source_oid)
-        )
-    if "greatest_mana_value" in spec:
-        # The **printed** mana value, off the card rather than the object, and
-        # `default=0` because nothing matching is a real answer: a player whose
-        # commander has been exiled, or who has none at all, gets no discount
-        # and pays the price the card prints.
-        return max(
-            (
-                state.card(oid).mana_value
-                for oid in _reduction_matches(state, pid, spec["greatest_mana_value"], source_oid)
-            ),
-            default=0,
-        )
-    return 0
-
-
-def variant_reduction(
-    state: GameState, pid: int, cost: Cost | None, source_oid: int | None
-) -> int:
-    """"This spell costs {X} less to cast **this way**."
-
-    The discount that belongs to one cast *variant* rather than to the card.
-    Visions of Glory's flashback line carries one and its printed hand cast must
-    not: a card-level `cost_reduction` is variant-blind, applied by
-    `_cast_variant` to whichever price it just picked, so putting the rider
-    there would quietly discount the cast the card never mentions.
-
-    It is `Cost.mana_reduction` on the variant's own cost node -- the same key
-    an activated ability's cost uses -- and not a new field, because it is the
-    same question asked of a different cost: "how much less does *this* cost
-    node cost".  A second key meaning the same thing is a key that gets written
-    in the wrong slot and silently ignored.
-
-    Only `flashback`/`graveyard_cost` can carry one today, and that is a fact
-    about the schema rather than about this function: `evoke`, `emerge`,
-    `overload`, `bestow`, `foretell` and `mutate` are bare mana strings with no
-    node to hang a rider on, and the loader says so rather than accepting one.
-
-    `alternative_cost` is the second full `Cost` -- Force of Will's pitch needs
-    somewhere to put a payment that is not mana -- but it is deliberately *not*
-    read here. A discount belongs to the branch that priced the line, and no
-    printed prowl or pitch cost says "costs {X} less to cast this way"; the
-    loader refuses `mana_reduction` on it rather than leaving a key that loads
-    and is ignored.
-    """
-    if cost is None:
-        return 0
-    return reduction_amount(state, pid, cost.mana_reduction, source_oid=source_oid)
-
-
-#: Zones a cost reduction's filter may count, and where each one's objects live.
-#:
-#: The battlefield and the command zone, and no others.  Both are **public** and
-#: both are readable before anything is on the stack, which is the whole
-#: requirement -- but the command zone had to be added on its own merits: it is
-#: where a commander sits for most of a game, so a reduction written about "a
-#: commander you own" and evaluated over the battlefield alone would read zero
-#: at exactly the moment the printed card is about it.
-#: The graveyard joined them on the same test: it is public, and it is readable
-#: before anything is on the stack. Cyan, Vengeful Samurai -- "This spell costs
-#: {1} less to cast for each creature card in your graveyard" -- is the card
-#: that wanted it, and there was no third place a spell's own price could be
-#: lowered from: the battlefield `spell_cost_reduction` static discounts a
-#: *different* card and its `count` is filtered by `static_filter_keys`, which
-#: has no `zone` key at all.
-REDUCTION_ZONES = frozenset({"battlefield", "command", "graveyard"})
-
-
-def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
-    """Every object a reduction filter naming ``zones`` may look at.
-
-    The command zone is per-player rather than global -- there is no
-    `state.command` to walk the way there is a `state.battlefield` -- so every
-    seat's is concatenated and the ownership keys below narrow it, exactly as
-    they narrow the battlefield.
-    """
-    if "battlefield" in zones:
-        yield from state.battlefield
-    if "command" in zones:
-        for player in state.players:
-            yield from player.command
-    if "graveyard" in zones:
-        # Every seat's, narrowed by the ownership keys below exactly as the
-        # command zone is -- "in **your** graveyard" is `controller: "you"`,
-        # and a card in a graveyard is in its owner's (400.3).
-        for player in state.players:
-            yield from player.graveyard
-
-
-def _reduction_matches(
-    state: GameState, pid: int, filt: Any, source_oid: int | None = None
-):
-    """The objects one reduction filter picks out, across the zones it names.
-
-    ``controller`` and ``owner`` are both here and they are not the same
-    question.  Every existing reduction counts permanents *you control*, which is
-    what "for each Vampire you control" says.  Visions of Glory says "a commander
-    you **own**", and the two part company on precisely the boards commanders are
-    played on: a commander in the command zone is controlled by nobody in
-    particular (the object's controller is its owner there, so `controller`
-    happens to answer), while a commander an opponent has stolen with Control
-    Magic is still one you own and still counts for the printed line.
-
-    ``zone`` defaults to the battlefield, so every filter written before the
-    command zone was reachable means what it always meant.
-
-    Types, subtypes, supertypes, colours and keywords come from `chars` on the
-    battlefield and from the printed face anywhere else.  A card in the command
-    zone is not a permanent: no continuous effect applies to it, and asking the
-    characteristics pipeline would let a static that forgot to say "creatures
-    you control" reach into a zone no static can touch.
-
-    **Every key the loader accepts is read here.**  It used to read six of
-    twenty and ignore the rest in silence, so "for each **legendary** creature
-    you control" -- Takenuma's channel ability -- priced itself off every
-    creature instead, and nothing on a board or in a test would have said so: a
-    reduction that counts too much simply makes the ability cheaper. The three
-    keys `STATIC_FILTER_KEYS` carries that are *not* here -- `attached`,
-    `paired` and `paired_with_source` -- are refused by the loader rather than
-    implemented, because each names a relation to one particular permanent and
-    a reduction counts a board.
-    """
-    zones = _filter_zones(filt)
-    for oid in _reduction_zone_oids(state, zones):
-        obj = state.objects.get(oid)
-        if obj is None:
-            continue
-        owner = filt.get("owner")
-        # "You control" is the default only while the filter has said nothing
-        # about ownership. A filter that named `owner` and not `controller` is
-        # asking the other question, and a defaulted control check on top of it
-        # would silently re-impose the answer the card went out of its way not
-        # to ask for -- a commander an opponent stole is one you own and *not*
-        # one you control, so the default would drop exactly the case `owner`
-        # was written for.
-        controller = filt.get("controller", None if owner else "you")
-        if controller == "you" and obj.controller != pid:
-            continue
-        if controller == "opponent" and obj.controller == pid:
-            continue
-        if owner == "you" and obj.owner != pid:
-            continue
-        if owner == "opponent" and obj.owner == pid:
-            continue
-        if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
-            continue
-        if filt.get("self_only") and oid != source_oid:
-            continue
-        if filt.get("exclude_self") and oid == source_oid:
-            continue
-        if obj.on_battlefield:
-            c = chars(state, oid)
-            types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
-            keywords, colors = c.keywords, c.colors
-        else:
-            card = state.card_of(obj)
-            types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
-            keywords, colors = card.keywords, card.colors
-        if (want := filt.get("types")) and not set(want).issubset(types):
-            continue
-        if (want := filt.get("not_types")) and set(want) & set(types):
-            continue
-        if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
-            continue
-        if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
-            continue
-        if (want := filt.get("colors")) and not set(want) & set(colors):
-            continue
-        if (want := filt.get("keywords")) and not set(want).issubset(keywords):
-            continue
-        if (want := filt.get("not_keywords")) and set(want) & set(keywords):
-            continue
-        # Board state, and only the three kinds of it a reduction can see. Each
-        # is a pipeline *input* -- nothing in the characteristics layer writes
-        # a tapped flag, a token flag or a combat assignment -- so reading them
-        # while pricing cannot depend on a static that has not run.
-        if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
-            continue
-        if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
-            continue
-        combat = state.combat
-        if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
-            filt["attacking"]
-        ):
-            continue
-        if "blocking" in filt and bool(combat and combat.blocking(oid)) != bool(
-            filt["blocking"]
-        ):
-            continue
-        yield oid
-
-
-def _filter_zones(filt: Any) -> frozenset[str]:
-    """The zones a filter names, as a set -- one zone or a list of them.
-
-    A list rather than a second filter key, because "on the battlefield **or** in
-    the command zone" is one pool with one maximum taken over it, and two
-    filters would be two maxima that something then has to combine.
-    """
-    zone = filt.get("zone", "battlefield")
-    if isinstance(zone, str):
-        return frozenset({zone})
-    return frozenset(str(z) for z in zone)
 
 
 def zone_of(state: GameState, oid: int) -> Zone:
