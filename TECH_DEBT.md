@@ -1,10 +1,10 @@
 # Tech Debt Audit
 
-**Commit audited:** `6ac90652` (`main`)
+**Commit audited:** `7ee6e8a0` (`origin/main`)
 **Date:** 2026-09-04
 **Scope:** audit only — no source file was modified.
 **Supersedes:** the 2026-08-25 audit of `0161573`. Every finding below was re-measured
-against `6ac90652`; a finding's original ID is kept so the two reports can be read
+against `7ee6e8a0`; a finding's original ID is kept so the two reports can be read
 side by side.
 
 Every line number below is true *at this commit*. Evidence cells are re-derivable by
@@ -12,9 +12,9 @@ running one command or opening one `file:line`.
 
 ## What changed between the two audits
 
-86 commits landed on `main` between `0161573` and `6ac90652` (640 files, +119k lines,
-most of it card data and DSL work). Five of them are the ones this report cares about,
-because they closed findings from the first audit:
+107 commits landed on `main` between `0161573` and `7ee6e8a0` (976 files, +236k lines;
+53 of them `extend-dsl`, so most of the volume is card data and DSL work). Five are the
+ones this report cares about, because they closed findings from the first audit:
 
 | PR / commit | What it closed |
 |---|---|
@@ -29,7 +29,13 @@ files already cited as existing (it did not — the first audit missed that);
 `docs/testing.md` had its frontend counts corrected (its Python counts were not);
 `frontend/tests/zzrepro*.test.tsx` (`LP-01`) are gone.
 
-## The three riskiest areas
+The last 21 of the 107 commits (PRs #22 and #25, all card and DSL work) closed no
+finding and touched one frontend file. They are why the Python numbers below differ
+from a draft of this report taken five days ago at `6ac90652`, and why the frontend
+numbers do not: engine coverage, suite counts and file sizes all moved, while every
+frontend percentage held to within a tenth of a point.
+
+## The riskiest areas
 
 **1. Combat's e2e coverage is still an illusion — and the one combat test that does run
 still fails.** `acceptance.spec.ts:132` still asserts `/btn--primary/` against a button
@@ -51,12 +57,23 @@ sits at **17%** unit coverage, `GroupDial.tsx` at **6%**, `OpponentBoard.tsx` at
 the first audit. Frontend coverage exists now (`CG-04`, **68.3%** of `src/`), so for the
 first time the gap is a number rather than a grep.
 
-**3. `loader.py` grew by 1,544 lines in ten days.** `src/automtg/cards/loader.py` went
-from 3,652 to **5,196** lines between the audits — a 42% increase in the largest file
-in the repository, with no per-module coverage floor. The DSL-extension cadence
-(≈40 `extend-dsl` commits in the window) lands in this one file, and `ops_board.py`
-(+462), `characteristics.py` (+460) and `legality.py` (+333) are following it. `OF-01`
-is the finding getting worse fastest.
+**3. The e2e suite's verdict is not reproducible, so nobody can tell a regression from
+a busy afternoon.** Running the same unchanged commit twice produced three different
+timeout failures across two Playwright projects and one Storybook project, and no two
+runs agreed on which test failed (`FT-06`). Every one passed when re-run alone. The
+two genuine assertion failures reproduced exactly, both times, which is the only reason
+they can be told apart — and that separation took four extra runs to establish rather
+than being something the suite reports about itself. A gate that fails differently on
+each run trains people to re-run it, and re-running is how `FT-03` survives eleven days
+with an assertion that has been wrong the whole time.
+
+**4. `loader.py` grew by 1,812 lines in ten days.** `src/automtg/cards/loader.py` went
+from 3,652 to **5,464** lines between the audits — a 50% increase in the largest file
+in the repository, with no per-module coverage floor. The 53 `extend-dsl` commits in
+the window land here, and four more files are following it: `characteristics.py`
+(+563), `ops_board.py` (+491), `primitives.py` (+420) and `legality.py` (+372).
+`OF-01` is the finding getting worse fastest, and it is getting worse by design —
+the card pipeline's whole cadence writes into these five files.
 
 ## Disclosure: the only repo change made
 
@@ -75,7 +92,7 @@ Diff — `frontend/package.json` (+1 line), `frontend/package-lock.json` (+702 l
 
 The unpinned form (`@vitest/coverage-v8`) **fails to install**: it resolves to 4.1.11,
 whose peer is `vitest@4.1.11`, while this project pins `vitest@^3.2.7`. Pinning to
-3.2.7 installs cleanly. The rebase onto `6ac90652` was conflict-free; no other file is
+3.2.7 installs cleanly. The rebase onto `7ee6e8a0` was conflict-free; no other file is
 touched by this branch.
 
 ## Commands run, and their results
@@ -84,28 +101,28 @@ Each stage was run individually rather than through `scripts/verify.py`, because
 `verify.py` stops at the first failure — correct for a gate, useless for an audit.
 Column three carries the 2026-08-25 result for comparison.
 
-| # | Command | Result at `6ac90652` | At `0161573` |
+| # | Command | Result at `7ee6e8a0` | At `0161573` |
 |---|---|---|---|
 | 1 | `python -m ruff check src scripts tests` | **pass** — `All checks passed!` | pass |
-| 2 | `python scripts/validate_decks.py` | **pass** — 2562 cards (50 tokens), 4 decks legal | pass — 2426 cards |
+| 2 | `python scripts/validate_decks.py` | **pass** — 2622 cards (51 tokens), 4 decks legal | pass — 2426 cards |
 | 3 | `python scripts/build_card_index.py --check` | **pass** — `index is current (32,827 rows)` | pass |
-| 4 | `python -m pytest tests/unit -q -o addopts=` | **pass** — `4435 passed, 1 warning in 37.06s` (the warning: `UV-08`) | 3460 passed |
-| 5 | `python -m pytest tests/cards -q -o addopts=` | **pass** — `6423 passed, 4149 skipped, 1 warning in 145.33s` | 6092 passed, 3958 skipped |
-| 6 | `python -m pytest tests/server -q -o addopts=` | **pass** — `302 passed, 1 warning in 131.62s` (the warning: `UV-08`) | 300 passed |
-| 7 | `python -m pytest tests/ai -q -o addopts=` | **pass** — `75 passed in 173.18s` | 75 passed |
-| 8 | `python scripts/run_arena.py --games 60 --pods 2,4 --max-draw-rate 0.25` | **pass** (exit 0) — 60 duels + 60 four-player games (verify's stage label says *"120 duels + 40 pods"*; the command it runs plays 60 of each size), **0 draws** in both, heuristic beats random 76.7% at 2p / 36.7% at 4p, 255.7s | not run (`UV-05`) |
-| 9 | `verify.run_live_server_stage` (real uvicorn, 2p + 4p + one pod) | **pass** — `ok=True` in 7.7s: 2p seed 2 finished turn 16, 4p seed 4 finished turn 26 (with `WARN never reached a combat declaration`), pod `DRAKE-8740` 2p seed 5 finished turn 15; hidden information held in all three | not run (`UV-05`) |
-| 10 | `cd frontend && npm run build` | **pass** — `tsc` clean, `vite build` 3.0s; one chunk-size warning (595 kB JS) | **FAIL** (`FT-01`) |
-| 11 | `cd frontend && npm run lint` | **pass** (exit 0) — `Found 1 warning.`; see `LS-01` | **FAIL** (`FT-02`) |
-| 12 | `cd frontend && npm run test` | **pass** — `58 files, 1272 passed` | 55 files, 1152 |
+| 4 | `python -m pytest tests/unit -q -o addopts=` | **pass** — `4581 passed, 1 warning in 56.64s` (the warning: `UV-08`) | 3460 passed |
+| 5 | `python -m pytest tests/cards -q -o addopts=` | **pass** — `6562 passed, 4248 skipped, 1 warning in 175.02s` | 6092 passed, 3958 skipped |
+| 6 | `python -m pytest tests/server -q -o addopts=` | **pass** — `303 passed, 1 warning in 260.24s` (the warning: `UV-08`) | 300 passed |
+| 7 | `python -m pytest tests/ai -q -o addopts=` | **pass** — `75 passed in 189.06s` | 75 passed |
+| 8 | `python scripts/run_arena.py --games 60 --pods 2,4 --max-draw-rate 0.25` | **pass** (exit 0) — 60 duels + 60 four-player games, **0 draws** in both, heuristic beats random 76.7% at 2p / 36.7% at 4p, 283.9s. Byte-identical win/draw/seat tables to the run five days ago, which is the seeded arena doing its job | not run (`UV-05`) |
+| 9 | `verify.run_live_server_stage` (real uvicorn, 2p + 4p + one pod) | **pass** — `ok=True` in 7.7s: 2p seed 2 finished turn 16, 4p seed 4 finished turn 26 (with `WARN never reached a combat declaration` again), pod `OASIS-8076` 2p seed 5 finished turn 15; hidden information held in all three | not run (`UV-05`) |
+| 10 | `cd frontend && npm run build` | **pass** — `tsc` clean, `vite build` 4.0s; one chunk-size warning (595 kB JS) | **FAIL** (`FT-01`) |
+| 11 | `cd frontend && npm run lint` | **pass** (exit 0) — 278 files, `Found 1 warning.`; see `LS-01` | **FAIL** (`FT-02`) |
+| 12 | `cd frontend && npm run test` | **pass** — `59 files, 1277 passed` | 55 files, 1152 |
 | 13 | `cd frontend && npm run build-storybook` | **pass** (exit 0) | pass |
-| 14 | `cd frontend && npm run test:stories` | **pass** — `38 files, 381 passed` | 37 files, 365 |
+| 14 | `cd frontend && npm run test:stories` | **pass on a quiet machine** — `38 files, 381 passed`. It **failed** when run alongside the other suites: `ManaSymbol.stories.tsx > All Symbols` reported 48 of 54 symbol images undecoded after its 5s `waitFor`, in a test that took 5052ms. All 55 files are present in `frontend/public/symbols` and nothing in the window touched them or the story — see `FT-06` | 37 files, 365 |
 | 15 | `cd frontend && npm run test:stories:handheld` | **pass** — `7 passed, 31 skipped (38 files), 35 tests` | 5 of 37 files, 22 tests |
-| 16 | `npx playwright test --project=chromium` | **FAIL (exit 1)** — `3 failed, 14 skipped, 107 passed (19.9m)`; the same three failures as before, see `FT-03`, `FT-04`, `FT-05`, `CG-01` | **FAIL** — 3 failed, 14 skipped, 107 passed |
-| 17 | `npx playwright test --project=handheld` | **pass** — `24 passed (3.2m)` (was 15; the nine new ones are `journeys-handheld.spec.ts`) | 15 passed |
-| 17b | `npx playwright test --project=deckfit` | **pass** — `8 passed (1.9m)` | not run — neither audit knew the third project existed |
-| 18 | `python -m pytest tests -q -o addopts= --cov=src/automtg --cov-report=term` | **pass** — `11235 passed, 4149 skipped, 2 warnings in 1826.22s (30:26)`; **TOTAL 92%** (16377 statements, 1324 missed) | 91% (14844 stmts, 1296 missed) |
-| 19 | `npx vitest run --project=unit --coverage --coverage.include='src/**'` | **68.30%** statements, 80.85% branches, 63.61% functions (unit project only — story and e2e runs are not instrumented) | never produced |
+| 16 | `npx playwright test --project=chromium` | **FAIL (exit 1)** — `3 failed, 14 skipped, 107 passed (24.5m)`. Two are the standing assertion failures (`FT-03`, `FT-04`); the third slot was a **timeout**, not an assertion, and it was a different test than five days ago — see `FT-05` and `FT-06` | **FAIL** — 3 failed, 14 skipped, 107 passed |
+| 17 | `npx playwright test --project=handheld` | **FAIL (exit 1)** — `1 failed, 23 passed (5.2m)`; re-run alone, **`24 passed (3.3m)`**. The failure is a 120s timeout in `journeys-handheld.spec.ts:321`, not an assertion — see `FT-06` | 15 passed |
+| 17b | `npx playwright test --project=deckfit` | **pass** — `8 passed (2.0m)` | not run — neither audit knew the third project existed |
+| 18 | `python -m pytest tests -q -o addopts= --cov=src/automtg --cov-report=term` | **pass** — `11521 passed, 4248 skipped, 2 warnings in 2100.17s (35:00)`; **TOTAL 92%** (16702 statements, 1340 missed) | 91% (14844 stmts, 1296 missed) |
+| 19 | `npx vitest run --project=unit --coverage --coverage.include='src/**'` | **68.31%** statements, 80.85% branches, 63.61% functions (unit project only — story and e2e runs are not instrumented) | never produced |
 
 `-o addopts=` is required to see counts at all — see `LS-02`. Without
 `--coverage.include='src/**'`, stage 19 reports **7.02%** because the provider
@@ -118,22 +135,22 @@ not repo changes.
 
 ## Findings
 
-| ID | Category | Status | Path(s) | Evidence at `6ac90652` | Est. risk of fixing | Blocking dependency |
+| ID | Category | Status | Path(s) | Evidence at `7ee6e8a0` | Est. risk of fixing | Blocking dependency |
 |---|---|---|---|---|---|---|
 | FT-01 | failing-test | **RESOLVED** | `frontend/tests/zzrepro2.test.tsx` | File no longer exists; `npm run build` exits 0. | — | none |
 | FT-02 | failing-test | **RESOLVED** | `frontend/tests/zzrepro*.test.tsx` | Files no longer exist; `npm run lint` exits 0. | — | none |
 | FT-03 | failing-test | **OPEN, still failing** | `frontend/e2e/acceptance.spec.ts:132` | `await expect(confirm).toHaveClass(/btn--primary/)` is unchanged, and the button it targets (`ActionPanel.tsx:1298`) still has `className="commit"`. Re-run: `Expected pattern: /btn--primary/ · Received string: "commit"`. Identical failure to 2026-08-25. | **High** — the assertion measures a class that no longer exists; the fix is to assert `commit` or `data-empty` | none |
-| FT-04 | failing-test | **OPEN, still failing, worse** | `frontend/e2e/layout.spec.ts:183` | `the viewer's bands do not move as permanents enter and leave play` — the relationship assertion `docs/testing.md` says must not be re-baselined. Re-run: `the creatures band moved 21px within the mat; the board is jumping again · Expected: < 6 · Received: 21.42` (was 17.37). | **High** | `FB-07` was fixed in #17 for the opening hand; the battlefield bands are a separate mechanism |
-| FT-05 | failing-test | **OPEN, moved** | `frontend/e2e/pod.spec.ts:592` | `the rail is one row: Lock in and Deal are neighbours`. The neighbour assertions the first audit saw fail (`:624`, Left from Deal lands on Lock in) now **pass** — #19's rail nudge fixed that half. The test still fails, one step later: `:632` presses Up from Lock in and expects the ring on `change-deck`; it lands on `pod-copy` (the invite-code copy button). The test file is unchanged since `0161573`, so this is the app's spatial navigation, not the spec, that changed. | **Medium** | none |
+| FT-04 | failing-test | **OPEN, still failing, worse** | `frontend/e2e/layout.spec.ts:183` | `the viewer's bands do not move as permanents enter and leave play` — the relationship assertion `docs/testing.md` says must not be re-baselined. Re-run: `the creatures band moved 22px within the mat; the board is jumping again · Expected: < 6 · Received: 22.01`. The drift has gone 17.37 → 21.42 → 22.01 across three measurements in eleven days, all against the same unchanged spec. It is the one finding that is measurably worsening on its own. | **High** | `FB-07` was fixed in #17 for the opening hand; the battlefield bands are a separate mechanism |
+| FT-05 | flaky-test | **PASSED this run; reclassified** | `frontend/e2e/pod.spec.ts:592` | `the rail is one row: Lock in and Deal are neighbours` **passed** at this tip. Five days ago it failed at `:632` — Up from Lock in landed on `pod-copy` instead of `change-deck` — after a 15s `expect.poll` timeout, and the neighbour half the first audit saw fail had already been fixed by #19. Same spec file, unchanged since `0161573`, two different verdicts. Treat this as `FT-06`, not as a fixed bug: nothing was changed between the two runs. Re-run alone at this tip: `21 passed (1.1m)`. | **Medium** | `FT-06` |
 | CG-01 | coverage-gap | **OPEN, unchanged** | `frontend/e2e/action-panel.spec.ts` lines 80, 127, 142, 167, 224, 269, 520, 661 | Same eight `test.skip(!(await reachDecision(page, …)))` gates, same fixed seeds (`seed: 3`, `5`, `7` at lines 79–519). Deterministic, so they skip on every run. Re-run: still exactly **14 skipped** of 124. Note that `journeys-handheld.spec.ts:421` (new) *does* reach a block declaration against the live engine, so the capability exists — the seeds in this file are simply ones that never get there. | **Medium** — reuse the seed or the scripted path `journeys-handheld.spec.ts` uses | `FT-03` (same surface) |
 | CG-02 | coverage-gap | **OPEN, narrowed** | 20 modules under `frontend/src/` | The same 20 modules have zero references from any `*.test.ts(x)`, `*.spec.ts` or `*.stories.tsx` (list in the appendix). But unit coverage now shows the grep overstated it: `GameRoute.tsx` is **92%** covered (through `routing.test.tsx`), `ChoiceCombo.tsx` **91%**, `useHandLift.ts` **90%**. The real holes are `GroupDial.tsx` **6%**, `CardHold.tsx` **17%**, `OpponentBoard.tsx` **14%**, `ControllerPanel.tsx` **5%**, `NewGameScreen.tsx` **0%** — and, outside the original list, `OpeningHand.tsx` **4%**, `CardGhost.tsx` **4%**, `InviteDialog.tsx` **5%**, `StackPanel.tsx` **5%**, `EventTicker.tsx` **7%** (all unit-project numbers; several of these are exercised by stories, which are not instrumented). | **Medium** | `CG-04` is resolved, so coverage can now be gated per file |
 | CG-03 | coverage-gap | **OPEN, narrowed** | `frontend/src/**/*.stories.tsx` (handheld project) | `npm run test:stories:handheld` now runs `7 passed, 31 skipped (38 files)` — **35 tests**, up from 22 over 5 files. `Journeys.stories.tsx` (#19) added press-budget gates at 1280×800. Still 7 of 38 story files. | **Medium** | none |
 | CG-04 | coverage-gap | **RESOLVED** (on this branch) | `frontend/` | `@vitest/coverage-v8@3.2.7` is installed and stage 19 produced the first frontend number: **68.3%** of `src/`. Not yet wired into `verify.py` or `package.json`. | **Low** | none |
-| CG-05 | coverage-gap | **OPEN, unchanged in shape** | `src/automtg/cards/authoring/` | Overall Python coverage is **92%** (16377 statements, 1324 missed; was 91% / 14844 / 1296). The authoring package is still the outlier: **402 of the 1324 missed lines — 30% of all uncovered code** — `fidelity.py` **27%** (118/161 missed), `packet.py` **45%** (54/99), `queue.py` **48%** (54/103), `templates.py` **49%** (176/345). Every other module in `src/automtg` clears 70%. | **Medium** — developer tooling, contained blast radius | none |
-| CG-06 | coverage-gap | **OPEN, slightly worse** | `src/automtg/engine/effects/ops_mana.py` | **70%** (12 of 40 statements missed; was 73%, 8 of 30). Still the lowest-covered module in the rules engine, where the next lowest are `values.py` and `rng.py` at 89%. It grew by 10 statements in the window (`ops_mana.py` +36 lines) and the new lines are among the missed ones. | **Medium** | none |
+| CG-05 | coverage-gap | **OPEN, unchanged in shape** | `src/automtg/cards/authoring/` | Overall Python coverage is **92%** (16702 statements, 1340 missed; was 91% / 14844 / 1296 at the first audit). Four authoring modules are still the outlier and account for **402 of the 1340 missed lines — 30% of all uncovered code in the project** — `fidelity.py` **27%** (118/161 missed), `packet.py` **46%** (54/100), `queue.py` **48%** (54/103), `templates.py` **49%** (176/345). Those four numbers have not moved a line in eleven days while everything around them grew. The fifth authoring module went the other way: `verify.py` is **94%** covered, having gained 340 lines and a test suite with them, which is what the other four look like when someone tests them. | **Medium** — developer tooling, contained blast radius | none |
+| CG-06 | coverage-gap | **IMPROVED, still the engine's lowest** | `src/automtg/engine/effects/ops_mana.py` | **80%** (8 of 40 statements missed; 73% and 8 of 30 at the first audit). Still the lowest-covered module in the rules engine — the next lowest are `values.py` and `rng.py` at 89% — but the gap closed rather than widened: the module gained 10 statements and no new misses. Worth re-checking rather than carrying forward as written. | **Medium** | none |
 | OF-01 | oversized-file (>600) | **OPEN, worse** | 53 files (was 45; CSS excluded as before) | Full ranked list in the appendix. Worst: `loader.py` **5196** (was 3652), `ops_board.py` **2081** (1619), `characteristics.py` **2043** (1583), `Table.tsx` **2030** (1742), `legality.py` **1752** (1419), `primitives.py` **1730** (1470). Eight new entries crossed 600 in the window, among them `objects.py` (754), `zones.py` (717), `ops_control.py` (693), `targeting.py` (663), `PlayerOrb.tsx` (608). | **High** for `loader.py` / `Table.tsx`; **Medium** for the rest | `CG-04` is resolved for the frontend; Python coverage is per-module already |
 | DC-01 | dead-code | **OPEN, 19 of 20** | 19 symbols in `src/automtg/` | `remove_attacker` gained a caller (`combat.py:525`) and drops off the list. The other 19 still have zero references outside their own `def` across `src`, `tests`, `scripts`, `frontend/src`, `frontend/e2e`, `frontend/tests` (compiled `__pycache__` matches excluded). Updated line numbers in the appendix. | **Low** individually | `UV-02` — the `register()` dispatch caveat still applies |
-| SD-01 | stale-doc | **OPEN, half-fixed** | `docs/testing.md` | #19 corrected the three frontend rows (`1272`, `381 + 35`, `118`). The four Python rows were not touched and are now further off: unit **395 → 4435**, cards **3513 → 6423 (+4149 skipped)**, server **287 → 302**. `tests/ai` (**75**) is still the only correct Python row. | **Low** | none |
+| SD-01 | stale-doc | **OPEN, half-fixed and re-staling** | `docs/testing.md` | #19 corrected the three frontend rows and they have already drifted again: claimed `1272` / `381 + 35` / `118`, measured **1277** / **381 + 35** / 156 across three projects. The four Python rows were never touched and are further off than at the first audit: unit **395 → 4581**, cards **3513 → 6562 (+4248 skipped)**, server **287 → 303**. `tests/ai` (**75**) is still the only correct row in the table. | **Low** | none |
 | SD-02 | stale-doc | **OPEN, unchanged** | `.dockerignore:53` | Still excludes `legacy-frontend`; `ls legacy-frontend` → no such file. | **Low** | none |
 | LP-01 | leftover-prototype | **RESOLVED** | `frontend/tests/zzrepro*.test.tsx` | Gone. Their subject (`FB-01`) shipped as `lobbyBack.test.tsx` and `padTyping.test.ts` in #15. | — | none |
 | LP-02 | leftover-prototype | **OPEN, unchanged** | `frontend/src/components/game/GroupDial.tsx:13` | *"it was the prototype's name for exactly this control, carried into the trap and then not built"* — same comment, same line. `GroupDial.tsx` is at 6% unit coverage. | **Low** — rename only | `CG-02` |
@@ -142,23 +159,24 @@ not repo changes.
 | LS-02 | lint-suppression | **OPEN, unchanged** | `pyproject.toml:29` → `addopts = "-q"` | `verify.py` still adds its own `-q` (`python_stages()`, lines 181–191), making `-qq`; the gate's output never shows how many tests ran. | **Low** | none |
 | LS-03 | lint-suppression | **unchanged** | `src`, `scripts`, `tests` | 22 `# noqa`: 8×`F401`, 8×`E402`, 3×`RUF001`, 3×`E731`. Six project-wide ruff ignores and three `per-file-ignores`, each with a written rationale. | **Low** | none |
 | LS-04 | lint-suppression | **unchanged in kind** | `frontend/src`, `frontend/e2e`, `frontend/tests` | 20 `biome-ignore` comments across 15 files (was 19 / 17). Still zero `@ts-ignore` / `@ts-expect-error`. | **Low** | none |
+| FT-06 | flaky-test | **NEW** | `frontend/e2e/` (both projects) | **Three different tests failed on timeout across two runs of the same unchanged commit**, and no two runs agreed on which. This session: `orb.spec.ts:225` hit the 180s test timeout inside the `keepOpeningHand` helper (`helpers.ts:171`), and `journeys-handheld.spec.ts:321` hit 120s. Five days ago, on the same specs: both passed and `pod.spec.ts:632` failed a 15s poll instead. Wall clock moved with it — chromium 19.9m → 24.5m, handheld 3.2m → 5.2m — so the trigger is machine load, not code. The two genuine assertion failures (`FT-03`, `FT-04`) reproduced identically in both runs, which is how you can tell the two classes apart. **All four re-ran green in isolation on a quiet machine**: `orb.spec.ts` `14 passed (1.1m)`, `pod.spec.ts` `21 passed (1.1m)`, `journeys-handheld.spec.ts` `6 passed (1.3m)`, and the whole handheld project back to `24 passed (3.3m)` — plus the Storybook case in stage 14, `381 passed`. Nothing was changed between the failing and passing runs. | **Medium** — the fix is per-test budgets that scale, or a serial project; the risk is that raising timeouts hides a real slowdown | none |
 | NF-01 | noisy-test | **NEW** | `frontend/src/components/game/ParticleLayer.tsx:142` | `npm run test` prints a jsdom stack trace twice — `Not implemented: HTMLCanvasElement.prototype.getContext` — from `routing.test.tsx`'s two rematch cases, which mount the board and hit the particle canvas. Tests pass; the trace is stderr noise that will hide a real one. | **Low** — guard `getContext` behind a null check, or stub canvas in the jsdom setup | none |
 
 ### Categories with no findings
 
 - **duplicated-logic** — no confirmable instance; `UV-03` still stands.
 - **TODO/FIXME/HACK/XXX markers** — zero outside the dataclass field name `todo:` in
-  `src/automtg/cards/authoring/packet.py` (lines 77, 299, 304, 318).
+  `src/automtg/cards/authoring/packet.py` (lines 117, 130, 392, 397, 411).
 - **broken documentation links** — every relative link in `README.md`, `docs/*.md`
   and `docs/adr/*.md` resolves (0 broken; checked by script).
 
 ## Field-reported defects (playtesting during the first audit)
 
-**14 defects reported on 2026-08-25.** At `6ac90652`: **7 fixed with a regression
+**14 defects reported on 2026-08-25.** At `7ee6e8a0`: **7 fixed with a regression
 test**, **7 open**. Fixed ones name the commit and the test; open ones say what was
 looked for and not found.
 
-| ID | Report | Status at `6ac90652` | Evidence |
+| ID | Report | Status at `7ee6e8a0` | Evidence |
 |---|---|---|---|
 | FB-05 | Same opening hand every game | **FIXED** — #16 `318e73c7` | `sessions.py:450` — `seed=new_seed() if seed is None else int(seed)`; `new_seed()` (`:413`) draws from `secrets`. Tests in `tests/server/test_api.py` (+34). |
 | FB-11 | The Attack button cannot be focused even when enabled | **FIXED** — #18 `f1c0f21d` | `ActionPanel.tsx:1299` — `data-stop={stopId.commit}` on the confirm slab; both `commit-mark` buttons carry `stopId.commitMark("all")` (`:1249`, `:1279`). `stops.test.tsx:211` asserts `combat-confirm` has `data-stop="commit"`. |
@@ -198,14 +216,21 @@ runs 381 passing tests and is **not** a candidate.
 
 ## Unverified / ambiguous — flagged rather than guessed
 
-- **UV-01** — RESOLVED at both audits; chromium `3 failed, 14 skipped, 107 passed (19.9m)`, handheld `24 passed (3.2m)`. 148 cases across the two projects (124 + 24; they are disjoint — `chromium` ignores `handheld|pad|deckfit.spec.ts`, `handheld` matches `handheld|pad`) against `docs/testing.md`'s claim of 118 for `frontend/e2e/`. Adding `deckfit` (8) makes 156 cases across three projects. `verify.py` runs none of them — Playwright is not a verify stage (`docs/testing.md`: *"Playwright is not run here"*), so every `FT-` finding in this report is invisible to the gate.
+- **UV-01** — RESOLVED as a question, replaced by `FT-06` as a problem. Full runs at
+  this tip: chromium `3 failed, 14 skipped, 107 passed (24.5m)`, handheld `1 failed,
+  23 passed (5.2m)`, deckfit `8 passed (2.0m)`. 156 cases across three disjoint
+  projects — `chromium` ignores `handheld|pad|deckfit.spec.ts`, `handheld` matches
+  `handheld|pad` — against `docs/testing.md`'s claim of 118 for `frontend/e2e/`.
+  `verify.py` runs none of the three: Playwright is not a verify stage
+  (`docs/testing.md`: *"Playwright is not run here"*), so every `FT-` finding in this
+  report is invisible to the gate that is supposed to catch them.
 - **UV-02** — the 19 `DC-01` candidates are **candidates only**. The engine registers
   effect ops dynamically (`register()` in `engine/effects/__init__.py`), and a grep
   cannot see dispatch through a registry. `remove_attacker` leaving the list because
   a caller appeared is the kind of thing this caveat exists for.
 - **UV-03** — duplication between `handheldAssert.ts` and `mockups/*/assert.js` was
   checked by function-name intersection only. Unchanged.
-- **UV-04** — `tests/cards` skips **4149** tests. Sampled reasons are per-card
+- **UV-04** — `tests/cards` skips **4248** tests. Sampled reasons are per-card
   conditionals, not disabled coverage. Not counted as a gap; not individually reviewed.
 - **UV-05** — RESOLVED. Both stages the first audit deferred were run this time
   (stages 8 and 9) and both pass. Two things worth noting from their output: the
@@ -267,94 +292,105 @@ imports them without exercising them: `NewGameScreen.tsx` 0%, `main.tsx` 0%,
 
 Per directory: `src/logic` **91%**, `src/input` **87%**, `src/components/lobby` 77%,
 `src/screens` 73%, `src/state` 67%, `src/components/game` 62%, `src/components/ui`
-61%, `src/fx` 55%, `src/api` 16%, `src/components/menu` 14%, `src/audio` 11%.
+61%, `src/fx` 55%, `src/api` 16%, `src/components/menu` 14%, `src/audio` 11%. Every
+one of these is within a tenth of a point of the same measurement five days earlier,
+and the untested-module list is character-for-character identical — 21 commits of
+engine and card work moved the Python numbers and left the frontend exactly where it
+was. The one exception is `CardFace.tsx`, which went to **98%** on the back of the
+single frontend test those commits added.
 
 ### Dead-code candidates (DC-01) — unconfirmed, see UV-02
 
 ```
-src/automtg/ai/action_space.py:324           decision_kind_of
-src/automtg/ai/action_space.py:328           creature_power
-src/automtg/cards/authoring/templates.py:958 sentence_patterns
-src/automtg/cards/images.py:152              normal_url
-src/automtg/engine/actions.py:277            chosen_refs
-src/automtg/engine/actions.py:280            chosen_values
-src/automtg/engine/carddef.py:969            color_set
-src/automtg/engine/characteristics.py:102    printed_chars
-src/automtg/engine/characteristics.py:1177   effective_toughness
-src/automtg/engine/effects/selectors.py:1213 sorted_candidates
-src/automtg/engine/game.py:1415              hand_size_limit
-src/automtg/engine/game.py:1419              target_ref
-src/automtg/engine/legality.py:1744          creature_can_attack
-src/automtg/engine/mana.py:202               total_required
-src/automtg/engine/primitives.py:1729        controlled_by
-src/automtg/engine/rng.py:55                 spawn
-src/automtg/engine/state.py:348              maybe_obj
-src/automtg/engine/state.py:495              objects_in
-src/automtg/engine/state.py:735              sorted_oids
+src/automtg/ai/action_space.py:324            decision_kind_of
+src/automtg/ai/action_space.py:328            creature_power
+src/automtg/cards/authoring/templates.py:958  sentence_patterns
+src/automtg/cards/images.py:152               normal_url
+src/automtg/engine/actions.py:291             chosen_refs
+src/automtg/engine/actions.py:294             chosen_values
+src/automtg/engine/carddef.py:1030            color_set
+src/automtg/engine/characteristics.py:102     printed_chars
+src/automtg/engine/characteristics.py:1228    effective_toughness
+src/automtg/engine/effects/selectors.py:1213  sorted_candidates
+src/automtg/engine/game.py:1442               hand_size_limit
+src/automtg/engine/game.py:1446               target_ref
+src/automtg/engine/legality.py:1783           creature_can_attack
+src/automtg/engine/mana.py:229                total_required
+src/automtg/engine/primitives.py:1889         controlled_by
+src/automtg/engine/rng.py:55                  spawn
+src/automtg/engine/state.py:372               maybe_obj
+src/automtg/engine/state.py:519               objects_in
+src/automtg/engine/state.py:759               sorted_oids
 ```
 
 Dropped since the first audit: `combat.py remove_attacker` — now called at `combat.py:525`.
 
 ### Oversized files (OF-01) — >600 lines, shipped code, mockups and CSS excluded
 
+53 files, the same count as five days ago but not the same list — the growth
+went into files that were already over. A column of `—` means the file did not exist at
+`0161573`; every other row grew. Note the first audit listed `pad.ts` at 912 lines when
+`git show 0161573:` gives 855: that table was measured against the dirty working tree it
+warned about, not against the commit it named. This column is `git show`.
+
 | Path | Lines | At `0161573` |
 |---|---|---|
-| `src/automtg/cards/loader.py` | 5196 | 3652 |
-| `src/automtg/engine/effects/ops_board.py` | 2081 | 1619 |
-| `src/automtg/engine/characteristics.py` | 2043 | 1583 |
+| `src/automtg/cards/loader.py` | 5464 | 3652 |
+| `src/automtg/engine/characteristics.py` | 2146 | 1583 |
+| `src/automtg/engine/effects/ops_board.py` | 2110 | 1619 |
 | `frontend/src/components/game/Table.tsx` | 2030 | 1742 |
-| `src/automtg/engine/legality.py` | 1752 | 1419 |
-| `src/automtg/engine/primitives.py` | 1730 | 1470 |
+| `src/automtg/engine/primitives.py` | 1890 | 1470 |
+| `src/automtg/engine/legality.py` | 1791 | 1419 |
+| `src/automtg/engine/costs.py` | 1631 | 1341 |
 | `src/automtg/engine/combat.py` | 1559 | 1390 |
-| `src/automtg/engine/costs.py` | 1514 | 1341 |
+| `src/automtg/engine/game.py` | 1447 | 1272 |
 | `src/automtg/engine/effects/ops_cards.py` | 1429 | 1080 |
-| `src/automtg/engine/game.py` | 1420 | 1272 |
+| `src/automtg/engine/triggers.py` | 1383 | 1208 |
 | `frontend/src/components/game/ActionPanel.tsx` | 1367 | 1277 |
-| `src/automtg/engine/triggers.py` | 1266 | 1208 |
 | `src/automtg/engine/effects/selectors.py` | 1215 | 965 |
-| `src/automtg/engine/carddef.py` | 1100 | 919 |
-| `src/automtg/cards/authoring/verify.py` | 1066 | 831 |
+| `src/automtg/cards/authoring/verify.py` | 1171 | 831 |
+| `src/automtg/engine/carddef.py` | 1161 | 919 |
+| `src/automtg/engine/structs.py` | 1139 | 972 |
 | `frontend/src/components/game/Table.stories.tsx` | 1024 | 894 |
-| `src/automtg/engine/structs.py` | 1021 | 972 |
 | `frontend/src/testing/scenarios.ts` | 1008 | 1008 |
-| `src/automtg/engine/stack.py` | 977 | 752 |
+| `src/automtg/engine/stack.py` | 984 | 752 |
+| `src/automtg/engine/mana.py` | 965 | 819 |
 | `src/automtg/cards/authoring/templates.py` | 964 | 959 |
-| `src/automtg/cards/schema.py` | 929 | 732 |
+| `src/automtg/cards/schema.py` | 962 | 732 |
 | `src/automtg/cards/proxy.py` | 928 | 921 |
-| `frontend/src/input/pad.ts` | 927 | 912 |
+| `frontend/src/input/pad.ts` | 927 | 855 |
 | `src/automtg/engine/effects/values.py` | 926 | 776 |
-| `src/automtg/engine/mana.py` | 847 | 819 |
+| `tests/cards/test_every_card_works.py` | 861 | 699 |
 | `frontend/src/logic/events.ts` | 843 | 814 |
-| `tests/cards/test_every_card_works.py` | 822 | 699 |
-| `tests/cards/test_proxy.py` | 818 | 787 |
+| `tests/cards/test_proxy.py` | 823 | 787 |
+| `src/automtg/engine/turn.py` | 802 | 762 |
 | `src/automtg/server/lobby.py` | 792 | 792 |
-| `src/automtg/engine/turn.py` | 783 | 762 |
 | `frontend/e2e/cycle3.spec.ts` | 764 | 764 |
-| `src/automtg/engine/objects.py` | 754 | new |
+| `src/automtg/engine/state.py` | 761 | 690 |
+| `src/automtg/engine/objects.py` | 754 | 561 |
 | `frontend/src/input/cursor.ts` | 739 | 677 |
-| `src/automtg/engine/state.py` | 737 | 690 |
-| `src/automtg/engine/zones.py` | 717 | new |
-| `frontend/e2e/pad.spec.ts` | 705 | new |
-| `tests/cards/test_authoring.py` | 700 | new |
-| `src/automtg/engine/effects/ops_control.py` | 693 | new |
+| `src/automtg/engine/zones.py` | 717 | 579 |
+| `src/automtg/engine/effects/ops_control.py` | 713 | 558 |
+| `frontend/e2e/pad.spec.ts` | 705 | 582 |
+| `tests/cards/test_authoring.py` | 700 | 388 |
 | `tests/unit/test_saga.py` | 688 | 688 |
 | `frontend/tests/components.test.tsx` | 687 | 687 |
 | `frontend/e2e/pod.spec.ts` | 681 | 681 |
 | `frontend/e2e/action-panel.spec.ts` | 671 | 671 |
+| `src/automtg/engine/targeting.py` | 670 | 404 |
 | `frontend/src/components/lobby/HomeScreen.tsx` | 665 | 665 |
 | `frontend/e2e/handheldAssert.ts` | 665 | 665 |
-| `src/automtg/engine/targeting.py` | 663 | new |
+| `src/automtg/server/routes.py` | 658 | 623 |
 | `tests/unit/test_delayed_object_reference.py` | 644 | 644 |
 | `tests/unit/test_monarch.py` | 643 | 643 |
-| `src/automtg/cards/images.py` | 624 | new |
-| `src/automtg/server/routes.py` | 623 | 623 |
+| `src/automtg/cards/images.py` | 624 | 569 |
 | `tests/unit/test_goad.py` | 621 | 621 |
 | `frontend/src/logic/zoomFit.ts` | 608 | 608 |
-| `frontend/src/components/game/PlayerOrb.tsx` | 608 | new |
+| `frontend/src/components/game/PlayerOrb.tsx` | 608 | 593 |
 | `frontend/src/components/game/FxLayer.tsx` | 605 | 605 |
 
-For the record, the stylesheets excluded above would add eight more: `handheld.css`
-2282, `board.css` 2278, `lobby.css` 1756, `ui.css` 1649, `cards.css` 1159, `seat.css`
+For the record, the stylesheets excluded above would add seven more: `handheld.css`
+2282, `board.css` 2278, `lobby.css` 1756, `ui.css` 1649, `cards.css` 1177, `seat.css`
 741, `door.css` 697.
 
 ## Out of scope: the feature request from the first audit
