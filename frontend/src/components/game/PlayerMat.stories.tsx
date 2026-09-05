@@ -12,6 +12,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
 import { CARD_SCALE, opponentCardScale } from "../../logic/cardSize";
+import { expectFontFloor, expectHitFloor } from "../../testing/asserts";
 import * as scenarios from "../../testing/scenarios";
 import { PlayerMat } from "./PlayerMat";
 
@@ -182,4 +183,20 @@ export const PlayerTargetable: Story = {
 /** Input gated while narration plays. */
 export const Locked: Story = {
   args: mat(early, 0, { locked: true }),
+};
+
+/** Your own mat at 1280x800: the lanes and the orb both hold the floors. */
+export const ViewerHandheld: Story = {
+  args: mat(early, 0),
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findAllByText("Forest");
+    // Type and targets only. The card width here is the fixture's fixed
+    // `cardScale`, not the zoom solver's answer; the 96px card floor is
+    // asserted where the solver runs, in `Table.stories.tsx`.
+    expectFontFloor(canvasElement);
+    expectHitFloor(canvasElement);
+  },
 };

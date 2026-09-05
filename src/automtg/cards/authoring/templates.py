@@ -955,10 +955,5 @@ def describe(result: TemplateResult) -> str:
     return f"{result.card_id}: {result.reason}"
 
 
-def sentence_patterns() -> list[str]:
-    """Every sentence this module can translate, for the report."""
-    return [p.pattern for p, _ in SENTENCES] + [p.pattern for p, _ in STATICS]
-
-
 def _unused(spec: Any) -> Any:  # pragma: no cover - keeps the public surface tidy
     return spec

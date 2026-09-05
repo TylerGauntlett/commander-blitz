@@ -149,9 +149,6 @@ class IndexEntry:
     def art_url(self) -> str:
         return image_url(self.scryfall_id, ART_CROP)
 
-    def normal_url(self) -> str:
-        return image_url(self.scryfall_id, NORMAL)
-
     def keyword_list(self) -> tuple[str, ...]:
         return tuple(k for k in self.keywords.split(",") if k)
 

@@ -8,12 +8,19 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { actionsOfKind, isOver, startGame, takeAction, waitForOurTurn } from "./helpers";
+import {
+  actionsOfKind,
+  budget,
+  isOver,
+  startGame,
+  takeAction,
+  waitForOurTurn,
+} from "./helpers";
 
 test("a game can be played from deal to result, with every re-themed surface working", async ({
   page,
 }) => {
-  test.setTimeout(600_000);
+  test.setTimeout(budget(600_000));
 
   // --- deal -------------------------------------------------------------
   await startGame(page, { deck: "aesi", opponents: 1, seed: 11 });
@@ -107,7 +114,7 @@ test("a game can be played from deal to result, with every re-themed surface wor
 });
 
 test("combat still works through the re-themed controls", async ({ page }) => {
-  test.setTimeout(300_000);
+  test.setTimeout(budget(300_000));
   await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
 
   for (let i = 0; i < 120; i += 1) {
@@ -125,15 +132,23 @@ test("combat still works through the re-themed controls", async ({ page }) => {
         .isVisible()
         .catch(() => false)
     ) {
-      // The commit slab is the primary control, and it still carries the
-      // server's action id like every other button.
+      // The commit slab is the primary control. It is `.commit`, not
+      // `.btn--primary` -- the class this assertion measured for eleven days
+      // was one the button had never had (TECH_DEBT FT-03). The slab
+      // deliberately carries no action id of its own (see the invariant in
+      // `ActionPanel.tsx`); what it carries is the commit stop.
       const confirm = page.getByTestId("combat-confirm");
       if (await confirm.count()) {
-        await expect(confirm).toHaveClass(/btn--primary/);
+        await expect(confirm).toHaveClass("commit");
+        await expect(confirm).toHaveAttribute("data-stop", "commit");
       }
-      const attacks = actionsOfKind(page, "declare_attackers");
+      // The panel emits `add_attacker` rows, never a `declare_attackers` kind;
+      // staging one and confirming is what "combat works" means here.
+      const attacks = actionsOfKind(page, "add_attacker");
       if (await attacks.count()) {
         await attacks.first().click();
+        await expect(confirm).toBeEnabled();
+        await confirm.click();
         return;
       }
     }
@@ -142,7 +157,7 @@ test("combat still works through the re-themed controls", async ({ page }) => {
 });
 
 test("every rendered action still has a unique server id", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
   // The load-bearing invariant of the whole client. The re-theme added a

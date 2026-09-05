@@ -50,8 +50,6 @@ runs
 
 # Not shipped: the server imports none of it.
 tests
-legacy-frontend
-mockups
 docs
 scripts
 data/authoring

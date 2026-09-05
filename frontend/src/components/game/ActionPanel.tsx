@@ -42,43 +42,26 @@ import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardView, GameView, LegalAction } from "../../api/types";
-import { setCursor } from "../../input/cursor";
-import { actionAttrs, stopId } from "../../input/stops";
 import {
   availableAttackers,
   availableBlockers,
-  blockableBy,
   defendersFor,
   groupPlayActions,
 } from "../../logic/actionMatch";
 import { sensibleAttacks } from "../../logic/autoAttack";
-import { type BlockTier, autoBlocks, blockTier } from "../../logic/autoBlock";
-import { keywordLabel, manaPips, statLine } from "../../logic/cardStyle";
+import { autoBlocks } from "../../logic/autoBlock";
+import { statLine } from "../../logic/cardStyle";
 import { decisionPrompt, thinkingLabel } from "../../logic/labels";
 import { findCard } from "../../logic/zoneGrouping";
-import { bouncy, ease } from "../../motion/springs";
+import { ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useHandheldLayout } from "../../state/useHandheld";
-import { ActionIcon } from "../ui/ActionIcon";
-import { SchemePicker } from "../ui/SchemePicker";
-import { ManaSymbol } from "./ManaSymbol";
-import { SymbolText } from "./SymbolText";
-
-/**
- * What a block would actually achieve, in four words.
- *
- * Straight off `blockTier`, which is the ranking "All defend" already sorts by,
- * so the label and the suggestion can never disagree. Naming the outcome is the
- * whole point of the grouped blocker list: the numbers were always on the cards,
- * but working out "my 2/2 into their 2/2 is a trade" for six pairs is arithmetic
- * the player was being asked to do under time pressure.
- */
-const TIER_LABEL: Record<BlockTier, string> = {
-  1: "kills it, survives",
-  2: "survives",
-  3: "trades",
-  4: "chumps",
-};
+import { AttackRows } from "./AttackRows";
+import { BlockGroups } from "./BlockGroups";
+import { CommitDock } from "./CommitDock";
+import { PlayRows } from "./PlayRows";
+import { ToolStrip } from "./ToolStrip";
+import { XStepper } from "./XStepper";
 
 /**
  * Actions big enough to be the slab rather than a row.
@@ -114,7 +97,7 @@ interface Props {
    * The prompt and the tools stay in the document. Note they are not *reachable*
    * while a dialog is up: `.prompt-backdrop` is fixed at `inset: 0` above
    * everything and swallows the clicks. That predates this panel and is recorded
-   * in docs/mockup-fidelity.md rather than worked around here.
+   * in docs/design-record.md (Open fidelity findings) rather than worked around here.
    */
   standDown: boolean;
 }
@@ -149,7 +132,7 @@ export function ActionPanel({
    * longer holds: the rail runs the full height of the screen now, 748px rather
    * than 514, so the 65px the slab costs is affordable and the list still comes
    * out at 363-398. Putting it back is also the arrangement
-   * `mockups/handheld-board/` draws and the one that reads better -- the thing
+   * the handheld-board round (`docs/design-record.md#handheld-board`) draws and the one that reads better -- the thing
    * you press to end a decision belongs under the list of that decision, not in
    * the corner of the hand.
    *
@@ -191,62 +174,6 @@ export function ActionPanel({
     setHosts((c) => (c.slab === null && c.tools === tools ? c : { slab: null, tools }));
   }, [handheld]);
 
-  const muted = useUiStore((s) => s.muted);
-  const toggleMuted = useUiStore((s) => s.toggleMuted);
-
-  /*
-   * The settings menu, and why three controls went into it.
-   *
-   * Sound, undo and quit were three permanently visible buttons in a strip
-   * whose whole job is to be ignorable. Two of them are pressed at most once a
-   * game and the third is pressed when a game ends -- and they sat at the same
-   * weight as `Auto-pass` and `Auto mana`, which are modes you flip mid-turn
-   * and which change how every subsequent priority window behaves. Equal
-   * prominence for "how does this game play" and "I would like to leave" reads
-   * as a row of five equally likely things, which is what makes the strip cost
-   * a glance it should never cost.
-   *
-   * So they are one control now, and they keep their ids: the same
-   * `data-stop`, `data-testid` and handlers ride into the menu, so the ring
-   * reaches them exactly as it did once the menu is open and no gate had to be
-   * loosened to allow a second copy.
-   *
-   * IT OPENS UPWARDS. The strip is the last row of the foot on a handheld and
-   * the last row of the panel on a desktop; there is nothing below either but
-   * the screen edge.
-   */
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const settingsRef = useRef<HTMLDivElement>(null);
-
-  /*
-   * Closing it puts the ring back on the button that opened it.
-   *
-   * Without this the ring is standing on a node that is about to stop existing,
-   * and `resolveCursor`'s fallback is "the first stop of the surface on top" --
-   * which is the far side of the board. Closing a menu must not move the player
-   * somewhere they did not ask to go. Guarded on focus actually being inside,
-   * so a mouse player clicking elsewhere is not dragged back here.
-   */
-  const closeSettings = () => {
-    setSettingsOpen(false);
-    const inside = settingsRef.current?.contains(document.activeElement);
-    if (inside) setCursor(stopId.tool("settings"));
-  };
-
-  /*
-   * A press anywhere else closes it. `pointerdown` rather than `click`, so the
-   * menu is gone before whatever was pressed underneath it acts -- and capture,
-   * so a control that stops propagation cannot leave the menu open behind it.
-   */
-  useEffect(() => {
-    if (!settingsOpen) return;
-    const onDown = (event: PointerEvent) => {
-      if (settingsRef.current?.contains(event.target as Node)) return;
-      setSettingsOpen(false);
-    };
-    document.addEventListener("pointerdown", onDown, true);
-    return () => document.removeEventListener("pointerdown", onDown, true);
-  }, [settingsOpen]);
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
   const stagedBlocks = useUiStore((s) => s.stagedBlocks);
   const stageAttack = useUiStore((s) => s.stageAttack);
@@ -535,41 +462,6 @@ export function ActionPanel({
   const dock = (tree: ReactNode): ReactNode =>
     hosts.slab ? createPortal(tree, hosts.slab) : tree;
 
-  /*
-   * THE DOCK IS THE SAME SHAPE IN EVERY STATE, and this is the half that makes
-   * it true when there is nothing to press.
-   *
-   * The well was always mounted and its contents were not, so between decisions
-   * it collapsed to its own padding -- 18px -- and sprang back to 66 or 90 the
-   * moment an action arrived. The whole rail below it moved with it, every time
-   * a turn passed. `.preview` above already holds a constant height for exactly
-   * this reason; `board.css` spends four paragraphs on why.
-   *
-   * So the bar is never absent, only idle: the same slab in the same quiet
-   * treatment a disabled one wears, carrying the panel's own waiting mark
-   * (`.acts__dot`, which is what `.acts__thinking` uses in the head). Gold
-   * means "this is what the turn is waiting on", and while the engine is
-   * playing out somebody else's turn it is not.
-   *
-   * IT IS NOT AN ACTION AND IS NOT A BUTTON. A `div`, not a disabled
-   * `<button>`: there is nothing here to press even in principle, and a
-   * disabled control is a promise that it will become pressable. It carries no
-   * `data-action-id` -- the exactly-once invariant at the top of this file --
-   * and no `data-stop`, so the controller cursor cannot land on it either.
-   * `aria-hidden` because `.acts__none` in the list above already says
-   * "Waiting..." to a screen reader, and saying it twice is worse than once.
-   */
-  const idleBar = (
-    <div className="bar">
-      <div className="commit commit--idle" aria-hidden="true">
-        <span className="commit__dots" data-testid="commit-idle">
-          <span className="acts__dot" />
-          <span className="acts__dot" />
-          <span className="acts__dot" />
-        </span>
-      </div>
-    </div>
-  );
   const tool = (tree: ReactNode): ReactNode =>
     hosts.tools ? createPortal(tree, hosts.tools) : tree;
 
@@ -612,299 +504,58 @@ export function ActionPanel({
         {hint && <p className="acts__hint">{hint}</p>}
 
         <div className="acts__list" data-testid="action-list">
-          {mode === "attack" &&
-            attackers.map((attacker, index) => {
-              const defenders = defendersFor(actions, attacker);
-              const chosen = stagedAttacks[attacker];
-              const on = chosen !== undefined;
-              const single = defenders.length === 1;
-              const action = single ? attackActionFor(attacker, defenders[0]) : null;
-              const rowClass = ["act", "act--staged", on ? "act--on" : ""]
-                .filter(Boolean)
-                .join(" ");
-              const body = (
-                <>
-                  <span className="act__key">{index + 1}</span>
-                  <span className="act__name">{nameOf(attacker)}</span>
-                  {on && (
-                    <span className="act__aim">→ {state.players[chosen]?.name ?? chosen}</span>
-                  )}
-                  {ptOf(attacker) && <span className="act__pt tabular">{ptOf(attacker)}</span>}
-                </>
-              );
+          {mode === "attack" && (
+            <AttackRows
+              attackers={attackers}
+              actions={actions}
+              state={state}
+              stagedAttacks={stagedAttacks}
+              disabled={disabled}
+              onStage={onStage}
+              attackActionFor={attackActionFor}
+              nameOf={nameOf}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
 
-              // One legal defender: the row *is* the action, so attacking is a
-              // single click on the obvious thing.
-              if (single && action) {
-                return (
-                  <button
-                    type="button"
-                    key={attacker}
-                    className={rowClass}
-                    {...actionAttrs(action.id)}
-                    data-action-kind={action.kind}
-                    data-attacker={attacker}
-                    data-defender={defenders[0]}
-                    data-staged={on ? "true" : undefined}
-                    aria-pressed={on}
-                    disabled={disabled}
-                    onClick={() => onStage(action.id)}
-                    {...previewing(attacker)}
-                  >
-                    {body}
-                  </button>
-                );
-              }
+          {mode === "block" && (
+            <BlockGroups
+              blockers={blockers}
+              actions={actions}
+              stagedBlocks={stagedBlocks}
+              disabled={disabled}
+              onStage={onStage}
+              blockActionFor={blockActionFor}
+              card={card}
+              nameOf={nameOf}
+              ptOf={ptOf}
+              previewing={previewing}
+            />
+          )}
 
-              // Several: the row is inert and each defender carries its own id,
-              // which is what keeps N pairs on N controls. Only in a pod.
-              return (
-                <div
-                  key={attacker}
-                  className={`${rowClass} act--group`}
-                  data-attacker={attacker}
-                  data-staged={on ? "true" : undefined}
-                  {...previewing(attacker)}
-                >
-                  {body}
-                  <span className="act__aims">
-                    {defenders.map((pid) => {
-                      const pairAction = attackActionFor(attacker, pid);
-                      if (!pairAction) return null;
-                      const aimed = chosen === pid;
-                      return (
-                        <button
-                          type="button"
-                          key={pid}
-                          className={aimed ? "aim aim--on" : "aim"}
-                          {...actionAttrs(pairAction.id)}
-                          data-action-kind={pairAction.kind}
-                          data-attacker={attacker}
-                          data-defender={pid}
-                          // The pointer gets this from the group row it is
-                          // inside; the ring lands on the chip itself and needs
-                          // it said here. See `previewing`.
-                          data-preview-oid={attacker}
-                          aria-pressed={aimed}
-                          disabled={disabled}
-                          onClick={() => onStage(pairAction.id)}
-                          data-hint={
-                            aimed
-                              ? `Attacking ${state.players[pid]?.name} — click to call it back`
-                              : `Send at ${state.players[pid]?.name}`
-                          }
-                        >
-                          {state.players[pid]?.name ?? pid}
-                        </button>
-                      );
-                    })}
-                  </span>
-                </div>
-              );
-            })}
-
-          {mode === "block" &&
-            blockers.map((blocker) => {
-              const blockerCard = card(blocker);
-              const chosen = stagedBlocks[blocker];
-              const targets = blockableBy(actions, blocker);
-              return (
-                <div className="actgroup" key={blocker} data-blocker={blocker}>
-                  {/* The header previews *your* creature; each row below it
-                      previews the attacker that row would block. Deciding a
-                      block means reading both, and now neither needs finding on
-                      the board first. */}
-                  <div className="actgroup__head" {...previewing(blocker)}>
-                    <span className="actgroup__name">{nameOf(blocker)}</span>
-                    {blockerCard && blockerCard.keywords.length > 0 && (
-                      <span className="actgroup__kw">
-                        {blockerCard.keywords.map(keywordLabel).join(" · ")}
-                      </span>
-                    )}
-                    {ptOf(blocker) && (
-                      <span className="actgroup__pt tabular">{ptOf(blocker)}</span>
-                    )}
-                  </div>
-                  {targets.length === 0 ? (
-                    <p className="actgroup__none">Nothing this can block.</p>
-                  ) : (
-                    targets.map((attacker) => {
-                      const action = blockActionFor(blocker, attacker);
-                      const attackerCard = card(attacker);
-                      if (!action || !blockerCard || !attackerCard) return null;
-                      const tier = blockTier(blockerCard, attackerCard);
-                      const on = chosen === attacker;
-                      return (
-                        <button
-                          type="button"
-                          key={action.id}
-                          className={`act act--nested act--staged${on ? " act--on" : ""}`}
-                          {...actionAttrs(action.id)}
-                          data-action-kind={action.kind}
-                          data-blocker={blocker}
-                          data-attacker={attacker}
-                          data-tier={tier}
-                          data-staged={on ? "true" : undefined}
-                          aria-pressed={on}
-                          disabled={disabled}
-                          onClick={() => onStage(action.id)}
-                          data-hint={
-                            on
-                              ? `Blocking ${nameOf(attacker)} — click to release`
-                              : `Block ${nameOf(attacker)}`
-                          }
-                          {...previewing(attacker)}
-                        >
-                          <span className="act__name">{nameOf(attacker)}</span>
-                          {/* The attacker's P/T, next to the verdict it produced.
-                              Deciding a block means comparing two numbers, and
-                              only one of them used to be in the panel. */}
-                          <span className="act__pt tabular">{statLine(attackerCard)}</span>
-                          <span className={`verdict verdict--${tier}`}>{TIER_LABEL[tier]}</span>
-                        </button>
-                      );
-                    })
-                  )}
-                </div>
-              );
-            })}
-
-          {mode === "play" &&
-            playGroups.map(({ key: groupKey, head, actions: aims }) => {
-              const source = head.source_oid === null ? null : card(head.source_oid);
-              const isCard = head.kind === "cast" || head.kind === "play_land";
-              const tone = isCard
-                ? " act--playable"
-                : head.kind === "activate"
-                  ? " act--ability"
-                  : "";
-              const key = handKey(head.source_oid);
-              const single = aims.length === 1;
-              const body = (
-                <>
-                  {key && <span className="act__key">{key}</span>}
-                  {isCard && source ? (
-                    <>
-                      <span className="act__name">{source.name}</span>
-                      <span className="act__type">{source.type_line}</span>
-                      {manaPips(source.mana_cost).length > 0 && (
-                        <span className="act__cost">
-                          {manaPips(source.mana_cost).map((pip) => (
-                            <ManaSymbol
-                              code={pip.symbol}
-                              className={`pip--${pip.tone}`}
-                              key={pip.key}
-                            />
-                          ))}
-                        </span>
-                      )}
-                      {statLine(source) && (
-                        <span className="act__pt tabular">{statLine(source)}</span>
-                      )}
-                    </>
-                  ) : (
-                    // Activation costs live in these labels ("{2}, {T}, Sacrifice:
-                    // ..."), and they were the last place mana stayed raw text.
-                    // Grouped, the row names the ability and the chips name the
-                    // targets, so the `-> Bear` suffix would be one arbitrary
-                    // target repeated on every row of the same permanent.
-                    <span className="act__name">
-                      <SymbolText text={single ? head.label : head.base_label} />
-                    </span>
-                  )}
-                </>
-              );
-
-              // One way to aim it: the row *is* the action, exactly as before.
-              if (single) {
-                return (
-                  <button
-                    type="button"
-                    key={groupKey}
-                    className={`act${tone}`}
-                    {...actionAttrs(head.id)}
-                    data-action-kind={head.kind}
-                    data-source={head.source_oid ?? undefined}
-                    disabled={disabled}
-                    onClick={() => onAct(head.id)}
-                    {...previewing(head.source_oid)}
-                  >
-                    {body}
-                  </button>
-                );
-              }
-
-              // Several: the row is inert and each target carries its own id,
-              // which is what keeps N actions on N controls rather than on one.
-              // Same shape as an attacker with several legal defenders above.
-              return (
-                <div
-                  key={groupKey}
-                  className={`act${tone} act--group`}
-                  data-source={head.source_oid ?? undefined}
-                  {...previewing(head.source_oid)}
-                >
-                  {body}
-                  <span className="act__aims">
-                    {aims.map((aim) => (
-                      <button
-                        type="button"
-                        key={aim.id}
-                        className="aim"
-                        {...actionAttrs(aim.id)}
-                        data-action-kind={aim.kind}
-                        data-source={aim.source_oid ?? undefined}
-                        disabled={disabled}
-                        onClick={() => onAct(aim.id)}
-                        data-hint={aim.label}
-                        // Not `previewing`: this is a hovering child of a
-                        // hovering container, the case that comment warns
-                        // about. Falling back to the row's own card rather
-                        // than to null is what keeps the preview from going
-                        // blank on the way from a chip back onto the row.
-                        onMouseEnter={() => hover(targetOid(aim) ?? head.source_oid)}
-                        onMouseLeave={() => hover(head.source_oid)}
-                        onFocus={() => hover(targetOid(aim) ?? head.source_oid)}
-                        onBlur={() => hover(head.source_oid)}
-                        // The ring's copy of the line above -- see `previewing`.
-                        data-preview-oid={targetOid(aim) ?? head.source_oid ?? undefined}
-                      >
-                        <SymbolText text={chipLabel(aim)} />
-                      </button>
-                    ))}
-                  </span>
-                </div>
-              );
-            })}
+          {mode === "play" && (
+            <PlayRows
+              playGroups={playGroups}
+              disabled={disabled}
+              onAct={onAct}
+              hover={hover}
+              card={card}
+              handKey={handKey}
+              chipLabel={chipLabel}
+              targetOid={targetOid}
+              previewing={previewing}
+            />
+          )}
 
           {mode === "chooseX" && (
-            <div className="xstep" data-testid="choose-x" data-x={clampedX}>
-              <button
-                type="button"
-                className="xstep__btn"
-                data-testid="choose-x-down"
-                disabled={disabled || clampedX <= 0}
-                onClick={() => setChosenX(clampedX - 1)}
-                aria-label="One less"
-              >
-                −
-              </button>
-              <span className="xstep__value tabular">X = {clampedX}</span>
-              <button
-                type="button"
-                className="xstep__btn"
-                data-testid="choose-x-up"
-                disabled={disabled || clampedX >= maxX}
-                onClick={() => setChosenX(clampedX + 1)}
-                aria-label="One more"
-              >
-                +
-              </button>
-              <span className="xstep__hint">
-                up to {maxX}
-                {perPoint > 1 && ` · ${perPoint} mana per point`}
-              </span>
-            </div>
+            <XStepper
+              clampedX={clampedX}
+              maxX={maxX}
+              perPoint={perPoint}
+              disabled={disabled}
+              setChosenX={setChosenX}
+            />
           )}
 
           {mode === "attack" && attackers.length === 0 && (
@@ -934,184 +585,16 @@ export function ActionPanel({
           shape for it. The foot is 1180px wide and they fit on one line there.
         */}
         {tool(
-          <div className="tools">
-            {/*
-            Sound, undo and quit, folded into one control. See `settingsOpen`
-            above for why: three buttons pressed once a game each, at the same
-            weight as the two modes beside them that change how every priority
-            window behaves.
-
-            `onKeyDown` rather than a document listener for Escape, and it stops
-            propagating: `Table` binds `Escape` to a strict unwind of the whole
-            board, so an un-stopped one here would close the menu AND cancel
-            whatever the player was in the middle of.
-          */}
-            <div
-              className="settings"
-              ref={settingsRef}
-              onKeyDown={(event) => {
-                if (event.key !== "Escape" || !settingsOpen) return;
-                event.stopPropagation();
-                closeSettings();
-              }}
-            >
-              <button
-                type="button"
-                className={settingsOpen ? "tool tool--on" : "tool"}
-                onClick={() => (settingsOpen ? closeSettings() : setSettingsOpen(true))}
-                aria-expanded={settingsOpen}
-                aria-haspopup="menu"
-                aria-label="Settings"
-                data-stop={stopId.tool("settings")}
-                data-testid="settings"
-                data-hint="Sound, undo and quit"
-              >
-                ⚙
-              </button>
-              {settingsOpen && (
-                <div className="settings__menu" role="menu" data-testid="settings-menu">
-                  {/*
-                  The only one that leaves the menu open: it is a toggle, and
-                  the thing you most often want after flipping it is to flip it
-                  back. The other two end what you were doing.
-                */}
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="settings__item"
-                    onClick={toggleMuted}
-                    aria-pressed={!muted}
-                    data-stop={stopId.tool("mute")}
-                    data-testid="mute"
-                    data-hint={muted ? "Sound off" : "Sound on"}
-                  >
-                    <span className="settings__glyph" aria-hidden="true">
-                      {muted ? "🔇" : "🔊"}
-                    </span>
-                    {muted ? "Sound off" : "Sound on"}
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="settings__item"
-                    onClick={() => {
-                      closeSettings();
-                      onUndo();
-                    }}
-                    disabled={busy}
-                    data-stop={stopId.tool("undo")}
-                    data-testid="undo"
-                    data-hint="Undo your last action (U)"
-                  >
-                    <span className="settings__glyph" aria-hidden="true">
-                      ↺
-                    </span>
-                    Undo
-                  </button>
-                  {/*
-                    THE ONE SETTING THAT CAN MAKE THE MENU UNREACHABLE, so it is
-                    reachable from inside it.
-
-                    The full diagnosis -- which pads the browser can see, and
-                    which of the three environment causes is stopping it -- lives
-                    on the front door's Settings card, where there is room for
-                    prose. What has to be here is the half a player needs
-                    MID-GAME: a Deck whose controller arrives as a keyboard shows
-                    "Enter" and "Esc" on every hint, and quitting to the lobby to
-                    fix that is a bad answer during somebody's turn.
-
-                    The picker is the same component the door renders, so the two
-                    surfaces cannot drift.
-                  */}
-                  <div className="settings__scheme" data-testid="settings-scheme">
-                    <span className="settings__label">Controls</span>
-                    <SchemePicker />
-                  </div>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="settings__item settings__item--danger"
-                    onClick={() => {
-                      closeSettings();
-                      onQuit();
-                    }}
-                    data-stop={stopId.tool("quit")}
-                    data-testid="quit"
-                    data-hint="Quit this game"
-                  >
-                    <span className="settings__glyph" aria-hidden="true">
-                      ✕
-                    </span>
-                    Quit game
-                  </button>
-                </div>
-              )}
-            </div>
-            {/*
-            The one control here that keeps a word rather than a glyph. It is a
-            mode with real consequences for how the game plays -- whether it
-            stops at every priority window -- and an unlabelled icon for that
-            would be a regression in clarity, not a saving in space.
-          */}
-            <button
-              type="button"
-              className={state.full_control ? "tool tool--on tool--wide" : "tool tool--wide"}
-              onClick={() => onToggleFullControl(!state.full_control)}
-              disabled={busy}
-              aria-pressed={state.full_control}
-              data-stop={stopId.tool("full-control")}
-              data-testid="full-control"
-              data-hint={
-                state.full_control
-                  ? "Full control: stopping at every priority window"
-                  : "Stopping only where you have something to respond to. Turn on for every window."
-              }
-            >
-              {state.full_control ? "Full control" : "Auto-pass"}
-            </button>
-            {/*
-            The second mode with real consequences, and it keeps its words for
-            the same reason. Off, the solver taps for you and mana abilities are
-            not actions at all; on, every untapped source becomes a row and a
-            dual becomes one chip per colour.
-          */}
-            <button
-              type="button"
-              className={state.manual_mana ? "tool tool--on tool--wide" : "tool tool--wide"}
-              onClick={() => onToggleManualMana(!state.manual_mana)}
-              disabled={busy}
-              aria-pressed={state.manual_mana}
-              data-stop={stopId.tool("manual-mana")}
-              data-testid="manual-mana"
-              data-hint={
-                state.manual_mana
-                  ? "Manual mana: you choose which permanent to tap, and which colour it makes"
-                  : "The solver taps for you. Turn on to tap lands yourself."
-              }
-            >
-              {state.manual_mana ? "Manual mana" : "Auto mana"}
-            </button>
-            {/*
-            Last, and only while it is worth anything.
-            
-            It used to be first. Skipping is urgent -- the whole point is that
-            you have stopped wanting to watch -- but it is also transient, and a
-            control that appears at the head of the row pushes the two modes
-            beside it sideways every time a beat plays. At the end it costs
-            nothing to the things that are always there.
-          */}
-            {narrating && (
-              <button
-                type="button"
-                className="tool"
-                data-stop={stopId.tool("skip")}
-                onClick={onSkipNarration}
-                data-hint="Skip ahead"
-              >
-                ⏩
-              </button>
-            )}
-          </div>,
+          <ToolStrip
+            state={state}
+            busy={busy}
+            narrating={narrating}
+            onToggleFullControl={onToggleFullControl}
+            onToggleManualMana={onToggleManualMana}
+            onSkipNarration={onSkipNarration}
+            onUndo={onUndo}
+            onQuit={onQuit}
+          />,
         )}
       </section>
 
@@ -1126,241 +609,27 @@ export function ActionPanel({
         prop. `renderDock` is the same tree either way; only its parent changes.
       */}
       {dock(
-        <div className="commit-dock">
-          {/*
-            What the count used to be doing on the button, moved off it -- and
-            now rendered in EVERY mode rather than only in combat.
-
-            `Attack with 0` -> `Attack with 10` is a label that changes width,
-            so the button re-centres itself under the thumb every time a
-            creature is staged, which is exactly while you are aiming at it.
-            `mockups/handheld-board/` names this and puts the number on a line
-            of its own above the bar. It is also the line the block forecast
-            wants, so the two states share one row rather than each inventing a
-            place to sit.
-
-            OUTSIDE THE MODE TERNARY, because a line that exists only in combat
-            is a line that appears when combat starts -- 25px of dock arriving
-            on top of the bar changing, which moved the rail a second time. Out
-            of combat it renders empty and `.commit-note`'s `min-height: 1lh`
-            keeps its row; `ActionPanel.stories`' `expectStableDock` fails if
-            that ever stops being true.
-          */}
-          <p className="commit-note tabular">
-            {mode === "attack"
-              ? `${attackPairs.length} attacking`
-              : mode === "block"
-                ? `${blockPairs.length} blocked of ${Object.keys(state.combat?.attackers ?? {}).length}`
-                : // Empty, and the row is held open by `.commit-note`'s
-                  // `min-height: 1lh` rather than by a non-breaking space. A
-                  // NBSP works and formats down to an invisible character in
-                  // this file, which is a thing the next person deletes by
-                  // accident; one mechanism in the stylesheet is better than
-                  // two, one of which cannot be seen.
-                  ""}
-          </p>
-          {mode === "chooseX" ? (
-            // The only control in the document carrying an id for this decision.
-            // The other twenty values are reachable through the stepper, which
-            // changes which id this slab points at rather than adding more.
-            xAction ? (
-              <div className="bar">
-                <motion.button
-                  type="button"
-                  className="commit"
-                  {...actionAttrs(xAction.id)}
-                  data-action-kind={xAction.kind}
-                  disabled={disabled}
-                  onClick={() => onAct(xAction.id)}
-                  whileHover={disabled ? undefined : { y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={bouncy}
-                  data-testid="commit"
-                >
-                  <span className="commit__main">Pay X = {clampedX}</span>
-                </motion.button>
-              </div>
-            ) : (
-              idleBar
-            )
-          ) : isCombat ? (
-            nothingToDeclare && finish ? (
-              /*
-                  With nothing declarable there is nothing to confirm, so
-                  declining *is* the decision and it takes the whole bar. The
-                  two marks go with it: "all" and "none" of an empty set are
-                  the same button pressed twice.
-                */
-              <div className="bar">
-                <motion.button
-                  type="button"
-                  className="commit"
-                  {...actionAttrs(finish.id)}
-                  data-action-kind={finish.kind}
-                  disabled={disabled}
-                  onClick={() => onAct(finish.id)}
-                  whileHover={disabled ? undefined : { y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={bouncy}
-                  data-testid="combat-skip"
-                >
-                  <span className="commit__main">
-                    {mode === "attack" ? "No attacks" : "No blocks"}
-                  </span>
-                </motion.button>
-              </div>
-            ) : (
-              /*
-                  EVERY CHOICE, THE DECISION, NO CHOICE -- in that order, on one
-                  row.
-
-                  These were a full-width slab with two 12px outlined pills
-                  under it, which spends a whole row on the two answers nobody
-                  presses and reads as one button with a caption. One shape
-                  either side of the slab is the relationship they actually
-                  have, and it puts all three at the 44px floor in the height
-                  the slab alone was taking.
-
-                  The marks themselves are DRAWN, not typed. They were `▣` and
-                  `▢`, filled and empty of one square, which is the true
-                  relationship and an unreadable picture of it -- playtest
-                  found two squares nobody could tell apart. `ui/ActionIcon`
-                  has the argument.
-
-                  The names live in `aria-label` and `data-hint` and nowhere
-                  else. A `title` would reach the mouse only, and this bar is
-                  driven by a controller as often as by a thumb.
-
-                  ALL THREE CARRY A STOP, and for a while only one of them did.
-                  "No attacks" is a server action and got `act:` out of
-                  `actionAttrs`; the mark and the slab are local staging, exist
-                  in no action list, and so had nothing for the ring to land on
-                  -- the two most-pressed controls of a combat step were mouse
-                  only, on a client whose whole point is that it plays on a
-                  handheld. They are stops in document order all -> slab ->
-                  skip, which is also left -> right on screen, so `L2` lands on
-                  the mark and one press of right reaches the slab.
-                */
-              <div className="bar">
-                {mode === "attack" ? (
-                  <button
-                    type="button"
-                    className="commit-mark"
-                    data-stop={stopId.commitMark("all")}
-                    data-testid="combat-all"
-                    disabled={disabled || unstagedAttackers.length === 0}
-                    onClick={attackWithAll}
-                    /*
-                      THE NUMBER IS WHAT THIS PRESS WOULD DO, not how many
-                      creatures exist. "All attack (4 of 7)" says both halves of
-                      the ranking in the place a controller player actually
-                      reads them -- `aria-label` is the accessible name, so it
-                      is what the ring announces and what the hint carries.
-                    */
-                    aria-label={
-                      wouldAttack === 0
-                        ? "All attack"
-                        : wouldAttack < unstagedAttackers.length
-                          ? `All attack (${wouldAttack} of ${unstagedAttackers.length})`
-                          : `All attack (${wouldAttack})`
-                    }
-                    data-hint={
-                      wouldAttack < unstagedAttackers.length
-                        ? "Send everything worth sending. Press again for the rest."
-                        : "Send every creature that can attack"
-                    }
-                  >
-                    <ActionIcon name="all" />
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="commit-mark"
-                    data-stop={stopId.commitMark("all")}
-                    data-testid="combat-all"
-                    disabled={disabled || newBlocks.length === 0}
-                    onClick={blockWithAll}
-                    aria-label={`All defend${
-                      newBlocks.length > 0 ? ` (${newBlocks.length})` : ""
-                    }`}
-                    data-hint={
-                      newBlocks.length === 0
-                        ? "No block here is worth making on its own"
-                        : "Block where it is worth it: survive and kill first, then walls, then trades"
-                    }
-                  >
-                    <ActionIcon name="all" />
-                  </button>
-                )}
-
-                <motion.button
-                  type="button"
-                  className="commit"
-                  data-stop={stopId.commit}
-                  disabled={disabled || staged.length === 0}
-                  data-empty={staged.length === 0 ? "true" : "false"}
-                  aria-label={
-                    mode === "attack"
-                      ? `Attack with ${attackPairs.length}`
-                      : `Confirm ${blockPairs.length} block${
-                          blockPairs.length === 1 ? "" : "s"
-                        }`
-                  }
-                  onClick={() =>
-                    onDeclare(mode === "attack" ? "attackers" : "blockers", staged)
-                  }
-                  whileHover={{ y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={bouncy}
-                  data-testid="combat-confirm"
-                >
-                  <span className="commit__main">{mode === "attack" ? "Attack" : "Block"}</span>
-                </motion.button>
-
-                {finish && (
-                  <button
-                    type="button"
-                    className="commit-mark"
-                    {...actionAttrs(finish.id)}
-                    data-action-kind={finish.kind}
-                    disabled={disabled}
-                    onClick={() => onAct(finish.id)}
-                    data-testid="combat-skip"
-                    aria-label={mode === "attack" ? "No attacks" : "No blocks"}
-                    data-hint={mode === "attack" ? "No attacks" : "No blocks"}
-                  >
-                    <ActionIcon name="skip" />
-                  </button>
-                )}
-              </div>
-            )
-          ) : commit ? (
-            <div className="bar">
-              <motion.button
-                type="button"
-                className="commit"
-                {...actionAttrs(commit.id)}
-                data-action-kind={commit.kind}
-                disabled={disabled}
-                onClick={() => onAct(commit.id)}
-                whileHover={disabled ? undefined : { y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={bouncy}
-                data-testid="commit"
-              >
-                <span className="commit__main">{commit.label}</span>
-              </motion.button>
-            </div>
-          ) : (
-            /*
-              Not your turn, or a dialog owns the decision. This is the branch
-              the whole rail used to collapse on -- `commit` is null while the
-              engine plays out every other seat's turn, which is most of the
-              wall-clock of a four-player game.
-            */
-            idleBar
-          )}
-        </div>,
+        <CommitDock
+          mode={mode}
+          state={state}
+          disabled={disabled}
+          isCombat={isCombat}
+          nothingToDeclare={nothingToDeclare}
+          attackPairs={attackPairs}
+          blockPairs={blockPairs}
+          staged={staged}
+          unstagedAttackers={unstagedAttackers}
+          wouldAttack={wouldAttack}
+          attackWithAll={attackWithAll}
+          blockWithAll={blockWithAll}
+          newBlocks={newBlocks}
+          finish={finish}
+          commit={commit}
+          xAction={xAction}
+          clampedX={clampedX}
+          onAct={onAct}
+          onDeclare={onDeclare}
+        />,
       )}
     </>
   );

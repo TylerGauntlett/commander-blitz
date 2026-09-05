@@ -226,9 +226,6 @@ class ManaCost:
             return 0
         return self.colored[idx] + sum(1 for pip in self.hybrid if idx in pip.symbols)
 
-    def total_required(self, x: int = 0) -> int:
-        return self.mana_value(x)
-
     def with_x(self, x: int) -> Requirement:
         """Flatten to a concrete requirement with ``X`` resolved."""
         return Requirement(

@@ -26,7 +26,7 @@ OPS: dict[str, Callable[..., Any]] = {}
 #: revealed this way", "the number of creature cards exiled this way", "exile
 #: **the token**".  Every other op ignores an ``as`` entirely, and an `as` that
 #: nothing writes reads back as 0 rather than as an error, so the loader refuses
-#: it (see `loader._validate_effect`).  Listed here, beside `OPS`, so the guard
+#: it (see `loader.effects._validate_effect`).  Listed here, beside `OPS`, so the guard
 #: and the implementations cannot drift apart.
 RECORDING_OPS = frozenset(
     {
@@ -128,12 +128,15 @@ def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any, None]:
 # Importing the op modules populates OPS.  Kept at the bottom so ``register`` and
 # ``OPS`` exist before the modules that use them are imported.
 from . import (
-    ops_board,  # noqa: F401
     ops_cards,  # noqa: F401
+    ops_characteristics,  # noqa: F401
+    ops_combat_flags,  # noqa: F401
     ops_control,  # noqa: F401
+    ops_counters,  # noqa: F401
     ops_life,  # noqa: F401
     ops_mana,  # noqa: F401
     ops_player,  # noqa: F401
+    ops_removal,  # noqa: F401
     ops_stack,  # noqa: F401
 )
 

@@ -16,71 +16,46 @@ import { motion } from "motion/react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import { type SoundName, play } from "../../audio/sfx";
-import { drive, restAll } from "../../fx/actuators";
-import { getCursor, setCursor, setCursorContext, subscribeCursor } from "../../input/cursor";
-import {
-  type GroupId,
-  getGroup,
-  groupOf,
-  groupRoot,
-  landableStopsIn,
-  nextGroup,
-  rememberStop,
-  rememberedStop,
-  resetGroups,
-  setGroup,
-} from "../../input/groups";
-import { onAny as onAnyPad, on as onPad, onFrame as onPadFrame } from "../../input/pad";
-import { sendableIn, stopElement, stopId, stopRoot } from "../../input/stops";
+import { drive } from "../../fx/actuators";
+import { getCursor, setCursor, setCursorContext } from "../../input/cursor";
+import { getGroup, setGroup } from "../../input/groups";
+import { sendableIn, stopId, stopRoot } from "../../input/stops";
+import { useGroupDial } from "../../input/useGroupDial";
+import { useOpponentReading } from "../../input/useOpponentReading";
+import { useKeyboardShortcuts, usePadBindings } from "../../input/useTableInput";
+import { useTableRegions } from "../../input/useTableRegions";
 import {
   actionsForCard,
-  availableAttackers,
-  availableBlockers,
   blockableBy,
   canDropOnLane,
   defendersFor,
 } from "../../logic/actionMatch";
 import { reset as forgetCardRects } from "../../logic/cardRects";
 import { COMMIT_TESTID, commitmentFor } from "../../logic/commit";
-import { groupForDecision } from "../../logic/focusGroup";
 import { type Gesture, followUpStops } from "../../logic/followUp";
-import { sourcesSpentBy } from "../../logic/mana";
 import { removalsByOid } from "../../logic/removals";
 import { parseStop } from "../../logic/verbs";
 import type { Lane as LaneName } from "../../logic/zoneGrouping";
-import { LANES, commandersOf, findCard, seatOrder } from "../../logic/zoneGrouping";
-import { type PeekTarget, useUiStore } from "../../state/uiStore";
+import { seatOrder } from "../../logic/zoneGrouping";
+import { useUiStore } from "../../state/uiStore";
 import type { GameSession, useGame } from "../../state/useGame";
 import { useHandheldLayout } from "../../state/useHandheld";
+import { useNarrationSkip } from "../../state/useNarrationSkip";
+import { useTableDerived } from "../../state/useTableDerived";
 import { useZoomFit } from "../../state/useZoomFit";
-import { Glyph } from "../ui/Glyph";
 import { Motes } from "../ui/Motes";
 import { ActionPanel } from "./ActionPanel";
-import { CardHold } from "./CardHold";
 import { CardPreview } from "./CardPreview";
 import { CombatArrows } from "./CombatArrows";
-import { EventTicker } from "./EventTicker";
 import { useCursorResolve } from "./FocusRing";
 import { FxLayer, useScreenShake } from "./FxLayer";
-import { GameOverScreen } from "./GameOverScreen";
-import { GroupDial } from "./GroupDial";
-import { HandFan } from "./HandFan";
-import { HintBar } from "./HintBar";
-import { OpeningHand } from "./OpeningHand";
-import { OpponentBoard } from "./OpponentBoard";
-import { ParticleLayer, clearParticles } from "./ParticleLayer";
+import { ParticleLayer } from "./ParticleLayer";
 import { PhaseTrack } from "./PhaseTrack";
 import { PlayerMat } from "./PlayerMat";
-import { PromptDialog, ownsDecision } from "./PromptDialog";
+import { ownsDecision } from "./PromptDialog";
 import { StackPanel } from "./StackPanel";
-import { ZonePeek } from "./ZonePeek";
-
-/** Keyboard routes into the zone viewer, which previously had none. */
-const PEEK_KEYS: Record<string, PeekTarget["zone"]> = {
-  g: "graveyard",
-  e: "exile",
-  c: "command",
-};
+import { TableFoot } from "./TableFoot";
+import { TableOverlays } from "./TableOverlays";
 
 /** Decisions where clicking your own creatures means "commit it to combat". */
 const COMBAT_DECISIONS = new Set(["declare_attackers", "declare_blockers"]);
@@ -114,7 +89,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    * reading hold is: a hold has no meaning across a re-render, and a hold kept
    * in a store is a hold that can get stuck.
    */
-  const [dialOpen, setDialOpen] = useState(false);
+  const [dialOpen, setDialOpen] = useGroupDial();
 
   /*
    * The card being read full screen, by oid.
@@ -180,6 +155,9 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
    */
   const handheld = useHandheldLayout();
 
+  /** Which opponent is being read while `R2` is held. See `useOpponentReading`. */
+  const reading = useOpponentReading(handheld, opponents, state.seat);
+
   // Card positions are remembered globally, by oid, and oids restart with each
   // game. Leaving them behind would let the first death of a new table fly out
   // of wherever the last table's card #12 happened to be sitting.
@@ -205,36 +183,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
   const fullControlMutate = game.setFullControl.mutate;
   const manualManaMutate = game.setManualMana.mutate;
 
-  /**
-   * Empty the queue and put the board back at rest.
-   *
-   * Skipping used to leave whatever was mid-flight still flying: `narration`
-   * owns the beats, but the particles, the card actuators and the screen shake
-   * all run on their own clocks past the end of the beat that started them --
-   * which is exactly what makes a turn read as continuous, and exactly what you
-   * do not want the instant the player says "enough".
-   */
-  const skipNarration = narration.skip;
-  const skipAll = useCallback(() => {
-    skipNarration();
-    clearParticles();
-    restAll();
-  }, [skipNarration]);
-
-  /**
-   * Whether this gesture should be dropped, and the side effect of not dropping it.
-   *
-   * A click while narration is playing means "get on with it" -- *and* it means
-   * the thing that was clicked. It used to mean only the first: the queue was
-   * skipped and the gesture thrown away, so for the second or two after every
-   * action the board ignored you, and playing it felt like it needed spamming.
-   * Only a genuine in-flight request gates input now.
-   */
-  const narrationBusy = narration.busy;
-  const gateInput = useCallback(() => {
-    if (narrationBusy) skipAll();
-    return busy;
-  }, [busy, narrationBusy, skipAll]);
+  const { skipAll, gateInput } = useNarrationSkip(narration, busy);
 
   /** A sound the player's own hand caused, played without waiting for anybody. */
   const muted = useUiStore((s) => s.muted);
@@ -256,165 +205,29 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
 
   // ---------------------------------------------------------------- derived
 
-  /** Cards in hand the server says can be played right now. */
-  const playableOids = useMemo(() => {
-    const set = new Set<number>();
-    for (const action of actions) {
-      if (
-        action.source_oid !== null &&
-        (action.kind === "cast" || action.kind === "play_land")
-      ) {
-        set.add(action.source_oid);
-      }
-    }
-    return set;
-  }, [actions]);
-
-  /**
-   * Permanents offering an activated ability right now.
-   *
-   * The same predicate `onBoardCard` already uses to route a click; this only
-   * draws the affordance for it. The action itself stays in the action bar, so
-   * the rune adds no `data-action-id` and cannot duplicate one.
-   *
-   * Note this is only the *available* state. The server can express an ability
-   * it is offering but not one you cannot afford -- `unplayable_reason` covers
-   * hand cards alone -- so there is deliberately no greyed-out variant.
-   */
-  const abilityOids = useMemo(() => {
-    const set = new Set<number>();
-    for (const action of actions) {
-      if (action.kind === "activate" && action.source_oid !== null) set.add(action.source_oid);
-    }
-    return set;
-  }, [actions]);
-
-  /** What the popover says a permanent offers, by source oid. */
-  const abilityLabels = useMemo(() => {
-    // `base_label`, not `label`: the engine offers one action per legal
-    // target, so `label` here would name whichever target happened to be
-    // first and read as a promise the popover cannot keep.
-    const byOid = new Map<number, Set<string>>();
-    for (const action of actions) {
-      if (action.kind !== "activate" || action.source_oid === null) continue;
-      const seen = byOid.get(action.source_oid) ?? new Set<string>();
-      seen.add(action.base_label);
-      byOid.set(action.source_oid, seen);
-    }
-    // Naming the first of several was a promise the popover could not keep
-    // either: a permanent with a mana ability and a sacrifice ability would
-    // advertise only one of them. Count instead, and let the panel enumerate.
-    return new Map(
-      [...byOid].map(([oid, labels]) => [
-        oid,
-        labels.size === 1 ? [...labels][0] : `${labels.size} abilities`,
-      ]),
-    );
-  }, [actions]);
-
-  /** Every oid named by any legal action: never hide these inside a stack. */
-  const actionableOids = useMemo(() => {
-    const set = new Set<number>();
-    for (const action of actions) {
-      if (action.source_oid !== null) set.add(action.source_oid);
-      for (const ref of action.targets) {
-        if (ref.kind === "object") set.add(ref.id);
-      }
-    }
-    return set;
-  }, [actions]);
-
-  /** The actions the current selection is waiting to resolve to. */
-  const targeting = useMemo(
-    () => actions.filter((a) => targetingActionIds.includes(a.id)),
-    [actions, targetingActionIds],
-  );
-
-  const targetableOids = useMemo(() => {
-    const set = new Set<number>();
-    for (const action of targeting) {
-      for (const ref of action.targets) {
-        if (ref.kind === "object") set.add(ref.id);
-      }
-    }
-    return set;
-  }, [targeting]);
-
-  const targetablePids = useMemo(() => {
-    const set = new Set<number>();
-    for (const action of targeting) {
-      for (const ref of action.targets) {
-        if (ref.kind === "player") set.add(ref.id);
-      }
-    }
-    // During attacker declaration, opponents are always pointable.
-    if (decisionKind === "declare_attackers" && selectedOid !== null) {
-      for (const action of actions) {
-        if (action.kind === "add_attacker" && action.source_oid === selectedOid) {
-          for (const ref of action.targets) {
-            if (ref.kind === "player") set.add(ref.id);
-          }
-        }
-      }
-    }
-    return set;
-  }, [targeting, decisionKind, selectedOid, actions]);
-
-  /**
-   * The target question is settled and only the *variant* question is left.
-   *
-   * True when every action still in the running names the same targets — so
-   * clicking the board again cannot narrow anything, and what remains is
-   * "kicked or not", which only the panel can ask. Also true for a selection
-   * of untargeted variants, where there was never a target to pick.
-   */
-  const targetChosen = useMemo(() => {
-    if (targeting.length < 2) return false;
-    const signature = (a: (typeof targeting)[number]) =>
-      a.targets.map((ref) => `${ref.kind}:${ref.id}`).join(",");
-    const first = signature(targeting[0]);
-    return targeting.every((a) => signature(a) === first);
-  }, [targeting]);
-
-  /** Creatures that may still be declared, for the amber "click me" rim. */
-  const combatCandidates = useMemo(() => {
-    if (!inCombatDecision) return new Set<number>();
-    if (decisionKind === "declare_attackers") return new Set(availableAttackers(actions));
-    return new Set(
-      actions
-        .filter((a) => a.kind === "add_blocker")
-        .map((a) => a.source_oid)
-        .filter((oid): oid is number => oid !== null),
-    );
-  }, [inCombatDecision, decisionKind, actions]);
-
-  /** Opponents' attackers that something of ours is staged to block. */
-  const blockedAttackers = useMemo(() => new Set(Object.values(stagedBlocks)), [stagedBlocks]);
-
-  /**
-   * The lands a hovered card would tap, straight from the engine's solver.
-   *
-   * The mana row could say what you have but not what a play would leave you
-   * with, which is the interesting question in a turn with two plays in it.
-   * Nothing is computed here: `pays` is the payment `solve_payment` actually
-   * found, so this cannot disagree with what casting the spell will really do.
-   */
-  const spending = useMemo(
-    () => (hoveredOid === null ? new Set<number>() : sourcesSpentBy(actions, hoveredOid)),
-    [hoveredOid, actions],
-  );
-
-  /** Lanes that would accept a drop of the selected hand card. */
-  const activeLanes = useMemo(() => {
-    const set = new Set<string>();
-    if (selectedOid === null) return set;
-    for (const lane of LANES) {
-      if (canDropOnLane(state, actions, selectedOid, lane)) {
-        set.add(`${state.seat}:${lane}`);
-      }
-    }
-    return set;
-  }, [selectedOid, state, actions]);
+  const {
+    playableOids,
+    abilityOids,
+    abilityLabels,
+    actionableOids,
+    targeting,
+    targetableOids,
+    targetablePids,
+    targetChosen,
+    combatCandidates,
+    blockedAttackers,
+    spending,
+    activeLanes,
+  } = useTableDerived({
+    state,
+    actions,
+    targetingActionIds,
+    decisionKind,
+    inCombatDecision,
+    selectedOid,
+    stagedBlocks,
+    hoveredOid,
+  });
 
   // ------------------------------------------------------------ interaction
 
@@ -840,6 +653,7 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     if (unwind()) cue("back");
   }, [
     dialOpen,
+    setDialOpen,
     heldCard,
     logOverlay,
     toggleLogOverlay,
@@ -948,36 +762,6 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     onBarAct,
     act,
   ]);
-
-  /**
-   * Which opponent is being read, while `R2` is held.
-   *
-   * A hold rather than a toggle: a toggle needs a second press to put away and
-   * leaves the board covered if you forget, whereas letting go is not something
-   * you can forget to do. `onFrame` because a trigger is analog and has no
-   * press event -- 0.5 is past any resting value and well short of the click.
-   *
-   * The seat is whichever one the ring is on, falling back to the first
-   * opponent, so "look at them" needs no separate act of choosing.
-   */
-  const [reading, setReading] = useState<number | null>(null);
-  const readingRef = useRef<number | null>(null);
-  readingRef.current = reading;
-
-  useEffect(() => {
-    if (!handheld) return;
-    return onPadFrame((frame) => {
-      const held = frame.r2 > 0.5;
-      if (!held) {
-        if (readingRef.current !== null) setReading(null);
-        return;
-      }
-      if (readingRef.current !== null) return;
-      const ref = parseStop(getCursor());
-      const onSeat = ref.kind === "orb" && ref.id !== null && ref.id !== state.seat;
-      setReading(onSeat ? ref.id : (opponents[0] ?? null));
-    });
-  }, [handheld, opponents, state.seat]);
 
   /*
    * A staged attacker leans toward the seat it is aimed at, and holds.
@@ -1091,453 +875,44 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
     setCursorContext(`game|${peek?.zone ?? ""}|${state.pending?.kind ?? ""}`);
   }, [peek?.zone, state.pending?.kind]);
 
-  /* ------------------------------------------------------------- regions
-   *
-   * `L1`/`R1` step between the board's five regions and trap the ring inside
-   * the one it is in, because directional navigation crosses a 96px seat strip,
-   * three lanes, a fanned hand and a 243px rail one card at a time.
-   * `HintBar` has advertised `L1 Zone` since it was written and nothing has
-   * ever been bound to it. See `input/groups.ts`.
-   */
+  const { enterGroup, jumpToCommit, stepGroup } = useTableRegions({
+    state,
+    actions,
+    decisionKind,
+    modalOwnsDecision,
+    narration,
+    cue,
+  });
 
-  /** Enter a region, landing where the ring was when it last left. */
-  const enterGroup = useCallback((id: GroupId | null) => {
-    if (id === null) {
-      setGroup(null);
-      return;
-    }
-    const here = getGroup();
-    const cursor = getCursor();
-    // Leaving: note where we were, so coming back is a jump and not a reset.
-    if (here && cursor) rememberStop(here, cursor);
-
-    setGroup(id);
-    const root = groupRoot(id);
-    if (!root) return;
-    /*
-     * LANDABLE, not merely present.
-     *
-     * This took the first `[data-stop]` in document order, which is a different
-     * question from the one `groupsPresent` asks to decide the region is worth
-     * entering at all: on a handheld an opponent's cards are clipped to zero
-     * height and still in the document, so the first stop in a region can be
-     * one nobody can see while the region genuinely has others. One helper now
-     * answers both.
-     */
-    const stops = landableStopsIn(root);
-    const wanted = rememberedStop(id);
-    // The remembered stop only if it is still there and still visible -- a card
-    // can have left play since, and a stop id that names nothing puts the ring
-    // nowhere.
-    const remembered = stops.some((el) => el.dataset.stop === wanted) ? wanted : undefined;
-    const target = remembered ?? stops[0]?.dataset.stop;
-    if (target) setCursor(target);
-  }, []);
-
-  /**
-   * `L2` SENDS THE RING TO THE THING THAT SUBMITS YOUR TURN.
-   *
-   * It used to send it to the tool strip, which `Menu` already did -- two
-   * buttons for one jump, and neither of them for the jump that matters. The
-   * commit slab is where a turn is actually spent: Attack, Block, Done, Pass.
-   * It lives in the right rail, and on a handheld the ring is almost never
-   * near it -- you are in your hand, or out on an opponent's board picking
-   * something to attack, and the rail is the far corner of the screen. Walking
-   * there is a dozen presses across a 96px seat strip, three lanes and a fanned
-   * hand, or two `R1` steps if you happen to know the region order. Neither is
-   * a thing to ask for once per phase, thirteen phases a turn.
-   *
-   * The slab specifically, and not the region: `enterGroup` would land on
-   * whichever action the ring last used, and what somebody pressing this wants
-   * is the button that ENDS the decision. Entering the region first is still
-   * right -- it keeps the "where were you when you left" bookkeeping honest,
-   * and the trap has to move with the ring -- so this is that, with the
-   * landing spot overridden.
-   *
-   * IN COMBAT THE LANDING IS THE `ALL` MARK, one press left of the slab. The
-   * dock there is three controls -- all, Attack/Block, no-attacks -- and "all"
-   * is the one that answers the question outright: it stages every attacker or
-   * every worthwhile block, so from it the whole decision is A, or right-then-A
-   * to declare whatever you had already picked by hand. Landing on the slab
-   * instead puts the ring on a button that is DISABLED until something is
-   * staged, which is the state it is in at the instant the decision opens --
-   * so `L2` appeared to jump to a dead control.
-   *
-   * Named rather than taken by document order, even though the two agree
-   * today. The order of a row is a layout fact and this is a behavioural one;
-   * a mark added to the left of it later must not silently steal the landing.
-   *
-   * The region is the fallback for the moment there is no slab (the panel is
-   * mid-decision and offers only rows), and a deny for the moment there is no
-   * panel at all, because a jump that silently does nothing is the defect the
-   * whole hint bar was rewritten to stop.
-   */
-  const jumpToCommit = useCallback(() => {
-    const acts = groupRoot("acts");
-    if (!acts || landableStopsIn(acts).length === 0) {
-      cue("deny");
-      return;
-    }
-    enterGroup("acts");
-    // The dock sits outside the panel's scrolling pane, which is what makes it
-    // findable by class here rather than by the action id it happens to carry
-    // this phase -- `actionAttrs` names the slab after the decision, so its
-    // stop id is different on every one of them.
-    const dock = document.querySelector<HTMLElement>(".commit-dock");
-    if (!dock) return;
-    const stops = landableStopsIn(dock);
-    const all = stops.find((el) => el.dataset.stop === stopId.commitMark("all"));
-    const slab = (all ?? stops[0])?.dataset.stop;
-    if (slab) setCursor(slab);
-  }, [enterGroup, cue]);
-
-  const stepGroup = useCallback(
-    (step: 1 | -1) => {
-      const next = nextGroup(getGroup(), step);
-      if (next === null) {
-        cue("deny");
-        return;
-      }
-      enterGroup(next);
-    },
-    [enterGroup, cue],
-  );
-
-  /*
-   * The dial, on `L2` HELD.
-   *
-   * Not on a hold of `L1`, which is where this started and could not work:
-   * `pad.ts` reports PRESSES and has no release event for a shoulder, so a
-   * "hold" there is a timer with nothing to cancel it -- a tap would open the
-   * dial 260ms later, having already stepped.
-   *
-   * `L2` is a TRIGGER, and `onFrame` reports its analog position every frame.
-   * That is the same channel the `R2` opponent reader is held on, for the same
-   * stated reason: letting go is not something you can forget to do. 0.5 is
-   * past any resting value and well short of the click.
-   *
-   * A TAP MUST NOT FLASH IT, and "the tap is over before the dial is worth
-   * looking at" was not true enough to rely on.
-   *
-   * Opening on the press edge meant a tap -- which is a good 100ms of trigger,
-   * because that is how long a thumb takes -- mounted the dial and unmounted it
-   * again. Two things came out of those two frames, and only the first was
-   * cosmetic: a visible flicker across the middle of the screen, and a ring
-   * that moves twice. `GroupDial` puts the ring on its own landing spoke as it
-   * opens, and closing an overlay hands the ring back to the stop that was
-   * underneath -- which is a `resolveCursor` that lands AFTER the tap has
-   * finished. Any direction pressed inside that window is overwritten by the
-   * restore, so `L2` then right -- jump to the combat bar, step to the slab,
-   * which is the whole gesture `L2` exists for -- ate the second press about
-   * half the time. From the player's side the pad simply missed inputs.
-   *
-   * So the dial waits. `HOLD` is the same 260ms the shoulder taps were timed
-   * against, and unlike those this one has something to cancel it: a trigger is
-   * analog, `onFrame` reports its position every frame, and the release edge is
-   * a real event. A tap starts the timer and clears it; a hold lets it fire.
-   */
-  const HOLD = 260;
-  const l2Held = useRef(false);
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    const off = onPadFrame((frame) => {
-      const held = frame.l2 > 0.5;
-      /*
-       * ON THE TRIGGER'S EDGE, NOT ON ITS LEVEL.
-       *
-       * This wrote `dialOpen = held` every frame, which is correct while `L2` is
-       * the only thing that opens the dial and wrong the moment anything else
-       * does: the button in the foot would set it true, the very next frame
-       * would read a resting trigger and set it straight back to false, and the
-       * dial would appear not to open at all. A press and a release are events;
-       * a trigger at rest is not one.
-       */
-      if (held === l2Held.current) return;
-      l2Held.current = held;
-      if (timer !== null) {
-        clearTimeout(timer);
-        timer = null;
-      }
-      if (held) timer = setTimeout(() => setDialOpen(true), HOLD);
-      // The release closes it whether or not it ever opened, so a hold that is
-      // let go of never leaves the dial up.
-      else setDialOpen(false);
-    });
-    return () => {
-      if (timer !== null) clearTimeout(timer);
-      off();
-    };
-  }, []);
-
-  /*
-   * The ring keeps its own group in step with where it actually is.
-   *
-   * The player can leave a region without pressing a shoulder: the pointer
-   * snaps the ring anywhere, `A` on a card can open a dialog, and a decision
-   * can move it. Reconciling from the cursor means the trap is always about
-   * where the ring IS rather than about where it was last sent.
-   */
-  useEffect(() => {
-    return subscribeCursor(() => {
-      const stop = getCursor();
-      if (!stop) return;
-      const el = stopElement(stop, document.querySelector<HTMLElement>(".table") ?? undefined);
-      if (!el) return;
-      const found = groupOf(el);
-      if (found && found !== getGroup()) setGroup(found);
-    });
-  }, []);
-
-  // A new game must not inherit the last one's region or its remembered stops.
-  useEffect(() => () => resetGroups(), []);
-
-  /*
-   * Where the decision is, when the decision changes.
-   *
-   * Keyed on the pending kind and the step ONLY. Run on every render this would
-   * drag the ring back each time the engine pushed a state -- several times a
-   * second while an AI plays -- and a ring that returns to where the app thinks
-   * you should be is worse than one that stays where you put it.
-   */
-  const modalOwns = modalOwnsDecision;
-
-  /**
-   * Is the board a place this combat decision can actually be MADE?
-   *
-   * The one thing `groupForDecision` cannot answer, because it is about the
-   * layout rather than about the game. A block is your creature and then the
-   * attacker it stops, and at 1280x800 an opponent's lanes are clipped to zero
-   * height -- so `stops.ts:onScreen` refuses to land the ring on an attacker,
-   * correctly, and the board holds half a decision. Sent there, `A` on your own
-   * creature answered nothing and every direction out of it was a wall or a
-   * seat. The panel has carried the whole pairing as rows the entire time.
-   *
-   * Asked of the WHOLE TABLE rather than of the board region, and that is the
-   * half worth getting right: on a desktop the attackers are drawn in
-   * `.play__opponents` and the ring reaches them by walking out of the board,
-   * because `escapeGroup` makes the region trap soft. The question is "is that
-   * card on screen anywhere", not "is it in this box".
-   *
-   * Asked of the DOM and not of the card count: a clipped card still reports
-   * its own full box, which is why `landableStopsIn` walks the ancestors.
-   * Attacking is unaffected -- your own creatures are the decision there, and
-   * the seats you aim at are stops at every size.
-   */
-  const boardCanDecide = useCallback(() => {
-    if (decisionKind !== "declare_blockers") return true;
-    const table = document.querySelector<HTMLElement>(".table");
-    if (!table) return true;
-    const reachable = new Set(landableStopsIn(table).map((el) => el.dataset.stop));
-    return availableBlockers(actions).some((blocker) =>
-      blockableBy(actions, blocker).some((attacker) => reachable.has(stopId.card(attacker))),
-    );
-  }, [decisionKind, actions]);
-
-  /*
-   * ONCE PER DECISION, and a ref rather than a dependency list is what makes it
-   * once.
-   *
-   * The first version keyed the effect on the pending kind, the step AND
-   * `narration.busy` -- and `busy` flips true then false after every action a
-   * player takes. Casting a spell in your main phase changes neither the step
-   * nor the pending kind, so the first two are stable and the third re-fired
-   * the effect on its own: go and read something on the board, cast, and the
-   * ring is yanked back to your hand. That is exactly the "returns to where the
-   * app thinks you should be" failure the note above is about, arriving through
-   * the dependency list rather than through the rule.
-   *
-   * So the KEY is the decision, the ref remembers which key was last acted on,
-   * and narration only decides *when* -- never *whether*.
-   */
-  const focusedFor = useRef<string | null>(null);
-  // biome-ignore lint/correctness/useExhaustiveDependencies: the narrow key is the point; see above.
-  useEffect(() => {
-    const key = `${state.pending?.kind ?? ""}|${state.step}`;
-    if (focusedFor.current === key) return;
-    // Wait for the board to stop moving, but do not treat waiting as done: the
-    // key is still unclaimed, so the next run after narration settles takes it.
-    if (narration.busy) return;
-    focusedFor.current = key;
-    const wanted = groupForDecision(state, actions, modalOwns, boardCanDecide());
-    if (wanted && wanted !== getGroup()) enterGroup(wanted);
-  }, [state.pending?.kind, state.step, narration.busy]);
-
-  useEffect(() => {
-    const unbind = [
-      onPad("b", back),
-      onPad("x", secondary),
-      /*
-       * A tap steps, a hold opens the dial.
-       *
-       * `pad.ts` reports a press and this app has no release event, so the hold
-       * is a timer started on the press and cancelled by the next press of
-       * anything -- which `onAnyPad` below does. A tap therefore steps
-       * immediately AND arms a timer that the tap itself cancels; a hold leaves
-       * the timer to fire.
-       */
-      onPad("l1", () => stepGroup(-1)),
-      onPad("r1", () => stepGroup(1)),
-      /*
-       * `Y` reads the card the ring is on, full screen.
-       *
-       * `logic/verbs.ts` has returned `Y Read` on every card stop since it was
-       * written and nothing was ever bound to it. An advertised button that
-       * does nothing is worse than an unadvertised one: it teaches the player
-       * that the hint bar is not to be trusted.
-       */
-      onPad("y", () => {
-        const ref = parseStop(getCursor());
-        if (ref.kind === "card" && ref.id !== null) {
-          setHeldCard(ref.id);
-          return;
-        }
-        /*
-         * On a SEAT, `Read` means their commander.
-         *
-         * `verbsFor` returns `Y Read` for an orb stop as well as for a card,
-         * and a bar that promises a verb the button does not have is the exact
-         * defect this whole binding exists to close -- so the seat answers the
-         * only question it could be asking. In Commander the deck IS the
-         * commander, and a seat you are deciding whether to attack is one whose
-         * commander's text you want.
-         */
-        if (ref.kind === "orb" && ref.id !== null) {
-          const commander = commandersOf(state, ref.id)[0];
-          if (commander) {
-            setHeldCard(commander.oid);
-            return;
-          }
-        }
-        cue("deny");
-      }),
-      // `View` is the log and `Menu` jumps the ring to the tool strip. Neither
-      // renders a control of its own: they flip a flag an existing surface
-      // already reads, or move the ring to a button that already exists. That
-      // is what keeps `data-action-id` and `data-testid` unique for free.
-      onPad("view", toggleLogOverlay),
-      // The strip's first stop, which is the settings menu now that sound, undo
-      // and quit live inside it. It was `tool:mute`, and a stop that only
-      // exists while a menu is open is a jump that does nothing four times out
-      // of five.
-      onPad("menu", () => {
-        setCursor(stopId.tool("settings"));
-      }),
-      /*
-       * A PRESS jumps to the commit slab, and HOLDING it opens the region dial
-       * (the `onPadFrame` above). The two do not collide: a tap crosses and
-       * releases the analog threshold inside a frame or two, which is over long
-       * before the dial is worth looking at. See `jumpToCommit`.
-       */
-      onPad("l2", jumpToCommit),
-      /*
-       * Any press ends a hold and puts a held card down.
-       *
-       * `pad.ts` reports presses and has no release event, so "held" here means
-       * "until you do something else" -- which is how it behaves in practice
-       * anyway, because the thing you do next is the thing you were reading the
-       * card in order to decide.
-       */
-      onAnyPad((button) => {
-        if (narration.busy) skipAll();
-        if (button !== "y" && heldCard !== null) setHeldCard(null);
-      }),
-    ];
-    return () => {
-      for (const off of unbind) off();
-    };
-  }, [
+  usePadBindings({
     back,
     secondary,
-    toggleLogOverlay,
-    narration.busy,
-    skipAll,
     stepGroup,
     jumpToCommit,
+    toggleLogOverlay,
+    narration,
+    skipAll,
     heldCard,
+    setHeldCard,
     cue,
     state,
-  ]);
+  });
 
   // ------------------------------------------------------------- keyboard
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (target && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
-
-      /*
-       * `Escape` is handled as the pad's `B` rather than here.
-       *
-       * It used to cancel targeting and close the zone viewer in one go. `B` is
-       * a strict unwind instead -- peek, then targeting, then selection -- which
-       * is the behaviour a back button needs in order to be predictable, and
-       * which is now the same code whether the player pressed Escape,
-       * Backspace, or B on a controller. One button, one implementation.
-       */
-      if (narration.busy && event.key !== "Escape") {
-        skipAll();
-        return;
-      }
-      /*
-       * Zone peeking. `Esc` closed it and nothing opened it, so the only route
-       * in was a chip on the orb. Placed before `gateInput` on purpose: looking
-       * at your own graveyard asks the server nothing, so there is no reason to
-       * refuse it while a request is in flight.
-       */
-      const peekZone = PEEK_KEYS[event.key.toLowerCase()];
-      if (peekZone) {
-        setPeek(peek?.zone === peekZone ? null : { pid: state.seat, zone: peekZone });
-        return;
-      }
-
-      if (gateInput()) return;
-
-      if (event.key === " ") {
-        const pass = actions.find((a) => a.kind === "pass");
-        if (pass) {
-          event.preventDefault();
-          act(pass.id);
-        }
-        return;
-      }
-      /*
-       * `Enter` is deliberately not handled here any more.
-       *
-       * It is bound to the pad's `A`, which presses whatever the ring is on --
-       * and the ring rests on the commit slab whenever a decision is pending,
-       * so the same keystroke still confirms. Keeping this branch as well made
-       * one press post two actions: this one took the first `keep`/`yes`/
-       * `finish_declaration` in the list while `confirm()` posted the button
-       * under the ring.
-       *
-       * It is also strictly better than what it replaced. The old branch could
-       * only ever confirm those three kinds; `A` presses the control the player
-       * is actually looking at, which is every kind.
-       */
-      if (event.key.toLowerCase() === "u") {
-        undoMutate();
-        return;
-      }
-      if (/^[1-9]$/.test(event.key)) {
-        const card = viewer.hand?.[Number(event.key) - 1];
-        if (card) playFromHand(card);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [
+  useKeyboardShortcuts({
     actions,
     act,
     gateInput,
     narration,
     skipAll,
     setPeek,
-    playFromHand,
-    viewer.hand,
-    undoMutate,
     peek,
-    state.seat,
-  ]);
+    playFromHand,
+    viewer,
+    undoMutate,
+    state,
+  });
 
   // ---------------------------------------------------------------- render
 
@@ -1840,191 +1215,59 @@ export function Table({ game, state, onQuit, onRematch }: Props) {
           It used to be a sibling, spanning the full width under both rails, so
           the right rail stopped where the hand started -- 514px at 1280x800,
           of which the rows the turn is actually spent in got 172.
-          `mockups/handheld-board/` measures the same rail at 748px when it runs
+          the handheld-board round (`docs/design-record.md#handheld-board`) measures the same rail at 748px when it runs
           to the foot instead, and the action list at 363-398.
 
           It also fixes something quietly: `data-fx-origin` is on this element,
           and with the foot outside it every card flying from the hand to the
           board crossed the origin's boundary. Every such flight is interior now.
         */}
-        <div className="table__foot" ref={footRef}>
-          {/*
-          Where the tool strip goes on a handheld. A host, not the controls
-          themselves.
-
-          What goes in it depends on `ActionPanel`'s own decision state, so
-          rebuilding it here would be a second implementation of controls the
-          turn is waiting on. `ActionPanel` finds this by class and portals its
-          real tool row into it, so there is exactly one in the document and
-          every `data-action-id`, `data-testid` and ring stop travels with it.
-
-          THE COMMIT SLAB USED TO HAVE A HOST HERE TOO. It does not need one any
-          more: the rail runs the full height of the screen, so the 65px the
-          slab costs is affordable there -- and under the list it commits is
-          where it belongs, rather than in the corner beside the hand.
-
-          Rendered only on a handheld. On a desktop the tools stay in the rail,
-          where 304px of width and a 950px-tall screen make them the right
-          shape; here the foot's row is 1017px and they are one line rather than
-          the three a 200px column wrapped them to.
-        */}
-          {handheld && <div className="foot__tools" />}
-
-          {/*
-          THE DIAL NEEDED A BUTTON, because holding `L2` was the only way in.
-
-          A Steam Deck in gaming mode hands the page a keyboard rather than a
-          gamepad, so `L2` -- and `z`, its keyboard stand-in -- arrive as nothing
-          at all. The region dial was therefore unreachable on the one device it
-          was designed for. The ring can now walk out of a region at its edge
-          (`input/stops.ts:escapeGroup`), so this is a shortcut rather than the
-          only road, but a jump the hint bar advertises should have a surface.
-
-          A `tool:` stop and no `data-action-id`: it flips a flag on a surface
-          that already exists, which is what keeps the panel's "every legal
-          action is a button, exactly once" invariant free.
-        */}
-          <button
-            type="button"
-            className="foot__regions"
-            onClick={() => setDialOpen(true)}
-            aria-label="Jump to a region"
-            data-stop={stopId.tool("regions")}
-            data-testid="regions"
-            data-hint="Jump to a region of the board"
-          >
-            <Glyph btn="l2" />
-            Regions
-          </button>
-
-          {/*
-          What the buttons do, for whoever is holding one.
-
-          `display: none` unless `html[data-input]` says a pad or a keyboard is
-          driving, so a mouse player's foot is exactly the row it has always
-          been -- no extra height, no reserved space, nothing to read. See
-          `components/ui/Glyph.tsx`.
-        */}
-          <HintBar state={state} actions={actions} />
-
-          {/*
-          One hint, never a second copy of the actions.
-
-          This used to be two blocks, and the first rendered every remaining
-          action as a `data-action-id` button -- the same ids `ActionPanel`
-          renders from `playRows`, which does *not* stand down for targeting.
-          Two controls, one id: exactly what the panel's invariant forbids. It
-          escaped CI only because no shipped card could reach it, and manual
-          mana (Stage 2) reaches it immediately. The panel owns the choice; the
-          foot only ever says what the click is for.
-        */}
-          {targeting.length > 0 && (
-            <div
-              className="choices"
-              data-testid={targetChosen ? "variant-hint" : "targeting-hint"}
-            >
-              <span className="choices__label">
-                {targetChosen ? "Pick how, in the panel" : "Pick a target"}
-              </span>
-              <button type="button" className="btn btn--ghost" onClick={endTargeting}>
-                Cancel (Esc)
-              </button>
-            </div>
-          )}
-
-          {/*
-          The hand owns the foot outright.
-
-          The commander used to sit to its left, on the theory that a zone you
-          play from belongs beside the other zone you play from. In practice it
-          put the format's defining card in the corner where nothing important
-          goes, at a size where its own name did not fit. It is the hero of the
-          player's info panel now -- see `CommandZone` and `PlayerOrb` -- and it
-          still casts by the same click on the same `playFromHand` path.
-        */}
-          <HandFan
-            cards={viewer.hand ?? []}
-            playableOids={playableOids}
-            reasons={viewer.hand_reasons ?? {}}
-            mana={viewer.mana}
-            selectedOid={selectedOid}
-            cardScale={zoom.hand}
-            fanWidth={zoom.fanW}
-            onActivate={playFromHand}
-            onDropOn={onDropOnZone}
-            // Your lanes are not on screen while you are reading somebody
-            // else's, so there is nowhere legal to drop.
-            disabled={locked || viewing !== null}
-          />
-        </div>
+        <TableFoot
+          footRef={footRef}
+          handheld={handheld}
+          state={state}
+          actions={actions}
+          viewer={viewer}
+          targeting={targeting}
+          targetChosen={targetChosen}
+          endTargeting={endTargeting}
+          playableOids={playableOids}
+          selectedOid={selectedOid}
+          zoom={zoom}
+          locked={locked}
+          viewing={viewing}
+          setDialOpen={setDialOpen}
+          playFromHand={playFromHand}
+          onDropOnZone={onDropOnZone}
+        />
 
         <CombatArrows state={state} boardRef={boardRef} />
         <ParticleLayer boardRef={boardRef} />
         <FxLayer beat={narration.current} speed={speed} boardRef={boardRef} state={state} />
       </motion.div>
 
-      {error && (
-        <motion.div
-          className="toast toast--error"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          data-testid="error-toast"
-        >
-          {error}
-          <button type="button" className="toast__close" onClick={() => setError(null)}>
-            ×
-          </button>
-        </motion.div>
-      )}
-
-      {stalled && (
-        <div className="toast toast--warn" data-testid="stall-toast">
-          The game stopped progressing. Try Undo, or start a new game.
-        </div>
-      )}
-
-      {handheld && <OpponentBoard state={state} pid={reading} />}
-
-      {/*
-        The two holds.
-
-        `AnimatePresence` on neither: both are gone the instant you press
-        anything else, and an exit animation on a thing you dismissed by acting
-        would still be fading while the action it was covering resolved.
-      */}
-      <CardHold card={heldCard === null ? null : findCard(state, heldCard)} />
-
-      {dialOpen && (
-        <GroupDial
-          current={getGroup()}
-          onPick={(id) => {
-            setDialOpen(false);
-            enterGroup(id);
-          }}
-        />
-      )}
-
-      {logOverlay && (
-        <div className="logover" data-modal-root data-testid="log-overlay">
-          <div className="logover__head">
-            <span>Log</span>
-            <button
-              type="button"
-              className="btn btn--ghost"
-              data-stop={stopId.tool("close-log")}
-              onClick={toggleLogOverlay}
-            >
-              Close
-            </button>
-          </div>
-          <EventTicker state={state} events={events} cardName={game.cardName} />
-        </div>
-      )}
-
-      <PromptDialog state={state} actions={actions} onAct={act} disabled={locked} />
-      <OpeningHand state={state} actions={actions} onAct={act} disabled={locked} />
-      <ZonePeek state={state} reasons={removals} />
-      <GameOverScreen state={state} onRematch={onRematch} onQuit={onQuit} />
+      <TableOverlays
+        state={state}
+        actions={actions}
+        events={events}
+        cardName={game.cardName}
+        error={error}
+        setError={setError}
+        stalled={stalled}
+        handheld={handheld}
+        reading={reading}
+        heldCard={heldCard}
+        dialOpen={dialOpen}
+        setDialOpen={setDialOpen}
+        enterGroup={enterGroup}
+        logOverlay={logOverlay}
+        toggleLogOverlay={toggleLogOverlay}
+        act={act}
+        locked={locked}
+        removals={removals}
+        onRematch={onRematch}
+        onQuit={onQuit}
+      />
     </div>
   );
 }

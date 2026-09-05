@@ -32,7 +32,7 @@ export const FALLBACK_BASE = 104;
 export const MIN_CARD_W = 52;
 
 /**
- * The floor on a handheld, from `mockups/handheld/assert.js`'s `CARD_FLOOR`.
+ * The floor on a handheld, from the handheld round's gate (`docs/design-record.md#gates-and-measurement`)'s `CARD_FLOOR`.
  *
  * Any card the focus ring can land on must be at least this wide. It is derived
  * from a 7-inch panel at 40-50cm rather than from a DPI number: below about
@@ -63,7 +63,7 @@ export const HANDHELD_MIN_CARD_W = 96;
  * at 13.9px against the rail's 13.5px. That does not break the hierarchy above,
  * because the hierarchy is about *one screen*: the board and the preview rail
  * share a viewport and compete for the same eye, while the lobby and the table
- * are never on screen together. It is the same argument `docs/mockup-fidelity.md`
+ * are never on screen together. It is the same argument `docs/design-record.md` (Open fidelity findings)
  * makes for the lobby keeping its own `.podcard` box.
  */
 export const MAX_CARD_W = 150;

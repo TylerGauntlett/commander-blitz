@@ -17,7 +17,7 @@
  *
  * ## The gate is the point
  *
- * `mockups/seat/` records the failure mode this whole family of components has:
+ * the seat round (`docs/design-record.md#seat`) records the failure mode this whole family of components has:
  * **a summary that cannot be checked against the thing it summarises**. Five of
  * its six directions could not be wrong about the board, because the numbers
  * were never in the payload. Every number here comes from `musterOf`, which is

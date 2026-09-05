@@ -9,7 +9,7 @@
     with flying that's attacking that opponent."
 
 `attacking` was a bare boolean, resolved as "whoever the **source** is already
-attacking" (`ops_board._attack_target`). That is the right answer for the cards
+attacking" (`board_helpers._attack_target`). That is the right answer for the cards
 it was written for and it is silently wrong for both of these:
 
 - Inside `for_each_player` the boolean has no idea the loop moved. At a pod

@@ -3,7 +3,7 @@
  *
  * Extracted from `HomeScreen` the moment a second screen needed it, and the
  * extraction is the feature rather than a tidy-up. The front door was ported
- * from `mockups/door/01-the-hand.html` and came out looking like a game; the
+ * from the door round's 01 'The Hand' (`docs/design-record.md#door`) and came out looking like a game; the
  * pod lobby and the deck catalogue it opens onto were still the flat panels
  * that shipped. Pressing PLAY therefore took the player from a game to a
  * settings dialog -- which is not experienced as two screens with different

@@ -3,7 +3,7 @@
  *
  * **The art is the card.** It fills the whole frame, and the text sits on graded
  * scrims at the top and bottom -- direction D, "Art Bleed", of
- * `mockups/cards/index.html`. Three rows of tinted paper with a window cut in
+ * the card-face round (`docs/design-record.md#cards`). Three rows of tinted paper with a window cut in
  * them is what this replaced, and the window was always the part anyone actually
  * looked at.
  *

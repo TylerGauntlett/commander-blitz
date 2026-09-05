@@ -154,7 +154,7 @@ The bar lives in the foot, which sits under every dialog's backdrop. So the one
 moment it was hidden was the one moment a player does not yet know what `A` and
 `B` do. Lifted above `--z-modal`. It is not a control, so lifting it cannot make
 anything pressable that should not be — a narrower version of the problem
-`docs/mockup-fidelity.md` records as open defect #3.
+`docs/design-record.md` (Open fidelity findings) records as open defect #3.
 
 #### 2.3 The action list was 41px holding 197px of content — **fixed**
 
@@ -707,7 +707,7 @@ reports four nulls from `getGamepads()` until the pad's first gesture. So
 the only way back: one event, dispatched once, and if it landed before `Screen`
 mounted its listener the controller was never seen again.
 
-`mockups/handheld/06-one-thumb.html` binds that same listener **with an empty
+the handheld round's 06 'One Thumb' (`docs/design-record.md#handheld`) binds that same listener **with an empty
 body on purpose** and polls unconditionally. The port inverted it and made the
 decorative listener load-bearing. The loop now idles at 10Hz instead of stopping,
 and re-arms on `focus` and `visibilitychange` — Chrome does not report gamepad
@@ -958,7 +958,7 @@ surface, not just a review one.
 ## Loop 8 — Meshing the mockup, and what the new gates found
 
 **Angle.** Loops 1–7 asked whether the *shipped* board could be played on a
-Deck. This one asks a different question: `mockups/handheld-board/` measured a
+Deck. This one asks a different question: the handheld-board round (`docs/design-record.md#handheld-board`) measured a
 board with more than twice the action list and 1.6× the card, so **what is
 actually in the way of having that one?**
 
@@ -1066,8 +1066,8 @@ board's column they stopped agreeing. The solver was also reading the foot's
 a *fan* has.
 
 `offsetLeft`/`offsetWidth` are untransformed layout values, which is the same
-distinction `mockups/handheld-board/_board.js` records about its own
-`BOARD.lay()` and the same trap `mockups/seat/assert.js` fell into.
+distinction the handheld-board round's layout code (`docs/design-record.md#handheld-board`) records about its own
+`BOARD.lay()` and the same trap the seat round's gate (`docs/design-record.md#gates-and-measurement`) fell into.
 
 #### 8.7 Two grid children in a three-column grid
 

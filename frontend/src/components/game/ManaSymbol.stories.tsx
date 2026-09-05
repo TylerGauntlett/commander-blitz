@@ -107,8 +107,13 @@ export const AllSymbols: Story = {
 
     // And every one must have decoded. `naturalWidth === 0` is the tell for a
     // file that is not on disk: the element exists and is laid out, so nothing
-    // else in the suite would notice. Waited for, because 54 requests do not
-    // finish within the tick that rendered them.
+    // else in the suite would notice.
+    //
+    // Awaited on the decodes themselves first: 54 requests do not finish within
+    // the tick that rendered them, and a bare 5s poll reported 48 of them
+    // undecoded when this project ran beside the unit suite (TECH_DEBT FT-06).
+    // `decode()` rejects for a missing file, which the poll below then names.
+    await Promise.all(images().map((img) => img.decode().catch(() => undefined)));
     await waitFor(
       () => {
         const broken = images()
@@ -116,7 +121,7 @@ export const AllSymbols: Story = {
           .map((img) => img.getAttribute("src"));
         expect(broken, "these symbol files did not load").toEqual([]);
       },
-      { timeout: 5000 },
+      { timeout: 15_000 },
     );
   },
 };

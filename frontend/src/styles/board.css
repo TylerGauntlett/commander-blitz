@@ -19,7 +19,7 @@
  * -- which is why the right rail stopped where the hand started. At 1280x800
  * that rail was 514px, and the action list, the rows a turn is actually spent
  * in, got 172 of them. Running the rail to the bottom edge instead makes it
- * 748 and the list 363-398; `mockups/handheld-board/measure.mjs` prints both.
+ * 748 and the list 363-398; the handheld-board round's measurements (`docs/design-record.md#handheld-board`) prints both.
  *
  * The cost is that the hand no longer has the whole width. Retiring the left
  * rail is what pays for it -- see `.table__body`.
@@ -234,7 +234,7 @@
  * It was a count on a chip, then a ghost button in the action bar's overflow
  * (docs/playtest-feedback-02.md), then a shrunken card face in the bottom-left
  * corner where `--card-w` resolved to ~74px and the name clipped to
- * "Aesi, Tyra…" -- docs/mockup-fidelity.md defect #5. A card face has six
+ * "Aesi, Tyra…" -- docs/design-record.md (Open fidelity findings) defect #5. A card face has six
  * things to fit and this column has room for three, so it stopped being a card
  * face: a portrait, a name, and a state strip, sized for the column instead of
  * shrunk into it. The full card is one hover away in the preview rail.
@@ -313,7 +313,7 @@
  * where the seal clamps to 76px of a 156px portrait, that left 76px for a
  * two-line name and put the disc through the middle of "Aesi, Tyrant of Gyre
  * Strait". Half the caption's width is a bad trade for 26px of height in a panel
- * that now has height to spare, and it is the same trade `mockups/orb/03`
+ * that now has height to spare, and it is the same trade the orb round's 03 'Plinth' (`docs/design-record.md#orb`)
  * already made with `.cmdwrap`'s bottom padding.
  */
 .cmdplinth__frame {
@@ -548,7 +548,7 @@
  * The commander's art is the panel's ground, and that is the whole direction:
  * four seats in a pod used to be four grey rectangles told apart by a name in
  * 12px type, while the one asset that separates them instantly was already
- * loaded and drawn at 80px. `mockups/orb/README.md` calls that defect #4 and
+ * loaded and drawn at 80px. the orb round (`docs/design-record.md#orb`) calls that defect #4 and
  * picks this direction to answer it.
  *
  * **There is no colour-identity tint**, deliberately, and it is the one thing
@@ -586,7 +586,7 @@
  * `inset: -14%` so the blur's soft edge falls outside the panel instead of
  * feathering into a visible border. The blur is for the type's sake, not to hide
  * a stretch: the crop is 626x457 and this box is 190px wide (0.30x) or 112px
- * (0.18x) -- see the art ceiling rule in mockups/README.md before porting this
+ * (0.18x) -- see the art ceiling rule in the design record (`docs/design-record.md#board-themes`) before porting this
  * to anything wider.
  */
 .orb__wash {

@@ -1,7 +1,7 @@
 /**
  * The front door: a main menu made of cards.
  *
- * Ported from `mockups/door/01-the-hand.html`, the direction that round
+ * Ported from the door round's 01 'The Hand' (`docs/design-record.md#door`), the direction that round
  * converged on. **THE MENU IS A HAND OF CARDS AND YOU ARE ALREADY HOLDING IT** --
  * the one you are on squares up, lifts and lights the room; the other two tilt
  * away and stack behind it. Selecting is casting: pressing A on a card is the
@@ -320,6 +320,7 @@ export function HomeScreen({
      same call for the same reason: the effect runs on the commit that STARTS
      the animation, when the element has not moved a pixel, so the ring needs
      telling to watch rather than to re-measure once. */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `sel` is a trigger, not a read; see above.
   useLayoutEffect(() => {
     refollowCursor();
   }, [sel]);

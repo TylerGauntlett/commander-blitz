@@ -14,6 +14,8 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { setPlayerToken } from "../src/api/client";
+import { resetInputMode } from "../src/input/inputMode";
+import { resetPad } from "../src/input/pad";
 import { storeToken } from "../src/state/usePod";
 import { linkGame } from "../src/state/usePodSession";
 import {
@@ -83,13 +85,21 @@ beforeEach(() => {
       ok: status < 400,
       status,
       statusText: "",
-      json: async () => (status < 400 ? found?.body : { detail: { code: "nope" } }),
+      // An error route may say what went wrong; one that does not gets a shrug.
+      json: async () =>
+        status < 400 ? found?.body : (found?.body ?? { detail: { code: "nope" } }),
     } as Response;
   });
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  // The app starts the pad poll on mount and nothing here unmounts it: its
+  // idle timer fired after this environment was torn down and reached for a
+  // `requestAnimationFrame` that no longer existed -- an "unhandled error"
+  // that failed a run in which every test had passed.
+  resetPad();
+  resetInputMode();
 });
 
 describe("the front door", () => {
@@ -143,6 +153,63 @@ describe("a pod address", () => {
     // its lobby must stop being a history entry rather than sit there offering
     // to return to a room that is gone.
     expect(app.where.how).toBe("REPLACE");
+  });
+});
+
+describe("joining from the door", () => {
+  it("sends a player whose pod has already dealt straight to the table", async () => {
+    // The server answers `already_started` with the game id in the detail, and
+    // this tab still holds the token it was given for that pod -- a reload
+    // after the deal, not a stranger with a stale link.
+    storeToken("GYRE-8412", "tok-1");
+    routes.push({
+      prefix: "/api/pods/GYRE-8412/join",
+      status: 409,
+      body: { detail: { code: "already_started", detail: "dealt", game_id: "g9" } },
+    });
+    routes.push({ prefix: "/api/games/g9/state", body: stateResponse(), repeat: true });
+
+    const app = renderApp("/?join=GYRE-8412");
+    fireEvent.click(await screen.findByTestId("join-pod"));
+    fireEvent.click(await screen.findByTestId("join-go"));
+    await waitFor(() => expect(app.where.pathname).toBe("/games/g9"));
+    expect(app.where.how).toBe("REPLACE");
+    // ...and everything asked on behalf of that game carries the token.
+    const forGame = calls.filter((call) => call.path.includes("g9"));
+    expect(forGame.length).toBeGreaterThan(0);
+    expect(forGame.every((call) => call.token === "tok-1")).toBe(true);
+  });
+
+  it("stays at the door, saying why, when the join is refused for any other reason", async () => {
+    routes.push({
+      prefix: "/api/pods/GYRE-8412/join",
+      status: 404,
+      body: { detail: { code: "not_found", detail: "no such pod" } },
+    });
+    const app = renderApp("/?join=GYRE-8412");
+    fireEvent.click(await screen.findByTestId("join-pod"));
+    fireEvent.click(await screen.findByTestId("join-go"));
+    await waitFor(() => expect(calls.some((c) => c.path.includes("/join"))).toBe(true));
+    expect(await screen.findByText(/no such pod/)).toBeTruthy();
+    expect(app.where.pathname).toBe("/");
+  });
+});
+
+describe("a pod that cannot be found", () => {
+  it("says there is no such pod, and offers the way back", async () => {
+    storeToken("GYRE-8412", "tok-1");
+    routes.push({ prefix: "/api/pods/GYRE-8412", status: 404, body: null });
+    const app = renderApp("/pods/GYRE-8412");
+    expect(await screen.findByText(/There is no pod with that code/)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+    await waitFor(() => expect(app.where.pathname).toBe("/"));
+  });
+
+  it("says a closed pod has closed", async () => {
+    storeToken("GYRE-8412", "tok-1");
+    routes.push({ prefix: "/api/pods/GYRE-8412", status: 410, body: null });
+    renderApp("/pods/GYRE-8412");
+    expect(await screen.findByText(/That pod has closed/)).toBeTruthy();
   });
 });
 

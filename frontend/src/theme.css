@@ -136,7 +136,7 @@
  * NOT `--pod-seat-h`, which is a CAP on a whole compact mat and is `0px` on a
  * desktop because `.play`'s own `fit-content(58%)` is the bound there. This is
  * the seat's own stated height, and it is the same number on both layouts
- * because the seat is the same component on both -- `mockups/seat/` measured
+ * because the seat is the same component on both -- the seat round (`docs/design-record.md#seat`) measured
  * every one of its directions inside 332x96, and a seat drawn at some other
  * height is a different design wearing the same name.
  *
@@ -155,7 +155,7 @@
  * back when card type was an eight-step luminance ladder read off the rendered
  * board. The ladder went with the art-bleed redesign -- card type is no longer
  * a colour at all -- so both registrations are gone. `tests/palette.test.ts`
- * fails if a `--type-ring` declaration reappears. See docs/mockup-fidelity.md.
+ * fails if a `--type-ring` declaration reappears. See docs/design-record.md (Open fidelity findings).
  */
 
 :root {
@@ -250,7 +250,7 @@
    * stacks -- five shapes in five colours, at the sizes where a stack of leaves
    * is height the column does not have. `--chip-ink` is the one ink all five
    * carry, so a chip's contrast is a property of the set rather than of each
-   * hue. See `mockups/handheld-board/`.
+   * hue. See the handheld-board round (`docs/design-record.md#handheld-board`).
    */
   --zone-lib: #7d6bd8;
   --zone-hand: #3f9e93;

@@ -45,7 +45,7 @@ def foundry_imprinting(
     The exile is done by hand rather than by casting the artifact, because the
     board has to be *exact*: what is being asserted is which activations are
     offered at which amount of mana, and a cast would tap some of it. It is
-    precisely what `ops_board.op_exile` does for an `until_leaves` exile -- move
+    precisely what `ops_removal.op_exile` does for an `until_leaves` exile -- move
     the card and record the link -- and `TestTheImprintTheCardActuallyMakes`
     drives the printed trigger to prove the two agree.
     """

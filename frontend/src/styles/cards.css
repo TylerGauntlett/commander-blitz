@@ -5,7 +5,7 @@
  * an opponent's board and 236px in the preview panel with no separate styles.
  *
  * ART BLEED. The illustration fills the frame and the text sits on graded
- * scrims at the top and bottom -- direction D of `mockups/cards/index.html`.
+ * scrims at the top and bottom -- direction D of the card-face round (`docs/design-record.md#cards`).
  * There is no card stock any more: no padding surround, no art window, no band
  * of tinted paper between the rows.
  *
@@ -145,7 +145,7 @@
   /*
    * Type sizes, clamped at *both* ends.
    *
-   * `mockups/cards/index.html` calls this file out by name for getting it wrong:
+   * the card-face round (`docs/design-record.md#cards`) calls this file out by name for getting it wrong:
    * "A floor alone (`max(8.5px, ...)`) is what the client does, and it is why the
    * preview card looks like a zoomed board card rather than a designed one."
    * A floor stops the small end rendering type nobody can read; the ceiling is
@@ -169,7 +169,7 @@
  *
  * Two stops each, the lit edge and the shadowed one, which is what makes a
  * frame read as moulded rather than as a coloured outline. Lifted from
- * `mockups/cards/index.html`'s `:root`.
+ * the card-face round's (`docs/design-record.md#cards`) `:root`.
  *
  * These do double duty now: the border, and the gradient behind the art. On a
  * card with no printing that gradient is all there is, so it has to be worth
@@ -243,7 +243,7 @@
  * meant to solve, one level up.
  *
  * What carries the category instead is `.face__glyph` and `.face__type`. If you
- * are re-adding a colour encoding here, read `docs/mockup-fidelity.md` first --
+ * are re-adding a colour encoding here, read `docs/design-record.md` (Open fidelity findings) first --
  * this was a decision, not an oversight. */
 
 /* Land colours ----------------------------------------------------------
@@ -658,7 +658,7 @@
  * two bands of text with a seam, which is the arrangement art bleed exists to
  * get rid of.
  *
- * `mockups/cards/index.html` makes the same call for the same reason -- "on the
+ * the card-face round (`docs/design-record.md#cards`) makes the same call for the same reason -- "on the
  * 60px mat a second line costs a quarter of the card and there is nothing to
  * spend it on". A truncated name on an opponent's permanent is cheap: hovering
  * puts the whole card in the preview rail.
@@ -673,7 +673,7 @@
 /*
  * And no mana cost at all on an opponent's mat.
  *
- * `mockups/cards/index.html` applies this to all five directions, and the
+ * the card-face round (`docs/design-record.md#cards`) applies this to all five directions, and the
  * argument is the strongest one on that page: a permanent on an opponent's board
  * has already been paid for, so its cost is the one line on the card that cannot
  * change a decision you are about to make -- and at ~51px it is competing for a
@@ -800,7 +800,7 @@
 /*
  * The commander mark, inside the name.
  *
- * It was a `CMD` badge pinned to a corner. `mockups/cards/index.html` argues the
+ * It was a `CMD` badge pinned to a corner. the card-face round (`docs/design-record.md#cards`) argues the
  * crown and it is right: a corner tag is a second thing competing for a corner
  * the P/T and the sickness mark have already claimed, and at pod size
  * `--card-w * 0.055` is under 3px, which is not a word. A real legendary wears a
@@ -840,7 +840,7 @@
  * The real ones -- Scryfall's published SVGs, vendored into `public/symbols/`
  * and drawn by `ManaSymbol` as `<img>`. These used to be a letter on a CSS disc:
  * a `G` in a green circle, which is a mark nobody who plays the game
- * recognises. `mockups/cards/index.html` draws the real symbols throughout and
+ * recognises. the card-face round (`docs/design-record.md#cards`) draws the real symbols throughout and
  * that is most of why its cards read as cards.
  *
  * So there is no fill, no border-radius and no type here: the artwork already
@@ -851,7 +851,7 @@
  *
  * `--pip` is the tuned size, capped as well as floored: past ~180px a cost row
  * scaled purely off `--card-w` stops looking like a cost and starts looking like
- * a row of buttons. Same clamp `mockups/cards/index.html` uses. */
+ * a row of buttons. Same clamp the card-face round (`docs/design-record.md#cards`) uses. */
 .pip {
   display: inline-block;
   /* The fallback is not decoration. `width: var(--pip)` with no value is invalid

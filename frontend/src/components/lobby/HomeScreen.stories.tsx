@@ -15,6 +15,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import { HomeScreen } from "./HomeScreen";
 
 const meta = {
@@ -152,5 +153,16 @@ export const SettingsHold: Story = {
     // Storybook runs without a gamepad, which is the case worth drawing: the
     // panel has to name the causes rather than just report the symptom.
     expect(await canvas.findByTestId("controller-status")).toBeVisible();
+  },
+};
+
+/** The front door on a Deck: three cards, each a target. */
+export const FreshHandheld: Story = {
+  args: Fresh.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };

@@ -10,6 +10,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
 import { CARD_SCALE } from "../../logic/cardSize";
+import { expectFontFloor, expectHitFloor } from "../../testing/asserts";
 import * as pool from "../../testing/cards";
 import { Lane } from "./Lane";
 
@@ -168,5 +169,21 @@ export const WithAttachments: Story = {
         ],
       ],
     ]),
+  },
+};
+
+/** The same creatures on a Deck: every card at the floor, every label legible. */
+export const CreaturesHandheld: Story = {
+  args: Creatures.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText("Grizzly Bears");
+    // Type and targets only. The card width here is the fixture's fixed
+    // `cardScale`, not the zoom solver's answer; the 96px card floor is
+    // asserted where the solver runs, in `Table.stories.tsx`.
+    expectFontFloor(canvasElement);
+    expectHitFloor(canvasElement);
   },
 };

@@ -197,7 +197,7 @@ class TargetModel(BaseModel):
     #: A **value expression** is the third form: "return up to X target creature
     #: cards…, where X is the number of times this enchantment was kicked" is
     #: ``{"additional_paid": true}``, evaluated when the targets are declared.
-    #: Only on an *ability's* targets -- see `loader._compile_targets`, which
+    #: Only on an *ability's* targets -- see `loader.targets._compile_targets`, which
     #: refuses one on a card's own `targets` because a spell's are chosen before
     #: it has been paid for and the expression would read zero.
     count: int | Literal["any"] | dict[str, Any] = 1
@@ -220,7 +220,7 @@ class TargetModel(BaseModel):
     #: ``choose_mode``.  Such a spec is declared only when that mode is chosen,
     #: which is what lets one spell carry four different targets and bind two of
     #: them.  Only on a card's own `targets`, and only on a card whose whole
-    #: effect tree is one top-level ``choose_mode`` -- `loader._compile_targets`
+    #: effect tree is one top-level ``choose_mode`` -- `loader.targets._compile_targets`
     #: refuses it anywhere else, because nowhere else is there a moment between
     #: choosing the mode and declaring the target.
     mode: int | None = None

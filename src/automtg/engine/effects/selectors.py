@@ -13,7 +13,7 @@ Two shorthand forms bypass matching entirely:
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import chars
@@ -281,11 +281,7 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
             return seeded
         return _narrow_to_extreme(
             ctx,
-            [
-                oid
-                for oid in seeded
-                if matches(ctx, oid, selector, default_zone=default_zone)
-            ],
+            [oid for oid in seeded if matches(ctx, oid, selector, default_zone=default_zone)],
             selector,
         )
 
@@ -331,7 +327,9 @@ def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list
         for pid in _zone_owners(ctx, selector):
             candidates.extend(state.players[pid].zone_list(zone))
 
-    return _narrow_to_extreme(ctx, [oid for oid in candidates if matches(ctx, oid, selector)], selector)
+    return _narrow_to_extreme(
+        ctx, [oid for oid in candidates if matches(ctx, oid, selector)], selector
+    )
 
 
 #: What `extreme` may rank on. Derived characteristics only, and read through
@@ -518,9 +516,7 @@ def matches(
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
-    if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(
-        ctx, str(name)
-    ):
+    if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
         # a `snapshot`, and a **list** for an op that recorded what it produced.
         # Martial Coup writes X Soldiers with `as` and then says "destroy all
@@ -893,7 +889,7 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
 #: ``controller_of``, ``owner_of``, ``not``) and a bare seat number are not
 #: here: they name something the card declares elsewhere and are checked where
-#: that is checked -- `loader._validate_player_spec`.
+#: that is checked -- `loader.effects._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
     {
         "you",
@@ -961,7 +957,7 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             #
             # Every other spelling of "enchanted opponent" is a different card.
             # `{"target": …}` cannot say it: an ability's targets are scoped to
-            # that ability (`loader._validate_player_spec`), and a triggered
+            # that ability (`loader.effects._validate_player_spec`), and a triggered
             # ability that declared none would resolve `ctx.target_players` to
             # `[]` -- which `op_may` reads as "nobody" and bills `ctx.controller`
             # instead, the documented Rhystic Study failure, so the Aura's own
@@ -1008,7 +1004,7 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning
             # `[]` for them is why `controller_of_target` below exists rather
-            # than this key being widened -- see `loader._validate_player_spec`,
+            # than this key being widened -- see `loader.effects._validate_player_spec`,
             # which refuses the combination at load time.
             return ctx.target_players(str(spec["target"]))
         if "controller_of_target" in spec:
@@ -1116,9 +1112,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # accident, and `0`/`""` would quietly become `false`. A card that asks for
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
-    if "x_in_mana_cost" in selector and not isinstance(
-        selector["x_in_mana_cost"], bool
-    ):
+    if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
             f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"
@@ -1208,8 +1202,3 @@ def validate_selector(selector: Any, where: str) -> None:
             validate_selector(branch, f"{where}.any_of[{i}]")
     if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
         raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
-
-
-def sorted_candidates(state: GameState, oids: Sequence[int]) -> list[int]:
-    """Deterministic ordering for target enumeration."""
-    return sorted(oids, key=lambda oid: (state.objects[oid].def_id, oid))

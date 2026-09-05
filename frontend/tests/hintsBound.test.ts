@@ -39,6 +39,7 @@ const SRC = join(__dirname, "..", "src");
 /** Every file that binds pad intents. Bindings are not allowed to hide. */
 const BINDERS = [
   "input/useCursorNav.ts",
+  "input/useTableInput.ts",
   "components/game/Table.tsx",
   "components/lobby/HomeScreen.tsx",
 ];

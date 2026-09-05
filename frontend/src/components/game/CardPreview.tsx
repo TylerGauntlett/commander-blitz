@@ -14,7 +14,7 @@
  * across -- SMALLER than the board card it is supposed to be helping you read,
  * with `object-fit: cover` throwing away most of the painting to get there. So
  * the compressed variant is not a smaller card: it is a **landscape window**
- * onto the same `art_crop`, which is 626x457. `mockups/handheld-board/`
+ * onto the same `art_crop`, which is 626x457. the handheld-board round (`docs/design-record.md#handheld-board`)
  * measures 227x84 as keeping the painting's full width for a third of the
  * height, and the 78px that hands back is what the rules text is made of.
  *
@@ -58,7 +58,7 @@ function cardStatus(card: CardView): string {
 /**
  * The compressed body: a landscape window, and the text that fits under it.
  *
- * Three findings from `mockups/handheld-board/` are encoded here.
+ * Three findings from the handheld-board round (`docs/design-record.md#handheld-board`) are encoded here.
  *
  * **The P/T goes on the art, not on the type line.** The first draft put
  * "Legendary Creature — Serpent · 5/5" on one 227px line; it ellipsised, and

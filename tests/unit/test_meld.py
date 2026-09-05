@@ -61,7 +61,7 @@ def position(builder, *, partner: bool = True):
 def meld(game, bruna: int):
     """Run the meld op directly — the trigger's timing is not what is under test."""
     from automtg.engine.effects.context import EffectContext
-    from automtg.engine.effects.ops_board import op_meld
+    from automtg.engine.effects.ops_counters import op_meld
 
     ctx = EffectContext(state=game.state, controller=0, source_oid=bruna)
     list(op_meld(ctx, {"op": "meld"}))

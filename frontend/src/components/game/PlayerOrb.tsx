@@ -20,7 +20,7 @@
  * **The commander is also the panel's ground.** Its art, blurred and scrimmed,
  * is the orb's background -- so four seats in a pod stop being four grey
  * rectangles told apart by a name in 12px type, which is the one thing the old
- * column could not do and the reason `mockups/orb/` picked this direction. It is
+ * column could not do and the reason the orb round (`docs/design-record.md#orb`) picked this direction. It is
  * the same `/art/{card_id}.jpg` the plinth already draws, so it costs no second
  * request. There is deliberately **no colour-identity tint** over it: a tint
  * dies in greyscale and the portrait does not, and every scrap of type here is
@@ -165,7 +165,7 @@ function ZonePile({
         
         A shape is, though, and does not have to be taught: a headstone is a
         graveyard, a fan of three is a hand, a face-down card is a library.
-        `mockups/handheld-board/` reaches for exactly this, and `SeatIcon` is
+        the handheld-board round (`docs/design-record.md#handheld-board`) reaches for exactly this, and `SeatIcon` is
         the set. So the word can go where the room is tight without the row
         becoming anonymous again -- see `styles/handheld.css`.
       */}
@@ -420,7 +420,7 @@ export function PlayerOrb({
           Your own name, and on a handheld it is the one thing here that says
           nothing.
 
-          `mockups/handheld-board/` calls this its single deviation from the
+          the handheld-board round (`docs/design-record.md#handheld-board`) calls this its single deviation from the
           plinth direction and argues it: the information strip six pixels above
           names you, and unlike the three seats beside it there is never any
           doubt whose panel this is. It is worth 21px of a 250px column and not

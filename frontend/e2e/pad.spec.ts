@@ -27,6 +27,7 @@
 import { type Page, expect, test } from "@playwright/test";
 import {
   actionsOfKind,
+  budget,
   isOver,
   keepOpeningHand,
   startGame,
@@ -650,7 +651,7 @@ test.describe("the combat bar answers a controller", () => {
   });
 
   test("L2 lands on the all mark, and right walks the rest of the bar", async ({ page }) => {
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
     await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
     await reachCombat(page, "add_attacker");
 
@@ -676,7 +677,7 @@ test.describe("the combat bar answers a controller", () => {
      * the claim: pressing them has to post the declaration, which is what
      * `add_attacker` disappearing says.
      */
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
     await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
     await reachCombat(page, "add_attacker");
 
@@ -693,7 +694,7 @@ test.describe("the combat bar answers a controller", () => {
   test("blocking has the same bar and the same walk", async ({ page }) => {
     // The two modes render from one branch, and a mode-specific regression is
     // the kind that ships: attacking is the one anybody tests by hand.
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
     await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
     await reachCombat(page, "add_blocker");
 

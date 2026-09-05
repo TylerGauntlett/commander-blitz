@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { actionButtons, isOver, startGame, takeAction, waitForOurTurn } from "./helpers";
+import {
+  actionButtons,
+  budget,
+  isOver,
+  startGame,
+  takeAction,
+  waitForOurTurn,
+} from "./helpers";
 
 /**
  * The real proof that the client covers every decision kind.
@@ -11,7 +18,7 @@ import { actionButtons, isOver, startGame, takeAction, waitForOurTurn } from "./
 test.describe("a whole game can be played through the UI", () => {
   test("two players, to a result", async ({ page }) => {
     test.slow();
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
 
     await startGame(page, { deck: "aesi", opponents: 1, seed: 11 });
 
@@ -65,7 +72,7 @@ test.describe("a whole game can be played through the UI", () => {
 
   test("a four-player pod is playable and shows every opponent", async ({ page }) => {
     test.slow();
-    test.setTimeout(300_000);
+    test.setTimeout(budget(300_000));
 
     await startGame(page, { deck: "aesi", opponents: 3, seed: 5 });
 
