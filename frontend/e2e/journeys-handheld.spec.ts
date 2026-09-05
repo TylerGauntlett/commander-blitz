@@ -31,9 +31,10 @@
 
 import { type Page, expect, test } from "@playwright/test";
 import {
+  budget,
   isOver,
   keepOpeningHand,
-  reachDecision,
+  reachDeclaration,
   setInstant,
   startGame,
   takeAction,
@@ -145,13 +146,11 @@ async function untilYouCanPlay(page: Page, limit = 80): Promise<string[]> {
 }
 
 /**
- * Play forward to a declaration, the way `pad.spec.ts` does.
+ * Play forward to a declaration, then let the ring arrive.
  *
- * `helpers.reachDecision` wants the panel visible AND carrying the right
- * `data-combat-kind` AND the actions present; against this deck and seed it kept
- * coming back false, and a test that skips is a test that is not run. This asks
- * the engine's own question -- is `add_attacker` legal -- and throws rather than
- * skipping, so a genuine regression is loud instead of quiet.
+ * `helpers.reachDeclaration` is this file's old local loop, promoted: it asks
+ * the engine's own question -- is `add_attacker` legal -- and throws rather
+ * than skipping, so a genuine regression is loud instead of quiet.
  *
  * The settle is the one `pad.spec.ts` explains: `Table` moves the ring to the
  * region a new decision lives in and waits for narration first, so the decision
@@ -159,16 +158,8 @@ async function untilYouCanPlay(page: Page, limit = 80): Promise<string[]> {
  * between them is a press the app then overrides.
  */
 async function reachAttackDeclaration(page: Page): Promise<void> {
-  for (let i = 0; i < 120; i += 1) {
-    await waitForOurTurn(page);
-    expect(await isOver(page), "the game ended before combat").toBe(false);
-    if (await page.locator('[data-action-kind="add_attacker"]').count()) {
-      await page.waitForTimeout(1500);
-      return;
-    }
-    await takeAction(page, ["keep", "play_land", "cast", "pass"]);
-  }
-  throw new Error("never reached an attack declaration");
+  await reachDeclaration(page, "attackers");
+  await page.waitForTimeout(budget(1500));
 }
 
 const region = (page: Page) =>
@@ -368,7 +359,7 @@ test.describe("the core journeys, in presses", () => {
   test("X declares a combat in two presses, from wherever the ring is", async ({ page }) => {
     // Seed 3 and the long budget, which is what `pad.spec.ts` uses: playing to
     // combat against a real engine is minutes, not seconds.
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
     await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
     /*
      * NO `keepOpeningHand` -- the loop answers the mulligan itself, which is
@@ -414,11 +405,13 @@ test.describe("the core journeys, in presses", () => {
    * in the panel.
    */
   test("a block decision puts the ring where the block can be made", async ({ page }) => {
+    // The same budget as the attack journey above: a block is further into the
+    // game than an attack, and this seed reaches it in ~27 of our decisions.
+    test.setTimeout(budget(600_000));
     await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
     await keepOpeningHand(page);
 
-    const reached = await reachDecision(page, "blockers");
-    test.skip(!reached || (await isOver(page)), "this seed never reached a block declaration");
+    await reachDeclaration(page, "blockers");
 
     const attackerIsReachable = await page.evaluate(() => {
       const ring = (window as unknown as { __AUTOMTG_RING?: { stops(): string[] } })

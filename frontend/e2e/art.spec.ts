@@ -8,7 +8,7 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { startGame, takeAction, waitForOurTurn } from "./helpers";
+import { budget, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 /** Play far enough that permanents are on the board to look at. */
 async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
@@ -65,7 +65,7 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
  * about: a check that survives the failure it was written for.
  */
 test("art loads and decodes on the board", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
 
@@ -84,7 +84,7 @@ test("art loads and decodes on the board", async ({ page }) => {
 });
 
 test("every art request goes to this server, never to a third party", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   const external: string[] = [];
   page.on("request", (request) => {
     const url = request.url();
@@ -102,7 +102,7 @@ test("every art request goes to this server, never to a third party", async ({ p
 });
 
 test("a card with no printing shows a plate, not a broken image", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   // Forced rather than hunted for: whether an artless card reaches the board
   // depends on the shuffle, and a test that depends on the shuffle is a test
   // that fails on Tuesdays.
@@ -149,7 +149,7 @@ test("a card with no printing shows a plate, not a broken image", async ({ page 
  * claim and it is the kind of thing a stray `padding` reverts by accident.
  */
 test("the art fills the frame", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
 
@@ -178,7 +178,7 @@ test("the art fills the frame", async ({ page }) => {
 test("a land's mana symbols stay on top of the art", async ({ page }) => {
   // The one channel on a land that reads at 60px in a four-player pod. The
   // illustration, at that size, does not.
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
 
@@ -205,7 +205,7 @@ test("a land's mana symbols stay on top of the art", async ({ page }) => {
 });
 
 test("the preview rail credits the illustrator", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
 

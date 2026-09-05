@@ -15,7 +15,7 @@
  */
 
 import { type Locator, type Page, expect, test } from "@playwright/test";
-import { keepOpeningHand, startGame } from "./helpers";
+import { budget, keepOpeningHand, startGame } from "./helpers";
 
 interface Box {
   x: number;
@@ -41,7 +41,7 @@ test.describe("the orb fills its column", () => {
     // 03 Plinth measures 190x318 and the column gets 341px or more, which left a
     // strip of dead mat under the panel. 01 Astrolabe's proportion -- the orb
     // reaching the same height as the board beside it -- is the one to match.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const orb = await boxOf(page.getByTestId("player-0"));
@@ -55,7 +55,7 @@ test.describe("the orb fills its column", () => {
   test("the piles sit on the panel's bottom edge, not under the plinth", async ({ page }) => {
     // `space-between` is where the slack goes. If the piles ever float back up
     // to the top the panel has stopped filling and started padding.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const orb = await boxOf(page.getByTestId("player-0"));
@@ -68,7 +68,7 @@ test.describe("the orb fills its column", () => {
     // The "escape" check mockups/README.md asks for, and the one `overflow:
     // hidden` on the orb would hide if it were asserted by eye. The seal hangs
     // off the *portrait*, deliberately; it must not hang off the panel.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const escaped = await page.evaluate(() => {
@@ -101,7 +101,7 @@ test.describe("the orb fills its column", () => {
     // breaks it. Measured on the *bottom* edge, not the top: the piles are
     // deliberately bottom-aligned so their heights read against each other, so a
     // drawn-down library and a grown graveyard have different tops by design.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const bottoms = await page
@@ -123,7 +123,7 @@ test.describe("the orb fills its column", () => {
      * it is inserted rather than waited for -- a spec that only ever sees four
      * is not testing the case that overflows.
      */
-    test.setTimeout(240_000);
+    test.setTimeout(budget(240_000));
     await openPod(page, 3);
 
     const rows = await page.evaluate(() => {
@@ -155,7 +155,7 @@ test.describe("the life seal", () => {
     // The idea the whole direction is built on: the dial costs the overlap
     // rather than a row of its own. If it stops overlapping it has silently
     // become a row again and the panel has grown by its diameter.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const dial = await boxOf(page.locator('[data-testid="player-0"] .dial'));
@@ -174,7 +174,7 @@ test.describe("the life seal", () => {
   });
 
   test("holds a bare life total that the helpers can still parse", async ({ page }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
     const text = await page.getByTestId("life-0").textContent();
     expect(Number(text)).toBe(40);
@@ -189,7 +189,7 @@ test.describe("the life seal", () => {
     // a decision modal's backdrop over the board turns this into a test of which
     // prompt the seed happened to produce. The property is the actual contract,
     // and cycle3.spec.ts already clicks the plinth through it for real.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
     const pointers = await page
       .locator('[data-testid="player-0"] .cmdplinth__frame .dial')
@@ -208,7 +208,7 @@ test.describe("hovering a commander fills the preview rail", () => {
   test("works for your own commander while it is not castable", async ({ page }) => {
     // The bug, in its most common form: on turn one you cannot cast a six-drop,
     // so the plinth was disabled, so hovering it did nothing at all.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const slot = page.getByTestId("command-zone-0").locator(".cmdslot").first();
@@ -233,7 +233,7 @@ test.describe("hovering a commander fills the preview rail", () => {
      * hover the window and the reader fills, exactly as before. `Y` does the
      * same for a controller, at full size.
      */
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 3);
 
     const seat = page.getByTestId("player-1");
@@ -245,7 +245,7 @@ test.describe("hovering a commander fills the preview rail", () => {
   });
 
   test("clears again when the pointer leaves", async ({ page }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const slot = page.getByTestId("command-zone-0").locator(".cmdslot").first();
@@ -261,7 +261,7 @@ test.describe("the commander is the panel's ground", () => {
     // README defect #4: four seats were four grey rectangles told apart by a name
     // in 12px type. Distinct URLs is the machine-checkable form of "they look
     // different", and it is what a screenshot cannot fail a build on.
-    test.setTimeout(240_000);
+    test.setTimeout(budget(240_000));
     await openPod(page, 3);
 
     /*
@@ -286,7 +286,7 @@ test.describe("the commander is the panel's ground", () => {
   test("the wash reuses the plinth's art rather than asking for a second crop", async ({
     page,
   }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
 
     const same = await page.evaluate(() => {
@@ -302,7 +302,7 @@ test.describe("the commander is the panel's ground", () => {
     // Dropped from the mockup on purpose: the tint is the channel that dies in
     // greyscale and the portrait under it is not. greyscale.spec.ts is what has
     // to agree first if it ever comes back.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await openPod(page, 1);
     expect(await page.locator(".orb__tint").count()).toBe(0);
   });

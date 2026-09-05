@@ -10,14 +10,27 @@ const PYTHON = process.platform === "win32" ? ".venv\\Scripts\\python.exe" : ".v
  * and vite on 5173, with vite proxying /api through. `reuseExistingServer` means
  * a dev session already running is used as-is rather than fought over.
  */
+/**
+ * Every budget in the suite, scaled once.
+ *
+ * The same unchanged commit produced three different timeout failures across
+ * two runs, and no two runs agreed on which test (TECH_DEBT FT-06). Each one
+ * passed alone on a quiet machine: the trigger was load, not code. Raising the
+ * numbers in place would hide a real slowdown, so the numbers stay and the
+ * *multiplier* is the knob -- `scripts/verify.py --e2e` sets `E2E_SLOW=2`
+ * because it runs this suite after two Storybook browsers on the same box.
+ * `helpers.budget()` applies the same factor to every per-test budget.
+ */
+const SLOW = Number(process.env.E2E_SLOW ?? 1);
+
 export default defineConfig({
   testDir: "./e2e",
   // The engine is deterministic per seed, but the AI pump is a real timing loop;
   // one retry absorbs a slow cold start without hiding a genuine failure.
   retries: process.env.CI ? 1 : 0,
   workers: 1,
-  timeout: 120_000,
-  expect: { timeout: 15_000 },
+  timeout: 120_000 * SLOW,
+  expect: { timeout: 15_000 * SLOW },
   reporter: [["list"], ["html", { open: "never", outputFolder: "e2e-report" }]],
   use: {
     baseURL: "http://127.0.0.1:5173",

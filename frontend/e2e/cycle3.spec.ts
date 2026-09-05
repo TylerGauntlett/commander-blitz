@@ -12,10 +12,12 @@
 
 import { type Page, expect, test } from "@playwright/test";
 import {
+  COMBAT_SEED,
   actionsOfKind,
+  budget,
   isOver,
   keepOpeningHand,
-  reachDecision,
+  reachDeclaration,
   startGame,
   takeAction,
   waitForOurTurn,
@@ -43,7 +45,7 @@ test.describe("a turn means a lap of the table", () => {
     // turn shows turn 3. This should be turn 2." The engine's own counter still
     // runs per player-turn -- summoning sickness needs it -- so this asserts the
     // two numbers exist side by side and that the *displayed* one is the round.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     /*
      * `keepOpeningHand`, and the wait inside it is the point.
@@ -88,7 +90,7 @@ test.describe("the commander is on screen", () => {
     // and the only route to casting was a ghost button in the bar's overflow.
     // Then it was a ~74px card face in the bottom-left corner, whose own name
     // did not fit -- docs/mockup-fidelity.md defect #5.
-    test.setTimeout(240_000);
+    test.setTimeout(budget(240_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
@@ -195,7 +197,7 @@ test.describe("lands say what they make", () => {
   });
 
   test("two different basics do not look alike", async ({ page }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
@@ -237,7 +239,7 @@ test.describe("choosing a card shows the card", () => {
     // is not this dialog's any more: `OpeningHand` answers both halves of a
     // mulligan on its own screen, so mulliganing here would walk past the
     // surface under test rather than into it. `smoke.spec.ts` covers that path.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
 
     const dialog = page.getByTestId("prompt-dialog");
@@ -269,12 +271,9 @@ test.describe("combat has one surface", () => {
     //
     // Asserting it that way matters: the old version located a component that no
     // longer exists, which is a check that passes by finding nothing.
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(
-      !(await reachDecision(page, "attackers")),
-      "never reached a declare-attackers decision",
-    );
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "attackers");
 
     const panel = page.getByTestId("combat-panel");
     expect(await panel.locator("[data-action-id]").count()).toBeGreaterThan(0);
@@ -302,12 +301,9 @@ test.describe("combat has one surface", () => {
   });
 
   test("All attack stages every creature that can attack", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(
-      !(await reachDecision(page, "attackers")),
-      "never reached a declare-attackers decision",
-    );
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "attackers");
 
     const panel = page.getByTestId("combat-panel");
     const all = page.getByTestId("combat-all");
@@ -329,26 +325,12 @@ test.describe("combat has one surface", () => {
   test("All defend suggests blocks and never suggests a chump", async ({ page }) => {
     // The blocking half of the same idea, but ranked rather than exhaustive:
     // "block everything" is a way to lose a board.
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    // Declines to attack on the way: a creature that attacked is tapped and
+    // cannot block, and reaching a blocker decision is the whole point.
+    await reachDeclaration(page, "blockers");
     const panel = page.getByTestId("combat-panel");
-    let reached = false;
-    for (let i = 0; i < 400 && !reached; i += 1) {
-      await waitForOurTurn(page);
-      if (await isOver(page)) break;
-      if (await panel.isVisible().catch(() => false)) {
-        const kind = await panel.getAttribute("data-combat-kind").catch(() => null);
-        if (kind === "blockers" && (await actionsOfKind(page, "add_blocker").count())) {
-          reached = true;
-          break;
-        }
-      }
-      // Decline to attack: a creature that attacked is tapped and cannot block,
-      // and reaching a blocker decision is the whole point of this loop.
-      await takeAction(page, ["keep", "play_land", "cast", "finish_declaration", "pass"]);
-    }
-    test.skip(!reached, "never reached a declare-blockers decision with a blocker");
 
     const all = page.getByTestId("combat-all");
     // The name is on `aria-label`: the button is a mark now, and its word lives
@@ -392,7 +374,7 @@ test.describe("mana notation is drawn, not spelled", () => {
     // A card's casting cost had been coloured pips since cycle 1, but rules text
     // and activation costs still read "{T}: Add {G}." -- two renderings of one
     // notation on one screen. See docs/playtest-feedback-02.md item 10.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
@@ -472,7 +454,7 @@ test.describe("mana notation is drawn, not spelled", () => {
     // mark nobody who plays the game recognises. They are Scryfall's published
     // SVGs now, vendored into `public/symbols/`. A missing file is invisible in
     // the DOM and shows up only as a blank square, so check `naturalWidth`.
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
@@ -515,7 +497,7 @@ test.describe("mana notation is drawn, not spelled", () => {
 
 test.describe("the mana row answers what a spell costs", () => {
   test("hovering a castable card marks the mana it would tap", async ({ page }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
     if (await keep.count()) await keep.first().click();
@@ -587,7 +569,7 @@ test.describe("the mana row answers what a spell costs", () => {
 
 test.describe("a four-player pod fits", () => {
   test("opponent cards shrink with the pod, so three mats share the row", async ({ page }) => {
-    test.setTimeout(180_000);
+    test.setTimeout(budget(180_000));
 
     /*
      * The deck pinning that used to be here is gone, because it had stopped

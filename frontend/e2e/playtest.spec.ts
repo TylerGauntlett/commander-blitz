@@ -1,6 +1,7 @@
 import { test } from "@playwright/test";
 import {
   actionsOfKind,
+  budget,
   enabledActionButtons,
   isOver,
   pickDeck,
@@ -20,7 +21,7 @@ test.describe("playtest capture", () => {
   test.skip(!process.env.PLAYTEST, "set PLAYTEST=1 to capture screenshots");
 
   test("photograph a game", async ({ page }) => {
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
 
     const shots: string[] = [];
     const shoot = async (name: string) => {
@@ -132,7 +133,7 @@ test.describe("playtest capture", () => {
    * against, and the one a two-player capture says nothing about.
    */
   test("photograph a four-player pod", async ({ page }) => {
-    test.setTimeout(600_000);
+    test.setTimeout(budget(600_000));
     await page.addInitScript(() => {
       window.localStorage.setItem("automtg.speed", "instant");
     });

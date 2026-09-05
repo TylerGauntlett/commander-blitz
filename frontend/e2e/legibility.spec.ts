@@ -13,7 +13,7 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { startGame, takeAction, waitForOurTurn } from "./helpers";
+import { budget, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 async function buildABoard(page: import("@playwright/test").Page, steps = 14) {
   await waitForOurTurn(page);
@@ -40,7 +40,7 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 14) {
 const MIN_SCRIM = 0.7;
 
 test("every card's text is scrimmed against its own art", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
   await buildABoard(page);
 
@@ -78,7 +78,7 @@ test("every card's text is scrimmed against its own art", async ({ page }) => {
 });
 
 test("the frame is thick enough to read at pod sizes", async ({ page }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(budget(180_000));
   await startGame(page, { deck: "aesi", opponents: 3, seed: 5 });
   await buildABoard(page, 20);
 

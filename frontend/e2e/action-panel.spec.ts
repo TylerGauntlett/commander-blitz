@@ -18,10 +18,12 @@
 
 import { type Locator, type Page, expect, test } from "@playwright/test";
 import {
+  COMBAT_SEED,
   actionsOfKind,
+  budget,
   isOver,
   keepOpeningHand,
-  reachDecision,
+  reachDeclaration,
   startGame,
   waitForOurTurn,
 } from "./helpers";
@@ -75,9 +77,9 @@ async function reachPriority(page: Page, limit = 60): Promise<boolean> {
 
 test.describe("choosing attackers", () => {
   test("is one row per creature and one click per attack", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "attackers");
 
     const panel = page.getByTestId("combat-panel");
     const rows = panel.locator(".acts__list .act[data-attacker]");
@@ -122,9 +124,9 @@ test.describe("choosing attackers", () => {
   });
 
   test("keeps every pair reachable exactly once", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "attackers");
 
     // 5. The load-bearing invariant, asserted at the moment combat is open --
     //    which is when the surface that used to break it was on screen.
@@ -137,9 +139,9 @@ test.describe("choosing attackers", () => {
     // The likeliest real bug in the merge, and neither surface tested it before:
     // the panel row and the card are two views of one `stagedAttacks` entry, and
     // nothing but this notices if they drift apart.
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "attackers");
 
     const row = page.getByTestId("combat-panel").locator(".act[data-attacker]").first();
     const oid = await row.getAttribute("data-attacker");
@@ -162,9 +164,9 @@ test.describe("choosing attackers", () => {
 
 test.describe("choosing a defender in a pod", () => {
   test("puts one id on each defender and re-points rather than adding", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 2, seed: 5 });
-    test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 2 });
+    await reachDeclaration(page, "attackers");
 
     const panel = page.getByTestId("combat-panel");
 
@@ -219,9 +221,9 @@ test.describe("choosing a defender in a pod", () => {
 
 test.describe("choosing blocks", () => {
   test("groups by your creature and says what each block would do", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "blockers")), "never reached declare blockers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "blockers");
 
     const panel = page.getByTestId("combat-panel");
 
@@ -264,9 +266,9 @@ test.describe("choosing blocks", () => {
   });
 
   test("assigns a block in one click and re-points on the second", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "blockers")), "never reached declare blockers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "blockers");
 
     const panel = page.getByTestId("combat-panel");
     // Prefer a creature with two or more legal blocks, so the re-point half of
@@ -313,7 +315,7 @@ test.describe("playing cards from the panel", () => {
   test("renders every legal action exactly once, and the slab is not a row", async ({
     page,
   }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(budget(300_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     test.skip(
       !(await reachPriority(page)),
@@ -356,7 +358,7 @@ test.describe("playing cards from the panel", () => {
   });
 
   test("casts from a row, and the row wears the playable colour", async ({ page }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(budget(300_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     test.skip(
       !(await reachPriority(page)),
@@ -463,7 +465,7 @@ test.describe("reading a card from the panel", () => {
   test("hovering a row fills the preview, exactly as hovering the card does", async ({
     page,
   }) => {
-    test.setTimeout(300_000);
+    test.setTimeout(budget(300_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     test.skip(
       !(await reachPriority(page)),
@@ -515,9 +517,9 @@ test.describe("reading a card from the panel", () => {
    * and it is easy to pass the wrong oid to either.
    */
   test("the blocker list wires both your creature and each attacker", async ({ page }) => {
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "blockers")), "never reached declare blockers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "blockers");
 
     const group = page.getByTestId("combat-panel").locator(".actgroup").first();
     test.skip(!(await group.locator(".act[data-attacker]").count()), "no legal block");
@@ -656,9 +658,9 @@ test.describe("panel styling", () => {
     // the three answers to the question on screen rendered as bare text. They
     // are `.commit-mark` now, flanking the slab rather than sitting under it,
     // and the outline is still what says they are pressable.
-    test.setTimeout(600_000);
-    await startGame(page, { deck: "aesi", opponents: 1, seed: 3 });
-    test.skip(!(await reachDecision(page, "attackers")), "never reached declare attackers");
+    test.setTimeout(budget(600_000));
+    await startGame(page, { ...COMBAT_SEED, opponents: 1 });
+    await reachDeclaration(page, "attackers");
 
     const tone = await page.getByTestId("combat-all").evaluate((node) => {
       const style = getComputedStyle(node);

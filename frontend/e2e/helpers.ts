@@ -1,6 +1,17 @@
 import { type Locator, type Page, expect } from "@playwright/test";
 
 /**
+ * A per-test budget, scaled by the same factor as `playwright.config.ts`.
+ *
+ * Specs write the number they mean (`test.setTimeout(budget(600_000))`) and the
+ * environment says how much slower this machine is right now. See the config for
+ * why the factor exists and who sets it.
+ */
+export function budget(ms: number): number {
+  return ms * Number(process.env.E2E_SLOW ?? 1);
+}
+
+/**
  * Driving the client the way a player does: through the DOM.
  *
  * Every legal action is a button carrying `data-action-id`, which is the
@@ -163,20 +174,28 @@ export async function keepOpeningHand(page: Page, mulligans = 0): Promise<void> 
    * pick; `min_count` of them finishes the decision and the screen goes.
    */
   const stage = page.getByTestId("opening-hand");
-  for (let guard = 0; guard < 8; guard += 1) {
-    if ((await stage.count()) === 0) break;
+  const settledPhase = async (): Promise<"gone" | "bottom" | "waiting"> => {
+    if ((await stage.count()) === 0) return "gone";
     if ((await stage.getAttribute("data-phase").catch(() => null)) !== "bottom") {
-      // Either it has gone, or it is mid-flight. Give the round trip a moment
-      // and look again rather than pressing whatever happens to be on screen.
-      await page.waitForTimeout(200);
-      continue;
+      return "waiting";
     }
-    const pick = stage.locator("[data-action-id]:not([disabled])").first();
-    if (!(await pick.count())) {
-      await page.waitForTimeout(200);
-      continue;
-    }
-    await pick.click();
+    const enabled = await stage.locator("[data-action-id]:not([disabled])").count();
+    return enabled > 0 ? "bottom" : "waiting";
+  };
+  for (let guard = 0; guard < 8; guard += 1) {
+    /*
+     * Polled, not slept. This used to be up to eight fixed 200ms waits -- ~1.6s
+     * of patience on a machine that may need more, and a stack of sleeps on one
+     * that needs none -- which is the shape every load-sensitive timeout in the
+     * suite had (TECH_DEBT FT-06). The condition is unchanged: the screen has
+     * gone, or it is asking the second question and has an enabled card to
+     * press. Anything else is the round trip, and we keep watching it.
+     */
+    await expect
+      .poll(settledPhase, { timeout: budget(15_000), intervals: [100] })
+      .not.toBe("waiting");
+    if ((await settledPhase()) === "gone") break;
+    await stage.locator("[data-action-id]:not([disabled])").first().click();
   }
 
   await waitForOurTurn(page);
@@ -280,24 +299,47 @@ export async function takeAction(page: Page, prefer: string[] = []): Promise<str
 }
 
 /**
- * Play until we hold a combat declaration with something to declare.
+ * The deck and seed on which the policy below reaches every combat
+ * declaration, and quickly.
+ *
+ * FOUND BY SEARCH, NOT BY HOPE. The previous gates started `aesi` on seeds 3
+ * and 5 and skipped when combat never came -- and on those seeds it never
+ * does: the game is over before the first declaration, on every run, so
+ * fourteen tests reported "skipped" for eleven days and nobody could tell
+ * (TECH_DEBT CG-01). Driving the real lobby and engine offline with this
+ * exact policy over seeds 1-12 of both decks: `aesi` reaches attackers on two
+ * seeds of twelve; `edgar` reaches attackers, a block with an untapped blocker,
+ * and a two-defender attack in a three-player pod on seed 7 within ten of the
+ * human's decisions each. If a rules change moves that, the helper below
+ * throws rather than skips, which is the whole point of it.
+ */
+export const COMBAT_SEED = { deck: "edgar", seed: 7 } as const;
+
+/**
+ * Play until the engine offers a combat declaration, or fail.
  *
  * Shaped after the combat loops in `smoke.spec.ts` rather than a poll on a
  * predicate: reaching combat means casting creatures and surviving to the step,
- * so the loop has to keep taking whatever action exists. Returns false if the
- * game ends first, which is a legitimate outcome and a reason to skip rather
- * than to fail.
+ * so the loop has to keep taking whatever action exists. It asks the engine's
+ * own question -- is `add_attacker` (or `add_blocker`) legal for us -- rather
+ * than three at once: the old helper also wanted the panel visible AND carrying
+ * the right `data-combat-kind`, and a race between the decision arriving and
+ * the panel drawing it was one more way to come back false.
+ *
+ * THROWS, NEVER SKIPS. A test that skips is a test that is not run, and a skip
+ * on a fixed seed is deterministic, so it is not run on every run. The game
+ * ending first is a real outcome, and here it is a failure: it means the seed
+ * above no longer does what it was chosen for, and somebody should look.
  *
  * Blocking needs the extra nudge in `prefer`: a creature that attacked is tapped
  * and cannot block, so a loop that happily attacks never reaches a blocker
  * decision with a blocker in it.
  */
-export async function reachDecision(
+export async function reachDeclaration(
   page: Page,
   kind: "attackers" | "blockers",
-  limit = 400,
-): Promise<boolean> {
-  const panel = page.getByTestId("combat-panel");
+  limit = 120,
+): Promise<void> {
   const wanted = kind === "attackers" ? "add_attacker" : "add_blocker";
   const prefer =
     kind === "attackers"
@@ -306,14 +348,11 @@ export async function reachDecision(
 
   for (let i = 0; i < limit; i += 1) {
     await waitForOurTurn(page);
-    if (await isOver(page)) return false;
-    if (await panel.isVisible().catch(() => false)) {
-      const seen = await panel.getAttribute("data-combat-kind").catch(() => null);
-      if (seen === kind && (await actionsOfKind(page, wanted).count())) return true;
-    }
+    expect(await isOver(page), `the game ended before a ${kind} declaration`).toBe(false);
+    if (await actionsOfKind(page, wanted).count()) return;
     await takeAction(page, prefer);
   }
-  return false;
+  throw new Error(`never reached a ${kind} declaration in ${limit} decisions`);
 }
 
 /** The life total a player's orb is showing. */
