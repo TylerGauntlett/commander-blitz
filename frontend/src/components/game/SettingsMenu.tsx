@@ -1,6 +1,13 @@
 /**
  * Sound, undo, the control scheme and quit, folded into one menu.
  *
+ * OPEN (TECH_DEBT FB-12): the open menu carries no `data-modal-root` and binds
+ * no `B`. `stops.ts:stopRoot` therefore still answers `.table`, so
+ * `escapeGroup` lets the ring walk out of the menu across the board, and the
+ * pad's `B` goes to `Table`'s unwind ladder, which does not know the menu is
+ * open. Escape works only through the `onKeyDown` below, which needs DOM focus
+ * inside. Documented here rather than fixed on the refactor branch.
+ *
  * Lifted out of `ActionPanel.tsx` as it was: the open flag, the ref, the
  * close-and-restore-the-ring rule and the press-anywhere-else listener all
  * moved together, and every `data-stop`, `data-testid` and handler rides with
