@@ -42,7 +42,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { CardView, GameView, LegalAction } from "../../api/types";
-import { setCursor } from "../../input/cursor";
 import { actionAttrs, stopId } from "../../input/stops";
 import {
   availableAttackers,
@@ -60,9 +59,9 @@ import { bouncy, ease } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
 import { useHandheldLayout } from "../../state/useHandheld";
 import { ActionIcon } from "../ui/ActionIcon";
-import { SchemePicker } from "../ui/SchemePicker";
 import { ManaSymbol } from "./ManaSymbol";
 import { SymbolText } from "./SymbolText";
+import { ToolStrip } from "./ToolStrip";
 
 /**
  * What a block would actually achieve, in four words.
@@ -191,62 +190,6 @@ export function ActionPanel({
     setHosts((c) => (c.slab === null && c.tools === tools ? c : { slab: null, tools }));
   }, [handheld]);
 
-  const muted = useUiStore((s) => s.muted);
-  const toggleMuted = useUiStore((s) => s.toggleMuted);
-
-  /*
-   * The settings menu, and why three controls went into it.
-   *
-   * Sound, undo and quit were three permanently visible buttons in a strip
-   * whose whole job is to be ignorable. Two of them are pressed at most once a
-   * game and the third is pressed when a game ends -- and they sat at the same
-   * weight as `Auto-pass` and `Auto mana`, which are modes you flip mid-turn
-   * and which change how every subsequent priority window behaves. Equal
-   * prominence for "how does this game play" and "I would like to leave" reads
-   * as a row of five equally likely things, which is what makes the strip cost
-   * a glance it should never cost.
-   *
-   * So they are one control now, and they keep their ids: the same
-   * `data-stop`, `data-testid` and handlers ride into the menu, so the ring
-   * reaches them exactly as it did once the menu is open and no gate had to be
-   * loosened to allow a second copy.
-   *
-   * IT OPENS UPWARDS. The strip is the last row of the foot on a handheld and
-   * the last row of the panel on a desktop; there is nothing below either but
-   * the screen edge.
-   */
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const settingsRef = useRef<HTMLDivElement>(null);
-
-  /*
-   * Closing it puts the ring back on the button that opened it.
-   *
-   * Without this the ring is standing on a node that is about to stop existing,
-   * and `resolveCursor`'s fallback is "the first stop of the surface on top" --
-   * which is the far side of the board. Closing a menu must not move the player
-   * somewhere they did not ask to go. Guarded on focus actually being inside,
-   * so a mouse player clicking elsewhere is not dragged back here.
-   */
-  const closeSettings = () => {
-    setSettingsOpen(false);
-    const inside = settingsRef.current?.contains(document.activeElement);
-    if (inside) setCursor(stopId.tool("settings"));
-  };
-
-  /*
-   * A press anywhere else closes it. `pointerdown` rather than `click`, so the
-   * menu is gone before whatever was pressed underneath it acts -- and capture,
-   * so a control that stops propagation cannot leave the menu open behind it.
-   */
-  useEffect(() => {
-    if (!settingsOpen) return;
-    const onDown = (event: PointerEvent) => {
-      if (settingsRef.current?.contains(event.target as Node)) return;
-      setSettingsOpen(false);
-    };
-    document.addEventListener("pointerdown", onDown, true);
-    return () => document.removeEventListener("pointerdown", onDown, true);
-  }, [settingsOpen]);
   const stagedAttacks = useUiStore((s) => s.stagedAttacks);
   const stagedBlocks = useUiStore((s) => s.stagedBlocks);
   const stageAttack = useUiStore((s) => s.stageAttack);
@@ -934,184 +877,16 @@ export function ActionPanel({
           shape for it. The foot is 1180px wide and they fit on one line there.
         */}
         {tool(
-          <div className="tools">
-            {/*
-            Sound, undo and quit, folded into one control. See `settingsOpen`
-            above for why: three buttons pressed once a game each, at the same
-            weight as the two modes beside them that change how every priority
-            window behaves.
-
-            `onKeyDown` rather than a document listener for Escape, and it stops
-            propagating: `Table` binds `Escape` to a strict unwind of the whole
-            board, so an un-stopped one here would close the menu AND cancel
-            whatever the player was in the middle of.
-          */}
-            <div
-              className="settings"
-              ref={settingsRef}
-              onKeyDown={(event) => {
-                if (event.key !== "Escape" || !settingsOpen) return;
-                event.stopPropagation();
-                closeSettings();
-              }}
-            >
-              <button
-                type="button"
-                className={settingsOpen ? "tool tool--on" : "tool"}
-                onClick={() => (settingsOpen ? closeSettings() : setSettingsOpen(true))}
-                aria-expanded={settingsOpen}
-                aria-haspopup="menu"
-                aria-label="Settings"
-                data-stop={stopId.tool("settings")}
-                data-testid="settings"
-                data-hint="Sound, undo and quit"
-              >
-                ⚙
-              </button>
-              {settingsOpen && (
-                <div className="settings__menu" role="menu" data-testid="settings-menu">
-                  {/*
-                  The only one that leaves the menu open: it is a toggle, and
-                  the thing you most often want after flipping it is to flip it
-                  back. The other two end what you were doing.
-                */}
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="settings__item"
-                    onClick={toggleMuted}
-                    aria-pressed={!muted}
-                    data-stop={stopId.tool("mute")}
-                    data-testid="mute"
-                    data-hint={muted ? "Sound off" : "Sound on"}
-                  >
-                    <span className="settings__glyph" aria-hidden="true">
-                      {muted ? "🔇" : "🔊"}
-                    </span>
-                    {muted ? "Sound off" : "Sound on"}
-                  </button>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="settings__item"
-                    onClick={() => {
-                      closeSettings();
-                      onUndo();
-                    }}
-                    disabled={busy}
-                    data-stop={stopId.tool("undo")}
-                    data-testid="undo"
-                    data-hint="Undo your last action (U)"
-                  >
-                    <span className="settings__glyph" aria-hidden="true">
-                      ↺
-                    </span>
-                    Undo
-                  </button>
-                  {/*
-                    THE ONE SETTING THAT CAN MAKE THE MENU UNREACHABLE, so it is
-                    reachable from inside it.
-
-                    The full diagnosis -- which pads the browser can see, and
-                    which of the three environment causes is stopping it -- lives
-                    on the front door's Settings card, where there is room for
-                    prose. What has to be here is the half a player needs
-                    MID-GAME: a Deck whose controller arrives as a keyboard shows
-                    "Enter" and "Esc" on every hint, and quitting to the lobby to
-                    fix that is a bad answer during somebody's turn.
-
-                    The picker is the same component the door renders, so the two
-                    surfaces cannot drift.
-                  */}
-                  <div className="settings__scheme" data-testid="settings-scheme">
-                    <span className="settings__label">Controls</span>
-                    <SchemePicker />
-                  </div>
-                  <button
-                    type="button"
-                    role="menuitem"
-                    className="settings__item settings__item--danger"
-                    onClick={() => {
-                      closeSettings();
-                      onQuit();
-                    }}
-                    data-stop={stopId.tool("quit")}
-                    data-testid="quit"
-                    data-hint="Quit this game"
-                  >
-                    <span className="settings__glyph" aria-hidden="true">
-                      ✕
-                    </span>
-                    Quit game
-                  </button>
-                </div>
-              )}
-            </div>
-            {/*
-            The one control here that keeps a word rather than a glyph. It is a
-            mode with real consequences for how the game plays -- whether it
-            stops at every priority window -- and an unlabelled icon for that
-            would be a regression in clarity, not a saving in space.
-          */}
-            <button
-              type="button"
-              className={state.full_control ? "tool tool--on tool--wide" : "tool tool--wide"}
-              onClick={() => onToggleFullControl(!state.full_control)}
-              disabled={busy}
-              aria-pressed={state.full_control}
-              data-stop={stopId.tool("full-control")}
-              data-testid="full-control"
-              data-hint={
-                state.full_control
-                  ? "Full control: stopping at every priority window"
-                  : "Stopping only where you have something to respond to. Turn on for every window."
-              }
-            >
-              {state.full_control ? "Full control" : "Auto-pass"}
-            </button>
-            {/*
-            The second mode with real consequences, and it keeps its words for
-            the same reason. Off, the solver taps for you and mana abilities are
-            not actions at all; on, every untapped source becomes a row and a
-            dual becomes one chip per colour.
-          */}
-            <button
-              type="button"
-              className={state.manual_mana ? "tool tool--on tool--wide" : "tool tool--wide"}
-              onClick={() => onToggleManualMana(!state.manual_mana)}
-              disabled={busy}
-              aria-pressed={state.manual_mana}
-              data-stop={stopId.tool("manual-mana")}
-              data-testid="manual-mana"
-              data-hint={
-                state.manual_mana
-                  ? "Manual mana: you choose which permanent to tap, and which colour it makes"
-                  : "The solver taps for you. Turn on to tap lands yourself."
-              }
-            >
-              {state.manual_mana ? "Manual mana" : "Auto mana"}
-            </button>
-            {/*
-            Last, and only while it is worth anything.
-            
-            It used to be first. Skipping is urgent -- the whole point is that
-            you have stopped wanting to watch -- but it is also transient, and a
-            control that appears at the head of the row pushes the two modes
-            beside it sideways every time a beat plays. At the end it costs
-            nothing to the things that are always there.
-          */}
-            {narrating && (
-              <button
-                type="button"
-                className="tool"
-                data-stop={stopId.tool("skip")}
-                onClick={onSkipNarration}
-                data-hint="Skip ahead"
-              >
-                ⏩
-              </button>
-            )}
-          </div>,
+          <ToolStrip
+            state={state}
+            busy={busy}
+            narrating={narrating}
+            onToggleFullControl={onToggleFullControl}
+            onToggleManualMana={onToggleManualMana}
+            onSkipNarration={onSkipNarration}
+            onUndo={onUndo}
+            onQuit={onQuit}
+          />,
         )}
       </section>
 
