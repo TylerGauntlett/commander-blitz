@@ -273,7 +273,7 @@ def target_count(
     A **spell's own** targets are a different moment and a different answer:
     601.2c fixes them while the spell is being cast, before it has been paid
     for, and legality enumerates them before the player has chosen X or how many
-    times to kick.  There is nothing to read there, so `loader._compile_targets`
+    times to kick.  There is nothing to read there, so `loader.targets._compile_targets`
     refuses a value-expression count on a card's own `targets` outright rather
     than letting it quietly evaluate to zero.
     """

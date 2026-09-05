@@ -893,7 +893,7 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
 #: ``controller_of``, ``owner_of``, ``not``) and a bare seat number are not
 #: here: they name something the card declares elsewhere and are checked where
-#: that is checked -- `loader._validate_player_spec`.
+#: that is checked -- `loader.effects._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
     {
         "you",
@@ -961,7 +961,7 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             #
             # Every other spelling of "enchanted opponent" is a different card.
             # `{"target": …}` cannot say it: an ability's targets are scoped to
-            # that ability (`loader._validate_player_spec`), and a triggered
+            # that ability (`loader.effects._validate_player_spec`), and a triggered
             # ability that declared none would resolve `ctx.target_players` to
             # `[]` -- which `op_may` reads as "nobody" and bills `ctx.controller`
             # instead, the documented Rhystic Study failure, so the Aura's own
@@ -1008,7 +1008,7 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning
             # `[]` for them is why `controller_of_target` below exists rather
-            # than this key being widened -- see `loader._validate_player_spec`,
+            # than this key being widened -- see `loader.effects._validate_player_spec`,
             # which refuses the combination at load time.
             return ctx.target_players(str(spec["target"]))
         if "controller_of_target" in spec:

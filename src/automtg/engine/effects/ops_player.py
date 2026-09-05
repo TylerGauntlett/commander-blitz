@@ -71,7 +71,7 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     cards print. The spec is here rather than hardcoded for the reason
     `become_monarch`'s is: a player is a first-class thing to name in this DSL,
     and every op that names one spells it the same way and validates through the
-    same `loader._validate_player_spec`.
+    same `loader.effects._validate_player_spec`.
 
     A spec naming more than one seat is not refused, and does not need to be:
     :func:`~automtg.engine.sba.declare_win` is a no-op once the game is over, so

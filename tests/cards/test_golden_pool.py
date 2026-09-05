@@ -26,6 +26,7 @@ import enum
 import hashlib
 import json
 import os
+import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -41,13 +42,32 @@ CARD_DIR = HERE.parents[1] / "data" / "cards"
 POOL_HASH = HERE / "golden_pool.sha256"
 VOCABULARY = HERE / "golden_vocabulary.json"
 
-#: Every module-level constant in the loader whose *membership* is the DSL's
-#: vocabulary. If one of these loses an entry, a card that used it fails to load;
-#: if one gains an entry the DSL grew. Both are worth a diff in review.
+
+def _engine_owned(name: str, value: Any) -> bool:
+    """Whether ``loader.<name>`` is merely an engine constant imported into it.
+
+    The loader imports vocabulary *from* the engine (trigger events, duration
+    names, the op registry) and defines its own on top. Only the latter is
+    the loader's to pin: the engine's constants are pinned where they live,
+    and an import that comes or goes with a refactor is not a change to the
+    DSL.
+    """
+    return any(
+        getattr(module, name, None) is value
+        for module_name, module in sys.modules.items()
+        if module_name.startswith("automtg.engine") and module is not None
+    )
+
+
+#: Every module-level constant the loader defines whose *membership* is the
+#: DSL's vocabulary. If one of these loses an entry, a card that used it fails to
+#: load; if one gains an entry the DSL grew. Both are worth a diff in review.
 VOCABULARY_CONSTANTS = sorted(
     name
     for name, value in vars(loader).items()
-    if name.isupper() and isinstance(value, (frozenset, set, tuple, dict))
+    if name.isupper()
+    and isinstance(value, (frozenset, set, tuple, dict))
+    and not _engine_owned(name, value)
 )
 
 
