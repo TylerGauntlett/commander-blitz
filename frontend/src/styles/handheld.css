@@ -1504,7 +1504,7 @@ html[data-input="keyboard"] [data-cursor].card {
  * exactly where a player does not yet know what `A` and `B` do, and the bar's
  * whole job is answering that.
  *
- * This is a narrower version of the problem `docs/mockup-fidelity.md` records
+ * This is a narrower version of the problem `docs/design-record.md` (Open fidelity findings) records
  * as open defect #3: the tool strip is visible but unreachable behind a
  * backdrop. The bar is not a control, so lifting it costs nothing and cannot
  * make anything clickable that should not be.

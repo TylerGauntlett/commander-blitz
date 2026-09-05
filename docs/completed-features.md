@@ -10576,7 +10576,7 @@ board renders perfectly well, so only a measurement notices a regression.
 The board is built against `mockups/05-planar-art.html`. The phase ribbon, the card
 layout, the enlarged rail card and the unified action panel have landed. What is
 still outstanding is enumerated, with severity and a fix direction, in
-[mockup-fidelity.md](mockup-fidelity.md) — read its "Deliberate divergences"
+[design-record.md](design-record.md#open-fidelity-findings) — read its "Deliberate divergences"
 section before changing anything to match a mockup.
 
 The two worth doing first are both the same failure, and neither is cosmetic: the

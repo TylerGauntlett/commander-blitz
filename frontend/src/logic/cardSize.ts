@@ -63,7 +63,7 @@ export const HANDHELD_MIN_CARD_W = 96;
  * at 13.9px against the rail's 13.5px. That does not break the hierarchy above,
  * because the hierarchy is about *one screen*: the board and the preview rail
  * share a viewport and compete for the same eye, while the lobby and the table
- * are never on screen together. It is the same argument `docs/mockup-fidelity.md`
+ * are never on screen together. It is the same argument `docs/design-record.md` (Open fidelity findings)
  * makes for the lobby keeping its own `.podcard` box.
  */
 export const MAX_CARD_W = 150;

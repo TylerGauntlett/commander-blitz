@@ -144,7 +144,7 @@ test("a card with no printing shows a plate, not a broken image", async ({ page 
  * This test used to be `the art never covers the type ring`, and it asserted the
  * exact opposite: that every art band sat inside the frame by at least the width
  * of a type-tinted ring. That ring encoded card type, and it is gone -- see
- * `tests/palette.test.ts` and docs/mockup-fidelity.md. The measurement is worth
+ * `tests/palette.test.ts` and docs/design-record.md (Open fidelity findings). The measurement is worth
  * keeping either way, because "the art fills the frame" is the direction's whole
  * claim and it is the kind of thing a stray `padding` reverts by accident.
  */

@@ -155,7 +155,7 @@
  * back when card type was an eight-step luminance ladder read off the rendered
  * board. The ladder went with the art-bleed redesign -- card type is no longer
  * a colour at all -- so both registrations are gone. `tests/palette.test.ts`
- * fails if a `--type-ring` declaration reappears. See docs/mockup-fidelity.md.
+ * fails if a `--type-ring` declaration reappears. See docs/design-record.md (Open fidelity findings).
  */
 
 :root {

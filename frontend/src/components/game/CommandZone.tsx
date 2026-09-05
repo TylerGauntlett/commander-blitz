@@ -7,7 +7,7 @@
  * that opened a read-only modal (docs/playtest-feedback-02.md item 7); then a
  * shrunken card face parked in the bottom-left corner beside the hand, where
  * `--card-w` resolved to ~74px and the name clipped to "Aesi, Tyra…" --
- * docs/mockup-fidelity.md defect #5, the least legible card on the board being
+ * docs/design-record.md (Open fidelity findings) defect #5, the least legible card on the board being
  * the one you cast most often.
  *
  * So this is not a card any more. It is a **plinth**: a cropped portrait in a
@@ -31,7 +31,7 @@
  *
  * **State is said three ways.** A word, the art's brightness, and a glyph shape.
  * The green "you can play this" rim is a hairline that is easy to miss, which is
- * docs/mockup-fidelity.md's top-ranked open defect; this element is not allowed
+ * docs/design-record.md (Open fidelity findings)'s top-ranked open defect; this element is not allowed
  * to add to that pile, so it reads "READY" and lights the portrait as well.
  *
  * This is a *gesture* surface, exactly like `HandFan`: it carries no
@@ -156,7 +156,7 @@ function Plinth({ card, castable, tax, disabled, onActivate, onHover, seal }: Pl
    * `hoveredOid` is only ever cleared by an element's own leave handler, so a
    * commander that is hovered and then leaves every visible zone -- shuffled
    * back into the library, say -- pins the preview rail to a card nobody is
-   * pointing at. docs/mockup-fidelity.md open defect #4.
+   * pointing at. docs/design-record.md (Open fidelity findings) open defect #4.
    *
    * Guarded on the store rather than fired blind: by the time a plinth unmounts
    * the pointer may already have arrived somewhere else, and clearing then would

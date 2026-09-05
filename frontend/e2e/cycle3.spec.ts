@@ -89,7 +89,7 @@ test.describe("the commander is on screen", () => {
     // Cycle 2 left the command zone as a `CMD 1` chip opening a read-only modal,
     // and the only route to casting was a ghost button in the bar's overflow.
     // Then it was a ~74px card face in the bottom-left corner, whose own name
-    // did not fit -- docs/mockup-fidelity.md defect #5.
+    // did not fit -- docs/design-record.md (Open fidelity findings) defect #5.
     test.setTimeout(budget(240_000));
     await startGame(page, { deck: "aesi", opponents: 1, seed: 7 });
     const keep = actionsOfKind(page, "keep");
