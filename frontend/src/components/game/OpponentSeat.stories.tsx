@@ -17,6 +17,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import { musterOf } from "../../logic/threat";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import { card, gameView, player } from "../../testing/fixtures";
 import { OpponentSeat } from "./OpponentSeat";
 
@@ -292,5 +293,16 @@ export const NoCommanderVisible: Story = {
     await canvas.findByTestId("player-1");
     expect(canvasElement.querySelector(".seat__ground")).toBeNull();
     expect(canvasElement.querySelector(".seat__win img")).toBeNull();
+  },
+};
+
+/** A developed opponent's strip on a Deck. */
+export const DevelopedHandheld: Story = {
+  args: Developed.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };

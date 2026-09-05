@@ -19,6 +19,7 @@ import { expect, fn, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
 import { APP_VAR } from "../../testing/appGeometry";
 import {
+  expectHandheldFloors,
   expectMountedLike,
   expectUniqueActionIds,
   renderedActionIds,
@@ -511,5 +512,16 @@ export const SettingsMenu: Story = {
     // A toggle is the one row that leaves the menu open: what you most often
     // want after flipping it is to flip it back.
     expect(canvas.queryByTestId("settings-menu")).not.toBeNull();
+  },
+};
+
+/** The play rows in the compact rail: every row a 44px target, every label 16px. */
+export const PlayModeHandheld: Story = {
+  args: from(scenarios.earlyBoard()),
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };
