@@ -18,7 +18,7 @@ python scripts/verify.py        # everything, in order, exits non-zero on failur
 
 `scripts/verify.py` runs 15 stages in dependency order and stops at the first failure:
 lint, deck validation, **is the committed card index current**, each Python suite, a
-160-game arena, **a real uvicorn process playing full games at 2 players, 4 players and
+120-game arena (60 duels and 60 four-player pods), **a real uvicorn process playing full games at 2 players, 4 players and
 one pod driven entirely through the lobby**, then the frontend build, lint and tests,
 the Storybook build, and the story interaction tests **twice** — once at the desktop
 canvas and once at a Steam Deck's.

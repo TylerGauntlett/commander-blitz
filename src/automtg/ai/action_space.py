@@ -21,7 +21,7 @@ import numpy as np
 
 from automtg.engine.actions import Action
 from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from automtg.engine.enums import ActionKind, Zone
 
 if TYPE_CHECKING:  # pragma: no cover
     from automtg.engine.state import GameState
@@ -175,7 +175,6 @@ def _attackable_walkers(state: GameState, pid: int) -> list[int]:
     planeswalker of the next opponent round the table" and stays roughly stable
     as boards change -- the same reasoning `_bf_key` uses for battlefield slots.
     """
-    from automtg.engine.characteristics import chars
 
     out: list[int] = []
     for seat in state.turn_order(pid):
@@ -319,11 +318,3 @@ def describe_index(index: int) -> str:
     return {IDX_YES: "yes", IDX_NO: "no", IDX_MULLIGAN: "mulligan", IDX_KEEP: "keep"}.get(
         index, f"index {index}"
     )
-
-
-def decision_kind_of(state: GameState) -> DecisionKind | None:
-    return state.pending_decision.kind if state.pending_decision else None
-
-
-def creature_power(state: GameState, oid: int) -> int:  # pragma: no cover - helper
-    return chars(state, oid).power

@@ -179,19 +179,19 @@ def python_stages(quick: bool) -> list[Stage]:
         # only fails when a dump *is* present and the committed index no longer
         # matches it -- which is the case worth catching before a commit.
         Stage("card index is current", [PY, "scripts/build_card_index.py", "--check"]),
-        Stage("unit tests", [PY, "-m", "pytest", "tests/unit", "-q"]),
-        Stage("every card works", [PY, "-m", "pytest", "tests/cards", "-q"]),
-        Stage("HTTP API", [PY, "-m", "pytest", "tests/server", "-q"]),
+        Stage("unit tests", [PY, "-m", "pytest", "tests/unit"]),
+        Stage("every card works", [PY, "-m", "pytest", "tests/cards"]),
+        Stage("HTTP API", [PY, "-m", "pytest", "tests/server"]),
     ]
     if quick:
         stages.append(
-            Stage("AI (fast)", [PY, "-m", "pytest", "tests/ai", "-q", "-m", "not slow"])
+            Stage("AI (fast)", [PY, "-m", "pytest", "tests/ai", "-m", "not slow"])
         )
     else:
-        stages.append(Stage("AI", [PY, "-m", "pytest", "tests/ai", "-q"]))
+        stages.append(Stage("AI", [PY, "-m", "pytest", "tests/ai"]))
         stages.append(
             Stage(
-                "arena: 120 duels + 40 pods",
+                "arena: 60 duels + 60 four-player pods",
                 [
                     PY,
                     "scripts/run_arena.py",

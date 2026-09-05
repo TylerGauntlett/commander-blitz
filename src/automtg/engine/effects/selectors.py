@@ -13,7 +13,7 @@ Two shorthand forms bypass matching entirely:
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping, Sequence
+from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import chars
@@ -1208,8 +1208,3 @@ def validate_selector(selector: Any, where: str) -> None:
             validate_selector(branch, f"{where}.any_of[{i}]")
     if "any_types" in selector and len(selector.get("any_types") or ()) < 2:
         raise DslError(f"{where}: any_types needs at least two types; use 'types' for one")
-
-
-def sorted_candidates(state: GameState, oids: Sequence[int]) -> list[int]:
-    """Deterministic ordering for target enumeration."""
-    return sorted(oids, key=lambda oid: (state.objects[oid].def_id, oid))

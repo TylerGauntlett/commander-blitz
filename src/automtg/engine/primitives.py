@@ -1884,7 +1884,3 @@ def untap_all(state: GameState, pid: int) -> list[int]:
 
 def counters_of(state: GameState, oids: Iterable[int], kind: str = PLUS_ONE) -> int:
     return sum(state.objects[oid].counter(kind) for oid in oids if oid in state.objects)
-
-
-def controlled_by(state: GameState, oids: Iterable[int], pid: int) -> list[GameObject]:
-    return [state.objects[o] for o in oids if o in state.objects and state.objects[o].controller == pid]

@@ -26,7 +26,7 @@ from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .mana import ManaCost
-from .player import MAX_HAND_SIZE, PlayerState
+from .player import PlayerState
 from .primitives import draw_cards
 from .rng import Rng
 from .state import GameState, new_object
@@ -1437,11 +1437,3 @@ def _deal_deck(state: GameState, pid: int, deck: DeckList, registry: CardRegistr
         player.library.append(obj.oid)
 
     state.rng.shuffle(player.library)
-
-
-def hand_size_limit() -> int:
-    return MAX_HAND_SIZE
-
-
-def target_ref(kind: str, ident: int) -> TargetRef:  # pragma: no cover - convenience
-    return TargetRef(kind, ident)  # type: ignore[arg-type]

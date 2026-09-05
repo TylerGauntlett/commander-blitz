@@ -99,19 +99,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
 
-def printed_chars(card: CardDef) -> Characteristics:
-    """Characteristics with nothing applied -- straight off the card face."""
-    return Characteristics(
-        power=card.power or 0,
-        toughness=card.toughness or 0,
-        types=card.types,
-        subtypes=card.subtypes,
-        supertypes=card.supertypes,
-        keywords=card.keywords,
-        colors=card.colors,
-    )
-
-
 def chars(state: GameState, oid: int) -> Characteristics:
     """Derived characteristics of an object, cached per ``char_version``."""
     if state.char_cache_version != state.char_version:
@@ -1223,12 +1210,6 @@ def is_land(state: GameState, oid: int) -> bool:
 
 def has_keyword(state: GameState, oid: int, keyword: str) -> bool:
     return keyword in chars(state, oid).keywords
-
-
-def effective_toughness(state: GameState, oid: int) -> int:
-    """Toughness minus damage already marked -- how much more it can take."""
-    obj = state.objects[oid]
-    return chars(state, oid).toughness - obj.damage
 
 
 def prevented_damage(state: GameState, oid: int) -> int:
