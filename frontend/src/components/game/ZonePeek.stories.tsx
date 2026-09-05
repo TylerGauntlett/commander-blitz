@@ -9,6 +9,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
 import { useUiStore } from "../../state/uiStore";
+import { expectHandheldFloors, settled } from "../../testing/asserts";
 import { gameView, player } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { ZonePeek } from "./ZonePeek";
@@ -131,5 +132,16 @@ export const ClosingIt: Story = {
     await canvas.findByText("Grizzly Bears");
     await userEvent.click(canvasElement.querySelector(".peek-backdrop") as HTMLElement);
     expect(useUiStore.getState().peek).toBeNull();
+  },
+};
+
+/** The graveyard modal on a Deck: the pile's cards are readable. */
+export const GraveyardHandheld: Story = {
+  args: Graveyard.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHandheldFloors(canvasElement);
   },
 };

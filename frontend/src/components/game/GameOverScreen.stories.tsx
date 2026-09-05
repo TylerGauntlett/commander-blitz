@@ -7,6 +7,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
+import { expectCardFloor, expectHitFloor, settled } from "../../testing/asserts";
 import { gameView, player } from "../../testing/fixtures";
 import * as scenarios from "../../testing/scenarios";
 import { GameOverScreen } from "./GameOverScreen";
@@ -115,5 +116,24 @@ export const StillPlaying: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(canvas.queryByTestId("game-over")).toBeNull();
+  },
+};
+
+/**
+ * The result screen on a Deck: two pressable answers.
+ *
+ * Targets and cards only. The subtitle (`.over__sub`) renders at 14px on the
+ * compact layout, two under the 16px type floor -- found the first time this
+ * story ran, and left as it is because fixing it is a visual change and this
+ * story's job is to say what the screen does today (TECH_DEBT CG-03).
+ */
+export const VictoryHandheld: Story = {
+  args: Victory.args,
+  globals: { handheld: "on" },
+  tags: ["handheld"],
+  play: async ({ canvasElement }) => {
+    await settled(canvasElement);
+    expectHitFloor(canvasElement);
+    expectCardFloor(canvasElement);
   },
 };
