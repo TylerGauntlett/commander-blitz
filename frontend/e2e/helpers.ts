@@ -210,6 +210,19 @@ export async function keepOpeningHand(page: Page, mulligans = 0): Promise<void> 
   }
 
   await waitForOurTurn(page);
+
+  /*
+   * PARK THE POINTER. The click on Keep left it where the Keep plate was, which
+   * is the bottom of the screen -- and once the stage has gone, that is over
+   * the hand. Chromium re-evaluates what is under a resting pointer after a
+   * layout change, so a hand card gets hovered and the preview rail reads it,
+   * with nobody having moved the mouse. Two specs then assert the rail is
+   * still asking to be pointed at ("Hover a card"), and on a CI runner that
+   * re-evaluation lands before the assertion does; on a developer machine it
+   * lands after, which is the only reason they passed. The top-left corner is
+   * the turn strip, which reads nothing.
+   */
+  await page.mouse.move(1, 1);
 }
 
 /**
