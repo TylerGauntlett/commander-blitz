@@ -63,6 +63,35 @@ async function withFakePad(page: Page): Promise<void> {
   });
 }
 
+/**
+ * Let the page draw `count` frames.
+ *
+ * FRAMES, NOT MILLISECONDS. `input/pad.ts` reads the pad once per animation
+ * frame, so what a press needs is a frame that sees it down and a frame that
+ * sees it up again -- not a duration. This helper held each half for a fixed
+ * 90ms, which is five frames on a developer machine and, on a CI runner that
+ * measured eleven frames a second while recording a trace, sometimes none:
+ * "a controller plugged in later" and "a second gamepad in front of the real
+ * one" failed there on the press alone, on different attempts, with the pad
+ * detected every time. Counting frames makes the press mean the same thing at
+ * any frame rate.
+ */
+async function frames(page: Page, count: number): Promise<void> {
+  await page.evaluate(
+    (n) =>
+      new Promise<void>((resolve) => {
+        let left = n;
+        const tick = () => {
+          left -= 1;
+          if (left <= 0) resolve();
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }),
+    count,
+  );
+}
+
 /** Press and release one button by index, giving the loop frames to see both. */
 async function press(page: Page, index: number): Promise<void> {
   await page.evaluate((i) => {
@@ -72,7 +101,7 @@ async function press(page: Page, index: number): Promise<void> {
     pad.buttons[i].pressed = true;
     pad.buttons[i].value = 1;
   }, index);
-  await page.waitForTimeout(90);
+  await frames(page, 3);
   await page.evaluate((i) => {
     const pad = (
       window as unknown as { __PAD: { buttons: { pressed: boolean; value: number }[] } }
@@ -80,7 +109,7 @@ async function press(page: Page, index: number): Promise<void> {
     pad.buttons[i].pressed = false;
     pad.buttons[i].value = 0;
   }, index);
-  await page.waitForTimeout(90);
+  await frames(page, 3);
 }
 
 /** W3C Standard Gamepad indices, the ones this suite uses. */
