@@ -218,6 +218,26 @@ test.describe("a gamepad drives the board", () => {
       "could not reach the hand to sweep it",
     ).toBe("hand");
 
+    /*
+     * TO THE LEFT END FIRST, so the sweep has somewhere to go.
+     *
+     * Where the ring enters the hand is not this test's business, and it used
+     * to be luck: the opening hand was still fading when the loop above ran,
+     * so `R1` walked in from the region dial and landed on the first card. The
+     * stage leaves sooner now (`OpeningHand.tsx`), the ring is already in the
+     * hand by the time this runs -- on whichever card was nearest the Keep
+     * button, the sixth of eight -- and a hold from the sixth card visits two
+     * stops and looks exactly like autorepeat being broken. Walking to the end
+     * makes the test about the ramp on every entry.
+     */
+    const stopAt = () =>
+      page.evaluate(() => document.querySelector("[data-cursor]")?.getAttribute("data-stop"));
+    for (let i = 0; i < 8; i += 1) {
+      const was = await stopAt();
+      await press(page, BTN.left);
+      if ((await stopAt()) === was) break;
+    }
+
     await press(page, BTN.right);
 
     /*

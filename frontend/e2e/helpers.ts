@@ -174,14 +174,25 @@ export async function keepOpeningHand(page: Page, mulligans = 0): Promise<void> 
    * pick; `min_count` of them finishes the decision and the screen goes.
    */
   const stage = page.getByTestId("opening-hand");
-  const settledPhase = async (): Promise<"gone" | "bottom" | "waiting"> => {
-    if ((await stage.count()) === 0) return "gone";
-    if ((await stage.getAttribute("data-phase").catch(() => null)) !== "bottom") {
-      return "waiting";
-    }
-    const enabled = await stage.locator("[data-action-id]:not([disabled])").count();
-    return enabled > 0 ? "bottom" : "waiting";
-  };
+  /*
+   * ONE READ OF THE DOM, NOT THREE. This used to `count()` the stage, then
+   * `getAttribute` its phase, then count its buttons -- three round trips, and
+   * a stage that left between the first and the second left `getAttribute`
+   * waiting for an element that was never coming back. With no action timeout
+   * configured that wait is unbounded, so the poll timed out at 30s reporting
+   * the value of its *previous* iteration, "waiting", against a board that had
+   * been playable for 29 of them. The window is the gap between two calls,
+   * which a stage that now leaves on a 260ms clock (`OpeningHand.tsx`) hits
+   * about once in fifteen keeps. A leaving stage counts as gone: it has
+   * answered, and `waitForOurTurn` below is what waits for the board.
+   */
+  const settledPhase = (): Promise<"gone" | "bottom" | "waiting"> =>
+    page.evaluate(() => {
+      const root = document.querySelector<HTMLElement>('[data-testid="opening-hand"]');
+      if (!root || root.dataset.closing !== undefined) return "gone";
+      if (root.dataset.phase !== "bottom") return "waiting";
+      return root.querySelector("[data-action-id]:not([disabled])") ? "bottom" : "waiting";
+    });
   for (let guard = 0; guard < 8; guard += 1) {
     /*
      * Polled, not slept. This used to be up to eight fixed 200ms waits -- ~1.6s
@@ -296,6 +307,46 @@ export async function takeAction(page: Page, prefer: string[] = []): Promise<str
   const id = await first.getAttribute("data-action-id");
   await first.click();
   return id;
+}
+
+/**
+ * Answer whatever is on top until nothing is, so the board underneath is
+ * reachable -- not merely built.
+ *
+ * A modal decision -- discarding to hand size is the one that bites -- takes
+ * more presses to answer than a spec's step budget has left, so a builder used
+ * to return with a prompt still up. `.prompt-backdrop` is `position: fixed;
+ * inset: 0`, so every later `hover()` on a board card waited out the whole test
+ * timeout against a surface it could never reach, and the failure named the
+ * hover rather than the dialog behind it.
+ *
+ * `[data-modal-root]:not([data-closing])`, not the dialog by name and not the
+ * bare attribute either. The selector is the app's own word for "something is
+ * on top and owns the ring" (`input/stops.ts`), and there are two such surfaces
+ * -- the generic dialog and `OpeningHand`. Naming one of them meant this loop
+ * silently stopped clearing the opening hand. Dropping the `:not` was the
+ * subtler miss: every surface animates out through `AnimatePresence`, so for
+ * its exit duration a dialog whose last option has just been answered is still
+ * in the DOM with its buttons. This loop found one of those a few milliseconds
+ * after its own click, asked Playwright to click it, and Playwright -- having
+ * watched the element detach -- waited for it to come back for the rest of a
+ * six-minute budget, while the pump carried the game on to a board with no
+ * dialog on it at all.
+ *
+ * The click is bounded for the same reason. It should never need to be: an
+ * exiting dialog is excluded above, and an open one is either clickable or its
+ * buttons are `disabled` while the answer is in flight. But a click that fails
+ * here means the surface moved, and the right answer is to look again, not to
+ * spend the test's whole budget waiting for one element.
+ */
+export async function clearPrompts(page: Page, presses = 12): Promise<void> {
+  for (let i = 0; i < presses; i += 1) {
+    const modal = page.locator("[data-modal-root]:not([data-closing])").last();
+    if (!(await modal.isVisible().catch(() => false))) return;
+    const choice = modal.locator("[data-action-id]:not([disabled])").first();
+    if (!(await choice.count())) return;
+    await choice.click({ timeout: budget(10_000) }).catch(() => undefined);
+  }
 }
 
 /**
