@@ -117,7 +117,7 @@ jobs:
           if-no-files-found: ignore
           path: |
             frontend/e2e-report
-            frontend/test-results/e2e-*.json
+            frontend/test-results
             frontend/coverage
             .coverage
 
