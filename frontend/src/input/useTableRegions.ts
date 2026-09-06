@@ -250,7 +250,29 @@ export function useTableRegions({
     if (narration.busy) return;
     focusedFor.current = key;
     const wanted = groupForDecision(state, actions, modalOwns, boardCanDecide());
-    if (wanted && wanted !== getGroup()) enterGroup(wanted);
+    if (!wanted) return;
+    /*
+     * ALREADY THERE IS NOT ENOUGH; the ring has to be standing on something.
+     *
+     * The group's name matched and nothing moved -- and that was the whole of
+     * a bug on a handheld. A trigger's question during the opponent's attack
+     * is a dialog, and the dialog's region is `acts`; the blocks arrive the
+     * moment it is answered, want `acts` too, and this saw the same name and
+     * left the ring on the dialog's own button. The dialog then faded, took
+     * the button with it, and the cursor fell to the nearest stop: a creature
+     * in the middle of the board, at a decision the board could not answer.
+     * So the question is whether the cursor is on a stop this region can
+     * still land on, and `landableStopsIn` -- which leaves out a surface that
+     * is closing -- is the one that knows.
+     */
+    const cursor = getCursor();
+    const root = groupRoot(wanted);
+    const standing =
+      wanted === getGroup() &&
+      root !== null &&
+      cursor !== null &&
+      landableStopsIn(root).some((el) => el.dataset.stop === cursor);
+    if (!standing) enterGroup(wanted);
   }, [state.pending?.kind, state.step, narration.busy]);
 
   return { enterGroup, jumpToCommit, stepGroup };
