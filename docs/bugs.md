@@ -2,6 +2,22 @@
 
 ### Fixed
 
+- **On a handheld, a block decision that followed a dialog left the ring on a
+  creature that could not block.** A trigger's question during the opponent's
+  attack is a dialog; the blocks arrive the moment it is answered. The
+  decision placement in `useTableRegions` wanted the panel, saw the region's
+  name already set to `acts` -- the dialog's region -- and did nothing; the
+  ring stayed on the fading dialog's button, and when the dialog left the DOM
+  the cursor fell to the nearest stop, a creature in the middle of the board,
+  at a decision the board cannot answer at 1280x800 (an opponent's lanes are
+  clipped to zero height there, so no attacker is a stop). Found by the
+  handheld Playwright project's first real run in CI: the spec written
+  against exactly this passed on a developer machine only because it looked
+  during the few milliseconds the dialog was still fading. The placement now
+  asks whether the cursor stands on a stop the region can land on, and
+  `notLeaving` keeps a closing surface's stops out of `stopsIn` and
+  `landableStopsIn`, so the cursor is re-resolved the moment a fade starts.
+
 - **After keeping an opening hand, the board sometimes could not be clicked.**
   The opening hand stayed in the DOM, invisible, at the modal z-index with
   `inset: 0`, over a game that had gone on without it. `AnimatePresence`
