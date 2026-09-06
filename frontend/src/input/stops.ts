@@ -25,7 +25,7 @@
  * assert the two sets are in bijection.
  */
 
-import { type GroupId, getGroup, groupRoot } from "./groups";
+import { type GroupId, getGroup, groupRoot, notLeaving } from "./groups";
 import { type Candidate, type Dir, nearestStop, pickStop } from "./nav";
 
 /**
@@ -212,9 +212,11 @@ const FOCUSABLE = 'button, a[href], input, select, textarea, [tabindex]:not([tab
  * no fallback, so the board never picks up its own tool buttons twice.
  */
 export function stopsIn(root: HTMLElement = activeRoot()): HTMLElement[] {
-  const declared = [...root.querySelectorAll<HTMLElement>("[data-stop]")];
+  const declared = [...root.querySelectorAll<HTMLElement>("[data-stop]")].filter(notLeaving);
   if (declared.length > 0) return declared;
-  return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)];
+  // `notLeaving` -- a stop inside a surface that is fading out is not a stop
+  // -- and `groups.ts` says why, beside the function.
+  return [...root.querySelectorAll<HTMLElement>(FOCUSABLE)].filter(notLeaving);
 }
 
 /**

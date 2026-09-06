@@ -154,6 +154,27 @@ describe("landableStopsIn", () => {
     const hand = document.querySelector(".hand") as HTMLElement;
     expect(landableStopsIn(hand).map((el) => el.dataset.stop)).toEqual(["card:1"]);
   });
+
+  /*
+   * A dialog fading out still holds its buttons. `stopRoot` stops treating it
+   * as the surface on top the moment `data-closing` appears, but its stops
+   * stayed in every list for the length of the fade -- so a cursor left on one
+   * was still "found", the return address beneath was consumed unapplied, and
+   * when the dialog finally left the ring fell to the nearest stop: a creature
+   * in the middle of the board, at a block decision it could not answer.
+   */
+  it("leaves out the stops of a surface that is closing, for landing and for the cursor", () => {
+    document.body.innerHTML = `<div class="table">
+      <div class="acts"><button data-stop="act:a1"></button></div>
+      <div data-modal-root data-closing><button data-stop="act:a0-choose"></button></div>
+    </div>`;
+    const table = document.querySelector(".table") as HTMLElement;
+    boxed(table, 1280, 800);
+    for (const el of document.querySelectorAll("[data-stop]")) boxed(el);
+
+    expect(landableStopsIn(table).map((el) => el.dataset.stop)).toEqual(["act:a1"]);
+    expect(candidatesIn(table).map((c) => c.id)).toEqual(["act:a1"]);
+  });
 });
 
 describe("nextGroup", () => {
