@@ -1,50 +1,43 @@
-/** TEMPORARY probe: is the attacker clipped at a block decision on this machine? Not for commit. */
+/** TEMPORARY probe: when does the ring settle after a block decision on this machine? Not for commit. */
 
 import { test } from "@playwright/test";
 import { keepOpeningHand, reachDeclaration, startGame } from "./helpers";
 
-test("probe: the attacker's clipping ancestors at a block decision", async ({ page }) => {
+test("probe: the ring after a block decision, at 20ms", async ({ page }) => {
   test.setTimeout(600_000);
+  const logs: string[] = [];
+  page.on("console", (m) => {
+    const text = m.text();
+    if (text.startsWith("[placement]") || text.startsWith("[enterGroup]")) {
+      logs.push(`${Date.now()} ${text}`);
+    }
+  });
   await startGame(page, { deck: "edgar", opponents: 1, seed: 3 });
   await keepOpeningHand(page);
   await reachDeclaration(page, "blockers");
 
-  const report = await page.evaluate(() => {
-    const lines: string[] = [];
-    const html = document.documentElement;
-    lines.push(
-      `group=${html.dataset.group} input=${html.dataset.input} handheld=${html.dataset.handheld} viewport=${innerWidth}x${innerHeight}`,
-    );
-    lines.push(`cursor=${document.querySelector("[data-cursor]")?.getAttribute("data-stop")}`);
-    lines.push(
-      `fonts: ${getComputedStyle(document.body).fontFamily} | ready=${document.fonts.status}`,
-    );
-    const r = (b: DOMRect) =>
-      `${Math.round(b.left)},${Math.round(b.top)} ${Math.round(b.width)}x${Math.round(b.height)}`;
-    for (const card of document.querySelectorAll<HTMLElement>(".card--attacking")) {
-      lines.push(
-        `attacker ${card.dataset.oid} ${card.dataset.cardName} rect=${r(card.getBoundingClientRect())}`,
-      );
-      for (let a = card.parentElement; a; a = a.parentElement) {
-        const s = getComputedStyle(a);
-        const clips = ["hidden", "clip", "auto", "scroll", "overlay"];
-        const clipping =
-          clips.includes(s.overflowX) ||
-          clips.includes(s.overflowY) ||
-          clips.includes(s.overflow);
-        const cls = a.className.toString().split(" ").slice(0, 2).join(".");
-        if (clipping || /mat|seat|lane|play__/.test(cls)) {
-          lines.push(
-            `  ${clipping ? "CLIP" : "    "} ${cls} overflow=${s.overflow}/${s.overflowY} rect=${r(a.getBoundingClientRect())} h=${s.height} display=${s.display}`,
-          );
-        }
-      }
+  const lines: string[] = await page.evaluate(async () => {
+    const out: string[] = [];
+    const t0 = performance.now();
+    let last = "";
+    while (performance.now() - t0 < 2500) {
+      const html = document.documentElement;
+      const ring = (
+        window as unknown as { __AUTOMTG_RING?: { stops(): string[]; cursor(): string } }
+      ).__AUTOMTG_RING;
+      const stops = ring?.stops() ?? [];
+      const dialog = document.querySelector<HTMLElement>("[data-testid='prompt-dialog']");
+      const actsStops = [
+        ...document.querySelectorAll<HTMLElement>(".acts [data-stop], aside [data-stop]"),
+      ]
+        .map((el) => el.dataset.stop)
+        .slice(0, 4);
+      const snap = `group=${html.dataset.group} cursor=${document.querySelector("[data-cursor]")?.getAttribute("data-stop")} ring=${ring?.cursor()} dialog=${dialog ? (dialog.dataset.closing ? "closing" : "open") : "none"} stops=${stops.length}:${stops.slice(0, 3).join(",")} acts=${actsStops.join(",")}`;
+      if (snap !== last) out.push(`${Math.round(performance.now() - t0)}ms ${snap}`);
+      last = snap;
+      await new Promise((r) => setTimeout(r, 20));
     }
-    const lanes = document.querySelectorAll<HTMLElement>(".mat--compact .lane");
-    lines.push(
-      `compact lanes: ${[...lanes].map((l) => r(l.getBoundingClientRect())).join(" ; ")}`,
-    );
-    return lines.join("\n");
+    return out;
   });
-  console.log(report);
+  console.log(["probe-start", ...lines, "--- app logs ---", ...logs.slice(-12)].join("\n"));
 });
