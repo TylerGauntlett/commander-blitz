@@ -2,6 +2,17 @@
 
 ### Fixed
 
+- **On a slow machine, Enter on a catalogue tile took no deck.** The pad loop
+  reads the keyboard once per animation frame: the frame that fires a press
+  records the key as down, and only the next frame can record its release.
+  Enter on "Change deck" opened the catalogue -- a heavy render -- and Enter
+  on the tile the ring landed on arrived before the loop had drawn a frame
+  since, so the loop read the same key still held, saw no edge, and did
+  nothing. Six presses in six on a CI runner drawing eleven frames a second;
+  never on a developer machine, where the release frame lands in 16ms.
+  `onKeyDown` now treats a key that is neither held nor pending as a new
+  press and resets its old record, so the next frame sees the edge.
+
 - **On a handheld, a block decision that followed a dialog left the ring on a
   creature that could not block.** A trigger's question during the opponent's
   attack is a dialog; the blocks arrive the moment it is answered. The
