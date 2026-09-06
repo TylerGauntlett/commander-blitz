@@ -74,7 +74,12 @@ which doubles every budget in the suite because it runs after two Storybook brow
 on the same machine. It then reads Playwright's JSON report and prints the failures
 sorted into **timed out** (a budget or a busy machine) and **failed an assertion**
 (reproducible; a bug) — the separation that used to take four extra runs by hand —
-plus any case marked `test.fail()` for a known open finding.
+plus any case marked `test.fail()` for a known open finding. A stage that produces no
+JSON report **fails**, whatever Playwright's exit code was: until 2026-09-06 the stage
+launched `npx` through `sh -c` with a list, which on Linux ran `npx` alone, exited zero
+in 0.3 s, and passed all three projects on every CI run without executing a test. The
+stage also hands its own interpreter to `playwright.config.ts` as `PYTHON`, because CI
+has no `.venv` for the config's default path to find.
 
 Playwright's own suite can still be invoked directly (`cd frontend && npx playwright test`).
 

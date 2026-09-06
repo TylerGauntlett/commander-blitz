@@ -307,16 +307,32 @@ def run_e2e_stage(project: str):
         started = time.time()
         report = FRONTEND / "test-results" / f"e2e-{project}.json"
         report.parent.mkdir(exist_ok=True)
+        # A stale report from an earlier run would otherwise be read as this
+        # run's verdict, and the "no report" check below would never fire.
+        report.unlink(missing_ok=True)
+        # `shutil.which`, and NOT `shell=True` with a list. On Windows a bare
+        # "npx" is `npx.cmd`, which CreateProcess cannot find without a shell;
+        # but on POSIX `shell=True` hands a *list* to `sh -c`, which runs only
+        # its first element -- `npx` alone -- and the rest become `$0`, `$1`...
+        # That printed npx's usage, exited zero in 0.3 s, and passed all three
+        # Playwright stages on every CI run before this comment was written.
+        npx = shutil.which("npx")
+        if npx is None:
+            return False, time.time() - started, "e2e: npx is not on PATH"
         result = subprocess.run(
-            ["npx", "playwright", "test", f"--project={project}", "--reporter=list,json"],
+            [npx, "playwright", "test", f"--project={project}", "--reporter=list,json"],
             cwd=FRONTEND,
             capture_output=not verbose,
             text=True,
-            shell=True,  # npx is npx.cmd on Windows
+            shell=False,
             env={
                 **os.environ,
                 "E2E_SLOW": os.environ.get("E2E_SLOW", "2"),
                 "PLAYWRIGHT_JSON_OUTPUT_NAME": str(report),
+                # `playwright.config.ts` boots uvicorn with this interpreter,
+                # so the suite runs against the same environment as the gate
+                # -- CI has no `.venv`, and that path was all the config knew.
+                "PYTHON": PY,
             },
             **DECODE,
         )
@@ -327,7 +343,10 @@ def run_e2e_stage(project: str):
             # is the one thing worth adding, whether or not the stage passed.
             print(readable(verdict), flush=True)
         output += "\n" + verdict
-        return result.returncode == 0, time.time() - started, output
+        # No report means no tests ran, whatever the exit code says. A stage
+        # that asserts nothing must not pass.
+        ok = result.returncode == 0 and report.is_file()
+        return ok, time.time() - started, output
 
     return run
 

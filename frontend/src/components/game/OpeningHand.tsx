@@ -51,7 +51,7 @@
  * rules, still a 1.4 portrait card".
  */
 
-import { AnimatePresence, motion, useIsPresent } from "motion/react";
+import { AnimatePresence, motion, usePresence } from "motion/react";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
@@ -108,6 +108,13 @@ function choiceByOid(state: GameView, actions: LegalAction[]): Map<number, Legal
   }
   return out;
 }
+
+/**
+ * How long a leaving stage stays in the DOM: `ease`'s 220ms, with a frame or
+ * two of slack so the fade is seen to finish. See `Stage` for why this is a
+ * number and not an animation's word for "done".
+ */
+const EXIT_MS = 260;
 
 export function OpeningHand({ state, actions, onAct, disabled }: Props) {
   const phase = mulliganPhase(state);
@@ -253,11 +260,32 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
    * `stopRoot` reads `[data-modal-root]:not([data-closing])`, and its header
    * says why: every dialog here animates out through `AnimatePresence`, so an
    * exiting one is still in the DOM for its exit duration and the ring stays
-   * trapped in a screen that is fading away. `useIsPresent` is false for exactly
+   * trapped in a screen that is fading away. `present` is false for exactly
    * that window, which is the cheapest honest answer -- the existing dialogs
    * satisfy the guard only by never having been measured mid-exit.
+   *
+   * AND THE STAGE LEAVES ON A CLOCK, NOT ON AN ANIMATION. `AnimatePresence`
+   * removes a child only once every `exit` inside it has reported complete,
+   * and an opacity exit started while the entrance was still in flight was
+   * measured never to -- the stage stayed in the DOM at the modal z-index,
+   * `inset: 0`, over a board that had gone on without it, on about one keep in
+   * two in `e2e/orb.spec.ts`. So the root carries no `exit`: the fade is an
+   * `animate` toward the closed look, which needs nobody's completion, and
+   * `safeToRemove` is called by a timer the fade cannot hold up. If the fade
+   * is ever lost again the stage cuts instead of fading; it does not stay.
    */
-  const present = useIsPresent();
+  const [present, safeToRemove] = usePresence();
+  // Through a ref, and keyed on `present` ALONE. `safeToRemove` is rebuilt
+  // whenever the presence boundary re-renders, which is every state push --
+  // the AI pump lands one every ~110ms while this fades -- and a timer that
+  // restarted on each of them never fired while the game was moving.
+  const removeRef = useRef(safeToRemove);
+  removeRef.current = safeToRemove;
+  useEffect(() => {
+    if (present) return;
+    const timer = setTimeout(() => removeRef.current?.(), EXIT_MS);
+    return () => clearTimeout(timer);
+  }, [present]);
 
   return (
     <motion.div
@@ -278,8 +306,7 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
       aria-label={bottoming ? "Put cards on the bottom of your library" : "Keep this hand?"}
       style={{ "--mu": fit.unit } as CSSProperties}
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      animate={{ opacity: present ? 1 : 0 }}
       transition={ease}
     >
       <p className="mull__eyebrow">{bottoming ? "To the bottom" : "Opening hand"}</p>
@@ -385,7 +412,10 @@ function Stage({ state, actions, onAct, disabled, phase }: Props & { phase: Mull
               {...attrs}
             >
               <span className="mull__lift">
-                <StaticCard card={card} variant="detail" />
+                {/* `onSurface`: the stage fades out as one thing, and a card
+                    with an exit of its own is a registration this stage's
+                    removal then waits on. `StaticCard` says what happened. */}
+                <StaticCard card={card} variant="detail" onSurface />
               </span>
               {marked && <span className="mull__tag">&#8595; Bottom</span>}
             </button>

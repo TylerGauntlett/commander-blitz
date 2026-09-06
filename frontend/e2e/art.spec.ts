@@ -8,7 +8,7 @@
  */
 
 import { expect, test } from "@playwright/test";
-import { budget, startGame, takeAction, waitForOurTurn } from "./helpers";
+import { budget, clearPrompts, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 /** Play far enough that permanents are on the board to look at. */
 async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
@@ -23,35 +23,9 @@ async function buildABoard(page: import("@playwright/test").Page, steps = 12) {
       return;
     await takeAction(page, ["keep", "play_land", "cast", "pass"]);
   }
-
-  /*
-   * Leave the board reachable, not merely built.
-   *
-   * A modal decision -- discarding to hand size is the one that bites -- takes
-   * more presses to answer than a step budget of twelve has left, so this used
-   * to return with a prompt still up. `.prompt-backdrop` is
-   * `position: fixed; inset: 0`, so every later `hover()` on a board card
-   * waited out the whole test timeout against a surface it could never reach,
-   * and the failure named the hover rather than the dialog behind it.
-   */
-  for (let i = 0; i < 12; i += 1) {
-    /*
-     * `[data-modal-root]`, not the dialog by name.
-     *
-     * That is the app's own word for "something is on top and owns the ring"
-     * (`input/stops.ts:89-114`), and there are two such surfaces now -- the
-     * generic dialog and `OpeningHand`. Naming one of them meant this loop
-     * silently stopped clearing the opening hand, and the symptom would have
-     * been every later `hover()` timing out against a full-screen surface it
-     * could never reach -- which is the exact failure the comment above
-     * describes, arrived at a second time.
-     */
-    const modal = page.locator("[data-modal-root]").last();
-    if (!(await modal.isVisible().catch(() => false))) return;
-    const choice = modal.locator("[data-action-id]:not([disabled])").first();
-    if (!(await choice.count())) return;
-    await choice.click();
-  }
+  // Leave the board reachable, not merely built; `clearPrompts` says why, and
+  // why it reads the selector it does.
+  await clearPrompts(page);
 }
 
 /*

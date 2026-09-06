@@ -2,6 +2,22 @@
 
 ### Fixed
 
+- **After keeping an opening hand, the board sometimes could not be clicked.**
+  The opening hand stayed in the DOM, invisible, at the modal z-index with
+  `inset: 0`, over a game that had gone on without it. `AnimatePresence`
+  removes a child only once every `exit` inside it reports complete, and an
+  opacity exit that started while the entrance was still in flight -- which
+  is when a hand is kept -- was measured never to: the seven cards' first
+  (`e2e/orb.spec.ts`, about one keep in two on a four-player pod), and the
+  stage's own once the cards were out of the way. The stage and the prompt
+  dialog now carry no `exit` at all: each `animate`s toward its closed look
+  and calls `safeToRemove` on a timer, through a ref keyed on presence alone,
+  because `safeToRemove` is rebuilt on every state push and a timer restarted
+  on each of them never fired while the AI pump was running. `StaticCard`
+  takes `onSurface` so a card on a fading surface registers no exit of its
+  own. Both surfaces mark themselves `data-closing` for the exit window, which
+  `stopRoot` and the e2e prompt-clearing helper already read.
+
 - **A pod game stalled until somebody reloaded, and the reload replayed the game.**
   Four faults in one twenty-five-line block of `useGame`. The long poll was a
   one-shot effect rather than a loop: a poll that times out comes back with
