@@ -2,6 +2,18 @@
 
 ### Fixed
 
+- **Back and forward again within a quarter of a second left a blank page.**
+  The app swaps screens under `AnimatePresence mode="wait"`, which mounts the
+  next screen only once the current one's exit animation has reported
+  complete -- and an opacity exit started while the entrance was still in
+  flight was measured never to (the same loss that stuck the opening hand and
+  the prompt dialog). On a CI runner, a host that went back to the front door
+  and forward to its game again inside 250ms was left with the door fading
+  forever and the table never mounting: no request, no error, nothing on
+  screen. `Screen` now carries no `exit`; it animates to its closed look and
+  reports itself removable on a timer, so a lost fade is a cut and never a
+  blank page. `tests/screen.test.tsx` pins the hand-off.
+
 - **On a slow machine, Enter on a catalogue tile took no deck.** The pad loop
   reads the keyboard once per animation frame: the frame that fires a press
   records the key as down, and only the next frame can record its release.
