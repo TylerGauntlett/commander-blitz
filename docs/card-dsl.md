@@ -6199,6 +6199,28 @@ Two things are worth knowing before writing one:
 - **It waits for the step's *next* occurrence.** `begin_step` for the current
   step has already run by the time any effect resolves, so scheduling `upkeep`
   during an upkeep means the following turn's, which is what the cards say.
+- **`your_turn` says *whose* step.** "At the beginning of **your** next end
+  step" (Necropotence, and fifteen more) as against "at the beginning of the
+  next end step" (Arcane Denial). Every seat has an end step, so the step name
+  alone cannot tell the two apart:
+
+  ```jsonc
+  { "op": "delay", "step": "end_step", "your_turn": true,
+    "text": "Put that card into your hand at the beginning of your next end step.",
+    "effects": [ … ] }
+  ```
+
+  Omit it and the delay is due at the very next such step, whoever is taking it
+  — which is right for the 477 cards that print "the next end step" and wrong
+  for the ones that print "your". The two readings agree on your own turn, which
+  is why the omission stayed invisible; the gap opens exactly where the word is
+  printed, on an ability used at instant speed during an opponent's turn.
+  `turn._delay_due` compares `state.active_player` against the delay's own
+  controller, so it is that controller's turn and not a fixed seat.
+
+  The struct's `turn` field does not stand in for this. It records the turn the
+  delay was created on, nothing reads it for timing, and "your next" is about
+  *whose* turn rather than how many have passed.
 
 The scheduled effects resolve directly rather than going on the stack. That is a
 divergence — a delayed trigger is a real triggered ability and should be

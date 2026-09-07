@@ -191,7 +191,8 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
     The step name, and for ``end_of_combat`` the **combat** as well.
 
     A turn has one upkeep, one draw step and one end step, so for those the name
-    is the whole of the timing. Since `extra_combat` it can have several combat
+    is the whole of the timing -- of *a* turn. Whose turn is a second question,
+    and ``your_turn`` is the delays that ask it: see the note below. Since `extra_combat` it can have several combat
     phases, and `Step.END_OF_COMBAT` is therefore re-entered within one turn --
     at which point "at end of combat" stops being a step and becomes a step *of
     a particular combat*. `op_delay` records which one; this compares it against
@@ -216,6 +217,13 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
         # struct a different default.
         return False
     if DELAY_STEPS.get(delayed.step) is not state.step:
+        return False
+    if delayed.your_turn and state.active_player != delayed.controller:
+        # "at the beginning of **your** next end step". Every seat has an end
+        # step, so the step name is not the whole of the timing here either --
+        # and unlike the combat case above, the difference only shows when the
+        # delay was created on somebody else's turn, which for an instant-speed
+        # ability is the ordinary line of play rather than the corner case.
         return False
     if delayed.combat is not None:
         return delayed.combat == state.combat_number

@@ -579,6 +579,12 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``end_of_combat`` captures one more thing, for the same reason and at the
     same moment: *which* combat. See :func:`_scheduled_combat`.
+
+    ``your_turn`` is "at the beginning of **your** next end step" as against "at
+    the beginning of the next end step". Every seat has an end step, so the step
+    name alone cannot tell the two apart, and the gap only opens when the delay
+    is created on somebody else's turn -- which is the ordinary line of play for
+    an instant-speed ability, and the reason the word is printed at all.
     """
     from ..structs import DelayedTrigger
 
@@ -594,6 +600,7 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
             description=str(spec.get("text") or ctx.source_name),
             turn=state.turn,
             combat=_scheduled_combat(state) if step == "end_of_combat" else None,
+            your_turn=bool(spec.get("your_turn", False)),
         )
     )
 
