@@ -1,0 +1,52 @@
+{
+  "_comment": "Cards that exist only for the your-turn delay test (tests/unit/test_delay_your_turn.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. The pair is the whole point: `t_delay_any_end_step` is the delay the engine could always write -- 'at the beginning of the next end step' -- and `t_delay_your_end_step` is the same delay with `your_turn`, which is 'at the beginning of *your* next end step'. Cast at instant speed on an opponent's turn the two fire a full turn apart, and with only one of them in the pool there was nothing to tell them apart.",
+  "cards": [
+    {
+      "id": "t_delay_any_end_step",
+      "name": "Test Delay Any End Step",
+      "oracle_text": "At the beginning of the next end step, you gain 3 life.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {
+          "op": "delay",
+          "step": "end_step",
+          "text": "At the beginning of the next end step, you gain 3 life.",
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": { "const": 3 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_delay_your_end_step",
+      "name": "Test Delay Your End Step",
+      "oracle_text": "At the beginning of your next end step, you gain 3 life.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {
+          "op": "delay",
+          "step": "end_step",
+          "your_turn": true,
+          "text": "At the beginning of your next end step, you gain 3 life.",
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": { "const": 3 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

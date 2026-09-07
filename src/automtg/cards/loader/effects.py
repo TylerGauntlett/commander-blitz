@@ -1443,6 +1443,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
+        if not isinstance(effect.get("your_turn", False), bool):
+            raise DslError(
+                f"{where}: delay's 'your_turn' is a flag saying whether the step "
+                f"must be its controller's own -- 'at the beginning of *your* "
+                f"next end step' -- so it takes true or false, not "
+                f"{effect.get('your_turn')!r}"
+            )
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
     if op == "delayed_trigger":
         _validate_delayed_trigger(effect, where)
