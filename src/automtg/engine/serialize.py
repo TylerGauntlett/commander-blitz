@@ -261,7 +261,23 @@ def _player(
             else None
         ),
         "graveyard": [card_view(state, oid) for oid in player.graveyard],
-        "exile": [card_view(state, oid) for oid in player.exile],
+        # Exile is a **public** zone and is sent in full -- except for the cards
+        # put there face down (Necropotence). Those are dropped from the list
+        # for every seat not in `revealed_to`, rather than sent redacted: a
+        # `CardView` promises a name and a type line, and half a card is a shape
+        # every consumer would have to learn. What stays public is that a card
+        # is *there*, which is `exile_hidden_count` below -- the pile is visible
+        # at a real table even when its faces are not.
+        "exile": [
+            card_view(state, oid)
+            for oid in player.exile
+            if not state.objects[oid].hidden_in_exile or seat in state.objects[oid].revealed_to
+        ],
+        "exile_hidden_count": sum(
+            1
+            for oid in player.exile
+            if state.objects[oid].hidden_in_exile and seat not in state.objects[oid].revealed_to
+        ),
         "command": [card_view(state, oid) for oid in player.command],
     }
 

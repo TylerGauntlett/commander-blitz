@@ -198,8 +198,12 @@ function zonesOf(player: PlayerView): SeatZone[] {
   // Exile appears the moment anything is exiled and is NOT a fixed slot, so a
   // seat shows four marks or five. The row has to survive that reflow, which is
   // why the marks share the width rather than being placed.
-  if (player.exile.length > 0) {
-    zones.push({ zone: "exile", kind: "ex", label: "Exile", count: player.exile.length });
+  // Face-down exiles are not in `exile` for a seat that may not see them, so
+  // the pile is counted rather than measured -- otherwise a Necropotence hiding
+  // the only card in exile makes the whole mark disappear.
+  const exileCount = player.exile.length + player.exile_hidden_count;
+  if (exileCount > 0) {
+    zones.push({ zone: "exile", kind: "ex", label: "Exile", count: exileCount });
   }
   zones.push({
     zone: "command",
