@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **33** capabilities.
+**32 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,12 +25,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [delayed-your-next-step](#delayed-your-next-step) | 1 | 508 | engine |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [doesnt-untap](#doesnt-untap) | 1 | 145 | static_effect |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
+| [exile-top-face-down](#exile-top-face-down) | 1 | 508 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [first-spell-each-turn](#first-spell-each-turn) | 1 | 77 | trigger_event |
 | [imprint](#imprint) | 1 | 146 | engine |
@@ -43,9 +45,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [skip-draw-step](#skip-draw-step) | 1 | 508 | static_effect |
 | [spell-or-permanent-target](#spell-or-permanent-target) | 1 | 172 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [text-change](#text-change) | 1 | 4346 | op |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 
 ## cast-as-though-flash
@@ -201,7 +205,7 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(engine)** a mana ability whose production is switched by a condition on its source at activation time -- "Add {C}; if this has a luck counter on it, instead add one mana of any color". `mana_options_of` and the payment solver must be able to evaluate a per-branch condition against live game state (here `counters_on` for a luck counter on the source) and offer only the branch that is currently true, in both the automatic tap path and the manual-mana path
-  <br>Why the existing vocabulary won't do: `_split_mana_rider` (src/automtg/cards/loader/mana.py) allows only leading `add_mana`/`choose_mode` effects plus a rider drawn from MANA_RIDER_OPS = {add_counters, add_poison, damage, gain_life, lose_life, remove_counters}; `if` is not in that set, so the printed conditional is a load error, not a card. `_mana_options` freezes production into a fixed tuple of 6-tuples at load time and `_mana_amount` may only scale one `add_mana`'s symbols, so no state can change *which* symbol is produced -- only how many. The three state-dependent forms that do exist (`mana_reflects`, `mana_identity`, `mana_chosen_color`) are each hardcoded questions about the board, the command zone or the permanent's chosen colour, and each is required to be the ability's only effect; none can be a condition on counters and none can pick between two branches. `choose_mode` is not a substitute and would be an approximation, because a mode is a free choice at activation: the land would offer any colour with no luck counter on it. Splitting the line into two mana abilities gated by `activation_condition` is silently wrong rather than merely ugly: `costs._sources_of` (src/automtg/engine/costs.py:225) collects solver mana sources on `solver_taps` plus tapped/summoning-sickness/abilities_locked alone and never consults `activation_condition`, so the payment solver would happily tap the counter-less Caverns for any colour; `activation_condition` is only read on the offered-action path in `legality` (src/automtg/engine/legality.py:1589). It would also leave one printed line claimed by two abilities, which the residual gate reads as text nobody owns.
+  <br>Why the existing vocabulary won't do: `_split_mana_rider` (src/automtg/cards/loader.py:3385) allows only leading `add_mana`/`choose_mode` effects plus a rider drawn from MANA_RIDER_OPS = {add_counters, add_poison, damage, gain_life, lose_life, remove_counters}; `if` is not in that set, so the printed conditional is a load error, not a card. `_mana_options` freezes production into a fixed tuple of 6-tuples at load time and `_mana_amount` may only scale one `add_mana`'s symbols, so no state can change *which* symbol is produced -- only how many. The three state-dependent forms that do exist (`mana_reflects`, `mana_identity`, `mana_chosen_color`) are each hardcoded questions about the board, the command zone or the permanent's chosen colour, and each is required to be the ability's only effect; none can be a condition on counters and none can pick between two branches. `choose_mode` is not a substitute and would be an approximation, because a mode is a free choice at activation: the land would offer any colour with no luck counter on it. Splitting the line into two mana abilities gated by `activation_condition` is silently wrong rather than merely ugly: `costs._sources_of` (src/automtg/engine/costs.py:225) collects solver mana sources on `solver_taps` plus tapped/summoning-sickness/abilities_locked alone and never consults `activation_condition`, so the payment solver would happily tap the counter-less Caverns for any colour; `activation_condition` is only read on the offered-action path in `legality` (src/automtg/engine/legality.py:1589). It would also leave one printed line claimed by two abilities, which the residual gate reads as text nobody owns.
 
 <details><summary>Cards waiting on this</summary>
 
@@ -222,6 +226,21 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+
+</details>
+
+## delayed-your-next-step
+
+Blocks **1** card.
+
+- **(engine)** a `delay` whose step is scoped to the *controller's own* turn -- "at the beginning of **your** next end step" as opposed to "at the beginning of the next end step". Concretely a flag on the op (`player: "you"`, or `your_turn_only: true`) recorded on `DelayedTrigger` and honoured in `turn._delay_due` by also requiring `state.active_player == delayed.controller`, alongside the existing step-name comparison
+  <br>Why the existing vocabulary won't do: `op_delay` (src/automtg/engine/effects/ops_control.py:568-598) records a step name and nothing about whose turn it is, and `_delay_due` (src/automtg/engine/turn.py:188-222) matches on `DELAY_STEPS[step] is state.step` alone. So a delay created by an activation made at instant speed on an opponent's turn -- which is how this ability is used, and the reason the printed line says "your" -- fires at *that opponent's* end step, handing the card over a full turn early and on the wrong side of the opponent's cleanup. `delayed_trigger` with an `end_step` event is no better: its trigger spec has a `controller` clause, but that clause is compared against the event's actor, which for `end_step` is the active player, so it would need the same seat comparison built anyway, and its two durations (`this_turn`, `until_it_fires`, src/automtg/engine/structs.py:784) do not express a turn boundary either. `until_your_next_turn`, which detain and goad already use (ops_combat_flags.py), proves the clock exists in the engine -- it has simply never been wired to `delay`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necropotence** (rank 508) — `necropotence`
+  - Skip your draw step.
+  - Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.
 
 </details>
 
@@ -302,13 +321,28 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
-  <br>Why the existing vocabulary won't do: `op_exile` (src/automtg/engine/effects/ops_removal.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/automtg/engine/effects/context.py:62). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and it hard-codes the destination: after `state.stack = [it for it in state.stack if it.sid != sid]` it calls `move_object(..., Zone.GRAVEYARD, cause="countered")`, and its spec accepts only `target`/`sid` -- no destination key (the same gap force_of_negation.json records as `counter_to_exile`, though that card genuinely counters and this one does not). Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/automtg/engine/effects/selectors.py:329), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
+  <br>Why the existing vocabulary won't do: `op_exile` (src/automtg/engine/effects/ops_board.py:235) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/automtg/engine/effects/context.py:62). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and it hard-codes the destination: after `state.stack = [it for it in state.stack if it.sid != sid]` it calls `move_object(..., Zone.GRAVEYARD, cause="countered")`, and its spec accepts only `target`/`sid` -- no destination key (the same gap force_of_negation.json records as `counter_to_exile`, though that card genuinely counters and this one does not). Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/automtg/engine/effects/selectors.py:329), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
 
 <details><summary>Cards waiting on this</summary>
 
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## exile-top-face-down
+
+Blocks **1** card.
+
+- **(op)** a way for an ordinary card to exile the top card of its controller's library **face down** and still name that specific card from a later resolution: either a `face_down` flag plus an `as` binding on `look_at_top` (its `_move_found` already special-cases `destination is Zone.EXILE` for the impulse permission, so this is the same seam), or the same pair on `exile` together with a selector that can reach the top of a library. With an `as` binding the return half comes free, because `op_delay` copies `ctx.bindings` at creation (ops_control.py:592) and a delayed `return_to_hand` over `{"binding": "..."}` would then move exactly the one card this activation exiled
+  <br>Why the existing vocabulary won't do: `look_at_top` is the only op that reaches the top of a library, and `_move_found` (src/automtg/engine/effects/ops_cards.py:309-346) calls `move_object` with no `by` and no face-down marking, and `op_look_at_top` has no `as` binding (the omission ragavan_nimble_pilferer's gap record already names). So the card it exiles is anonymous: it lands in the shared exile zone among everything else ever exiled, no `exiled_by` link is written, and `{"zone": "exile", "exiled_with": "self"}` therefore matches nothing -- a delayed `return_to_hand` written that way would silently hand back no card at all, which is the worst possible failure for a card whose entire function is drawing. `exile` does write `exiled_by` (under `link`) and does take an `as`, but it takes a selector, and `selector_keys` has no way to say "the top card of a library": `{"zone": "library", "count": 1}` is a choice from the whole deck, i.e. a tutor at 1 life. `hideaway` is the one op that gets the exile half nearly right -- with `amount: 1` it exiles the top card face down, sets `exiled_by` and marks it revealed only to its controller (ops_cards.py:1091-1106) -- but it is rule 702.75a's op and not this line: it emits a `hideaway` event, its `amount` means "look at the top N and choose one", and its `_bottom_in_random_order` tail is part of the keyword. Even granting it, the link it leaves is source-wide rather than per-activation, so `exiled_with: "self"` on the delayed return sweeps every card Necropotence still has in exile -- with the mistimed `delay` above, an early-firing return would drag out cards a later activation had not yet paid off.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necropotence** (rank 508) — `necropotence`
+  - Skip your draw step.
+  - Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.
 
 </details>
 
@@ -488,6 +522,21 @@ Blocks **1** card.
 
 </details>
 
+## skip-draw-step
+
+Blocks **1** card.
+
+- **(static_effect)** a continuous effect that makes a named player skip a named step -- concretely a `skip_draw_step` entry in `static_effects` (filterless, with the usual `controller`/player spec so it can say "your draw step", "each player's draw step" or "target player skips their next draw step"), backed by a flag the turn walk consults: `turn._draw_step` (src/automtg/engine/turn.py:529-541) must ask the continuous-effects layer before calling `replacements.draw`, and still fire `EventType.DRAW_STEP` afterwards so abilities that watch the step itself keep working. The same hook is what Ob Nixilis, Yawgmoth's Bargain, Solitary Confinement and every "skip your untap step" card would use, so it should take the step name rather than being hard-coded to the draw
+  <br>Why the existing vocabulary won't do: Nothing in the DSL reaches the turn structure. `static_effects` has 34 entries and not one of them touches a step or a phase; `ops` likewise, with the single exception of `skip_untap`, which is not a step effect at all -- `op_skip_untap` (src/automtg/engine/effects/ops_characteristics.py:259) sets `GameObject.skip_next_untap` (src/automtg/engine/objects.py:298), a per-permanent one-shot cleared by the untap step it skips, so it can say "this creature doesn't untap" and has no vocabulary for "you don't draw". The draw itself has no seam either: `_draw_step` skips only the fixed first-turn rule (`state.turn == 1 and pid == state.starting_player`) and there is no per-player skip flag on the player struct to set; `replacements.draw` (src/automtg/engine/replacements.py:46-66) offers dredge and miracle and has no general replacement hook a static could register against. The `draw_step` trigger event cannot stand in: it is fired at src/automtg/engine/turn.py:541 *after* the draw has already resolved, so a triggered ability hung on it could only clean up afterwards, and the nearest spelling of that -- draw then discard -- is a different card that fires `draw` and `discard` triggers Necropotence's own second line would then feed on.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necropotence** (rank 508) — `necropotence`
+  - Skip your draw step.
+  - Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.
+
+</details>
+
 ## spell-or-permanent-target
 
 Blocks **1** card.
@@ -529,6 +578,20 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
+
+</details>
+
+## text-change
+
+Blocks **1** card.
+
+- **(op)** a text-changing effect (613.1c, layer 3) as an op: point it at one object, have its controller name a creature type, and from then on every instance of that word on that object -- its printed subtype line *and* the word wherever it appears inside its own rules text ("other Goblins you control get +1/+0", "{T}: Target Goblin gains haste", "Goblin creature you control") -- reads as Vampire instead. It must be a lasting substitution on the object, surviving into later layers so the rewritten type line feeds `add_subtype` grants and the rewritten ability text is what actually resolves. Olivia Voldaren's kin all hang on it: New Blood, Artificial Evolution, Mind Bend, Sleight of Mind, Glamerdye, Trickery Charm
+  <br>Why the existing vocabulary won't do: `add_subtype` (src/automtg/engine/effects/ops_characteristics.py:29, primitive at src/automtg/engine/primitives.py:851) is explicitly and only additive -- its docstring says "Types are always *added*" and `add_subtypes` unions onto `obj.added_subtypes` with no removal path -- so it would leave the old creature type in place, and "replacing all instances" is a substitution, not an addition. The `set_types` static (applied at src/automtg/engine/characteristics.py:230) is the only thing that ever takes a subtype away, and it does so as a side effect of dropping a whole *card* type (205.1b): it rewrites `types` wholesale from a fixed printed list and cannot be told "swap Goblin for Vampire while leaving Creature alone", nor can a static's magnitude be a type chosen at resolution. `animate` likewise assigns a fixed type line written on the card. `choose_type` (src/automtg/engine/effects/ops_control.py:136) can ask the question but not act on the answer: it writes `obj.chosen_type` onto `ctx.source_oid`, which for a sorcery is the spell itself on its way to the graveyard, and the only consumer is `{"chosen_type_of": "self"}` inside the *same* permanent's own abilities. Most decisively, the characteristics pipeline in src/automtg/engine/characteristics.py has no layer-3 step at all -- it goes straight from copy effects to type grants -- so nothing anywhere reads or rewrites the words inside another object's printed ability text; a permanent's abilities are matched by their authored spec, not by a mutable text. Approximating with `add_subtype` ("it's also a Vampire") is a different card: it would not stop the creature answering to its original type for anthems, fetches and tribal removal, and it would not touch the creature's own text, which is the half of New Blood that turns an opposing lord into yours.
+
+<details><summary>Cards waiting on this</summary>
+
+- **New Blood** (rank 4346) — `new_blood`
+  - Change the text of that creature by replacing all instances of one creature type with Vampire.
 
 </details>
 
