@@ -55,6 +55,14 @@ comparable across restarts, and not a vector clock. A client that reconnects aft
 server restart sees a lower version than it held and simply re-fetches from zero,
 which is the correct outcome anyway.
 
+**A game client holds two cursors and must carry both.** The version says *when* to
+wake; the event cursor (`event_cursor`, fed back as `?since=`) says *what* is new. A
+response is self-describing — its events end at its `event_cursor` — so a client that
+receives one overlapping something it already holds can trim it rather than render a
+move twice, which is what makes it safe for a pump reply and a poll reply to land in
+either order. The first game client carried only the version and asked for events from
+zero, and every poll that landed replayed the whole game (`docs/bugs.md`).
+
 ## Alternatives considered
 
 **WebSockets.** The obvious answer, and genuinely better above a few dozen concurrent

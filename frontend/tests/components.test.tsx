@@ -1,7 +1,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { AnimatePresence } from "motion/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PendingDecision } from "../src/api/types";
 import { ActionPanel } from "../src/components/game/ActionPanel";
+import { StaticCard } from "../src/components/game/Card";
 import { CardFace } from "../src/components/game/CardFace";
 import { PromptDialog } from "../src/components/game/PromptDialog";
 import { noteInput, resetInputMode } from "../src/input/inputMode";
@@ -11,6 +13,36 @@ import { action, card, gameView, pending, player } from "./fixtures";
 afterEach(cleanup);
 
 const noop = () => undefined;
+
+describe("StaticCard", () => {
+  /*
+   * The two halves of `onSurface`, side by side. A card of its own registers an
+   * exit with the presence around it and stays for that animation; a card on a
+   * surface has no exit to run, so the presence has nothing to wait on and the
+   * card goes the moment it is dropped -- which is what keeps the surface's
+   * own removal from depending on seven of them.
+   */
+  it("lingers for its exit by default, and leaves at once on a surface", () => {
+    const view = (shown: boolean, onSurface: boolean) => (
+      <AnimatePresence>
+        {shown && (
+          <StaticCard key="c" card={card({ name: "Grizzly Bears" })} onSurface={onSurface} />
+        )}
+      </AnimatePresence>
+    );
+    const own = render(view(true, false));
+    own.rerender(view(false, false));
+    expect(screen.queryByText("Grizzly Bears"), "an exit of its own runs first").not.toBeNull();
+    cleanup();
+
+    const onSurface = render(view(true, true));
+    onSurface.rerender(view(false, true));
+    expect(
+      screen.queryByText("Grizzly Bears"),
+      "nothing to run; nothing to wait on",
+    ).toBeNull();
+  });
+});
 
 describe("CardFace", () => {
   it("renders the name, type line and mana symbols", () => {
@@ -448,6 +480,31 @@ describe("PromptDialog", () => {
       />,
     );
     expect(screen.getByTestId("prompt-dialog").dataset.decisionKind).toBe("choose_objects");
+  });
+
+  /*
+   * `AnimatePresence` keeps the dialog in the DOM for its exit animation, and
+   * for that window it is still `[data-modal-root]` with its buttons. `stopRoot`
+   * and the e2e prompt-clearing helper both read
+   * `[data-modal-root]:not([data-closing])`, so the attribute is what stops the
+   * ring -- or a test -- from choosing a surface that is already leaving.
+   */
+  it("marks itself closing while it animates out", () => {
+    const answered = gameView({ pending: null });
+    const { rerender } = render(
+      <PromptDialog
+        state={shown("choose_objects", { context: { purpose: "sacrifice" } })}
+        actions={[action({ id: "a0-sac", kind: "choose", label: "Forest", choice: 0 })]}
+        onAct={noop}
+        disabled={false}
+      />,
+    );
+    expect(screen.getByTestId("prompt-dialog").hasAttribute("data-closing")).toBe(false);
+
+    rerender(<PromptDialog state={answered} actions={[]} onAct={noop} disabled={false} />);
+    const leaving = screen.getByTestId("prompt-dialog");
+    expect(leaving.hasAttribute("data-modal-root")).toBe(true);
+    expect(leaving.hasAttribute("data-closing")).toBe(true);
   });
 
   it.each([

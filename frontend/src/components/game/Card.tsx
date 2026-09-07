@@ -312,11 +312,29 @@ export function StaticCard({
   variant = "detail",
   className,
   style,
+  onSurface = false,
 }: {
   card: CardView;
   variant?: CardVariant;
   className?: string;
   style?: CSSProperties;
+  /**
+   * The card sits on a surface that fades out as a whole -- the opening hand,
+   * a prompt dialog -- so it must not carry an `exit` of its own.
+   *
+   * Not decorative. A `motion` element with `exit` registers with the nearest
+   * `AnimatePresence`, and that presence removes its child only once EVERY
+   * registered exit has reported complete. Seven cards on the opening hand were
+   * seven such registrations, for a fade nobody could see under the stage's own
+   * 220ms fade -- and when one of them was answered while its entrance spring
+   * was still in flight, its opacity exit sometimes never finished. The stage
+   * then stayed in the DOM at `opacity: 0`, `position: absolute; inset: 0`,
+   * over a board that had gone on without it, eating every click. Measured in
+   * `e2e/orb.spec.ts` on a four-player pod, about one game in two. With the
+   * surface owning the exit there is one registration, the surface's own.
+   * The entrance stays: that is the part a person sees.
+   */
+  onSurface?: boolean;
 }) {
   return (
     <motion.div
@@ -324,7 +342,7 @@ export function StaticCard({
       style={style}
       initial={{ opacity: 0, scale: 0.94 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.94 }}
+      exit={onSurface ? undefined : { opacity: 0, scale: 0.94 }}
       transition={bouncy}
       data-card-name={card.name}
     >

@@ -8,11 +8,18 @@
  * knows whether two states are the same screen or two different ones.
  */
 
-import { motion } from "motion/react";
-import type { ReactNode } from "react";
+import { motion, usePresence } from "motion/react";
+import { type ReactNode, useEffect, useRef } from "react";
 import { useCursorNav } from "../../input/useCursorNav";
 import { SCREEN_VARIANTS, type ScreenVariant } from "../../motion/springs";
 import { FocusRing } from "../game/FocusRing";
+
+/**
+ * How long a leaving screen stays mounted: `ease`'s 220ms, with a frame or two
+ * of slack so the fade is seen to finish. A number rather than an animation's
+ * word for "done" -- see the note in `Screen`.
+ */
+const EXIT_MS = 320;
 
 interface Props {
   variant?: ScreenVariant;
@@ -40,11 +47,43 @@ export function Screen({ variant = "slide", center = false, testId, children }: 
    */
   useCursorNav();
 
+  /*
+   * A SCREEN LEAVES ON A CLOCK, NOT ON AN ANIMATION.
+   *
+   * The outer `AnimatePresence mode="wait"` mounts the next screen only once
+   * this one's exit has reported complete, and an opacity exit started while
+   * the entrance was still in flight was measured never to (the opening hand
+   * and the prompt dialog first; `docs/bugs.md`). Here the consequence is
+   * worse than a stuck overlay: NOTHING mounts. Back to the front door and
+   * forward again inside a quarter of a second -- which is what a history
+   * gesture on a slow machine looks like -- left the door fading forever and
+   * the table never arriving, a blank page with no error in it
+   * (`e2e/pod.spec.ts`, "both browsers land on the table", on a CI runner).
+   *
+   * So the root carries no `exit`: while present it animates to its variant's
+   * `animate`, while leaving to its `exit` look, and `safeToRemove` is called
+   * by a timer the animation cannot hold up -- through a ref keyed on presence
+   * alone, because `safeToRemove` is rebuilt on every render of the boundary.
+   * A lost fade is a cut. It is never a blank screen.
+   */
+  const [present, safeToRemove] = usePresence();
+  const removeRef = useRef(safeToRemove);
+  removeRef.current = safeToRemove;
+  useEffect(() => {
+    if (present) return;
+    const timer = setTimeout(() => removeRef.current?.(), EXIT_MS);
+    return () => clearTimeout(timer);
+  }, [present]);
+  const { initial, animate, exit, ...rest } = SCREEN_VARIANTS[variant];
+
   return (
     <motion.div
       className={center ? "screen screen--center" : "screen"}
       data-testid={testId}
-      {...SCREEN_VARIANTS[variant]}
+      data-closing={present ? undefined : true}
+      initial={initial}
+      animate={present ? animate : exit}
+      {...rest}
     >
       {children}
       <FocusRing context={testId ?? variant} />

@@ -23,7 +23,7 @@
 
 import { type Page, expect, test } from "@playwright/test";
 import { handheldAssert } from "./handheldAssert";
-import { startGame, takeAction, waitForOurTurn } from "./helpers";
+import { clearPrompts, startGame, takeAction, waitForOurTurn } from "./helpers";
 
 const SIZES = [
   { w: 1200, h: 800 },
@@ -43,24 +43,9 @@ async function develop(page: Page, steps = 14): Promise<void> {
       return;
     await takeAction(page, ["keep", "play_land", "cast", "pass"]);
   }
-  for (let i = 0; i < 12; i += 1) {
-    /*
-     * `[data-modal-root]`, not the dialog by name.
-     *
-     * That is the app's own word for "something is on top and owns the ring"
-     * (`input/stops.ts:89-114`), and there are two such surfaces now -- the
-     * generic dialog and `OpeningHand`. Naming one of them meant this loop
-     * silently stopped clearing the opening hand, and the symptom would have
-     * been every later `hover()` timing out against a full-screen surface it
-     * could never reach -- which is the exact failure the comment above
-     * describes, arrived at a second time.
-     */
-    const modal = page.locator("[data-modal-root]").last();
-    if (!(await modal.isVisible().catch(() => false))) return;
-    const choice = modal.locator("[data-action-id]:not([disabled])").first();
-    if (!(await choice.count())) return;
-    await choice.click();
-  }
+  // Leave the lanes reachable, not merely holding something; `clearPrompts`
+  // says why, and why it reads the selector it does.
+  await clearPrompts(page);
 }
 
 /**

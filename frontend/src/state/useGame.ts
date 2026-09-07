@@ -15,18 +15,32 @@
  * That loop is what turns "the board suddenly looks different" into "I watched
  * them do it".
  *
- * **Another human: the long poll.** There is nothing to pump -- the server is
+ * **Another human: the listener.** There is nothing to pump -- the server is
  * not going to move that seat, a person is. So we ask for the state with the
- * version we last saw and the request blocks until it changes. Pumping here
- * would be a busy-wait against a human's thinking time.
+ * version we last saw and the request blocks until it changes. It is the same
+ * self-rescheduling long poll as `usePod`: a timed-out poll is a 200 with the
+ * same version, and the answer to it is simply another poll. Pumping here would
+ * be a busy-wait against a human's thinking time.
+ *
+ * The listener carries **two cursors** from the last response it absorbed. The
+ * version says *when* to wake; the event cursor says *what* is new, so the
+ * answer carries only the events this client has not rendered. A response is
+ * self-describing -- its events end at `event_cursor` -- which is what lets
+ * `absorb` trim one that overlaps something already seen, and why a pump
+ * response and a poll response landing out of order cannot narrate anything
+ * twice. See `docs/adr/0007-versioned-long-polling.md`.
  *
  * `human_seats` in the response is what tells the two apart. The engine does not
- * model it (a seat is a seat to it); the session does.
+ * model it (a seat is a seat to it); the session does. With several people at
+ * one table and an AI on the clock, exactly one of them pumps -- the lowest
+ * human seat -- and the rest listen, so the AI's turn is narrated once at one
+ * pace on every screen. A listener whose poll times out while the AI is still
+ * on the clock takes the pump over: the elected pumper's tab has gone.
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api } from "../api/client";
+import { ApiError, api } from "../api/client";
 import type { GameEvent, GameView, SeatConfig, StateResponse } from "../api/types";
 import { beatsFor } from "../logic/events";
 import { playerNames } from "../logic/labels";
@@ -55,10 +69,25 @@ const PUMP_DELAY_MS = 60;
  * How long one long poll may block, in seconds. Matches the server's ceiling.
  *
  * A poll that finds nothing comes back with a 200 and the same version, and the
- * effect below simply issues another -- so this is the *latency* of noticing a
+ * listener simply issues another -- so this is the *latency* of noticing a
  * server that restarted, not of noticing a move.
  */
 const POLL_SECONDS = 25;
+
+/**
+ * How long to wait before re-polling after a *failed* poll.
+ *
+ * A successful poll re-issues immediately; a failure means the server is down
+ * or restarting, and hammering it would turn a blip into a stampede.
+ */
+const RETRY_MS = 2000;
+
+/**
+ * How often a listener holding a fresh response checks whether the last batch
+ * has finished animating. The request is never re-issued to wait: a poll that
+ * is torn down and re-created leaves a parked server thread behind each time.
+ */
+const NARRATION_TICK_MS = 100;
 
 /**
  * `staleTime: Infinity` because the deck list was fixed for the life of the
@@ -107,6 +136,38 @@ function seatOf(session: GameSession): number {
   return session.seat ?? 0;
 }
 
+/**
+ * Whoever is on the clock, when it is not us and there is nothing to do.
+ *
+ * A pure function of one response so the listener can decide from the answer
+ * it just absorbed whether to keep listening, rather than issuing the next
+ * request and waiting for React to tear it down again.
+ */
+export function waitingOnFrom(response: StateResponse, seat: number | null): number | null {
+  const state = response.state;
+  return !state.game_over &&
+    state.pending !== null &&
+    seat !== null &&
+    state.pending.player !== seat &&
+    response.actions.length === 0
+    ? state.pending.player
+    : null;
+}
+
+/**
+ * The events in a response this client has not seen.
+ *
+ * A response's events end at its `event_cursor`, so they start at
+ * `event_cursor - events.length`; anything before `cursor` has already been
+ * logged and narrated. A response that carries nothing new -- somebody toggled
+ * an option, or the pump and the poll answered the same move -- trims to
+ * nothing rather than narrating the move again.
+ */
+export function freshEvents(response: StateResponse, cursor: number): GameEvent[] {
+  const start = response.event_cursor - response.events.length;
+  return response.events.slice(Math.max(0, cursor - start));
+}
+
 export function useGame(session: GameSession | null) {
   const queryClient = useQueryClient();
   const setError = useUiStore((s) => s.setError);
@@ -118,6 +179,20 @@ export function useGame(session: GameSession | null) {
   const names = useRef(new Map<string, string>());
   const stalls = useRef(0);
   const [stalled, setStalled] = useState(false);
+
+  /*
+   * The two cursors, in refs: they change on every response and the listener
+   * reads them from inside a loop that must not restart when they move.
+   */
+  const versionRef = useRef(0);
+  const cursorRef = useRef(0);
+  const remember = useCallback((response: StateResponse) => {
+    versionRef.current = response.version;
+    cursorRef.current = response.event_cursor;
+  }, []);
+
+  /** A listener that has stopped hearing the pumper takes the pump over. */
+  const [takeover, setTakeover] = useState(false);
 
   // Memoised so the callbacks below keep a stable identity: rebuilding them
   // every render would restart the pump effect on every render too.
@@ -134,6 +209,7 @@ export function useGame(session: GameSession | null) {
       // The opening events (shuffle, opening hands) are history, not drama:
       // seed the log but do not narrate them.
       harvestNames(response.state, names.current);
+      remember(response);
       setLog(response.events);
       return response;
     },
@@ -145,12 +221,15 @@ export function useGame(session: GameSession | null) {
   const absorb = useCallback(
     (response: StateResponse) => {
       if (!session) return;
+      // A slow POST landing after a newer poll would put an older board and an
+      // older action list back in the cache. Nothing it carries is news.
+      if (response.version < versionRef.current) return;
+      const fresh = freshEvents(response, cursorRef.current);
+      remember(response);
       harvestNames(response.state, names.current);
       queryClient.setQueryData(key, response);
-      setLog((previous) => [...previous, ...response.events]);
-      narration.push(
-        beatsFor(response.events, playerNames(response.state), lookup, response.your_seat),
-      );
+      if (fresh.length > 0) setLog((previous) => [...previous, ...fresh]);
+      narration.push(beatsFor(fresh, playerNames(response.state), lookup, response.your_seat));
       // Keep a half-built declaration alive across responses that are not the
       // declaration itself -- the AI pump lands here too, and wiping the staged
       // set mid-choice loses work the player has not committed yet.
@@ -162,8 +241,12 @@ export function useGame(session: GameSession | null) {
       if (!stillDeclaring) clearStaging();
       setError(null);
     },
-    [session, key, queryClient, clearStaging, setError, narration.push, lookup],
+    [session, key, queryClient, clearStaging, setError, narration.push, lookup, remember],
   );
+  const absorbRef = useRef(absorb);
+  useEffect(() => {
+    absorbRef.current = absorb;
+  }, [absorb]);
 
   /** A player-driven action always resets the stall guard. */
   const humanAbsorb = useCallback(
@@ -207,6 +290,7 @@ export function useGame(session: GameSession | null) {
       // whole game again. Replace the log; never narrate a rewind.
       narration.reset();
       harvestNames(response.state, names.current);
+      remember(response);
       queryClient.setQueryData(key, response);
       setLog(response.events);
       stalls.current = 0;
@@ -232,6 +316,7 @@ export function useGame(session: GameSession | null) {
     onSuccess: (response) => {
       if (!session) return;
       harvestNames(response.state, names.current);
+      remember(response);
       queryClient.setQueryData(key, response);
       setError(null);
     },
@@ -258,6 +343,7 @@ export function useGame(session: GameSession | null) {
     onSuccess: (response) => {
       if (!session) return;
       harvestNames(response.state, names.current);
+      remember(response);
       queryClient.setQueryData(key, response);
       setError(null);
     },
@@ -294,21 +380,36 @@ export function useGame(session: GameSession | null) {
   const humanSeats = useMemo(() => data?.human_seats ?? [], [data]);
 
   /** Whoever is on the clock, when it is not us and there is nothing to do. */
-  const waitingOn =
-    state !== null &&
-    !state.game_over &&
-    state.pending !== null &&
-    yourSeat !== null &&
-    state.pending.player !== yourSeat &&
-    actions.length === 0
-      ? state.pending.player
-      : null;
+  const waitingOn = data ? waitingOnFrom(data, yourSeat) : null;
 
-  /** An AI seat: pump it forward a decision at a time so its turn is watchable. */
+  /** An AI seat is deciding. */
   const aiThinking = waitingOn !== null && !humanSeats.includes(waitingOn);
 
-  /** Another person: there is nothing to pump. Block until they move. */
+  /** Another person is deciding. Nothing to pump; nothing to do but listen. */
   const waitingForPlayer = waitingOn !== null && humanSeats.includes(waitingOn);
+
+  /**
+   * Who pumps the AI: the lowest human seat, or a listener that has taken over.
+   *
+   * With two people at a table both pumping, each got half of the AI's events
+   * and the other half arrived as a surprise; and the wait-for-narration gate
+   * on one screen was defeated by the other screen's pump.
+   */
+  const pumper = humanSeats.length > 0 ? humanSeats[0] : null;
+  const pumping = aiThinking && (yourSeat === pumper || takeover);
+
+  /**
+   * Whether to hold a long poll open. Gated on the session knowing its own
+   * seat: `yourSeat` is known from the first, seat-less fetch, and a poll
+   * started under that query key is torn down the moment the key changes.
+   */
+  const listening = waitingOn !== null && !pumping && session !== null && session.seat !== null;
+
+  // A takeover lasts for one AI decision run. Once a person is on the clock
+  // again the election starts over from the lowest seat.
+  useEffect(() => {
+    if (!aiThinking) setTakeover(false);
+  }, [aiThinking]);
 
   const busy = act.isPending || declare.isPending || undo.isPending || pump.isPending;
 
@@ -316,39 +417,96 @@ export function useGame(session: GameSession | null) {
   // the last decision finishes before the next one is requested.
   const pumpMutate = pump.mutate;
   useEffect(() => {
-    if (!session || !aiThinking || stalled) return;
+    if (!session || !pumping || stalled) return;
     if (busy || narration.busy) return;
     const timer = setTimeout(() => pumpMutate(), PUMP_DELAY_MS);
     return () => clearTimeout(timer);
-  }, [session, aiThinking, stalled, busy, narration.busy, pumpMutate]);
+  }, [session, pumping, stalled, busy, narration.busy, pumpMutate]);
 
-  // The long poll. One request in flight at a time, re-issued the moment it
-  // lands -- a timed-out poll is a 200 with the same version, which is
-  // indistinguishable from a slow one.
-  const version = data?.version ?? 0;
+  /*
+   * The listener reads these from inside its loop. Refs, because the loop must
+   * outlive any single render: a dependency that changed on every response
+   * would tear the poll down and re-issue it, and every abandoned poll is a
+   * server thread parked for up to 25 s.
+   */
+  const narrationBusyRef = useRef(false);
   useEffect(() => {
-    if (!session || !waitingForPlayer || yourSeat === null) return;
-    if (busy || narration.busy) return;
+    narrationBusyRef.current = narration.busy;
+  }, [narration.busy]);
+  const aiOnClockRef = useRef(false);
+  useEffect(() => {
+    aiOnClockRef.current = aiThinking;
+  }, [aiThinking]);
+
+  // The listener: one request in flight at a time, re-issued the moment it
+  // lands, for as long as somebody else is on the clock.
+  const gameId = session?.gameId ?? null;
+  useEffect(() => {
+    if (!gameId || yourSeat === null || !listening) return;
+    const seat = yourSeat;
     let live = true;
-    void (async () => {
-      try {
-        const response = await api.state(
-          session.gameId,
-          yourSeat,
-          // The events we already hold; the server sends only what is new.
-          undefined,
-          version,
-          POLL_SECONDS,
-        );
-        if (live && response.version > version) absorb(response);
-      } catch (caught) {
-        if (live) setError((caught as Error).message);
+    let controller: AbortController | null = null;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, ms);
+      });
+
+    const listen = async () => {
+      while (live) {
+        controller = new AbortController();
+        try {
+          const response = await api.state(
+            gameId,
+            seat,
+            cursorRef.current,
+            versionRef.current,
+            POLL_SECONDS,
+            controller.signal,
+          );
+          if (!live) return;
+          if (response.version <= versionRef.current) {
+            // Timed out. If an AI is on the clock and nobody has moved it in
+            // all that time, the pumper's tab is gone: take the pump over.
+            if (aiOnClockRef.current) {
+              setTakeover(true);
+              return;
+            }
+            continue;
+          }
+          // Let the last batch finish animating before this one lands on the
+          // board -- by waiting, not by dropping the response and asking again.
+          while (live && narrationBusyRef.current) await sleep(NARRATION_TICK_MS);
+          if (!live) return;
+          absorbRef.current(response);
+          // Decide from the response whether there is anything left to hear.
+          // The re-render that flips `listening` has not happened yet, and a
+          // request issued now would park a server thread for nothing.
+          const next = waitingOnFrom(response, seat);
+          if (next === null) return;
+          const nextIsAi = !response.human_seats.includes(next);
+          if (nextIsAi && seat === response.human_seats[0]) return;
+        } catch (caught) {
+          if (!live) return;
+          const error = caught as Error;
+          setError(error.message);
+          // The game is gone or the seat is not ours any more. Neither is
+          // going to change by asking again every two seconds.
+          if (error instanceof ApiError && (error.status === 403 || error.status === 404)) {
+            return;
+          }
+          await sleep(RETRY_MS);
+        }
       }
-    })();
+    };
+
+    void listen();
     return () => {
       live = false;
+      controller?.abort();
+      if (timer) clearTimeout(timer);
     };
-  }, [session, waitingForPlayer, yourSeat, version, busy, narration.busy, absorb, setError]);
+  }, [gameId, yourSeat, listening, setError]);
 
   return {
     state,

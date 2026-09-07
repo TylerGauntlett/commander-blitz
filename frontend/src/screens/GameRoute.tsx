@@ -14,7 +14,7 @@
  */
 
 import { AnimatePresence } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { ApiError, setPlayerToken } from "../api/client";
 import type { SeatConfig } from "../api/types";
@@ -50,7 +50,11 @@ export function GameRoute() {
   });
   if (held.gameId !== gameId) setHeld({ gameId, seat: null });
   const seat = held.gameId === gameId ? held.seat : null;
-  const game = useGame(gameId ? { gameId, seat } : null);
+  // Memoised: `useGame` keys its listener on this object, and a fresh literal
+  // every render tore the long poll down and re-issued it on every re-render,
+  // leaving a parked server thread behind each time.
+  const gameSession = useMemo(() => (gameId ? { gameId, seat } : null), [gameId, seat]);
+  const game = useGame(gameSession);
 
   useEffect(() => {
     if (seat === null && game.yourSeat !== null) {

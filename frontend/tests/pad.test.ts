@@ -373,6 +373,31 @@ describe("two taps in quick succession", () => {
     tap();
     expect(hits).toEqual(["a", "a"]);
   });
+
+  /*
+   * The other way to lose the second: the loop fired the first and has not yet
+   * drawn the frame that would see it let go, and the second tap lands in
+   * between. A frame is 16ms here and up to a tenth of a second on a slow
+   * machine that has just rendered something heavy -- Enter opened the deck
+   * catalogue, Enter on the tile it landed on took nothing, six times in six
+   * on a CI runner. The key was released and pressed again, so it is a press.
+   */
+  it("fires twice when the second tap lands before the frame that saw the first released", () => {
+    const hits: string[] = [];
+    startPad();
+    on("a", () => hits.push("a"));
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter" }));
+    // One frame: the press fires and is recorded as down. Not a second one.
+    vi.advanceTimersByTime(17);
+    expect(hits).toEqual(["a"]);
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
+    window.dispatchEvent(new KeyboardEvent("keyup", { key: "Enter" }));
+    vi.advanceTimersByTime(60);
+    expect(hits).toEqual(["a", "a"]);
+  });
 });
 
 describe("diagnostics", () => {

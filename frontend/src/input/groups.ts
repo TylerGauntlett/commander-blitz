@@ -104,7 +104,32 @@ function visible(el: Element): boolean {
  * being asked.
  */
 export function landableStopsIn(root: HTMLElement): HTMLElement[] {
-  return [...root.querySelectorAll<HTMLElement>("[data-stop]")].filter(visible);
+  return [...root.querySelectorAll<HTMLElement>("[data-stop]")].filter(
+    (el) => notLeaving(el) && visible(el),
+  );
+}
+
+/**
+ * A stop inside a surface that is on its way out is not a stop.
+ *
+ * `stopRoot` already reads `[data-modal-root]:not([data-closing])`, so a
+ * closing dialog stops OWNING the ring the moment it starts to fade. But its
+ * buttons stayed in every stop list for the length of the fade, and a cursor
+ * that was on one of them was therefore still "found" by `resolveCursor` --
+ * which meant the return address for the surface underneath was consumed
+ * without being applied, and when the dialog finally left the DOM the ring
+ * fell to whatever stop was NEAREST its last position: the middle of the
+ * board, under where the dialog had been. Answering a prompt and being handed
+ * the next decision in the same breath -- a trigger's question during an
+ * attack, then the blocks -- put the ring on a creature that could not answer
+ * it (`e2e/journeys-handheld.spec.ts`, which had only ever looked while the
+ * dialog was still fading). With the closing surface's stops out of the lists,
+ * the cursor is not found the moment the fade starts, and the return address
+ * or the decision's own placement decides where it goes, before the dialog is
+ * gone. Here rather than in `stops.ts` because `stops.ts` imports this file.
+ */
+export function notLeaving(el: Element): boolean {
+  return el.closest("[data-closing]") === null;
 }
 
 /**
