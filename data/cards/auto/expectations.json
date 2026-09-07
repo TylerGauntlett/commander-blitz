@@ -5111,6 +5111,13 @@
   "necroblossom_snarl": {
     "zone": "battlefield"
   },
+  "necropotence": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "needle_spires": {
     "zone": "battlefield"
   },

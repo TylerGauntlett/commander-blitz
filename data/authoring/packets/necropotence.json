@@ -428,6 +428,7 @@
       "set_colors",
       "set_pt",
       "set_types",
+      "skip_draw_step",
       "spell_cost_reduction",
       "untap_during_each_untap_step",
       "ward"
