@@ -178,10 +178,29 @@ def _resolve_groups(
     return tuple(out)
 
 
+def _by_permanent(sources: Sequence[ManaSource]) -> dict[int, list[ManaSource]]:
+    """Sources grouped by the permanent they tap, first-seen order kept.
+
+    A :class:`ManaSource` is one *ability*; a Talisman or a painland has two
+    tap abilities and so appears twice.  Every count of "how much mana" has to
+    go through here, because the permanent taps once whichever ability is used.
+    """
+    out: dict[int, list[ManaSource]] = {}
+    for source in sources:
+        out.setdefault(source.oid, []).append(source)
+    return out
+
+
+def permanents_output(sources: Sequence[ManaSource]) -> int:
+    """Upper bound on mana from these sources: each permanent taps once, for
+    its best ability."""
+    return sum(max(s.max_output() for s in group) for group in _by_permanent(sources).values())
+
+
 def available_mana(state: GameState, pid: int) -> int:
     """Upper bound on mana this player could produce, for heuristics and encoding."""
     pool = state.players[pid].mana_pool.total()
-    return pool + sum(source.max_output() for source in mana_sources(state, pid))
+    return pool + permanents_output(mana_sources(state, pid))
 
 
 def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
@@ -191,6 +210,10 @@ def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
     a four-player pod walked it four times over.  The per-object work is
     identical either way; this just partitions instead of re-scanning.  Pass the
     result to :func:`mana_availability` as ``sources``.
+
+    Per ability, exactly like :func:`mana_sources` -- this is the solver-shaped
+    list.  Collapsing to one entry per permanent is :func:`mana_availability`'s
+    job, since only the client wants that shape.
     """
     out: dict[int, list[ManaSource]] = {p.pid: [] for p in state.players}
     for oid in state.battlefield:
@@ -487,29 +510,43 @@ def mana_availability(
     {G}.  Only :func:`can_pay_mana` answers affordability, and the client uses
     the action list for that.
 
+    One entry per **permanent**, not per ability.  A Talisman prints "{T}: Add
+    {C}" and "{T}: Add {B} or {R}" -- two abilities, one tap -- and shows up
+    here as a single source whose ``options`` are ``[["C"], ["B"], ["R"]]`` and
+    whose ``amount`` is 1.  Listed per ability it rendered as two pips and
+    claimed a mana the permanent cannot make.  ``amount`` is the best single
+    tap, so a permanent whose abilities differ in size ("{C}{C}" beside "{G}")
+    reports the larger; an upper bound, like ``total``.
+
     ``sources`` lets a caller serializing every seat share one battlefield walk;
     see :func:`sources_by_controller`.  Omitted, it is computed here as before.
     """
     pool = state.players[pid].mana_pool
     if sources is None:
         sources = mana_sources(state, pid)
+    entries: list[dict[str, Any]] = []
+    for oid, group in _by_permanent(sources).items():
+        # Every yield any of the permanent's abilities could choose, each as
+        # the symbols it actually makes.  "{T}: Add {G} or {U}" is
+        # [["G"], ["U"]]; "{T}: Add {G}{U}" is [["G", "U"]].  The union alone
+        # cannot tell those apart, and the difference is a whole mana.
+        # Deduplicated in order: two abilities that both make {G} are one
+        # choice, not two.
+        options = list(dict.fromkeys(tuple(o) for s in group for o in s.options))
+        producible = frozenset().union(*(s.producible() for s in group))
+        entries.append(
+            {
+                "oid": oid,
+                "options": [_option_symbols(option) for option in options],
+                # Sorted by SYMBOLS order so {G}{U} and {U}{G} render alike.
+                "symbols": sorted((SYMBOLS[i] for i in producible), key=SYMBOL_INDEX.get),
+                "amount": max(s.max_output() for s in group),
+            }
+        )
     return {
         "pool": pool.to_dict(),
-        "sources": [
-            {
-                "oid": source.oid,
-                # Every yield the ability could choose, each as the symbols it
-                # actually makes.  "{T}: Add {G} or {U}" is [["G"], ["U"]];
-                # "{T}: Add {G}{U}" is [["G", "U"]].  The union alone cannot
-                # tell those apart, and the difference is a whole mana.
-                "options": [_option_symbols(option) for option in source.options],
-                # Sorted by SYMBOLS order so {G}{U} and {U}{G} render alike.
-                "symbols": sorted((SYMBOLS[i] for i in source.producible()), key=SYMBOL_INDEX.get),
-                "amount": source.max_output(),
-            }
-            for source in sources
-        ],
-        "total": pool.total() + sum(source.max_output() for source in sources),
+        "sources": entries,
+        "total": pool.total() + permanents_output(sources),
     }
 
 
@@ -1191,6 +1228,17 @@ def pay_mana(
     if payment is None:
         return False
     for oid, ability_index, option_index in payment.taps:
+        obj = state.objects.get(oid)
+        if obj is None or obj.tapped:
+            # The plan was made against untapped permanents, so this can only
+            # mean the solver named one permanent twice -- a Talisman's two
+            # abilities, once.  Refuse loudly: `activate_mana_ability` would
+            # add the mana regardless of the tap, and the pool would hold a
+            # mana no permanent made.
+            raise DslError(
+                f"payment plan taps {state.card(oid).name} (#{oid}) but it is "
+                "already tapped; the solver must never tap one permanent twice"
+            )
         activate_mana_ability(state, oid, ability_index, pid, option_index)
     spent = player.mana_pool.spend(req)
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
@@ -1243,6 +1291,10 @@ def activate_mana_ability(
     )
 
     if ability.cost is not None and ability.cost.tap:
+        # The return value is deliberately not checked: `Game._activate_mana`
+        # has already tapped the source through `pay()` by the time it reaches
+        # here, so a False is the normal by-hand case.  The solver's plan is
+        # checked against the board in `pay_mana` instead.
         tap_permanent(state, oid)
 
     # Tagged with the permanent that made it. The tag is the whole of what
