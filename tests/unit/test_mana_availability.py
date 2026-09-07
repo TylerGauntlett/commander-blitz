@@ -116,6 +116,37 @@ class TestAmbiguousSources:
         assert sources(game)[0]["symbols"] == ["U", "G"]
 
 
+class TestTwoAbilitiesOnePermanent:
+    """A painland prints "{T}: Add {C}" and "{T}: Add {R} or {W}" -- two
+    abilities, but the land taps once, so it is one source worth one mana.
+
+    Listed per ability it was two entries sharing an oid, two pips on the
+    client, and a claimed total of two for a land that makes one.
+    """
+
+    def test_a_painland_is_one_source_with_every_option(self, builder):
+        game = builder().battlefield(0, ["t_painland"]).build(advance=False)
+        (source,) = sources(game)
+        assert source["options"] == [["C"], ["R"], ["W"]]
+        assert source["symbols"] == ["W", "R", "C"]
+        assert source["amount"] == 1
+        assert total(game) == 1
+
+    def test_two_painlands_are_two_mana(self, builder):
+        game = builder().battlefield(0, ["t_painland", "t_painland"]).build(advance=False)
+        assert len(sources(game)) == 2
+        assert len({s["oid"] for s in sources(game)}) == 2
+        assert total(game) == 2
+
+    def test_the_heuristic_count_agrees(self, builder):
+        from automtg.engine.costs import available_mana
+
+        alone = builder().battlefield(0, ["t_painland"]).build(advance=False)
+        assert available_mana(alone.state, 0) == 1
+        with_forest = builder().battlefield(0, ["t_painland", "forest"]).build(advance=False)
+        assert available_mana(with_forest.state, 0) == 2
+
+
 class TestSerialized:
     def test_it_reaches_the_player_view(self, builder):
         from automtg.engine.serialize import player_view
@@ -147,7 +178,7 @@ class TestSharedSourceIndex:
 
         game = (
             builder(players=4)
-            .battlefield(0, ["forest", "t_dual_land"])
+            .battlefield(0, ["forest", "t_dual_land", "t_painland"])
             .battlefield(1, ["island", "island", "llanowar_elves"])
             .battlefield(2, ["nomad_outpost"])
             .build(advance=False)

@@ -124,6 +124,74 @@ class TestTheSolverPaysItToo:
         assert game.state.players[0].life == before - 1
 
 
+class TestOnePermanentOneTap:
+    """Two abilities, one land, one tap.
+
+    The solver saw the painland's "{T}: Add {C}" and "{T}: Add {R} or {W}" as
+    two independent sources, so one land paid {1}{R} by itself -- and took a
+    life for it. A single painland is one mana of either kind.
+    """
+
+    def _pay(self, game, text: str) -> bool:
+        from automtg.engine.costs import pay_mana
+        from automtg.engine.mana import ManaCost
+
+        return pay_mana(game.state, 0, ManaCost.parse(text).with_x(0))
+
+    def test_one_land_cannot_pay_two_mana(self, builder):
+        game = position(builder, lands=1)
+        oid = a_painland(game)
+        before = game.state.players[0].life
+        assert not self._pay(game, "{1}{R}")
+        assert not game.state.objects[oid].tapped
+        assert game.state.players[0].mana_pool.total() == 0
+        assert game.state.players[0].life == before
+
+    def test_one_land_pays_one_coloured_mana(self, builder):
+        game = position(builder, lands=1)
+        before = game.state.players[0].life
+        assert self._pay(game, "{R}")
+        assert game.state.objects[a_painland(game)].tapped
+        assert game.state.players[0].life == before - 1
+
+    def test_one_land_pays_one_colourless_mana_painlessly(self, builder):
+        game = position(builder, lands=1)
+        before = game.state.players[0].life
+        assert self._pay(game, "{C}")
+        assert game.state.players[0].life == before
+
+    def test_two_lands_pay_two_and_only_the_coloured_tap_hurts(self, builder):
+        game = position(builder, lands=2)
+        before = game.state.players[0].life
+        assert self._pay(game, "{1}{R}")
+        assert all(game.state.objects[oid].tapped for oid in oids_of(game, PAINLAND))
+        assert game.state.players[0].life == before - 1
+
+    def test_affordability_agrees(self, builder):
+        from automtg.engine.costs import can_pay_mana
+        from automtg.engine.mana import ManaCost
+
+        game = position(builder, lands=1)
+        assert can_pay_mana(game.state, 0, ManaCost.parse("{R}"))
+        assert not can_pay_mana(game.state, 0, ManaCost.parse("{1}{R}"))
+
+    def test_a_plan_that_taps_one_permanent_twice_is_refused(self, builder, monkeypatch):
+        """The guard behind the solver: a double tap must not become free mana."""
+        from automtg.engine import costs
+        from automtg.engine.mana import ManaCost, Payment
+
+        game = position(builder, lands=1)
+        oid = a_painland(game)
+        monkeypatch.setattr(
+            costs,
+            "solve_payment",
+            lambda *a, **k: Payment(taps=[(oid, 0, 0), (oid, 1, 0)], produced=(0,) * 6),
+        )
+        with pytest.raises(DslError):
+            costs.pay_mana(game.state, 0, ManaCost.parse("{1}{R}").with_x(0))
+        assert game.state.players[0].mana_pool.total() <= 1
+
+
 class TestTheRiderIsStillAManaAbility:
     def test_it_produces_the_options_the_solver_reads(self, registry):
         ability = registry.get(PAINLAND).abilities[COLOURED]

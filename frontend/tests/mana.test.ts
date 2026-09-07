@@ -37,6 +37,16 @@ const bounce = (oid: number) => ({
   symbols: ["U", "G"],
   amount: 2,
 });
+/**
+ * "{T}: Add {C}" and "{T}: Add {B} or {R}" -- two abilities on one permanent,
+ * merged by the server into one source worth one mana of three possible kinds.
+ */
+const talisman = (oid: number) => ({
+  oid,
+  options: [["C"], ["B"], ["R"]],
+  symbols: ["B", "R", "C"],
+  amount: 1,
+});
 
 describe("manaRow", () => {
   it("is empty for a board with nothing untapped", () => {
@@ -82,12 +92,25 @@ describe("manaRow", () => {
       expect(pips.every((p) => p.symbols.length === 1)).toBe(true);
     });
 
+    it("draws a two-ability permanent as one undecided pip", () => {
+      const pips = manaRow(mana({ sources: [talisman(1)], total: 1 }));
+      expect(pips).toHaveLength(1);
+      expect(pips[0].tone).toBe("any");
+      expect(pips[0].symbols).toEqual(["B", "R", "C"]);
+    });
+
+    it("gives every pip a distinct key", () => {
+      const pips = manaRow(mana({ sources: [talisman(1), talisman(2), bounce(3)], total: 4 }));
+      expect(new Set(pips.map((p) => p.key)).size).toBe(pips.length);
+    });
+
     it("never invents mana: pip count always equals the server's total", () => {
       for (const sources of [
         [forest(1)],
         [dual(1)],
         [bounce(1)],
-        [forest(1), dual(2), bounce(3)],
+        [talisman(1)],
+        [forest(1), dual(2), bounce(3), talisman(4)],
       ]) {
         const total = sources.reduce((sum, s) => sum + s.amount, 0);
         expect(manaRow(mana({ sources, total }))).toHaveLength(total);
@@ -178,12 +201,19 @@ describe("manaGroups", () => {
     expect(green.spent).toBe(2);
   });
 
+  it("has no single mark for a three-way choice", () => {
+    const [group] = manaGroups(manaRow(mana({ sources: [talisman(1)], total: 1 })));
+    expect(group.code).toBeNull();
+    expect(group.count).toBe(1);
+  });
+
   it("never invents or loses mana: the counts always sum to the row", () => {
     for (const sources of [
       [forest(1)],
       [dual(1)],
       [bounce(1)],
-      [forest(1), dual(2), bounce(3)],
+      [talisman(1)],
+      [forest(1), dual(2), bounce(3), talisman(4)],
       [forest(1), forest(2), dual(3), dual(4)],
     ]) {
       const total = sources.reduce((sum, s) => sum + s.amount, 0);
