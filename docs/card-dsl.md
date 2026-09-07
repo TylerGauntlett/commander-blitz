@@ -232,7 +232,7 @@ strictly better card. A zero or negative ordinal is refused too — the op floor
 it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
-| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
+| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -5729,6 +5729,71 @@ creatures you control get +1/+1" is the reason to convert the creature at all.
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
+
+## `change_text` — "replacing all instances of one creature type"
+
+```jsonc
+{ "op": "change_text", "objects": { "target": "t1" }, "to": "Vampire" }
+```
+
+New Blood, and layer 3 (613.1c) — the layer the pipeline did not have, sitting
+between copy effects and the type-granting statics.
+
+**It is the opposite of `add_subtype` above**, and the pair is worth holding in
+mind because the printed lines look alike:
+
+| | |
+|---|---|
+| `add_subtype` | "It becomes a Vampire **in addition to** its other types" — the old word stays, so the creature still answers to its old tribe's lords and its old tribe's removal, and its rules text is untouched |
+| `change_text` | "**Replacing all instances of** one creature type with Vampire" — the old word is gone, everywhere |
+
+Written as an `add_subtype`, New Blood loads, resolves, puts "Vampire" on the
+type line and is a different and much weaker card. That is why the authoring
+worker refused it rather than approximating.
+
+**"All instances" is four readers**, and each can be missed on its own with
+nothing to say so:
+
+| reader | what it is | what breaks without it |
+|---|---|---|
+| `_compute` | the derived type line | `chars()` reports the old type |
+| `_matches_printed` | what a static filter on *another card* sees | a Vampire lord cannot find the creature you just converted — most of the card |
+| `abilities_of` | the words inside the object's **own** abilities | a stolen "other Goblins you control get +1/+0" stays a Goblin lord |
+| `stack.ability_of` | how an activated or triggered ability is looked up as it resolves | the statics are rewritten and the activated half is not |
+
+`abilities_of` reaches both its own paths through `printed_abilities`, because
+`_derived_abilities` reads the printed list too: substituting on only the fast
+path leaves a text-changed permanent reverting the moment any `grant_ability`
+static is on the battlefield.
+
+The substitution walks every `subtypes` list, however deeply nested, and nothing
+else — see `engine/text_change.py`. Keying on the name and not on the string is
+what stops it rewriting a token's name or a prompt that happens to read
+"Goblin"; walking every nesting level is what stops the stolen lord keeping its
+old tribe. It **does** reach `create_token` and `add_subtype` specs, which is
+the printed consequence rather than an overreach: 612.1 changes the text, and a
+line that reads "create a 1/1 Goblin" is text.
+
+Recorded on `GameObject.text_changes` as ordered `(old, new)` pairs — ordered
+because 612.4 applies text changes in timestamp order and the second reads the
+first one's output, so Goblin→Vampire then Vampire→Zombie is a Zombie. Cleared
+by `reset_permanent_state`, the same contract `added_subtypes` has.
+
+The type being **replaced** is chosen at resolution and is not written on the
+card; `to` is required and names the type written in. The prompt offers the
+types with an *instance* in the target's printed text — its subtype line plus
+every type named in its abilities — rather than every creature type in the pool.
+The rules let a player name any of them (612.1), and naming a word the card
+never says replaces nothing, so the options removed are the options that do
+nothing; what it buys is a real choice instead of the 400-entry cap
+`choose_type` needs.
+
+**Creature types only.** The other two word classes the family prints are
+refused by name at load time rather than accepted and ignored: a colour word
+(Glamerdye, Mind Bend, Sleight of Mind, and seven more) reaches `colors`
+filters, protection qualities and mana production, and a basic land type
+(Magical Hack, Whim of Volrath) reaches landwalk keywords and mana abilities.
+Each is its own surface with its own way of going quietly wrong.
 
 ## Keyword counters — "with a vigilance counter on it"
 

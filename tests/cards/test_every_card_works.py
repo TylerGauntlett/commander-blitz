@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from automtg.cards.authoring.verify import check_expectation
+from automtg.cards.authoring.verify import check_expectation, swap_in_tribal_body
 from automtg.cards.registry import CardRegistry
 from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef
@@ -88,7 +88,15 @@ def pytest_generate_tests(metafunc):
 def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True) -> Game:
     builder = GameBuilder(registry, players=2, seed=1)
     builder.battlefield(0, MANA_BASE)
-    builder.battlefield(0, OWN_BOARD)
+    # "As an additional cost to cast this spell, tap an untapped Vampire you
+    # control" -- New Blood. `t_bear` is a Bear, so a printed cost naming any
+    # tribe is unpayable and the card is never offered. The swap is shared with
+    # `verify.build_sandbox` rather than copied, so the two sandboxes cannot
+    # disagree about what such a cost can be paid with, and it happens **only**
+    # for a card that names a tribe -- every other card sees the board it was
+    # measured on.
+    under_test = registry.get(card_id) if card_id in registry else None
+    builder.battlefield(0, swap_in_tribal_body(registry, list(OWN_BOARD), under_test))
     builder.battlefield(1, OPPONENT_BOARD)
     builder.graveyard(0, OWN_GRAVEYARD)
     # The second card is deliberately not a land -- see `verify.build_sandbox`.

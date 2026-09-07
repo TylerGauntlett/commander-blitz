@@ -1,3 +1,122 @@
+## `change_text` -- layer 3, and the four places "all instances" has to reach
+
+### Overview
+
+New Blood: *"Gain control of target creature. Change the text of that creature by
+replacing all instances of one creature type with Vampire."* One gap record,
+`text_change`, written by a worker that refused to approximate it -- and the
+refusal was the right call, because the approximation available is a good one.
+
+The characteristics pipeline had **no layer 3 at all**. `_compute` went straight
+from copy effects to the type-granting statics, and nothing anywhere in the
+engine rewrote a word inside another object's rules text: a permanent's
+abilities are matched by their authored spec, not by a mutable text.
+
+### The near miss, which is most of the design
+
+`add_subtype` reads almost the same in English and is a different effect:
+
+| | |
+|---|---|
+| `add_subtype` | "It becomes a Vampire **in addition to** its other types" (Captivating Vampire). The old word stays. The creature still answers to its old tribe's lords and its old tribe's removal, and its own rules text is untouched |
+| `change_text` | "**Replacing all instances of** one creature type with Vampire". The old word is gone, everywhere |
+
+Written as an `add_subtype`, New Blood loads, resolves, puts "Vampire" on the
+type line, and is a different and much weaker card. Nothing on screen says so.
+That is the exact failure `docs/card-authoring.md` is built around, and it is
+why the card sat as a gap record rather than shipping.
+
+### "All instances" is four readers
+
+The work is not the substitution, which is twenty lines. It is knowing where the
+old word is being read from, and there are four places -- each of which fails
+silently and independently:
+
+| reader | what it is | what breaks without it |
+|---|---|---|
+| `characteristics._compute` | the derived type line | `chars()` reports the old type |
+| `characteristics._matches_printed` | what a static filter on **another card** sees | a Vampire lord cannot find the creature you just converted |
+| `characteristics.abilities_of` | the words inside the object's **own** abilities | a stolen "other Goblins you control get +1/+0" stays a Goblin lord |
+| `stack.ability_of` | how an activated or triggered ability is looked up as it resolves | the statics are rewritten and the activated half is not |
+
+The second is the one worth dwelling on. `_matches_printed` reads the printed
+card face deliberately, so that no static can depend on another static's output;
+a Vampire lord's anthem takes that path and never enters `_compute` at all. An
+implementation that did `_compute` alone passes every test you would think to
+write about the type line, and converts a creature that no lord in the deck can
+see -- which in a Vampire deck is the whole reason to cast the card.
+
+`text_changes` is admitted there on the same argument `added_subtypes` already
+won: it is a pipeline **input**, written by an op and unwritable by any layer, so
+reading it introduces no dependency between statics.
+
+### One list, two readers
+
+`abilities_of` returns the printed list directly when nothing grants or removes
+an ability, and `_derived_abilities` folds it in with the granted ones when
+something does -- and that second function fetched `card_of(obj).abilities` for
+itself. Substituting on only the first path leaves a text-changed permanent
+reverting to its old tribe the moment any `grant_ability` static appears
+anywhere on the battlefield.
+
+Both now go through `characteristics.printed_abilities`. This was found by
+mutation-testing the seam rather than by reading it: the first version of the
+test that claimed to cover it had no granter on the board, so it took the fast
+path and the mutant survived.
+
+### The walk is narrow on purpose
+
+`substitute` rewrites every `subtypes` list, however deeply nested, and nothing
+else. Both halves of that are load-bearing:
+
+* **Keyed on the name, not the string.** A walk that rewrote any string equal to
+  "Goblin" would rewrite a token's name, a binding label or a mode's prompt.
+* **Every nesting level.** A `subtypes` list can sit inside a `TriggerSpec`
+  filter, a static's `affects`, an effect's `objects`, a target's selector or a
+  value's count. Miss one and the stolen lord keeps its old tribe.
+
+It **does** reach `create_token` and `add_subtype` specs, which is the printed
+consequence rather than an overreach: 612.1 changes the text, and a line reading
+"create a 1/1 Goblin" is text.
+
+### No new `DecisionKind`
+
+`ask_mode` already asks "pick one of these labels, hand back the index", which is
+exactly this question -- the argument `choose_type` made first. So legality's
+`_choice_actions`, `game.apply` and the authoring verifier's auto-answer table
+all work unchanged.
+
+The prompt offers the types with an **instance** in the target's printed text --
+its subtype line plus every type named in its abilities -- rather than every
+creature type in the pool. The rules let a player name any of them (612.1), and
+naming a word the card never says replaces nothing, so the options removed are
+exactly the options that do nothing. What it buys is a real choice of two or
+three instead of the 400-entry cap `choose_type` needs.
+
+### Creature types only, and the refusal is by name
+
+The family prints three word classes, and creature types are the **smallest** of
+them: colour words are ten cards (Glamerdye, Mind Bend, Sleight of Mind, Alter
+Reality, Crystal Spray, Whim of Volrath, Spectral Shift, Swirl the Mists,
+Balduvian Shaman, Trait Doctoring) and basic land types six.
+
+They are refused at load time rather than accepted and ignored. A colour word
+reaches `colors` filters, protection qualities and mana production; a basic land
+type reaches landwalk keywords and mana abilities. Each is its own surface with
+its own way of going quietly wrong, and a card written against a key this op
+silently dropped would print its words and change nothing.
+
+Artificial Evolution -- "with **another**", both halves chosen -- is refused for
+a different reason: it targets a *spell or* permanent, which no selector can say
+(`spell_or_permanent_target` is its own gap), so accepting a second prompt here
+would buy a feature and still no card.
+
+### Server: nothing. Frontend: nothing.
+
+`text_changes` is serialized with the rest of the object state by
+`GameObject.to_dict`, and the type line the client draws comes from `chars`,
+which already has the substitution applied.
+
 ## A cost reduction that counts a supertype — the Kamigawa channel legends
 
 ### Overview

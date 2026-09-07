@@ -449,6 +449,7 @@
   "cant_sacrifice",
   "cascade",
   "cast_copy",
+  "change_text",
   "choose_color",
   "choose_mode",
   "choose_permanents",

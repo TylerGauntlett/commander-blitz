@@ -31,6 +31,7 @@ from .costs import (
 )
 from .enums import Zone
 from .legality import unplayable_reason
+from .text_change import displayed as displayed_text
 
 if TYPE_CHECKING:  # pragma: no cover
     from .mana import ManaSource
@@ -48,11 +49,15 @@ def card_view(state: GameState, oid: int, *, revealed: bool = True) -> dict[str,
         "oid": oid,
         "card_id": card.id,
         "name": card.name,
-        "type_line": card.type_line,
+        # Rewritten for a text-changed permanent (613.1c), so the type line and
+        # the rules text a player reads agree with what the card now does -- and
+        # with the derived `subtypes` sent in the same payload. `text_changes`
+        # is empty for every other card, so this is one attribute check.
+        "type_line": displayed_text(card.type_line, obj.text_changes),
         "mana_cost": str(card.mana_cost),
         "mana_value": card.mana_value,
         "colors": sorted(card.colors),
-        "oracle_text": card.oracle_text,
+        "oracle_text": displayed_text(card.oracle_text, obj.text_changes),
         "controller": obj.controller,
         "owner": obj.owner,
         "zone": obj.zone.value,

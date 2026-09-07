@@ -211,11 +211,125 @@ class Verdict:
 # ----------------------------------------------------------------------
 
 
+def tribal_cost_subtype(card: CardDef | None) -> str | None:
+    """The creature subtype this card's additional cost demands, if any.
+
+    "As an additional cost to cast this spell, **tap an untapped Vampire you
+    control**" -- New Blood. Read off the compiled cost rather than guessed at
+    from the oracle text, so the question asked is the one the payment solver
+    will ask.
+    """
+    if card is None or card.additional_cost is None:
+        return None
+    pool = card.additional_cost.tap_permanents or card.additional_cost.untap_permanents
+    if not pool:
+        return None
+    wanted = pool.get("subtypes")
+    if not wanted or len(wanted) != 1 or not isinstance(wanted[0], str):
+        return None
+    return wanted[0]
+
+
+def _own_board(registry: CardRegistry, card: CardDef | None) -> list[str]:
+    """Your two creatures -- with one swapped for the tribe a cost demands.
+
+    Both slots are normally filled by the alphabetically first creature in the
+    pool, which is an Ooze. So a printed "tap an untapped **Vampire** you
+    control" is unpayable, legality never offers the cast, and gate 4 reports
+    "not playable in the sandbox" -- the harness naming an unrepresented shape
+    rather than a verdict about the card. Add the prop; do not relax the gate,
+    the call `legendary_creature` and `small_creature` record above.
+
+    **Swapped only for a card that needs it**, which is `add_dummy_spell`'s
+    rule and for its reason: every card measured before this change must see
+    the position it was measured in. Two measured facts made that non-optional
+    here rather than a preference:
+
+    - Filling a slot unconditionally with a *vanilla* creature moved eleven
+      hand-written verdicts, because the hand-written pool has no vanilla
+      Vampire at all -- `_props` skips a role the pool cannot fill, so the board
+      silently became 31 and every `battlefield_count` in that pool read one
+      low. A prop that is sometimes absent is worse than one that is never
+      there.
+    - The tribe is read off the card's own cost, so the test is exact rather
+      than a guess about which cards are "the tribal ones".
+
+    The replacement carries **no abilities at all** -- stricter than the "no
+    activated or triggered ability" the roles above ask for, and deliberately
+    so, because the ability that would hurt here is a *static* one: the tribes
+    that print tap costs are the tribes that print lords, and the quietest
+    Vampire in the pool by the roles' own standard is Legion Lieutenant, whose
+    "other Vampires you control get +1/+1" would pump the other prop and land
+    inside the measured P/T of every card verified afterwards.
+
+    Among those, the **fewest keywords** wins, ties broken by id so the position
+    is identical run to run. Keywords cannot be excluded outright -- the
+    hand-written pool has 43 Vampires and not one of them is vanilla -- so the
+    rule is to take the quietest body that exists rather than to insist on a
+    perfect one and silently fall back to no prop at all. Lifelink on the
+    resulting pick costs nothing: the sandbox declines combat, so it never
+    deals damage.
+
+    It takes the first slot rather than being appended, so the boards stay 32
+    and 6; the second keeps the plain `creature` role, so a card wanting a
+    creature that is *not* of the tribe still finds one.
+    """
+    props = _props(registry, OWN_BOARD_ROLES)
+    return swap_in_tribal_body(registry, props, card)
+
+
+def quiet_tribal_body(registry: CardRegistry, subtype: str) -> str | None:
+    """The quietest creature of ``subtype`` in this pool, or None if it has none.
+
+    See :func:`_own_board` for what "quietest" means and why it is not simply
+    the alphabetically first. Public because the two sandboxes need the same
+    answer: `tests/cards/test_every_card_works.py` builds its position from
+    fixed test fixtures rather than from roles, and a second copy of this rule
+    would be a second place for the two boards to disagree about what a tribal
+    cost can be paid with.
+    """
+    match = sorted(
+        (
+            c
+            for c in registry
+            if c.is_creature
+            and not c.is_token
+            and "Legendary" not in c.supertypes
+            and subtype in c.subtypes
+            and not c.abilities
+        ),
+        key=lambda c: (len(c.keywords), c.id),
+    )
+    return match[0].id if match else None
+
+
+def swap_in_tribal_body(
+    registry: CardRegistry, board: list[str], card: CardDef | None
+) -> list[str]:
+    """``board`` with its first creature swapped for the tribe ``card``'s cost needs.
+
+    A swap rather than an addition, so the board size is unchanged and no
+    expectation moves -- the call both sandboxes' legendary props already record.
+    Returns the board untouched when the card demands no tribe, or when the pool
+    has no quiet body of it: the card then fails gate 4 saying it is not
+    playable, which is the honest report of an unrepresented shape rather than a
+    verdict about the card.
+    """
+    subtype = tribal_cost_subtype(card)
+    if subtype is None or not board:
+        return board
+    pick = quiet_tribal_body(registry, subtype)
+    if pick is None:
+        return board
+    return [pick, *board[1:]]
+
+
 def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True) -> Game:
     """A fixed position with the card under test in hand."""
     builder = GameBuilder(registry, players=2, seed=1)
+    under_test = registry.get(card_id) if card_id in registry else None
     builder.battlefield(0, MANA_BASE)
-    builder.battlefield(0, _props(registry, OWN_BOARD_ROLES))
+    builder.battlefield(0, _own_board(registry, under_test))
     builder.battlefield(1, [*_props(registry, OPPONENT_BOARD_ROLES), "forest", "island"])
     builder.graveyard(0, _props(registry, OWN_GRAVEYARD_ROLES))
     # Forty cards, and the **second** one is deliberately not a land. The pile
