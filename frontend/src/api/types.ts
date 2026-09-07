@@ -164,7 +164,19 @@ export interface PlayerView {
    */
   hand_reasons: Record<string, UnplayableReason> | null;
   graveyard: CardView[];
+  /**
+   * Exile is a public zone and arrives in full -- minus any card put there
+   * *face down* (Necropotence), which the server drops for every seat not
+   * entitled to see it rather than sending a half-filled `CardView`.
+   */
   exile: CardView[];
+  /**
+   * How many face-down cards are in this player's exile that the viewing seat
+   * may not see. The pile is public even when its faces are not, so zone counts
+   * are `exile.length + exile_hidden_count`; `exile` alone under-counts and the
+   * pile would vanish from the board on a seat that cannot see into it.
+   */
+  exile_hidden_count: number;
   command: CardView[];
 }
 

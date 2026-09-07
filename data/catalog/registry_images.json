@@ -5766,6 +5766,10 @@
     "artist": "Winona Nelson",
     "scryfall_id": "42291a2c-9127-4cf1-8474-6c0353f4ccbd"
   },
+  "necropotence": {
+    "artist": "Kuregure",
+    "scryfall_id": "2765545b-5e2d-4d4c-b126-93415774a2e9"
+  },
   "needle_spires": {
     "artist": "Lorenzo Lanfranconi",
     "scryfall_id": "08fb8639-a0bb-4ad7-86b0-46116a078556"
@@ -5821,6 +5825,10 @@
   "new_benalia": {
     "artist": "Richard Wright",
     "scryfall_id": "315e4c91-5b2a-45e8-b6b1-baf08ae6e2fc"
+  },
+  "new_blood": {
+    "artist": "Howard Lyon",
+    "scryfall_id": "6ee669ab-0ae6-43e5-86fd-f0dcb621e478"
   },
   "nezahal_primal_tide": {
     "artist": "Wayne Wu",

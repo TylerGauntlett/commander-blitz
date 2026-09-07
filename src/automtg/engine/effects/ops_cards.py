@@ -344,6 +344,25 @@ def _move_found(
             if obj is not None:
                 obj.playable_by = pid
                 obj.playable_turn = ctx.state.turn
+        # "Exile the top card of your library **face down**." Necropotence.
+        # Face-down here is *privacy*, not the 707 morph identity `face_down`
+        # carries: a card in exile has no characteristics to hide behind. What
+        # the printed words buy is that nobody has been shown it -- its own
+        # controller included -- so `revealed_to` stays empty and
+        # `hidden_in_exile` says that the emptiness is deliberate. The flag is
+        # needed because exile is otherwise a **public** zone that `player_view`
+        # sends in full, so an empty `revealed_to` alone is the default every
+        # ordinary exile already has and would leave these words inert.
+        # `hideaway` writes `revealed_to.add(pid)` instead, because 702.75a says
+        # its controller may look; Necropotence does not.
+        #
+        # Written after the move for `playable_this_turn`'s reason:
+        # `reset_permanent_state` runs on the way and clears `revealed_to`.
+        if destination is Zone.EXILE and spec.get("face_down"):
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                obj.hidden_in_exile = True
+                obj.revealed_to = set()
 
 
 @register("look_at_top")
@@ -364,12 +383,33 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``cast_free`` sends what was picked to the **stack** instead of to a
     destination zone -- see :func:`_cast_from_window`.
+
+    ``as`` records the cards this op actually took, and is what lets a *later*
+    effect name them. Necropotence is the card: "exile the top card of your
+    library face down. Put **that card** into your hand at the beginning of your
+    next end step" -- a `delay` copies `ctx.bindings` when it is created, so
+    `{"binding": …}` in the scheduled effects moves exactly the card this
+    activation exiled.
+
+    `exiled_with: "self"` cannot do that job and is the trap worth naming.
+    `_move_found` deliberately writes no `exiled_by` -- see
+    :func:`_cast_from_window` for why that would break Florian -- so the
+    selector matches nothing and the delayed return silently hands back no card
+    at all. Even with the link written it would be *source-wide* rather than
+    per-activation, so a second activation's return would sweep up the first
+    one's card too. The binding is per-resolution, which is what the printed
+    "that card" means.
+
+    ``face_down`` is exile without showing it to anybody, and only exile: see
+    :func:`_move_found`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     destination = DESTINATIONS[spec.get("destination", "hand")]
     tapped = bool(spec.get("tapped"))
     cast_free = bool(spec.get("cast_free"))
     selector = spec.get("objects") or spec.get("selector") or {}
+    binding = spec.get("as")
+    bound: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         top = list(ctx.state.players[pid].library[: max(0, int(amount))])
         pool = [oid for oid in top if _matches_library(ctx, oid, selector)]
@@ -391,6 +431,11 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             else:
                 _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
                 taken = set(picked)
+            # Accumulated across seats rather than assigned, for the reason
+            # `exile`'s own `as` accumulates: a `player: "each_player"` look
+            # would otherwise bind only the last seat's cards and strand the
+            # rest, findable by nothing.
+            bound.extend(taken)
         # "…and put the rest on the bottom of your library in a random order."
         # Florian. Shuffling instead is a different game action: it reorders the
         # *whole* deck, and everything under the cards you looked at was already
@@ -402,6 +447,11 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
         if spec.get("shuffle", False):
             shuffle_library(ctx.state, pid)
+    if binding:
+        # Set even when nothing was taken -- an empty library is a real outcome,
+        # and a later `{"binding": …}` reading a *missing* key is a different
+        # failure from one reading an empty list.
+        ctx.bindings[str(binding)] = bound
 
 
 def _cast_from_window(ctx: EffectContext, pid: int, picked: list[int]):

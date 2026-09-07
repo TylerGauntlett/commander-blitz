@@ -5111,6 +5111,13 @@
   "necroblossom_snarl": {
     "zone": "battlefield"
   },
+  "necropotence": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "needle_spires": {
     "zone": "battlefield"
   },
@@ -5149,6 +5156,24 @@
   },
   "new_benalia": {
     "zone": "battlefield"
+  },
+  "new_blood": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "nezahal_primal_tide": {
     "zone": "battlefield"

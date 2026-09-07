@@ -258,13 +258,14 @@ def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.bindings[str(spec["as"])] = int(chosen)
 
 
-def _creature_types(ctx: EffectContext) -> set[str]:
-    """Every creature subtype the card pool actually contains."""
-    found: set[str] = set()
-    for card in ctx.state.registry:
-        if "Creature" in card.types:
-            found.update(card.subtypes)
-    return found
+def _creature_types(ctx: EffectContext) -> frozenset[str]:
+    """Every creature subtype the card pool actually contains.
+
+    The survey lives on the registry, which is immutable and can therefore cache
+    it: `text_change` asks the same question when it builds its candidate list,
+    and two walks of 2,600 cards to reach the same answer is one too many.
+    """
+    return ctx.state.registry.creature_types()
 
 
 def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int | None]:
@@ -579,6 +580,12 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``end_of_combat`` captures one more thing, for the same reason and at the
     same moment: *which* combat. See :func:`_scheduled_combat`.
+
+    ``your_turn`` is "at the beginning of **your** next end step" as against "at
+    the beginning of the next end step". Every seat has an end step, so the step
+    name alone cannot tell the two apart, and the gap only opens when the delay
+    is created on somebody else's turn -- which is the ordinary line of play for
+    an instant-speed ability, and the reason the word is printed at all.
     """
     from ..structs import DelayedTrigger
 
@@ -594,6 +601,7 @@ def op_delay(ctx: EffectContext, spec: Mapping[str, Any]):
             description=str(spec.get("text") or ctx.source_name),
             turn=state.turn,
             combat=_scheduled_combat(state) if step == "end_of_combat" else None,
+            your_turn=bool(spec.get("your_turn", False)),
         )
     )
 
