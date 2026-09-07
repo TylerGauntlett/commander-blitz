@@ -2905,21 +2905,42 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Nine static effects describe the *player* rather than a characteristic, so they
-take `affects_player` instead of `affects`:
+Thirteen static effects describe the *player* rather than a characteristic, so
+they take `affects_player` instead of `affects` — the full list is
+`PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
 ```jsonc
 { "kind": "static", "effect": "extra_land_drops",
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
+{ "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 ```
+
+`skip_draw_step` is Necropotence's first line, and the whole of its design is
+how *little* it takes away. Rule 500.1: skipping a step's turn-based action is
+not skipping the step. `turn._draw_step` asks
+`player_statics.player_skips_draw_step` before the draw and fires
+`EventType.DRAW_STEP` either way, so a Saga's lore tick and every "at the
+beginning of your draw step" trigger survive under a Necropotence. It reaches
+only the *turn-based* draw (504.1) — a `draw` op off a spell is untouched,
+because the check lives in the turn walk and not in `primitives.draw_cards`.
+
+It is named for the one sentence rather than parameterised on a step name, which
+is the call every static here makes. The catalogue prints "skip your draw step"
+fifteen times and every other step-skip once or twice, across three different
+steps *and* two different lifetimes — "skip your **next** untap step" is a
+one-shot like `skip_untap`, not a continuous effect, so a shared `step:`
+parameter would not have carried it anyway.
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which
