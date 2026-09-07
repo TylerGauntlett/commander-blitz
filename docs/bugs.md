@@ -2,6 +2,88 @@
 
 ### Fixed
 
+- **Back and forward again within a quarter of a second left a blank page.**
+  The app swaps screens under `AnimatePresence mode="wait"`, which mounts the
+  next screen only once the current one's exit animation has reported
+  complete -- and an opacity exit started while the entrance was still in
+  flight was measured never to (the same loss that stuck the opening hand and
+  the prompt dialog). On a CI runner, a host that went back to the front door
+  and forward to its game again inside 250ms was left with the door fading
+  forever and the table never mounting: no request, no error, nothing on
+  screen. `Screen` now carries no `exit`; it animates to its closed look and
+  reports itself removable on a timer, so a lost fade is a cut and never a
+  blank page. `tests/screen.test.tsx` pins the hand-off.
+
+- **On a slow machine, Enter on a catalogue tile took no deck.** The pad loop
+  reads the keyboard once per animation frame: the frame that fires a press
+  records the key as down, and only the next frame can record its release.
+  Enter on "Change deck" opened the catalogue -- a heavy render -- and Enter
+  on the tile the ring landed on arrived before the loop had drawn a frame
+  since, so the loop read the same key still held, saw no edge, and did
+  nothing. Six presses in six on a CI runner drawing eleven frames a second;
+  never on a developer machine, where the release frame lands in 16ms.
+  `onKeyDown` now treats a key that is neither held nor pending as a new
+  press and resets its old record, so the next frame sees the edge.
+
+- **On a handheld, a block decision that followed a dialog left the ring on a
+  creature that could not block.** A trigger's question during the opponent's
+  attack is a dialog; the blocks arrive the moment it is answered. The
+  decision placement in `useTableRegions` wanted the panel, saw the region's
+  name already set to `acts` -- the dialog's region -- and did nothing; the
+  ring stayed on the fading dialog's button, and when the dialog left the DOM
+  the cursor fell to the nearest stop, a creature in the middle of the board,
+  at a decision the board cannot answer at 1280x800 (an opponent's lanes are
+  clipped to zero height there, so no attacker is a stop). Found by the
+  handheld Playwright project's first real run in CI: the spec written
+  against exactly this passed on a developer machine only because it looked
+  during the few milliseconds the dialog was still fading. The placement now
+  asks whether the cursor stands on a stop the region can land on, and
+  `notLeaving` keeps a closing surface's stops out of `stopsIn` and
+  `landableStopsIn`, so the cursor is re-resolved the moment a fade starts.
+
+- **After keeping an opening hand, the board sometimes could not be clicked.**
+  The opening hand stayed in the DOM, invisible, at the modal z-index with
+  `inset: 0`, over a game that had gone on without it. `AnimatePresence`
+  removes a child only once every `exit` inside it reports complete, and an
+  opacity exit that started while the entrance was still in flight -- which
+  is when a hand is kept -- was measured never to: the seven cards' first
+  (`e2e/orb.spec.ts`, about one keep in two on a four-player pod), and the
+  stage's own once the cards were out of the way. The stage and the prompt
+  dialog now carry no `exit` at all: each `animate`s toward its closed look
+  and calls `safeToRemove` on a timer, through a ref keyed on presence alone,
+  because `safeToRemove` is rebuilt on every state push and a timer restarted
+  on each of them never fired while the AI pump was running. `StaticCard`
+  takes `onSurface` so a card on a fading surface registers no exit of its
+  own. Both surfaces mark themselves `data-closing` for the exit window, which
+  `stopRoot` and the e2e prompt-clearing helper already read.
+
+- **A pod game stalled until somebody reloaded, and the reload replayed the game.**
+  Four faults in one twenty-five-line block of `useGame`. The long poll was a
+  one-shot effect rather than a loop: a poll that times out comes back with
+  the *same* version, `absorb` was skipped, nothing it depended on changed and
+  it never ran again -- so an opponent who thought for longer than the 25 s
+  ceiling left the waiting tab deaf, silently, until it was reloaded. It sent
+  `?since=0` on every poll, so the one poll that did land after a reload got
+  the whole event log back, appended it to the log a second time and narrated
+  the entire game as beats; `event_cursor` had never been read. `GameRoute`
+  passed a fresh session literal every render, so the effect was torn down and
+  re-issued on every re-render with no `AbortController`, each abandoned poll
+  parking a server thread for the full ceiling. And with two people at a table
+  and an AI on the clock, both pumped it: each reply carried only its own
+  call's events -- the POST routes read their `since` cursor *outside* the
+  session lock -- so each screen missed the other's slices, and the
+  wait-for-narration gate on one screen was defeated by the other's pump.
+
+  The listener is now the same self-rescheduling loop as `usePod`, carries both
+  cursors from the last response it absorbed, aborts on unmount, waits for
+  narration to drain rather than re-issuing, and gives up on a 403 or 404
+  instead of retrying forever. `absorb` trims a response against the cursor,
+  so a reply that overlaps something already seen narrates nothing twice. The
+  lowest human seat pumps an AI and everyone else listens; a listener whose
+  poll times out takes over. The four POST routes read their cursor under the
+  lock. `tests/useGame.test.tsx` pins the loop; `TestConcurrentMutations`
+  pins the cursor.
+
 - **A spell could pay its own mandatory additional cost by discarding itself.**
   601.2a moves a spell to the stack before any of its costs are paid, so a card
   can never be fodder for its own "discard a card". Legality priced the cost

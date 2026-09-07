@@ -63,6 +63,35 @@ async function withFakePad(page: Page): Promise<void> {
   });
 }
 
+/**
+ * Let the page draw `count` frames.
+ *
+ * FRAMES, NOT MILLISECONDS. `input/pad.ts` reads the pad once per animation
+ * frame, so what a press needs is a frame that sees it down and a frame that
+ * sees it up again -- not a duration. This helper held each half for a fixed
+ * 90ms, which is five frames on a developer machine and, on a CI runner that
+ * measured eleven frames a second while recording a trace, sometimes none:
+ * "a controller plugged in later" and "a second gamepad in front of the real
+ * one" failed there on the press alone, on different attempts, with the pad
+ * detected every time. Counting frames makes the press mean the same thing at
+ * any frame rate.
+ */
+async function frames(page: Page, count: number): Promise<void> {
+  await page.evaluate(
+    (n) =>
+      new Promise<void>((resolve) => {
+        let left = n;
+        const tick = () => {
+          left -= 1;
+          if (left <= 0) resolve();
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }),
+    count,
+  );
+}
+
 /** Press and release one button by index, giving the loop frames to see both. */
 async function press(page: Page, index: number): Promise<void> {
   await page.evaluate((i) => {
@@ -72,7 +101,7 @@ async function press(page: Page, index: number): Promise<void> {
     pad.buttons[i].pressed = true;
     pad.buttons[i].value = 1;
   }, index);
-  await page.waitForTimeout(90);
+  await frames(page, 3);
   await page.evaluate((i) => {
     const pad = (
       window as unknown as { __PAD: { buttons: { pressed: boolean; value: number }[] } }
@@ -80,7 +109,7 @@ async function press(page: Page, index: number): Promise<void> {
     pad.buttons[i].pressed = false;
     pad.buttons[i].value = 0;
   }, index);
-  await page.waitForTimeout(90);
+  await frames(page, 3);
 }
 
 /** W3C Standard Gamepad indices, the ones this suite uses. */
@@ -217,6 +246,26 @@ test.describe("a gamepad drives the board", () => {
       await page.evaluate(() => document.documentElement.getAttribute("data-group")),
       "could not reach the hand to sweep it",
     ).toBe("hand");
+
+    /*
+     * TO THE LEFT END FIRST, so the sweep has somewhere to go.
+     *
+     * Where the ring enters the hand is not this test's business, and it used
+     * to be luck: the opening hand was still fading when the loop above ran,
+     * so `R1` walked in from the region dial and landed on the first card. The
+     * stage leaves sooner now (`OpeningHand.tsx`), the ring is already in the
+     * hand by the time this runs -- on whichever card was nearest the Keep
+     * button, the sixth of eight -- and a hold from the sixth card visits two
+     * stops and looks exactly like autorepeat being broken. Walking to the end
+     * makes the test about the ramp on every entry.
+     */
+    const stopAt = () =>
+      page.evaluate(() => document.querySelector("[data-cursor]")?.getAttribute("data-stop"));
+    for (let i = 0; i < 8; i += 1) {
+      const was = await stopAt();
+      await press(page, BTN.left);
+      if ((await stopAt()) === was) break;
+    }
 
     await press(page, BTN.right);
 

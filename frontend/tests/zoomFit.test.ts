@@ -423,12 +423,23 @@ describe("solveBoardCardWidth", () => {
       }
       // Nothing on the grid above the answer may fit. At the floor this is
       // vacuous -- the floor is returned precisely when nothing fits.
+      //
+      // One `expect` per trial, not one per grid point. The scan is the same;
+      // what changed is that ~80,000 matcher calls under V8 coverage
+      // instrumentation took this test past vitest's 5 s default on a CI
+      // runner that was also driving two Storybook browsers (5.7 s, and 5.1 s
+      // on the run before -- a coin flip). The message still names the size.
+      let fitsAbove: number | undefined;
       for (let bigger = solved + 0.5; bigger <= 150; bigger += 0.5) {
-        expect(
-          boardHeight(bands, bigger),
-          `trial ${trial}: ${bigger} fits but the solver returned ${solved}`,
-        ).toBeGreaterThan(heightPx);
+        if (boardHeight(bands, bigger) <= heightPx) {
+          fitsAbove = bigger;
+          break;
+        }
       }
+      expect(
+        fitsAbove,
+        `trial ${trial}: ${fitsAbove} fits but the solver returned ${solved}`,
+      ).toBeUndefined();
     }
   });
 });

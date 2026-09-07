@@ -334,3 +334,66 @@ class TestGameLongPoll:
         assert woken.status_code == 200
         assert woken.json()["version"] > current
         assert time.monotonic() - started < 15.0
+
+
+class TestConcurrentMutations:
+    def test_each_reply_carries_only_its_own_events(self, client):
+        """Two mutations at once, and neither reply repeats the other's events.
+
+        The ``since`` cursor a reply is sliced from used to be read *before*
+        taking the session lock, so a second request arriving while the first
+        held it read the pre-mutation length and then answered with the first
+        request's events as well as its own.  Two people at one table pumping
+        the same AI turn saw each move narrated twice on one screen.
+
+        The first ``/advance`` is held inside the lock for 0.3 s; the second is
+        sent 50 ms behind it, so it is queued on that lock either way -- the
+        only question is whether it read its cursor before or after queueing.
+        """
+        body = client.post(
+            "/api/games",
+            json={
+                "seats": [
+                    {"deck_id": "aesi", "kind": "human"},
+                    {"deck_id": "edgar", "kind": "ai"},
+                    {"deck_id": "zurgo", "kind": "ai"},
+                ],
+                "seed": 5,
+            },
+        ).json()
+        game_id = body["game_id"]
+        keep = next(a for a in body["actions"] if a["kind"] == "keep")
+        # One AI step: seat 1 answers its mulligan, seat 2's is still owed, so
+        # there is a decision for ``/advance`` to resolve.
+        kept = client.post(
+            f"/api/games/{game_id}/actions",
+            params={"ai_steps": 1},
+            json={"seat": 0, "action_id": keep["id"]},
+        ).json()
+        start = kept["event_cursor"]
+
+        session = client.app.state.sessions.get(game_id)
+        assert session.game.pending().player in session.agents
+        original = session.drive_ai
+
+        def slow_drive(max_steps=None):
+            with session._lock:
+                time.sleep(0.3)
+                return original(max_steps)
+
+        session.drive_ai = slow_drive
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            first = pool.submit(
+                client.post, f"/api/games/{game_id}/advance", json={"seat": 0}
+            )
+            time.sleep(0.05)
+            second = pool.submit(
+                client.post, f"/api/games/{game_id}/advance", json={"seat": 0}
+            )
+            replies = [first.result().json(), second.result().json()]
+
+        assert all("events" in reply for reply in replies), replies
+        final = max(reply["event_cursor"] for reply in replies)
+        assert final > start
+        assert sum(len(reply["events"]) for reply in replies) == final - start

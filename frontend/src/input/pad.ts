@@ -683,6 +683,26 @@ function onKeyDown(event: KeyboardEvent): void {
   // The OS autorepeat would race our own ramp and win, so the ramp would never
   // be what the player is feeling.
   if (event.repeat) return;
+  /*
+   * A SECOND TAP BEFORE THE LOOP SAW THE FIRST ONE LET GO.
+   *
+   * The frame that fires a press records the key as down; only the NEXT frame
+   * can record its release. "A button still recorded as down keeps the loop
+   * awake", below in `frame`, makes sure that frame comes; it cannot make it
+   * come sooner -- and a frame is a long time on
+   * a slow machine, longer still when the press just opened something heavy.
+   * Enter on "Change deck" opened the catalogue; Enter on the tile the ring
+   * landed on arrived before the loop had drawn a frame since, so the loop
+   * read it as the same key still held -- `down && was` -- and took no deck.
+   * Measured on a CI runner at eleven frames a second, six presses in six
+   * (`e2e/pod.spec.ts`, "puts the ring back on the control that opened it");
+   * never on a developer machine, where the release frame lands in 16ms.
+   *
+   * The key was not held: it is not in `keyDown`, and its earlier latch was
+   * already consumed. So this is a new press, and the record of the old one
+   * is what the next frame must compare against.
+   */
+  if (!keyDown.has(name) && !keyLatch.has(name) && prev.get(name)) prev.set(name, false);
   keyDown.add(name);
   keyLatch.add(name);
   wake();

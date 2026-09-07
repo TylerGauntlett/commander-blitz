@@ -1,7 +1,20 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import { defineConfig, devices } from "@playwright/test";
 
 /** The repo's virtualenv interpreter, by platform. */
-const PYTHON = process.platform === "win32" ? ".venv\\Scripts\\python.exe" : ".venv/bin/python";
+const VENV_PYTHON =
+  process.platform === "win32" ? ".venv\\Scripts\\python.exe" : ".venv/bin/python";
+
+/**
+ * The interpreter that boots uvicorn, in order of preference: `PYTHON` from the
+ * environment (`scripts/verify.py` sets it to its own `sys.executable`), the
+ * repo's virtualenv when it exists, else whatever `python` is on PATH. CI has no
+ * `.venv` -- `setup-python` installs into the runner's interpreter -- so the
+ * hard-coded venv path meant the web server could never start there.
+ */
+const PYTHON =
+  process.env.PYTHON ?? (existsSync(resolve("..", VENV_PYTHON)) ? VENV_PYTHON : "python");
 
 /**
  * End-to-end against the real engine.
@@ -89,7 +102,9 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: `${PYTHON} -m uvicorn automtg.server.app:get_app --factory --port 8000`,
+      // Quoted: a `sys.executable` handed in from `verify.py` is absolute, and
+      // this checkout's path has a space in it.
+      command: `"${PYTHON}" -m uvicorn automtg.server.app:get_app --factory --port 8000`,
       cwd: "..",
       url: "http://127.0.0.1:8000/health",
       reuseExistingServer: true,

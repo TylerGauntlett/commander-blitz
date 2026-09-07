@@ -464,7 +464,8 @@ def get_state(
     """This seat's view of the game, optionally waiting for it to change.
 
     ``since`` and ``since_version`` are different cursors and both are useful at
-    once: the first says which events you have already rendered, the second says
+    once: the first says which events you have already rendered (the
+    ``event_cursor`` of the last response you absorbed), the second says
     which *state* you have already seen.  With ``since_version`` omitted this is
     the immediate read it has always been; with it, the request blocks until
     another player moves, which is how a second human learns it is their turn
@@ -505,12 +506,16 @@ def apply_action(
 ) -> StateResponse:
     session = _session(request, game_id)
     _authorise(request, session, body.seat)
-    since = len(session.game.state.events)
-    try:
-        session.apply_action_id(body.seat, body.action_id, ai_steps=ai_steps)
-    except IllegalActionError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from None
-    return _state_response(session, body.seat, since)
+    # The cursor, the mutation and the reply under one lock: read outside it,
+    # a second client's mutation could land in between and this reply would
+    # carry that client's events as well as its own -- or none of its own.
+    with session._lock:
+        since = len(session.game.state.events)
+        try:
+            session.apply_action_id(body.seat, body.action_id, ai_steps=ai_steps)
+        except IllegalActionError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+        return _state_response(session, body.seat, since)
 
 
 @router.post("/games/{game_id}/declare", response_model=StateResponse)
@@ -522,12 +527,13 @@ def declare(
 ) -> StateResponse:
     session = _session(request, game_id)
     _authorise(request, session, body.seat)
-    since = len(session.game.state.events)
-    try:
-        session.declare(body.seat, body.kind, body.pairs, ai_steps=ai_steps)
-    except IllegalActionError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from None
-    return _state_response(session, body.seat, since)
+    with session._lock:
+        since = len(session.game.state.events)
+        try:
+            session.declare(body.seat, body.kind, body.pairs, ai_steps=ai_steps)
+        except IllegalActionError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from None
+        return _state_response(session, body.seat, since)
 
 
 @router.post("/games/{game_id}/advance", response_model=StateResponse)
@@ -546,9 +552,10 @@ def advance(
     """
     session = _session(request, game_id)
     _authorise(request, session, seat)
-    since = len(session.game.state.events)
-    session.drive_ai(ai_steps)
-    return _state_response(session, seat, since)
+    with session._lock:
+        since = len(session.game.state.events)
+        session.drive_ai(ai_steps)
+        return _state_response(session, seat, since)
 
 
 @router.post("/games/{game_id}/options", response_model=StateResponse)
@@ -565,11 +572,12 @@ def set_options(request: Request, game_id: str, body: OptionsRequest) -> StateRe
         # An AI seat has no stops to configure -- it is offered every window
         # already, and pretending otherwise would silently do nothing.
         raise HTTPException(status_code=400, detail=f"seat {body.seat} is not human")
-    since = len(session.game.state.events)
-    session.set_full_control(body.seat, body.full_control)
-    if body.manual_mana is not None:
-        session.set_manual_mana(body.seat, body.manual_mana)
-    return _state_response(session, body.seat, since)
+    with session._lock:
+        since = len(session.game.state.events)
+        session.set_full_control(body.seat, body.full_control)
+        if body.manual_mana is not None:
+            session.set_manual_mana(body.seat, body.manual_mana)
+        return _state_response(session, body.seat, since)
 
 
 @router.post("/games/{game_id}/undo", response_model=StateResponse)

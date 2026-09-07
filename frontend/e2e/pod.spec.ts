@@ -16,7 +16,14 @@
  */
 
 import { type BrowserContext, type Page, expect, test } from "@playwright/test";
-import { budget, openCatalog, setInstant } from "./helpers";
+import {
+  actionsOfKind,
+  budget,
+  enabledActionButtons,
+  openCatalog,
+  setInstant,
+  takeAction,
+} from "./helpers";
 
 /** One player's browser. */
 async function open(context: BrowserContext): Promise<Page> {
@@ -255,22 +262,45 @@ test.describe("a pod with two people in it", () => {
     await hostPage.goForward();
     await hostPage.getByTestId("table").waitFor({ timeout: 60_000 });
 
-    // Each holds a hand, and neither can read the other's.
-    for (const page of [hostPage, guestPage]) {
-      await expect(page.locator(".hand .card").first()).toBeVisible({ timeout: 30_000 });
-    }
+    /*
+     * Each holds a hand, and neither can read the other's.
+     *
+     * POLLED, AND READ IN THE SAME BREATH. A screen transition in this app is a
+     * `mode="wait"` fade: the outgoing screen fades to nothing and only then
+     * does the incoming one mount, so for a few hundred milliseconds there is
+     * genuinely no hand in the document. Coming back to a game crosses two of
+     * those -- the forward navigation, and then `table` → `dealing` → `table`
+     * as the route re-mounts and the seat it resolves changes the query key
+     * underneath it. Measured on this machine: the hand is absent from 53ms to
+     * 785ms after the back press.
+     *
+     * So `waitFor(table)` can return just before one of those swaps, and the
+     * old shape here -- assert a card is visible, then read the names in a
+     * second call -- read an empty hand on a CI runner and failed a property
+     * that was never in question. The poll keeps the names it saw.
+     */
+    const namesIn = (page: Page) =>
+      page.locator(".hand [data-card-name]").evaluateAll((nodes) =>
+        nodes
+          .map((node) => node.getAttribute("data-card-name"))
+          .filter((name): name is string => Boolean(name))
+          .sort(),
+      );
+    const handOf = async (page: Page): Promise<string[]> => {
+      let names: string[] = [];
+      await expect
+        .poll(
+          async () => {
+            names = await namesIn(page);
+            return names.length;
+          },
+          { timeout: budget(30_000) },
+        )
+        .toBeGreaterThan(0);
+      return names;
+    };
 
-    const hands = await Promise.all(
-      [hostPage, guestPage].map(async (page) => {
-        const names = await page
-          .locator(".hand [data-card-name]")
-          .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-card-name")));
-        return names.filter(Boolean).sort();
-      }),
-    );
-
-    expect(hands[0].length).toBeGreaterThan(0);
-    expect(hands[1].length).toBeGreaterThan(0);
+    const hands = [await handOf(hostPage), await handOf(guestPage)];
     // Two different decks, so an overlap would mean somebody is reading a hand
     // that is not theirs.
     expect(hands[0]).not.toEqual(hands[1]);
@@ -677,5 +707,114 @@ test.describe("a pod with two people in it", () => {
     await expect(page.getByTestId("home-error")).toBeVisible();
     await expect(page.getByTestId("join-hold")).toBeVisible();
     await expect(page.getByTestId("home")).toBeVisible();
+  });
+});
+
+/**
+ * The turn actually changes hands.
+ *
+ * The test above proves both browsers *arrive*. This one proves they can play:
+ * a decision taken in one browser shows up as the other browser's decision
+ * without anybody reloading, in both directions and across a real end of turn.
+ * Which seat goes first is the engine's choice, so the spec asks rather than
+ * assumes.
+ *
+ * And the reload case, which is where the old listener showed itself. It sent
+ * `?since=0` on every poll, so the first poll to land after a reload replayed
+ * the whole game and doubled the log. The check is exact: the log a tab has
+ * accumulated live must be the same length as the log a fresh load of the same
+ * tab shows, because both are the same event list rendered once.
+ */
+test.describe("a turn changes hands", () => {
+  test("play passes between two browsers without a reload, and a reload replays nothing", async ({
+    browser,
+  }) => {
+    test.setTimeout(budget(300_000));
+    const hostContext = await browser.newContext();
+    const guestContext = await browser.newContext();
+    const hostPage = await open(hostContext);
+    const guestPage = await open(guestContext);
+
+    const code = await host(hostPage);
+    await join(guestPage, code);
+    await pick(hostPage, "aesi");
+    await pick(guestPage, "edgar");
+    await guestPage.getByTestId("lock-in").click();
+    await hostPage.getByTestId("lock-in").click();
+    await expect(hostPage.getByTestId("start-game")).toBeEnabled({ timeout: 20_000 });
+    await hostPage.getByTestId("start-game").click();
+    await hostPage.getByTestId("table").waitFor({ timeout: 60_000 });
+    await guestPage.getByTestId("table").waitFor({ timeout: 60_000 });
+
+    // The log is an overlay: Tab opens it, Escape closes it. Count and close,
+    // so the panel is never sitting over a button the next step wants.
+    const lines = async (page: Page) => {
+      await page.keyboard.press("Tab");
+      await page.getByTestId("log-overlay").waitFor({ timeout: 10_000 });
+      const count = await page.getByTestId("event-log").locator(".ticker__line").count();
+      await page.keyboard.press("Escape");
+      await expect(page.getByTestId("log-overlay")).toBeHidden();
+      return count;
+    };
+    const up = async (page: Page) => (await enabledActionButtons(page).count()) > 0;
+
+    // Seat 0 holds the first mulligan, and the guest is told so.
+    const hostKeep = actionsOfKind(hostPage, "keep").first();
+    await hostKeep.waitFor({ timeout: 30_000 });
+    await expect(guestPage.getByTestId("waiting-on")).toBeVisible({ timeout: 30_000 });
+
+    // Host -> guest: the host keeps and the guest's own question appears.
+    await hostKeep.click();
+    const guestKeep = actionsOfKind(guestPage, "keep").first();
+    await guestKeep.waitFor({ timeout: 30_000 });
+    await guestKeep.click();
+
+    // Whoever the engine chose to go first is on the clock; the other waits.
+    await expect
+      .poll(async () => (await up(hostPage)) || (await up(guestPage)), { timeout: 60_000 })
+      .toBe(true);
+    const [active, waiting] = (await up(hostPage))
+      ? [hostPage, guestPage]
+      : [guestPage, hostPage];
+    await expect(waiting.getByTestId("waiting-on")).toBeVisible();
+
+    // A reload while somebody else is on the clock comes back with the same
+    // log, not the log twice.
+    await expect.poll(() => lines(waiting), { timeout: 30_000 }).toBeGreaterThan(0);
+    const before = await lines(waiting);
+    await waiting.reload();
+    await waiting.getByTestId("table").waitFor({ timeout: 60_000 });
+    await expect.poll(() => lines(waiting), { timeout: 30_000 }).toBe(before);
+
+    // The active seat plays turn 1 out until the other has something to do.
+    // That crosses the end of the turn, which is the hand-over this spec is for.
+    let handedOver = false;
+    for (let i = 0; i < 80 && !handedOver; i += 1) {
+      handedOver = await up(waiting);
+      if (handedOver) break;
+      if (await up(active)) {
+        await takeAction(active, ["play_land", "pass"]);
+      } else {
+        await active.waitForTimeout(250);
+      }
+    }
+    expect(handedOver, "the turn was never handed over").toBe(true);
+
+    // Everything the active seat did reached the reloaded tab through its
+    // listener, exactly once: the live log is the length a fresh load says.
+    const live = await lines(waiting);
+    expect(live).toBeGreaterThan(before);
+    await waiting.reload();
+    await waiting.getByTestId("table").waitFor({ timeout: 60_000 });
+    await expect.poll(() => lines(waiting), { timeout: 30_000 }).toBe(live);
+    await expect.poll(() => up(waiting), { timeout: 30_000 }).toBe(true);
+
+    // And back the other way once more: the first seat hears the second's move.
+    const heard = await lines(active);
+    await takeAction(waiting, ["play_land", "pass"]);
+    await expect.poll(() => lines(active), { timeout: 30_000 }).toBeGreaterThan(heard);
+
+    await hostContext.close();
+    await guestContext.close();
   });
 });

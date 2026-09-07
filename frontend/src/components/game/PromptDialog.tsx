@@ -23,7 +23,8 @@
  * `ChoiceCombo`, which this hands those decisions to.
  */
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, usePresence } from "motion/react";
+import { useEffect, useRef } from "react";
 import type { CardView, GameView, LegalAction } from "../../api/types";
 import { actionAttrs } from "../../input/stops";
 import { mulliganPhase } from "../../logic/openingHand";
@@ -172,89 +173,146 @@ export function PromptDialog({ state, actions, onAct, disabled }: Props) {
   // hand. Resolving faces for a dialog nobody can see is work per push for
   // nothing.
   const rows = open ? rowsFor(state, actions) : [];
-  const { options, extras } = partition(rows);
 
   return (
     <AnimatePresence>
       {open && pending && (
-        <motion.div
-          className="prompt-backdrop"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={ease}
-        >
-          <motion.div
-            className="prompt"
-            role="dialog"
-            aria-modal="true"
-            data-modal-root
-            aria-label={pending.prompt || pending.kind}
-            data-testid="prompt-dialog"
-            data-decision-kind={pending.kind}
-            initial={{ opacity: 0, y: 24, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 12, scale: 0.98 }}
-            transition={bouncy}
-          >
-            <header className="prompt__head">
-              <h2 className="prompt__title">{pending.prompt || pending.kind}</h2>
-              {pending.max_count > 1 && (
-                <p className="prompt__hint">
-                  Choose{" "}
-                  {pending.min_count === pending.max_count
-                    ? pending.max_count
-                    : `${pending.min_count}–${pending.max_count}`}
-                  {pending.selected.length > 0 && ` · ${pending.selected.length} chosen`}
-                </p>
-              )}
-            </header>
-
-            {isWall(options) ? (
-              /*
-               * Keyed by the decision, so a new question arrives with an empty
-               * field and the first row highlighted. Without it the query typed
-               * at the last prompt would still be narrowing this one.
-               */
-              <ChoiceCombo
-                key={`${pending.kind}:${pending.prompt}`}
-                choices={options.map(choiceOf)}
-                extras={extras.map(choiceOf)}
-                onAct={onAct}
-                disabled={disabled}
-              />
-            ) : (
-              <div className="prompt__options">
-                {rows.map(({ action, card, playerName }) => (
-                  <motion.button
-                    type="button"
-                    key={action.id}
-                    className={card ? "opt opt--card" : "opt"}
-                    {...actionAttrs(action.id)}
-                    data-action-kind={action.kind}
-                    disabled={disabled}
-                    onClick={() => onAct(action.id)}
-                    whileHover={disabled ? undefined : { y: -4, scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    transition={bouncy}
-                  >
-                    {card ? (
-                      <>
-                        <StaticCard card={card} variant="detail" />
-                        <span className="opt__caption">{action.label}</span>
-                      </>
-                    ) : (
-                      <span className="opt__label">
-                        {playerName ? `${action.label} (${playerName})` : action.label}
-                      </span>
-                    )}
-                  </motion.button>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        </motion.div>
+        <PromptSurface pending={pending} rows={rows} onAct={onAct} disabled={disabled} />
       )}
     </AnimatePresence>
+  );
+}
+
+interface SurfaceProps {
+  pending: NonNullable<GameView["pending"]>;
+  rows: Row[];
+  onAct: (actionId: string) => void;
+  disabled: boolean;
+}
+
+/**
+ * How long a leaving dialog stays in the DOM: enough for `bouncy` to settle
+ * the slide, not a frame more. See `PromptSurface` for why this is a number.
+ */
+const EXIT_MS = 320;
+
+/**
+ * The dialog itself: a child of `AnimatePresence`, so it can tell when it is
+ * leaving.
+ *
+ * `usePresence` only answers from inside the presence boundary, which is why
+ * this is not inlined in `PromptDialog`. `present` is false for exactly the
+ * exit animation, and that window matters: the dialog is still in the DOM,
+ * still `[data-modal-root]`, and still carries its option buttons while it
+ * fades. `stopRoot` (`input/stops.ts`) reads
+ * `[data-modal-root]:not([data-closing])` so the ring is not trapped in a
+ * surface that is going away -- `OpeningHand` has set the attribute since it
+ * was written, and this dialog satisfied the guard only by never having been
+ * measured mid-exit. The e2e helpers that clear a board of prompts read the
+ * same selector, and one that did not clicked an option in an exiting dialog,
+ * waited for it to come back, and timed out six minutes later against a board
+ * with no dialog on it at all.
+ *
+ * AND IT LEAVES ON A CLOCK, NOT ON AN ANIMATION -- the same shape as the
+ * opening hand's `Stage`, for the reason given there: `AnimatePresence` waits
+ * for every `exit` inside the child to report complete, and an opacity exit
+ * started while the entrance was still in flight was measured never to. This
+ * dialog is answered fast in every e2e spec, so it carries no `exit` at all:
+ * the backdrop and the box `animate` toward their closed look, which needs
+ * nobody's completion, and `safeToRemove` runs on a timer. A lost fade means
+ * a cut, never a dialog left over the board.
+ */
+function PromptSurface({ pending, rows, onAct, disabled }: SurfaceProps) {
+  const [present, safeToRemove] = usePresence();
+  // Through a ref, and keyed on `present` ALONE: `safeToRemove` is rebuilt on
+  // every render of the presence boundary, and a timer restarted on each state
+  // push never fired while the game was moving. `OpeningHand` says the same.
+  const removeRef = useRef(safeToRemove);
+  removeRef.current = safeToRemove;
+  useEffect(() => {
+    if (present) return;
+    const timer = setTimeout(() => removeRef.current?.(), EXIT_MS);
+    return () => clearTimeout(timer);
+  }, [present]);
+  const { options, extras } = partition(rows);
+
+  return (
+    <motion.div
+      className="prompt-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: present ? 1 : 0 }}
+      transition={ease}
+    >
+      <motion.div
+        className="prompt"
+        role="dialog"
+        aria-modal="true"
+        data-modal-root
+        data-closing={present ? undefined : true}
+        aria-label={pending.prompt || pending.kind}
+        data-testid="prompt-dialog"
+        data-decision-kind={pending.kind}
+        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+        animate={present ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 12, scale: 0.98 }}
+        transition={bouncy}
+      >
+        <header className="prompt__head">
+          <h2 className="prompt__title">{pending.prompt || pending.kind}</h2>
+          {pending.max_count > 1 && (
+            <p className="prompt__hint">
+              Choose{" "}
+              {pending.min_count === pending.max_count
+                ? pending.max_count
+                : `${pending.min_count}–${pending.max_count}`}
+              {pending.selected.length > 0 && ` · ${pending.selected.length} chosen`}
+            </p>
+          )}
+        </header>
+
+        {isWall(options) ? (
+          /*
+           * Keyed by the decision, so a new question arrives with an empty
+           * field and the first row highlighted. Without it the query typed
+           * at the last prompt would still be narrowing this one.
+           */
+          <ChoiceCombo
+            key={`${pending.kind}:${pending.prompt}`}
+            choices={options.map(choiceOf)}
+            extras={extras.map(choiceOf)}
+            onAct={onAct}
+            disabled={disabled}
+          />
+        ) : (
+          <div className="prompt__options">
+            {rows.map(({ action, card, playerName }) => (
+              <motion.button
+                type="button"
+                key={action.id}
+                className={card ? "opt opt--card" : "opt"}
+                {...actionAttrs(action.id)}
+                data-action-kind={action.kind}
+                disabled={disabled}
+                onClick={() => onAct(action.id)}
+                whileHover={disabled ? undefined : { y: -4, scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                transition={bouncy}
+              >
+                {card ? (
+                  <>
+                    {/* `onSurface`: the backdrop fades as one thing; see `StaticCard`. */}
+                    <StaticCard card={card} variant="detail" onSurface />
+                    <span className="opt__caption">{action.label}</span>
+                  </>
+                ) : (
+                  <span className="opt__label">
+                    {playerName ? `${action.label} (${playerName})` : action.label}
+                  </span>
+                )}
+              </motion.button>
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
