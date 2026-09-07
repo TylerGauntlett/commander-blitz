@@ -262,22 +262,45 @@ test.describe("a pod with two people in it", () => {
     await hostPage.goForward();
     await hostPage.getByTestId("table").waitFor({ timeout: 60_000 });
 
-    // Each holds a hand, and neither can read the other's.
-    for (const page of [hostPage, guestPage]) {
-      await expect(page.locator(".hand .card").first()).toBeVisible({ timeout: 30_000 });
-    }
+    /*
+     * Each holds a hand, and neither can read the other's.
+     *
+     * POLLED, AND READ IN THE SAME BREATH. A screen transition in this app is a
+     * `mode="wait"` fade: the outgoing screen fades to nothing and only then
+     * does the incoming one mount, so for a few hundred milliseconds there is
+     * genuinely no hand in the document. Coming back to a game crosses two of
+     * those -- the forward navigation, and then `table` → `dealing` → `table`
+     * as the route re-mounts and the seat it resolves changes the query key
+     * underneath it. Measured on this machine: the hand is absent from 53ms to
+     * 785ms after the back press.
+     *
+     * So `waitFor(table)` can return just before one of those swaps, and the
+     * old shape here -- assert a card is visible, then read the names in a
+     * second call -- read an empty hand on a CI runner and failed a property
+     * that was never in question. The poll keeps the names it saw.
+     */
+    const namesIn = (page: Page) =>
+      page.locator(".hand [data-card-name]").evaluateAll((nodes) =>
+        nodes
+          .map((node) => node.getAttribute("data-card-name"))
+          .filter((name): name is string => Boolean(name))
+          .sort(),
+      );
+    const handOf = async (page: Page): Promise<string[]> => {
+      let names: string[] = [];
+      await expect
+        .poll(
+          async () => {
+            names = await namesIn(page);
+            return names.length;
+          },
+          { timeout: budget(30_000) },
+        )
+        .toBeGreaterThan(0);
+      return names;
+    };
 
-    const hands = await Promise.all(
-      [hostPage, guestPage].map(async (page) => {
-        const names = await page
-          .locator(".hand [data-card-name]")
-          .evaluateAll((nodes) => nodes.map((node) => node.getAttribute("data-card-name")));
-        return names.filter(Boolean).sort();
-      }),
-    );
-
-    expect(hands[0].length).toBeGreaterThan(0);
-    expect(hands[1].length).toBeGreaterThan(0);
+    const hands = [await handOf(hostPage), await handOf(guestPage)];
     // Two different decks, so an overlap would mean somebody is reading a hand
     // that is not theirs.
     expect(hands[0]).not.toEqual(hands[1]);
