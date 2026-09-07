@@ -17,8 +17,9 @@ from typing import TYPE_CHECKING
 
 from automtg.engine.actions import Action
 from automtg.engine.carddef import CardDef
-from automtg.engine.characteristics import chars
+from automtg.engine.characteristics import abilities_of, chars
 from automtg.engine.combat import can_block
+from automtg.engine.costs import life_cost
 from automtg.engine.enums import ActionKind, DecisionKind, Keyword, Step
 from automtg.engine.rng import Rng
 
@@ -30,6 +31,10 @@ if TYPE_CHECKING:  # pragma: no cover
 DESPERATE_LIFE = 10
 #: Cheapest opposing spell worth spending a counterspell on.
 COUNTER_THRESHOLD = 3
+#: Effect ops that only make the source bigger or harder to kill this turn.
+#: An ability whose whole effect is one of these is a combat trick, and worth
+#: nothing at all outside combat.
+COMBAT_TRICK_OPS = frozenset({"pump", "grant_keyword"})
 
 
 class HeuristicAgent:
@@ -197,7 +202,7 @@ class HeuristicAgent:
             return 1000.0  # a missed land drop is the most expensive mistake there is
 
         if action.kind is ActionKind.ACTIVATE:
-            return 5.0
+            return self._activate_value(state, seat, action)
 
         if action.kind is not ActionKind.CAST:
             return 0.0
@@ -229,6 +234,75 @@ class HeuristicAgent:
         if role == "creature":
             return 300.0 + card.mana_value * 8 + (card.power or 0) * 3
         return 100.0 + card.mana_value
+
+    def _activate_value(self, state: GameState, seat: int, action: Action) -> float:
+        """How good is activating this ability?  Non-positive means "don't".
+
+        Every activation used to score a flat 5.0, which beat passing at every
+        priority window -- so the agent activated the same ability again the
+        instant it resolved, and kept going until the cost became unpayable.
+        Adanto Vanguard's "Pay 4 life" took it from 40 to 3 for one turn of
+        indestructible; Bloodthrone Vampire ate its own board a creature at a
+        time.  Three rules fix that, in order of how much damage they undo.
+
+        The first is the important one: **once per ability per turn**.  The
+        turn ledger already counts activations for forecast and loyalty, and
+        `Game._activate` bumps it before the cost is paid, so the ability
+        scores zero even while it is still on the stack.  It does cap a
+        genuinely repeatable pump (firebreathing) at one activation a turn --
+        a real cost, and much cheaper than the alternative, because this agent
+        has no notion of how much power it needs.
+        """
+        oid, index = action.source, action.ability_index
+        if oid is None or index is None:
+            return 5.0
+        abilities = abilities_of(state, oid)
+        if not 0 <= index < len(abilities):
+            # Turning a face-down creature up is an ACTIVATE borrowing index 0
+            # of a permanent with no abilities at all; see
+            # `legality._turn_face_up_actions`.
+            return 5.0
+        ability = abilities[index]
+        if ability.is_mana_ability:
+            # By-hand mana (a Signet, a Vivid land) never reaches the ledger,
+            # and tapping already stops it repeating.  The mana it floats is
+            # what the next pass spends.
+            return 5.0
+        if state.turn_ledger.activations(oid, index):
+            return 0.0
+
+        # Life is a resource this agent otherwise never prices, and an ability
+        # that *can* be paid for is not the same as one worth paying for.  The
+        # chump-blocking threshold does duty here too.
+        cost = ability.cost
+        if (
+            cost is not None
+            and cost.pay_life
+            and state.players[seat].life - life_cost(state, seat, cost, oid) <= DESPERATE_LIFE
+        ):
+            return 0.0
+
+        ops = {effect.get("op") for effect in ability.effects}
+        if ops and ops <= COMBAT_TRICK_OPS:
+            if cost is not None and cost.sacrifice is not None:
+                # A creature on the board is worth more than +2/+2 for a turn.
+                return 0.0
+            if state.step is not Step.DECLARE_BLOCKERS or not _in_combat(state, oid):
+                # The same rule the "pump" spell bucket follows below: a trick
+                # spent before blocks are known usually buys nothing.
+                return 0.0
+            granted = {
+                str(keyword).lower()
+                for effect in ability.effects
+                if effect.get("op") == "grant_keyword"
+                for keyword in (
+                    effect.get("keywords") or ([effect["keyword"]] if "keyword" in effect else [])
+                )
+            }
+            if granted and granted <= chars(state, oid).keywords:
+                return 0.0  # it already has what this would grant
+            return 20.0  # the pump-spell weight, so it outranks a plain activation
+        return 5.0
 
     def _counter_value(self, state: GameState, seat: int, action: Action) -> float:
         for ref in action.targets:
@@ -365,6 +439,12 @@ def _walk(card: CardDef):
                 yield from walk(mode.get("effects") or [])
 
     yield from walk(card.spell_effects)
+
+
+def _in_combat(state: GameState, oid: int) -> bool:
+    """Is this creature attacking or blocking right now?"""
+    combat = state.combat
+    return combat is not None and (oid in combat.attackers or oid in combat.blockers)
 
 
 def _creatures(state: GameState, pid: int):
