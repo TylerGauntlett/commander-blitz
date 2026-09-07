@@ -84,6 +84,7 @@ export function player(overrides: Partial<PlayerView> = {}): PlayerView {
     hand_revealed: [],
     graveyard: [],
     exile: [],
+    exile_hidden_count: 0,
     command: [],
     ...overrides,
   };

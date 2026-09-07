@@ -307,6 +307,23 @@ class GameObject:
     #: object, and having seen a card in somebody's hand does not entitle you to
     #: keep seeing it after it has been played and bounced back.
     revealed_to: set[int] = field(default_factory=set)
+    #: Exiled **face down** (Necropotence): in exile, and shown to nobody but
+    #: the seats in `revealed_to`.
+    #:
+    #: A separate flag rather than "empty `revealed_to` means hidden", because
+    #: an empty set is the default for every card in every zone and exile is
+    #: otherwise a **public** zone -- `player_view` sends it in full to the whole
+    #: table. Without a flag saying which of the two an empty set means, a
+    #: face-down exile is indistinguishable from an ordinary one and the words
+    #: are inert.
+    #:
+    #: Distinct from `face_down`, which is the 707 morph/manifest state of a
+    #: permanent on the battlefield: a card in exile has no characteristics to
+    #: hide behind, so what this buys is privacy and not identity.
+    #:
+    #: Cleared by `reset_permanent_state` with `revealed_to`, for its reason: the
+    #: card that comes back to hand is a new object and carries none of this.
+    hidden_in_exile: bool = False
 
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
@@ -671,6 +688,7 @@ class GameObject:
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
+        self.hidden_in_exile = False
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.

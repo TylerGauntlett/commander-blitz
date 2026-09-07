@@ -160,6 +160,42 @@ required — defaulted it would look at one card and say nothing about it.
 `cast_free` sends what was picked to the **stack** instead of to a destination
 zone — see [Casting for free out of the window](#casting-for-free-out-of-the-window).
 
+`as` and `face_down` are Necropotence's third line, which needs both:
+
+```jsonc
+{ "op": "look_at_top", "amount": { "const": 1 },
+  "objects": { "count": 1 },
+  "destination": "exile", "face_down": true, "as": "impulsed" }
+```
+
+**`as`** records the cards this op actually took, so a *later* effect can name
+them. "Exile the top card of your library face down. Put **that card** into your
+hand at the beginning of your next end step" — `delay` copies `ctx.bindings`
+when it schedules, so `{"binding": "impulsed"}` in the scheduled effects moves
+exactly the card this activation exiled. `exiled_with: "self"` cannot stand in:
+`_move_found` deliberately writes no `exiled_by` (writing one would strand
+Florian's declined cards in exile — see
+[Casting for free out of the window](#casting-for-free-out-of-the-window)), so
+the selector matches nothing and the delayed return silently hands back no card
+at all. Even with the link written it would be *source-wide* where the printed
+"that card" is per-activation. The binding accumulates across seats, like
+`discard`'s and `mill`'s, so a `player: "each_player"` look binds every seat's
+cards rather than the last one's.
+
+**`face_down`** is privacy, and it is refused at load time on any destination
+but `exile` — a card is only face down there, and elsewhere the key would print
+its words and do nothing. It is *not* `GameObject.face_down`, the 707
+morph/manifest state a permanent has on the battlefield: a card in exile has no
+characteristics to hide behind. What it sets is `hidden_in_exile`, and that flag
+has to exist because **exile is a public zone** — `player_view` sends it in full
+to the whole table, and `revealed_to` is empty for every card in every zone by
+default, so "nobody has been shown it" cannot by itself mark a face-down exile.
+A hidden card is dropped from the `exile` list of every seat not in
+`revealed_to` and counted in `exile_hidden_count` instead, so the pile stays
+public even though its faces are not. `hideaway` is the deliberate contrast: it
+writes `revealed_to.add(pid)`, because 702.75a says its controller may look and
+Necropotence says no such thing.
+
 `put_on_top` sends a permanent to a library, and `from_top` says **how deep**:
 
 ```jsonc

@@ -628,6 +628,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: look_at_top 'cast_free' takes no {sorted(clashing)} -- "
                     f"the picked card goes to the stack, not to a zone"
                 )
+        # "Exile the top card of your library **face down**." Only exile can be
+        # face down: `_move_found` writes the privacy on the way into that zone
+        # and reads it nowhere else, so `face_down` beside any other destination
+        # loads clean, prints the words and does nothing at all -- which is the
+        # failure this whole pass exists to stop. `cast_free` is refused with it
+        # for the same reason the three keys above are: it replaces the branch
+        # that would honour it.
+        if effect.get("face_down") and (destination != "exile" or effect.get("cast_free")):
+            raise DslError(
+                f"{where}: look_at_top 'face_down' needs destination 'exile' "
+                f"(a card is only face down in exile); got {destination!r}"
+            )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
         # version of the card -- an empty selector matches the very first card
