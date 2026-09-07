@@ -1,0 +1,263 @@
+{
+  "_comment": "Cards that exist only for the text-change test (tests/unit/test_text_change.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_new_blood` is New Blood's second line. `t_goblin_lord` is the card the second half of the mechanic is for -- a lord whose anthem names its own tribe, so a text change has to rewrite the words inside its ability and not only its type line. `t_vampire_lord` is the witness on the other side: an anthem belonging to somebody else, which sees the converted creature only if the substitution reaches `_matches_printed`. `t_goblin_herald` carries the same word in a triggered ability and an activated ability, which resolve through `stack.ability_of` rather than through the statics path. `t_granter` exists only to make `_ability_statics` non-empty, which pushes `abilities_of` off its fast path and through `_derived_abilities` -- the second reader of the printed list, and the one a mutation test showed was otherwise uncovered.",
+  "cards": [
+    {
+      "id": "t_new_blood",
+      "name": "Test New Blood",
+      "oracle_text": "Gain control of target creature. Change the text of that creature by replacing all instances of one creature type with Vampire.",
+      "mana_cost": "{2}{B}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_control",
+          "objects": {
+            "target": "t1"
+          }
+        },
+        {
+          "op": "change_text",
+          "objects": {
+            "target": "t1"
+          },
+          "to": "Vampire"
+        }
+      ]
+    },
+    {
+      "id": "t_goblin_lord",
+      "name": "Test Goblin Lord",
+      "oracle_text": "Other Goblins you control get +1/+1.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Goblins you control get +1/+1.",
+          "effect": "buff",
+          "power": 1,
+          "toughness": 1,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Goblin"
+            ],
+            "exclude_self": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_vampire_lord",
+      "name": "Test Vampire Lord",
+      "oracle_text": "Other Vampires you control get +2/+2.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other Vampires you control get +2/+2.",
+          "effect": "buff",
+          "power": 2,
+          "toughness": 2,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vampire"
+            ],
+            "exclude_self": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_plain_goblin",
+      "name": "Test Plain Goblin",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    },
+    {
+      "id": "t_goblin_herald",
+      "name": "Test Goblin Herald",
+      "oracle_text": "Whenever another Goblin you control enters, you gain 1 life.\n{T}: Target Goblin you control gains haste until end of turn.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another Goblin you control enters, you gain 1 life.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Goblin"
+              ],
+              "exclude_self": true
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Target Goblin you control gains haste until end of turn.",
+          "cost": {
+            "tap": true
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "subtypes": [
+                  "Goblin"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_granter",
+      "name": "Test Granter",
+      "oracle_text": "Vampires you control have \"Whenever this creature attacks, you gain 1 life.\"",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you gain 1 life.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Vampires you control have \"Whenever this creature attacks, you gain 1 life.\"",
+          "effect": "grant_ability",
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vampire"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

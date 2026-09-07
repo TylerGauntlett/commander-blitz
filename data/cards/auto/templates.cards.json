@@ -56814,6 +56814,59 @@
       ]
     },
     {
+      "additional_cost": {
+        "tap_permanents": {
+          "controller": "you",
+          "count": 1,
+          "subtypes": [
+            "Vampire"
+          ]
+        }
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "new_blood",
+      "mana_cost": "{2}{B}{B}",
+      "name": "New Blood",
+      "oracle_text": "As an additional cost to cast this spell, tap an untapped Vampire you control.\nGain control of target creature. Change the text of that creature by replacing all instances of one creature type with Vampire.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "gain_control"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "change_text",
+          "to": "Vampire"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects_player": "you",

@@ -576,6 +576,32 @@ class GameObject:
     #: comes back is a new object, and arrives with its printed type line.
     added_subtypes: tuple[str, ...] = ()
 
+    #: Text-changing effects on this object (613.1c, layer 3): ``(old, new)``
+    #: creature-type pairs, in timestamp order. "Change the text of that
+    #: creature by replacing all instances of one creature type with Vampire"
+    #: -- New Blood.
+    #:
+    #: **Not** `added_subtypes`, which is the layer *above* and the opposite
+    #: reading: that one is "it becomes a Vampire **in addition to** its other
+    #: types" and leaves the printed word in place, so a Goblin under it answers
+    #: to Goblin lords and Goblin removal still. This replaces the word, and
+    #: replaces it everywhere -- the subtype line *and* every instance inside
+    #: the object's own rules text, which is what turns a stolen Goblin lord
+    #: into a Vampire lord. See `engine/text_change.py`.
+    #:
+    #: A tuple applied in order rather than a mapping, because 612.4 applies
+    #: text changes in timestamp order and the second one reads the first one's
+    #: output: Goblin→Vampire then Vampire→Zombie is a Zombie.
+    #:
+    #: A pipeline *input* like `added_subtypes` above -- nothing in the
+    #: characteristics pipeline can write it -- so reading it in `_compute`,
+    #: `_matches` and `abilities_of` alike creates no dependency between layers.
+    #:
+    #: Reset with the rest of the battlefield state, for `added_subtypes`'
+    #: reason: a permanent that leaves and comes back is a new object and
+    #: arrives with its printed text.
+    text_changes: tuple[tuple[str, str], ...] = ()
+
     #: Which face of a transforming double-faced card this permanent is showing.
     #:
     #: The whole of the mechanic, because `GameState.card_of` is a single choke
@@ -672,6 +698,7 @@ class GameObject:
         self.chosen_type = None
         self.chosen_color = None
         self.added_subtypes = ()
+        self.text_changes = ()
         self.transformed = False
         # A permanent that left the battlefield is no longer a pile: the cards
         # under it were sent along by `move_object` before this ran.
@@ -751,6 +778,7 @@ class GameObject:
             "damage": self.damage,
             "counters": dict(self.counters),
             "added_subtypes": list(self.added_subtypes),
+            "text_changes": [list(pair) for pair in self.text_changes],
             "transformed": self.transformed,
             "attached_to": self.attached_to,
             "attached_to_player": self.attached_to_player,

@@ -17,8 +17,9 @@ from ..primitives import (
     pump,
 )
 from ..structs import TempEffect
+from ..text_change import printed_type_instances
 from . import register
-from .context import EffectContext
+from .context import EffectContext, ask_mode
 from .selectors import (
     choose_objects,
     select_players,
@@ -46,6 +47,65 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")
     for oid in oids:
         add_subtypes(ctx.state, oid, subtypes)
+
+
+@register("change_text")
+def op_change_text(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Change the text of that creature by replacing all instances of one
+    creature type with Vampire." New Blood. Layer 3 (613.1c).
+
+    The **opposite** of `add_subtype`, and the pair is worth holding in mind
+    because the two printed lines look alike. "It becomes a Vampire in addition
+    to its other types" (Captivating Vampire) leaves the printed word in place,
+    so the creature still answers to its old tribe's lords and its old tribe's
+    removal, and its own rules text is untouched. This one *replaces* the word,
+    and replaces it everywhere -- the subtype line and every instance inside the
+    permanent's own abilities. That second half is why anyone casts New Blood:
+    a stolen "other Goblins you control get +1/+0" becomes a Vampire lord.
+
+    The choice is `ask_mode`, so **no new `DecisionKind`** -- the same argument
+    `choose_type` makes. "Pick one of these labels, hand back the index" is
+    exactly this question, so legality's `_choice_actions`, `game.apply` and the
+    authoring verifier's auto-answer table all work unchanged.
+
+    The candidates are the types with an *instance* in the target's printed text
+    rather than every creature type in the pool. Naming a word the card never
+    says replaces nothing, so the options removed are the options that do
+    nothing -- and what it buys is a prompt of two or three real choices instead
+    of the 400-entry cap `choose_type` needs, on a card whose whole decision is
+    which of this creature's words to rewrite.
+
+    Written onto the target, not held as a `TempEffect`: the printed effect
+    lasts indefinitely, and a permanent that leaves and comes back is a new
+    object with its printed text, which is what `reset_permanent_state` already
+    does with `added_subtypes`.
+    """
+    replacement = str(spec.get("to") or "")
+    if not replacement:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Change the text of")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        candidates = sorted(printed_type_instances(ctx.state, ctx.state.card_of(obj)))
+        # The replacement itself is not a candidate: "replacing all instances of
+        # Vampire with Vampire" is a choice with no consequence, and offering it
+        # on a creature that is *already* a Vampire would make the prompt look
+        # like the card had done something.
+        candidates = [t for t in candidates if t != replacement]
+        if not candidates:
+            continue
+        picked = yield from ask_mode(
+            ctx,
+            f"Replace which creature type with {replacement}?",
+            candidates,
+            ctx.controller,
+        )
+        if not picked:
+            continue
+        obj.text_changes = (*obj.text_changes, (candidates[picked[0]], replacement))
+        ctx.state.bump_chars()
 
 
 @register("pump")

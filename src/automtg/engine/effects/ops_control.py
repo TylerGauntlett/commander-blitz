@@ -258,13 +258,14 @@ def op_choose_player(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.bindings[str(spec["as"])] = int(chosen)
 
 
-def _creature_types(ctx: EffectContext) -> set[str]:
-    """Every creature subtype the card pool actually contains."""
-    found: set[str] = set()
-    for card in ctx.state.registry:
-        if "Creature" in card.types:
-            found.update(card.subtypes)
-    return found
+def _creature_types(ctx: EffectContext) -> frozenset[str]:
+    """Every creature subtype the card pool actually contains.
+
+    The survey lives on the registry, which is immutable and can therefore cache
+    it: `text_change` asks the same question when it builds its candidate list,
+    and two walks of 2,600 cards to reach the same answer is one too many.
+    """
+    return ctx.state.registry.creature_types()
 
 
 def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int | None]:

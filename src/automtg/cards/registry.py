@@ -60,7 +60,7 @@ def generated_dir() -> Path:
 class CardRegistry:
     """Immutable lookup from card id to :class:`CardDef`."""
 
-    __slots__ = ("_by_name", "_cards")
+    __slots__ = ("_by_name", "_cards", "_creature_types")
 
     def __init__(self, cards: dict[str, CardDef]) -> None:
         self._cards = dict(cards)
@@ -71,6 +71,7 @@ class CardRegistry:
         self._by_name: dict[str, CardDef] = {}
         for card in self._cards.values():
             self._by_name.setdefault(card.name, card)
+        self._creature_types: frozenset[str] | None = None
 
     def get(self, def_id: str) -> CardDef:
         try:
@@ -92,6 +93,23 @@ class CardRegistry:
 
     def by_name(self, name: str) -> CardDef | None:
         return self._by_name.get(name)
+
+    def creature_types(self) -> frozenset[str]:
+        """Every creature subtype the pool actually contains.
+
+        A survey rather than the Comprehensive Rules list, for the reason
+        `ops_control.MAX_TYPE_CHOICES` gives: a type no card in the game has is
+        a choice with no consequence. Cached on first use because both askers --
+        `choose_type`'s prompt and `text_change`'s candidate list -- walk the
+        whole registry to build it, and the registry is immutable.
+        """
+        if self._creature_types is None:
+            found: set[str] = set()
+            for card in self._cards.values():
+                if "Creature" in card.types:
+                    found.update(card.subtypes)
+            self._creature_types = frozenset(found)
+        return self._creature_types
 
     @classmethod
     def from_paths(cls, paths: Iterable[Path]) -> CardRegistry:
