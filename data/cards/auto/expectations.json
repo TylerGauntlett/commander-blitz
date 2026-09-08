@@ -350,6 +350,13 @@
     },
     "zone": "battlefield"
   },
+  "archmage_of_runes": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archweaver": {
     "zone": "battlefield"
   },
@@ -3494,6 +3501,17 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "harmonic_prodigy": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "harrier_naga": {
     "zone": "battlefield"
@@ -8744,6 +8762,11 @@
   "vexing_gull": {
     "zone": "battlefield"
   },
+  "veyran_voice_of_duality": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "viashino_runner": {
     "zone": "battlefield"
   },
@@ -8815,6 +8838,15 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "vivi_ornitier": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "vivid_creek": {

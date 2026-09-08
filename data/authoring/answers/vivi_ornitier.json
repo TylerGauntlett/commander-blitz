@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "vivi_ornitier",
+    "name": "Vivi Ornitier",
+    "oracle_text": "{0}: Add X mana in any combination of {U} and/or {R}, where X is Vivi Ornitier's power. Activate only during your turn and only once each turn.\nWhenever you cast a noncreature spell, put a +1/+1 counter on Vivi Ornitier and it deals 1 damage to each opponent.",
+    "mana_cost": "{1}{U}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Wizard"],
+    "power": 0,
+    "toughness": 3,
+    "colors": ["R", "U"],
+    "color_identity": ["R", "U"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{0}: Add X mana in any combination of {U} and/or {R}, where X is Vivi Ornitier's power. Activate only during your turn and only once each turn.",
+        "is_mana_ability": true,
+        "once_each_turn": true,
+        "condition": {"is_your_turn": true},
+        "cost": {"mana": "{0}"},
+        "effects": [
+          {
+            "op": "add_mana",
+            "split": ["U", "R"],
+            "amount": {"power_of": {"self": true}}
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a noncreature spell, put a +1/+1 counter on Vivi Ornitier and it deals 1 damage to each opponent.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"not_types": ["Creature"]}
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"self_only": true}
+          },
+          {
+            "op": "damage",
+            "amount": {"const": 1},
+            "player": "each_opponent"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "life": {"0": 40, "1": 40}
+  }
+}

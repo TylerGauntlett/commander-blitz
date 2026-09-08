@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "veyran_voice_of_duality",
+    "name": "Veyran, Voice of Duality",
+    "oracle_text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, Veyran gets +1/+1 until end of turn.\nIf you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+    "mana_cost": "{1}{U}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Efreet", "Wizard"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["R", "U"],
+    "color_identity": ["R", "U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, Veyran gets +1/+1 until end of turn.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"any_types": ["Instant", "Sorcery"]}
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {"self_only": true},
+            "power": 1,
+            "toughness": 1,
+            "duration": "until_end_of_turn"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, Veyran gets +1/+1 until end of turn.",
+        "trigger": {
+          "event": "spell_copied",
+          "controller": "you",
+          "filter": {"any_types": ["Instant", "Sorcery"]}
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {"self_only": true},
+            "power": 1,
+            "toughness": 1,
+            "duration": "until_end_of_turn"
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "If you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+        "effect": "double_triggers",
+        "affects": {"controller": "you"},
+        "cause_events": ["spell_cast", "spell_copied"],
+        "cause_controller": "you",
+        "cause_filter": {"any_types": ["Instant", "Sorcery"]}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6
+  }
+}

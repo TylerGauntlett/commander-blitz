@@ -12112,12 +12112,12 @@
     },
     "Archmage of Runes": {
       "edhrec_rank": 985,
-      "gate": "template",
+      "gate": null,
       "name": "Archmage of Runes",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "15f15cc5-c3dc-4830-aa55-13080c738739",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archmage's Charm": {
@@ -121842,12 +121842,12 @@
     },
     "Harmonic Prodigy": {
       "edhrec_rank": 672,
-      "gate": "template",
+      "gate": null,
       "name": "Harmonic Prodigy",
-      "reason": "no template for: If a triggered ability of a Shaman or another Wizard you control triggers, that ability tr",
+      "reason": "",
       "scryfall_id": "63a565e3-d7a8-469d-898f-49fef634c107",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Harmonic Sliver": {
@@ -301442,12 +301442,12 @@
     },
     "Veyran, Voice of Duality": {
       "edhrec_rank": 784,
-      "gate": "template",
+      "gate": null,
       "name": "Veyran, Voice of Duality",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, Veyran gets +1/+1 until",
+      "reason": "",
       "scryfall_id": "1cb06c70-7ff2-4c88-9931-1bfe8a3226d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vhal, Candlekeep Researcher": {
@@ -303672,12 +303672,12 @@
     },
     "Vivi Ornitier": {
       "edhrec_rank": 1194,
-      "gate": "template",
+      "gate": null,
       "name": "Vivi Ornitier",
-      "reason": "no template for: {0}: Add X mana in any combination of {U} and/or {R}, where X is 's power. Activate only d",
+      "reason": "",
       "scryfall_id": "25ef2d44-c261-4511-b96f-85e7a291e318",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Vivi's Persistence": {

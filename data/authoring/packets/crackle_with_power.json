@@ -48,6 +48,9 @@
       "amount",
       "arrived_this_turn_from",
       "blockers",
+      "cause_controller",
+      "cause_events",
+      "cause_filter",
       "chapter",
       "colors",
       "condition",
@@ -630,6 +633,7 @@
         "objects"
       ],
       "pump": [
+        "duration",
         "objects",
         "power",
         "toughness"
@@ -981,6 +985,7 @@
       "cast_from_library_top",
       "double_land_mana",
       "double_land_triggers",
+      "double_triggers",
       "extra_land_drops",
       "freeze_opponent_lands",
       "grant_ability",
