@@ -791,7 +791,21 @@ def _place_after_resolution(
     # legality widening, and the one thing that separates it is that the card
     # comes back for another go, so `graveyard_cast_exiles` is the whole
     # difference between the two keywords.
-    if obj.cast_from_graveyard and destination is Zone.GRAVEYARD and card.graveyard_cast_exiles:
+    # Two paths into a graveyard cast and both exile, but they are different
+    # facts and neither implies the other. A `cast_from_graveyard` permission
+    # (or the card's own flashback) sets `cast_from_graveyard`, and
+    # `graveyard_cast_exiles` is what escape turns off. A `grant_playable`
+    # permission sets neither, so without its own clause Will of the Jeskai's
+    # "gains flashback" would be a permission the card could use again and again
+    # for the rest of the turn.
+    #
+    # The second is gated on the turn as well as the flag, because the
+    # permission itself is: a card granted flashback last turn and cast this one
+    # was never given anything, and must not be exiled for it.
+    if destination is Zone.GRAVEYARD and (
+        (obj.cast_from_graveyard and card.graveyard_cast_exiles)
+        or (obj.playable_exiles and obj.playable_turn == state.turn)
+    ):
         destination = Zone.EXILE
     # Buyback: "put it into your hand instead of your graveyard as it
     # resolves". The same shape as the flashback rider pointing the other way,

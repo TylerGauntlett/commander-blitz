@@ -372,6 +372,18 @@ class GameObject:
     #: *current* zone, which for any resolving sorcery is the stack, identically
     #: whether it was cast from hand or from the graveyard.
     cast_from_graveyard: bool = False
+    #: A `grant_playable` permission on this card is **flashback**: cast it and
+    #: it is exiled rather than returning to the zone it came from.
+    #:
+    #: "Each instant and sorcery card in your graveyard gains flashback until
+    #: end of turn" -- Will of the Jeskai. Needed here where Lier's static needs
+    #: nothing, and the difference is which path the cast took: a
+    #: `cast_from_graveyard` permission sets `cast_from_graveyard` and the
+    #: existing `graveyard_cast_exiles` default already exiles it, while a
+    #: `grant_playable` cast sets neither and would leave the card in the
+    #: graveyard -- repeatable for the rest of the turn, and strictly better
+    #: than the printed card.
+    playable_exiles: bool = False
     #: Whether this object was cast for its **overload** cost. Same contract as
     #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
     #: permanent's own enters trigger may read it.

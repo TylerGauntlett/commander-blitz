@@ -1250,6 +1250,9 @@
   "champions_of_minas_tirith": {
     "zone": "battlefield"
   },
+  "chandra_s_ignition": {
+    "zone": "graveyard"
+  },
   "changeling_sentinel": {
     "zone": "battlefield"
   },
@@ -8201,6 +8204,11 @@
   },
   "the_one_ring": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_ozolith": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "the_terror_of_serpent_s_pass": {

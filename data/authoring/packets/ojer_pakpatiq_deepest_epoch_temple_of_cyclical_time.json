@@ -545,6 +545,7 @@
       ],
       "grant_playable": [
         "any_type",
+        "as_flashback",
         "limit",
         "objects"
       ],
@@ -630,6 +631,7 @@
         "amount",
         "counter",
         "from",
+        "from_had_counters",
         "objects"
       ],
       "must_attack": [

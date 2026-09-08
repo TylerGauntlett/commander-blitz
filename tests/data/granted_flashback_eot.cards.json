@@ -1,0 +1,33 @@
+{
+  "_comment": "Will of the Jeskai's second mode: 'Each instant and sorcery card in your graveyard gains flashback until end of turn.' t_will_no_exile is the same grant WITHOUT the rider -- a permission the card can use again and again for the rest of the turn.",
+  "cards": [
+    {
+      "id": "t_will_flashback",
+      "name": "Test Will Flashback",
+      "oracle_text": "Each instant and sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost.",
+      "mana_cost": "{3}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {"op": "grant_playable", "as_flashback": true,
+         "objects": {"zone": "graveyard", "controller": "you",
+                     "any_types": ["Instant", "Sorcery"]}}
+      ]
+    },
+    {
+      "id": "t_will_no_exile",
+      "name": "Test Will Without Exile",
+      "oracle_text": "Until end of turn, you may cast instant and sorcery cards from your graveyard.",
+      "mana_cost": "{3}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {"op": "grant_playable",
+         "objects": {"zone": "graveyard", "controller": "you",
+                     "any_types": ["Instant", "Sorcery"]}}
+      ]
+    }
+  ]
+}
