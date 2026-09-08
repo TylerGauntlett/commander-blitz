@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-113 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+114 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -258,7 +258,7 @@ it, but a card that needed correcting was authored wrong.
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` `copy_spell` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
+| Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
@@ -767,6 +767,54 @@ Where the card goes is its **owner's** hand — a spell whose controller is not
 its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
+
+### Plot
+
+```jsonc
+{ "op": "grant_plot" }        // the spell the trigger bound
+```
+
+"Whenever you cast a multicolored instant or sorcery spell from your hand, exile
+that spell instead of putting it into your graveyard as it resolves. If you do,
+it becomes plotted." (Lilah, Undefeated Slickshot; 702.171a.)
+
+`grant_plot` is `grant_rebound`'s slot exactly — a flag on the spell's object,
+written while it is still on the stack, read by `_place_after_resolution`, and
+turned into what it leaves behind *after* the move, because
+`reset_permanent_state` runs on the way into exile and clears every `playable_*`
+field. The two differ only in what they leave: rebound owes one free cast at the
+next upkeep, plot leaves a standing permission.
+
+That permission is three riders on `playable_by`:
+
+- **`later_turns`**, the fourth `playable_duration` and the only one with a
+  *start* rather than an end. Nothing expires a plotted card; the turn it was
+  plotted on is the one turn it may not be cast.
+- **`playable_free`** — "without paying its mana cost", which is 601.2b and not a
+  reduction to zero: on an X spell a discount still leaves X payable.
+- **`playable_sorcery_only`** — a restriction on the permission, not the card. A
+  plotted instant is still an instant, so `_timing_ok` alone would offer it in
+  response to something.
+
+"If you do" needs no expression: the exile and the plotting are one rider, so
+there is no state where the first happened and the second did not.
+
+The from-hand gate does double duty exactly as rebound's does — it is the printed
+words, and it is the loop guard, since the plotted card is cast from **exile** and
+would otherwise re-plot itself for ever.
+
+### "Multicolored" — `min_colors`
+
+```jsonc
+{ "any_types": ["Instant", "Sorcery"], "min_colors": 2 }
+```
+
+Two or more colors (202.2b). `colors` cannot say it — that is a membership test,
+so `["U", "R"]` matches a mono-red spell, and `require_all` would mean exactly
+those colours and no others. Written as a number rather than a `multicolored`
+boolean because the number is what the rule says and reads the same on the rarer
+"three or more colors". Honoured by all three matchers: the selector language, the
+trigger filter, and `_matches_printed`.
 
 ### Granting rebound to a spell that does not print it
 

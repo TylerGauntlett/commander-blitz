@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**31 cards** blocked by **36** capabilities.
+**30 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,11 +37,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [multi-pip-x-cost](#multi-pip-x-cost) | 1 | 1212 | cost |
-| [multicolored-from-hand-spell-filter](#multicolored-from-hand-spell-filter) | 1 | 10372 | selector |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [plot](#plot) | 1 | 10372 | op, replacement |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -400,20 +398,6 @@ Blocks **1** card.
 
 </details>
 
-## multicolored-from-hand-spell-filter
-
-Blocks **1** card.
-
-- **(selector)** A `spell_cast` trigger filter that can require (a) the spell be multicolored -- two or more colors, any two -- and (b) that it was cast from the caster's hand.
-  <br>Why the existing vocabulary won't do: `selector_keys` has `colors`/`not_colors` (membership in a named list) but no "two or more colors" / multicolored predicate, and `require_all` on a trigger means the spell must have every colour listed, which is five-colour, not multicolored. For the zone, `zone` in `selector_keys` reads an object's current zone, and a spell being cast is on the stack; `condition_keys` offers only `cast_from_graveyard`, whose complement is not "from hand" (a spell cast from exile, from the library top or from a command zone would wrongly qualify).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lilah, Undefeated Slickshot** (rank 10372) — `lilah_undefeated_slickshot`
-  - Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted. (You may cast it as a sorcery on a later turn without paying its mana cost.)
-
-</details>
-
 ## multikicker
 
 Blocks **1** card.
@@ -458,22 +442,6 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
-
-</details>
-
-## plot
-
-Blocks **1** card.
-
-- **(op)** An op (or an `exile` option) that marks an exiled card as plotted: its owner may cast it from exile on any LATER turn, only at sorcery speed, without paying its mana cost, and the permission must persist indefinitely rather than expiring at end of turn.
-  <br>Why the existing vocabulary won't do: `exile` carries only `playable_this_turn`, which is the opposite duration -- it grants the cast permission for the current turn and plot explicitly forbids casting it the turn it was plotted. `grant_playable` (any_type/limit/objects) makes cards playable but has no key for `free` (no mana cost), no sorcery-speed restriction and no "not this turn" restriction, and its counterpart `play_exiled` (as/objects) is a resolution-time "you may play it now", not a standing permission left on an exiled card. `look_at_top`'s `cast_free` is free casting, but only for cards it just looked at, immediately. `become_prepared` is the separate Prepared mechanic, not plot.
-- **(replacement)** A replacement effect for where a RESOLVING instant or sorcery goes on its way to the graveyard -- "exile that spell instead of putting it into your graveyard as it resolves" -- applied to a spell the trigger identified, and reporting whether it applied so the dependent "If you do" clause can run.
-  <br>Why the existing vocabulary won't do: The only zone-change replacements in `ops` are `replace_deaths` and `replace_leaves_battlefield`, both of which redirect a PERMANENT leaving the battlefield; neither can see a spell on the stack finishing resolution. `counter` with a destination would be wrong (the spell must resolve first), and a plain `exile` from a trigger cannot fire between a spell's resolution and its move to the graveyard, so the spell would be in the graveyard already.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lilah, Undefeated Slickshot** (rank 10372) — `lilah_undefeated_slickshot`
-  - Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted. (You may cast it as a sorcery on a later turn without paying its mana cost.)
 
 </details>
 

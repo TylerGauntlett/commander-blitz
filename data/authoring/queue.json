@@ -157432,12 +157432,12 @@
     },
     "Lilah, Undefeated Slickshot": {
       "edhrec_rank": 10372,
-      "gate": "template",
+      "gate": null,
       "name": "Lilah, Undefeated Slickshot",
-      "reason": "no template for: Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell",
+      "reason": "",
       "scryfall_id": "95efd401-579e-448b-9655-31311c0ae41e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana Vess": {

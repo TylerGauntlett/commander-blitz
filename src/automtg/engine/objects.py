@@ -167,6 +167,16 @@ class GameObject:
     #: the only window there is -- the rider is consulted during resolution and
     #: the stack list is popped by the time an effect could reach it afterwards.
     granted_rebound: bool = False
+    #: "Exile that spell instead of putting it into your graveyard as it
+    #: resolves. If you do, it becomes plotted." (Lilah, Undefeated Slickshot.)
+    #:
+    #: The same slot and the same window as `granted_rebound`: written on the
+    #: spell's object while it is still on the stack, read by
+    #: `_place_after_resolution`, and turned into the plotted permission after
+    #: the move -- because `reset_permanent_state` runs on the way to exile and
+    #: would wipe a permission set before it, which is what `rebound_by` and
+    #: `exiled_by` both discovered first.
+    granted_plot: bool = False
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -525,6 +535,15 @@ class GameObject:
     #:   first of your turns to *start* after the grant, so a card exiled on your
     #:   own turn lives through the whole of the next one.
     playable_duration: str = "this_turn"
+    #: "…without paying its mana cost." Plot and foretell are the two shapes
+    #: that pay something other than the printed price out of exile, and
+    #: foretell has a printed cost of its own -- this is the half that has none.
+    playable_free: bool = False
+    #: "…**as a sorcery**." A restriction on the permission rather than on the
+    #: card, which is what makes it different from `_timing_ok`: a plotted
+    #: *instant* may only be cast at sorcery speed, and its own type line still
+    #: says instant.
+    playable_sorcery_only: bool = False
     #: Which permanent's permission made this card playable, when that
     #: permission caps how many of its cards may be cast -- Locke, Treasure
     #: Hunter: "you may cast **a spell** from among those cards", singular, out
@@ -732,6 +751,11 @@ class GameObject:
             return False
         if self.playable_duration == "this_turn":
             return self.playable_turn == turn
+        if self.playable_duration == "later_turns":
+            # Plot's "on a later turn", and the only duration with a *start*
+            # rather than an end. Nothing expires it, so there is no hook: the
+            # card leaves exile by being cast.
+            return turn > self.playable_turn
         return True
 
     def reset_permanent_state(self) -> None:
@@ -792,9 +816,12 @@ class GameObject:
         # life. Read before the move that runs this, so clearing it here costs
         # the grant nothing and stops it outliving the spell it was given to.
         self.granted_rebound = False
+        self.granted_plot = False
         self.playable_by = None
         self.playable_turn = -1
         self.playable_duration = "this_turn"
+        self.playable_free = False
+        self.playable_sorcery_only = False
         self.playable_group = None
         self.playable_any_type = False
         self.exiled_from = None
@@ -889,7 +916,16 @@ class GameObject:
 #: impulse-draw default and was the only one the engine had; the other two
 #: outlive the turn they were granted in and are ended by hooks in
 #: `turn.begin_step` rather than by arithmetic on a turn number.
-PLAYABLE_DURATIONS = ("this_turn", "your_next_end_step", "end_of_your_next_turn")
+PLAYABLE_DURATIONS = (
+    "this_turn",
+    "your_next_end_step",
+    "end_of_your_next_turn",
+    #: Plot (702.171a): "you may cast it as a sorcery on a **later turn**
+    #: without paying its mana cost." No end at all -- a plotted card waits in
+    #: exile until it is cast -- and a start that is not now: the turn it was
+    #: plotted on is the one turn it may *not* be cast.
+    "later_turns",
+)
 
 
 def playable_duration_of(spec: Mapping[str, Any]) -> str | None:

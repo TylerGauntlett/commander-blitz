@@ -563,6 +563,11 @@
         "duration",
         "objects"
       ],
+      "grant_graveyard_cast": [
+        "affects_spells",
+        "any_graveyard",
+        "grants_flashback"
+      ],
       "grant_keyword": [
         "duration",
         "keyword",
@@ -576,6 +581,10 @@
         "objects",
         "playable",
         "playable_this_turn"
+      ],
+      "grant_plot": [
+        "sid",
+        "target"
       ],
       "grant_protection": [
         "duration",
@@ -929,6 +938,7 @@
       "grant_graveyard_cast",
       "grant_keyword",
       "grant_playable",
+      "grant_plot",
       "grant_protection",
       "grant_rebound",
       "haunt",
@@ -1029,6 +1039,7 @@
       "is_token",
       "keywords",
       "mana_value",
+      "min_colors",
       "name",
       "not_colors",
       "not_keywords",

@@ -1,0 +1,57 @@
+{
+  "card": {
+    "id": "lilah_undefeated_slickshot",
+    "name": "Lilah, Undefeated Slickshot",
+    "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted. (You may cast it as a sorcery on a later turn without paying its mana cost.)",
+    "mana_cost": "{1}{U}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Rogue"],
+    "power": 3,
+    "toughness": 3,
+    "colors": ["R", "U"],
+    "color_identity": ["R", "U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Prowess",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "not_types": ["Creature"]
+          }
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {"self_only": true, "zone": "battlefield"},
+            "power": {"const": 1},
+            "toughness": {"const": 1}
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "any_types": ["Instant", "Sorcery"],
+            "min_colors": 2
+          }
+        },
+        "effects": [
+          {
+            "op": "grant_plot"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

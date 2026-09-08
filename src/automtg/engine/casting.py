@@ -128,9 +128,16 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         ):
             continue
         card = state.card(oid)
+        # "…as a sorcery." A restriction the *permission* carries, not the card:
+        # a plotted instant is still an instant, and `_timing_ok` would happily
+        # offer it with something on the stack.
+        if obj.playable_sorcery_only and not sorcery_speed:
+            continue
         if card.is_land or not _timing_ok(card, sorcery_speed):
             continue
-        out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+        out.extend(
+            _cast_options(state, pid, oid, card, extra_generic=0, free=obj.playable_free)
+        )
 
     # Foretold cards are cast from **exile**, at the foretell price, and only on
     # a turn after the one they were foretold on -- `foretold_cards` is what
@@ -353,7 +360,7 @@ def _timing_ok(card: CardDef, sorcery_speed: bool) -> bool:
 
 
 def _cast_options(
-    state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int
+    state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int, free: bool = False
 ) -> list[Action]:
     """Every distinct way to cast this card right now.
 
@@ -372,7 +379,9 @@ def _cast_options(
     if not tuples:
         return []
 
-    out = _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False)
+    out = _cast_variant(
+        state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=free
+    )
     if card.kicker is not None:
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True
@@ -752,6 +761,10 @@ def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) ->
 #: the card. The card names only the price of turning it back up.
 MORPH_COST = ManaCost.parse("{3}")
 
+#: "Without paying its mana cost." Plot's price, and not the same thing as a
+#: cost reduced to zero -- on an X spell a discount still leaves X to pay.
+FREE_COST = ManaCost.parse("")
+
 #: How many creatures a convoke line may tap, or cards a delve line may exile.
 #: Capped for the reason `_emerge_fodder` is capped: every one is a separate
 #: cast action multiplied by every legal target tuple.
@@ -836,6 +849,7 @@ def _cast_variant(
     overloaded: bool = False,
     additional_times: int = 0,
     additional_choice: int | None = None,
+    free: bool = False,
     from_library_top: bool = False,
     foretold: bool = False,
     face_down: bool = False,
@@ -870,7 +884,18 @@ def _cast_variant(
     # rider written there would discount the printed hand cast too.
     variant_less = 0
 
-    if flashback and card.flashback is not None:
+    if free:
+        # "…without paying its mana cost." Plot (702.171a). First in the chain
+        # because it replaces the price outright rather than adjusting it, and
+        # because a plotted card has no other variant to be confused with -- it
+        # is offered from exile under its own permission and nowhere else.
+        #
+        # `FREE_COST`, not `card.mana_cost` with a discount: 601.2b's "without
+        # paying its mana cost" is not a reduction to zero, and the difference
+        # shows on an X spell, where a discount leaves X payable and this does
+        # not.
+        cost = FREE_COST
+    elif flashback and card.flashback is not None:
         cost = card.flashback.mana
         variant_less = variant_reduction(state, pid, card.flashback, oid)
     elif emerge_oid is not None and card.emerge is not None:
