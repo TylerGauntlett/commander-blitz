@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "electrostatic_infantry",
+    "name": "Electrostatic Infantry",
+    "oracle_text": "Trample\nWhenever you cast an instant or sorcery spell, put a +1/+1 counter on this creature.",
+    "mana_cost": "{1}{R}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Dwarf",
+      "Wizard"
+    ],
+    "power": 1,
+    "toughness": 2,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "keywords": [
+      "trample"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast an instant or sorcery spell, put a +1/+1 counter on this creature.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "self_only": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {
+      "kind": "+1/+1",
+      "amount": 0
+    }
+  }
+}
