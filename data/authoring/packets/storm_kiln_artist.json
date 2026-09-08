@@ -1081,6 +1081,7 @@
       "sacrificed",
       "self_enters",
       "spell_cast",
+      "spell_copied",
       "token_created",
       "upkeep",
       "you_attack",

@@ -1069,6 +1069,7 @@
       "sacrificed",
       "self_enters",
       "spell_cast",
+      "spell_copied",
       "token_created",
       "upkeep",
       "you_attack",
@@ -1145,7 +1146,7 @@
       "Sorcery"
     ]
   },
-  "template_said": "no template for: Destroy target artifact you don't control",
+  "template_said": "vandalblast: an overload card's targets must all be 'optional' -- an overloaded spell is cast with no targets at all",
   "todo": [
     "Destroy target artifact you don't control",
     "Overload {4}{R}"

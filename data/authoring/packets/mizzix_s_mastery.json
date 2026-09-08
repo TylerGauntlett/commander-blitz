@@ -391,7 +391,8 @@
         "amount",
         "controller",
         "new_targets",
-        "sid"
+        "sid",
+        "target"
       ],
       "counter": [
         "objects",
@@ -1069,6 +1070,7 @@
       "sacrificed",
       "self_enters",
       "spell_cast",
+      "spell_copied",
       "token_created",
       "upkeep",
       "you_attack",
