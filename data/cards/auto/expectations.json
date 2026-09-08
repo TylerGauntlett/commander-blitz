@@ -5760,6 +5760,13 @@
   "pine_barrens": {
     "zone": "battlefield"
   },
+  "pinnacle_monk_mystic_peak": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "pip_boy_3000": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6447,6 +6454,13 @@
     "zone": "battlefield"
   },
   "river_of_tears": {
+    "zone": "battlefield"
+  },
+  "riverglide_pathway_lavaglide_pathway": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "riverwheel_aerialists": {

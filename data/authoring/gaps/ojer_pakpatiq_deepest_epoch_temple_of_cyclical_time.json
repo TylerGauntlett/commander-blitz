@@ -1,0 +1,30 @@
+{
+  "card_id": "ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time",
+  "name": "Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time",
+  "oracle_text": "Flying\nWhenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)\nWhen Ojer Pakpatiq dies, return it to the battlefield tapped and transformed under its owner's control with three time counters on it.",
+  "blocked_sentences": [
+    "Whenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)",
+    "{T}: Add {U}. Remove a time counter from this land."
+  ],
+  "needs": [
+    {
+      "capability": "rebound",
+      "kind": "keyword",
+      "what": "rebound as a real mechanic, and an effect that grants it to a spell already on the stack: a replacement that exiles the spell on resolution instead of putting it into its owner's graveyard, plus a delayed trigger at the beginning of that player's next upkeep offering to cast it from exile without paying its mana cost, with the exiled card leaving exile only when cast or when the offer is declined. The grant must apply to a spell object on the stack chosen by a spell_cast trigger filtered to instants cast from hand, not to a permanent.",
+      "why_existing_wont_do": "rebound is absent from the 34-entry keywords list and from card_level_cost_keys, so neither grant_keyword (keyword/keywords must name a loader-known keyword) nor a printed cost node can carry it, and even a hypothetical keyword would have no behaviour behind it. grant_keyword and grant_ability both take `objects`, a selector for permanents on the battlefield; nothing in ops attaches anything to a spell on the stack -- the only ops that reach a stack object are counter, copy_spell and return_spell_to_hand, each addressing it by `sid`/`target` to remove or duplicate it, never to modify how it resolves. Hand-rolling the effect is no better: `exile` cannot replace where a resolving spell goes (it moves objects from a zone, and there is no replacement hook for a spell finishing resolution), and delayed_trigger plus play_exiled could at best re-cast a card that some other effect had already exiled, which is a different card's text."
+    },
+    {
+      "capability": "mana-ability-with-rider",
+      "kind": "engine",
+      "what": "a mana ability whose effects list may contain a non-mana effect alongside add_mana -- here `{T}: Add {U}. Remove a time counter from this land.` -- so that the extra effect happens on activation, without the stack, exactly as the printed mana ability does",
+      "why_existing_wont_do": "The loader restricts a mana ability to add_mana alone, or one choose_mode whose modes each hold only add_mana, and add_mana's own options (amount, in_commander_identity, mana, player, reflecting) carry no rider, so remove_counters cannot ride along inside it. The two reachable shapes are both wrong. Dropping is_mana_ability and writing effects [add_mana, remove_counters] makes it an ordinary activated ability that uses the stack: it could be responded to and could not be activated while casting a spell or paying a cost, which is the whole point of a mana ability. Moving the removal into the ability's `cost` via the remove_counters cost key changes the card's function outright -- Temple of Cyclical Time is meant to tap for {U} forever, shedding a time counter only while it still has one, and a remove_counters cost would make the land produce no mana at all once it has zero counters, exactly when the other ability becomes activatable."
+    }
+  ],
+  "closest_existing": ["grant_keyword", "grant_ability", "delayed_trigger", "play_exiled", "add_mana", "remove_counters", "is_mana_ability"],
+  "confidence": "high",
+  "resolved_by_reference": [
+    "sorcery_speed_only is an ability field, so \"Activate only ... as a sorcery\" on the back face is NOT missing (previously misfiled as sorcery-speed-activation).",
+    "\"Activate only if it has no time counters on it\" is an ability condition: a cmp of counters_on against {\"const\": 0}, no new capability needed.",
+    "The back face is a back_face entry on the same card, not a gap; the dies trigger is return_from_graveyard (tapped, counters) followed by transform."
+  ]
+}

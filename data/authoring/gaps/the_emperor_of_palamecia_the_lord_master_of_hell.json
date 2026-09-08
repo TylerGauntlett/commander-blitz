@@ -1,0 +1,24 @@
+{
+  "card_id": "the_emperor_of_palamecia_the_lord_master_of_hell",
+  "name": "The Emperor of Palamecia // The Lord Master of Hell",
+  "oracle_text": "{T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell.\nWhenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on The Emperor of Palamecia. Then if it has three or more +1/+1 counters on it, transform it.",
+  "blocked_sentences": [
+    "Whenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on The Emperor of Palamecia. Then if it has three or more +1/+1 counters on it, transform it."
+  ],
+  "needs": [
+    {
+      "capability": "mana-spent-on-spell",
+      "kind": "value",
+      "what": "A value leaf usable inside a spell_cast trigger's intervening-if `cmp` that reports the total amount of mana actually paid to cast the triggering spell -- the real sum handed over (including X, additional mana costs, cost increases, and reduced by cost reductions and alternative/free casts), not the spell's printed or stack mana value. Wanted as something like {\"mana_spent_on\": {\"spell\": \"trigger\"}} so \"if at least four mana was spent to cast it\" is a cmp of that against {\"const\": 4}.",
+      "why_existing_wont_do": "value_keys has no leaf for mana paid. `mana_value_of` is the closest and is explicitly the wrong number: it reads the spell's mana value, so it counts a cost-reduced or free-cast spell at full price and a spell with additional mana costs at less than was paid -- the two quantities coincide only by accident, and the card's whole gate is the difference. `additional_paid` reports only mana paid *above* the mana cost (kicker/multikicker-style overpayment), not the total, and is 0 for a straightforwardly cast {2}{U}{U} spell that plainly satisfies this trigger. `colors_of_mana_spent` and `mana_symbols` count colors and printed symbols respectively, neither of which is an amount of mana spent. `condition_keys` offers no mana-payment predicate either, so the intervening if cannot be phrased at the condition level to route around the missing value."
+    }
+  ],
+  "closest_existing": [
+    "mana_value_of",
+    "additional_paid",
+    "colors_of_mana_spent",
+    "mana_symbols"
+  ],
+  "confidence": "high",
+  "notes": "Everything else on the card is expressible and was verified against `reference` before filing: the mana ability is `is_mana_ability` with one `choose_mode` of two `add_mana` modes plus `mana_restriction` for \"Spend this mana only to cast a noncreature spell\" (an `ability_keys` field -- the earlier `conditional-mana-ability` filing was false and should be dropped); the counter/transform payload is `add_counters` followed by `if`/`cmp` on `counters_on` >= 3 wrapping `transform`; and the back face, The Lord Master of Hell (Legendary Creature -- Demon Noble Wizard, 3/3, no mana cost), is an ordinary `back_face` entry whose Starfall `attacks` trigger is `damage` to each opponent for a `count` of graveyard cards with `not_types: [\"Creature\", \"Land\"]`. Only the intervening-if blocks the card; closing `mana-spent-on-spell` makes the whole card writable."
+}
