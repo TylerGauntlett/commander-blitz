@@ -175242,12 +175242,12 @@
     },
     "Mizzix's Mastery": {
       "edhrec_rank": 800,
-      "gate": "template",
+      "gate": null,
       "name": "Mizzix's Mastery",
-      "reason": "no template for: Exile target card that's an instant or sorcery from your graveyard. For each card exiled t",
+      "reason": "",
       "scryfall_id": "8a139398-4d42-4715-8a5a-c446bf665a2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mizzix, Replica Rider": {
