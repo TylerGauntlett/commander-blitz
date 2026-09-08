@@ -47,6 +47,7 @@ def push_spell(
     graveyard_permission: int | None = None,
     enters_tapped: bool = False,
     overloaded: bool = False,
+    cost_option: int | None = None,
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
     second_face: bool = False,
@@ -126,6 +127,7 @@ def push_spell(
         graveyard_permission=graveyard_permission,
         enters_tapped=enters_tapped,
         overloaded=overloaded,
+        cost_option=cost_option,
         spliced=spliced,
         face_down=face_down,
         modes=modes,
@@ -658,6 +660,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # would always read False and every overloaded spell would resolve as the
     # targeted half -- with no targets, which is nothing at all.
     obj.cast_overloaded = item.overloaded
+    # And the tier, for the same reason at the same moment: a tiered spell's
+    # whole effect is an `if` on which price was paid, so a flag written after
+    # `spell_effects` would read None and every tier would resolve as none of
+    # them.
+    obj.cast_cost_option = item.cost_option
     # Gift (702.164a), for the same reason and at the same moment as the two
     # above: "if the gift wasn't promised, return that card…" is an `if` inside
     # `spell_effects`, and a promise written onto the object afterwards would

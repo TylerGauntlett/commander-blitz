@@ -651,6 +651,10 @@ class StackItem:
     #: Cast for the card's overload cost, read on resolution by the
     #: `{"overloaded": true}` condition the card branches on.
     overloaded: bool = False
+    #: Which of the card's `additional_cost_options` was paid, by index. Read on
+    #: resolution by the `{"cost_option": n}` condition a tiered card branches
+    #: on -- the tier that was bought decides which effect happens.
+    cost_option: int | None = None
     #: Card ids spliced onto this spell as it was cast. Their `spell_effects`
     #: run after the host's, in the order they were spliced on -- which is what
     #: "add this card's effects to that spell" means, and why they are recorded

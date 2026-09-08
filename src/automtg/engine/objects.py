@@ -376,6 +376,14 @@ class GameObject:
     #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
     #: permanent's own enters trigger may read it.
     cast_overloaded: bool = False
+    #: Which of `additional_cost_options` was paid, by index, or ``None`` for a
+    #: card that offers no such choice.
+    #:
+    #: **Tiered** (Fire Magic, Ice Magic): "Choose one additional cost", where
+    #: each tier buys a *different effect* rather than a bigger number. Bitter
+    #: Triumph's two prices lead to one effect and never needed reading back;
+    #: a tiered card cannot resolve at all without knowing which was paid.
+    cast_cost_option: int | None = None
     #: **Which step this object was cast in** -- addendum's "if you cast this
     #: spell during your main phase". Recorded by `stack.push_spell`, because
     #: that is the moment 608.2 is talking about: the spell can be cast in a
