@@ -21,8 +21,14 @@ class is one card and asserts the printed sentence the gate could not reach.
 from __future__ import annotations
 
 from automtg.engine.characteristics import chars
-from automtg.engine.enums import ActionKind, DecisionKind, Zone
-from tests.conftest import action_for_card, only_oid, pass_until
+from automtg.engine.enums import ActionKind, DecisionKind, Step, Zone
+from tests.conftest import (
+    action_for_card,
+    advance_to_step,
+    count_on_battlefield,
+    only_oid,
+    pass_until,
+)
 
 # A targetless noncreature instant. Lightning Bolt was the obvious choice and is
 # the wrong one: "any target" auto-targets, the harness takes the first legal
@@ -30,6 +36,13 @@ from tests.conftest import action_for_card, only_oid, pass_until
 # kills before anything can be asserted about its counter.
 RITUAL = "pyretic_ritual"  # {1}{R} Instant, "Add {R}{R}{R}" -- no targets at all
 WIZARD = "fugitive_wizard"  # a plain 1/1 Wizard, for the cards that care about the type
+# A castable instant in the OPPONENT's hand, and it is load bearing rather than
+# scenery. With no play available to anybody, the engine's auto-pass runs from
+# the spell resolving straight through cleanup and into the next turn -- which
+# wipes every until-end-of-turn grant before it can be read, and reaches the end
+# step that exiles Stormsplitter's token. A test measuring either after cleanup
+# would pass whatever the card did.
+ANCHOR = "t_plain_instant"  # {W}, gain 1 life -- a reason for priority to stop
 
 
 def cast(game, card_id: str, pid: int = 0) -> int:
@@ -326,3 +339,120 @@ class TestManaGeyser:
         ]
         assert len(bulk) == 1
         assert bulk[0].data == {"mana": "{R}", "times": 3}, "the untapped Forest does not count"
+
+
+class TestBalmorBattlemageCaptain:
+    """"Whenever you cast an instant or sorcery spell, creatures you control get +1/+0 and gain trample."""
+
+    def test_the_team_grows_and_gains_trample(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["balmor_battlemage_captain", "t_bear", "mountain", "mountain"])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .hand(0, [RITUAL])
+            .build()
+        )
+        bear = only_oid(game, "t_bear")
+        assert chars(game.state, bear).power == 2
+        assert "trample" not in {str(k) for k in chars(game.state, bear).keywords}
+
+        cast(game, RITUAL)
+
+        assert chars(game.state, bear).power == 3, "+1/+0"
+        assert chars(game.state, bear).toughness == 2, "toughness is untouched"
+        assert "trample" in {str(k) for k in chars(game.state, bear).keywords}
+
+
+class TestCalderaPyremaw:
+    """"…put a +1/+1 counter on this creature. Then it deals damage equal to its power."""
+
+    def test_the_counter_lands_before_the_damage(self, builder):
+        """Printed order matters: a 3/3 that grew first deals 4, not 3."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["caldera_pyremaw", "mountain", "mountain"])
+            .hand(0, [RITUAL])
+            .build()
+        )
+        dragon = only_oid(game, "caldera_pyremaw")
+        assert chars(game.state, dragon).power == 3
+
+        cast(game, RITUAL)
+
+        assert game.state.objects[dragon].counters.get("+1/+1") == 1
+        assert chars(game.state, dragon).power == 4
+        assert game.state.players[1].life == 36, "4 damage, the post-counter power"
+
+
+class TestExaltedFlamerOfTzeentch:
+    """"Fire of Tzeentch — …this creature deals 1 damage to each opponent."""
+
+    def test_it_pings_on_an_instant(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["exalted_flamer_of_tzeentch", "mountain", "mountain"])
+            .hand(0, [RITUAL])
+            .build()
+        )
+        cast(game, RITUAL)
+        assert game.state.players[1].life == 39
+        assert game.state.players[0].life == 40, "each OPPONENT, not each player"
+
+
+class TestStormsplitter:
+    """"…create a token that's a copy of this creature. Exile that token at the next end step."""
+
+    def test_it_copies_itself_and_the_copy_is_temporary(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["stormsplitter", "mountain", "mountain"])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .hand(0, [RITUAL])
+            .build()
+        )
+        assert count_on_battlefield(game, "stormsplitter") == 1
+
+        cast(game, RITUAL)
+        assert count_on_battlefield(game, "stormsplitter") == 2, "the token copy"
+        tokens = [
+            o for o in game.state.battlefield_objects(0) if o.def_id == "stormsplitter" and o.is_token
+        ]
+        assert len(tokens) == 1, "the copy is a token, and the original is not"
+
+    def test_the_token_does_not_survive_the_turn(self, builder):
+        """The delayed exile is why this is not strictly better than printed."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["stormsplitter", "mountain", "mountain"])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .hand(0, [RITUAL])
+            .build()
+        )
+        cast(game, RITUAL)
+        assert count_on_battlefield(game, "stormsplitter") == 2
+
+        advance_to_step(game, Step.END_STEP)
+        pass_until(game, lambda g: not g.state.stack)
+        assert count_on_battlefield(game, "stormsplitter") == 1, "the token is exiled"
+
+
+class TestAetherfluxReservoir:
+    """"Whenever you cast a spell, you gain 1 life for each spell you've cast this turn."""
+
+    def test_the_life_scales_with_the_turn_s_spell_count(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["aetherflux_reservoir"] + ["mountain"] * 6)
+            .hand(0, [RITUAL, RITUAL])
+            .build()
+        )
+        assert game.state.players[0].life == 40
+
+        cast(game, RITUAL)
+        assert game.state.players[0].life == 41, "first spell this turn: gain 1"
+
+        cast(game, RITUAL)
+        assert game.state.players[0].life == 43, "second spell: gain 2, not 1"
