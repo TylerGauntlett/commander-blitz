@@ -768,6 +768,43 @@ its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
 
+### "Each of X targets"
+
+```jsonc
+{ "id": "t1", "kind": "any", "count": { "x": true },
+  "selector": { "types": ["Creature"] } }
+```
+
+Crackle with Power. The one computed `count` a **spell's** targets may carry, and
+the reason it is the only one is an ordering rule.
+
+`_compile_targets` otherwise refuses a value-expression count on a card's own
+targets, because "a spell's are declared while it is being cast (601.2c), before
+X is chosen and before any additional cost is paid, so the expression would read
+0". That is right for `{"additional_paid": true}` — kicker is paid at 601.2h,
+long after — and wrong for X, because **601.2b announces X and 601.2c declares
+targets, in that order**.
+
+The engine already ran them in that order. `Game._cast` asks `_ask_x`, then
+`_ask_modes`, then `_ask_mode_targets` — a target declaration made at cast time
+after a cast-time choice, which is "exactly where 601.2 puts it".
+`_ask_x_targets` is its sibling, keyed on X instead of on modes.
+
+Legality is untouched and stays a **gate**, which it already was for the cost:
+"X is a gate here, not a value… `game._cast` then asks the player which one." It
+sizes the spec at zero, offers one line, and the refs are chosen where X is a
+number. There is deliberately no line-per-X: that would multiply target tuples by
+every affordable X, and the choice is one the player already makes at cast time.
+
+`filter_legal` needed nothing. `variable_size` already makes the last spec swallow
+the remaining refs, and its comment already argues that re-evaluating a computed
+count on resolution would be worse than using the stored length — "the number is
+fixed when the targets are declared (601.2c)".
+
+Two refusals: `{"x": true}` on a card with no `{X}` in its mana cost (the spec
+would size to zero for ever — a spell that says it targets and never does), and
+every other computed count on a spell, unchanged.
+
 ### Plot
 
 ```jsonc

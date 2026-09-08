@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **34** capabilities.
+**29 cards** blocked by **32** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [multi-pip-x-cost](#multi-pip-x-cost) | 1 | 1212 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
@@ -47,7 +46,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-| [x-targets](#x-targets) | 1 | 1212 | selector |
 
 ## cast-as-though-flash
 
@@ -384,20 +382,6 @@ Blocks **1** card.
 
 </details>
 
-## multi-pip-x-cost
-
-Blocks **1** card.
-
-- **(cost)** a mana cost in which the {X} symbol appears more than once ({X}{X}{X}{R}{R}), where choosing X=2 charges 6 generic plus {R}{R} while the value of X read by effects and by x_in_mana_cost stays 2 -- i.e. the cost parser must multiply the payment by the pip count while the announced X, the mana value on the stack, and every `x` value leaf remain the single announced number
-  <br>Why the existing vocabulary won't do: The packet's cost vocabulary has one X notion and no multiplicity: `x_value` on an activated ability's cost is a single X, `x_in_mana_cost` reads X back off an object, and `x` in value_keys is the one announced value. Nothing states what a repeated {X} pip in the printed mana_cost string charges. If the parser collapses the three pips to one X, Crackle with Power costs a third of its real price -- a misprice, not a rounding error, and exactly the failure mode that makes an approximation here worse than an unimplemented card. This need must be confirmed or built before the card can be authored even if x_targets lands first.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crackle with Power** (rank 1212) — `crackle_with_power`
-  - Crackle with Power deals five times X damage to each of up to X targets.
-
-</details>
-
 ## multikicker
 
 Blocks **1** card.
@@ -544,19 +528,5 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
-
-</details>
-
-## x-targets
-
-Blocks **1** card.
-
-- **(selector)** a target spec whose number of targets is the spell's X -- a `count` that accepts a value expression from value_keys (here {"x": true}) instead of only an integer literal, with `optional: true` giving the "up to" so that X=0 or fewer targets chosen is still a legal cast, and the chosen count locked at announcement (601.2c) rather than recomputed on resolution
-  <br>Why the existing vocabulary won't do: In selector_keys `count` is the size of a target spec and `optional` is the "up to", so "up to three targets" is sayable, but the size is a fixed number: there is no place on a target spec where a value_keys leaf such as `x` may sit. The reference is explicit that variable-size card-level targets are a thing the loader knows about only as a restriction (the mode note forbids them alongside modal targeting), not as something a count may be built from. The nearest expressible shapes both misprint the card: a fixed `count` (say 3 with `optional`) hard-caps the spell no matter what X is paid, and a targetless {"controller": "opponent", "count": "all"} sprays every permanent rather than letting the caster pick X of them, and would ignore targeting restrictions such as hexproof and protection.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crackle with Power** (rank 1212) — `crackle_with_power`
-  - Crackle with Power deals five times X damage to each of up to X targets.
 
 </details>

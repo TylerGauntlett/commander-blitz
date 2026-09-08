@@ -17960,6 +17960,53 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "crackle_with_power",
+      "mana_cost": "{X}{X}{X}{R}{R}",
+      "name": "Crackle with Power",
+      "oracle_text": "Crackle with Power deals five times X damage to each of up to X targets.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "times": [
+              {
+                "const": 5
+              },
+              {
+                "x": true
+              }
+            ]
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "R",
         "W"

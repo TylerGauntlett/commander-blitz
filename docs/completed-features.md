@@ -11125,3 +11125,69 @@ already written beside their `colors` clause.
 
 `tests/unit/test_plot.py` keeps the mono-coloured instant as a live card, because
 it is the card `colors` would have given.
+
+## "Each of X targets" — an ordering rule, not a rewrite
+
+### Overview
+
+Crackle with Power: "{X}{R}{R}{R}. Crackle with Power deals 5 damage to each of X
+targets."
+
+I had flagged this as architecturally blocked twice, on the grounds that targets
+are declared as part of casting while legality enumerates target tuples with X
+pinned at 0. That was half right and the wrong half was the conclusion.
+
+### The refusal was correct and its reason was not universal
+
+`loader.targets._compile_targets` refuses a value-expression `count` on a card's
+own `targets`:
+
+> a spell's are declared while it is being cast (601.2c), before X is chosen and
+> before any additional cost is paid, so the expression would read 0
+
+That is exactly right for `{"additional_paid": true}` — kicker and replicate are
+paid at 601.2h, long after targets. It is exactly wrong for X, because 601.2b
+announces X and 601.2c declares targets, **in that order**.
+
+### The flow already existed
+
+`Game._cast` runs `_ask_x`, then `_ask_modes`, then `_ask_mode_targets`. That last
+one declares a mode's own targets at cast time, after a cast-time choice, and its
+docstring says why that is legitimate: "Runs immediately after `_ask_modes` and
+before the spell is paid for, which is exactly where 601.2 puts it."
+
+`_ask_x_targets` is that method's sibling with X in place of the mode list. No
+casting-flow change, no new decision kind, no new event — the proposal I had been
+carrying (one cast line per affordable X, bounded by a choice cap) would have
+multiplied target tuples by a choice the player already makes a moment later, and
+was strictly worse than the thing already in the file.
+
+### Legality stays a gate
+
+The comment beside the `x_count` check in `_cast_variant` had already settled this
+for the cost:
+
+> X is a *gate* here, not a value. Legality asks only "is there any X this is
+> castable at", and `game._cast` then asks the player which one — so the action
+> carries X = 0.
+
+The target spec sizes to zero there for the same reason and the line is still
+offered. Nothing about legality changed.
+
+### `filter_legal` needed nothing at all
+
+`TargetSpec.variable_size` already makes the last spec swallow whatever refs
+remain, the loader already guarantees there is at most one and that it comes last,
+and the comment already argues that re-evaluating a computed count on resolution
+would be *worse* than using the stored length: "the number is fixed when the
+targets are declared (601.2c), and anything that moved in between would re-slice
+refs that were chosen under the old one."
+
+That is the semantics an X-sized target wants, written before one existed.
+
+### Two refusals kept
+
+`{"x": true}` on a card with no `{X}` in its mana cost is a load error — the spec
+would size to zero for ever, which is a spell that says it targets and never does,
+the silent half of the mistake the original clause prevents. Every other computed
+count on a spell is refused exactly as before.
