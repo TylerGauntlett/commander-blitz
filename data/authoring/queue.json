@@ -131862,12 +131862,12 @@
     },
     "Ice Magic": {
       "edhrec_rank": 9791,
-      "gate": "template",
+      "gate": null,
       "name": "Ice Magic",
-      "reason": "no template for: Tiered",
+      "reason": "",
       "scryfall_id": "9dabd626-7ec3-4913-babb-d5d3fd5e32d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ice Out": {
