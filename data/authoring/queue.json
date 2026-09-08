@@ -43492,12 +43492,12 @@
     },
     "Chandra's Ignition": {
       "edhrec_rank": 481,
-      "gate": "template",
+      "gate": null,
       "name": "Chandra's Ignition",
-      "reason": "no template for: Target creature you control deals damage equal to its power to each other creature and eac",
+      "reason": "",
       "scryfall_id": "74e7ffa3-150d-406d-bbda-a9ff06074054",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chandra's Incinerator": {
@@ -279722,12 +279722,12 @@
     },
     "The Ozolith": {
       "edhrec_rank": 303,
-      "gate": "template",
+      "gate": null,
       "name": "The Ozolith",
-      "reason": "no template for: Whenever a creature you control leaves the battlefield, if it had counters on it, put thos",
+      "reason": "",
       "scryfall_id": "e0aaee13-bfeb-47fd-93cb-2ccdd5d44e75",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Pandorica": {

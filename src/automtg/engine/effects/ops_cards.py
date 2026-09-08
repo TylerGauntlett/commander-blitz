@@ -168,6 +168,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_by = ctx.controller
         obj.playable_turn = ctx.state.turn
         obj.playable_group = ctx.source_oid if limit else None
+        # "…gains **flashback**", rather than a bare permission to cast it: the
+        # card is exiled as it resolves, so the grant is worth one cast per card
+        # rather than as many as the turn's mana allows.
+        obj.playable_exiles = bool(spec.get("as_flashback"))
         # "…and mana of any type can be spent to cast that spell" travels with
         # the permission it is printed beside, and expires with it: the flag is
         # read only where `playable_turn` already gates the offer.
