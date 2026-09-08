@@ -1665,7 +1665,7 @@ batching work.
 [Sagas](#sagas) below, where the whole trigger is supplied by rule 714.2c.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
-`leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
+`leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
@@ -1675,6 +1675,39 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
+
+### `spell_copied`, and why magecraft is two abilities
+
+"Magecraft — Whenever you cast **or copy** an instant or sorcery spell…" —
+Archmage Emeritus, Storm-Kiln Artist, Veyran. Two events, one printed line, and
+the line is claimed by two abilities: the same shape Winged Boots uses for "has
+flying and ward {4}".
+
+The temptation is to widen `spell_cast` to fire on copies instead, and it is
+badly wrong. A copy put on the stack is **not cast** (707.10a) — nobody paid for
+it and it never existed in a zone. Storm, replicate, conspire, casualty,
+gravestorm and epic are every one of them a `spell_cast` trigger whose effect
+copies the spell that fired it, so a copy that counted as a cast would retrigger
+the ability that made it: a storm count of nine becoming an unbounded loop
+rather than nine copies. `tests/unit/test_magecraft.py::TestACopyIsNotACast`
+holds that line.
+
+The subject is the **original** spell, so a filter asks what was copied —
+`{"any_types": ["Instant", "Sorcery"]}` is the printed question and the original
+is still on the stack to answer it. `controller` is the **copy's** controller,
+because 706.10 gives a copy to whoever created it: reading the original's
+controller would fire your magecraft when an opponent copied your spell, and
+stay silent when you copied theirs.
+
+`{"binding": "sid"}` is the copy's stack id, so an ability may act on the copy
+it just heard about.
+
+Nothing here was new except the listener. `EventType.SPELL_COPIED` had been
+emitted by `put_copy_on_stack` since copying existed — but through
+`state.emit`, which only *records* an event, where every other trigger-bearing
+event in the engine goes through `triggers.fire`. So the event was written into
+the log and heard by nobody, and no amount of card vocabulary would have
+reached it.
 
 **`precombat_main`** is "at the beginning of your **first** main phase" — Black
 Market Connections. `upkeep` is the near miss and is a step too early: it is
