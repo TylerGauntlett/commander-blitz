@@ -1,0 +1,126 @@
+{
+  "card": {
+    "id": "pinnacle_monk_mystic_peak",
+    "name": "Pinnacle Monk // Mystic Peak",
+    "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhen this creature enters, return target instant or sorcery card from your graveyard to your hand.",
+    "mana_cost": "{3}{R}{R}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Djinn",
+      "Monk"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "second_face": "mystic_peak",
+    "second_face_zone": "hand",
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Prowess",
+        "trigger": {
+          "event": "spell_cast",
+          "filter": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "power": {
+              "const": 1
+            },
+            "toughness": {
+              "const": 1
+            },
+            "objects": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, return target instant or sorcery card from your graveyard to your hand.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "gy_spell",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "hand",
+            "objects": {
+              "target": "gy_spell"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "back": {
+    "id": "mystic_peak",
+    "name": "Mystic Peak",
+    "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "R"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "text": "{T}: Add {R}.",
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{R}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

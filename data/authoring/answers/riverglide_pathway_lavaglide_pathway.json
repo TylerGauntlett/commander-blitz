@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "riverglide_pathway_lavaglide_pathway",
+    "name": "Riverglide Pathway // Lavaglide Pathway",
+    "oracle_text": "{T}: Add {U}.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["R", "U"],
+    "second_face": "lavaglide_pathway",
+    "second_face_zone": "hand",
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{U}"}]
+      }
+    ]
+  },
+  "back": {
+    "id": "lavaglide_pathway",
+    "name": "Lavaglide Pathway",
+    "oracle_text": "{T}: Add {R}.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["R", "U"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {R}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{R}"}]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

@@ -37,6 +37,48 @@
   "oracle_text": "Destroy target artifact you don't control.\nOverload {4}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
   "power": null,
   "reference": {
+    "ability_keys": [
+      "ability",
+      "activate_steps",
+      "active_zones",
+      "affects",
+      "affects_player",
+      "affects_spells",
+      "affects_token",
+      "amount",
+      "arrived_this_turn_from",
+      "blockers",
+      "chapter",
+      "colors",
+      "condition",
+      "cost",
+      "create_instead",
+      "effect",
+      "effects",
+      "enters_tapped",
+      "from_colors",
+      "from_subtypes",
+      "from_types",
+      "id",
+      "is_cycling",
+      "is_mana_ability",
+      "keywords",
+      "kind",
+      "loss_multiplier",
+      "mana_restriction",
+      "once_each_turn",
+      "pay_life_instead",
+      "power",
+      "require_all",
+      "sorcery_speed_only",
+      "static_max_per_turn",
+      "subtypes",
+      "targets",
+      "text",
+      "toughness",
+      "trigger",
+      "types"
+    ],
     "card_level_cost_keys": [
       "additional_cost",
       "additional_optional",
@@ -198,6 +240,8 @@
     ],
     "notes": [
       "A card either uses vocabulary in these lists or it fails to load.",
+      "`op_options` is what each op may carry beside its `op` name, and `ability_keys` is what an entry in `abilities` may have. Read both before concluding a line cannot be said: `copy_spell` takes `new_targets` (\"you may choose new targets for the copy\"), an ability takes `sorcery_speed_only`, `once_each_turn` and `activate_steps` for printed activation limits, and `mana_restriction` for \"spend this mana only to ...\". Each of those has been filed as a missing capability by a worker that had only the op *names*.",
+      "`op_options` is a **lower bound**, gathered from each op's own source and from every effect the shipped pool writes. An op that forwards its spec to a helper can accept a key listed for neither, so a key's absence is not proof it does not exist -- check the `examples` too, and prefer a gap record only when both are silent.",
       "`card_level_face_keys` is how a card carries a second printed face, and which key you want turns on one question: is the other half something you TURN OVER to, or a second spell you may CAST? `back_face` is the first -- a transforming DFC, never cast, never drawn, reached only by the `transform` op. `second_face` is the second -- a split half, an Adventure, an Aftermath half -- with its own name, cost and type line, cast instead of the front from `second_face_zone` (\"hand\", or \"graveyard\" for Aftermath). A **modal double-faced card** is a `second_face` whose other half is a permanent: you play one face or the other and nothing turns over. Either way the other half is an ordinary card entry in the same pool, and your packet's `back_face` block carries its printed text -- write it as a second entry, do not file a gap.",
       "`condition_keys` and `value_keys` are what an `if` can ask and what an amount can be. `counters_on` reads a counter count off an object, so \"if this has no +1/+1 counters on it\" is a `cmp` against `{\"const\": 0}` and needs no new op.",
       "`static_condition_keys` is what a static ability's optional `condition` may ask -- an \"as long as ...\" clause that switches the whole static on and off as the board moves. It is a third language, neither `condition_keys` nor `static_filter_keys`.",
@@ -217,6 +261,527 @@
       "A target spec may carry `mode`: the index of the mode that owns it, in a spell whose whole effect tree is one top-level `choose_mode`. That is how \"Choose up to two. * Target artifact card. * Target creature card. ...\" carries one target per bullet and binds two distinct ones -- the spec is declared only if its mode is chosen. It must be a fixed count, never `optional`, and no card-level target on the same card may be variable-size.",
       "The expectation is checked in a sandbox: player 0 at 40 life with a deep mana base, two creatures, and an opponent holding a creature, a flier, an artifact and an enchantment. The card under test is the only card in hand."
     ],
+    "op_options": {
+      "<=": [
+        "value"
+      ],
+      ">": [
+        "value"
+      ],
+      ">=": [
+        "amount",
+        "counter",
+        "value"
+      ],
+      "add_counters": [
+        "amount",
+        "counter",
+        "objects"
+      ],
+      "add_mana": [
+        "amount",
+        "in_commander_identity",
+        "mana",
+        "player",
+        "reflecting"
+      ],
+      "add_mana_per": [
+        "mana",
+        "per",
+        "player"
+      ],
+      "add_poison": [
+        "amount",
+        "player"
+      ],
+      "add_subtype": [
+        "objects",
+        "subtypes"
+      ],
+      "animate": [
+        "colors",
+        "keywords",
+        "objects",
+        "power",
+        "subtypes",
+        "toughness",
+        "types"
+      ],
+      "attach": [
+        "attachment",
+        "objects"
+      ],
+      "aura_swap": [
+        "objects"
+      ],
+      "become_copy": [
+        "copying",
+        "duration",
+        "except_name",
+        "objects"
+      ],
+      "become_monarch": [
+        "player"
+      ],
+      "become_prepared": [
+        "objects"
+      ],
+      "cant_attack_player": [
+        "attacker",
+        "defender",
+        "duration",
+        "planeswalkers"
+      ],
+      "cant_block": [
+        "all_creatures",
+        "duration",
+        "objects"
+      ],
+      "cant_sacrifice": [
+        "duration",
+        "objects"
+      ],
+      "cascade": [
+        "max_mana_value"
+      ],
+      "change_text": [
+        "objects",
+        "to"
+      ],
+      "choose_color": [
+        "prompt"
+      ],
+      "choose_mode": [
+        "chooser",
+        "count",
+        "modes",
+        "once_each",
+        "or_more",
+        "up_to",
+        "up_to_if"
+      ],
+      "choose_permanents": [
+        "as",
+        "objects",
+        "prompt"
+      ],
+      "choose_player": [
+        "as",
+        "players",
+        "prompt"
+      ],
+      "choose_type": [
+        "prompt"
+      ],
+      "connive": [
+        "amount",
+        "objects"
+      ],
+      "copy_permanent": [
+        "amount",
+        "as",
+        "attacking",
+        "controller",
+        "except",
+        "except_",
+        "objects",
+        "tapped"
+      ],
+      "copy_spell": [
+        "amount",
+        "controller",
+        "new_targets",
+        "sid"
+      ],
+      "counter": [
+        "objects",
+        "sid",
+        "target"
+      ],
+      "create_token": [
+        "amount",
+        "as",
+        "attacking",
+        "controller",
+        "tapped",
+        "token"
+      ],
+      "damage": [
+        "amount",
+        "objects",
+        "player",
+        "target"
+      ],
+      "delay": [
+        "effects",
+        "step",
+        "text",
+        "your_turn"
+      ],
+      "delayed_trigger": [
+        "duration",
+        "effects",
+        "text",
+        "trigger"
+      ],
+      "destroy": [
+        "no_regeneration",
+        "objects"
+      ],
+      "detain": [
+        "objects"
+      ],
+      "discard": [
+        "amount",
+        "as",
+        "player",
+        "random",
+        "up_to"
+      ],
+      "draw": [
+        "amount",
+        "player"
+      ],
+      "encode": [
+        "objects"
+      ],
+      "exile": [
+        "as",
+        "link",
+        "objects",
+        "playable_this_turn",
+        "until_leaves"
+      ],
+      "exile_and_return": [
+        "face",
+        "objects"
+      ],
+      "explore": [
+        "objects"
+      ],
+      "extra_combat": [
+        "amount",
+        "extra_main"
+      ],
+      "extra_land_drop": [
+        "amount",
+        "player"
+      ],
+      "for_each": [
+        "effects",
+        "objects"
+      ],
+      "for_each_player": [
+        "effects",
+        "players"
+      ],
+      "freeze": [
+        "objects"
+      ],
+      "gain_control": [
+        "as",
+        "duration",
+        "objects",
+        "player"
+      ],
+      "gain_life": [
+        "amount",
+        "player"
+      ],
+      "goad": [
+        "objects",
+        "player"
+      ],
+      "grant_ability": [
+        "ability",
+        "ability_index",
+        "duration",
+        "objects"
+      ],
+      "grant_keyword": [
+        "duration",
+        "keyword",
+        "keywords",
+        "objects"
+      ],
+      "grant_playable": [
+        "any_type",
+        "limit",
+        "objects"
+      ],
+      "grant_protection": [
+        "duration",
+        "from_colors",
+        "from_everything",
+        "from_subtypes",
+        "from_types",
+        "objects",
+        "player"
+      ],
+      "haunt": [
+        "objects"
+      ],
+      "hideaway": [
+        "amount"
+      ],
+      "if": [
+        "condition",
+        "else",
+        "then"
+      ],
+      "join_forces": [
+        "as",
+        "pay",
+        "prompt"
+      ],
+      "lock_abilities": [
+        "objects"
+      ],
+      "lock_life_total": [
+        "duration",
+        "player"
+      ],
+      "look_at_hand": [
+        "player"
+      ],
+      "look_at_top": [
+        "amount",
+        "as",
+        "cast_free",
+        "destination",
+        "face_down",
+        "objects",
+        "playable_this_turn",
+        "player",
+        "rest_to_bottom",
+        "selector",
+        "shuffle",
+        "tapped"
+      ],
+      "lose_life": [
+        "amount",
+        "player"
+      ],
+      "manifest": [
+        "amount",
+        "cloak",
+        "player"
+      ],
+      "may": [
+        "as",
+        "condition",
+        "effects",
+        "else",
+        "pay",
+        "player",
+        "prompt",
+        "repeat"
+      ],
+      "mill": [
+        "amount",
+        "as",
+        "player"
+      ],
+      "monstrosity": [
+        "amount"
+      ],
+      "move_counters": [
+        "amount",
+        "counter",
+        "from",
+        "objects"
+      ],
+      "must_attack": [
+        "duration",
+        "objects"
+      ],
+      "must_block": [
+        "attacker",
+        "objects"
+      ],
+      "noop": [],
+      "pair": [
+        "objects"
+      ],
+      "phase_in": [
+        "objects",
+        "tapped"
+      ],
+      "phase_out": [
+        "link",
+        "objects",
+        "until_leaves"
+      ],
+      "play_exiled": [
+        "as",
+        "objects"
+      ],
+      "prevent_damage": [
+        "duration",
+        "player"
+      ],
+      "proliferate": [
+        "objects"
+      ],
+      "pump": [
+        "objects",
+        "power",
+        "toughness"
+      ],
+      "put_on_top": [
+        "from_top",
+        "objects"
+      ],
+      "put_onto_battlefield": [
+        "cause",
+        "controller",
+        "counters",
+        "objects",
+        "tapped"
+      ],
+      "reflexive_trigger": [
+        "ability"
+      ],
+      "regenerate": [
+        "amount",
+        "objects"
+      ],
+      "remove_counters": [
+        "amount",
+        "counter",
+        "objects"
+      ],
+      "repeat": [
+        "amount",
+        "effects"
+      ],
+      "replace_deaths": [
+        "destination",
+        "objects"
+      ],
+      "replace_leaves_battlefield": [
+        "destination",
+        "objects"
+      ],
+      "return_from_graveyard": [
+        "controller",
+        "counters",
+        "destination",
+        "objects",
+        "tapped"
+      ],
+      "return_spell_to_hand": [
+        "target"
+      ],
+      "return_to_hand": [
+        "objects"
+      ],
+      "return_to_origin": [
+        "objects"
+      ],
+      "reveal": [
+        "as",
+        "objects"
+      ],
+      "reveal_until": [
+        "destination",
+        "objects",
+        "player",
+        "rest_to_bottom",
+        "selector"
+      ],
+      "ripple": [
+        "amount"
+      ],
+      "roll_dice": [
+        "as",
+        "count",
+        "sides"
+      ],
+      "sacrifice": [
+        "as",
+        "chooser",
+        "objects",
+        "snapshot"
+      ],
+      "scry": [
+        "amount",
+        "chooser",
+        "player"
+      ],
+      "search_library": [
+        "as",
+        "count",
+        "destination",
+        "player",
+        "reveal",
+        "selector",
+        "share_subtype",
+        "shuffle",
+        "tapped"
+      ],
+      "search_zones": [
+        "as",
+        "count",
+        "destination",
+        "player",
+        "selector",
+        "zones"
+      ],
+      "set_flag": [
+        "flag",
+        "objects"
+      ],
+      "set_pt": [
+        "objects",
+        "power",
+        "toughness"
+      ],
+      "set_turn_flag": [
+        "flag",
+        "objects"
+      ],
+      "shuffle": [
+        "player"
+      ],
+      "skip_untap": [
+        "objects"
+      ],
+      "snapshot": [
+        "as",
+        "objects",
+        "target"
+      ],
+      "surveil": [
+        "amount",
+        "player"
+      ],
+      "tap": [
+        "objects"
+      ],
+      "transform": [
+        "objects",
+        "to_back"
+      ],
+      "two_piles": [
+        "amount",
+        "other",
+        "to"
+      ],
+      "unattach": [
+        "objects"
+      ],
+      "unblockable": [
+        "duration",
+        "objects"
+      ],
+      "untap": [
+        "objects"
+      ],
+      "win_game": [
+        "player"
+      ]
+    },
     "ops": [
       "add_counters",
       "add_mana",

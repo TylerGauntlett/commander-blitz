@@ -201222,12 +201222,12 @@
     },
     "Pinnacle Monk // Mystic Peak": {
       "edhrec_rank": 528,
-      "gate": "template",
+      "gate": null,
       "name": "Pinnacle Monk // Mystic Peak",
-      "reason": "no template for: When this creature enters, return target instant or sorcery card from your graveyard to yo",
+      "reason": "",
       "scryfall_id": "24d4f26e-7f96-4b38-867e-4fac819b2679",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pinnacle Starcage": {
@@ -223912,12 +223912,12 @@
     },
     "Riverglide Pathway // Lavaglide Pathway": {
       "edhrec_rank": 856,
-      "gate": "template",
+      "gate": null,
       "name": "Riverglide Pathway // Lavaglide Pathway",
-      "reason": "proxy simplified it: only the front face exists; the back face is not modelled",
+      "reason": "",
       "scryfall_id": "ae2af948-df8c-4821-beed-7d64f6506257",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riverguard's Reflexes": {
