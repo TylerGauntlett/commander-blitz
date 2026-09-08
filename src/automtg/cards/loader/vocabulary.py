@@ -153,6 +153,10 @@ STATIC_EFFECTS = frozenset(
         # (Harmonic Prodigy) or to a cause (Veyran). Distinct from
         # `double_land_triggers`, which is player-wide and land-only.
         "double_triggers",
+        # "Spells can't be countered" -- Lier. A claim about EVERY spell every
+        # player casts, which the card-level `uncounterable` flag cannot make:
+        # that one is a card saying it about itself.
+        "spells_cant_be_countered",
         # Vorinclex's two halves.  Both are read at the mana choke point rather
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.

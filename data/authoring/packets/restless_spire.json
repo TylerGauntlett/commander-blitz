@@ -74,6 +74,7 @@
       "from_colors",
       "from_subtypes",
       "from_types",
+      "grants_flashback",
       "id",
       "is_cycling",
       "is_mana_ability",
@@ -1026,6 +1027,7 @@
       "set_types",
       "skip_draw_step",
       "spell_cost_reduction",
+      "spells_cant_be_countered",
       "untap_during_each_untap_step",
       "ward"
     ],
@@ -1218,7 +1220,7 @@
       "Land"
     ]
   },
-  "template_said": "no template for: {U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"D",
+  "template_said": "2 validation errors for CardModel",
   "todo": [
     "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land",
     "Whenever this land attacks, scry 1"

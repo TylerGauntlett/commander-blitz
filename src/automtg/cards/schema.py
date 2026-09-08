@@ -370,6 +370,19 @@ class AbilityModel(BaseModel):
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
+    #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
+    #: instant and sorcery card in your graveyard has flashback. The flashback
+    #: cost is equal to that card's mana cost."
+    #:
+    #: It carries no behaviour of its own, and that is the point. A spell cast
+    #: out of a graveyard already exiles as it resolves (`graveyard_cast_exiles`
+    #: defaults True, and escape is the only thing that turns it off), so the
+    #: exile half of flashback was already there. What this says is that the
+    #: permission needs **no `max_per_turn`**: the exile is the rate limit, card
+    #: by card, so a graveyard that runs out is the whole of the cap. Without it
+    #: the loader refuses an uncapped permission, correctly -- one that neither
+    #: meters nor exiles recasts the same card every turn for ever.
+    grants_flashback: bool = False
     #: ``double_triggers``: which EVENT counts as the cause. Veyran's "if **you
     #: casting or copying an instant or sorcery spell** causes a triggered
     #: ability ... to trigger" -- a clause about what happened, not about whose

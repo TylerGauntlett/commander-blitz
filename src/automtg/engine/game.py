@@ -588,9 +588,11 @@ class Game:
                 from .characteristics import graveyard_cast_permissions
 
                 for source_obj, static in graveyard_cast_permissions(state, pid):
-                    if source_obj.oid == granting.oid and static.get("enters_tapped"):
+                    if source_obj.oid != granting.oid:
+                        continue
+                    if static.get("enters_tapped"):
                         enters_tapped = True
-                        break
+
 
         if action.prepared:
             # A **copy**, and the permanent stays on the battlefield -- the one

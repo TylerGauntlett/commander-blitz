@@ -63,6 +63,7 @@
       "from_colors",
       "from_subtypes",
       "from_types",
+      "grants_flashback",
       "id",
       "is_cycling",
       "is_mana_ability",
@@ -1015,6 +1016,7 @@
       "set_types",
       "skip_draw_step",
       "spell_cost_reduction",
+      "spells_cant_be_countered",
       "untap_during_each_untap_step",
       "ward"
     ],
