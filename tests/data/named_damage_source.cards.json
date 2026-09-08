@@ -1,0 +1,118 @@
+{
+  "_comment": "Chandra's Ignition: 'Target creature you control deals damage equal to its power to each other creature and each opponent.' The damage is dealt BY the creature -- so its lifelink gains life and its deathtouch kills -- and 'each other' spares the creature itself. Reuses the pool's existing t_lifelinker.",
+  "cards": [
+    {
+      "id": "t_ignition",
+      "name": "Test Ignition",
+      "oracle_text": "Target creature you control deals damage equal to its power to each other creature and each opponent.",
+      "mana_cost": "{3}{R}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "snapshot",
+          "objects": {
+            "target": "t1"
+          },
+          "as": "dealer"
+        },
+        {
+          "op": "damage",
+          "source_object": {
+            "target": "t1"
+          },
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all",
+            "exclude_binding": "dealer"
+          },
+          "player": "each_opponent"
+        }
+      ]
+    },
+    {
+      "id": "t_ignition_spell_source",
+      "name": "Test Ignition Spell Source",
+      "oracle_text": "Target creature you control deals damage equal to its power to each other creature and each opponent.",
+      "mana_cost": "{3}{R}{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "snapshot",
+          "objects": {
+            "target": "t1"
+          },
+          "as": "dealer"
+        },
+        {
+          "op": "damage",
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all",
+            "exclude_binding": "dealer"
+          },
+          "player": "each_opponent"
+        }
+      ]
+    }
+  ]
+}
