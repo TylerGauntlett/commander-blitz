@@ -99,6 +99,7 @@
     ],
     "card_level_cost_keys": [
       "additional_cost",
+      "additional_cost_options",
       "additional_optional",
       "additional_repeatable",
       "alternative_cost",
@@ -138,6 +139,7 @@
       "cast_from_graveyard",
       "cmp",
       "combat_damage_by",
+      "cost_option",
       "entered_from",
       "evoked",
       "exists",

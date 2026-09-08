@@ -94772,12 +94772,12 @@
     },
     "Fire Magic": {
       "edhrec_rank": 3914,
-      "gate": "template",
+      "gate": null,
       "name": "Fire Magic",
-      "reason": "no template for: Tiered",
+      "reason": "",
       "scryfall_id": "415ff6a5-61ef-4b37-ae08-e44476300d4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fire Nation Ambushers": {

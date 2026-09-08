@@ -1500,17 +1500,35 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     thief's library would hand the victim's card to the thief for ever.
     """
     depth = max(1, evaluate_value(ctx, spec.get("from_top", 1)))
+    # "…puts it on the **bottom** of their library", and Ice Magic's "on their
+    # choice of the top or bottom". `from_top` cannot say either: it counts from
+    # the top, and a depth big enough to reach the bottom of *this* library is a
+    # number the card does not print and that a shuffle would invalidate.
+    bottom = bool(spec.get("bottom"))
+    owner_chooses = bool(spec.get("owner_chooses"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put on top of library")
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
+        to_bottom = bottom
+        if owner_chooses:
+            # **The owner** decides, not the resolving player -- "its owner puts
+            # it on their choice of the top or bottom" is the printed line, and
+            # asking the caster would hand them a tempo decision the card gives
+            # away.
+            to_bottom = not (
+                yield from ask_yes_no(ctx, "Put it on top of your library?", obj.owner)
+            )
         move_object(
             ctx.state,
             oid,
             Zone.LIBRARY,
             to_player=obj.owner,
-            to_index=depth - 1,
+            # `None` appends, which is the bottom -- and it has to be None
+            # rather than a computed length, because the length is read before
+            # the card has left its old zone.
+            to_index=None if to_bottom else depth - 1,
             cause="tuck",
             by=ctx.source_oid,
         )
