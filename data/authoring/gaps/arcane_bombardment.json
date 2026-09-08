@@ -1,0 +1,24 @@
+{
+  "card_id": "arcane_bombardment",
+  "name": "Arcane Bombardment",
+  "oracle_text": "Whenever you cast your first instant or sorcery spell each turn, exile an instant or sorcery card at random from your graveyard. Then copy each card exiled with this enchantment. You may cast any number of the copies without paying their mana costs.",
+  "blocked_sentences": [
+    "Whenever you cast your first instant or sorcery spell each turn, exile an instant or sorcery card at random from your graveyard. Then copy each card exiled with this enchantment. You may cast any number of the copies without paying their mana costs."
+  ],
+  "needs": [
+    {
+      "capability": "first-spell-each-turn",
+      "kind": "trigger_event",
+      "what": "a per-turn cap on a spell_cast trigger, so the ability fires only on the controller's first matching spell each turn and is silent for every later one -- a trigger field such as nth: 1 or max_per_turn: 1 alongside the filter",
+      "why_existing_wont_do": "spell_cast in trigger_events fires on every matching spell with no count limit, and value_keys spells_cast_this_turn is only readable inside an effect, so an if/condition could gate the effect but the ability would still trigger and put a do-nothing object on the stack (visible to spell_copied/ability_activated watchers and to any 'whenever a triggered ability triggers' effect). ability_keys carries once_each_turn, activate_steps, sorcery_speed_only and static_max_per_turn, but the packet's own notes scope those to printed ACTIVATION limits on activated abilities, and condition_keys has no has_turn_flag test the trigger itself may read before firing"
+    },
+    {
+      "capability": "copy-exiled-card",
+      "kind": "op",
+      "what": "an op that creates copies of cards sitting in exile -- selected by an objects selector such as {\"zone\": \"exile\", \"exiled_with\": \"self\"} -- and offers the controller an optional free cast of any number of those copies, leaving the original cards exiled and re-copyable on later resolutions",
+      "why_existing_wont_do": "cast_copy appears in ops but has no entry at all in op_options (unlike noop, which is listed with an explicit empty list) and no shipped example uses it, so it exposes no objects/selector to aim at exiled cards and no free-cast flag can be confirmed. copy_spell copies a spell already on the stack (it takes target/sid, not objects in exile). copy_permanent and become_copy both need a permanent on the battlefield. play_exiled and exile's playable_this_turn / look_at_top's cast_free let you play the ORIGINAL card, which would move it out of exile and break the accumulating 'each card exiled with this enchantment' pile that must stay exiled and be copied again every turn"
+    }
+  ],
+  "closest_existing": ["copy_spell", "cast_copy", "play_exiled", "spell_cast", "once_each_turn"],
+  "confidence": "low"
+}
