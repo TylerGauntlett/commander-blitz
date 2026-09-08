@@ -96152,12 +96152,12 @@
     },
     "Flame of Anor": {
       "edhrec_rank": 1760,
-      "gate": "template",
+      "gate": null,
       "name": "Flame of Anor",
-      "reason": "no template for: Choose one. If you control a Wizard as you cast this spell, you may choose two instead",
+      "reason": "",
       "scryfall_id": "1c8873a1-e324-4342-ba63-0bc1bc812e3b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flame-Blessed Bolt": {
@@ -298682,12 +298682,12 @@
     },
     "Vandalblast": {
       "edhrec_rank": 100,
-      "gate": "template",
+      "gate": "schema",
       "name": "Vandalblast",
-      "reason": "no template for: Destroy target artifact you don't control",
+      "reason": "2 validation errors for CardModel",
       "scryfall_id": "71067239-d46f-4201-a91c-6aa4c41fa8b1",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Vandalize": {

@@ -1,0 +1,34 @@
+{
+  "card_id": "lier_disciple_of_the_drowned",
+  "name": "Lier, Disciple of the Drowned",
+  "oracle_text": "Spells can't be countered.\nEach instant and sorcery card in your graveyard has flashback. The flashback cost is equal to that card's mana cost.",
+  "blocked_sentences": [
+    "Spells can't be countered.",
+    "Each instant and sorcery card in your graveyard has flashback. The flashback cost is equal to that card's mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "cant-be-countered",
+      "kind": "static_effect",
+      "what": "A static ability that makes spells uncounterable while its source is on the battlefield -- a continuous effect that causes the `counter` op (and any other counter-a-spell effect) to do nothing to the spells it covers. It must be able to cover ALL spells on the stack, every player's, not only the source's controller's, and its filter needs to reach spells on the stack (types/colors/controller of a spell object), which is a different population from the permanents `static_filter_keys` describes.",
+      "why_existing_wont_do": "`static_effects` has no entry of this shape at all: the nearest neighbours are `protection` and `ward`, which guard a permanent or player from targeting and damage rather than protecting an object on the stack from being countered, and `prevent_damage`, which replaces damage only. The `counter` op has `objects`, `sid` and `target` but no notion of an immunity that a permanent can project onto the stack. The card-level cost/field vocabulary is no help either -- `card_level_cost_keys` is prices only, and a card-level `uncounterable` flag (if one exists outside the packet's reference) would only make Lier itself uncounterable, whereas the printed line is a global static about every spell anyone casts. There is no way to say it partly without silently narrowing 'spells' to 'this spell'.",
+      "confidence": "high"
+    },
+    {
+      "capability": "granted-flashback",
+      "kind": "static_effect",
+      "what": "A static ability that grants flashback to cards in a zone -- specifically, every instant and sorcery card in its controller's graveyard gains flashback whose cost is computed per card (equal to that card's own mana cost), including the flashback replacement that exiles the card as it resolves or as it leaves the stack (702.33a). It needs a static that both grants a *castable-from-graveyard* permission with a per-card derived cost and carries flashback's exile rider.",
+      "why_existing_wont_do": "`flashback` is in `card_level_cost_keys`, i.e. a price a card sets on *itself* at load time; there is no op or static that hangs one on other cards, and `grant_ability`/`grant_keyword` grant abilities and the 34 loader keywords to permanents, not costs to cards in a graveyard. The closest static is `cast_from_graveyard`, but a bare 'you may cast instants and sorceries from your graveyard' permission is not the same sentence: flashback exiles the card instead of letting it return to the graveyard, so without the exile rider the card loops infinitely, and the cost has to be derived per card from that card's printed mana cost rather than being a fixed price on the granting permanent. Approximating with `cast_from_graveyard` would be a strictly stronger, subtly wrong card.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": [
+    "cast_from_graveyard",
+    "flashback",
+    "grant_ability",
+    "grant_keyword",
+    "protection",
+    "ward"
+  ],
+  "confidence": "high"
+}
