@@ -296,6 +296,7 @@ class TestActivatedAbilities:
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _pay_the_counters(game, oid, ability)
+            _afford_the_life(game, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
@@ -336,6 +337,34 @@ def _home_zone(ability) -> Zone:
     """
     zones = ability.active_zones or (Zone.BATTLEFIELD,)
     return Zone.BATTLEFIELD if Zone.BATTLEFIELD in zones else zones[0]
+
+
+def _afford_the_life(game: Game, ability) -> None:
+    """Raise the life total to something the ability's life cost can be paid from.
+
+    Same argument as the mana base and the counters above: "could not pay for
+    it" must never be read as "does not work". Aetherflux Reservoir prints
+    "Pay 50 life", 118.4 forbids paying life you do not have, and the sandbox
+    seats start at 40 -- so the one ability the card is played for reported as
+    unusable on a board where it was merely unaffordable.
+
+    Deliberately additive rather than a flat large number: the cost is paid for
+    real a moment later, and a seat left at exactly the cost would be dead on
+    the spot from the resulting zero.
+    """
+    cost = ability.cost
+    if cost is None:
+        return
+    needed = getattr(cost, "pay_life", None)
+    if not needed:
+        return
+    # `pay_life` is a value expression as often as it is a number -- War Room's
+    # is `{"commander_color_identity": "you"}`. Evaluating it would need a
+    # context this harness has not built yet, and the answer is only ever used
+    # as a floor, so an unevaluated one takes a headroom that no printed card
+    # exceeds.
+    floor = int(needed) + 10 if isinstance(needed, int) else 60
+    game.state.players[0].life = max(game.state.players[0].life, floor)
 
 
 def _pay_the_counters(game: Game, oid: int, ability) -> None:
