@@ -1,0 +1,43 @@
+{
+  "_comment": "The Restless Spire shape: a creature-land animated with a quoted 'During your turn, this creature has first strike'. t_restless_flat is the counterfactual with a plain keyword, which wrongly keeps first strike while blocking.",
+  "cards": [
+    {
+      "id": "t_restless",
+      "name": "Test Restless Land",
+      "oracle_text": "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land.",
+      "types": ["Land"],
+      "color_identity": ["U", "R"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land.",
+          "cost": {"mana": "{U}{R}"},
+          "effects": [
+            {"op": "animate", "objects": {"self_only": true}, "power": {"const": 2},
+             "toughness": {"const": 1}, "subtypes": ["Elemental"], "colors": ["U", "R"],
+             "your_turn_keywords": ["first_strike"]}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_restless_flat",
+      "name": "Test Restless Flat",
+      "oracle_text": "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with first strike. It's still a land.",
+      "types": ["Land"],
+      "color_identity": ["U", "R"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with first strike. It's still a land.",
+          "cost": {"mana": "{U}{R}"},
+          "effects": [
+            {"op": "animate", "objects": {"self_only": true}, "power": {"const": 2},
+             "toughness": {"const": 1}, "subtypes": ["Elemental"], "colors": ["U", "R"],
+             "keywords": ["first_strike"]}
+          ]
+        }
+      ]
+    }
+  ]
+}

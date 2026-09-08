@@ -375,6 +375,11 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 power += temp.power
                 toughness += temp.toughness
             elif temp.kind == "keyword" and temp.keyword:
+                # "**During your turn**, this creature has first strike."
+                # Read off the active player, which is a pipeline input, so no
+                # static is reading another static here.
+                if temp.only_your_turn and state.active_player != obj.controller:
+                    continue
                 keywords.add(temp.keyword)
 
         # 7. haste from suspend, which is *not* an until-end-of-turn effect: it

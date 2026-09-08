@@ -92,6 +92,18 @@ class TempEffect:
     #: it to the original controller then would undo somebody else's card.
     previous_controller: int | None = None
     new_controller: int | None = None
+    #: For ``kind == "keyword"``: the keyword is granted only while it is its
+    #: controller's turn. Restless Spire and the rest of the *Restless* cycle
+    #: animate into a creature "with \"During your turn, this creature has first
+    #: strike\"" -- a quoted ability on the animated body, live for half the
+    #: turn cycle.
+    #:
+    #: A named flag rather than a general `condition`, deliberately. Evaluating
+    #: an arbitrary condition inside the characteristics layer is how a static
+    #: comes to read another static's output, which the loader forbids
+    #: everywhere else; "is it my turn" is a pipeline *input* the way a counter
+    #: or a tapped flag is, so it can be read without opening that door.
+    only_your_turn: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {

@@ -226,6 +226,14 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
     subtypes = [str(t) for t in spec.get("subtypes", ())]
     colors = [str(c) for c in spec.get("colors", ())]
     keywords = [str(k) for k in spec.get("keywords", ())]
+    # "…with \"**During your turn**, this creature has first strike\"" -- the
+    # Restless cycle, Restless Spire among them. A quoted ability on the
+    # animated body, live for half the turn cycle, and it has to ride the
+    # animation: a flat `keywords` entry would give first strike while blocking
+    # on an opponent's turn, and a separate static beside the animation would
+    # have no printed line of its own to claim -- the residual gate's objection,
+    # and the reason Raging Ravine still fails.
+    your_turn_keywords = [str(k) for k in spec.get("your_turn_keywords", ())]
     oids = yield from choose_objects(ctx, spec.get("objects"), "Animate")
     for oid in oids:
         animate(
@@ -236,6 +244,7 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
             types=types,
             subtypes=subtypes,
             colors=colors,
+            your_turn_keywords=your_turn_keywords,
             source=ctx.source_oid,
         )
         for keyword in keywords:
