@@ -71,6 +71,22 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     state = ctx.state
     if "sid" in spec:
         sid = evaluate_value(ctx, spec["sid"])
+    elif "target" in spec:
+        # "Copy **target** instant or sorcery spell" -- Expansion, Kitsa,
+        # Mizzix's Mastery, and Fork before all of them. `sid` is a *value*
+        # expression and the value language has no leaf for a declared target's
+        # stack id, so every user of this op until now was a triggered ability
+        # copying the spell that fired it -- storm, replicate, conspire,
+        # casualty, demonstrate. A card that named a target instead loaded
+        # clean, found no `sid`, fell back to an empty binding and silently
+        # copied nothing, which is the failure mode this whole pipeline exists
+        # to prevent.
+        #
+        # Read exactly the way `counter` reads its own target, through
+        # `ctx.target_sids`, because they are the same question about the same
+        # kind of object and a second spelling would be a second bug.
+        sids = ctx.target_sids(str(spec["target"]))
+        sid = sids[0] if sids else None
     else:
         sid = ctx.bindings.get("sid")
     original = state.stack_item(int(sid)) if isinstance(sid, int) else None
