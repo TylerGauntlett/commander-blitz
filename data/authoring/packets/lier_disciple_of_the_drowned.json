@@ -327,7 +327,8 @@
         "power",
         "subtypes",
         "toughness",
-        "types"
+        "types",
+        "your_turn_keywords"
       ],
       "attach": [
         "attachment",

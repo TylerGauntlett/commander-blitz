@@ -1492,6 +1492,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # moment it arrives.
         if "power" not in effect or "toughness" not in effect:
             raise DslError(f"{where}: animate needs 'power' and 'toughness'")
+        for word in effect.get("your_turn_keywords", ()) or ():
+            if word not in KNOWN_KEYWORDS:
+                raise DslError(
+                    f"{where}.your_turn_keywords: unknown keyword {word!r}"
+                )
         for t in effect.get("types", ()) or ():
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {t!r}")

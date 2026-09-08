@@ -2399,6 +2399,18 @@
   "experimental_armor": {
     "zone": "battlefield"
   },
+  "expressive_iteration": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "exultant_skymarcher": {
     "zone": "battlefield"
   },
