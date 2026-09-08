@@ -1118,6 +1118,18 @@ class Game:
         oid = action.source
         card = state.card(oid)
         ability = abilities_of(state, oid)[action.ability_index]
+        # "Activate only during your turn and **only once each turn**" -- Vivi
+        # Ornitier. Counted here for the reason `_activate` counts it, and in
+        # the same place relative to the cost: this is the moment an activation
+        # happens, and one that strands mid-payment still spends the allowance.
+        #
+        # It was missing, and only a mana ability could notice: `legality`
+        # checks `once_each_turn` against this ledger for every activated
+        # ability alike, but nothing on this path ever wrote to it -- so a
+        # printed per-turn limit on a by-hand mana ability was inert. Vivi taps
+        # for his own power, so the card was an arbitrary amount of mana per
+        # turn rather than one activation's worth.
+        state.turn_ledger.activated(oid, action.ability_index)
 
         # Fired rather than emitted, and tagged, so `TriggerSpec.mana_ability`
         # is a live restriction rather than a guard that never runs: a card
