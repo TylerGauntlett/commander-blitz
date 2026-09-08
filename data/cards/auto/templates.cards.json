@@ -807,6 +807,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "spells_cast_this_turn": "you"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        },
+        {
+          "cost": {
+            "pay_life": 50
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 50
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "Pay 50 life: This artifact deals 50 damage to any target."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "aetherflux_reservoir",
+      "mana_cost": "{4}",
+      "name": "Aetherflux Reservoir",
+      "oracle_text": "Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.\nPay 50 life: This artifact deals 50 damage to any target.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -83364,6 +83423,69 @@
         "Spirit"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "the_token",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "the_token"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile that token at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, create a token that's a copy of this creature. Exile that token at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "stormsplitter",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Stormsplitter",
+      "oracle_text": "Haste\nWhenever you cast an instant or sorcery spell, create a token that's a copy of this creature. Exile that token at the beginning of the next end step.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Otter",
+        "Wizard"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

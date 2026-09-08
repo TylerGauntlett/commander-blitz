@@ -64,6 +64,13 @@
   "aeronaut_s_wings": {
     "zone": "battlefield"
   },
+  "aetherflux_reservoir": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "affa_protector": {
     "zone": "battlefield"
   },
@@ -7622,6 +7629,10 @@
     "zone": "battlefield"
   },
   "stormrider_spirit": {
+    "zone": "battlefield"
+  },
+  "stormsplitter": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "stormtide_leviathan": {

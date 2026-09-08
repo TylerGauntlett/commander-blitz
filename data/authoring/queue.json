@@ -3302,12 +3302,12 @@
     },
     "Aetherflux Reservoir": {
       "edhrec_rank": 379,
-      "gate": "template",
+      "gate": null,
       "name": "Aetherflux Reservoir",
-      "reason": "no template for: Whenever you cast a spell, you gain 1 life for each spell you've cast this turn",
+      "reason": "",
       "scryfall_id": "7f5342d5-b8a6-46ee-afd7-b333bb836a7c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aethergeode Miner": {
@@ -264432,12 +264432,12 @@
     },
     "Stormsplitter": {
       "edhrec_rank": 3946,
-      "gate": "template",
+      "gate": null,
       "name": "Stormsplitter",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, create a token that's a copy of this creatu",
+      "reason": "",
       "scryfall_id": "56f214d3-6b93-40db-a693-55e491c8a283",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormsurge Kraken": {

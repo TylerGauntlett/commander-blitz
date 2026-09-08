@@ -1,0 +1,20 @@
+{
+  "card_id": "restless_spire",
+  "name": "Restless Spire",
+  "oracle_text": "This land enters tapped.\n{T}: Add {U} or {R}.\n{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land.\nWhenever this land attacks, scry 1.",
+  "blocked_sentences": [
+    "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land."
+  ],
+  "needs": [
+    {
+      "capability": "animate_granted_ability",
+      "kind": "op",
+      "what": "an 'abilities' slot on the animate op, so an animation can grant the quoted ability a creature-land becomes -- a static grant whose own `condition` may be `is_your_turn` (Restless Spire's \"During your turn, this creature has first strike\"), and by the same slot a quoted triggered ability (Raging Ravine's \"Whenever this creature attacks, put a +1/+1 counter on it\"). The granted ability must live and die with the animation's until-end-of-turn window and must be authored inside the one animate effect, because the residual gate treats the whole printed line as one claim.",
+      "why_existing_wont_do": "animate is the right op for the rest of the line (2/1, blue and red, Elemental, still a land), but its spec is closed: the loader validates only power/toughness/types/subtypes/colors/keywords, and op_animate reads exactly those, granting each keyword unconditionally for the duration. So `keywords: [\"first_strike\"]` is the only reachable shape and it is wrong in the direction that matters -- the printed card has no first strike while blocking on an opponent's turn, so the flat keyword is a strictly better card. The condition itself is sayable elsewhere (`is_your_turn` is in static_condition_keys and grant_keyword is a static_effect), but a separate card-level static conditioned on is_your_turn cannot be authored here: it has no printed sentence of its own to claim -- the quoted text is inside the {U}{R} line -- and op_animate's own docstring rules out the split, saying an animation is one sentence and an animate beside a grant \"would read as two claims on the same line\". grant_ability as an op is a resolution-time effect on a target, not something animate can hand its own animation.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": ["animate", "grant_keyword", "grant_ability", "is_your_turn"],
+  "confidence": "high",
+  "notes": "The other three lines are expressible today and are not blocked: enters tapped is the self_enters_tapped replacement in the starting point, the mana ability is the choose_mode/add_mana pair, and \"Whenever this land attacks, scry 1.\" is a plain printed triggered ability (attacks event, self_only, scry 1) -- it is NOT the quoted-ability problem, because it is printed on the card rather than granted by the animation. Only the {U}{R} line blocks the card."
+}
