@@ -71,7 +71,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `cast_from_hand` `return_to_origin` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `grant_graveyard_cast` `cast_from_hand` `return_to_origin` |
 
 `cast_from_hand` is "you may cast a spell **from your hand** without paying its
 mana cost" — Electrodominance, Glamdring. The engine could already cast for free
@@ -255,7 +255,7 @@ it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` |
-| Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
+| Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
