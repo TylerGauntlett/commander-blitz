@@ -66,12 +66,34 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-108 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+111 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `return_to_origin` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `cast_from_hand` `return_to_origin` |
+
+`cast_from_hand` is "you may cast a spell **from your hand** without paying its
+mana cost" — Electrodominance, Glamdring. The engine could already cast for free
+from the library top (`look_at_top`'s `cast_free`, cascade, Bolas's Citadel) and
+from exile (`play_exiled`, foretell); the one zone it could not reach was the one
+every card of this shape names.
+
+```jsonc
+{ "op": "cast_from_hand",
+  "selector": { "any_types": ["Instant", "Sorcery"],
+                "mana_value": { "op": "<=", "value": { "x": true } } } }
+```
+
+`grant_playable` is the near miss and is a **different sentence**: it permits a
+*play* from a zone that normally forbids one, at the card's printed cost. A card
+already in hand needs no permission to be cast — it needs the price waived — so
+reaching for it here produces a card that does nothing at all.
+
+`selector` is the whole of the printed restriction and is optional; omitted, any
+card in hand qualifies, which is Electrodominance's bare "a spell". The op is
+optional by construction — the choice has a minimum of zero, so no `may` wrapper
+is needed — and a player with nothing matching is never asked.
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —

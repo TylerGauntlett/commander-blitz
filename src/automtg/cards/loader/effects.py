@@ -1430,6 +1430,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: lock_life_total takes no 'amount' -- it forbids the "
                 f"change rather than sizing it"
             )
+    if op == "cast_from_hand":
+        # The selector is what may be picked, and it is the whole of the printed
+        # restriction -- "an instant or sorcery spell with mana value X or less".
+        # A misspelled key would widen it silently into "any card in your hand",
+        # which is a strictly better card than the one printed and exactly the
+        # failure this validation layer exists to refuse.
+        selector = effect.get("selector")
+        if selector is not None:
+            if not isinstance(selector, Mapping):
+                raise DslError(f"{where}: cast_from_hand's 'selector' must be a mapping")
+            validate_selector(selector, f"{where}.selector")
+        if "player" in effect:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the

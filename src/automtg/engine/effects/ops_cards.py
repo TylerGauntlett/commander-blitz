@@ -1124,6 +1124,49 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     return len(ctx.state.stack) > before
 
 
+@register("cast_from_hand")
+def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may cast a spell from your hand without paying its mana cost."
+
+    Electrodominance ("…with mana value X or less"), Glamdring ("…with mana
+    value less than or equal to that damage"), Bolas's Citadel's cousins. The
+    engine could already cast for free from the **library top** (`look_at_top`'s
+    `cast_free`, cascade, Bolas's Citadel) and from **exile** (`play_exiled`,
+    foretell, plot), and the one zone it could not reach was the one every card
+    of this shape names.
+
+    `grant_playable` is the near miss and is a different sentence: it *permits a
+    play* from a zone that normally forbids one, at the card's printed cost. A
+    card already in hand needs no permission to be cast -- what it needs is the
+    price waived -- so that op is a no-op here rather than an approximation.
+
+    ``selector`` is what may be picked, tested as a card in hand, so "an instant
+    or sorcery spell with mana value 4 or less" is the printed restriction and
+    not a widening. Omitted, any card in hand qualifies, which is
+    Electrodominance's "a spell".
+
+    Optional by construction: `ask_objects` with a minimum of zero is the "you
+    may", so no `may` wrapper is needed and declining costs no second question.
+    A player with nothing matching is not asked at all.
+    """
+    from ..suspend import cast_for_free
+    from .selectors import select_players
+
+    selector = spec.get("selector") or {}
+    prompt = "Cast a spell without paying its mana cost"
+    for pid in select_players(ctx, spec.get("player", "you")):
+        pool = [
+            oid
+            for oid in list(ctx.state.players[pid].hand)
+            if _matches_in_zone(ctx, oid, selector, "hand")
+        ]
+        if not pool:
+            continue
+        picked = yield from ask_objects(ctx, prompt, pool, 0, 1, pid, "cast_from_hand")
+        if picked:
+            cast_for_free(ctx.state, pid, picked[0])
+
+
 @register("hideaway")
 def op_hideaway(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 702.75a — "look at the top N cards, exile one face down, and put the
