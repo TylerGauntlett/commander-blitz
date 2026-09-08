@@ -33832,12 +33832,12 @@
     },
     "Bria, Riptide Rogue": {
       "edhrec_rank": 2968,
-      "gate": "template",
+      "gate": null,
       "name": "Bria, Riptide Rogue",
-      "reason": "no template for: Other creatures you control have prowess",
+      "reason": "",
       "scryfall_id": "390c96b3-68da-4a42-89ab-d9ccc79ce0dd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Briar Hydra": {
@@ -215432,12 +215432,12 @@
     },
     "Reality Shift": {
       "edhrec_rank": 277,
-      "gate": "template",
+      "gate": null,
       "name": "Reality Shift",
-      "reason": "no template for: Exile target creature. Its controller manifests the top card of their library",
+      "reason": "",
       "scryfall_id": "920bb44e-aa7f-4ee9-ab19-30114f55ec9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reality Smasher": {

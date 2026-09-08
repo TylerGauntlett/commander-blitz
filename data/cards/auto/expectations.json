@@ -961,6 +961,10 @@
   "breezekeeper": {
     "zone": "battlefield"
   },
+  "bria_riptide_rogue": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "brightblade_stoat": {
     "zone": "battlefield"
   },
@@ -6176,6 +6180,13 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "reality_shift": {
+    "battlefield_count": 32,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "reanimate": {
     "battlefield_count": 33,
