@@ -1698,6 +1698,34 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
+### Tiered, and reading back which price was paid
+
+Fire Magic and Ice Magic print "Tiered (Choose one additional cost)" with three
+prices, and — unlike every other choose-a-price card — **which price was paid
+decides what the spell does**. Ice Magic's tiers bounce, or put on top or
+bottom, or shuffle away: three different effects, not one with a scaling number.
+
+The cost half already shipped. `additional_cost_options` has existed since
+Bitter Triumph's "discard a card **or** pay 3 life" and does the hard part: one
+price chosen at cast, paid as part of casting, offered as its own cast line per
+option.
+
+What was missing is reading the choice back, because Bitter Triumph never needed
+to — both of its prices lead to the same "destroy target creature".
+
+```jsonc
+"additional_cost_options": [ {"mana": "{0}"}, {"mana": "{2}"}, {"mana": "{5}"} ],
+"spell_effects": [
+  { "op": "if", "condition": { "cost_option": 0 }, "then": [ … ] },
+  { "op": "if", "condition": { "cost_option": 1 }, "then": [ … ] }
+]
+```
+
+The index rides the stack item and is stamped onto the object **before**
+`spell_effects` run — the same moment and for the same reason as `overloaded`
+and `kicked`. Written after them it would read `None`, every branch would fail,
+and the spell would cost mana and do nothing at all.
+
 ### `mana_spent_of` — what was paid, not what is printed
 
 "…if **at least four mana was spent** to cast it" — The Emperor of Palamecia.

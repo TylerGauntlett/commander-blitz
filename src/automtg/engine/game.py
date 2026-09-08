@@ -636,6 +636,7 @@ class Game:
             evoked=action.evoked,
             flashback=action.flashback,
             overloaded=action.overloaded,
+            cost_option=action.additional_choice,
             spliced=spliced,
             face_down=action.face_down,
             second_face=action.second_face,

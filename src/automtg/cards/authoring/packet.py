@@ -46,6 +46,13 @@ from .verify import EXPECTATION_KEYS
 #: bookkeeping.  Each one is a bare mana cost unless noted.
 CARD_LEVEL_COST_KEYS = (
     "additional_cost",  # a non-mana Cost, e.g. "sacrifice a creature"
+    #: A choice BETWEEN prices, exactly one paid -- Bitter Triumph's "discard a
+    #: card or pay 3 life", and **tiered** (Fire Magic, Ice Magic), where each
+    #: price buys a different effect and the card branches on
+    #: `{"cost_option": n}`. Omitted from this list until now, so two workers
+    #: reading it correctly reported the mechanic missing while Bitter Triumph
+    #: shipped using it.
+    "additional_cost_options",
     "additional_optional",
     "additional_repeatable",
     "alternative_cost",
