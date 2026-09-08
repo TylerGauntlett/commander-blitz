@@ -398,7 +398,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         else None
     )
     mode_count = len(cast_modes.get("modes") or ()) if cast_modes else None
-    all_targets = _compile_targets(model.targets, where, on_spell=True, mode_count=mode_count)
+    all_targets = _compile_targets(
+        model.targets,
+        where,
+        on_spell=True,
+        mode_count=mode_count,
+        # For the one computed count a spell may carry: "each of X targets"
+        # needs an {X} to be sized by.
+        mana_cost=model.mana_cost,
+    )
     targets = tuple(spec for spec in all_targets if spec.mode is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:

@@ -432,6 +432,11 @@ class Game:
         # once its mode has been taken. Appended to the action's own refs, which
         # `CardDef.specs_for_modes` re-derives the spec list for on resolution.
         mode_refs = yield from self._ask_mode_targets(pid, card, oid, modes)
+        # 601.2c again, for the one target size a spell can only know now:
+        # "deals 5 damage to each of **X** targets". Declared after `_ask_x`
+        # above because 601.2b announces X first, which is the whole reason this
+        # is the one computed count a spell's targets may carry.
+        x_refs = yield from self._ask_x_targets(pid, card, oid, x)
 
         ok = yield from pay(
             state,
@@ -631,7 +636,7 @@ class Game:
             state,
             oid,
             pid,
-            tuple(action.targets) + mode_refs,
+            tuple(action.targets) + x_refs + mode_refs,
             x=x,
             kicked=action.kicked,
             graveyard_permission=permission,
@@ -1038,6 +1043,55 @@ class Game:
                     ctx, f"Target for {card.name}", options, want, want, pid
                 )
                 out.extend(chosen)
+        return tuple(out)
+
+    def _ask_x_targets(
+        self, pid: int, card, oid: int, x: int
+    ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
+        """Declare an X-sized target spec's refs -- "each of X targets".
+
+        The sibling of :meth:`_ask_mode_targets`, and it exists for the same
+        reason and in the same window: 601.2 chooses modes and announces X
+        (601.2b), *then* declares targets (601.2c), and both of those are
+        choices legality could not have made on the player's behalf.
+
+        Crackle with Power is the witness. Legality enumerates a spell's targets
+        before the player has picked X, so it sizes the spec at zero and offers
+        one line -- the gate the `x_count` check beside it already is for the
+        cost. The refs are chosen here, where X is a number.
+
+        Returns ``()`` for every card without such a spec, which is all but one
+        of them.
+
+        No `ask_targets` when X is 0: "each of zero targets" is a spell that
+        targets nothing, which is legal and is not a question.
+        """
+        specs = [spec for spec in (card.targets or ()) if spec.x_sized]
+        if not specs:
+            return ()
+        from .effects.context import EffectContext, ask_targets
+        from .targeting import candidates, describe_ref
+
+        state = self.state
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+        out: list[TargetRef] = []
+        for spec in specs:
+            if x <= 0:
+                continue
+            options = [
+                (describe_ref(state, ref), ref) for ref in candidates(state, pid, spec, oid)
+            ]
+            # Fewer legal targets than X is not an error and not a smaller X:
+            # 601.2c requires as many *different* targets as the spell asks for,
+            # and a spell that cannot choose them is simply not castable that
+            # way. Legality cannot have caught this -- it did not know X -- so
+            # the honest answer here is to take what there is, which `ask_targets`
+            # does with a ceiling it can meet.
+            want = min(x, len(options))
+            chosen = yield from ask_targets(
+                ctx, f"Targets for {card.name}", options, want, want, pid
+            )
+            out.extend(chosen)
         return tuple(out)
 
     def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:

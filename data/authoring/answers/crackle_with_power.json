@@ -1,0 +1,54 @@
+{
+  "card": {
+    "id": "crackle_with_power",
+    "name": "Crackle with Power",
+    "oracle_text": "Crackle with Power deals five times X damage to each of up to X targets.",
+    "mana_cost": "{X}{X}{X}{R}{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "any",
+        "count": {
+          "x": true
+        },
+        "up_to": true,
+        "selector": {
+          "types": [
+            "Creature"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "damage",
+        "target": "t1",
+        "amount": {
+          "times": [
+            {
+              "const": 5
+            },
+            {
+              "x": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

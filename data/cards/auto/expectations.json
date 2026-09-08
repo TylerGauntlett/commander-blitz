@@ -1594,6 +1594,12 @@
   "cowl_prowler": {
     "zone": "battlefield"
   },
+  "crackle_with_power": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "crackling_doom": {
     "life": {
       "1": 38

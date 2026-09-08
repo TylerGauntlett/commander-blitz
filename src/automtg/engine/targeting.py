@@ -82,6 +82,29 @@ def candidates(
             and _spell_matches(ctx, item, spec)
         ]
 
+    if spec.kind == "spell_or_permanent":
+        # "Target spell or nonland permanent an opponent controls." One
+        # instance of the word "target" whose legal choices live in two zones,
+        # so the pool is the two halves concatenated rather than two specs --
+        # two specs would be a card that targets twice and fizzles unless both
+        # are still legal.
+        #
+        # Spells first, matching the printed word order, and both halves reuse
+        # the matcher their single-kind branch uses: nothing here decides
+        # legality of its own, so every ref this offers is one `still_legal`
+        # will accept when it re-checks it -- and it re-checks by `ref.kind`,
+        # which is why that function needed no change at all.
+        pool: list[TargetRef] = [
+            TargetRef.stack(item.sid)
+            for item in state.stack
+            if item.is_spell and item.sid != exclude_sid and _spell_matches(ctx, item, spec)
+        ]
+        pool.extend(
+            TargetRef.obj(oid)
+            for oid in resolve_pool(ctx, {**dict(spec.selector), "zone": "battlefield"})
+            if can_be_targeted(state, controller, oid, source_oid=source_oid)
+        )
+        return pool
     if spec.kind == "card_in_exile":
         # Exile is kept per owner, so the selector says whose pile to walk the
         # same way a graveyard spec does; the zone is supplied, because the kind

@@ -54652,12 +54652,12 @@
     },
     "Crackle with Power": {
       "edhrec_rank": 1212,
-      "gate": "template",
+      "gate": null,
       "name": "Crackle with Power",
-      "reason": "no template for: deals five times X damage to each of up to X targets",
+      "reason": "",
       "scryfall_id": "6d4e121d-c46c-4028-9582-3bb9c1621cbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crackleburr": {

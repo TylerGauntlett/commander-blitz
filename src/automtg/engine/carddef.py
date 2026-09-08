@@ -85,6 +85,20 @@ class TargetSpec:
         """
         return self.up_to or not isinstance(self.count, int)
 
+    @property
+    def x_sized(self) -> bool:
+        """Is this "each of **X** targets", sized by the X paid to cast the spell?
+
+        Crackle with Power: "{X}{R}{R}{R}: … deals 5 damage to each of X
+        targets." The one computed count a *spell* may carry, and it is legal
+        for the reason every other computed count is not: 601.2b announces X
+        and 601.2c chooses targets, in that order, so by the time the targets
+        are declared X is a number. `{"additional_paid": true}` reads a cost
+        paid at 601.2h and would still read zero here, which is what
+        `loader.targets._compile_targets` refuses.
+        """
+        return isinstance(self.count, dict) and bool(self.count.get("x"))
+
 
 #: What a **bestowed** spell targets, fixed by rule 702.103a rather than by the
 #: card: "it's an Aura spell with **enchant creature**". Every other alternative

@@ -178,8 +178,20 @@ class TargetModel(BaseModel):
     model_config = Strict
 
     id: str
+    #: ``"spell_or_permanent"`` is the one kind whose pool spans two zones at
+    #: once -- "target **spell or nonland permanent** an opponent controls"
+    #: (Sink into Stupor). It is one instance of the word "target", so it is one
+    #: spec: writing two, one of each kind, is a card that targets twice and
+    #: needs both to be legal. The `selector` narrows both halves, since the
+    #: printed clause ("nonland", "an opponent controls") is meant to.
     kind: Literal[
-        "permanent", "player", "spell", "card_in_graveyard", "card_in_exile", "any"
+        "permanent",
+        "player",
+        "spell",
+        "card_in_graveyard",
+        "card_in_exile",
+        "any",
+        "spell_or_permanent",
     ]
     #: "…any number of target creature cards **with total mana value 6 or
     #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
