@@ -386,11 +386,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: return_spell_to_hand references target {tid!r} "
                 f"which the card does not declare"
             )
-        if target_kinds[tid] != "spell":
+        if target_kinds[tid] not in ("spell", "spell_or_permanent"):
             raise DslError(
-                f"{where}: return_spell_to_hand needs a target of kind 'spell', "
-                f"and {tid!r} is {target_kinds[tid]!r} "
-                f"(a permanent goes back with return_to_hand)"
+                f"{where}: return_spell_to_hand needs a target of kind 'spell' or "
+                f"'spell_or_permanent', and {tid!r} is {target_kinds[tid]!r} "
+                f"(a permanent alone goes back with return_to_hand)"
             )
         if "objects" in effect:
             # The obvious thing to write, copied off `return_to_hand`, and it is

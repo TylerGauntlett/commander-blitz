@@ -727,7 +727,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     if item.mutated:
         yield from _merge_mutation(state, item, targets)
         return
-    _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
+    yield from _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
     _attach_aura(state, obj, card, targets, specs)
 
 
@@ -775,7 +775,7 @@ def _merge_mutation(
 
 def _place_after_resolution(
     state: GameState, obj, card: CardDef, *, enters_tapped: bool = False
-) -> None:
+):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
     The object's zone is still ``STACK``; ``move_object`` handles that case by
@@ -875,6 +875,13 @@ def _place_after_resolution(
     # showing the face it was cast as.
     obj.showing_second_face = False
     controller = obj.controller
+    if destination is Zone.BATTLEFIELD:
+        # "As this enters, you may pay …" -- the permanent-spell half of the
+        # same offer `game._play_land` makes for a land drop, and asked in the
+        # same window and for the same reason.
+        from .zones import offer_enters_costs
+
+        yield from offer_enters_costs(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:

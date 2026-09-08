@@ -11191,3 +11191,63 @@ That is the semantics an X-sized target wants, written before one existed.
 would size to zero for ever, which is a spell that says it targets and never does,
 the silent half of the mistake the original clause prevents. Every other computed
 count on a spell is refused exactly as before.
+
+## Sink into Stupor — two capabilities, one card
+
+The last card in the Vivi deck, and it needed both faces built.
+
+### "Target spell or nonland permanent an opponent controls"
+
+One instance of the word "target" whose legal choices live in two zones at once.
+`kind: "spell"` walks the stack; `"permanent"` and `"any"` walk the battlefield;
+nothing pooled the two.
+
+**One spec, not two.** Writing one of each kind is a card that targets *twice*:
+it would need a legal choice of each to be castable at all, and 608.2b would
+fizzle it if either became illegal. The printed card is castable with only a
+permanent on the board and with only a spell on the stack.
+
+`still_legal` needed no change whatever. It already re-checks a stored ref by
+`ref.kind` rather than by the spec's kind, so every ref the new pool offers is one
+it will accept — the design working rather than a lucky escape. The `selector`
+narrows both halves, because "nonland" and "an opponent controls" are meant to.
+
+What did need saying is where the chosen thing goes. `return_spell_to_hand` read
+only `ctx.target_sids`, so a union target that landed on a permanent returned
+nothing and left it on the battlefield with the card looking like it worked. That
+is the exact silent failure that op's own docstring was written about — it argues
+at length that `return_to_hand` "cannot see a spell" and is a silent no-op — one
+kind further along, pointing the other way.
+
+### "As this land enters, you may pay 3 life"
+
+Steam Vents already ships in this pool with the sentence dropped. A land that
+always enters tapped is a strictly worse card and nothing on the board says so,
+which is the same silent-narrowing failure the impulse durations were about.
+
+**Where the question is asked is the whole design.** 614 applies enters
+replacements *inside* the zone change, and `move_object` is not a generator: it
+cannot stop for a decision. The gap record proposed making that path suspend "the
+way dredge/madness/miracle do", which would put a suspend point inside every zone
+change in the engine — every death, every draw, every token.
+
+The cheaper and more exact answer is to ask a moment earlier. Both paths that put
+a permanent onto the battlefield are *already* generators — `game._play_land` for
+a land drop, `stack._place_after_resolution` for a permanent spell — so
+`zones.offer_enters_costs` is called there and leaves the answer on the object.
+
+That is not an approximation. Nobody receives priority between the question and
+the arrival, so there is no window in which the permanent exists with the question
+unanswered. `_play_land` already makes exactly this argument for writing
+`showing_second_face` before the move rather than during it.
+
+`enters_cost_paid` survives `reset_permanent_state` deliberately — the same
+exemption `hasted_by_suspend` has, and its comment gives the same reason, that the
+flag is set a moment before a move this runs during. `_enter_battlefield` clears
+it once the replacements have read it, because a permanent that leaves and comes
+back is a new object (400.7) whose controller has been asked nothing.
+
+**One divergence, stated:** an unaffordable price is never offered. 118.4 forbids
+paying life you do not have, so a player at 2 life is not shown a question whose
+"yes" cannot be honoured — which would otherwise leave the arrival depending on
+how a failed payment was reported.

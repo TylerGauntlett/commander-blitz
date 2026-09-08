@@ -80149,6 +80149,43 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sink_into_stupor_soporific_springs",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Sink into Stupor // Soporific Springs",
+      "oracle_text": "Return target spell or nonland permanent an opponent controls to its owner's hand.",
+      "second_face": "soporific_springs",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "return_spell_to_hand",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell_or_permanent",
+          "selector": {
+            "controller": "opponent",
+            "not_types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G",
         "W"
       ],
@@ -82371,6 +82408,43 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "soporific_springs",
+      "name": "Soporific Springs",
+      "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {U}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped",
+          "unless_cost": {
+            "pay_life": 3
+          }
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
