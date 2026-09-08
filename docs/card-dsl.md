@@ -2912,6 +2912,25 @@ creature source of the chosen type**." Three things are load-bearing:
   at load time, because the type does not exist until the land is on the
   battlefield. A group naming it before anything is chosen is **dropped, not
   widened**: the land pays for nothing rather than for everything.
+- **`{"not": <name>}`** is the negated entry — "spend this mana only to cast a
+  **non**creature spell" (The Emperor of Palamecia). A group carries `required`
+  and `forbidden` names and is satisfied when every required one is present and
+  no forbidden one is, so `[[{"not": "creature"}]]` is the whole line and
+  `[["artifact", {"not": "creature"}]]` is "a noncreature artifact spell".
+
+  It exists because both spellings available without it misprint the card, in
+  opposite directions. `"noncreature"` as a literal loads — the guard only asks
+  that an entry look like a word — and then matches nothing ever, leaving mana
+  that can never be spent. Enumerating the noncreature types over-permits every
+  artifact creature, because `permits` sees `artifact` among the names and never
+  learns `creature` is there too. Both live in
+  `tests/unit/test_mana_restriction_not.py` as cards, so the difference is
+  asserted rather than described.
+
+  A negated `{"chosen_type_of": …}` is refused: no card prints it, and accepting
+  it would mean a sentinel that only half the substitution path honours. A name
+  that is both required and forbidden in one group is refused too — nothing can
+  satisfy it, which is the same dead mana a typo makes.
 
 ## Adding an op
 

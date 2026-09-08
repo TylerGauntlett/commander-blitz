@@ -32,6 +32,7 @@ from .mana import (
     ManaRestriction,
     ManaSource,
     Requirement,
+    RestrictionGroup,
     SpendPurpose,
     format_symbols,
     solve_payment,
@@ -167,15 +168,31 @@ def resolve_mana_restriction(ability: Ability, obj: Any) -> ManaRestriction | No
 
 
 def _resolve_groups(
-    groups: tuple[frozenset[str], ...], chosen: str | None
-) -> tuple[frozenset[str], ...]:
-    out: list[frozenset[str]] = []
+    groups: tuple[RestrictionGroup, ...], chosen: str | None
+) -> tuple[RestrictionGroup, ...]:
+    out: list[RestrictionGroup] = []
     for group in groups:
-        if CHOSEN_TYPE not in group:
+        if CHOSEN_TYPE not in group.names():
             out.append(group)
         elif chosen is not None:
-            out.append((group - {CHOSEN_TYPE}) | {chosen.lower()})
+            # Both halves, though only `required` can hold the sentinel today --
+            # the loader refuses a negated chosen type, since no card prints
+            # "spend this only to cast a spell that is *not* the chosen type".
+            # Substituting both anyway means the day one does, this is not the
+            # place that quietly kept the sentinel.
+            out.append(
+                RestrictionGroup(
+                    required=_swap(group.required, chosen),
+                    forbidden=_swap(group.forbidden, chosen),
+                )
+            )
     return tuple(out)
+
+
+def _swap(names: frozenset[str], chosen: str) -> frozenset[str]:
+    if CHOSEN_TYPE not in names:
+        return names
+    return (names - {CHOSEN_TYPE}) | {chosen.lower()}
 
 
 def _by_permanent(sources: Sequence[ManaSource]) -> dict[int, list[ManaSource]]:

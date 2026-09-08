@@ -1,0 +1,92 @@
+{
+  "_comment": "Shapes for tests/unit/test_mana_restriction_not.py. t_emperor_mana is The Emperor of Palamecia's mana ability: 'Spend this mana only to cast a noncreature spell.' The other two are the spellings that were available before the negation, kept as live cards because each is a different wrong card and the test says which.",
+  "cards": [
+    {
+      "id": "t_emperor_mana",
+      "name": "Test Noncreature Font",
+      "oracle_text": "{T}: Add {U}. Spend this mana only to cast a noncreature spell.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}. Spend this mana only to cast a noncreature spell.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "mana_restriction": [[{"not": "creature"}]],
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    },
+    {
+      "id": "t_enumerated_font",
+      "name": "Test Enumerated Font",
+      "oracle_text": "{T}: Add {U}. Spend this mana only to cast an artifact, enchantment, instant, or sorcery spell.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}. Spend this mana only to cast an artifact, enchantment, instant, or sorcery spell.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "mana_restriction": ["artifact", "enchantment", "instant", "sorcery"],
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    },
+    {
+      "id": "t_literal_noncreature_font",
+      "name": "Test Literal Noncreature Font",
+      "oracle_text": "{T}: Add {U}. Spend this mana only to cast a noncreature spell.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}. Spend this mana only to cast a noncreature spell.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "mana_restriction": ["noncreature"],
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    },
+    {
+      "id": "t_artifact_creature_spell",
+      "name": "Test Gearhulk",
+      "oracle_text": "",
+      "mana_cost": "{U}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Construct"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"]
+    },
+    {
+      "id": "t_plain_artifact_spell",
+      "name": "Test Blue Trinket",
+      "oracle_text": "",
+      "mana_cost": "{U}",
+      "types": ["Artifact"],
+      "colors": ["U"],
+      "color_identity": ["U"]
+    },
+    {
+      "id": "t_plain_creature_spell",
+      "name": "Test Plain Bear",
+      "oracle_text": "",
+      "mana_cost": "{U}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U"],
+      "color_identity": ["U"]
+    }
+  ]
+}

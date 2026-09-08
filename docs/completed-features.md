@@ -10781,3 +10781,72 @@ rebound.
 `TestPrintedReboundIsUnchanged`: without a control that a card printing rebound
 still rebounds with no granter on the board, every other assertion here is also
 consistent with the bait card having had rebound all along.
+
+## `mana_restriction` learns the word "non"
+
+### Overview
+
+The Emperor of Palamecia: "{T}: Add {U} or {R}. **Spend this mana only to cast a
+noncreature spell.**"
+
+`mana_restriction` was already the right home for the line, and it was purely
+positive. `_restriction_groups` compiled each group to a frozenset of literal
+lowercased type and subtype names, and `ManaSource.permits` answered
+`group <= purpose.names` against the flat set of the spell's own types and
+subtypes. Nothing anywhere in that chain could ask whether a name was **absent**.
+
+The worker that found this had been told by me that `mana_restriction` would
+carry it. It read the source instead of taking that on trust, and reported back
+that it would not — which is the whole reason the gap record was worth having.
+
+### Both near misses are wrong, in opposite directions
+
+This is the useful part, because a negation is only worth building if the
+spellings already available are worse:
+
+- **`["noncreature"]`** loads. The loader's guard on a restriction entry only
+  asks that it look like a word, deliberately, because subtypes are open-ended
+  and there is no closed list to check against. So the card compiles, and then
+  matches nothing for ever — no spell has a type called "noncreature". The mana
+  becomes permanently unspendable: a strictly *worse* card than printed, and a
+  silent one, which the loader's own comment already flagged as the failure mode
+  a typo produces.
+- **`["artifact", "enchantment", "instant", "sorcery"]`** enumerates the
+  noncreature types as an any-of, and over-permits every artifact creature and
+  enchantment creature spell — `permits` sees `artifact` among the purpose's
+  names, finds its one-name group satisfied, and never learns that `creature` is
+  in that same set. A strictly *better* card.
+
+Both are kept as live cards in `tests/unit/test_mana_restriction_not.py`. The
+sharpest pair in the file is the same artifact creature spell against the two
+fonts: castable under the enumeration, not castable under the negation, same
+board, same spell.
+
+### The change
+
+`RestrictionGroup(required, forbidden)` replaces the bare frozenset, and a group
+is satisfied when `required <= names and not (forbidden & names)`. Four call
+sites, all of them named by the gap record before a line was written: the loader
+builds it, `ManaRestriction.dynamic` scans both halves for the chosen-type
+sentinel, `costs._resolve_groups` substitutes into both, and `permits` asks both.
+
+A bare frozenset is still accepted and coerced, because that *is* the shorthand —
+every name required, none forbidden — and because coercing is one line against
+rewriting every construction that predates the change.
+
+Two refusals rather than two silent acceptances:
+
+- A name both required and forbidden in one group. Nothing satisfies it, which is
+  the same dead mana the typo makes, so it is a load error rather than a card
+  that quietly does nothing.
+- A negated `{"chosen_type_of": …}`. No card prints "spend this only to cast a
+  spell that is *not* the chosen type", and accepting it would mean a sentinel
+  that only half the substitution path honours. `_resolve_groups` substitutes
+  into `forbidden` anyway, so the day one is printed this is not the place that
+  kept the sentinel.
+
+### Where the idea came from
+
+Trigger filters have had `not_types` all along, and selectors have
+`not_types`/`not_subtypes`. The restriction language was the one place the
+negation was missing, and it is the same one word.

@@ -278372,12 +278372,12 @@
     },
     "The Emperor of Palamecia // The Lord Master of Hell": {
       "edhrec_rank": 4833,
-      "gate": "template",
+      "gate": null,
       "name": "The Emperor of Palamecia // The Lord Master of Hell",
-      "reason": "no template for: {T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell",
+      "reason": "",
       "scryfall_id": "1b4d8a51-2307-4ed6-af25-c48946219096",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The End": {

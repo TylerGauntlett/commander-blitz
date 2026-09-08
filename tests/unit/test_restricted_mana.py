@@ -25,6 +25,7 @@ from automtg.cards.schema import CardModel
 from automtg.engine.costs import available_mana, mana_sources, spell_purpose
 from automtg.engine.enums import ActionKind
 from automtg.engine.errors import DslError
+from automtg.engine.mana import RestrictionGroup
 from tests.conftest import only_oid, pass_until
 
 
@@ -277,15 +278,17 @@ class TestASubtypeRestriction:
         """Three one-name groups: "and/or" is an any-of, so any group matching wins."""
         card = self.card(["Vampire", "Cleric", "Demon"])
         assert set(card.abilities[0].mana_restriction.cast) == {
-            frozenset({"vampire"}),
-            frozenset({"cleric"}),
-            frozenset({"demon"}),
+            RestrictionGroup(frozenset({"vampire"})),
+            RestrictionGroup(frozenset({"cleric"})),
+            RestrictionGroup(frozenset({"demon"})),
         }
 
     def test_a_bare_string_still_works(self):
         """The old single-type form is unchanged."""
         card = self.card("creature")
-        assert card.abilities[0].mana_restriction.cast == (frozenset({"creature"}),)
+        assert card.abilities[0].mana_restriction.cast == (
+            RestrictionGroup(frozenset({"creature"})),
+        )
 
     def test_the_bare_form_permits_no_activation(self):
         """"Spend this mana only to **cast** a Vampire spell" -- and nothing else.
