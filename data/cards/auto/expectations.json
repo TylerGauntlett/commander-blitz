@@ -343,6 +343,13 @@
   "archers_of_qarsi": {
     "zone": "battlefield"
   },
+  "archmage_emeritus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archweaver": {
     "zone": "battlefield"
   },
@@ -2639,6 +2646,15 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "flare_of_denial": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "fleetfeather_sandals": {
     "zone": "battlefield"
@@ -7642,6 +7658,13 @@
   "storm_crow": {
     "zone": "battlefield"
   },
+  "storm_kiln_artist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "stormcarved_coast": {
     "zone": "battlefield"
   },
@@ -8585,6 +8608,10 @@
   },
   "vampire_revenant": {
     "zone": "battlefield"
+  },
+  "vandalblast": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "vanquisher_s_axe": {
     "zone": "battlefield"
