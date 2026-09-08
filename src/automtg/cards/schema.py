@@ -370,6 +370,23 @@ class AbilityModel(BaseModel):
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
+    #: ``double_triggers``: which EVENT counts as the cause. Veyran's "if **you
+    #: casting or copying an instant or sorcery spell** causes a triggered
+    #: ability ... to trigger" -- a clause about what happened, not about whose
+    #: ability answered it.
+    #:
+    #: Separate from `affects`, which is the other axis the same effect scopes
+    #: on: Harmonic Prodigy filters the *permanent whose ability fired* ("a
+    #: Shaman or another Wizard you control") and does not care what caused it.
+    #: A card writes whichever of the two it prints; omitting these three means
+    #: "any cause".
+    cause_events: list[str] | None = None
+    #: ``double_triggers``: whose cause it must be, read against the static's own
+    #: controller. Veyran's "**you** casting or copying".
+    cause_controller: Literal["you", "opponent", "any"] | None = None
+    #: ``double_triggers``: what the cause must have been, as a card filter on
+    #: the event's subject. Veyran's "an **instant or sorcery** spell".
+    cause_filter: dict[str, Any] | None = None
     #: "**Once during each of your turns**, you may cast an artifact spell from
     #: your graveyard." Edgar, Master Machinist. How many times a
     #: `cast_from_graveyard` permission may be used per turn, counted per

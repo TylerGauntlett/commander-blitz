@@ -395,6 +395,10 @@
     "artist": "Alejandro Mirabal",
     "scryfall_id": "0fcf0074-162a-4cc0-9726-8672a0261307"
   },
+  "archmage_emeritus": {
+    "artist": "Caio Monteiro",
+    "scryfall_id": "dd547601-d650-4a02-a3a4-890bcef03a7c"
+  },
   "archweaver": {
     "artist": "Jason Felix",
     "scryfall_id": "f99dc8ff-932c-4d56-9253-99ce9e145306"
@@ -2464,6 +2468,10 @@
     "artist": "Joseph Meehan",
     "scryfall_id": "c12027df-b6fb-4956-a6da-6e8375be7364"
   },
+  "electrodominance": {
+    "artist": "Mark A. Nelson",
+    "scryfall_id": "6d550bc9-2cb5-4947-a48d-2c92b5c72541"
+  },
   "electrostatic_infantry": {
     "artist": "Kekai Kotaki",
     "scryfall_id": "5ed2d72f-f1cf-45a7-adf7-969f531721ce"
@@ -2668,6 +2676,10 @@
     "artist": "Ron Spears",
     "scryfall_id": "d11c5fe0-1528-4c94-a8cc-42bcab9d7487"
   },
+  "expansion_explosion": {
+    "artist": "Deruchenko Alexander",
+    "scryfall_id": "42cacf46-6f84-4198-877b-1544cff2f837"
+  },
   "expedition_envoy": {
     "artist": "David Palumbo",
     "scryfall_id": "41193ef1-1619-4448-9905-26b05079c79a"
@@ -2683,6 +2695,10 @@
   "explore": {
     "artist": "Maojin Lee",
     "scryfall_id": "ab9dbf0b-2c1d-463c-b675-ff711c282e56"
+  },
+  "explosion": {
+    "artist": "Deruchenko Alexander",
+    "scryfall_id": "42cacf46-6f84-4198-877b-1544cff2f837"
   },
   "explosive_vegetation": {
     "artist": "John Avon",
@@ -2924,6 +2940,10 @@
     "artist": "Arthur Yuan",
     "scryfall_id": "7690e624-93c1-46f4-8f33-e28d881787d3"
   },
+  "flame_of_anor": {
+    "artist": "Jeff Miracola",
+    "scryfall_id": "1c8873a1-e324-4342-ba63-0bc1bc812e3b"
+  },
   "flameborn_viron": {
     "artist": "Svetlin Velinov",
     "scryfall_id": "9601ea62-a609-4bc5-a2f0-f7615b4dd5fa"
@@ -2935,6 +2955,10 @@
   "flaming_sword": {
     "artist": "Randy Gallegos",
     "scryfall_id": "17ecd9ff-8c30-4e17-8cff-dd40d653c4af"
+  },
+  "flare_of_denial": {
+    "artist": "Jason A. Engle",
+    "scryfall_id": "0149c119-83ea-46f5-9e22-33a674ddddb6"
   },
   "fleetfeather_sandals": {
     "artist": "Steve Prescott",
@@ -3359,6 +3383,10 @@
   "gladecover_scout": {
     "artist": "Allen Williams",
     "scryfall_id": "e112d77d-f019-4709-b31a-b02952df0e35"
+  },
+  "glamdring": {
+    "artist": "Franz Vohwinkel",
+    "scryfall_id": "162a211d-621e-4a20-a732-2f4233e4fe48"
   },
   "glamorous_grapplers": {
     "artist": "Marco Turini",
@@ -4668,6 +4696,10 @@
   "kithkin_billyrider": {
     "artist": "Zara Alfonso",
     "scryfall_id": "0535b69f-247d-49c9-97e1-d988700578ab"
+  },
+  "kitsa_otterball_elite": {
+    "artist": "Zoltan Boros",
+    "scryfall_id": "c8ff751a-ec64-41d5-b22c-2a483ad9a9b2"
   },
   "kjeldoran_escort": {
     "artist": "Bryon Wackwitz",
@@ -8507,6 +8539,10 @@
     "artist": "Una Fricker",
     "scryfall_id": "a26a6daa-499d-4f3e-a75a-2fe4dcf3b629"
   },
+  "storm_kiln_artist": {
+    "artist": "Manuel Casta\u00f1\u00f3n",
+    "scryfall_id": "dd408ccb-3578-4729-82a7-8a61af0fd32e"
+  },
   "stormcarved_coast": {
     "artist": "Piotr Dura",
     "scryfall_id": "36f6c636-3539-494f-abf9-62ea00fcedfd"
@@ -9602,6 +9638,10 @@
   "vampiric_rites": {
     "artist": "Anastasia Ovchinnikova",
     "scryfall_id": "9ae0b1e0-a481-4a98-b67b-0cf8bac53fdd"
+  },
+  "vandalblast": {
+    "artist": "Javier Charro",
+    "scryfall_id": "71067239-d46f-4201-a91c-6aa4c41fa8b1"
   },
   "vanquisher_s_axe": {
     "artist": "Joe Slucher",

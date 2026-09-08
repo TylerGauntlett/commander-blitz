@@ -1,0 +1,214 @@
+{
+  "_comment": "Shapes for tests/unit/test_trigger_doubling.py. t_prodigy scopes by the SUBTYPE of the permanent whose ability fired (Harmonic Prodigy); t_veyran scopes by the CAUSE being a spell you cast or copied (Veyran, Voice of Duality). Two axes, one static effect. t_upkeep_wizard GAINS LIFE rather than drawing: the upkeep window is one step away from the turn's own draw, and a life total cannot be confused with it.",
+  "cards": [
+    {
+      "id": "t_prodigy",
+      "name": "Test Harmonic Prodigy",
+      "oracle_text": "If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time.",
+      "mana_cost": "{1}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a triggered ability of a Shaman or another Wizard you control triggers, that ability triggers an additional time.",
+          "effect": "double_triggers",
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Shaman",
+              "Wizard"
+            ],
+            "exclude_self": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_veyran",
+      "name": "Test Veyran",
+      "oracle_text": "If you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+      "mana_cost": "{1}{U}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Efreet",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you casting or copying an instant or sorcery spell causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+          "effect": "double_triggers",
+          "affects": {
+            "controller": "you"
+          },
+          "cause_events": [
+            "spell_cast",
+            "spell_copied"
+          ],
+          "cause_controller": "you",
+          "cause_filter": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_wizard_drawer",
+      "name": "Test Wizard Drawer",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_goblin_drawer",
+      "name": "Test Goblin Drawer",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, draw a card.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_upkeep_wizard",
+      "name": "Test Upkeep Wizard",
+      "oracle_text": "At the beginning of your upkeep, you gain 1 life.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you gain 1 life.",
+          "trigger": {
+            "event": "upkeep",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
