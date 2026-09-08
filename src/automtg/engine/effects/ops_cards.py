@@ -1158,7 +1158,16 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         pool = [
             oid
             for oid in list(ctx.state.players[pid].hand)
-            if _matches_in_zone(ctx, oid, selector, "hand")
+            # A land is not a spell and is never cast (305.9) -- it is *played*,
+            # and only during your main phase with the stack empty. Excluded
+            # here rather than left to each card's selector, because every
+            # printed card of this shape says "cast a spell" and none of them
+            # says "nonland": Electrodominance's own restriction is a mana
+            # value, and a Forest has mana value 0, so the bare printed filter
+            # matches it. Found by gate 5 -- the spare Forest in the sandbox
+            # hand vanished, which is the whole reason that Forest is there.
+            if "Land" not in ctx.state.card_of(ctx.state.objects[oid]).types
+            and _matches_in_zone(ctx, oid, selector, "hand")
         ]
         if not pool:
             continue

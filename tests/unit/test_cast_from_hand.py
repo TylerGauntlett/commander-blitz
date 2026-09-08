@@ -177,6 +177,33 @@ class TestTheSelectorRestricts:
         assert zone_of(game, BEAR) is Zone.BATTLEFIELD, "a creature is 'a spell'"
 
 
+class TestALandIsNotASpell:
+    """305.9. A land is played, never cast, so it is never on offer.
+
+    The printed restriction on every card of this shape is a mana value, and a
+    land's is 0 -- so without an explicit exclusion the bare printed filter
+    matches a Forest and the "spell" cast is a land drop out of nowhere. Gate 5
+    caught it: the sandbox's spare Forest disappeared from hand.
+    """
+
+    def test_a_land_is_not_offered_even_with_no_selector(self, builder):
+        game = position(builder, [UNBOUNDED, "forest"])
+        cast(game, UNBOUNDED)
+
+        pending = game.pending()
+        assert pending is None or pending.kind is DecisionKind.PRIORITY
+
+    def test_the_land_is_still_in_hand_afterwards(self, builder):
+        game = position(builder, [UNBOUNDED, "forest"])
+        cast(game, UNBOUNDED)
+        settle(game)
+
+        # By hand contents, not `zone_of`: the library is twenty Forests, and a
+        # lookup by def_id would happily find one of those and pass.
+        in_hand = [game.state.objects[o].def_id for o in game.state.players[0].hand]
+        assert in_hand == ["forest"]
+
+
 class TestNothingToOffer:
     def test_an_empty_hand_asks_nothing_and_does_not_crash(self, builder):
         """The boundary. Not asked at all, rather than asked and declined."""

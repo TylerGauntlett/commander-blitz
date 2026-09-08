@@ -1117,6 +1117,17 @@ def _matches_printed(
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
         return False
+    # `types` is a conjunction -- `issubset` above -- which is right for
+    # "artifact creature" and useless for "instant or sorcery": no card is both,
+    # so ["Instant", "Sorcery"] loads clean and matches nothing at all. The
+    # selector language has always had `any_types` for the or-of-types question
+    # and the *static* filters did not, so Archmage of Runes' "instant and
+    # sorcery spells you cast cost {1} less" was unsayable -- and the tempting
+    # spelling of it, a `not_types` complement, silently widens to every
+    # noncreature spell.
+    any_types = selector.get("any_types")
+    if any_types and not (set(any_types) & card.types):
+        return False
     not_types = selector.get("not_types")
     if not_types and set(not_types) & card.types:
         return False
