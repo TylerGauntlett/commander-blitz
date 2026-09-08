@@ -1,0 +1,24 @@
+{
+  "card_id": "will_of_the_jeskai",
+  "name": "Will of the Jeskai",
+  "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Each player may discard their hand and draw five cards.\n• Each instant and sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost.",
+  "blocked_sentences": [
+    "Each instant and sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "granted-flashback",
+      "kind": "op",
+      "what": "an effect that gives cards already in a graveyard the flashback alternative cost -- castable from the graveyard for a cost derived per card (here each card's own mana cost), exiled instead of going to the graveyard as it resolves -- with a duration, so 'until end of turn' and 'for as long as this permanent is on the battlefield' (Lier, Disciple of the Drowned) are both sayable",
+      "why_existing_wont_do": "`flashback` is a card_level_cost_key -- a field a card carries about itself -- and no op writes it onto another card. `grant_keyword` only takes the 34 ability keywords and flashback is not one of them; `grant_ability` attaches an activated/triggered/static ability, but flashback is an alternative cost to CAST the card, not an ability, and no `cost_keys` entry can price itself at 'its mana cost'. `grant_playable` (any_type/limit/objects) would let the cards be played but carries no alternative cost and no exile-on-resolution replacement, so it silently gives a strictly better, repeatable effect. The static_effect `cast_from_graveyard` is the closest semantics, but it is a static ability on a permanent -- it cannot be produced by a sorcery's `spell_effects` with a duration, and it likewise omits the exile replacement and the cost."
+    }
+  ],
+  "closest_existing": [
+    "grant_playable",
+    "cast_from_graveyard",
+    "grant_ability",
+    "flashback"
+  ],
+  "notes": "The other two lines are expressible and are not blocked. The conditional mode count -- 'Choose one. If you control a commander as you cast this spell, you may choose both instead' -- is `choose_mode` with `count: 1` plus `up_to_if` on an `exists` condition over `{controller: you, zone: battlefield, is_commander: true}`; `up_to_if` is in choose_mode's op_options, so a mode count may depend on the board as the spell is cast. Mode 1 is `for_each_player` -> `may` -> `discard` the hand + `draw` 5. Only the flashback-granting mode blocks the card.",
+  "confidence": "high"
+}

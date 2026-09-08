@@ -1,0 +1,19 @@
+{
+  "card_id": "kitsa_otterball_elite",
+  "name": "Kitsa, Otterball Elite",
+  "oracle_text": "Vigilance\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\n{T}: Draw a card, then discard a card.\n{2}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if Kitsa's power is 3 or greater.",
+  "blocked_sentences": [
+    "{2}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy. Activate only if Kitsa's power is 3 or greater."
+  ],
+  "needs": [
+    {
+      "capability": "copy_target_spell",
+      "kind": "op",
+      "what": "copy_spell must be able to name its victim by a declared target -- a `target` key holding a target id, read through `ctx.target_sids` the way `counter` and `return_spell_to_hand` already read theirs, so a card can declare `targets: [{\"id\": \"t1\", \"kind\": \"spell\", \"selector\": {\"any_types\": [\"Instant\", \"Sorcery\"], \"controller\": \"you\"}}]` and copy that spell",
+      "why_existing_wont_do": "`copy_spell` takes only `amount`, `controller`, `new_targets` and `sid`. `sid` is a value expression, and the value language has no leaf that yields a target's stack id -- `{\"binding\": \"sid\"}` reads the sid a *trigger event* carried, which is why every shipped user of the op (storm, replicate, casualty, gravestorm, Jin-Gitaxias-style cast triggers) is a triggered ability sourced to the spell it copies. With no `sid` in the spec the op falls back to `ctx.bindings.get(\"sid\")`, which on an activated ability is empty, so a Fork-style line would load clean and silently copy nothing. `counter` solves the same problem with its own `target` key (`spec.get(\"target\", \"t1\")` -> `ctx.target_sids`); `copy_spell` needs that key. `snapshot` is no substitute: its `target` goes through `target_oids`, which keeps only object refs and drops stack refs."
+    }
+  ],
+  "closest_existing": ["copy_spell", "counter", "return_spell_to_hand"],
+  "confidence": "high",
+  "notes": "The rest of the card is expressible and was checked: vigilance is a printed keyword; prowess is the shipped idiom (a `spell_cast` trigger with `filter: {\"not_types\": [\"Creature\"]}` and a self-only `pump`); \"{T}: Draw a card, then discard a card.\" is a `tap` cost with `draw` then `discard`; and the activation restriction \"only if Kitsa's power is 3 or greater\" is an ability `condition` of `{\"cmp\": \">=\", \"left\": {\"power_of\": {\"self_only\": true}}, \"right\": {\"const\": 3}}`. Only the copy target blocks the card. No answer file was written, per the partial-expressibility rule."
+}

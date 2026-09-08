@@ -2616,6 +2616,18 @@
       "0": 41
     }
   },
+  "flame_of_anor": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "flameborn_viron": {
     "zone": "battlefield"
   },
