@@ -1,0 +1,54 @@
+{
+  "card": {
+    "id": "epic_experiment",
+    "name": "Epic Experiment",
+    "oracle_text": "Exile the top X cards of your library. You may cast instant and sorcery spells with mana value X or less from among them without paying their mana costs. Then put all cards exiled this way that weren't cast into your graveyard.",
+    "mana_cost": "{X}{U}{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "R",
+      "U"
+    ],
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "look_at_top",
+        "amount": {
+          "x": true
+        },
+        "cast_free": true,
+        "rest_to": "graveyard",
+        "objects": {
+          "count": "any",
+          "any_types": [
+            "Instant",
+            "Sorcery"
+          ],
+          "mana_value": {
+            "op": "<=",
+            "value": {
+              "x": true
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

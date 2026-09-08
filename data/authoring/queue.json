@@ -84532,12 +84532,12 @@
     },
     "Epic Experiment": {
       "edhrec_rank": 6077,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Epic Experiment",
-      "reason": "no template for: Exile the top X cards of your library. You may cast instant and sorcery spells with mana v",
+      "reason": "player 0 hand_size is 2, expected 1; player 0 library_size is 19, expected 40; player 0 graveyard_size is 23, expected 3",
       "scryfall_id": "d3ad9626-3124-4ad6-9cac-49aa9c3ce88c",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Epic Fight": {
