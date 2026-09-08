@@ -22,6 +22,7 @@ from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from automtg.engine.events import EventType
 from automtg.engine.game import Game
 from automtg.engine.objects import PLUS_ONE
 from automtg.engine.primitives import add_counters, lose_life
@@ -523,9 +524,11 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     -- ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``,
     which it satisfies by adding permanents; the same comparison over
     ``life_lost_this_turn``, which it satisfies by taking the life; a per-player
-    ``max_count_of``, which it satisfies by stocking one opponent's board; and
-    ``power_of`` the source itself, which it satisfies with +1/+1 counters. A helper clever enough to solve an arbitrary condition would be a
-    second implementation of `evaluate` living in the tests, and the first thing
+    ``max_count_of``, which it satisfies by stocking one opponent's board;
+    ``power_of`` the source itself, which it satisfies with +1/+1 counters; and
+    ``spells_cast_this_turn``, which it satisfies by emitting the cast events the
+    ledger folds. A helper clever enough to solve an arbitrary condition would be
+    a second implementation of `evaluate` living in the tests, and the first thing
     it would hide is a bug in the first.
     """
     condition = getattr(ability, "activation_condition", None)
@@ -564,6 +567,25 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         for _ in range(max(0, want - (chars(game.state, oid).power or 0))):
             add_counters(game.state, oid, "+1/+1", 1)
         game.state.bump_chars()
+        return
+
+    # "…only if you've cast three or more instant and/or sorcery spells this
+    # turn" -- Urabrask. Ninth of the family, and the third that satisfies a
+    # clause by *doing* the thing rather than by arranging the board.
+    #
+    # `state.emit` rather than a write to `TurnLedger`: `_tally` folds the event
+    # into the ledger and `emit` records without scanning the trigger bus, so
+    # this writes the tally through exactly the code a real cast writes it
+    # through -- a card naming the wrong tally still fails -- while not
+    # cascading a sandbox full of cast triggers off a spell nobody cast.
+    if "spells_cast_this_turn" in left:
+        spec = left["spells_cast_this_turn"]
+        filt = spec.get("filter") if isinstance(spec, dict) else None
+        match = _fodder_for(registry, {"types": ["Instant"]} if filt else {})
+        if match is None:
+            return
+        for _ in range(int(right["const"])):
+            game.state.emit(EventType.SPELL_CAST, player=0, card=match.id)
         return
 
     if "count" not in left:

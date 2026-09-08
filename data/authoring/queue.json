@@ -296742,12 +296742,12 @@
     },
     "Urabrask // The Great Work": {
       "edhrec_rank": 1813,
-      "gate": "template",
+      "gate": null,
       "name": "Urabrask // The Great Work",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, Urabrask deals 1 damage to target opponent.",
+      "reason": "",
       "scryfall_id": "52173f36-19d2-48be-a8e8-8cbe946759c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urabrask the Hidden": {

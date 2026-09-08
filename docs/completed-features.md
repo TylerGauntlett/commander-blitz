@@ -10929,3 +10929,127 @@ priority, so `pass_until` sailed through it and on into the grantee's own end
 step — where the permission correctly ended, looking exactly like a bug. That one
 now applies the hook directly, which is the actual claim: same state, opponent
 active, permission untouched.
+
+## `grant_graveyard_cast` — a permission that outlives the permanent granting it
+
+### Overview
+
+Urabrask, chapter III: "Until end of turn, you may cast instant and sorcery
+spells from any graveyard. If a spell cast this way would be put into a
+graveyard, exile it instead." Yawgmoth's Will is the same card.
+
+The engine had exactly one graveyard-cast permission — `cast_from_graveyard`, a
+static — and it is the wrong shape three ways over for this sentence. They are
+the same three ways `BlockProhibition` inverted for "can't block", which is why
+this ended up in the same place:
+
+- **It needs a permanent on the battlefield.** The chapter exiles the Saga in the
+  same breath as granting the permission.
+- **It has no clock.** This one ends with the turn.
+- **It reaches its controller's own graveyard.** This one reaches the table.
+
+### The spec is a static, deliberately
+
+The grant stores an ordinary `cast_from_graveyard` static dict and
+`graveyard_cast_permissions` yields it beside the real ones. That single decision
+is most of the feature:
+
+- `affects_spells` filters the cards — existing code.
+- `max_per_turn` and `grants_flashback` meter it — existing code, including the
+  uncapped-permission argument built for Lier.
+- The spell is marked `cast_from_graveyard` when cast, so
+  `graveyard_cast_exiles` exiles it as it resolves — which means **the second
+  printed sentence needed no code at all.**
+
+The loader therefore asks for the same two guarantees the static's own loader
+does, in the same words: a filter, because an absent one frees the whole
+graveyard; and either a cap or `grants_flashback`, because a permission that
+neither meters nor exiles is an engine rather than a printed line.
+
+### The source survives its zone
+
+`GraveyardCastGrant` keeps the granting oid even though the Saga is in exile, and
+that is not sentiment. The rate limit is counted per granting object in the turn
+ledger, and `graveyard_cast_allows` resolves a `chosen_type` against the granter.
+Both keep working, because a `GameObject` outlives the zone it was in — the same
+property `rebound_by` and `exiled_by` rely on.
+
+### `any_graveyard` is asked twice
+
+Once to widen the candidate loop past the caster's own graveyard, and once per
+card in `_graveyard_cast_permission`. Both are load-bearing: widening alone would
+offer a card that no permission actually covers, and asking alone would never see
+the card, because the loop over graveyards is where candidates come from. The
+per-card half is what keeps Edgar and flashback out of an opponent's graveyard.
+
+### Why not `grant_playable`
+
+It is the near miss, and it very nearly works — it takes an arbitrary selector,
+it is turn-scoped, and `as_flashback` already produces the exile. The gap record
+argued it could not name "every graveyard", which was not quite the real problem.
+
+The real problem is that it **snapshots**. It marks the cards it can see when it
+resolves. A spell that reaches a graveyard later in the same turn is castable
+under the printed card and invisible to a mark placed earlier. For a card whose
+whole point is a graveyard that refills as you empty it, that is not an
+approximation — it is the loop, deleted.
+
+`TestACardThatArrivesLater` is that difference, asserted.
+
+## Counting spells by type, not just counting them
+
+### Overview
+
+Urabrask's front face: "{R}: Exile Urabrask, then return it to the battlefield
+transformed… Activate only as a sorcery and only if you've cast **three or more
+instant and/or sorcery spells** this turn."
+
+Two workers disagreed about this line, which is the useful part of the story. The
+first authored around it and reported the front face expressible, blocking only on
+chapter III. The second read `values.py` and `structs.py` and reported that
+`spells_cast_this_turn` sums `TurnLedger.spells_cast` — a flat per-player integer
+bumped once per `SPELL_CAST` event with no record of *what* was cast — so there is
+nothing to filter on and the condition would turn on after three creature spells.
+
+The second was right, and the disagreement is worth recording because the first
+reading is the natural one: the value has a plausible name, it takes a player
+spec, and nothing about it advertises that it has thrown the types away.
+
+### The change
+
+`TurnLedger.spells_cast_ids` — the printed id of each spell, in cast order, per
+caster — kept **beside** the count rather than replacing it. Storm reads the bare
+count and reads it once per copy; making every storm trigger walk a list to serve
+a rarer question would be the wrong trade, and the two answers cannot drift
+because they are written from the same event.
+
+The id recorded is `data["card"]`, which is the face that was cast: a disturb cast
+turns the card over inside `push_spell`, and the half that was cast is the half
+the condition is asking about.
+
+Matching is `_matches_printed`, the same matcher `graveyard_cast_allows` uses, and
+for its stated reason — a spell that has finished resolving has a printed face and
+no board state left to ask about.
+
+### Where the filter lives
+
+Inside the value, not beside it:
+
+```jsonc
+{ "spells_cast_this_turn": { "player": "you", "filter": { … } } }
+```
+
+A sibling `filter` key would have to be added to `VALUE_KEYS`, and would then be
+silently legal on every value expression in the language. `permanents_entered_this_turn`
+already set the precedent of a ledger read that takes a filter rather than a bare
+player spec.
+
+The branch is on the presence of `filter`, not on the type of the value, because a
+player spec is itself sometimes a mapping — `{"except": …}` — and typing the
+branch would have quietly changed what those mean.
+
+### Tests
+
+`tests/unit/test_spells_cast_by_type.py`. The load-bearing pair casts three
+creature spells and asserts the bare count reaches 3 while the filtered one stays
+0 — which is the second worker's argument, executable.

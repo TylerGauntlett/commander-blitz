@@ -179,6 +179,51 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_any_type = any_type
 
 
+
+@register("grant_graveyard_cast")
+def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Until end of turn, you may cast … spells from any graveyard."
+
+    Urabrask's third chapter, and Yawgmoth's Will before it.
+
+    Not `grant_playable`, though that is the near miss and it is worth saying
+    why. `grant_playable` marks the cards it can see **now**, and this sentence
+    is a standing permission: a spell that reaches a graveyard later in the same
+    turn is castable under the printed card and invisible to a snapshot. For a
+    card whose whole point is a graveyard that refills as you empty it, that is
+    not a rounding error -- it is the loop.
+
+    Nor a `cast_from_graveyard` static, which is the shape the permission
+    already had: a static is read off a permanent on the battlefield, and this
+    chapter exiles the Saga in the same breath as granting it. So the grant goes
+    on the table with a turn on it, and `graveyard_cast_permissions` reads it
+    beside the statics.
+
+    The spec **is** a `cast_from_graveyard` static, which is why the second
+    printed sentence needs nothing here: "if a spell cast this way would be put
+    into a graveyard, exile it instead" is what a graveyard cast already does,
+    through `graveyard_cast_exiles` on the resolving spell.
+    """
+    from ..structs import GraveyardCastGrant
+
+    if ctx.source_oid is None:
+        # The rate limit is counted against the granting object and the filter
+        # may name its chosen type, so a grant with no source has nowhere to
+        # keep either. Nothing in the pool can reach this -- an effect always
+        # has a source -- and granting anyway would be an uncapped permission
+        # belonging to nobody.
+        return
+    static = {k: v for k, v in spec.items() if k != "op"}
+    static.setdefault("affects_player", "you")
+    ctx.state.graveyard_cast_grants.append(
+        GraveyardCastGrant(
+            player=ctx.controller,
+            turn=ctx.state.turn,
+            source=ctx.source_oid,
+            static=static,
+        )
+    )
+
 @register("shuffle")
 def op_shuffle(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):

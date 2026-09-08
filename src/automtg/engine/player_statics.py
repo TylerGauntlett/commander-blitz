@@ -556,11 +556,29 @@ def graveyard_cast_permissions(
     `player_plays_lands_from_graveyard`: that one answers a yes/no the land drop
     asks, while this has to say *which* spells and *how many times*.
     """
-    return [
+    out = [
         (obj, static)
         for obj, static in _active_player_statics(state, "cast_from_graveyard")
         if _reaches_player(obj, static, pid)
     ]
+    # The floating, turn-scoped half. A permission granted by a resolving
+    # effect rather than by a permanent still on the battlefield -- Urabrask's
+    # third chapter, which exiles the Saga in the same breath -- so it is read
+    # off the table and joins the same list. Everything downstream (the
+    # `affects_spells` filter, `max_per_turn`, `grants_flashback`, and the
+    # `cast_from_graveyard` mark that exiles the spell as it resolves) is then
+    # the code that already existed.
+    #
+    # The granting object is looked up even though it has left the battlefield:
+    # a `GameObject` outlives its zone, the rate limit is counted against its
+    # oid, and `graveyard_cast_allows` resolves a chosen type against it.
+    for grant in state.graveyard_cast_grants:
+        if grant.turn != state.turn or grant.player != pid:
+            continue
+        source = state.objects.get(grant.source)
+        if source is not None:
+            out.append((source, grant.static))
+    return out
 
 
 def graveyard_cast_allows(

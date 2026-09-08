@@ -498,6 +498,7 @@
   "gain_life",
   "goad",
   "grant_ability",
+  "grant_graveyard_cast",
   "grant_keyword",
   "grant_playable",
   "grant_protection",

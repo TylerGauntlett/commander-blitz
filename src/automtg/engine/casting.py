@@ -174,7 +174,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # here the same way `_land_actions` widens where a land may be played from.
     from .costs import can_pay
 
-    for oid in state.players[pid].graveyard:
+    for oid in _castable_graveyards(state, pid):
         card = state.card(oid)
         # Aftermath (702.127a): "cast this half only from your graveyard". The
         # same widening retrace makes, and the restriction is where the second
@@ -531,6 +531,41 @@ def _cast_options(
 MAX_ADDITIONAL_TIMES = 6
 
 
+
+def _castable_graveyards(state: GameState, pid: int) -> list[int]:
+    """Which graveyard cards ``pid`` might cast from -- usually just their own.
+
+    Every permission the engine had reaches its controller's own graveyard, so
+    that is the whole list until something says otherwise. "You may cast instant
+    and sorcery spells from **any** graveyard" (Urabrask, and Yawgmoth's Will
+    before it) is the exception, and it widens *where the card may be*, not what
+    may be cast -- `_graveyard_cast_permission` still asks, per card, whether a
+    permission covers it, and refuses a card in somebody else's graveyard to any
+    permission that did not say `any_graveyard`.
+
+    Both halves are needed. Widening here alone would offer a card no permission
+    covers; asking there alone would never see the card, because this loop is
+    where the candidates come from.
+    """
+    own = list(state.players[pid].graveyard)
+    if not any(
+        static.get("any_graveyard") for _source, static in _permissions_for(state, pid)
+    ):
+        return own
+    return own + [
+        oid
+        for other in state.players
+        if other.pid != pid
+        for oid in other.graveyard
+    ]
+
+
+def _permissions_for(state: GameState, pid: int):
+    from .player_statics import graveyard_cast_permissions
+
+    return graveyard_cast_permissions(state, pid)
+
+
 def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: int | None = None):
     """The permission that would let ``card`` be cast from a graveyard, if any.
 
@@ -555,6 +590,16 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: i
         # "…put there from anywhere other than the battlefield this turn" is a
         # fact about *this copy* of the card, so it is asked of the object.
         if subject is not None and not graveyard_cast_arrival_ok(state, static, subject):
+            continue
+        # "…from **any** graveyard". A permission that does not say so reaches
+        # only the caster's own, which is every permission the engine had --
+        # so the check is here rather than in the widening, and a card sitting
+        # in an opponent's graveyard is invisible to Edgar and to flashback.
+        if (
+            subject is not None
+            and subject.owner != pid
+            and not static.get("any_graveyard")
+        ):
             continue
         cap = int(static.get("max_per_turn") or 1)
         # Billed against the granting permanent through the ordinary activation

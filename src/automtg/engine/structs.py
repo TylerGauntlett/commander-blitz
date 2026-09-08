@@ -8,7 +8,7 @@ without any ``TYPE_CHECKING`` gymnastics.
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -207,6 +207,42 @@ class AttackRestriction:
 #: `AttackRestriction` uses, and that is not an oversight -- see the class.
 BLOCK_PROHIBITION_DURATIONS = ("this_turn", "until_your_next_turn")
 
+
+
+@dataclass(frozen=True)
+class GraveyardCastGrant:
+    """"Until end of turn, you may cast instant and sorcery spells from any graveyard."
+
+    Urabrask's third chapter, and Yawgmoth's Will before it. The engine's only
+    graveyard-cast permission is `cast_from_graveyard`, a **static** read off a
+    permanent on the battlefield -- which is the wrong shape three ways for this
+    sentence, the same three ways `BlockProhibition` inverted for "can't block":
+
+    - It needs a permanent still on the battlefield, and this chapter exiles the
+      Saga in the same breath that grants the permission.
+    - It has no clock; this one ends with the turn.
+    - It reaches its controller's own graveyard, and this one reaches the table.
+
+    So the grant lives on the table (:attr:`GameState.graveyard_cast_grants`)
+    beside `block_prohibitions`, for the reason given there: the effect belongs
+    to no permanent, and a Saga that exiles itself leaves none behind to own it.
+
+    ``source`` is kept anyway, and it is not decoration. The rate limit is
+    counted per granting object in the turn ledger, and `graveyard_cast_allows`
+    resolves `chosen_type`/`chosen_color` against the granter -- both still work
+    for an object in exile, because a `GameObject` outlives the zone it was in.
+
+    ``static`` is an ordinary `cast_from_graveyard` static dict, so everything
+    downstream -- the `affects_spells` filter, `grants_flashback`,
+    `max_per_turn`, and the `cast_from_graveyard` mark that makes the spell
+    exile as it resolves -- is the code that already existed rather than a
+    second implementation of it.
+    """
+
+    player: int
+    turn: int
+    source: int
+    static: Mapping[str, Any]
 
 @dataclass(frozen=True)
 class BlockProhibition:
@@ -943,6 +979,20 @@ class TurnLedger:
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
+    #: **What** was cast, per caster -- the printed id of each spell, in cast
+    #: order. Beside the count rather than replacing it, because storm asks only
+    #: "how many" and paying a list's length for every storm copy is worse than
+    #: keeping both.
+    #:
+    #: Urabrask is why it exists: "only if you've cast **three or more instant
+    #: and/or sorcery spells** this turn" cannot be read off a flat integer, and
+    #: the count alone would let three creature spells turn the ability on --
+    #: strictly better than the printed card, and silently.
+    #:
+    #: The id is the face that was **cast**, which is what the event carries: a
+    #: disturb cast turns the card over inside `push_spell`, and the half that
+    #: was cast is the half the condition is asking about.
+    spells_cast_ids: dict[int, list[str]] = field(default_factory=dict)
     #: Cards put into any graveyard from anywhere this turn (gravestorm).
     #: Tokens are excluded because they are not cards, and a token dying is the
     #: single most common way this number would otherwise be wrong.
@@ -1075,6 +1125,7 @@ class TurnLedger:
         self.damage_taken.clear()
         self.life_lost.clear()
         self.spells_cast.clear()
+        self.spells_cast_ids.clear()
         self.combat_damage_types.clear()
         self.ability_activations.clear()
         self.cards_to_graveyard = 0

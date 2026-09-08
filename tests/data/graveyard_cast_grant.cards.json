@@ -1,0 +1,62 @@
+{
+  "_comment": "Shapes for tests/unit/test_graveyard_cast_grant.py. t_yawgmoth is Urabrask's third chapter as a sorcery that exiles itself -- the exile is the point, since the whole difference from a static is that the permission outlives its source. t_own_graveyard is the same grant without `any_graveyard`, kept live because it is the narrower card the widening must not hand out for free.",
+  "cards": [
+    {
+      "id": "t_yawgmoth",
+      "name": "Test Yawgmoth's Will",
+      "oracle_text": "Until end of turn, you may cast instant and sorcery spells from any graveyard. If a spell cast this way would be put into a graveyard, exile it instead. Exile Test Yawgmoth's Will.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "exiles_itself": true,
+      "spell_effects": [
+        {
+          "op": "grant_graveyard_cast",
+          "affects_spells": {"any_types": ["Instant", "Sorcery"]},
+          "any_graveyard": true,
+          "grants_flashback": true
+        }
+      ]
+    },
+    {
+      "id": "t_own_graveyard_only",
+      "name": "Test Lesser Will",
+      "oracle_text": "Until end of turn, you may cast instant and sorcery spells from your graveyard. Exile Test Lesser Will.",
+      "mana_cost": "{2}{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "exiles_itself": true,
+      "spell_effects": [
+        {
+          "op": "grant_graveyard_cast",
+          "affects_spells": {"any_types": ["Instant", "Sorcery"]},
+          "grants_flashback": true
+        }
+      ]
+    },
+    {
+      "id": "t_gy_gain",
+      "name": "Test Graveyard Bait",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+    },
+    {
+      "id": "t_gy_creature",
+      "name": "Test Graveyard Ogre",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    }
+  ]
+}
