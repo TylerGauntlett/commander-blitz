@@ -11212,12 +11212,12 @@
     },
     "Arcane Bombardment": {
       "edhrec_rank": 2253,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Bombardment",
-      "reason": "no template for: Whenever you cast your first instant or sorcery spell each turn, exile an instant or sorce",
+      "reason": "",
       "scryfall_id": "ef7e6e2d-d984-483e-b117-b1c5d640dc23",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Denial": {
@@ -84532,12 +84532,12 @@
     },
     "Epic Experiment": {
       "edhrec_rank": 6077,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Epic Experiment",
-      "reason": "player 0 hand_size is 2, expected 1; player 0 library_size is 19, expected 40; player 0 graveyard_size is 23, expected 3",
+      "reason": "",
       "scryfall_id": "d3ad9626-3124-4ad6-9cac-49aa9c3ce88c",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Epic Fight": {
@@ -313082,12 +313082,12 @@
     },
     "Will of the Jeskai": {
       "edhrec_rank": 2264,
-      "gate": "template",
+      "gate": null,
       "name": "Will of the Jeskai",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "3ef5e587-8b80-4ea9-9788-367541101ecc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Will of the Mardu": {

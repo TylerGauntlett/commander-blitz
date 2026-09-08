@@ -10,19 +10,21 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **33** capabilities.
+**36 cards** blocked by **42** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [enters-replacement](#enters-replacement) | 2 | 172 | replacement |
+| [impulse-until-next-turn](#impulse-until-next-turn) | 2 | 1214 | engine |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [token-definitions](#token-definitions) | 2 | 70 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cast-from-graveyard-this-turn](#cast-from-graveyard-this-turn) | 1 | 1813 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -35,18 +37,25 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-spell-each-turn](#first-spell-each-turn) | 1 | 77 | trigger_event |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [impulse-until-next-turn](#impulse-until-next-turn) | 1 | 1214 | engine |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [mana-ability-with-rider](#mana-ability-with-rider) | 1 | 3126 | engine |
+| [mana-restriction-negation](#mana-restriction-negation) | 1 | 4833 | selector |
+| [multi-pip-x-cost](#multi-pip-x-cost) | 1 | 1212 | cost |
+| [multicolored-from-hand-spell-filter](#multicolored-from-hand-spell-filter) | 1 | 10372 | selector |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [plot](#plot) | 1 | 10372 | op, replacement |
+| [rebound](#rebound) | 1 | 3126 | keyword |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [spell-exiled-instead-of-graveyard](#spell-exiled-instead-of-graveyard) | 1 | 1813 | replacement |
 | [spell-or-permanent-target](#spell-or-permanent-target) | 1 | 172 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
+| [x-targets](#x-targets) | 1 | 1212 | selector |
 
 ## cast-as-though-flash
 
@@ -100,6 +109,24 @@ Blocks **2** cards.
   - As this land enters, you may pay 3 life. If you don't, it enters tapped.
 - **Mox Diamond** (rank 246) — `mox_diamond`
   - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
+
+</details>
+
+## impulse-until-next-turn
+
+Blocks **2** cards.
+
+- **(engine)** an impulse-exile permission whose clock is a duration rather than the current turn -- here specifically 'until your next end step', which when the spell is cast on an opponent's turn spans the rest of that turn, every other player's turn, and your following turn up to its end step. `exile`'s `playable_this_turn` (and `grant_playable`, which carries no duration at all) needs to accept a duration form -- e.g. `playable: "until_your_next_end_step"` / `until_your_next_turn` -- and every consumer of the permission must honour the recorded expiry instead of comparing against the current turn number.
+  <br>Why the existing vocabulary won't do: `exile` carries only the boolean `playable_this_turn`, and `look_at_top`'s `playable_this_turn` is the same single-turn flag; `grant_playable` takes `any_type`, `limit` and `objects` and no `duration` at all. Shipping `playable_this_turn` would be an approximation in the *narrowing* direction: cast on an opponent's turn (this is an Instant, so that is a normal line of play) the printed card lets you play the exiled card right through your next turn up to your end step, while `playable_this_turn` revokes it at the turn boundary -- a strictly WORSE card than printed, which fails the fidelity rule just as surely as the more usual strictly-better error, and fails it silently since nothing on the board shows the permission expiring early. Going the other way, `grant_playable` with no duration is an open-ended permission and is strictly better than printed. `play_exiled` is a different effect (cast now, for free, not a deferred permission at the printed price). `delay`/`delayed_trigger` cannot re-grant the permission later either: bindings live for one resolution, and `exiled_with` reads `exiled_by`, which `exile` only sets under `link`/`until_leaves` -- flags that mean 'return it', not 'it is still playable'. The engine already expresses `until_your_next_turn` for detain/goad/cant_block, so the clock is representable; it has simply never been wired to the impulse permission. This is the same engine gap already recorded for Light Up the Stage.
+- **(engine)** an impulse-exile permission whose clock runs to the end of the granting player's NEXT turn instead of the current one. Concretely: replace the single `playable_turn: int` on GameObject (src/automtg/engine/objects.py:450) with a permission that also records its duration -- e.g. a `playable_until_next_turn: bool` alongside it, or a `playable_expires_after` marker the turn boundary clears -- and have every reader honour it: legality._playable_zones (src/automtg/engine/legality.py:325-336), the exile-permission filter at src/automtg/engine/legality.py:471, the any-type relaxation at src/automtg/engine/legality.py:1171 and src/automtg/engine/game.py:383, and the group cap at src/automtg/engine/game.py:547. Then surface it on the card side as a duration on `exile`'s `playable_this_turn` (a `playable: "until_your_next_turn"` form, or a sibling `playable_until_next_turn` flag) and the same on `grant_playable`, so the two impulse families -- "you may play that card this turn" and "until the end of your next turn, you may play those cards" -- stay one op with two clocks.
+  <br>Why the existing vocabulary won't do: The permission the engine has is hard-wired to a single turn. `exile` with `playable_this_turn` (src/automtg/engine/effects/ops_board.py:267,293-294) and `grant_playable` (src/automtg/engine/effects/ops_cards.py:132-165) both write `obj.playable_turn = ctx.state.turn`, and every consumer gates on the equality `playable_turn == state.turn`, so the offer vanishes at the turn boundary -- a card written with `playable_this_turn` would let the player use the two exiled cards only on the turn Light Up the Stage resolved, which is strictly narrower than printed and is exactly the approximation the brief forbids. `play_exiled` is a different card entirely: it casts immediately and for free, while this line is a deferred permission at the printed price. `delay`/`delayed_trigger` cannot re-grant it either -- there is no way to re-select the two specific exiled cards from a later resolution, since bindings live for one resolution only (ops_board.py comment at :275-282) and the `exiled_with: "self"` selector reads `exiled_by`, which `exile` sets only under `until_leaves`/`link`, a flag that means "return them" rather than "they are still playable". The duration vocabulary the engine already has for other effects -- `until_your_next_turn` on detain/goad/cant_block (src/automtg/engine/effects/ops_board.py:1939,1996) -- proves the clock is representable; it simply has never been wired to the impulse permission. Note the first printed line, "Spectacle {R}", is NOT blocked: it is expressible as a card-level `alternative_cost` of {R} whose `condition` is a `cmp` of `{"life_lost_this_turn": "opponent"}` greater than `{"const": 0}`, which the loader accepts (src/automtg/cards/loader.py:1205-1228). Only the impulse duration blocks the card, so no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Light Up the Stage** (rank 1214) — `light_up_the_stage`
+  - Until the end of your next turn, you may play those cards.
+- **Haste Magic** (rank 4090) — `haste_magic`
+  - You may play it until your next end step.
 
 </details>
 
@@ -193,6 +220,21 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cast-from-graveyard-this-turn
+
+Blocks **1** card.
+
+- **(op)** A resolution-time effect op that grants the controller permission, until end of turn, to cast instant and sorcery cards from EVERY player's graveyard (not just their own) — the Yawgmoth's Will / Underworld Breach permission. It must be a floating turn-scoped effect that outlives its source, because the same chapter exiles the Saga immediately afterwards, and it must accept a card-type filter and an owner scope of "any player".
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` exists only in `static_effects`, so it is a permanent static ability read off a permanent that is still on the battlefield; it is not an op a Saga chapter's `effects` list can run, it has no duration, and it dies with the Saga this chapter exiles. `grant_playable` is the closest op, but its `objects` names specific already-known cards (the exile-linked "you may play cards exiled with this" pattern) and its `op_options` are only `any_type`, `limit` and `objects` — no `duration` and no way to say "every card of these types in every graveyard, for the rest of the turn". `exile`'s `playable_this_turn` grants a turn-long cast permission but only for cards this effect itself exiles, and these cards must stay in their graveyards. `grant_ability` grants an ability to objects on the battlefield, so it cannot install a player-scoped permission that survives the source leaving.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urabrask // The Great Work** (rank 1813) — `urabrask_the_great_work`
+  - III — Until end of turn, you may cast instant and sorcery spells from any graveyard.
+  - If a spell cast this way would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -369,20 +411,6 @@ Blocks **1** card.
 
 </details>
 
-## impulse-until-next-turn
-
-Blocks **1** card.
-
-- **(engine)** an impulse-exile permission whose clock runs to the end of the granting player's NEXT turn instead of the current one. Concretely: replace the single `playable_turn: int` on GameObject (src/automtg/engine/objects.py:450) with a permission that also records its duration -- e.g. a `playable_until_next_turn: bool` alongside it, or a `playable_expires_after` marker the turn boundary clears -- and have every reader honour it: legality._playable_zones (src/automtg/engine/legality.py:325-336), the exile-permission filter at src/automtg/engine/legality.py:471, the any-type relaxation at src/automtg/engine/legality.py:1171 and src/automtg/engine/game.py:383, and the group cap at src/automtg/engine/game.py:547. Then surface it on the card side as a duration on `exile`'s `playable_this_turn` (a `playable: "until_your_next_turn"` form, or a sibling `playable_until_next_turn` flag) and the same on `grant_playable`, so the two impulse families -- "you may play that card this turn" and "until the end of your next turn, you may play those cards" -- stay one op with two clocks.
-  <br>Why the existing vocabulary won't do: The permission the engine has is hard-wired to a single turn. `exile` with `playable_this_turn` (src/automtg/engine/effects/ops_board.py:267,293-294) and `grant_playable` (src/automtg/engine/effects/ops_cards.py:132-165) both write `obj.playable_turn = ctx.state.turn`, and every consumer gates on the equality `playable_turn == state.turn`, so the offer vanishes at the turn boundary -- a card written with `playable_this_turn` would let the player use the two exiled cards only on the turn Light Up the Stage resolved, which is strictly narrower than printed and is exactly the approximation the brief forbids. `play_exiled` is a different card entirely: it casts immediately and for free, while this line is a deferred permission at the printed price. `delay`/`delayed_trigger` cannot re-grant it either -- there is no way to re-select the two specific exiled cards from a later resolution, since bindings live for one resolution only (ops_board.py comment at :275-282) and the `exiled_with: "self"` selector reads `exiled_by`, which `exile` sets only under `until_leaves`/`link`, a flag that means "return them" rather than "they are still playable". The duration vocabulary the engine already has for other effects -- `until_your_next_turn` on detain/goad/cant_block (src/automtg/engine/effects/ops_board.py:1939,1996) -- proves the clock is representable; it simply has never been wired to the impulse permission. Note the first printed line, "Spectacle {R}", is NOT blocked: it is expressible as a card-level `alternative_cost` of {R} whose `condition` is a `cmp` of `{"life_lost_this_turn": "opponent"}` greater than `{"const": 0}`, which the loader accepts (src/automtg/cards/loader.py:1205-1228). Only the impulse duration blocks the card, so no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Light Up the Stage** (rank 1214) — `light_up_the_stage`
-  - Until the end of your next turn, you may play those cards.
-
-</details>
-
 ## look-at-random-card-in-hand
 
 Blocks **1** card.
@@ -394,6 +422,63 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## mana-ability-with-rider
+
+Blocks **1** card.
+
+- **(engine)** a mana ability whose effects list may contain a non-mana effect alongside add_mana -- here `{T}: Add {U}. Remove a time counter from this land.` -- so that the extra effect happens on activation, without the stack, exactly as the printed mana ability does
+  <br>Why the existing vocabulary won't do: The loader restricts a mana ability to add_mana alone, or one choose_mode whose modes each hold only add_mana, and add_mana's own options (amount, in_commander_identity, mana, player, reflecting) carry no rider, so remove_counters cannot ride along inside it. The two reachable shapes are both wrong. Dropping is_mana_ability and writing effects [add_mana, remove_counters] makes it an ordinary activated ability that uses the stack: it could be responded to and could not be activated while casting a spell or paying a cost, which is the whole point of a mana ability. Moving the removal into the ability's `cost` via the remove_counters cost key changes the card's function outright -- Temple of Cyclical Time is meant to tap for {U} forever, shedding a time counter only while it still has one, and a remove_counters cost would make the land produce no mana at all once it has zero counters, exactly when the other ability becomes activatable.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time** (rank 3126) — `ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time`
+  - Whenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)
+  - {T}: Add {U}. Remove a time counter from this land.
+
+</details>
+
+## mana-restriction-negation
+
+Blocks **1** card.
+
+- **(selector)** a negated entry in a `mana_restriction` group -- a way to write "spend this mana only to cast a NONcreature spell", i.e. a restriction that is satisfied when a named type or subtype is ABSENT from the spell's characteristics. Concretely: let a group entry be `{"not": "creature"}` (loader `_restriction_name` in src/automtg/cards/loader/mana.py, which today accepts only a literal name or `{"chosen_type_of": "self"}`), carry the negated names alongside the required ones on `ManaRestriction`'s groups, and have `ManaSource.permits` (src/automtg/engine/mana.py) require `required <= purpose.names` AND `not (forbidden & purpose.names)` instead of the bare subset test it does now.
+  <br>Why the existing vocabulary won't do: `mana_restriction` ships and is the right home for this line, but it is purely positive: `_restriction_groups` compiles each group to a `frozenset` of lowercased literal type/subtype names, and `ManaSource.permits` answers with `any(group <= purpose.names ...)` against `costs.spell_purpose`, whose `names` is just the flat lowercased set of the spell's types and subtypes. Nothing in that chain can express absence. The two spellings available both misprint the card. (a) `"noncreature"` as a literal loads -- the loader's shape check only asks that an entry look like a word -- and then matches nothing ever, because no spell has a type or subtype called "noncreature"; the mana would be permanently unspendable, which the loader's own comment calls out as the safe-but-silent failure. (b) Enumerating the noncreature types as an any-of, `["artifact", "enchantment", "instant", "sorcery", "planeswalker", "battle"]`, over-permits every artifact creature and enchantment creature spell, because `permits` sees "artifact" in the purpose's names and never learns that "creature" is also there -- a strictly better card than the one printed. Trigger filters already have the negation (`not_types` is honoured in `matches_card_filter`) and selectors have `not_types`/`not_subtypes`; the restriction language is the one place it is missing, and it is the same one-word idea.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Emperor of Palamecia // The Lord Master of Hell** (rank 4833) — `the_emperor_of_palamecia_the_lord_master_of_hell`
+  - {T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell.
+
+</details>
+
+## multi-pip-x-cost
+
+Blocks **1** card.
+
+- **(cost)** a mana cost in which the {X} symbol appears more than once ({X}{X}{X}{R}{R}), where choosing X=2 charges 6 generic plus {R}{R} while the value of X read by effects and by x_in_mana_cost stays 2 -- i.e. the cost parser must multiply the payment by the pip count while the announced X, the mana value on the stack, and every `x` value leaf remain the single announced number
+  <br>Why the existing vocabulary won't do: The packet's cost vocabulary has one X notion and no multiplicity: `x_value` on an activated ability's cost is a single X, `x_in_mana_cost` reads X back off an object, and `x` in value_keys is the one announced value. Nothing states what a repeated {X} pip in the printed mana_cost string charges. If the parser collapses the three pips to one X, Crackle with Power costs a third of its real price -- a misprice, not a rounding error, and exactly the failure mode that makes an approximation here worse than an unimplemented card. This need must be confirmed or built before the card can be authored even if x_targets lands first.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crackle with Power** (rank 1212) — `crackle_with_power`
+  - Crackle with Power deals five times X damage to each of up to X targets.
+
+</details>
+
+## multicolored-from-hand-spell-filter
+
+Blocks **1** card.
+
+- **(selector)** A `spell_cast` trigger filter that can require (a) the spell be multicolored -- two or more colors, any two -- and (b) that it was cast from the caster's hand.
+  <br>Why the existing vocabulary won't do: `selector_keys` has `colors`/`not_colors` (membership in a named list) but no "two or more colors" / multicolored predicate, and `require_all` on a trigger means the spell must have every colour listed, which is five-colour, not multicolored. For the zone, `zone` in `selector_keys` reads an object's current zone, and a spell being cast is on the stack; `condition_keys` offers only `cast_from_graveyard`, whose complement is not "from hand" (a spell cast from exile, from the library top or from a command zone would wrongly qualify).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lilah, Undefeated Slickshot** (rank 10372) — `lilah_undefeated_slickshot`
+  - Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted. (You may cast it as a sorcery on a later turn without paying its mana cost.)
 
 </details>
 
@@ -444,6 +529,37 @@ Blocks **1** card.
 
 </details>
 
+## plot
+
+Blocks **1** card.
+
+- **(op)** An op (or an `exile` option) that marks an exiled card as plotted: its owner may cast it from exile on any LATER turn, only at sorcery speed, without paying its mana cost, and the permission must persist indefinitely rather than expiring at end of turn.
+  <br>Why the existing vocabulary won't do: `exile` carries only `playable_this_turn`, which is the opposite duration -- it grants the cast permission for the current turn and plot explicitly forbids casting it the turn it was plotted. `grant_playable` (any_type/limit/objects) makes cards playable but has no key for `free` (no mana cost), no sorcery-speed restriction and no "not this turn" restriction, and its counterpart `play_exiled` (as/objects) is a resolution-time "you may play it now", not a standing permission left on an exiled card. `look_at_top`'s `cast_free` is free casting, but only for cards it just looked at, immediately. `become_prepared` is the separate Prepared mechanic, not plot.
+- **(replacement)** A replacement effect for where a RESOLVING instant or sorcery goes on its way to the graveyard -- "exile that spell instead of putting it into your graveyard as it resolves" -- applied to a spell the trigger identified, and reporting whether it applied so the dependent "If you do" clause can run.
+  <br>Why the existing vocabulary won't do: The only zone-change replacements in `ops` are `replace_deaths` and `replace_leaves_battlefield`, both of which redirect a PERMANENT leaving the battlefield; neither can see a spell on the stack finishing resolution. `counter` with a destination would be wrong (the spell must resolve first), and a plain `exile` from a trigger cannot fire between a spell's resolution and its move to the graveyard, so the spell would be in the graveyard already.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lilah, Undefeated Slickshot** (rank 10372) — `lilah_undefeated_slickshot`
+  - Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted. (You may cast it as a sorcery on a later turn without paying its mana cost.)
+
+</details>
+
+## rebound
+
+Blocks **1** card.
+
+- **(keyword)** rebound as a real mechanic, and an effect that grants it to a spell already on the stack: a replacement that exiles the spell on resolution instead of putting it into its owner's graveyard, plus a delayed trigger at the beginning of that player's next upkeep offering to cast it from exile without paying its mana cost, with the exiled card leaving exile only when cast or when the offer is declined. The grant must apply to a spell object on the stack chosen by a spell_cast trigger filtered to instants cast from hand, not to a permanent.
+  <br>Why the existing vocabulary won't do: rebound is absent from the 34-entry keywords list and from card_level_cost_keys, so neither grant_keyword (keyword/keywords must name a loader-known keyword) nor a printed cost node can carry it, and even a hypothetical keyword would have no behaviour behind it. grant_keyword and grant_ability both take `objects`, a selector for permanents on the battlefield; nothing in ops attaches anything to a spell on the stack -- the only ops that reach a stack object are counter, copy_spell and return_spell_to_hand, each addressing it by `sid`/`target` to remove or duplicate it, never to modify how it resolves. Hand-rolling the effect is no better: `exile` cannot replace where a resolving spell goes (it moves objects from a zone, and there is no replacement hook for a spell finishing resolution), and delayed_trigger plus play_exiled could at best re-cast a card that some other effect had already exiled, which is a different card's text.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time** (rank 3126) — `ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time`
+  - Whenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)
+  - {T}: Add {U}. Remove a time counter from this land.
+
+</details>
+
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -485,6 +601,21 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## spell-exiled-instead-of-graveyard
+
+Blocks **1** card.
+
+- **(replacement)** A replacement effect attached to the above permission: a spell cast under it that would be put into a graveyard from the stack (on resolution or on being countered) is exiled instead. Needs a marker on the spell at cast time and a replacement applied when that spell leaves the stack for a graveyard.
+  <br>Why the existing vocabulary won't do: The two replacement ops present, `replace_deaths` and `replace_leaves_battlefield`, both redirect PERMANENTS leaving the battlefield; neither sees a spell moving from the stack to a graveyard. Nothing in `ops` or `static_effects` tags a cast spell so a later zone change can be replaced, and `condition_keys`'s `cast_from_graveyard` is only a yes/no question about how a spell was cast, not a hook that can redirect where it goes afterwards.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urabrask // The Great Work** (rank 1813) — `urabrask_the_great_work`
+  - III — Until end of turn, you may cast instant and sorcery spells from any graveyard.
+  - If a spell cast this way would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -543,5 +674,19 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
+
+</details>
+
+## x-targets
+
+Blocks **1** card.
+
+- **(selector)** a target spec whose number of targets is the spell's X -- a `count` that accepts a value expression from value_keys (here {"x": true}) instead of only an integer literal, with `optional: true` giving the "up to" so that X=0 or fewer targets chosen is still a legal cast, and the chosen count locked at announcement (601.2c) rather than recomputed on resolution
+  <br>Why the existing vocabulary won't do: In selector_keys `count` is the size of a target spec and `optional` is the "up to", so "up to three targets" is sayable, but the size is a fixed number: there is no place on a target spec where a value_keys leaf such as `x` may sit. The reference is explicit that variable-size card-level targets are a thing the loader knows about only as a restriction (the mode note forbids them alongside modal targeting), not as something a count may be built from. The nearest expressible shapes both misprint the card: a fixed `count` (say 3 with `optional`) hard-caps the spell no matter what X is paid, and a targetless {"controller": "opponent", "count": "all"} sprays every permanent rather than letting the caster pick X of them, and would ignore targeting restrictions such as hexproof and protection.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crackle with Power** (rank 1212) — `crackle_with_power`
+  - Crackle with Power deals five times X damage to each of up to X targets.
 
 </details>
