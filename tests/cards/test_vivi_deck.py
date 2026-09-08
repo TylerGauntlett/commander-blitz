@@ -456,3 +456,176 @@ class TestAetherfluxReservoir:
 
         cast(game, RITUAL)
         assert game.state.players[0].life == 43, "second spell: gain 2, not 1"
+
+
+class TestViviOrnitier:
+    """The commander, and the card gate 5 could say the least about.
+
+    Both printed lines are unreachable in the authoring sandbox: the harness
+    never activates an ability, and nothing casts a spell after the card under
+    test. So the expectation for the deck's centrepiece was "it is on the
+    battlefield", and everything below is new.
+    """
+
+    def position(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["vivi_ornitier", "mountain", "mountain"])
+            .hand(0, [RITUAL, RITUAL])
+            .hand(1, [ANCHOR])
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        vivi = only_oid(game, "vivi_ornitier")
+        # Vivi arrived this turn, and a creature that did is summoning sick.
+        # The `{0}` ability prints no `{T}`, so 302.6 does not touch it -- but
+        # the ability tests below are about the ability, not about sickness, and
+        # the authoring harness clears exactly this before activating anything.
+        game.state.objects[vivi].entered_turn = 0
+        game.state.bump_chars()
+        return game, vivi
+
+    def test_casting_a_noncreature_spell_grows_it_and_burns(self, builder):
+        """"…put a +1/+1 counter on Vivi and it deals 1 damage to each opponent."
+
+        One sentence, two halves, and the gate could assert neither.
+        """
+        game, vivi = self.position(builder)
+        before = game.state.players[1].life
+
+        cast(game, RITUAL)
+
+        assert game.state.objects[vivi].counters.get("+1/+1") == 1
+        assert game.state.players[1].life == before - 1
+
+    def test_the_damage_does_not_hit_you(self, builder):
+        """"each **opponent**"."""
+        game, _vivi = self.position(builder)
+        before = game.state.players[0].life
+
+        cast(game, RITUAL)
+
+        assert game.state.players[0].life == before
+
+    def zero_ability(self, game, vivi):
+        return [
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE and a.source == vivi
+        ]
+
+    def test_it_is_not_offered_at_power_zero(self, builder):
+        """Vivi is a printed **0/3**, and that is the whole engine of the card.
+
+        "Add X mana …, where X is Vivi Ornitier's power" adds nothing at power
+        zero, so legality declines to offer it -- a prompt that cannot change
+        anything is the cost `copy_spell`'s `new_targets` was held back over.
+        The ability turns on only once the trigger below has grown him, which is
+        the loop the deck is built around.
+        """
+        game, vivi = self.position(builder)
+        assert chars(game.state, vivi).power == 0, "the premise"
+
+        assert not self.zero_ability(game, vivi)
+
+    def test_once_grown_it_adds_mana_equal_to_its_power(self, builder):
+        """The other half: two counters, two mana.
+
+        Counters rather than a cast, because a ritual would put its own {R}{R}{R}
+        in the pool and there would be no way to tell whose mana was whose.
+        """
+        from automtg.engine.primitives import add_counters
+
+        game, vivi = self.position(builder)
+        add_counters(game.state, vivi, "+1/+1", 2)
+        game.state.bump_chars()
+        assert chars(game.state, vivi).power == 2
+
+        actions = self.zero_ability(game, vivi)
+        assert actions, "a grown Vivi offers the ability"
+        game.apply(actions[0])
+        pass_until(game, lambda g: g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
+
+        assert game.state.players[0].mana_pool.total() == 2
+
+    def test_it_is_offered_only_once_each_turn(self, builder):
+        """"Activate only … once each turn." The second look finds nothing."""
+        from automtg.engine.primitives import add_counters
+
+        game, vivi = self.position(builder)
+        add_counters(game.state, vivi, "+1/+1", 2)
+        game.state.bump_chars()
+        game.apply(self.zero_ability(game, vivi)[0])
+        pass_until(game, lambda g: g.pending() is None or g.pending().kind is DecisionKind.PRIORITY)
+
+        assert not self.zero_ability(game, vivi)
+
+    def test_it_is_not_offered_on_an_opponents_turn(self, builder):
+        """"Activate only during your turn."""
+        from automtg.engine.primitives import add_counters
+
+        game, vivi = self.position(builder)
+        add_counters(game.state, vivi, "+1/+1", 2)
+        game.state.bump_chars()
+        pass_until(
+            game,
+            lambda g: g.state.active_player == 1 and g.pending() is not None,
+        )
+
+        assert not self.zero_ability(game, vivi)
+
+
+class TestArchmageOfRunes:
+    """"Instant and sorcery spells you cast cost {1} less to cast."
+
+    A static the gate cannot see: it changes the *price* of a later spell, and
+    the sandbox casts only the card under test.
+    """
+
+    def position(self, builder, *, archmage: bool):
+        board = ["mountain", "mountain"]
+        if archmage:
+            board = ["archmage_of_runes", *board]
+        return (
+            builder(players=2)
+            .battlefield(0, board)
+            .hand(0, [RITUAL])
+            .hand(1, [ANCHOR])
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+
+    def castable(self, game) -> bool:
+        return any(
+            a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == RITUAL
+            for a in game.legal_actions()
+        )
+
+    def test_the_discount_makes_a_two_drop_castable_off_one_land(self, builder):
+        """Pyretic Ritual is {1}{R}; two Mountains pay it either way, so the
+        claim is measured at the boundary instead -- one Mountain short."""
+        game = self.position(builder, archmage=True)
+        # Tap one Mountain, leaving a single untapped land.
+        land = next(o for o in game.state.battlefield_objects(0) if o.def_id == "mountain")
+        land.tapped = True
+        game.state.bump_chars()
+
+        assert self.castable(game), "{1}{R} less {1} is {R}"
+
+    def test_and_without_it_the_same_board_cannot(self, builder):
+        """The control. Without it the test above is just "a land pays for a spell"."""
+        game = self.position(builder, archmage=False)
+        land = next(o for o in game.state.battlefield_objects(0) if o.def_id == "mountain")
+        land.tapped = True
+        game.state.bump_chars()
+
+        assert not self.castable(game)
+
+    def test_the_cast_trigger_draws(self, builder):
+        """"Whenever you cast an instant or sorcery spell, draw a card."""
+        game = self.position(builder, archmage=True)
+        before = len(game.state.players[0].library)
+
+        cast(game, RITUAL)
+
+        assert len(game.state.players[0].library) == before - 1
