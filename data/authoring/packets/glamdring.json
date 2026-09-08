@@ -351,6 +351,10 @@
       "cascade": [
         "max_mana_value"
       ],
+      "cast_from_hand": [
+        "player",
+        "selector"
+      ],
       "change_text": [
         "objects",
         "to"
@@ -807,6 +811,7 @@
       "cant_sacrifice",
       "cascade",
       "cast_copy",
+      "cast_from_hand",
       "change_text",
       "choose_color",
       "choose_mode",

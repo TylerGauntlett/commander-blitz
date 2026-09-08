@@ -79962,12 +79962,12 @@
     },
     "Electrodominance": {
       "edhrec_rank": 1392,
-      "gate": "template",
+      "gate": null,
       "name": "Electrodominance",
-      "reason": "no template for: deals X damage to any target. You may cast a spell with mana value X or less from your han",
+      "reason": "",
       "scryfall_id": "6d550bc9-2cb5-4947-a48d-2c92b5c72541",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electroduplicate": {
@@ -87652,12 +87652,12 @@
     },
     "Expansion // Explosion": {
       "edhrec_rank": 3768,
-      "gate": "template",
+      "gate": null,
       "name": "Expansion // Explosion",
-      "reason": "no template for: Copy target instant or sorcery spell with mana value 4 or less. You may choose new targets",
+      "reason": "",
       "scryfall_id": "42cacf46-6f84-4198-877b-1544cff2f837",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expansion Algorithm": {
@@ -109362,12 +109362,12 @@
     },
     "Glamdring": {
       "edhrec_rank": 5725,
-      "gate": "template",
+      "gate": null,
       "name": "Glamdring",
-      "reason": "no template for: Equipped creature has first strike and gets +1/+0 for each instant and sorcery card in you",
+      "reason": "",
       "scryfall_id": "162a211d-621e-4a20-a732-2f4233e4fe48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glamdring, Foe-hammer // Gleam of Death": {
@@ -148802,12 +148802,12 @@
     },
     "Kitsa, Otterball Elite": {
       "edhrec_rank": 2178,
-      "gate": "template",
+      "gate": null,
       "name": "Kitsa, Otterball Elite",
-      "reason": "no template for: {T}: Draw a card, then discard a card",
+      "reason": "",
       "scryfall_id": "c8ff751a-ec64-41d5-b22c-2a483ad9a9b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kitsune Ace": {

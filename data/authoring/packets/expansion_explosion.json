@@ -344,6 +344,10 @@
       "cascade": [
         "max_mana_value"
       ],
+      "cast_from_hand": [
+        "player",
+        "selector"
+      ],
       "change_text": [
         "objects",
         "to"
@@ -800,6 +804,7 @@
       "cant_sacrifice",
       "cascade",
       "cast_copy",
+      "cast_from_hand",
       "change_text",
       "choose_color",
       "choose_mode",
@@ -1149,7 +1154,7 @@
       "Instant"
     ]
   },
-  "template_said": "no template for: Copy target instant or sorcery spell with mana value 4 or less. You may choose new targets",
+  "template_said": "player 0 hand_size is 2, expected 1; player 0 library_size is 39, expected 40",
   "todo": [
     "Copy target instant or sorcery spell with mana value 4 or less. You may choose new targets for the copy",
     "Explosion deals X damage to any target. Target player draws X cards"

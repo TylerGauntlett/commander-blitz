@@ -1,0 +1,31 @@
+{
+  "card_id": "mizzix_s_mastery",
+  "name": "Mizzix's Mastery",
+  "oracle_text": "Exile target card that's an instant or sorcery from your graveyard. For each card exiled this way, copy it, and you may cast the copy without paying its mana cost. Exile Mizzix's Mastery.\nOverload {5}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+  "blocked_sentences": [
+    "Exile Mizzix's Mastery.",
+    "For each card exiled this way, copy it, and you may cast the copy without paying its mana cost."
+  ],
+  "needs": [
+    {
+      "capability": "self-exile-on-resolution",
+      "kind": "op",
+      "what": "A way for an instant or sorcery to exile itself as the last step of its own resolution, so it goes to exile instead of to its owner's graveyard (CR 608.2m). Either an `exile` whose `objects` are allowed to resolve to the spell currently resolving on the stack, or a card-level boolean flag alongside the other `card_level_cost_keys`. The whole Increasing/Mastery family (\"Exile Increasing Vengeance.\", \"Exile Mizzix's Mastery.\") turns on this one line, and it is load-bearing: without it the card is an infinitely reusable free-spell engine rather than a one-shot.",
+      "why_existing_wont_do": "`cost_keys` has `exile_self`, but the packet's own notes define it as \"Exile this artifact\" and say it requires the source to be on the battlefield; `exile_self_from_hand` is likewise a cost, paid from hand before the spell is ever on the stack. Both are costs, and this is a resolution effect that must happen after the copy clause. The `exile` op takes only `objects`, and while `selector_keys` has `self_only`, every documented `zone` for a selector is a real game zone -- nothing says a selector can reach the resolving spell on the stack, and nothing in `card_level_cost_keys` or `ability_keys` is a self-exile-on-resolution flag."
+    },
+    {
+      "capability": "cast_copy",
+      "kind": "op",
+      "what": "Publish the option keys for the `cast_copy` op. It is listed in `reference.ops` but has no entry at all in `op_options` -- unlike `noop`, which is present with an empty list -- so a worker cannot tell whether it takes `objects` (which cards to copy, e.g. the ones just exiled from a graveyard by the preceding `exile`), a `target`, an `amount`, a `controller`, or a free-cast flag. If it cannot already copy a card sitting in exile and cast that copy without paying its mana cost, that is the capability to add: copy a *card* in exile (not a spell on the stack) and offer its controller a free cast.",
+      "why_existing_wont_do": "`copy_spell` is the wrong primitive: its `op_options` (`amount`, `controller`, `new_targets`, `sid`, `target`) describe copying a spell already on the stack, and Mizzix's Mastery copies a card in exile that was never cast. `play_exiled` and `grant_playable` let you play the exiled card itself, which is a different game action -- the original card must stay in exile and only the copy is cast. `look_at_top` has a `cast_free` key, but it is bound to cards revealed off the library. The existing gap slug `cast-free-from-hand` is also not it: this casts a copy from exile, not the physical card from hand."
+    }
+  ],
+  "closest_existing": [
+    "cast_copy",
+    "copy_spell",
+    "play_exiled",
+    "exile_self",
+    "cast-free-from-hand"
+  ],
+  "confidence": "high"
+}

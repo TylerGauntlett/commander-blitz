@@ -184,6 +184,7 @@
       "x_value"
     ],
     "cost_reduction_filter_keys": [
+      "any_types",
       "attacking",
       "blocking",
       "colors",
@@ -362,6 +363,10 @@
       ],
       "cascade": [
         "max_mana_value"
+      ],
+      "cast_from_hand": [
+        "player",
+        "selector"
       ],
       "change_text": [
         "objects",
@@ -819,6 +824,7 @@
       "cant_sacrifice",
       "cascade",
       "cast_copy",
+      "cast_from_hand",
       "change_text",
       "choose_color",
       "choose_mode",
@@ -1017,6 +1023,7 @@
       "ward"
     ],
     "static_filter_keys": [
+      "any_types",
       "attached",
       "attacking",
       "blocking",

@@ -1,0 +1,23 @@
+{
+  "card": {
+    "id": "electrodominance",
+    "name": "Electrodominance",
+    "oracle_text": "Electrodominance deals X damage to any target. You may cast a spell with mana value X or less from your hand without paying its mana cost.",
+    "mana_cost": "{X}{R}{R}",
+    "types": ["Instant"],
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "targets": [
+      {"id": "t", "kind": "any", "count": 1}
+    ],
+    "spell_effects": [
+      {"op": "damage", "amount": {"x": true}, "target": "t"},
+      {"op": "cast_from_hand", "selector": {"mana_value": {"op": "<=", "value": {"x": true}}}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1},
+    "library_size": {"0": 40}
+  }
+}

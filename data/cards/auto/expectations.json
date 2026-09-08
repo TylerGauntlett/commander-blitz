@@ -2170,6 +2170,15 @@
   "eldrazi_devastator": {
     "zone": "battlefield"
   },
+  "electrodominance": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "electrostatic_infantry": {
     "battlefield_count": 33,
     "counters": {
@@ -2363,6 +2372,19 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "expansion_explosion": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "expedition_envoy": {
     "zone": "battlefield"
@@ -3105,6 +3127,10 @@
     "zone": "battlefield"
   },
   "gladecover_scout": {
+    "zone": "battlefield"
+  },
+  "glamdring": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glamorous_grapplers": {
@@ -4180,6 +4206,10 @@
     "zone": "battlefield"
   },
   "kithkin_billyrider": {
+    "zone": "battlefield"
+  },
+  "kitsa_otterball_elite": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kjeldoran_escort": {
