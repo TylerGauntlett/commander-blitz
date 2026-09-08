@@ -1,0 +1,28 @@
+{
+  "_comment": "Season of Weaving's header: 'Choose up to five {P} worth of modes. You may choose the same mode more than once.' Each mode has a price in paws and the selection is a multiset within the budget. t_budget_as_count is the near miss -- up_to with count 5 -- which permits five copies of the three-paw mode.",
+  "cards": [
+    {
+      "id": "t_budget",
+      "name": "Test Budget Spell",
+      "oracle_text": "Choose up to five {P} worth of modes. You may choose the same mode more than once.\n{P} — You gain 1 life.\n{P}{P} — You gain 4 life.\n{P}{P}{P} — You gain 9 life.",
+      "mana_cost": "{4}{U}{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "budget": 5,
+          "modes": [
+            {"label": "One paw", "cost": 1,
+             "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]},
+            {"label": "Two paws", "cost": 2,
+             "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 4}}]},
+            {"label": "Three paws", "cost": 3,
+             "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 9}}]}
+          ]
+        }
+      ]
+    }
+  ]
+}

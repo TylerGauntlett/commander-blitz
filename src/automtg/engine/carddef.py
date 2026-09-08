@@ -508,6 +508,22 @@ def asks_another_player(spec: Mapping[str, Any] | None) -> bool:
     return bool(spec) and spec.get("chooser") is not None
 
 
+def is_budgeted(spec: Mapping[str, Any] | None) -> bool:
+    """Is this ``choose_mode`` a budget rather than a count?
+
+    Season of Weaving: "choose up to five {P} worth of modes. You may choose the
+    same mode more than once." The answer is a **multiset** picked one mode at a
+    time, because what is affordable shrinks as the budget is spent -- which is
+    a different question from the single "which of these" that `_ask_modes`
+    puts at 601.2b, and one it has no shape for.
+
+    Declined for the same reason `asks_another_player` is, so the op's own loop
+    gets to ask. Season of Weaving owns no mode-targets, so nothing is lost by
+    asking at resolution; a budgeted card that did would need this revisited.
+    """
+    return bool(spec) and spec.get("budget") is not None
+
+
 def _specs_for_modes(
     base: tuple[TargetSpec, ...],
     mode_targets: Mapping[int, tuple[TargetSpec, ...]],
@@ -661,7 +677,7 @@ class Ability:
         if self.is_static or count_mode_specs(self.effects) != 1:
             return None
         spec = top_level_mode_spec(self.effects)
-        return None if asks_another_player(spec) else spec
+        return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs this ability actually declared -- see
@@ -959,7 +975,7 @@ class CardDef:
         if count_mode_specs(self.spell_effects) != 1:
             return None
         spec = top_level_mode_spec(self.spell_effects)
-        return None if asks_another_player(spec) else spec
+        return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.
