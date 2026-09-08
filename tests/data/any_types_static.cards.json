@@ -1,0 +1,47 @@
+{
+  "_comment": "Shapes for tests/unit/test_any_types_static_filter.py. t_runes is the Archmage of Runes shape: one static reducing BOTH instants and sorceries, which `types` cannot say because no spell is both at once.",
+  "cards": [
+    {
+      "id": "t_runes",
+      "name": "Test Archmage of Runes",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
+      "mana_cost": "{3}{U}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Wizard"],
+      "power": 3,
+      "toughness": 6,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "any_types": ["Instant", "Sorcery"]},
+          "amount": {"const": 1}
+        }
+      ]
+    },
+    {
+      "id": "t_runes_conjunction",
+      "name": "Test Impossible Reducer",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
+      "mana_cost": "{3}{U}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Wizard"],
+      "power": 3,
+      "toughness": 6,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "types": ["Instant", "Sorcery"]},
+          "amount": {"const": 1}
+        }
+      ]
+    }
+  ]
+}

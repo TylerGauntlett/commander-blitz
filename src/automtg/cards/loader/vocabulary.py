@@ -335,6 +335,10 @@ SPELL_FILTER_KEYS = frozenset(
     {
         "controller",
         "types",
+        # The or-of-types question. `types` is a conjunction, so "instant and
+        # sorcery spells you cast cost {1} less" cannot be said with it -- a
+        # spell is never both at once.
+        "any_types",
         "not_types",
         "subtypes",
         "supertypes",
@@ -354,6 +358,7 @@ STATIC_FILTER_KEYS = frozenset(
         "self_only",
         "controller",
         "types",
+        "any_types",
         "not_types",
         "subtypes",
         "supertypes",
@@ -562,6 +567,13 @@ STATIC_ZONE_FILTER_KEYS = frozenset(
         # A card in a graveyard has no board state, but it does have a name.
         "name",
         "types",
+        # The or-of-types question, for the same reason `SPELL_FILTER_KEYS` has
+        # it: Glamdring's "+1/+0 for each instant **and** sorcery card in your
+        # graveyard" counts two types, and `types` is a conjunction that would
+        # have counted zero. Without this the card can only be written as two
+        # statics summed, which is correct arithmetic (no card is both) and one
+        # more ability than the printed line has.
+        "any_types",
         "not_types",
         "subtypes",
         "supertypes",
