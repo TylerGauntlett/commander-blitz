@@ -33,6 +33,23 @@ TRIGGER_EVENTS: dict[str, str] = {
     "leaves_graveyard": EventType.LEAVES_GRAVEYARD,
     "land_played": EventType.LAND_PLAYED,
     "spell_cast": EventType.SPELL_CAST,
+    #: "Magecraft -- Whenever you cast **or copy** an instant or sorcery spell…"
+    #: Archmage Emeritus, Storm-Kiln Artist, Veyran.
+    #:
+    #: A separate event rather than a widening of `spell_cast`, because a copy
+    #: is emphatically **not** cast (707.10a): storm, replicate, conspire,
+    #: casualty, gravestorm and epic all copy the spell that made them, and a
+    #: `spell_cast` that also fired on copies would make every one of them
+    #: retrigger itself -- a storm count of nine firing prowess nine more times.
+    #: So magecraft is two abilities claiming one printed line, the same shape
+    #: Winged Boots uses for "has flying and ward {4}".
+    #:
+    #: `EventType.SPELL_COPIED` has been emitted by `put_copy_on_stack` since
+    #: copying existed and simply had no listener; what was missing was this
+    #: row, the `OBJECT_SUBJECT_TRIGGERS` membership that gives a filter
+    #: something to read, and the `_actor` clause that makes `controller: "you"`
+    #: mean the copy's controller.
+    "spell_copied": EventType.SPELL_COPIED,
     "attacks": EventType.ATTACKS,
     "blocks": EventType.BLOCKS,
     "deals_combat_damage_to_player": EventType.COMBAT_DAMAGE_TO_PLAYER,
@@ -263,6 +280,12 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # so the trigger silently never fired.
         "leaves_graveyard",
         "spell_cast",
+        # The *original* spell, which is what `put_copy_on_stack` puts on the
+        # event as `source`. A filter on a magecraft trigger therefore asks
+        # "was the thing copied an instant or sorcery", which is the printed
+        # question -- and it is answerable, because the original is still on
+        # the stack when its copy is made.
+        "spell_copied",
         "attacks",
         "blocks",
         "deals_combat_damage_to_player",
@@ -985,7 +1008,13 @@ def _actor(
     # control**": the actor is the player whose creatures connected, which
     # `_fire_damage_batch` puts on the event because it is the key the batch was
     # grouped by. Whom they hit is `damaged`, and never this.
-    if dsl_event in ("land_played", "spell_cast", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage"):
+    # `spell_copied` is listed for the reason `spell_cast` is, and the answer
+    # differs from the fallthrough: the subject is the *original* spell, so
+    # reading its controller would make "whenever **you** copy" fire on an
+    # opponent copying your spell, and stay silent when you copy theirs.
+    # `put_copy_on_stack` puts the copy's controller on the event, which is who
+    # did the copying -- 706.10 gives the copy to whoever created it.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

@@ -202,7 +202,16 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
     )
     obj.stack_id = copy.sid
     state.stack.append(copy)
-    state.emit(
+    # `fire` rather than `state.emit`: magecraft ("whenever you cast **or copy**
+    # an instant or sorcery spell") listens for this, and `emit` only records
+    # the event -- it never scans for triggered abilities, so the event was
+    # written into the log and heard by nobody. Every other trigger-bearing
+    # event in the engine goes through `fire`; this one was emitted before
+    # anything could listen and was never moved over.
+    from ..triggers import fire
+
+    fire(
+        state,
         EventType.SPELL_COPIED,
         player=controller,
         source=original.oid,
