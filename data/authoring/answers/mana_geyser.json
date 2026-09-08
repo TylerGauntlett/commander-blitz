@@ -1,0 +1,50 @@
+{
+  "card": {
+    "id": "mana_geyser",
+    "name": "Mana Geyser",
+    "oracle_text": "Add {R} for each tapped land your opponents control.",
+    "mana_cost": "{3}{R}{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "spell_effects": [
+      {
+        "op": "add_mana_per",
+        "mana": "{R}",
+        "player": "you",
+        "per": {
+          "zone": "battlefield",
+          "controller": "opponent",
+          "types": [
+            "Land"
+          ],
+          "tapped": true
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6
+  }
+}

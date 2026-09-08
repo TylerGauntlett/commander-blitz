@@ -1,0 +1,18 @@
+{
+  "card_id": "archmage_emeritus",
+  "name": "Archmage Emeritus",
+  "oracle_text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, draw a card.",
+  "blocked_sentences": [
+    "Magecraft — Whenever you cast or copy an instant or sorcery spell, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "magecraft",
+      "kind": "trigger_event",
+      "what": "a trigger event that fires when a player copies an instant or sorcery spell on the stack -- a `spell_copied` event (or an equivalent `copied: true` / `include_copies: true` filter key on `spell_cast`) that fires once per copy created, whether the copy comes from an effect that copies a spell, a copy that is put onto the stack without being cast, or a copy that is cast. It must carry the same filter surface `spell_cast` has (controller \"you\", types [\"Instant\", \"Sorcery\"]) so the magecraft half can be filtered identically, and it must not double-fire for a copy that is also cast (707.10/608.2 -- a cast copy triggers magecraft once for the cast and once for the copy per the printed wording, so the event's firing rules need to be pinned deliberately rather than left to whichever code path happens to make the copy).",
+      "why_existing_wont_do": "`trigger_events` contains `spell_cast`, which is the closest thing and covers only the cast half. Nothing in the list observes a copy being created: `cycle`, `draw`, `ability_activated` and `permanent_enters` are all unrelated moments, and there is no event fired from the copying machinery at all. `copy_spell` and `cast_copy` are in `ops` -- they are effects that *make* a copy, not events that *notice* one, so they cannot be used to hear another card's copying. `condition_keys` has `was_cast`, which asks whether an object was cast, but a condition can only narrow a trigger that already fired; it cannot cause one to fire, and `was_cast` is false for the untriggered copy anyway. Authoring this as a bare `spell_cast` trigger would ship a strictly weaker card that silently misses every copy -- exactly the half-implemented approximation the brief forbids, and the half the card's own deck archetype (Strixhaven copy/storm decks) is built around."
+    }
+  ],
+  "closest_existing": ["spell_cast", "copy_spell", "cast_copy"],
+  "confidence": "high"
+}

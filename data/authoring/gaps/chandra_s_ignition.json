@@ -1,0 +1,29 @@
+{
+  "card_id": "chandra_s_ignition",
+  "name": "Chandra's Ignition",
+  "oracle_text": "Target creature you control deals damage equal to its power to each other creature and each opponent.",
+  "blocked_sentences": [
+    "Target creature you control deals damage equal to its power to each other creature and each opponent."
+  ],
+  "needs": [
+    {
+      "capability": "damage_from_named_source",
+      "kind": "op",
+      "what": "a way for the `damage` op to attribute the damage to an object other than the resolving spell/ability -- here, the targeted creature -- so that the target's own deathtouch, lifelink, wither and infect apply to every point dealt, and so damage-source-based replacement/prevention effects see the creature rather than the sorcery",
+      "why_existing_wont_do": "`damage` in `ops` deals damage from the resolving source; nothing in the packet's vocabulary names a substitute source object, and `snapshot` only captures a value (it would let `power_of` be read, not reassign who deals the hit). Approximating with plain `damage` would make Chandra's Ignition mis-handle the common lifelink/deathtouch case it is played for."
+    },
+    {
+      "capability": "each_other_object_selector",
+      "kind": "selector",
+      "what": "a selector key that excludes the effect's chosen target from a mass selection -- 'each OTHER creature' -- i.e. the complement of the object bound by `target` within an `objects` filter",
+      "why_existing_wont_do": "`selector_keys` has `exclude_self`, which excludes the ability's own source (the sorcery), not the targeted creature, and `target` selects that creature rather than excluding it. There is no `not_target`/`exclude_target` key, so any expressible form would damage all creatures including the source creature -- a different card."
+    }
+  ],
+  "closest_existing": [
+    "damage",
+    "exclude_self",
+    "power_of",
+    "snapshot"
+  ],
+  "confidence": "high"
+}
