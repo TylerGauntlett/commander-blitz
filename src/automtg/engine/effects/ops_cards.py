@@ -83,17 +83,29 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))
     random = bool(spec.get("random"))
     up_to = bool(spec.get("up_to"))
+    # "Each player **discards their hand**" -- Windfall, Wheel of Fortune. Not
+    # expressible as an `amount`: the amount is evaluated once, above this
+    # loop, so it cannot be a different number for each player. Every near-miss
+    # spelling gets it wrong quietly -- a `cards_in_hand` amount reads the
+    # *resolving* player's hand and then takes that many from everyone, so a
+    # Windfall cast with three in hand rips three from an opponent holding
+    # seven and leaves four.
+    whole_hand = bool(spec.get("whole_hand"))
     name = spec.get("as")
     taken: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
         if not hand:
             continue
-        take = min(amount, len(hand))
+        take = len(hand) if whole_hand else min(amount, len(hand))
         if random:
             # A random discard has no floor to relax: nobody is choosing, so
             # "up to" and "exactly" pick the same cards.
             picked = ctx.state.rng.shuffled(hand)[:take]
+        elif whole_hand:
+            # No choice to make: the whole hand goes, so asking would be a
+            # prompt with exactly one legal answer.
+            picked = hand
         else:
             floor = 0 if up_to else take
             picked = yield from ask_objects(ctx, "Discard", hand, floor, take, pid, "discard")

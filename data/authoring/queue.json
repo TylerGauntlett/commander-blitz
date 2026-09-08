@@ -104202,12 +104202,12 @@
     },
     "Gandalf's Sanction": {
       "edhrec_rank": 8237,
-      "gate": "template",
+      "gate": null,
       "name": "Gandalf's Sanction",
-      "reason": "no template for: deals X damage to target creature, where X is the number of instant and sorcery cards in y",
+      "reason": "",
       "scryfall_id": "8ebf2a25-9bee-4146-af83-f22aab6db2a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gandalf, Friend of the Shire": {
