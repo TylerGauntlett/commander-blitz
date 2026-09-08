@@ -16,6 +16,7 @@ from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selecto
 from automtg.engine.effects.values import (
     validate_value,
 )
+from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
@@ -628,6 +629,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: look_at_top 'cast_free' takes no {sorted(clashing)} -- "
                     f"the picked card goes to the stack, not to a zone"
                 )
+        # "Exile the top card of your library **face down**." Only exile can be
+        # face down: `_move_found` writes the privacy on the way into that zone
+        # and reads it nowhere else, so `face_down` beside any other destination
+        # loads clean, prints the words and does nothing at all -- which is the
+        # failure this whole pass exists to stop. `cast_free` is refused with it
+        # for the same reason the three keys above are: it replaces the branch
+        # that would honour it.
+        if effect.get("face_down") and (destination != "exile" or effect.get("cast_free")):
+            raise DslError(
+                f"{where}: look_at_top 'face_down' needs destination 'exile' "
+                f"(a card is only face down in exile); got {destination!r}"
+            )
     if op == "reveal_until":
         # The selector *is* the "until", so an omitted one is not a smaller
         # version of the card -- an empty selector matches the very first card
@@ -1443,7 +1456,57 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if not effect.get("effects"):
             raise DslError(f"{where}: delay needs 'effects' to schedule")
+        if not isinstance(effect.get("your_turn", False), bool):
+            raise DslError(
+                f"{where}: delay's 'your_turn' is a flag saying whether the step "
+                f"must be its controller's own -- 'at the beginning of *your* "
+                f"next end step' -- so it takes true or false, not "
+                f"{effect.get('your_turn')!r}"
+            )
         _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
+    if op == "change_text":
+        # The word being written in. Without it the op has nothing to say and
+        # would silently do nothing, which for a text change is invisible --
+        # the creature keeps its printed line and the card looks like it fizzled.
+        replacement = effect.get("to")
+        if not isinstance(replacement, str) or not replacement:
+            raise DslError(
+                f"{where}: change_text needs a 'to' naming the creature type "
+                f"written in ('...with Vampire'), got {replacement!r}"
+            )
+        # There is no closed list of creature types to check against -- creature
+        # is the *default* class in `SUBTYPE_CLASS`, which enumerates only the
+        # non-creature subtypes -- so the check that exists is the negative one:
+        # a subtype the engine knows belongs to some other class is certainly
+        # not a creature type. "Replace all instances of Goblin with Equipment"
+        # would otherwise load and put a nonsense word on the type line.
+        if SUBTYPE_CLASS.get(replacement) is not None:
+            raise DslError(
+                f"{where}: change_text 'to' must be a creature type; "
+                f"{replacement!r} is a {SUBTYPE_CLASS[replacement]} subtype"
+            )
+        # Only the creature-type word class is built. The other two the family
+        # prints are refused by name rather than accepted and ignored: a colour
+        # word (Glamerdye, Mind Bend, and eight more) reaches `colors` filters,
+        # protection qualities and mana production, and a basic land type
+        # (Magical Hack, Whim of Volrath) reaches landwalk keywords and mana
+        # abilities. Each is a surface of its own, and a card written against a
+        # key this op ignores would print the words and change nothing.
+        word_class = str(effect.get("word_class", "creature_type"))
+        if word_class != "creature_type":
+            raise DslError(
+                f"{where}: change_text only implements 'creature_type'; "
+                f"{word_class!r} is not modelled (see docs/unsupported-cards.md)"
+            )
+        # "…with **another**" -- Artificial Evolution asks for the replacement
+        # too. Refused rather than half-built: that card targets a *spell or*
+        # permanent, which no selector can say, so accepting the key here would
+        # buy a second prompt and still no card.
+        if replacement == "choose":
+            raise DslError(
+                f"{where}: change_text's 'to' is a literal creature type; "
+                f"choosing the replacement as well is not modelled"
+            )
     if op == "delayed_trigger":
         _validate_delayed_trigger(effect, where)
 

@@ -183172,12 +183172,12 @@
     },
     "Necropotence": {
       "edhrec_rank": 508,
-      "gate": "template",
+      "gate": null,
       "name": "Necropotence",
-      "reason": "no template for: Skip your draw step",
+      "reason": "",
       "scryfall_id": "2765545b-5e2d-4d4c-b126-93415774a2e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necropouncer": {
@@ -184472,12 +184472,12 @@
     },
     "New Blood": {
       "edhrec_rank": 4346,
-      "gate": "template",
+      "gate": null,
       "name": "New Blood",
-      "reason": "no template for: As an additional cost to cast this spell, tap an untapped Vampire you control",
+      "reason": "",
       "scryfall_id": "6ee669ab-0ae6-43e5-86fd-f0dcb621e478",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "New Frontiers": {

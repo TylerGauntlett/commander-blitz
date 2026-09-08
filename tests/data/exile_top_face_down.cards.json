@@ -1,0 +1,68 @@
+{
+  "_comment": "Cards that exist only for the face-down-exile test (tests/unit/test_exile_top_face_down.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_necro_impulse` is Necropotence's third line, which is the whole capability in one ability: exile the top card face down, name it with `as`, and let a `your_turn` delay hand back exactly that card. `t_open_impulse` is the same ability without `face_down`, so the test can tell the privacy apart from the move.",
+  "cards": [
+    {
+      "id": "t_necro_impulse",
+      "name": "Test Necro Impulse",
+      "oracle_text": "Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.",
+      "mana_cost": "{B}{B}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.",
+          "cost": { "pay_life": 1 },
+          "effects": [
+            {
+              "op": "look_at_top",
+              "amount": { "const": 1 },
+              "destination": "exile",
+              "face_down": true,
+              "as": "impulsed",
+              "objects": { "count": 1 }
+            },
+            {
+              "op": "delay",
+              "step": "end_step",
+              "your_turn": true,
+              "text": "Put that card into your hand at the beginning of your next end step.",
+              "effects": [
+                {
+                  "op": "return_to_hand",
+                  "objects": { "binding": "impulsed" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_open_impulse",
+      "name": "Test Open Impulse",
+      "oracle_text": "Pay 1 life: Exile the top card of your library.",
+      "mana_cost": "{B}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Pay 1 life: Exile the top card of your library.",
+          "cost": { "pay_life": 1 },
+          "effects": [
+            {
+              "op": "look_at_top",
+              "amount": { "const": 1 },
+              "destination": "exile",
+              "as": "impulsed",
+              "objects": { "count": 1 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

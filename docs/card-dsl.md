@@ -160,6 +160,42 @@ required — defaulted it would look at one card and say nothing about it.
 `cast_free` sends what was picked to the **stack** instead of to a destination
 zone — see [Casting for free out of the window](#casting-for-free-out-of-the-window).
 
+`as` and `face_down` are Necropotence's third line, which needs both:
+
+```jsonc
+{ "op": "look_at_top", "amount": { "const": 1 },
+  "objects": { "count": 1 },
+  "destination": "exile", "face_down": true, "as": "impulsed" }
+```
+
+**`as`** records the cards this op actually took, so a *later* effect can name
+them. "Exile the top card of your library face down. Put **that card** into your
+hand at the beginning of your next end step" — `delay` copies `ctx.bindings`
+when it schedules, so `{"binding": "impulsed"}` in the scheduled effects moves
+exactly the card this activation exiled. `exiled_with: "self"` cannot stand in:
+`_move_found` deliberately writes no `exiled_by` (writing one would strand
+Florian's declined cards in exile — see
+[Casting for free out of the window](#casting-for-free-out-of-the-window)), so
+the selector matches nothing and the delayed return silently hands back no card
+at all. Even with the link written it would be *source-wide* where the printed
+"that card" is per-activation. The binding accumulates across seats, like
+`discard`'s and `mill`'s, so a `player: "each_player"` look binds every seat's
+cards rather than the last one's.
+
+**`face_down`** is privacy, and it is refused at load time on any destination
+but `exile` — a card is only face down there, and elsewhere the key would print
+its words and do nothing. It is *not* `GameObject.face_down`, the 707
+morph/manifest state a permanent has on the battlefield: a card in exile has no
+characteristics to hide behind. What it sets is `hidden_in_exile`, and that flag
+has to exist because **exile is a public zone** — `player_view` sends it in full
+to the whole table, and `revealed_to` is empty for every card in every zone by
+default, so "nobody has been shown it" cannot by itself mark a face-down exile.
+A hidden card is dropped from the `exile` list of every seat not in
+`revealed_to` and counted in `exile_hidden_count` instead, so the pile stays
+public even though its faces are not. `hideaway` is the deliberate contrast: it
+writes `revealed_to.add(pid)`, because 702.75a says its controller may look and
+Necropotence says no such thing.
+
 `put_on_top` sends a permanent to a library, and `from_top` says **how deep**:
 
 ```jsonc
@@ -196,7 +232,7 @@ strictly better card. A zero or negative ordinal is refused too — the op floor
 it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
-| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `transform` |
+| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -2905,21 +2941,42 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Nine static effects describe the *player* rather than a characteristic, so they
-take `affects_player` instead of `affects`:
+Thirteen static effects describe the *player* rather than a characteristic, so
+they take `affects_player` instead of `affects` — the full list is
+`PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
 ```jsonc
 { "kind": "static", "effect": "extra_land_drops",
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
+{ "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
+{ "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
+{ "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 ```
+
+`skip_draw_step` is Necropotence's first line, and the whole of its design is
+how *little* it takes away. Rule 500.1: skipping a step's turn-based action is
+not skipping the step. `turn._draw_step` asks
+`player_statics.player_skips_draw_step` before the draw and fires
+`EventType.DRAW_STEP` either way, so a Saga's lore tick and every "at the
+beginning of your draw step" trigger survive under a Necropotence. It reaches
+only the *turn-based* draw (504.1) — a `draw` op off a spell is untouched,
+because the check lives in the turn walk and not in `primitives.draw_cards`.
+
+It is named for the one sentence rather than parameterised on a step name, which
+is the call every static here makes. The catalogue prints "skip your draw step"
+fifteen times and every other step-skip once or twice, across three different
+steps *and* two different lifetimes — "skip your **next** untap step" is a
+one-shot like `skip_untap`, not a continuous effect, so a shared `step:`
+parameter would not have carried it anyway.
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which
@@ -5673,6 +5730,71 @@ Subtypes only. `types` is refused rather than dropped — "becomes an artifact i
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
 
+## `change_text` — "replacing all instances of one creature type"
+
+```jsonc
+{ "op": "change_text", "objects": { "target": "t1" }, "to": "Vampire" }
+```
+
+New Blood, and layer 3 (613.1c) — the layer the pipeline did not have, sitting
+between copy effects and the type-granting statics.
+
+**It is the opposite of `add_subtype` above**, and the pair is worth holding in
+mind because the printed lines look alike:
+
+| | |
+|---|---|
+| `add_subtype` | "It becomes a Vampire **in addition to** its other types" — the old word stays, so the creature still answers to its old tribe's lords and its old tribe's removal, and its rules text is untouched |
+| `change_text` | "**Replacing all instances of** one creature type with Vampire" — the old word is gone, everywhere |
+
+Written as an `add_subtype`, New Blood loads, resolves, puts "Vampire" on the
+type line and is a different and much weaker card. That is why the authoring
+worker refused it rather than approximating.
+
+**"All instances" is four readers**, and each can be missed on its own with
+nothing to say so:
+
+| reader | what it is | what breaks without it |
+|---|---|---|
+| `_compute` | the derived type line | `chars()` reports the old type |
+| `_matches_printed` | what a static filter on *another card* sees | a Vampire lord cannot find the creature you just converted — most of the card |
+| `abilities_of` | the words inside the object's **own** abilities | a stolen "other Goblins you control get +1/+0" stays a Goblin lord |
+| `stack.ability_of` | how an activated or triggered ability is looked up as it resolves | the statics are rewritten and the activated half is not |
+
+`abilities_of` reaches both its own paths through `printed_abilities`, because
+`_derived_abilities` reads the printed list too: substituting on only the fast
+path leaves a text-changed permanent reverting the moment any `grant_ability`
+static is on the battlefield.
+
+The substitution walks every `subtypes` list, however deeply nested, and nothing
+else — see `engine/text_change.py`. Keying on the name and not on the string is
+what stops it rewriting a token's name or a prompt that happens to read
+"Goblin"; walking every nesting level is what stops the stolen lord keeping its
+old tribe. It **does** reach `create_token` and `add_subtype` specs, which is
+the printed consequence rather than an overreach: 612.1 changes the text, and a
+line that reads "create a 1/1 Goblin" is text.
+
+Recorded on `GameObject.text_changes` as ordered `(old, new)` pairs — ordered
+because 612.4 applies text changes in timestamp order and the second reads the
+first one's output, so Goblin→Vampire then Vampire→Zombie is a Zombie. Cleared
+by `reset_permanent_state`, the same contract `added_subtypes` has.
+
+The type being **replaced** is chosen at resolution and is not written on the
+card; `to` is required and names the type written in. The prompt offers the
+types with an *instance* in the target's printed text — its subtype line plus
+every type named in its abilities — rather than every creature type in the pool.
+The rules let a player name any of them (612.1), and naming a word the card
+never says replaces nothing, so the options removed are the options that do
+nothing; what it buys is a real choice instead of the 400-entry cap
+`choose_type` needs.
+
+**Creature types only.** The other two word classes the family prints are
+refused by name at load time rather than accepted and ignored: a colour word
+(Glamerdye, Mind Bend, Sleight of Mind, and seven more) reaches `colors`
+filters, protection qualities and mana production, and a basic land type
+(Magical Hack, Whim of Volrath) reaches landwalk keywords and mana abilities.
+Each is its own surface with its own way of going quietly wrong.
+
 ## Keyword counters — "with a vigilance counter on it"
 
 ```jsonc
@@ -6178,6 +6300,28 @@ Two things are worth knowing before writing one:
 - **It waits for the step's *next* occurrence.** `begin_step` for the current
   step has already run by the time any effect resolves, so scheduling `upkeep`
   during an upkeep means the following turn's, which is what the cards say.
+- **`your_turn` says *whose* step.** "At the beginning of **your** next end
+  step" (Necropotence, and fifteen more) as against "at the beginning of the
+  next end step" (Arcane Denial). Every seat has an end step, so the step name
+  alone cannot tell the two apart:
+
+  ```jsonc
+  { "op": "delay", "step": "end_step", "your_turn": true,
+    "text": "Put that card into your hand at the beginning of your next end step.",
+    "effects": [ … ] }
+  ```
+
+  Omit it and the delay is due at the very next such step, whoever is taking it
+  — which is right for the 477 cards that print "the next end step" and wrong
+  for the ones that print "your". The two readings agree on your own turn, which
+  is why the omission stayed invisible; the gap opens exactly where the word is
+  printed, on an ability used at instant speed during an opponent's turn.
+  `turn._delay_due` compares `state.active_player` against the delay's own
+  controller, so it is that controller's turn and not a fixed seat.
+
+  The struct's `turn` field does not stand in for this. It records the turn the
+  delay was created on, nothing reads it for timing, and "your next" is about
+  *whose* turn rather than how many have passed.
 
 The scheduled effects resolve directly rather than going on the stack. That is a
 divergence — a delayed trigger is a real triggered ability and should be

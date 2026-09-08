@@ -581,14 +581,14 @@ export function PlayerOrb({
               label="GY"
               count={player.graveyard.length}
             />
-            {player.exile.length > 0 && (
+            {player.exile.length + player.exile_hidden_count > 0 && (
               <ZonePile
                 pid={player.pid}
                 zone="exile"
                 name="exile"
                 kind="ex"
                 label="Exile"
-                count={player.exile.length}
+                count={player.exile.length + player.exile_hidden_count}
               />
             )}
             <ZonePile
