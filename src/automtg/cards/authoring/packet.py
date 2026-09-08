@@ -71,6 +71,27 @@ CARD_LEVEL_COST_KEYS = (
     "suspend",
 )
 
+#: The card-level fields that join two printed faces into one card entry.
+#:
+#: Same argument as ``CARD_LEVEL_COST_KEYS``, and it was found the same way: a
+#: worker shown neither list reads a printed second face as vocabulary nobody
+#: has given it and files a gap for a mechanic that already works. Riverglide
+#: Pathway was recorded as ``modal-double-faced-card``/``engine`` with high
+#: confidence while seven cards in the shipped pool -- Bloodline Keeper,
+#: Malakir Rebirth, Response // Resurgence among them -- already use these
+#: fields, because the reference block named no way to say "the other half".
+#:
+#: Curated for the same reason too: a face is not a price, so it needs its own
+#: heading rather than being buried in the cost list.
+CARD_LEVEL_FACE_KEYS = (
+    "back_face",  # the face you TURN OVER to; never cast, never drawn
+    "second_face",  # a second SPELL the same card may be cast as
+    "second_face_zone",  # "hand" (split, adventure) or "graveyard" (aftermath)
+    "prepared_face",  # the spell a prepared permanent may cast a copy of
+    "fuse",  # bool; one spell made of both halves at once
+    "adventure",  # bool; the second face exiles and the front is cast from exile
+)
+
 
 def packets_dir() -> Path:
     return data_dir() / "authoring" / "packets"
@@ -219,9 +240,26 @@ def reference() -> dict:
         # matches nothing a worker has been shown and becomes a gap record for
         # a mechanic that already works.
         "card_level_cost_keys": list(CARD_LEVEL_COST_KEYS),
+        # How a card says "the other half". See CARD_LEVEL_FACE_KEYS: without
+        # this, every double-faced, split and Adventure card becomes a gap
+        # record for a mechanic seven shipped cards already use.
+        "card_level_face_keys": list(CARD_LEVEL_FACE_KEYS),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
+            "`card_level_face_keys` is how a card carries a second printed"
+            " face, and which key you want turns on one question: is the other"
+            " half something you TURN OVER to, or a second spell you may CAST?"
+            " `back_face` is the first -- a transforming DFC, never cast, never"
+            " drawn, reached only by the `transform` op. `second_face` is the"
+            " second -- a split half, an Adventure, an Aftermath half -- with"
+            " its own name, cost and type line, cast instead of the front from"
+            " `second_face_zone` (\"hand\", or \"graveyard\" for Aftermath). A"
+            " **modal double-faced card** is a `second_face` whose other half is"
+            " a permanent: you play one face or the other and nothing turns"
+            " over. Either way the other half is an ordinary card entry in the"
+            " same pool, and your packet's `back_face` block carries its printed"
+            " text -- write it as a second entry, do not file a gap.",
             "`condition_keys` and `value_keys` are what an `if` can ask and what"
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
