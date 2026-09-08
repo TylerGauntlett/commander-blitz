@@ -310,6 +310,11 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
     Clamped at zero: a negative multiplier is not a thing a card can mean, and
     an ability with no counters on it simply makes no mana.
     """
+    if ability.mana_split:
+        # A split ability's size is already inside each option -- the
+        # compositions `_split_options` builds each sum to X -- so multiplying
+        # by X here would produce X*X mana. The amount is read once, there.
+        return 1
     if ability.mana_amount is None:
         return 1
     from .effects.context import EffectContext
@@ -352,6 +357,8 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     introduces no new question. That is what keeps a reflecting ability a mana
     ability for 605.1a.
     """
+    if ability.mana_split:
+        return _split_options(state, oid, ability)
     if ability.mana_chosen_color:
         return _chosen_color_options(state, oid, ability)
     if ability.mana_identity:
@@ -416,6 +423,75 @@ def _chosen_color_options(
     if index is None:  # pragma: no cover - the loader only writes WUBRG here
         return ()
     return tuple(option for option in ability.mana_options if option[index])
+
+
+#: How many ways a split may be offered before it is truncated. Two colours and
+#: a power of nine is ten options, which is nothing; five colours and a large X
+#: is combinatorial. The cap is far above any printed card -- Vivi is the only
+#: one in the pool and splits two ways -- and exists so a pathological board
+#: cannot hang the solver rather than to express a rule.
+MAX_SPLIT_OPTIONS = 64
+
+
+def _split_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
+    """Every way to divide X mana among the named colours.
+
+    "Add X mana in any combination of {U} and/or {R}, where X is Vivi
+    Ornitier's power." The combination is a *choice*, so it is offered as one
+    option per composition and the solver picks the one that pays the spell --
+    which is exactly what a player does at a table.
+
+    X is read here, at activation, through `_split_amount`; it is the same
+    value expression `mana_amount` reads, and `mana_amount` returns 1 for a
+    split ability so the size is not applied twice.
+
+    X of zero yields nothing -- a Vivi with 0 power taps for no mana, which is
+    the printed card.
+    """
+    total = _split_amount(state, oid, ability)
+    indices = [SYMBOL_INDEX[c] for c in ability.mana_split if c in SYMBOL_INDEX]
+    if total <= 0 or not indices:
+        return ()
+
+    rows: list[list[int]] = []
+
+    def walk(depth: int, left: int, so_far: list[int]) -> None:
+        if len(rows) >= MAX_SPLIT_OPTIONS:
+            return
+        if depth == len(indices) - 1:
+            rows.append([*so_far, left])
+            return
+        for take in range(left + 1):
+            walk(depth + 1, left - take, [*so_far, take])
+
+    walk(0, total, [])
+
+    options = []
+    for row in rows:
+        produced = [0] * len(SYMBOLS)
+        for index, amount in zip(indices, row, strict=True):
+            produced[index] += amount
+        options.append(tuple(produced))
+    return tuple(options)
+
+
+def _split_amount(state: GameState, oid: int, ability: Ability) -> int:
+    """X for a split ability, read the way `mana_amount` reads every other one."""
+    if ability.mana_amount is None:
+        return 0
+    from .effects.context import EffectContext
+    from .effects.values import evaluate_value
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return 0
+    ctx = EffectContext(
+        state=state,
+        controller=obj.controller,
+        source_oid=oid,
+        source_name=state.card_of(obj).name,
+    )
+    return max(0, int(evaluate_value(ctx, ability.mana_amount)))
 
 
 def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:

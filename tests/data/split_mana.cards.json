@@ -1,0 +1,55 @@
+{
+  "_comment": "The Vivi Ornitier shape: a mana ability producing X mana freely split across two colours, where X reads the board. A choose_mode of two add_manas is the near miss and offers X of one colour or X of the other, never a genuine mix.",
+  "cards": [
+    {
+      "id": "t_vivi",
+      "name": "Test Split Mage",
+      "oracle_text": "{0}: Add X mana in any combination of {U} and/or {R}, where X is Test Split Mage's power. Activate only during your turn and only once each turn.",
+      "mana_cost": "{1}{U}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 0,
+      "toughness": 3,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{0}: Add X mana in any combination of {U} and/or {R}, where X is Test Split Mage's power. Activate only during your turn and only once each turn.",
+          "is_mana_ability": true,
+          "once_each_turn": true,
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "mana": "{0}"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "split": [
+                "U",
+                "R"
+              ],
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
