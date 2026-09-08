@@ -80,7 +80,7 @@ It is checked by casting your card in one fixed position and reading the board.
 | Your battlefield | **32 permanents** — 30 lands (6 each of Plains, Island, Swamp, Mountain, Forest) + 2 creatures |
 | Opponent's battlefield | **6 permanents** — a **legendary** creature, a flier, an artifact, an enchantment, a Forest and an Island |
 | Your hand | the card under test **and one spare Forest** — so `hand_size` is **1** after you cast it, not 0. The Forest is deliberate: a card can never discard itself to pay its own additional cost (601.2a), so a hand of one would make every mandatory "as an additional cost, discard a card" unplayable. Every `hand_size` you assert counts it |
-| Your library | **40 cards**, all basic lands |
+| Your library | **40 cards** — basic lands, except **index 1, which is an instant or sorcery** (a targetless one, placed there by `build_sandbox` so a card that draws twice does not deck you). So a tutor for an instant or sorcery **finds it**: `library_size` 39 and `hand_size` 2, not 40 and 1 |
 | Opponent's library | 20 cards |
 | Your graveyard | **2 creature cards** — one of **mana value 3 or less**, one of **mana value 5**, so a printed cost ceiling *and* a printed floor each have something to reach |
 | Phase | your precombat main phase, turn 1, with mana enough to cast anything |
