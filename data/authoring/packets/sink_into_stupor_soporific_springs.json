@@ -373,6 +373,7 @@
         "prompt"
       ],
       "choose_mode": [
+        "budget",
         "chooser",
         "count",
         "modes",
