@@ -2629,6 +2629,19 @@
   "fire_lit_thicket": {
     "zone": "battlefield"
   },
+  "fire_magic": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "fire_nation_ambushers": {
     "zone": "battlefield"
   },

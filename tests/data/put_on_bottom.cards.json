@@ -1,0 +1,47 @@
+{
+  "_comment": "Ice Magic's Blizzara tier: 'Target creature's owner puts it on their choice of the top or bottom of their library.' The OWNER chooses, not the caster.",
+  "cards": [
+    {
+      "id": "t_tuck_bottom",
+      "name": "Test Tuck Bottom",
+      "oracle_text": "Put target creature on the bottom of its owner's library.",
+      "mana_cost": "{1}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [{"op": "put_on_top", "objects": {"target": "t1"}, "bottom": true}]
+    },
+    {
+      "id": "t_tuck_choice",
+      "name": "Test Tuck Choice",
+      "oracle_text": "Target creature's owner puts it on their choice of the top or bottom of their library.",
+      "mana_cost": "{1}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [{"op": "put_on_top", "objects": {"target": "t1"}, "owner_chooses": true}]
+    },
+    {
+      "id": "t_tuck_top",
+      "name": "Test Tuck Top",
+      "oracle_text": "Put target creature on top of its owner's library.",
+      "mana_cost": "{1}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1,
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "spell_effects": [{"op": "put_on_top", "objects": {"target": "t1"}}]
+    }
+  ]
+}
