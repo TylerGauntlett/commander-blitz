@@ -8235,6 +8235,10 @@
   "thaumaturge_s_familiar": {
     "zone": "battlefield"
   },
+  "the_emperor_of_palamecia_the_lord_master_of_hell": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_fabulous_frog_man": {
     "zone": "battlefield"
   },

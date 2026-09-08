@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **42** capabilities.
+**35 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [mana-ability-with-rider](#mana-ability-with-rider) | 1 | 3126 | engine |
-| [mana-restriction-negation](#mana-restriction-negation) | 1 | 4833 | selector |
 | [multi-pip-x-cost](#multi-pip-x-cost) | 1 | 1212 | cost |
 | [multicolored-from-hand-spell-filter](#multicolored-from-hand-spell-filter) | 1 | 10372 | selector |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -437,20 +436,6 @@ Blocks **1** card.
 - **Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time** (rank 3126) — `ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time`
   - Whenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)
   - {T}: Add {U}. Remove a time counter from this land.
-
-</details>
-
-## mana-restriction-negation
-
-Blocks **1** card.
-
-- **(selector)** a negated entry in a `mana_restriction` group -- a way to write "spend this mana only to cast a NONcreature spell", i.e. a restriction that is satisfied when a named type or subtype is ABSENT from the spell's characteristics. Concretely: let a group entry be `{"not": "creature"}` (loader `_restriction_name` in src/automtg/cards/loader/mana.py, which today accepts only a literal name or `{"chosen_type_of": "self"}`), carry the negated names alongside the required ones on `ManaRestriction`'s groups, and have `ManaSource.permits` (src/automtg/engine/mana.py) require `required <= purpose.names` AND `not (forbidden & purpose.names)` instead of the bare subset test it does now.
-  <br>Why the existing vocabulary won't do: `mana_restriction` ships and is the right home for this line, but it is purely positive: `_restriction_groups` compiles each group to a `frozenset` of lowercased literal type/subtype names, and `ManaSource.permits` answers with `any(group <= purpose.names ...)` against `costs.spell_purpose`, whose `names` is just the flat lowercased set of the spell's types and subtypes. Nothing in that chain can express absence. The two spellings available both misprint the card. (a) `"noncreature"` as a literal loads -- the loader's shape check only asks that an entry look like a word -- and then matches nothing ever, because no spell has a type or subtype called "noncreature"; the mana would be permanently unspendable, which the loader's own comment calls out as the safe-but-silent failure. (b) Enumerating the noncreature types as an any-of, `["artifact", "enchantment", "instant", "sorcery", "planeswalker", "battle"]`, over-permits every artifact creature and enchantment creature spell, because `permits` sees "artifact" in the purpose's names and never learns that "creature" is also there -- a strictly better card than the one printed. Trigger filters already have the negation (`not_types` is honoured in `matches_card_filter`) and selectors have `not_types`/`not_subtypes`; the restriction language is the one place it is missing, and it is the same one-word idea.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Emperor of Palamecia // The Lord Master of Hell** (rank 4833) — `the_emperor_of_palamecia_the_lord_master_of_hell`
-  - {T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell.
 
 </details>
 

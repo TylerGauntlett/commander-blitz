@@ -576,6 +576,34 @@ class SpendPurpose:
 
 
 @dataclass(frozen=True)
+class RestrictionGroup:
+    """One all-of inside a restriction: names that must be there, and must not.
+
+    ``required`` alone was the whole language until "spend this mana only to
+    cast a **non**creature spell" (The Emperor of Palamecia). That line has no
+    positive spelling: `"noncreature"` is not a type, so as a literal it matches
+    nothing ever and freezes the mana permanently unspendable, while enumerating
+    the noncreature types over-permits every artifact creature and enchantment
+    creature spell -- `permits` would see "artifact" among the names and never
+    learn that "creature" is there too.
+
+    So the group asks both questions. It is the same one-word idea trigger
+    filters have had all along as `not_types`, arriving in the one place that
+    lacked it.
+    """
+
+    required: frozenset[str] = frozenset()
+    forbidden: frozenset[str] = frozenset()
+
+    def names(self) -> frozenset[str]:
+        """Every name mentioned, either way round -- for `dynamic`'s scan."""
+        return self.required | self.forbidden
+
+    def satisfied_by(self, names: frozenset[str]) -> bool:
+        return self.required <= names and not (self.forbidden & names)
+
+
+@dataclass(frozen=True)
 class ManaRestriction:
     """"Spend this mana only to cast X (or activate an ability of Y)."
 
@@ -596,8 +624,8 @@ class ManaRestriction:
     about activating abilities does not permit it.
     """
 
-    cast: tuple[frozenset[str], ...] = ()
-    activate: tuple[frozenset[str], ...] = ()
+    cast: tuple[RestrictionGroup, ...] = ()
+    activate: tuple[RestrictionGroup, ...] = ()
     #: Does any group name :data:`CHOSEN_TYPE`?  Derived here rather than stored
     #: by the loader so it cannot drift from the groups it describes, and
     #: computed once at load so `costs.resolve_mana_restriction` can return an
@@ -606,11 +634,27 @@ class ManaRestriction:
     dynamic: bool = field(init=False, default=False)
 
     def __post_init__(self) -> None:
+        # A bare frozenset is accepted as a group and means what it always
+        # meant: every name required, none forbidden. Kept because that *is*
+        # the shorthand -- the negation is the new half, not the old one -- and
+        # because coercing here is one line against rewriting every construction
+        # of a restriction that predates it.
+        for slot in ("cast", "activate"):
+            groups = getattr(self, slot)
+            if any(not isinstance(g, RestrictionGroup) for g in groups):
+                object.__setattr__(
+                    self,
+                    slot,
+                    tuple(
+                        g if isinstance(g, RestrictionGroup) else RestrictionGroup(frozenset(g))
+                        for g in groups
+                    ),
+                )
         object.__setattr__(
-            self, "dynamic", any(CHOSEN_TYPE in g for g in self.cast + self.activate)
+            self, "dynamic", any(CHOSEN_TYPE in g.names() for g in self.cast + self.activate)
         )
 
-    def groups(self, kind: str) -> tuple[frozenset[str], ...]:
+    def groups(self, kind: str) -> tuple[RestrictionGroup, ...]:
         return self.activate if kind == ACTIVATE else self.cast
 
 
@@ -659,7 +703,10 @@ class ManaSource:
             return True
         if purpose is None:
             return False
-        return any(group <= purpose.names for group in self.restriction.groups(purpose.kind))
+        return any(
+            group.satisfied_by(purpose.names)
+            for group in self.restriction.groups(purpose.kind)
+        )
 
     def max_output(self) -> int:
         return max((sum(o) for o in self.options), default=0)

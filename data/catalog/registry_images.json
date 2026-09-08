@@ -9103,6 +9103,10 @@
     "artist": "Andrea Radeck",
     "scryfall_id": "6a1858f5-16b8-4a58-8f31-b60f926fdbf8"
   },
+  "the_emperor_of_palamecia_the_lord_master_of_hell": {
+    "artist": "Heonhwa",
+    "scryfall_id": "1b4d8a51-2307-4ed6-af25-c48946219096"
+  },
   "the_fabulous_frog_man": {
     "artist": "Dan Brereton",
     "scryfall_id": "9307100e-2d7e-42a9-9951-24af01ab9ded"
@@ -9110,6 +9114,11 @@
   "the_lady_of_the_mountain": {
     "artist": "Richard Kane Ferguson",
     "scryfall_id": "83717eb2-220e-4086-be09-dee9174798b8"
+  },
+  "the_lord_master_of_hell": {
+    "artist": "Heonhwa",
+    "back": true,
+    "scryfall_id": "1b4d8a51-2307-4ed6-af25-c48946219096"
   },
   "the_one_ring": {
     "artist": "Dan Frazier",
