@@ -3844,6 +3844,14 @@
   "icatian_phalanx": {
     "zone": "battlefield"
   },
+  "ice_magic": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "ice_tunnel": {
     "zone": "battlefield"
   },

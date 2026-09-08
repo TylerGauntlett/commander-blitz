@@ -434,7 +434,54 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             # free Forest-on-the-stack.
             pool = [oid for oid in pool if not ctx.state.card_of(ctx.state.objects[oid]).is_land]
         taken: set[int] = set()
-        if pool:
+        steps = spec.get("destinations")
+        if steps:
+            # "Put one of them into your hand, put one of them on the bottom of
+            # your library, and exile one of them" -- Expressive Iteration. One
+            # look, three destinations, one card each.
+            #
+            # `destination` plus `rest_to_bottom` is the near miss and reaches
+            # only two: the remainder key is hardwired to the bottom and takes
+            # *everything* not picked, so hand+bottom or exile+bottom, never all
+            # three. Two sequential `look_at_top`s is worse -- the second reads a
+            # top that the first has already changed, and `as` binds only what
+            # was taken, so nothing can name "the other two".
+            #
+            # Each step draws from what the earlier ones left, which is what
+            # makes the three choices one decision about one window.
+            remaining = list(pool)
+            for step in steps:
+                if not remaining:
+                    break
+                want = max(0, min(int(step.get("count", 1)), len(remaining)))
+                if not want:
+                    continue
+                where = DESTINATIONS[step.get("to", "hand")]
+                picked = yield from ask_objects(
+                    ctx,
+                    f"Put on {step.get('to', 'hand')}",
+                    remaining,
+                    want,
+                    want,
+                    pid,
+                    "look_at_top",
+                )
+                # The step carries its own destination flags -- `to` reads as
+                # `destination` for `_move_found`'s `library_top` test, and
+                # `playable_this_turn` belongs to the exile step alone.
+                _move_found(
+                    ctx,
+                    picked,
+                    pid,
+                    where,
+                    {**step, "destination": step.get("to", "hand")},
+                    tapped,
+                    "look_at_top",
+                )
+                taken.update(picked)
+                remaining = [oid for oid in remaining if oid not in picked]
+            bound.extend(taken)
+        elif pool:
             picked = yield from pick_from_pool(
                 ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
             )

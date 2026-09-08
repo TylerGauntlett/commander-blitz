@@ -582,6 +582,7 @@
         "as",
         "cast_free",
         "destination",
+        "destinations",
         "face_down",
         "objects",
         "playable_this_turn",
@@ -663,8 +664,10 @@
         "toughness"
       ],
       "put_on_top": [
+        "bottom",
         "from_top",
-        "objects"
+        "objects",
+        "owner_chooses"
       ],
       "put_onto_battlefield": [
         "cause",

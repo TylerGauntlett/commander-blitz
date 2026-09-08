@@ -41752,6 +41752,102 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "mana": "{0}"
+        },
+        {
+          "mana": "{2}"
+        },
+        {
+          "mana": "{5}{U}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ice_magic",
+      "mana_cost": "{1}{U}",
+      "name": "Ice Magic",
+      "oracle_text": "Tiered (Choose one additional cost.)\n• Blizzard — {0} — Return target creature to its owner's hand.\n• Blizzara — {2} — Target creature's owner puts it on their choice of the top or bottom of their library.\n• Blizzaga — {5}{U} — Target creature's owner shuffles it into their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cost_option": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top",
+              "owner_chooses": true
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "as": "tucked",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": {
+                "owner_of": "tucked"
+              }
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
