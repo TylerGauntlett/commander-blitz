@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-111 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+112 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -258,7 +258,7 @@ it, but a card that needed correcting was authored wrong.
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` `copy_spell` `return_spell_to_hand` `reflexive_trigger` |
+| Stack | `counter` `copy_spell` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
@@ -767,6 +767,35 @@ Where the card goes is its **owner's** hand — a spell whose controller is not
 its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
+
+### Granting rebound to a spell that does not print it
+
+```jsonc
+{ "op": "grant_rebound" }                    // the spell the trigger bound
+{ "op": "grant_rebound", "target": "t1" }    // a declared kind: "spell" target
+```
+
+"Whenever you cast an instant spell from your hand, **it gains rebound**" (Ojer
+Pakpatiq, Deepest Epoch). Rebound itself is not new and never was: `rebound` has
+been a card-level rider since the field existed, with the exile-on-resolution in
+`_place_after_resolution`, `rebound_by` on the exiled card and the free cast in
+`suspend.rebound_tick`. The whole mechanic was reachable only by a card that
+printed the keyword, because the rider read the flag off the **card**.
+
+`grant_rebound` writes the same fact onto the spell's *object* while it is still
+on the stack, and the rider reads `card.rebound or obj.granted_rebound`. A
+granted rebound and a printed one are then the same rebound — deliberately, since
+a separate exile-and-recast path for the grant would be two mechanisms for one
+behaviour.
+
+The spell must still have been **cast from a hand**, which is 702.87a's own
+wording and also the loop guard: the free cast at the next upkeep is made from
+exile, so without it one instant would rebound every upkeep for ever. A grant
+made to a spell cast from anywhere else is therefore inert rather than refused.
+
+Which spell is named the same three ways `copy_spell` names one — a `sid` value,
+a declared `target`, or by default the spell the `spell_cast` trigger bound. The
+two ops share `_spell_named_by` rather than spelling it twice.
 
 ## Value expressions
 

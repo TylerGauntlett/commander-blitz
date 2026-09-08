@@ -400,6 +400,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: return_spell_to_hand reads no 'objects' -- it takes "
                 f"the spell its 'target' names"
             )
+    if op == "grant_rebound":
+        # The same two checks `return_spell_to_hand` makes, for the same reason
+        # and with the same failure mode: the op reads one stack object, and a
+        # `target` that names a permanent or a player finds no spell, sets
+        # nothing and leaves a card that says "it gains rebound" and does not.
+        if "target" in effect:
+            tid = str(effect["target"])
+            if tid not in target_kinds:
+                raise DslError(
+                    f"{where}: grant_rebound references target {tid!r} "
+                    f"which the card does not declare"
+                )
+            if target_kinds[tid] != "spell":
+                raise DslError(
+                    f"{where}: grant_rebound needs a target of kind 'spell', "
+                    f"and {tid!r} is {target_kinds[tid]!r}"
+                )
+        if "objects" in effect:
+            # Refused rather than dropped, exactly as above: a spell is named
+            # by the target it was cast at or by the trigger that saw it, never
+            # by a selector over a zone, and "every spell on the stack gains
+            # rebound" is a card nobody has printed.
+            raise DslError(
+                f"{where}: grant_rebound reads no 'objects' -- it takes the "
+                f"spell its trigger bound, or the one its 'target' names"
+            )
     # Every op that names a player spells it `player` and every one of them
     # feeds `select_players`, so this is checked once here rather than per op --
     # the way `counter` is. `become_monarch`, `goad` and `cant_attack_player`

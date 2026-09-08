@@ -12,6 +12,41 @@ from . import register
 from .context import EffectContext
 
 
+def _spell_named_by(ctx: EffectContext, spec: Mapping[str, Any]):
+    """The spell on the stack a spec is talking about, or None.
+
+    Three spellings, because three kinds of card ask the question. ``sid`` is a
+    value expression; ``target`` is "**target** instant or sorcery spell"
+    (Expansion, Kitsa, Mizzix's Mastery, and Fork before all of them); and with
+    neither, the spell that fired the trigger -- the `sid` a `spell_cast`
+    trigger already carries in its bindings, which is storm, replicate,
+    conspire, casualty and demonstrate.
+
+    Extracted rather than written twice. `copy_spell` reads a declared target
+    through `ctx.target_sids` exactly the way `counter` reads its own, on the
+    stated grounds that they are the same question about the same kind of
+    object and a second spelling would be a second bug -- and `grant_rebound`
+    asking it a third time is where that stops being hypothetical.
+
+    Returns None for a `sid` that names nothing and for a stack item that is an
+    ability rather than a spell, so every caller can treat "no spell here" as
+    one case.
+    """
+    from .values import evaluate_value
+
+    if "sid" in spec:
+        sid = evaluate_value(ctx, spec["sid"])
+    elif "target" in spec:
+        sids = ctx.target_sids(str(spec["target"]))
+        sid = sids[0] if sids else None
+    else:
+        sid = ctx.bindings.get("sid")
+    item = ctx.state.stack_item(int(sid)) if isinstance(sid, int) else None
+    if item is None or not item.is_spell:
+        return None
+    return item
+
+
 @register("copy_spell")
 def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     """Copy a spell on the stack (rule 706.10).
@@ -69,28 +104,8 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     from .values import evaluate_value
 
     state = ctx.state
-    if "sid" in spec:
-        sid = evaluate_value(ctx, spec["sid"])
-    elif "target" in spec:
-        # "Copy **target** instant or sorcery spell" -- Expansion, Kitsa,
-        # Mizzix's Mastery, and Fork before all of them. `sid` is a *value*
-        # expression and the value language has no leaf for a declared target's
-        # stack id, so every user of this op until now was a triggered ability
-        # copying the spell that fired it -- storm, replicate, conspire,
-        # casualty, demonstrate. A card that named a target instead loaded
-        # clean, found no `sid`, fell back to an empty binding and silently
-        # copied nothing, which is the failure mode this whole pipeline exists
-        # to prevent.
-        #
-        # Read exactly the way `counter` reads its own target, through
-        # `ctx.target_sids`, because they are the same question about the same
-        # kind of object and a second spelling would be a second bug.
-        sids = ctx.target_sids(str(spec["target"]))
-        sid = sids[0] if sids else None
-    else:
-        sid = ctx.bindings.get("sid")
-    original = state.stack_item(int(sid)) if isinstance(sid, int) else None
-    if original is None or not original.is_spell:
+    original = _spell_named_by(ctx, spec)
+    if original is None:
         return
     times = evaluate_value(ctx, spec.get("amount", 1)) if "amount" in spec else 1
     if "controller" in spec:
@@ -266,6 +281,43 @@ def _shielded_by_a_static(state, item) -> bool:
         if source_obj is not None:
             return True
     return False
+
+
+@register("grant_rebound")
+def op_grant_rebound(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"It gains rebound." -- Ojer Pakpatiq, Deepest Epoch.
+
+    Rebound itself was never missing. `CardDef.rebound` has had the full
+    mechanic behind it for as long as the field has existed: the resolution
+    rider in `_place_after_resolution` that exiles the spell instead of binning
+    it, `rebound_by` recorded on the exiled card, and `suspend.rebound_tick`
+    offering the free cast at its controller's next upkeep. What could not be
+    said was somebody else granting it -- the flag is read off the **card**, so
+    only a card that prints rebound could ever have it.
+
+    So this op writes the same fact about a spell that does not print it, on
+    the spell's object while it is still on the stack, and the rider reads the
+    two together. Nothing else is needed and nothing else is added: a granted
+    rebound and a printed one are the same rebound, and giving the grant its
+    own exile-and-recast path would be a second mechanism for one behaviour.
+
+    **Which spell** comes from `_spell_named_by` -- the trigger's own `sid` by
+    default, which is what "whenever you cast an instant spell, **it** gains
+    rebound" means, or a declared ``target``.
+
+    The from-hand half of the printed line lives in the trigger's filter, not
+    here, and 702.87a's own "if you cast this spell from your hand" is enforced
+    by the rider regardless. A grant made to a spell cast from anywhere else is
+    therefore inert rather than wrong -- which is also what stops the free cast
+    at the next upkeep, itself made from exile, rebounding a second time.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    obj.granted_rebound = True
 
 
 @register("counter")

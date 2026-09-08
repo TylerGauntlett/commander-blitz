@@ -79,6 +79,7 @@
    "set_pt",
    "set_types",
    "spell_cost_reduction",
+   "spells_cant_be_countered",
    "untap_during_each_untap_step",
    "ward"
   ],
@@ -153,6 +154,14 @@
    "gain_life",
    "lose_life",
    "remove_counters"
+  ],
+  "MANA_SYMBOLS": [
+   "W",
+   "U",
+   "B",
+   "R",
+   "G",
+   "C"
   ],
   "NOT_A_CAST_TIME_COST": [
    "discard_self",
@@ -296,6 +305,7 @@
    "set_types",
    "skip_draw_step",
    "spell_cost_reduction",
+   "spells_cant_be_countered",
    "untap_during_each_untap_step",
    "ward"
   ],
@@ -491,6 +501,7 @@
   "grant_keyword",
   "grant_playable",
   "grant_protection",
+  "grant_rebound",
   "haunt",
   "hideaway",
   "if",
