@@ -80032,12 +80032,12 @@
     },
     "Electrostatic Infantry": {
       "edhrec_rank": 6274,
-      "gate": "template",
+      "gate": null,
       "name": "Electrostatic Infantry",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "5ed2d72f-f1cf-45a7-adf7-969f531721ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electrostatic Pummeler": {
@@ -139982,12 +139982,12 @@
     },
     "Izzet Boilerworks": {
       "edhrec_rank": 407,
-      "gate": "template",
+      "gate": null,
       "name": "Izzet Boilerworks",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "bdd4b490-d68a-4e9f-a2d9-6b85948239ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Izzet Charm": {
@@ -222862,12 +222862,12 @@
     },
     "Riptide Laboratory": {
       "edhrec_rank": 1771,
-      "gate": "template",
+      "gate": null,
       "name": "Riptide Laboratory",
-      "reason": "no template for: {1}{U}, {T}: Return target Wizard you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "25a9cb87-e572-4885-8561-1d4b158ec7e4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riptide Mangler": {
@@ -259372,12 +259372,12 @@
     },
     "Sprite Dragon": {
       "edhrec_rank": 6109,
-      "gate": "template",
+      "gate": null,
       "name": "Sprite Dragon",
-      "reason": "no template for: Whenever you cast a noncreature spell, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "361385d8-d9c7-4de8-a5c8-683e682779f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sprite Noble": {
@@ -313862,12 +313862,12 @@
     },
     "Winged Boots": {
       "edhrec_rank": 1870,
-      "gate": "template",
+      "gate": null,
       "name": "Winged Boots",
-      "reason": "no template for: Equipped creature has flying and ward {4}",
+      "reason": "",
       "scryfall_id": "116361c4-fddd-440a-ad02-8d71df733231",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winged Coatl": {

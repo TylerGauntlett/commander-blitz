@@ -2123,6 +2123,14 @@
   "eldrazi_devastator": {
     "zone": "battlefield"
   },
+  "electrostatic_infantry": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 0,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "elegant_parlor": {
     "zone": "battlefield"
   },
@@ -3829,6 +3837,12 @@
   },
   "ixalli_s_lorekeeper": {
     "zone": "battlefield"
+  },
+  "izzet_boilerworks": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
   },
   "izzet_guildgate": {
     "zone": "battlefield"
@@ -6295,6 +6309,10 @@
   "ripscale_predator": {
     "zone": "battlefield"
   },
+  "riptide_laboratory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "riptide_turtle": {
     "zone": "battlefield"
   },
@@ -7378,6 +7396,10 @@
     "life": {
       "0": 42
     }
+  },
+  "sprite_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "squall_seed_mercenary": {
     "battlefield_count": 33,
@@ -9033,6 +9055,10 @@
     "zone": "battlefield"
   },
   "wing_commando": {
+    "zone": "battlefield"
+  },
+  "winged_boots": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "winged_coatl": {
