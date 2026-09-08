@@ -242,6 +242,32 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
     return copy
 
 
+def _shielded_by_a_static(state, item) -> bool:
+    """Is a `spells_cant_be_countered` static covering this spell?
+
+    Lier, Disciple of the Drowned: "Spells can't be countered." Everyone's,
+    including the opponents' -- the card is symmetrical and famously so, which is
+    why this asks nothing about who controls the static or the spell unless the
+    card's own `affects_spells` filter does.
+
+    The card-level `uncounterable` flag beside this one is a *different claim*:
+    it is one card saying it about itself, and could never cover a spell the
+    static's controller does not own.
+    """
+    from ..characteristics import _battlefield_statics, _matches_printed
+
+    card = state.registry.get(item.def_id)
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "spells_cant_be_countered":
+            continue
+        filt = static.get("affects_spells")
+        if filt and not _matches_printed(card, filt):
+            continue
+        if source_obj is not None:
+            return True
+    return False
+
+
 @register("counter")
 def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     """Counter target spell.
@@ -272,7 +298,10 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
         # "This spell can't be countered." Printed on the card rather than
         # granted, so it is read off the definition and needs no static: the
         # spell is on the stack, where statics do not reach it anyway.
-        if item.is_spell and state.registry.get(item.def_id).uncounterable:
+        if item.is_spell and (
+            state.registry.get(item.def_id).uncounterable
+            or _shielded_by_a_static(state, item)
+        ):
             state.emit(
                 EventType.SPELL_COUNTERED,
                 player=item.controller,

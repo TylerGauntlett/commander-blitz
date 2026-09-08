@@ -1718,9 +1718,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: cast_from_graveyard filters spells with "
                 f"'affects_spells', not 'affects' (which picks out permanents)"
             )
-        if not model.static_max_per_turn:
+        if not model.static_max_per_turn and not model.grants_flashback:
+            # `grants_flashback` IS the rate limit, and a different one: each
+            # card is exiled as it resolves, so the permission spends itself
+            # card by card rather than being metered per turn. Lier prints no
+            # per-turn cap and needs none -- your graveyard runs out.
             raise DslError(
-                f"{where}: cast_from_graveyard needs 'max_per_turn' -- "
+                f"{where}: cast_from_graveyard needs 'max_per_turn' or "
+                f"'grants_flashback' -- "
                 f"'once during each of your turns' is the whole rate limit, and "
                 f"without it the permission is an unbounded engine"
             )
@@ -1814,7 +1819,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
-    elif model.effect in ("spell_cost_reduction", "replace_token_creation"):
+    elif model.effect in (
+        "spell_cost_reduction",
+        "replace_token_creation",
+        # "Spells can't be countered" names no permanent either -- it is about
+        # spells on the stack, and its optional `affects_spells` is the only
+        # filter it can carry. Lier prints no filter at all: every spell, every
+        # player, which is the card's whole reputation.
+        "spells_cant_be_countered",
+    ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
         # permanents for `affects` to name.

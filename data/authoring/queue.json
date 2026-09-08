@@ -219912,12 +219912,12 @@
     },
     "Restless Spire": {
       "edhrec_rank": 4735,
-      "gate": "template",
+      "gate": null,
       "name": "Restless Spire",
-      "reason": "no template for: {U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"D",
+      "reason": "",
       "scryfall_id": "fbf4552a-643a-4dc7-a2ae-8e3af5c1ceef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Restless Vents": {
