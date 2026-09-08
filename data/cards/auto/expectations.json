@@ -7359,6 +7359,16 @@
   "sin_spira_s_punishment": {
     "zone": "battlefield"
   },
+  "sink_into_stupor_soporific_springs": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "sir_shandlar_of_eberyn": {
     "zone": "battlefield"
   },

@@ -779,6 +779,21 @@ def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     target_id = str(spec.get("target", "t1"))
     for sid in ctx.target_sids(target_id):
         pull_spell_off_stack(ctx.state, sid, Zone.HAND, cause="returned", by=ctx.source_oid)
+    # "Return target **spell or nonland permanent** an opponent controls to its
+    # owner's hand" (Sink into Stupor). One instance of the word "target", so
+    # one spec and one op -- and the ref that comes back says which half of the
+    # printed word the caster took. A `kind: "spell_or_permanent"` target that
+    # landed on a permanent is an object ref, and reading only `target_sids`
+    # would return nothing and leave the permanent on the battlefield with the
+    # card looking like it worked, which is the silent failure this op's own
+    # docstring was written about.
+    #
+    # The owner's hand either way: `move_object` with `to_player` unset sends a
+    # permanent home, the same seat `pull_spell_off_stack` sends a spell to.
+    for oid in ctx.target_oids(target_id):
+        obj = ctx.state.objects.get(oid)
+        if obj is not None:
+            move_object(ctx.state, oid, Zone.HAND, cause="returned")
 
 
 @register("return_from_graveyard")

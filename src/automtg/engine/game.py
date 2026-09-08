@@ -33,7 +33,7 @@ from .state import GameState, new_object
 from .structs import TargetRef
 from .targeting import selectable_modes
 from .turn import _next_blocker_decision
-from .zones import move_object
+from .zones import move_object, offer_enters_costs
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -122,7 +122,7 @@ class Game:
 
         state.passes_in_row = 0
         if action.kind is ActionKind.PLAY_LAND:
-            self._play_land(pid, action)
+            self._run(self._play_land(pid, action))
         elif action.kind is ActionKind.CAST:
             self._run(self._cast(pid, action))
         elif action.kind is ActionKind.SUSPEND:
@@ -251,7 +251,7 @@ class Game:
     # priority actions
     # ------------------------------------------------------------------
 
-    def _play_land(self, pid: int, action: Action) -> None:
+    def _play_land(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
         state = self.state
         oid = action.source
         card = state.card(oid)
@@ -268,6 +268,12 @@ class Game:
         if action.second_face:
             state.objects[oid].showing_second_face = True
             card = state.card_of(state.objects[oid])
+        # "As this land enters, you may pay 3 life. If you don't, it enters
+        # tapped." Asked before the move for the reason the `second_face` write
+        # above is done before it: the enters replacements are applied inside
+        # `move_object`, which cannot stop to ask, and nobody receives priority
+        # between this question and the arrival.
+        yield from offer_enters_costs(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,

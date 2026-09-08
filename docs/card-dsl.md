@@ -768,6 +768,69 @@ its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
 
+### "Target spell or nonland permanent"
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_permanent", "count": 1,
+  "selector": { "not_types": ["Land"], "controller": "opponent" } }
+```
+
+Sink into Stupor. One instance of the word "target" whose legal choices live in
+two zones at once — `"spell"` walks the stack, `"permanent"` and `"any"` walk the
+battlefield, and nothing pooled the two.
+
+**One spec, not two.** Two specs, one of each kind, is a card that targets
+*twice*: it would need a legal choice of each to be castable, and 608.2b would
+fizzle it if either became illegal. The printed card is castable with only a
+permanent on the board and with only a spell on the stack.
+
+`still_legal` needed no change at all, because it already re-checks a stored ref
+by `ref.kind` rather than by the spec's — so every ref this pool offers is one it
+will accept. The `selector` narrows both halves, since "nonland" and "an opponent
+controls" are meant to.
+
+`return_spell_to_hand` reads both `target_sids` and `target_oids` for the same
+reason: a union target that landed on a permanent would otherwise return nothing
+and leave it on the battlefield with the card looking like it worked — the silent
+failure that op's docstring was already written about, one kind further along.
+
+### "As this enters, you may pay …"
+
+```jsonc
+{ "event": "self_enters_tapped", "unless_cost": { "pay_life": 3 } }
+```
+
+"As this land enters, you may pay 3 life. If you don't, it enters tapped."
+(Soporific Springs, and the shock lands. Steam Vents ships today with the sentence
+dropped — a strictly worse card, and a silent one.)
+
+`unless_cost` takes a whole `Cost`, not a life number, because the rest of the
+cycle pays with a sacrifice or a discard.
+
+**Where the question is asked is the design.** 614 applies enters replacements
+*inside* the zone change, and `move_object` is not a generator — it cannot stop
+for a decision, and making it one would put a suspend point inside every zone
+change in the engine. So `zones.offer_enters_costs` is called by whichever path is
+about to put the permanent onto the battlefield — `game._play_land` for a land
+drop, `stack._place_after_resolution` for a permanent spell, both already
+generators — and leaves the answer on `obj.enters_cost_paid` for the replacement
+to read a moment later.
+
+Asking a moment early is not an approximation: nobody receives priority between
+the question and the arrival, so there is no window in which the permanent exists
+with the question unanswered. It is the argument `_play_land` already makes for
+writing `showing_second_face` before the move.
+
+`enters_cost_paid` survives `reset_permanent_state` deliberately — the same
+exemption `hasted_by_suspend` has, and for the same reason — and
+`_enter_battlefield` clears it once the replacements have read it, because a
+permanent that leaves and returns is a new object whose controller has been asked
+nothing.
+
+An unaffordable price is never offered: 118.4 forbids paying life you do not have,
+so `can_pay` is asked first rather than showing a question whose "yes" cannot be
+honoured.
+
 ### "Each of X targets"
 
 ```jsonc

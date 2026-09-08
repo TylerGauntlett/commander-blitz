@@ -246562,12 +246562,12 @@
     },
     "Sink into Stupor // Soporific Springs": {
       "edhrec_rank": 172,
-      "gate": "template",
+      "gate": null,
       "name": "Sink into Stupor // Soporific Springs",
-      "reason": "no template for: Return target spell or nonland permanent an opponent controls to its owner's hand",
+      "reason": "",
       "scryfall_id": "5358b87a-1a29-426d-b165-40c97da2c14d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sink into Takenuma": {

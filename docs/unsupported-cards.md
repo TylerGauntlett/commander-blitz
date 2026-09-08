@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**29 cards** blocked by **32** capabilities.
+**28 cards** blocked by **31** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [enters-replacement](#enters-replacement) | 2 | 172 | replacement |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [token-definitions](#token-definitions) | 2 | 70 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -29,6 +28,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [doesnt-untap](#doesnt-untap) | 1 | 145 | static_effect |
+| [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -42,7 +42,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-or-permanent-target](#spell-or-permanent-target) | 1 | 172 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
@@ -80,25 +79,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## enters-replacement
-
-Blocks **2** cards.
-
-- **(replacement)** a card-level replacement of the permanent's own arrival that can (a) offer its controller an optional cost as the entry is being replaced -- here discarding a land card from hand, i.e. the `discard_selector` vocabulary of an activated cost reused as a replacement's price -- and (b) choose the destination zone on the answer: paid, the permanent finishes entering the battlefield; declined, it goes to its owner's graveyard instead and never enters at all, so no `self_enters`/`permanent_enters` trigger anywhere sees it and it is never on the battlefield to be sacrificed or bounced in response. It must apply on every arrival, from any zone (cast, reanimated, blinked), not only when the card is cast
-  <br>Why the existing vocabulary won't do: The four whitelisted replacements (`self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared`) all only decorate a permanent that is already arriving -- ReplacementModel's own docstring says so, and `zones` runs them after the object has been added to the battlefield, reading nothing from `modify` but `tapped` and `counters`. None of them can charge a cost, ask the controller anything, or redirect the arrival to another zone, and there is no `graveyard` destination in that code path at all. The card-level cost keys are the wrong layer twice over: `additional_optional` / `additional_cost` are cast costs, so they would not apply to a Mox Diamond returning from the graveyard or blinked, and neither branch matches the printed card -- a mandatory discard would make the artifact uncastable with no land in hand (it is castable, it just dies on the way), and an optional one that goes unpaid would still let it enter. `replace_leaves_battlefield` and `replace_deaths` are the only existing destination-rewriting replacements and both fire on the way *out* of the battlefield, so they cannot see a permanent that must never arrive; `replace_token_creation` rewrites what is created but, as its docstring notes, deliberately handles the no-object-yet case only for tokens. Carrying the line as a `self_enters` triggered ability running `may` + `discard` + `sacrifice` is exactly the approximation the rules forbid: the artifact would really enter, other enters triggers would see it, and it would reach the graveyard from the battlefield rather than never having been there.
-- **(replacement)** the `self_enters_tapped` replacement has to be able to carry an optional price the controller is asked about as the permanent enters -- "you may pay 3 life; if you don't, it enters tapped" -- i.e. a `cost` (here `pay_life`, and `pay_life`/`sacrifice`/`discard` for the rest of the cycle) offered at replacement time, with the tapped rewrite applied only when the offer is declined. That means the enters-replacement path must be able to suspend for a decision the way dredge/madness/miracle do, rather than being applied inline
-  <br>Why the existing vocabulary won't do: `ReplacementModel` (src/automtg/cards/schema.py:454) accepts only `event`, `modify`, `counter`, `amount` and `condition`, and `condition` is a board-state tree ("unless you control a Mountain") with no room for a payment or a player choice. `zones._enter_battlefield` applies it synchronously -- `if event == "self_enters_tapped": obj.tapped = True` (zones.py:445) -- and `replacements.py`'s module docstring states outright that every whitelisted enters replacement "is applied synchronously and asks nothing", which is why dredge, madness and miracle had to be moved out of that whitelist to be able to stop and ask. `pay_life` exists in `cost_keys` but only an *activated ability's* `cost` may hold it; there is no card-level or replacement-level slot for it. The two reachable approximations are both a different card: writing the bare `{"event": "self_enters_tapped"}` (what every shockland in the shipped pool does today, e.g. `blood_crypt`) deletes the printed choice and makes the land unconditionally tapped, and a `self_enters` trigger running `may` + `lose_life` + `untap` puts the decision on the stack after the land has already entered tapped -- it can be responded to, `permanent_enters` watchers see a tapped land, and `lose_life` is not a payment that can be refused for want of life.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sink into Stupor // Soporific Springs** (rank 172) — `sink_into_stupor_soporific_springs`
-  - Return target spell or nonland permanent an opponent controls to its owner's hand.
-  - As this land enters, you may pay 3 life. If you don't, it enters tapped.
-- **Mox Diamond** (rank 246) — `mox_diamond`
-  - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
 
 </details>
 
@@ -277,6 +257,20 @@ Blocks **1** card.
 
 - **Mana Vault** (rank 145) — `mana_vault`
   - This artifact doesn't untap during your untap step.
+
+</details>
+
+## enters-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a card-level replacement of the permanent's own arrival that can (a) offer its controller an optional cost as the entry is being replaced -- here discarding a land card from hand, i.e. the `discard_selector` vocabulary of an activated cost reused as a replacement's price -- and (b) choose the destination zone on the answer: paid, the permanent finishes entering the battlefield; declined, it goes to its owner's graveyard instead and never enters at all, so no `self_enters`/`permanent_enters` trigger anywhere sees it and it is never on the battlefield to be sacrificed or bounced in response. It must apply on every arrival, from any zone (cast, reanimated, blinked), not only when the card is cast
+  <br>Why the existing vocabulary won't do: The four whitelisted replacements (`self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared`) all only decorate a permanent that is already arriving -- ReplacementModel's own docstring says so, and `zones` runs them after the object has been added to the battlefield, reading nothing from `modify` but `tapped` and `counters`. None of them can charge a cost, ask the controller anything, or redirect the arrival to another zone, and there is no `graveyard` destination in that code path at all. The card-level cost keys are the wrong layer twice over: `additional_optional` / `additional_cost` are cast costs, so they would not apply to a Mox Diamond returning from the graveyard or blinked, and neither branch matches the printed card -- a mandatory discard would make the artifact uncastable with no land in hand (it is castable, it just dies on the way), and an optional one that goes unpaid would still let it enter. `replace_leaves_battlefield` and `replace_deaths` are the only existing destination-rewriting replacements and both fire on the way *out* of the battlefield, so they cannot see a permanent that must never arrive; `replace_token_creation` rewrites what is created but, as its docstring notes, deliberately handles the no-object-yet case only for tokens. Carrying the line as a `self_enters` triggered ability running `may` + `discard` + `sacrifice` is exactly the approximation the rules forbid: the artifact would really enter, other enters triggers would see it, and it would reach the graveyard from the battlefield rather than never having been there.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mox Diamond** (rank 246) — `mox_diamond`
+  - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
 
 </details>
 
@@ -470,21 +464,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## spell-or-permanent-target
-
-Blocks **1** card.
-
-- **(selector)** one target spec whose legal choices span the stack and the battlefield at once -- "target spell or nonland permanent an opponent controls" is a single target the caster may point at either a spell on the stack or a permanent, so `TargetModel.kind` needs a value (or `selector` needs a `union` that survives the kind switch) that pools `TargetRef.stack(sid)` and `TargetRef.obj(oid)` refs together, `still_legal` must re-check whichever kind the chosen ref turned out to be, and the bounce op must send a spell to its owner's hand via `pull_spell_off_stack` and a permanent via `move_object` from the one binding
-  <br>Why the existing vocabulary won't do: `TargetModel.kind` is a closed Literal of six mutually exclusive values -- permanent, player, spell, card_in_graveyard, card_in_exile, any (src/automtg/cards/schema.py:158) -- and `targeting.candidates` branches on it: `kind: "spell"` walks `state.stack` only (targeting.py:76) and every object kind walks a zone pool, with `kind: "any"` hard-overriding the selector's zone to `battlefield` in both `candidates` (targeting.py:96) and `still_legal` (targeting.py:596), so it is creatures/planeswalkers/players and can never reach the stack. `selector.union` can name a zone per branch, but it is consulted only after the kind has already decided which universe is walked, so a stack branch under a permanent-kind spec yields nothing. The ops are split the same way and neither covers both: `return_spell_to_hand` (ops_cards.py:591) reads `ctx.target_sids` and its own docstring records that `return_to_hand` (ops_cards.py:532) "cannot see a spell" -- `resolve_pool`'s `{"target": ...}` branch keeps only object refs, so a stack ref makes it a silent no-op. Two target specs, or one top-level `choose_mode` with a per-mode `mode`-tagged target on each branch, is the closest reachable shape and is a different card: it prints a mode line the card does not have, forbids a copy from choosing a new target of the other kind (706.10), and in the two-spec spelling lets the caster take a spell *and* a permanent, where the printed card takes exactly one object of either kind.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sink into Stupor // Soporific Springs** (rank 172) — `sink_into_stupor_soporific_springs`
-  - Return target spell or nonland permanent an opponent controls to its owner's hand.
-  - As this land enters, you may pay 3 life. If you don't, it enters tapped.
 
 </details>
 

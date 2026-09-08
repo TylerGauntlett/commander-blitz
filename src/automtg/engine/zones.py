@@ -392,6 +392,54 @@ def _detach_all(state: GameState, oid: int) -> None:
             other.paired_with = None
 
 
+
+def offer_enters_costs(state: GameState, oid: int, controller: int):
+    """"As this enters, you may pay 3 life." Ask, and pay if the answer is yes.
+
+    Called **just before** `move_object` by whichever path is putting the
+    permanent onto the battlefield -- `game._play_land` for a land drop,
+    `stack._place_after_resolution` for a permanent spell. Both are generators
+    already; `move_object` is not, and making it one would put a suspend point
+    inside every zone change in the engine.
+
+    Asking a moment early is not an approximation. 614 applies the replacements
+    during the zone change and nobody receives priority in between, so there is
+    no window in which the permanent exists with the question unanswered -- the
+    same argument `_play_land` already makes for setting `showing_second_face`
+    before the move.
+
+    The answer is left on `obj.enters_cost_paid`, which
+    `reset_permanent_state` deliberately does not clear and
+    `_enter_battlefield` clears once the replacements have read it.
+
+    An unaffordable price is not offered: `can_pay` is asked first, so a player
+    at 2 life is never shown a question whose yes would kill them and whose
+    payment would fail anyway.
+    """
+    from .carddef import Cost
+    from .costs import can_pay, pay
+    from .effects.context import ask_yes_no
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    for replacement in card.replacements:
+        node = replacement.get("unless_cost")
+        if not node:
+            continue
+        cost = Cost(**node) if not isinstance(node, Cost) else node
+        if not can_pay(state, controller, cost, oid):
+            continue
+        ctx = EffectContext(
+            state=state, controller=controller, source_oid=oid, source_name=card.name
+        )
+        if not (yield from ask_yes_no(ctx, f"Pay {card.name}'s cost as it enters?", controller)):
+            continue
+        if (yield from pay(state, controller, cost, oid)):
+            obj.enters_cost_paid = True
+
+
 def _enter_battlefield(
     state: GameState,
     obj: GameObject,
@@ -421,6 +469,11 @@ def _enter_battlefield(
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
 
+    # Cleared once the loop below has read it: the answer belongs to this one
+    # arrival, and a permanent that leaves and comes back is a new object
+    # (400.7) whose controller has not been asked anything.
+    paid_on_arrival = obj.enters_cost_paid
+    obj.enters_cost_paid = False
     for replacement in card.replacements:
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
@@ -445,6 +498,14 @@ def _enter_battlefield(
         if event == "self_enters_tapped" or (
             event == "self_enters" and replacement.get("modify", {}).get("tapped")
         ):
+            # "…**unless** you pay 3 life." The offer was made and answered a
+            # moment ago, just before the move, by whichever path is putting
+            # this permanent onto the battlefield -- see `offer_enters_costs`.
+            # Read here rather than asked here because `move_object` is not a
+            # generator and cannot stop for a decision, and making it one would
+            # put a suspend point inside every zone change in the engine.
+            if replacement.get("unless_cost") and paid_on_arrival:
+                continue
             obj.tapped = True
         elif event == "self_enters_with_counters" or (
             event == "self_enters" and "counters" in replacement.get("modify", {})

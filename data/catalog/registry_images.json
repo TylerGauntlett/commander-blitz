@@ -8067,6 +8067,10 @@
     "artist": "John Tedrick",
     "scryfall_id": "075dd582-61b7-45e9-9dcf-0b544b733e61"
   },
+  "sink_into_stupor_soporific_springs": {
+    "artist": "Peter Polach",
+    "scryfall_id": "5358b87a-1a29-426d-b165-40c97da2c14d"
+  },
   "sir_shandlar_of_eberyn": {
     "artist": "Andi Rusu",
     "scryfall_id": "31570ded-f5e3-44c4-b95f-294ac10b2cd2"
@@ -8334,6 +8338,10 @@
   "somberwald_dryad": {
     "artist": "Jaime Jones",
     "scryfall_id": "307edca0-769d-4071-9654-3537341e96bd"
+  },
+  "soporific_springs": {
+    "artist": "Peter Polach",
+    "scryfall_id": "5358b87a-1a29-426d-b165-40c97da2c14d"
   },
   "sorin_imperious_bloodlord": {
     "artist": "Chase Stone",

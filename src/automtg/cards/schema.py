@@ -554,6 +554,21 @@ class ReplacementModel(BaseModel):
     #: card writes the negation: a condition here says when the replacement
     #: *applies*, matching every other `condition` in the DSL.
     condition: dict[str, Any] | None = None
+    #: "As this land enters, you may pay 3 life. If you don't, it enters
+    #: tapped." (Sink into Stupor // Soporific Springs, and the shock lands.)
+    #: A price the controller may pay to *avoid* the replacement, offered as
+    #: the permanent enters and taking a whole `Cost` -- `pay_life` for this
+    #: cycle, and the same node the rest of the DSL prices things with.
+    #:
+    #: The question is asked **just before** the move rather than inside it, by
+    #: whichever path is putting the permanent onto the battlefield. That is
+    #: observationally the same moment: 614 replacements are applied during the
+    #: zone change and nobody receives priority in between, so there is no
+    #: window in which the permanent exists un-replaced. It is also the only
+    #: reachable moment -- `move_object` is not a generator and cannot stop to
+    #: ask, and making it one would put a suspend point inside every zone
+    #: change in the engine.
+    unless_cost: dict[str, Any] | None = None
 
 
 class CardModel(BaseModel):

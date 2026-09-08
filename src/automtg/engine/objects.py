@@ -177,6 +177,12 @@ class GameObject:
     #: would wipe a permission set before it, which is what `rebound_by` and
     #: `exiled_by` both discovered first.
     granted_plot: bool = False
+    #: "As this land enters, you may pay 3 life." Whether the controller took
+    #: that offer, answered just before the move and read by the enters
+    #: replacements a moment later. Deliberately survives
+    #: `reset_permanent_state` -- see the note there -- and is cleared by
+    #: `_enter_battlefield` once it has been read.
+    enters_cost_paid: bool = False
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -827,6 +833,12 @@ class GameObject:
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
+        # `enters_cost_paid` is deliberately *not* reset either, and for the
+        # same reason as `hasted_by_suspend` below: it is the answer to a
+        # question asked a moment before the move, and this runs on the way in
+        # -- clearing it here would throw away the payment and tap a land its
+        # controller had just paid 3 life to untap. `_enter_battlefield` clears
+        # it once the replacements have read it.
         self.hidden_in_exile = False
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
