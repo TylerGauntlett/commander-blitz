@@ -109,6 +109,18 @@ VALUE_KEYS = frozenset(
         "min",
         "loop_value",
         "binding",
+        # "…draws cards equal to **the greatest number of cards a player
+        # discarded this way**" -- Windfall. The binding a `discard` writes
+        # accumulates every card every player pitched, so `{"count": {"binding":
+        # ...}}` is the TOTAL; this groups the same binding by owner and takes
+        # the largest group.
+        #
+        # No existing leaf comes close, and each near miss is wrong quietly:
+        # `cards_in_hand` and `max_count_of` read the board when the `draw`
+        # runs, by which point every hand is empty and both are 0, and
+        # `cards_to_graveyard_this_turn` is a turn-wide tally over every
+        # graveyard that also counts what was there already.
+        "greatest_discarded_by_a_player",
         "counters_on",
         # "…if it had no -1/-1 counters on it" -- persist and undying. Not
         # `counters_on`, which reads a live object: this asks about a creature
@@ -228,6 +240,18 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "binding" in expr:
         value = ctx.bindings.get(str(expr["binding"]))
         return int(value) if isinstance(value, int) else 0
+    if "greatest_discarded_by_a_player" in expr:
+        # The binding holds oids, and an oid knows its owner, so the grouping
+        # needs nothing recorded that `discard` was not already recording.
+        bound = ctx.bindings.get(str(expr["greatest_discarded_by_a_player"]))
+        if not isinstance(bound, (list, tuple)):
+            return 0
+        per_player: dict[int, int] = {}
+        for oid in bound:
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                per_player[obj.owner] = per_player.get(obj.owner, 0) + 1
+        return max(per_player.values(), default=0)
     if "rolled" in expr:
         return _rolled(ctx, expr["rolled"])
     if "count" in expr:

@@ -302,7 +302,8 @@
         "in_commander_identity",
         "mana",
         "player",
-        "reflecting"
+        "reflecting",
+        "split"
       ],
       "add_mana_per": [
         "mana",
@@ -432,6 +433,7 @@
       ],
       "damage": [
         "amount",
+        "excess_to",
         "objects",
         "player",
         "target"
@@ -460,7 +462,8 @@
         "as",
         "player",
         "random",
-        "up_to"
+        "up_to",
+        "whole_hand"
       ],
       "draw": [
         "amount",
@@ -1133,6 +1136,7 @@
       "damage_taken_this_turn",
       "distinct",
       "extreme_value",
+      "greatest_discarded_by_a_player",
       "lands_you_control",
       "life_lost_this_turn",
       "life_of",

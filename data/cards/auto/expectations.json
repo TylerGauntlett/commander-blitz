@@ -2949,6 +2949,18 @@
   "game_trail_changeling": {
     "zone": "battlefield"
   },
+  "gandalf_s_sanction": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "gangly_stompling": {
     "zone": "battlefield"
   },

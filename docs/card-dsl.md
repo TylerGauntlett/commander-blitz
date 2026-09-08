@@ -1698,6 +1698,35 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
+### Discarding a whole hand, and reading the greatest that went
+
+Windfall: "Each player discards their hand, then draws cards equal to the
+**greatest number of cards a player discarded this way**." Two halves, and each
+was unsayable for the same underlying reason -- a per-player quantity in an op
+whose `amount` is evaluated once.
+
+```jsonc
+{ "op": "discard", "player": "each_player", "whole_hand": true, "as": "pitched" },
+{ "op": "draw",    "player": "each_player",
+  "amount": { "greatest_discarded_by_a_player": "pitched" } }
+```
+
+`whole_hand` replaces `amount` rather than joining it. The near miss is
+`{"amount": {"cards_in_hand": ...}}`, which reads the **resolving** player's
+hand and then takes that many from everybody: a Windfall cast with three in hand
+rips three from an opponent holding seven and leaves them four.
+
+`greatest_discarded_by_a_player` groups the discard's binding by owner and takes
+the largest group. Nothing new is recorded to make that work -- `as` already
+accumulates oids across players, and an oid knows its owner. Every other way to
+ask is wrong quietly:
+
+| spelling | what it actually gives |
+|---|---|
+| `{"count": {"binding": …}}` | the **total** across all players — 3 and 1 draws four |
+| `cards_in_hand`, `max_count_of` | read at `draw` time, when every hand is empty — zero |
+| `cards_to_graveyard_this_turn` | turn-wide, every graveyard, counting what was already there |
+
 ### `damage`'s `excess_to`
 
 "Excess damage is dealt to that creature's controller instead" — Gandalf's

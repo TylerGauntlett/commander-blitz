@@ -1444,6 +1444,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: lock_life_total takes no 'amount' -- it forbids the "
                 f"change rather than sizing it"
             )
+    if op == "discard" and effect.get("whole_hand"):
+        # "Each player discards their hand." The size is per player and cannot
+        # also be an `amount`, which is evaluated once for everybody -- two
+        # answers to one question, and the `amount` would silently win for the
+        # players it was not computed from.
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: 'whole_hand' is the whole hand, so it replaces 'amount' "
+                f"rather than joining it"
+            )
+        if effect.get("up_to"):
+            raise DslError(f"{where}: a whole-hand discard is not optional")
+
     if op == "damage" and "excess_to" in effect:
         # "Excess damage is dealt to that creature's controller instead."
         # Only meaningful on the single-target form: `objects` is a pool and
