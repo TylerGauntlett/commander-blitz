@@ -1444,6 +1444,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: lock_life_total takes no 'amount' -- it forbids the "
                 f"change rather than sizing it"
             )
+    if op == "damage" and "excess_to" in effect:
+        # "Excess damage is dealt to that creature's controller instead."
+        # Only meaningful on the single-target form: `objects` is a pool and
+        # there is no one creature whose controller the spill belongs to.
+        if effect["excess_to"] != "controller":
+            raise DslError(
+                f"{where}.excess_to: the only spelling any printed card uses is "
+                f"'controller', got {effect['excess_to']!r}"
+            )
+        if "target" not in effect:
+            raise DslError(
+                f"{where}: 'excess_to' needs a single 'target' -- a pool of objects has "
+                f"no one controller for the excess to reach"
+            )
+
     if op == "cast_from_hand":
         # The selector is what may be picked, and it is the whole of the printed
         # restriction -- "an instant or sorcery spell with mana value X or less".

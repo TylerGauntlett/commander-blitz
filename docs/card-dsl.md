@@ -1698,6 +1698,31 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
+### `damage`'s `excess_to`
+
+"Excess damage is dealt to that creature's controller instead" — Gandalf's
+Sanction. **One damage event split in two**, not two events, which is visible:
+two would let a damage trigger fire twice and would let the second half be
+prevented on its own.
+
+```jsonc
+{ "op": "damage", "target": "t1",
+  "amount": { "count": { "zone": "graveyard", "controller": "you",
+                         "any_types": ["Instant", "Sorcery"] } },
+  "excess_to": "controller" }
+```
+
+Only on the single-`target` form: `objects` is a pool and there is no one
+creature whose controller the spill belongs to, so the loader refuses it there.
+
+Lethal is read the way `sba` reads it — toughness minus damage **already
+marked**, or 1 from a deathtouch source. That matters and is tested: a creature
+already carrying a point of damage spills one more, which is exactly what a
+naive "amount minus toughness" gets wrong.
+
+`trample` is the near miss and spills for the same reason, but only in combat.
+`prevent_damage` suppresses without redirecting.
+
 ### A mana ability that splits colours
 
 "{0}: Add X mana in **any combination of {U} and/or {R}**, where X is Vivi
