@@ -353,6 +353,10 @@
       "cascade": [
         "max_mana_value"
       ],
+      "cast_copy": [
+        "objects",
+        "optional"
+      ],
       "cast_from_hand": [
         "player",
         "selector"
@@ -573,6 +577,7 @@
         "objects",
         "playable_this_turn",
         "player",
+        "rest_to",
         "rest_to_bottom",
         "selector",
         "shuffle",
