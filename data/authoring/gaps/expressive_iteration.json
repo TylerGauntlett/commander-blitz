@@ -1,0 +1,18 @@
+{
+  "card_id": "expressive_iteration",
+  "name": "Expressive Iteration",
+  "oracle_text": "Look at the top three cards of your library. Put one of them into your hand, put one of them on the bottom of your library, and exile one of them. You may play the exiled card this turn.",
+  "blocked_sentences": [
+    "Put one of them into your hand, put one of them on the bottom of your library, and exile one of them."
+  ],
+  "needs": [
+    {
+      "capability": "look_split_destinations",
+      "kind": "op",
+      "what": "a way for one `look_at_top` to route the cards it looked at to three different zones with a count per zone -- e.g. a `destinations` list such as [{\"destination\": \"hand\", \"count\": 1}, {\"destination\": \"bottom\", \"count\": 1}, {\"destination\": \"exile\", \"count\": 1, \"playable_this_turn\": true}] -- where the looked-at cards form a single pool, every assignment is chosen by the controller in one decision with all three cards visible, each card is assigned to exactly one destination, and the whole assignment happens as one event rather than as a sequence of looks. `bottom` must be a real destination for a *named* card (not the all-or-nothing `rest_to_bottom` boolean), and the exile leg must still accept the existing `playable_this_turn` impulse flag so the third printed sentence rides along with it.",
+      "why_existing_wont_do": "`look_at_top` is the closest op and resolves exactly one destination: `destination = DESTINATIONS[spec.get('destination', 'hand')]` (ops_cards.py:407), handed to `_move_found` for every picked card. Its only remainder key is `rest_to_bottom`, a boolean hardwired to `_bottom_in_random_order` (ops_cards.py:446) -- bottom of library only, and it takes *everything* that was looked at and not picked, so it can express a second destination but never a third. That gives at most hand+bottom or exile+bottom, never hand+bottom+exile with one card each. `two_piles` carries `to`/`other` but is only two destinations, is a pile split made by an opponent, and does not look-then-assign. `search_zones` widens the source zones, not the destinations. `for_each` iterates a pool but each iteration would still run a single-destination op. Sequencing two `look_at_top` ops (look 3, take one to hand; then look 2, exile one with rest_to_bottom) is the approximation this record exists to refuse: it is two separate looks rather than the printed single look, it emits a second `look_at_top` decision, the second look re-reads the library top after the first card has already moved, and `as` binds only what an op *took*, so nothing can name \"the other two of the three you looked at\" to keep the pool fixed across the two ops. `grant_playable` and `exile`'s / `look_at_top`'s `playable_this_turn` already cover the last printed sentence ('You may play the exiled card this turn.'), so the impulse permission is not what is missing -- only the three-way assignment is."
+    }
+  ],
+  "closest_existing": ["look_at_top", "search_split_destinations", "two_piles", "grant_playable", "play_exiled"],
+  "confidence": "high"
+}

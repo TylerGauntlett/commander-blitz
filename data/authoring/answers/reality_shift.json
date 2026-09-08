@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "reality_shift",
+    "name": "Reality Shift",
+    "oracle_text": "Exile target creature. Its controller manifests the top card of their library. (That player puts the top card of their library onto the battlefield face down as a 2/2 creature. If it's a creature card, it can be turned face up any time for its mana cost.)",
+    "mana_cost": "{1}{U}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "snapshot",
+        "target": "t1",
+        "as": "victim"
+      },
+      {
+        "op": "exile",
+        "objects": {
+          "target": "t1"
+        }
+      },
+      {
+        "op": "manifest",
+        "player": {
+          "controller_of": "victim"
+        },
+        "amount": {
+          "const": 1
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 32,
+    "library_size": {
+      "0": 39
+    }
+  }
+}
