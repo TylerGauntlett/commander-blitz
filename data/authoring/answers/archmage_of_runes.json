@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "archmage_of_runes",
+    "name": "Archmage of Runes",
+    "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.\nWhenever you cast an instant or sorcery spell, draw a card.",
+    "mana_cost": "{3}{U}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Giant", "Wizard"],
+    "power": 3,
+    "toughness": 6,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Instant and sorcery spells you cast cost {1} less to cast.",
+        "effect": "spell_cost_reduction",
+        "affects_spells": {
+          "controller": "you",
+          "any_types": ["Instant", "Sorcery"]
+        },
+        "amount": {"const": 1}
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast an instant or sorcery spell, draw a card.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"any_types": ["Instant", "Sorcery"]}
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}
