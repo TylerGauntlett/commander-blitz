@@ -844,6 +844,15 @@ def _place_after_resolution(
         and obj.cast_from_hand
         and destination is Zone.GRAVEYARD
     )
+    # Plot's "exile that spell instead of putting it into your graveyard as it
+    # resolves" -- the seventh rider on this slot, beside rebound's exile and
+    # for its reasons. Gated on `cast_from_hand` because Lilah's trigger says
+    # "from your hand", and it is the loop guard too: the plotted card is cast
+    # from **exile** later, so without it a plotted spell would re-plot itself
+    # every time it resolved and never leave.
+    plots = obj.granted_plot and obj.cast_from_hand and destination is Zone.GRAVEYARD
+    if plots:
+        destination = Zone.EXILE
     if rebounds:
         destination = Zone.EXILE
     # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
@@ -893,6 +902,17 @@ def _place_after_resolution(
         # which would wipe this if it were set first -- the same ordering
         # `exiled_by` needs.
         obj.rebound_by = controller
+    if plots:
+        # After the move for `rebound_by`'s reason, and this one has four fields
+        # to lose rather than one. "You may cast it as a sorcery on a later turn
+        # without paying its mana cost" is the whole of plot (702.171a), and it
+        # is three riders on the permission the engine already had.
+        obj.playable_by = controller
+        obj.playable_turn = state.turn
+        obj.playable_duration = "later_turns"
+        obj.playable_free = True
+        obj.playable_sorcery_only = True
+        state.emit("plotted", player=controller, source=obj.oid, card=obj.def_id)
     if adventuring and printed.adventure:
         # After the move for `rebound_by`'s reason, and this one really is
         # cleared on the way back: the creature that comes off its adventure

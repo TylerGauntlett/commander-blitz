@@ -351,6 +351,14 @@ SPELL_FILTER_KEYS = frozenset(
         "subtypes",
         "supertypes",
         "colors",
+        # "Whenever you cast a **multicolored** instant or sorcery spell" --
+        # Lilah, Undefeated Slickshot. Two or more colors, any two, which
+        # `colors` cannot say: it is a membership test, so `["U","R"]` matches a
+        # mono-blue spell, and `require_all` would mean exactly those colours
+        # and no others. Written as a number rather than a `multicolored`
+        # boolean because the number is what the rules say (202.2b) and reads
+        # the same on the rarer "three or more colors".
+        "min_colors",
         "keywords",
         "not_keywords",
         "name",

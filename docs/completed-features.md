@@ -11053,3 +11053,75 @@ branch would have quietly changed what those mean.
 `tests/unit/test_spells_cast_by_type.py`. The load-bearing pair casts three
 creature spells and asserts the bare count reaches 3 while the filtered one stays
 0 — which is the second worker's argument, executable.
+
+## Plot — a rider and a permission, both already built
+
+### Overview
+
+Lilah, Undefeated Slickshot: "Whenever you cast a multicolored instant or sorcery
+spell from your hand, exile that spell instead of putting it into your graveyard
+as it resolves. If you do, it becomes plotted." Plot (702.171a) is "you may cast
+it as a sorcery on a later turn without paying its mana cost."
+
+The gap record filed three needs. Two of them were shapes this session had
+already built for other cards, which is the interesting part — the third was one
+word.
+
+### The rider is `grant_rebound`'s slot
+
+`grant_plot` writes a flag on the spell's object while it is still on the stack;
+`_place_after_resolution` reads it and sends the spell to exile instead of the
+graveyard; and the permission is written **after** the move, because
+`reset_permanent_state` runs on the way and clears every `playable_*` field —
+which is the ordering `rebound_by` and `exiled_by` both discovered first.
+
+Rebound and plot differ only in what they leave behind: one free cast owed at the
+next upkeep, against a standing permission with no end. Everything else is the
+same slot, which is why plot needed no new machinery for its first sentence.
+
+It has to be a rider rather than an `exile` written into the ability's effects,
+for the reason `encode` and `exiles_itself` both give: by the time an ability's
+effects run, the stack list is already popped, so the op would reach nothing and
+the printed line would silently do nothing.
+
+### The permission is three riders on one that existed
+
+- **`later_turns`** — the fourth `playable_duration`, and the only one with a
+  *start* rather than an end. Nothing expires a plotted card; the turn it was
+  plotted on is the one turn it may not be cast.
+- **`playable_free`** — "without paying its mana cost". Priced as `FREE_COST`
+  rather than as a discount, because 601.2b is not a reduction to zero and the
+  difference shows on an X spell, where a discount leaves X payable.
+- **`playable_sorcery_only`** — a restriction on the *permission*, not on the
+  card. A plotted instant is still an instant and `_timing_ok` would happily
+  offer it in response to something.
+
+Both sides of the free cast read the same flag off the same card — legality
+prices the line with it and `game._cast` pays with it — which is the argument the
+`playable_any_type` block already makes one line down, and the bug the
+`from_library_top` branch records: a line offered free and billed the printed cost
+is a cast that silently does nothing.
+
+### "If you do" needed nothing
+
+The exile and the plotting are one rider, so there is no state in which the first
+happened and the second did not. That is exactly what the printed conditional
+says, and expressing it separately would have invented a failure mode the card
+does not have.
+
+### The one new piece: `min_colors`
+
+"Multicolored" is two or more colors (202.2b). `colors` cannot say it — it is a
+membership test, so `{"colors": ["U", "R"]}` matches a mono-red spell — and
+`require_all` means exactly those colours and no others.
+
+Written as a number rather than a `multicolored` boolean because the number is
+what the rule says and reads the same on the rarer "three or more colors".
+Honoured by all three matchers, since a filter that means one thing to a trigger
+and another to a selector is worse than not having it: the selector language reads
+the *derived* colours (so a repainted permanent is matched on what it is), and the
+trigger filter and `_matches_printed` read the printed face, each for the reason
+already written beside their `colors` clause.
+
+`tests/unit/test_plot.py` keeps the mono-coloured instant as a live card, because
+it is the card `colors` would have given.

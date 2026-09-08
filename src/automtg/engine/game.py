@@ -379,6 +379,14 @@ class Game:
             # for free and then billed its printed cost, which `pay` refused
             # with no mana on the board: the cast simply did nothing.
             cost = ManaCost.parse("")
+        elif state.objects[oid].playable_free and state.objects[oid].playable_live(state.turn):
+            # Plot: "you may cast it as a sorcery on a later turn **without
+            # paying its mana cost**". Read off the same flag on the same card
+            # that `_cast_variant` priced the line with -- the argument the
+            # `playable_any_type` block below makes, and the bug the
+            # `from_library_top` branch above records: a line offered free and
+            # billed the printed cost is a cast that silently does nothing.
+            cost = ManaCost.parse("")
         else:
             cost = card.mana_cost
 

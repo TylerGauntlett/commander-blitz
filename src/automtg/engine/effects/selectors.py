@@ -98,6 +98,9 @@ SELECTOR_KEYS = frozenset(
         "not_supertypes",
         "colors",
         "not_colors",
+        #: "Two or more colors", which `colors` cannot say: that is a membership
+        #: test, so `["U", "R"]` matches a mono-blue permanent.
+        "min_colors",
         "keywords",
         "not_keywords",
         "tapped",
@@ -604,6 +607,12 @@ def matches(
     if (want := selector.get("not_supertypes")) and set(want) & supertypes:
         return False
     if (want := selector.get("colors")) and not (set(want) & colors):
+        return False
+    # "…a **multicolored** instant or sorcery spell" (202.2b). Read off the
+    # derived `colors` here rather than the printed set, so a permanent something
+    # has repainted is matched on what it *is* -- the same reason `not_colors`
+    # one line down does.
+    if (least := selector.get("min_colors")) is not None and len(colors) < int(least):
         return False
     if (want := selector.get("not_colors")) and set(want) & colors:
         return False

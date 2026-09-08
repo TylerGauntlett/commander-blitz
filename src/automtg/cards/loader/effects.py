@@ -425,7 +425,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'grants_flashback' -- an unmetered permission is an engine, "
                 f"not a printed line"
             )
-    if op == "grant_rebound":
+    if op in ("grant_rebound", "grant_plot"):
         # The same two checks `return_spell_to_hand` makes, for the same reason
         # and with the same failure mode: the op reads one stack object, and a
         # `target` that names a permanent or a player finds no spell, sets
@@ -434,12 +434,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             tid = str(effect["target"])
             if tid not in target_kinds:
                 raise DslError(
-                    f"{where}: grant_rebound references target {tid!r} "
+                    f"{where}: {op} references target {tid!r} "
                     f"which the card does not declare"
                 )
             if target_kinds[tid] != "spell":
                 raise DslError(
-                    f"{where}: grant_rebound needs a target of kind 'spell', "
+                    f"{where}: {op} needs a target of kind 'spell', "
                     f"and {tid!r} is {target_kinds[tid]!r}"
                 )
         if "objects" in effect:
@@ -448,7 +448,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # by a selector over a zone, and "every spell on the stack gains
             # rebound" is a card nobody has printed.
             raise DslError(
-                f"{where}: grant_rebound reads no 'objects' -- it takes the "
+                f"{where}: {op} reads no 'objects' -- it takes the "
                 f"spell its trigger bound, or the one its 'target' names"
             )
     # Every op that names a player spells it `player` and every one of them

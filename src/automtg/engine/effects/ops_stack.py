@@ -320,6 +320,35 @@ def op_grant_rebound(ctx: EffectContext, spec: Mapping[str, Any]):
     obj.granted_rebound = True
 
 
+@register("grant_plot")
+def op_grant_plot(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Exile that spell instead of putting it into your graveyard as it resolves.
+    If you do, it becomes plotted." -- Lilah, Undefeated Slickshot.
+
+    The same shape as `grant_rebound` and deliberately so: both are riders on
+    where a resolving spell goes, both are written on the spell's object while
+    it is still on the stack, and both are read by `_place_after_resolution`.
+    Plot differs in what it leaves behind -- rebound owes one free cast at the
+    next upkeep, plot leaves a standing permission with no end.
+
+    "If you do" needs no separate expression. The exile and the plotting are one
+    rider, so there is no state in which the first happened and the second did
+    not -- which is exactly what the printed conditional says.
+
+    Not an `exile` op written into the ability's effects: the stack list is
+    already popped by the time those run, so it would reach nothing and the
+    printed line would silently do nothing. The same argument `encode` and
+    `exiles_itself` both make.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    obj.granted_plot = True
+
+
 @register("counter")
 def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     """Counter target spell.

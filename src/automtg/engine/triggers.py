@@ -1273,6 +1273,12 @@ def matches_card_filter(
     colors = filt.get("colors")
     if colors and not (set(colors) & card.colors):
         return False
+    # "…a **multicolored** instant or sorcery spell" (202.2b: a card with two
+    # or more colors). `colors` is a membership test and says something else
+    # entirely -- `["U", "R"]` matches a mono-blue spell -- so this is its own
+    # clause rather than a spelling of that one.
+    if (least := filt.get("min_colors")) is not None and len(card.colors) < int(least):
+        return False
     keywords = filt.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
         return False
