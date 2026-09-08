@@ -152,13 +152,29 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     if amount <= 0:
         return
 
+    # "**Target creature you control** deals damage equal to its power to each
+    # other creature and each opponent" -- Chandra's Ignition. The damage is
+    # dealt BY that creature, not by the spell, and the difference is the whole
+    # card: lifelink on it gains its controller life, deathtouch on it kills
+    # what it hits, and "damage dealt by a source you control" triggers read it.
+    # Left as the resolving source when absent, which is every other card.
+    dealer = ctx.source_oid
+    if "source_object" in spec:
+        named = resolve_pool(ctx, spec["source_object"])
+        if not named:
+            # The named creature has gone -- countered target, or removed in
+            # response. Nothing deals the damage, rather than the spell dealing
+            # it in the creature's place.
+            return
+        dealer = named[0]
+
     if "objects" in spec:
         for oid in resolve_pool(ctx, spec["objects"]):
-            damage_permanent(ctx.state, oid, amount, ctx.source_oid)
+            damage_permanent(ctx.state, oid, amount, dealer)
 
     if "player" in spec:
         for pid in select_players(ctx, spec["player"]):
-            damage_player(ctx.state, pid, amount, ctx.source_oid)
+            damage_player(ctx.state, pid, amount, dealer)
 
     if "target" in spec:
         # A single target that may be either a creature or a player ("any target").
@@ -167,9 +183,9 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
                 if spec.get("excess_to"):
                     _damage_with_excess(ctx, ref.id, amount, str(spec["excess_to"]))
                 else:
-                    damage_permanent(ctx.state, ref.id, amount, ctx.source_oid)
+                    damage_permanent(ctx.state, ref.id, amount, dealer)
             elif ref.kind == "player":
-                damage_player(ctx.state, ref.id, amount, ctx.source_oid)
+                damage_player(ctx.state, ref.id, amount, dealer)
 
 
 def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> None:
