@@ -162,6 +162,106 @@ class Packet:
         return json.dumps(asdict(self), indent=2, ensure_ascii=False, sort_keys=True) + "\n"
 
 
+def _op_options() -> dict[str, list[str]]:
+    """Every key each op reads out of its own effect dict.
+
+    ``ops`` alone is a list of *names*, and a name is not a language: a worker
+    shown ``copy_spell`` and no keys has no way to learn that ``new_targets``
+    exists, so "You may choose new targets for the copy" reads as unsayable.
+    Expansion // Explosion, Deflecting Swat and Misdirection were all filed
+    against a ``choose-new-targets`` capability that has shipped since
+    Jin-Gitaxias, purely because the reference never named the flag.
+
+    Derived by walking each op's own source for the literal it hands to
+    ``spec.get``/``spec[...]``/``in spec``, rather than curated, for the reason
+    ``static_effects`` and ``cost_keys`` are derived: a hand-written list goes
+    stale the first time somebody adds a key and does not think of this file.
+
+    It is a **lower bound**. An op that forwards ``spec`` to a helper hides that
+    helper's keys, so a key's absence here is not proof it does not exist --
+    which the note beside it says, because the failure this exists to prevent is
+    a worker treating silence as a "no".
+    """
+    import ast
+    import inspect
+    import textwrap
+
+    from automtg.engine.effects import OPS
+
+    options: dict[str, list[str]] = {}
+    for name, fn in OPS.items():
+        try:
+            tree = ast.parse(textwrap.dedent(inspect.getsource(fn)))
+        except (OSError, TypeError, SyntaxError):  # pragma: no cover - defensive
+            continue
+        keys: set[str] = set()
+        for node in ast.walk(tree):
+            match node:
+                # spec.get("x"), spec.get("x", default), spec.pop("x")
+                case ast.Call(
+                    func=ast.Attribute(value=ast.Name(id="spec"), attr="get" | "pop"),
+                    args=[ast.Constant(value=str() as key), *_],
+                ):
+                    keys.add(key)
+                # spec["x"]
+                case ast.Subscript(
+                    value=ast.Name(id="spec"), slice=ast.Constant(value=str() as key)
+                ):
+                    keys.add(key)
+                # "x" in spec
+                case ast.Compare(
+                    left=ast.Constant(value=str() as key),
+                    ops=[ast.In()],
+                    comparators=[ast.Name(id="spec")],
+                ):
+                    keys.add(key)
+        if keys:
+            options[name] = set(keys)
+
+    # Union with what the shipped pool actually writes, because the scan alone
+    # is not merely incomplete but *misleading*: `add_mana` forwards `spec` to a
+    # helper and so reports only `player`, and a worker reading that as the
+    # whole of it would conclude the op cannot name a colour. Every effect dict
+    # in the pool is a key some op demonstrably accepts, which is the one source
+    # that cannot be wrong about it.
+    for card in _pool_cards():
+        for effect in _walk_effects(card):
+            op = effect.get("op")
+            if isinstance(op, str):
+                options.setdefault(op, set()).update(k for k in effect if k != "op")
+
+    return {name: sorted(keys) for name, keys in sorted(options.items())}
+
+
+def _pool_cards() -> list[dict]:
+    """Every shipped card entry, hand-written and authored."""
+    cards: list[dict] = []
+    for path in sorted((data_dir() / "cards").glob("*.cards.json")) + sorted(
+        (data_dir() / "cards" / "auto").glob("*.cards.json")
+    ):
+        try:
+            cards.extend(json.loads(path.read_text(encoding="utf-8")).get("cards", []))
+        except (OSError, ValueError):  # pragma: no cover - defensive
+            continue
+    return cards
+
+
+def _walk_effects(node: object):
+    """Yield every ``{"op": ...}`` mapping anywhere inside a card entry.
+
+    Recursive because effects nest: `choose_mode` holds modes holding effects,
+    `if` holds branches, `may` and `delay` hold payloads.
+    """
+    if isinstance(node, dict):
+        if isinstance(node.get("op"), str):
+            yield node
+        for value in node.values():
+            yield from _walk_effects(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _walk_effects(item)
+
+
 def reference() -> dict:
     """The DSL, small enough to travel with every packet."""
     from automtg.engine.effects import known_ops
@@ -180,10 +280,21 @@ def reference() -> dict:
         STATIC_FILTER_KEYS,
         STATIC_VALUE_KEYS,
     )
-    from ..schema import CostModel
+    from ..schema import AbilityModel, CostModel
 
     return {
         "ops": sorted(known_ops()),
+        # What each op may carry beside its `op` name. See _op_options: without
+        # this, an op's optional flags are invisible and a card that needs one
+        # becomes a gap record for something that already ships.
+        "op_options": _op_options(),
+        # The fields an entry in `abilities` may have. Derived from the model
+        # the loader validates against, as `cost_keys` is. `sorcery_speed_only`
+        # is the witness: 81 shipped cards set it, the reference named it
+        # nowhere, and Ojer Pakpatiq was filed against a
+        # `sorcery-speed-activation` capability because a worker looked in
+        # `cost_keys` -- the only list it had -- and correctly did not find it.
+        "ability_keys": sorted(AbilityModel.model_fields),
         "keywords": sorted(k.value for k in Keyword),
         "types": sorted(t.value for t in CardType),
         "supertypes": sorted(s.value for s in Supertype),
@@ -247,6 +358,20 @@ def reference() -> dict:
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
+            "`op_options` is what each op may carry beside its `op` name, and"
+            " `ability_keys` is what an entry in `abilities` may have. Read both"
+            " before concluding a line cannot be said: `copy_spell` takes"
+            " `new_targets` (\"you may choose new targets for the copy\"), an"
+            " ability takes `sorcery_speed_only`, `once_each_turn` and"
+            " `activate_steps` for printed activation limits, and"
+            " `mana_restriction` for \"spend this mana only to ...\". Each of"
+            " those has been filed as a missing capability by a worker that had"
+            " only the op *names*.",
+            "`op_options` is a **lower bound**, gathered from each op's own"
+            " source and from every effect the shipped pool writes. An op that"
+            " forwards its spec to a helper can accept a key listed for neither,"
+            " so a key's absence is not proof it does not exist -- check the"
+            " `examples` too, and prefer a gap record only when both are silent.",
             "`card_level_face_keys` is how a card carries a second printed"
             " face, and which key you want turns on one question: is the other"
             " half something you TURN OVER to, or a second spell you may CAST?"
