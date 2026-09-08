@@ -22,6 +22,12 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "abrade": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "academy_manufactor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -314,6 +320,16 @@
   "arcane_sanctum": {
     "zone": "battlefield"
   },
+  "archaeomancer": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archangel": {
     "zone": "battlefield"
   },
@@ -483,6 +499,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "balmor_battlemage_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "bane_alley_blackguard": {
     "zone": "battlefield"
@@ -1010,6 +1030,15 @@
     "zone": "battlefield"
   },
   "caldera_lake": {
+    "zone": "battlefield"
+  },
+  "caldera_pyremaw": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "call_damage_control": {
@@ -2274,6 +2303,14 @@
       "graveyard"
     ]
   },
+  "exalted_flamer_of_tzeentch": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "excavation_technique": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -2721,6 +2758,18 @@
   },
   "foul_orchard": {
     "zone": "battlefield"
+  },
+  "frantic_search": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "frantic_strength": {
     "zone": [
@@ -4599,6 +4648,24 @@
   },
   "mana_geode": {
     "zone": "battlefield"
+  },
+  "mana_geyser": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "mana_prism": {
     "zone": "battlefield"
@@ -7261,6 +7328,15 @@
   },
   "soltari_foot_soldier": {
     "zone": "battlefield"
+  },
+  "solve_the_equation": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
   },
   "somberwald_dryad": {
     "zone": "battlefield"

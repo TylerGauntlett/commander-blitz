@@ -1,0 +1,36 @@
+{
+  "card_id": "vivi_ornitier",
+  "name": "Vivi Ornitier",
+  "oracle_text": "{0}: Add X mana in any combination of {U} and/or {R}, where X is Vivi Ornitier's power. Activate only during your turn and only once each turn.\nWhenever you cast a noncreature spell, put a +1/+1 counter on Vivi Ornitier and it deals 1 damage to each opponent.",
+  "blocked_sentences": [
+    "{0}: Add X mana in any combination of {U} and/or {R}, where X is Vivi Ornitier's power. Activate only during your turn and only once each turn."
+  ],
+  "needs": [
+    {
+      "capability": "variable_mana_amount",
+      "kind": "value",
+      "what": "an `add_mana` whose *count* is a value expression from `value_keys` rather than a literal mana string -- here `{\"power_of\": {\"self_only\": true}}` -- evaluated when the ability resolves (so a Vivi with four +1/+1 counters makes four mana, not zero), and exposed to the mana solver at activation time so it can plan against the amount the ability would actually produce",
+      "why_existing_wont_do": "`add_mana` takes a fixed literal mana string, so the amount is frozen at authoring time and this card's amount is its own printed-plus-counters power, which is 0 on the turn it lands and grows every noncreature spell. `add_mana_per` is the only scaling producer and it is wrong twice: a mana ability may contain only `add_mana` or one `choose_mode` of `add_mana` modes, so `add_mana_per` cannot appear in a mana ability at all, and it multiplies a literal unit by a *selector count* -- a number of matching objects -- while X here is a characteristic (power) of one object, which no selector count can express. Writing any constant instead (0, 1, 2) is a different card, and picking the largest plausible constant is a free-mana engine."
+    },
+    {
+      "capability": "split_color_mana",
+      "kind": "engine",
+      "what": "a producible-mana form meaning \"N mana in any combination of {U} and/or {R}\" -- N independent per-mana colour choices over a fixed colour set, with N itself a value (see `variable_mana_amount`), decided as the mana is produced and offered to the solver as every distribution from N-of-the-first to N-of-the-second, not as one all-or-nothing colour pick",
+      "why_existing_wont_do": "The only branching a mana ability may hold is one `choose_mode` whose modes are each an `add_mana` (`Add {U}` / `Add {R}`), which is a single choice for the whole activation: it can say \"add N mana of one of these colours\" but never a mixed pool such as {U}{U}{R}. Enumerating the mixes as modes requires N+1 modes and N is not known when the card is written -- Vivi's power is 0 on arrival and unbounded thereafter -- so no fixed mode list is correct. `choose_color` would be a fresh unrestricted colour choice and is not legal inside a mana ability; `repeat` and `for_each` are ops and are equally forbidden there, so the split cannot be reached by looping a one-mana ability either."
+    },
+    {
+      "capability": "activate_only_during_your_turn",
+      "kind": "engine",
+      "what": "an activation-timing restriction on an activated ability -- a field alongside `cost` meaning the ability is only a legal activation while its controller is the active player (the same slot would carry \"only as a sorcery\", \"only during combat\", \"only during an opponent's turn\") -- enforced when legality is computed, not when the ability resolves",
+      "why_existing_wont_do": "Nothing in `cost_keys` restricts *when* an ability may be activated; every key there is a price that is paid, and a restriction is not a payment. `condition_keys` has exactly the right predicate, `is_your_turn`, but conditions live inside an `if` op, which is (a) a resolution-time check that would let the ability be activated on an opponent's turn and then fizzle -- and this is a mana ability, so being activatable at all is the whole permission being granted -- and (b) forbidden here regardless, since a mana ability may contain only `add_mana` or one `choose_mode` of `add_mana` modes."
+    },
+    {
+      "capability": "once_each_turn_activation",
+      "kind": "engine",
+      "what": "a per-turn activation limit on an activated ability -- a field alongside `cost` meaning this ability may be activated at most N times (N=1 here) per turn per source, counted at activation and cleared at end of turn",
+      "why_existing_wont_do": "The nearest machinery is the turn-flag pair, `set_turn_flag` (an op) writing a flag that `has_turn_flag` (a condition) reads, and both halves are unusable here: the op would have to run in the ability's own effects and the condition inside an `if`, and a mana ability admits neither -- it may contain only `add_mana` or one `choose_mode` of `add_mana` modes. Even in an ability that could hold them, the flag is checked as the ability resolves rather than as it is activated, so the ability could be activated repeatedly and merely produce nothing on the later resolutions, which on a mana ability is not the printed restriction. Omitting the clause entirely turns a once-per-turn ritual into a repeatable {0} ability whose output grows with the creature -- an arbitrarily large mana loop, the most damaging possible approximation."
+    }
+  ],
+  "closest_existing": ["add_mana", "add_mana_per", "choose_mode", "choose_color", "power_of", "is_your_turn", "has_turn_flag", "set_turn_flag"],
+  "confidence": "high"
+}

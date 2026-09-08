@@ -1,0 +1,85 @@
+{
+  "card": {
+    "id": "balmor_battlemage_captain",
+    "name": "Balmor, Battlemage Captain",
+    "oracle_text": "Flying\nWhenever you cast an instant or sorcery spell, creatures you control get +1/+0 and gain trample until end of turn.",
+    "mana_cost": "{U}{R}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Bird",
+      "Wizard"
+    ],
+    "power": 1,
+    "toughness": 3,
+    "colors": [
+      "R",
+      "U"
+    ],
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast an instant or sorcery spell, creatures you control get +1/+0 and gain trample until end of turn.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "count": "all"
+            },
+            "power": {
+              "const": 1
+            },
+            "toughness": {
+              "const": 0
+            }
+          },
+          {
+            "op": "grant_keyword",
+            "keywords": [
+              "trample"
+            ],
+            "duration": "until_end_of_turn",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

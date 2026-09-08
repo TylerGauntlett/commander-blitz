@@ -692,12 +692,12 @@
     },
     "Abrade": {
       "edhrec_rank": 144,
-      "gate": "template",
+      "gate": null,
       "name": "Abrade",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "31af49a8-e655-4670-b035-58171a6a57b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abraded Bluffs": {
@@ -11682,12 +11682,12 @@
     },
     "Archaeomancer": {
       "edhrec_rank": 960,
-      "gate": "template",
+      "gate": null,
       "name": "Archaeomancer",
-      "reason": "no template for: When this creature enters, return target instant or sorcery card from your graveyard to yo",
+      "reason": "",
       "scryfall_id": "d583783f-623c-40dd-9dac-0937d65f9341",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archaeomancer's Map": {
@@ -19472,12 +19472,12 @@
     },
     "Balmor, Battlemage Captain": {
       "edhrec_rank": 2129,
-      "gate": "template",
+      "gate": null,
       "name": "Balmor, Battlemage Captain",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, creatures you control get +1/+0 and gain tr",
+      "reason": "",
       "scryfall_id": "0b45ab13-9bb6-48af-8b37-d97b25801ac8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Balor": {
@@ -37742,12 +37742,12 @@
     },
     "Caldera Pyremaw": {
       "edhrec_rank": 4673,
-      "gate": "template",
+      "gate": null,
       "name": "Caldera Pyremaw",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, put a +1/+1 counter on this creature. Then ",
+      "reason": "",
       "scryfall_id": "ec76d618-9e92-438c-9fbc-16994b805511",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Calibrated Blast": {
@@ -87122,12 +87122,12 @@
     },
     "Exalted Flamer of Tzeentch": {
       "edhrec_rank": 3091,
-      "gate": "template",
+      "gate": null,
       "name": "Exalted Flamer of Tzeentch",
-      "reason": "no template for: Sorcerous Inspiration — At the beginning of your upkeep, return an instant or sorcery card",
+      "reason": "",
       "scryfall_id": "47ebc3bc-113f-437c-b60a-9597939d91ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exalted Sunborn": {
@@ -100982,12 +100982,12 @@
     },
     "Frantic Search": {
       "edhrec_rank": 102,
-      "gate": "template",
+      "gate": null,
       "name": "Frantic Search",
-      "reason": "no template for: Draw two cards, then discard two cards. Untap up to three lands",
+      "reason": "",
       "scryfall_id": "d8c5e52d-57ae-464b-8860-7dd39ebfef64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frantic Strength": {
@@ -164932,12 +164932,12 @@
     },
     "Mana Geyser": {
       "edhrec_rank": 298,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Geyser",
-      "reason": "no template for: Add {R} for each tapped land your opponents control",
+      "reason": "",
       "scryfall_id": "e676108f-c5e5-4c00-aae1-75faab39da24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mana Leak": {
@@ -252702,12 +252702,12 @@
     },
     "Solve the Equation": {
       "edhrec_rank": 929,
-      "gate": "template",
+      "gate": null,
       "name": "Solve the Equation",
-      "reason": "no template for: Search your library for an instant or sorcery card, reveal it, put it into your hand, then",
+      "reason": "",
       "scryfall_id": "4c547c39-9ef8-4e8c-a6fd-6d9b6a8345a5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Somber Hoverguard": {
