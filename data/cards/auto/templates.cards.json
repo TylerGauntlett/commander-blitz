@@ -49220,6 +49220,52 @@
     {
       "abilities": [
         {
+          "effect": "spells_cant_be_countered",
+          "kind": "static",
+          "text": "Spells can't be countered."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "effect": "cast_from_graveyard",
+          "grants_flashback": true,
+          "kind": "static",
+          "text": "Each instant and sorcery card in your graveyard has flashback. The flashback cost is equal to that card's mana cost."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lier_disciple_of_the_drowned",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Lier, Disciple of the Drowned",
+      "oracle_text": "Spells can't be countered.\nEach instant and sorcery card in your graveyard has flashback. The flashback cost is equal to that card's mana cost.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

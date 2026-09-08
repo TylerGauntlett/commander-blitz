@@ -142,6 +142,59 @@ def op_set_turn_flag(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+def _move_every_kind(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Move the whole multiset of counters, not one named kind.
+
+    Two sources, and the second is why this is not just a loop over
+    `source.counters`:
+
+    - An ordinary permanent -- The Ozolith's "move all counters from The Ozolith
+      onto target creature" -- reads its live counters.
+    - A permanent that has **already left** -- The Ozolith's own trigger,
+      "whenever a creature you control leaves the battlefield, if it had
+      counters on it, put those counters on The Ozolith". By the time that
+      resolves the creature is gone and `reset_permanent_state` has emptied it,
+      so the counts come from the leave event's `had_counters` snapshot, which
+      is the same place `counters_had` reads and the same explicit-LKI pattern
+      `snapshot` established.
+    """
+    from_had = bool(spec.get("from_had_counters"))
+    if from_had:
+        snapshot = ctx.bindings.get("had_counters")
+        counts = dict(snapshot) if isinstance(snapshot, Mapping) else {}
+        sources: list[int] = []
+    else:
+        if "from" in spec:
+            sources = resolve_pool(ctx, spec["from"])
+        else:
+            sources = [ctx.source_oid] if ctx.source_oid is not None else []
+        counts = {}
+        for source_oid in sources:
+            source = ctx.state.objects.get(source_oid)
+            if source is None:
+                continue
+            for counter_kind, amount in source.counters.items():
+                if amount > 0:
+                    counts[counter_kind] = counts.get(counter_kind, 0) + amount
+    if not counts:
+        # Nothing to move is not nothing to do wrong: asking for a destination
+        # anyway would put a prompt in front of a player for a trigger whose
+        # intervening-if already said no.
+        return
+    destinations = yield from choose_objects(ctx, spec.get("objects"), "Move counters to")
+    if not destinations:
+        return
+    for source_oid in sources:
+        source = ctx.state.objects.get(source_oid)
+        if source is None or not source.on_battlefield:
+            continue
+        for counter_kind, amount in list(counts.items()):
+            remove_counters(ctx.state, source_oid, counter_kind, min(amount, source.counter(counter_kind)))
+    for dest_oid in destinations:
+        for counter_kind, amount in counts.items():
+            add_counters(ctx.state, dest_oid, counter_kind, amount, source=ctx.source_oid)
+
+
 @register("move_counters")
 def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """Take counters off one permanent and put them on another.
@@ -166,6 +219,15 @@ def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     legal destination the counters stay put, which is what "move ... onto it"
     says when "it" is gone.
     """
+    # "…put **those counters** on The Ozolith", and "move **all counters** from
+    # The Ozolith onto target creature". Both mean the whole multiset -- every
+    # kind, with its own amount -- where every other card in this family names
+    # one kind. Naming `+1/+1` for The Ozolith would silently drop loyalty,
+    # charge, oil and the rest, which is a card that looks implemented and is
+    # quietly smaller than printed.
+    if spec.get("all_kinds"):
+        yield from _move_every_kind(ctx, spec)
+        return
     kind = str(spec.get("counter", PLUS_ONE))
     if "from" in spec:
         sources = resolve_pool(ctx, spec["from"])

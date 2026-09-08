@@ -4480,6 +4480,11 @@
   "leyline_prowler": {
     "zone": "battlefield"
   },
+  "lier_disciple_of_the_drowned": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "lifelink": {
     "zone": [
       "battlefield",

@@ -611,6 +611,7 @@
         "amount"
       ],
       "move_counters": [
+        "all_kinds",
         "amount",
         "counter",
         "from",
