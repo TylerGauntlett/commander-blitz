@@ -149,6 +149,14 @@ STATIC_EFFECTS = frozenset(
         # it is read by `triggers.collect` rather than by the characteristics
         # pipeline, and there is no object for it to attach to.
         "double_land_triggers",
+        # "That ability triggers an additional time" scoped to a permanent
+        # (Harmonic Prodigy) or to a cause (Veyran). Distinct from
+        # `double_land_triggers`, which is player-wide and land-only.
+        "double_triggers",
+        # "Spells can't be countered" -- Lier. A claim about EVERY spell every
+        # player casts, which the card-level `uncounterable` flag cannot make:
+        # that one is a card saying it about itself.
+        "spells_cant_be_countered",
         # Vorinclex's two halves.  Both are read at the mana choke point rather
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.
@@ -335,10 +343,22 @@ SPELL_FILTER_KEYS = frozenset(
     {
         "controller",
         "types",
+        # The or-of-types question. `types` is a conjunction, so "instant and
+        # sorcery spells you cast cost {1} less" cannot be said with it -- a
+        # spell is never both at once.
+        "any_types",
         "not_types",
         "subtypes",
         "supertypes",
         "colors",
+        # "Whenever you cast a **multicolored** instant or sorcery spell" --
+        # Lilah, Undefeated Slickshot. Two or more colors, any two, which
+        # `colors` cannot say: it is a membership test, so `["U","R"]` matches a
+        # mono-blue spell, and `require_all` would mean exactly those colours
+        # and no others. Written as a number rather than a `multicolored`
+        # boolean because the number is what the rules say (202.2b) and reads
+        # the same on the rarer "three or more colors".
+        "min_colors",
         "keywords",
         "not_keywords",
         "name",
@@ -354,6 +374,7 @@ STATIC_FILTER_KEYS = frozenset(
         "self_only",
         "controller",
         "types",
+        "any_types",
         "not_types",
         "subtypes",
         "supertypes",
@@ -562,6 +583,13 @@ STATIC_ZONE_FILTER_KEYS = frozenset(
         # A card in a graveyard has no board state, but it does have a name.
         "name",
         "types",
+        # The or-of-types question, for the same reason `SPELL_FILTER_KEYS` has
+        # it: Glamdring's "+1/+0 for each instant **and** sorcery card in your
+        # graveyard" counts two types, and `types` is a conjunction that would
+        # have counted zero. Without this the card can only be written as two
+        # statics summed, which is correct arithmetic (no card is both) and one
+        # more ability than the printed line has.
+        "any_types",
         "not_types",
         "subtypes",
         "supertypes",

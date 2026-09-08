@@ -1,0 +1,41 @@
+{
+  "_comment": "Shapes for tests/unit/test_copy_target_spell.py. t_fork copies a spell it TARGETS, which is the thing copy_spell could not do: every shipped user of the op copies the spell that fired it.",
+  "cards": [
+    {
+      "id": "t_fork",
+      "name": "Test Fork",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "mana_cost": "{U}{R}",
+      "types": ["Instant"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "count": 1,
+          "selector": {"any_types": ["Instant", "Sorcery"]}
+        }
+      ],
+      "spell_effects": [{"op": "copy_spell", "target": "t1"}]
+    },
+    {
+      "id": "t_fork_retarget",
+      "name": "Test Retargeting Fork",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "mana_cost": "{U}{R}",
+      "types": ["Instant"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "count": 1,
+          "selector": {"any_types": ["Instant", "Sorcery"]}
+        }
+      ],
+      "spell_effects": [{"op": "copy_spell", "target": "t1", "new_targets": true}]
+    }
+  ]
+}

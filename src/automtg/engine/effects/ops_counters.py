@@ -491,19 +491,44 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     `put_copy_on_stack`, so a cipher copy is a token and announces its targets
     exactly as a storm copy does.
 
-    The original stays in exile -- it is copied, not cast -- which is the whole
-    of why cipher keeps paying.
+    The original stays where it is -- it is copied, not cast -- which is the
+    whole of why cipher keeps paying, and the same reason Mizzix's Mastery and
+    Arcane Bombardment accumulate rather than spend their exiles.
+
+    ``objects`` names **which** cards to copy, and defaults to this ability's
+    own card, which is cipher. Mizzix's Mastery copies a card it has just exiled
+    from a graveyard; Arcane Bombardment copies "each card exiled with this
+    enchantment", a pile that grows every turn. `copy_spell` cannot serve
+    either: it copies something on the *stack*, and these cards are in exile
+    with nothing on the stack to point at.
+
+    ``optional`` is the printed "you **may** cast the copy", asked once per
+    card. Cipher does not set it -- its own "may" is the reflexive trigger that
+    got here -- so nothing gained a prompt.
     """
     from ..effects.ops_stack import put_copy_on_stack
     from ..structs import StackItem
+    from .context import ask_yes_no
+    from .selectors import resolve_pool
 
-    obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
-    if obj is None:
-        return
-    template = StackItem(
-        sid=-1, kind="spell", controller=ctx.controller, def_id=obj.def_id, oid=obj.oid
-    )
-    put_copy_on_stack(ctx.state, ctx.controller, template)
+    if "objects" in spec:
+        oids = resolve_pool(ctx, spec["objects"])
+    else:
+        oids = [ctx.source_oid] if ctx.source_oid is not None else []
+    optional = bool(spec.get("optional"))
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        name = ctx.state.card_of(obj).name
+        if optional and not (
+            yield from ask_yes_no(ctx, f"Cast a copy of {name} without paying its mana cost?")
+        ):
+            continue
+        template = StackItem(
+            sid=-1, kind="spell", controller=ctx.controller, def_id=obj.def_id, oid=obj.oid
+        )
+        put_copy_on_stack(ctx.state, ctx.controller, template)
 
 
 @register("haunt")

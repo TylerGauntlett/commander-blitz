@@ -1,0 +1,84 @@
+{
+  "card": {
+    "id": "sink_into_stupor_soporific_springs",
+    "name": "Sink into Stupor // Soporific Springs",
+    "oracle_text": "Return target spell or nonland permanent an opponent controls to its owner's hand.",
+    "mana_cost": "{1}{U}{U}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "second_face": "soporific_springs",
+    "second_face_zone": "hand",
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "spell_or_permanent",
+        "count": 1,
+        "selector": {
+          "not_types": [
+            "Land"
+          ],
+          "controller": "opponent"
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "return_spell_to_hand",
+        "target": "t1"
+      }
+    ]
+  },
+  "back": {
+    "id": "soporific_springs",
+    "name": "Soporific Springs",
+    "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {U}.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "U"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped",
+        "unless_cost": {
+          "pay_life": 3
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "is_mana_ability": true,
+        "text": "{T}: Add {U}.",
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{U}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 5,
+    "hand_size": {
+      "0": 1
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

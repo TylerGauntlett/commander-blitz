@@ -57,9 +57,11 @@ export function manaRow(mana: ManaView | undefined): ManaPipView[] {
   }
 
   for (const source of mana.sources) {
-    // Every option produces the same *amount* (the solver's max_output), so the
-    // first one is enough to know how many pips this source is worth. Which
-    // colours those pips could be is the union across options.
+    // `amount` is the best single tap of this permanent, so it is how many pips
+    // the source is worth. Which colours those pips could be is the union
+    // across options — and a permanent with two tap abilities (a Talisman's
+    // "{C}" beside its "{B} or {R}") arrives as one source with every option
+    // of both, so only a single-option source is definite.
     const definite = source.options.length === 1 ? source.options[0] : null;
     for (let i = 0; i < source.amount; i += 1) {
       const symbols = definite ? [definite[i] ?? definite[0]] : source.symbols;

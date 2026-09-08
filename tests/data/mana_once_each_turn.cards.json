@@ -1,0 +1,40 @@
+{
+  "_comment": "Shapes for tests/unit/test_mana_ability_once_each_turn.py. t_once_font is Vivi Ornitier's shape reduced to the claim: a by-hand mana ability with a printed per-turn limit. t_unlimited_font is the same ability without the limit, so the test can tell an enforced limit from an ability that simply cannot be activated twice.",
+  "cards": [
+    {
+      "id": "t_once_font",
+      "name": "Test Once Font",
+      "oracle_text": "{0}: Add {U}. Activate only once each turn.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{0}: Add {U}. Activate only once each turn.",
+          "cost": {"mana": "{0}"},
+          "is_mana_ability": true,
+          "once_each_turn": true,
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    },
+    {
+      "id": "t_unlimited_font",
+      "name": "Test Unlimited Font",
+      "oracle_text": "{0}: Add {U}.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{0}: Add {U}.",
+          "cost": {"mana": "{0}"},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    }
+  ]
+}

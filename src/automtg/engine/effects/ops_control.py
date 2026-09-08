@@ -386,6 +386,17 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             # resolved; there is simply nothing left to choose.
             return
 
+    # "Choose up to five {P} worth of modes. You may choose the same mode more
+    # than once." -- Season of Weaving. A *budget*, not a count: each mode has a
+    # price in paws and the selection is a multiset whose prices sum within it.
+    #
+    # `count`/`up_to` cannot say it and the near miss is far stronger than the
+    # card: `{"up_to": true, "count": 5}` permits five copies of the three-paw
+    # mode, which is a board wipe repeated five times for six mana.
+    if spec.get("budget") is not None:
+        yield from _choose_within_budget(ctx, spec, modes, labels, chooser)
+        return
+
     chosen = list(ctx.modes)
     # `modes_answered` and not `chosen`: "choose up to two" is allowed to choose
     # none, and reading the empty tuple as "nobody asked yet" would ask the
@@ -414,6 +425,53 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     for index in sorted(chosen):
         if once_each and source is not None:
             source.flags.add(_mode_flag(labels[index]))
+        yield from execute(ctx, modes[index].get("effects") or [])
+
+
+#: Guard on the budget loop, matching `join_forces`' and `may`'s. A mode priced
+#: at zero would otherwise be choosable for ever.
+MAX_BUDGET_PICKS = 32
+
+
+def _choose_within_budget(ctx: EffectContext, spec, modes, labels, chooser: int):
+    """Pick a multiset of modes whose prices fit inside a budget.
+
+    Asked one mode at a time rather than as a single multi-select, because the
+    set of *affordable* modes shrinks as the budget is spent: after three paws
+    of a five-paw budget, only the one-paw and two-paw modes may still be taken,
+    and offering the three-paw one would be offering a choice that cannot be
+    paid for.
+
+    Repeats are the point -- "you may choose the same mode more than once" -- so
+    a taken mode stays on the list while it is still affordable.
+
+    700.2e still applies at the end: the modes run in printed order, not the
+    order they were picked, however many times each was taken.
+    """
+    budget = evaluate_value(ctx, spec.get("budget", 0))
+    prices = [max(0, evaluate_value(ctx, m.get("cost", 1))) for m in modes]
+    picked: list[int] = []
+    for _ in range(MAX_BUDGET_PICKS):
+        affordable = [i for i, price in enumerate(prices) if price <= budget]
+        if not affordable:
+            break
+        # A floor of zero: "up to five paws worth" allows stopping at any point,
+        # including immediately, and `ask_mode` returning nothing is that.
+        answer = yield from ask_mode(
+            ctx,
+            f"Choose a mode ({budget} left)",
+            [labels[i] for i in affordable],
+            chooser,
+            0,
+            1,
+        )
+        if not answer:
+            break
+        index = affordable[answer[0]]
+        picked.append(index)
+        budget -= prices[index]
+
+    for index in sorted(picked):
         yield from execute(ctx, modes[index].get("effects") or [])
 
 

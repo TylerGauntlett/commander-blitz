@@ -1,0 +1,82 @@
+{
+  "_comment": "Lier's first line: 'Spells can't be countered.' A claim about EVERY spell every player casts, which the card-level `uncounterable` flag cannot make -- that one is a card saying it about itself. Reuses the pool's existing t_counterspell rather than defining a second one. t_lier also carries the granted-flashback half; t_lier_no_exile is a plain metered permission -- the spell goes BACK to the graveyard -- which is what makes the exile rider visible.",
+  "cards": [
+    {
+      "id": "t_lier",
+      "name": "Test Lier",
+      "oracle_text": "Spells can't be countered.\nEach instant and sorcery card in your graveyard has flashback. The flashback cost is equal to that card's mana cost.",
+      "mana_cost": "{3}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 3,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells can't be countered.",
+          "effect": "spells_cant_be_countered"
+        },
+        {
+          "kind": "static",
+          "text": "Each instant and sorcery card in your graveyard has flashback. The flashback cost is equal to that card's mana cost.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "controller": "you",
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "grants_flashback": true
+        }
+      ]
+    },
+    {
+      "id": "t_lier_no_exile",
+      "name": "Test Lier Without Exile",
+      "oracle_text": "Once during each of your turns, you may cast an instant or sorcery spell from your graveyard.",
+      "mana_cost": "{3}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 3,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Once during each of your turns, you may cast an instant or sorcery spell from your graveyard.",
+          "effect": "cast_from_graveyard",
+          "affects_player": "you",
+          "affects_spells": {
+            "controller": "you",
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "static_max_per_turn": 1
+        }
+      ]
+    }
+  ]
+}

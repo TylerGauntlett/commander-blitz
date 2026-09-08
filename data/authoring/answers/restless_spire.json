@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "restless_spire",
+    "name": "Restless Spire",
+    "oracle_text": "This land enters tapped.\n{T}: Add {U} or {R}.\n{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land.\nWhenever this land attacks, scry 1.",
+    "mana_cost": "",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["R", "U"],
+    "replacements": [
+      {"event": "self_enters_tapped"}
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U} or {R}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}"}]}
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{U}{R}: Until end of turn, this land becomes a 2/1 blue and red Elemental creature with \"During your turn, this creature has first strike.\" It's still a land.",
+        "cost": {"mana": "{U}{R}"},
+        "effects": [
+          {
+            "op": "animate",
+            "objects": {"self_only": true},
+            "power": {"const": 2},
+            "toughness": {"const": 1},
+            "subtypes": ["Elemental"],
+            "colors": ["U", "R"],
+            "your_turn_keywords": ["first_strike"]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever this land attacks, scry 1.",
+        "trigger": {"event": "attacks", "source": "self"},
+        "effects": [{"op": "scry", "amount": {"const": 1}}]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1},
+    "opponent_battlefield_count": 6
+  }
+}

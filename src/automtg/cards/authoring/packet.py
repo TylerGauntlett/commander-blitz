@@ -46,6 +46,13 @@ from .verify import EXPECTATION_KEYS
 #: bookkeeping.  Each one is a bare mana cost unless noted.
 CARD_LEVEL_COST_KEYS = (
     "additional_cost",  # a non-mana Cost, e.g. "sacrifice a creature"
+    #: A choice BETWEEN prices, exactly one paid -- Bitter Triumph's "discard a
+    #: card or pay 3 life", and **tiered** (Fire Magic, Ice Magic), where each
+    #: price buys a different effect and the card branches on
+    #: `{"cost_option": n}`. Omitted from this list until now, so two workers
+    #: reading it correctly reported the mechanic missing while Bitter Triumph
+    #: shipped using it.
+    "additional_cost_options",
     "additional_optional",
     "additional_repeatable",
     "alternative_cost",
@@ -69,6 +76,57 @@ CARD_LEVEL_COST_KEYS = (
     "retrace",  # bool
     "splice",
     "suspend",
+)
+
+#: The card-level fields that join two printed faces into one card entry.
+#:
+#: Same argument as ``CARD_LEVEL_COST_KEYS``, and it was found the same way: a
+#: worker shown neither list reads a printed second face as vocabulary nobody
+#: has given it and files a gap for a mechanic that already works. Riverglide
+#: Pathway was recorded as ``modal-double-faced-card``/``engine`` with high
+#: confidence while seven cards in the shipped pool -- Bloodline Keeper,
+#: Malakir Rebirth, Response // Resurgence among them -- already use these
+#: fields, because the reference block named no way to say "the other half".
+#:
+#: Curated for the same reason too: a face is not a price, so it needs its own
+#: heading rather than being buried in the cost list.
+CARD_LEVEL_FACE_KEYS = (
+    "back_face",  # the face you TURN OVER to; never cast, never drawn
+    "second_face",  # a second SPELL the same card may be cast as
+    "second_face_zone",  # "hand" (split, adventure) or "graveyard" (aftermath)
+    "prepared_face",  # the spell a prepared permanent may cast a copy of
+    "fuse",  # bool; one spell made of both halves at once
+    "adventure",  # bool; the second face exiles and the front is cast from exile
+)
+
+
+#: Card-level **riders**: things a card says about itself that are neither a
+#: price nor a second face.
+#:
+#: The third list for the third time. `CARD_LEVEL_COST_KEYS` was added because a
+#: printed "Bestow {1}{G}" matched nothing a worker had been shown;
+#: `CARD_LEVEL_FACE_KEYS` because a printed second face did; and this because
+#: "Exile Mizzix's Mastery." did. Each time the mechanic already shipped and the
+#: gap record was written in good faith against a reference that did not name
+#: it.
+#:
+#: Curated, and the test is the same one the other two lists pass: would a
+#: worker reading a printed sentence go looking for this? A `melds_with` or an
+#: `evoke_label` is bookkeeping the pipeline fills in; `exiles_itself` and
+#: `uncounterable` are sentences on the card.
+CARD_LEVEL_RIDER_KEYS = (
+    "exiles_itself",  # "Exile <this card>." -- instead of the graveyard, on resolution
+    "uncounterable",  # "This spell can't be countered."
+    "rebound",  # exiled as it resolves, cast free from exile next upkeep
+    "split_second",  # "…players can't cast spells or activate abilities"
+    "epic",  # "…copy it at the beginning of each of your upkeeps. You can't cast spells"
+    "miracle",  # the price of casting it as the first card drawn this turn
+    "graveyard_cast",  # castable from a graveyard on its own say-so
+    "graveyard_cost",  # what that costs
+    "graveyard_cast_transformed",  # disturb: it arrives on the back face
+    "splice_onto",  # which spells this may be spliced onto
+    "melds_with",  # the other half of a meld pair
+    "melds_into",  # what the pair becomes
 )
 
 
@@ -141,6 +199,175 @@ class Packet:
         return json.dumps(asdict(self), indent=2, ensure_ascii=False, sort_keys=True) + "\n"
 
 
+def _op_options() -> dict[str, list[str]]:
+    """Every key each op reads out of its own effect dict.
+
+    ``ops`` alone is a list of *names*, and a name is not a language: a worker
+    shown ``copy_spell`` and no keys has no way to learn that ``new_targets``
+    exists, so "You may choose new targets for the copy" reads as unsayable.
+    Expansion // Explosion, Deflecting Swat and Misdirection were all filed
+    against a ``choose-new-targets`` capability that has shipped since
+    Jin-Gitaxias, purely because the reference never named the flag.
+
+    Derived by walking each op's own source for the literal it hands to
+    ``spec.get``/``spec[...]``/``in spec``, rather than curated, for the reason
+    ``static_effects`` and ``cost_keys`` are derived: a hand-written list goes
+    stale the first time somebody adds a key and does not think of this file.
+
+    It is a **lower bound**. An op that forwards ``spec`` to a helper hides that
+    helper's keys, so a key's absence here is not proof it does not exist --
+    which the note beside it says, because the failure this exists to prevent is
+    a worker treating silence as a "no".
+    """
+    import ast
+    import inspect
+    import textwrap
+
+    from automtg.engine.effects import OPS
+
+    def read_keys(fn, seen: set) -> set[str]:
+        """Keys ``fn`` reads out of a mapping parameter, following it one hop.
+
+        The hop is not a refinement. An op that hands ``spec`` to a helper
+        reports none of that helper's keys, and the result is *misleading*
+        rather than merely short: after `playable` moved into a shared
+        `playable_duration_of(spec)`, `exile` and `look_at_top` went on
+        advertising only the boolean it replaced, and a worker reading that as
+        the whole of it would write the shorter card. Following the call is the
+        fix at the source; the union with the shipped pool below stays, because
+        a helper reached through two hops or a dynamic dispatch is still
+        invisible.
+        """
+        if fn in seen:
+            return set()
+        seen.add(fn)
+        try:
+            tree = ast.parse(textwrap.dedent(inspect.getsource(fn)))
+        except (OSError, TypeError, SyntaxError):  # pragma: no cover - defensive
+            return set()
+        # Whatever the mapping is called here: `spec` in every op, but a helper
+        # is free to name its own parameter something else.
+        params = {a.arg for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
+                  for a in node.args.args}
+        names = params & {"spec", "effect"}
+        keys: set[str] = set()
+        for node in ast.walk(tree):
+            match node:
+                # spec.get("x"), spec.get("x", default), spec.pop("x")
+                case ast.Call(
+                    func=ast.Attribute(value=ast.Name(id=str() as who), attr="get" | "pop"),
+                    args=[ast.Constant(value=str() as key), *_],
+                ) if who in names:
+                    keys.add(key)
+                # spec["x"]
+                case ast.Subscript(
+                    value=ast.Name(id=str() as who), slice=ast.Constant(value=str() as key)
+                ) if who in names:
+                    keys.add(key)
+                # "x" in spec
+                case ast.Compare(
+                    left=ast.Constant(value=str() as key),
+                    ops=[ast.In()],
+                    comparators=[ast.Name(id=str() as who)],
+                ) if who in names:
+                    keys.add(key)
+                # helper(spec) -- follow it, once
+                case ast.Call(func=ast.Name(id=str() as called), args=args) if any(
+                    isinstance(a, ast.Name) and a.id in names for a in args
+                ):
+                    target = getattr(inspect.getmodule(fn), called, None)
+                    if inspect.isfunction(target):
+                        keys |= read_keys(target, seen)
+        return keys
+
+    options: dict[str, list[str]] = {}
+    for name, fn in OPS.items():
+        keys = read_keys(fn, set())
+        if keys:
+            options[name] = set(keys)
+
+    # Union with what the shipped pool actually writes, because the scan alone
+    # is not merely incomplete but *misleading*: `add_mana` forwards `spec` to a
+    # helper and so reports only `player`, and a worker reading that as the
+    # whole of it would conclude the op cannot name a colour. Every effect dict
+    # in the pool is a key some op demonstrably accepts, which is the one source
+    # that cannot be wrong about it.
+    for card in _pool_cards():
+        for effect in _walk_effects(card):
+            op = effect.get("op")
+            if isinstance(op, str):
+                options.setdefault(op, set()).update(k for k in effect if k != "op")
+
+    return {name: sorted(keys) for name, keys in sorted(options.items())}
+
+
+def _pool_cards() -> list[dict]:
+    """Every shipped card entry, hand-written and authored."""
+    cards: list[dict] = []
+    for path in sorted((data_dir() / "cards").glob("*.cards.json")) + sorted(
+        (data_dir() / "cards" / "auto").glob("*.cards.json")
+    ):
+        try:
+            cards.extend(json.loads(path.read_text(encoding="utf-8")).get("cards", []))
+        except (OSError, ValueError):  # pragma: no cover - defensive
+            continue
+    return cards
+
+
+def _walk_effects(node: object):
+    """Yield every ``{"op": ...}`` mapping anywhere inside a card entry.
+
+    Recursive because effects nest: `choose_mode` holds modes holding effects,
+    `if` holds branches, `may` and `delay` hold payloads.
+    """
+    if isinstance(node, dict):
+        if isinstance(node.get("op"), str):
+            yield node
+        for value in node.values():
+            yield from _walk_effects(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _walk_effects(item)
+
+
+
+def _required_keys() -> dict:
+    """Which fields each nested model REFUSES to be built without.
+
+    Derived, because a name in `ability_keys` says a field exists and says
+    nothing about whether omitting it is fatal. Four gate-1 rejections in one
+    run were exactly that reading: three targets written with no `id`/`kind`,
+    and Arcane Bombardment's triggered ability with no `kind` -- every one of
+    them a worker that had the right key list and no way to see the asterisk.
+    """
+    from ..schema import AbilityModel, CostModel, TargetModel, TriggerModel
+
+    models = {
+        "ability": AbilityModel,
+        "cost": CostModel,
+        "target": TargetModel,
+        "trigger": TriggerModel,
+    }
+    return {
+        label: sorted(n for n, f in model.model_fields.items() if f.is_required())
+        for label, model in models.items()
+    }
+
+
+def _literal_options(model, field: str) -> list[str]:
+    """The values a Literal-typed field accepts, or [] if it is not one.
+
+    `kind` is a closed vocabulary of five and the reference named none of them,
+    so the only way to learn the spelling was to find a shipped card using it.
+    """
+    import typing
+
+    annotation = model.model_fields[field].annotation
+    if typing.get_origin(annotation) is typing.Literal:
+        return [str(v) for v in typing.get_args(annotation)]
+    return []
+
+
 def reference() -> dict:
     """The DSL, small enough to travel with every packet."""
     from automtg.engine.effects import known_ops
@@ -154,15 +381,45 @@ def reference() -> dict:
         COST_REDUCTION_FILTER_KEYS,
         COST_REDUCTION_KEYS,
         COST_REDUCTION_REFUSED_FILTER_KEYS,
+        MANA_RIDER_OPS,
         STATIC_CONDITION_HEADS,
         STATIC_EFFECTS,
         STATIC_FILTER_KEYS,
         STATIC_VALUE_KEYS,
     )
-    from ..schema import CostModel
+    from ..schema import AbilityModel, CostModel, TargetModel, TriggerModel
 
     return {
         "ops": sorted(known_ops()),
+        # What each op may carry beside its `op` name. See _op_options: without
+        # this, an op's optional flags are invisible and a card that needs one
+        # becomes a gap record for something that already ships.
+        "op_options": _op_options(),
+        # The fields an entry in `abilities` may have. Derived from the model
+        # the loader validates against, as `cost_keys` is. `sorcery_speed_only`
+        # is the witness: 81 shipped cards set it, the reference named it
+        # nowhere, and Ojer Pakpatiq was filed against a
+        # `sorcery-speed-activation` capability because a worker looked in
+        # `cost_keys` -- the only list it had -- and correctly did not find it.
+        "ability_keys": sorted(AbilityModel.model_fields),
+        # The five spellings of `kind`, which is required and was named
+        # nowhere: a worker could only learn it by finding a shipped card that
+        # used it.
+        "ability_kinds": _literal_options(AbilityModel, "kind"),
+        # What a `trigger` object may carry, beside `event`. Derived from the
+        # model, as `cost_keys` and `ability_keys` are, and for the reason those
+        # two exist: Arcane Bombardment's "whenever you cast your FIRST instant
+        # or sorcery spell each turn" was filed as a missing trigger event by a
+        # worker that had looked in `ability_keys` -- the only list it had --
+        # while `max_per_turn` sat on TriggerModel, already shipping on
+        # Jin-Gitaxias' own spell_cast trigger.
+        "trigger_keys": sorted(TriggerModel.model_fields),
+        # And what a target spec may carry. `id` and `kind` are required, and
+        # three gate-1 rejections in this run were a worker writing neither.
+        "target_keys": sorted(TargetModel.model_fields),
+        # Which of all the above are not optional. See _required_keys: a key
+        # list says a field exists, never that leaving it out is fatal.
+        "required_keys": _required_keys(),
         "keywords": sorted(k.value for k in Keyword),
         "types": sorted(t.value for t in CardType),
         "supertypes": sorted(s.value for s in Supertype),
@@ -219,9 +476,71 @@ def reference() -> dict:
         # matches nothing a worker has been shown and becomes a gap record for
         # a mechanic that already works.
         "card_level_cost_keys": list(CARD_LEVEL_COST_KEYS),
+        # How a card says "the other half". See CARD_LEVEL_FACE_KEYS: without
+        # this, every double-faced, split and Adventure card becomes a gap
+        # record for a mechanic seven shipped cards already use.
+        "card_level_face_keys": list(CARD_LEVEL_FACE_KEYS),
+        # What the card says about ITSELF that is neither a price nor a face.
+        # See CARD_LEVEL_RIDER_KEYS: "Exile Mizzix's Mastery." was filed as a
+        # missing capability against a reference that named no such field,
+        # while `exiles_itself` had shipped with Teferi's Protection.
+        "card_level_rider_keys": list(CARD_LEVEL_RIDER_KEYS),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
+            "`op_options` is what each op may carry beside its `op` name, and"
+            " `ability_keys` is what an entry in `abilities` may have. Read both"
+            " before concluding a line cannot be said: `copy_spell` takes"
+            " `new_targets` (\"you may choose new targets for the copy\"), an"
+            " ability takes `sorcery_speed_only`, `once_each_turn` and"
+            " `activate_steps` for printed activation limits, and"
+            " `mana_restriction` for \"spend this mana only to ...\". Each of"
+            " those has been filed as a missing capability by a worker that had"
+            " only the op *names*.",
+            "`op_options` is a **lower bound**, gathered from each op's own"
+            " source and from every effect the shipped pool writes. An op that"
+            " forwards its spec to a helper can accept a key listed for neither,"
+            " so a key's absence is not proof it does not exist -- check the"
+            " `examples` too, and prefer a gap record only when both are silent.",
+            "`trigger_keys` is what a trigger object may carry beside `event`,"
+            " and it is where a printed rate limit lives: `max_per_turn: 1` is"
+            " \"whenever you cast your FIRST ... each turn\" and \"this"
+            " ability triggers only once each turn\", and `nth` is \"your"
+            " second card each turn\". A trigger's FILTER keys go inside"
+            " `filter`, never on the trigger itself.",
+            "`target_keys` is what a card-level or ability `targets` entry may"
+            " carry, and `ability_kinds` is the closed vocabulary of an"
+            " ability's `kind`.",
+            "A key being listed does not make it legal everywhere. `id` on an"
+            " ability is accepted only on a **reflexive** one and the compiler"
+            " refuses it on any other -- it is in `ability_keys` because it is"
+            " a real field, and writing it on a triggered ability is a gate-2"
+            " rejection.",
+            "`required_keys` is the subset of each of those lists that is NOT"
+            " optional -- every ability needs a `kind`, every target an `id`"
+            " and a `kind`, every trigger an `event`. A spec missing one fails"
+            " schema validation before anything else about the card is looked"
+            " at, so check this list against what you wrote before filing"
+            " anything.",
+            "`card_level_rider_keys` is what a card says about ITSELF that is"
+            " neither a price nor a face -- `exiles_itself` for \"Exile <this"
+            " card>.\" instead of the graveyard, `uncounterable` for \"This"
+            " spell can't be countered\", `rebound`, `split_second`, `miracle`."
+            " Look here before concluding a sentence about the card's own fate"
+            " cannot be said.",
+            "`card_level_face_keys` is how a card carries a second printed"
+            " face, and which key you want turns on one question: is the other"
+            " half something you TURN OVER to, or a second spell you may CAST?"
+            " `back_face` is the first -- a transforming DFC, never cast, never"
+            " drawn, reached only by the `transform` op. `second_face` is the"
+            " second -- a split half, an Adventure, an Aftermath half -- with"
+            " its own name, cost and type line, cast instead of the front from"
+            " `second_face_zone` (\"hand\", or \"graveyard\" for Aftermath). A"
+            " **modal double-faced card** is a `second_face` whose other half is"
+            " a permanent: you play one face or the other and nothing turns"
+            " over. Either way the other half is an ordinary card entry in the"
+            " same pool, and your packet's `back_face` block carries its printed"
+            " text -- write it as a second entry, do not file a gap.",
             "`condition_keys` and `value_keys` are what an `if` can ask and what"
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
@@ -292,8 +611,18 @@ def reference() -> dict:
             "A static ability's filter may only read printed characteristics.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",
-            "A mana ability may contain only `add_mana`, or one `choose_mode`"
-            " whose modes each contain only `add_mana`.",
+            "A mana ability's MANA half may contain only `add_mana`, or one"
+            " `choose_mode` whose modes each contain only `add_mana` -- and it"
+            " may then be followed by a **rider**, one or more of"
+            f" {sorted(MANA_RIDER_OPS)}, which happen on activation without the"
+            " stack exactly as the mana does. That is how"
+            " \"{T}: Add {U}. Remove a time counter from this land.\" is"
+            " written (Temple of Cyclical Time), and \"{T}: Add {B}. This"
+            " creature deals 1 damage to you.\" The rider belongs to the"
+            " ABILITY, not to `add_mana`, so it is not in `op_options` -- this"
+            " note used to say a mana ability may contain only `add_mana`, and"
+            " a worker filed a gap against a rider the loader has always"
+            " accepted.",
             "\"It can't be regenerated.\" is `no_regeneration: true` on the"
             " `destroy` op -- 701.15c, the victim's regeneration shields are"
             " not applied to that destruction (and not spent either)."

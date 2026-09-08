@@ -59,17 +59,20 @@ export interface CardView {
 export type UnplayableReason = "priority" | "timing" | "land_drop" | "mana" | "targets";
 
 /** One untapped permanent that could be tapped for mana. */
+/** One untapped permanent that can be tapped for mana. */
 export interface ManaSourceView {
   oid: number;
   /**
-   * Every yield the ability could choose, each as the symbols it makes.
+   * Every yield the permanent could choose, each as the symbols it makes.
    * "Add {G} or {U}" is `[["G"], ["U"]]`; "Add {G}{U}" is `[["G", "U"]]`.
    * The union in `symbols` cannot tell those apart — and it is a whole mana.
+   * A permanent with two tap abilities lists the options of both: a Talisman
+   * is `[["C"], ["B"], ["R"]]`, still one mana.
    */
   options: string[][];
   /** Every symbol this source could make, in WUBRG order. */
   symbols: string[];
-  /** How much mana it makes. "Add {G}{U}" is 2; "Add {G} or {U}" is 1. */
+  /** How much mana one tap makes. "Add {G}{U}" is 2; "Add {G} or {U}" is 1. */
   amount: number;
 }
 

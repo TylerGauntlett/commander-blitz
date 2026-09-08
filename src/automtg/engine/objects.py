@@ -10,6 +10,7 @@ track "the new object", which the curated decks avoid.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -90,6 +91,15 @@ class GameObject:
     #: *generic* part too, which is what both keywords say -- a Sunburst artifact
     #: cast for `{4}` off five different lands enters with five counters.
     colors_spent: frozenset[str] = frozenset()
+    #: How much mana was actually **spent** casting this spell, written by
+    #: `pay_mana` beside `colors_spent` and at the same instant, for the same
+    #: reason: it is knowable exactly once, while the payment is happening.
+    #:
+    #: "…if **at least four mana was spent** to cast it" -- The Emperor of
+    #: Palamecia. Not the printed mana value: a cost reduction, an alternative
+    #: cost, a free cast and an additional cost all move what was paid without
+    #: moving what is printed, and the card asks about the payment.
+    mana_spent: int = 0
     #: "If a creature dealt damage this way would die this turn, exile it
     #: instead." A zone name, replacing the graveyard as this permanent's
     #: destination when it would die. Per-object and turn-scoped -- cleared at
@@ -146,6 +156,33 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
+    #: "whenever you cast an instant spell from your hand, it gains rebound".
+    #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
+    #: `playable_exiles` is read beside `card.graveyard_cast_exiles`: the card
+    #: field is what a spell says about itself and this is what somebody else
+    #: said about it, and the resolution rider cannot tell the difference.
+    #:
+    #: Set on the **spell's object while it is still on the stack**, which is
+    #: the only window there is -- the rider is consulted during resolution and
+    #: the stack list is popped by the time an effect could reach it afterwards.
+    granted_rebound: bool = False
+    #: "Exile that spell instead of putting it into your graveyard as it
+    #: resolves. If you do, it becomes plotted." (Lilah, Undefeated Slickshot.)
+    #:
+    #: The same slot and the same window as `granted_rebound`: written on the
+    #: spell's object while it is still on the stack, read by
+    #: `_place_after_resolution`, and turned into the plotted permission after
+    #: the move -- because `reset_permanent_state` runs on the way to exile and
+    #: would wipe a permission set before it, which is what `rebound_by` and
+    #: `exiled_by` both discovered first.
+    granted_plot: bool = False
+    #: "As this land enters, you may pay 3 life." Whether the controller took
+    #: that offer, answered just before the move and read by the enters
+    #: replacements a moment later. Deliberately survives
+    #: `reset_permanent_state` -- see the note there -- and is cleared by
+    #: `_enter_battlefield` once it has been read.
+    enters_cost_paid: bool = False
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -363,10 +400,30 @@ class GameObject:
     #: *current* zone, which for any resolving sorcery is the stack, identically
     #: whether it was cast from hand or from the graveyard.
     cast_from_graveyard: bool = False
+    #: A `grant_playable` permission on this card is **flashback**: cast it and
+    #: it is exiled rather than returning to the zone it came from.
+    #:
+    #: "Each instant and sorcery card in your graveyard gains flashback until
+    #: end of turn" -- Will of the Jeskai. Needed here where Lier's static needs
+    #: nothing, and the difference is which path the cast took: a
+    #: `cast_from_graveyard` permission sets `cast_from_graveyard` and the
+    #: existing `graveyard_cast_exiles` default already exiles it, while a
+    #: `grant_playable` cast sets neither and would leave the card in the
+    #: graveyard -- repeatable for the rest of the turn, and strictly better
+    #: than the printed card.
+    playable_exiles: bool = False
     #: Whether this object was cast for its **overload** cost. Same contract as
     #: `cast_kicked`: the flag has to outlive the spell, because an overloaded
     #: permanent's own enters trigger may read it.
     cast_overloaded: bool = False
+    #: Which of `additional_cost_options` was paid, by index, or ``None`` for a
+    #: card that offers no such choice.
+    #:
+    #: **Tiered** (Fire Magic, Ice Magic): "Choose one additional cost", where
+    #: each tier buys a *different effect* rather than a bigger number. Bitter
+    #: Triumph's two prices lead to one effect and never needed reading back;
+    #: a tiered card cannot resolve at all without knowing which was paid.
+    cast_cost_option: int | None = None
     #: **Which step this object was cast in** -- addendum's "if you cast this
     #: spell during your main phase". Recorded by `stack.push_spell`, because
     #: that is the moment 608.2 is talking about: the spell can be cast in a
@@ -465,6 +522,34 @@ class GameObject:
     #: This one is a permission with a duration, and the cost is still owed.
     playable_by: int | None = None
     playable_turn: int = -1
+    #: How long the permission lasts. ``"this_turn"`` is the impulse-draw
+    #: default and is read off `playable_turn`; the other two outlive the turn
+    #: they were granted in and are ended by a hook in the turn structure
+    #: instead, which sets `playable_by` back to None.
+    #:
+    #: Keyed to the *player* and cleared when their step arrives, never computed
+    #: as a future turn number -- the same choice detain, goad and "until your
+    #: next turn" all made, and for their reason: eliminating a player moves
+    #: everybody else's next turn, and extra turns move it again.
+    #:
+    #: - ``"your_next_end_step"`` -- "You may play it until your next end step."
+    #:   (Haste Magic.) Cleared as that end step begins, so a card exiled during
+    #:   your own end step survives to the following turn's, which is what "your
+    #:   **next**" says.
+    #: - ``"end_of_your_next_turn"`` -- "Until the end of your next turn, you may
+    #:   play that card." (Light Up the Stage.) Cleared in the cleanup of the
+    #:   first of your turns to *start* after the grant, so a card exiled on your
+    #:   own turn lives through the whole of the next one.
+    playable_duration: str = "this_turn"
+    #: "…without paying its mana cost." Plot and foretell are the two shapes
+    #: that pay something other than the printed price out of exile, and
+    #: foretell has a printed cost of its own -- this is the half that has none.
+    playable_free: bool = False
+    #: "…**as a sorcery**." A restriction on the permission rather than on the
+    #: card, which is what makes it different from `_timing_ok`: a plotted
+    #: *instant* may only be cast at sorcery speed, and its own type line still
+    #: says instant.
+    playable_sorcery_only: bool = False
     #: Which permanent's permission made this card playable, when that
     #: permission caps how many of its cards may be cast -- Locke, Treasure
     #: Hunter: "you may cast **a spell** from among those cards", singular, out
@@ -655,6 +740,30 @@ class GameObject:
     #: place.
     prepared: bool = False
 
+    def playable_live(self, turn: int) -> bool:
+        """Is the "you may play it" permission still standing?
+
+        One question asked in seven places -- legality, both cast paths, the
+        any-type relaxation, the group ledger and the flashback rider -- which
+        used to be spelled `obj.playable_turn == state.turn` at each of them.
+        That spelling *is* the "this turn" duration, so generalising it meant
+        replacing all seven rather than adding an eighth.
+
+        The longer durations answer True until their hook in the turn structure
+        clears `playable_by`; there is no arithmetic on future turn numbers
+        here, deliberately.
+        """
+        if self.playable_by is None:
+            return False
+        if self.playable_duration == "this_turn":
+            return self.playable_turn == turn
+        if self.playable_duration == "later_turns":
+            # Plot's "on a later turn", and the only duration with a *start*
+            # rather than an end. Nothing expires it, so there is no hook: the
+            # card leaves exile by being cast.
+            return turn > self.playable_turn
+        return True
+
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
@@ -708,13 +817,28 @@ class GameObject:
         # The creature came back off its adventure and is on the battlefield;
         # there is nothing left in exile for anyone to cast.
         self.on_adventure = False
+        # A card that changed zones is a new object (400.7), so a rebound
+        # somebody granted the *spell* does not follow the card into its next
+        # life. Read before the move that runs this, so clearing it here costs
+        # the grant nothing and stops it outliving the spell it was given to.
+        self.granted_rebound = False
+        self.granted_plot = False
         self.playable_by = None
         self.playable_turn = -1
+        self.playable_duration = "this_turn"
+        self.playable_free = False
+        self.playable_sorcery_only = False
         self.playable_group = None
         self.playable_any_type = False
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
+        # `enters_cost_paid` is deliberately *not* reset either, and for the
+        # same reason as `hasted_by_suspend` below: it is the answer to a
+        # question asked a moment before the move, and this runs on the way in
+        # -- clearing it here would throw away the payment and tap a land its
+        # controller had just paid 3 life to untap. `_enter_battlefield` clears
+        # it once the replacements have read it.
         self.hidden_in_exile = False
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
@@ -798,3 +922,35 @@ class GameObject:
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
         }
+
+
+#: The durations a "you may play it" permission may carry. ``this_turn`` is the
+#: impulse-draw default and was the only one the engine had; the other two
+#: outlive the turn they were granted in and are ended by hooks in
+#: `turn.begin_step` rather than by arithmetic on a turn number.
+PLAYABLE_DURATIONS = (
+    "this_turn",
+    "your_next_end_step",
+    "end_of_your_next_turn",
+    #: Plot (702.171a): "you may cast it as a sorcery on a **later turn**
+    #: without paying its mana cost." No end at all -- a plotted card waits in
+    #: exile until it is cast -- and a start that is not now: the turn it was
+    #: plotted on is the one turn it may *not* be cast.
+    "later_turns",
+)
+
+
+def playable_duration_of(spec: Mapping[str, Any]) -> str | None:
+    """An effect spec's permission duration, or None when it grants none.
+
+    Two spellings of one key. ``playable_this_turn: true`` is what every card
+    written before durations existed says, and it means ``"this_turn"``; the
+    general form is ``playable: "<duration>"``. The loader refuses both on one
+    effect, so this never has to choose between them.
+    """
+    if spec.get("playable_this_turn"):
+        return "this_turn"
+    duration = spec.get("playable")
+    if duration in PLAYABLE_DURATIONS:
+        return str(duration)
+    return None

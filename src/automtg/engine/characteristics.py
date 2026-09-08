@@ -375,6 +375,11 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 power += temp.power
                 toughness += temp.toughness
             elif temp.kind == "keyword" and temp.keyword:
+                # "**During your turn**, this creature has first strike."
+                # Read off the active player, which is a pipeline input, so no
+                # static is reading another static here.
+                if temp.only_your_turn and state.active_player != obj.controller:
+                    continue
                 keywords.add(temp.keyword)
 
         # 7. haste from suspend, which is *not* an until-end-of-turn effect: it
@@ -1117,6 +1122,17 @@ def _matches_printed(
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
         return False
+    # `types` is a conjunction -- `issubset` above -- which is right for
+    # "artifact creature" and useless for "instant or sorcery": no card is both,
+    # so ["Instant", "Sorcery"] loads clean and matches nothing at all. The
+    # selector language has always had `any_types` for the or-of-types question
+    # and the *static* filters did not, so Archmage of Runes' "instant and
+    # sorcery spells you cast cost {1} less" was unsayable -- and the tempting
+    # spelling of it, a `not_types` complement, silently widens to every
+    # noncreature spell.
+    any_types = selector.get("any_types")
+    if any_types and not (set(any_types) & card.types):
+        return False
     not_types = selector.get("not_types")
     if not_types and set(not_types) & card.types:
         return False
@@ -1131,6 +1147,13 @@ def _matches_printed(
     colors = selector.get("colors")
     if colors and not (set(colors) & card.colors):
         return False
+    # "…a **multicolored** instant or sorcery spell" (202.2b: a card with two
+    # or more colors). `colors` is a membership test and says something else
+    # entirely -- `["U", "R"]` matches a mono-blue spell -- so this is its own
+    # clause rather than a spelling of that one.
+    if (least := selector.get("min_colors")) is not None and len(card.colors) < int(least):
+        return False
+
     keywords = selector.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
         return False

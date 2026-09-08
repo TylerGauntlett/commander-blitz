@@ -1,0 +1,34 @@
+{
+  "card": {
+    "id": "gandalf_s_sanction",
+    "name": "Gandalf's Sanction",
+    "oracle_text": "Gandalf's Sanction deals X damage to target creature, where X is the number of instant and sorcery cards in your graveyard. Excess damage is dealt to that creature's controller instead.",
+    "mana_cost": "{1}{U}{R}",
+    "types": ["Sorcery"],
+    "colors": ["R", "U"],
+    "color_identity": ["R", "U"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {"zone": "battlefield", "types": ["Creature"]}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "damage",
+        "target": "t1",
+        "amount": {"count": {"zone": "graveyard", "controller": "you", "any_types": ["Instant", "Sorcery"]}},
+        "excess_to": "controller"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {"0": 40, "1": 40},
+    "graveyard_size": {"0": 3},
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6
+  }
+}

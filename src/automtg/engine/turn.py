@@ -39,6 +39,26 @@ if TYPE_CHECKING:  # pragma: no cover
     from .structs import DelayedTrigger
 
 
+
+def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bool = False) -> None:
+    """End every "you may play it" permission on ``duration`` for the active player.
+
+    Ending it is setting `playable_by` back to None, which is what
+    `GameObject.playable_live` reads. The card stays in exile with nothing
+    attached, exactly as an expired this-turn permission leaves it.
+    """
+    pid = state.active_player
+    for obj in state.objects.values():
+        if obj.playable_by != pid or obj.playable_duration != duration:
+            continue
+        if after_grant_turn and obj.playable_turn >= state.turn:
+            continue
+        obj.playable_by = None
+        obj.playable_group = None
+        obj.playable_any_type = False
+        obj.playable_exiles = False
+
+
 def begin_step(state: GameState) -> Generator[Any, list[int], None]:
     """Perform the turn-based actions for the step the game has just entered."""
     state.step_started = True
@@ -89,9 +109,26 @@ def begin_step(state: GameState) -> Generator[Any, list[int], None]:
         # postcombat main and the printed word is "each".
         fire(state, EventType.POSTCOMBAT_MAIN, player=state.active_player)
     elif step is Step.END_STEP:
+        # "You may play it until your next end step." (Haste Magic.) Ended as
+        # the step begins and keyed by *who* was granted it, never by a turn
+        # number -- detain's choice, for detain's reason.
+        #
+        # A card exiled during your own end step therefore survives to the
+        # following turn's, because this hook has already run for that step.
+        # That is not a gap: "your **next** end step" is the next one to begin,
+        # and the one you are standing in is not it.
+        _expire_permissions(state, "your_next_end_step")
         fire(state, EventType.END_STEP, player=state.active_player)
         yield from _monarch_draw(state)
     elif step is Step.CLEANUP:
+        # "Until the end of your next turn, you may play that card." (Light Up
+        # the Stage.) Cleared in the cleanup of the first of the grantee's turns
+        # to *start* after the grant, which is why it checks the grant turn as
+        # well as the seat: exiled on your own turn, "your next turn" is a later
+        # one, and clearing here without that check would end the permission at
+        # the end of the turn it was granted in -- a strictly worse card, and a
+        # silent one.
+        _expire_permissions(state, "end_of_your_next_turn", after_grant_turn=True)
         yield from _cleanup_step(state)
 
     yield from _run_delayed(state)
@@ -621,6 +658,22 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     clear_unblockables(state, "this_turn")
     clear_player_protections(state, "this_turn")
     clear_life_locks(state, "this_turn")
+    # "**Until end of turn**, you may cast … from any graveyard." Beside the
+    # rest and owned by no permanent for their reason, and more literally than
+    # most: the Saga chapter that grants it exiles the Saga on the same line, so
+    # there has never been a permanent for `clear_until_eot` to walk to.
+    #
+    # Dropped rather than left to the turn check that reads them, because a
+    # permission nobody clears accumulates one dead record per grant for the
+    # rest of the game.
+    # Strictly greater: this cleanup ends the turn the grant was made in, so a
+    # record whose turn matches the one now ending is exactly the one to drop.
+    # Nothing grants for a future turn, so this keeps nothing today -- written as
+    # a comparison rather than `.clear()` because the turn is what makes it dead,
+    # and a longer-lived grant should not have to remember to change this line.
+    state.graveyard_cast_grants = [
+        g for g in state.graveyard_cast_grants if g.turn > state.turn
+    ]
     # "Prevent all damage that would be dealt to you **this turn**." (Selfless
     # Squire, Fog.) Beside the three above and owned by no permanent for the same
     # reason -- Fog is an instant and leaves nothing behind, and the Squire's

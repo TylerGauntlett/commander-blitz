@@ -1,0 +1,25 @@
+{
+  "_comment": "The Expressive Iteration shape: one look at three cards, three different destinations, one card each. destination + rest_to_bottom reaches only two of them.",
+  "cards": [
+    {
+      "id": "t_iteration",
+      "name": "Test Iteration",
+      "oracle_text": "Look at the top three cards of your library. Put one of them into your hand, put one of them on the bottom of your library, and exile one of them. You may play the exiled card this turn.",
+      "mana_cost": "{U}{R}",
+      "types": ["Sorcery"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "amount": {"const": 3},
+          "destinations": [
+            {"to": "hand", "count": 1},
+            {"to": "library_bottom", "count": 1},
+            {"to": "exile", "count": 1, "playable_this_turn": true}
+          ]
+        }
+      ]
+    }
+  ]
+}

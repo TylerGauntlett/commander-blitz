@@ -8,7 +8,7 @@ from typing import Any
 from ..characteristics import chars
 from ..enums import Zone
 from ..events import EventType
-from ..objects import PLUS_ONE
+from ..objects import PLUS_ONE, playable_duration_of
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
@@ -83,17 +83,29 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
     amount = evaluate_value(ctx, spec.get("amount", 1))
     random = bool(spec.get("random"))
     up_to = bool(spec.get("up_to"))
+    # "Each player **discards their hand**" -- Windfall, Wheel of Fortune. Not
+    # expressible as an `amount`: the amount is evaluated once, above this
+    # loop, so it cannot be a different number for each player. Every near-miss
+    # spelling gets it wrong quietly -- a `cards_in_hand` amount reads the
+    # *resolving* player's hand and then takes that many from everyone, so a
+    # Windfall cast with three in hand rips three from an opponent holding
+    # seven and leaves four.
+    whole_hand = bool(spec.get("whole_hand"))
     name = spec.get("as")
     taken: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         hand = list(ctx.state.players[pid].hand)
         if not hand:
             continue
-        take = min(amount, len(hand))
+        take = len(hand) if whole_hand else min(amount, len(hand))
         if random:
             # A random discard has no floor to relax: nobody is choosing, so
             # "up to" and "exactly" pick the same cards.
             picked = ctx.state.rng.shuffled(hand)[:take]
+        elif whole_hand:
+            # No choice to make: the whole hand goes, so asking would be a
+            # prompt with exactly one legal answer.
+            picked = hand
         else:
             floor = 0 if up_to else take
             picked = yield from ask_objects(ctx, "Discard", hand, floor, take, pid, "discard")
@@ -155,12 +167,62 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         obj.playable_by = ctx.controller
         obj.playable_turn = ctx.state.turn
+        obj.playable_duration = playable_duration_of(spec) or "this_turn"
         obj.playable_group = ctx.source_oid if limit else None
+        # "…gains **flashback**", rather than a bare permission to cast it: the
+        # card is exiled as it resolves, so the grant is worth one cast per card
+        # rather than as many as the turn's mana allows.
+        obj.playable_exiles = bool(spec.get("as_flashback"))
         # "…and mana of any type can be spent to cast that spell" travels with
         # the permission it is printed beside, and expires with it: the flag is
         # read only where `playable_turn` already gates the offer.
         obj.playable_any_type = any_type
 
+
+
+@register("grant_graveyard_cast")
+def op_grant_graveyard_cast(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Until end of turn, you may cast … spells from any graveyard."
+
+    Urabrask's third chapter, and Yawgmoth's Will before it.
+
+    Not `grant_playable`, though that is the near miss and it is worth saying
+    why. `grant_playable` marks the cards it can see **now**, and this sentence
+    is a standing permission: a spell that reaches a graveyard later in the same
+    turn is castable under the printed card and invisible to a snapshot. For a
+    card whose whole point is a graveyard that refills as you empty it, that is
+    not a rounding error -- it is the loop.
+
+    Nor a `cast_from_graveyard` static, which is the shape the permission
+    already had: a static is read off a permanent on the battlefield, and this
+    chapter exiles the Saga in the same breath as granting it. So the grant goes
+    on the table with a turn on it, and `graveyard_cast_permissions` reads it
+    beside the statics.
+
+    The spec **is** a `cast_from_graveyard` static, which is why the second
+    printed sentence needs nothing here: "if a spell cast this way would be put
+    into a graveyard, exile it instead" is what a graveyard cast already does,
+    through `graveyard_cast_exiles` on the resolving spell.
+    """
+    from ..structs import GraveyardCastGrant
+
+    if ctx.source_oid is None:
+        # The rate limit is counted against the granting object and the filter
+        # may name its chosen type, so a grant with no source has nowhere to
+        # keep either. Nothing in the pool can reach this -- an effect always
+        # has a source -- and granting anyway would be an uncapped permission
+        # belonging to nobody.
+        return
+    static = {k: v for k, v in spec.items() if k != "op"}
+    static.setdefault("affects_player", "you")
+    ctx.state.graveyard_cast_grants.append(
+        GraveyardCastGrant(
+            player=ctx.controller,
+            turn=ctx.state.turn,
+            source=ctx.source_oid,
+            static=static,
+        )
+    )
 
 @register("shuffle")
 def op_shuffle(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -339,11 +401,12 @@ def _move_found(
         # key only works on the cards that spell the exile out as its own step.
         # Written after the move, like `exile` writes it, because
         # `reset_permanent_state` runs on the way and would wipe the pair.
-        if destination is Zone.EXILE and spec.get("playable_this_turn"):
+        if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
                 obj.playable_by = pid
                 obj.playable_turn = ctx.state.turn
+                obj.playable_duration = duration
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What
@@ -422,7 +485,54 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             # free Forest-on-the-stack.
             pool = [oid for oid in pool if not ctx.state.card_of(ctx.state.objects[oid]).is_land]
         taken: set[int] = set()
-        if pool:
+        steps = spec.get("destinations")
+        if steps:
+            # "Put one of them into your hand, put one of them on the bottom of
+            # your library, and exile one of them" -- Expressive Iteration. One
+            # look, three destinations, one card each.
+            #
+            # `destination` plus `rest_to_bottom` is the near miss and reaches
+            # only two: the remainder key is hardwired to the bottom and takes
+            # *everything* not picked, so hand+bottom or exile+bottom, never all
+            # three. Two sequential `look_at_top`s is worse -- the second reads a
+            # top that the first has already changed, and `as` binds only what
+            # was taken, so nothing can name "the other two".
+            #
+            # Each step draws from what the earlier ones left, which is what
+            # makes the three choices one decision about one window.
+            remaining = list(pool)
+            for step in steps:
+                if not remaining:
+                    break
+                want = max(0, min(int(step.get("count", 1)), len(remaining)))
+                if not want:
+                    continue
+                where = DESTINATIONS[step.get("to", "hand")]
+                picked = yield from ask_objects(
+                    ctx,
+                    f"Put on {step.get('to', 'hand')}",
+                    remaining,
+                    want,
+                    want,
+                    pid,
+                    "look_at_top",
+                )
+                # The step carries its own destination flags -- `to` reads as
+                # `destination` for `_move_found`'s `library_top` test, and
+                # `playable_this_turn` belongs to the exile step alone.
+                _move_found(
+                    ctx,
+                    picked,
+                    pid,
+                    where,
+                    {**step, "destination": step.get("to", "hand")},
+                    tapped,
+                    "look_at_top",
+                )
+                taken.update(picked)
+                remaining = [oid for oid in remaining if oid not in picked]
+            bound.extend(taken)
+        elif pool:
             picked = yield from pick_from_pool(
                 ctx, pool, selector, "Look at the top of your library", "look_at_top", pid
             )
@@ -445,6 +555,21 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
         # the selector filtered out of the pool, which were still looked at.
         if spec.get("rest_to_bottom", False):
             _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
+        # "Then put all cards exiled this way **that weren't cast** into your
+        # graveyard" -- Epic Experiment. The same remainder, sent somewhere
+        # other than the bottom of the library. Without it the leftovers stay on
+        # top of the library, which is a strictly better card: Epic Experiment
+        # would leave its misses where they can be drawn.
+        if (rest := spec.get("rest_to")) is not None:
+            for oid in [o for o in top if o not in taken]:
+                move_object(
+                    ctx.state,
+                    oid,
+                    DESTINATIONS[str(rest)],
+                    to_player=pid,
+                    cause="look_at_top",
+                    by=ctx.source_oid,
+                )
         if spec.get("shuffle", False):
             shuffle_library(ctx.state, pid)
     if binding:
@@ -654,6 +779,21 @@ def op_return_spell_to_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     target_id = str(spec.get("target", "t1"))
     for sid in ctx.target_sids(target_id):
         pull_spell_off_stack(ctx.state, sid, Zone.HAND, cause="returned", by=ctx.source_oid)
+    # "Return target **spell or nonland permanent** an opponent controls to its
+    # owner's hand" (Sink into Stupor). One instance of the word "target", so
+    # one spec and one op -- and the ref that comes back says which half of the
+    # printed word the caster took. A `kind: "spell_or_permanent"` target that
+    # landed on a permanent is an object ref, and reading only `target_sids`
+    # would return nothing and leave the permanent on the battlefield with the
+    # card looking like it worked, which is the silent failure this op's own
+    # docstring was written about.
+    #
+    # The owner's hand either way: `move_object` with `to_player` unset sends a
+    # permanent home, the same seat `pull_spell_off_stack` sends a spell to.
+    for oid in ctx.target_oids(target_id):
+        obj = ctx.state.objects.get(oid)
+        if obj is not None:
+            move_object(ctx.state, oid, Zone.HAND, cause="returned")
 
 
 @register("return_from_graveyard")
@@ -1124,6 +1264,58 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     return len(ctx.state.stack) > before
 
 
+@register("cast_from_hand")
+def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may cast a spell from your hand without paying its mana cost."
+
+    Electrodominance ("…with mana value X or less"), Glamdring ("…with mana
+    value less than or equal to that damage"), Bolas's Citadel's cousins. The
+    engine could already cast for free from the **library top** (`look_at_top`'s
+    `cast_free`, cascade, Bolas's Citadel) and from **exile** (`play_exiled`,
+    foretell, plot), and the one zone it could not reach was the one every card
+    of this shape names.
+
+    `grant_playable` is the near miss and is a different sentence: it *permits a
+    play* from a zone that normally forbids one, at the card's printed cost. A
+    card already in hand needs no permission to be cast -- what it needs is the
+    price waived -- so that op is a no-op here rather than an approximation.
+
+    ``selector`` is what may be picked, tested as a card in hand, so "an instant
+    or sorcery spell with mana value 4 or less" is the printed restriction and
+    not a widening. Omitted, any card in hand qualifies, which is
+    Electrodominance's "a spell".
+
+    Optional by construction: `ask_objects` with a minimum of zero is the "you
+    may", so no `may` wrapper is needed and declining costs no second question.
+    A player with nothing matching is not asked at all.
+    """
+    from ..suspend import cast_for_free
+    from .selectors import select_players
+
+    selector = spec.get("selector") or {}
+    prompt = "Cast a spell without paying its mana cost"
+    for pid in select_players(ctx, spec.get("player", "you")):
+        pool = [
+            oid
+            for oid in list(ctx.state.players[pid].hand)
+            # A land is not a spell and is never cast (305.9) -- it is *played*,
+            # and only during your main phase with the stack empty. Excluded
+            # here rather than left to each card's selector, because every
+            # printed card of this shape says "cast a spell" and none of them
+            # says "nonland": Electrodominance's own restriction is a mana
+            # value, and a Forest has mana value 0, so the bare printed filter
+            # matches it. Found by gate 5 -- the spare Forest in the sandbox
+            # hand vanished, which is the whole reason that Forest is there.
+            if "Land" not in ctx.state.card_of(ctx.state.objects[oid]).types
+            and _matches_in_zone(ctx, oid, selector, "hand")
+        ]
+        if not pool:
+            continue
+        picked = yield from ask_objects(ctx, prompt, pool, 0, 1, pid, "cast_from_hand")
+        if picked:
+            cast_for_free(ctx.state, pid, picked[0])
+
+
 @register("hideaway")
 def op_hideaway(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 702.75a — "look at the top N cards, exile one face down, and put the
@@ -1436,17 +1628,35 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     thief's library would hand the victim's card to the thief for ever.
     """
     depth = max(1, evaluate_value(ctx, spec.get("from_top", 1)))
+    # "…puts it on the **bottom** of their library", and Ice Magic's "on their
+    # choice of the top or bottom". `from_top` cannot say either: it counts from
+    # the top, and a depth big enough to reach the bottom of *this* library is a
+    # number the card does not print and that a shuffle would invalidate.
+    bottom = bool(spec.get("bottom"))
+    owner_chooses = bool(spec.get("owner_chooses"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put on top of library")
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
             continue
+        to_bottom = bottom
+        if owner_chooses:
+            # **The owner** decides, not the resolving player -- "its owner puts
+            # it on their choice of the top or bottom" is the printed line, and
+            # asking the caster would hand them a tempo decision the card gives
+            # away.
+            to_bottom = not (
+                yield from ask_yes_no(ctx, "Put it on top of your library?", obj.owner)
+            )
         move_object(
             ctx.state,
             oid,
             Zone.LIBRARY,
             to_player=obj.owner,
-            to_index=depth - 1,
+            # `None` appends, which is the bottom -- and it has to be None
+            # rather than a computed length, because the length is read before
+            # the card has left its old zone.
+            to_index=None if to_bottom else depth - 1,
             cause="tuck",
             by=ctx.source_oid,
         )

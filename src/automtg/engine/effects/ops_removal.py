@@ -8,6 +8,7 @@ from typing import Any
 
 from ..enums import Zone
 from ..errors import DslError
+from ..objects import playable_duration_of
 from ..primitives import (
     add_counters,
     create_token,
@@ -215,6 +216,7 @@ def op_phase_in(ctx: EffectContext, spec: Mapping[str, Any]):
     ctx.state.bump_chars()
 
 
+
 @register("exile")
 def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     """Exile objects, optionally remembering which permanent did it.
@@ -248,7 +250,11 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
     # family. Not `play_exiled`, which casts the card for *free* and does it
     # there and then: this is a permission the player may take later, at the
     # printed price, and it expires with the turn.
-    playable = bool(spec.get("playable_this_turn"))
+    # `playable_this_turn` is the boolean this started as; `playable` is the
+    # same permission with a duration, and the two are one key with two
+    # spellings rather than two keys -- writing both is a load error.
+    playable_duration = playable_duration_of(spec)
+    playable = playable_duration is not None
     oids = yield from choose_objects(ctx, spec.get("objects"), "Exile", "destroy")
     if name := spec.get("as"):
         # Written before the move, so the binding records what this op exiled
@@ -276,6 +282,7 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
             if obj is not None:
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
+                obj.playable_duration = playable_duration
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.

@@ -56,6 +56,11 @@ CONDITION_KEYS = frozenset(
         # 'target' with 'each'". There is no rewriting a printed sentence, and
         # the two halves really are two effects, so the card branches on this.
         "overloaded",
+        # Which of `additional_cost_options` was paid, by index. **Tiered**
+        # (Fire Magic, Ice Magic): each tier is a different effect, so the card
+        # is one `choose_mode`-free branch per price. Bitter Triumph needed no
+        # such key because both of its prices lead to the same effect.
+        "cost_option",
         "has_city_s_blessing",
         # "If you're the monarch…" (721). Takes a player spec, so a card can also
         # ask it of somebody else.
@@ -159,6 +164,13 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_overloaded = obj is not None and obj.cast_overloaded
         return was_overloaded == bool(cond["overloaded"])
+    if "cost_option" in cond:
+        # Read off the object rather than the StackItem, exactly as `overloaded`
+        # and `kicked` are: a permanent spell's own enters trigger runs after the
+        # item has gone.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        chosen = obj.cast_cost_option if obj is not None else None
+        return chosen == int(cond["cost_option"])
     if "evoked" in cond:
         # Only ever read on the battlefield -- "it's sacrificed when it
         # enters" is an ETB trigger -- but written the same way as `kicked`

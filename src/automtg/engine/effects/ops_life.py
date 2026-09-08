@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..enums import Keyword
 from ..errors import DslError
 from ..events import EventType
 from ..primitives import (
@@ -151,18 +152,79 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     if amount <= 0:
         return
 
+    # "**Target creature you control** deals damage equal to its power to each
+    # other creature and each opponent" -- Chandra's Ignition. The damage is
+    # dealt BY that creature, not by the spell, and the difference is the whole
+    # card: lifelink on it gains its controller life, deathtouch on it kills
+    # what it hits, and "damage dealt by a source you control" triggers read it.
+    # Left as the resolving source when absent, which is every other card.
+    dealer = ctx.source_oid
+    if "source_object" in spec:
+        named = resolve_pool(ctx, spec["source_object"])
+        if not named:
+            # The named creature has gone -- countered target, or removed in
+            # response. Nothing deals the damage, rather than the spell dealing
+            # it in the creature's place.
+            return
+        dealer = named[0]
+
     if "objects" in spec:
         for oid in resolve_pool(ctx, spec["objects"]):
-            damage_permanent(ctx.state, oid, amount, ctx.source_oid)
+            damage_permanent(ctx.state, oid, amount, dealer)
 
     if "player" in spec:
         for pid in select_players(ctx, spec["player"]):
-            damage_player(ctx.state, pid, amount, ctx.source_oid)
+            damage_player(ctx.state, pid, amount, dealer)
 
     if "target" in spec:
         # A single target that may be either a creature or a player ("any target").
         for ref in ctx.target_refs(str(spec["target"])):
             if ref.kind == "object":
-                damage_permanent(ctx.state, ref.id, amount, ctx.source_oid)
+                if spec.get("excess_to"):
+                    _damage_with_excess(ctx, ref.id, amount, str(spec["excess_to"]))
+                else:
+                    damage_permanent(ctx.state, ref.id, amount, dealer)
             elif ref.kind == "player":
-                damage_player(ctx.state, ref.id, amount, ctx.source_oid)
+                damage_player(ctx.state, ref.id, amount, dealer)
+
+
+def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> None:
+    """ "Excess damage is dealt to that creature's controller instead."
+
+    Gandalf's Sanction. **One damage event split in two**, not two events: the
+    creature is dealt exactly lethal and the remainder goes to a player, so a
+    card that would have overkilled a 2/2 by nine points sends nine at its
+    controller.
+
+    Lethal is read the way `sba` reads it -- toughness minus damage already
+    marked, or 1 from a deathtouch source -- because those two must agree or
+    this leaves a creature one point short of the death the rules say it took.
+
+    `trample` is the near miss and is combat-only, so it could not be reused;
+    this is the noncombat spelling of the same idea.
+    """
+    from ..characteristics import chars
+
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    c = chars(state, oid)
+    source = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    deathtouch = bool(
+        source is not None
+        and Keyword.DEATHTOUCH.value in chars(state, source.oid).keywords
+    )
+    lethal = 1 if deathtouch else max(0, (c.toughness or 0) - obj.damage)
+    to_creature = min(amount, lethal)
+    if to_creature > 0:
+        damage_permanent(state, oid, to_creature, ctx.source_oid)
+    spill = amount - to_creature
+    if spill <= 0:
+        return
+    # "that creature's controller" is the only spelling any printed card uses,
+    # and it is read off the object rather than through `select_players` because
+    # the creature is the subject: a control-changing effect has to move the
+    # excess with it.
+    if excess_to == "controller":
+        damage_player(state, obj.controller, spill, ctx.source_oid)

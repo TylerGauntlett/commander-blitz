@@ -47,6 +47,7 @@ def push_spell(
     graveyard_permission: int | None = None,
     enters_tapped: bool = False,
     overloaded: bool = False,
+    cost_option: int | None = None,
     spliced: tuple[str, ...] = (),
     face_down: bool = False,
     second_face: bool = False,
@@ -126,6 +127,7 @@ def push_spell(
         graveyard_permission=graveyard_permission,
         enters_tapped=enters_tapped,
         overloaded=overloaded,
+        cost_option=cost_option,
         spliced=spliced,
         face_down=face_down,
         modes=modes,
@@ -658,6 +660,11 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # would always read False and every overloaded spell would resolve as the
     # targeted half -- with no targets, which is nothing at all.
     obj.cast_overloaded = item.overloaded
+    # And the tier, for the same reason at the same moment: a tiered spell's
+    # whole effect is an `if` on which price was paid, so a flag written after
+    # `spell_effects` would read None and every tier would resolve as none of
+    # them.
+    obj.cast_cost_option = item.cost_option
     # Gift (702.164a), for the same reason and at the same moment as the two
     # above: "if the gift wasn't promised, return that card…" is an `if` inside
     # `spell_effects`, and a promise written onto the object afterwards would
@@ -720,7 +727,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     if item.mutated:
         yield from _merge_mutation(state, item, targets)
         return
-    _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
+    yield from _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
     _attach_aura(state, obj, card, targets, specs)
 
 
@@ -768,7 +775,7 @@ def _merge_mutation(
 
 def _place_after_resolution(
     state: GameState, obj, card: CardDef, *, enters_tapped: bool = False
-) -> None:
+):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
     The object's zone is still ``STACK``; ``move_object`` handles that case by
@@ -784,7 +791,21 @@ def _place_after_resolution(
     # legality widening, and the one thing that separates it is that the card
     # comes back for another go, so `graveyard_cast_exiles` is the whole
     # difference between the two keywords.
-    if obj.cast_from_graveyard and destination is Zone.GRAVEYARD and card.graveyard_cast_exiles:
+    # Two paths into a graveyard cast and both exile, but they are different
+    # facts and neither implies the other. A `cast_from_graveyard` permission
+    # (or the card's own flashback) sets `cast_from_graveyard`, and
+    # `graveyard_cast_exiles` is what escape turns off. A `grant_playable`
+    # permission sets neither, so without its own clause Will of the Jeskai's
+    # "gains flashback" would be a permission the card could use again and again
+    # for the rest of the turn.
+    #
+    # The second is gated on the turn as well as the flag, because the
+    # permission itself is: a card granted flashback last turn and cast this one
+    # was never given anything, and must not be exiled for it.
+    if destination is Zone.GRAVEYARD and (
+        (obj.cast_from_graveyard and card.graveyard_cast_exiles)
+        or (obj.playable_exiles and obj.playable_live(state.turn))
+    ):
         destination = Zone.EXILE
     # Buyback: "put it into your hand instead of your graveyard as it
     # resolves". The same shape as the flashback rider pointing the other way,
@@ -812,7 +833,26 @@ def _place_after_resolution(
     # the printed line would silently do nothing.
     if card.exiles_itself and destination is Zone.GRAVEYARD:
         destination = Zone.EXILE
-    rebounds = card.rebound and obj.cast_from_hand and destination is Zone.GRAVEYARD
+    # `granted_rebound` beside the printed flag, and the disjunction is the
+    # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
+    # and a spell that was handed it are the same spell from here on. Both are
+    # still gated on `cast_from_hand`, which is 702.87a's own wording and the
+    # loop guard -- the free cast at the next upkeep happens from **exile**, so
+    # without it the card would rebound again every upkeep for ever.
+    rebounds = (
+        (card.rebound or obj.granted_rebound)
+        and obj.cast_from_hand
+        and destination is Zone.GRAVEYARD
+    )
+    # Plot's "exile that spell instead of putting it into your graveyard as it
+    # resolves" -- the seventh rider on this slot, beside rebound's exile and
+    # for its reasons. Gated on `cast_from_hand` because Lilah's trigger says
+    # "from your hand", and it is the loop guard too: the plotted card is cast
+    # from **exile** later, so without it a plotted spell would re-plot itself
+    # every time it resolved and never leave.
+    plots = obj.granted_plot and obj.cast_from_hand and destination is Zone.GRAVEYARD
+    if plots:
+        destination = Zone.EXILE
     if rebounds:
         destination = Zone.EXILE
     # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
@@ -835,6 +875,13 @@ def _place_after_resolution(
     # showing the face it was cast as.
     obj.showing_second_face = False
     controller = obj.controller
+    if destination is Zone.BATTLEFIELD:
+        # "As this enters, you may pay …" -- the permanent-spell half of the
+        # same offer `game._play_land` makes for a land drop, and asked in the
+        # same window and for the same reason.
+        from .zones import offer_enters_costs
+
+        yield from offer_enters_costs(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
@@ -862,6 +909,17 @@ def _place_after_resolution(
         # which would wipe this if it were set first -- the same ordering
         # `exiled_by` needs.
         obj.rebound_by = controller
+    if plots:
+        # After the move for `rebound_by`'s reason, and this one has four fields
+        # to lose rather than one. "You may cast it as a sorcery on a later turn
+        # without paying its mana cost" is the whole of plot (702.171a), and it
+        # is three riders on the permission the engine already had.
+        obj.playable_by = controller
+        obj.playable_turn = state.turn
+        obj.playable_duration = "later_turns"
+        obj.playable_free = True
+        obj.playable_sorcery_only = True
+        state.emit("plotted", player=controller, source=obj.oid, card=obj.def_id)
     if adventuring and printed.adventure:
         # After the move for `rebound_by`'s reason, and this one really is
         # cleared on the way back: the creature that comes off its adventure

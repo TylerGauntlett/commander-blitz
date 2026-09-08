@@ -18,6 +18,7 @@ from automtg.engine.effects.values import (
 )
 from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
+from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -385,11 +386,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: return_spell_to_hand references target {tid!r} "
                 f"which the card does not declare"
             )
-        if target_kinds[tid] != "spell":
+        if target_kinds[tid] not in ("spell", "spell_or_permanent"):
             raise DslError(
-                f"{where}: return_spell_to_hand needs a target of kind 'spell', "
-                f"and {tid!r} is {target_kinds[tid]!r} "
-                f"(a permanent goes back with return_to_hand)"
+                f"{where}: return_spell_to_hand needs a target of kind 'spell' or "
+                f"'spell_or_permanent', and {tid!r} is {target_kinds[tid]!r} "
+                f"(a permanent alone goes back with return_to_hand)"
             )
         if "objects" in effect:
             # The obvious thing to write, copied off `return_to_hand`, and it is
@@ -399,6 +400,56 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: return_spell_to_hand reads no 'objects' -- it takes "
                 f"the spell its 'target' names"
+            )
+    if op == "grant_graveyard_cast":
+        # The spec IS a `cast_from_graveyard` static, so the two things that
+        # static must always carry are required here too, and for the same
+        # reasons the static's own loader gives them.
+        if not effect.get("affects_spells"):
+            # An empty filter frees the whole graveyard, so a missing one has to
+            # be a load error rather than a default -- `graveyard_cast_allows`
+            # returns False on an absent filter precisely so a compile bug hands
+            # over nothing instead of everything, and that is a floor, not a
+            # spelling.
+            raise DslError(
+                f"{where}: grant_graveyard_cast needs 'affects_spells' -- "
+                f"without it the permission names no cards"
+            )
+        if not effect.get("max_per_turn") and not effect.get("grants_flashback"):
+            # A permission that neither meters nor exiles recasts one card every
+            # turn for ever. `grants_flashback` IS the rate limit for the cards
+            # that print no cap -- the spent card is the brake -- which is the
+            # argument the static's loader makes in the same words.
+            raise DslError(
+                f"{where}: grant_graveyard_cast needs 'max_per_turn' or "
+                f"'grants_flashback' -- an unmetered permission is an engine, "
+                f"not a printed line"
+            )
+    if op in ("grant_rebound", "grant_plot"):
+        # The same two checks `return_spell_to_hand` makes, for the same reason
+        # and with the same failure mode: the op reads one stack object, and a
+        # `target` that names a permanent or a player finds no spell, sets
+        # nothing and leaves a card that says "it gains rebound" and does not.
+        if "target" in effect:
+            tid = str(effect["target"])
+            if tid not in target_kinds:
+                raise DslError(
+                    f"{where}: {op} references target {tid!r} "
+                    f"which the card does not declare"
+                )
+            if target_kinds[tid] != "spell":
+                raise DslError(
+                    f"{where}: {op} needs a target of kind 'spell', "
+                    f"and {tid!r} is {target_kinds[tid]!r}"
+                )
+        if "objects" in effect:
+            # Refused rather than dropped, exactly as above: a spell is named
+            # by the target it was cast at or by the trigger that saw it, never
+            # by a selector over a zone, and "every spell on the stack gains
+            # rebound" is a card nobody has printed.
+            raise DslError(
+                f"{where}: {op} reads no 'objects' -- it takes the "
+                f"spell its trigger bound, or the one its 'target' names"
             )
     # Every op that names a player spells it `player` and every one of them
     # feeds `select_players`, so this is checked once here rather than per op --
@@ -929,6 +980,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'playable_this_turn' needs 'objects' -- "
             f"there is nothing to grant permission on"
         )
+    if "playable" in effect or "playable_this_turn" in effect:
+        # Two spellings of one key: `playable_this_turn: true` is what every
+        # card written before durations existed says, and `playable:
+        # "<duration>"` is the general form. Written together they would need a
+        # precedence rule nobody can read off the card, so they are refused
+        # together instead.
+        if "playable" in effect and "playable_this_turn" in effect:
+            raise DslError(
+                f"{where}: 'playable' and 'playable_this_turn' are two spellings of "
+                f"one key -- write 'playable': \"this_turn\" or the boolean, not both"
+            )
+        if op not in ("exile", "look_at_top", "grant_playable"):
+            raise DslError(
+                f"{where}: {op!r} grants no 'you may play it' permission, so "
+                f"'playable' means nothing on it"
+            )
+        if (duration := effect.get("playable")) is not None and duration not in PLAYABLE_DURATIONS:
+            # A typo here would fall through `playable_duration_of` as None and
+            # grant no permission at all -- a card that says "you may play it"
+            # and does not, silently. The same reason the mana restriction's
+            # entry guard exists.
+            raise DslError(
+                f"{where}: unknown 'playable' duration {duration!r} "
+                f"(implemented: {sorted(PLAYABLE_DURATIONS)})"
+            )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a
@@ -1335,10 +1411,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         and "mana" not in effect
         and "reflecting" not in effect
         and not effect.get("in_commander_identity")
+        and not effect.get("split")
     ):
         raise DslError(
-            f"{where}: add_mana needs 'mana' (or 'reflecting', or 'in_commander_identity')"
+            f"{where}: add_mana needs 'mana' (or 'reflecting', or "
+            f"'in_commander_identity', or 'split')"
         )
+    if op == "add_mana" and effect.get("split") is not None:
+        # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier.
+        # The colours are a list and the size is an `amount`; `mana` says the
+        # opposite thing (a fixed production string) and the two together would
+        # be two answers to one question.
+        if "mana" in effect:
+            raise DslError(
+                f"{where}: 'split' names the colours a combination may draw on, so it "
+                f"replaces 'mana' rather than joining it"
+            )
+        if not isinstance(effect["split"], list):
+            raise DslError(f"{where}.split: expected a list of mana symbols")
     if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
         # The one non-literal `mana`, and validated as such for the reason
         # `_restriction_name` validates its twin: a near-miss spelling that fell
@@ -1430,12 +1520,59 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: lock_life_total takes no 'amount' -- it forbids the "
                 f"change rather than sizing it"
             )
+    if op == "discard" and effect.get("whole_hand"):
+        # "Each player discards their hand." The size is per player and cannot
+        # also be an `amount`, which is evaluated once for everybody -- two
+        # answers to one question, and the `amount` would silently win for the
+        # players it was not computed from.
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: 'whole_hand' is the whole hand, so it replaces 'amount' "
+                f"rather than joining it"
+            )
+        if effect.get("up_to"):
+            raise DslError(f"{where}: a whole-hand discard is not optional")
+
+    if op == "damage" and "excess_to" in effect:
+        # "Excess damage is dealt to that creature's controller instead."
+        # Only meaningful on the single-target form: `objects` is a pool and
+        # there is no one creature whose controller the spill belongs to.
+        if effect["excess_to"] != "controller":
+            raise DslError(
+                f"{where}.excess_to: the only spelling any printed card uses is "
+                f"'controller', got {effect['excess_to']!r}"
+            )
+        if "target" not in effect:
+            raise DslError(
+                f"{where}: 'excess_to' needs a single 'target' -- a pool of objects has "
+                f"no one controller for the excess to reach"
+            )
+
+    if op == "cast_from_hand":
+        # The selector is what may be picked, and it is the whole of the printed
+        # restriction -- "an instant or sorcery spell with mana value X or less".
+        # A misspelled key would widen it silently into "any card in your hand",
+        # which is a strictly better card than the one printed and exactly the
+        # failure this validation layer exists to refuse.
+        selector = effect.get("selector")
+        if selector is not None:
+            if not isinstance(selector, Mapping):
+                raise DslError(f"{where}: cast_from_hand's 'selector' must be a mapping")
+            validate_selector(selector, f"{where}.selector")
+        if "player" in effect:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
         # moment it arrives.
         if "power" not in effect or "toughness" not in effect:
             raise DslError(f"{where}: animate needs 'power' and 'toughness'")
+        for word in effect.get("your_turn_keywords", ()) or ():
+            if word not in KNOWN_KEYWORDS:
+                raise DslError(
+                    f"{where}.your_turn_keywords: unknown keyword {word!r}"
+                )
         for t in effect.get("types", ()) or ():
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {t!r}")

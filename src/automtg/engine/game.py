@@ -33,7 +33,7 @@ from .state import GameState, new_object
 from .structs import TargetRef
 from .targeting import selectable_modes
 from .turn import _next_blocker_decision
-from .zones import move_object
+from .zones import move_object, offer_enters_costs
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -122,7 +122,7 @@ class Game:
 
         state.passes_in_row = 0
         if action.kind is ActionKind.PLAY_LAND:
-            self._play_land(pid, action)
+            self._run(self._play_land(pid, action))
         elif action.kind is ActionKind.CAST:
             self._run(self._cast(pid, action))
         elif action.kind is ActionKind.SUSPEND:
@@ -251,7 +251,7 @@ class Game:
     # priority actions
     # ------------------------------------------------------------------
 
-    def _play_land(self, pid: int, action: Action) -> None:
+    def _play_land(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
         state = self.state
         oid = action.source
         card = state.card(oid)
@@ -268,6 +268,12 @@ class Game:
         if action.second_face:
             state.objects[oid].showing_second_face = True
             card = state.card_of(state.objects[oid])
+        # "As this land enters, you may pay 3 life. If you don't, it enters
+        # tapped." Asked before the move for the reason the `second_face` write
+        # above is done before it: the enters replacements are applied inside
+        # `move_object`, which cannot stop to ask, and nobody receives priority
+        # between this question and the arrival.
+        yield from offer_enters_costs(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,
@@ -379,6 +385,14 @@ class Game:
             # for free and then billed its printed cost, which `pay` refused
             # with no mana on the board: the cast simply did nothing.
             cost = ManaCost.parse("")
+        elif state.objects[oid].playable_free and state.objects[oid].playable_live(state.turn):
+            # Plot: "you may cast it as a sorcery on a later turn **without
+            # paying its mana cost**". Read off the same flag on the same card
+            # that `_cast_variant` priced the line with -- the argument the
+            # `playable_any_type` block below makes, and the bug the
+            # `from_library_top` branch above records: a line offered free and
+            # billed the printed cost is a cast that silently does nothing.
+            cost = ManaCost.parse("")
         else:
             cost = card.mana_cost
 
@@ -391,7 +405,7 @@ class Game:
         cost, phyrexian_life = cost.paying_phyrexian(action.phyrexian)
 
         granted = state.objects[oid]
-        if granted.playable_any_type and granted.playable_turn == state.turn:
+        if granted.playable_any_type and granted.playable_live(state.turn):
             # The paying half of the relaxation `_cast_variant` priced the line
             # with. Both sides read the same flag off the same card, so a line
             # that was offered is a line that can be paid.
@@ -424,6 +438,11 @@ class Game:
         # once its mode has been taken. Appended to the action's own refs, which
         # `CardDef.specs_for_modes` re-derives the spec list for on resolution.
         mode_refs = yield from self._ask_mode_targets(pid, card, oid, modes)
+        # 601.2c again, for the one target size a spell can only know now:
+        # "deals 5 damage to each of **X** targets". Declared after `_ask_x`
+        # above because 601.2b announces X first, which is the whole reason this
+        # is the one computed count a spell's targets may carry.
+        x_refs = yield from self._ask_x_targets(pid, card, oid, x)
 
         ok = yield from pay(
             state,
@@ -571,7 +590,7 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
-        if obj.playable_group is not None and obj.playable_turn == state.turn:
+        if obj.playable_group is not None and obj.playable_live(state.turn):
             # "…you may cast **a spell** from among those cards." Billed to the
             # permanent that granted the permission, through the same ledger
             # slot a `cast_from_graveyard` permission uses, so legality's cap
@@ -588,9 +607,11 @@ class Game:
                 from .characteristics import graveyard_cast_permissions
 
                 for source_obj, static in graveyard_cast_permissions(state, pid):
-                    if source_obj.oid == granting.oid and static.get("enters_tapped"):
+                    if source_obj.oid != granting.oid:
+                        continue
+                    if static.get("enters_tapped"):
                         enters_tapped = True
-                        break
+
 
         if action.prepared:
             # A **copy**, and the permanent stays on the battlefield -- the one
@@ -621,7 +642,7 @@ class Game:
             state,
             oid,
             pid,
-            tuple(action.targets) + mode_refs,
+            tuple(action.targets) + x_refs + mode_refs,
             x=x,
             kicked=action.kicked,
             graveyard_permission=permission,
@@ -636,6 +657,7 @@ class Game:
             evoked=action.evoked,
             flashback=action.flashback,
             overloaded=action.overloaded,
+            cost_option=action.additional_choice,
             spliced=spliced,
             face_down=action.face_down,
             second_face=action.second_face,
@@ -1029,6 +1051,55 @@ class Game:
                 out.extend(chosen)
         return tuple(out)
 
+    def _ask_x_targets(
+        self, pid: int, card, oid: int, x: int
+    ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
+        """Declare an X-sized target spec's refs -- "each of X targets".
+
+        The sibling of :meth:`_ask_mode_targets`, and it exists for the same
+        reason and in the same window: 601.2 chooses modes and announces X
+        (601.2b), *then* declares targets (601.2c), and both of those are
+        choices legality could not have made on the player's behalf.
+
+        Crackle with Power is the witness. Legality enumerates a spell's targets
+        before the player has picked X, so it sizes the spec at zero and offers
+        one line -- the gate the `x_count` check beside it already is for the
+        cost. The refs are chosen here, where X is a number.
+
+        Returns ``()`` for every card without such a spec, which is all but one
+        of them.
+
+        No `ask_targets` when X is 0: "each of zero targets" is a spell that
+        targets nothing, which is legal and is not a question.
+        """
+        specs = [spec for spec in (card.targets or ()) if spec.x_sized]
+        if not specs:
+            return ()
+        from .effects.context import EffectContext, ask_targets
+        from .targeting import candidates, describe_ref
+
+        state = self.state
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+        out: list[TargetRef] = []
+        for spec in specs:
+            if x <= 0:
+                continue
+            options = [
+                (describe_ref(state, ref), ref) for ref in candidates(state, pid, spec, oid)
+            ]
+            # Fewer legal targets than X is not an error and not a smaller X:
+            # 601.2c requires as many *different* targets as the spell asks for,
+            # and a spell that cannot choose them is simply not castable that
+            # way. Legality cannot have caught this -- it did not know X -- so
+            # the honest answer here is to take what there is, which `ask_targets`
+            # does with a ceiling it can meet.
+            want = min(x, len(options))
+            chosen = yield from ask_targets(
+                ctx, f"Targets for {card.name}", options, want, want, pid
+            )
+            out.extend(chosen)
+        return tuple(out)
+
     def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
         """Tap a permanent for mana by hand.
 
@@ -1047,6 +1118,18 @@ class Game:
         oid = action.source
         card = state.card(oid)
         ability = abilities_of(state, oid)[action.ability_index]
+        # "Activate only during your turn and **only once each turn**" -- Vivi
+        # Ornitier. Counted here for the reason `_activate` counts it, and in
+        # the same place relative to the cost: this is the moment an activation
+        # happens, and one that strands mid-payment still spends the allowance.
+        #
+        # It was missing, and only a mana ability could notice: `legality`
+        # checks `once_each_turn` against this ledger for every activated
+        # ability alike, but nothing on this path ever wrote to it -- so a
+        # printed per-turn limit on a by-hand mana ability was inert. Vivi taps
+        # for his own power, so the card was an arbitrary amount of mana per
+        # turn rather than one activation's worth.
+        state.turn_ledger.activated(oid, action.ability_index)
 
         # Fired rather than emitted, and tagged, so `TriggerSpec.mana_ability`
         # is a live restriction rather than a guard that never runs: a card

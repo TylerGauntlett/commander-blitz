@@ -1,0 +1,54 @@
+{
+  "card": {
+    "id": "expressive_iteration",
+    "name": "Expressive Iteration",
+    "oracle_text": "Look at the top three cards of your library. Put one of them into your hand, put one of them on the bottom of your library, and exile one of them. You may play the exiled card this turn.",
+    "mana_cost": "{U}{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "R",
+      "U"
+    ],
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "look_at_top",
+        "amount": {
+          "const": 3
+        },
+        "destinations": [
+          {
+            "to": "hand",
+            "count": 1
+          },
+          {
+            "to": "library_bottom",
+            "count": 1
+          },
+          {
+            "to": "exile",
+            "count": 1,
+            "playable_this_turn": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

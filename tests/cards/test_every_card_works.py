@@ -20,10 +20,12 @@ from automtg.cards.authoring.verify import check_expectation, swap_in_tribal_bod
 from automtg.cards.registry import CardRegistry
 from automtg.engine.actions import PendingDecision
 from automtg.engine.carddef import CardDef
+from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, DecisionKind, Zone
+from automtg.engine.events import EventType
 from automtg.engine.game import Game
 from automtg.engine.objects import PLUS_ONE
-from automtg.engine.primitives import lose_life
+from automtg.engine.primitives import add_counters, lose_life
 from automtg.engine.stack import push_spell
 from automtg.engine.state import new_object
 from tests.conftest import GameBuilder
@@ -137,12 +139,19 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
 DUMMY_SPELLS = ("t_bear", "t_plain_instant", "t_x_spell")
 
 
-def add_dummy_spell(game: Game) -> None:
-    """Put spells on the stack so counterspells have something to target."""
+def add_dummy_spell(game: Game, seat: int = 1) -> None:
+    """Put spells on ``seat``'s side of the stack for a spell target to find.
+
+    The seat defaults to the opponent, which is whose spell every counterspell
+    in the pool wants. Kitsa is the first card to want the other one -- "copy
+    target instant or sorcery spell **you control**" -- and with only the
+    opponent's dummies up she reported as unusable on a board that simply held
+    nobody's spell she was allowed to point at.
+    """
     for card_id in DUMMY_SPELLS:
-        obj = new_object(game.state, card_id, owner=1, zone=Zone.HAND)
-        game.state.players[1].hand.append(obj.oid)
-        push_spell(game.state, obj.oid, 1)
+        obj = new_object(game.state, card_id, owner=seat, zone=Zone.HAND)
+        game.state.players[seat].hand.append(obj.oid)
+        push_spell(game.state, obj.oid, seat)
 
 
 def drive(game: Game, limit: int = 60) -> None:
@@ -296,10 +305,11 @@ class TestActivatedAbilities:
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _pay_the_counters(game, oid, ability)
+            _afford_the_life(game, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
-            _satisfy_the_activation_condition(game, registry, ability)
+            _satisfy_the_activation_condition(game, registry, ability, oid)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
@@ -336,6 +346,34 @@ def _home_zone(ability) -> Zone:
     """
     zones = ability.active_zones or (Zone.BATTLEFIELD,)
     return Zone.BATTLEFIELD if Zone.BATTLEFIELD in zones else zones[0]
+
+
+def _afford_the_life(game: Game, ability) -> None:
+    """Raise the life total to something the ability's life cost can be paid from.
+
+    Same argument as the mana base and the counters above: "could not pay for
+    it" must never be read as "does not work". Aetherflux Reservoir prints
+    "Pay 50 life", 118.4 forbids paying life you do not have, and the sandbox
+    seats start at 40 -- so the one ability the card is played for reported as
+    unusable on a board where it was merely unaffordable.
+
+    Deliberately additive rather than a flat large number: the cost is paid for
+    real a moment later, and a seat left at exactly the cost would be dead on
+    the spot from the resulting zero.
+    """
+    cost = ability.cost
+    if cost is None:
+        return
+    needed = getattr(cost, "pay_life", None)
+    if not needed:
+        return
+    # `pay_life` is a value expression as often as it is a number -- War Room's
+    # is `{"commander_color_identity": "you"}`. Evaluating it would need a
+    # context this harness has not built yet, and the answer is only ever used
+    # as a floor, so an unevaluated one takes a headroom that no printed card
+    # exceeds.
+    floor = int(needed) + 10 if isinstance(needed, int) else 60
+    game.state.players[0].life = max(game.state.players[0].life, floor)
 
 
 def _pay_the_counters(game: Game, oid: int, ability) -> None:
@@ -474,7 +512,7 @@ def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
         game.state.battlefield.append(fodder.oid)
 
 
-def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
+def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -> None:
     """Put out whatever an "activate only if..." clause is counting.
 
     Sixth of the same family, and added for the same reason as the other five:
@@ -485,10 +523,12 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
     Deliberately dumb, exactly as `_provide_the_target` is. It reads three shapes
     -- ``{"cmp": ">=", "left": {"count": <selector>}, "right": {"const": n}}``,
     which it satisfies by adding permanents; the same comparison over
-    ``life_lost_this_turn``, which it satisfies by taking the life; and a
-    per-player ``max_count_of``, which it satisfies by stocking one opponent's
-    board. A helper clever enough to solve an arbitrary condition would be a
-    second implementation of `evaluate` living in the tests, and the first thing
+    ``life_lost_this_turn``, which it satisfies by taking the life; a per-player
+    ``max_count_of``, which it satisfies by stocking one opponent's board;
+    ``power_of`` the source itself, which it satisfies with +1/+1 counters; and
+    ``spells_cast_this_turn``, which it satisfies by emitting the cast events the
+    ledger folds. A helper clever enough to solve an arbitrary condition would be
+    a second implementation of `evaluate` living in the tests, and the first thing
     it would hide is a bug in the first.
     """
     condition = getattr(ability, "activation_condition", None)
@@ -514,6 +554,38 @@ def _satisfy_the_activation_condition(game: Game, registry, ability) -> None:
         pids = [p.pid for p in game.state.players if p.pid != 0] if "opponent" in whose else [0]
         for pid in pids:
             lose_life(game.state, pid, int(right["const"]))
+        return
+
+    # "Activate only if Kitsa's power is 3 or greater." A 1/3 printed under a
+    # condition about its own power reports as broken on a board that simply
+    # never grew it. Counters rather than a pump, because a counter is a
+    # pipeline input the characteristics layer reads the same way the real card
+    # would have grown -- and `chars` is what the condition asks, so a card
+    # naming the wrong characteristic still fails.
+    if "power_of" in left:
+        want = int(right["const"])
+        for _ in range(max(0, want - (chars(game.state, oid).power or 0))):
+            add_counters(game.state, oid, "+1/+1", 1)
+        game.state.bump_chars()
+        return
+
+    # "…only if you've cast three or more instant and/or sorcery spells this
+    # turn" -- Urabrask. Ninth of the family, and the third that satisfies a
+    # clause by *doing* the thing rather than by arranging the board.
+    #
+    # `state.emit` rather than a write to `TurnLedger`: `_tally` folds the event
+    # into the ledger and `emit` records without scanning the trigger bus, so
+    # this writes the tally through exactly the code a real cast writes it
+    # through -- a card naming the wrong tally still fails -- while not
+    # cascading a sandbox full of cast triggers off a spell nobody cast.
+    if "spells_cast_this_turn" in left:
+        spec = left["spells_cast_this_turn"]
+        filt = spec.get("filter") if isinstance(spec, dict) else None
+        match = _fodder_for(registry, {"types": ["Instant"]} if filt else {})
+        if match is None:
+            return
+        for _ in range(int(right["const"])):
+            game.state.emit(EventType.SPELL_CAST, player=0, card=match.id)
         return
 
     if "count" not in left:
@@ -679,7 +751,13 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # creature uncastable (117.1a): this test puts the card onto the
         # battlefield directly and only ever activates it, which is
         # instant-speed.
-        add_dummy_spell(game)
+        # One per seat the specs actually ask for, rather than both always: a
+        # second stack item changes what else is legal, and every card in the
+        # pool but this one wants the opponent's.
+        for spec in ability.targets:
+            if spec.kind != "spell":
+                continue
+            add_dummy_spell(game, 0 if spec.selector.get("controller") == "you" else 1)
         return
     for spec in ability.targets:
         match = _target_fodder(registry, spec)

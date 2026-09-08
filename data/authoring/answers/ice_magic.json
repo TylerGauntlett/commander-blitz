@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "ice_magic",
+    "name": "Ice Magic",
+    "oracle_text": "Tiered (Choose one additional cost.)\n• Blizzard — {0} — Return target creature to its owner's hand.\n• Blizzara — {2} — Target creature's owner puts it on their choice of the top or bottom of their library.\n• Blizzaga — {5}{U} — Target creature's owner shuffles it into their library.",
+    "mana_cost": "{1}{U}",
+    "types": ["Instant"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "additional_cost_options": [
+      {"mana": "{0}"},
+      {"mana": "{2}"},
+      {"mana": "{5}{U}"}
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {"zone": "battlefield", "types": ["Creature"]}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {"cost_option": 0},
+        "then": [
+          {"op": "return_to_hand", "objects": {"target": "t1"}}
+        ]
+      },
+      {
+        "op": "if",
+        "condition": {"cost_option": 1},
+        "then": [
+          {"op": "put_on_top", "objects": {"target": "t1"}, "owner_chooses": true}
+        ]
+      },
+      {
+        "op": "if",
+        "condition": {"cost_option": 2},
+        "then": [
+          {"op": "snapshot", "target": "t1", "as": "tucked"},
+          {"op": "put_on_top", "objects": {"target": "t1"}},
+          {"op": "shuffle", "player": {"owner_of": "tucked"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 31,
+    "hand_size": {"0": 2},
+    "opponent_battlefield_count": 6
+  }
+}

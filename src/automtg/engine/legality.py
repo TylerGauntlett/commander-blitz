@@ -337,7 +337,7 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     # Florian's land half silently does nothing. Filtered per object below,
     # because only the flagged cards in exile are offered.
     if any(
-        state.objects[oid].playable_by == pid and state.objects[oid].playable_turn == state.turn
+        state.objects[oid].playable_by == pid and state.objects[oid].playable_live(state.turn)
         for oid in state.players[pid].exile
     ):
         zones.append(
@@ -345,7 +345,7 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
                 oid
                 for oid in state.players[pid].exile
                 if state.objects[oid].playable_by == pid
-                and state.objects[oid].playable_turn == state.turn
+                and state.objects[oid].playable_live(state.turn)
             ]
         )
     if player_plays_lands_from_library_top(state, pid) and state.players[pid].library:

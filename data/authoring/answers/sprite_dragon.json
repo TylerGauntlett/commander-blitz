@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "sprite_dragon",
+    "name": "Sprite Dragon",
+    "oracle_text": "Flying, haste\nWhenever you cast a noncreature spell, put a +1/+1 counter on this creature.",
+    "mana_cost": "{U}{R}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Faerie",
+      "Dragon"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+      "R",
+      "U"
+    ],
+    "color_identity": [
+      "R",
+      "U"
+    ],
+    "keywords": [
+      "flying",
+      "haste"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a noncreature spell, put a +1/+1 counter on this creature.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
