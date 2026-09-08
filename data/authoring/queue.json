@@ -156352,12 +156352,12 @@
     },
     "Lier, Disciple of the Drowned": {
       "edhrec_rank": 2217,
-      "gate": "template",
+      "gate": null,
       "name": "Lier, Disciple of the Drowned",
-      "reason": "no template for: Spells can't be countered",
+      "reason": "",
       "scryfall_id": "faead665-3070-4e29-9bc5-0d87708e600f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liesa, Forgotten Archangel": {
