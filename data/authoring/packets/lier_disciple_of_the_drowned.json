@@ -1141,6 +1141,7 @@
       "life_lost_this_turn",
       "life_of",
       "loop_value",
+      "mana_spent_of",
       "mana_symbols",
       "mana_value_of",
       "max",

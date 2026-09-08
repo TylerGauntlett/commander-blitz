@@ -1320,6 +1320,10 @@ def pay_mana(
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
+        # Accumulated rather than assigned: a cast pays in more than one call
+        # when it has an additional cost, and "how much mana was spent to cast
+        # it" is all of them.
+        obj.mana_spent += req.total
     state.emit(
         EventType.MANA_SPENT,
         player=pid,

@@ -121,6 +121,11 @@ VALUE_KEYS = frozenset(
         # `cards_to_graveyard_this_turn` is a turn-wide tally over every
         # graveyard that also counts what was there already.
         "greatest_discarded_by_a_player",
+        # "…if at least four mana was spent to cast it" -- The Emperor of
+        # Palamecia. What was actually PAID, which `mana_value_of` is not: a
+        # cost reduction, an alternative cost, a free cast and an additional
+        # cost each move one without moving the other.
+        "mana_spent_of",
         "counters_on",
         # "…if it had no -1/-1 counters on it" -- persist and undying. Not
         # `counters_on`, which reads a live object: this asks about a creature
@@ -338,6 +343,8 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         return _characteristic(ctx, expr["toughness_of"], "toughness")
     if "mana_value_of" in expr:
         return _characteristic(ctx, expr["mana_value_of"], "mana_value")
+    if "mana_spent_of" in expr:
+        return _characteristic(ctx, expr["mana_spent_of"], "mana_spent")
     if "life_of" in expr:
         pids = _players(ctx, expr["life_of"])
         return sum(ctx.state.players[p].life for p in pids)
@@ -617,6 +624,8 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
     obj = ctx.state.objects.get(oid)
     if obj is None:
         return 0
+    if which == "mana_spent":
+        return obj.mana_spent
     if which == "mana_value":
         # "…except it's a white Zombie Angel with **no mana cost**." An embalm
         # token's def_id is the original card's, so without this it would still

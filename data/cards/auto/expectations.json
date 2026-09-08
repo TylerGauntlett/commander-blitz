@@ -9266,6 +9266,14 @@
   "windbrisk_heights": {
     "zone": "battlefield"
   },
+  "windfall": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "windreader_sphinx": {
     "battlefield_count": 33,
     "zone": "battlefield"

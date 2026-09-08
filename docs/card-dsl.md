@@ -1698,6 +1698,33 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
+### `mana_spent_of` — what was paid, not what is printed
+
+"…if **at least four mana was spent** to cast it" — The Emperor of Palamecia.
+
+```jsonc
+{ "cmp": ">=", "left": { "mana_spent_of": { "binding": "subject" } },
+  "right": { "const": 4 } }
+```
+
+`pay_mana` records the total on the spell object beside `colors_spent` and
+`mana_sources_spent`, for the reason those two live there: it is knowable
+exactly once, while the payment is happening. It **accumulates**, because a cast
+with an additional cost pays in more than one call.
+
+Every near miss answers a different question, and they only diverge when
+something interesting has happened — which is exactly when these cards are
+played:
+
+| leaf | what it gives |
+|---|---|
+| `mana_value_of` | the **printed** cost — unmoved by reductions, alternative costs, free casts |
+| `additional_paid` | only the overpayment *above* the mana cost — 0 for a plainly qualifying {3}{R} |
+| `colors_of_mana_spent`, `mana_symbols` | colour and printed symbols, not an amount |
+
+A {3}{R} spell cast under a cost reducer is mana value 4 and three mana spent,
+and that case is what the tests pin.
+
 ### Discarding a whole hand, and reading the greatest that went
 
 Windfall: "Each player discards their hand, then draws cards equal to the

@@ -90,6 +90,15 @@ class GameObject:
     #: *generic* part too, which is what both keywords say -- a Sunburst artifact
     #: cast for `{4}` off five different lands enters with five counters.
     colors_spent: frozenset[str] = frozenset()
+    #: How much mana was actually **spent** casting this spell, written by
+    #: `pay_mana` beside `colors_spent` and at the same instant, for the same
+    #: reason: it is knowable exactly once, while the payment is happening.
+    #:
+    #: "…if **at least four mana was spent** to cast it" -- The Emperor of
+    #: Palamecia. Not the printed mana value: a cost reduction, an alternative
+    #: cost, a free cast and an additional cost all move what was paid without
+    #: moving what is printed, and the card asks about the payment.
+    mana_spent: int = 0
     #: "If a creature dealt damage this way would die this turn, exile it
     #: instead." A zone name, replacing the graveyard as this permanent's
     #: destination when it would die. Per-object and turn-scoped -- cleared at
