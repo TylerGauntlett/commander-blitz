@@ -313482,12 +313482,12 @@
     },
     "Windfall": {
       "edhrec_rank": 154,
-      "gate": "template",
+      "gate": null,
       "name": "Windfall",
-      "reason": "no template for: Each player discards their hand, then draws cards equal to the greatest number of cards a ",
+      "reason": "",
       "scryfall_id": "3fd291fa-43b8-4fa0-987d-65a022045a64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Windgrace Acolyte": {
