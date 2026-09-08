@@ -414,6 +414,7 @@ def fire(
 def collect(state: GameState, event: GameEvent) -> None:
     """Scan for triggered abilities matching ``event`` and queue them."""
     doubled = _land_trigger_doublers(state, event)
+    doublers = _trigger_doublers(state, event)
     for obj, ability in _candidate_abilities(state, event):
         spec = ability.trigger
         if spec is None:
@@ -427,6 +428,16 @@ def collect(state: GameState, event: GameEvent) -> None:
             # separate abilities on the stack and anything in between -- another
             # landfall trigger, a response -- goes between them.
             _queue(state, obj, ability, event)
+        for source_obj, static in doublers:
+            # `affects` asks about the permanent whose ability just triggered,
+            # which is the axis Harmonic Prodigy scopes on ("a Shaman or another
+            # Wizard you control"); the *cause* was already matched once, above
+            # the loop, because it is a fact about the event and not about this
+            # ability. Two doublers stack, and so does a doubler with Ancient
+            # Greenwarden -- each queues one more copy, which is what "triggers
+            # an additional time" says however many say it.
+            if _static_matches(state, obj, source_obj, static.get("affects")):
+                _queue(state, obj, ability, event)
     _arm_delayed(state, event)
 
 
@@ -595,6 +606,80 @@ def run_armed_delays(state: GameState) -> Generator[Any, list[int], None]:
             source_name=delayed.description,
         )
         yield from execute(ctx, list(delayed.effects))
+
+
+def _trigger_doublers(state: GameState, event: GameEvent):
+    """Every ``double_triggers`` static whose *cause* clause this event satisfies.
+
+    Two shipped cards want this and they scope it on different axes, which is
+    why the effect has two filters rather than one:
+
+    - **Harmonic Prodigy** -- "if a triggered ability of a Shaman or another
+      Wizard you control triggers". The scope is the *permanent whose ability
+      fired*, and any event at all counts. That is ``affects``, applied per
+      ability in `collect`.
+    - **Veyran** -- "if you casting or copying an instant or sorcery spell
+      causes a triggered ability of a permanent you control to trigger". The
+      scope is the **cause**: which event, whose, and what it was. That is
+      ``cause_events`` / ``cause_controller`` / ``cause_filter``, matched here
+      once for the whole event rather than per ability.
+
+    Either filter omitted means "any", so a card that says only one of the two
+    writes only one of them.
+
+    `double_land_triggers` stays where it is rather than being folded into this:
+    it is player-wide with no `affects` at all, and it reads its "as long as"
+    gate through `players_doubling_land_triggers`, which is the single place
+    every player-wide static is gated.
+    """
+    from .characteristics import _battlefield_statics
+
+    out = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "double_triggers":
+            continue
+        if not _cause_matches(state, source_obj, static, event):
+            continue
+        out.append((source_obj, static))
+    return out
+
+
+def _cause_matches(
+    state: GameState, source_obj: GameObject, static: Mapping[str, Any], event: GameEvent
+) -> bool:
+    """Does ``event`` count as the cause this static names?"""
+    names = static.get("cause_events")
+    if names is None:
+        return True
+    dsl = next((n for n in names if TRIGGER_EVENTS.get(n) == event.type), None)
+    if dsl is None:
+        return False
+
+    subject = _subject_oid(dsl, event)
+    who = static.get("cause_controller")
+    if who is not None:
+        actor = _actor(state, dsl, event, subject)
+        if who == "you" and actor != source_obj.controller:
+            return False
+        if who == "opponent" and (actor is None or actor == source_obj.controller):
+            return False
+
+    filt = static.get("cause_filter")
+    if filt:
+        if subject is None:
+            return False
+        if not matches_card_filter(state, subject, filt, source_obj):
+            return False
+    return True
+
+
+def _static_matches(
+    state: GameState, obj: GameObject, source_obj: GameObject, affects: Any
+) -> bool:
+    """`characteristics._matches`, imported late for the reason the rest are."""
+    from .characteristics import _matches
+
+    return _matches(state, obj, source_obj, affects)
 
 
 def _land_trigger_doublers(state: GameState, event: GameEvent) -> frozenset[int]:

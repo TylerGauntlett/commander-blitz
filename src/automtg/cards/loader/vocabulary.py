@@ -149,6 +149,10 @@ STATIC_EFFECTS = frozenset(
         # it is read by `triggers.collect` rather than by the characteristics
         # pipeline, and there is no object for it to attach to.
         "double_land_triggers",
+        # "That ability triggers an additional time" scoped to a permanent
+        # (Harmonic Prodigy) or to a cause (Veyran). Distinct from
+        # `double_land_triggers`, which is player-wide and land-only.
+        "double_triggers",
         # Vorinclex's two halves.  Both are read at the mana choke point rather
         # than as triggers, because tapping for mana happens inside payment
         # where nothing can go on the stack.

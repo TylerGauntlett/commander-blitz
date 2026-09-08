@@ -1698,6 +1698,48 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
+### `double_triggers`, and its two axes
+
+"That ability triggers an additional time." Two shipped cards print the same
+effect and disagree completely about what it applies to, which is why the static
+carries two independent filters:
+
+| | scope | written as |
+|---|---|---|
+| **Harmonic Prodigy** | the permanent whose ability fired — "a Shaman or another Wizard you control" | `affects` |
+| **Veyran** | the **cause** — "if *you casting or copying an instant or sorcery spell*" | `cause_events` · `cause_controller` · `cause_filter` |
+
+```jsonc
+{ "kind": "static", "effect": "double_triggers",
+  "affects": { "controller": "you" },
+  "cause_events": ["spell_cast", "spell_copied"],
+  "cause_controller": "you",
+  "cause_filter": { "any_types": ["Instant", "Sorcery"] } }
+```
+
+Either half omitted means "any", so a card writes only what it prints. Harmonic
+Prodigy has no cause clause and therefore doubles an upkeep trigger as readily
+as a cast one; Veyran has no subtype clause and doubles a Goblin's.
+
+`affects` is matched per ability inside `collect`, because it asks about the
+permanent that just triggered. The cause is matched **once for the whole event**,
+above that loop, because it is a fact about what happened rather than about who
+answered.
+
+Doublers stack additively: each queues **one** more copy of the ability that
+fired, so a trigger under both cards happens three times, not four. "Triggers an
+additional time" twice over is not "twice, twice".
+
+`double_land_triggers` stays separate. It is player-wide with no `affects` at
+all and reads its "as long as" gate through `players_doubling_land_triggers`,
+which is the one place every player-wide static is gated.
+
+One asymmetry worth knowing, since it is in the printed card and not in the
+engine: Harmonic Prodigy says "a Shaman **or another** Wizard", and
+`exclude_self` applies to the whole filter rather than to the Wizard half. That
+is coincidentally exact for this printing — Harmonic Prodigy is a Human Wizard,
+never a Shaman — and would be wrong for a Shaman that printed the same line.
+
 ### `spell_copied`, and why magecraft is two abilities
 
 "Magecraft — Whenever you cast **or copy** an instant or sorcery spell…" —

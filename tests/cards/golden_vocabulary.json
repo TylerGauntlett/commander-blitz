@@ -71,6 +71,7 @@
    "cant_attack_you",
    "cant_block",
    "cant_block_alone",
+   "double_triggers",
    "grant_keyword",
    "prevent_damage",
    "protection",
@@ -196,6 +197,7 @@
    "return_to_hand"
   ],
   "SPELL_FILTER_KEYS": [
+   "any_types",
    "colors",
    "controller",
    "keywords",
@@ -228,6 +230,7 @@
    ">="
   ],
   "STATIC_COUNT_FILTER_KEYS": [
+   "any_types",
    "attached",
    "attacking",
    "blocking",
@@ -273,6 +276,7 @@
    "cast_from_library_top",
    "double_land_mana",
    "double_land_triggers",
+   "double_triggers",
    "extra_land_drops",
    "freeze_opponent_lands",
    "grant_ability",
@@ -296,6 +300,7 @@
    "ward"
   ],
   "STATIC_FILTER_KEYS": [
+   "any_types",
    "attached",
    "attacking",
    "blocking",
@@ -339,6 +344,7 @@
    "permanents_entered_this_turn"
   ],
   "STATIC_ZONE_FILTER_KEYS": [
+   "any_types",
    "colors",
    "controller",
    "keywords",
@@ -449,6 +455,7 @@
   "cant_sacrifice",
   "cascade",
   "cast_copy",
+  "cast_from_hand",
   "change_text",
   "choose_color",
   "choose_mode",

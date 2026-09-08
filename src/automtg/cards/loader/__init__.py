@@ -1610,6 +1610,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'blockers'/'require_all' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
         )
+    if model.effect == "double_triggers":
+        # The cause clause is the half a card may omit, and omitting it means
+        # "any cause" -- so a typo in an event name must not read as one.
+        from automtg.engine.triggers import TRIGGER_EVENTS
+
+        for name in model.cause_events or ():
+            if name not in TRIGGER_EVENTS:
+                raise DslError(
+                    f"{where}.cause_events: unknown trigger event {name!r} "
+                    f"(implemented: {sorted(TRIGGER_EVENTS)})"
+                )
+        if model.cause_filter is not None:
+            unknown = set(model.cause_filter) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.cause_filter: unknown keys {sorted(unknown)}; a cause "
+                    f"is matched against the printed face of the event's subject"
+                )
+    elif model.cause_events or model.cause_controller or model.cause_filter:
+        raise DslError(
+            f"{where}: a cause clause only means something to 'double_triggers', "
+            f"not to {model.effect!r}"
+        )
+
     if model.effect in ("cant_attack_alone", "cant_block_alone") and model.affects is None:
         # `characteristics._matches` reads a missing filter as "matches
         # nothing", so an "…alone" static without one is a printed restriction
@@ -1868,6 +1892,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["loss_multiplier"] = model.loss_multiplier
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
+    # `double_triggers`' cause clause. Copied explicitly like every other field
+    # here: this dict is a whitelist, not a dump of the model, so a field the
+    # schema accepts and this loop forgets is silently dropped -- the static
+    # loads, compiles and applies with the clause simply absent. Veyran doubled
+    # an upkeep trigger for exactly that reason before these three lines.
+    if model.cause_events is not None:
+        static["cause_events"] = list(model.cause_events)
+    if model.cause_controller is not None:
+        static["cause_controller"] = model.cause_controller
+    if model.cause_filter is not None:
+        static["cause_filter"] = dict(model.cause_filter)
     for field_name in ("power", "toughness", "amount"):
         value = getattr(model, field_name)
         if value is not None:
