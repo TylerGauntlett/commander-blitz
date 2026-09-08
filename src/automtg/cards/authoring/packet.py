@@ -299,6 +299,44 @@ def _walk_effects(node: object):
             yield from _walk_effects(item)
 
 
+
+def _required_keys() -> dict:
+    """Which fields each nested model REFUSES to be built without.
+
+    Derived, because a name in `ability_keys` says a field exists and says
+    nothing about whether omitting it is fatal. Four gate-1 rejections in one
+    run were exactly that reading: three targets written with no `id`/`kind`,
+    and Arcane Bombardment's triggered ability with no `kind` -- every one of
+    them a worker that had the right key list and no way to see the asterisk.
+    """
+    from ..schema import AbilityModel, CostModel, TargetModel, TriggerModel
+
+    models = {
+        "ability": AbilityModel,
+        "cost": CostModel,
+        "target": TargetModel,
+        "trigger": TriggerModel,
+    }
+    return {
+        label: sorted(n for n, f in model.model_fields.items() if f.is_required())
+        for label, model in models.items()
+    }
+
+
+def _literal_options(model, field: str) -> list[str]:
+    """The values a Literal-typed field accepts, or [] if it is not one.
+
+    `kind` is a closed vocabulary of five and the reference named none of them,
+    so the only way to learn the spelling was to find a shipped card using it.
+    """
+    import typing
+
+    annotation = model.model_fields[field].annotation
+    if typing.get_origin(annotation) is typing.Literal:
+        return [str(v) for v in typing.get_args(annotation)]
+    return []
+
+
 def reference() -> dict:
     """The DSL, small enough to travel with every packet."""
     from automtg.engine.effects import known_ops
@@ -332,6 +370,10 @@ def reference() -> dict:
         # `sorcery-speed-activation` capability because a worker looked in
         # `cost_keys` -- the only list it had -- and correctly did not find it.
         "ability_keys": sorted(AbilityModel.model_fields),
+        # The five spellings of `kind`, which is required and was named
+        # nowhere: a worker could only learn it by finding a shipped card that
+        # used it.
+        "ability_kinds": _literal_options(AbilityModel, "kind"),
         # What a `trigger` object may carry, beside `event`. Derived from the
         # model, as `cost_keys` and `ability_keys` are, and for the reason those
         # two exist: Arcane Bombardment's "whenever you cast your FIRST instant
@@ -343,6 +385,9 @@ def reference() -> dict:
         # And what a target spec may carry. `id` and `kind` are required, and
         # three gate-1 rejections in this run were a worker writing neither.
         "target_keys": sorted(TargetModel.model_fields),
+        # Which of all the above are not optional. See _required_keys: a key
+        # list says a field exists, never that leaving it out is fatal.
+        "required_keys": _required_keys(),
         "keywords": sorted(k.value for k in Keyword),
         "types": sorted(t.value for t in CardType),
         "supertypes": sorted(s.value for s in Supertype),
@@ -432,8 +477,19 @@ def reference() -> dict:
             " second card each turn\". A trigger's FILTER keys go inside"
             " `filter`, never on the trigger itself.",
             "`target_keys` is what a card-level or ability `targets` entry may"
-            " carry. `id` and `kind` are both REQUIRED; a spec missing either"
-            " fails schema validation before anything else is looked at.",
+            " carry, and `ability_kinds` is the closed vocabulary of an"
+            " ability's `kind`.",
+            "A key being listed does not make it legal everywhere. `id` on an"
+            " ability is accepted only on a **reflexive** one and the compiler"
+            " refuses it on any other -- it is in `ability_keys` because it is"
+            " a real field, and writing it on a triggered ability is a gate-2"
+            " rejection.",
+            "`required_keys` is the subset of each of those lists that is NOT"
+            " optional -- every ability needs a `kind`, every target an `id`"
+            " and a `kind`, every trigger an `event`. A spec missing one fails"
+            " schema validation before anything else about the card is looked"
+            " at, so check this list against what you wrote before filing"
+            " anything.",
             "`card_level_rider_keys` is what a card says about ITSELF that is"
             " neither a price nor a face -- `exiles_itself` for \"Exile <this"
             " card>.\" instead of the graveyard, `uncounterable` for \"This"
