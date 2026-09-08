@@ -100,6 +100,36 @@ CARD_LEVEL_FACE_KEYS = (
 )
 
 
+#: Card-level **riders**: things a card says about itself that are neither a
+#: price nor a second face.
+#:
+#: The third list for the third time. `CARD_LEVEL_COST_KEYS` was added because a
+#: printed "Bestow {1}{G}" matched nothing a worker had been shown;
+#: `CARD_LEVEL_FACE_KEYS` because a printed second face did; and this because
+#: "Exile Mizzix's Mastery." did. Each time the mechanic already shipped and the
+#: gap record was written in good faith against a reference that did not name
+#: it.
+#:
+#: Curated, and the test is the same one the other two lists pass: would a
+#: worker reading a printed sentence go looking for this? A `melds_with` or an
+#: `evoke_label` is bookkeeping the pipeline fills in; `exiles_itself` and
+#: `uncounterable` are sentences on the card.
+CARD_LEVEL_RIDER_KEYS = (
+    "exiles_itself",  # "Exile <this card>." -- instead of the graveyard, on resolution
+    "uncounterable",  # "This spell can't be countered."
+    "rebound",  # exiled as it resolves, cast free from exile next upkeep
+    "split_second",  # "…players can't cast spells or activate abilities"
+    "epic",  # "…copy it at the beginning of each of your upkeeps. You can't cast spells"
+    "miracle",  # the price of casting it as the first card drawn this turn
+    "graveyard_cast",  # castable from a graveyard on its own say-so
+    "graveyard_cost",  # what that costs
+    "graveyard_cast_transformed",  # disturb: it arrives on the back face
+    "splice_onto",  # which spells this may be spliced onto
+    "melds_with",  # the other half of a meld pair
+    "melds_into",  # what the pair becomes
+)
+
+
 def packets_dir() -> Path:
     return data_dir() / "authoring" / "packets"
 
@@ -362,6 +392,11 @@ def reference() -> dict:
         # this, every double-faced, split and Adventure card becomes a gap
         # record for a mechanic seven shipped cards already use.
         "card_level_face_keys": list(CARD_LEVEL_FACE_KEYS),
+        # What the card says about ITSELF that is neither a price nor a face.
+        # See CARD_LEVEL_RIDER_KEYS: "Exile Mizzix's Mastery." was filed as a
+        # missing capability against a reference that named no such field,
+        # while `exiles_itself` had shipped with Teferi's Protection.
+        "card_level_rider_keys": list(CARD_LEVEL_RIDER_KEYS),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
@@ -379,6 +414,12 @@ def reference() -> dict:
             " forwards its spec to a helper can accept a key listed for neither,"
             " so a key's absence is not proof it does not exist -- check the"
             " `examples` too, and prefer a gap record only when both are silent.",
+            "`card_level_rider_keys` is what a card says about ITSELF that is"
+            " neither a price nor a face -- `exiles_itself` for \"Exile <this"
+            " card>.\" instead of the graveyard, `uncounterable` for \"This"
+            " spell can't be countered\", `rebound`, `split_second`, `miracle`."
+            " Look here before concluding a sentence about the card's own fate"
+            " cannot be said.",
             "`card_level_face_keys` is how a card carries a second printed"
             " face, and which key you want turns on one question: is the other"
             " half something you TURN OVER to, or a second spell you may CAST?"

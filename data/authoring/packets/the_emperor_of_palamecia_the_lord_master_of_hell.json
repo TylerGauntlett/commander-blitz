@@ -137,6 +137,20 @@
       "fuse",
       "adventure"
     ],
+    "card_level_rider_keys": [
+      "exiles_itself",
+      "uncounterable",
+      "rebound",
+      "split_second",
+      "epic",
+      "miracle",
+      "graveyard_cast",
+      "graveyard_cost",
+      "graveyard_cast_transformed",
+      "splice_onto",
+      "melds_with",
+      "melds_into"
+    ],
     "condition_keys": [
       "all",
       "any",
@@ -268,6 +282,7 @@
       "A card either uses vocabulary in these lists or it fails to load.",
       "`op_options` is what each op may carry beside its `op` name, and `ability_keys` is what an entry in `abilities` may have. Read both before concluding a line cannot be said: `copy_spell` takes `new_targets` (\"you may choose new targets for the copy\"), an ability takes `sorcery_speed_only`, `once_each_turn` and `activate_steps` for printed activation limits, and `mana_restriction` for \"spend this mana only to ...\". Each of those has been filed as a missing capability by a worker that had only the op *names*.",
       "`op_options` is a **lower bound**, gathered from each op's own source and from every effect the shipped pool writes. An op that forwards its spec to a helper can accept a key listed for neither, so a key's absence is not proof it does not exist -- check the `examples` too, and prefer a gap record only when both are silent.",
+      "`card_level_rider_keys` is what a card says about ITSELF that is neither a price nor a face -- `exiles_itself` for \"Exile <this card>.\" instead of the graveyard, `uncounterable` for \"This spell can't be countered\", `rebound`, `split_second`, `miracle`. Look here before concluding a sentence about the card's own fate cannot be said.",
       "`card_level_face_keys` is how a card carries a second printed face, and which key you want turns on one question: is the other half something you TURN OVER to, or a second spell you may CAST? `back_face` is the first -- a transforming DFC, never cast, never drawn, reached only by the `transform` op. `second_face` is the second -- a split half, an Adventure, an Aftermath half -- with its own name, cost and type line, cast instead of the front from `second_face_zone` (\"hand\", or \"graveyard\" for Aftermath). A **modal double-faced card** is a `second_face` whose other half is a permanent: you play one face or the other and nothing turns over. Either way the other half is an ordinary card entry in the same pool, and your packet's `back_face` block carries its printed text -- write it as a second entry, do not file a gap.",
       "`condition_keys` and `value_keys` are what an `if` can ask and what an amount can be. `counters_on` reads a counter count off an object, so \"if this has no +1/+1 counters on it\" is a `cmp` against `{\"const\": 0}` and needs no new op.",
       "`static_condition_keys` is what a static ability's optional `condition` may ask -- an \"as long as ...\" clause that switches the whole static on and off as the board moves. It is a third language, neither `condition_keys` nor `static_filter_keys`.",
