@@ -658,6 +658,22 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
     clear_unblockables(state, "this_turn")
     clear_player_protections(state, "this_turn")
     clear_life_locks(state, "this_turn")
+    # "**Until end of turn**, you may cast … from any graveyard." Beside the
+    # rest and owned by no permanent for their reason, and more literally than
+    # most: the Saga chapter that grants it exiles the Saga on the same line, so
+    # there has never been a permanent for `clear_until_eot` to walk to.
+    #
+    # Dropped rather than left to the turn check that reads them, because a
+    # permission nobody clears accumulates one dead record per grant for the
+    # rest of the game.
+    # Strictly greater: this cleanup ends the turn the grant was made in, so a
+    # record whose turn matches the one now ending is exactly the one to drop.
+    # Nothing grants for a future turn, so this keeps nothing today -- written as
+    # a comparison rather than `.clear()` because the turn is what makes it dead,
+    # and a longer-lived grant should not have to remember to change this line.
+    state.graveyard_cast_grants = [
+        g for g in state.graveyard_cast_grants if g.turn > state.turn
+    ]
     # "Prevent all damage that would be dealt to you **this turn**." (Selfless
     # Squire, Fog.) Beside the three above and owned by no permanent for the same
     # reason -- Fog is an instant and leaves nothing behind, and the Squire's

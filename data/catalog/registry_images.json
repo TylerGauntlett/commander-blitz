@@ -9124,6 +9124,11 @@
     "artist": "Dan Brereton",
     "scryfall_id": "9307100e-2d7e-42a9-9951-24af01ab9ded"
   },
+  "the_great_work": {
+    "artist": "Kekai Kotaki",
+    "back": true,
+    "scryfall_id": "52173f36-19d2-48be-a8e8-8cbe946759c0"
+  },
   "the_lady_of_the_mountain": {
     "artist": "Richard Kane Ferguson",
     "scryfall_id": "83717eb2-220e-4086-be09-dee9174798b8"
@@ -9592,6 +9597,10 @@
   "ur_golem_s_eye": {
     "artist": "Heather Hudson",
     "scryfall_id": "7a2ea921-8ef9-4a31-b484-73375e828d34"
+  },
+  "urabrask_the_great_work": {
+    "artist": "Kekai Kotaki",
+    "scryfall_id": "52173f36-19d2-48be-a8e8-8cbe946759c0"
   },
   "urban_evolution": {
     "artist": "Eytan Zana",

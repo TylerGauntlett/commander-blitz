@@ -410,6 +410,7 @@
         "prompt"
       ],
       "choose_mode": [
+        "all_if",
         "budget",
         "chooser",
         "count",
@@ -512,6 +513,8 @@
         "as",
         "link",
         "objects",
+        "playable",
+        "playable_this_turn",
         "until_leaves"
       ],
       "exile_and_return": [
@@ -570,7 +573,9 @@
         "any_type",
         "as_flashback",
         "limit",
-        "objects"
+        "objects",
+        "playable",
+        "playable_this_turn"
       ],
       "grant_protection": [
         "duration",
@@ -581,7 +586,10 @@
         "objects",
         "player"
       ],
-      "grant_rebound": [],
+      "grant_rebound": [
+        "sid",
+        "target"
+      ],
       "haunt": [
         "objects"
       ],
@@ -616,6 +624,7 @@
         "destinations",
         "face_down",
         "objects",
+        "playable",
         "playable_this_turn",
         "player",
         "rest_to",
@@ -704,6 +713,7 @@
         "owner_chooses"
       ],
       "put_onto_battlefield": [
+        "attacking",
         "cause",
         "controller",
         "counters",
@@ -756,7 +766,10 @@
       ],
       "reveal_until": [
         "destination",
+        "face_down",
         "objects",
+        "playable",
+        "playable_this_turn",
         "player",
         "rest_to_bottom",
         "selector"
@@ -784,6 +797,9 @@
         "as",
         "count",
         "destination",
+        "face_down",
+        "playable",
+        "playable_this_turn",
         "player",
         "reveal",
         "selector",
@@ -795,8 +811,15 @@
         "as",
         "count",
         "destination",
+        "face_down",
+        "playable",
+        "playable_this_turn",
         "player",
+        "reveal",
         "selector",
+        "share_subtype",
+        "shuffle",
+        "tapped",
         "zones"
       ],
       "set_flag": [
@@ -903,6 +926,7 @@
       "gain_life",
       "goad",
       "grant_ability",
+      "grant_graveyard_cast",
       "grant_keyword",
       "grant_playable",
       "grant_protection",

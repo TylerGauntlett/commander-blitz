@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**32 cards** blocked by **38** capabilities.
+**31 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-from-graveyard-this-turn](#cast-from-graveyard-this-turn) | 1 | 1813 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -46,7 +45,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-exiled-instead-of-graveyard](#spell-exiled-instead-of-graveyard) | 1 | 1813 | replacement |
 | [spell-or-permanent-target](#spell-or-permanent-target) | 1 | 172 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -198,21 +196,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cast-from-graveyard-this-turn
-
-Blocks **1** card.
-
-- **(op)** A resolution-time effect op that grants the controller permission, until end of turn, to cast instant and sorcery cards from EVERY player's graveyard (not just their own) — the Yawgmoth's Will / Underworld Breach permission. It must be a floating turn-scoped effect that outlives its source, because the same chapter exiles the Saga immediately afterwards, and it must accept a card-type filter and an owner scope of "any player".
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` exists only in `static_effects`, so it is a permanent static ability read off a permanent that is still on the battlefield; it is not an op a Saga chapter's `effects` list can run, it has no duration, and it dies with the Saga this chapter exiles. `grant_playable` is the closest op, but its `objects` names specific already-known cards (the exile-linked "you may play cards exiled with this" pattern) and its `op_options` are only `any_type`, `limit` and `objects` — no `duration` and no way to say "every card of these types in every graveyard, for the rest of the turn". `exile`'s `playable_this_turn` grants a turn-long cast permission but only for cards this effect itself exiles, and these cards must stay in their graveyards. `grant_ability` grants an ability to objects on the battlefield, so it cannot install a player-scoped permission that survives the source leaving.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urabrask // The Great Work** (rank 1813) — `urabrask_the_great_work`
-  - III — Until end of turn, you may cast instant and sorcery spells from any graveyard.
-  - If a spell cast this way would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -535,21 +518,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## spell-exiled-instead-of-graveyard
-
-Blocks **1** card.
-
-- **(replacement)** A replacement effect attached to the above permission: a spell cast under it that would be put into a graveyard from the stack (on resolution or on being countered) is exiled instead. Needs a marker on the spell at cast time and a replacement applied when that spell leaves the stack for a graveyard.
-  <br>Why the existing vocabulary won't do: The two replacement ops present, `replace_deaths` and `replace_leaves_battlefield`, both redirect PERMANENTS leaving the battlefield; neither sees a spell moving from the stack to a graveyard. Nothing in `ops` or `static_effects` tags a cast spell so a later zone change can be replaced, and `condition_keys`'s `cast_from_graveyard` is only a yes/no question about how a spell was cast, not a hook that can redirect where it goes afterwards.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urabrask // The Great Work** (rank 1813) — `urabrask_the_great_work`
-  - III — Until end of turn, you may cast instant and sorcery spells from any graveyard.
-  - If a spell cast this way would be put into a graveyard, exile it instead.
 
 </details>
 

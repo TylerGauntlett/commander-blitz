@@ -8705,6 +8705,13 @@
   "ur_golem_s_eye": {
     "zone": "battlefield"
   },
+  "urabrask_the_great_work": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "urban_evolution": {
     "hand_size": {
       "0": 4

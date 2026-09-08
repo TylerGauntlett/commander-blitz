@@ -401,6 +401,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: return_spell_to_hand reads no 'objects' -- it takes "
                 f"the spell its 'target' names"
             )
+    if op == "grant_graveyard_cast":
+        # The spec IS a `cast_from_graveyard` static, so the two things that
+        # static must always carry are required here too, and for the same
+        # reasons the static's own loader gives them.
+        if not effect.get("affects_spells"):
+            # An empty filter frees the whole graveyard, so a missing one has to
+            # be a load error rather than a default -- `graveyard_cast_allows`
+            # returns False on an absent filter precisely so a compile bug hands
+            # over nothing instead of everything, and that is a floor, not a
+            # spelling.
+            raise DslError(
+                f"{where}: grant_graveyard_cast needs 'affects_spells' -- "
+                f"without it the permission names no cards"
+            )
+        if not effect.get("max_per_turn") and not effect.get("grants_flashback"):
+            # A permission that neither meters nor exiles recasts one card every
+            # turn for ever. `grants_flashback` IS the rate limit for the cards
+            # that print no cap -- the spent card is the brake -- which is the
+            # argument the static's loader makes in the same words.
+            raise DslError(
+                f"{where}: grant_graveyard_cast needs 'max_per_turn' or "
+                f"'grants_flashback' -- an unmetered permission is an engine, "
+                f"not a printed line"
+            )
     if op == "grant_rebound":
         # The same two checks `return_spell_to_hand` makes, for the same reason
         # and with the same failure mode: the op reads one stack object, and a

@@ -446,8 +446,38 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)
     if "spells_cast_this_turn" in expr:
-        pids = _players(ctx, expr["spells_cast_this_turn"])
-        return sum(ledger.spells_cast.get(p, 0) for p in pids)
+        spec = expr["spells_cast_this_turn"]
+        # Either a bare player spec -- storm, and everything written before this
+        # -- or `{"player": …, "filter": …}` for the sentences that ask *which*
+        # spells. Branching on `filter` rather than on the type, because a player
+        # spec is itself sometimes a mapping (`{"except": …}`).
+        filt = spec.get("filter") if isinstance(spec, Mapping) and "filter" in spec else None
+        who = spec.get("player", "you") if filt is not None else spec
+        pids = _players(ctx, who)
+        if filt is None:
+            return sum(ledger.spells_cast.get(p, 0) for p in pids)
+        # "…if you've cast three or more **instant and/or sorcery** spells this
+        # turn" (Urabrask). Counted off the recorded ids rather than the flat
+        # total, which knows only how many: without this the condition turns on
+        # for three creature spells, which is a strictly better card and a
+        # silent one.
+        #
+        # `_matches_printed` is the same matcher `graveyard_cast_allows` uses,
+        # and for its reason: a spell that has finished resolving has a printed
+        # face and no board state left to ask about.
+        from ..characteristics import _matches_printed
+
+        registry = ctx.state.registry
+        total = 0
+        for p in pids:
+            for cast_id in ledger.spells_cast_ids.get(p, ()):
+                # `in` before `get`, because `get` raises on an id the registry
+                # does not know -- a copy put on the stack by an effect is not a
+                # card and was never cast, but the guard costs nothing and a
+                # crash here would take down an ordinary condition check.
+                if cast_id in registry and _matches_printed(registry.get(cast_id), filt):
+                    total += 1
+        return total
     if "cards_to_graveyard_this_turn" in expr:
         # Every graveyard, so it takes no player spec: gravestorm counts cards
         # put into *a* graveyard, not into yours.
@@ -930,6 +960,20 @@ def validate_value(expr: Any, where: str) -> None:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
         )
+    spells = expr.get("spells_cast_this_turn")
+    if isinstance(spells, Mapping) and "filter" in spells:
+        # The typed form. Validated as a selector so a misspelled type is a load
+        # error: unmatched, it would count zero for ever and turn the condition
+        # permanently off -- the quiet direction, but still a card that does not
+        # do what it says.
+        from .selectors import validate_selector
+
+        if unknown := set(spells) - {"player", "filter"}:
+            raise DslError(
+                f"{where}.spells_cast_this_turn: unknown keys {sorted(unknown)} "
+                f"(a player spec, or 'player' and 'filter')"
+            )
+        validate_selector(spells["filter"], f"{where}.spells_cast_this_turn.filter")
     for key in PER_PLAYER_COUNT_KEYS & set(expr):
         validate_per_player_count(expr[key], f"{where}.{key}")
     if "distinct" in expr:

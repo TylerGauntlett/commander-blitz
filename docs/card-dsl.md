@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-112 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+113 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -2931,6 +2931,74 @@ creature source of the chosen type**." Three things are load-bearing:
   it would mean a sentinel that only half the substitution path honours. A name
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
+
+### Counting the spells you cast, by type
+
+```jsonc
+{ "spells_cast_this_turn": "you" }                          // storm: how many
+{ "spells_cast_this_turn": { "player": "you",               // ...of what kind
+                             "filter": { "any_types": ["Instant", "Sorcery"] } } }
+```
+
+"Activate only if you've cast **three or more instant and/or sorcery spells**
+this turn" (Urabrask). `TurnLedger.spells_cast` is a flat per-player integer
+bumped once per `SPELL_CAST`, so the bare form turns Urabrask's transform on after
+three *creature* spells — a strictly better card, silently.
+
+The ledger therefore also keeps `spells_cast_ids`: the printed id of each spell,
+in cast order, per caster. Beside the count rather than replacing it, because
+storm asks only "how many" and asks it per copy — paying a list's length on every
+storm trigger to serve a rarer question is the wrong trade.
+
+The filter goes **inside** the value rather than beside it, following
+`permanents_entered_this_turn`: a sibling `filter` key would have to join
+`VALUE_KEYS` and would then be legal on every value expression. Branching is on
+the presence of `filter`, not on the type, because a player spec is itself
+sometimes a mapping (`{"except": …}`). The id recorded is the face that was
+**cast** — a disturb cast turns the card over inside `push_spell`, and the half
+that was cast is the half the condition asks about.
+
+### Casting out of every graveyard, until end of turn
+
+```jsonc
+{ "op": "grant_graveyard_cast",
+  "affects_spells": { "any_types": ["Instant", "Sorcery"] },
+  "any_graveyard": true,
+  "grants_flashback": true }
+```
+
+"Until end of turn, you may cast instant and sorcery spells from any graveyard.
+If a spell cast this way would be put into a graveyard, exile it instead."
+(Urabrask's third chapter; Yawgmoth's Will before it.)
+
+The spec **is** a `cast_from_graveyard` static, and that is the design rather
+than a coincidence. It means the `affects_spells` filter, `max_per_turn`,
+`grants_flashback` and the `cast_from_graveyard` mark that makes the spell exile
+as it resolves are all the code that already existed — so the second printed
+sentence needs nothing at all, and the loader asks for the same two guarantees
+the static's own loader does: a filter (an absent one would free the whole
+graveyard) and either a cap or `grants_flashback` (a permission that neither
+meters nor exiles is an engine, not a printed line).
+
+What is new is where the permission *lives*. `cast_from_graveyard` is read off a
+permanent on the battlefield, and this chapter exiles the Saga in the same breath
+as granting it — so the grant goes on the table
+(`GameState.graveyard_cast_grants`) with a turn on it, beside `block_prohibitions`
+and for that field's reason. The granting object is still recorded, and still
+resolves: a `GameObject` outlives the zone it was in, so the per-source rate limit
+and a `chosen_type` filter both keep working from exile.
+
+`any_graveyard` widens *where the engine looks* and is asked again per card, in
+`_graveyard_cast_permission`. Both halves are needed: widening alone would offer
+a card no permission covers, and asking alone would never see the card, since the
+loop over graveyards is where candidates come from.
+
+**Not `grant_playable`,** which is the near miss and very nearly works — it takes a
+selector, it is turn-scoped, and its `as_flashback` already produces the same
+exile. What it cannot be is *standing*: it marks the cards it can see when it
+resolves, and a spell that reaches a graveyard later in the same turn is castable
+under the printed card and invisible to a snapshot. For a card whose point is a
+graveyard that refills as you empty it, that is the loop, not a rounding error.
 
 ### How long "you may play it" lasts
 
