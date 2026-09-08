@@ -1,0 +1,68 @@
+{
+  "card": {
+    "id": "stormsplitter",
+    "name": "Stormsplitter",
+    "oracle_text": "Haste\nWhenever you cast an instant or sorcery spell, create a token that's a copy of this creature. Exile that token at the beginning of the next end step.",
+    "mana_cost": "{3}{R}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Otter",
+      "Wizard"
+    ],
+    "power": 1,
+    "toughness": 4,
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "keywords": [
+      "haste"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast an instant or sorcery spell, create a token that's a copy of this creature. Exile that token at the beginning of the next end step.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": {
+              "self_only": true
+            },
+            "as": "the_token"
+          },
+          {
+            "op": "delay",
+            "step": "end_step",
+            "text": "Exile that token at the beginning of the next end step.",
+            "effects": [
+              {
+                "op": "exile",
+                "objects": {
+                  "binding": "the_token"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
