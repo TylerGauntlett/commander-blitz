@@ -1,0 +1,19 @@
+{
+  "card_id": "the_emperor_of_palamecia_the_lord_master_of_hell",
+  "name": "The Emperor of Palamecia // The Lord Master of Hell",
+  "oracle_text": "{T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell.\nWhenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on The Emperor of Palamecia. Then if it has three or more +1/+1 counters on it, transform it.",
+  "blocked_sentences": [
+    "{T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell."
+  ],
+  "needs": [
+    {
+      "capability": "mana_restriction_negation",
+      "kind": "selector",
+      "what": "a negated entry in a `mana_restriction` group -- a way to write \"spend this mana only to cast a NONcreature spell\", i.e. a restriction that is satisfied when a named type or subtype is ABSENT from the spell's characteristics. Concretely: let a group entry be `{\"not\": \"creature\"}` (loader `_restriction_name` in src/automtg/cards/loader/mana.py, which today accepts only a literal name or `{\"chosen_type_of\": \"self\"}`), carry the negated names alongside the required ones on `ManaRestriction`'s groups, and have `ManaSource.permits` (src/automtg/engine/mana.py) require `required <= purpose.names` AND `not (forbidden & purpose.names)` instead of the bare subset test it does now.",
+      "why_existing_wont_do": "`mana_restriction` ships and is the right home for this line, but it is purely positive: `_restriction_groups` compiles each group to a `frozenset` of lowercased literal type/subtype names, and `ManaSource.permits` answers with `any(group <= purpose.names ...)` against `costs.spell_purpose`, whose `names` is just the flat lowercased set of the spell's types and subtypes. Nothing in that chain can express absence. The two spellings available both misprint the card. (a) `\"noncreature\"` as a literal loads -- the loader's shape check only asks that an entry look like a word -- and then matches nothing ever, because no spell has a type or subtype called \"noncreature\"; the mana would be permanently unspendable, which the loader's own comment calls out as the safe-but-silent failure. (b) Enumerating the noncreature types as an any-of, `[\"artifact\", \"enchantment\", \"instant\", \"sorcery\", \"planeswalker\", \"battle\"]`, over-permits every artifact creature and enchantment creature spell, because `permits` sees \"artifact\" in the purpose's names and never learns that \"creature\" is also there -- a strictly better card than the one printed. Trigger filters already have the negation (`not_types` is honoured in `matches_card_filter`) and selectors have `not_types`/`not_subtypes`; the restriction language is the one place it is missing, and it is the same one-word idea.",
+      "note": "The rest of the card is expressible today and needs nothing new. The second line is a `spell_cast` trigger with `filter: {\"not_types\": [\"Creature\"]}` and `controller: \"you\"`, an intervening-if `{\"cmp\": \">=\", \"left\": {\"mana_spent_of\": {\"binding\": \"subject\"}}, \"right\": {\"const\": 4}}` (the trigger's `subject` binding is the cast spell, and `costs.pay_mana` writes `obj.mana_spent` before the spell_cast event fires), then `add_counters` followed by an `if` on `{\"counters_on\": {\"counter\": \"+1/+1\", \"objects\": {\"self_only\": true}}} >= 3` wrapping `{\"op\": \"transform\", \"objects\": {\"self_only\": true}, \"to_back\": true}`. The back face, The Lord Master of Hell, is an ordinary `back_face` entry with an `attacks` trigger dealing `damage` to each opponent for `{\"count\": {\"zone\": \"graveyard\", \"controller\": \"you\", \"not_types\": [\"Creature\", \"Land\"]}}`. Land this one negation and the whole card can be authored unchanged."
+    }
+  ],
+  "closest_existing": ["mana_restriction", "not_types", "not_subtypes", "chosen_type_of"],
+  "confidence": "high"
+}

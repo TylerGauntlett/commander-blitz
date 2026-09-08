@@ -1,0 +1,101 @@
+{
+  "card": {
+    "id": "will_of_the_jeskai",
+    "name": "Will of the Jeskai",
+    "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Each player may discard their hand and draw five cards.\n• Each instant and sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost.",
+    "mana_cost": "{3}{R}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 1,
+        "up_to_if": {
+          "condition": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "is_commander": true
+            }
+          },
+          "count": 2
+        },
+        "modes": [
+          {
+            "label": "Each player may discard their hand and draw five cards.",
+            "effects": [
+              {
+                "op": "for_each_player",
+                "players": "each_player",
+                "effects": [
+                  {
+                    "op": "may",
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "prompt": "Discard your hand and draw five cards?",
+                    "effects": [
+                      {
+                        "op": "discard",
+                        "player": {
+                          "binding": "each_player"
+                        },
+                        "whole_hand": true
+                      },
+                      {
+                        "op": "draw",
+                        "player": {
+                          "binding": "each_player"
+                        },
+                        "amount": {
+                          "const": 5
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "label": "Each instant and sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost.",
+            "effects": [
+              {
+                "op": "grant_playable",
+                "as_flashback": true,
+                "objects": {
+                  "zone": "graveyard",
+                  "controller": "you",
+                  "any_types": [
+                    "Instant",
+                    "Sorcery"
+                  ],
+                  "count": "all"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 35
+    },
+    "graveyard_size": {
+      "0": 4
+    }
+  }
+}

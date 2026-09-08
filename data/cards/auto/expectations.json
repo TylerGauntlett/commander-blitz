@@ -315,6 +315,16 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arcane_bombardment": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "arcane_denial": {
     "zone": "graveyard"
   },
@@ -2314,6 +2324,18 @@
   },
   "eowyn_shieldmaiden": {
     "zone": "battlefield"
+  },
+  "epic_experiment": {
+    "graveyard_size": {
+      "0": 23
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 19
+    },
+    "zone": "graveyard"
   },
   "epic_proportions": {
     "zone": [
@@ -9312,6 +9334,18 @@
   },
   "wildwood_patrol": {
     "zone": "battlefield"
+  },
+  "will_of_the_jeskai": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
   },
   "willow_dryad": {
     "zone": "battlefield"
