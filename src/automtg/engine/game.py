@@ -391,7 +391,7 @@ class Game:
         cost, phyrexian_life = cost.paying_phyrexian(action.phyrexian)
 
         granted = state.objects[oid]
-        if granted.playable_any_type and granted.playable_turn == state.turn:
+        if granted.playable_any_type and granted.playable_live(state.turn):
             # The paying half of the relaxation `_cast_variant` priced the line
             # with. Both sides read the same flag off the same card, so a line
             # that was offered is a line that can be paid.
@@ -571,7 +571,7 @@ class Game:
             if not ok:  # pragma: no cover - legality already proved payability
                 return
 
-        if obj.playable_group is not None and obj.playable_turn == state.turn:
+        if obj.playable_group is not None and obj.playable_live(state.turn):
             # "…you may cast **a spell** from among those cards." Billed to the
             # permanent that granted the permission, through the same ledger
             # slot a `cast_from_graveyard` permission uses, so legality's cap

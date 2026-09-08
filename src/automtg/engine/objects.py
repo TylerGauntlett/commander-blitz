@@ -10,6 +10,7 @@ track "the new object", which the curated decks avoid.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -505,6 +506,25 @@ class GameObject:
     #: This one is a permission with a duration, and the cost is still owed.
     playable_by: int | None = None
     playable_turn: int = -1
+    #: How long the permission lasts. ``"this_turn"`` is the impulse-draw
+    #: default and is read off `playable_turn`; the other two outlive the turn
+    #: they were granted in and are ended by a hook in the turn structure
+    #: instead, which sets `playable_by` back to None.
+    #:
+    #: Keyed to the *player* and cleared when their step arrives, never computed
+    #: as a future turn number -- the same choice detain, goad and "until your
+    #: next turn" all made, and for their reason: eliminating a player moves
+    #: everybody else's next turn, and extra turns move it again.
+    #:
+    #: - ``"your_next_end_step"`` -- "You may play it until your next end step."
+    #:   (Haste Magic.) Cleared as that end step begins, so a card exiled during
+    #:   your own end step survives to the following turn's, which is what "your
+    #:   **next**" says.
+    #: - ``"end_of_your_next_turn"`` -- "Until the end of your next turn, you may
+    #:   play that card." (Light Up the Stage.) Cleared in the cleanup of the
+    #:   first of your turns to *start* after the grant, so a card exiled on your
+    #:   own turn lives through the whole of the next one.
+    playable_duration: str = "this_turn"
     #: Which permanent's permission made this card playable, when that
     #: permission caps how many of its cards may be cast -- Locke, Treasure
     #: Hunter: "you may cast **a spell** from among those cards", singular, out
@@ -695,6 +715,25 @@ class GameObject:
     #: place.
     prepared: bool = False
 
+    def playable_live(self, turn: int) -> bool:
+        """Is the "you may play it" permission still standing?
+
+        One question asked in seven places -- legality, both cast paths, the
+        any-type relaxation, the group ledger and the flashback rider -- which
+        used to be spelled `obj.playable_turn == state.turn` at each of them.
+        That spelling *is* the "this turn" duration, so generalising it meant
+        replacing all seven rather than adding an eighth.
+
+        The longer durations answer True until their hook in the turn structure
+        clears `playable_by`; there is no arithmetic on future turn numbers
+        here, deliberately.
+        """
+        if self.playable_by is None:
+            return False
+        if self.playable_duration == "this_turn":
+            return self.playable_turn == turn
+        return True
+
     def reset_permanent_state(self) -> None:
         """Wipe everything that only means something on the battlefield."""
         self.must_attack = None
@@ -755,6 +794,7 @@ class GameObject:
         self.granted_rebound = False
         self.playable_by = None
         self.playable_turn = -1
+        self.playable_duration = "this_turn"
         self.playable_group = None
         self.playable_any_type = False
         self.exiled_from = None
@@ -843,3 +883,26 @@ class GameObject:
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
         }
+
+
+#: The durations a "you may play it" permission may carry. ``this_turn`` is the
+#: impulse-draw default and was the only one the engine had; the other two
+#: outlive the turn they were granted in and are ended by hooks in
+#: `turn.begin_step` rather than by arithmetic on a turn number.
+PLAYABLE_DURATIONS = ("this_turn", "your_next_end_step", "end_of_your_next_turn")
+
+
+def playable_duration_of(spec: Mapping[str, Any]) -> str | None:
+    """An effect spec's permission duration, or None when it grants none.
+
+    Two spellings of one key. ``playable_this_turn: true`` is what every card
+    written before durations existed says, and it means ``"this_turn"``; the
+    general form is ``playable: "<duration>"``. The loader refuses both on one
+    effect, so this never has to choose between them.
+    """
+    if spec.get("playable_this_turn"):
+        return "this_turn"
+    duration = spec.get("playable")
+    if duration in PLAYABLE_DURATIONS:
+        return str(duration)
+    return None

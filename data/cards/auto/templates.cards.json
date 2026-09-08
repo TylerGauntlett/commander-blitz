@@ -38504,6 +38504,70 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "haste_magic",
+      "mana_cost": "{1}{R}",
+      "name": "Haste Magic",
+      "oracle_text": "Target creature gets +3/+1 and gains haste until end of turn. Exile the top card of your library. You may play it until your next end step.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": 3
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable": "your_next_end_step",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -60988,6 +61052,80 @@
       "subtypes": [
         "Ogre",
         "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "grant_rebound"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant spell from your hand, it gains rebound.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Instant"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "time": 3
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            },
+            {
+              "op": "transform",
+              "to_back": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Ojer Pakpatiq dies, return it to the battlefield tapped and transformed under its owner's control with three time counters on it.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "back_face": "temple_of_cyclical_time",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time",
+      "oracle_text": "Flying\nWhenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)\nWhen Ojer Pakpatiq dies, return it to the battlefield tapped and transformed under its owner's control with three time counters on it.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 3,
       "types": [
@@ -89805,6 +89943,74 @@
           "event": "self_enters_tapped"
         }
       ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "time",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}. Remove a time counter from this land."
+        },
+        {
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "counters_on": {
+                "counter": "time",
+                "objects": {
+                  "self_only": true
+                }
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "cost": {
+            "mana": "{2}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "transform",
+              "to_back": false
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{2}{U}, {T}: Transform this land. Activate only if it has no time counters on it and only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "temple_of_cyclical_time",
+      "name": "Temple of Cyclical Time",
+      "oracle_text": "(Transforms from Ojer Pakpatiq, Deepest Epoch.)\n{T}: Add {U}. Remove a time counter from this land.\n{2}{U}, {T}: Transform this land. Activate only if it has no time counters on it and only as a sorcery.",
       "source": "auto",
       "types": [
         "Land"
