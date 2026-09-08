@@ -56287,6 +56287,82 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "skip_draw_step",
+          "kind": "static",
+          "text": "Skip your draw step."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you discard a card, exile that card from your graveyard.",
+          "trigger": {
+            "controller": "you",
+            "event": "discard"
+          }
+        },
+        {
+          "cost": {
+            "pay_life": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "impulsed",
+              "destination": "exile",
+              "face_down": true,
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "impulsed"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Put that card into your hand at the beginning of your next end step.",
+              "your_turn": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "necropotence",
+      "mana_cost": "{B}{B}{B}",
+      "name": "Necropotence",
+      "oracle_text": "Skip your draw step.\nWhenever you discard a card, exile that card from your graveyard.\nPay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -56735,6 +56811,59 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "additional_cost": {
+        "tap_permanents": {
+          "controller": "you",
+          "count": 1,
+          "subtypes": [
+            "Vampire"
+          ]
+        }
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "new_blood",
+      "mana_cost": "{2}{B}{B}",
+      "name": "New Blood",
+      "oracle_text": "As an additional cost to cast this spell, tap an untapped Vampire you control.\nGain control of target creature. Change the text of that creature by replacing all instances of one creature type with Vampire.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "gain_control"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "change_text",
+          "to": "Vampire"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

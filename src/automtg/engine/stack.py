@@ -18,6 +18,7 @@ from .carddef import (
     TargetSpec,
     rules_ability,
 )
+from .characteristics import printed_abilities
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
@@ -303,7 +304,15 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
     else:
         source = state.objects.get(item_or_trig.source_oid)
         if source is not None:
-            pool = state.card_of(source).abilities
+            # `printed_abilities` and not `card.abilities`: a text-changed
+            # permanent (613.1c) resolves its **rewritten** ability, so a stolen
+            # "{T}: Target Goblin gains haste" targets a Vampire. The statics on
+            # such a permanent already come through `abilities_of`; without this
+            # the activated and triggered halves of the same card would keep
+            # their old tribe, which is the sort of split nobody would think to
+            # test for. Indices are unaffected -- the substitution rewrites each
+            # ability in place and adds and removes none.
+            pool = printed_abilities(state, source)
         else:
             # A token that paid for its own ability by sacrificing itself is
             # *gone*: the token state-based action pops it out of

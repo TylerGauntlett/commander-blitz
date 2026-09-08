@@ -159,6 +159,29 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "no_hand_limit")
 
 
+def player_skips_draw_step(state: GameState, pid: int) -> bool:
+    """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
+
+    Necropotence, Yawgmoth's Bargain, Solitary Confinement. Player-wide like
+    `player_has_no_hand_limit` and read at the same kind of place -- the turn
+    walk, in `turn._draw_step` -- because a step that does not happen is a fact
+    about the turn rather than a characteristic of any permanent.
+
+    What it does **not** suppress is the step itself. 505.1 still has a draw
+    step; only its turn-based action (504.1) is skipped, so
+    ``EventType.DRAW_STEP`` still fires and the abilities that watch for the
+    step -- Sagas' lore tick, "at the beginning of your draw step" triggers --
+    keep working under a Necropotence. Suppressing the event too is the tempting
+    one-line version and is a different game: it would silently stop a Saga
+    advancing, and nothing on screen would say why.
+
+    Only the *turn-based* draw. A `draw_cards` op resolving from a spell is
+    untouched, which is what the printed card says -- Necropotence's own
+    controller may still cast Ancestral Recall.
+    """
+    return _player_static(state, pid, "skip_draw_step")
+
+
 def attack_forbidden(state: GameState, oid: int) -> bool:
     """Is this creature under a global "can't attack" static?
 

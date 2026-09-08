@@ -1,0 +1,60 @@
+{
+  "_comment": "Cards that exist only for the skip-draw-step test (tests/unit/test_skip_draw_step.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_necro_skip` is Necropotence's first line on its own. `t_conditional_skip` carries the same static behind an `as long as` clause, so the test can pin that the condition is actually asked -- a player-wide static whose condition is dropped is the silent over-grant `_active_player_statics` exists to stop.",
+  "cards": [
+    {
+      "id": "t_necro_skip",
+      "name": "Test Skipped Draw",
+      "oracle_text": "Skip your draw step.",
+      "mana_cost": "{B}{B}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Skip your draw step.",
+          "effect": "skip_draw_step",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_conditional_skip",
+      "name": "Test Conditionally Skipped Draw",
+      "oracle_text": "As long as you control a Mountain, skip your draw step.",
+      "mana_cost": "{B}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you control a Mountain, skip your draw step.",
+          "effect": "skip_draw_step",
+          "affects_player": "you",
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Mountain"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

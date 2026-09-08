@@ -93,6 +93,19 @@ STATIC_EFFECTS = frozenset(
         # Player-wide, like `extra_land_drops`: a fact about the player rather
         # than a characteristic, with no object for it to attach to.
         "no_hand_limit",
+        # "Skip your draw step." Necropotence, and the fourteen other cards that
+        # print exactly this sentence. Player-wide for `no_hand_limit`'s reason,
+        # and read by `turn._draw_step`, which is the only place a turn-based
+        # draw happens.
+        #
+        # Named for the one printed sentence rather than parameterised on a step
+        # name, which is the house call every static here makes: the catalogue
+        # prints "skip your draw step" 15 times and every other step-skip once
+        # or twice apiece, across three different steps *and* two different
+        # durations -- "skip your **next** untap step" is a one-shot like
+        # `skip_untap`, not a continuous effect, so a shared `step:` parameter
+        # would still not have carried it.
+        "skip_draw_step",
         "play_lands_from_graveyard",
         # "Once during each of your turns, you may cast an artifact spell from
         # your graveyard." Edgar, Master Machinist. Player-wide like
@@ -242,6 +255,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
     {
         "extra_land_drops",
         "no_hand_limit",
+        "skip_draw_step",
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",

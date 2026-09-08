@@ -54,6 +54,16 @@ RECORDING_OPS = frozenset(
         "exile",
         "gain_control",
         "join_forces",
+        #: The cards a bounded look off the top actually **took** -- "exile the
+        #: top card of your library face down. Put **that card** into your hand
+        #: at the beginning of your next end step" (Necropotence). Nothing else
+        #: can name that card afterwards: `_move_found` deliberately writes no
+        #: `exiled_by`, so `exiled_with: "self"` matches nothing, and even with
+        #: the link written it would be source-wide where the printed "that
+        #: card" is per-activation. Accumulates across seats like `discard` and
+        #: `mill`, so a `player: "each_player"` look binds every seat's cards
+        #: rather than the last one's. See `ops_cards.op_look_at_top`.
+        "look_at_top",
         #: The only recorder whose binding is a **set of seats**: `may` writes
         #: the players who said yes, read back with the `{"binding": …}` player
         #: spec. Snort's "each opponent who discarded their hand this way" is

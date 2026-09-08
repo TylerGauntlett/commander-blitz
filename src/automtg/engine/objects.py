@@ -307,6 +307,23 @@ class GameObject:
     #: object, and having seen a card in somebody's hand does not entitle you to
     #: keep seeing it after it has been played and bounced back.
     revealed_to: set[int] = field(default_factory=set)
+    #: Exiled **face down** (Necropotence): in exile, and shown to nobody but
+    #: the seats in `revealed_to`.
+    #:
+    #: A separate flag rather than "empty `revealed_to` means hidden", because
+    #: an empty set is the default for every card in every zone and exile is
+    #: otherwise a **public** zone -- `player_view` sends it in full to the whole
+    #: table. Without a flag saying which of the two an empty set means, a
+    #: face-down exile is indistinguishable from an ordinary one and the words
+    #: are inert.
+    #:
+    #: Distinct from `face_down`, which is the 707 morph/manifest state of a
+    #: permanent on the battlefield: a card in exile has no characteristics to
+    #: hide behind, so what this buys is privacy and not identity.
+    #:
+    #: Cleared by `reset_permanent_state` with `revealed_to`, for its reason: the
+    #: card that comes back to hand is a new object and carries none of this.
+    hidden_in_exile: bool = False
 
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
@@ -559,6 +576,32 @@ class GameObject:
     #: comes back is a new object, and arrives with its printed type line.
     added_subtypes: tuple[str, ...] = ()
 
+    #: Text-changing effects on this object (613.1c, layer 3): ``(old, new)``
+    #: creature-type pairs, in timestamp order. "Change the text of that
+    #: creature by replacing all instances of one creature type with Vampire"
+    #: -- New Blood.
+    #:
+    #: **Not** `added_subtypes`, which is the layer *above* and the opposite
+    #: reading: that one is "it becomes a Vampire **in addition to** its other
+    #: types" and leaves the printed word in place, so a Goblin under it answers
+    #: to Goblin lords and Goblin removal still. This replaces the word, and
+    #: replaces it everywhere -- the subtype line *and* every instance inside
+    #: the object's own rules text, which is what turns a stolen Goblin lord
+    #: into a Vampire lord. See `engine/text_change.py`.
+    #:
+    #: A tuple applied in order rather than a mapping, because 612.4 applies
+    #: text changes in timestamp order and the second one reads the first one's
+    #: output: Goblin→Vampire then Vampire→Zombie is a Zombie.
+    #:
+    #: A pipeline *input* like `added_subtypes` above -- nothing in the
+    #: characteristics pipeline can write it -- so reading it in `_compute`,
+    #: `_matches` and `abilities_of` alike creates no dependency between layers.
+    #:
+    #: Reset with the rest of the battlefield state, for `added_subtypes`'
+    #: reason: a permanent that leaves and comes back is a new object and
+    #: arrives with its printed text.
+    text_changes: tuple[tuple[str, str], ...] = ()
+
     #: Which face of a transforming double-faced card this permanent is showing.
     #:
     #: The whole of the mechanic, because `GameState.card_of` is a single choke
@@ -655,6 +698,7 @@ class GameObject:
         self.chosen_type = None
         self.chosen_color = None
         self.added_subtypes = ()
+        self.text_changes = ()
         self.transformed = False
         # A permanent that left the battlefield is no longer a pile: the cards
         # under it were sent along by `move_object` before this ran.
@@ -671,6 +715,7 @@ class GameObject:
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
+        self.hidden_in_exile = False
         # `hasted_by_suspend` is deliberately *not* reset: it is set as the card
         # leaves exile to be cast, and this runs on the way onto the battlefield
         # a moment later. Clearing it here would take the haste straight back.
@@ -733,6 +778,7 @@ class GameObject:
             "damage": self.damage,
             "counters": dict(self.counters),
             "added_subtypes": list(self.added_subtypes),
+            "text_changes": [list(pair) for pair in self.text_changes],
             "transformed": self.transformed,
             "attached_to": self.attached_to,
             "attached_to_player": self.attached_to_player,

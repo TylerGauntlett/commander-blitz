@@ -57,6 +57,8 @@ from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .objects import MINUS_ONE, PLUS_ONE, GameObject
 from .structs import PROTECTION_EVERYTHING, Characteristics
+from .text_change import apply_to_ability
+from .text_change import apply_to_subtypes as apply_text_changes
 
 #: What ``min_life_of`` reports when its player spec selects nobody.
 #:
@@ -173,6 +175,23 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # which is also what the printing says: it loses its card types and
             # is not told to lose its creature types.
             types = set(retyped)
+
+    # Layer 3, text-changing effects (613.1c): "replacing all instances of one
+    # creature type with Vampire". New Blood.
+    #
+    # Here, which is *before* every static below: layer 3 runs ahead of layer 4,
+    # so the type-granting statics -- `add_subtype`, `set_types`, `animate` --
+    # layer on top of the rewritten line exactly as they would on a printed one.
+    # Applied after `copy_overrides` for the same ordering reason: a copy's
+    # exception is part of what the object is, and the text change rewrites what
+    # it ended up being.
+    #
+    # This is only half of "all instances". The other half is the word inside
+    # the object's own rules text, which `abilities_of` rewrites; and a third
+    # reader, `_matches`, needs it too, because a *static filter belonging to
+    # another card* asks about printed subtypes without coming through here.
+    if obj.text_changes:
+        subtypes = apply_text_changes(subtypes, obj.text_changes)
 
     # Bestow (702.103b): "it's an Aura spell with enchant creature... it becomes
     # a creature again if it's not attached to a creature". Applied to the
@@ -437,6 +456,32 @@ def _loses_abilities(state: GameState, obj: GameObject) -> bool:
     )
 
 
+def printed_abilities(state: GameState, obj: GameObject) -> tuple[Ability, ...]:
+    """This object's printed abilities, with any text change applied (613.1c).
+
+    "Replacing all instances of one creature type with Vampire" rewrites the
+    words *inside* the abilities, not only the subtype line -- a stolen "other
+    Goblins you control get +1/+0" has to become a Vampire lord, which is the
+    half of New Blood worth casting it for.
+
+    One function because there are two readers and they must not disagree:
+    `abilities_of` returns this list directly when nothing grants or removes an
+    ability, and `_derived_abilities` folds it in with the granted ones when
+    something does. Substituting in only the first would leave a text-changed
+    permanent reverting to its old tribe the moment any `grant_ability` static
+    appeared anywhere on the battlefield -- a bug that needs two cards on the
+    table at once to show up.
+
+    Pure and uncached: `text_changes` is a pipeline input, and the gate on it
+    being non-empty means every card that has never been text-changed pays one
+    attribute check.
+    """
+    printed = state.card_of(obj).abilities
+    if not obj.text_changes:
+        return printed
+    return tuple(apply_to_ability(ability, obj.text_changes) for ability in printed)
+
+
 def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     """The abilities a permanent **actually has**, printed ones included.
 
@@ -466,7 +511,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
         # 707.2, and the same early return `_compute` makes: a face-down
         # permanent is a 2/2 with no abilities, whatever is underneath it.
         return ()
-    printed = state.card_of(obj).abilities
+    printed = printed_abilities(state, obj)
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
@@ -498,7 +543,7 @@ def _derived_abilities(
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
     """
-    printed = state.card_of(obj).abilities
+    printed = printed_abilities(state, obj)
     out: list[tuple[Ability, tuple[int, int] | None]] = []
     if not any(
         static.get("effect") == "lose_all_abilities"
@@ -1041,7 +1086,10 @@ def resolve_chosen_colors(
 
 
 def _matches_printed(
-    card: CardDef, selector: Mapping[str, Any], added_subtypes: tuple[str, ...] = ()
+    card: CardDef,
+    selector: Mapping[str, Any],
+    added_subtypes: tuple[str, ...] = (),
+    text_changes: tuple[tuple[str, str], ...] = (),
 ) -> bool:
     """The half of a static filter that reads the printed card face.
 
@@ -1055,6 +1103,16 @@ def _matches_printed(
     a tapped flag is -- reading it cannot make one static depend on another's
     output.  Without it, Captivating Vampire's own anthem would not see the
     creature it had just converted, which is most of the card.
+
+    ``text_changes`` is the second, admitted on the same argument and for the
+    same kind of card.  It is layer 3 (613.1c) and it *rewrites* the printed
+    line rather than adding to it, so it is applied to `card.subtypes` before
+    the added ones are unioned in -- a Goblin changed to Vampire is no longer a
+    Goblin here, which is the whole difference between New Blood and Captivating
+    Vampire.  Without it `chars()` would report the new type line and every
+    static filter in the game would still see the old one, so New Blood would
+    convert a creature that no Vampire lord could find: the card would look
+    implemented and do almost nothing.
     """
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
@@ -1063,8 +1121,10 @@ def _matches_printed(
     if not_types and set(not_types) & card.types:
         return False
     subtypes = selector.get("subtypes")
-    if subtypes and not (set(subtypes) & (card.subtypes | set(added_subtypes))):
-        return False
+    if subtypes:
+        printed = apply_text_changes(set(card.subtypes), text_changes)
+        if not (set(subtypes) & (printed | set(added_subtypes))):
+            return False
     supertypes = selector.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False
@@ -1165,7 +1225,7 @@ def _matches(
     if owner == "opponent" and obj.owner == source.controller:
         return False
 
-    if not _matches_printed(card, selector, obj.added_subtypes):
+    if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
         return False
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
@@ -1474,6 +1534,7 @@ from .player_statics import (  # noqa: F401
     player_plays_lands_from_graveyard,
     player_plays_lands_from_library_top,
     player_reveals_library_top,
+    player_skips_draw_step,
     players_doubling_land_triggers,
     players_freezing_opponent_lands,
     printed_token_matches,

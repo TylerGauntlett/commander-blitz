@@ -180,7 +180,8 @@
    "play_lands_from_graveyard",
    "play_lands_from_library_top",
    "replace_life_loss",
-   "reveal_library_top"
+   "reveal_library_top",
+   "skip_draw_step"
   ],
   "PLURAL_PLAYER_SPEC_NAMES": [
    "all",
@@ -289,6 +290,7 @@
    "set_colors",
    "set_pt",
    "set_types",
+   "skip_draw_step",
    "spell_cost_reduction",
    "untap_during_each_untap_step",
    "ward"
@@ -373,7 +375,8 @@
    "play_lands_from_library_top",
    "replace_life_loss",
    "replace_token_creation",
-   "reveal_library_top"
+   "reveal_library_top",
+   "skip_draw_step"
   ],
   "WAS_CAST_TRIGGERS": [
    "self_enters"
@@ -446,6 +449,7 @@
   "cant_sacrifice",
   "cascade",
   "cast_copy",
+  "change_text",
   "choose_color",
   "choose_mode",
   "choose_permanents",

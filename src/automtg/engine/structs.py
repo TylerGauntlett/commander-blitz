@@ -742,6 +742,16 @@ class DelayedTrigger:
     ``duration`` is how long an event-watching subscription is good for, and it
     is the one thing the two printed shapes of it disagree about.  See
     :data:`DELAYED_DURATIONS`.
+
+    ``your_turn`` is the difference between "at the beginning of the next end
+    step" and "at the beginning of **your** next end step" -- 16 cards print the
+    second, Necropotence among them.  A step name alone cannot tell them apart,
+    because every seat has an end step: a delay created at instant speed during
+    an opponent's turn is due at *that* opponent's end step under the first
+    reading and a full turn later under the second, which for Necropotence is
+    the difference between exiling a card and getting it back on the same turn
+    somebody else is taking.  `turn._delay_due` compares
+    ``state.active_player`` against :attr:`controller` when this is set.
     """
 
     step: str
@@ -752,6 +762,9 @@ class DelayedTrigger:
     description: str = ""
     turn: int = 0
     combat: int | None = None
+    #: "at the beginning of **your** next end step" -- due only on a turn this
+    #: trigger's own controller is taking.
+    your_turn: bool = False
     trigger: TriggerSpec | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
