@@ -41,6 +41,7 @@ from automtg.engine.enums import (
     Zone,
 )
 from automtg.engine.errors import DslError
+from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
 from automtg.engine.mana import ManaCost, ManaRestriction
 from automtg.engine.sagas import LORE, SAGA
 from automtg.engine.triggers import TRIGGER_EVENTS
@@ -1439,6 +1440,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     mana_reflects: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
+    mana_split: tuple[str, ...] = ()
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
@@ -1503,6 +1505,38 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             # ability would never be offered whatever the commander's colours.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif any(isinstance(e, Mapping) and e.get("split") for e in mana_effects):
+            # "Add X mana in any combination of {U} and/or {R}." Vivi Ornitier.
+            # Fourth of the same family: the options depend on X, which reads
+            # the board, so load time can only record the colours and the
+            # expression.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a split mana ability is a single 'add_mana' -- there is "
+                    f"no second thing for the combination to join"
+                )
+            effect = mana_effects[0]
+            colors = [str(c) for c in effect.get("split") or ()]
+            if len(colors) < 2:
+                raise DslError(
+                    f"{where}.split: a combination needs two or more colours; one colour "
+                    f"is an ordinary 'mana' string with an 'amount'"
+                )
+            unknown = [c for c in colors if c not in MANA_SYMBOLS]
+            if unknown:
+                raise DslError(f"{where}.split: unknown mana symbols {unknown}")
+            if "amount" not in effect:
+                raise DslError(
+                    f"{where}: a split mana ability needs an 'amount' -- how much mana is "
+                    f"being divided. Without it the split has no size"
+                )
+            mana_split = tuple(colors)
+            _validate_mana_amount(effect["amount"], f"{where}.amount")
+            mana_amount = effect["amount"]
+            # The static superset, for the reason `reflecting` needs one: an
+            # empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source at all.
+            mana_options = _ANY_COLOR_OPTIONS
         elif any(
             isinstance(e, Mapping) and isinstance(e.get("mana"), Mapping) for e in mana_effects
         ):
@@ -1542,6 +1576,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
         mana_identity=mana_identity,
+        mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
         # 606.3: a loyalty ability may be activated "any time they could cast a

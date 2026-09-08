@@ -1335,10 +1335,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         and "mana" not in effect
         and "reflecting" not in effect
         and not effect.get("in_commander_identity")
+        and not effect.get("split")
     ):
         raise DslError(
-            f"{where}: add_mana needs 'mana' (or 'reflecting', or 'in_commander_identity')"
+            f"{where}: add_mana needs 'mana' (or 'reflecting', or "
+            f"'in_commander_identity', or 'split')"
         )
+    if op == "add_mana" and effect.get("split") is not None:
+        # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier.
+        # The colours are a list and the size is an `amount`; `mana` says the
+        # opposite thing (a fixed production string) and the two together would
+        # be two answers to one question.
+        if "mana" in effect:
+            raise DslError(
+                f"{where}: 'split' names the colours a combination may draw on, so it "
+                f"replaces 'mana' rather than joining it"
+            )
+        if not isinstance(effect["split"], list):
+            raise DslError(f"{where}.split: expected a list of mana symbols")
     if op in ("add_mana", "add_mana_per") and isinstance(effect.get("mana"), Mapping):
         # The one non-literal `mana`, and validated as such for the reason
         # `_restriction_name` validates its twin: a near-miss spelling that fell

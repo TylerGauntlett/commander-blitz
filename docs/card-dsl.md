@@ -1698,6 +1698,41 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
 
+### A mana ability that splits colours
+
+"{0}: Add X mana in **any combination of {U} and/or {R}**, where X is Vivi
+Ornitier's power." Two things at once, and the engine had each separately:
+
+```jsonc
+{ "op": "add_mana", "split": ["U", "R"], "amount": { "power_of": { "self": true } } }
+```
+
+`split` names the colours the combination may draw on and replaces `mana`;
+`amount` is how much is being divided. Fourth member of the family that includes
+`reflecting`, `in_commander_identity` and a `mana` mapping — all four are
+abilities whose options cannot be known at load time, so the card records the
+question and `costs.mana_options_of` answers it at activation.
+
+The combination is offered as **one option per composition**: a power-3 source
+offers 3+0, 2+1, 1+2 and 0+3, and the payment picks whichever covers the spell.
+A `choose_mode` of two `add_mana`s is the near miss and is a strictly worse
+card — it offers X of one colour *or* X of the other and can never make
+{U}{U}{R}{R} off a power-4 source, which is the whole card.
+
+**The size lives inside the option, not beside it.** Every other mana ability
+multiplies its single option by `mana_amount`; a split's compositions already
+sum to X, so `mana_amount` returns 1 for one. Without that the card would make
+X² mana.
+
+`in_commander_identity` looks like a shortcut for Vivi and is not: it reads the
+*controller's commander identity* rather than the printed {U}/{R}, so it is
+correct only while Vivi is the commander and silently wrong in the 99 of a
+five-colour deck.
+
+`MAX_SPLIT_OPTIONS` caps the enumeration at 64. Two colours and a large X is
+linear; five colours is combinatorial, and the cap is a guard against a
+pathological board rather than a rule.
+
 ### `double_triggers`, and its two axes
 
 "That ability triggers an additional time." Two shipped cards print the same

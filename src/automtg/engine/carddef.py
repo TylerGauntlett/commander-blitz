@@ -577,6 +577,16 @@ class Ability:
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.
     mana_identity: bool = False
+    #: "Add X mana in **any combination of {U} and/or {R}**" -- Vivi Ornitier.
+    #: The colours the split may draw on. Fourth member of the same family as
+    #: `mana_reflects`, `mana_identity` and `mana_chosen_color`: the options are
+    #: a question that cannot be answered at load time, because the *size* of
+    #: the split is `mana_amount` and that reads the board.
+    #:
+    #: A `choose_mode` of two `add_mana`s is the near miss and is a strictly
+    #: worse card: it offers X of one colour or X of the other and can never
+    #: make {U}{U}{R}{R} off a power-4 Vivi.
+    mana_split: tuple[str, ...] = ()
     #: "{T}: Add one mana of **the chosen color**." Heraldic Banner. The third
     #: member of the same family as `mana_reflects` and `mana_identity`: the
     #: colour is a question about this permanent's own `chosen_color`, asked
