@@ -5083,6 +5083,12 @@
   "misty_rainforest": {
     "zone": "battlefield"
   },
+  "mizzix_s_mastery": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "exile"
+  },
   "moaning_spirit": {
     "zone": "battlefield"
   },

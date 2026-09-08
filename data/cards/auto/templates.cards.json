@@ -55432,6 +55432,86 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "exiles_itself": true,
+      "id": "mizzix_s_mastery",
+      "mana_cost": "{3}{R}",
+      "name": "Mizzix's Mastery",
+      "oracle_text": "Exile target card that's an instant or sorcery from your graveyard. For each card exiled this way, copy it, and you may cast the copy without paying its mana cost. Exile Mizzix's Mastery.\nOverload {5}{R}{R}{R} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "overload": "{5}{R}{R}{R}",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "overloaded": true
+          },
+          "else": [
+            {
+              "as": "banked",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "as": "banked",
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "count": "all",
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy",
+              "optional": true
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "optional": true,
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [

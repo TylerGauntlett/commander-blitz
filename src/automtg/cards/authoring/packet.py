@@ -317,7 +317,7 @@ def reference() -> dict:
         STATIC_FILTER_KEYS,
         STATIC_VALUE_KEYS,
     )
-    from ..schema import AbilityModel, CostModel
+    from ..schema import AbilityModel, CostModel, TargetModel, TriggerModel
 
     return {
         "ops": sorted(known_ops()),
@@ -332,6 +332,17 @@ def reference() -> dict:
         # `sorcery-speed-activation` capability because a worker looked in
         # `cost_keys` -- the only list it had -- and correctly did not find it.
         "ability_keys": sorted(AbilityModel.model_fields),
+        # What a `trigger` object may carry, beside `event`. Derived from the
+        # model, as `cost_keys` and `ability_keys` are, and for the reason those
+        # two exist: Arcane Bombardment's "whenever you cast your FIRST instant
+        # or sorcery spell each turn" was filed as a missing trigger event by a
+        # worker that had looked in `ability_keys` -- the only list it had --
+        # while `max_per_turn` sat on TriggerModel, already shipping on
+        # Jin-Gitaxias' own spell_cast trigger.
+        "trigger_keys": sorted(TriggerModel.model_fields),
+        # And what a target spec may carry. `id` and `kind` are required, and
+        # three gate-1 rejections in this run were a worker writing neither.
+        "target_keys": sorted(TargetModel.model_fields),
         "keywords": sorted(k.value for k in Keyword),
         "types": sorted(t.value for t in CardType),
         "supertypes": sorted(s.value for s in Supertype),
@@ -414,6 +425,15 @@ def reference() -> dict:
             " forwards its spec to a helper can accept a key listed for neither,"
             " so a key's absence is not proof it does not exist -- check the"
             " `examples` too, and prefer a gap record only when both are silent.",
+            "`trigger_keys` is what a trigger object may carry beside `event`,"
+            " and it is where a printed rate limit lives: `max_per_turn: 1` is"
+            " \"whenever you cast your FIRST ... each turn\" and \"this"
+            " ability triggers only once each turn\", and `nth` is \"your"
+            " second card each turn\". A trigger's FILTER keys go inside"
+            " `filter`, never on the trigger itself.",
+            "`target_keys` is what a card-level or ability `targets` entry may"
+            " carry. `id` and `kind` are both REQUIRED; a spec missing either"
+            " fails schema validation before anything else is looked at.",
             "`card_level_rider_keys` is what a card says about ITSELF that is"
             " neither a price nor a face -- `exiles_itself` for \"Exile <this"
             " card>.\" instead of the graveyard, `uncounterable` for \"This"
