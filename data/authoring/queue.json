@@ -236262,12 +236262,12 @@
     },
     "Season of Weaving": {
       "edhrec_rank": 2126,
-      "gate": "template",
+      "gate": null,
       "name": "Season of Weaving",
-      "reason": "no template for: Choose up to five {P} worth of modes. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "61da9522-3844-4753-8122-d11ae2780a4c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Season of the Bold": {

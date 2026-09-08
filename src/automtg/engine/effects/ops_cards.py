@@ -508,6 +508,21 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
         # the selector filtered out of the pool, which were still looked at.
         if spec.get("rest_to_bottom", False):
             _bottom_in_random_order(ctx, pid, [oid for oid in top if oid not in taken])
+        # "Then put all cards exiled this way **that weren't cast** into your
+        # graveyard" -- Epic Experiment. The same remainder, sent somewhere
+        # other than the bottom of the library. Without it the leftovers stay on
+        # top of the library, which is a strictly better card: Epic Experiment
+        # would leave its misses where they can be drawn.
+        if (rest := spec.get("rest_to")) is not None:
+            for oid in [o for o in top if o not in taken]:
+                move_object(
+                    ctx.state,
+                    oid,
+                    DESTINATIONS[str(rest)],
+                    to_player=pid,
+                    cause="look_at_top",
+                    by=ctx.source_oid,
+                )
         if spec.get("shuffle", False):
             shuffle_library(ctx.state, pid)
     if binding:

@@ -6954,6 +6954,17 @@
   "seaside_citadel": {
     "zone": "battlefield"
   },
+  "season_of_weaving": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 35
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "secluded_courtyard": {
     "zone": "battlefield"
   },

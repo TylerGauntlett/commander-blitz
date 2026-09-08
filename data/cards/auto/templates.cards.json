@@ -75470,6 +75470,79 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "season_of_weaving",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Season of Weaving",
+      "oracle_text": "Choose up to five {P} worth of modes. You may choose the same mode more than once.\n{P} — Draw a card.\n{P}{P} — Choose an artifact or creature you control. Create a token that's a copy of it.\n{P}{P}{P} — Return each nonland, nontoken permanent to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "budget": 5,
+          "modes": [
+            {
+              "cost": 1,
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "label": "Draw a card"
+            },
+            {
+              "cost": 2,
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Creature"
+                    ],
+                    "controller": "you",
+                    "count": 1,
+                    "zone": "battlefield"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Choose an artifact or creature you control. Create a token that's a copy of it."
+            },
+            {
+              "cost": 3,
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "is_token": false,
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Return each nonland, nontoken permanent to its owner's hand."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
