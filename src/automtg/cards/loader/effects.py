@@ -18,6 +18,7 @@ from automtg.engine.effects.values import (
 )
 from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
+from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -955,6 +956,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'playable_this_turn' needs 'objects' -- "
             f"there is nothing to grant permission on"
         )
+    if "playable" in effect or "playable_this_turn" in effect:
+        # Two spellings of one key: `playable_this_turn: true` is what every
+        # card written before durations existed says, and `playable:
+        # "<duration>"` is the general form. Written together they would need a
+        # precedence rule nobody can read off the card, so they are refused
+        # together instead.
+        if "playable" in effect and "playable_this_turn" in effect:
+            raise DslError(
+                f"{where}: 'playable' and 'playable_this_turn' are two spellings of "
+                f"one key -- write 'playable': \"this_turn\" or the boolean, not both"
+            )
+        if op not in ("exile", "look_at_top", "grant_playable"):
+            raise DslError(
+                f"{where}: {op!r} grants no 'you may play it' permission, so "
+                f"'playable' means nothing on it"
+            )
+        if (duration := effect.get("playable")) is not None and duration not in PLAYABLE_DURATIONS:
+            # A typo here would fall through `playable_duration_of` as None and
+            # grant no permission at all -- a card that says "you may play it"
+            # and does not, silently. The same reason the mana restriction's
+            # entry guard exists.
+            raise DslError(
+                f"{where}: unknown 'playable' duration {duration!r} "
+                f"(implemented: {sorted(PLAYABLE_DURATIONS)})"
+            )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a

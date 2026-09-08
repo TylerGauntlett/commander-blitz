@@ -10850,3 +10850,82 @@ Two refusals rather than two silent acceptances:
 Trigger filters have had `not_types` all along, and selectors have
 `not_types`/`not_subtypes`. The restriction language was the one place the
 negation was missing, and it is the same one word.
+
+## A "you may play it" permission with a real duration
+
+### Overview
+
+Two cards, one missing idea:
+
+- "Exile the top card of your library. You may play it **until your next end
+  step**." (Haste Magic.)
+- "Exile the top two cards of your library. **Until the end of your next turn**,
+  you may play those cards." (Light Up the Stage.)
+
+The engine had exactly one clock: `playable_turn` on the object, compared against
+`state.turn` in seven places. That is the impulse-draw "this turn", and it is
+correct for the family it was built for.
+
+### Why this is not a rounding error
+
+The interesting thing about this gap is its direction. Almost every approximation
+worth refusing makes a **better** card than printed; this one makes a worse one.
+
+Haste Magic is an instant. Cast on an opponent's turn — a normal line of play —
+the printed card lets you play the exiled card through the rest of that turn,
+every other player's turn, and your following turn up to its end step.
+`playable_this_turn` revokes it at the turn boundary. Nothing on the board shows
+a permission expiring early, so the loss is silent, and the card looks
+implemented.
+
+Going the other way is no better: `grant_playable` carries no duration at all,
+which is an open-ended permission.
+
+### The clocks are keyed to the player, not to a turn number
+
+Neither duration computes a future turn number, and the reason is written in
+`_untap_step` already: eliminating a player moves everybody else's "next turn",
+and extra turns move it again. So both are ended when the grantee's step arrives,
+exactly as detain, goad, "until your next turn" block prohibitions, player
+protections and life locks all are.
+
+`turn._expire_permissions` is called twice in `begin_step` — as the end step
+begins, and in cleanup.
+
+### One word apart
+
+The two clocks differ only in "next", and it changes both hooks:
+
+- **"your next end step"** asked on your own turn is *this* turn's, so the
+  permission is no longer than the this-turn one. The hook clears
+  unconditionally when the grantee's end step begins. A card exiled *during* your
+  own end step therefore survives to the following turn's — correct, because the
+  end step you are standing in is not your next one, and the hook for it has
+  already run.
+- **"your next turn"** is never the turn you are standing in. So the cleanup hook
+  checks `playable_turn < state.turn` as well as the seat: without that, a card
+  exiled on your own turn would lose its permission at the end of the turn it was
+  granted in, which is the shorter card again.
+
+### Seven readers, one question
+
+`playable_turn == state.turn` appeared in legality, both cast paths, the any-type
+relaxation, the group ledger and the flashback rider. That comparison *is* the
+this-turn duration, so generalising meant replacing all seven with
+`GameObject.playable_live(turn)` rather than adding an eighth reader that knew
+about durations while the others did not.
+
+### A test that was wrong before the engine was
+
+Three of the tests in `tests/unit/test_playable_duration.py` failed on first run,
+and none of them was an engine bug. `pass_until` returns the moment it finds no
+pending decision, so on a game built with `advance=False` the "hand the turn to
+the opponent" helper did nothing at all — every "granted on an opponent's turn"
+test was quietly testing the other case. Reaching the opponent's precombat main
+was then still not enough, because seat 0 has to *hold priority* there to cast an
+instant; the condition has to be the cast action, not the step. And the
+opponent's-end-step assertion navigated to a cleanup step, which grants no
+priority, so `pass_until` sailed through it and on into the grantee's own end
+step — where the permission correctly ended, looking exactly like a bug. That one
+now applies the hook directly, which is the actual claim: same state, opponent
+active, permission untouched.

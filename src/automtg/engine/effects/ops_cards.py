@@ -8,7 +8,7 @@ from typing import Any
 from ..characteristics import chars
 from ..enums import Zone
 from ..events import EventType
-from ..objects import PLUS_ONE
+from ..objects import PLUS_ONE, playable_duration_of
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..zones import move_object
 from . import register
@@ -167,6 +167,7 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         obj.playable_by = ctx.controller
         obj.playable_turn = ctx.state.turn
+        obj.playable_duration = playable_duration_of(spec) or "this_turn"
         obj.playable_group = ctx.source_oid if limit else None
         # "…gains **flashback**", rather than a bare permission to cast it: the
         # card is exiled as it resolves, so the grant is worth one cast per card
@@ -355,11 +356,12 @@ def _move_found(
         # key only works on the cards that spell the exile out as its own step.
         # Written after the move, like `exile` writes it, because
         # `reset_permanent_state` runs on the way and would wipe the pair.
-        if destination is Zone.EXILE and spec.get("playable_this_turn"):
+        if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
                 obj.playable_by = pid
                 obj.playable_turn = ctx.state.turn
+                obj.playable_duration = duration
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What

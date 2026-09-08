@@ -1,0 +1,92 @@
+{
+  "_comment": "Shapes for tests/unit/test_playable_duration.py. t_haste_magic is the Haste Magic clock ('until your next end step'), t_light_up is Light Up the Stage's ('until the end of your next turn'), and t_impulse is the this-turn permission both are compared against -- the one the engine had, and the one that is a strictly worse card for either of them.",
+  "cards": [
+    {
+      "id": "t_impulse",
+      "name": "Test Impulse",
+      "oracle_text": "Exile the top card of your library. You may play it this turn.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "you",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": 1
+          },
+          "destination": "exile",
+          "playable_this_turn": true
+        }
+      ]
+    },
+    {
+      "id": "t_haste_magic",
+      "name": "Test Haste Magic",
+      "oracle_text": "Exile the top card of your library. You may play it until your next end step.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "you",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": 1
+          },
+          "destination": "exile",
+          "playable": "your_next_end_step"
+        }
+      ]
+    },
+    {
+      "id": "t_light_up",
+      "name": "Test Light Up",
+      "oracle_text": "Exile the top card of your library. Until the end of your next turn, you may play that card.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "you",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": 1
+          },
+          "destination": "exile",
+          "playable": "end_of_your_next_turn"
+        }
+      ]
+    }
+  ]
+}

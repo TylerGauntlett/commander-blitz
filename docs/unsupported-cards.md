@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**35 cards** blocked by **41** capabilities.
+**32 cards** blocked by **38** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [enters-replacement](#enters-replacement) | 2 | 172 | replacement |
-| [impulse-until-next-turn](#impulse-until-next-turn) | 2 | 1214 | engine |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [token-definitions](#token-definitions) | 2 | 70 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -38,14 +37,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [mana-ability-with-rider](#mana-ability-with-rider) | 1 | 3126 | engine |
 | [multi-pip-x-cost](#multi-pip-x-cost) | 1 | 1212 | cost |
 | [multicolored-from-hand-spell-filter](#multicolored-from-hand-spell-filter) | 1 | 10372 | selector |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [plot](#plot) | 1 | 10372 | op, replacement |
-| [rebound](#rebound) | 1 | 3126 | keyword |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -108,24 +105,6 @@ Blocks **2** cards.
   - As this land enters, you may pay 3 life. If you don't, it enters tapped.
 - **Mox Diamond** (rank 246) — `mox_diamond`
   - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
-
-</details>
-
-## impulse-until-next-turn
-
-Blocks **2** cards.
-
-- **(engine)** an impulse-exile permission whose clock is a duration rather than the current turn -- here specifically 'until your next end step', which when the spell is cast on an opponent's turn spans the rest of that turn, every other player's turn, and your following turn up to its end step. `exile`'s `playable_this_turn` (and `grant_playable`, which carries no duration at all) needs to accept a duration form -- e.g. `playable: "until_your_next_end_step"` / `until_your_next_turn` -- and every consumer of the permission must honour the recorded expiry instead of comparing against the current turn number.
-  <br>Why the existing vocabulary won't do: `exile` carries only the boolean `playable_this_turn`, and `look_at_top`'s `playable_this_turn` is the same single-turn flag; `grant_playable` takes `any_type`, `limit` and `objects` and no `duration` at all. Shipping `playable_this_turn` would be an approximation in the *narrowing* direction: cast on an opponent's turn (this is an Instant, so that is a normal line of play) the printed card lets you play the exiled card right through your next turn up to your end step, while `playable_this_turn` revokes it at the turn boundary -- a strictly WORSE card than printed, which fails the fidelity rule just as surely as the more usual strictly-better error, and fails it silently since nothing on the board shows the permission expiring early. Going the other way, `grant_playable` with no duration is an open-ended permission and is strictly better than printed. `play_exiled` is a different effect (cast now, for free, not a deferred permission at the printed price). `delay`/`delayed_trigger` cannot re-grant the permission later either: bindings live for one resolution, and `exiled_with` reads `exiled_by`, which `exile` only sets under `link`/`until_leaves` -- flags that mean 'return it', not 'it is still playable'. The engine already expresses `until_your_next_turn` for detain/goad/cant_block, so the clock is representable; it has simply never been wired to the impulse permission. This is the same engine gap already recorded for Light Up the Stage.
-- **(engine)** an impulse-exile permission whose clock runs to the end of the granting player's NEXT turn instead of the current one. Concretely: replace the single `playable_turn: int` on GameObject (src/automtg/engine/objects.py:450) with a permission that also records its duration -- e.g. a `playable_until_next_turn: bool` alongside it, or a `playable_expires_after` marker the turn boundary clears -- and have every reader honour it: legality._playable_zones (src/automtg/engine/legality.py:325-336), the exile-permission filter at src/automtg/engine/legality.py:471, the any-type relaxation at src/automtg/engine/legality.py:1171 and src/automtg/engine/game.py:383, and the group cap at src/automtg/engine/game.py:547. Then surface it on the card side as a duration on `exile`'s `playable_this_turn` (a `playable: "until_your_next_turn"` form, or a sibling `playable_until_next_turn` flag) and the same on `grant_playable`, so the two impulse families -- "you may play that card this turn" and "until the end of your next turn, you may play those cards" -- stay one op with two clocks.
-  <br>Why the existing vocabulary won't do: The permission the engine has is hard-wired to a single turn. `exile` with `playable_this_turn` (src/automtg/engine/effects/ops_board.py:267,293-294) and `grant_playable` (src/automtg/engine/effects/ops_cards.py:132-165) both write `obj.playable_turn = ctx.state.turn`, and every consumer gates on the equality `playable_turn == state.turn`, so the offer vanishes at the turn boundary -- a card written with `playable_this_turn` would let the player use the two exiled cards only on the turn Light Up the Stage resolved, which is strictly narrower than printed and is exactly the approximation the brief forbids. `play_exiled` is a different card entirely: it casts immediately and for free, while this line is a deferred permission at the printed price. `delay`/`delayed_trigger` cannot re-grant it either -- there is no way to re-select the two specific exiled cards from a later resolution, since bindings live for one resolution only (ops_board.py comment at :275-282) and the `exiled_with: "self"` selector reads `exiled_by`, which `exile` sets only under `until_leaves`/`link`, a flag that means "return them" rather than "they are still playable". The duration vocabulary the engine already has for other effects -- `until_your_next_turn` on detain/goad/cant_block (src/automtg/engine/effects/ops_board.py:1939,1996) -- proves the clock is representable; it simply has never been wired to the impulse permission. Note the first printed line, "Spectacle {R}", is NOT blocked: it is expressible as a card-level `alternative_cost` of {R} whose `condition` is a `cmp` of `{"life_lost_this_turn": "opponent"}` greater than `{"const": 0}`, which the loader accepts (src/automtg/cards/loader.py:1205-1228). Only the impulse duration blocks the card, so no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Light Up the Stage** (rank 1214) — `light_up_the_stage`
-  - Until the end of your next turn, you may play those cards.
-- **Haste Magic** (rank 4090) — `haste_magic`
-  - You may play it until your next end step.
 
 </details>
 
@@ -424,21 +403,6 @@ Blocks **1** card.
 
 </details>
 
-## mana-ability-with-rider
-
-Blocks **1** card.
-
-- **(engine)** a mana ability whose effects list may contain a non-mana effect alongside add_mana -- here `{T}: Add {U}. Remove a time counter from this land.` -- so that the extra effect happens on activation, without the stack, exactly as the printed mana ability does
-  <br>Why the existing vocabulary won't do: The loader restricts a mana ability to add_mana alone, or one choose_mode whose modes each hold only add_mana, and add_mana's own options (amount, in_commander_identity, mana, player, reflecting) carry no rider, so remove_counters cannot ride along inside it. The two reachable shapes are both wrong. Dropping is_mana_ability and writing effects [add_mana, remove_counters] makes it an ordinary activated ability that uses the stack: it could be responded to and could not be activated while casting a spell or paying a cost, which is the whole point of a mana ability. Moving the removal into the ability's `cost` via the remove_counters cost key changes the card's function outright -- Temple of Cyclical Time is meant to tap for {U} forever, shedding a time counter only while it still has one, and a remove_counters cost would make the land produce no mana at all once it has zero counters, exactly when the other ability becomes activatable.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time** (rank 3126) — `ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time`
-  - Whenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)
-  - {T}: Add {U}. Remove a time counter from this land.
-
-</details>
-
 ## multi-pip-x-cost
 
 Blocks **1** card.
@@ -527,21 +491,6 @@ Blocks **1** card.
 
 - **Lilah, Undefeated Slickshot** (rank 10372) — `lilah_undefeated_slickshot`
   - Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted. (You may cast it as a sorcery on a later turn without paying its mana cost.)
-
-</details>
-
-## rebound
-
-Blocks **1** card.
-
-- **(keyword)** rebound as a real mechanic, and an effect that grants it to a spell already on the stack: a replacement that exiles the spell on resolution instead of putting it into its owner's graveyard, plus a delayed trigger at the beginning of that player's next upkeep offering to cast it from exile without paying its mana cost, with the exiled card leaving exile only when cast or when the offer is declined. The grant must apply to a spell object on the stack chosen by a spell_cast trigger filtered to instants cast from hand, not to a permanent.
-  <br>Why the existing vocabulary won't do: rebound is absent from the 34-entry keywords list and from card_level_cost_keys, so neither grant_keyword (keyword/keywords must name a loader-known keyword) nor a printed cost node can carry it, and even a hypothetical keyword would have no behaviour behind it. grant_keyword and grant_ability both take `objects`, a selector for permanents on the battlefield; nothing in ops attaches anything to a spell on the stack -- the only ops that reach a stack object are counter, copy_spell and return_spell_to_hand, each addressing it by `sid`/`target` to remove or duplicate it, never to modify how it resolves. Hand-rolling the effect is no better: `exile` cannot replace where a resolving spell goes (it moves objects from a zone, and there is no replacement hook for a spell finishing resolution), and delayed_trigger plus play_exiled could at best re-cast a card that some other effect had already exiled, which is a different card's text.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time** (rank 3126) — `ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time`
-  - Whenever you cast an instant spell from your hand, it gains rebound. (Exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.)
-  - {T}: Add {U}. Remove a time counter from this land.
 
 </details>
 

@@ -3585,6 +3585,22 @@
   "harvest_gwyllion": {
     "zone": "battlefield"
   },
+  "haste_magic": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 1
+    },
+    "zone": "graveyard"
+  },
   "haunted_cloak": {
     "zone": "battlefield"
   },
@@ -5595,6 +5611,10 @@
     "zone": "battlefield"
   },
   "ogre_warrior": {
+    "zone": "battlefield"
+  },
+  "ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "oketra_s_monument": {

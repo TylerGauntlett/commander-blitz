@@ -118,7 +118,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         permitted.extend(player.graveyard)
     for oid in permitted:
         obj = state.objects[oid]
-        if obj.playable_by != pid or obj.playable_turn != state.turn:
+        if obj.playable_by != pid or not obj.playable_live(state.turn):
             continue
         # "…you may cast **a spell** from among those cards", singular out of
         # however many were milled. Counted per granting permanent, so two
@@ -878,7 +878,7 @@ def _cast_variant(
         if phyrexian_life > state.players[pid].life:
             continue
         permission = state.objects[oid]
-        if permission.playable_any_type and permission.playable_turn == state.turn:
+        if permission.playable_any_type and permission.playable_live(state.turn):
             # "…and mana of any type can be spent to cast that spell." The colours
             # are relaxed once the price has been chosen, so it is the price this
             # line is actually offering that gets relaxed rather than the printed

@@ -804,7 +804,7 @@ def _place_after_resolution(
     # was never given anything, and must not be exiled for it.
     if destination is Zone.GRAVEYARD and (
         (obj.cast_from_graveyard and card.graveyard_cast_exiles)
-        or (obj.playable_exiles and obj.playable_turn == state.turn)
+        or (obj.playable_exiles and obj.playable_live(state.turn))
     ):
         destination = Zone.EXILE
     # Buyback: "put it into your hand instead of your graveyard as it

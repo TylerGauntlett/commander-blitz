@@ -122362,12 +122362,12 @@
     },
     "Haste Magic": {
       "edhrec_rank": 4090,
-      "gate": "template",
+      "gate": null,
       "name": "Haste Magic",
-      "reason": "no template for: Target creature gets +3/+1 and gains haste until end of turn. Exile the top card of your l",
+      "reason": "",
       "scryfall_id": "3af9d100-70ee-4c6c-a762-11a0c4f3ef6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hatchery Sliver": {
@@ -190132,12 +190132,12 @@
     },
     "Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time": {
       "edhrec_rank": 3126,
-      "gate": "template",
+      "gate": null,
       "name": "Ojer Pakpatiq, Deepest Epoch // Temple of Cyclical Time",
-      "reason": "no template for: Whenever you cast an instant spell from your hand, it gains rebound",
+      "reason": "",
       "scryfall_id": "a1fbfb8f-600e-4b29-98c5-7c6714d35347",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ojer Taq, Deepest Foundation // Temple of Civilization": {

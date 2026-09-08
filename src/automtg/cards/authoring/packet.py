@@ -225,33 +225,64 @@ def _op_options() -> dict[str, list[str]]:
 
     from automtg.engine.effects import OPS
 
-    options: dict[str, list[str]] = {}
-    for name, fn in OPS.items():
+    def read_keys(fn, seen: set) -> set[str]:
+        """Keys ``fn`` reads out of a mapping parameter, following it one hop.
+
+        The hop is not a refinement. An op that hands ``spec`` to a helper
+        reports none of that helper's keys, and the result is *misleading*
+        rather than merely short: after `playable` moved into a shared
+        `playable_duration_of(spec)`, `exile` and `look_at_top` went on
+        advertising only the boolean it replaced, and a worker reading that as
+        the whole of it would write the shorter card. Following the call is the
+        fix at the source; the union with the shipped pool below stays, because
+        a helper reached through two hops or a dynamic dispatch is still
+        invisible.
+        """
+        if fn in seen:
+            return set()
+        seen.add(fn)
         try:
             tree = ast.parse(textwrap.dedent(inspect.getsource(fn)))
         except (OSError, TypeError, SyntaxError):  # pragma: no cover - defensive
-            continue
+            return set()
+        # Whatever the mapping is called here: `spec` in every op, but a helper
+        # is free to name its own parameter something else.
+        params = {a.arg for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
+                  for a in node.args.args}
+        names = params & {"spec", "effect"}
         keys: set[str] = set()
         for node in ast.walk(tree):
             match node:
                 # spec.get("x"), spec.get("x", default), spec.pop("x")
                 case ast.Call(
-                    func=ast.Attribute(value=ast.Name(id="spec"), attr="get" | "pop"),
+                    func=ast.Attribute(value=ast.Name(id=str() as who), attr="get" | "pop"),
                     args=[ast.Constant(value=str() as key), *_],
-                ):
+                ) if who in names:
                     keys.add(key)
                 # spec["x"]
                 case ast.Subscript(
-                    value=ast.Name(id="spec"), slice=ast.Constant(value=str() as key)
-                ):
+                    value=ast.Name(id=str() as who), slice=ast.Constant(value=str() as key)
+                ) if who in names:
                     keys.add(key)
                 # "x" in spec
                 case ast.Compare(
                     left=ast.Constant(value=str() as key),
                     ops=[ast.In()],
-                    comparators=[ast.Name(id="spec")],
-                ):
+                    comparators=[ast.Name(id=str() as who)],
+                ) if who in names:
                     keys.add(key)
+                # helper(spec) -- follow it, once
+                case ast.Call(func=ast.Name(id=str() as called), args=args) if any(
+                    isinstance(a, ast.Name) and a.id in names for a in args
+                ):
+                    target = getattr(inspect.getmodule(fn), called, None)
+                    if inspect.isfunction(target):
+                        keys |= read_keys(target, seen)
+        return keys
+
+    options: dict[str, list[str]] = {}
+    for name, fn in OPS.items():
+        keys = read_keys(fn, set())
         if keys:
             options[name] = set(keys)
 
@@ -350,6 +381,7 @@ def reference() -> dict:
         COST_REDUCTION_FILTER_KEYS,
         COST_REDUCTION_KEYS,
         COST_REDUCTION_REFUSED_FILTER_KEYS,
+        MANA_RIDER_OPS,
         STATIC_CONDITION_HEADS,
         STATIC_EFFECTS,
         STATIC_FILTER_KEYS,
@@ -579,8 +611,18 @@ def reference() -> dict:
             "A static ability's filter may only read printed characteristics.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",
-            "A mana ability may contain only `add_mana`, or one `choose_mode`"
-            " whose modes each contain only `add_mana`.",
+            "A mana ability's MANA half may contain only `add_mana`, or one"
+            " `choose_mode` whose modes each contain only `add_mana` -- and it"
+            " may then be followed by a **rider**, one or more of"
+            f" {sorted(MANA_RIDER_OPS)}, which happen on activation without the"
+            " stack exactly as the mana does. That is how"
+            " \"{T}: Add {U}. Remove a time counter from this land.\" is"
+            " written (Temple of Cyclical Time), and \"{T}: Add {B}. This"
+            " creature deals 1 damage to you.\" The rider belongs to the"
+            " ABILITY, not to `add_mana`, so it is not in `op_options` -- this"
+            " note used to say a mana ability may contain only `add_mana`, and"
+            " a worker filed a gap against a rider the loader has always"
+            " accepted.",
             "\"It can't be regenerated.\" is `no_regeneration: true` on the"
             " `destroy` op -- 701.15c, the victim's regeneration shields are"
             " not applied to that destruction (and not spent either)."

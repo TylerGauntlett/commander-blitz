@@ -2932,6 +2932,45 @@ creature source of the chosen type**." Three things are load-bearing:
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
 
+### How long "you may play it" lasts
+
+```jsonc
+{ "op": "exile", "objects": { ... }, "playable_this_turn": true }   // the default
+{ "op": "look_at_top", "destination": "exile",
+  "playable": "your_next_end_step" }                                // Haste Magic
+{ "op": "exile", "objects": { ... },
+  "playable": "end_of_your_next_turn" }                             // Light Up the Stage
+```
+
+`playable_this_turn` is the impulse-draw permission and was the only one there
+was: a `playable_turn` on the object, compared against `state.turn` in seven
+places. `playable` is the same key with a duration, and the two are refused
+together — a precedence rule nobody could read off the card.
+
+The other two clocks are **strictly longer**, which is why they are not an
+approximation worth skipping. Haste Magic is an instant; cast on an opponent's
+turn, the printed card lets you play the exiled card right through your following
+turn, and `playable_this_turn` revokes it at the turn boundary with nothing on
+the board to show it.
+
+Neither is arithmetic on a future turn number. Both are keyed to the **player**
+and ended when their step arrives — `turn._expire_permissions`, called as the end
+step begins and again in cleanup — which is the choice detain, goad and "until
+your next turn" all made, and for their reason: eliminating a player moves
+everybody else's next turn, and extra turns move it again.
+
+They differ in the word "next". *Your next end step*, asked on your own turn, is
+**this** turn's, so the permission is no longer than the this-turn one; a card
+exiled during your own end step survives to the following turn's, because the
+hook for that step has already run. *Your next turn* is never the turn you are
+standing in, so `end_of_your_next_turn` granted on your own turn lives through
+the whole of the following one — which is why its cleanup hook checks the grant
+turn as well as the seat.
+
+Every reader goes through `GameObject.playable_live(turn)`. Generalising meant
+replacing all seven `playable_turn == state.turn` comparisons rather than adding
+an eighth, since that comparison *is* the this-turn duration.
+
 ## Adding an op
 
 1. Write the function in the right `effects/ops_*.py` and decorate it with
