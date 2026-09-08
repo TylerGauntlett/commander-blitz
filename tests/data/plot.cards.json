@@ -1,0 +1,61 @@
+{
+  "_comment": "Shapes for tests/unit/test_plot.py. t_lilah is Lilah, Undefeated Slickshot's second line. t_gold_bolt is a multicolored instant and t_mono_bolt the mono-coloured near miss, which is what separates `min_colors` from `colors`.",
+  "cards": [
+    {
+      "id": "t_lilah",
+      "name": "Test Slickshot",
+      "oracle_text": "Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted.",
+      "mana_cost": "{1}{U}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a multicolored instant or sorcery spell from your hand, exile that spell instead of putting it into your graveyard as it resolves. If you do, it becomes plotted.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {"any_types": ["Instant", "Sorcery"], "min_colors": 2}
+          },
+          "effects": [{"op": "grant_plot"}]
+        }
+      ]
+    },
+    {
+      "id": "t_gold_bolt",
+      "name": "Test Gold Bolt",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{U}{R}",
+      "types": ["Instant"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+    },
+    {
+      "id": "t_mono_bolt",
+      "name": "Test Mono Bolt",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+    },
+    {
+      "id": "t_gold_creature",
+      "name": "Test Gold Ogre",
+      "oracle_text": "",
+      "mana_cost": "{U}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"]
+    }
+  ]
+}

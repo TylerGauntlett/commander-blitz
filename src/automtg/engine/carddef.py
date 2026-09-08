@@ -85,6 +85,20 @@ class TargetSpec:
         """
         return self.up_to or not isinstance(self.count, int)
 
+    @property
+    def x_sized(self) -> bool:
+        """Is this "each of **X** targets", sized by the X paid to cast the spell?
+
+        Crackle with Power: "{X}{R}{R}{R}: … deals 5 damage to each of X
+        targets." The one computed count a *spell* may carry, and it is legal
+        for the reason every other computed count is not: 601.2b announces X
+        and 601.2c chooses targets, in that order, so by the time the targets
+        are declared X is a number. `{"additional_paid": true}` reads a cost
+        paid at 601.2h and would still read zero here, which is what
+        `loader.targets._compile_targets` refuses.
+        """
+        return isinstance(self.count, dict) and bool(self.count.get("x"))
+
 
 #: What a **bestowed** spell targets, fixed by rule 702.103a rather than by the
 #: card: "it's an Aura spell with **enchant creature**". Every other alternative
@@ -508,6 +522,22 @@ def asks_another_player(spec: Mapping[str, Any] | None) -> bool:
     return bool(spec) and spec.get("chooser") is not None
 
 
+def is_budgeted(spec: Mapping[str, Any] | None) -> bool:
+    """Is this ``choose_mode`` a budget rather than a count?
+
+    Season of Weaving: "choose up to five {P} worth of modes. You may choose the
+    same mode more than once." The answer is a **multiset** picked one mode at a
+    time, because what is affordable shrinks as the budget is spent -- which is
+    a different question from the single "which of these" that `_ask_modes`
+    puts at 601.2b, and one it has no shape for.
+
+    Declined for the same reason `asks_another_player` is, so the op's own loop
+    gets to ask. Season of Weaving owns no mode-targets, so nothing is lost by
+    asking at resolution; a budgeted card that did would need this revisited.
+    """
+    return bool(spec) and spec.get("budget") is not None
+
+
 def _specs_for_modes(
     base: tuple[TargetSpec, ...],
     mode_targets: Mapping[int, tuple[TargetSpec, ...]],
@@ -577,6 +607,16 @@ class Ability:
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.
     mana_identity: bool = False
+    #: "Add X mana in **any combination of {U} and/or {R}**" -- Vivi Ornitier.
+    #: The colours the split may draw on. Fourth member of the same family as
+    #: `mana_reflects`, `mana_identity` and `mana_chosen_color`: the options are
+    #: a question that cannot be answered at load time, because the *size* of
+    #: the split is `mana_amount` and that reads the board.
+    #:
+    #: A `choose_mode` of two `add_mana`s is the near miss and is a strictly
+    #: worse card: it offers X of one colour or X of the other and can never
+    #: make {U}{U}{R}{R} off a power-4 Vivi.
+    mana_split: tuple[str, ...] = ()
     #: "{T}: Add one mana of **the chosen color**." Heraldic Banner. The third
     #: member of the same family as `mana_reflects` and `mana_identity`: the
     #: colour is a question about this permanent's own `chosen_color`, asked
@@ -651,7 +691,7 @@ class Ability:
         if self.is_static or count_mode_specs(self.effects) != 1:
             return None
         spec = top_level_mode_spec(self.effects)
-        return None if asks_another_player(spec) else spec
+        return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs this ability actually declared -- see
@@ -949,7 +989,7 @@ class CardDef:
         if count_mode_specs(self.spell_effects) != 1:
             return None
         spec = top_level_mode_spec(self.spell_effects)
-        return None if asks_another_player(spec) else spec
+        return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
     def specs_for_modes(self, modes: Sequence[int]) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.

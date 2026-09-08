@@ -71,6 +71,7 @@
    "cant_attack_you",
    "cant_block",
    "cant_block_alone",
+   "double_triggers",
    "grant_keyword",
    "prevent_damage",
    "protection",
@@ -78,6 +79,7 @@
    "set_pt",
    "set_types",
    "spell_cost_reduction",
+   "spells_cant_be_countered",
    "untap_during_each_untap_step",
    "ward"
   ],
@@ -153,6 +155,14 @@
    "lose_life",
    "remove_counters"
   ],
+  "MANA_SYMBOLS": [
+   "W",
+   "U",
+   "B",
+   "R",
+   "G",
+   "C"
+  ],
   "NOT_A_CAST_TIME_COST": [
    "discard_self",
    "exile_self",
@@ -196,9 +206,11 @@
    "return_to_hand"
   ],
   "SPELL_FILTER_KEYS": [
+   "any_types",
    "colors",
    "controller",
    "keywords",
+   "min_colors",
    "name",
    "not_keywords",
    "not_types",
@@ -228,6 +240,7 @@
    ">="
   ],
   "STATIC_COUNT_FILTER_KEYS": [
+   "any_types",
    "attached",
    "attacking",
    "blocking",
@@ -273,6 +286,7 @@
    "cast_from_library_top",
    "double_land_mana",
    "double_land_triggers",
+   "double_triggers",
    "extra_land_drops",
    "freeze_opponent_lands",
    "grant_ability",
@@ -292,10 +306,12 @@
    "set_types",
    "skip_draw_step",
    "spell_cost_reduction",
+   "spells_cant_be_countered",
    "untap_during_each_untap_step",
    "ward"
   ],
   "STATIC_FILTER_KEYS": [
+   "any_types",
    "attached",
    "attacking",
    "blocking",
@@ -339,6 +355,7 @@
    "permanents_entered_this_turn"
   ],
   "STATIC_ZONE_FILTER_KEYS": [
+   "any_types",
    "colors",
    "controller",
    "keywords",
@@ -449,6 +466,7 @@
   "cant_sacrifice",
   "cascade",
   "cast_copy",
+  "cast_from_hand",
   "change_text",
   "choose_color",
   "choose_mode",
@@ -481,9 +499,12 @@
   "gain_life",
   "goad",
   "grant_ability",
+  "grant_graveyard_cast",
   "grant_keyword",
   "grant_playable",
+  "grant_plot",
   "grant_protection",
+  "grant_rebound",
   "haunt",
   "hideaway",
   "if",

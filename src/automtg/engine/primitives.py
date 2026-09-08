@@ -1054,6 +1054,8 @@ def animate(
     types: Sequence[str] = ("Creature",),
     subtypes: Sequence[str] = (),
     colors: Sequence[str] = (),
+    keywords: Sequence[str] = (),
+    your_turn_keywords: Sequence[str] = (),
     source: int | None = None,
 ) -> None:
     """ "It becomes a 4/4 Elemental creature until end of turn. It's still a land."
@@ -1083,6 +1085,18 @@ def animate(
             source=source,
         )
     )
+    # Keywords the animated body carries. `your_turn_keywords` is the quoted
+    # half of the Restless cycle -- "with \"During your turn, this creature has
+    # first strike\"" -- and it has to ride the animation rather than be a
+    # separate ability on the card: a static written beside the animation would
+    # have no printed line of its own to claim, which is the residual gate's
+    # objection and the reason Raging Ravine still fails.
+    for word in keywords:
+        obj.until_eot.append(TempEffect(kind="keyword", keyword=word, source=source))
+    for word in your_turn_keywords:
+        obj.until_eot.append(
+            TempEffect(kind="keyword", keyword=word, source=source, only_your_turn=True)
+        )
     state.bump_chars()
     _stats_changed(state, obj, power=power, toughness=toughness)
 

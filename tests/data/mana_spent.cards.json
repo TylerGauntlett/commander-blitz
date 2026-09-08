@@ -1,0 +1,57 @@
+{
+  "_comment": "The Emperor of Palamecia shape: a spell_cast trigger with an intervening-if on how much mana was actually SPENT on the triggering spell, which is not its printed mana value.",
+  "cards": [
+    {
+      "id": "t_emperor",
+      "name": "Test Mana Watcher",
+      "oracle_text": "Whenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on Test Mana Watcher.",
+      "mana_cost": "{U}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Wizard"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on Test Mana Watcher.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {"not_types": ["Creature"]},
+            "condition": {
+              "cmp": ">=",
+              "left": {"mana_spent_of": {"binding": "subject"}},
+              "right": {"const": 4}
+            }
+          },
+          "effects": [
+            {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1},
+             "objects": {"self_only": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cheap_instant",
+      "name": "Test Cheap Instant",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_pricey_instant",
+      "name": "Test Pricey Instant",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{3}{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

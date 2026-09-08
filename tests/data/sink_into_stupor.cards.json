@@ -1,0 +1,57 @@
+{
+  "_comment": "Shapes for tests/unit/test_spell_or_permanent.py and tests/unit/test_enters_unless_cost.py. t_sink is Sink into Stupor's front face -- one target spanning the stack and the battlefield. t_springs is the back face's clause, and t_plain_shockless is the same land with the offer removed, kept live because it is the card that would ship if the clause were dropped.",
+  "cards": [
+    {
+      "id": "t_sink",
+      "name": "Test Sink into Stupor",
+      "oracle_text": "Return target spell or nonland permanent an opponent controls to its owner's hand.",
+      "mana_cost": "{1}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_or_permanent",
+          "count": 1,
+          "selector": {"not_types": ["Land"], "controller": "opponent"}
+        }
+      ],
+      "spell_effects": [{"op": "return_spell_to_hand", "target": "t1"}]
+    },
+    {
+      "id": "t_springs",
+      "name": "Test Soporific Springs",
+      "oracle_text": "As Test Soporific Springs enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {U}.",
+      "types": ["Land"],
+      "color_identity": ["U"],
+      "replacements": [{"event": "self_enters_tapped", "unless_cost": {"pay_life": 3}}],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    },
+    {
+      "id": "t_springs_always_tapped",
+      "name": "Test Sleepy Springs",
+      "oracle_text": "Test Sleepy Springs enters tapped.\n{T}: Add {U}.",
+      "types": ["Land"],
+      "color_identity": ["U"],
+      "replacements": [{"event": "self_enters_tapped"}],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {U}.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{U}", "player": "you"}]
+        }
+      ]
+    }
+  ]
+}

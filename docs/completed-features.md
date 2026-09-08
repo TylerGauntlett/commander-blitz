@@ -10704,3 +10704,550 @@ full-bleed illustrations, so the two most urgent facts on screen are carried by
 its two quietest marks.
 
 Using: mockups\flow\02-face-up.html
+## `grant_rebound` — the rider read off the wrong object
+
+### Overview
+
+Ojer Pakpatiq, Deepest Epoch: "Whenever you cast an instant spell from your
+hand, **it gains rebound**."
+
+The gap record filed against this said rebound was "absent from the 34-entry
+keywords list", which is true, and concluded the mechanic had "no behaviour
+behind it", which was not. Rebound has been complete since `CardDef.rebound`
+existed — the exile-on-resolution rider in `_place_after_resolution`, the
+`rebound_by` mark on the exiled card, and the free cast at the controller's next
+upkeep in `suspend.rebound_tick`. It is a **card-level rider**, not a keyword,
+which is why looking in the keyword list found nothing and why the packet now
+names `CARD_LEVEL_RIDER_KEYS` explicitly.
+
+What was genuinely missing was one word of scope. The rider asked `card.rebound`
+— what a spell says about *itself* — so only a card that printed the keyword
+could ever have it, and no effect could hand it to a spell that did not.
+
+### The change
+
+`granted_rebound` on the spell's `GameObject`, set while the spell is still on
+the stack, read beside the card flag:
+
+```python
+rebounds = (
+    (card.rebound or obj.granted_rebound)
+    and obj.cast_from_hand
+    and destination is Zone.GRAVEYARD
+)
+```
+
+That disjunction is the whole feature. It is the same shape `playable_exiles`
+already has beside `card.graveyard_cast_exiles` on the neighbouring line: the
+card field is what the spell says about itself, the object field is what somebody
+else said about it, and the rider is not entitled to care which.
+
+Deliberately *no* second path. A granted rebound could have been built as its own
+exile-plus-delayed-trigger, and that would have been two mechanisms for one
+behaviour — the mistake made once already for Lier's granted flashback and
+reverted, where `graveyard_cast_exiles` turned out to be doing the work all along.
+
+### The stack is the only window
+
+The flag has to be written while the spell is on the stack. `_place_after_resolution`
+consults it during resolution, and by the time any later effect could reach the
+object the stack list has been popped — which is the same reason `encode` is a
+rider rather than an `exile` written into `spell_effects`, and the same reason
+Mizzix's Mastery's "Exile Mizzix's Mastery" is `exiles_itself` rather than an op.
+
+Addressing it was free: `spell_cast` is in `OBJECT_SUBJECT_TRIGGERS`, so the
+trigger already binds the cast spell's `sid`. `copy_spell` had the lookup inline
+with a comment arguing that a second spelling would be a second bug; `grant_rebound`
+asking the same question a third time is where that stopped being hypothetical,
+so it is now `_spell_named_by` and both ops call it.
+
+### The from-hand gate, twice
+
+702.87a says "if you cast this spell from your hand", and the gate is also the
+loop guard: the free cast at the next upkeep is made **from exile**, so without
+it one instant would rebound at every upkeep for the rest of the game.
+`suspend.rebound_tick` clears the mark before casting for the same reason — the
+free cast is itself a cast.
+
+Because the gate lives in the rider rather than in the op, a grant made to a
+spell cast from anywhere else is **inert rather than refused**. That is what lets
+Ojer Pakpatiq's printed "from your hand" live in the trigger's filter without the
+op having to re-check it, and it means the granted card cannot rebound its own
+rebound.
+
+### Tests
+
+`tests/unit/test_granted_rebound.py`, eleven of them. The load-bearing one is
+`TestPrintedReboundIsUnchanged`: without a control that a card printing rebound
+still rebounds with no granter on the board, every other assertion here is also
+consistent with the bait card having had rebound all along.
+
+## `mana_restriction` learns the word "non"
+
+### Overview
+
+The Emperor of Palamecia: "{T}: Add {U} or {R}. **Spend this mana only to cast a
+noncreature spell.**"
+
+`mana_restriction` was already the right home for the line, and it was purely
+positive. `_restriction_groups` compiled each group to a frozenset of literal
+lowercased type and subtype names, and `ManaSource.permits` answered
+`group <= purpose.names` against the flat set of the spell's own types and
+subtypes. Nothing anywhere in that chain could ask whether a name was **absent**.
+
+The worker that found this had been told by me that `mana_restriction` would
+carry it. It read the source instead of taking that on trust, and reported back
+that it would not — which is the whole reason the gap record was worth having.
+
+### Both near misses are wrong, in opposite directions
+
+This is the useful part, because a negation is only worth building if the
+spellings already available are worse:
+
+- **`["noncreature"]`** loads. The loader's guard on a restriction entry only
+  asks that it look like a word, deliberately, because subtypes are open-ended
+  and there is no closed list to check against. So the card compiles, and then
+  matches nothing for ever — no spell has a type called "noncreature". The mana
+  becomes permanently unspendable: a strictly *worse* card than printed, and a
+  silent one, which the loader's own comment already flagged as the failure mode
+  a typo produces.
+- **`["artifact", "enchantment", "instant", "sorcery"]`** enumerates the
+  noncreature types as an any-of, and over-permits every artifact creature and
+  enchantment creature spell — `permits` sees `artifact` among the purpose's
+  names, finds its one-name group satisfied, and never learns that `creature` is
+  in that same set. A strictly *better* card.
+
+Both are kept as live cards in `tests/unit/test_mana_restriction_not.py`. The
+sharpest pair in the file is the same artifact creature spell against the two
+fonts: castable under the enumeration, not castable under the negation, same
+board, same spell.
+
+### The change
+
+`RestrictionGroup(required, forbidden)` replaces the bare frozenset, and a group
+is satisfied when `required <= names and not (forbidden & names)`. Four call
+sites, all of them named by the gap record before a line was written: the loader
+builds it, `ManaRestriction.dynamic` scans both halves for the chosen-type
+sentinel, `costs._resolve_groups` substitutes into both, and `permits` asks both.
+
+A bare frozenset is still accepted and coerced, because that *is* the shorthand —
+every name required, none forbidden — and because coercing is one line against
+rewriting every construction that predates the change.
+
+Two refusals rather than two silent acceptances:
+
+- A name both required and forbidden in one group. Nothing satisfies it, which is
+  the same dead mana the typo makes, so it is a load error rather than a card
+  that quietly does nothing.
+- A negated `{"chosen_type_of": …}`. No card prints "spend this only to cast a
+  spell that is *not* the chosen type", and accepting it would mean a sentinel
+  that only half the substitution path honours. `_resolve_groups` substitutes
+  into `forbidden` anyway, so the day one is printed this is not the place that
+  kept the sentinel.
+
+### Where the idea came from
+
+Trigger filters have had `not_types` all along, and selectors have
+`not_types`/`not_subtypes`. The restriction language was the one place the
+negation was missing, and it is the same one word.
+
+## A "you may play it" permission with a real duration
+
+### Overview
+
+Two cards, one missing idea:
+
+- "Exile the top card of your library. You may play it **until your next end
+  step**." (Haste Magic.)
+- "Exile the top two cards of your library. **Until the end of your next turn**,
+  you may play those cards." (Light Up the Stage.)
+
+The engine had exactly one clock: `playable_turn` on the object, compared against
+`state.turn` in seven places. That is the impulse-draw "this turn", and it is
+correct for the family it was built for.
+
+### Why this is not a rounding error
+
+The interesting thing about this gap is its direction. Almost every approximation
+worth refusing makes a **better** card than printed; this one makes a worse one.
+
+Haste Magic is an instant. Cast on an opponent's turn — a normal line of play —
+the printed card lets you play the exiled card through the rest of that turn,
+every other player's turn, and your following turn up to its end step.
+`playable_this_turn` revokes it at the turn boundary. Nothing on the board shows
+a permission expiring early, so the loss is silent, and the card looks
+implemented.
+
+Going the other way is no better: `grant_playable` carries no duration at all,
+which is an open-ended permission.
+
+### The clocks are keyed to the player, not to a turn number
+
+Neither duration computes a future turn number, and the reason is written in
+`_untap_step` already: eliminating a player moves everybody else's "next turn",
+and extra turns move it again. So both are ended when the grantee's step arrives,
+exactly as detain, goad, "until your next turn" block prohibitions, player
+protections and life locks all are.
+
+`turn._expire_permissions` is called twice in `begin_step` — as the end step
+begins, and in cleanup.
+
+### One word apart
+
+The two clocks differ only in "next", and it changes both hooks:
+
+- **"your next end step"** asked on your own turn is *this* turn's, so the
+  permission is no longer than the this-turn one. The hook clears
+  unconditionally when the grantee's end step begins. A card exiled *during* your
+  own end step therefore survives to the following turn's — correct, because the
+  end step you are standing in is not your next one, and the hook for it has
+  already run.
+- **"your next turn"** is never the turn you are standing in. So the cleanup hook
+  checks `playable_turn < state.turn` as well as the seat: without that, a card
+  exiled on your own turn would lose its permission at the end of the turn it was
+  granted in, which is the shorter card again.
+
+### Seven readers, one question
+
+`playable_turn == state.turn` appeared in legality, both cast paths, the any-type
+relaxation, the group ledger and the flashback rider. That comparison *is* the
+this-turn duration, so generalising meant replacing all seven with
+`GameObject.playable_live(turn)` rather than adding an eighth reader that knew
+about durations while the others did not.
+
+### A test that was wrong before the engine was
+
+Three of the tests in `tests/unit/test_playable_duration.py` failed on first run,
+and none of them was an engine bug. `pass_until` returns the moment it finds no
+pending decision, so on a game built with `advance=False` the "hand the turn to
+the opponent" helper did nothing at all — every "granted on an opponent's turn"
+test was quietly testing the other case. Reaching the opponent's precombat main
+was then still not enough, because seat 0 has to *hold priority* there to cast an
+instant; the condition has to be the cast action, not the step. And the
+opponent's-end-step assertion navigated to a cleanup step, which grants no
+priority, so `pass_until` sailed through it and on into the grantee's own end
+step — where the permission correctly ended, looking exactly like a bug. That one
+now applies the hook directly, which is the actual claim: same state, opponent
+active, permission untouched.
+
+## `grant_graveyard_cast` — a permission that outlives the permanent granting it
+
+### Overview
+
+Urabrask, chapter III: "Until end of turn, you may cast instant and sorcery
+spells from any graveyard. If a spell cast this way would be put into a
+graveyard, exile it instead." Yawgmoth's Will is the same card.
+
+The engine had exactly one graveyard-cast permission — `cast_from_graveyard`, a
+static — and it is the wrong shape three ways over for this sentence. They are
+the same three ways `BlockProhibition` inverted for "can't block", which is why
+this ended up in the same place:
+
+- **It needs a permanent on the battlefield.** The chapter exiles the Saga in the
+  same breath as granting the permission.
+- **It has no clock.** This one ends with the turn.
+- **It reaches its controller's own graveyard.** This one reaches the table.
+
+### The spec is a static, deliberately
+
+The grant stores an ordinary `cast_from_graveyard` static dict and
+`graveyard_cast_permissions` yields it beside the real ones. That single decision
+is most of the feature:
+
+- `affects_spells` filters the cards — existing code.
+- `max_per_turn` and `grants_flashback` meter it — existing code, including the
+  uncapped-permission argument built for Lier.
+- The spell is marked `cast_from_graveyard` when cast, so
+  `graveyard_cast_exiles` exiles it as it resolves — which means **the second
+  printed sentence needed no code at all.**
+
+The loader therefore asks for the same two guarantees the static's own loader
+does, in the same words: a filter, because an absent one frees the whole
+graveyard; and either a cap or `grants_flashback`, because a permission that
+neither meters nor exiles is an engine rather than a printed line.
+
+### The source survives its zone
+
+`GraveyardCastGrant` keeps the granting oid even though the Saga is in exile, and
+that is not sentiment. The rate limit is counted per granting object in the turn
+ledger, and `graveyard_cast_allows` resolves a `chosen_type` against the granter.
+Both keep working, because a `GameObject` outlives the zone it was in — the same
+property `rebound_by` and `exiled_by` rely on.
+
+### `any_graveyard` is asked twice
+
+Once to widen the candidate loop past the caster's own graveyard, and once per
+card in `_graveyard_cast_permission`. Both are load-bearing: widening alone would
+offer a card that no permission actually covers, and asking alone would never see
+the card, because the loop over graveyards is where candidates come from. The
+per-card half is what keeps Edgar and flashback out of an opponent's graveyard.
+
+### Why not `grant_playable`
+
+It is the near miss, and it very nearly works — it takes an arbitrary selector,
+it is turn-scoped, and `as_flashback` already produces the exile. The gap record
+argued it could not name "every graveyard", which was not quite the real problem.
+
+The real problem is that it **snapshots**. It marks the cards it can see when it
+resolves. A spell that reaches a graveyard later in the same turn is castable
+under the printed card and invisible to a mark placed earlier. For a card whose
+whole point is a graveyard that refills as you empty it, that is not an
+approximation — it is the loop, deleted.
+
+`TestACardThatArrivesLater` is that difference, asserted.
+
+## Counting spells by type, not just counting them
+
+### Overview
+
+Urabrask's front face: "{R}: Exile Urabrask, then return it to the battlefield
+transformed… Activate only as a sorcery and only if you've cast **three or more
+instant and/or sorcery spells** this turn."
+
+Two workers disagreed about this line, which is the useful part of the story. The
+first authored around it and reported the front face expressible, blocking only on
+chapter III. The second read `values.py` and `structs.py` and reported that
+`spells_cast_this_turn` sums `TurnLedger.spells_cast` — a flat per-player integer
+bumped once per `SPELL_CAST` event with no record of *what* was cast — so there is
+nothing to filter on and the condition would turn on after three creature spells.
+
+The second was right, and the disagreement is worth recording because the first
+reading is the natural one: the value has a plausible name, it takes a player
+spec, and nothing about it advertises that it has thrown the types away.
+
+### The change
+
+`TurnLedger.spells_cast_ids` — the printed id of each spell, in cast order, per
+caster — kept **beside** the count rather than replacing it. Storm reads the bare
+count and reads it once per copy; making every storm trigger walk a list to serve
+a rarer question would be the wrong trade, and the two answers cannot drift
+because they are written from the same event.
+
+The id recorded is `data["card"]`, which is the face that was cast: a disturb cast
+turns the card over inside `push_spell`, and the half that was cast is the half
+the condition is asking about.
+
+Matching is `_matches_printed`, the same matcher `graveyard_cast_allows` uses, and
+for its stated reason — a spell that has finished resolving has a printed face and
+no board state left to ask about.
+
+### Where the filter lives
+
+Inside the value, not beside it:
+
+```jsonc
+{ "spells_cast_this_turn": { "player": "you", "filter": { … } } }
+```
+
+A sibling `filter` key would have to be added to `VALUE_KEYS`, and would then be
+silently legal on every value expression in the language. `permanents_entered_this_turn`
+already set the precedent of a ledger read that takes a filter rather than a bare
+player spec.
+
+The branch is on the presence of `filter`, not on the type of the value, because a
+player spec is itself sometimes a mapping — `{"except": …}` — and typing the
+branch would have quietly changed what those mean.
+
+### Tests
+
+`tests/unit/test_spells_cast_by_type.py`. The load-bearing pair casts three
+creature spells and asserts the bare count reaches 3 while the filtered one stays
+0 — which is the second worker's argument, executable.
+
+## Plot — a rider and a permission, both already built
+
+### Overview
+
+Lilah, Undefeated Slickshot: "Whenever you cast a multicolored instant or sorcery
+spell from your hand, exile that spell instead of putting it into your graveyard
+as it resolves. If you do, it becomes plotted." Plot (702.171a) is "you may cast
+it as a sorcery on a later turn without paying its mana cost."
+
+The gap record filed three needs. Two of them were shapes this session had
+already built for other cards, which is the interesting part — the third was one
+word.
+
+### The rider is `grant_rebound`'s slot
+
+`grant_plot` writes a flag on the spell's object while it is still on the stack;
+`_place_after_resolution` reads it and sends the spell to exile instead of the
+graveyard; and the permission is written **after** the move, because
+`reset_permanent_state` runs on the way and clears every `playable_*` field —
+which is the ordering `rebound_by` and `exiled_by` both discovered first.
+
+Rebound and plot differ only in what they leave behind: one free cast owed at the
+next upkeep, against a standing permission with no end. Everything else is the
+same slot, which is why plot needed no new machinery for its first sentence.
+
+It has to be a rider rather than an `exile` written into the ability's effects,
+for the reason `encode` and `exiles_itself` both give: by the time an ability's
+effects run, the stack list is already popped, so the op would reach nothing and
+the printed line would silently do nothing.
+
+### The permission is three riders on one that existed
+
+- **`later_turns`** — the fourth `playable_duration`, and the only one with a
+  *start* rather than an end. Nothing expires a plotted card; the turn it was
+  plotted on is the one turn it may not be cast.
+- **`playable_free`** — "without paying its mana cost". Priced as `FREE_COST`
+  rather than as a discount, because 601.2b is not a reduction to zero and the
+  difference shows on an X spell, where a discount leaves X payable.
+- **`playable_sorcery_only`** — a restriction on the *permission*, not on the
+  card. A plotted instant is still an instant and `_timing_ok` would happily
+  offer it in response to something.
+
+Both sides of the free cast read the same flag off the same card — legality
+prices the line with it and `game._cast` pays with it — which is the argument the
+`playable_any_type` block already makes one line down, and the bug the
+`from_library_top` branch records: a line offered free and billed the printed cost
+is a cast that silently does nothing.
+
+### "If you do" needed nothing
+
+The exile and the plotting are one rider, so there is no state in which the first
+happened and the second did not. That is exactly what the printed conditional
+says, and expressing it separately would have invented a failure mode the card
+does not have.
+
+### The one new piece: `min_colors`
+
+"Multicolored" is two or more colors (202.2b). `colors` cannot say it — it is a
+membership test, so `{"colors": ["U", "R"]}` matches a mono-red spell — and
+`require_all` means exactly those colours and no others.
+
+Written as a number rather than a `multicolored` boolean because the number is
+what the rule says and reads the same on the rarer "three or more colors".
+Honoured by all three matchers, since a filter that means one thing to a trigger
+and another to a selector is worse than not having it: the selector language reads
+the *derived* colours (so a repainted permanent is matched on what it is), and the
+trigger filter and `_matches_printed` read the printed face, each for the reason
+already written beside their `colors` clause.
+
+`tests/unit/test_plot.py` keeps the mono-coloured instant as a live card, because
+it is the card `colors` would have given.
+
+## "Each of X targets" — an ordering rule, not a rewrite
+
+### Overview
+
+Crackle with Power: "{X}{R}{R}{R}. Crackle with Power deals 5 damage to each of X
+targets."
+
+I had flagged this as architecturally blocked twice, on the grounds that targets
+are declared as part of casting while legality enumerates target tuples with X
+pinned at 0. That was half right and the wrong half was the conclusion.
+
+### The refusal was correct and its reason was not universal
+
+`loader.targets._compile_targets` refuses a value-expression `count` on a card's
+own `targets`:
+
+> a spell's are declared while it is being cast (601.2c), before X is chosen and
+> before any additional cost is paid, so the expression would read 0
+
+That is exactly right for `{"additional_paid": true}` — kicker and replicate are
+paid at 601.2h, long after targets. It is exactly wrong for X, because 601.2b
+announces X and 601.2c declares targets, **in that order**.
+
+### The flow already existed
+
+`Game._cast` runs `_ask_x`, then `_ask_modes`, then `_ask_mode_targets`. That last
+one declares a mode's own targets at cast time, after a cast-time choice, and its
+docstring says why that is legitimate: "Runs immediately after `_ask_modes` and
+before the spell is paid for, which is exactly where 601.2 puts it."
+
+`_ask_x_targets` is that method's sibling with X in place of the mode list. No
+casting-flow change, no new decision kind, no new event — the proposal I had been
+carrying (one cast line per affordable X, bounded by a choice cap) would have
+multiplied target tuples by a choice the player already makes a moment later, and
+was strictly worse than the thing already in the file.
+
+### Legality stays a gate
+
+The comment beside the `x_count` check in `_cast_variant` had already settled this
+for the cost:
+
+> X is a *gate* here, not a value. Legality asks only "is there any X this is
+> castable at", and `game._cast` then asks the player which one — so the action
+> carries X = 0.
+
+The target spec sizes to zero there for the same reason and the line is still
+offered. Nothing about legality changed.
+
+### `filter_legal` needed nothing at all
+
+`TargetSpec.variable_size` already makes the last spec swallow whatever refs
+remain, the loader already guarantees there is at most one and that it comes last,
+and the comment already argues that re-evaluating a computed count on resolution
+would be *worse* than using the stored length: "the number is fixed when the
+targets are declared (601.2c), and anything that moved in between would re-slice
+refs that were chosen under the old one."
+
+That is the semantics an X-sized target wants, written before one existed.
+
+### Two refusals kept
+
+`{"x": true}` on a card with no `{X}` in its mana cost is a load error — the spec
+would size to zero for ever, which is a spell that says it targets and never does,
+the silent half of the mistake the original clause prevents. Every other computed
+count on a spell is refused exactly as before.
+
+## Sink into Stupor — two capabilities, one card
+
+The last card in the Vivi deck, and it needed both faces built.
+
+### "Target spell or nonland permanent an opponent controls"
+
+One instance of the word "target" whose legal choices live in two zones at once.
+`kind: "spell"` walks the stack; `"permanent"` and `"any"` walk the battlefield;
+nothing pooled the two.
+
+**One spec, not two.** Writing one of each kind is a card that targets *twice*:
+it would need a legal choice of each to be castable at all, and 608.2b would
+fizzle it if either became illegal. The printed card is castable with only a
+permanent on the board and with only a spell on the stack.
+
+`still_legal` needed no change whatever. It already re-checks a stored ref by
+`ref.kind` rather than by the spec's kind, so every ref the new pool offers is one
+it will accept — the design working rather than a lucky escape. The `selector`
+narrows both halves, because "nonland" and "an opponent controls" are meant to.
+
+What did need saying is where the chosen thing goes. `return_spell_to_hand` read
+only `ctx.target_sids`, so a union target that landed on a permanent returned
+nothing and left it on the battlefield with the card looking like it worked. That
+is the exact silent failure that op's own docstring was written about — it argues
+at length that `return_to_hand` "cannot see a spell" and is a silent no-op — one
+kind further along, pointing the other way.
+
+### "As this land enters, you may pay 3 life"
+
+Steam Vents already ships in this pool with the sentence dropped. A land that
+always enters tapped is a strictly worse card and nothing on the board says so,
+which is the same silent-narrowing failure the impulse durations were about.
+
+**Where the question is asked is the whole design.** 614 applies enters
+replacements *inside* the zone change, and `move_object` is not a generator: it
+cannot stop for a decision. The gap record proposed making that path suspend "the
+way dredge/madness/miracle do", which would put a suspend point inside every zone
+change in the engine — every death, every draw, every token.
+
+The cheaper and more exact answer is to ask a moment earlier. Both paths that put
+a permanent onto the battlefield are *already* generators — `game._play_land` for
+a land drop, `stack._place_after_resolution` for a permanent spell — so
+`zones.offer_enters_costs` is called there and leaves the answer on the object.
+
+That is not an approximation. Nobody receives priority between the question and
+the arrival, so there is no window in which the permanent exists with the question
+unanswered. `_play_land` already makes exactly this argument for writing
+`showing_second_face` before the move rather than during it.
+
+`enters_cost_paid` survives `reset_permanent_state` deliberately — the same
+exemption `hasted_by_suspend` has, and its comment gives the same reason, that the
+flag is set a moment before a move this runs during. `_enter_battlefield` clears
+it once the replacements have read it, because a permanent that leaves and comes
+back is a new object (400.7) whose controller has been asked nothing.
+
+**One divergence, stated:** an unaffordable price is never offered. 118.4 forbids
+paying life you do not have, so a player at 2 life is not shown a question whose
+"yes" cannot be honoured — which would otherwise leave the arrival depending on
+how a failed payment was reported.

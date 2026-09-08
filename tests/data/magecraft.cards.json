@@ -1,0 +1,87 @@
+{
+  "_comment": "Shapes for tests/unit/test_magecraft.py. t_magecraft is the Archmage Emeritus shape -- one printed line, two abilities, because a copy is not cast. t_copy_watcher isolates the copy half so a passing test cannot be explained by the cast half.",
+  "cards": [
+    {
+      "id": "t_magecraft",
+      "name": "Test Magecraft Adept",
+      "oracle_text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Wizard"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {"any_types": ["Instant", "Sorcery"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "Magecraft — Whenever you cast or copy an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "event": "spell_copied",
+            "controller": "you",
+            "filter": {"any_types": ["Instant", "Sorcery"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_copy_watcher",
+      "name": "Test Copy Watcher",
+      "oracle_text": "Whenever you copy an instant or sorcery spell, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Wizard"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you copy an instant or sorcery spell, draw a card.",
+          "trigger": {
+            "event": "spell_copied",
+            "controller": "you",
+            "filter": {"any_types": ["Instant", "Sorcery"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_creature_copy_watcher",
+      "name": "Test Creature Copy Watcher",
+      "oracle_text": "Whenever you copy a creature spell, draw a card.",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Wizard"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you copy a creature spell, draw a card.",
+          "trigger": {
+            "event": "spell_copied",
+            "controller": "you",
+            "filter": {"types": ["Creature"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

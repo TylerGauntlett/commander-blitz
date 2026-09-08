@@ -1,0 +1,100 @@
+{
+  "_comment": "The Gandalf's Sanction shape: one damage event split into lethal-to-the-creature and the remainder to its controller. t_excess_fixed deals a known 5 so the arithmetic is readable; t_excess_none is the control that spills nothing. t_big_wall is a 0/9 so the no-excess case is a fixed number rather than one that depends on which prop the pool happens to hold.",
+  "cards": [
+    {
+      "id": "t_excess_five",
+      "name": "Test Excess Five",
+      "oracle_text": "Test Excess Five deals 5 damage to target creature. Excess damage is dealt to that creature's controller instead.",
+      "mana_cost": "{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 5
+          },
+          "excess_to": "controller"
+        }
+      ]
+    },
+    {
+      "id": "t_plain_five",
+      "name": "Test Plain Five",
+      "oracle_text": "Test Plain Five deals 5 damage to target creature.",
+      "mana_cost": "{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_big_wall",
+      "name": "Test Big Wall",
+      "oracle_text": "",
+      "mana_cost": "{4}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 0,
+      "toughness": 9,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

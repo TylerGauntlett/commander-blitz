@@ -26,8 +26,20 @@ def amounts(**kwargs: int) -> tuple[int, ...]:
     return tuple(out)
 
 
-def source(oid: int, *options: tuple[int, ...], is_land: bool = True) -> ManaSource:
-    return ManaSource(oid=oid, ability_index=0, options=options, is_land=is_land, sort_key=(0, oid))
+def source(
+    oid: int, *options: tuple[int, ...], is_land: bool = True, ability_index: int = 0
+) -> ManaSource:
+    return ManaSource(
+        oid=oid, ability_index=ability_index, options=options, is_land=is_land, sort_key=(0, oid)
+    )
+
+
+def talisman(oid: int, *colours: str) -> list[ManaSource]:
+    """"{T}: Add {C}" and "{T}: Add {B} or {R}" -- two abilities, one permanent."""
+    return [
+        source(oid, amounts(c=1), is_land=False),
+        source(oid, *(amounts(**{colour: 1}) for colour in colours), is_land=False, ability_index=1),
+    ]
 
 
 class TestParsing:
@@ -247,6 +259,51 @@ class TestSolver:
         )
         assert payment is not None
         assert len(payment.taps) == 2
+
+
+class TestOnePermanentTapsOnce:
+    """A permanent with two tap abilities is two sources that share an oid.
+
+    The solver used to exclude by list position, so a Talisman paid {1}{B} on
+    its own: ability 0 for the generic pip, ability 1 for the black one, the
+    same permanent tapped twice. Every case here is one permanent, one tap.
+    """
+
+    def test_two_abilities_of_one_permanent_are_mutually_exclusive(self):
+        sources = talisman(1, "b", "r")
+        assert solve_payment(Requirement(colored=amounts(r=1), generic=1), ManaPool(), sources) is None
+        red = solve_payment(Requirement(colored=amounts(r=1)), ManaPool(), sources)
+        colourless = solve_payment(Requirement(colored=amounts(c=1)), ManaPool(), sources)
+        assert red is not None and red.taps == [(1, 1, 1)]
+        assert colourless is not None and colourless.taps == [(1, 0, 0)]
+
+    def test_generic_comes_from_a_different_permanent(self):
+        sources = [*talisman(1, "b", "r"), source(2, amounts(g=1))]
+        payment = solve_payment(
+            Requirement(colored=amounts(r=1), generic=1), ManaPool(), sources
+        )
+        assert payment is not None
+        assert sorted(oid for oid, _, _ in payment.taps) == [1, 2]
+
+    def test_the_search_fallback_never_taps_one_permanent_twice(self):
+        """The awkward-assignment shape from ``TestSolver``, on two Talismans."""
+        sources = [*talisman(1, "w", "u"), *talisman(2, "w", "u")]
+        both = solve_payment(Requirement(colored=amounts(w=1, u=1)), ManaPool(), sources)
+        assert both is not None
+        assert sorted(oid for oid, _, _ in both.taps) == [1, 2]
+        three = solve_payment(
+            Requirement(colored=amounts(w=1, u=1, c=1)), ManaPool(), sources
+        )
+        assert three is None
+
+    def test_the_search_bound_counts_each_permanent_once(self):
+        """Two Talismans are two mana, whatever the number of abilities."""
+        sources = [*talisman(1, "w", "u"), *talisman(2, "w", "u")]
+        assert solve_payment(Requirement(generic=2), ManaPool(), sources) is not None
+        assert solve_payment(Requirement(generic=3), ManaPool(), sources) is None
+
+    def test_max_x_counts_a_talisman_once(self):
+        assert max_affordable_x(ManaCost.parse("{X}"), ManaPool(), talisman(1, "b", "r")) == 1
 
 
 class TestMaxX:

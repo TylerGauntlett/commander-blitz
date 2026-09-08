@@ -178,8 +178,20 @@ class TargetModel(BaseModel):
     model_config = Strict
 
     id: str
+    #: ``"spell_or_permanent"`` is the one kind whose pool spans two zones at
+    #: once -- "target **spell or nonland permanent** an opponent controls"
+    #: (Sink into Stupor). It is one instance of the word "target", so it is one
+    #: spec: writing two, one of each kind, is a card that targets twice and
+    #: needs both to be legal. The `selector` narrows both halves, since the
+    #: printed clause ("nonland", "an opponent controls") is meant to.
     kind: Literal[
-        "permanent", "player", "spell", "card_in_graveyard", "card_in_exile", "any"
+        "permanent",
+        "player",
+        "spell",
+        "card_in_graveyard",
+        "card_in_exile",
+        "any",
+        "spell_or_permanent",
     ]
     #: "…any number of target creature cards **with total mana value 6 or
     #: less**" (Phoenix, Warden of Fire). A cap on the picks **together**, not
@@ -370,6 +382,36 @@ class AbilityModel(BaseModel):
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
+    #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
+    #: instant and sorcery card in your graveyard has flashback. The flashback
+    #: cost is equal to that card's mana cost."
+    #:
+    #: It carries no behaviour of its own, and that is the point. A spell cast
+    #: out of a graveyard already exiles as it resolves (`graveyard_cast_exiles`
+    #: defaults True, and escape is the only thing that turns it off), so the
+    #: exile half of flashback was already there. What this says is that the
+    #: permission needs **no `max_per_turn`**: the exile is the rate limit, card
+    #: by card, so a graveyard that runs out is the whole of the cap. Without it
+    #: the loader refuses an uncapped permission, correctly -- one that neither
+    #: meters nor exiles recasts the same card every turn for ever.
+    grants_flashback: bool = False
+    #: ``double_triggers``: which EVENT counts as the cause. Veyran's "if **you
+    #: casting or copying an instant or sorcery spell** causes a triggered
+    #: ability ... to trigger" -- a clause about what happened, not about whose
+    #: ability answered it.
+    #:
+    #: Separate from `affects`, which is the other axis the same effect scopes
+    #: on: Harmonic Prodigy filters the *permanent whose ability fired* ("a
+    #: Shaman or another Wizard you control") and does not care what caused it.
+    #: A card writes whichever of the two it prints; omitting these three means
+    #: "any cause".
+    cause_events: list[str] | None = None
+    #: ``double_triggers``: whose cause it must be, read against the static's own
+    #: controller. Veyran's "**you** casting or copying".
+    cause_controller: Literal["you", "opponent", "any"] | None = None
+    #: ``double_triggers``: what the cause must have been, as a card filter on
+    #: the event's subject. Veyran's "an **instant or sorcery** spell".
+    cause_filter: dict[str, Any] | None = None
     #: "**Once during each of your turns**, you may cast an artifact spell from
     #: your graveyard." Edgar, Master Machinist. How many times a
     #: `cast_from_graveyard` permission may be used per turn, counted per
@@ -512,6 +554,21 @@ class ReplacementModel(BaseModel):
     #: card writes the negation: a condition here says when the replacement
     #: *applies*, matching every other `condition` in the DSL.
     condition: dict[str, Any] | None = None
+    #: "As this land enters, you may pay 3 life. If you don't, it enters
+    #: tapped." (Sink into Stupor // Soporific Springs, and the shock lands.)
+    #: A price the controller may pay to *avoid* the replacement, offered as
+    #: the permanent enters and taking a whole `Cost` -- `pay_life` for this
+    #: cycle, and the same node the rest of the DSL prices things with.
+    #:
+    #: The question is asked **just before** the move rather than inside it, by
+    #: whichever path is putting the permanent onto the battlefield. That is
+    #: observationally the same moment: 614 replacements are applied during the
+    #: zone change and nobody receives priority in between, so there is no
+    #: window in which the permanent exists un-replaced. It is also the only
+    #: reachable moment -- `move_object` is not a generator and cannot stop to
+    #: ask, and making it one would put a suspend point inside every zone
+    #: change in the engine.
+    unless_cost: dict[str, Any] | None = None
 
 
 class CardModel(BaseModel):

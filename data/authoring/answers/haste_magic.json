@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "haste_magic",
+    "name": "Haste Magic",
+    "oracle_text": "Target creature gets +3/+1 and gains haste until end of turn. Exile the top card of your library. You may play it until your next end step.",
+    "mana_cost": "{1}{R}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "pump",
+        "objects": {
+          "target": "t1"
+        },
+        "power": {
+          "const": 3
+        },
+        "toughness": {
+          "const": 1
+        }
+      },
+      {
+        "op": "grant_keyword",
+        "keywords": [
+          "haste"
+        ],
+        "objects": {
+          "target": "t1"
+        }
+      },
+      {
+        "op": "look_at_top",
+        "player": "you",
+        "amount": {
+          "const": 1
+        },
+        "objects": {
+          "count": "all"
+        },
+        "destination": "exile",
+        "playable": "your_next_end_step"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

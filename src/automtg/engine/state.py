@@ -19,6 +19,7 @@ from .structs import (
     DamageShield,
     DelayedTrigger,
     EnteredPermanent,
+    GraveyardCastGrant,
     LifeLock,
     PlayerProtection,
     SacrificeRestriction,
@@ -256,6 +257,12 @@ class GameState:
     #: naming a set. Normally empty, which is why `combat.block_prohibited`
     #: short-circuits on it.
     block_prohibitions: list[BlockProhibition] = field(default_factory=list)
+    #: "Until end of turn, you may cast instant and sorcery spells from any
+    #: graveyard." On the table beside `block_prohibitions` and for its reason:
+    #: the permission belongs to no permanent, and the Saga chapter that grants
+    #: it exiles the Saga in the same breath. Turn-scoped, so entries are read
+    #: only while `turn` matches and are dropped in cleanup.
+    graveyard_cast_grants: list[GraveyardCastGrant] = field(default_factory=list)
     #: "Target creature can't be blocked this turn" -- see
     #: :class:`structs.Unblockable`.
     #:
@@ -674,6 +681,10 @@ class GameState:
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
+                # And what it was, for the conditions that ask about types
+                # rather than about a count. `card` is the face that was cast.
+                if (cast_id := data.get("card")) is not None:
+                    ledger.spells_cast_ids.setdefault(pid, []).append(str(cast_id))
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:

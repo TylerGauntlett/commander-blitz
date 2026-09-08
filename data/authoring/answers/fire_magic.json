@@ -1,0 +1,106 @@
+{
+  "card": {
+    "id": "fire_magic",
+    "name": "Fire Magic",
+    "oracle_text": "Tiered (Choose one additional cost.)\n• Fire — {0} — Fire Magic deals 1 damage to each creature.\n• Fira — {2} — Fire Magic deals 2 damage to each creature.\n• Firaga — {5} — Fire Magic deals 3 damage to each creature.",
+    "mana_cost": "{R}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "R"
+    ],
+    "color_identity": [
+      "R"
+    ],
+    "additional_cost_options": [
+      {
+        "mana": "{0}"
+      },
+      {
+        "mana": "{2}"
+      },
+      {
+        "mana": "{5}"
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {
+          "cost_option": 0
+        },
+        "then": [
+          {
+            "op": "damage",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ],
+              "count": "all"
+            }
+          }
+        ]
+      },
+      {
+        "op": "if",
+        "condition": {
+          "cost_option": 1
+        },
+        "then": [
+          {
+            "op": "damage",
+            "amount": {
+              "const": 2
+            },
+            "objects": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ],
+              "count": "all"
+            }
+          }
+        ]
+      },
+      {
+        "op": "if",
+        "condition": {
+          "cost_option": 2
+        },
+        "then": [
+          {
+            "op": "damage",
+            "amount": {
+              "const": 3
+            },
+            "objects": {
+              "zone": "battlefield",
+              "types": [
+                "Creature"
+              ],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    }
+  }
+}

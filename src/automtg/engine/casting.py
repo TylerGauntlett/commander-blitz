@@ -118,7 +118,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         permitted.extend(player.graveyard)
     for oid in permitted:
         obj = state.objects[oid]
-        if obj.playable_by != pid or obj.playable_turn != state.turn:
+        if obj.playable_by != pid or not obj.playable_live(state.turn):
             continue
         # "…you may cast **a spell** from among those cards", singular out of
         # however many were milled. Counted per granting permanent, so two
@@ -128,9 +128,16 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         ):
             continue
         card = state.card(oid)
+        # "…as a sorcery." A restriction the *permission* carries, not the card:
+        # a plotted instant is still an instant, and `_timing_ok` would happily
+        # offer it with something on the stack.
+        if obj.playable_sorcery_only and not sorcery_speed:
+            continue
         if card.is_land or not _timing_ok(card, sorcery_speed):
             continue
-        out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
+        out.extend(
+            _cast_options(state, pid, oid, card, extra_generic=0, free=obj.playable_free)
+        )
 
     # Foretold cards are cast from **exile**, at the foretell price, and only on
     # a turn after the one they were foretold on -- `foretold_cards` is what
@@ -174,7 +181,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # here the same way `_land_actions` widens where a land may be played from.
     from .costs import can_pay
 
-    for oid in state.players[pid].graveyard:
+    for oid in _castable_graveyards(state, pid):
         card = state.card(oid)
         # Aftermath (702.127a): "cast this half only from your graveyard". The
         # same widening retrace makes, and the restriction is where the second
@@ -353,7 +360,7 @@ def _timing_ok(card: CardDef, sorcery_speed: bool) -> bool:
 
 
 def _cast_options(
-    state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int
+    state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int, free: bool = False
 ) -> list[Action]:
     """Every distinct way to cast this card right now.
 
@@ -372,7 +379,9 @@ def _cast_options(
     if not tuples:
         return []
 
-    out = _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False)
+    out = _cast_variant(
+        state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=free
+    )
     if card.kicker is not None:
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True
@@ -531,6 +540,41 @@ def _cast_options(
 MAX_ADDITIONAL_TIMES = 6
 
 
+
+def _castable_graveyards(state: GameState, pid: int) -> list[int]:
+    """Which graveyard cards ``pid`` might cast from -- usually just their own.
+
+    Every permission the engine had reaches its controller's own graveyard, so
+    that is the whole list until something says otherwise. "You may cast instant
+    and sorcery spells from **any** graveyard" (Urabrask, and Yawgmoth's Will
+    before it) is the exception, and it widens *where the card may be*, not what
+    may be cast -- `_graveyard_cast_permission` still asks, per card, whether a
+    permission covers it, and refuses a card in somebody else's graveyard to any
+    permission that did not say `any_graveyard`.
+
+    Both halves are needed. Widening here alone would offer a card no permission
+    covers; asking there alone would never see the card, because this loop is
+    where the candidates come from.
+    """
+    own = list(state.players[pid].graveyard)
+    if not any(
+        static.get("any_graveyard") for _source, static in _permissions_for(state, pid)
+    ):
+        return own
+    return own + [
+        oid
+        for other in state.players
+        if other.pid != pid
+        for oid in other.graveyard
+    ]
+
+
+def _permissions_for(state: GameState, pid: int):
+    from .player_statics import graveyard_cast_permissions
+
+    return graveyard_cast_permissions(state, pid)
+
+
 def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: int | None = None):
     """The permission that would let ``card`` be cast from a graveyard, if any.
 
@@ -555,6 +599,16 @@ def _graveyard_cast_permission(state: GameState, pid: int, card: CardDef, oid: i
         # "…put there from anywhere other than the battlefield this turn" is a
         # fact about *this copy* of the card, so it is asked of the object.
         if subject is not None and not graveyard_cast_arrival_ok(state, static, subject):
+            continue
+        # "…from **any** graveyard". A permission that does not say so reaches
+        # only the caster's own, which is every permission the engine had --
+        # so the check is here rather than in the widening, and a card sitting
+        # in an opponent's graveyard is invisible to Edgar and to flashback.
+        if (
+            subject is not None
+            and subject.owner != pid
+            and not static.get("any_graveyard")
+        ):
             continue
         cap = int(static.get("max_per_turn") or 1)
         # Billed against the granting permanent through the ordinary activation
@@ -707,6 +761,10 @@ def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) ->
 #: the card. The card names only the price of turning it back up.
 MORPH_COST = ManaCost.parse("{3}")
 
+#: "Without paying its mana cost." Plot's price, and not the same thing as a
+#: cost reduced to zero -- on an X spell a discount still leaves X to pay.
+FREE_COST = ManaCost.parse("")
+
 #: How many creatures a convoke line may tap, or cards a delve line may exile.
 #: Capped for the reason `_emerge_fodder` is capped: every one is a separate
 #: cast action multiplied by every legal target tuple.
@@ -791,6 +849,7 @@ def _cast_variant(
     overloaded: bool = False,
     additional_times: int = 0,
     additional_choice: int | None = None,
+    free: bool = False,
     from_library_top: bool = False,
     foretold: bool = False,
     face_down: bool = False,
@@ -825,7 +884,18 @@ def _cast_variant(
     # rider written there would discount the printed hand cast too.
     variant_less = 0
 
-    if flashback and card.flashback is not None:
+    if free:
+        # "…without paying its mana cost." Plot (702.171a). First in the chain
+        # because it replaces the price outright rather than adjusting it, and
+        # because a plotted card has no other variant to be confused with -- it
+        # is offered from exile under its own permission and nowhere else.
+        #
+        # `FREE_COST`, not `card.mana_cost` with a discount: 601.2b's "without
+        # paying its mana cost" is not a reduction to zero, and the difference
+        # shows on an X spell, where a discount leaves X payable and this does
+        # not.
+        cost = FREE_COST
+    elif flashback and card.flashback is not None:
         cost = card.flashback.mana
         variant_less = variant_reduction(state, pid, card.flashback, oid)
     elif emerge_oid is not None and card.emerge is not None:
@@ -878,7 +948,7 @@ def _cast_variant(
         if phyrexian_life > state.players[pid].life:
             continue
         permission = state.objects[oid]
-        if permission.playable_any_type and permission.playable_turn == state.turn:
+        if permission.playable_any_type and permission.playable_live(state.turn):
             # "…and mana of any type can be spent to cast that spell." The colours
             # are relaxed once the price has been chosen, so it is the price this
             # line is actually offering that gets relaxed rather than the printed

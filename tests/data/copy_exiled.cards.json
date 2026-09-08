@@ -1,0 +1,37 @@
+{
+  "_comment": "Mizzix's Mastery and Epic Experiment shapes. t_mastery exiles a graveyard card and copies it, offering the copy as a free cast -- the ORIGINAL stays in exile, which is what stops the card being a repeatable engine. t_epic looks at the top three, free-casts what it can, and bins the rest.",
+  "cards": [
+    {
+      "id": "t_mastery",
+      "name": "Test Mastery",
+      "oracle_text": "Exile target instant or sorcery card from your graveyard. Copy it, and you may cast the copy without paying its mana cost.",
+      "mana_cost": "{3}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "controller": "you",
+                      "any_types": ["Instant", "Sorcery"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "as": "banked"},
+        {"op": "cast_copy", "objects": {"binding": "banked"}}
+      ]
+    },
+    {
+      "id": "t_epic_exp",
+      "name": "Test Epic Experiment",
+      "oracle_text": "Look at the top three cards of your library. You may cast instant and sorcery spells from among them without paying their mana costs. Then put the rest into your graveyard.",
+      "mana_cost": "{3}{U}{R}",
+      "types": ["Sorcery"],
+      "colors": ["U", "R"],
+      "color_identity": ["U", "R"],
+      "spell_effects": [
+        {"op": "look_at_top", "amount": {"const": 3}, "cast_free": true,
+         "rest_to": "graveyard",
+         "objects": {"any_types": ["Instant", "Sorcery"]}}
+      ]
+    }
+  ]
+}

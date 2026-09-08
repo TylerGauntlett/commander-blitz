@@ -41,6 +41,7 @@ from automtg.engine.enums import (
     Zone,
 )
 from automtg.engine.errors import DslError
+from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
 from automtg.engine.mana import ManaCost, ManaRestriction
 from automtg.engine.sagas import LORE, SAGA
 from automtg.engine.triggers import TRIGGER_EVENTS
@@ -397,7 +398,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         else None
     )
     mode_count = len(cast_modes.get("modes") or ()) if cast_modes else None
-    all_targets = _compile_targets(model.targets, where, on_spell=True, mode_count=mode_count)
+    all_targets = _compile_targets(
+        model.targets,
+        where,
+        on_spell=True,
+        mode_count=mode_count,
+        # For the one computed count a spell may carry: "each of X targets"
+        # needs an {X} to be sized by.
+        mana_cost=model.mana_cost,
+    )
     targets = tuple(spec for spec in all_targets if spec.mode is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
@@ -1439,6 +1448,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
     mana_reflects: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
+    mana_split: tuple[str, ...] = ()
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
             raise DslError(f"{where}: only activated abilities can be mana abilities")
@@ -1503,6 +1513,38 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             # ability would never be offered whatever the commander's colours.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif any(isinstance(e, Mapping) and e.get("split") for e in mana_effects):
+            # "Add X mana in any combination of {U} and/or {R}." Vivi Ornitier.
+            # Fourth of the same family: the options depend on X, which reads
+            # the board, so load time can only record the colours and the
+            # expression.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a split mana ability is a single 'add_mana' -- there is "
+                    f"no second thing for the combination to join"
+                )
+            effect = mana_effects[0]
+            colors = [str(c) for c in effect.get("split") or ()]
+            if len(colors) < 2:
+                raise DslError(
+                    f"{where}.split: a combination needs two or more colours; one colour "
+                    f"is an ordinary 'mana' string with an 'amount'"
+                )
+            unknown = [c for c in colors if c not in MANA_SYMBOLS]
+            if unknown:
+                raise DslError(f"{where}.split: unknown mana symbols {unknown}")
+            if "amount" not in effect:
+                raise DslError(
+                    f"{where}: a split mana ability needs an 'amount' -- how much mana is "
+                    f"being divided. Without it the split has no size"
+                )
+            mana_split = tuple(colors)
+            _validate_mana_amount(effect["amount"], f"{where}.amount")
+            mana_amount = effect["amount"]
+            # The static superset, for the reason `reflecting` needs one: an
+            # empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source at all.
+            mana_options = _ANY_COLOR_OPTIONS
         elif any(
             isinstance(e, Mapping) and isinstance(e.get("mana"), Mapping) for e in mana_effects
         ):
@@ -1542,6 +1584,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
         mana_identity=mana_identity,
+        mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
         # 606.3: a loyalty ability may be activated "any time they could cast a
@@ -1610,6 +1653,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'blockers'/'require_all' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
         )
+    if model.effect == "double_triggers":
+        # The cause clause is the half a card may omit, and omitting it means
+        # "any cause" -- so a typo in an event name must not read as one.
+        from automtg.engine.triggers import TRIGGER_EVENTS
+
+        for name in model.cause_events or ():
+            if name not in TRIGGER_EVENTS:
+                raise DslError(
+                    f"{where}.cause_events: unknown trigger event {name!r} "
+                    f"(implemented: {sorted(TRIGGER_EVENTS)})"
+                )
+        if model.cause_filter is not None:
+            unknown = set(model.cause_filter) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.cause_filter: unknown keys {sorted(unknown)}; a cause "
+                    f"is matched against the printed face of the event's subject"
+                )
+    elif model.cause_events or model.cause_controller or model.cause_filter:
+        raise DslError(
+            f"{where}: a cause clause only means something to 'double_triggers', "
+            f"not to {model.effect!r}"
+        )
+
     if model.effect in ("cant_attack_alone", "cant_block_alone") and model.affects is None:
         # `characteristics._matches` reads a missing filter as "matches
         # nothing", so an "…alone" static without one is a printed restriction
@@ -1659,9 +1726,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: cast_from_graveyard filters spells with "
                 f"'affects_spells', not 'affects' (which picks out permanents)"
             )
-        if not model.static_max_per_turn:
+        if not model.static_max_per_turn and not model.grants_flashback:
+            # `grants_flashback` IS the rate limit, and a different one: each
+            # card is exiled as it resolves, so the permission spends itself
+            # card by card rather than being metered per turn. Lier prints no
+            # per-turn cap and needs none -- your graveyard runs out.
             raise DslError(
-                f"{where}: cast_from_graveyard needs 'max_per_turn' -- "
+                f"{where}: cast_from_graveyard needs 'max_per_turn' or "
+                f"'grants_flashback' -- "
                 f"'once during each of your turns' is the whole rate limit, and "
                 f"without it the permission is an unbounded engine"
             )
@@ -1755,7 +1827,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
-    elif model.effect in ("spell_cost_reduction", "replace_token_creation"):
+    elif model.effect in (
+        "spell_cost_reduction",
+        "replace_token_creation",
+        # "Spells can't be countered" names no permanent either -- it is about
+        # spells on the stack, and its optional `affects_spells` is the only
+        # filter it can carry. Lier prints no filter at all: every spell, every
+        # player, which is the card's whole reputation.
+        "spells_cant_be_countered",
+    ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
         # permanents for `affects` to name.
@@ -1868,6 +1948,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["loss_multiplier"] = model.loss_multiplier
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
+    # `double_triggers`' cause clause. Copied explicitly like every other field
+    # here: this dict is a whitelist, not a dump of the model, so a field the
+    # schema accepts and this loop forgets is silently dropped -- the static
+    # loads, compiles and applies with the clause simply absent. Veyran doubled
+    # an upkeep trigger for exactly that reason before these three lines.
+    if model.cause_events is not None:
+        static["cause_events"] = list(model.cause_events)
+    if model.cause_controller is not None:
+        static["cause_controller"] = model.cause_controller
+    if model.cause_filter is not None:
+        static["cause_filter"] = dict(model.cause_filter)
     for field_name in ("power", "toughness", "amount"):
         value = getattr(model, field_name)
         if value is not None:

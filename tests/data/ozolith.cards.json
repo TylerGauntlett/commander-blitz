@@ -1,0 +1,78 @@
+{
+  "_comment": "The Ozolith's two lines. Both mean the WHOLE multiset of counters -- every kind with its own amount -- where every other card in this family names one kind. t_ozolith_one_kind is the counterfactual that names +1/+1 and silently drops the rest.",
+  "cards": [
+    {
+      "id": "t_ozolith",
+      "name": "Test Ozolith",
+      "oracle_text": "Whenever a creature you control leaves the battlefield, if it had counters on it, put those counters on Test Ozolith.\nAt the beginning of combat on your turn, if Test Ozolith has counters on it, you may move all counters from Test Ozolith onto target creature.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "supertypes": ["Legendary"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control leaves the battlefield, if it had counters on it, put those counters on Test Ozolith.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "controller": "you",
+            "filter": {"types": ["Creature"]},
+            "condition": {"cmp": ">", "left": {"counters_had": "+1/+1"}, "right": {"const": 0}}
+          },
+          "effects": [
+            {"op": "move_counters", "all_kinds": true, "from_had_counters": true,
+             "objects": {"self_only": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ozolith_one_kind",
+      "name": "Test Ozolith One Kind",
+      "oracle_text": "Whenever a creature you control leaves the battlefield, if it had counters on it, put those counters on Test Ozolith One Kind.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "supertypes": ["Legendary"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control leaves the battlefield, if it had counters on it, put those counters on Test Ozolith One Kind.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "controller": "you",
+            "filter": {"types": ["Creature"]},
+            "condition": {"cmp": ">", "left": {"counters_had": "+1/+1"}, "right": {"const": 0}}
+          },
+          "effects": [
+            {"op": "add_counters", "counter": "+1/+1",
+             "amount": {"counters_had": "+1/+1"}, "objects": {"self_only": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_counter_mover",
+      "name": "Test Counter Mover",
+      "oracle_text": "Move all counters from Test Counter Mover onto target creature.",
+      "mana_cost": "{1}{G}",
+      "types": ["Artifact"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Move all counters from Test Counter Mover onto target creature.",
+          "cost": {"tap": true},
+          "targets": [
+            {"id": "t1", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "types": ["Creature"]}}
+          ],
+          "effects": [
+            {"op": "move_counters", "all_kinds": true, "from": {"self_only": true},
+             "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

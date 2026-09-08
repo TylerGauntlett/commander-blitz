@@ -576,6 +576,34 @@ class SpendPurpose:
 
 
 @dataclass(frozen=True)
+class RestrictionGroup:
+    """One all-of inside a restriction: names that must be there, and must not.
+
+    ``required`` alone was the whole language until "spend this mana only to
+    cast a **non**creature spell" (The Emperor of Palamecia). That line has no
+    positive spelling: `"noncreature"` is not a type, so as a literal it matches
+    nothing ever and freezes the mana permanently unspendable, while enumerating
+    the noncreature types over-permits every artifact creature and enchantment
+    creature spell -- `permits` would see "artifact" among the names and never
+    learn that "creature" is there too.
+
+    So the group asks both questions. It is the same one-word idea trigger
+    filters have had all along as `not_types`, arriving in the one place that
+    lacked it.
+    """
+
+    required: frozenset[str] = frozenset()
+    forbidden: frozenset[str] = frozenset()
+
+    def names(self) -> frozenset[str]:
+        """Every name mentioned, either way round -- for `dynamic`'s scan."""
+        return self.required | self.forbidden
+
+    def satisfied_by(self, names: frozenset[str]) -> bool:
+        return self.required <= names and not (self.forbidden & names)
+
+
+@dataclass(frozen=True)
 class ManaRestriction:
     """"Spend this mana only to cast X (or activate an ability of Y)."
 
@@ -596,8 +624,8 @@ class ManaRestriction:
     about activating abilities does not permit it.
     """
 
-    cast: tuple[frozenset[str], ...] = ()
-    activate: tuple[frozenset[str], ...] = ()
+    cast: tuple[RestrictionGroup, ...] = ()
+    activate: tuple[RestrictionGroup, ...] = ()
     #: Does any group name :data:`CHOSEN_TYPE`?  Derived here rather than stored
     #: by the loader so it cannot drift from the groups it describes, and
     #: computed once at load so `costs.resolve_mana_restriction` can return an
@@ -606,21 +634,43 @@ class ManaRestriction:
     dynamic: bool = field(init=False, default=False)
 
     def __post_init__(self) -> None:
+        # A bare frozenset is accepted as a group and means what it always
+        # meant: every name required, none forbidden. Kept because that *is*
+        # the shorthand -- the negation is the new half, not the old one -- and
+        # because coercing here is one line against rewriting every construction
+        # of a restriction that predates it.
+        for slot in ("cast", "activate"):
+            groups = getattr(self, slot)
+            if any(not isinstance(g, RestrictionGroup) for g in groups):
+                object.__setattr__(
+                    self,
+                    slot,
+                    tuple(
+                        g if isinstance(g, RestrictionGroup) else RestrictionGroup(frozenset(g))
+                        for g in groups
+                    ),
+                )
         object.__setattr__(
-            self, "dynamic", any(CHOSEN_TYPE in g for g in self.cast + self.activate)
+            self, "dynamic", any(CHOSEN_TYPE in g.names() for g in self.cast + self.activate)
         )
 
-    def groups(self, kind: str) -> tuple[frozenset[str], ...]:
+    def groups(self, kind: str) -> tuple[RestrictionGroup, ...]:
         return self.activate if kind == ACTIVATE else self.cast
 
 
 @dataclass(frozen=True)
 class ManaSource:
-    """One untapped permanent's mana ability, flattened into its possible yields.
+    """One mana ability of one untapped permanent, flattened into its yields.
 
     ``options`` holds every 6-tuple the ability could produce (a dual land that
     reads "Add {G} or {U}" contributes two options; one that reads "Add {G}{U}"
     contributes a single option producing two mana).
+
+    One *ability*, not one permanent.  A Talisman or a painland prints two tap
+    abilities ("{T}: Add {C}" and "{T}: Add {B} or {R}") and so contributes two
+    sources sharing an ``oid``.  The permanent can only be tapped once, so the
+    solver treats every source with the same ``oid`` as mutually exclusive --
+    the alternative was a Talisman that paid ``{1}{B}`` on its own.
     """
 
     oid: int
@@ -653,7 +703,10 @@ class ManaSource:
             return True
         if purpose is None:
             return False
-        return any(group <= purpose.names for group in self.restriction.groups(purpose.kind))
+        return any(
+            group.satisfied_by(purpose.names)
+            for group in self.restriction.groups(purpose.kind)
+        )
 
     def max_output(self) -> int:
         return max((sum(o) for o in self.options), default=0)
@@ -832,10 +885,17 @@ def _flexibility(source: ManaSource) -> int:
 
 
 def _colour_abundance(sources: Iterable[ManaSource]) -> list[int]:
-    """How many of these sources can produce each symbol."""
-    counts = _zeros()
+    """How many *permanents* among these sources can produce each symbol.
+
+    Counted per permanent rather than per source, so a Talisman's two abilities
+    do not make its colours look twice as plentiful as they are.
+    """
+    by_permanent: dict[int, set[int]] = {}
     for source in sources:
-        for i in source.producible():
+        by_permanent.setdefault(source.oid, set()).update(source.producible())
+    counts = _zeros()
+    for symbols in by_permanent.values():
+        for i in symbols:
             counts[i] += 1
     return counts
 
@@ -844,8 +904,11 @@ def _greedy_solve(
     base: tuple[int, ...], req: Requirement, sources: Sequence[ManaSource]
 ) -> Payment | None:
     produced = list(base)
+    # Permanents already tapped in this plan.  Keyed by oid, not by position in
+    # ``sources``: a permanent with two tap abilities appears twice, and using
+    # both would tap it twice.
     used: set[int] = set()
-    taps: list[tuple[int, int]] = []
+    taps: list[tuple[int, int, int]] = []
 
     # Phase A -- cover the coloured (and {C}) pips, most-constrained colour first.
     while True:
@@ -856,16 +919,13 @@ def _greedy_solve(
         for i in range(N_SYMBOLS):
             if deficits[i] == 0:
                 continue
-            candidates[i] = [
-                s for k, s in enumerate(sources) if k not in used and i in s.producible()
-            ]
+            candidates[i] = [s for s in sources if s.oid not in used and i in s.producible()]
             if not candidates[i]:
                 return None
         colour = min(candidates, key=lambda i: (len(candidates[i]), i))
         pool_of = candidates[colour]
         pool_of.sort(key=lambda s: (_flexibility(s), 0 if s.is_land else 1, s.sort_key, s.oid))
         chosen = pool_of[0]
-        idx = next(k for k, s in enumerate(sources) if s is chosen)
         viable = [(j, o) for j, o in enumerate(chosen.options) if o[colour] > 0]
         option_index, option = max(
             viable,
@@ -878,7 +938,7 @@ def _greedy_solve(
         )
         for i in range(N_SYMBOLS):
             produced[i] += option[i]
-        used.add(idx)
+        used.add(chosen.oid)
         taps.append((chosen.oid, chosen.ability_index, option_index))
 
     # Phase B -- top up generic with whatever is left.
@@ -891,26 +951,24 @@ def _greedy_solve(
     # draining the same plentiful colour instead of alternating.
     abundance = _colour_abundance(sources)
     while not satisfies(produced, req):
-        remaining = [
-            (k, s) for k, s in enumerate(sources) if k not in used and s.max_output() > 0
-        ]
+        remaining = [s for s in sources if s.oid not in used and s.max_output() > 0]
         if not remaining:
             return None
         remaining.sort(
-            key=lambda ks: (
-                -ks[1].max_output(),
-                -min((abundance[i] for i in ks[1].producible()), default=0),
-                0 if ks[1].is_land else 1,
-                ks[1].sort_key,
+            key=lambda s: (
+                -s.max_output(),
+                -min((abundance[i] for i in s.producible()), default=0),
+                0 if s.is_land else 1,
+                s.sort_key,
             )
         )
-        idx, source = remaining[0]
+        source = remaining[0]
         option_index, option = max(
             enumerate(source.options), key=lambda jo: (sum(jo[1]), tuple(-v for v in jo[1]), -jo[0])
         )
         for i in range(N_SYMBOLS):
             produced[i] += option[i]
-        used.add(idx)
+        used.add(source.oid)
         taps.append((source.oid, source.ability_index, option_index))
 
     return Payment(taps=taps, produced=tuple(produced))
@@ -921,14 +979,29 @@ def _search_solve(
 ) -> Payment | None:
     """Bounded depth-first fallback over "skip this source / use option k"."""
     n = len(sources)
+    # Upper bound on what sources[i:] can still add.  Each *permanent* is
+    # counted once, for its best ability from here on: two abilities of one
+    # Talisman cannot both be tapped, and summing them would let the search
+    # chase a payment that no board can make.  Admissible whichever of a
+    # permanent's abilities an earlier branch took, because it only ever
+    # over-estimates.
     suffix_max = [0] * (n + 1)
+    best_after: dict[int, int] = {}
     for i in range(n - 1, -1, -1):
-        suffix_max[i] = suffix_max[i + 1] + sources[i].max_output()
+        out = sources[i].max_output()
+        prev = best_after.get(sources[i].oid, 0)
+        suffix_max[i] = suffix_max[i + 1] + max(0, out - prev)
+        best_after[sources[i].oid] = max(prev, out)
 
     nodes = 0
     needed_total = req.total
 
-    def recurse(idx: int, produced: tuple[int, ...], taps: list[tuple[int, int]]):
+    def recurse(
+        idx: int,
+        produced: tuple[int, ...],
+        taps: list[tuple[int, int, int]],
+        tapped: set[int],
+    ):
         nonlocal nodes
         nodes += 1
         if nodes > MAX_SOLVER_NODES:
@@ -940,18 +1013,22 @@ def _search_solve(
         if sum(produced) + suffix_max[idx] < needed_total:
             return None
         source = sources[idx]
-        # Try using this source (each option, richest first) before skipping it.
-        options = sorted(enumerate(source.options), key=lambda jo: (-sum(jo[1]), jo[1]))
-        for option_index, option in options:
-            nxt = tuple(produced[i] + option[i] for i in range(N_SYMBOLS))
-            taps.append((source.oid, source.ability_index, option_index))
-            found = recurse(idx + 1, nxt, taps)
-            taps.pop()
-            if found is not None:
-                return found
-        return recurse(idx + 1, produced, taps)
+        # Try using this source (each option, richest first) before skipping it
+        # -- unless its permanent is already tapped by an earlier choice.
+        if source.oid not in tapped:
+            options = sorted(enumerate(source.options), key=lambda jo: (-sum(jo[1]), jo[1]))
+            tapped.add(source.oid)
+            for option_index, option in options:
+                nxt = tuple(produced[i] + option[i] for i in range(N_SYMBOLS))
+                taps.append((source.oid, source.ability_index, option_index))
+                found = recurse(idx + 1, nxt, taps, tapped)
+                taps.pop()
+                if found is not None:
+                    return found
+            tapped.discard(source.oid)
+        return recurse(idx + 1, produced, taps, tapped)
 
-    return recurse(0, base, [])
+    return recurse(0, base, [], set())
 
 
 def format_symbols(amounts: Iterable[int]) -> str:

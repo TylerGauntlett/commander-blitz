@@ -129,6 +129,132 @@ class TestHeuristicBehaviour:
         assert chosen.kind is ActionKind.ADD_BLOCKER, "declined a free profitable block"
 
 
+class TestHeuristicDoesNotSelfDestruct:
+    """Activated abilities used to score a flat 5.0, beating PASS every time.
+
+    So the agent re-activated the same ability at every priority window until
+    the cost stopped being payable: Adanto Vanguard's "Pay 4 life" ran it from
+    40 down to 3, and Bloodthrone Vampire ate its own board. The value function
+    now asks the turn ledger whether it has already done this, and whether the
+    ability is a combat trick worth using at all.
+    """
+
+    def _blocked_vanguard(self, builder, life: int = 40):
+        """Seat 0's Adanto Vanguard attacking into a block, priority to seat 0."""
+        from automtg.engine.structs import TargetRef
+        from tests.conftest import find_action, only_oid, pass_until
+
+        game = (
+            builder(players=2)
+            .battlefield(0, ["adanto_vanguard"])
+            .battlefield(1, ["t_big"])
+            .life(0, life)
+            .build()
+        )
+        vanguard = only_oid(game, "adanto_vanguard", 0)
+        big = only_oid(game, "t_big", 1)
+        pass_until(
+            game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_ATTACKERS
+        )
+        game.apply(
+            find_action(
+                game, ActionKind.ADD_ATTACKER, source=vanguard, targets=(TargetRef.player(1),)
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+        pass_until(
+            game, lambda g: g.pending() and g.pending().kind is DecisionKind.DECLARE_BLOCKERS
+        )
+        game.apply(
+            find_action(
+                game, ActionKind.ADD_BLOCKER, source=big, targets=(TargetRef.obj(vanguard),)
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+        return game, vanguard
+
+    def _activations_of(self, game, agent, seat: int, oid: int, limit: int = 40) -> int:
+        """How many times the agent activates ``oid`` before the turn ends."""
+        turn = game.state.turn
+        count = 0
+        for _ in range(limit):
+            decision = game.pending()
+            if decision is None or game.over or game.state.turn != turn:
+                break
+            chosen = agent.act(game, decision.player, game.legal_actions())
+            if (
+                decision.player == seat
+                and chosen.kind is ActionKind.ACTIVATE
+                and chosen.source == oid
+            ):
+                count += 1
+            game.apply(chosen)
+        return count
+
+    def test_it_uses_a_combat_trick_once_and_not_again_that_turn(self, builder):
+        game, vanguard = self._blocked_vanguard(builder)
+        agent = HeuristicAgent(0)
+        used = self._activations_of(game, agent, 0, vanguard)
+        assert used == 1, f"activated Adanto Vanguard {used} times in one turn"
+        assert game.state.players[0].life == 36
+
+    def test_it_does_not_pay_life_it_cannot_spare(self, builder):
+        game, vanguard = self._blocked_vanguard(builder, life=12)
+        agent = HeuristicAgent(0)
+        assert self._activations_of(game, agent, 0, vanguard) == 0
+        assert game.state.players[0].life == 12
+
+    def test_it_does_not_pay_life_outside_combat(self, builder):
+        """Indestructible until end of turn buys nothing in a main phase."""
+        from tests.conftest import only_oid
+
+        game = (
+            builder(players=2)
+            .battlefield(0, ["adanto_vanguard"])
+            .life(0, 40)
+            .build()
+        )
+        agent = HeuristicAgent(0)
+        chosen = agent.act(game, 0, game.legal_actions())
+        assert chosen.source != only_oid(game, "adanto_vanguard", 0) or (
+            chosen.kind is not ActionKind.ACTIVATE
+        )
+
+    def test_it_does_not_sacrifice_its_board_for_a_pump(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["bloodthrone_vampire", "t_bear"])
+            .build()
+        )
+        agent = HeuristicAgent(0)
+        chosen = agent.act(game, 0, game.legal_actions())
+        assert chosen.kind is not ActionKind.ACTIVATE, "sacrificed a creature for +2/+2"
+
+    def test_it_never_repeats_a_non_mana_ability_in_one_turn(self):
+        """The property, over a real game rather than one built position."""
+        from automtg.engine.characteristics import abilities_of
+
+        game = create_game(["edgar", "aesi"], seed=5)
+        agents = {0: HeuristicAgent(0), 1: HeuristicAgent(1)}
+        seen: set[tuple[int, int, int]] = set()
+        for _ in range(600):
+            if game.over:
+                break
+            decision = game.pending()
+            if decision is None:
+                break
+            chosen = agents[decision.player].act(game, decision.player, game.legal_actions())
+            if chosen.kind is ActionKind.ACTIVATE and chosen.source is not None:
+                abilities = abilities_of(game.state, chosen.source)
+                index = chosen.ability_index
+                usable = index is not None and 0 <= index < len(abilities)
+                if usable and not abilities[index].is_mana_ability:
+                    key = (game.state.turn, chosen.source, index)
+                    assert key not in seen, f"repeated ability {key} in one turn"
+                    seen.add(key)
+            game.apply(chosen)
+
+
 class TestHeuristicIsCompetent:
     def test_heuristic_beats_random(self, duel_results):
         summary = summarize(duel_results)[2]

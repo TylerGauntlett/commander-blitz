@@ -18,7 +18,12 @@ from automtg.engine.effects.values import (
     validate_value,
 )
 from automtg.engine.errors import DslError
-from automtg.engine.mana import CHOSEN_TYPE, ManaRestriction, parse_mana_production
+from automtg.engine.mana import (
+    CHOSEN_TYPE,
+    ManaRestriction,
+    RestrictionGroup,
+    parse_mana_production,
+)
 
 from .statics import (
     _validate_cost_reduction,
@@ -311,7 +316,7 @@ def _mana_restriction(spec: Any, where: str) -> ManaRestriction:
     return ManaRestriction(cast=_restriction_groups(spec, where))
 
 
-def _restriction_groups(spec: Any, where: str) -> tuple[frozenset[str], ...]:
+def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
     """One half of a restriction: the groups, any of which may be satisfied.
 
     ``None`` is an omitted half and means "never", which is the whole of how a
@@ -322,7 +327,7 @@ def _restriction_groups(spec: Any, where: str) -> tuple[frozenset[str], ...]:
     groups = [spec] if isinstance(spec, str) else list(spec)
     if not groups:
         raise DslError(f"{where}: 'mana_restriction' is empty; omit it for ordinary mana")
-    out: list[frozenset[str]] = []
+    out: list[RestrictionGroup] = []
     for group in groups:
         entries = [group] if isinstance(group, (str, Mapping)) else list(group)
         if not entries:
@@ -330,12 +335,47 @@ def _restriction_groups(spec: Any, where: str) -> tuple[frozenset[str], ...]:
                 f"{where}: an empty group in 'mana_restriction' restricts nothing; "
                 f"omit it for ordinary mana"
             )
-        out.append(frozenset(_restriction_name(entry, where) for entry in entries))
+        required: set[str] = set()
+        forbidden: set[str] = set()
+        for entry in entries:
+            if isinstance(entry, Mapping) and "not" in entry:
+                if set(entry) != {"not"}:
+                    raise DslError(
+                        f"{where}: a negated mana restriction takes only 'not', "
+                        f"not {dict(entry)!r}"
+                    )
+                forbidden.add(_restriction_name(entry["not"], where, negated=True))
+            else:
+                required.add(_restriction_name(entry, where))
+        if not required and not forbidden:
+            raise DslError(
+                f"{where}: an empty group in 'mana_restriction' restricts nothing; "
+                f"omit it for ordinary mana"
+            )
+        # A name on both sides is a group nothing can ever satisfy -- the same
+        # permanently-unspendable mana a typo makes, and worth the same refusal.
+        if overlap := required & forbidden:
+            raise DslError(
+                f"{where}: {sorted(overlap)!r} is both required and forbidden in one "
+                f"'mana_restriction' group, which nothing can satisfy"
+            )
+        out.append(RestrictionGroup(frozenset(required), frozenset(forbidden)))
     return tuple(out)
 
 
-def _restriction_name(entry: Any, where: str) -> str:
-    """One name inside a restriction group: a literal, or the chosen type."""
+def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
+    """One name inside a restriction group: a literal, or the chosen type.
+
+    ``negated`` is the `{"not": …}` half, and it accepts literals only. No card
+    prints "spend this only to cast a spell that is *not* the chosen type", and
+    the sentinel would have to survive `costs._resolve_groups` for it to mean
+    anything -- so it is refused here rather than accepted and half-honoured.
+    """
+    if negated and isinstance(entry, Mapping):
+        raise DslError(
+            f"{where}: a negated mana restriction takes a literal type or "
+            f"subtype, not {dict(entry)!r}"
+        )
     if isinstance(entry, Mapping):
         # Exactly the one dynamic leaf, and validated as such: a near-miss
         # spelling that fell through would freeze into a literal name no card

@@ -34,6 +34,7 @@ def _compile_targets(
     on_spell: bool = False,
     on_trigger: bool = False,
     mode_count: int | None = None,
+    mana_cost: str | None = None,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -105,12 +106,22 @@ def _compile_targets(
                 f"{where}: 'one_per_player' needs 'count': 'any' -- "
                 f"it caps a variable-size choice, and a fixed one has no room to cap"
             )
-        if on_spell and not isinstance(spec.count, (int, str)):
+        if on_spell and not isinstance(spec.count, (int, str)) and not spec.x_sized:
             raise DslError(
                 f"{where}.target[{spec.id}]: a computed 'count' only works on an "
                 f"ability's targets -- a spell's are declared while it is being "
-                f"cast (601.2c), before X is chosen and before any additional "
-                f"cost is paid, so the expression would read 0"
+                f"cast (601.2c), before any additional cost is paid, so the "
+                f"expression would read 0. The one exception is {{\"x\": true}}: "
+                f"601.2b announces X *before* 601.2c chooses targets"
+            )
+        if spec.x_sized and on_spell and not (mana_cost or "").count("{X}"):
+            # "Each of X targets" on a card with no X to pay is a spec that
+            # always sizes to zero -- a spell that says it targets and never
+            # does. Refused rather than left to read 0 for ever, which is the
+            # silent half of the same mistake the clause above prevents.
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'count': {{\"x\": true}} needs an "
+                f"{{X}} in the card's mana cost -- there is no X to size it by"
             )
     _check_mode_targets(
         specs, where, on_spell=on_spell, on_trigger=on_trigger, mode_count=mode_count

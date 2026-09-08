@@ -32,6 +32,7 @@ from .mana import (
     ManaRestriction,
     ManaSource,
     Requirement,
+    RestrictionGroup,
     SpendPurpose,
     format_symbols,
     solve_payment,
@@ -167,21 +168,56 @@ def resolve_mana_restriction(ability: Ability, obj: Any) -> ManaRestriction | No
 
 
 def _resolve_groups(
-    groups: tuple[frozenset[str], ...], chosen: str | None
-) -> tuple[frozenset[str], ...]:
-    out: list[frozenset[str]] = []
+    groups: tuple[RestrictionGroup, ...], chosen: str | None
+) -> tuple[RestrictionGroup, ...]:
+    out: list[RestrictionGroup] = []
     for group in groups:
-        if CHOSEN_TYPE not in group:
+        if CHOSEN_TYPE not in group.names():
             out.append(group)
         elif chosen is not None:
-            out.append((group - {CHOSEN_TYPE}) | {chosen.lower()})
+            # Both halves, though only `required` can hold the sentinel today --
+            # the loader refuses a negated chosen type, since no card prints
+            # "spend this only to cast a spell that is *not* the chosen type".
+            # Substituting both anyway means the day one does, this is not the
+            # place that quietly kept the sentinel.
+            out.append(
+                RestrictionGroup(
+                    required=_swap(group.required, chosen),
+                    forbidden=_swap(group.forbidden, chosen),
+                )
+            )
     return tuple(out)
+
+
+def _swap(names: frozenset[str], chosen: str) -> frozenset[str]:
+    if CHOSEN_TYPE not in names:
+        return names
+    return (names - {CHOSEN_TYPE}) | {chosen.lower()}
+
+
+def _by_permanent(sources: Sequence[ManaSource]) -> dict[int, list[ManaSource]]:
+    """Sources grouped by the permanent they tap, first-seen order kept.
+
+    A :class:`ManaSource` is one *ability*; a Talisman or a painland has two
+    tap abilities and so appears twice.  Every count of "how much mana" has to
+    go through here, because the permanent taps once whichever ability is used.
+    """
+    out: dict[int, list[ManaSource]] = {}
+    for source in sources:
+        out.setdefault(source.oid, []).append(source)
+    return out
+
+
+def permanents_output(sources: Sequence[ManaSource]) -> int:
+    """Upper bound on mana from these sources: each permanent taps once, for
+    its best ability."""
+    return sum(max(s.max_output() for s in group) for group in _by_permanent(sources).values())
 
 
 def available_mana(state: GameState, pid: int) -> int:
     """Upper bound on mana this player could produce, for heuristics and encoding."""
     pool = state.players[pid].mana_pool.total()
-    return pool + sum(source.max_output() for source in mana_sources(state, pid))
+    return pool + permanents_output(mana_sources(state, pid))
 
 
 def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
@@ -191,6 +227,10 @@ def sources_by_controller(state: GameState) -> dict[int, list[ManaSource]]:
     a four-player pod walked it four times over.  The per-object work is
     identical either way; this just partitions instead of re-scanning.  Pass the
     result to :func:`mana_availability` as ``sources``.
+
+    Per ability, exactly like :func:`mana_sources` -- this is the solver-shaped
+    list.  Collapsing to one entry per permanent is :func:`mana_availability`'s
+    job, since only the client wants that shape.
     """
     out: dict[int, list[ManaSource]] = {p.pid: [] for p in state.players}
     for oid in state.battlefield:
@@ -287,6 +327,11 @@ def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
     Clamped at zero: a negative multiplier is not a thing a card can mean, and
     an ability with no counters on it simply makes no mana.
     """
+    if ability.mana_split:
+        # A split ability's size is already inside each option -- the
+        # compositions `_split_options` builds each sum to X -- so multiplying
+        # by X here would produce X*X mana. The amount is read once, there.
+        return 1
     if ability.mana_amount is None:
         return 1
     from .effects.context import EffectContext
@@ -329,6 +374,8 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
     introduces no new question. That is what keeps a reflecting ability a mana
     ability for 605.1a.
     """
+    if ability.mana_split:
+        return _split_options(state, oid, ability)
     if ability.mana_chosen_color:
         return _chosen_color_options(state, oid, ability)
     if ability.mana_identity:
@@ -393,6 +440,75 @@ def _chosen_color_options(
     if index is None:  # pragma: no cover - the loader only writes WUBRG here
         return ()
     return tuple(option for option in ability.mana_options if option[index])
+
+
+#: How many ways a split may be offered before it is truncated. Two colours and
+#: a power of nine is ten options, which is nothing; five colours and a large X
+#: is combinatorial. The cap is far above any printed card -- Vivi is the only
+#: one in the pool and splits two ways -- and exists so a pathological board
+#: cannot hang the solver rather than to express a rule.
+MAX_SPLIT_OPTIONS = 64
+
+
+def _split_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
+    """Every way to divide X mana among the named colours.
+
+    "Add X mana in any combination of {U} and/or {R}, where X is Vivi
+    Ornitier's power." The combination is a *choice*, so it is offered as one
+    option per composition and the solver picks the one that pays the spell --
+    which is exactly what a player does at a table.
+
+    X is read here, at activation, through `_split_amount`; it is the same
+    value expression `mana_amount` reads, and `mana_amount` returns 1 for a
+    split ability so the size is not applied twice.
+
+    X of zero yields nothing -- a Vivi with 0 power taps for no mana, which is
+    the printed card.
+    """
+    total = _split_amount(state, oid, ability)
+    indices = [SYMBOL_INDEX[c] for c in ability.mana_split if c in SYMBOL_INDEX]
+    if total <= 0 or not indices:
+        return ()
+
+    rows: list[list[int]] = []
+
+    def walk(depth: int, left: int, so_far: list[int]) -> None:
+        if len(rows) >= MAX_SPLIT_OPTIONS:
+            return
+        if depth == len(indices) - 1:
+            rows.append([*so_far, left])
+            return
+        for take in range(left + 1):
+            walk(depth + 1, left - take, [*so_far, take])
+
+    walk(0, total, [])
+
+    options = []
+    for row in rows:
+        produced = [0] * len(SYMBOLS)
+        for index, amount in zip(indices, row, strict=True):
+            produced[index] += amount
+        options.append(tuple(produced))
+    return tuple(options)
+
+
+def _split_amount(state: GameState, oid: int, ability: Ability) -> int:
+    """X for a split ability, read the way `mana_amount` reads every other one."""
+    if ability.mana_amount is None:
+        return 0
+    from .effects.context import EffectContext
+    from .effects.values import evaluate_value
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return 0
+    ctx = EffectContext(
+        state=state,
+        controller=obj.controller,
+        source_oid=oid,
+        source_name=state.card_of(obj).name,
+    )
+    return max(0, int(evaluate_value(ctx, ability.mana_amount)))
 
 
 def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
@@ -487,29 +603,43 @@ def mana_availability(
     {G}.  Only :func:`can_pay_mana` answers affordability, and the client uses
     the action list for that.
 
+    One entry per **permanent**, not per ability.  A Talisman prints "{T}: Add
+    {C}" and "{T}: Add {B} or {R}" -- two abilities, one tap -- and shows up
+    here as a single source whose ``options`` are ``[["C"], ["B"], ["R"]]`` and
+    whose ``amount`` is 1.  Listed per ability it rendered as two pips and
+    claimed a mana the permanent cannot make.  ``amount`` is the best single
+    tap, so a permanent whose abilities differ in size ("{C}{C}" beside "{G}")
+    reports the larger; an upper bound, like ``total``.
+
     ``sources`` lets a caller serializing every seat share one battlefield walk;
     see :func:`sources_by_controller`.  Omitted, it is computed here as before.
     """
     pool = state.players[pid].mana_pool
     if sources is None:
         sources = mana_sources(state, pid)
+    entries: list[dict[str, Any]] = []
+    for oid, group in _by_permanent(sources).items():
+        # Every yield any of the permanent's abilities could choose, each as
+        # the symbols it actually makes.  "{T}: Add {G} or {U}" is
+        # [["G"], ["U"]]; "{T}: Add {G}{U}" is [["G", "U"]].  The union alone
+        # cannot tell those apart, and the difference is a whole mana.
+        # Deduplicated in order: two abilities that both make {G} are one
+        # choice, not two.
+        options = list(dict.fromkeys(tuple(o) for s in group for o in s.options))
+        producible = frozenset().union(*(s.producible() for s in group))
+        entries.append(
+            {
+                "oid": oid,
+                "options": [_option_symbols(option) for option in options],
+                # Sorted by SYMBOLS order so {G}{U} and {U}{G} render alike.
+                "symbols": sorted((SYMBOLS[i] for i in producible), key=SYMBOL_INDEX.get),
+                "amount": max(s.max_output() for s in group),
+            }
+        )
     return {
         "pool": pool.to_dict(),
-        "sources": [
-            {
-                "oid": source.oid,
-                # Every yield the ability could choose, each as the symbols it
-                # actually makes.  "{T}: Add {G} or {U}" is [["G"], ["U"]];
-                # "{T}: Add {G}{U}" is [["G", "U"]].  The union alone cannot
-                # tell those apart, and the difference is a whole mana.
-                "options": [_option_symbols(option) for option in source.options],
-                # Sorted by SYMBOLS order so {G}{U} and {U}{G} render alike.
-                "symbols": sorted((SYMBOLS[i] for i in source.producible()), key=SYMBOL_INDEX.get),
-                "amount": source.max_output(),
-            }
-            for source in sources
-        ],
-        "total": pool.total() + sum(source.max_output() for source in sources),
+        "sources": entries,
+        "total": pool.total() + permanents_output(sources),
     }
 
 
@@ -1191,11 +1321,26 @@ def pay_mana(
     if payment is None:
         return False
     for oid, ability_index, option_index in payment.taps:
+        obj = state.objects.get(oid)
+        if obj is None or obj.tapped:
+            # The plan was made against untapped permanents, so this can only
+            # mean the solver named one permanent twice -- a Talisman's two
+            # abilities, once.  Refuse loudly: `activate_mana_ability` would
+            # add the mana regardless of the tap, and the pool would hold a
+            # mana no permanent made.
+            raise DslError(
+                f"payment plan taps {state.card(oid).name} (#{oid}) but it is "
+                "already tapped; the solver must never tap one permanent twice"
+            )
         activate_mana_ability(state, oid, ability_index, pid, option_index)
     spent = player.mana_pool.spend(req)
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
+        # Accumulated rather than assigned: a cast pays in more than one call
+        # when it has an additional cost, and "how much mana was spent to cast
+        # it" is all of them.
+        obj.mana_spent += req.total
     state.emit(
         EventType.MANA_SPENT,
         player=pid,
@@ -1243,6 +1388,10 @@ def activate_mana_ability(
     )
 
     if ability.cost is not None and ability.cost.tap:
+        # The return value is deliberately not checked: `Game._activate_mana`
+        # has already tapped the source through `pay()` by the time it reaches
+        # here, so a False is the normal by-hand case.  The solver's plan is
+        # checked against the board in `pay_mana` instead.
         tap_permanent(state, oid)
 
     # Tagged with the permanent that made it. The tag is the whole of what

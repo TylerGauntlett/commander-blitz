@@ -66,12 +66,34 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-108 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+114 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
 |---|---|
-| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `return_to_origin` |
+| Cards | `draw` `discard` `mill` `search_library` `search_zones` `look_at_top` `look_at_hand` `return_to_hand` `return_from_graveyard` `reveal` `scry` `surveil` `shuffle` `put_on_top` `two_piles` `explore` `connive` `clash` `cascade` `ripple` `reveal_until` `hideaway` `play_exiled` `grant_playable` `grant_graveyard_cast` `cast_from_hand` `return_to_origin` |
+
+`cast_from_hand` is "you may cast a spell **from your hand** without paying its
+mana cost" — Electrodominance, Glamdring. The engine could already cast for free
+from the library top (`look_at_top`'s `cast_free`, cascade, Bolas's Citadel) and
+from exile (`play_exiled`, foretell); the one zone it could not reach was the one
+every card of this shape names.
+
+```jsonc
+{ "op": "cast_from_hand",
+  "selector": { "any_types": ["Instant", "Sorcery"],
+                "mana_value": { "op": "<=", "value": { "x": true } } } }
+```
+
+`grant_playable` is the near miss and is a **different sentence**: it permits a
+*play* from a zone that normally forbids one, at the card's printed cost. A card
+already in hand needs no permission to be cast — it needs the price waived — so
+reaching for it here produces a card that does nothing at all.
+
+`selector` is the whole of the printed restriction and is optional; omitted, any
+card in hand qualifies, which is Electrodominance's bare "a spell". The op is
+optional by construction — the choice has a minimum of zero, so no `may` wrapper
+is needed — and a player with nothing matching is never asked.
 
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
@@ -233,10 +255,10 @@ it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` |
-| Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` |
+| Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
-| Stack | `counter` `copy_spell` `return_spell_to_hand` `reflexive_trigger` |
+| Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
@@ -745,6 +767,183 @@ Where the card goes is its **owner's** hand — a spell whose controller is not
 its owner still goes home. And a *copy* of a spell is not a card (706.10), so
 there is nothing to put anywhere: 704.5e removes it and it ceases to exist.
 `stack.pull_spell_off_stack` is the one place all of that lives.
+
+### "Target spell or nonland permanent"
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_permanent", "count": 1,
+  "selector": { "not_types": ["Land"], "controller": "opponent" } }
+```
+
+Sink into Stupor. One instance of the word "target" whose legal choices live in
+two zones at once — `"spell"` walks the stack, `"permanent"` and `"any"` walk the
+battlefield, and nothing pooled the two.
+
+**One spec, not two.** Two specs, one of each kind, is a card that targets
+*twice*: it would need a legal choice of each to be castable, and 608.2b would
+fizzle it if either became illegal. The printed card is castable with only a
+permanent on the board and with only a spell on the stack.
+
+`still_legal` needed no change at all, because it already re-checks a stored ref
+by `ref.kind` rather than by the spec's — so every ref this pool offers is one it
+will accept. The `selector` narrows both halves, since "nonland" and "an opponent
+controls" are meant to.
+
+`return_spell_to_hand` reads both `target_sids` and `target_oids` for the same
+reason: a union target that landed on a permanent would otherwise return nothing
+and leave it on the battlefield with the card looking like it worked — the silent
+failure that op's docstring was already written about, one kind further along.
+
+### "As this enters, you may pay …"
+
+```jsonc
+{ "event": "self_enters_tapped", "unless_cost": { "pay_life": 3 } }
+```
+
+"As this land enters, you may pay 3 life. If you don't, it enters tapped."
+(Soporific Springs, and the shock lands. Steam Vents ships today with the sentence
+dropped — a strictly worse card, and a silent one.)
+
+`unless_cost` takes a whole `Cost`, not a life number, because the rest of the
+cycle pays with a sacrifice or a discard.
+
+**Where the question is asked is the design.** 614 applies enters replacements
+*inside* the zone change, and `move_object` is not a generator — it cannot stop
+for a decision, and making it one would put a suspend point inside every zone
+change in the engine. So `zones.offer_enters_costs` is called by whichever path is
+about to put the permanent onto the battlefield — `game._play_land` for a land
+drop, `stack._place_after_resolution` for a permanent spell, both already
+generators — and leaves the answer on `obj.enters_cost_paid` for the replacement
+to read a moment later.
+
+Asking a moment early is not an approximation: nobody receives priority between
+the question and the arrival, so there is no window in which the permanent exists
+with the question unanswered. It is the argument `_play_land` already makes for
+writing `showing_second_face` before the move.
+
+`enters_cost_paid` survives `reset_permanent_state` deliberately — the same
+exemption `hasted_by_suspend` has, and for the same reason — and
+`_enter_battlefield` clears it once the replacements have read it, because a
+permanent that leaves and returns is a new object whose controller has been asked
+nothing.
+
+An unaffordable price is never offered: 118.4 forbids paying life you do not have,
+so `can_pay` is asked first rather than showing a question whose "yes" cannot be
+honoured.
+
+### "Each of X targets"
+
+```jsonc
+{ "id": "t1", "kind": "any", "count": { "x": true },
+  "selector": { "types": ["Creature"] } }
+```
+
+Crackle with Power. The one computed `count` a **spell's** targets may carry, and
+the reason it is the only one is an ordering rule.
+
+`_compile_targets` otherwise refuses a value-expression count on a card's own
+targets, because "a spell's are declared while it is being cast (601.2c), before
+X is chosen and before any additional cost is paid, so the expression would read
+0". That is right for `{"additional_paid": true}` — kicker is paid at 601.2h,
+long after — and wrong for X, because **601.2b announces X and 601.2c declares
+targets, in that order**.
+
+The engine already ran them in that order. `Game._cast` asks `_ask_x`, then
+`_ask_modes`, then `_ask_mode_targets` — a target declaration made at cast time
+after a cast-time choice, which is "exactly where 601.2 puts it".
+`_ask_x_targets` is its sibling, keyed on X instead of on modes.
+
+Legality is untouched and stays a **gate**, which it already was for the cost:
+"X is a gate here, not a value… `game._cast` then asks the player which one." It
+sizes the spec at zero, offers one line, and the refs are chosen where X is a
+number. There is deliberately no line-per-X: that would multiply target tuples by
+every affordable X, and the choice is one the player already makes at cast time.
+
+`filter_legal` needed nothing. `variable_size` already makes the last spec swallow
+the remaining refs, and its comment already argues that re-evaluating a computed
+count on resolution would be worse than using the stored length — "the number is
+fixed when the targets are declared (601.2c)".
+
+Two refusals: `{"x": true}` on a card with no `{X}` in its mana cost (the spec
+would size to zero for ever — a spell that says it targets and never does), and
+every other computed count on a spell, unchanged.
+
+### Plot
+
+```jsonc
+{ "op": "grant_plot" }        // the spell the trigger bound
+```
+
+"Whenever you cast a multicolored instant or sorcery spell from your hand, exile
+that spell instead of putting it into your graveyard as it resolves. If you do,
+it becomes plotted." (Lilah, Undefeated Slickshot; 702.171a.)
+
+`grant_plot` is `grant_rebound`'s slot exactly — a flag on the spell's object,
+written while it is still on the stack, read by `_place_after_resolution`, and
+turned into what it leaves behind *after* the move, because
+`reset_permanent_state` runs on the way into exile and clears every `playable_*`
+field. The two differ only in what they leave: rebound owes one free cast at the
+next upkeep, plot leaves a standing permission.
+
+That permission is three riders on `playable_by`:
+
+- **`later_turns`**, the fourth `playable_duration` and the only one with a
+  *start* rather than an end. Nothing expires a plotted card; the turn it was
+  plotted on is the one turn it may not be cast.
+- **`playable_free`** — "without paying its mana cost", which is 601.2b and not a
+  reduction to zero: on an X spell a discount still leaves X payable.
+- **`playable_sorcery_only`** — a restriction on the permission, not the card. A
+  plotted instant is still an instant, so `_timing_ok` alone would offer it in
+  response to something.
+
+"If you do" needs no expression: the exile and the plotting are one rider, so
+there is no state where the first happened and the second did not.
+
+The from-hand gate does double duty exactly as rebound's does — it is the printed
+words, and it is the loop guard, since the plotted card is cast from **exile** and
+would otherwise re-plot itself for ever.
+
+### "Multicolored" — `min_colors`
+
+```jsonc
+{ "any_types": ["Instant", "Sorcery"], "min_colors": 2 }
+```
+
+Two or more colors (202.2b). `colors` cannot say it — that is a membership test,
+so `["U", "R"]` matches a mono-red spell, and `require_all` would mean exactly
+those colours and no others. Written as a number rather than a `multicolored`
+boolean because the number is what the rule says and reads the same on the rarer
+"three or more colors". Honoured by all three matchers: the selector language, the
+trigger filter, and `_matches_printed`.
+
+### Granting rebound to a spell that does not print it
+
+```jsonc
+{ "op": "grant_rebound" }                    // the spell the trigger bound
+{ "op": "grant_rebound", "target": "t1" }    // a declared kind: "spell" target
+```
+
+"Whenever you cast an instant spell from your hand, **it gains rebound**" (Ojer
+Pakpatiq, Deepest Epoch). Rebound itself is not new and never was: `rebound` has
+been a card-level rider since the field existed, with the exile-on-resolution in
+`_place_after_resolution`, `rebound_by` on the exiled card and the free cast in
+`suspend.rebound_tick`. The whole mechanic was reachable only by a card that
+printed the keyword, because the rider read the flag off the **card**.
+
+`grant_rebound` writes the same fact onto the spell's *object* while it is still
+on the stack, and the rider reads `card.rebound or obj.granted_rebound`. A
+granted rebound and a printed one are then the same rebound — deliberately, since
+a separate exile-and-recast path for the grant would be two mechanisms for one
+behaviour.
+
+The spell must still have been **cast from a hand**, which is 702.87a's own
+wording and also the loop guard: the free cast at the next upkeep is made from
+exile, so without it one instant would rebound every upkeep for ever. A grant
+made to a spell cast from anywhere else is therefore inert rather than refused.
+
+Which spell is named the same three ways `copy_spell` names one — a `sid` value,
+a declared `target`, or by default the spell the `spell_cast` trigger bound. The
+two ops share `_spell_named_by` rather than spelling it twice.
 
 ## Value expressions
 
@@ -1665,7 +1864,7 @@ batching work.
 [Sagas](#sagas) below, where the whole trigger is supplied by rule 714.2c.
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
-`leaves_battlefield` · `land_played` · `spell_cast` · `attacks` · `blocks` ·
+`leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
 `becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
@@ -1675,6 +1874,225 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
+
+### Tiered, and reading back which price was paid
+
+Fire Magic and Ice Magic print "Tiered (Choose one additional cost)" with three
+prices, and — unlike every other choose-a-price card — **which price was paid
+decides what the spell does**. Ice Magic's tiers bounce, or put on top or
+bottom, or shuffle away: three different effects, not one with a scaling number.
+
+The cost half already shipped. `additional_cost_options` has existed since
+Bitter Triumph's "discard a card **or** pay 3 life" and does the hard part: one
+price chosen at cast, paid as part of casting, offered as its own cast line per
+option.
+
+What was missing is reading the choice back, because Bitter Triumph never needed
+to — both of its prices lead to the same "destroy target creature".
+
+```jsonc
+"additional_cost_options": [ {"mana": "{0}"}, {"mana": "{2}"}, {"mana": "{5}"} ],
+"spell_effects": [
+  { "op": "if", "condition": { "cost_option": 0 }, "then": [ … ] },
+  { "op": "if", "condition": { "cost_option": 1 }, "then": [ … ] }
+]
+```
+
+The index rides the stack item and is stamped onto the object **before**
+`spell_effects` run — the same moment and for the same reason as `overloaded`
+and `kicked`. Written after them it would read `None`, every branch would fail,
+and the spell would cost mana and do nothing at all.
+
+### `mana_spent_of` — what was paid, not what is printed
+
+"…if **at least four mana was spent** to cast it" — The Emperor of Palamecia.
+
+```jsonc
+{ "cmp": ">=", "left": { "mana_spent_of": { "binding": "subject" } },
+  "right": { "const": 4 } }
+```
+
+`pay_mana` records the total on the spell object beside `colors_spent` and
+`mana_sources_spent`, for the reason those two live there: it is knowable
+exactly once, while the payment is happening. It **accumulates**, because a cast
+with an additional cost pays in more than one call.
+
+Every near miss answers a different question, and they only diverge when
+something interesting has happened — which is exactly when these cards are
+played:
+
+| leaf | what it gives |
+|---|---|
+| `mana_value_of` | the **printed** cost — unmoved by reductions, alternative costs, free casts |
+| `additional_paid` | only the overpayment *above* the mana cost — 0 for a plainly qualifying {3}{R} |
+| `colors_of_mana_spent`, `mana_symbols` | colour and printed symbols, not an amount |
+
+A {3}{R} spell cast under a cost reducer is mana value 4 and three mana spent,
+and that case is what the tests pin.
+
+### Discarding a whole hand, and reading the greatest that went
+
+Windfall: "Each player discards their hand, then draws cards equal to the
+**greatest number of cards a player discarded this way**." Two halves, and each
+was unsayable for the same underlying reason -- a per-player quantity in an op
+whose `amount` is evaluated once.
+
+```jsonc
+{ "op": "discard", "player": "each_player", "whole_hand": true, "as": "pitched" },
+{ "op": "draw",    "player": "each_player",
+  "amount": { "greatest_discarded_by_a_player": "pitched" } }
+```
+
+`whole_hand` replaces `amount` rather than joining it. The near miss is
+`{"amount": {"cards_in_hand": ...}}`, which reads the **resolving** player's
+hand and then takes that many from everybody: a Windfall cast with three in hand
+rips three from an opponent holding seven and leaves them four.
+
+`greatest_discarded_by_a_player` groups the discard's binding by owner and takes
+the largest group. Nothing new is recorded to make that work -- `as` already
+accumulates oids across players, and an oid knows its owner. Every other way to
+ask is wrong quietly:
+
+| spelling | what it actually gives |
+|---|---|
+| `{"count": {"binding": …}}` | the **total** across all players — 3 and 1 draws four |
+| `cards_in_hand`, `max_count_of` | read at `draw` time, when every hand is empty — zero |
+| `cards_to_graveyard_this_turn` | turn-wide, every graveyard, counting what was already there |
+
+### `damage`'s `excess_to`
+
+"Excess damage is dealt to that creature's controller instead" — Gandalf's
+Sanction. **One damage event split in two**, not two events, which is visible:
+two would let a damage trigger fire twice and would let the second half be
+prevented on its own.
+
+```jsonc
+{ "op": "damage", "target": "t1",
+  "amount": { "count": { "zone": "graveyard", "controller": "you",
+                         "any_types": ["Instant", "Sorcery"] } },
+  "excess_to": "controller" }
+```
+
+Only on the single-`target` form: `objects` is a pool and there is no one
+creature whose controller the spill belongs to, so the loader refuses it there.
+
+Lethal is read the way `sba` reads it — toughness minus damage **already
+marked**, or 1 from a deathtouch source. That matters and is tested: a creature
+already carrying a point of damage spills one more, which is exactly what a
+naive "amount minus toughness" gets wrong.
+
+`trample` is the near miss and spills for the same reason, but only in combat.
+`prevent_damage` suppresses without redirecting.
+
+### A mana ability that splits colours
+
+"{0}: Add X mana in **any combination of {U} and/or {R}**, where X is Vivi
+Ornitier's power." Two things at once, and the engine had each separately:
+
+```jsonc
+{ "op": "add_mana", "split": ["U", "R"], "amount": { "power_of": { "self": true } } }
+```
+
+`split` names the colours the combination may draw on and replaces `mana`;
+`amount` is how much is being divided. Fourth member of the family that includes
+`reflecting`, `in_commander_identity` and a `mana` mapping — all four are
+abilities whose options cannot be known at load time, so the card records the
+question and `costs.mana_options_of` answers it at activation.
+
+The combination is offered as **one option per composition**: a power-3 source
+offers 3+0, 2+1, 1+2 and 0+3, and the payment picks whichever covers the spell.
+A `choose_mode` of two `add_mana`s is the near miss and is a strictly worse
+card — it offers X of one colour *or* X of the other and can never make
+{U}{U}{R}{R} off a power-4 source, which is the whole card.
+
+**The size lives inside the option, not beside it.** Every other mana ability
+multiplies its single option by `mana_amount`; a split's compositions already
+sum to X, so `mana_amount` returns 1 for one. Without that the card would make
+X² mana.
+
+`in_commander_identity` looks like a shortcut for Vivi and is not: it reads the
+*controller's commander identity* rather than the printed {U}/{R}, so it is
+correct only while Vivi is the commander and silently wrong in the 99 of a
+five-colour deck.
+
+`MAX_SPLIT_OPTIONS` caps the enumeration at 64. Two colours and a large X is
+linear; five colours is combinatorial, and the cap is a guard against a
+pathological board rather than a rule.
+
+### `double_triggers`, and its two axes
+
+"That ability triggers an additional time." Two shipped cards print the same
+effect and disagree completely about what it applies to, which is why the static
+carries two independent filters:
+
+| | scope | written as |
+|---|---|---|
+| **Harmonic Prodigy** | the permanent whose ability fired — "a Shaman or another Wizard you control" | `affects` |
+| **Veyran** | the **cause** — "if *you casting or copying an instant or sorcery spell*" | `cause_events` · `cause_controller` · `cause_filter` |
+
+```jsonc
+{ "kind": "static", "effect": "double_triggers",
+  "affects": { "controller": "you" },
+  "cause_events": ["spell_cast", "spell_copied"],
+  "cause_controller": "you",
+  "cause_filter": { "any_types": ["Instant", "Sorcery"] } }
+```
+
+Either half omitted means "any", so a card writes only what it prints. Harmonic
+Prodigy has no cause clause and therefore doubles an upkeep trigger as readily
+as a cast one; Veyran has no subtype clause and doubles a Goblin's.
+
+`affects` is matched per ability inside `collect`, because it asks about the
+permanent that just triggered. The cause is matched **once for the whole event**,
+above that loop, because it is a fact about what happened rather than about who
+answered.
+
+Doublers stack additively: each queues **one** more copy of the ability that
+fired, so a trigger under both cards happens three times, not four. "Triggers an
+additional time" twice over is not "twice, twice".
+
+`double_land_triggers` stays separate. It is player-wide with no `affects` at
+all and reads its "as long as" gate through `players_doubling_land_triggers`,
+which is the one place every player-wide static is gated.
+
+One asymmetry worth knowing, since it is in the printed card and not in the
+engine: Harmonic Prodigy says "a Shaman **or another** Wizard", and
+`exclude_self` applies to the whole filter rather than to the Wizard half. That
+is coincidentally exact for this printing — Harmonic Prodigy is a Human Wizard,
+never a Shaman — and would be wrong for a Shaman that printed the same line.
+
+### `spell_copied`, and why magecraft is two abilities
+
+"Magecraft — Whenever you cast **or copy** an instant or sorcery spell…" —
+Archmage Emeritus, Storm-Kiln Artist, Veyran. Two events, one printed line, and
+the line is claimed by two abilities: the same shape Winged Boots uses for "has
+flying and ward {4}".
+
+The temptation is to widen `spell_cast` to fire on copies instead, and it is
+badly wrong. A copy put on the stack is **not cast** (707.10a) — nobody paid for
+it and it never existed in a zone. Storm, replicate, conspire, casualty,
+gravestorm and epic are every one of them a `spell_cast` trigger whose effect
+copies the spell that fired it, so a copy that counted as a cast would retrigger
+the ability that made it: a storm count of nine becoming an unbounded loop
+rather than nine copies. `tests/unit/test_magecraft.py::TestACopyIsNotACast`
+holds that line.
+
+The subject is the **original** spell, so a filter asks what was copied —
+`{"any_types": ["Instant", "Sorcery"]}` is the printed question and the original
+is still on the stack to answer it. `controller` is the **copy's** controller,
+because 706.10 gives a copy to whoever created it: reading the original's
+controller would fire your magecraft when an opponent copied your spell, and
+stay silent when you copied theirs.
+
+`{"binding": "sid"}` is the copy's stack id, so an ability may act on the copy
+it just heard about.
+
+Nothing here was new except the listener. `EventType.SPELL_COPIED` had been
+emitted by `put_copy_on_stack` since copying existed — but through
+`state.emit`, which only *records* an event, where every other trigger-bearing
+event in the engine goes through `triggers.fire`. So the event was written into
+the log and heard by nobody, and no amount of card vocabulary would have
+reached it.
 
 **`precombat_main`** is "at the beginning of your **first** main phase" — Black
 Market Connections. `upkeep` is the near miss and is a step too early: it is
@@ -2642,6 +3060,132 @@ creature source of the chosen type**." Three things are load-bearing:
   at load time, because the type does not exist until the land is on the
   battlefield. A group naming it before anything is chosen is **dropped, not
   widened**: the land pays for nothing rather than for everything.
+- **`{"not": <name>}`** is the negated entry — "spend this mana only to cast a
+  **non**creature spell" (The Emperor of Palamecia). A group carries `required`
+  and `forbidden` names and is satisfied when every required one is present and
+  no forbidden one is, so `[[{"not": "creature"}]]` is the whole line and
+  `[["artifact", {"not": "creature"}]]` is "a noncreature artifact spell".
+
+  It exists because both spellings available without it misprint the card, in
+  opposite directions. `"noncreature"` as a literal loads — the guard only asks
+  that an entry look like a word — and then matches nothing ever, leaving mana
+  that can never be spent. Enumerating the noncreature types over-permits every
+  artifact creature, because `permits` sees `artifact` among the names and never
+  learns `creature` is there too. Both live in
+  `tests/unit/test_mana_restriction_not.py` as cards, so the difference is
+  asserted rather than described.
+
+  A negated `{"chosen_type_of": …}` is refused: no card prints it, and accepting
+  it would mean a sentinel that only half the substitution path honours. A name
+  that is both required and forbidden in one group is refused too — nothing can
+  satisfy it, which is the same dead mana a typo makes.
+
+### Counting the spells you cast, by type
+
+```jsonc
+{ "spells_cast_this_turn": "you" }                          // storm: how many
+{ "spells_cast_this_turn": { "player": "you",               // ...of what kind
+                             "filter": { "any_types": ["Instant", "Sorcery"] } } }
+```
+
+"Activate only if you've cast **three or more instant and/or sorcery spells**
+this turn" (Urabrask). `TurnLedger.spells_cast` is a flat per-player integer
+bumped once per `SPELL_CAST`, so the bare form turns Urabrask's transform on after
+three *creature* spells — a strictly better card, silently.
+
+The ledger therefore also keeps `spells_cast_ids`: the printed id of each spell,
+in cast order, per caster. Beside the count rather than replacing it, because
+storm asks only "how many" and asks it per copy — paying a list's length on every
+storm trigger to serve a rarer question is the wrong trade.
+
+The filter goes **inside** the value rather than beside it, following
+`permanents_entered_this_turn`: a sibling `filter` key would have to join
+`VALUE_KEYS` and would then be legal on every value expression. Branching is on
+the presence of `filter`, not on the type, because a player spec is itself
+sometimes a mapping (`{"except": …}`). The id recorded is the face that was
+**cast** — a disturb cast turns the card over inside `push_spell`, and the half
+that was cast is the half the condition asks about.
+
+### Casting out of every graveyard, until end of turn
+
+```jsonc
+{ "op": "grant_graveyard_cast",
+  "affects_spells": { "any_types": ["Instant", "Sorcery"] },
+  "any_graveyard": true,
+  "grants_flashback": true }
+```
+
+"Until end of turn, you may cast instant and sorcery spells from any graveyard.
+If a spell cast this way would be put into a graveyard, exile it instead."
+(Urabrask's third chapter; Yawgmoth's Will before it.)
+
+The spec **is** a `cast_from_graveyard` static, and that is the design rather
+than a coincidence. It means the `affects_spells` filter, `max_per_turn`,
+`grants_flashback` and the `cast_from_graveyard` mark that makes the spell exile
+as it resolves are all the code that already existed — so the second printed
+sentence needs nothing at all, and the loader asks for the same two guarantees
+the static's own loader does: a filter (an absent one would free the whole
+graveyard) and either a cap or `grants_flashback` (a permission that neither
+meters nor exiles is an engine, not a printed line).
+
+What is new is where the permission *lives*. `cast_from_graveyard` is read off a
+permanent on the battlefield, and this chapter exiles the Saga in the same breath
+as granting it — so the grant goes on the table
+(`GameState.graveyard_cast_grants`) with a turn on it, beside `block_prohibitions`
+and for that field's reason. The granting object is still recorded, and still
+resolves: a `GameObject` outlives the zone it was in, so the per-source rate limit
+and a `chosen_type` filter both keep working from exile.
+
+`any_graveyard` widens *where the engine looks* and is asked again per card, in
+`_graveyard_cast_permission`. Both halves are needed: widening alone would offer
+a card no permission covers, and asking alone would never see the card, since the
+loop over graveyards is where candidates come from.
+
+**Not `grant_playable`,** which is the near miss and very nearly works — it takes a
+selector, it is turn-scoped, and its `as_flashback` already produces the same
+exile. What it cannot be is *standing*: it marks the cards it can see when it
+resolves, and a spell that reaches a graveyard later in the same turn is castable
+under the printed card and invisible to a snapshot. For a card whose point is a
+graveyard that refills as you empty it, that is the loop, not a rounding error.
+
+### How long "you may play it" lasts
+
+```jsonc
+{ "op": "exile", "objects": { ... }, "playable_this_turn": true }   // the default
+{ "op": "look_at_top", "destination": "exile",
+  "playable": "your_next_end_step" }                                // Haste Magic
+{ "op": "exile", "objects": { ... },
+  "playable": "end_of_your_next_turn" }                             // Light Up the Stage
+```
+
+`playable_this_turn` is the impulse-draw permission and was the only one there
+was: a `playable_turn` on the object, compared against `state.turn` in seven
+places. `playable` is the same key with a duration, and the two are refused
+together — a precedence rule nobody could read off the card.
+
+The other two clocks are **strictly longer**, which is why they are not an
+approximation worth skipping. Haste Magic is an instant; cast on an opponent's
+turn, the printed card lets you play the exiled card right through your following
+turn, and `playable_this_turn` revokes it at the turn boundary with nothing on
+the board to show it.
+
+Neither is arithmetic on a future turn number. Both are keyed to the **player**
+and ended when their step arrives — `turn._expire_permissions`, called as the end
+step begins and again in cleanup — which is the choice detain, goad and "until
+your next turn" all made, and for their reason: eliminating a player moves
+everybody else's next turn, and extra turns move it again.
+
+They differ in the word "next". *Your next end step*, asked on your own turn, is
+**this** turn's, so the permission is no longer than the this-turn one; a card
+exiled during your own end step survives to the following turn's, because the
+hook for that step has already run. *Your next turn* is never the turn you are
+standing in, so `end_of_your_next_turn` granted on your own turn lives through
+the whole of the following one — which is why its cleanup hook checks the grant
+turn as well as the seat.
+
+Every reader goes through `GameObject.playable_live(turn)`. Generalising meant
+replacing all seven `playable_turn == state.turn` comparisons rather than adding
+an eighth, since that comparison *is* the this-turn duration.
 
 ## Adding an op
 

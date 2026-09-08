@@ -22,6 +22,12 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "abrade": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "academy_manufactor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -56,6 +62,13 @@
     "zone": "battlefield"
   },
   "aeronaut_s_wings": {
+    "zone": "battlefield"
+  },
+  "aetherflux_reservoir": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "affa_protector": {
@@ -302,6 +315,16 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arcane_bombardment": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "arcane_denial": {
     "zone": "graveyard"
   },
@@ -314,10 +337,34 @@
   "arcane_sanctum": {
     "zone": "battlefield"
   },
+  "archaeomancer": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archangel": {
     "zone": "battlefield"
   },
   "archers_of_qarsi": {
+    "zone": "battlefield"
+  },
+  "archmage_emeritus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "archmage_of_runes": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "archweaver": {
@@ -483,6 +530,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "balmor_battlemage_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "bane_alley_blackguard": {
     "zone": "battlefield"
@@ -941,6 +992,10 @@
   "breezekeeper": {
     "zone": "battlefield"
   },
+  "bria_riptide_rogue": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "brightblade_stoat": {
     "zone": "battlefield"
   },
@@ -1010,6 +1065,15 @@
     "zone": "battlefield"
   },
   "caldera_lake": {
+    "zone": "battlefield"
+  },
+  "caldera_pyremaw": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "call_damage_control": {
@@ -1195,6 +1259,9 @@
   },
   "champions_of_minas_tirith": {
     "zone": "battlefield"
+  },
+  "chandra_s_ignition": {
+    "zone": "graveyard"
   },
   "changeling_sentinel": {
     "zone": "battlefield"
@@ -1526,6 +1593,12 @@
   },
   "cowl_prowler": {
     "zone": "battlefield"
+  },
+  "crackle_with_power": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "crackling_doom": {
     "life": {
@@ -2123,6 +2196,23 @@
   "eldrazi_devastator": {
     "zone": "battlefield"
   },
+  "electrodominance": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "electrostatic_infantry": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 0,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "elegant_parlor": {
     "zone": "battlefield"
   },
@@ -2241,6 +2331,18 @@
   "eowyn_shieldmaiden": {
     "zone": "battlefield"
   },
+  "epic_experiment": {
+    "graveyard_size": {
+      "0": 23
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 19
+    },
+    "zone": "graveyard"
+  },
   "epic_proportions": {
     "zone": [
       "battlefield",
@@ -2265,6 +2367,14 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "exalted_flamer_of_tzeentch": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "excavation_technique": {
     "battlefield_count": 33,
@@ -2301,11 +2411,36 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "expansion_explosion": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "expedition_envoy": {
     "zone": "battlefield"
   },
   "experimental_armor": {
     "zone": "battlefield"
+  },
+  "expressive_iteration": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "exultant_skymarcher": {
     "zone": "battlefield"
@@ -2537,6 +2672,19 @@
   "fire_lit_thicket": {
     "zone": "battlefield"
   },
+  "fire_magic": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "fire_nation_ambushers": {
     "zone": "battlefield"
   },
@@ -2560,6 +2708,18 @@
       "0": 41
     }
   },
+  "flame_of_anor": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "flameborn_viron": {
     "zone": "battlefield"
   },
@@ -2571,6 +2731,15 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "flare_of_denial": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "fleetfeather_sandals": {
     "zone": "battlefield"
@@ -2714,6 +2883,18 @@
   "foul_orchard": {
     "zone": "battlefield"
   },
+  "frantic_search": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "frantic_strength": {
     "zone": [
       "battlefield",
@@ -2823,6 +3004,18 @@
   },
   "game_trail_changeling": {
     "zone": "battlefield"
+  },
+  "gandalf_s_sanction": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "gangly_stompling": {
     "zone": "battlefield"
@@ -3009,6 +3202,10 @@
     "zone": "battlefield"
   },
   "gladecover_scout": {
+    "zone": "battlefield"
+  },
+  "glamdring": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glamorous_grapplers": {
@@ -3373,6 +3570,17 @@
       "graveyard"
     ]
   },
+  "harmonic_prodigy": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "harrier_naga": {
     "zone": "battlefield"
   },
@@ -3382,6 +3590,22 @@
   },
   "harvest_gwyllion": {
     "zone": "battlefield"
+  },
+  "haste_magic": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "target_pt_delta": {
+      "power": 3,
+      "toughness": 1
+    },
+    "zone": "graveyard"
   },
   "haunted_cloak": {
     "zone": "battlefield"
@@ -3679,6 +3903,14 @@
   "icatian_phalanx": {
     "zone": "battlefield"
   },
+  "ice_magic": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "ice_tunnel": {
     "zone": "battlefield"
   },
@@ -3829,6 +4061,12 @@
   },
   "ixalli_s_lorekeeper": {
     "zone": "battlefield"
+  },
+  "izzet_boilerworks": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
   },
   "izzet_guildgate": {
     "zone": "battlefield"
@@ -4080,6 +4318,10 @@
   "kithkin_billyrider": {
     "zone": "battlefield"
   },
+  "kitsa_otterball_elite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kjeldoran_escort": {
     "zone": "battlefield"
   },
@@ -4285,6 +4527,11 @@
   "leyline_prowler": {
     "zone": "battlefield"
   },
+  "lier_disciple_of_the_drowned": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "lifelink": {
     "zone": [
       "battlefield",
@@ -4326,6 +4573,10 @@
     "zone": "battlefield"
   },
   "lightshell_duo": {
+    "zone": "battlefield"
+  },
+  "lilah_undefeated_slickshot": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "living_laser": {
@@ -4585,6 +4836,24 @@
   },
   "mana_geode": {
     "zone": "battlefield"
+  },
+  "mana_geyser": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "mana_prism": {
     "zone": "battlefield"
@@ -4861,6 +5130,12 @@
   },
   "misty_rainforest": {
     "zone": "battlefield"
+  },
+  "mizzix_s_mastery": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "exile"
   },
   "moaning_spirit": {
     "zone": "battlefield"
@@ -5348,6 +5623,10 @@
   "ogre_warrior": {
     "zone": "battlefield"
   },
+  "ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "oketra_s_monument": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5666,6 +5945,13 @@
     "zone": "battlefield"
   },
   "pine_barrens": {
+    "zone": "battlefield"
+  },
+  "pinnacle_monk_mystic_peak": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "pip_boy_3000": {
@@ -6096,6 +6382,13 @@
       "0": 2
     }
   },
+  "reality_shift": {
+    "battlefield_count": 32,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "reanimate": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -6210,6 +6503,14 @@
     },
     "zone": "graveyard"
   },
+  "restless_spire": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "resupply": {
     "hand_size": {
       "0": 2
@@ -6295,6 +6596,10 @@
   "ripscale_predator": {
     "zone": "battlefield"
   },
+  "riptide_laboratory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "riptide_turtle": {
     "zone": "battlefield"
   },
@@ -6344,6 +6649,13 @@
     "zone": "battlefield"
   },
   "river_of_tears": {
+    "zone": "battlefield"
+  },
+  "riverglide_pathway_lavaglide_pathway": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "riverwheel_aerialists": {
@@ -6700,6 +7012,17 @@
   "seaside_citadel": {
     "zone": "battlefield"
   },
+  "season_of_weaving": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 35
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "secluded_courtyard": {
     "zone": "battlefield"
   },
@@ -7036,6 +7359,16 @@
   "sin_spira_s_punishment": {
     "zone": "battlefield"
   },
+  "sink_into_stupor_soporific_springs": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "sir_shandlar_of_eberyn": {
     "zone": "battlefield"
   },
@@ -7244,6 +7577,15 @@
   "soltari_foot_soldier": {
     "zone": "battlefield"
   },
+  "solve_the_equation": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "somberwald_dryad": {
     "zone": "battlefield"
   },
@@ -7379,6 +7721,10 @@
       "0": 42
     }
   },
+  "sprite_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "squall_seed_mercenary": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7500,6 +7846,13 @@
   "storm_crow": {
     "zone": "battlefield"
   },
+  "storm_kiln_artist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "stormcarved_coast": {
     "zone": "battlefield"
   },
@@ -7513,6 +7866,10 @@
     "zone": "battlefield"
   },
   "stormrider_spirit": {
+    "zone": "battlefield"
+  },
+  "stormsplitter": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "stormtide_leviathan": {
@@ -7918,6 +8275,10 @@
   "thaumaturge_s_familiar": {
     "zone": "battlefield"
   },
+  "the_emperor_of_palamecia_the_lord_master_of_hell": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_fabulous_frog_man": {
     "zone": "battlefield"
   },
@@ -7926,6 +8287,11 @@
   },
   "the_one_ring": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_ozolith": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "the_terror_of_serpent_s_pass": {
@@ -8359,6 +8725,13 @@
   "ur_golem_s_eye": {
     "zone": "battlefield"
   },
+  "urabrask_the_great_work": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "urban_evolution": {
     "hand_size": {
       "0": 4
@@ -8439,6 +8812,10 @@
   },
   "vampire_revenant": {
     "zone": "battlefield"
+  },
+  "vandalblast": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "vanquisher_s_axe": {
     "zone": "battlefield"
@@ -8541,6 +8918,11 @@
   "vexing_gull": {
     "zone": "battlefield"
   },
+  "veyran_voice_of_duality": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "viashino_runner": {
     "zone": "battlefield"
   },
@@ -8612,6 +8994,15 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "vivi_ornitier": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "vivid_creek": {
@@ -8995,6 +9386,18 @@
   "wildwood_patrol": {
     "zone": "battlefield"
   },
+  "will_of_the_jeskai": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
+  },
   "willow_dryad": {
     "zone": "battlefield"
   },
@@ -9019,6 +9422,14 @@
   "windbrisk_heights": {
     "zone": "battlefield"
   },
+  "windfall": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "windreader_sphinx": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9033,6 +9444,10 @@
     "zone": "battlefield"
   },
   "wing_commando": {
+    "zone": "battlefield"
+  },
+  "winged_boots": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "winged_coatl": {

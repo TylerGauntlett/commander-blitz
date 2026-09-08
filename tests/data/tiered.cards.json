@@ -1,0 +1,30 @@
+{
+  "_comment": "The Fire Magic shape: Tiered. One additional cost chosen from three at cast time, and each tier buys a DIFFERENT effect -- so the card branches on which price was paid. Bitter Triumph (tests/data/modal_cost.cards.json) is the same cost machinery where both prices lead to one effect.",
+  "cards": [
+    {
+      "id": "t_tiered_burn",
+      "name": "Test Tiered Burn",
+      "oracle_text": "Tiered (Choose one additional cost.)\n• Small — {0} — Test Tiered Burn deals 1 damage to each creature.\n• Medium — {2} — Test Tiered Burn deals 2 damage to each creature.\n• Large — {5} — Test Tiered Burn deals 3 damage to each creature.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "additional_cost_options": [
+        {"mana": "{0}"},
+        {"mana": "{2}"},
+        {"mana": "{5}"}
+      ],
+      "spell_effects": [
+        {"op": "if", "condition": {"cost_option": 0},
+         "then": [{"op": "damage", "amount": {"const": 1},
+                   "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"}}]},
+        {"op": "if", "condition": {"cost_option": 1},
+         "then": [{"op": "damage", "amount": {"const": 2},
+                   "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"}}]},
+        {"op": "if", "condition": {"cost_option": 2},
+         "then": [{"op": "damage", "amount": {"const": 3},
+                   "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"}}]}
+      ]
+    }
+  ]
+}

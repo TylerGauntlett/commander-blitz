@@ -1,0 +1,30 @@
+{
+  "_comment": "Shapes for tests/unit/test_cast_from_hand.py. t_dominance is the Electrodominance shape: an instant that offers a free cast out of your own hand.",
+  "cards": [
+    {
+      "id": "t_dominance",
+      "name": "Test Dominance",
+      "oracle_text": "You may cast an instant or sorcery spell with mana value 2 or less from your hand without paying its mana cost.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "cast_from_hand",
+          "selector": {"any_types": ["Instant", "Sorcery"], "mana_value": {"op": "<=", "value": 2}}
+        }
+      ]
+    },
+    {
+      "id": "t_dominance_any",
+      "name": "Test Dominance Unbounded",
+      "oracle_text": "You may cast a spell from your hand without paying its mana cost.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "cast_from_hand"}]
+    }
+  ]
+}

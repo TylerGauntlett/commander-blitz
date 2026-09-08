@@ -50,6 +50,29 @@ as both filename and the card's `id`:
 
 Both halves are required. A card nobody asserted anything about is rejected.
 
+**A two-faced card is one answer with two card entries.** If your packet has a
+`back_face`, add a third key, `"back"`, holding that face as a complete card entry
+of its own — its own `id`, `name`, `oracle_text`, `type_line`, cost and effects:
+
+```json
+{ "card": { "...": "..." }, "back": { "...": "..." }, "expectation": { "...": "..." } }
+```
+
+The front then points at it with one of the `card_level_face_keys` in your
+`reference`, and which key you want turns on a single question: is the other half
+something you **turn over to**, or a second spell you may **cast**?
+
+- `back_face` — a transforming DFC. Never cast, never drawn, reached only by the
+  `transform` op.
+- `second_face` — a split half, an Adventure, an Aftermath half, or a **modal
+  double-faced card**, where you play one face *or* the other and nothing ever
+  turns over. Pair it with `second_face_zone` (`"hand"`, or `"graveyard"` for
+  Aftermath).
+
+Only the front face has a position the gates can cast, so there is one
+expectation, proven through the front. **Do not file a gap record for a second
+face** — seven cards in the shipped pool already use these fields.
+
 Start from the packet's `starting_point` — keywords, mana ability, enters-tapped,
 whatever the free tiers already worked out — and **add** to it. Copy `oracle_text`
 verbatim from the packet. Follow the packet's `examples` for shape.
@@ -80,7 +103,7 @@ It is checked by casting your card in one fixed position and reading the board.
 | Your battlefield | **32 permanents** — 30 lands (6 each of Plains, Island, Swamp, Mountain, Forest) + 2 creatures |
 | Opponent's battlefield | **6 permanents** — a **legendary** creature, a flier, an artifact, an enchantment, a Forest and an Island |
 | Your hand | the card under test **and one spare Forest** — so `hand_size` is **1** after you cast it, not 0. The Forest is deliberate: a card can never discard itself to pay its own additional cost (601.2a), so a hand of one would make every mandatory "as an additional cost, discard a card" unplayable. Every `hand_size` you assert counts it |
-| Your library | **40 cards**, all basic lands |
+| Your library | **40 cards** — basic lands, except **index 1, which is an instant or sorcery** (a targetless one, placed there by `build_sandbox` so a card that draws twice does not deck you). So a tutor for an instant or sorcery **finds it**: `library_size` 39 and `hand_size` 2, not 40 and 1 |
 | Opponent's library | 20 cards |
 | Your graveyard | **2 creature cards** — one of **mana value 3 or less**, one of **mana value 5**, so a printed cost ceiling *and* a printed floor each have something to reach |
 | Phase | your precombat main phase, turn 1, with mana enough to cast anything |
