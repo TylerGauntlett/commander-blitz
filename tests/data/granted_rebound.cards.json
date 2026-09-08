@@ -1,0 +1,118 @@
+{
+  "_comment": "Shapes for tests/unit/test_granted_rebound.py. t_rebound_granter is the Ojer Pakpatiq shape -- it grants rebound to a spell that does not print it. t_printed_rebound is the control: the same mechanic reached the old way, so a passing test cannot be explained by the grant doing nothing and the card having rebound all along.",
+  "cards": [
+    {
+      "id": "t_rebound_granter",
+      "name": "Test Rebound Granter",
+      "oracle_text": "Whenever you cast an instant spell from your hand, it gains rebound.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant spell from your hand, it gains rebound.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Instant"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "grant_rebound"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_printed_rebound",
+      "name": "Test Printed Rebound",
+      "oracle_text": "Draw a card.\nRebound",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "rebound": true,
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_reb_gain",
+      "name": "Test Rebound Bait",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_reb_gain_sorcery",
+      "name": "Test Rebound Bait Sorcery",
+      "oracle_text": "You gain 2 life.",
+      "mana_cost": "{R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    }
+  ]
+}

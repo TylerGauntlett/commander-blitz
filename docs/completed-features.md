@@ -10704,3 +10704,80 @@ full-bleed illustrations, so the two most urgent facts on screen are carried by
 its two quietest marks.
 
 Using: mockups\flow\02-face-up.html
+## `grant_rebound` — the rider read off the wrong object
+
+### Overview
+
+Ojer Pakpatiq, Deepest Epoch: "Whenever you cast an instant spell from your
+hand, **it gains rebound**."
+
+The gap record filed against this said rebound was "absent from the 34-entry
+keywords list", which is true, and concluded the mechanic had "no behaviour
+behind it", which was not. Rebound has been complete since `CardDef.rebound`
+existed — the exile-on-resolution rider in `_place_after_resolution`, the
+`rebound_by` mark on the exiled card, and the free cast at the controller's next
+upkeep in `suspend.rebound_tick`. It is a **card-level rider**, not a keyword,
+which is why looking in the keyword list found nothing and why the packet now
+names `CARD_LEVEL_RIDER_KEYS` explicitly.
+
+What was genuinely missing was one word of scope. The rider asked `card.rebound`
+— what a spell says about *itself* — so only a card that printed the keyword
+could ever have it, and no effect could hand it to a spell that did not.
+
+### The change
+
+`granted_rebound` on the spell's `GameObject`, set while the spell is still on
+the stack, read beside the card flag:
+
+```python
+rebounds = (
+    (card.rebound or obj.granted_rebound)
+    and obj.cast_from_hand
+    and destination is Zone.GRAVEYARD
+)
+```
+
+That disjunction is the whole feature. It is the same shape `playable_exiles`
+already has beside `card.graveyard_cast_exiles` on the neighbouring line: the
+card field is what the spell says about itself, the object field is what somebody
+else said about it, and the rider is not entitled to care which.
+
+Deliberately *no* second path. A granted rebound could have been built as its own
+exile-plus-delayed-trigger, and that would have been two mechanisms for one
+behaviour — the mistake made once already for Lier's granted flashback and
+reverted, where `graveyard_cast_exiles` turned out to be doing the work all along.
+
+### The stack is the only window
+
+The flag has to be written while the spell is on the stack. `_place_after_resolution`
+consults it during resolution, and by the time any later effect could reach the
+object the stack list has been popped — which is the same reason `encode` is a
+rider rather than an `exile` written into `spell_effects`, and the same reason
+Mizzix's Mastery's "Exile Mizzix's Mastery" is `exiles_itself` rather than an op.
+
+Addressing it was free: `spell_cast` is in `OBJECT_SUBJECT_TRIGGERS`, so the
+trigger already binds the cast spell's `sid`. `copy_spell` had the lookup inline
+with a comment arguing that a second spelling would be a second bug; `grant_rebound`
+asking the same question a third time is where that stopped being hypothetical,
+so it is now `_spell_named_by` and both ops call it.
+
+### The from-hand gate, twice
+
+702.87a says "if you cast this spell from your hand", and the gate is also the
+loop guard: the free cast at the next upkeep is made **from exile**, so without
+it one instant would rebound at every upkeep for the rest of the game.
+`suspend.rebound_tick` clears the mark before casting for the same reason — the
+free cast is itself a cast.
+
+Because the gate lives in the rider rather than in the op, a grant made to a
+spell cast from anywhere else is **inert rather than refused**. That is what lets
+Ojer Pakpatiq's printed "from your hand" live in the trigger's filter without the
+op having to re-check it, and it means the granted card cannot rebound its own
+rebound.
+
+### Tests
+
+`tests/unit/test_granted_rebound.py`, eleven of them. The load-bearing one is
+`TestPrintedReboundIsUnchanged`: without a control that a card printing rebound
+still rebounds with no granter on the board, every other assertion here is also
+consistent with the bait card having had rebound all along.

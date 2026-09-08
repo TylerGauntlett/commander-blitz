@@ -155,6 +155,17 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
+    #: "whenever you cast an instant spell from your hand, it gains rebound".
+    #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
+    #: `playable_exiles` is read beside `card.graveyard_cast_exiles`: the card
+    #: field is what a spell says about itself and this is what somebody else
+    #: said about it, and the resolution rider cannot tell the difference.
+    #:
+    #: Set on the **spell's object while it is still on the stack**, which is
+    #: the only window there is -- the rider is consulted during resolution and
+    #: the stack list is popped by the time an effect could reach it afterwards.
+    granted_rebound: bool = False
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -737,6 +748,11 @@ class GameObject:
         # The creature came back off its adventure and is on the battlefield;
         # there is nothing left in exile for anyone to cast.
         self.on_adventure = False
+        # A card that changed zones is a new object (400.7), so a rebound
+        # somebody granted the *spell* does not follow the card into its next
+        # life. Read before the move that runs this, so clearing it here costs
+        # the grant nothing and stops it outliving the spell it was given to.
+        self.granted_rebound = False
         self.playable_by = None
         self.playable_turn = -1
         self.playable_group = None

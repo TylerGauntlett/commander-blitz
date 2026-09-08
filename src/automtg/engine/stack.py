@@ -833,7 +833,17 @@ def _place_after_resolution(
     # the printed line would silently do nothing.
     if card.exiles_itself and destination is Zone.GRAVEYARD:
         destination = Zone.EXILE
-    rebounds = card.rebound and obj.cast_from_hand and destination is Zone.GRAVEYARD
+    # `granted_rebound` beside the printed flag, and the disjunction is the
+    # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
+    # and a spell that was handed it are the same spell from here on. Both are
+    # still gated on `cast_from_hand`, which is 702.87a's own wording and the
+    # loop guard -- the free cast at the next upkeep happens from **exile**, so
+    # without it the card would rebound again every upkeep for ever.
+    rebounds = (
+        (card.rebound or obj.granted_rebound)
+        and obj.cast_from_hand
+        and destination is Zone.GRAVEYARD
+    )
     if rebounds:
         destination = Zone.EXILE
     # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
