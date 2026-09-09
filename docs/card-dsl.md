@@ -8070,6 +8070,41 @@ with an approximated cost will never reveal.
 If you add a token whose ability sacrifices it, assert that the effect actually
 happened — not just that the token went away.
 
+### The near-miss token, and why it is silent
+
+The other half of a token being a data change is that **nothing checks the id
+against the words that asked for it**. `validate_token_references` asks only
+whether the id exists and is a token; no gate compares the token that arrives
+against the sentence on the card that made it, because a token is never cast and
+so gates 4 and 5 cannot reach one. So a card reaching for a token that is *nearly*
+right loads, plays, and is quietly a different card forever.
+
+The failure is worth naming because the wrong answer is always the cheaper one to
+write. Luminarch Ascension prints a 4/4 white Angel with **flying**; the pool
+already held `angel_4_4_w_flying_vigilance`, which is one printed word bigger and
+attacks without tapping — on the very card the Angel is the payoff for. Three
+pairs in the pool now differ by exactly one word:
+
+| | | the word |
+|---|---|---|
+| `angel_4_4_w_flying` | `angel_4_4_w_flying_vigilance` | vigilance |
+| `illusion_1_1_u` | `illusion_1_1_u_flying` | flying |
+| `knight_2_2_wu_vigilance` | `knight_2_2_w_vigilance` | blue |
+
+Two consequences. The packet's `token_ids` carries each id's **printed
+description** rather than the bare id, so matching a printed token against the
+list is a lookup rather than a guess. And a token added to the pool gets its
+assertion written by hand — `tests/unit/test_deck_tokens.py` and
+`tests/unit/test_artifact_tokens.py` are where that lives, and they are the only
+coverage a token definition ever has.
+
+A token's *size* need not be a number. Urza's Saga's Construct is a printed 0/0
+carrying "This token gets +1/+1 for each artifact you control", which is a static
+`buff` with a counted magnitude on `{"self_only": true}` — and it counts itself,
+so a lone Construct is a 1/1 rather than a 0/0 that state-based actions bin on
+arrival. Written as `add_counters` it would freeze at its arrival size; written
+as `pump` it would wear off at cleanup.
+
 ## Which mechanism a printed keyword lands on
 
 The next several sections each answer one instance of a single question: a
