@@ -121,6 +121,22 @@ class IndexEntry:
     #: there are 32k cards and finite effort, so the ones people actually play
     #: are worth implementing first, and alphabetical order is worth nothing.
     edhrec_rank: int | None = None
+    #: A planeswalker's printed starting loyalty, as a string because it is not
+    #: always a number -- Nissa, Steward of Elements prints `X`. `None` for
+    #: everything that is not a planeswalker.
+    #:
+    #: Stored at all because loyalty is the one printed characteristic a
+    #: planeswalker cannot be written without: the loader compiles it into a
+    #: `self_enters_with_counters` replacement, and a planeswalker that enters
+    #: with none is binned by the zero-loyalty state-based action the moment it
+    #: resolves. It lived in neither `power` nor `toughness` -- Scryfall keeps it
+    #: in its own field -- so all 327 planeswalkers in the catalog read as having
+    #: no loyalty at all, and every one of them was unauthorable for that reason
+    #: alone.
+    loyalty: str | None = None
+    #: The back face's loyalty, for a planeswalker that is the back of a
+    #: transforming card. Declared beside `back_power` and for its reason.
+    back_loyalty: str | None = None
     #: The **back face** of a double-faced card, whose two faces are separate
     #: objects -- `transform` and `modal_dfc`. Empty for every other layout,
     #: including `split` and `adventure`, whose halves are two halves of one
@@ -183,6 +199,8 @@ COLUMNS = (
     "back_power",
     "back_toughness",
     "back_oracle_text",
+    "loyalty",
+    "back_loyalty",
 )
 
 SCHEMA = f"""
@@ -212,6 +230,8 @@ CREATE TABLE cards (
     {COLUMNS[22]} TEXT,
     {COLUMNS[23]} TEXT,
     {COLUMNS[24]} TEXT,
+    {COLUMNS[25]} TEXT,
+    {COLUMNS[26]} TEXT,
     -- Not `name` alone.  87 names are printed both as a real card and as a
     -- token -- Tarmogoyf, Champion of Wits, Adorned Pouncer -- and with `name`
     -- as the sole key whichever printing happened to win the sort evicted the
@@ -257,6 +277,8 @@ def _row_to_entry(row: sqlite3.Row | tuple) -> IndexEntry:
         back_power=values[22],
         back_toughness=values[23],
         back_oracle_text=values[24] or "",
+        loyalty=values[25],
+        back_loyalty=values[26],
     )
 
 
@@ -276,6 +298,8 @@ LATE_COLUMNS = frozenset(
         "back_power",
         "back_toughness",
         "back_oracle_text",
+        "loyalty",
+        "back_loyalty",
     }
 )
 
