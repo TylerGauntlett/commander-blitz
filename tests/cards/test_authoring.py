@@ -554,6 +554,51 @@ class TestThePacketCarriesTheWholeVocabulary:
         assert "counters_on" in ref["value_keys"]
         assert "cmp" in ref["condition_keys"]
 
+    def test_every_token_the_pool_defines_is_named(self):
+        """`create_token` names an id, and the id list is the one vocabulary a
+        worker could not recover from the ops.
+
+        `validate_token_references` refuses a `create_token` whose id is not a
+        token in the pool, and that check runs inside the gates -- so a worker
+        shown `create_token`'s options but not the ids has no legal move.
+        Alandra, Sky Dreamer was filed as blocked on `create_token` itself for
+        exactly this: every other line of her was expressible, and the packet
+        gave no way to discover that "a 2/2 blue Drake creature token with
+        flying" had no id.
+
+        Derived from the shipped pool, so a token added in `tokens.cards.json`
+        reaches the next packet without anybody remembering to say so.
+        """
+        from automtg.cards.authoring.packet import reference
+        from automtg.cards.registry import default_registry
+
+        named = reference()["token_ids"]
+        pool = default_registry().registry
+        defined = {cid for cid in pool.ids() if pool.get(cid).is_token}
+        assert defined <= set(named), (
+            "a token exists that no packet names; a worker cannot create it"
+        )
+        assert all(v.strip() for v in named.values()), (
+            "a bare id does not tell a worker whether the printed token exists"
+        )
+
+    def test_a_token_id_is_described_the_way_the_token_is_printed(self):
+        """The id alone does not answer the question the worker is asking.
+
+        Matching "create a 1/1 white Human Soldier creature token" against a
+        list of bare ids is a guess; against the printed description it is a
+        lookup. The two ids that differ from a near neighbour by one printed
+        word are the reason -- picking the wrong one of those makes a card
+        strictly better or worse than the printed one, silently.
+        """
+        from automtg.cards.authoring.packet import reference
+
+        named = reference()["token_ids"]
+        assert named["human_soldier_1_1_w"] == "1/1 white Human Soldier creature"
+        assert "with vigilance" in named["knight_2_2_w_vigilance"]
+        assert "with vigilance" not in named["knight_2_2_w"]
+        assert "colorless" in named["clue_token"]
+
 class TestATransformingCardIsOneAnswer:
     """Henrika Domnathi, Edgar Charmed Groom -- two faces, one answer file.
 

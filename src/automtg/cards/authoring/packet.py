@@ -130,6 +130,11 @@ CARD_LEVEL_RIDER_KEYS = (
 )
 
 
+#: Spelled out because a token is printed in words ("a 2/2 blue Drake") and the
+#: worker is matching printed text against `_token_ids`, not colour codes.
+_COLOR_WORDS = {"W": "white", "U": "blue", "B": "black", "R": "red", "G": "green"}
+
+
 def packets_dir() -> Path:
     return data_dir() / "authoring" / "packets"
 
@@ -331,6 +336,43 @@ def _walk_effects(node: object):
 
 
 
+def _token_ids() -> dict[str, str]:
+    """Every token id `create_token` may name, with what it puts on the board.
+
+    Not a convenience. `loader.validate_token_references` refuses a card whose
+    `create_token` names an id that does not exist or is not a token, and that
+    check runs inside the authoring gates -- so a worker guessing `drake_2_2_u`
+    for "create a 2/2 blue Drake creature token" writes a card that cannot load.
+    Shown nothing, a worker has exactly two moves and both are wrong: invent an
+    id, or file a gap record against `create_token`, which has shipped since the
+    first Saproling.
+
+    The value is the token as printed, because the id alone does not settle the
+    question the worker is actually asking -- whether the token the card wants
+    already exists. `beast_4_4_w_alone` and `knight_2_2_w_vigilance` are the
+    cases: two ids differing from a near neighbour by one printed word.
+    """
+    out: dict[str, str] = {}
+    for entry in _pool_cards():
+        if not entry.get("is_token"):
+            continue
+        bits: list[str] = []
+        power, toughness = entry.get("power"), entry.get("toughness")
+        if power is not None and toughness is not None:
+            bits.append(f"{power}/{toughness}")
+        bits.extend(_COLOR_WORDS.get(c, c) for c in entry.get("colors") or ())
+        if not entry.get("colors"):
+            bits.append("colorless")
+        bits.extend(entry.get("subtypes") or ())
+        bits.extend(t.lower() for t in entry.get("types") or ())
+        if entry.get("keywords"):
+            bits.append("with " + " and ".join(entry["keywords"]))
+        if entry.get("abilities"):
+            bits.append(f'-- {entry["abilities"][0].get("text", "")}')
+        out[str(entry["id"])] = " ".join(bits)
+    return out
+
+
 def _required_keys() -> dict:
     """Which fields each nested model REFUSES to be built without.
 
@@ -485,9 +527,24 @@ def reference() -> dict:
         # missing capability against a reference that named no such field,
         # while `exiles_itself` had shipped with Teferi's Protection.
         "card_level_rider_keys": list(CARD_LEVEL_RIDER_KEYS),
+        # Which tokens exist. `create_token` names a token by id and
+        # `validate_token_references` refuses an id that is not one, so a worker
+        # shown `create_token`'s options but never the ids can only guess -- and
+        # a guessed id is a card that does not load. See _token_ids.
+        "token_ids": _token_ids(),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
+            "`token_ids` is every token `create_token` may name, and it is a"
+            " CLOSED list: an id that is not in it does not load, so do not"
+            " invent one from the printed words. Match the printed token"
+            " against the descriptions -- \"create a 1/1 white Human Soldier"
+            " creature token\" is `human_soldier_1_1_w`. If the token your card"
+            " prints is genuinely not there, that IS a gap record, with"
+            " `kind: \"token\"` and the printed token in `what` -- it is a data"
+            " change somebody makes in one line, and it is the cheapest gap in"
+            " this whole pipeline to close. Do not substitute a token that is"
+            " nearly right: a 2/2 Knight with vigilance is not a 2/2 Knight.",
             "`op_options` is what each op may carry beside its `op` name, and"
             " `ability_keys` is what an entry in `abilities` may have. Read both"
             " before concluding a line cannot be said: `copy_spell` takes"
