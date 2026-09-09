@@ -1440,6 +1440,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "drake_2_2_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 2/2 blue Drake creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "any_of": [
+                  {
+                    "self_only": true
+                  },
+                  {
+                    "subtypes": [
+                      "Drake"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "cards_in_hand": "you"
+              },
+              "toughness": {
+                "cards_in_hand": "you"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your fifth card each turn, Alandra and Drakes you control each get +X/+X until end of turn, where X is the number of cards in your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 5
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "alandra_sky_dreamer",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Alandra, Sky Dreamer",
+      "oracle_text": "Whenever you draw your second card each turn, create a 2/2 blue Drake creature token with flying.\nWhenever you draw your fifth card each turn, Alandra and Drakes you control each get +X/+X until end of turn, where X is the number of cards in your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -15120,6 +15197,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with two or more creatures, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "knight_2_2_wu_vigilance"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "chivalric_alliance",
+      "mana_cost": "{1}{W}",
+      "name": "Chivalric Alliance",
+      "oracle_text": "Whenever you attack with two or more creatures, draw a card.\n{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -22115,6 +22255,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Detective"
+            ]
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "condition": {
+            "has_city_s_blessing": "you"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "As long as you have the city's blessing, Detectives you control can't be blocked."
+        },
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "detective_2_2_wu"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 2/2 white and blue Detective creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "ascend": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "detective_of_the_month",
+      "mana_cost": "{2}{U}",
+      "name": "Detective of the Month",
+      "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAs long as you have the city's blessing, Detectives you control can't be blocked.\nWhenever you draw your second card each turn, create a 2/2 white and blue Detective creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -25621,6 +25818,47 @@
         "Warlock"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "eldrazi_spawn_0_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "emrakul_s_messenger",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Emrakul's Messenger",
+      "oracle_text": "Devoid (This card has no color.)\nFlying\nWhenever you draw your second card each turn, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -40729,6 +40967,80 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "bird_1_1_u_flying_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create a 1/1 blue Bird creature token with flying and vigilance.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with one or more Birds, scry 2.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Bird"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hermes_overseer_of_elpis",
+      "mana_cost": "{3}{U}",
+      "name": "Hermes, Overseer of Elpis",
+      "oracle_text": "Whenever you cast a noncreature spell, create a 1/1 blue Bird creature token with flying and vigilance.\nWhenever you attack with one or more Birds, scry 2.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "attacking": true,
                 "count": "all",
@@ -52703,6 +53015,91 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "quest",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a quest counter on it?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each opponent's end step, if you didn't lose life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "life_lost_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "opponent",
+            "event": "end_step"
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "counters_on": {
+                "counter": "quest",
+                "objects": {
+                  "self_only": true
+                }
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "angel_4_4_w_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: Create a 4/4 white Angel creature token with flying. Activate only if this enchantment has four or more quest counters on it."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "luminarch_ascension",
+      "mana_cost": "{1}{W}",
+      "name": "Luminarch Ascension",
+      "oracle_text": "At the beginning of each opponent's end step, if you didn't lose life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)\n{1}{W}: Create a 4/4 white Angel creature token with flying. Activate only if this enchantment has four or more quest counters on it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -56234,6 +56631,48 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "faerie_1_1_u_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mischievous_mystic",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Mischievous Mystic",
+      "oracle_text": "Flying\nWhenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -57009,6 +57448,79 @@
         "Legendary"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "monk_1_1_w_prowess"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "monastery_mentor",
+      "mana_cost": "{2}{W}",
+      "name": "Monastery Mentor",
+      "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -59227,6 +59739,66 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "tentacle_1_1_u"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": "you",
+              "prompt": "Pay {1} to put a +1/+1 counter on Nadir Kraken and create a 1/1 blue Tentacle creature token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, you may pay {1}. If you do, put a +1/+1 counter on this creature and create a 1/1 blue Tentacle creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "nadir_kraken",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Nadir Kraken",
+      "oracle_text": "Whenever you draw a card, you may pay {1}. If you do, put a +1/+1 counter on this creature and create a 1/1 blue Tentacle creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kraken"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -83336,6 +83908,79 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{3}{R}",
+            "mana_reduction": {
+              "count": {
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "spirits",
+              "op": "create_token",
+              "token": "spirit_1_1_c"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "binding": "spirits"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Channel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They gain haste until end of turn. This ability costs {1} less to activate for each legendary creature you control."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "sokenzan_crucible_of_defiance",
+      "name": "Sokenzan, Crucible of Defiance",
+      "oracle_text": "{T}: Add {R}.\nChannel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They gain haste until end of turn. This ability costs {1} less to activate for each legendary creature you control.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -88866,6 +89511,52 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "swan_song",
+      "mana_cost": "{U}",
+      "name": "Swan Song",
+      "oracle_text": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "controller": {
+            "controller_of_target": "t1"
+          },
+          "op": "create_token",
+          "token": "bird_2_2_u_flying"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Enchantment",
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -93215,6 +93906,78 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thopter_fabricator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Thopter Fabricator",
+      "oracle_text": "Flying\nWhenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying.\nCrew 2",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
       ]
     },
     {

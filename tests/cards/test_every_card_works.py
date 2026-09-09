@@ -563,6 +563,26 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     # pipeline input the characteristics layer reads the same way the real card
     # would have grown -- and `chars` is what the condition asks, so a card
     # naming the wrong characteristic still fails.
+    # "Activate only if this enchantment has four or more quest counters on it"
+    # -- Luminarch Ascension. Eleventh of the family, and the first activation
+    # condition to count counters on its own source rather than permanents on
+    # the board. `_pay_the_counters` stocks counters a *cost* removes; this is
+    # the same stocking for a condition that only reads them, and the two are
+    # separate because a card can have either without the other.
+    #
+    # Written onto the object rather than through `add_counters` deliberately:
+    # a quest counter arriving is an event some other card could react to, and
+    # this helper is arranging a position rather than playing a turn.
+    if "counters_on" in left:
+        spec = left["counters_on"] or {}
+        objects = spec.get("objects") or {}
+        if not objects.get("self_only"):
+            return
+        kind = str(spec.get("counter", PLUS_ONE))
+        game.state.objects[oid].counters[kind] = int(right["const"])
+        game.state.bump_chars()
+        return
+
     if "power_of" in left:
         want = int(right["const"])
         for _ in range(max(0, want - (chars(game.state, oid).power or 0))):

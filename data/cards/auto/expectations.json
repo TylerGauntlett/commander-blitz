@@ -137,6 +137,10 @@
   "alaborn_trooper": {
     "zone": "battlefield"
   },
+  "alandra_sky_dreamer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alena_kessig_trapper": {
     "zone": "battlefield"
   },
@@ -1346,6 +1350,10 @@
   "chitinous_graspling": {
     "zone": "battlefield"
   },
+  "chivalric_alliance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "choked_estuary": {
     "zone": "battlefield"
   },
@@ -1984,6 +1992,10 @@
   "desolate_mire": {
     "zone": "battlefield"
   },
+  "detective_of_the_month": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "devilthorn_fox": {
     "zone": "battlefield"
   },
@@ -2305,6 +2317,10 @@
     "zone": "graveyard"
   },
   "emeritus_of_woe_demonic_tutor": {
+    "zone": "battlefield"
+  },
+  "emrakul_s_messenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "endurance_bobblehead": {
@@ -3780,6 +3796,10 @@
   "herd_heirloom": {
     "zone": "battlefield"
   },
+  "hermes_overseer_of_elpis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hero_of_bladehold": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4805,6 +4825,10 @@
   "lumengrid_warden": {
     "zone": "battlefield"
   },
+  "luminarch_ascension": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lumra_bellow_of_the_woods": {
     "zone": "battlefield"
   },
@@ -5197,6 +5221,10 @@
   "mirri_cat_warrior": {
     "zone": "battlefield"
   },
+  "mischievous_mystic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mischievous_sneakling": {
     "zone": "battlefield"
   },
@@ -5250,6 +5278,13 @@
     "zone": "battlefield"
   },
   "momo_rambunctious_rascal": {
+    "zone": "battlefield"
+  },
+  "monastery_mentor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "monastery_swiftspear": {
@@ -5457,6 +5492,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "nadir_kraken": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "naga_eternal": {
     "zone": "battlefield"
@@ -7691,6 +7730,10 @@
   "sokenzan_bruiser": {
     "zone": "battlefield"
   },
+  "sokenzan_crucible_of_defiance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sokka_wolf_cove_s_protector": {
     "zone": "battlefield"
   },
@@ -8162,6 +8205,10 @@
   "swab_goblin": {
     "zone": "battlefield"
   },
+  "swan_song": {
+    "opponent_battlefield_count": 8,
+    "zone": "graveyard"
+  },
   "swashbuckling": {
     "zone": [
       "battlefield",
@@ -8455,6 +8502,10 @@
         "double_strike"
       ]
     },
+    "zone": "battlefield"
+  },
+  "thopter_fabricator": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "thornglint_bridge": {

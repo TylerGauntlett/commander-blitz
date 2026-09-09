@@ -1,0 +1,78 @@
+{
+  "card": {
+    "id": "sokenzan_crucible_of_defiance",
+    "name": "Sokenzan, Crucible of Defiance",
+    "oracle_text": "{T}: Add {R}.\nChannel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They gain haste until end of turn. This ability costs {1} less to activate for each legendary creature you control.",
+    "types": [
+      "Land"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [
+      "R"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {R}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{R}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Channel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They gain haste until end of turn. This ability costs {1} less to activate for each legendary creature you control.",
+        "active_zones": [
+          "hand"
+        ],
+        "cost": {
+          "mana": "{3}{R}",
+          "discard_self": true,
+          "mana_reduction": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "supertypes": [
+                "Legendary"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "spirit_1_1_c",
+            "amount": {
+              "const": 2
+            },
+            "as": "spirits"
+          },
+          {
+            "op": "grant_keyword",
+            "keyword": "haste",
+            "duration": "until_end_of_turn",
+            "objects": {
+              "binding": "spirits"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

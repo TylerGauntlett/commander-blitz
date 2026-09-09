@@ -5642,12 +5642,12 @@
     },
     "Alandra, Sky Dreamer": {
       "edhrec_rank": 2546,
-      "gate": "template",
+      "gate": null,
       "name": "Alandra, Sky Dreamer",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 2/2 blue Drake creature token with ",
+      "reason": "",
       "scryfall_id": "54bf48d4-e350-4ca7-87da-ce04fefd4610",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Alania's Pathmaker": {
@@ -45512,12 +45512,12 @@
     },
     "Chivalric Alliance": {
       "edhrec_rank": 3003,
-      "gate": "template",
+      "gate": null,
       "name": "Chivalric Alliance",
-      "reason": "no template for: Whenever you attack with two or more creatures, draw a card",
+      "reason": "",
       "scryfall_id": "853adaa2-184f-460d-856c-bdb989bade61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Chlorophant": {
@@ -67262,12 +67262,12 @@
     },
     "Detective of the Month": {
       "edhrec_rank": 6453,
-      "gate": "template",
+      "gate": null,
       "name": "Detective of the Month",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "9bf37b66-1f00-4887-924d-35afdea72e83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Detective's Phoenix": {
@@ -82782,12 +82782,12 @@
     },
     "Emrakul's Messenger": {
       "edhrec_rank": 2600,
-      "gate": "template",
+      "gate": null,
       "name": "Emrakul's Messenger",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 0/1 colorless Eldrazi Spawn creatur",
+      "reason": "",
       "scryfall_id": "f0f818d7-320c-47b9-a083-40007f3d91ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Emrakul, the Aeons Torn": {
@@ -125602,12 +125602,12 @@
     },
     "Hermes, Overseer of Elpis": {
       "edhrec_rank": 3719,
-      "gate": "template",
+      "gate": null,
       "name": "Hermes, Overseer of Elpis",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 blue Bird creature token with flying a",
+      "reason": "",
       "scryfall_id": "e04a05e5-7bff-46a4-aae1-6713977e6e30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hermetic Study": {
@@ -161582,12 +161582,12 @@
     },
     "Luminarch Ascension": {
       "edhrec_rank": 3265,
-      "gate": "template",
+      "gate": null,
       "name": "Luminarch Ascension",
-      "reason": "no template for: At the beginning of each opponent's end step, if you didn't lose life this turn, you may p",
+      "reason": "",
       "scryfall_id": "b3770d86-4496-4c06-aab1-2917cfec100e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Luminarch Aspirant": {
@@ -174162,12 +174162,12 @@
     },
     "Mischievous Mystic": {
       "edhrec_rank": 2983,
-      "gate": "template",
+      "gate": null,
       "name": "Mischievous Mystic",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with",
+      "reason": "",
       "scryfall_id": "20d89cec-528b-4b2a-87db-e11ce0000622",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mischievous Poltergeist": {
@@ -176712,12 +176712,12 @@
     },
     "Monastery Mentor": {
       "edhrec_rank": 1574,
-      "gate": "template",
+      "gate": null,
       "name": "Monastery Mentor",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess",
+      "reason": "",
       "scryfall_id": "75665c2f-a100-4e3f-be8e-b5cc3c9a090b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Monastery Messenger": {
@@ -181322,12 +181322,12 @@
     },
     "Nadir Kraken": {
       "edhrec_rank": 2612,
-      "gate": "template",
+      "gate": null,
       "name": "Nadir Kraken",
-      "reason": "no template for: Whenever you draw a card, you may pay {1}. If you do, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "be7b276f-2351-4f56-a104-13e3ec3f0890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nadu, Winged Wisdom": {
@@ -252042,12 +252042,12 @@
     },
     "Sokenzan, Crucible of Defiance": {
       "edhrec_rank": 977,
-      "gate": "template",
+      "gate": null,
       "name": "Sokenzan, Crucible of Defiance",
-      "reason": "no template for: Channel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They",
+      "reason": "",
       "scryfall_id": "327333cc-2cc9-44ba-a0e6-d01329c416a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sokka and Suki": {
@@ -269502,12 +269502,12 @@
     },
     "Swan Song": {
       "edhrec_rank": 70,
-      "gate": "template",
+      "gate": null,
       "name": "Swan Song",
-      "reason": "no template for: Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue B",
+      "reason": "",
       "scryfall_id": "83d0b761-d694-4232-9f40-5bd8c82a05f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Swans of Bryn Argoll": {
@@ -281552,12 +281552,12 @@
     },
     "Thopter Fabricator": {
       "edhrec_rank": 4427,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Fabricator",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 colorless Thopter artifact crea",
+      "reason": "",
       "scryfall_id": "1dd26a5a-ca58-4cb6-b599-7c84d601dc07",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Thopter Foundry": {
