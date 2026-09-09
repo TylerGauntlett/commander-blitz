@@ -1,0 +1,22 @@
+{
+  "card_id": "adeline_resplendent_cathar",
+  "name": "Adeline, Resplendent Cathar",
+  "oracle_text": "Vigilance\nAdeline's power is equal to the number of creatures you control.\nWhenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+  "blocked_sentences": [
+    "Whenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control."
+  ],
+  "needs": [
+    {
+      "capability": "token-attacking-planeswalker",
+      "kind": "op",
+      "what": "create_token's `attacking` must be able to name a **planeswalker** as the attack's defender (506.2's third defender kind), with the token's controller choosing between the named seat and a planeswalker that player controls as the token arrives -- i.e. `attacking` accepting an object spec / a choice alongside the player spec it takes today, and the arriving token recorded against the walker exactly as `combat.add_attacker(..., planeswalker=...)` records a declared attacker. The same widening is wanted on `put_onto_battlefield`, which shares the helper, and it turns on every 'attacking that player or a planeswalker they control' card at once (Adeline, Myrel-style mobilize-with-a-choice, Legion Loyalist descendants), not this one card.",
+      "why_existing_wont_do": "The closest existing thing is `create_token`'s `attacking` **player spec** -- Ainok Strike Leader's `{\"binding\": \"each_player\"}` inside a `for_each_player`, which is Adeline's sentence minus its last five words. It is a player-only channel by construction: `effects/board_helpers._attacking_player` runs the spec through `select_players`, returns a single **pid** or None, refuses a spec naming several seats, and every caller (`create_token`, `put_onto_battlefield`) then joins the token to that seat's attack. There is no key on either op, and no other op at all, that aims an attacker at a permanent. Substituting the player half alone is not a rougher card but a narrower one: this repo's own combat code and docs draw 506.2 hard -- 'attacking somebody's planeswalker is not attacking them' (the Ghostly Prison ruling behind `cant_attack_player`'s planeswalker exemption and `cant_attack_you`'s opposite answer) -- so an implementation that can only ever point Adeline's tokens at the seat drops a real choice its controller is entitled to make every combat, on a board where a walker is usually the reason to attack. Declared attackers already reach walkers (`legal_planeswalker_defenders`, `combat.add_attacker(planeswalker=...)`, tests/unit/test_planeswalkers.py), so the rules subsystem exists and only the token-creation path cannot reach it. The card's other two lines are expressible and no partial answer was written: `vigilance` is a printed keyword, and 'Adeline's power is equal to the number of creatures you control' is a `set_pt` static with `power: {\"count\": {\"controller\": \"you\", \"types\": [\"Creature\"]}}`, the Cultivator Colossus shape."
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "put_onto_battlefield",
+    "for_each_player"
+  ],
+  "confidence": "high"
+}

@@ -317,6 +317,7 @@ class TestActivatedAbilities:
             game.state.bump_chars()
             game._advance()
             _provide_the_attacker(game, registry, ability)
+            _satisfy_the_attack_count(game, registry, ability)
 
             action = next(
                 (
@@ -879,43 +880,114 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
     game.state.battlefield.append(attacker.oid)
     game.state.bump_chars()
 
-    # Walk to declare-attackers by passing priority. `_answer` is deliberately
-    # not reused: it declines combat outright, which is the whole thing being
-    # undone here.
+    if _walk_to_declare_attackers(game):
+        _declare_them(game, [attacker.oid])
+
+
+def _walk_to_declare_attackers(game: Game) -> bool:
+    """Pass priority until the declare-attackers decision is on the table.
+
+    `_answer` is deliberately not reused: it declines combat outright, which is
+    the whole thing being undone here. Shared by the two helpers that need the
+    game in combat -- one to point an ability at an attacker, one to satisfy a
+    clause counting how many attacked.
+    """
     for _ in range(40):
         decision = game.pending()
         if decision is None or game.over:
-            return
+            return False
         if decision.kind is DecisionKind.DECLARE_ATTACKERS:
-            break
+            return True
         if decision.kind is not DecisionKind.PRIORITY:
-            return
+            return False
         passing = next(
             (a for a in game.legal_actions() if a.kind is ActionKind.PASS), None
         )
         if passing is None:
-            return
+            return False
         game.apply(passing)
-    else:
-        return
+    return False
 
-    add = next(
-        (
-            a
-            for a in game.legal_actions()
-            if a.kind is ActionKind.ADD_ATTACKER and a.source == attacker.oid
-        ),
-        None,
-    )
-    if add is None:
-        return
-    game.apply(add)
+
+def _declare_them(game: Game, oids: list[int]) -> None:
+    """Declare each oid as an attacker, then close the declaration.
+
+    An oid the engine will not accept is skipped rather than asserted on: this
+    is a helper arranging a position, and "could not build the board" has to
+    stay distinguishable from "the ability is broken". The caller's own
+    assertion is what reports the failure.
+    """
+    for oid in oids:
+        add = next(
+            (
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ADD_ATTACKER and a.source == oid
+            ),
+            None,
+        )
+        if add is not None:
+            game.apply(add)
     finish = next(
         (a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION),
         None,
     )
     if finish is not None:
         game.apply(finish)
+
+
+def _satisfy_the_attack_count(game: Game, registry, ability) -> None:
+    """"Activate only if you attacked with two or more creatures this turn."
+
+    Tenth of the family, and the third that has to satisfy a clause by *doing*
+    the thing rather than by arranging the board -- `TurnLedger` records
+    creatures **declared as attackers**, so stocking the battlefield the way the
+    `count` branch does satisfies nothing, exactly as it satisfies nothing for
+    `permanents_entered_this_turn`.
+
+    Minas Tirith is the witness and is the first card in the pool to print this
+    clause as an *activation* condition. Windbrisk Heights had carried the same
+    value expression for as long, but inside an `if` in the ability's effects --
+    so the ability was always activatable and merely did nothing, and the shape
+    that gates activation itself had never been exercised.
+
+    Runs after `_provide_the_attacker` and reuses its walk, so a card wanting
+    both an attacking target and an attack count gets one trip to combat rather
+    than two. Creatures are made rather than borrowed from the board: the
+    sandbox's own two are props whose printed text is not this test's business,
+    and one of them being unable to attack would read as the ability failing.
+    """
+    condition = getattr(ability, "activation_condition", None)
+    if not isinstance(condition, dict) or "cmp" not in condition:
+        return
+    left, right = condition.get("left") or {}, condition.get("right") or {}
+    if "attackers_this_turn" not in left or "const" not in right:
+        return
+    if str(left["attackers_this_turn"]) != "you":
+        return
+    wanted = int(right["const"])
+    if wanted <= 0:
+        return
+
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token and c.is_creature and not c.keywords
+        ),
+        None,
+    )
+    if match is None:
+        return
+    oids: list[int] = []
+    for _ in range(wanted):
+        attacker = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        attacker.entered_turn = 0
+        game.state.battlefield.append(attacker.oid)
+        oids.append(attacker.oid)
+    game.state.bump_chars()
+    if _walk_to_declare_attackers(game):
+        _declare_them(game, oids)
 
 
 class TestManaAbilities:

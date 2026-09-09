@@ -1,0 +1,83 @@
+{
+  "card": {
+    "id": "minas_tirith",
+    "name": "Minas Tirith",
+    "oracle_text": "Minas Tirith enters tapped unless you control a legendary creature.\n{T}: Add {W}.\n{1}{W}, {T}: Draw a card. Activate only if you attacked with two or more creatures this turn.",
+    "mana_cost": "",
+    "types": [
+      "Land"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "colors": [],
+    "color_identity": [
+      "W"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "supertypes": [
+                "Legendary"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{W}, {T}: Draw a card. Activate only if you attacked with two or more creatures this turn.",
+        "cost": {
+          "mana": "{1}{W}",
+          "tap": true
+        },
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "attackers_this_turn": "you"
+          },
+          "right": {
+            "const": 2
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "amount": {
+              "const": 1
+            },
+            "player": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

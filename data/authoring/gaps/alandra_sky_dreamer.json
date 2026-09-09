@@ -1,0 +1,24 @@
+{
+  "card_id": "alandra_sky_dreamer",
+  "name": "Alandra, Sky Dreamer",
+  "oracle_text": "Whenever you draw your second card each turn, create a 2/2 blue Drake creature token with flying.\nWhenever you draw your fifth card each turn, Alandra and Drakes you control each get +X/+X until end of turn, where X is the number of cards in your hand.",
+  "blocked_sentences": [
+    "Whenever you draw your second card each turn, create a 2/2 blue Drake creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "engine",
+      "what": "a token definition for a 2/2 blue Drake creature token with flying -- id `drake_2_2_u_flying`, name \"Drake Token\", types [\"Creature\"], subtypes [\"Drake\"], colors [\"U\"], color_identity [\"U\"], power 2, toughness 2, keywords [\"flying\"], is_token true -- added to data/cards/tokens.cards.json so `create_token` can name it",
+      "why_existing_wont_do": "`create_token` carries only `token`, `amount`, `as`, `attacking`, `controller` and `tapped`: the `token` value is an id string naming a card already in the pool, there is no inline token body and no size, colour, subtype or keyword override on the op. `loader.validate_token_references` (src/automtg/cards/loader/linking.py) raises `references unknown card` at load time for any id that is absent or not marked `is_token`, so the card cannot ship ahead of the definition. The pool has no Drake token of any size -- the only blue fliers are `illusion_1_1_u_flying` (1/1, Illusion) and `vampire_2_2_b_flying` (right body, wrong colour and tribe); the nearest 2/2 blue creature is `komas_coil_3_3_u` at 3/3 with no flying. Substituting any of them would give the player a creature type this card's own second ability counts (\"Drakes you control\"), so an approximation would break the card's other half as well as its printed text. A token definition is data a card worker may not write, and this is the same block already recorded for Swan Song's Bird and Sokenzan's Spirit.",
+      "blocks_only": "the token clause; the rest of the card is expressible today"
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "illusion_1_1_u_flying",
+    "vampire_2_2_b_flying"
+  ],
+  "confidence": "high",
+  "notes": "Everything else this card prints already exists. \"Whenever you draw your second/fifth card each turn\" is a `draw` trigger with `controller: \"you\"` and `nth: 2` / `nth: 5` -- the loader accepts `nth` only on a draw event (src/automtg/cards/loader/__init__.py:1406) and templates.cards.json already ships an `nth: 2` draw trigger. \"Alandra and Drakes you control each get +X/+X until end of turn, where X is the number of cards in your hand\" is a `pump` with `duration: \"end_of_turn\"`, `power` and `toughness` of `{\"cards_in_hand\": {\"player\": \"you\"}}`, over `{\"union\": [{\"self_only\": true}, {\"zone\": \"battlefield\", \"controller\": \"you\", \"subtypes\": [\"Drake\"]}], \"count\": \"all\"}`. So this card is one token definition away from shipping, and its expectation would then be a `tokens` assertion of `drake_2_2_u_flying` once a draw trigger can be made to fire -- absent that, `{\"zone\": \"battlefield\", \"battlefield_count\": 33}`."
+}

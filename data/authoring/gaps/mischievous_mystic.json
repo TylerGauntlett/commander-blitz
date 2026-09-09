@@ -1,0 +1,23 @@
+{
+  "card_id": "mischievous_mystic",
+  "name": "Mischievous Mystic",
+  "oracle_text": "Flying\nWhenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.",
+  "blocked_sentences": [
+    "Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "token",
+      "what": "a token id for a 1/1 blue Faerie creature token with flying -- e.g. `faerie_1_1_u_flying`: name \"Faerie\", oracle_text \"1/1 blue Faerie creature token with flying.\", types [\"Creature\"], subtypes [\"Faerie\"], power 1, toughness 1, colors [\"U\"], color_identity [\"U\"], keywords [\"flying\"], is_token true. It is byte-for-byte the shipped `illusion_1_1_u_flying` entry in data/cards/tokens.cards.json with the subtype and name changed from Illusion to Faerie, so it is a one-line data change. The blue Faerie flier is the standard token of the whole Faerie tribe (Bitterblossom, Spellstutter Sprite makers, the Wilds of Eldraine and Bloomburrow Faerie shells), so the single id closes a large family, not just this card.",
+      "why_existing_wont_do": "token_ids is a closed list and contains no Faerie entry at all -- checked against data/cards/tokens.cards.json, where `grep Faerie` returns nothing. The nearest match, `illusion_1_1_u_flying` (1/1 blue Illusion creature with flying), has the right size, colour and keyword but the wrong creature type, and creature type is load-bearing here: this card is a Faerie tribal payoff and the token is meant to be counted by lords and Faerie-typed effects. The brief forbids substituting a nearly-right token. The only other 1/1 flier is `bird_1_1_w_flying`, which is the wrong colour as well. `create_token` cannot spell the difference from the card either: op_options gives it only `token`, `amount`, `as`, `attacking`, `controller` and `tapped` -- no subtypes, colours, power/toughness or keyword override. Patching it after creation would also fail: `add_subtype` on a `create_token` `as` binding would leave the token an Illusion Faerie rather than a Faerie, and `animate` would set a base power/toughness and store an until-end-of-turn TempEffect, so the type would fall off at cleanup where the printed token is permanently a Faerie."
+    }
+  ],
+  "closest_existing": [
+    "illusion_1_1_u_flying",
+    "bird_1_1_w_flying",
+    "fish_1_1_u"
+  ],
+  "notes": "The token is the ONLY thing blocking this card -- everything else is expressible today, and the card ships the moment the one-line token id lands. The rest spells out as: id `mischievous_mystic`, name \"Mischievous Mystic\", mana_cost \"{1}{U}\", types [\"Creature\"], subtypes [\"Human\", \"Wizard\"], power 2, toughness 1, colors [\"U\"], color_identity [\"U\"], keywords [\"flying\"] (which claims the printed \"Flying\" line, as the packet's starting_point already had it). One ability, kind \"triggered\", text \"Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.\", trigger {\"event\": \"draw\", \"controller\": \"you\", \"nth\": 2}, effects [{\"op\": \"create_token\", \"token\": \"<the new faerie_1_1_u_flying id>\"}]. That trigger shape is proven, not guessed: shipped `prince_imrahil_the_fair` writes \"Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.\" with exactly {\"controller\": \"you\", \"event\": \"draw\", \"nth\": 2}, so `nth` needs nothing new. Expectation would be {\"zone\": \"battlefield\", \"battlefield_count\": 33}: nothing in the sandbox position draws a card after the creature resolves, so the trigger never fires and no `tokens` assertion is available -- only the creature arriving on the battlefield can be asserted.",
+  "confidence": "high"
+}

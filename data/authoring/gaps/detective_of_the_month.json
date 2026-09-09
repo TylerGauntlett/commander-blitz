@@ -1,0 +1,25 @@
+{
+  "card_id": "detective_of_the_month",
+  "name": "Detective of the Month",
+  "oracle_text": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAs long as you have the city's blessing, Detectives you control can't be blocked.\nWhenever you draw your second card each turn, create a 2/2 white and blue Detective creature token.",
+  "blocked_sentences": [
+    "Whenever you draw your second card each turn, create a 2/2 white and blue Detective creature token."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "token",
+      "what": "a token id for a 2/2 white and blue Detective creature token -- a two-colored (WU) 2/2 with the creature type Detective and no keywords, e.g. `detective_2_2_wu`",
+      "why_existing_wont_do": "token_ids is a closed list and it holds no Detective at all, and no white-and-blue creature token of any size. The nearest 2/2s are `cat_beast_2_2_w`, `knight_2_2_w`, `ox_2_2_w` (all mono-white, all the wrong creature type) and `zombie_2_2_b`; the only multicolored entries are `citizen_1_1_gw`, `kithkin_1_1_gw`, `inkling_2_1_wb_flying` and the WB Vampires, none of them WU and none of them 2/2 Detectives. Substituting any of them would silently change both the token's color and its creature type -- and the creature type is load-bearing on this very card, whose own second line only makes *Detectives* unblockable, so a wrong-type token would be a card that visibly fails to do what it says. `create_token` takes only a `token` id (op_options lists `amount`, `as`, `attacking`, `controller`, `tapped`, `token`) with no colors/subtypes override, so the printed token cannot be spelled from the card."
+    }
+  ],
+  "closest_existing": [
+    "knight_2_2_w",
+    "cat_beast_2_2_w",
+    "ox_2_2_w",
+    "inkling_2_1_wb_flying",
+    "citizen_1_1_gw"
+  ],
+  "notes": "The token is the ONLY thing blocking this card -- the other two printed lines are expressible today, and the card ships the moment a one-line token id lands. The rest spells out as a Creature -- Human Detective, {2}{U}, power 2, toughness 3, colors [\"U\"], color_identity [\"U\"], subtypes [\"Human\", \"Detective\"], carrying the card-level cost key `\"ascend\": true` for the reminder-text line (exactly as shipped skymarcher_aspirant does, which likewise has no ability entry claiming its \"Ascend\" line), plus two abilities: (1) static -- text \"As long as you have the city's blessing, Detectives you control can't be blocked.\", {\"kind\": \"static\", \"effect\": \"block_restriction\", \"affects\": {\"controller\": \"you\", \"subtypes\": [\"Detective\"]}, \"blockers\": {\"types\": [\"Creature\"]}, \"condition\": {\"has_city_s_blessing\": \"you\"}} -- `block_restriction` with an all-creatures `blockers` filter is plain \"can't be blocked\" (stromkirk_noble narrows the same filter to Humans, and combat.can_block rejects any blocker the filter matches), and `has_city_s_blessing` is in static_condition_keys and gates the whole static the way skymarcher_aspirant's conditional flying does; (2) triggered -- text \"Whenever you draw your second card each turn, create a 2/2 white and blue Detective creature token.\", {\"kind\": \"triggered\", \"trigger\": {\"event\": \"draw\", \"controller\": \"you\", \"nth\": 2}, \"effects\": [{\"op\": \"create_token\", \"token\": \"<the new WU Detective id>\", \"amount\": {\"const\": 1}}]} -- the trigger half needs nothing new, since `nth` on a trigger is exactly \"your second card each turn\" and the DRAW event already carries the per-turn ordinal. Expectation would be {\"zone\": \"battlefield\", \"battlefield_count\": 33} -- nothing in the sandbox draws a card after the creature resolves, so the trigger never fires and the static is not observable through any expectation key (no combat happens and `granted` reads keywords, not block restrictions); the creature arriving on a battlefield of 32 is all that can honestly be asserted.",
+  "confidence": "high"
+}

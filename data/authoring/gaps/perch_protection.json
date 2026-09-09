@@ -1,0 +1,34 @@
+{
+  "card_id": "perch_protection",
+  "name": "Perch Protection",
+  "oracle_text": "Gift an extra turn (You may promise an opponent a gift as you cast this spell. If you do, they take an extra turn after this one.)\nCreate four 2/2 blue Bird creature tokens with flying. If the gift was promised, all permanents you control phase out, and until your next turn, your life total can't change and you gain protection from everything.\nExile Perch Protection.",
+  "blocked_sentences": [
+    "Gift an extra turn (You may promise an opponent a gift as you cast this spell. If you do, they take an extra turn after this one.)",
+    "Create four 2/2 blue Bird creature tokens with flying."
+  ],
+  "needs": [
+    {
+      "capability": "extra_turn",
+      "kind": "op",
+      "what": "an `extra_turn` op taking the usual player spec -- and it must accept `\"gift_recipient\"`, not just \"you\" -- that queues one additional turn for that seat immediately after the current one, taken before the turn order would otherwise advance, and stacking if several resolve. This is the reward half of a gift, so it has to be writable as an ordinary entry in `spell_effects` placed first (702.164b), the way Parting Gust writes `{\"op\": \"create_token\", \"token\": \"fish_1_1_u\", \"tapped\": true, \"controller\": \"gift_recipient\"}`.",
+      "why_existing_wont_do": "The `gift` card-level cost itself ships and is not what is missing -- `gift` is in `card_level_cost_keys`, and `gift_promised` / `gift_recipient` are in `condition_keys` and the player specs. What is missing is the thing being promised. The `gift` string is only a label: `src/automtg/cards/loader/__init__.py` checks it is non-empty and that something reads the promise, and nothing anywhere in `src/` grants a turn from it, so the engine delivers no reward on its own -- the card must spell the reward out as an effect. `ops` has `extra_combat` (with `extra_main`) and `extra_land_drop`, but both add sub-steps *inside* the turn already in progress and neither adds a turn to the turn sequence; no `value_key`, `condition_key` or `trigger_event` refers to a scheduled turn either. This is the same missing op already filed for Final Fortune (`data/authoring/gaps/final_fortune.json`), plus the requirement that its player spec reach the gift recipient. Writing `gift: \"an extra turn\"` and simply omitting the grant would be the worst outcome available here: the residual gate accepts it (`src/automtg/cards/authoring/verify.py:1170` claims a printed line starting \"Gift \" whenever the noun phrase matches `card.gift`), so the card would load, pass all six gates, offer the promise in the UI, and never hand the opponent the turn it promised."
+    },
+    {
+      "capability": "token-definitions",
+      "kind": "token",
+      "what": "a token id for a 2/2 blue Bird creature token with flying, e.g. `bird_2_2_u_flying`",
+      "why_existing_wont_do": "`token_ids` is a closed list and its only Bird entry is `bird_1_1_w_flying` (1/1 white Bird with flying) -- wrong size and wrong color, so four of them is a 4-power white board instead of an 8-power blue one, and every card that reads size or color (anthems, devotion, \"blue creatures you control\", color-based removal and protection) would read it wrong. The nearest blue flier, `illusion_1_1_u_flying`, has the right color but the wrong size and the wrong creature type, which matters to Bird tribal and to `shares_a_type_with`. `create_token` takes only `amount`, `as`, `attacking`, `controller`, `tapped` and `token` -- there is no power/toughness, color, subtype or keyword override -- so the printed token cannot be spelled from the card, and the brief forbids substituting a nearly-right one."
+    }
+  ],
+  "closest_existing": [
+    "extra_combat",
+    "extra_land_drop",
+    "delay",
+    "delayed_trigger",
+    "gift",
+    "bird_1_1_w_flying",
+    "illusion_1_1_u_flying"
+  ],
+  "notes": "TWO blockers, and both are cheap. The token is a one-line data change; the `extra_turn` op is already on the roadmap for Final Fortune (docs/unsupported-cards.md:313) and needs only one addition here -- its player spec must accept \"gift_recipient\". Everything ELSE on this card is expressible today. The rest spells out as an Instant {4}{W}{W}, colors [\"W\"], color_identity [\"W\"], with `gift: \"an extra turn\"` and `exiles_itself: true` (that last is the printed \"Exile Perch Protection.\" line -- the card-level rider, not the `exile` op). `spell_effects`, in this order: (1) the gift reward first, per 702.164b -- `{\"op\": \"extra_turn\", \"player\": \"gift_recipient\"}` with the op above, which creates nothing when no promise was made because the player spec resolves to the empty list, exactly as Parting Gust's `create_token` does; (2) `{\"op\": \"create_token\", \"token\": \"<the new 2/2 blue flying Bird id>\", \"amount\": {\"const\": 4}}`; (3) `{\"op\": \"if\", \"condition\": {\"gift_promised\": true}, \"then\": [{\"op\": \"phase_out\", \"objects\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"count\": \"all\"}}, {\"op\": \"lock_life_total\", \"player\": \"you\", \"duration\": \"until_your_next_turn\"}, {\"op\": \"grant_protection\", \"player\": \"you\", \"from_everything\": true, \"duration\": \"until_your_next_turn\"}]}. That third clause is Teferi's Protection's three effects verbatim (data/authoring/answers/teferi_s_protection.json), wrapped in the gift condition. Expectation: gate 5 measures a gift card promised, so the birds are made and then everything phases out -- {\"zone\": \"exile\", \"battlefield_count\": 0}, matching Teferi's Protection, which asserts exactly that pair for the same phase-out plus `exiles_itself`. `tokens` cannot be asserted alongside it: the four Birds phase out with the rest.",
+  "confidence": "high"
+}

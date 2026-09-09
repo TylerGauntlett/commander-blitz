@@ -1,0 +1,25 @@
+{
+  "card_id": "monastery_mentor",
+  "name": "Monastery Mentor",
+  "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nWhenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess.",
+  "blocked_sentences": [
+    "Whenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "token",
+      "what": "a token id for a 1/1 white Monk creature token with prowess, e.g. `monk_1_1_w_prowess` -- a mono-white 1/1 with subtype Monk that carries prowess as a printed ability of its own. It is ONE token definition, not a token plus a keyword: prowess is not one of the 34 loader keywords, but the shipped pool already writes it as a triggered ability (see `agent_of_atlas` in data/cards/auto/templates.cards.json -- kind \"triggered\", text \"Prowess\", trigger {\"event\": \"spell_cast\", \"filter\": {\"not_types\": [\"Creature\"]}}, effects [{\"op\": \"pump\", \"objects\": {\"self_only\": true, \"zone\": \"battlefield\"}, \"power\": {\"const\": 1}, \"toughness\": {\"const\": 1}}]), and a token entry may carry printed abilities exactly as `treasure_token` in data/cards/tokens.cards.json carries its activated mana ability. So the new entry is that same triggered ability on a 1/1 white Monk. The same token is printed by Monastery Swiftspear's cycle-mates and by every 'create a 1/1 white Monk creature token with prowess' card, so it closes more than this one.",
+      "why_existing_wont_do": "`token_ids` is a closed list and it has no Monk at all. The nearest white 1/1s in it are `human_1_1_w` (1/1 white Human), `soldier_1_1_w` (1/1 white Soldier) and `human_soldier_1_1_w` (1/1 white Human Soldier), and none of the three is a Monk or has prowess -- substituting one would silently change both the creature type (which Monk-tribal and 'creature type' effects read) and drop the token's entire printed ability, so every copy the Mentor makes would be an inert vanilla 1/1 instead of the engine the card is built around. `create_token` takes only a `token` id: op_options lists `amount`, `as`, `attacking`, `controller`, `tapped` and `token`, with no subtypes, colors, keywords or ability override, so the missing characteristics cannot be spelled from the card. Granting the ability afterwards is not a substitute either -- `grant_ability`/`grant_keyword` would have to name prowess, which is not a loader keyword, and `grant_ability` on a freshly created token would still leave later-made tokens without it."
+    }
+  ],
+  "closest_existing": [
+    "human_1_1_w",
+    "soldier_1_1_w",
+    "human_soldier_1_1_w",
+    "treasure_token",
+    "create_token"
+  ],
+  "notes": "The token is the ONLY thing blocking this card. Both printed lines are expressible today and the card ships the moment the one-line token id lands. Prowess itself is NOT a gap -- it is a triggered ability the shipped pool already writes. The full card: {\"id\": \"monastery_mentor\", \"name\": \"Monastery Mentor\", \"oracle_text\": \"Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\\nWhenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess.\", \"mana_cost\": \"{2}{W}\", \"types\": [\"Creature\"], \"subtypes\": [\"Human\", \"Monk\"], \"power\": 2, \"toughness\": 2, \"colors\": [\"W\"], \"color_identity\": [\"W\"], \"abilities\": [{\"kind\": \"triggered\", \"text\": \"Prowess\", \"trigger\": {\"event\": \"spell_cast\", \"filter\": {\"not_types\": [\"Creature\"]}}, \"effects\": [{\"op\": \"pump\", \"objects\": {\"self_only\": true, \"zone\": \"battlefield\"}, \"power\": {\"const\": 1}, \"toughness\": {\"const\": 1}}]}, {\"kind\": \"triggered\", \"text\": \"Whenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess.\", \"trigger\": {\"event\": \"spell_cast\", \"filter\": {\"not_types\": [\"Creature\"]}}, \"effects\": [{\"op\": \"create_token\", \"token\": \"<the new 1/1 white Monk with prowess id>\", \"amount\": {\"const\": 1}}]}]}. Expectation would be {\"zone\": \"battlefield\", \"battlefield_count\": 33} -- neither trigger can fire in the sandbox, because nothing casts a spell after the Mentor resolves, so the creature arriving on the battlefield is all that can be asserted.",
+  "confidence": "high"
+}

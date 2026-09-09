@@ -1,0 +1,25 @@
+{
+  "card_id": "thopter_fabricator",
+  "name": "Thopter Fabricator",
+  "oracle_text": "Flying\nWhenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying.\nCrew 2",
+  "blocked_sentences": [
+    "Whenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "token",
+      "what": "a token id for a 1/1 colorless Thopter artifact creature token with flying -- e.g. `thopter_1_1_c_flying`: types [\"Artifact\", \"Creature\"], subtypes [\"Thopter\"], power 1, toughness 1, keywords [\"flying\"], colors [], color_identity [], is_token true, no abilities. It is exactly the shipped `gnome_1_1_c` entry (1/1 colorless Gnome artifact creature) with the subtype changed to Thopter and `flying` added, so it is a one-line data change. The Thopter is one of the most reprinted tokens in the game and the queue already holds at least four more cards waiting on this same id (a Counter-target-spell-and-make-X, two enters triggers and an Equipment), so the single id closes a family rather than one card.",
+      "why_existing_wont_do": "`token_ids` is a closed list and has no Thopter entry at all. The two colorless creature tokens in it are `gnome_1_1_c` (1/1 colorless Gnome artifact creature -- right size, right colorlessness, right artifact-ness, but wrong creature type and NO flying) and `hero_1_1_c` (1/1 colorless Hero creature -- not an artifact and no flying). The only 1/1 flier in the list is `illusion_1_1_u_flying`, which is blue and not an artifact, and `bird_1_1_w_flying` is white. Substituting `gnome_1_1_c` would silently drop evasion from every token this card makes, and the brief forbids a nearly-right token. It cannot be patched from the card either: `create_token`'s op_options are only `token`, `amount`, `as`, `attacking`, `controller`, `tapped` -- there is no power/toughness, subtype, color or keyword override -- and chasing the token with `grant_keyword`/`add_subtype` after creation would be a duration-less approximation of a token the engine simply does not define, and would still print the wrong creature type on the card.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": [
+    "gnome_1_1_c",
+    "hero_1_1_c",
+    "illusion_1_1_u_flying",
+    "bird_1_1_w_flying"
+  ],
+  "notes": "The token is the ONLY blocker. Both of the other printed lines are expressible today, and the card ships the moment the one-line token id lands. Crew is NOT a gap: `cost_keys` carries `tap_permanents`, docs/card-dsl.md line 1382 spells `{\"tap_permanents\": {\"types\": [\"Creature\"], \"total_power\": 3}}` as \"crew 3\" and its \"Crew -- a tap cost measured in power\" section gives the whole ability, and docs/rules-coverage.md lists Crew as implemented with the note that Vehicle needed nothing because `subtypes` is free text. The `nth: 2` draw trigger is equally proven: shipped `prince_imrahil_the_fair` writes \"Whenever you draw your second card each turn, create a 1/1 white Human Soldier creature token.\" as {\"event\": \"draw\", \"controller\": \"you\", \"nth\": 2} with a bare `create_token`, which is byte-for-byte the shape this card wants.\n\nThe rest of the card spells out as: id `thopter_fabricator`, name \"Thopter Fabricator\", mana_cost \"{2}{U}\", types [\"Artifact\"], subtypes [\"Vehicle\"], power 4, toughness 4, colors [\"U\"], color_identity [\"U\"], keywords [\"flying\"] (that is the whole first printed line -- a Vehicle may carry flying while it is not a creature). Two abilities:\n\n1. {\"kind\": \"triggered\", \"text\": \"Whenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying.\", \"trigger\": {\"event\": \"draw\", \"controller\": \"you\", \"nth\": 2}, \"effects\": [{\"op\": \"create_token\", \"token\": \"<the new thopter_1_1_c_flying id>\"}]}\n\n2. {\"kind\": \"activated\", \"text\": \"Crew 2\", \"cost\": {\"tap_permanents\": {\"controller\": \"you\", \"types\": [\"Creature\"], \"total_power\": 2}}, \"effects\": [{\"op\": \"animate\", \"power\": {\"const\": 4}, \"toughness\": {\"const\": 4}, \"types\": [\"Creature\"], \"objects\": {\"zone\": \"battlefield\", \"self_only\": true}}]}\n\nExpectation would be {\"zone\": \"battlefield\", \"battlefield_count\": 33}: the card is a noncreature artifact that just resolves, nothing in the sandbox position draws a card after it lands so the `nth: 2` trigger never fires and no `tokens` assertion is available, and Crew is an activated ability the harness never activates.",
+  "confidence": "high"
+}

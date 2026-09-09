@@ -1,0 +1,37 @@
+{
+  "card_id": "trouble_in_pairs",
+  "name": "Trouble in Pairs",
+  "oracle_text": "If an opponent would begin an extra turn, that player skips that turn instead.\nWhenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+  "blocked_sentences": [
+    "If an opponent would begin an extra turn, that player skips that turn instead.",
+    "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "extra_turn",
+      "kind": "replacement",
+      "what": "Two halves, and the first is the same missing concept the `extra_turn` op gap already names: the engine has no notion of an extra turn to replace. `turn._begin_next_turn` (src/automtg/engine/turn.py:837) advances `state.active_idx` by `next_alive_index` and increments `state.turn`, with no queue of scheduled turns anywhere -- `state.extra_phases` / `extra_phases_taken` are extra *phases inside* the turn already running, cleared at that very boundary. Once a queue of extra turns exists, this card needs the second half: a player-wide static -- `skip_extra_turn` in `static_effects`, read where a queued extra turn is about to begin, the way `player_skips_draw_step` (src/automtg/engine/player_statics.py:163) is read in the turn walk -- that takes the usual `affects_player` spec (`\"opponent\"` here) and, instead of beginning that queued turn, discards it. It must be a replacement on *beginning* the turn rather than a filter at scheduling time, because 614/616 apply when the turn would begin: a Time Warp cast while Trouble in Pairs is out and then answered before the extra turn arrives should still lose the turn, and an extra turn queued before the enchantment resolved should still be skipped. It also removes exactly one queued turn, not the opponent's whole schedule, so a player holding two extra turns loses them one at a time.",
+      "why_existing_wont_do": "`static_effects` has `skip_draw_step`, which is the closest shape and is the model for the plumbing, but it suppresses a turn-based *action inside* a turn (504.1) and reaches nothing about the turn sequence. `ops` has `extra_combat` and `extra_land_drop`, both extra sub-steps within the turn in progress, and `skip_untap`, which is a per-permanent flag. Nothing in `static_effects`, `ops`, `trigger_events`, `condition_keys` or `value_keys` refers to a scheduled turn at all, so there is no object, event or predicate for a replacement to attach to -- the sentence cannot be approximated in the wrong direction either, since there is no way to say \"an opponent skips their next turn\" and doing so would be a strictly different (and far stronger) card: the printed line touches only *extra* turns and is inert against a normal turn sequence."
+    },
+    {
+      "capability": "per-player-spell-ordinal",
+      "kind": "trigger_event",
+      "what": "`nth` on a `spell_cast` trigger, scored per caster: \"this was that player's Nth spell this turn\", answered at queue time the way `data[\"nth\"]` already is on the DRAW event. `state` folds `ledger.spells_cast[pid]` on the SPELL_CAST branch (src/automtg/engine/state.py:681), so the post-bump ordinal can be written onto the event as it is emitted in `game._cast` (src/automtg/engine/game.py:674) and compared in `triggers._matches` against `TriggerSpec.nth`, which already exists and already does exactly this comparison (src/automtg/engine/triggers.py:913). The loader guard at src/automtg/cards/loader/__init__.py:1406 -- \"'nth' only means anything on a draw trigger\" -- then widens to accept `spell_cast`. Trouble in Pairs is the unfiltered case (`nth: 2`, `controller: \"opponent\"`, every spell counts); Esper Sentinel and Ledger Shredder need the same key scored over a filtered run, so one piece of work turns on the whole \"a player casts their Nth spell each turn\" family. Nothing else in this sentence is blocked: \"attacks you with two or more creatures\" is a `creatures_attack_player` trigger with `controller: \"opponent\"`, `defending: \"you\"` and a `condition` of `{\"cmp\": [{\"count\": {\"binding\": \"attackers\"}}, \">=\", {\"const\": 2}]}` -- `attackers` is in `EVENT_BINDING_KEYS` and is the subset declared against that defender (src/automtg/engine/combat.py:589) -- and \"draws their second card each turn\" is `{\"event\": \"draw\", \"controller\": \"opponent\", \"nth\": 2}`, whose ordinal `draw_cards` stamps per drawing player (src/automtg/engine/primitives.py:72). Only the third clause has nothing to read.",
+      "why_existing_wont_do": "`nth` is refused outright on any non-draw trigger by the loader, and even if it were accepted the SPELL_CAST event carries player/source/oid/sid/card/kicked and no ordinal, so it would compare against `None` and the ability would never fire. `max_per_turn` is the key the packet notes nominate for a printed rate limit and it is a *per-permanent* cap -- `triggers._queue` keys `state.triggers_this_turn` by `(obj.oid, ability.index)` -- so it cannot express \"their second\" at all (it caps how many times the ability fires, not which spell fires it) and at a pod it would be shared across every opponent besides. The trigger-`condition` route -- `{\"cmp\": [{\"spells_cast_this_turn\": {\"binding\": \"event_player\"}}, \"==\", {\"const\": 2}]}`, which the per-player tally really can compute and which `select_players` really does accept as a binding -- is the near miss this codebase documents at length as wrong, and it is wrong here in the card's ordinary line: an intervening-if is re-checked on resolution (603.4, `stack.resolve_top`, src/automtg/engine/stack.py:1024), and the opponent who holds priority after their second spell and casts a third takes the tally to 3, so the queued trigger reads 3 and resolves `skipped=\"condition\"` -- Trouble in Pairs draws nothing on exactly the turn a storm-ish opponent makes it matter. Loosening to `>=` fires on every spell from the second onward, which is a different and much stronger card. `carddef.TriggerSpec.nth`'s own docstring (src/automtg/engine/carddef.py:440) makes this argument for the draw case: only a queue-time predicate is both correct at queue time and stable at resolution."
+    }
+  ],
+  "closest_existing": [
+    "skip_draw_step",
+    "extra_combat",
+    "extra_land_drop",
+    "skip_untap",
+    "no_hand_limit",
+    "nth",
+    "max_per_turn",
+    "spells_cast_this_turn",
+    "spell_cast",
+    "draw",
+    "creatures_attack_player"
+  ],
+  "confidence": "high"
+}

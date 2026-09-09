@@ -1,0 +1,27 @@
+{
+  "card_id": "faerie_artisans",
+  "name": "Faerie Artisans",
+  "oracle_text": "Flying\nWhenever a nontoken creature an opponent controls enters, create a token that's a copy of that creature except it's an artifact in addition to its other types. Then exile all other tokens created with this creature.",
+  "blocked_sentences": [
+    "Whenever a nontoken creature an opponent controls enters, create a token that's a copy of that creature except it's an artifact in addition to its other types.",
+    "Then exile all other tokens created with this creature."
+  ],
+  "needs": [
+    {
+      "capability": "copy-with-added-type",
+      "kind": "op",
+      "what": "an additive card-type key on copy_permanent's `except_` clause (say `add_types`, alongside the existing `add_subtypes`), plus the matching branch on `copy_overrides` in characteristics.py, so a token copy can be created as 'a copy of that creature except it's an artifact in addition to its other types' -- the copy keeps every card type it copied and gains Artifact.",
+      "why_existing_wont_do": "`except_` accepts exactly {colors, add_subtypes, no_mana_cost, types}, and `types` is documented and implemented as a strict REPLACEMENT -- characteristics.py does `types = set(retyped)` under the comment '...except it's an artifact and it loses all other card types' (Esper's to Magicite). Writing `types: [\"Artifact\", \"Creature\"]` would be an approximation that silently strips Enchantment/Land off a copied Enchantment Creature or creature-land, and `types: [\"Artifact\"]` would strip Creature outright. Nothing else adds a card type to the copy either: `add_subtype` raises DslError on a `types` key by design ('add_subtype changes subtypes only; use animate for card types'), and `animate` sets a base power/toughness (defaulting to 0/0) and stores an until_eot TempEffect, so it would both resize and then un-type the token at cleanup, where the printed exception is part of what the token permanently is.",
+      "confidence": "high"
+    },
+    {
+      "capability": "created-with-source",
+      "kind": "selector",
+      "what": "a record on a token of the permanent whose effect created it (a `created_with`/`created_by` oid field written by `create_token` in primitives.py) and a selector key that reads it -- `{\"created_with\": \"self\", \"exclude_binding\": \"...\"}` -- so 'exile all other tokens created with this creature' can name exactly the copies this permanent made on earlier triggers and nothing else.",
+      "why_existing_wont_do": "`create_token`/`copy_permanent` record no creator: the new object gets owner, controller and is_token and nothing pointing back at the source, and the TOKEN_CREATED event's `source` is the token itself. The existing object-to-object links are the wrong ones and are each written by their own op -- `exiled_with` (exile's `link`), `phased_out_with`, `haunted_by` (haunt) and cipher's `encoded_by` -- none of which a token creation writes. `copy_permanent`'s `as` binding does hold the copies, but `ctx.bindings` lives only for one resolution, and this clause has to reach the tokens made by *previous* triggers, several turns earlier. The only reachable approximation, `{\"is_token\": true, \"controller\": \"you\"}` minus the fresh copy, would exile every unrelated Treasure, Clue and Soldier token its controller owns.",
+      "confidence": "high"
+    }
+  ],
+  "closest_existing": ["embalm", "cipher", "haunt"],
+  "confidence": "high"
+}

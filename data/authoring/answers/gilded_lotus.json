@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "gilded_lotus",
+    "name": "Gilded Lotus",
+    "oracle_text": "{T}: Add three mana of any one color.",
+    "mana_cost": "{5}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add three mana of any one color.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"effects": [{"op": "add_mana", "mana": "{W}{W}{W}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{U}{U}{U}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{B}{B}{B}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{R}{R}{R}"}]},
+              {"effects": [{"op": "add_mana", "mana": "{G}{G}{G}"}]}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

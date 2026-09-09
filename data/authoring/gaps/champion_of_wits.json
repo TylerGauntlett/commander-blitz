@@ -1,0 +1,18 @@
+{
+  "card_id": "champion_of_wits",
+  "name": "Champion of Wits",
+  "oracle_text": "When this creature enters, you may draw cards equal to its power. If you do, discard two cards.\nEternalize {5}{U}{U} ({5}{U}{U}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Snake Wizard with no mana cost. Eternalize only as a sorcery.)",
+  "blocked_sentences": [
+    "Eternalize {5}{U}{U} ({5}{U}{U}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Snake Wizard with no mana cost. Eternalize only as a sorcery.)"
+  ],
+  "needs": [
+    {
+      "capability": "eternalize",
+      "kind": "op",
+      "what": "power/toughness keys on copy_permanent's `except_` clause (and the `copy_overrides` object field behind it), so a token copy can be created with a different printed size: 'a copy of it, except it's a 4/4 black Zombie Snake Wizard with no mana cost'. Everything else eternalize needs already exists -- an activated ability with active_zones ['graveyard'], sorcery_speed_only, an exile_from_graveyard self_only cost, and copy_permanent with except_ colors/add_subtypes/no_mana_cost.",
+      "why_existing_wont_do": "copy_permanent's `except_` is the only route to the exception clause and it accepts exactly {colors, add_subtypes, no_mana_cost, types} -- the loader raises DslError on any other key, and characteristics.py applies only those -- so the eternalize token would enter as the card's printed 2/1. Nothing else can fix the size permanently: `set_pt` is documented as a compensating pump lasting until end of turn, and `animate` stores a TempEffect on until_eot, so both wear off in the cleanup step, while `create_token` may only name ids from the closed token list, which holds no copy of this card (zombie_2_2_b is a different creature, not a copy carrying Champion of Wits' own enters trigger)."
+    }
+  ],
+  "closest_existing": ["embalm"],
+  "confidence": "high"
+}

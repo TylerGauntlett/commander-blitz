@@ -1,0 +1,24 @@
+{
+  "card_id": "chivalric_alliance",
+  "name": "Chivalric Alliance",
+  "oracle_text": "Whenever you attack with two or more creatures, draw a card.\n{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance.",
+  "blocked_sentences": [
+    "{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance"
+  ],
+  "needs": [
+    {
+      "capability": "token-definitions",
+      "kind": "token",
+      "what": "a token id for a 2/2 white and blue Knight creature token with vigilance -- a two-colored (WU) 2/2 Knight with vigilance, e.g. `knight_2_2_wu_vigilance`",
+      "why_existing_wont_do": "token_ids is a closed list and its only Knight entries are `knight_2_2_w` (2/2 white Knight) and `knight_2_2_w_vigilance` (2/2 white Knight with vigilance). Both are mono-white, so neither is the printed token: the card prints a white AND blue Knight, and substituting the mono-white one would silently change the token's color for every card that reads colors (devotion, 'blue creatures you control', color-based protection and removal). The brief forbids approximating a token, and `create_token` takes only a `token` id -- it has no colors/keywords override in op_options -- so there is no way to spell the second color from the card."
+    }
+  ],
+  "closest_existing": [
+    "knight_2_2_w_vigilance",
+    "knight_2_2_w",
+    "citizen_1_1_gw",
+    "inkling_2_1_wb_flying"
+  ],
+  "notes": "The token is the ONLY thing blocking this card -- everything else is expressible today, and the card ships the moment a one-line token id lands. The rest spells out as an Enchantment {1}{W} (colors [\"W\"], color_identity [\"W\"]) with two abilities: (1) triggered -- text \"Whenever you attack with two or more creatures, draw a card.\", trigger {\"event\": \"you_attack\", \"controller\": \"you\", \"condition\": {\"cmp\": \">=\", \"left\": {\"count\": {\"binding\": \"attackers\"}}, \"right\": {\"const\": 2}}}, effects [{\"op\": \"draw\", \"amount\": {\"const\": 1}, \"player\": \"you\"}] -- exactly the shape champions_from_beyond uses for \"Whenever you attack with four or more creatures\"; (2) activated -- text \"{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance.\", cost {\"mana\": \"{2}\", \"discard\": 1}, effects [{\"op\": \"create_token\", \"token\": \"<the new WU Knight id>\", \"amount\": {\"const\": 1}}]. Expectation would be {\"zone\": \"battlefield\", \"battlefield_count\": 33} -- neither ability fires in the sandbox (no attack happens and activated abilities are never activated), so the enchantment resolving onto the battlefield is all that can be asserted.",
+  "confidence": "high"
+}

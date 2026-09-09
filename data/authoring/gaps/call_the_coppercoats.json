@@ -1,0 +1,25 @@
+{
+  "card_id": "call_the_coppercoats",
+  "name": "Call the Coppercoats",
+  "oracle_text": "Strive — This spell costs {1}{W} more to cast for each target beyond the first.\nChoose any number of target opponents. Create X 1/1 white Human Soldier creature tokens, where X is the number of creatures those opponents control.",
+  "blocked_sentences": [
+    "Strive — This spell costs {1}{W} more to cast for each target beyond the first",
+    "Choose any number of target opponents. Create X 1/1 white Human Soldier creature tokens, where X is the number of creatures those opponents control"
+  ],
+  "needs": [
+    {
+      "capability": "strive",
+      "kind": "cost",
+      "what": "a card-level additional cost that RAISES the spell's cost by a fixed mana string ({1}{W} here) once for each target chosen beyond the first, paid as part of casting, so the price is a function of the number of targets bound by a variable-size target spec",
+      "why_existing_wont_do": "Every price in card_level_cost_keys either lowers the cost or is a flat/optional extra: cost_reduction only subtracts and its cost_reduction_keys (count, total_power, greatest_mana_value, amount) each read the battlefield through cost_reduction_filter_keys, never the spell's own targets, and it cannot add. multikicker is the only per-instance repeatable price but it is optional and player-chosen, unlinked to how many targets were declared, so it cannot make the extra {1}{W} mandatory per extra target. Nothing in the pool prints 'more to cast' at all"
+    },
+    {
+      "capability": "targeted-player-selector",
+      "kind": "selector",
+      "what": "a way for an effect's value/selector to mean 'controlled by the players this spell targeted' — i.e. a controller/player reference resolving to the bound target players — so X can be count({types: [Creature], controlled by target players}) after 'choose any number of target opponents'",
+      "why_existing_wont_do": "controller and player accept only fixed roles in practice (you, opponent, any, each_opponent, each_player, owner, enchanted_player, gift_recipient); none of them narrows to the subset of opponents actually targeted, and with count: \"any\" targets that subset is variable, so counting creatures under 'controller: opponent' would count every opponent's creatures rather than only the chosen ones"
+    }
+  ],
+  "closest_existing": ["multikicker", "cost_reduction", "kicker"],
+  "confidence": "high"
+}

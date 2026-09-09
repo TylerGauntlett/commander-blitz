@@ -1,0 +1,25 @@
+{
+  "card_id": "sea_gate_restoration_sea_gate_reborn",
+  "name": "Sea Gate Restoration // Sea Gate, Reborn",
+  "oracle_text": "Draw cards equal to the number of cards in your hand plus one. You have no maximum hand size for the rest of the game.",
+  "blocked_sentences": [
+    "You have no maximum hand size for the rest of the game."
+  ],
+  "needs": [
+    {
+      "capability": "no_maximum_hand_size",
+      "kind": "op",
+      "what": "A one-shot effect op that writes a permanent, player-scoped continuous effect lifting the cleanup-step hand limit -- resolving from a sorcery's spell_effects, taking a player (`you`, an opponent, `each_player`), and surviving the spell going to the graveyard, because 'for the rest of the game' outlives every object the spell could hang it on. Concretely: a one-way boolean on PlayerState beside `has_city_s_blessing` and `epic_source` (src/automtg/engine/player.py:72, :80), written by the op and read by `player_has_no_hand_limit` (src/automtg/engine/player_statics.py:152) as a second source alongside the battlefield statics, so `turn._cleanup_step` (src/automtg/engine/turn.py:637) honours it with no permanent on the board. Worth building as a general rest-of-game player permission rather than this one flag: Sea Gate Restoration's sibling MDFCs and the Zendikar Rising cycle print the same 'for the rest of the game' shape.",
+      "why_existing_wont_do": "`no_hand_limit` exists but only as a STATIC ability effect sourced on a battlefield permanent -- Reliquary Tower, Thought Vessel, Nezahal. `player_has_no_hand_limit` calls `_player_static` -> `_active_player_statics`, which walks `_battlefield_statics` (src/automtg/engine/player_statics.py:152, :463), so the effect exists only while some permanent this player controls is on the battlefield printing it. A Sorcery has no battlefield presence at all: it resolves and goes to the graveyard, and there is nothing for the static to be sourced on. Putting the static in `abilities` is not an option either -- the loader requires an instant or sorcery to put its effects in `spell_effects`, and a static ability on a card that never enters the battlefield would never be read. `grant_ability`, the one effect that hands a static to another object, is explicitly closed to this: `no_hand_limit` is in PLAYER_WIDE_STATIC_EFFECTS, which UNGRANTABLE_STATIC_EFFECTS subtracts out of GRANTABLE_STATIC_EFFECTS (src/automtg/cards/loader/vocabulary.py:262, :297), and there would be no permanent to grant it to in the first place. `set_flag` and `set_turn_flag` are the closest writable state and both miss: they take `objects` and write onto a GameObject, cleared by `reset_permanent_state` on any zone change, and only `has_flag`/`has_turn_flag` conditions read them -- nothing in the cleanup step consults the flag ledger. `delay` and `delayed_trigger` run effects at a later step, not a continuous effect with no end. No `duration` value in the op vocabulary means 'the rest of the game'; the longest is a permanent's own lifetime. The first sentence of the card is fine -- `draw` with `amount: {\"sum\": [{\"cards_in_hand\": \"you\"}, {\"const\": 1}]}` -- and the back face, Sea Gate, Reborn, is an ordinary `second_face` land with an optional 3-life enters-untapped payment and `{T}: Add {U}`; only this one sentence blocks the card, so no partial answer was written."
+    }
+  ],
+  "closest_existing": [
+    "no_hand_limit",
+    "grant_ability",
+    "set_flag",
+    "set_turn_flag",
+    "has_city_s_blessing",
+    "extra_land_drops"
+  ],
+  "confidence": "high"
+}

@@ -19,6 +19,10 @@
   "aardvark_sloth": {
     "zone": "battlefield"
   },
+  "abandoned_air_temple": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "abbey_griffin": {
     "zone": "battlefield"
   },
@@ -347,6 +351,16 @@
     },
     "zone": "battlefield"
   },
+  "archaeomancer_s_map": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "archangel": {
     "zone": "battlefield"
   },
@@ -442,6 +456,10 @@
   "ashcoat_bear": {
     "zone": "battlefield"
   },
+  "ashnod_s_altar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aspect_of_gorgon": {
     "zone": [
       "battlefield",
@@ -456,6 +474,11 @@
   },
   "auntie_s_hovel": {
     "zone": "battlefield"
+  },
+  "austere_command": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "automated_artificer": {
     "zone": "battlefield"
@@ -1198,6 +1221,10 @@
     "zone": "battlefield"
   },
   "cathar_s_shield": {
+    "zone": "battlefield"
+  },
+  "cathars_crusade": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "cathedral_sanctifier": {
@@ -2226,6 +2253,10 @@
   "elephant_rat": {
     "zone": "battlefield"
   },
+  "elesh_norn_grand_cenobite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elfhame_palace": {
     "zone": "battlefield"
   },
@@ -2741,6 +2772,22 @@
     },
     "zone": "graveyard"
   },
+  "flawless_maneuver": {
+    "battlefield_count": 32,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "fleetfeather_sandals": {
     "zone": "battlefield"
   },
@@ -2763,6 +2810,10 @@
     "zone": "battlefield"
   },
   "flooded_strand": {
+    "zone": "battlefield"
+  },
+  "floodfarm_verge": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "florian_voldaren_scion": {
@@ -3162,6 +3213,13 @@
     "zone": "battlefield"
   },
   "gilanra_caller_of_wirewood": {
+    "zone": "battlefield"
+  },
+  "gilded_lotus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "gilded_sentinel": {
@@ -4632,6 +4690,16 @@
   "looming_altisaur": {
     "zone": "battlefield"
   },
+  "loran_of_the_third_path": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "los_diablos_missile_base": {
     "life": {
       "0": 41
@@ -4790,6 +4858,24 @@
   },
   "makindi_griffin": {
     "zone": "battlefield"
+  },
+  "makindi_stampede_makindi_mesas": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "malakir_bloodwitch": {
     "battlefield_count": 33,
@@ -5082,6 +5168,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "minas_tirith": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "minotaur_abomination": {
     "zone": "battlefield"
   },
@@ -5193,6 +5283,16 @@
     "zone": "battlefield"
   },
   "moonglove_winnower": {
+    "zone": "battlefield"
+  },
+  "moonshaker_cavalry": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "flying"
+      ]
+    },
     "zone": "battlefield"
   },
   "moor_fiend": {
@@ -5481,6 +5581,10 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "nimbus_maze": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "nimbus_of_the_isles": {
     "zone": "battlefield"
@@ -7032,6 +7136,15 @@
   "secluded_steppe": {
     "zone": "battlefield"
   },
+  "secret_rendezvous": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "securitron_squadron": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7253,6 +7366,16 @@
     "zone": "battlefield"
   },
   "shuttle_crew": {
+    "zone": "battlefield"
+  },
+  "sicarian_infiltrator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "sickbay_orderly": {
@@ -8169,6 +8292,15 @@
     "zone": "battlefield"
   },
   "tasseled_dromedary": {
+    "zone": "battlefield"
+  },
+  "tataru_taru": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "taunt_from_the_rampart": {
@@ -9398,6 +9530,17 @@
     },
     "zone": "graveyard"
   },
+  "will_of_the_mardu": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 3
+    },
+    "tokens": {
+      "count": 2,
+      "id": "warrior_1_1_r"
+    },
+    "zone": "graveyard"
+  },
   "willow_dryad": {
     "zone": "battlefield"
   },
@@ -9481,6 +9624,14 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "witch_enchanter_witch_blessed_meadow": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
   },
   "witch_s_familiar": {
     "zone": "battlefield"
