@@ -48,6 +48,7 @@ from automtg.engine.triggers import ORDINAL_FILTER_KEYS, TRIGGER_EVENTS
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (  # noqa: F401
+    _refuse_seats_read_as_objects,
     _refuse_targets_inside_a_delay,
     _validate_attacking,
     _validate_delayed_trigger,
@@ -1051,6 +1052,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads a roll with {{'rolled': …}} but never rolls any "
             f"dice, so it would always read 0"
         )
+
+    _refuse_seats_read_as_objects(model, where)
 
     # `of` names a *different* permanent to ask about -- Celes, Rune Knight's
     # "…or was cast from a graveyard", which is about the creature that just

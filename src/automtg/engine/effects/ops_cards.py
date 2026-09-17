@@ -41,14 +41,47 @@ def _replacements():
 
 @register("draw")
 def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Draw cards.
+
+    ``as`` records **the players who actually drew at least one card** -- a set
+    of seats, the shape `may`'s `as` writes, read back with the
+    ``{"binding": …}`` player spec. Cut a Deal: "Each opponent draws a card,
+    then you draw a card for each opponent **who drew a card this way**."
+
+    The seat is taken from what `replacements.draw` returned, not from who was
+    told to draw, because the two differ in exactly the positions the rider was
+    printed for:
+
+    - an empty library draws nothing (121.4: that is an *attempt* to draw, whose
+      only consequence is the state-based loss of 704.5b), so that opponent
+      pays nothing out;
+    - a draw **replaced** is not a draw (121.6, 614.11) -- dredge returns a
+      card from the graveyard instead, and no card was drawn.
+
+    A miracle card that was drawn and then cast *was* drawn, and still counts.
+
+    The binding is written even when nobody drew, so a read after it answers
+    for this draw and not for an earlier one; and it **accumulates** across a
+    `for_each_player` loop the way `may`'s does, so "each player draws a card"
+    written one seat at a time still names every seat that drew.
+    """
     draw_with_replacements = _replacements().draw
 
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    name = spec.get("as")
+    drew: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         # Dredge replaces *a* draw, whatever caused it, and miracle asks about
         # the first card drawn this turn however it arrived -- so every draw in
         # the engine goes through here except the opening hand.
-        yield from draw_with_replacements(ctx.state, pid, amount)
+        got = yield from draw_with_replacements(ctx.state, pid, amount)
+        if got and pid not in drew:
+            drew.append(pid)
+    if name:
+        previous = ctx.bindings.get(str(name))
+        seats = list(previous) if isinstance(previous, list) else []
+        seats.extend(pid for pid in drew if pid not in seats)
+        ctx.bindings[str(name)] = seats
 
 
 @register("discard")

@@ -11453,3 +11453,55 @@ The three cards are not authored in this change. Adagia, Windswept Bastion still
 needs Station (a cost that binds the tapped creature's power, and the "12+ |"
 threshold ability); Faerie Artisans still needs "tokens created with this
 creature"; Champion of Wits needs nothing else.
+
+## Draw tracking — "each opponent who drew a card this way"
+
+### Overview
+
+Cut a Deal: *"Each opponent draws a card, then you draw a card for each opponent
+who drew a card this way."* One gap record, `draw-tracking`. `draw` recorded
+nothing and the loader refused an `as` on it, so the second half had no honest
+spelling.
+
+### Why the existing vocabulary would not do
+
+- `for_each_player` over `"each_opponent"` counts opponents at the table, not
+  opponents who drew. It pays out for an opponent with an empty library (121.4:
+  an attempt to draw is not a draw) and for one whose draw dredge replaced
+  (121.6, 614.11). Both positions are reachable here.
+- `cards_drawn_this_turn` is a turn-wide tally that also counts draw steps.
+- `may`'s `as` is the only other seat-set binding, and wrapping a mandatory draw
+  in a `may` hands each opponent a choice the card does not print.
+
+### The shape
+
+`op_draw` keeps what `replacements.draw` returns and, given an `as`, writes the
+seats whose list was non-empty -- the list-of-player-ids shape `may` already
+writes and the `{"binding": …}` player spec already reads (seat order, living
+players only). It is written even when nobody drew, and accumulates across a
+`for_each_player` loop as `may`'s does. `draw` joins `RECORDING_OPS`, which is
+all the loader's `as` guard needed.
+
+### The loader guard
+
+`resolve_pool` reads any bound list as oids, so `{"count": {"binding": "drew"}}`
+would load and count *objects* whose ids equal the seats. The new
+`loader.effects._refuse_seats_read_as_objects` refuses a `draw` or `may` binding
+under any object-pool key (`count`, `exists`, `objects`, `per`, `from`,
+`attacker`, `source_object`) or in `exclude_binding`.
+
+### Tier A
+
+No new op, event, decision kind or API field; nothing under `frontend/`. The
+authoring packet needed nothing: `as` is not a per-op vocabulary list there.
+
+### Guarded by
+
+`tests/unit/test_draw_tracking.py`: the seats recorded; an empty library not
+recorded (and still flagged for the loss); a dredged draw not recorded and a
+declined dredge recorded; fewer cards than asked still recorded; the empty
+write; accumulation across a loop; the whole Cut a Deal effect list at two
+players, with a decked opponent, and at a four-player pod with and without one;
+and the load-time guards.
+
+Cut a Deal is not authored in this change; its gap record stays until it is.

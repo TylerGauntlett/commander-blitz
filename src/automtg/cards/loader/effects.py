@@ -52,6 +52,7 @@ from .vocabulary import (
 )
 from .walk import (
     _check_counter_kind,
+    _mentions,
 )
 
 #: What `copy_permanent`'s ``except_`` may rewrite -- the copiable values of
@@ -70,6 +71,54 @@ COPY_EXCEPT_KEYS = frozenset(
         "no_mana_cost",
     }
 )
+
+
+#: The recorders whose `as` binding is a **set of seats** rather than of
+#: objects: `may` (the players who said yes) and `draw` (the players who
+#: actually drew). Both write a bare list of player ids.
+SEAT_RECORDING_OPS = frozenset({"draw", "may"})
+
+#: Every key whose value `resolve_pool` reads as a pool of **objects**. A bare
+#: `{"binding": …}` under any other key is a player spec.
+_OBJECT_POOL_KEYS = ("count", "exists", "objects", "per", "from", "attacker", "source_object")
+
+
+def _refuse_seats_read_as_objects(model: CardModel, where: str) -> None:
+    """A seat binding read as a pool of objects counts the wrong thing.
+
+    `resolve_pool` reads any bound list as oids, and a seat binding is a list of
+    player ids -- small integers that are also the ids of real objects. So
+    Cut a Deal written as ``{"count": {"binding": "drew"}}`` loads, resolves,
+    and draws one card for every *object* whose id happens to equal a seat that
+    drew -- right by accident while those objects exist, and wrong the moment
+    one of them leaves the game. The count of a seat set is a
+    `for_each_player` over it.
+    """
+    names: set[str] = set()
+
+    def collect(node: Mapping[str, Any]) -> bool:
+        if node.get("op") in SEAT_RECORDING_OPS and isinstance(node.get("as"), str):
+            names.add(node["as"])
+        return False
+
+    _mentions(model, collect)
+    if not names:
+        return
+
+    def reads_as_objects(node: Mapping[str, Any]) -> bool:
+        if node.get("exclude_binding") in names:
+            return True
+        return any(
+            isinstance(node.get(key), Mapping) and node[key].get("binding") in names
+            for key in _OBJECT_POOL_KEYS
+        )
+
+    if _mentions(model, reads_as_objects):
+        raise DslError(
+            f"{where}: reads a binding written by {sorted(SEAT_RECORDING_OPS)} as a pool "
+            f"of objects, but it holds players -- name the seats with the "
+            f"{{'binding': …}} player spec, and count them with a for_each_player over it"
+        )
 
 
 def _validate_enchanted_player(model: CardModel, where: str) -> None:

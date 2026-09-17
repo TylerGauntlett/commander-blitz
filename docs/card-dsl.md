@@ -573,9 +573,10 @@ exactly one, so nothing else changed.
 hand without asking. `count` still defaults to `"all"`, so every reveal already
 in the pool is unchanged.
 
-Eleven ops record: `sacrifice`, `reveal`, `exile`, `create_token`,
-`copy_permanent`, `gain_control`, `snapshot`, `join_forces`, `roll_dice`,
-`search_library` and `search_zones`. **No other op does**, and an `as` on one
+The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
+`reveal`, `exile`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
+`join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
+`may` and `draw`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
 read of it would be 0, and the card's second sentence would silently do nothing.
 
@@ -3908,8 +3909,8 @@ keep one of each, and the single `exclude_binding` on the sweep spares them all.
   "player": { "binding": "wheeled", "except": "you" } }
 ```
 
-`may`'s `as` records **the players who said yes** -- the only binding that is a
-set of seats rather than of objects -- accumulated across a `for_each_player`
+`may`'s `as` records **the players who said yes** -- a set of seats rather than
+of objects, like `draw`'s (below) -- accumulated across a `for_each_player`
 loop and read back with the `{"binding": …}` player spec. Nothing else could:
 `set_flag` and `set_turn_flag` are object-scoped and `has_flag` is always asked
 of the ability's own source, and `each_player` is overwritten each iteration and
@@ -3925,6 +3926,40 @@ would be burned once per card.
 complement over the whole table, and the recorded set contains you whenever you
 took the same option. It needs a spec to narrow -- a bare `{"except": "you"}` is
 just `{"not": "you"}` written the long way, and the loader says so.
+
+### `draw`'s `as` — "each opponent who drew a card this way"
+
+```jsonc
+// Cut a Deal — "Each opponent draws a card, then you draw a card for each
+// opponent who drew a card this way."
+{ "op": "draw", "player": "each_opponent", "amount": { "const": 1 }, "as": "drew" },
+{ "op": "for_each_player", "players": { "binding": "drew" },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+`draw`'s `as` records **the players who actually drew at least one card** -- the
+second set-of-seats binding, beside `may`'s, and read the same way with the
+`{"binding": …}` player spec. The count of it is a `for_each_player` over it.
+
+It is taken from what was drawn, not from who was told to draw, and the two
+differ in exactly the positions the rider was printed for:
+
+| | |
+|---|---|
+| **An empty library** | not recorded. Drawing from an empty library is an *attempt* (121.4): the player is still flagged for the 704.5b loss, but no card was drawn |
+| **A replaced draw** | not recorded. Dredge returns a card *instead* (121.6, 614.11), so a player who dredged drew nothing |
+| **Fewer than asked** | recorded. "Drew **a** card" is at least one |
+| **A miracle cast off the draw** | recorded. The card was drawn before it was cast |
+
+The binding is written even when nobody drew, so a later read answers for this
+draw; and it **accumulates** across a `for_each_player` loop, as `may`'s does.
+
+A `for_each_player` over `"each_opponent"` is the near miss, and it pays out for
+the very opponents the rider excludes. **`{"count": {"binding": "drew"}}` is
+refused at load time**: `resolve_pool` reads any bound list as oids, and a list
+of seats is a list of small integers that are also the ids of real objects. The
+same refusal covers `may`'s binding and every object-pool key (`objects`,
+`exists`, `per`, `from`, `attacker`, `source_object`, `exclude_binding`).
 
 ### Entwine — "choose both if you pay the entwine cost"
 
