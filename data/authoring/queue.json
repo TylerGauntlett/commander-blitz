@@ -1882,12 +1882,12 @@
     },
     "Adagia, Windswept Bastion": {
       "edhrec_rank": 1790,
-      "gate": "template",
+      "gate": null,
       "name": "Adagia, Windswept Bastion",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "4d6901e7-d519-4dfc-a74d-63fff5e4ffae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Adamant Will": {
@@ -297562,12 +297562,12 @@
     },
     "Uthros, Titanic Godcore": {
       "edhrec_rank": 1435,
-      "gate": "template",
+      "gate": null,
       "name": "Uthros, Titanic Godcore",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "11da39d6-cfa6-498d-91b1-11454cc7e5a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Utility Knife": {

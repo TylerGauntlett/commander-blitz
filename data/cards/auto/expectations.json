@@ -45,6 +45,10 @@
   "accursed_spirit": {
     "zone": "battlefield"
   },
+  "adagia_windswept_bastion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adanto_vanguard": {
     "zone": "battlefield"
   },
@@ -9027,6 +9031,10 @@
     "zone": "battlefield"
   },
   "urza_s_tower": {
+    "zone": "battlefield"
+  },
+  "uthros_titanic_godcore": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "utopia_tree": {
