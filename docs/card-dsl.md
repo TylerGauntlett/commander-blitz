@@ -4253,6 +4253,30 @@ then failed. The full `Cost` shape is accepted, not just mana, and it is
 validated at load time through the same model an ability's cost uses, so a
 misspelled key is a load error rather than a cost silently dropped.
 
+### "You may pay {X}, where X is less than or equal to…"
+
+`x` announces the `{X}` of the `pay` as the ability resolves. `max` is the
+printed ceiling, a value expression; `as` binds the X that was paid:
+
+```jsonc
+// Well of Lost Dreams: whenever you gain life, you may pay {X}, where X is less
+//                      than or equal to the amount of life you gained.
+//                      If you do, draw X cards.
+{ "op": "may", "pay": { "mana": "{X}" },
+  "x": { "max": { "binding": "amount" }, "as": "paid_x" },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "binding": "paid_x" } } ] }
+```
+
+After the yes, the player is asked `choose_x` (the decision a spell's X uses)
+from 0 up to the **smaller** of `max` and what they can pay, and exactly that X is
+charged. `pay.times` is the near miss: it scales a cost by a number the card
+computes, so it could only charge X equal to the life gained, never less.
+
+`{X}` in an optional `pay` without `x` is refused (nothing would announce X, so
+it would charge {0}), as is `x` without an `{X}`, without `max` or `as`, on any
+op but a `may` with a `pay`, and beside `repeat`, `pay.times` or
+`pay.mana_reduction`.
+
 ### "…unless that player pays {1}"
 
 The same op, with two things moved. `player` says *who is asked* — it has always

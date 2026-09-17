@@ -12949,3 +12949,36 @@ first draw step (no draw, 103.8a) with three, one and no cards in hand — the h
 comes back the same size, off the top, with the old hand underneath; the binding
 names what arrived; a second tuck of nothing leaves an empty binding rather than
 a stale one; the loader accepts the key.
+
+
+## `may`'s `x` — "you may pay {X}, where X is less than or equal to…"
+
+### Overview
+
+Well of Lost Dreams: *"Whenever you gain life, you may pay {X}, where X is less
+than or equal to the amount of life you gained. If you do, draw X cards."*
+
+### Why the existing vocabulary would not do
+
+`may`'s `pay` charges a fixed cost, and `pay.times` scales it by a number the card
+computes — X equal to the gain, never less. `choose_x` was asked only by
+`game.py` at cast and activation time. `may` with `repeat` around {1} and one
+draw interleaves payments with draws and has no ceiling.
+
+### The shape
+
+- **`x: {"max": <value>, "as": <name>, "prompt"?}`** on `may`, beside a `pay`
+  whose mana carries `{X}`.
+- `ops_control._announce_x`: after the yes, `ask_x` over 0 up to
+  min(`max`, `max_affordable_x` of the player's pool and sources), then `pay`
+  with that `x`, then the paid X bound under `as` before the effects run.
+- The loader (`_validate_pay_x`) requires `max` and `as`, refuses an `{X}` with
+  no `x` and an `x` with no `{X}`, `x` anywhere but a paying `may`, and `x`
+  beside `repeat`, `pay.times` or `pay.mana_reduction`.
+
+### Guarded by
+
+`tests/unit/test_pay_x_on_resolution.py`: the ceiling is the life gained with
+plenty of mana and the mana with plenty of life; nothing open charges {0} without
+asking; X paid is X drawn and X tapped; a smaller X than the gain; X = 0; declining
+asks no X; and the loader refusals.

@@ -18,6 +18,7 @@ from automtg.engine.effects.values import (
 )
 from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
+from automtg.engine.mana import ManaCost
 from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
@@ -119,6 +120,34 @@ def _refuse_seats_read_as_objects(model: CardModel, where: str) -> None:
             f"of objects, but it holds players -- name the seats with the "
             f"{{'binding': …}} player spec, and count them with a for_each_player over it"
         )
+
+
+def _validate_pay_x(effect: Mapping[str, Any], where: str) -> None:
+    """``may``'s ``x``: the ceiling on an announced X, and where X is bound.
+
+    Both halves are required. A missing ``max`` is "pay any amount", which is
+    join forces and not this; a missing ``as`` pays for X cards and draws none.
+    """
+    spec = effect["x"]
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}.x: must be an object with 'max' and 'as'")
+    if unknown := set(spec) - {"max", "as", "prompt"}:
+        raise DslError(f"{where}.x: unsupported keys {sorted(unknown)} (takes 'max', 'as', 'prompt')")
+    if "max" not in spec:
+        raise DslError(f"{where}.x.max: the printed ceiling on X is required")
+    validate_value(spec["max"], f"{where}.x.max")
+    if not (isinstance(spec.get("as"), str) and spec["as"]):
+        raise DslError(f"{where}.x.as: a binding name for the announced X is required")
+    if effect.get("repeat"):
+        # Each yes would announce and bind a new X over the last one, and no
+        # printed "repeat this process" pays an X.
+        raise DslError(f"{where}.x: an announced X cannot be combined with 'repeat'")
+    if effect["pay"].get("times") is not None:
+        raise DslError(f"{where}.x: an announced X cannot be combined with 'pay.times'")
+    if effect["pay"].get("mana_reduction") is not None:
+        # The ceiling is priced off the printed mana; a reduction would make the
+        # offered X and the charged X disagree.
+        raise DslError(f"{where}.x: an announced X cannot be combined with 'pay.mana_reduction'")
 
 
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
@@ -613,6 +642,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
                 f"not to an optional payment"
             )
+        x_symbols = ManaCost.parse(effect["pay"].get("mana")).x_count
+        if x_symbols and "x" not in effect:
+            # Nothing announces an X for an optional payment unless the effect
+            # says how, so `{X}` here would charge {0} and run the "if you do"
+            # branch for free -- the silent reading of Well of Lost Dreams.
+            raise DslError(
+                f"{where}.pay: an optional {{X}} payment needs 'x' -- its ceiling "
+                f"('max') and the binding the announced X is read back from ('as')"
+            )
+        if "x" in effect and not x_symbols:
+            raise DslError(f"{where}: 'x' announces the {{X}} of 'pay', and its mana has none")
+        if "x" in effect:
+            _validate_pay_x(effect, where)
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
             # nothing else, so a `times` beside a cost with no mana would load
@@ -621,6 +663,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(times, f"{where}.pay.times")
             if not effect["pay"].get("mana"):
                 raise DslError(f"{where}.pay: 'times' multiplies the mana cost, and there is none")
+    if "x" in effect and (op != "may" or "pay" not in effect):
+        # `may` without a `pay` has no {X} to announce, and every other op
+        # ignores the key -- the card would load and draw 0.
+        raise DslError(f"{where}: 'x' announces the {{X}} of a may's 'pay', not of {op!r}")
     if op == "win_game" and "condition" in effect:
         # "**If you rolled 6 exactly seven times**, you win the game" (Luck
         # Bobblehead). A top-level `condition` is read by `if` and by `may` and
