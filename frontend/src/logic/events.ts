@@ -394,15 +394,36 @@ export function beatsFor(
     }
 
     switch (event.type) {
-      case "turn_began":
+      case "turn_began": {
+        const turn = event.data.extra ? "Extra Turn" : "Turn";
         push({
           hold: 620,
           banner: {
-            text: event.player === viewerSeat ? "Your Turn" : `${who}'s Turn`,
+            text: event.player === viewerSeat ? `Your ${turn}` : `${who}'s ${turn}`,
             tone: "neutral",
           },
         });
         return;
+      }
+
+      /*
+       * A skipped extra turn (Trouble in Pairs). A banner for the reason the
+       * monarch gets one: nothing on the board changes, and the only visible
+       * consequence -- the turn going to somebody else -- looks like the
+       * promised turn was never there. Toned per seat, because losing your own
+       * turn is bad news and an opponent losing theirs is good.
+       */
+      case "turn_skipped": {
+        const mine = event.player === viewerSeat;
+        push({
+          hold: 520,
+          banner: {
+            text: mine ? "You skip your extra turn" : `${who} skips their extra turn`,
+            tone: mine ? "danger" : "good",
+          },
+        });
+        return;
+      }
 
       case "spell_cast":
         push({
@@ -636,6 +657,27 @@ export function beatsFor(
           hold: 320,
           sound: "chime",
           float: { anchor, value: roman, tone: "good" },
+          fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+        });
+        return;
+      }
+
+      /*
+       * A Class gaining a level.
+       *
+       * The Saga chapter's shape, and for its reason: a board moment on one
+       * permanent, whose consequence -- the abilities printed under the new
+       * level -- is otherwise invisible until something they do happens. The
+       * level badge on the card changes too, and this is what draws the eye to
+       * it.
+       */
+      case "became_level": {
+        if (event.source === null) return;
+        const anchor = { kind: "object", oid: event.source } as const;
+        push({
+          hold: 320,
+          sound: "chime",
+          float: { anchor, value: `Level ${num(event.data.level) ?? 0}`, tone: "good" },
           fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
         });
         return;

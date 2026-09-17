@@ -332,6 +332,12 @@ def to_row(record: dict) -> tuple:
         back.get("power"),
         back.get("toughness"),
         back.get("oracle_text", "") or "",
+        # Loyalty is its own Scryfall field, in neither `power` nor `toughness`
+        # -- which is why every planeswalker in the index read as having none.
+        # `pick` because a transforming card that is a planeswalker on the front
+        # carries it on the face rather than on the record.
+        pick("loyalty"),
+        back.get("loyalty"),
     )
 
 

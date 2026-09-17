@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "sea_gate_restoration_sea_gate_reborn",
+    "name": "Sea Gate Restoration // Sea Gate, Reborn",
+    "oracle_text": "Draw cards equal to the number of cards in your hand plus one. You have no maximum hand size for the rest of the game.",
+    "mana_cost": "{4}{U}{U}{U}",
+    "types": ["Sorcery"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "second_face": "sea_gate_reborn",
+    "second_face_zone": "hand",
+    "spell_effects": [
+      {
+        "op": "draw",
+        "player": "you",
+        "amount": {"sum": [{"cards_in_hand": "you"}, {"const": 1}]}
+      },
+      {"op": "no_maximum_hand_size", "player": "you"}
+    ]
+  },
+  "back": {
+    "id": "sea_gate_reborn",
+    "name": "Sea Gate, Reborn",
+    "oracle_text": "As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {U}.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["U"],
+    "replacements": [
+      {"event": "self_enters_tapped", "unless_cost": {"pay_life": 3}}
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{U}"}],
+        "is_mana_ability": true,
+        "text": "{T}: Add {U}."
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 3},
+    "library_size": {"0": 38},
+    "graveyard_size": {"0": 3}
+  }
+}

@@ -281,12 +281,21 @@ export function isWounded(card: CardView): boolean {
   return card.zone === "battlefield" && (card.damage ?? 0) > 0;
 }
 
-/** Counters rendered as short badges, e.g. ["+1/+1 x3"]. */
+/**
+ * Counters rendered as short badges, e.g. ["+1/+1 x3"].
+ *
+ * A Class's level leads, as "Level 2". It is not a counter -- proliferate
+ * cannot touch it and the server sends it apart from `counters` -- but it
+ * sits in the same place for the same reason counters do: it is a fact about
+ * the permanent that nothing else on the card restates, and it is the one
+ * that says which of the printed abilities are switched on.
+ */
 export function counterBadges(card: CardView): string[] {
   const counters = card.counters ?? {};
-  return Object.entries(counters)
+  const badges = Object.entries(counters)
     .filter(([, amount]) => amount > 0)
     .map(([kind, amount]) => (amount === 1 ? kind : `${kind} x${amount}`));
+  return card.level === undefined ? badges : [`Level ${card.level}`, ...badges];
 }
 
 /** Keywords as they should read on a card face: "first_strike" -> "First strike". */

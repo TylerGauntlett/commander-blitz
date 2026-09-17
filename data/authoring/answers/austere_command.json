@@ -1,0 +1,70 @@
+{
+  "card": {
+    "id": "austere_command",
+    "name": "Austere Command",
+    "oracle_text": "Choose two —\n• Destroy all artifacts.\n• Destroy all enchantments.\n• Destroy all creatures with mana value 3 or less.\n• Destroy all creatures with mana value 4 or greater.",
+    "mana_cost": "{4}{W}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {
+        "op": "choose_mode",
+        "count": 2,
+        "modes": [
+          {
+            "label": "Destroy all artifacts.",
+            "effects": [
+              {
+                "op": "destroy",
+                "objects": {"zone": "battlefield", "types": ["Artifact"], "count": "all"}
+              }
+            ]
+          },
+          {
+            "label": "Destroy all enchantments.",
+            "effects": [
+              {
+                "op": "destroy",
+                "objects": {"zone": "battlefield", "types": ["Enchantment"], "count": "all"}
+              }
+            ]
+          },
+          {
+            "label": "Destroy all creatures with mana value 3 or less.",
+            "effects": [
+              {
+                "op": "destroy",
+                "objects": {
+                  "zone": "battlefield",
+                  "types": ["Creature"],
+                  "count": "all",
+                  "mana_value": {"op": "<=", "value": {"const": 3}}
+                }
+              }
+            ]
+          },
+          {
+            "label": "Destroy all creatures with mana value 4 or greater.",
+            "effects": [
+              {
+                "op": "destroy",
+                "objects": {
+                  "zone": "battlefield",
+                  "types": ["Creature"],
+                  "count": "all",
+                  "mana_value": {"op": ">=", "value": {"const": 4}}
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 4
+  }
+}

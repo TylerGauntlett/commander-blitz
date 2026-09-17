@@ -150,6 +150,15 @@ def move_object(
     if was_on_battlefield:
         _seen = chars(state, oid)
         had_power, had_toughness = _seen.power, _seen.toughness
+        # And for the same reason, into any record a cost made of this
+        # permanent: Station reads "the tapped creature's power" at resolution,
+        # as the creature last existed on the battlefield if it has gone. See
+        # `costs.bind_paid_object`. A record already filled in belongs to an
+        # earlier departure -- the creature left, came back as a new object
+        # (400.7) and is leaving again -- and keeps the answer it had.
+        for record in state.paid_objects.values():
+            if record["oid"] == oid and record["power"] is None:
+                record["power"], record["toughness"] = had_power, had_toughness
     else:
         had_power = had_toughness = 0
     # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
@@ -452,6 +461,11 @@ def _enter_battlefield(
     """Apply enter-the-battlefield replacements, then fire the ETB event."""
     obj.entered_turn = state.turn
     obj.tapped = forced_tapped
+    # 716.3: a Class enters at level 1. Here and not in `reset_permanent_state`,
+    # which runs on the way *out* and would take the level from the object a
+    # leaves-the-battlefield trigger is about to be collected off -- see
+    # `GameObject.class_level`.
+    obj.class_level = 1
     # "…**if it was cast**" (603.6e). Written here, before the replacements and
     # long before the ENTERS_BATTLEFIELD event below, because the trigger's own
     # intervening-if is evaluated as the ability queues off that event.

@@ -1,0 +1,88 @@
+{
+  "card": {
+    "id": "makindi_stampede_makindi_mesas",
+    "name": "Makindi Stampede // Makindi Mesas",
+    "oracle_text": "Creatures you control get +2/+2 until end of turn.",
+    "mana_cost": "{3}{W}{W}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "second_face": "makindi_mesas",
+    "second_face_zone": "hand",
+    "spell_effects": [
+      {
+        "op": "pump",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 2
+        }
+      }
+    ]
+  },
+  "back": {
+    "id": "makindi_mesas",
+    "name": "Makindi Mesas",
+    "oracle_text": "This land enters tapped.\n{T}: Add {W}.",
+    "types": [
+      "Land"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "graveyard_size": {
+      "0": 3
+    },
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6
+  }
+}

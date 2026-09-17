@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "swan_song",
+    "name": "Swan Song",
+    "oracle_text": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying.",
+    "mana_cost": "{U}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "spell",
+        "selector": {
+          "any_types": [
+            "Enchantment",
+            "Instant",
+            "Sorcery"
+          ]
+        },
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "create_token",
+        "token": "bird_2_2_u_flying",
+        "amount": {
+          "const": 1
+        },
+        "controller": {
+          "controller_of_target": "t1"
+        }
+      },
+      {
+        "op": "counter",
+        "target": "t1"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "opponent_battlefield_count": 8
+  }
+}

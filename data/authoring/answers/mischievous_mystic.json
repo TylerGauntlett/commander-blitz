@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "mischievous_mystic",
+    "name": "Mischievous Mystic",
+    "oracle_text": "Flying\nWhenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.",
+    "mana_cost": "{1}{U}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Wizard"
+    ],
+    "power": 2,
+    "toughness": 1,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with flying.",
+        "trigger": {
+          "event": "draw",
+          "controller": "you",
+          "nth": 2
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "faerie_1_1_u_flying"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

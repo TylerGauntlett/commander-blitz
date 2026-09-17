@@ -1,0 +1,59 @@
+{
+  "card": {
+    "id": "floodfarm_verge",
+    "name": "Floodfarm Verge",
+    "oracle_text": "{T}: Add {W}.\n{T}: Add {U}. Activate only if you control a Plains or an Island.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U}. Activate only if you control a Plains or an Island.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "condition": {
+          "exists": {
+            "zone": "battlefield",
+            "controller": "you",
+            "subtypes": [
+              "Plains",
+              "Island"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{U}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

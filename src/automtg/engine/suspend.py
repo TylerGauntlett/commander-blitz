@@ -190,14 +190,34 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     really cast and not the ones that were merely offered.
     """
     from . import stack, triggers
+    from .player_statics import player_cant_cast_spells
     from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
         return False
+    if player_cant_cast_spells(state, pid):
+        # Voice of Victory (101.2): a "may cast" meets a "can't cast" and the
+        # "can't" wins. The card stays exactly where it is -- in exile for a
+        # suspend or a rebound, which is the no-legal-target outcome below, and
+        # wherever the calling op left it otherwise, so cascade still bottoms
+        # it with the rest. The floor under every free cast, so an op that
+        # forgets to ask first still cannot cast through the lock.
+        return False
     card = state.card_of(obj)
 
-    options = enumerate_target_tuples(state, pid, card.targets, oid, limit=1)
+    # Strive's surcharge is not charged here -- nothing on this path pays mana
+    # -- so the spell takes at most one target, the most it can have for free.
+    # Taking every target the board offered would be the printed card with its
+    # cost increase deleted.
+    options = enumerate_target_tuples(
+        state,
+        pid,
+        card.targets,
+        oid,
+        limit=1,
+        size_cap=1 if card.strive is not None else None,
+    )
     if not options:
         return False
     # And its modes, on the one card shape whose targets belong to them. Same

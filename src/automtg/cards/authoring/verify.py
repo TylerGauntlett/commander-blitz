@@ -1092,6 +1092,10 @@ _SELF_REFERENCE = re.compile(
 )
 
 
+#: A station symbol at the head of a printed line: "12+ | …".
+_STRIATION = re.compile(r"^(\d+)\+\s*\|")
+
+
 def fold_self_reference(text: str, name: str) -> str:
     """Collapse every way a card names itself to one token, for comparison only."""
     if name:
@@ -1099,6 +1103,16 @@ def fold_self_reference(text: str, name: str) -> str:
         for form in sorted({f"{name}'s", name}, key=len, reverse=True):
             text = re.sub(re.escape(form), "~", text, flags=re.IGNORECASE)
     return _SELF_REFERENCE.sub("~", text)
+
+
+#: The price on a strive line -- "costs {1}{W} more to cast for each target
+#: beyond the first". Only the symbols are captured; the rest of the sentence
+#: has to be there word for word, because a cost that grows with something other
+#: than the target count is a different mechanic wearing the same word.
+_STRIVE_LINE = re.compile(
+    r"costs ((?:\{[^}]+\})+) more to cast for each target beyond the first$",
+    re.IGNORECASE,
+)
 
 
 def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
@@ -1192,6 +1206,17 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.multikicker is not None and stripped.lower().startswith("multikicker "):
         return _declares_printed_cost(stripped[len("multikicker ") :], card.multikicker)
 
+    # "Strive — This spell costs {1}{W} more to cast for each target beyond the
+    # first." Multikicker's shape: a card-level price charged inside
+    # `game._cast`, so no ability can honestly carry the line -- and strict for
+    # multikicker's reason. The loader sets `card.strive` only beside the one
+    # "any number of target" spec it prices, and the symbols on the line have
+    # to be the ones charged, so declaring `strive: "{1}"` cannot claim a printed
+    # "{2}{R} more". An unparsable or mismatched line stays residual.
+    if card.strive is not None and stripped.lower().startswith("strive"):
+        match = _STRIVE_LINE.search(stripped)
+        return match is not None and _declares_printed_cost(match.group(1), card.strive)
+
     # "Ascend (If you control ten or more permanents…)" is a *state trigger*
     # checked in the state-based-action pass, not an ability: it uses no stack
     # and cannot be responded to, so there is nothing for an ability's `text` to
@@ -1257,6 +1282,21 @@ def _covered(card: CardDef, line: str) -> bool:
     # card printing Devoid while carrying colours has not implemented it.
     if stripped.lower().startswith("devoid") and not card.colors:
         return True
+    # "12+ | {U}, {T}: Add {U} for each artifact you control." A station
+    # striation (721) is claimed only by an ability gated at that very number,
+    # and only by its whole text. The loose substring match below would let an
+    # ungated "{U}, {T}: Add {U} …" claim the line -- a Planet that makes the
+    # mana from turn one, wearing the printed words.
+    striation = _STRIATION.match(stripped)
+    if striation is not None:
+        wanted = int(striation.group(1))
+        return any(
+            ability.threshold is not None
+            and ability.threshold[1] == wanted
+            and fold_self_reference((ability.text or "").strip().rstrip("."), card.name)
+            == folded_line
+            for ability in card.abilities
+        )
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if not claimed:

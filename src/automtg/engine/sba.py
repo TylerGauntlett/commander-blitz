@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 from . import sagas
 from .characteristics import chars
-from .enums import Keyword, LossReason, Zone
+from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
@@ -503,7 +503,10 @@ def _legend_rule(state: GameState) -> bool:
         if obj is None:
             continue
         card = state.card_of(obj)
-        if not card.is_legendary:
+        # The derived supertypes, not the printed ones: a token copied "except
+        # it's legendary" (Adagia, Windswept Bastion) has a non-legendary card
+        # behind it, and the exception is the whole reason the copy is unique.
+        if Supertype.LEGENDARY.value not in chars(state, oid).supertypes:
             continue
         seen.setdefault((obj.controller, card.name), []).append(oid)
 

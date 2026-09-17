@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "esper_sentinel",
+    "name": "Esper Sentinel",
+    "oracle_text": "Whenever an opponent casts their first noncreature spell each turn, draw a card unless that player pays {X}, where X is this creature's power.",
+    "mana_cost": "{W}",
+    "types": ["Artifact", "Creature"],
+    "subtypes": ["Human", "Soldier"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts their first noncreature spell each turn, draw a card unless that player pays {X}, where X is this creature's power.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "filter": {"not_types": ["Creature"]},
+          "nth": 1
+        },
+        "effects": [
+          {
+            "op": "may",
+            "player": {"controller_of": "subject"},
+            "prompt": "Pay {X} to stop Esper Sentinel's draw?",
+            "pay": {
+              "mana": "{1}",
+              "times": {"power_of": {"self": true}}
+            },
+            "else": [
+              {"op": "draw", "player": "you", "amount": {"const": 1}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

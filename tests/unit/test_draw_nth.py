@@ -327,7 +327,7 @@ class TestItIsRefusedWhereItCannotApply:
         """
         card = watcher(nth=2)
         card["abilities"][0]["trigger"]["event"] = "discard"
-        with pytest.raises(DslError, match="only means anything on a draw trigger"):
+        with pytest.raises(DslError, match="only means anything on a draw or spell_cast trigger"):
             compile_card(CardModel.model_validate(card))
 
     @pytest.mark.parametrize("nth", [0, -1])

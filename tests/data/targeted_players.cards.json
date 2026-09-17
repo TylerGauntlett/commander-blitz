@@ -1,0 +1,42 @@
+{
+  "_comment": "Cards that exist only for the targeted-players test (tests/unit/test_targeted_players.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_coppercoats` is Call the Coppercoats: any number of target opponents, and X counts the creatures THOSE opponents control. `t_loose_coppercoats` is the counterfactual spelled with `controller: \"opponent\"`, which counts every opponent's creatures whoever was targeted.",
+  "cards": [
+    {
+      "id": "t_coppercoats",
+      "name": "Test Coppercoats",
+      "oracle_text": "Strive — This spell costs {1}{W} more to cast for each target beyond the first.\nChoose any number of target opponents. Create X 1/1 white Human Soldier creature tokens, where X is the number of creatures those opponents control.",
+      "mana_cost": "{2}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "strive": "{1}{W}",
+      "targets": [
+        { "id": "t1", "kind": "player", "count": "any",
+          "selector": { "controller": "opponent" } }
+      ],
+      "spell_effects": [
+        { "op": "create_token", "token": "human_soldier_1_1_w",
+          "amount": { "count": { "zone": "battlefield", "types": ["Creature"],
+                                 "controller": { "target": "t1" } } } }
+      ]
+    },
+    {
+      "id": "t_loose_coppercoats",
+      "name": "Test Loose Coppercoats",
+      "oracle_text": "Choose any number of target opponents. Create X 1/1 white Human Soldier creature tokens, where X is the number of creatures your opponents control.",
+      "mana_cost": "{2}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        { "id": "t1", "kind": "player", "count": "any",
+          "selector": { "controller": "opponent" } }
+      ],
+      "spell_effects": [
+        { "op": "create_token", "token": "human_soldier_1_1_w",
+          "amount": { "count": { "zone": "battlefield", "types": ["Creature"],
+                                 "controller": "opponent" } } }
+      ]
+    }
+  ]
+}

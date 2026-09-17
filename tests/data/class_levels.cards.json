@@ -1,0 +1,79 @@
+{
+  "_comment": "Cards that exist only for the Class tests (tests/unit/test_class_levels.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_class` puts one ability of every kind the level gate has to reach on one ladder: a level-1 anthem that is always there, a level-2 trigger, a level-2 player-wide static (read off the printed face by `player_statics`), a level-2 `lose_all_abilities` (read off the printed face by `_ability_statics`), a level-3 anthem and a level-3 activated ability. The level lines sit between them in printed order, so a gate that dropped seats instead of holding them would renumber the level-3 line.",
+  "cards": [
+    {
+      "id": "t_class",
+      "name": "Test Class",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nCreatures you control get +1/+0.\n{W}: Level 2\nWhenever a creature you control enters, you gain 1 life.\nYou may play an additional land on each of your turns.\nCreatures your opponents control lose all abilities.\n{1}{W}: Level 3\nCreatures you control get +0/+2.\n{2}: You gain 2 life.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Class"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+0.",
+          "effect": "buff",
+          "affects": { "controller": "you", "types": ["Creature"] },
+          "power": { "const": 1 },
+          "toughness": { "const": 0 }
+        },
+        {
+          "kind": "level",
+          "text": "{W}: Level 2",
+          "level": 2,
+          "cost": { "mana": "{W}" }
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, you gain 1 life.",
+          "level": 2,
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": { "types": ["Creature"] }
+          },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "static",
+          "text": "You may play an additional land on each of your turns.",
+          "level": 2,
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": { "const": 1 }
+        },
+        {
+          "kind": "static",
+          "text": "Creatures your opponents control lose all abilities.",
+          "level": 2,
+          "effect": "lose_all_abilities",
+          "affects": { "controller": "opponent", "types": ["Creature"] }
+        },
+        {
+          "kind": "level",
+          "text": "{1}{W}: Level 3",
+          "level": 3,
+          "cost": { "mana": "{1}{W}" }
+        },
+        {
+          "kind": "static",
+          "text": "Creatures you control get +0/+2.",
+          "level": 3,
+          "effect": "buff",
+          "affects": { "controller": "you", "types": ["Creature"] },
+          "power": { "const": 0 },
+          "toughness": { "const": 2 }
+        },
+        {
+          "kind": "activated",
+          "text": "{2}: You gain 2 life.",
+          "level": 3,
+          "cost": { "mana": "{2}" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 2 } }]
+        }
+      ]
+    }
+  ]
+}

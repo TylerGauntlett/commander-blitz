@@ -396,6 +396,15 @@ class Game:
         else:
             cost = card.mana_cost
 
+        # Strive (601.2f): "costs {1}{W} more to cast for each target beyond the
+        # first". Added to whichever price the branch above chose, because a cost
+        # increase applies to every way of casting the spell, and sized by the
+        # targets this action announced (601.2c) -- the tuple legality priced the
+        # line with, through the same `strive_surcharge`.
+        from .casting import strive_surcharge
+
+        cost = cost.plus(strive_surcharge(card, action.targets))
+
         # 107.4f, and the paying half of the line `_cast_variant` offered. The
         # bought pips leave the cost here, before every relaxation and discount
         # below, exactly as legality priced them -- so a line offered as "paying
@@ -766,7 +775,13 @@ class Game:
             mana_ability=False,
         )
 
-        ok = yield from pay(state, pid, ability.cost, oid, x=x, purpose=purpose)
+        # What the cost named -- Station's "the tapped creature" -- handed on to
+        # the stack item so the effects can read it. Empty for every cost that
+        # names nothing, which is every cost but `tap_permanents` with `as`.
+        bindings: dict[str, Any] = {}
+        ok = yield from pay(
+            state, pid, ability.cost, oid, x=x, purpose=purpose, bindings=bindings
+        )
         if not ok:  # pragma: no cover
             return
 
@@ -779,6 +794,7 @@ class Game:
             x=x,
             modes=modes,
             modes_answered=ability.cast_time_modes is not None,
+            bindings=bindings,
         )
         if ability.is_cycling:
             # Fired *after* the cycling ability is on the stack, and the order

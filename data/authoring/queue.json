@@ -302,12 +302,12 @@
     },
     "Abandoned Air Temple": {
       "edhrec_rank": 1358,
-      "gate": "template",
+      "gate": null,
       "name": "Abandoned Air Temple",
-      "reason": "no template for: {3}{W}, {T}: Put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "761988b0-fb0e-45e7-97d3-cef259fe47b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Abandoned Campground": {
@@ -1882,12 +1882,12 @@
     },
     "Adagia, Windswept Bastion": {
       "edhrec_rank": 1790,
-      "gate": "template",
+      "gate": null,
       "name": "Adagia, Windswept Bastion",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "4d6901e7-d519-4dfc-a74d-63fff5e4ffae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Adamant Will": {
@@ -2082,12 +2082,12 @@
     },
     "Adeline, Resplendent Cathar": {
       "edhrec_rank": 506,
-      "gate": "template",
+      "gate": null,
       "name": "Adeline, Resplendent Cathar",
-      "reason": "no template for: Adeline's power is equal to the number of creatures you control",
+      "reason": "",
       "scryfall_id": "0b9579d8-bc8f-4d74-bfc1-dcdd42568f79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Adeliz, the Cinder Wind": {
@@ -5642,12 +5642,12 @@
     },
     "Alandra, Sky Dreamer": {
       "edhrec_rank": 2546,
-      "gate": "template",
+      "gate": null,
       "name": "Alandra, Sky Dreamer",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 2/2 blue Drake creature token with ",
+      "reason": "",
       "scryfall_id": "54bf48d4-e350-4ca7-87da-ce04fefd4610",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Alania's Pathmaker": {
@@ -11692,12 +11692,12 @@
     },
     "Archaeomancer's Map": {
       "edhrec_rank": 743,
-      "gate": "template",
+      "gate": null,
       "name": "Archaeomancer's Map",
-      "reason": "no template for: When this artifact enters, search your library for up to two basic Plains cards, reveal th",
+      "reason": "",
       "scryfall_id": "3679b9c8-ebae-474a-b862-6397edbcc4ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Archaeomender": {
@@ -14732,12 +14732,12 @@
     },
     "Ashnod's Altar": {
       "edhrec_rank": 132,
-      "gate": "template",
+      "gate": null,
       "name": "Ashnod's Altar",
-      "reason": "no template for: Sacrifice a creature: Add {C}{C}",
+      "reason": "",
       "scryfall_id": "fe96fe60-f251-403c-acd1-d658a1d0c930",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ashnod's Battle Gear": {
@@ -16642,12 +16642,12 @@
     },
     "Austere Command": {
       "edhrec_rank": 169,
-      "gate": "template",
+      "gate": null,
       "name": "Austere Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "96f2ff40-4f11-4869-8f5e-19ef33e18f1e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Autarch Mammoth": {
@@ -20452,12 +20452,12 @@
     },
     "Bard, King of Dale": {
       "edhrec_rank": 21754,
-      "gate": "template",
+      "gate": null,
       "name": "Bard, King of Dale",
-      "reason": "no template for: If you would draw a card except the first one you draw in each of your draw steps, draw tw",
+      "reason": "",
       "scryfall_id": "a4adb258-381e-4e64-9f93-9fcf943be360",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bargain": {
@@ -37962,12 +37962,12 @@
     },
     "Call the Coppercoats": {
       "edhrec_rank": 1586,
-      "gate": "template",
+      "gate": null,
       "name": "Call the Coppercoats",
-      "reason": "no template for: Strive — This spell costs {1}{W} more to cast for each target beyond the first",
+      "reason": "",
       "scryfall_id": "17844223-f9fb-4cd8-ba8e-d1db07e5ba55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Call the Gatewatch": {
@@ -39722,12 +39722,12 @@
     },
     "Caretaker's Talent": {
       "edhrec_rank": 640,
-      "gate": "template",
+      "gate": null,
       "name": "Caretaker's Talent",
-      "reason": "no template for: Whenever one or more tokens you control enter, draw a card. This ability triggers only onc",
+      "reason": "",
       "scryfall_id": "ad5ea98a-e36e-4ab9-b4da-cc572f3777db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cargo Ship": {
@@ -41042,12 +41042,12 @@
     },
     "Cathars' Crusade": {
       "edhrec_rank": 556,
-      "gate": "template",
+      "gate": null,
       "name": "Cathars' Crusade",
-      "reason": "no template for: Whenever a creature you control enters, put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "3ebdc35c-019d-41d9-aff7-b317246aefb1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Catharsis": {
@@ -43162,12 +43162,12 @@
     },
     "Champion of Wits": {
       "edhrec_rank": 7065,
-      "gate": "template",
+      "gate": null,
       "name": "Champion of Wits",
-      "reason": "no template for: When this creature enters, you may draw cards equal to its power. If you do, discard two c",
+      "reason": "",
       "scryfall_id": "cf76d414-9424-4fd5-a1ff-2ff345ad6b0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Champion of the Clachan": {
@@ -45512,12 +45512,12 @@
     },
     "Chivalric Alliance": {
       "edhrec_rank": 3003,
-      "gate": "template",
+      "gate": null,
       "name": "Chivalric Alliance",
-      "reason": "no template for: Whenever you attack with two or more creatures, draw a card",
+      "reason": "",
       "scryfall_id": "853adaa2-184f-460d-856c-bdb989bade61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Chlorophant": {
@@ -58942,12 +58942,12 @@
     },
     "Cut a Deal": {
       "edhrec_rank": 1018,
-      "gate": "template",
+      "gate": null,
       "name": "Cut a Deal",
-      "reason": "no template for: Each opponent draws a card, then you draw a card for each opponent who drew a card this wa",
+      "reason": "",
       "scryfall_id": "088388a6-1cc3-4782-91af-504e70f40a97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cut of the Profits": {
@@ -67262,12 +67262,12 @@
     },
     "Detective of the Month": {
       "edhrec_rank": 6453,
-      "gate": "template",
+      "gate": null,
       "name": "Detective of the Month",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "9bf37b66-1f00-4887-924d-35afdea72e83",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Detective's Phoenix": {
@@ -80412,12 +80412,12 @@
     },
     "Elesh Norn, Grand Cenobite": {
       "edhrec_rank": 845,
-      "gate": "template",
+      "gate": null,
       "name": "Elesh Norn, Grand Cenobite",
-      "reason": "no template for: Other creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "05c000fe-726f-4236-9317-c9dfeba4fb66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Elesh Norn, Mother of Machines": {
@@ -82782,12 +82782,12 @@
     },
     "Emrakul's Messenger": {
       "edhrec_rank": 2600,
-      "gate": "template",
+      "gate": null,
       "name": "Emrakul's Messenger",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 0/1 colorless Eldrazi Spawn creatur",
+      "reason": "",
       "scryfall_id": "f0f818d7-320c-47b9-a083-40007f3d91ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Emrakul, the Aeons Torn": {
@@ -85502,12 +85502,12 @@
     },
     "Esper Sentinel": {
       "edhrec_rank": 77,
-      "gate": "template",
+      "gate": null,
       "name": "Esper Sentinel",
-      "reason": "no template for: Whenever an opponent casts their first noncreature spell each turn, draw a card unless tha",
+      "reason": "",
       "scryfall_id": "8b5a916f-a6f2-4e89-b38f-7e5bc0c2e032",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Esper Sojourners": {
@@ -89302,12 +89302,12 @@
     },
     "Faerie Artisans": {
       "edhrec_rank": 4846,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Artisans",
-      "reason": "no template for: Whenever a nontoken creature an opponent controls enters, create a token that's a copy of ",
+      "reason": "",
       "scryfall_id": "6c8cefaa-d005-4b9c-a2b0-90ed97f3157f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Faerie Bladecrafter": {
@@ -96902,12 +96902,12 @@
     },
     "Flawless Maneuver": {
       "edhrec_rank": 181,
-      "gate": "template",
+      "gate": null,
       "name": "Flawless Maneuver",
-      "reason": "no template for: If you control a commander, you may cast this spell without paying its mana cost",
+      "reason": "",
       "scryfall_id": "1c4d0743-0f3b-492e-82a5-725dc6d3b582",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Flaxen Intruder // Welcome Home": {
@@ -97772,12 +97772,12 @@
     },
     "Floodfarm Verge": {
       "edhrec_rank": 667,
-      "gate": "template",
+      "gate": null,
       "name": "Floodfarm Verge",
-      "reason": "no template for: {T}: Add {U}. Activate only if you control a Plains or an Island",
+      "reason": "",
       "scryfall_id": "025152a1-4fdf-4e4e-a792-c540dd43fccd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Floodgate": {
@@ -108592,12 +108592,12 @@
     },
     "Gilded Lotus": {
       "edhrec_rank": 412,
-      "gate": "template",
+      "gate": null,
       "name": "Gilded Lotus",
-      "reason": "proxy simplified it: mana clause read loosely: 'three mana of any one color'",
+      "reason": "",
       "scryfall_id": "28e619e6-ecc1-49c3-8fa9-ce42becdb9ba",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gilded Pinions": {
@@ -125602,12 +125602,12 @@
     },
     "Hermes, Overseer of Elpis": {
       "edhrec_rank": 3719,
-      "gate": "template",
+      "gate": null,
       "name": "Hermes, Overseer of Elpis",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 blue Bird creature token with flying a",
+      "reason": "",
       "scryfall_id": "e04a05e5-7bff-46a4-aae1-6713977e6e30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hermetic Study": {
@@ -159902,12 +159902,12 @@
     },
     "Loran of the Third Path": {
       "edhrec_rank": 350,
-      "gate": "template",
+      "gate": null,
       "name": "Loran of the Third Path",
-      "reason": "no template for: When Loran enters, destroy up to one target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "450ec0a6-839b-4a35-a79b-ae358408a17c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Loran's Escape": {
@@ -161582,12 +161582,12 @@
     },
     "Luminarch Ascension": {
       "edhrec_rank": 3265,
-      "gate": "template",
+      "gate": null,
       "name": "Luminarch Ascension",
-      "reason": "no template for: At the beginning of each opponent's end step, if you didn't lose life this turn, you may p",
+      "reason": "",
       "scryfall_id": "b3770d86-4496-4c06-aab1-2917cfec100e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Luminarch Aspirant": {
@@ -164332,12 +164332,12 @@
     },
     "Makindi Stampede // Makindi Mesas": {
       "edhrec_rank": 8464,
-      "gate": "template",
+      "gate": null,
       "name": "Makindi Stampede // Makindi Mesas",
-      "reason": "no template for: Creatures you control get +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "ada9a974-8f1f-4148-bd61-200fc14714b2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Malach of the Dawn": {
@@ -165342,12 +165342,12 @@
     },
     "Mangara, the Diplomat": {
       "edhrec_rank": 612,
-      "gate": "template",
+      "gate": null,
       "name": "Mangara, the Diplomat",
-      "reason": "no template for: Whenever an opponent attacks with creatures, if two or more of those creatures are attacki",
+      "reason": "",
       "scryfall_id": "49d0d7ec-4bee-47d3-91a6-43510be65402",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Manglehorn": {
@@ -172122,12 +172122,12 @@
     },
     "Minas Tirith": {
       "edhrec_rank": 424,
-      "gate": "template",
+      "gate": null,
       "name": "Minas Tirith",
-      "reason": "no template for: {1}{W}, {T}: Draw a card. Activate only if you attacked with two or more creatures this tu",
+      "reason": "",
       "scryfall_id": "638c45e2-91d0-4ced-8bf7-64b2817b281a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Minas Tirith Garrison": {
@@ -174162,12 +174162,12 @@
     },
     "Mischievous Mystic": {
       "edhrec_rank": 2983,
-      "gate": "template",
+      "gate": null,
       "name": "Mischievous Mystic",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 blue Faerie creature token with",
+      "reason": "",
       "scryfall_id": "20d89cec-528b-4b2a-87db-e11ce0000622",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mischievous Poltergeist": {
@@ -176712,12 +176712,12 @@
     },
     "Monastery Mentor": {
       "edhrec_rank": 1574,
-      "gate": "template",
+      "gate": null,
       "name": "Monastery Mentor",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 white Monk creature token with prowess",
+      "reason": "",
       "scryfall_id": "75665c2f-a100-4e3f-be8e-b5cc3c9a090b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Monastery Messenger": {
@@ -177492,12 +177492,12 @@
     },
     "Moonshaker Cavalry": {
       "edhrec_rank": 1228,
-      "gate": "template",
+      "gate": null,
       "name": "Moonshaker Cavalry",
-      "reason": "no template for: When this creature enters, creatures you control gain flying and get +X/+X until end of tu",
+      "reason": "",
       "scryfall_id": "ca90d382-7e13-4637-a624-2a1b82abe56c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Moonsilver Key": {
@@ -181322,12 +181322,12 @@
     },
     "Nadir Kraken": {
       "edhrec_rank": 2612,
-      "gate": "template",
+      "gate": null,
       "name": "Nadir Kraken",
-      "reason": "no template for: Whenever you draw a card, you may pay {1}. If you do, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "be7b276f-2351-4f56-a104-13e3ec3f0890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nadu, Winged Wisdom": {
@@ -185932,12 +185932,12 @@
     },
     "Nimbus Maze": {
       "edhrec_rank": 1841,
-      "gate": "template",
+      "gate": null,
       "name": "Nimbus Maze",
-      "reason": "no template for: {T}: Add {W}. Activate only if you control an Island",
+      "reason": "",
       "scryfall_id": "711dbdb1-7ec3-4fb4-8364-d34f5e143fd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nimbus Naiad": {
@@ -198172,12 +198172,12 @@
     },
     "Perch Protection": {
       "edhrec_rank": 2371,
-      "gate": "template",
+      "gate": null,
       "name": "Perch Protection",
-      "reason": "no template for: Gift an extra turn",
+      "reason": "",
       "scryfall_id": "1f81d6ea-9a76-43b9-b030-d40c5cfbeefe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Peregrin Took": {
@@ -235532,12 +235532,12 @@
     },
     "Sea Gate Restoration // Sea Gate, Reborn": {
       "edhrec_rank": 670,
-      "gate": "template",
+      "gate": null,
       "name": "Sea Gate Restoration // Sea Gate, Reborn",
-      "reason": "no template for: Draw cards equal to the number of cards in your hand plus one. You have no maximum hand si",
+      "reason": "",
       "scryfall_id": "193071fe-180b-4d35-ba78-9c16675c29fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sea Gate Stormcaller": {
@@ -236572,12 +236572,12 @@
     },
     "Secret Rendezvous": {
       "edhrec_rank": 1145,
-      "gate": "template",
+      "gate": null,
       "name": "Secret Rendezvous",
-      "reason": "no template for: You and target opponent each draw three cards",
+      "reason": "",
       "scryfall_id": "187f9ede-0f30-4f37-bf4a-dc78cbf81c9e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Secret Salvage": {
@@ -243262,12 +243262,12 @@
     },
     "Shorikai, Genesis Engine": {
       "edhrec_rank": 2301,
-      "gate": "template",
+      "gate": null,
       "name": "Shorikai, Genesis Engine",
-      "reason": "no template for: {1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token",
+      "reason": "",
       "scryfall_id": "04fe475d-5f84-41e5-b2b3-10005dce74f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Short Bow": {
@@ -244162,12 +244162,12 @@
     },
     "Sicarian Infiltrator": {
       "edhrec_rank": 6718,
-      "gate": "template",
+      "gate": null,
       "name": "Sicarian Infiltrator",
-      "reason": "no template for: Squad {2}",
+      "reason": "",
       "scryfall_id": "8e4ad023-6672-4f6f-838a-7f923ef44a80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sick and Tired": {
@@ -252042,12 +252042,12 @@
     },
     "Sokenzan, Crucible of Defiance": {
       "edhrec_rank": 977,
-      "gate": "template",
+      "gate": null,
       "name": "Sokenzan, Crucible of Defiance",
-      "reason": "no template for: Channel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They",
+      "reason": "",
       "scryfall_id": "327333cc-2cc9-44ba-a0e6-d01329c416a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sokka and Suki": {
@@ -269502,12 +269502,12 @@
     },
     "Swan Song": {
       "edhrec_rank": 70,
-      "gate": "template",
+      "gate": null,
       "name": "Swan Song",
-      "reason": "no template for: Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue B",
+      "reason": "",
       "scryfall_id": "83d0b761-d694-4232-9f40-5bd8c82a05f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Swans of Bryn Argoll": {
@@ -273492,12 +273492,12 @@
     },
     "Tataru Taru": {
       "edhrec_rank": 1239,
-      "gate": "template",
+      "gate": null,
       "name": "Tataru Taru",
-      "reason": "no template for: When enters, you draw a card and target opponent may draw a card",
+      "reason": "",
       "scryfall_id": "545c98b3-dc78-4070-8dcb-f6a246abce09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tato Farmer": {
@@ -278072,12 +278072,12 @@
     },
     "The Council of Four": {
       "edhrec_rank": 2145,
-      "gate": "template",
+      "gate": null,
       "name": "The Council of Four",
-      "reason": "no template for: Whenever a player draws their second card during their turn, you draw a card",
+      "reason": "",
       "scryfall_id": "0873cfa8-046c-4b14-ae22-3fd6a691f763",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Creation of Avacyn": {
@@ -279822,12 +279822,12 @@
     },
     "The Queen of Dale": {
       "edhrec_rank": 16779,
-      "gate": "template",
+      "gate": null,
       "name": "The Queen of Dale",
-      "reason": "no template for: Whenever an opponent casts their first noncreature spell each turn, you recruit",
+      "reason": "",
       "scryfall_id": "4cff1878-3f23-4a0a-ad79-28a44921cca8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Rack": {
@@ -280392,12 +280392,12 @@
     },
     "The Theorist, Jace Beleren": {
       "edhrec_rank": 22385,
-      "gate": "template",
+      "gate": null,
       "name": "The Theorist, Jace Beleren",
-      "reason": "no template for: At the beginning of each opponent's draw step, you draw a card",
+      "reason": "",
       "scryfall_id": "20bb8c55-4b0b-425f-8201-b54fa2fdde86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Thing": {
@@ -281552,12 +281552,12 @@
     },
     "Thopter Fabricator": {
       "edhrec_rank": 4427,
-      "gate": "template",
+      "gate": null,
       "name": "Thopter Fabricator",
-      "reason": "no template for: Whenever you draw your second card each turn, create a 1/1 colorless Thopter artifact crea",
+      "reason": "",
       "scryfall_id": "1dd26a5a-ca58-4cb6-b599-7c84d601dc07",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Thopter Foundry": {
@@ -291092,12 +291092,12 @@
     },
     "Trouble in Pairs": {
       "edhrec_rank": 630,
-      "gate": "template",
+      "gate": null,
       "name": "Trouble in Pairs",
-      "reason": "no template for: If an opponent would begin an extra turn, that player skips that turn instead",
+      "reason": "",
       "scryfall_id": "3f631a24-4d71-400c-a58d-ae91e193db2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Troubled Healer": {
@@ -297402,12 +297402,12 @@
     },
     "Urza's Saga": {
       "edhrec_rank": 120,
-      "gate": "template",
+      "gate": null,
       "name": "Urza's Saga",
-      "reason": "no template for: I — This Saga gains \"{T}: Add {C}.\"",
+      "reason": "",
       "scryfall_id": "3ec5d76d-58c0-4525-be90-b37f4a97e14c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Urza's Sylex": {
@@ -297562,12 +297562,12 @@
     },
     "Uthros, Titanic Godcore": {
       "edhrec_rank": 1435,
-      "gate": "template",
+      "gate": null,
       "name": "Uthros, Titanic Godcore",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "11da39d6-cfa6-498d-91b1-11454cc7e5a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Utility Knife": {
@@ -304332,12 +304332,12 @@
     },
     "Voice of Victory": {
       "edhrec_rank": 554,
-      "gate": "template",
+      "gate": null,
       "name": "Voice of Victory",
-      "reason": "no template for: Mobilize 2",
+      "reason": "",
       "scryfall_id": "233ce7c0-85bb-4875-8750-5f3287979201",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Voice of the Blessed": {
@@ -313092,12 +313092,12 @@
     },
     "Will of the Mardu": {
       "edhrec_rank": 2361,
-      "gate": "template",
+      "gate": null,
       "name": "Will of the Mardu",
-      "reason": "no template for: Choose one. If you control a commander as you cast this spell, you may choose both instead",
+      "reason": "",
       "scryfall_id": "26f6b519-20ff-4255-926d-5caee6c572d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Will of the Naga": {
@@ -314642,12 +314642,12 @@
     },
     "Witch Enchanter // Witch-Blessed Meadow": {
       "edhrec_rank": 307,
-      "gate": "template",
+      "gate": null,
       "name": "Witch Enchanter // Witch-Blessed Meadow",
-      "reason": "no template for: When this creature enters, destroy target artifact or enchantment an opponent controls",
+      "reason": "",
       "scryfall_id": "b7ba7d7e-c285-4e99-9ee1-135bf343677d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Witch Engine": {

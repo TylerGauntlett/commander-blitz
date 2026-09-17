@@ -54,6 +54,80 @@ def _attacking_player(ctx: EffectContext, spec: Mapping[str, Any], fallback) -> 
     return named[0]
 
 
+def _aim_at_planeswalker(ctx: EffectContext, spec: Mapping[str, Any], oids, defender: int | None):
+    """"…tapped and attacking that player **or a planeswalker they control**."
+
+    ``or_planeswalker: true`` beside ``attacking``. Rule 508.4: a creature put
+    onto the battlefield attacking was never declared, so it is the creature's
+    **controller** who chooses what it attacks, as it enters -- and the printed
+    sentence narrows that choice to the named seat or one of that seat's
+    planeswalkers (Adeline, Resplendent Cathar; Myriad). Without the key the
+    token can only ever attack the seat, which on a board where the walker is
+    the reason to attack is a narrower card than the printed one: attacking
+    somebody's planeswalker is not attacking them (506.2), and this repo draws
+    that line everywhere else.
+
+    Asked through `ask_targets` with ``purpose="attack"`` -- a player ref and
+    object refs in one list is exactly what that helper already poses, and every
+    seat that answers a `CHOOSE_OBJECTS` (the heuristic agent, the RL encoder,
+    the client dialog, the authoring verifier) answers this with no change. No
+    new `DecisionKind` for the reason Fact or Fiction needed none.
+
+    The choice is recorded the way a declared attack at a walker is
+    (`combat.add_attacker(planeswalker=...)`): ``attackers[oid]`` stays the
+    defending player, and ``attacking_planeswalker[oid]`` names the walker, so
+    damage assignment (508.1 / 506.4c) and every reader of either map see it.
+
+    Made a moment **after** the token arrives rather than as it does, the trade
+    `op_choose_type` documents: zone changes apply enter-replacements
+    synchronously and cannot stop to ask. Nothing can act in between -- the op
+    has not returned -- so the difference is not observable.
+
+    One question per creature, because 508.4 is per creature: three tokens (a
+    doubled Adeline) may split between the player and two walkers. With no
+    planeswalker there is nothing to choose and nothing is asked. Restrictions
+    on *declaring* (Ghostly Prison, `cant_attack_player`) are not consulted:
+    nothing is being declared, which is 508.4 again.
+    """
+    combat = ctx.state.combat
+    if not spec.get("or_planeswalker") or defender is None or combat is None:
+        return
+    from ..characteristics import chars
+    from ..structs import TargetRef
+    from .context import ask_targets
+
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield or combat.attackers.get(oid) != defender:
+            continue
+        walkers = [
+            pw
+            for pw in ctx.state.battlefield
+            if (pw_obj := ctx.state.objects.get(pw)) is not None
+            and pw_obj.controller == defender
+            and pw != oid
+            and "Planeswalker" in chars(ctx.state, pw).types
+        ]
+        if not walkers:
+            continue
+        seat = ctx.state.players[defender].name or f"Player {defender}"
+        refs = [(seat, TargetRef.player(defender))]
+        refs.extend((ctx.name_of(pw), TargetRef.obj(pw)) for pw in walkers)
+        picked = yield from ask_targets(
+            ctx,
+            f"{ctx.name_of(oid)} attacks {seat} or a planeswalker they control",
+            refs,
+            1,
+            1,
+            obj.controller,
+            purpose="attack",
+        )
+        if picked and picked[0].kind == "object":
+            combat.attacking_planeswalker[oid] = picked[0].id
+        else:
+            combat.attacking_planeswalker.pop(oid, None)
+
+
 def _offer_blocks_to(ctx: EffectContext, defender: int) -> None:
     """Make sure a newly attacked player still gets to declare blockers.
 

@@ -1,0 +1,41 @@
+{
+  "card": {
+    "id": "chivalric_alliance",
+    "name": "Chivalric Alliance",
+    "oracle_text": "Whenever you attack with two or more creatures, draw a card.\n{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance.",
+    "mana_cost": "{1}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you attack with two or more creatures, draw a card.",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"binding": "attackers"}},
+            "right": {"const": 2}
+          }
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, Discard a card: Create a 2/2 white and blue Knight creature token with vigilance.",
+        "cost": {"mana": "{2}", "discard": 1},
+        "effects": [
+          {"op": "create_token", "token": "knight_2_2_wu_vigilance", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

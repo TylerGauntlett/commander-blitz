@@ -70,10 +70,15 @@ class GameBuilder:
         tapped: bool = False,
         sick: bool = False,
         counters: dict[str, int] | None = None,
+        level: int = 1,
     ) -> GameBuilder:
         for card_id in card_ids:
             obj = new_object(self.state, card_id, owner=pid, zone=Zone.BATTLEFIELD)
             obj.tapped = tapped
+            # A Class part-way up its ladder (716), the way `counters=` stands a
+            # Saga part-way through its story. Placed, not bought: no level
+            # ability resolves and nothing that watches for a level fires.
+            obj.class_level = level
             # Permanents start having been controlled since before this turn, so
             # creatures can attack unless a test explicitly asks for sickness.
             obj.entered_turn = self.state.turn if sick else self.state.turn - 1

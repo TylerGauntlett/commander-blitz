@@ -1,0 +1,92 @@
+{
+  "_comment": "Cards that exist only for the becomes-level trigger tests (tests/unit/test_becomes_level_trigger.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_caretakers_talent` is Caretaker's Talent line for line, under a test id so authoring the real card later is not blocked by it. `t_level_watcher` prints a level-2 and a level-3 'becomes' trigger, so a test can see each fire exactly once and on its own rung.",
+  "cards": [
+    {
+      "id": "t_caretakers_talent",
+      "name": "Test Caretaker's Talent",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhenever one or more tokens you control enter, draw a card. This ability triggers only once each turn.\n{W}: Level 2\nWhen this Class becomes level 2, create a token that's a copy of target token you control.\n{3}{W}: Level 3\nCreature tokens you control get +2/+2.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Class"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more tokens you control enter, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": { "is_token": true },
+            "batched": true,
+            "max_per_turn": 1
+          },
+          "effects": [{ "op": "draw", "player": "you", "amount": { "const": 1 } }]
+        },
+        {
+          "kind": "level",
+          "text": "{W}: Level 2",
+          "level": 2,
+          "cost": { "mana": "{W}" }
+        },
+        {
+          "kind": "triggered",
+          "text": "When this Class becomes level 2, create a token that's a copy of target token you control.",
+          "level": 2,
+          "trigger": { "event": "becomes_level", "level": 2 },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": { "controller": "you", "is_token": true }
+            }
+          ],
+          "effects": [{ "op": "copy_permanent", "objects": { "target": "t1" } }]
+        },
+        {
+          "kind": "level",
+          "text": "{3}{W}: Level 3",
+          "level": 3,
+          "cost": { "mana": "{3}{W}" }
+        },
+        {
+          "kind": "static",
+          "text": "Creature tokens you control get +2/+2.",
+          "level": 3,
+          "effect": "buff",
+          "affects": { "controller": "you", "types": ["Creature"], "is_token": true },
+          "power": { "const": 2 },
+          "toughness": { "const": 2 }
+        }
+      ]
+    },
+    {
+      "id": "t_level_watcher",
+      "name": "Test Level Watcher",
+      "oracle_text": "{W}: Level 2\nWhen this Class becomes level 2, you gain 2 life.\n{W}: Level 3\nWhen this Class becomes level 3, you gain 3 life.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Class"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        { "kind": "level", "text": "{W}: Level 2", "level": 2, "cost": { "mana": "{W}" } },
+        {
+          "kind": "triggered",
+          "text": "When this Class becomes level 2, you gain 2 life.",
+          "level": 2,
+          "trigger": { "event": "becomes_level", "level": 2 },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 2 } }]
+        },
+        { "kind": "level", "text": "{W}: Level 3", "level": 3, "cost": { "mana": "{W}" } },
+        {
+          "kind": "triggered",
+          "text": "When this Class becomes level 3, you gain 3 life.",
+          "level": 3,
+          "trigger": { "event": "becomes_level", "level": 3 },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 3 } }]
+        }
+      ]
+    }
+  ]
+}

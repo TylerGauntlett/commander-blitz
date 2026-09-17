@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "flawless_maneuver",
+    "name": "Flawless Maneuver",
+    "oracle_text": "If you control a commander, you may cast this spell without paying its mana cost.\nCreatures you control gain indestructible until end of turn.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "alternative_cost": {
+      "mana": "{0}",
+      "condition": {
+        "exists": {
+          "zone": "battlefield",
+          "controller": "you",
+          "is_commander": true
+        }
+      }
+    },
+    "spell_effects": [
+      {
+        "op": "grant_keyword",
+        "keywords": [
+          "indestructible"
+        ],
+        "duration": "until_end_of_turn",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "count": "all"
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "granted": {
+      "keywords": [
+        "indestructible"
+      ],
+      "count": 2
+    },
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

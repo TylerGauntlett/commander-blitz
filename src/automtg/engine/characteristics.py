@@ -175,6 +175,24 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # which is also what the printing says: it loses its card types and
             # is not told to lose its creature types.
             types = set(retyped)
+        if added_types := obj.copy_overrides.get("add_types"):
+            # "…except it's an artifact **in addition to its other types**."
+            # Faerie Artisans. The addition beside `types`' replacement, and the
+            # printing decides again: a copied Enchantment Creature stays both.
+            types.update(added_types)
+        if added_supers := obj.copy_overrides.get("add_supertypes"):
+            # "…except it's legendary." Adagia, Windswept Bastion. Unioned onto
+            # the copied card's supertypes, so the legend rule -- which reads
+            # this, not the printed card -- applies to the token.
+            supertypes.update(added_supers)
+        # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The
+        # base size, before every layer, so counters and anthems land on top of
+        # the 4/4 exactly as they would on a printed one (707.9b: the exception
+        # becomes the copiable value).
+        if (base_power := obj.copy_overrides.get("power")) is not None:
+            power = int(base_power)
+        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
+            toughness = int(base_toughness)
 
     # Layer 3, text-changing effects (613.1c): "replacing all instances of one
     # creature type with Vampire". New Blood.
@@ -443,6 +461,12 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
                 static = ability.static if ability.is_static else None
                 if not static or static.get("effect") not in ABILITY_STATICS:
                     continue
+                # A Class's level-3 "loses all abilities" or "have …" is not
+                # there at level 2 (716.2b). Read off the printed face for the
+                # regress this function's callers document, so the level gate
+                # `present_printed_abilities` applies has to be applied here too.
+                if not ability.present_at(obj.class_level):
+                    continue
                 if _static_active(state, obj, static):
                     out.append((obj, static))
         state.ability_static_cache = out
@@ -487,6 +511,73 @@ def printed_abilities(state: GameState, obj: GameObject) -> tuple[Ability, ...]:
     return tuple(apply_to_ability(ability, obj.text_changes) for ability in printed)
 
 
+def threshold_met(obj: GameObject, ability: Ability) -> bool:
+    """Has this object the counters a station symbol asks for? (721)
+
+    "As long as this permanent has N or more charge counters on it, it has
+    [abilities]." Anywhere but the battlefield nothing is a permanent and a
+    card carries no counters, so the answer there is no -- a Planet in hand
+    has only its unstriated abilities, which is also what it prints.
+    """
+    if ability.threshold is None:
+        return True
+    if not obj.on_battlefield:
+        return False
+    counter, at_least = ability.threshold
+    return obj.counter(counter) >= at_least
+
+
+def present_printed_abilities(
+    obj: GameObject, printed: tuple[Ability, ...]
+) -> tuple[Ability, ...]:
+    """The printed abilities this object actually has, with both gates applied.
+
+    Two printed conditions on *having* an ability rather than on using it, and
+    one function for both because every reader of `abilities_of` has to agree
+    about them. The ability that fails either is **absent**, not refused: it is
+    not offered, not a mana source for the payment solver, not collected as a
+    trigger, not applied as a static, not listed for the client and not the
+    AI's to consider. Refusing it in `legality` alone -- `condition`'s shape --
+    would leave it a mana source, since the solver never asks legality.
+
+    Indices must keep meaning what they printed (`Action.ability_index`,
+    `StackItem.ability_index`, the per-turn trigger cap and the once-each-turn
+    ledger all address an ability by position), and the two gates keep that
+    promise in two ways:
+
+    - **A Class level (716.2b-c)** swaps each ability printed above the
+      object's level for its :meth:`Ability.latent` stand-in *at the same
+      seat*. A Class interleaves its level lines with its gated abilities, so
+      nothing could be dropped without renumbering the lines after it. Applied
+      in every zone: a leaves-the-battlefield trigger is collected off the
+      object after it has left (603.10a), and `GameObject.class_level` still
+      holds the level it left at.
+    - **A station threshold (721)** drops the ability. The loader holds those to
+      the end of the list and to rising order, so below its number the list only
+      ever loses a tail.
+
+    The seat-keeping pass runs first, so it never changes the length the
+    tail-dropping pass relies on.
+
+    **Not** `stack.ability_of`'s list, and that is deliberate: an ability on the
+    stack resolves whatever happens to its source (113.7a), so resolution reads
+    `printed_abilities`.
+
+    The same tuple back, untouched, for a card with neither -- every card but a
+    Class or a Planet -- at the cost of one level check per ability and one
+    attribute read.
+    """
+    level = obj.class_level
+    if not all(ability.present_at(level) for ability in printed):
+        printed = tuple(
+            ability if ability.present_at(level) else ability.latent() for ability in printed
+        )
+    if not printed or printed[-1].threshold is None:
+        return printed
+    present = tuple(ability for ability in printed if threshold_met(obj, ability))
+    return printed if len(present) == len(printed) else present
+
+
 def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     """The abilities a permanent **actually has**, printed ones included.
 
@@ -499,8 +590,9 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     still does something.
 
     So this is the one function that answers the question, and every one of
-    those readers now asks it. Off the battlefield it is the printed list
-    unchanged, which is every card in hand, on the stack and in a graveyard.
+    those readers now asks it. Off the battlefield it is the printed list with
+    only the gates of `present_printed_abilities` applied, which for every card
+    in hand, on the stack and in a graveyard is the printed list.
 
     **Indices are stable and meaningful.** `Action.ability_index`,
     `StackItem.ability_index` and the RL action space all address an ability by
@@ -516,11 +608,11 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
         # 707.2, and the same early return `_compute` makes: a face-down
         # permanent is a 2/2 with no abilities, whatever is underneath it.
         return ()
-    printed = printed_abilities(state, obj)
+    printed = present_printed_abilities(obj, printed_abilities(state, obj))
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
-    if not statics:
+    if not statics and not _has_op_grants(obj):
         return printed
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
@@ -548,7 +640,7 @@ def _derived_abilities(
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
     """
-    printed = printed_abilities(state, obj)
+    printed = present_printed_abilities(obj, printed_abilities(state, obj))
     out: list[tuple[Ability, tuple[int, int] | None]] = []
     if not any(
         static.get("effect") == "lose_all_abilities"
@@ -565,6 +657,61 @@ def _derived_abilities(
         index = int(static.get("ability", 0))
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
+    out.extend(_op_granted_activated(state, obj))
+    return out
+
+
+def _has_op_grants(obj: GameObject) -> bool:
+    """Is anything on this permanent a one-shot ``grant_ability`` record?
+
+    The cheap half of `_op_granted_activated`, asked on `abilities_of`'s fast
+    path: almost no permanent carries one, and those that do must not be
+    answered with the printed list.
+    """
+    return any(
+        temp.kind == "ability" for temp in (*obj.until_eot, *obj.granted_abilities_permanent)
+    )
+
+
+def _op_granted_activated(
+    state: GameState, obj: GameObject
+) -> list[tuple[Ability, tuple[int, int]]]:
+    """The **activated** abilities the `grant_ability` *op* has handed this permanent.
+
+    Urza's Saga: "I — This Saga gains "{T}: Add {C}."" and "II — This Saga gains
+    "{2}, {T}: Create a … Construct …"". A chapter resolves once and the gain
+    outlives it, so the grant is a record on the permanent (`primitives.
+    grant_ability`), not a static recomputed from a granter's "as long as".
+
+    Until this, that record was read by exactly one reader -- `triggers`, through
+    `primitives.granted_abilities` -- so an op-granted *activated* ability was
+    held and never offered: legality, the payment solver and `game._activate`
+    all read `abilities_of`, and `abilities_of` only knew the static grants.
+    Appended here with the same provenance a static grant carries, so an
+    activation can tell `stack.ability_of` where the definition lives (608.2).
+
+    **Activated only.** An op-granted *triggered* ability is already yielded by
+    `triggers.collect` off the record itself; listing it here too would fire it
+    twice. And the loader refuses an op-granted static.
+
+    Read off the two live lists and never off ``left_with``: that is a departure
+    snapshot for leave-the-battlefield triggers, and the whole point of 400.7 is
+    that the object which comes back has none of it.
+    """
+    out: list[tuple[Ability, tuple[int, int]]] = []
+    for temp in (*obj.until_eot, *obj.granted_abilities_permanent):
+        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        granter = state.objects.get(temp.source)
+        if granter is None:
+            continue
+        pool = state.card_of(granter).grantable_abilities
+        if not 0 <= temp.ability_index < len(pool):
+            continue
+        ability = pool[temp.ability_index]
+        if not ability.is_activated:
+            continue
+        out.append((ability, (granter.oid, temp.ability_index)))
     return out
 
 
@@ -588,7 +735,7 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
     if obj.face_down:
         return None
     statics = _ability_statics(state)
-    if not statics:
+    if not statics and not _has_op_grants(obj):
         return None
     derived = _derived_abilities(state, obj, statics)
     if 0 <= index < len(derived):
@@ -1168,6 +1315,14 @@ def _matches_printed(
     name = selector.get("name")
     if name is not None and card.name != name:
         return False
+    # "…with mana cost {0} or {1}." The printed cost, symbol for symbol -- see
+    # `mana.printed_cost_is`. As printed as a name, so no layer can move it.
+    wanted_cost = selector.get("mana_cost")
+    if wanted_cost is not None:
+        from .mana import printed_cost_is
+
+        if not printed_cost_is(card.mana_cost, wanted_cost):
+            return False
     return True
 
 
@@ -1306,6 +1461,33 @@ def prevented_damage(state: GameState, oid: int) -> int:
     total = 0
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "prevent_damage":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
+def crew_power_bonus(state: GameState, oid: int) -> int:
+    """How much greater this creature's power counts **while crewing** -- 702.122.
+
+    "This token crews Vehicles as though its power were 2 greater." Not a
+    characteristic, and that is the whole design: a `buff` would make the Pilot
+    a 3/1 that attacks for three, and the printed token is a 1/1 everywhere
+    except inside the one sum a crew cost takes. So this sits beside
+    `prevented_damage` -- a static whose output one *other* rule asks for, read
+    off the battlefield at the moment that rule runs -- and its one reader is
+    `costs._crew_power`.
+
+    Summed over every applicable static, so a creature granted a second one
+    counts both.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "crew_power_bonus":
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
@@ -1550,6 +1732,7 @@ from .player_statics import (  # noqa: F401
     graveyard_cast_permissions,
     library_top_cast_permission,
     life_loss_multiplier,
+    player_cant_cast_spells,
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,
@@ -1558,6 +1741,7 @@ from .player_statics import (  # noqa: F401
     player_plays_lands_from_library_top,
     player_reveals_library_top,
     player_skips_draw_step,
+    player_skips_extra_turn,
     players_doubling_land_triggers,
     players_freezing_opponent_lands,
     printed_token_matches,

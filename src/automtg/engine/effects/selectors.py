@@ -105,6 +105,23 @@ SELECTOR_KEYS = frozenset(
         "not_keywords",
         "tapped",
         "attacking",
+        #: "Whenever an opponent attacks **you** with two or more creatures" --
+        #: Trouble in Pairs. A creature attacking this player *itself*, and not
+        #: one of their planeswalkers: 506.2/508.1b make the player and each
+        #: planeswalker they control separate things to attack, so a creature
+        #: sent at your planeswalker is not attacking you.
+        #:
+        #: `attacking` is the near miss and has no notion of whom. The
+        #: `attackers` binding of `creatures_attack_player` with `defending:
+        #: "you"` is the other one and is deliberately wider: `combat.attackers`
+        #: records the defending *player* for a planeswalker attack too, which
+        #: is exactly Mangara, the Diplomat's "attacking you and/or planeswalkers
+        #: you control" and one creature too many for Trouble in Pairs. This key
+        #: narrows that binding (or any pool) by also reading
+        #: `combat.attacking_planeswalker`. `"you"`, `"opponent"` or `"any"`
+        #: (some player, never a planeswalker), relative to the ability's
+        #: controller.
+        "attacking_player",
         #: "Untap all creatures that **attacked this turn**" -- Relentless
         #: Assault, Aggravated Assault, Seize the Day. Not `attacking`, which is
         #: live combat state and is false for everything by the time these
@@ -136,6 +153,13 @@ SELECTOR_KEYS = frozenset(
         #: is restricted to W/U/B/R/G, so it cannot filter a pool and has no
         #: spelling for X.
         "x_in_mana_cost",
+        #: "Search your library for an artifact card **with mana cost {0} or
+        #: {1}**" -- Urza's Saga. A list of printed costs, any of which matches,
+        #: compared symbol for symbol (`mana.printed_cost_is`). `mana_value`
+        #: cannot say it: an artifact land has no mana cost and mana value 0, and
+        #: `{X}` scores 0 too, so `mana_value <= 1` finds both and the printed
+        #: card finds neither.
+        "mana_cost",
         "exclude_self",
         #: "each **other** attacking creature" -- exclude whichever object a
         #: trigger bound under this name.  `exclude_self` cannot do it: it
@@ -226,6 +250,13 @@ SELECTOR_KEYS = frozenset(
         # *this* source put there, read back by its own leaves-trigger.
         "exiled_with",
         "phased_out_with",
+        #: "…exile all other tokens **created with this creature**" -- Faerie
+        #: Artisans. The tokens this object's own effects created, read off the
+        #: source's `created_tokens`; `"self"` is the only spelling. Scoped to
+        #: this *object*, so tokens a previous incarnation made (400.7) and
+        #: tokens another permanent made are not in it. "Other" is
+        #: `exclude_binding` over the `as` the creating op wrote.
+        "created_with",
         # "…dealt damage by this creature this turn." A trigger filter rather
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
@@ -673,6 +704,14 @@ def matches(
         want = ctx.source_oid if who == "self" else who
         if obj.exiled_by is None or obj.exiled_by != want:
             return False
+    if "created_with" in selector:
+        # "…tokens created with this creature" -- the ones this object's
+        # effects made, and no others. `is_token` plus `controller: "you"` is
+        # the reachable approximation and it is a different card: it exiles
+        # every Treasure, Clue and Soldier its controller has.
+        creator = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        if creator is None or oid not in creator.created_tokens:
+            return False
     if "phased_out_with" in selector:
         # "…until this enchantment leaves the battlefield" -- the permanents
         # *this* card phased out, and no others. The phasing twin of
@@ -698,6 +737,10 @@ def matches(
     combat = state.combat
     if "attacking" in selector and bool(combat and combat.attacking(oid)) != bool(
         selector["attacking"]
+    ):
+        return False
+    if (who := selector.get("attacking_player")) is not None and not attacking_player_matches(
+        combat, oid, str(who), ctx.controller
     ):
         return False
     if "blocked" in selector:
@@ -747,8 +790,57 @@ def matches(
         card.mana_cost.x_count > 0
     ) is not bool(want):
         return False
+    if (want := selector.get("mana_cost")) is not None and not has_printed_cost(ctx.state, oid, want):
+        return False
 
     return True
+
+
+#: What `attacking_player` may name, relative to the ability's controller.
+ATTACKING_PLAYER_WORDS = ("you", "opponent", "any")
+
+
+def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -> bool:
+    """Is ``oid`` attacking a **player** -- the one ``who`` names -- rather than a
+    planeswalker that player controls?
+
+    506.2 gives an attacking creature one of three things to attack: a player, a
+    planeswalker, or a battle. `combat.attackers[oid]` is the defending *player*
+    in the first two cases (`add_attacker` refuses a walker whose controller
+    disagrees), which is right for "attacks you or a planeswalker you control"
+    and one creature too many for "attacks you". `attacking_planeswalker` is
+    the record that tells them apart. Battles are not attackable in this engine;
+    when they are, their record belongs beside this one.
+
+    Shared by `matches` and `triggers.matches_card_filter`, so the effect and
+    trigger halves of the filter language cannot disagree about it.
+    """
+    if combat is None or not combat.attacking(oid) or oid in combat.attacking_planeswalker:
+        return False
+    defender = combat.attackers[oid]
+    if who == "you":
+        return defender == controller
+    if who == "opponent":
+        return defender != controller
+    return True
+
+
+def has_printed_cost(state, oid: int, wanted) -> bool:
+    """Does this object's printed mana cost equal one of ``wanted``?
+
+    Read off `card_of`, so a split half or an Adventure answers for the face in
+    play. An object a copy effect gave "no mana cost" (embalm, eternalize) has
+    none, whatever the card it copies prints -- the same override `mana_value_of`
+    honours.
+    """
+    from ..mana import printed_cost_is
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+        return False
+    return printed_cost_is(state.card_of(obj).mana_cost, wanted)
 
 
 def _compare(value: int, spec: Any, ctx: EffectContext) -> bool:
@@ -1090,6 +1182,10 @@ def validate_selector(selector: Any, where: str) -> None:
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
+    if "created_with" in selector and selector["created_with"] != "self":
+        # A card can only name itself as the creator; any other value would
+        # load and then silently match no token at all.
+        raise DslError(f"{where}: created_with must be 'self', got {selector['created_with']!r}")
     chooser = selector.get("chooser")
     if chooser is not None and chooser not in ("controller", "owner", "none"):
         # Anything else is an ordinary player spec -- "each opponent chooses a
@@ -1126,6 +1222,19 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
             f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"
         )
+    # A bare `true` is the tempting spelling -- it is how `attacking` is written
+    # -- and it would name nobody: the key is *which* player, and a boolean read
+    # as a word matches no branch, so every creature would silently fail it.
+    who = selector.get("attacking_player")
+    if who is not None and (not isinstance(who, str) or who not in ATTACKING_PLAYER_WORDS):
+        raise DslError(
+            f"{where}: 'attacking_player' names whom the creature attacks -- one of "
+            f"{list(ATTACKING_PLAYER_WORDS)}; use 'attacking' for true/false"
+        )
+    if "mana_cost" in selector:
+        from ..mana import validate_printed_cost_list
+
+        validate_printed_cost_list(selector["mana_cost"], where)
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):
         raise DslError(f"{where}: unknown count {count!r}; use 'all', 'any' or a value")

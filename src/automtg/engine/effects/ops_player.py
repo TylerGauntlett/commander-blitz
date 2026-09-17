@@ -107,3 +107,55 @@ def op_win_game(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
 
     for pid in select_players(ctx, spec.get("player", "you")):
         declare_win(ctx.state, pid)
+
+
+@register("extra_turn")
+def op_extra_turn(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "Take an extra turn after this one" (500.7). Time Warp, Perch Protection.
+
+    Takes the usual **player spec**, defaulting to ``"you"``. The spec is not a
+    nicety: Perch Protection's gift is "they take an extra turn after this one",
+    written ``{"op": "extra_turn", "player": "gift_recipient"}`` -- which, like
+    Parting Gust's Fish, schedules nothing at all when no promise was made,
+    because the spec resolves to nobody.
+
+    Only schedules. The turn is pushed onto `GameState.extra_turns` and
+    `turn._begin_next_turn` takes it when the current turn ends, so the op is
+    correct from wherever it resolves -- a sorcery in your main phase, or an
+    instant on somebody else's turn, whose extra turn still comes directly after
+    *that* turn. Whether the turn then happens at all is decided there, not here:
+    a skip is a replacement on the turn beginning (614.10), and Trouble in Pairs
+    arriving between the two must still catch it.
+
+    Several players named are added one at a time in APNAP order, the most
+    recently added taken first -- 500.7 word for word, so in a pod "each player
+    takes an extra turn" runs in reverse turn order from the active player.
+    """
+    state = ctx.state
+    named = set(select_players(ctx, spec.get("player", "you")))
+    for pid in state.turn_order():
+        if pid in named:
+            state.extra_turns.append(pid)
+
+
+@register("no_maximum_hand_size")
+def op_no_maximum_hand_size(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "You have no maximum hand size for the rest of the game." (402.2)
+
+    Sea Gate Restoration, Finale of Revelation's X-is-10 branch, Ancient Silver
+    Dragon. The printed static ``no_hand_limit`` already says the same words,
+    and could not carry these cards: it exists only while a permanent printing
+    it is on the battlefield, and a sorcery never is. This is the one-shot
+    that outlives its source -- it sets `PlayerState.has_no_maximum_hand_size`,
+    one-way, and `player_statics.player_has_no_hand_limit` reads that flag
+    beside the statics, so the cleanup step (514.1) asks one question either
+    way.
+
+    Takes the usual **player spec**, defaulting to ``"you"``. Named for the
+    lifetime it has, which is the whole game: "until your next turn" (Enter the
+    Infinite) is a different, *ending* effect and the loader refuses a
+    ``duration`` here rather than reading it as this.
+    """
+    for pid in select_players(ctx, spec.get("player", "you")):
+        ctx.state.players[pid].has_no_maximum_hand_size = True
+

@@ -323,6 +323,64 @@ class ManaCost:
         return self.text or "{0}"
 
 
+def _printed_shape(cost: ManaCost) -> tuple:
+    """What a printed cost *is*, with the spelling of it thrown away.
+
+    Every symbol counted and nothing summed across kinds: ``{C}`` is a coloured
+    slot and not generic, ``{2/W}`` and ``{W/P}`` are hybrid pips and not the
+    generic or white they can be paid with, and ``{X}`` is its own count. So
+    ``{1}`` equals only a cost of one generic symbol.
+    """
+    hybrid: dict[HybridPip, int] = {}
+    for pip in cost.hybrid:
+        hybrid[pip] = hybrid.get(pip, 0) + 1
+    return (cost.generic, cost.colored, cost.x_count, frozenset(hybrid.items()))
+
+
+def _wanted_shape(text: str) -> tuple:
+    return _printed_shape(ManaCost.parse("".join(text.split())))
+
+
+def printed_cost_is(cost: ManaCost, wanted: Iterable[str]) -> bool:
+    """ "An artifact card with **mana cost {0} or {1}**" -- Urza's Saga.
+
+    The printed cost, compared symbol for symbol against each of ``wanted``.
+    Not `mana_value`, which is a number read off the cost and cannot say it:
+
+    - a card with **no mana cost** (202.1b -- an artifact land, Lotus Bloom) has
+      mana value 0 and does not have mana cost {0}, so it never matches here;
+    - ``{X}`` scores 0 (202.3b) and ``{X}`` is not ``{0}``;
+    - ``{W}``, ``{C}``, ``{W/P}`` and ``{2/W}`` are each mana value 1 or 2 and
+      none of them is ``{1}``.
+    """
+    if not cost.text:
+        return False
+    shape = _printed_shape(cost)
+    return any(_wanted_shape(w) == shape for w in wanted)
+
+
+def validate_printed_cost_list(value: object, where: str) -> None:
+    """Load-time check for a ``mana_cost`` filter clause: a list of costs.
+
+    A bare string is refused rather than wrapped: iterated, ``"{1}"`` is three
+    characters, and a list is what "{0} or {1}" is. An empty string would name
+    "no mana cost", which this clause exists to never match -- written, it is a
+    filter that silently matches nothing.
+    """
+    if isinstance(value, str) or not isinstance(value, (list, tuple)) or not value:
+        raise DslError(
+            f"{where}: 'mana_cost' is a non-empty list of printed costs, "
+            f'e.g. ["{{0}}", "{{1}}"], got {value!r}'
+        )
+    for entry in value:
+        if not isinstance(entry, str) or not "".join(entry.split()):
+            raise DslError(
+                f"{where}: 'mana_cost' entries are printed costs like \"{{1}}\"; "
+                f"a card with no mana cost never matches, got {entry!r}"
+            )
+        _wanted_shape(entry)  # raises DslError on an unparsable cost
+
+
 def _parse_hybrid(sym: str, text: str) -> HybridPip:
     """``"W/U"``, ``"2/W"`` or ``"W/P"`` -> a :class:`HybridPip`.
 

@@ -106,6 +106,12 @@ STATIC_EFFECTS = frozenset(
         # `skip_untap`, not a continuous effect, so a shared `step:` parameter
         # would still not have carried it.
         "skip_draw_step",
+        # "If an opponent would begin an extra turn, that player skips that turn
+        # instead." Trouble in Pairs. Player-wide, and a *replacement*: read by
+        # `turn._take_extra_turn` as a scheduled extra turn would begin (614.10),
+        # never at scheduling time, so a turn queued before the permanent arrived
+        # is still skipped. Only extra turns -- the ordinary order has no reader.
+        "skip_extra_turn",
         "play_lands_from_graveyard",
         # "Once during each of your turns, you may cast an artifact spell from
         # your graveyard." Edgar, Master Machinist. Player-wide like
@@ -145,6 +151,14 @@ STATIC_EFFECTS = frozenset(
         # keyword -- and *not* protection, which prevents all of it and three
         # other things besides. Read by `damage_permanent` alone.
         "prevent_damage",
+        # "This creature crews Vehicles as though its power were 2 greater." --
+        # Hotshot Mechanic, and the Pilot token Shorikai, Reckoner Bankbuster
+        # and a dozen others make. Parameterised on N, so a static and not a
+        # keyword -- and *not* `buff`, which changes the creature's real power:
+        # the Pilot stays a 1/1 in combat, for `power_of`, and for every other
+        # sum on the board. Read by `costs._crew_power` alone, the one sum a
+        # crew cost takes, and by nothing in the characteristics pipeline.
+        "crew_power_bonus",
         # Ancient Greenwarden.  A fact about the *player*, like the two above:
         # it is read by `triggers.collect` rather than by the characteristics
         # pipeline, and there is no object for it to attach to.
@@ -249,6 +263,23 @@ STATIC_EFFECTS = frozenset(
         # and by the life-loss half of `primitives.damage_player`, which are
         # the two places a player's life goes down.
         "replace_life_loss",
+        # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
+        # would draw a card, draw two cards instead", optionally "except the
+        # first one you draw in each of your draw steps".  Read by
+        # `replacements.draw`, which every draw after the opening hand goes
+        # through one card at a time -- the only place a draw can still be
+        # replaced; a `draw` trigger fires after the card is in hand and would
+        # add a card alongside rather than instead.
+        "replace_draw",
+        # Voice of Victory.  "Your opponents can't cast spells during your
+        # turn."  A prohibition on a *player*, so it takes `affects_player` and
+        # no `affects`, and it is read wherever a spell can be cast rather than
+        # by the characteristics pipeline: `casting._cast_actions` withholds the
+        # actions, and `suspend.cast_for_free`, `replacements._offer_cast` and
+        # `op_cast_copy` refuse the casts a resolving effect would make (101.2).
+        # Not `split_second`, which lives on the stack and binds every player,
+        # and not `epic`, which is a card-level rider with no seat or duration.
+        "cant_cast_spells",
     }
 )
 
@@ -264,6 +295,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "extra_land_drops",
         "no_hand_limit",
         "skip_draw_step",
+        "skip_extra_turn",
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
@@ -274,6 +306,8 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "double_land_mana",
         "freeze_opponent_lands",
         "replace_life_loss",
+        "replace_draw",
+        "cant_cast_spells",
     }
 )
 
@@ -362,6 +396,8 @@ SPELL_FILTER_KEYS = frozenset(
         "keywords",
         "not_keywords",
         "name",
+        # "…spells with mana cost {X}". Printed, so `_matches_printed` reads it.
+        "mana_cost",
     }
 )
 
@@ -384,6 +420,9 @@ STATIC_FILTER_KEYS = frozenset(
         # negated form, which the effect-side selector language always had
         # and the static one did not.
         "not_keywords",
+        # "…with mana cost {0} or {1}". The printed cost, which no layer moves,
+        # so it is as safe here as `types` is. See `mana.printed_cost_is`.
+        "mana_cost",
         "tapped",
         "is_commander",
         # "Commander creatures you **own**."  903.3 makes ownership the relation
@@ -596,6 +635,8 @@ STATIC_ZONE_FILTER_KEYS = frozenset(
         "colors",
         "keywords",
         "not_keywords",
+        # A card in a graveyard has a printed cost, too.
+        "mana_cost",
     }
 )
 

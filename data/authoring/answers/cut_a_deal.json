@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "cut_a_deal",
+    "name": "Cut a Deal",
+    "oracle_text": "Each opponent draws a card, then you draw a card for each opponent who drew a card this way.",
+    "mana_cost": "{2}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {"op": "draw", "player": "each_opponent", "amount": {"const": 1}, "as": "drew"},
+      {"op": "for_each_player", "players": {"binding": "drew"}, "effects": [
+        {"op": "draw", "player": "you", "amount": {"const": 1}}
+      ]}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "library_size": {"0": 39, "1": 19},
+    "hand_size": {"0": 2}
+  }
+}

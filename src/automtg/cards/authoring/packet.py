@@ -75,6 +75,9 @@ CARD_LEVEL_COST_KEYS = (
     "pay_generic_with",  # str; convoke and its relatives
     "retrace",  # bool
     "splice",
+    #: "This spell costs {1}{W} more to cast for each target beyond the first";
+    #: needs exactly one target spec, with count "any".
+    "strive",
     "suspend",
 )
 
@@ -128,6 +131,11 @@ CARD_LEVEL_RIDER_KEYS = (
     "melds_with",  # the other half of a meld pair
     "melds_into",  # what the pair becomes
 )
+
+
+#: Spelled out because a token is printed in words ("a 2/2 blue Drake") and the
+#: worker is matching printed text against `_token_ids`, not colour codes.
+_COLOR_WORDS = {"W": "white", "U": "blue", "B": "black", "R": "red", "G": "green"}
 
 
 def packets_dir() -> Path:
@@ -331,6 +339,43 @@ def _walk_effects(node: object):
 
 
 
+def _token_ids() -> dict[str, str]:
+    """Every token id `create_token` may name, with what it puts on the board.
+
+    Not a convenience. `loader.validate_token_references` refuses a card whose
+    `create_token` names an id that does not exist or is not a token, and that
+    check runs inside the authoring gates -- so a worker guessing `drake_2_2_u`
+    for "create a 2/2 blue Drake creature token" writes a card that cannot load.
+    Shown nothing, a worker has exactly two moves and both are wrong: invent an
+    id, or file a gap record against `create_token`, which has shipped since the
+    first Saproling.
+
+    The value is the token as printed, because the id alone does not settle the
+    question the worker is actually asking -- whether the token the card wants
+    already exists. `beast_4_4_w_alone` and `knight_2_2_w_vigilance` are the
+    cases: two ids differing from a near neighbour by one printed word.
+    """
+    out: dict[str, str] = {}
+    for entry in _pool_cards():
+        if not entry.get("is_token"):
+            continue
+        bits: list[str] = []
+        power, toughness = entry.get("power"), entry.get("toughness")
+        if power is not None and toughness is not None:
+            bits.append(f"{power}/{toughness}")
+        bits.extend(_COLOR_WORDS.get(c, c) for c in entry.get("colors") or ())
+        if not entry.get("colors"):
+            bits.append("colorless")
+        bits.extend(entry.get("subtypes") or ())
+        bits.extend(t.lower() for t in entry.get("types") or ())
+        if entry.get("keywords"):
+            bits.append("with " + " and ".join(entry["keywords"]))
+        if entry.get("abilities"):
+            bits.append(f'-- {entry["abilities"][0].get("text", "")}')
+        out[str(entry["id"])] = " ".join(bits)
+    return out
+
+
 def _required_keys() -> dict:
     """Which fields each nested model REFUSES to be built without.
 
@@ -485,9 +530,24 @@ def reference() -> dict:
         # missing capability against a reference that named no such field,
         # while `exiles_itself` had shipped with Teferi's Protection.
         "card_level_rider_keys": list(CARD_LEVEL_RIDER_KEYS),
+        # Which tokens exist. `create_token` names a token by id and
+        # `validate_token_references` refuses an id that is not one, so a worker
+        # shown `create_token`'s options but never the ids can only guess -- and
+        # a guessed id is a card that does not load. See _token_ids.
+        "token_ids": _token_ids(),
         "expectation_keys": list(EXPECTATION_KEYS),
         "notes": [
             "A card either uses vocabulary in these lists or it fails to load.",
+            "`token_ids` is every token `create_token` may name, and it is a"
+            " CLOSED list: an id that is not in it does not load, so do not"
+            " invent one from the printed words. Match the printed token"
+            " against the descriptions -- \"create a 1/1 white Human Soldier"
+            " creature token\" is `human_soldier_1_1_w`. If the token your card"
+            " prints is genuinely not there, that IS a gap record, with"
+            " `kind: \"token\"` and the printed token in `what` -- it is a data"
+            " change somebody makes in one line, and it is the cheapest gap in"
+            " this whole pipeline to close. Do not substitute a token that is"
+            " nearly right: a 2/2 Knight with vigilance is not a 2/2 Knight.",
             "`op_options` is what each op may carry beside its `op` name, and"
             " `ability_keys` is what an entry in `abilities` may have. Read both"
             " before concluding a line cannot be said: `copy_spell` takes"
@@ -505,8 +565,13 @@ def reference() -> dict:
             "`trigger_keys` is what a trigger object may carry beside `event`,"
             " and it is where a printed rate limit lives: `max_per_turn: 1` is"
             " \"whenever you cast your FIRST ... each turn\" and \"this"
-            " ability triggers only once each turn\", and `nth` is \"your"
-            " second card each turn\". A trigger's FILTER keys go inside"
+            " ability triggers only once each turn\" (a cap per permanent, so"
+            " never \"an opponent casts THEIR first ... each turn\"), and"
+            " `nth` is \"your second card each turn\" on a `draw` trigger and"
+            " \"a player casts their Nth spell each turn\" on a `spell_cast`"
+            " trigger -- counted per caster, and over the spells matching the"
+            " trigger's `filter` when it has one (\"their first noncreature"
+            " spell\"). A trigger's FILTER keys go inside"
             " `filter`, never on the trigger itself.",
             "`target_keys` is what a card-level or ability `targets` entry may"
             " carry, and `ability_kinds` is the closed vocabulary of an"
@@ -516,6 +581,19 @@ def reference() -> dict:
             " refuses it on any other -- it is in `ability_keys` because it is"
             " a real field, and writing it on a triggered ability is a gate-2"
             " rejection.",
+            "A **Class** (\"(Gain the next level as a sorcery to add its"
+            " ability.)\") is `subtypes: [\"Class\"]` plus two spellings of"
+            " `level`. A printed \"{W}: Level 2\" line is"
+            " `{\"kind\": \"level\", \"level\": 2, \"text\": \"{W}: Level 2\","
+            " \"cost\": {\"mana\": \"{W}\"}}` and nothing else -- the sorcery"
+            " timing, the \"only from level 1\" restriction and the effect are"
+            " rule 716.2a and the compiler supplies them. Every ability printed"
+            " BELOW that line, up to the next level line, carries `\"level\": 2`"
+            " whatever its kind; the abilities above the first level line carry"
+            " no `level`. The reminder line needs no ability. \"When this"
+            " Class becomes level 2, ...\" is a triggered ability with"
+            " `\"level\": 2` and `trigger: {\"event\": \"becomes_level\","
+            " \"level\": 2}`.",
             "`required_keys` is the subset of each of those lists that is NOT"
             " optional -- every ability needs a `kind`, every target an `id`"
             " and a `kind`, every trigger an `event`. A spec missing one fails"
@@ -541,10 +619,48 @@ def reference() -> dict:
             " over. Either way the other half is an ordinary card entry in the"
             " same pool, and your packet's `back_face` block carries its printed"
             " text -- write it as a second entry, do not file a gap.",
+            "A `tap_permanents` cost may carry `as`, naming THE one permanent it"
+            " tapped so the ability's effects can read it: Station (\"Tap another"
+            " creature you control: Put charge counters equal to its power on"
+            " this Planet\") is `{\"tap_permanents\": {\"types\": [\"Creature\"],"
+            " \"exclude_self\": true, \"as\": \"stationed\"}}` with"
+            " `sorcery_speed_only` and an `add_counters` whose amount is"
+            " `{\"power_of\": {\"binding\": \"stationed\"}}`. Never a `count`"
+            " above 1 or a `total_power` beside it.",
+            "A station striation -- \"12+ | {U}, {T}: Add {U} for each artifact"
+            " you control.\" -- is an activated ability with `threshold:"
+            " {\"counter\": \"charge\", \"at_least\": 12}` whose `text` is the"
+            " whole printed line, prefix included. The permanent HAS it only at"
+            " that many counters. Activated abilities only; gated abilities go"
+            " after every ungated one, in rising order. Not `condition`, which"
+            " leaves the ability on the permanent.",
             "`condition_keys` and `value_keys` are what an `if` can ask and what"
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
             " against `{\"const\": 0}` and needs no new op.",
+            "\"Your opponents can't cast spells during your turn\" is the"
+            " player-wide static `cant_cast_spells` with `affects_player:"
+            " \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops"
+            " every spell from every zone, free casts included, and takes no"
+            " spell filter: \"can't cast creature spells\", \"from anywhere"
+            " other than their hands\" and \"more than one spell each turn\""
+            " are still gaps, and so is \"can't activate abilities\".",
+            "\"If you would draw a card, draw two cards instead\" is the"
+            " player-wide static `replace_draw` with `affects_player: \"you\"`"
+            " and `draw_multiplier: 2`; \"...except the first one you draw in"
+            " each of your draw steps\" adds `except_first_in_draw_step: true`."
+            " It is a real replacement of each draw, so it is NOT a `draw`"
+            " trigger that draws an extra card. \"Skip your draw step\" is"
+            " `skip_draw_step`, and a replacement that does something other"
+            " than draw more cards (\"exile the top card instead\") is still a"
+            " gap.",
+            "\"Crew N\" is an activated ability whose `cost` is `tap_permanents`"
+            " with `total_power: N`. \"This creature crews Vehicles as though"
+            " its power were 2 greater\" is the static `crew_power_bonus` with"
+            " `affects: {\"self_only\": true}` and `amount: {\"const\": 2}` --"
+            " not `buff`, which changes real power. The Pilot token printing"
+            " that line is `pilot_1_1_c_crew2`; a Pilot that also \"saddles"
+            " Mounts\" is a different token and is still a gap.",
             "`static_condition_keys` is what a static ability's optional"
             " `condition` may ask -- an \"as long as ...\" clause that switches"
             " the whole static on and off as the board moves. It is a third"
@@ -564,6 +680,16 @@ def reference() -> dict:
             " set a *static ability* may read, because a static may only read"
             " printed characteristics -- do not mistake it for the whole"
             " selector language.",
+            "A selector's `controller` (and `player`, for a zone somebody owns)"
+            " takes a player spec as well as \"you\"/\"opponent\"/\"any\"."
+            " `{\"target\": \"t1\"}` there means EVERY player target t1 chose, so"
+            " \"the number of creatures those opponents control\" after \"choose"
+            " any number of target opponents\" is `{\"count\": {\"types\":"
+            " [\"Creature\"], \"controller\": {\"target\": \"t1\"}}}` -- and"
+            " \"creatures they control\" after one target player is the same"
+            " clause. Targets that became illegal are dropped on resolution."
+            " `controller: \"opponent\"` is NOT it: that counts every opponent,"
+            " targeted or not.",
             "\"This spell/ability costs {N} less\" is `cost_reduction` on the"
             " card, or `mana_reduction` on an activated ability's `cost` or a"
             " `flashback` node. It takes exactly one of `cost_reduction_keys`"
@@ -608,7 +734,33 @@ def reference() -> dict:
             " an ability with `active_zones: [\"hand\"]`. `exile_self` is a"
             " different cost: it is \"Exile this artifact\" and requires the"
             " source to be on the battlefield.",
+            "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add"
+            " {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is"
+            " written once under the card's `grantable_abilities` and handed"
+            " over by index. A one-shot gain is the `grant_ability` op --"
+            " `duration: \"permanent\"` when no duration is printed, and"
+            " `objects: {\"self_only\": true}` for \"this Saga gains\" -- and"
+            " it may grant a triggered or an activated ability, mana or not."
+            " \"As long as ...\" / \"have ...\" is the `grant_ability` static,"
+            " which may also grant a static. A granted activated ability works"
+            " on the battlefield only.",
             "A static ability's filter may only read printed characteristics.",
+            "\"If one or more tokens would be created under your control, twice"
+            " that many of those tokens are created instead\" (Parallel Lives,"
+            " Anointed Procession, Doubling Season's token half) is a"
+            " `replace_token_creation` static with `token_multiplier: 2` and no"
+            " `create_instead` -- the tokens keep their identity, so copies stay"
+            " copies. `create_instead` is the OTHER axis (which token is made"
+            " instead) and a static takes one or the other. \"Creature tokens\""
+            " is an `affects_token` filter; a sentence naming no player (\"if one"
+            " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"…tapped and attacking that player or a planeswalker they control\""
+            " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
+            " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"
+            " `or_planeswalker: true`, on `create_token`, `copy_permanent` or"
+            " `put_onto_battlefield`. The creature's controller then chooses the"
+            " seat or one of its planeswalkers (508.4). Without the key the token"
+            " can only attack the player, which is a narrower card.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",
             "A mana ability's MANA half may contain only `add_mana`, or one"
