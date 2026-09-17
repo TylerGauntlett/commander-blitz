@@ -9268,6 +9268,10 @@
   "vodalian_soldiers": {
     "zone": "battlefield"
   },
+  "voice_of_victory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "voiceless_spirit": {
     "zone": "battlefield"
   },

@@ -102131,6 +102131,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "mobilized",
+              "attacking": true,
+              "op": "create_token",
+              "tapped": true,
+              "token": "warrior_1_1_r"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "mobilized",
+                    "count": "all"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice them at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Mobilize 2 (Whenever this creature attacks, create two tapped and attacking 1/1 red Warrior creature tokens. Sacrifice them at the beginning of the next end step.)",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cant_cast_spells",
+          "kind": "static",
+          "text": "Your opponents can't cast spells during your turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "voice_of_victory",
+      "mana_cost": "{1}{W}",
+      "name": "Voice of Victory",
+      "oracle_text": "Mobilize 2 (Whenever this creature attacks, create two tapped and attacking 1/1 red Warrior creature tokens. Sacrifice them at the beginning of the next end step.)\nYour opponents can't cast spells during your turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Bard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

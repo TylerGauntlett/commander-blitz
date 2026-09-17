@@ -304332,12 +304332,12 @@
     },
     "Voice of Victory": {
       "edhrec_rank": 554,
-      "gate": "template",
+      "gate": null,
       "name": "Voice of Victory",
-      "reason": "no template for: Mobilize 2",
+      "reason": "",
       "scryfall_id": "233ce7c0-85bb-4875-8750-5f3287979201",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Voice of the Blessed": {
