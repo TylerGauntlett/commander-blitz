@@ -12499,3 +12499,39 @@ three-player table the caster is asked, opponents only, and exactly the chosen
 seat draws; a fizzled spell hands out nothing; a copy of the cheap cast draws
 again and a copy of the printed cast does not; and the loader still refuses the
 rider without the cost and the cost without the rider.
+
+## `from_colors_outside_commander_identity` — protection from each colour your commander lacks — 903.4
+
+### Overview
+
+Commander's Plate: "Equipped creature gets +3/+3 and has protection from each
+color that's not in your commander's color identity. Equip commander {3}. Equip
+{5}". Everything but the protection was already expressible — `buff` on
+`{"attached": true}`, and two equip lines, one whose target selector adds
+`is_commander`. The protection static took colours only as a printed list, and
+the set here is the five colours *minus* the commanders' identity of whoever
+controls the Plate, which is a different list in every deck.
+
+### The shape
+
+- `AbilityModel.from_colors_outside_commander_identity` (bool), carried onto the
+  compiled static. The loader counts it as protection's quality, refuses it
+  beside `from_colors` and on any effect but `protection`.
+- `characteristics.commander_color_identity(state, pid)` — the union of the
+  printed `color_identity` of a player's commanders, wherever they are, as colour
+  letters.
+- `characteristics.protection_from` adds `WUBRG - commander_color_identity(state,
+  source.controller)` for a static carrying the flag. Computed at read time, so
+  a change of control of the Equipment changes the set; the four rules that read
+  protection (damage, enchant/equip, block, target) needed nothing.
+- No commander, or a colourless one: protection from all five (903.4).
+
+### Guarded by
+
+`tests/unit/test_protection_from_colors_outside_commander_identity.py`: mono-black
+leaves the other four, partners union, no commander and a colourless commander
+are all five, the +3/+3; nothing while unequipped; the commander's zone does not
+matter; the Plate's controller decides (handing it over changes the set, stealing
+the creature does not) and an opponent's commander is not yours; a red spell
+cannot target the equipped creature while a black one can; Equip commander
+reaches only the commander and Equip {5} reaches both; and the loader refusals.

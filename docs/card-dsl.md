@@ -9430,6 +9430,27 @@ let you target your own protected creature.
 A `protection` static that names no quality is rejected at load time; it would
 load, look implemented, and protect from nothing.
 
+**Protection from the colours outside your commander's identity.** Commander's
+Plate — "Equipped creature gets +3/+3 and has protection from each color that's
+not in your commander's color identity" — names a colour set no printed list can,
+so it is a flag in place of `from_colors`:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "attached": true },
+  "from_colors_outside_commander_identity": true }
+```
+
+`protection_from` computes it each time it is read: `W U B R G` minus the printed
+`color_identity` of every commander of the **static's controller** — "your" is
+whoever controls the Plate, so it follows the Equipment when it changes hands and
+does not move when the equipped creature does. Partners are a union; the
+commander's zone does not matter, because identity is printed (903.4). A player
+with no commander, or a colourless one, gets protection from all five. The flag
+counts as the static's quality, is refused beside `from_colors` (it is already the
+whole colour set) and on any effect but `protection`. The +3/+3 is an ordinary
+`buff` static on `{"attached": true}`, and "Equip commander {3}" is an equip line
+whose target selector adds `"is_commander": true`.
+
 ### Absorb, which is not protection with a number
 
 ```jsonc

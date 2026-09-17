@@ -498,6 +498,13 @@ class AbilityModel(BaseModel):
     from_types: list[str] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
     from_colors: list[str] = Field(default_factory=list)
+    #: "Protection from each color that's not in your commander's color
+    #: identity" -- Commander's Plate. A colour set no printed list can name,
+    #: because it is the five colours minus a set read off the *controller's*
+    #: commanders, and it moves when the Equipment changes hands. Computed where
+    #: protection is read (`characteristics.protection_from`); no commander at
+    #: all is protection from all five (903.4).
+    from_colors_outside_commander_identity: bool = False
     #: ``set_colors``: the colours that *replace* the printed ones. The empty
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not

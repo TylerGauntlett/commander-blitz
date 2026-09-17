@@ -2302,12 +2302,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     qualities = [*model.from_types, *model.from_subtypes, *model.from_colors]
+    if model.from_colors_outside_commander_identity:
+        # A quality, and the loudest kind of one: it is up to five colours.
+        qualities.append("outside commander identity")
     if model.effect == "protection":
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
         # exists to stop.
         if not qualities:
-            raise DslError(f"{where}: protection needs from_types/from_subtypes/from_colors")
+            raise DslError(
+                f"{where}: protection needs from_types/from_subtypes/from_colors/"
+                f"from_colors_outside_commander_identity"
+            )
+        if model.from_colors_outside_commander_identity and model.from_colors:
+            # The computed set already covers every colour the commander lacks,
+            # and a printed colour *inside* the identity is a second sentence no
+            # card prints. Written together, one of the two is dead weight or a
+            # silent widening, and nothing on the board would say which.
+            raise DslError(
+                f"{where}: 'from_colors_outside_commander_identity' is the whole "
+                f"colour set; do not also list 'from_colors'"
+            )
         for t in model.from_types:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
@@ -2315,7 +2330,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown color {c!r} in from_colors")
     elif qualities:
-        raise DslError(f"{where}: from_types/from_subtypes/from_colors need effect 'protection'")
+        raise DslError(
+            f"{where}: from_types/from_subtypes/from_colors/"
+            f"from_colors_outside_commander_identity need effect 'protection'"
+        )
 
     _validate_static_condition(model.condition, f"{where}.condition")
 
@@ -2365,6 +2383,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         value = getattr(model, field_name)
         if value:
             static[field_name] = list(value)
+    if model.from_colors_outside_commander_identity:
+        static["from_colors_outside_commander_identity"] = True
     if model.blockers is not None:
         static["blockers"] = dict(model.blockers)
     if model.require_all:
