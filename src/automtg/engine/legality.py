@@ -712,11 +712,11 @@ def _ability_aims(
         # available, instead of being offered at X = 0 and copying it for free.
         and ability.cost.x_value is None
     ):
-        from .costs import mana_sources
+        from .costs import mana_sources, most_life_for_mana
 
         if (
             max_affordable_x(
-                ability.cost.mana,
+                most_life_for_mana(state, pid, ability.cost, oid),
                 state.players[pid].mana_pool,
                 mana_sources(state, pid, purpose=purpose),
             )

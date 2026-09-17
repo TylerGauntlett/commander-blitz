@@ -298,6 +298,18 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "no_hand_limit")
 
 
+def player_pays_life_for_black(state: GameState, pid: int) -> bool:
+    """Whether every ``{B}`` in a cost this player pays may be paid with 2 life.
+
+    K'rrik, Son of Yawgmoth: "For each {B} in a cost, you may pay 2 life rather
+    than pay that mana." A fact about the *payer*, read wherever a cost is
+    priced -- the cast line in `casting._cast_variant` and `Game._cast`, and
+    every other cost through `costs.can_pay` / `costs.pay` -- by turning each
+    black pip into a Phyrexian one with `ManaCost.black_as_phyrexian`.
+    """
+    return _player_static(state, pid, "black_mana_as_phyrexian")
+
+
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
     """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
 

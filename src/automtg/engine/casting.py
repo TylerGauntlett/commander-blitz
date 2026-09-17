@@ -18,6 +18,7 @@ from .costs import (
 )
 from .enums import ActionKind, Keyword, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
+from .player_statics import player_pays_life_for_black
 from .primitives import sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
@@ -1058,6 +1059,13 @@ def _cast_variant(
     # by `Game._cast` alongside it. One line per number of pips bought, which
     # is two for the whole printed cycle and three for Thundering Tanadon.
     printed = cost
+    if player_pays_life_for_black(state, pid):
+        # K'rrik: "For each {B} in a cost, you may pay 2 life rather than pay
+        # that mana." The same choice the Phyrexian line already carries, so it
+        # is made the same way -- each black pip becomes a `{B/P}` before the
+        # lines are counted, and one line per number bought falls out below.
+        # `Game._cast` makes the identical conversion before it charges.
+        printed = printed.black_as_phyrexian()
     out: list[Action] = []
     for phyrexian in range(printed.phyrexian_count + 1):
         cost, phyrexian_life = printed.paying_phyrexian(phyrexian)

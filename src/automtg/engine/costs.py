@@ -9,6 +9,7 @@ may need a choice, so :func:`pay` is a generator.
 from __future__ import annotations
 
 from collections.abc import Generator, Sequence
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Ability, CardDef, Cost
@@ -18,7 +19,7 @@ from .characteristics import (
     mana_added_on_tap,
     player_doubles_land_mana,
 )
-from .effects.context import EffectContext, ask_objects
+from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.selectors import resolve_pool
 from .enums import COLORLESS, Keyword, Zone
 from .errors import DslError
@@ -707,6 +708,16 @@ def can_pay_mana(
     extra_generic: int = 0,
     purpose: SpendPurpose | None = None,
 ) -> bool:
+    if payable_mana(state, pid, cost).phyrexian_count:
+        # A special action's mana (suspend, foretell) is paid through `pay`,
+        # which may buy Phyrexian pips -- and K'rrik's black ones -- with life,
+        # so the offer has to count them the same way.
+        return (
+            life_for_mana_range(
+                state, pid, Cost(mana=cost), None, x=x, extra_generic=extra_generic, purpose=purpose
+            )
+            is not None
+        )
     req = cost.with_x(x)
     if extra_generic:
         req = req.with_generic(req.generic + extra_generic)
@@ -803,6 +814,93 @@ def life_cost(state: GameState, pid: int, cost: Cost, source_oid: int | None) ->
 
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     return max(0, int(evaluate_value(ctx, spec)))
+
+
+def payable_mana(state: GameState, pid: int, mana: ManaCost) -> ManaCost:
+    """``mana`` as this player may pay it: K'rrik's black pips made Phyrexian.
+
+    "For each {B} in a cost, you may pay 2 life rather than pay that mana."
+    Every cost path that prices mana reads it through here or through the
+    identical conversion on the cast line, so a pip offered as buyable with life
+    is a pip charged that way.
+    """
+    from .player_statics import player_pays_life_for_black
+
+    # Cheap test first: this is asked of every cost legality prices, and most
+    # have no black in them at all -- the battlefield walk is for the rest.
+    if not (mana.colored[SYMBOL_INDEX["B"]] or mana.hybrid):
+        return mana
+    if player_pays_life_for_black(state, pid):
+        return mana.black_as_phyrexian()
+    return mana
+
+
+def _life_budget(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> int:
+    """How much life is left over for Phyrexian pips once the cost's own
+    "pay N life" is set aside. 118.4 lets the whole of it go; a locked life
+    total (Teferi's Protection) lets none of it go, because paying life is
+    losing it."""
+    if life_locked(state, pid):
+        return 0
+    return max(0, state.players[pid].life - life_cost(state, pid, cost, source_oid))
+
+
+def life_for_mana_range(
+    state: GameState,
+    pid: int,
+    cost: Cost,
+    source_oid: int | None,
+    *,
+    x: int = 0,
+    extra_generic: int = 0,
+    purpose: SpendPurpose | None = None,
+) -> tuple[ManaCost, int, int] | None:
+    """How many of this cost's Phyrexian pips may be paid with life, or ``None``.
+
+    Returns ``(mana, fewest, most)``: the cost's mana as this player pays it
+    (:func:`payable_mana`), the fewest pips that must go the life way for the
+    rest to be payable with the mana on hand, and the most the life total can
+    buy. ``None`` when no number between 0 and that ceiling leaves a payable
+    remainder -- the cost cannot be paid at all.
+
+    Every cost that is not a spell's own cast line comes through here: an
+    activated ability, a mana ability tapped by hand, a morph turned face up,
+    "unless its controller pays {B}". The cast line counts its pips as separate
+    *lines* instead (`casting._cast_variant`), which is why `pay` is told not to
+    ask when the cast calls it.
+
+    Feasibility is monotone in the number bought -- buying one more pip only
+    takes a demand away -- so the answer is a contiguous range and the scan can
+    stop at the first payable number.
+    """
+    mana = payable_mana(state, pid, cost.mana)
+    most = min(mana.phyrexian_count, _life_budget(state, pid, cost, source_oid) // 2)
+    sources = mana_sources(state, pid, purpose=purpose)
+    if cost.tap and source_oid is not None:
+        sources = [s for s in sources if s.oid != source_oid]
+    pool = state.players[pid].mana_pool
+    for bought in range(most + 1):
+        remaining, _ = mana.paying_phyrexian(bought)
+        req = ability_mana(state, pid, replace(cost, mana=remaining), x, source_oid)
+        if extra_generic:
+            req = req.with_generic(req.generic + extra_generic)
+        if solve_payment(req, pool, sources) is not None:
+            return mana, bought, most
+    return None
+
+
+def most_life_for_mana(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None
+) -> ManaCost:
+    """This cost's mana with as many Phyrexian pips bought as the life allows.
+
+    The cheapest the mana half can get, and so what an ``{X}`` ceiling is
+    measured against: `pay` then asks for at least the pips that X needs, never
+    more than the life can buy.
+    """
+    mana = payable_mana(state, pid, cost.mana)
+    most = min(mana.phyrexian_count, _life_budget(state, pid, cost, source_oid) // 2)
+    return mana.paying_phyrexian(most)[0]
 
 
 def can_pay(
@@ -927,7 +1025,12 @@ def can_pay(
         # A source that is about to be tapped for this cost cannot also pay for it.
         if cost.tap and source_oid is not None:
             sources = [s for s in sources if s.oid != source_oid]
-        if (
+        if payable_mana(state, pid, cost.mana).phyrexian_count:
+            # 107.4f, and K'rrik: some pips may be bought with life, and the
+            # cost is payable if any number of them leaves a payable remainder.
+            if life_for_mana_range(state, pid, cost, source_oid, x=x, purpose=purpose) is None:
+                return False
+        elif (
             solve_payment(ability_mana(state, pid, cost, x, source_oid), player.mana_pool, sources)
             is None
         ):
@@ -1175,6 +1278,7 @@ def pay(
     purpose: SpendPurpose | None = None,
     record_colors_on: int | None = None,
     bindings: dict[str, Any] | None = None,
+    life_for_mana: bool = True,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
 
@@ -1190,6 +1294,13 @@ def pay(
     ``purpose`` is what the mana is being spent on, and must be the same value
     legality used when it decided this was payable -- restricted mana is offered
     or withheld by that alone.
+
+    ``life_for_mana`` is whether a Phyrexian pip still in the cost -- printed,
+    or a ``{B}`` under K'rrik -- may be bought with 2 life here (107.4f). The
+    player is asked how many when there is a choice. ``False`` from the cast
+    line alone, which has already made that choice as the line it offered
+    (`Action.phyrexian`), so every pip still in its cost is one the caster chose
+    to pay with mana.
     """
     # A payment is one group, the way an effect op is: an
     # `exile_from_graveyard` cost that takes three cards takes them at
@@ -1211,6 +1322,30 @@ def pay(
     # Mana is paid first: activating mana abilities happens before other costs
     # are paid (rule 601.2g), so sacrificing a mana creature as part of the cost
     # cannot strand the payment.
+    phyrexian_life = 0
+    if life_for_mana:
+        span = life_for_mana_range(
+            state, pid, cost, source_oid, x=x, extra_generic=extra_generic, purpose=purpose
+        )
+        if span is not None and span[2]:
+            mana, fewest, most = span
+            bought = fewest
+            if most > fewest:
+                # The payer's choice, made while paying (601.2g-h) -- the same
+                # choice the cast line offers as separate lines, asked here
+                # because an activation or a resolving "unless" has no lines.
+                labels = [
+                    "Pay with mana"
+                    if n == 0
+                    else f"Pay {n * 2} life for {n} mana symbol{'s' if n > 1 else ''}"
+                    for n in range(fewest, most + 1)
+                ]
+                picked = yield from ask_mode(
+                    ctx, "Pay mana symbols with 2 life each?", labels, pid
+                )
+                bought = fewest + (picked[0] if picked else 0)
+            remaining, phyrexian_life = mana.paying_phyrexian(bought)
+            cost = replace(cost, mana=remaining)
     req = ability_mana(state, pid, cost, x, source_oid)
     if extra_generic:
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
@@ -1226,6 +1361,11 @@ def pay(
         record_colors_on=record_colors_on,
     ):
         return False
+
+    if phyrexian_life:
+        # The pips bought above: one symbol of this cost paid in a different
+        # currency, so the same payment and the same event batch as the mana.
+        lose_life(state, pid, phyrexian_life, source=source_oid)
 
     if cost.pay_life:
         # A Phyrexian pip bought with life arrives here, as `pay_life` on a cost

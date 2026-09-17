@@ -3515,8 +3515,36 @@ teaching the solver about life is also what keeps the rest honest: `{2}{U/P}`
 paid the life way is still a `{2}` that a tax raises and a cost reduction
 shrinks, which is precisely what an `alternative_cost` could never express.
 
-Phyrexian pips in an **activated ability's** cost are not offered as lines and so
-must be paid with mana. No shipped card prints one; see `docs/rules-coverage.md`.
+Every **other** cost -- an activated ability, a mana ability tapped by hand, a
+special action (suspend, foretell, turning a morph face up), "unless its
+controller pays" -- has no lines, so the choice is asked while paying:
+`costs.pay` finds the fewest pips that must be bought for the rest to be
+payable and the most the life total can buy (`costs.life_for_mana_range`), and
+asks how many (`CHOOSE_MODE`, "Pay 2 life for 1 mana symbol") only when those
+differ. `can_pay` and `can_pay_mana` offer the cost when any number in that
+range leaves a payable remainder, and an `{X}` ceiling is measured with every
+buyable pip bought (`costs.most_life_for_mana`). The cast line alone passes
+`pay(..., life_for_mana=False)`, because `Action.phyrexian` already answered.
+
+### `black_mana_as_phyrexian` — K'rrik's "For each {B} in a cost"
+
+```jsonc
+{ "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
+```
+
+K'rrik, Son of Yawgmoth: *"For each {B} in a cost, you may pay 2 life rather than
+pay that mana."* A player-wide static, and the whole mechanism is
+`ManaCost.black_as_phyrexian`: while it reaches the payer, each `{B}` in a cost
+they pay is read as a `{B/P}`, so the Phyrexian machinery above does the rest --
+cast lines for a spell, the asked choice for everything else.
+
+The rulings fix the edges, and each is a test in
+`tests/unit/test_black_mana_as_phyrexian.py`: every cost the player pays counts
+(spells, activations, special actions); a hybrid pip that *may* be paid with
+black (`{B/R}`, `{2/B}`) gains the life half too; generic mana never does; and the
+cost itself does not change -- mana value, colour and chroma read the same.
+When bought pips must be picked, a single-symbol pip goes first
+(`paying_phyrexian`), since anything that pays `{B}` also pays `{B/R}`.
 
 ### Restricted mana
 
@@ -3993,7 +4021,7 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Fourteen static effects describe the *player* rather than a characteristic, so
+Seventeen static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -4019,6 +4047,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
+{ "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 ```
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is

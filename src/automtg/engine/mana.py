@@ -239,6 +239,47 @@ class ManaCost:
         """How many Phyrexian pips this cost has -- how many life lines it offers."""
         return sum(1 for pip in self.hybrid if pip.phyrexian)
 
+    def black_as_phyrexian(self) -> ManaCost:
+        """This cost with every ``{B}`` in it payable with 2 life as well.
+
+        K'rrik, Son of Yawgmoth: "For each {B} in a cost, you may pay 2 life
+        rather than pay that mana." Read exactly as a Phyrexian pip is (107.4f),
+        and the rulings say where the edges are: a plain ``{B}`` becomes a
+        ``{B/P}``; a pip that *may* be paid with black -- ``{B/R}``, ``{2/B}`` --
+        gains the life half too, because choosing to pay it with {B} is what
+        lets K'rrik buy it; ``{B/P}`` already has it; generic mana never does,
+        and nor does a pip with no black in it.
+
+        What the cost *is* does not move -- :attr:`colored` loses the pips but
+        :attr:`hybrid` gains them, so :meth:`mana_value`, :attr:`colors` and
+        :meth:`symbols_of` read the same numbers, and ``text`` stays printed.
+        The converted plain pips go first in :attr:`hybrid` because
+        :meth:`paying_phyrexian` buys pips in that order and a single-symbol pip
+        is the one no other mana could have paid.
+        """
+        black = SYMBOL_INDEX["B"]
+        plain = self.colored[black]
+        widened = tuple(
+            HybridPip(symbols=pip.symbols, generic=pip.generic, life=PHYREXIAN_LIFE)
+            if black in pip.symbols and pip.life is None
+            else pip
+            for pip in self.hybrid
+        )
+        if not plain and widened == self.hybrid:
+            return self
+        colored = list(self.colored)
+        colored[black] = 0
+        return ManaCost(
+            generic=self.generic,
+            colored=tuple(colored),
+            x_count=self.x_count,
+            text=self.text,
+            hybrid=(
+                *(HybridPip(symbols=frozenset({black}), life=PHYREXIAN_LIFE),) * plain,
+                *widened,
+            ),
+        )
+
     def paying_phyrexian(self, count: int) -> tuple[ManaCost, int]:
         """This cost with ``count`` of its Phyrexian pips bought with life.
 
@@ -263,21 +304,36 @@ class ManaCost:
         a Gitaxian Probe cast for 2 life is still a mana-value-1 spell, so the
         remaining cost is never what :meth:`mana_value` is read from.
 
-        Pips are taken in printed order. Every Phyrexian symbol costs the same 2
-        life, so which of two identical pips goes is not a choice; a cost mixing
-        colours (no card prints one) would want the caller to say which, and this
-        would be the place to widen.
+        Pips are taken single-symbol first, then in printed order. Every
+        Phyrexian symbol costs the same 2 life, so which of two identical pips
+        goes is not a choice. Under K'rrik (:meth:`black_as_phyrexian`) a
+        ``{B}`` and a ``{B/R}`` can sit in one cost, and buying the ``{B}`` is
+        never worse: anything that could pay it could pay the ``{B/R}``. Two
+        *different* payable-with-life pips in one cost -- ``{2/B}`` beside
+        ``{B/R}``, or a ``{W/P}`` beside a ``{B}`` under K'rrik, which no shipped
+        card prints -- would want the caller to say which, and
+        this would be the place to widen.
         """
         if count <= 0:
             return self, 0
         kept: list[HybridPip] = []
         owed = 0
         left = count
-        for pip in self.hybrid:
-            if left > 0 and pip.phyrexian:
-                owed += pip.life or 0
+        bought: set[int] = set()
+        order = sorted(
+            range(len(self.hybrid)),
+            key=lambda i: (
+                not (len(self.hybrid[i].symbols) == 1 and self.hybrid[i].generic is None),
+                i,
+            ),
+        )
+        for i in order:
+            if left > 0 and self.hybrid[i].phyrexian:
+                owed += self.hybrid[i].life or 0
                 left -= 1
-            else:
+                bought.add(i)
+        for i, pip in enumerate(self.hybrid):
+            if i not in bought:
                 kept.append(pip)
         if left:
             raise DslError(

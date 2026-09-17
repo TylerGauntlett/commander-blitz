@@ -12982,3 +12982,57 @@ draw interleaves payments with draws and has no ceiling.
 plenty of mana and the mana with plenty of life; nothing open charges {0} without
 asking; X paid is X drawn and X tapped; a smaller X than the gain; X = 0; declining
 asks no X; and the loader refusals.
+### One narrowing, recorded -- and since lifted
+A Phyrexian pip in an **activated ability's** cost had to be paid with mana,
+because the choice was offered only as a cast line. Lifted by
+`black_mana_as_phyrexian` below, which needed the choice in every cost.
+## `black_mana_as_phyrexian` — K'rrik, Son of Yawgmoth's "for each {B} in a cost"
+
+### Overview
+
+*"For each {B} in a cost, you may pay 2 life rather than pay that mana."* The
+line the Sheoldred deck's K'rrik is played for. The gap record named it; no
+existing static could say it — `pay_life_instead` pays a whole spell's mana value
+off the top of the library, and `spell_cost_reduction` can only shrink generic
+mana.
+
+### The shape
+
+- **The static.** `black_mana_as_phyrexian`, player-wide (`affects_player`),
+  read by `player_statics.player_pays_life_for_black`.
+- **The cost.** `ManaCost.black_as_phyrexian` turns each `{B}` into a `{B/P}` and
+  gives every black hybrid pip (`{B/R}`, `{2/B}`) a life half, which is the
+  ruling: "if you choose to pay {B} this way, K'rrik's ability allows you to pay
+  life". Mana value, colours, chroma and `text` do not move.
+- **Spells** reuse the Phyrexian cast lines untouched: `_cast_variant` and
+  `Game._cast` convert the variant's price before counting / buying pips.
+  `paying_phyrexian` now buys single-symbol pips first, so a `{B}` is bought
+  before a `{B/R}` beside it.
+- **Every other cost** asks. `costs.life_for_mana_range` returns the fewest pips
+  that must be bought for the remainder to be payable and the most the life total
+  can buy (less any life the cost itself charges; none under a life lock);
+  `can_pay` / `can_pay_mana` offer the cost when that range exists, and `pay` asks
+  `CHOOSE_MODE` only when it holds more than one number. X ceilings on
+  activations are measured with every buyable pip bought
+  (`costs.most_life_for_mana`). The cast line passes `life_for_mana=False`.
+
+That second half is also what lifts the recorded narrowing on printed Phyrexian
+pips in activated abilities (Birthing Pod's `{1}{G/P}`): same code, no K'rrik
+needed.
+
+### Not modelled
+
+Two different life-payable pips in one cost (`{2/B}` beside `{B/R}`) are bought
+in a fixed order rather than asked; a strive surcharge's `{B}` is paid with mana.
+No shipped card prints either. In `docs/rules-coverage.md`.
+
+### Guarded by
+
+`tests/unit/test_black_mana_as_phyrexian.py`: the conversion (plain, hybrid,
+`{2/B}`, already-Phyrexian, untouched generic and other colours, the buying
+order); the cast lines with and without black sources, without K'rrik, under an
+opponent's K'rrik, a hybrid spell, a spell with no black; the 118.4 boundary;
+what a cast charges; activations offered off no mana, withheld without K'rrik or
+the life, the forced answer not asked, the real choice asked and honoured, the
+X ceiling; and a printed `{G/P}` activation payable with life. K'rrik, Son of
+Yawgmoth is authored.

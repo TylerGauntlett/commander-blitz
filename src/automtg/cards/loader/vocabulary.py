@@ -137,6 +137,12 @@ STATIC_EFFECTS = frozenset(
         # the permission without it is every spell in the deck castable off the
         # top at its printed cost, which is a different and much stronger card.
         "cast_from_library_top",
+        # "For each {B} in a cost, you may pay 2 life rather than pay that
+        # mana." K'rrik, Son of Yawgmoth. Player-wide: it changes how the
+        # player *pays*, in every cost, so there is no object to attach it to.
+        # Read by the cast line and by `costs.can_pay` / `costs.pay`, each of
+        # which reads a black pip as a Phyrexian one while it is on.
+        "black_mana_as_phyrexian",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -324,6 +330,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
+        "black_mana_as_phyrexian",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",

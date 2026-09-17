@@ -331,12 +331,17 @@ convoke and similar · overload
 
 **Phyrexian mana** is implemented (107.4f): `{W/P}` parses as a hybrid pip whose
 alternative half is 2 life, and legality offers one cast line per number of pips
-bought that way, bounded by 118.4. One narrowing is recorded here: a Phyrexian
-pip in an **activated ability's** cost must be paid with mana, because the choice
-is offered as a *cast* line and an activation is not one. No shipped card prints
-such an ability — Birthing Pod's `{1}{G/P}` is the first that would — so nothing
-in the pool is worse than printed, and the direction of the narrowing is the safe
-one: the engine asks for more than the card does, never less.
+bought that way, bounded by 118.4. Every other cost (activations, special
+actions, "unless pays") asks how many pips to buy while paying, so a Phyrexian
+pip in an **activated ability's** cost is payable with life too. **K'rrik, Son of
+Yawgmoth**'s "for each {B} in a cost, you may pay 2 life" is the
+`black_mana_as_phyrexian` player-wide static, which reads each `{B}` -- and each
+hybrid pip payable with black -- as a `{B/P}` in every cost its controller pays.
+**Not modelled**: when two *different* life-payable pips sit in one cost (a
+`{2/B}` beside a `{B/R}`, or a `{W/P}` beside a `{B}` under K'rrik), the engine
+buys single-symbol pips first and then in printed order rather than asking which;
+no shipped card prints such a cost. Under K'rrik the `{B}` in a **strive**
+surcharge is paid with mana (no shipped strive card prints `{B}`).
 
 **Effects**
 Copying a permanent as anything but a token ·

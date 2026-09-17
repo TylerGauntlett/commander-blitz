@@ -402,7 +402,14 @@ class Game:
         # targets this action announced (601.2c) -- the tuple legality priced the
         # line with, through the same `strive_surcharge`.
         from .casting import strive_surcharge
+        from .player_statics import player_pays_life_for_black
 
+        if player_pays_life_for_black(state, pid):
+            # K'rrik's black pips, read as Phyrexian ones exactly where
+            # `_cast_variant` read them when it counted the lines -- on the
+            # variant's price and before strive -- so `action.phyrexian` buys
+            # the same pips here that it bought there.
+            cost = cost.black_as_phyrexian()
         cost = cost.plus(strive_surcharge(card, action.targets))
 
         # 107.4f, and the paying half of the line `_cast_variant` offered. The
@@ -470,6 +477,9 @@ class Game:
             # on, and this is the only moment they exist: `spend` decrements the
             # pool and one blue mana is then indistinguishable from another.
             record_colors_on=oid,
+            # The line already chose which pips are bought with life
+            # (`action.phyrexian`); every pip left in `cost` is paid with mana.
+            life_for_mana=False,
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
@@ -720,10 +730,15 @@ class Game:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and
             # `costs.pay` make.
+            from .costs import most_life_for_mana
+
             x = yield from self._ask_x(
                 pid,
                 card.name,
-                ability.cost.mana,
+                # The ceiling is measured with every life-payable pip bought,
+                # the cheapest this cost can get; `pay` then asks for at least
+                # the pips the chosen X needs.
+                most_life_for_mana(state, pid, ability.cost, oid),
                 0,
                 purpose,
                 exclude_oid=oid if ability.cost.tap else None,
