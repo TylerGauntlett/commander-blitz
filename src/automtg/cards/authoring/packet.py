@@ -728,6 +728,13 @@ def reference() -> dict:
             " instead) and a static takes one or the other. \"Creature tokens\""
             " is an `affects_token` filter; a sentence naming no player (\"if one"
             " or more tokens would be created\") adds `affects_player: \"any\"`.",
+            "\"…tapped and attacking that player or a planeswalker they control\""
+            " (Adeline, Resplendent Cathar) is `attacking` naming the seat -- e.g."
+            " `{\"binding\": \"each_player\"}` inside a `for_each_player` -- plus"
+            " `or_planeswalker: true`, on `create_token`, `copy_permanent` or"
+            " `put_onto_battlefield`. The creature's controller then chooses the"
+            " seat or one of its planeswalkers (508.4). Without the key the token"
+            " can only attack the player, which is a narrower card.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",
             "A mana ability's MANA half may contain only `add_mana`, or one"

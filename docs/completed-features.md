@@ -12113,3 +12113,67 @@ III with the Construct still arriving; and a Saga that leaves and returns has
 neither grant until chapter I runs again. The two loader tests that pinned the
 old refusal (`test_restricted_mana.py`, `test_lose_all_abilities.py`) now pin
 the reversal.
+
+## `or_planeswalker` — a token attacking "that player or a planeswalker they control"
+
+### Overview
+
+Adeline, Resplendent Cathar was blocked on "…create a 1/1 white Human creature
+token that's tapped and attacking that player or a planeswalker they control."
+`attacking` could name a seat (Ainok Strike Leader) and nothing else, although a
+declared attacker has been able to attack a planeswalker since planeswalkers
+shipped.
+
+### Why the existing vocabulary would not do
+
+- `attacking` resolves through `_attacking_player` to a single **pid**; every
+  caller writes that pid into `combat.attackers` and no key on any op aims an
+  attacker at a permanent.
+- Writing only the seat is a narrower card: 506.2 makes a planeswalker a third
+  attack target, and this engine already refuses to treat attacking a walker as
+  attacking its controller (Ghostly Prison, goad).
+
+### The shape
+
+- **`or_planeswalker: true`** beside `attacking` on `create_token`,
+  `copy_permanent` and `put_onto_battlefield`, read by
+  `board_helpers._aim_at_planeswalker` after the permanents arrive.
+- **The choice is 508.4's**: the arriving creature's controller picks the seat or
+  one of that seat's planeswalkers, one question per creature, and no question
+  when the seat has no planeswalker.
+- **Recorded as a declared attack at a walker is**: `attackers[oid]` stays the
+  defending player, `attacking_planeswalker[oid]` names the walker, so damage
+  assignment (508.1, 506.4c) and every reader of either map need nothing new —
+  including the `attacking_planeswalker` selector being added alongside.
+
+### Tier A, and why no new decision kind
+
+`ask_targets` already poses a mixed list of player and object refs as a
+`CHOOSE_OBJECTS`; it gained an optional `purpose` (default `"target"`) so this
+question says `"attack"`, since nothing is targeted. The heuristic agent, the RL
+encoder, the client's prompt dialog and the authoring verifier all answer a
+`CHOOSE_OBJECTS` already, so the verifier cannot hang on it. No event, no API
+field, nothing under `frontend/`. The packet's `op_options` are derived from each
+op's source, following the helper call, so `or_planeswalker` reaches workers on
+all three ops without a hand-written entry.
+
+### The loader guard
+
+`or_planeswalker` without an `attacking` (or with `attacking: false`) is a load
+error — the token would attack nobody while the card reads as printed — and so is
+a non-boolean value.
+
+### Guarded by
+
+`tests/unit/test_token_attacking_planeswalker.py`: no planeswalker, another
+seat's planeswalker, or only your own means no question and the token attacks the
+player; with one, the token's controller (not the effect's) is offered exactly the
+seat and its walker; choosing the walker records it, choosing the player records
+none; two tokens choose separately; `attacking: true` widens the same way; no
+attack event fires; `put_onto_battlefield` and `copy_permanent` take the key; the
+printed card through real combat puts the Human's damage on the walker, deals
+nothing when the walker has left, asks only at the pod seats that have walkers,
+and falls back to the player under the passive answer; its `set_pt` power counts
+the creatures its controller has; and the load-time guards and packet options.
+
+Adeline is not authored in this change; its gap record stays until she is.

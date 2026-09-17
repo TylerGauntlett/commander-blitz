@@ -3179,6 +3179,42 @@ unblocked, which is what stops this from re-opening a declaration.
 
 `copy_permanent` and `put_onto_battlefield` take the same key the same way.
 
+### "…attacking that player **or a planeswalker they control**"
+
+`or_planeswalker: true` widens `attacking` to the seat's planeswalkers as well:
+
+```jsonc
+// "Whenever you attack, for each opponent, create a 1/1 white Human creature
+//  token that's tapped and attacking that player or a planeswalker they
+//  control." -- Adeline, Resplendent Cathar
+{ "op": "for_each_player", "players": "each_opponent",
+  "effects": [
+    { "op": "create_token", "token": "human_1_1_w", "tapped": true,
+      "attacking": { "binding": "each_player" }, "or_planeswalker": true }
+  ] }
+```
+
+Rule 508.4: a creature put onto the battlefield attacking was never declared,
+so its **controller** chooses what it attacks. For each token (or permanent) that
+joined combat, if the named seat controls a planeswalker, that controller is
+asked a `CHOOSE_OBJECTS` question (purpose `"attack"`) offering the seat and each
+of its planeswalkers; with no planeswalker nothing is asked and the token attacks
+the player. Choosing a walker records it in `combat.attacking_planeswalker`, the
+map a declared attack at a walker writes, so the defending player is unchanged
+(506.2) and combat damage goes to the walker — or nowhere, if the walker has left
+(506.4c).
+
+- One question **per creature**: two tokens may split between face and walker.
+- Only the named seat's walkers — never another opponent's, never your own.
+- Works with `attacking: true` as well, offering the walkers of whoever the
+  source is attacking.
+- Attack restrictions and taxes are not consulted: nothing is being declared.
+- The loader refuses the key without an `attacking` to widen (or with `false`),
+  and refuses anything but a boolean.
+
+Without the key the token can only attack the seat. That is a narrower card, not
+a rougher one: attacking somebody's planeswalker is not attacking them.
+
 ## Mana abilities
 
 A mana ability must contain only `add_mana`, or a single `choose_mode` whose modes each

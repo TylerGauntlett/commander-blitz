@@ -12498,6 +12498,76 @@
       ]
     },
     {
+      "id": "t_resplendent_marshal",
+      "name": "Test Resplendent Marshal",
+      "oracle_text": "Vigilance\nThis creature's power is equal to the number of creatures you control.\nWhenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+      "mana_cost": "{1}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "keywords": [
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature's power is equal to the number of creatures you control.",
+          "effect": "set_pt",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+          "trigger": {
+            "event": "you_attack",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "for_each_player",
+              "players": "each_opponent",
+              "effects": [
+                {
+                  "op": "create_token",
+                  "token": "human_1_1_w",
+                  "tapped": true,
+                  "attacking": {
+                    "binding": "each_player"
+                  },
+                  "or_planeswalker": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_ink_scribe",
       "name": "Test Ink Scribe",
       "oracle_text": "Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.",

@@ -18,6 +18,7 @@ from ..zones import destroy, exile, move_object, sacrifice
 from ..zones import snapshot as capture_snapshot
 from . import register
 from .board_helpers import (
+    _aim_at_planeswalker,
     _attack_defender,
     _attack_target,
     _attacking_player,
@@ -481,6 +482,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     tapped = bool(spec.get("tapped"))
     attacking = _attacking_player(ctx, spec, _attack_defender)
     counters = spec.get("counters") or {}
+    arrived: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -505,6 +507,10 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         if attacking is not None and ctx.state.combat is not None:
             ctx.state.combat.attackers[oid] = attacking
             _offer_blocks_to(ctx, attacking)
+            arrived.append(oid)
+    # "…attacking that player or a planeswalker they control" -- asked once
+    # every permanent has arrived, so no question interrupts the batch.
+    yield from _aim_at_planeswalker(ctx, spec, arrived, attacking)
 
 
 @register("create_token")
@@ -521,7 +527,9 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``attacking`` is either ``true`` -- "wherever the source is already pointed"
     -- or a player spec naming the seat, which is "attacking **that player**".
-    See `_attacking_player`.
+    See `_attacking_player`. ``or_planeswalker`` widens it to "…that player or a
+    planeswalker they control", the token's controller choosing as it arrives;
+    see `_aim_at_planeswalker`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
@@ -541,6 +549,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
         )
     if made and attacking is not None:
         _offer_blocks_to(ctx, attacking)
+    yield from _aim_at_planeswalker(ctx, spec, made, attacking)
     if name := spec.get("as"):
         # Written after the op, unlike `sacrifice`'s, which is written before:
         # that one records a *choice* the player made and this one records
@@ -607,5 +616,6 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
             )
     if made and attacking is not None:
         _offer_blocks_to(ctx, attacking)
+    yield from _aim_at_planeswalker(ctx, spec, made, attacking)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = made

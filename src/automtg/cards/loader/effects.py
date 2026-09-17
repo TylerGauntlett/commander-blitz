@@ -1203,6 +1203,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
     if op in ATTACKING_OPS and "attacking" in effect:
         _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
+    if op in ATTACKING_OPS and "or_planeswalker" in effect:
+        # "…attacking that player or a planeswalker they control." A widening of
+        # `attacking`, so it means nothing without one: beside no `attacking`
+        # (or `false`) it would load and the token would attack nobody, which
+        # reads as the printed card and drops the whole clause. A string such
+        # as "true" is refused for the same reason -- it is not the flag.
+        if not isinstance(effect["or_planeswalker"], bool):
+            raise DslError(f"{where}.or_planeswalker: must be true or false")
+        if effect["or_planeswalker"] and effect.get("attacking") in (None, False):
+            raise DslError(
+                f"{where}.or_planeswalker: widens `attacking` to 'that player or a "
+                f"planeswalker they control' and needs an `attacking` to widen"
+            )
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
