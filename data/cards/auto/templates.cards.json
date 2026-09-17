@@ -12444,6 +12444,50 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "call_the_coppercoats",
+      "mana_cost": "{2}{W}",
+      "name": "Call the Coppercoats",
+      "oracle_text": "Strive — This spell costs {1}{W} more to cast for each target beyond the first.\nChoose any number of target opponents. Create X 1/1 white Human Soldier creature tokens, where X is the number of creatures those opponents control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": {
+                "target": "t1"
+              },
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "create_token",
+          "token": "human_soldier_1_1_w"
+        }
+      ],
+      "strive": "{1}{W}",
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "U"
       ],

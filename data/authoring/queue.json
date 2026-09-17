@@ -37962,12 +37962,12 @@
     },
     "Call the Coppercoats": {
       "edhrec_rank": 1586,
-      "gate": "template",
+      "gate": null,
       "name": "Call the Coppercoats",
-      "reason": "no template for: Strive — This spell costs {1}{W} more to cast for each target beyond the first",
+      "reason": "",
       "scryfall_id": "17844223-f9fb-4cd8-ba8e-d1db07e5ba55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Call the Gatewatch": {
