@@ -12668,3 +12668,35 @@ reads the life the first one actually took, after replacements.
 `tests/unit/test_life_lost_this_way.py`: the sum across two opponents, an int,
 zero, no `as` writes nothing, overwrite rather than accumulate, a doubled loss
 gains the doubled amount, a locked opponent contributes nothing, and the loader.
+
+## Extort — 702.101
+
+### Overview
+
+"Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1
+life and you gain that much life." Nineteen catalog cards print it; Crypt Ghast
+filed it as blocked.
+
+### Why the existing vocabulary would not do
+
+Every piece existed except "that much life": counting opponents is wrong under a
+loss doubler. The previous commit's `lose_life` `as` binding is that read, so
+extort needs no engine change and no `Keyword`.
+
+### The shape
+
+- `templates.extort_ability(text)`: a `spell_cast` trigger (controller you), a
+  `may` with `pay: {"mana": "{W/B}"}`, then `lose_life` each opponent 1 `as`
+  `extorted` and `gain_life` of the binding.
+- The `extort` template writes it for a bare "Extort" line. Syndic of Tithes,
+  Basilica Guards, Tithe Drinker, Knight of Obligation, Kingpin's Pet,
+  Syndicate Enforcer and Basilica Screecher now translate and pass all six gates.
+- `docs/keywords.md`'s row names the binding and the template.
+
+### Guarded by
+
+`tests/unit/test_extort.py`, against `t_extortioner` (pinned equal to the
+template's output): paying drains and gains, two opponents gain two, white pays
+the hybrid pip, the mana is really taken, declining does nothing, a player who
+cannot pay is not asked, two instances trigger twice, an opponent's spell does
+not trigger it, and a doubled loss gains double.

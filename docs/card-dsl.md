@@ -3113,6 +3113,28 @@ binding. Extort's "you gain that much life" is the same read.
 The binding is this op's loss alone: a second `lose_life` with the same `as`
 overwrites it rather than adding to it.
 
+### Extort
+
+Extort (702.101) is this read inside a `may`, and is written by the template
+tier on every bare "Extort" line (`templates.extort_ability`):
+
+```jsonc
+{ "kind": "triggered", "text": "Extort (Whenever you cast a spell, …)",
+  "trigger": { "event": "spell_cast", "controller": "you" },
+  "effects": [
+    { "op": "may", "prompt": "Extort: pay {W/B}?", "pay": { "mana": "{W/B}" },
+      "effects": [
+        { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 }, "as": "extorted" },
+        { "op": "gain_life", "player": "you", "amount": { "binding": "extorted" } } ] } ] }
+```
+
+Any spell you cast triggers it, creature spells included. `{W/B}` is hybrid, so
+either colour pays, and a player who can pay neither is not asked. Each instance
+triggers separately (702.101b). "Gain that much life" is not the opponent count:
+under a loss doubler it is double. "Other creatures you control have extort"
+(Pontiff of Blight) is a granted keyword the engine does not model and stays a
+gap.
+
 ## "If you would draw a card, draw two cards instead"
 
 ```jsonc

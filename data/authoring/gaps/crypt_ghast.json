@@ -3,8 +3,7 @@
   "name": "Crypt Ghast",
   "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever you tap a Swamp for mana, add an additional {B}.",
   "blocked_sentences": [
-    "Whenever you tap a Swamp for mana, add an additional {B}.",
-    "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)"
+    "Whenever you tap a Swamp for mana, add an additional {B}."
   ],
   "needs": [
     {
@@ -13,15 +12,10 @@
       "what": "a mana-choke-point effect for 'whenever you tap a <filtered land> for mana, add <fixed mana>': a filter on which lands count (subtypes Swamp) and a fixed mana string to add ({B}), resolved immediately inside payment like a mana ability (Crypt Ghast, Gauntlet of Power's land half, Wild Growth-style riders)",
       "why_existing_wont_do": "double_land_mana is a boolean player static (player_doubles_land_mana) with no land filter and it adds one mana of the type the land produced, not a fixed {B}; there is no 'tapped_for_mana' trigger_event, and an add_mana ability needs to be activated rather than fired off another permanent's mana ability",
       "confidence": "high"
-    },
-    {
-      "capability": "extort",
-      "kind": "keyword",
-      "what": "Extort: a spell_cast trigger (controller you) with an optional {W/B} payment; if paid, each opponent loses 1 life and you gain life equal to the total life actually lost that way",
-      "why_existing_wont_do": "spell_cast + may{pay} + lose_life is close, but lose_life has no `as` binding to read the life actually lost, so 'you gain that much life' can only be approximated by counting opponents; no extort keyword or template exists",
-      "confidence": "low"
     }
   ],
-  "closest_existing": ["double_land_mana", "may", "lose_life", "gain_life"],
+  "closest_existing": [
+    "double_land_mana"
+  ],
   "confidence": "high"
 }
