@@ -89302,12 +89302,12 @@
     },
     "Faerie Artisans": {
       "edhrec_rank": 4846,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Artisans",
-      "reason": "no template for: Whenever a nontoken creature an opponent controls enters, create a token that's a copy of ",
+      "reason": "",
       "scryfall_id": "6c8cefaa-d005-4b9c-a2b0-90ed97f3157f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Faerie Bladecrafter": {

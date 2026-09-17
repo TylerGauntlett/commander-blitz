@@ -2539,6 +2539,10 @@
     },
     "zone": "graveyard"
   },
+  "faerie_artisans": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "faerie_conclave": {
     "zone": "battlefield"
   },
