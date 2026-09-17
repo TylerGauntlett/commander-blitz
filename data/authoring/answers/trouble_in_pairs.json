@@ -1,0 +1,65 @@
+{
+  "card": {
+    "id": "trouble_in_pairs",
+    "name": "Trouble in Pairs",
+    "oracle_text": "If an opponent would begin an extra turn, that player skips that turn instead.\nWhenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+    "mana_cost": "{2}{W}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If an opponent would begin an extra turn, that player skips that turn instead.",
+        "effect": "skip_extra_turn",
+        "affects_player": "opponent"
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+        "trigger": {
+          "event": "creatures_attack_player",
+          "controller": "opponent",
+          "defending": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"binding": "attackers", "attacking_player": "you"}},
+            "right": {"const": 2}
+          }
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+        "trigger": {
+          "event": "draw",
+          "controller": "opponent",
+          "nth": 2
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "nth": 2
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

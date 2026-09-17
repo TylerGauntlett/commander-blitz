@@ -8843,6 +8843,13 @@
   "tropical_island": {
     "zone": "battlefield"
   },
+  "trouble_in_pairs": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "trusty_machete": {
     "zone": "battlefield"
   },

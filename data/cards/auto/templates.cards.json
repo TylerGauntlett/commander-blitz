@@ -97311,6 +97311,96 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "effect": "skip_extra_turn",
+          "kind": "static",
+          "text": "If an opponent would begin an extra turn, that player skips that turn instead."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking_player": "you",
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "trouble_in_pairs",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Trouble in Pairs",
+      "oracle_text": "If an opponent would begin an extra turn, that player skips that turn instead.\nWhenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

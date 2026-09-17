@@ -291092,12 +291092,12 @@
     },
     "Trouble in Pairs": {
       "edhrec_rank": 630,
-      "gate": "template",
+      "gate": null,
       "name": "Trouble in Pairs",
-      "reason": "no template for: If an opponent would begin an extra turn, that player skips that turn instead",
+      "reason": "",
       "scryfall_id": "3f631a24-4d71-400c-a58d-ae91e193db2e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Troubled Healer": {
