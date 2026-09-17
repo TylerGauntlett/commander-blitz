@@ -479,6 +479,25 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
     for _ in range(int(spec.get("count", 1) or 1)):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+    # Crew's cost is a total power, not a count: Shorikai's Crew 8 needs eight
+    # power of untapped creatures, and the generic board's two may not reach it.
+    needed = int(spec.get("total_power", 0) or 0)
+    if needed:
+        strong = next(
+            (
+                c
+                for c in sorted(registry, key=lambda c: c.id)
+                if not c.is_token
+                and "Creature" in c.types
+                and isinstance(c.power, int)
+                and c.power > 0
+            ),
+            None,
+        )
+        if strong is not None:
+            for _ in range(-(-needed // strong.power)):
+                fodder = new_object(game.state, strong.id, owner=0, zone=Zone.BATTLEFIELD)
+                game.state.battlefield.append(fodder.oid)
 
 
 def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
