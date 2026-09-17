@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "adeline_resplendent_cathar",
+    "name": "Adeline, Resplendent Cathar",
+    "oracle_text": "Vigilance\nAdeline's power is equal to the number of creatures you control.\nWhenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+    "mana_cost": "{1}{W}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Knight"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "power": 0,
+    "toughness": 4,
+    "keywords": ["vigilance"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "set_pt",
+        "affects": {"self_only": true},
+        "power": {"count": {"controller": "you", "types": ["Creature"]}},
+        "toughness": {"const": 4},
+        "text": "Adeline's power is equal to the number of creatures you control."
+      },
+      {
+        "kind": "triggered",
+        "trigger": {"event": "you_attack", "controller": "you"},
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": "each_opponent",
+            "effects": [
+              {
+                "op": "create_token",
+                "token": "human_1_1_w",
+                "tapped": true,
+                "attacking": {"binding": "each_player"},
+                "or_planeswalker": true
+              }
+            ]
+          }
+        ],
+        "text": "Whenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

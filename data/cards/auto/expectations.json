@@ -55,6 +55,10 @@
   "adarkar_wastes": {
     "zone": "battlefield"
   },
+  "adeline_resplendent_cathar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adult_gold_dragon": {
     "zone": "battlefield"
   },

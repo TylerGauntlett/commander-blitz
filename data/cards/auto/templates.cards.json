@@ -793,6 +793,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "text": "Adeline's power is equal to the number of creatures you control.",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attacking": {
+                    "binding": "each_player"
+                  },
+                  "op": "create_token",
+                  "or_planeswalker": true,
+                  "tapped": true,
+                  "token": "human_1_1_w"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "adeline_resplendent_cathar",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{W}",
+      "name": "Adeline, Resplendent Cathar",
+      "oracle_text": "Vigilance\nAdeline's power is equal to the number of creatures you control.\nWhenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "W"
