@@ -555,6 +555,12 @@ class AbilityModel(BaseModel):
     #: replaces a loss with itself, and 0 is "they lose no life" -- a
     #: prevention, which is a different sentence and a much stronger card.
     loss_multiplier: int | None = None
+    #: ``replace_life_gain``: what a life gain is multiplied by. Alhammarret's
+    #: Archive's "you gain **twice** that much life instead" is ``2``. Required,
+    #: and refused below 2 for `loss_multiplier`'s reasons: 1 replaces a gain
+    #: with itself, and 0 is "you gain no life" -- `cant_gain_life`, a
+    #: different sentence.
+    gain_multiplier: int | None = None
     #: ``replace_draw``: how many cards each replaced draw becomes. Thought
     #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
     #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1

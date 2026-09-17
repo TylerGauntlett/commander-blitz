@@ -645,6 +645,11 @@ def reference() -> dict:
             " spell filter: \"can't cast creature spells\", \"from anywhere"
             " other than their hands\" and \"more than one spell each turn\""
             " are still gaps, and so is \"can't activate abilities\".",
+            "\"If you would gain life, you gain twice that much life instead\""
+            " is the player-wide static `replace_life_gain` with"
+            " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
+            " replacement read wherever life is gained, lifelink included, so"
+            " it is NOT a `you_gain_life` trigger that gains again.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"

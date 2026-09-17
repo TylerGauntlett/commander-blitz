@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 from . import sagas
 from .characteristics import (
     chars,
+    life_gain_multiplier,
     life_loss_multiplier,
     player_protected_from,
     printed_token_matches,
@@ -205,6 +206,16 @@ def life_locked(state: GameState, pid: int) -> bool:
 
 
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
+    """Put life on a player, applying any replacement of the gain.
+
+    Returns **what was actually gained**, and `LIFE_GAINED` carries the same
+    number: under Alhammarret's Archive a "gain 3" is a gain of 6, and a
+    "whenever you gain life, put that many +1/+1 counters" trigger that read
+    the unreplaced 3 would disagree with the life total it is reacting to.
+
+    The one place a life total goes up -- `op_gain_life` and lifelink both
+    arrive here -- so it is the one place the replacement is read.
+    """
     if amount <= 0:
         return 0
     # "Your life total can't change" (118.5). Nothing gained, and **no event**:
@@ -213,6 +224,9 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
     # that did not happen.
     if life_locked(state, pid):
         return 0
+    # "You gain twice that much life instead" (614.1a). After the lock for the
+    # reason `lose_life` reads its multiplier after it: twice nothing is nothing.
+    amount *= life_gain_multiplier(state, pid)
     state.players[pid].life += amount
     fire(state, EventType.LIFE_GAINED, player=pid, source=source, amount=amount)
     return amount

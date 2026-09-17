@@ -12739,3 +12739,46 @@ unaffected by `you`, `any` paying the tapper, a land made a Swamp counting, the
 solver paying {B}{B}{B}{B} from two Swamps (and not without), legality offering
 the spell (and not without), the effect ending with its source, the condition
 asked, and the loader refusals.
+was no replacement of life *gain* here; that is `replace_life_gain`, below.
+
+## `replace_life_gain` — "you gain twice that much life instead"
+
+### Overview
+
+Alhammarret's Archive: *"If you would gain life, you gain **twice that much life
+instead**."* Its second line, the draw doubler with Bard's exemption, already
+shipped as `replace_draw`; this was the half that kept the card out of the
+Sheoldred, the Apocalypse deck.
+
+### Why the existing vocabulary would not do
+
+- `replace_life_loss` multiplies losses only.
+- A `you_gain_life` trigger with a `gain_life` effect is a second gain: it uses
+  the stack, fires `LIFE_GAINED` a second time for every life-gain trigger on the
+  board, and re-triggers itself.
+
+### The shape
+
+- **`replace_life_gain`**, a player-wide static (`affects_player`,
+  `gain_multiplier`, optional `condition`), read by
+  `player_statics.life_gain_multiplier` through `_active_player_statics`.
+- **One call site**, `primitives.gain_life`, the only place a life total goes up.
+  Lifelink reaches it through `_apply_lifelink`, so lifelink is doubled and the
+  damage is not.
+- `gain_life` now returns, and `LIFE_GAINED` now carries, the replaced amount.
+- The life lock (118.5) is checked before the multiplier.
+- The loader requires `gain_multiplier`, refuses it below 2 and on any other
+  effect, and refuses `affects`/`amount` beside it.
+
+### Divergences
+
+Two doublers multiply (614.5); 616.1's ordering is not asked, which for a
+product cannot show.
+
+### Guarded by
+
+`tests/unit/test_life_gain_replacement.py`: the multiplier (controller only,
+`affects_player: "opponent"`, two doublers, the condition read), the gain and its
+return value, one event carrying 6, zero and a locked total, the Archive leaving,
+lifelink doubled without doubling the damage, a real cast spell, and the loader
+refusals. Alhammarret's Archive is authored whole.

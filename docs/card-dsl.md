@@ -2563,6 +2563,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` �
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
+[`replace_life_gain`](#if-you-would-gain-life-you-gain-twice-that-much-life-instead) ·
 [`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
@@ -3134,6 +3135,32 @@ triggers separately (702.101b). "Gain that much life" is not the opponent count:
 under a loss doubler it is double. "Other creatures you control have extort"
 (Pontiff of Blight) is a granted keyword the engine does not model and stays a
 gap.
+## "If you would gain life, you gain twice that much life instead"
+
+```jsonc
+// Alhammarret's Archive, Boon Reflection, Rhox Faithmender
+{ "kind": "static",
+  "text": "If you would gain life, you gain twice that much life instead.",
+  "effect": "replace_life_gain",
+  "affects_player": "you",
+  "gain_multiplier": 2 }
+```
+
+The mirror of `replace_life_loss`, read by `primitives.gain_life` — the **one**
+place a life total goes up, which the `gain_life` op and lifelink (702.15b) both
+reach. So a lifelinking creature under an Archive gains twice the damage it
+dealt, and the damage itself is not doubled.
+
+`LIFE_GAINED` carries the **replaced** amount, and `gain_life` returns it: a
+"whenever you gain life, put that many +1/+1 counters" trigger reads 6 off a
+doubled gain of 3, agreeing with the life total. It is not a `you_gain_life`
+trigger that gains again — that is a second gain on the stack, a second event
+every life-gain trigger pays out on, and a loop.
+
+`gain_multiplier` is required and must be **2 or more**: 1 replaces a gain with
+itself, and 0 is "you gain no life", which is a different sentence. Two doublers
+multiply (614.5). A locked life total (118.5) stays locked — twice nothing is
+nothing.
 
 ## "If you would draw a card, draw two cards instead"
 
@@ -3916,6 +3943,7 @@ they take `affects_player` instead of `affects` — the full list is
   "tapped_permanent": { "subtypes": ["Swamp"] }, "add_mana": "{B}" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
+{ "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 ```

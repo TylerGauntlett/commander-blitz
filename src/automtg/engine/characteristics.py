@@ -1760,6 +1760,7 @@ from .player_statics import (  # noqa: F401
     graveyard_cast_arrival_ok,
     graveyard_cast_permissions,
     library_top_cast_permission,
+    life_gain_multiplier,
     life_loss_multiplier,
     mana_added_on_tap,
     player_cant_cast_spells,

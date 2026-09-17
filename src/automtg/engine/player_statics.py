@@ -122,6 +122,29 @@ def life_loss_multiplier(state: GameState, pid: int) -> int:
     return multiplier
 
 
+def life_gain_multiplier(state: GameState, pid: int) -> int:
+    """What a life gain by ``pid`` is multiplied by right now.  Usually 1.
+
+    Alhammarret's Archive: "If you would gain life, you gain twice that much
+    life instead."  The mirror of :func:`life_loss_multiplier`, and read the
+    same way for the same reasons: through `_active_player_statics`, so an "as
+    long as" clause beside it is asked; **multiplied**, not summed, because two
+    Archives are two replacements of one event each applying once (614.5) and
+    a gain doubled twice is quadrupled; and 616.1's ordering is not asked,
+    which for a product cannot show.
+
+    Asked by `primitives.gain_life` only, which is the one place a life total
+    goes up -- lifelink reaches it too (702.15b), so a lifelinking creature
+    under an Archive gains twice the damage it dealt, while the damage itself
+    is untouched.
+    """
+    multiplier = 1
+    for obj, static in _active_player_statics(state, "replace_life_gain"):
+        if _reaches_player(obj, static, pid):
+            multiplier *= int(static.get("gain_multiplier", 1))
+    return multiplier
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 

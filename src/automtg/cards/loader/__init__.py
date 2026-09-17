@@ -2329,6 +2329,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'tapped_permanent'/'add_mana' only mean anything on an "
             f"add_mana_on_tap static, not on {model.effect!r}"
         )
+    if model.effect == "replace_life_gain":
+        # The mirror of `replace_life_loss`, refused for its reasons: 1 replaces
+        # a gain with an identical gain, and 0 is "you gain no life" -- which
+        # is `cant_gain_life`, a different sentence that also stops the
+        # life-gain triggers rather than firing them for nothing.
+        if model.gain_multiplier is None:
+            raise DslError(
+                f"{where}: replace_life_gain needs 'gain_multiplier' -- what the "
+                f"life gain is multiplied by"
+            )
+        if model.gain_multiplier < 2:
+            raise DslError(
+                f"{where}.gain_multiplier: must be 2 or more; "
+                f"1 replaces a gain with itself and 0 is \"can't gain life\", "
+                f"which is a different effect"
+            )
+        if model.affects is not None or model.amount is not None:
+            # "If you would gain life" names a player, and the size is
+            # `gain_multiplier`; nothing reads either key.
+            raise DslError(
+                f"{where}: replace_life_gain takes 'affects_player', "
+                f"'gain_multiplier' and an optional 'condition', and no "
+                f"'affects' or 'amount'"
+            )
+    elif model.gain_multiplier is not None:
+        raise DslError(
+            f"{where}: 'gain_multiplier' only means anything on a "
+            f"replace_life_gain static, not on {model.effect!r}"
+        )
     if model.effect == "replace_draw":
         # Same refusals as `loss_multiplier`: 1 replaces a draw with an
         # identical draw and 0 is "draw nothing instead" -- a prevention, which
@@ -2512,6 +2541,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["token_multiplier"] = model.token_multiplier
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
+    if model.gain_multiplier is not None:
+        static["gain_multiplier"] = model.gain_multiplier
     if model.draw_multiplier is not None:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:

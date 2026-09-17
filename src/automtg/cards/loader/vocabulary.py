@@ -275,6 +275,13 @@ STATIC_EFFECTS = frozenset(
         # and by the life-loss half of `primitives.damage_player`, which are
         # the two places a player's life goes down.
         "replace_life_loss",
+        # Alhammarret's Archive.  "If you would gain life, you gain twice that
+        # much life instead."  The mirror of `replace_life_loss`, read by
+        # `primitives.gain_life` -- the one place a life total goes up, which
+        # lifelink reaches too.  Not a `you_gain_life` trigger that gains again:
+        # that is a second gain on the stack, visible to every life-gain trigger
+        # as its own event, and it re-triggers itself.
+        "replace_life_gain",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -319,6 +326,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "add_mana_on_tap",
         "freeze_opponent_lands",
         "replace_life_loss",
+        "replace_life_gain",
         "replace_draw",
         "cant_cast_spells",
     }
