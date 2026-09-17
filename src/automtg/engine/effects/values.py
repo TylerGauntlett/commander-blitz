@@ -91,6 +91,9 @@ VALUE_KEYS = frozenset(
         "permanents_entered_this_turn",
         "damage_taken_this_turn",
         "life_lost_this_turn",
+        # "…if you gained life this turn" -- Witch of the Moors. The gain twin
+        # of the line above; "did it happen" is a `cmp` against 0.
+        "life_gained_this_turn",
         "spells_cast_this_turn",
         "cards_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
@@ -445,6 +448,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_lost_this_turn" in expr:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)
+    if "life_gained_this_turn" in expr:
+        pids = _players(ctx, expr["life_gained_this_turn"])
+        return sum(ledger.life_gained.get(p, 0) for p in pids)
     if "spells_cast_this_turn" in expr:
         spec = expr["spells_cast_this_turn"]
         # Either a bare player spec -- storm, and everything written before this

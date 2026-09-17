@@ -650,6 +650,12 @@ def reference() -> dict:
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
             " replacement read wherever life is gained, lifelink included, so"
             " it is NOT a `you_gain_life` trigger that gains again.",
+            "\"If you gained life this turn\" is the value"
+            " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
+            " `{\"const\": 0}` -- on a trigger, as its `condition` (an"
+            " intervening if). It is the turn's ledger, so it counts gains made"
+            " before the permanent entered; never an unprinted `you_gain_life`"
+            " trigger setting a flag.",
             "\"Your opponents can't gain life\" is the player-wide static"
             " `cant_gain_life` with `affects_player: \"opponent\"` (\"you\""
             " and \"any\" for the other sentences). Every gain is stopped,"

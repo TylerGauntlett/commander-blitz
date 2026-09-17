@@ -12820,3 +12820,42 @@ the op and lifelink stopped (lifelink's damage still dealt), no event and no
 trigger, the lift when the source leaves, the condition read, the composition
 with a doubler on either side, and the loader refusals. Erebos, God of the Dead
 is authored whole.
+
+## `life_gained_this_turn` — "if you gained life this turn"
+
+### Overview
+
+Witch of the Moors: *"At the beginning of your end step, **if you gained life this
+turn**, each opponent sacrifices a creature of their choice and you return up to
+one target creature card from your graveyard to your hand."* The rest of the
+sentence (`for_each_player` over a `sacrifice` with the player's own choice, and
+an optional graveyard target) was already expressible.
+
+### Not a documentation gap
+
+The ledger had `life_lost`, `damage_taken` and the draw count, and nothing in the
+engine recorded a gain at all, so this was real work rather than a missing line
+in the packet.
+
+### Why the existing vocabulary would not do
+
+A `has_turn_flag` set by a `you_gain_life` trigger on the Witch is an ability the
+card does not print, and it misses a gain made before the Witch entered.
+
+### The shape
+
+- **`TurnLedger.life_gained`**, cleared with the ledger at cleanup.
+- Folded in `GameState.emit` off `LIFE_GAINED`, beside `life_lost`: every gain
+  counts (the op, lifelink), with the amount the event carries (doubled under
+  `replace_life_gain`), and a gain that did not happen fires no event.
+- **`{"life_gained_this_turn": <player spec>}`**, a value leaf; "if you gained
+  life" is a `cmp` `>` 0 on the trigger's `condition`, re-read on resolution.
+
+### Guarded by
+
+`tests/unit/test_life_gained_this_turn.py`: the fold, accumulation, lifelink, a
+loss that is not a gain, gain-then-loss, per player, zero, a locked total and
+`cant_gain_life` not counting, the condition, the refusal of an unknown
+spelling, an end-step trigger against a real turn with and without a gain and
+with a gain made before the permanent entered, and the tally gone next turn.
+Witch of the Moors is authored whole.

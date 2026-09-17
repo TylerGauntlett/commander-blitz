@@ -1,0 +1,35 @@
+{
+  "_comment": "Cards that exist only for tests/unit/test_life_gained_this_turn.py. Never part of a deck list. `t_moors_witch` is Witch of the Moors' trigger shape -- your end step, if you gained life this turn -- with an effect a test can read off a life total instead of a sacrifice and a graveyard target.",
+  "cards": [
+    {
+      "id": "t_moors_witch",
+      "name": "Test Moors Witch",
+      "oracle_text": "At the beginning of your end step, if you gained life this turn, each opponent loses 1 life.",
+      "mana_cost": "{3}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warlock"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you gained life this turn, each opponent loses 1 life.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "you",
+            "condition": {
+              "cmp": ">",
+              "left": {"life_gained_this_turn": "you"},
+              "right": {"const": 0}
+            }
+          },
+          "effects": [
+            {"op": "lose_life", "player": "each_opponent", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    }
+  ]
+}

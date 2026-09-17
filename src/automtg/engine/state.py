@@ -747,6 +747,13 @@ class GameState:
             if pid is not None:
                 amount = int(data.get("amount") or 0)
                 ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+        elif event.type == EventType.LIFE_GAINED:
+            # Witch of the Moors. Off the event rather than in `gain_life`, for
+            # the reason every other tally here is: lifelink and the op both
+            # fire it, and a gain that was forbidden or locked fires nothing.
+            if pid is not None:
+                amount = int(data.get("amount") or 0)
+                ledger.life_gained[pid] = ledger.life_gained.get(pid, 0) + amount
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
