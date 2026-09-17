@@ -636,9 +636,11 @@ class GameObject:
     #:
     #: A copy is a token whose ``def_id`` is the original's, so the "except"
     #: clause has nowhere to live on the card -- it is a property of this one
-    #: object. Kept deliberately small: added subtypes, replacement colours, and
-    #: whether the mana cost is gone. Anything richer belongs in a real
-    #: copiable-values layer, which this engine does not have.
+    #: object. The copiable values 707.9b lets an exception rewrite: replacement
+    #: colours, card types and base power/toughness; added card types,
+    #: subtypes and supertypes; and whether the mana cost is gone. Anything
+    #: richer belongs in a real copiable-values layer, which this engine does
+    #: not have.
     #:
     #: Preserved across zone changes for the same reason ``is_token`` is: it is
     #: part of what the object *is*, not something that happened to it.

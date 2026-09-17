@@ -11392,3 +11392,64 @@ needs nothing else: `bird_2_2_u_flying` has since shipped, and its promised
 branch is Teferi's Protection's three effects behind `gift_promised`; Trouble in Pairs' second line is
 sayable now that `nth` on `spell_cast` has shipped; Final Fortune still needs a
 delayed trigger scoped to the extra turn it created and a `lose_game` op.
+
+## Copy exceptions — "except it's legendary", "…an artifact in addition", eternalize
+
+### Overview
+
+Rule 707.9b: a copy effect that modifies a characteristic "as part of the
+copying process" makes that characteristic a copiable value of the copy.
+`copy_permanent`'s `except_` already had embalm's `colors`, `add_subtypes` and
+`no_mana_cost`, and Espers to Magicite's replacing `types`. It gains:
+
+| key | printed clause | witness |
+|---|---|---|
+| `add_supertypes` | "except it's legendary" | Adagia, Windswept Bastion |
+| `add_types` | "except it's an artifact in addition to its other types" | Faerie Artisans |
+| `power`, `toughness` | eternalize's "except it's a 4/4 black Zombie …" | Champion of Wits |
+
+### Why the existing vocabulary would not do
+
+The loader refused every key outside the four, and `characteristics._compute`
+applied only those. `types` replaces, so it cannot say "in addition"; nothing
+in the DSL could touch a supertype; and `set_pt`/`animate` wear off at cleanup,
+where a copiable value is permanent.
+
+### The shape
+
+All three are applied in `_compute` to the printed face before any layer, where
+the rest of `copy_overrides` already was. The base size replaces the printed
+P/T, so a counter on an eternalized token makes it a 5/5. The loader holds the
+key set as `COPY_EXCEPT_KEYS` and refuses unknown supertypes and card types, an
+empty addition, `types` with `add_types`, half a size, and a size that is not a
+non-negative integer.
+
+**The legend rule had to move.** `sba._legend_rule` read `card.is_legendary`
+off the printed card, so a token copied "except it's legendary" would report
+Legendary in `chars` and never be put into the graveyard. It now reads the
+derived supertypes.
+
+Eternalize needs no keyword: it is embalm's activated ability from the
+graveyard with this bigger exception. Champion of Wits' printed line is Snake
+Wizard, so `add_subtypes: ["Zombie"]` completes "Zombie Snake Wizard".
+
+### Tier A
+
+No op, no event, no decision kind, no API field, nothing under `frontend/`.
+The authoring packet lists `except_` as a `copy_permanent` key, not its
+sub-keys, so it needs no change.
+
+### Guarded by
+
+`tests/unit/test_copy_except.py`: the legendary token and the untouched
+original, the legend rule keeping one of two legendary copies (and neither
+without the clause), a legendary selector; the artifact copy that is still a
+2/2 creature and is found by an artifact selector (and is not without the
+clause); the eternalized token's 4/4 size, black colour, mana value 0, added
+Zombie, a counter layering on top, and the original's size; and the load-time
+guards.
+
+The three cards are not authored in this change. Adagia, Windswept Bastion still
+needs Station (a cost that binds the tapped creature's power, and the "12+ |"
+threshold ability); Faerie Artisans still needs "tokens created with this
+creature"; Champion of Wits needs nothing else.

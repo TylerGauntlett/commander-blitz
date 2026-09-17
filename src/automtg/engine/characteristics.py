@@ -175,6 +175,24 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             # which is also what the printing says: it loses its card types and
             # is not told to lose its creature types.
             types = set(retyped)
+        if added_types := obj.copy_overrides.get("add_types"):
+            # "…except it's an artifact **in addition to its other types**."
+            # Faerie Artisans. The addition beside `types`' replacement, and the
+            # printing decides again: a copied Enchantment Creature stays both.
+            types.update(added_types)
+        if added_supers := obj.copy_overrides.get("add_supertypes"):
+            # "…except it's legendary." Adagia, Windswept Bastion. Unioned onto
+            # the copied card's supertypes, so the legend rule -- which reads
+            # this, not the printed card -- applies to the token.
+            supertypes.update(added_supers)
+        # "…except it's a **4/4** black Zombie" (eternalize, 702.129a). The
+        # base size, before every layer, so counters and anthems land on top of
+        # the 4/4 exactly as they would on a printed one (707.9b: the exception
+        # becomes the copiable value).
+        if (base_power := obj.copy_overrides.get("power")) is not None:
+            power = int(base_power)
+        if (base_toughness := obj.copy_overrides.get("toughness")) is not None:
+            toughness = int(base_toughness)
 
     # Layer 3, text-changing effects (613.1c): "replacing all instances of one
     # creature type with Vampire". New Blood.

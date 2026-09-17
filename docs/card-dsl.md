@@ -7306,6 +7306,27 @@ its own. So the exception rides on the **object**, as `copy_overrides`:
 | `colors` | replaces the printed colours outright |
 | `add_subtypes` | *adds* to the printed subtypes — an embalm token is a Zombie **Angel** |
 | `no_mana_cost` | mana value reads 0 rather than the printed card's |
+| `types` | *replaces* the card types — Espers to Magicite, below |
+| `add_types` | *adds* card types — "except it's an artifact in addition to its other types" (Faerie Artisans) |
+| `add_supertypes` | *adds* supertypes — "except it's legendary" (Adagia, Windswept Bastion); the legend rule reads it |
+| `power`, `toughness` | *replace* the base size, a pair of non-negative integers — eternalize's "4/4" |
+
+The whole set is 707.9b's copiable values that a printing has asked for, and
+the loader holds it as `COPY_EXCEPT_KEYS`. `types` and `add_types` together are
+refused (one replaces, one adds, and the order would be a guess), as are an
+empty addition and half a size.
+
+Eternalize (702.129a) is embalm's shape with a bigger exception — Champion of
+Wits, a Snake Wizard, becomes "a 4/4 black Zombie Snake Wizard with no mana
+cost":
+
+```jsonc
+"except_": { "power": 4, "toughness": 4, "colors": ["B"],
+             "add_subtypes": ["Zombie"], "no_mana_cost": true }
+```
+
+The size is a base value applied before any layer, so a +1/+1 counter on the
+token makes a 5/5.
 
 Applied to the printed face *before* any layer, because the exception is part of
 what the token is rather than an effect on it — so an anthem afterwards layers

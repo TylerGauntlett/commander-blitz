@@ -44,6 +44,7 @@ from .vocabulary import (
     DELAYED_TRIGGER_KEYS,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
+    KNOWN_SUPERTYPES,
     KNOWN_TYPES,
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
@@ -51,6 +52,23 @@ from .vocabulary import (
 )
 from .walk import (
     _check_counter_kind,
+)
+
+#: What `copy_permanent`'s ``except_`` may rewrite -- the copiable values of
+#: 707.9b that a printed exception has needed so far. Replacements: ``colors``,
+#: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
+#: ``add_subtypes`` and ``add_supertypes``. And ``no_mana_cost``.
+COPY_EXCEPT_KEYS = frozenset(
+    {
+        "colors",
+        "types",
+        "power",
+        "toughness",
+        "add_types",
+        "add_subtypes",
+        "add_supertypes",
+        "no_mana_cost",
+    }
 )
 
 
@@ -1012,11 +1030,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # somebody reads its colour.
         if not isinstance(overrides, Mapping):
             raise DslError(f"{where}: 'except_' must be an object")
-        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost", "types"}
+        unknown = set(overrides) - COPY_EXCEPT_KEYS
         if unknown:
             raise DslError(
                 f"{where}.except_: unsupported keys {sorted(unknown)} "
-                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost', 'types')"
+                f"(implemented: {sorted(COPY_EXCEPT_KEYS)})"
             )
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
@@ -1034,6 +1052,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for t in overrides["types"]:
                 if t not in KNOWN_TYPES:
                     raise DslError(f"{where}.except_.types: unknown card type {t!r}")
+        if "types" in overrides and "add_types" in overrides:
+            # One replaces and one adds, so together they say two different
+            # printed lines at once -- the order would be a guess.
+            raise DslError(
+                f"{where}.except_: 'types' replaces the card types and 'add_types' "
+                f"adds to them -- write the one the printed clause says"
+            )
+        for key, known, noun in (
+            ("add_types", KNOWN_TYPES, "card type"),
+            ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+        ):
+            if key not in overrides:
+                continue
+            added = overrides[key]
+            if not isinstance(added, list) or not added:
+                # An addition of nothing is a clause that does nothing, and
+                # "except it's legendary" dropped is a copy the legend rule
+                # never sees.
+                raise DslError(f"{where}.except_.{key}: must be a non-empty list")
+            for name in added:
+                if name not in known:
+                    raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+        for key in ("power", "toughness"):
+            # "...except it's a 4/4" (eternalize). The base size, so a number and
+            # never an expression: 707.9b makes it a copiable value, fixed when
+            # the copy is made, not something re-read as the game goes on.
+            if key in overrides:
+                value = overrides[key]
+                if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                    raise DslError(
+                        f"{where}.except_.{key}: must be a non-negative integer, got {value!r}"
+                    )
+        if ("power" in overrides) != ("toughness" in overrides):
+            # Every printed exception names a size as "N/N"; half of one is a
+            # typo that would leave the copied card's other half standing.
+            raise DslError(f"{where}.except_: 'power' and 'toughness' come as a pair")
     if op == "add_subtype":
         # An op that names no subtype is a printed sentence that does nothing,
         # and it would load and resolve exactly like one that works.
