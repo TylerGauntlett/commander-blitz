@@ -1668,6 +1668,12 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     "into its owner's library" is printed on every card in this family, and the
     difference is only visible on a stolen permanent -- where sending it to the
     thief's library would hand the victim's card to the thief for ever.
+
+    ``any_order`` is "…on the bottom of their library **in any order**" --
+    Teferi's Puzzle Box. Rule 401.4 lets the **owner** arrange two or more cards
+    put into one position of a library at the same time, and without it the
+    cards went in pool order, which for a hand is whatever order it was held in
+    and nobody chose. See :func:`_in_owners_order`.
     """
     depth = max(1, evaluate_value(ctx, spec.get("from_top", 1)))
     # "…puts it on the **bottom** of their library", and Ice Magic's "on their
@@ -1677,6 +1683,8 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     bottom = bool(spec.get("bottom"))
     owner_chooses = bool(spec.get("owner_chooses"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put on top of library")
+    if spec.get("any_order"):
+        oids = yield from _in_owners_order(ctx, oids, bottom)
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -1711,3 +1719,42 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             source=oid,
             to="library_top" if depth == 1 else "library",
         )
+
+
+def _in_owners_order(ctx: EffectContext, oids: list[int], bottom: bool):
+    """Let each owner arrange their own cards, one pick at a time (401.4).
+
+    The answer is the order the cards are **put** there, which is the physical
+    reading and the one `put_on_top` already had for Brainstorm's picks: on the
+    bottom each card goes under the one before, so the last chosen is the bottom
+    card; on top each goes over the one before, so the last chosen is the top.
+    The prompt says which, because the two read opposite ways round.
+
+    No new decision kind: "which card next" is `ask_objects` with a count of
+    one over what is left, asked until a single card remains -- the last one
+    has nowhere else to go, and one card alone asks nothing at all. Grouped by
+    owner, because each library is its own position and 401.4 gives each owner
+    only their own cards; owners are asked in the order their first card was
+    chosen, which is APNAP for any selector that walks players.
+    """
+    by_owner: dict[int, list[int]] = {}
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is not None:
+            by_owner.setdefault(obj.owner, []).append(oid)
+    prompt = (
+        "Put on the bottom of your library next (the last card is the bottom card)"
+        if bottom
+        else "Put on top of your library next (the last card is the top card)"
+    )
+    ordered: list[int] = []
+    for owner, remaining in by_owner.items():
+        remaining = list(remaining)
+        while len(remaining) > 1:
+            picked = yield from ask_objects(ctx, prompt, remaining, 1, 1, owner, "library_order")
+            if not picked:  # pragma: no cover - a count of one always answers
+                break
+            ordered.append(picked[0])
+            remaining.remove(picked[0])
+        ordered.extend(remaining)
+    return ordered

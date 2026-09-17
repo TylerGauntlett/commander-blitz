@@ -654,6 +654,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.from_top: depth counts from 1 (1 is the top card); got {depth}"
             )
+    if "any_order" in effect:
+        # "…on the bottom of their library **in any order**" (Teferi's Puzzle
+        # Box, 401.4). Only `put_on_top` reads it; on another op it would load
+        # and leave the order to the pool, which is the misreading it exists to
+        # stop.
+        if op != "put_on_top":
+            raise DslError(
+                f"{where}: 'any_order' arranges cards put into a library, and only "
+                f"put_on_top reads it, not {op!r}"
+            )
+        if not isinstance(effect["any_order"], bool):
+            raise DslError(f"{where}: 'any_order' is true or false")
+        if effect["any_order"] and "from_top" in effect:
+            # An ordinal is one position in the library; several cards arranged
+            # "in any order" are a run of positions, and nothing printed says
+            # both.
+            raise DslError(f"{where}: 'any_order' cannot be combined with 'from_top'")
+        if effect["any_order"] and effect.get("owner_chooses"):
+            # "Its owner puts it on their choice of the top or bottom" is one
+            # card and one question per card; a run arranged together has to
+            # go to one end, so the two sentences cannot share an effect.
+            raise DslError(f"{where}: 'any_order' cannot be combined with 'owner_chooses'")
     if "cast_free" in effect and op != "look_at_top":
         # "…without paying its mana cost" is free, and every other op that could
         # plausibly be written with it (`exile`, `search_library`, `reveal`)

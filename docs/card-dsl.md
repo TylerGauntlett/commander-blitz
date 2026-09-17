@@ -248,6 +248,24 @@ exile with extra steps. Three details are only ever visible when they are wrong:
   key can read a library's order, so it is pinned in
   `tests/unit/test_library_depth.py` rather than by the authoring gate.
 
+`any_order: true` is "…puts the cards in their hand on the bottom of their
+library **in any order**" (Teferi's Puzzle Box). Rule 401.4 lets the **owner**
+arrange several cards put into one end of a library at once; without the flag
+they go in pool order, which for a hand is the order it was held in and which
+nobody chose.
+
+```jsonc
+{ "op": "put_on_top", "bottom": true, "any_order": true,
+  "objects": { "zone": "hand", "player": { "binding": "event_player" }, "count": "all" } }
+```
+
+The owner is asked one card at a time (`ask_objects` with a count of one,
+purpose `library_order`) until one card is left, and each answer is the next card
+**put** there: on the bottom the last card chosen is the bottom card, on top it is
+the top card. One card asks nothing. Each owner orders only their own cards.
+Refused beside `from_top` (an ordinal is one position, not a run) and beside
+`owner_chooses` (a per-card choice of end), and on any other op.
+
 The loader refuses `from_top` on any other op: `draw` and friends read `amount`
 and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors

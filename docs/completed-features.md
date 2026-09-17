@@ -12887,3 +12887,36 @@ the library and the life total; only the halving was missing.
 life totals, one life (lost entirely), an empty library (still costs life); both
 directions over 0, 1, 2, 7, 40 and a negative; composition inside and around
 `sum`; and every loader refusal.
+
+
+## `any_order` — "on the bottom of their library in any order" — 401.4
+
+### Overview
+
+Teferi's Puzzle Box: *"At the beginning of each player's draw step, that player
+puts the cards in their hand on the bottom of their library **in any order**, then
+draws that many cards."* The first half of the sentence.
+
+### Why the existing vocabulary would not do
+
+`put_on_top` with `bottom: true` resolved its selector through `choose_objects`,
+which for `count: "all"` returns the pool in hand order and moves each card with
+no question. `scry` and `look_at_top` order only cards taken off the top of the
+library, never cards from a hand.
+
+### The shape
+
+- **`any_order: true`** on `put_on_top`, read by `ops_cards._in_owners_order`:
+  per owner, `ask_objects` with a count of one over the cards left, purpose
+  `library_order`, until one remains. No new `DecisionKind`.
+- Each answer is the next card put there: the last chosen is the bottom card on
+  the bottom and the top card on top.
+- The loader refuses it on any other op, as a non-boolean, and beside `from_top`
+  or `owner_chooses`.
+
+### Guarded by
+
+`tests/unit/test_put_on_bottom_any_order.py`: the same hand under in two orders,
+the top of the library undisturbed, the top-of-library reading, one question per
+card but the last, the owner asked when the hand is an opponent's, one card and
+an empty hand asking nothing, and the loader refusals.
