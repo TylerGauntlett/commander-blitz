@@ -505,6 +505,44 @@ def printed_abilities(state: GameState, obj: GameObject) -> tuple[Ability, ...]:
     return tuple(apply_to_ability(ability, obj.text_changes) for ability in printed)
 
 
+def threshold_met(obj: GameObject, ability: Ability) -> bool:
+    """Has this object the counters a station symbol asks for? (721)
+
+    "As long as this permanent has N or more charge counters on it, it has
+    [abilities]." Anywhere but the battlefield nothing is a permanent and a
+    card carries no counters, so the answer there is no -- a Planet in hand
+    has only its unstriated abilities, which is also what it prints.
+    """
+    if ability.threshold is None:
+        return True
+    if not obj.on_battlefield:
+        return False
+    counter, at_least = ability.threshold
+    return obj.counter(counter) >= at_least
+
+
+def present_printed_abilities(
+    obj: GameObject, printed: tuple[Ability, ...]
+) -> tuple[Ability, ...]:
+    """The printed abilities this object actually has, station gates applied.
+
+    The ability below its threshold is **absent**, not refused: it is not
+    offered, not a mana source for the payment solver, not listed for the
+    client and not the AI's to consider, because every one of those reads
+    `abilities_of`. Refusing it in `legality` alone -- `condition`'s shape --
+    would leave it a mana source, since the solver never asks legality.
+
+    Only ever drops a tail, which is what keeps indices meaning what they
+    printed; the loader holds gated abilities to the end of the list and to
+    rising order for exactly that. The last ability is checked first, so a card
+    with no striations pays one attribute read.
+    """
+    if not printed or printed[-1].threshold is None:
+        return printed
+    present = tuple(ability for ability in printed if threshold_met(obj, ability))
+    return printed if len(present) == len(printed) else present
+
+
 def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     """The abilities a permanent **actually has**, printed ones included.
 
@@ -534,7 +572,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
         # 707.2, and the same early return `_compute` makes: a face-down
         # permanent is a 2/2 with no abilities, whatever is underneath it.
         return ()
-    printed = printed_abilities(state, obj)
+    printed = present_printed_abilities(obj, printed_abilities(state, obj))
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
@@ -566,7 +604,7 @@ def _derived_abilities(
     Shared with `abilities_of` above rather than walked twice, because the two
     answers have to agree about which ability is at which position.
     """
-    printed = printed_abilities(state, obj)
+    printed = present_printed_abilities(obj, printed_abilities(state, obj))
     out: list[tuple[Ability, tuple[int, int] | None]] = []
     if not any(
         static.get("effect") == "lose_all_abilities"

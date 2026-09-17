@@ -459,10 +459,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         validate_condition(replacement.condition, f"{where}.replacements[{i}].condition")
 
     abilities = tuple(_compile_ability(a, i, where) for i, a in enumerate(model.abilities))
+    _check_threshold_order(abilities, where)
     grantable = tuple(
         _compile_ability(a, i, f"{where}.grantable")
         for i, a in enumerate(model.grantable_abilities)
     )
+    if any(ability.threshold is not None for ability in grantable):
+        # A granted ability sits after the recipient's printed ones and is
+        # addressed through its granter's pool, so neither the suffix argument
+        # in `_check_threshold_order` nor `abilities_of`'s filter covers it.
+        raise DslError(f"{where}.grantable_abilities: a threshold is a printed striation")
     final_chapter = _final_chapter(model, abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
@@ -1164,6 +1170,75 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     )
 
 
+def _compile_threshold(
+    model: AbilityModel, kind: AbilityKind, where: str
+) -> tuple[str, int] | None:
+    """A station symbol's ``{"counter": "charge", "at_least": 12}``, or ``None``.
+
+    Activated abilities only. That is what the two Planets print, and it is
+    where the gate is honoured: `abilities_of` leaves the ability out, and
+    `legality`, the mana solver and the AI all read that list. A gated static or
+    trigger would also have to reach `_ability_statics`, the player statics and
+    the trigger collectors, which read printed faces -- so one is refused here
+    rather than loading as an ability that is always on.
+    """
+    spec = model.threshold
+    if spec is None:
+        return None
+    if kind is not AbilityKind.ACTIVATED:
+        raise DslError(
+            f"{where}.threshold: only an activated ability may be gated on a counter "
+            f"count so far, not a {kind.value} one"
+        )
+    unknown = set(spec) - {"counter", "at_least"}
+    if unknown:
+        raise DslError(f"{where}.threshold: unsupported keys {sorted(unknown)}")
+    counter = spec.get("counter")
+    at_least = spec.get("at_least")
+    if not isinstance(counter, str) or not counter:
+        raise DslError(f"{where}.threshold.counter: a counter kind, got {counter!r}")
+    _check_counter_kind(counter, f"{where}.threshold.counter")
+    if isinstance(at_least, bool) or not isinstance(at_least, int) or at_least < 1:
+        # "0+" would be an ability the permanent always has, which is no gate.
+        raise DslError(
+            f"{where}.threshold.at_least: a positive number of counters, got {at_least!r}"
+        )
+    return (counter, at_least)
+
+
+def _check_threshold_order(abilities: tuple[Ability, ...], where: str) -> None:
+    """Gated abilities come last, in rising order, on one counter.
+
+    Not tidiness: `Action.ability_index`, `StackItem.ability_index` and the
+    ledger address an ability by position in `abilities_of`, and resolution reads
+    the printed list at that position. Leaving out a gated ability from the
+    *middle* would shift every ability after it, so a resolving "{T}: Add {W}"
+    could run the Planet's 12+ line instead. Kept as a suffix, and rising, an
+    ability that is missing only ever takes the ones after it with it, and every
+    index that is still offered means what it printed. Station cards print their
+    striations exactly this way.
+    """
+    gated_seen = False
+    last: tuple[str, int] | None = None
+    for i, ability in enumerate(abilities):
+        if ability.threshold is None:
+            if gated_seen:
+                raise DslError(
+                    f"{where}.abilities[{i}]: an ungated ability after a threshold "
+                    f"ability; gated abilities come last"
+                )
+            continue
+        gated_seen = True
+        if last is not None and (
+            ability.threshold[0] != last[0] or ability.threshold[1] < last[1]
+        ):
+            raise DslError(
+                f"{where}.abilities[{i}].threshold: gated abilities count one counter "
+                f"in rising order, got {ability.threshold} after {last}"
+            )
+        last = ability.threshold
+
+
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -1175,6 +1250,8 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             f"{where}: 'activate_steps' and 'once_each_turn' restrict *activating*, "
             f"so they only mean anything on an activated ability"
         )
+
+    threshold = _compile_threshold(model, kind, where)
 
     if model.chapter is not None and kind is not AbilityKind.CHAPTER:
         # Silently ignored it would produce a card that reads "II --" and fires
@@ -1618,6 +1695,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         is_cycling=model.is_cycling,
         activate_steps=tuple(model.activate_steps),
         once_each_turn=model.once_each_turn,
+        threshold=threshold,
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,

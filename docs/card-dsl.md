@@ -1712,6 +1712,46 @@ removing counters.
 Not `choose_permanents` + the `tap` op + `add_counters`: that pays on resolution,
 so the ability could be activated with nothing to tap.
 
+### Station symbols — `threshold`, an ability the permanent has only at N+
+
+```jsonc
+{ "kind": "activated",
+  "text": "12+ | {U}, {T}: Add {U} for each artifact you control.",
+  "threshold": { "counter": "charge", "at_least": 12 },
+  "cost": { "mana": "{U}", "tap": true },
+  "is_mana_ability": true,
+  "effects": [ { "op": "add_mana", "mana": "{U}",
+                 "amount": { "count": { "controller": "you", "types": ["Artifact"] } } } ] }
+```
+
+Rule 721: a station symbol means "As long as this permanent has N or more charge
+counters on it, it has [abilities]." Below N the ability **does not exist**:
+`characteristics.abilities_of` leaves it out, so legality does not offer it, the
+payment solver and the by-hand mana path do not have it, and neither the AI nor
+the client's action list sees it. Off the battlefield a card has no counters and
+so no striations. An ability already on the stack resolves if the counters go
+(113.7a). The station ability itself is ungated and may be activated past the
+last number.
+
+Not `condition`: "activate only if…" refuses the activation of an ability the
+permanent still *has*, and a mana ability never goes through that check — so
+Uthros would tap for blue on turn one.
+
+The loader holds three rules. `threshold` goes on **activated** abilities only
+(a gated static or trigger would also have to reach the printed-face readers, so
+it is refused rather than loading always-on). Gated abilities come **after every
+ungated one**, in **rising order** on **one counter** — abilities are addressed
+by position, so an absent ability may only ever drop a tail. And a threshold is a
+printed striation, so it is refused on `grantable_abilities`.
+
+The residual gate claims a `N+ | …` line only through an ability gated at that N
+whose whole `text` is the line: an ungated "{U}, {T}: Add {U} …" does not claim
+"12+ | {U}, {T}: Add {U} …".
+
+**Not built:** a Spacecraft's striated P/T box ("It's an artifact creature at
+12+"), and gated keywords, statics and triggers ("12+ | Flying", "8+ |
+Whenever…"). The two Planets need neither.
+
 All three take a selector over the battlefield defaulting to `controller: "you"`,
 and all three make the ability **unavailable** when too little matches rather
 than cheaper: an ability whose bounce cost has nothing to bounce would cost only

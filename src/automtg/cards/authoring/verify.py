@@ -1092,6 +1092,10 @@ _SELF_REFERENCE = re.compile(
 )
 
 
+#: A station symbol at the head of a printed line: "12+ | …".
+_STRIATION = re.compile(r"^(\d+)\+\s*\|")
+
+
 def fold_self_reference(text: str, name: str) -> str:
     """Collapse every way a card names itself to one token, for comparison only."""
     if name:
@@ -1257,6 +1261,21 @@ def _covered(card: CardDef, line: str) -> bool:
     # card printing Devoid while carrying colours has not implemented it.
     if stripped.lower().startswith("devoid") and not card.colors:
         return True
+    # "12+ | {U}, {T}: Add {U} for each artifact you control." A station
+    # striation (721) is claimed only by an ability gated at that very number,
+    # and only by its whole text. The loose substring match below would let an
+    # ungated "{U}, {T}: Add {U} …" claim the line -- a Planet that makes the
+    # mana from turn one, wearing the printed words.
+    striation = _STRIATION.match(stripped)
+    if striation is not None:
+        wanted = int(striation.group(1))
+        return any(
+            ability.threshold is not None
+            and ability.threshold[1] == wanted
+            and fold_self_reference((ability.text or "").strip().rstrip("."), card.name)
+            == folded_line
+            for ability in card.abilities
+        )
     for ability in card.abilities:
         claimed = (ability.text or "").strip().rstrip(".")
         if not claimed:

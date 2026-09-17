@@ -13,7 +13,7 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
-from .characteristics import abilities_of, chars
+from .characteristics import abilities_of, chars, threshold_met
 from .costs import (
     can_pay,
     can_pay_mana,
@@ -641,6 +641,15 @@ def _ability_aims(
         return None
     if zone not in ability.active_zones:
         return None
+    if ability.threshold is not None:
+        # A station striation below its number is not on the permanent (721).
+        # `_activate_actions` never reaches one -- it walks `abilities_of`,
+        # which has already left it out -- but `_offers_something_else` walks
+        # the printed face, and a 12+ ability counted there would surface a
+        # Planet's tap-only mana ability on a Planet with nothing else to do.
+        obj = state.objects.get(oid)
+        if obj is None or not threshold_met(obj, ability):
+            return None
     if ability.sorcery_speed_only and not sorcery_speed:
         return None
     # Forecast: "activate only during your upkeep, and only once each turn".

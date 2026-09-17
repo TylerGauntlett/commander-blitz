@@ -611,6 +611,13 @@ def reference() -> dict:
             " `sorcery_speed_only` and an `add_counters` whose amount is"
             " `{\"power_of\": {\"binding\": \"stationed\"}}`. Never a `count`"
             " above 1 or a `total_power` beside it.",
+            "A station striation -- \"12+ | {U}, {T}: Add {U} for each artifact"
+            " you control.\" -- is an activated ability with `threshold:"
+            " {\"counter\": \"charge\", \"at_least\": 12}` whose `text` is the"
+            " whole printed line, prefix included. The permanent HAS it only at"
+            " that many counters. Activated abilities only; gated abilities go"
+            " after every ungated one, in rising order. Not `condition`, which"
+            " leaves the ability on the permanent.",
             "`condition_keys` and `value_keys` are what an `if` can ask and what"
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"

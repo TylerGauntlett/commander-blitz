@@ -12004,3 +12004,58 @@ second activation adding; a pump in response counting; a pumped creature
 destroyed in response using its last-known power; negative power putting none
 and removing none; the record pruned; and the load-time guards. The test card is
 `tests/data/station.cards.json`.
+
+## Station symbols — "12+ | …", an ability had only at a counter count
+
+### Overview
+
+The second half of Station, rule 721: "As long as this permanent has N or more
+charge counters on it, it has [abilities]." Uthros, Titanic Godcore's
+"12+ | {U}, {T}: Add {U} for each artifact you control." and Adagia, Windswept
+Bastion's "12+ | {3}{W}, {T}: Create a token that's a copy of target artifact or
+enchantment you control, except it's legendary. Activate only as a sorcery."
+
+### Why the existing vocabulary would not do
+
+`condition` ("activate only if…") refuses the activation of an ability the
+permanent still has. Uthros's gated line is a mana ability, and mana abilities
+never pass through that check, so it would have tapped for blue from turn one.
+The rule is about existence, not permission.
+
+### The shape
+
+`threshold: {"counter": "charge", "at_least": 12}` on an activated ability,
+compiled to `Ability.threshold`. `characteristics.present_printed_abilities`
+drops the gated abilities an object does not meet (all of them off the
+battlefield) from `abilities_of` and `_derived_abilities`, which legality, the
+mana solver, the by-hand mana path, the AI and granted-ability provenance all
+read. `legality._ability_aims` checks it too, for `_offers_something_else`,
+which walks the printed face. Resolution is untouched: `ability_of` reads the
+printed list, so an ability on the stack survives losing the counters.
+
+The loader refuses a threshold on anything but an activated ability, on a
+grantable ability, an ungated ability after a gated one, and falling or
+mixed-counter thresholds: abilities are addressed by index, so an absent one may
+only drop a tail. `verify._covered` claims an `N+ |` line only through an ability
+gated at N whose text is the whole line. The activation sweep in
+`tests/cards/test_every_card_works.py` stocks the counters a threshold asks for,
+and its target prop now reads `any_types` ("target artifact or enchantment").
+
+### Not built
+
+Spacecraft becoming artifact creatures with a base P/T at their number, and gated
+keywords, statics and triggers. Neither Planet needs them; the loader refuses a
+gated non-activated ability.
+
+### Guarded by
+
+`tests/unit/test_station_threshold.py`: absent below 4 and present at exactly 4;
+the 12+ mana ability absent at 11 and present at 12 at its printed index; Station
+still offered past the last number; no striations in hand; removing a counter
+taking the ability away; an ability on the stack resolving after its counters
+are gone; the 12+ mana ability adding one blue per artifact and absent from the
+by-hand mana path at 11; the load-time guards; and the residual gate (the
+striated card claims every line, an ungated ability or a gate at another number
+does not).
+
+Neither card is authored in this change.

@@ -660,6 +660,14 @@ class Ability:
     activate_steps: tuple[str, ...] = ()
     #: Forecast: "only once each turn", counted per (object, ability index).
     once_each_turn: bool = False
+    #: A station symbol (721): ``(counter kind, N)`` -- this permanent has the
+    #: ability only while it has N or more of that counter. Read by
+    #: `characteristics.abilities_of`, which leaves the ability out below N, so
+    #: every reader that asks what a permanent can do agrees it is not there.
+    #: The loader keeps these abilities after every ungated one and in rising
+    #: order, which is what keeps `abilities_of`'s indices stable: below a
+    #: threshold the list only ever loses a tail.
+    threshold: tuple[str, int] | None = None
     # activated + triggered
     targets: tuple[TargetSpec, ...] = ()
     #: Target specs owned by one **mode** each, the ability-level twin of

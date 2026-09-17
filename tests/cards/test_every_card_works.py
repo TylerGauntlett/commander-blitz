@@ -400,6 +400,16 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
         price = getattr(cost, "loyalty", None) if cost else None
         needed = -int(price) if price is not None and int(price) < 0 else 0
         game.state.objects[oid].counters["loyalty"] = max(loyalty, needed)
+    # A station striation (721): "12+ | {3}{W}, {T}: …" is an ability the
+    # permanent does not *have* below twelve charge counters, so a Planet placed
+    # with none reported its best line as missing. Stocked to exactly the
+    # number, which is the boundary the gate is written against -- one fewer
+    # and the ability is rightly absent.
+    threshold = getattr(ability, "threshold", None)
+    if threshold is not None:
+        kind, at_least = threshold
+        counters = game.state.objects[oid].counters
+        counters[kind] = max(counters.get(kind, 0), at_least)
     spec = getattr(cost, "remove_counters", None) if cost else None
     if not spec:
         return
@@ -832,7 +842,11 @@ def _target_fodder(registry, spec):
     if spec.kind not in ("permanent", "any"):
         return None
     selector = spec.selector
-    types = {str(t) for t in selector.get("types") or ["Creature"]}
+    # "Target artifact **or** enchantment you control" -- Adagia, Windswept
+    # Bastion's 12+ line -- is `any_types`, and read as nothing it defaulted to
+    # a creature neither half accepts. The first listed type is one it does.
+    either = [str(t) for t in selector.get("any_types") or []]
+    types = {str(t) for t in selector.get("types") or either[:1] or ["Creature"]}
     subtypes = {str(s) for s in selector.get("subtypes") or []}
     forbidden = {str(s) for s in selector.get("not_supertypes") or []}
 

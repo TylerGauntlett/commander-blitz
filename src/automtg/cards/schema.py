@@ -364,6 +364,14 @@ class AbilityModel(BaseModel):
         Literal["upkeep", "draw_step", "precombat_main", "end_step"]
     ] = Field(default_factory=list)
     once_each_turn: bool = False
+    #: A station symbol (721): "12+ | {U}, {T}: Add {U} for each artifact you
+    #: control" -- ``{"counter": "charge", "at_least": 12}``. The permanent
+    #: **has** this ability only while it has that many counters; below it the
+    #: ability does not exist, so it is not offered, not a mana source and not
+    #: listed. Not ``condition``, which refuses an activation of an ability the
+    #: permanent still has. Activated abilities only, printed after every
+    #: ungated ability and in rising order.
+    threshold: dict[str, Any] | None = None
 
     # triggered
     trigger: TriggerModel | None = None
