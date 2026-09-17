@@ -15,6 +15,7 @@ from .carddef import Ability, CardDef, Cost
 from .characteristics import (
     abilities_of,
     chars,
+    mana_added_on_tap,
     player_doubles_land_mana,
 )
 from .effects.context import EffectContext, ask_objects
@@ -286,6 +287,9 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
         return []
     is_land = "Land" in c.types
     doubled = is_land and player_doubles_land_mana(state, obj.controller)
+    # Crypt Ghast. Every ability reaching the solver is tap-only, so each one
+    # is "tapping it for mana" (106.12) and each option gets the extra.
+    extra = mana_added_total(state, obj.controller, oid)
     out: list[ManaSource] = []
     for ability in abilities_of(state, oid):
         if not solver_taps(ability):
@@ -305,10 +309,13 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
                 ability_index=ability.index,
                 options=(
                     tuple(
-                        mana_produced(
-                            option,
-                            doubled=doubled,
-                            times=mana_amount(state, oid, ability),
+                        plus_mana(
+                            mana_produced(
+                                option,
+                                doubled=doubled,
+                                times=mana_amount(state, oid, ability),
+                            ),
+                            extra,
                         )
                         for option in mana_options_of(state, oid, ability)
                     )
@@ -560,6 +567,31 @@ def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tup
         for option in ability.mana_options
         if any(amount and i in colors for i, amount in enumerate(option))
     )
+
+
+def mana_added_total(state: GameState, pid: int, oid: int) -> tuple[int, ...] | None:
+    """Everything ``add_mana_on_tap`` statics add when ``pid`` taps ``oid``, summed.
+
+    ``None`` when nothing applies. Read by the planner (`_sources_of`) and the
+    chip label, while `activate_mana_ability` reads the same pairs pip by pip
+    with their sources -- so the offer and the payment cannot disagree about how
+    much a Swamp makes.
+    """
+    added = mana_added_on_tap(state, pid, oid)
+    if not added:
+        return None
+    total = [0] * len(added[0][1])
+    for _, mana in added:
+        for i, v in enumerate(mana):
+            total[i] += v
+    return tuple(total)
+
+
+def plus_mana(option: Sequence[int], extra: Sequence[int] | None) -> tuple[int, ...]:
+    """``option`` with the triggered-mana ``extra`` added on top."""
+    if extra is None:
+        return tuple(option)
+    return tuple(a + b for a, b in zip(option, extra, strict=True))
 
 
 def mana_produced(option: Sequence[int], *, doubled: bool, times: int = 1) -> tuple[int, ...]:
@@ -1452,6 +1484,12 @@ def activate_mana_ability(
         doubled=doubled,
         times=mana_amount(state, oid, ability),
     )
+    # "Whenever you tap a Swamp for mana, add an additional {B}." Read before
+    # the tap for the reason the variable amount above is, and only when the
+    # ability really taps: 106.12 makes "tap for mana" a mana ability with {T}
+    # in its cost, and nothing else.
+    tapping = ability.cost is not None and ability.cost.tap
+    added_on_tap = mana_added_on_tap(state, pid, oid) if tapping else []
 
     if ability.cost is not None and ability.cost.tap:
         # The return value is deliberately not checked: `Game._activate_mana`
@@ -1466,6 +1504,11 @@ def activate_mana_ability(
     # came from once it has landed in it.
     state.players[pid].mana_pool.add_tuple(produced, source=oid)
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
+    # The triggered mana ability's mana is its source's, not the land's: tagged
+    # with the Ghast, so provenance readers see who really made it.
+    for source, mana in added_on_tap:
+        state.players[pid].mana_pool.add_tuple(mana, source=source)
+        state.emit(EventType.MANA_ADDED, player=pid, source=source, mana=format_symbols(mana))
     if ability.mana_rider:
         _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:

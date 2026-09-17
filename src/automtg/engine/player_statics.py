@@ -170,6 +170,45 @@ def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "double_land_mana")
 
 
+def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, tuple[int, ...]]]:
+    """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
+
+    Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." A
+    triggered mana ability (605.1b): it triggers off a mana ability and resolves
+    immediately, never using the stack (605.4a), so it is answered here at the
+    mana choke point beside `player_doubles_land_mana` rather than queued.
+
+    Returns ``(source oid, mana)`` pairs, one per applicable static, so the pool
+    can tag each pip with the permanent whose ability made it -- the Ghast, not
+    the Swamp. Two Ghasts add two {B}: each is its own triggered ability.
+
+    ``tapped_permanent`` is matched against the tapped permanent's *current*
+    characteristics, so a land Urborg, Tomb of Yawgmoth has made a Swamp is a
+    Swamp. ``affects_player`` names whose taps count -- "you" for Crypt Ghast,
+    "any" for "whenever a Forest is tapped for mana, its controller adds"
+    (Vernal Bloom). The mana always goes to the player who tapped.
+    """
+    from .mana import parse_mana_production
+
+    out: list[tuple[int, tuple[int, ...]]] = []
+    tapped: Any = None
+    for source, static in _active_player_statics(state, "add_mana_on_tap"):
+        if not _reaches_player(source, static, pid):
+            continue
+        if tapped is None:
+            tapped = chars(state, oid)
+        wanted = static.get("tapped_permanent") or {}
+        if not all(t in tapped.types for t in wanted.get("types", [])):
+            continue
+        if not all(t in tapped.supertypes for t in wanted.get("supertypes", [])):
+            continue
+        subtypes = wanted.get("subtypes", [])
+        if subtypes and not any(t in tapped.subtypes for t in subtypes):
+            continue
+        out.append((source.oid, parse_mana_production(str(static.get("add_mana", "")))))
+    return out
+
+
 def players_freezing_opponent_lands(state: GameState) -> frozenset[int]:
     """Everyone whose ``freeze_opponent_lands`` static is on the battlefield.
 

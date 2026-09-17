@@ -134,6 +134,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_LIFE_PLAYERS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
+    TAPPED_PERMANENT_KEYS,
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
     WAS_CAST_TRIGGERS,
@@ -2030,6 +2031,49 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
 
 
+def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
+    """ "Whenever you tap a Swamp for mana, add an additional {B}." Crypt Ghast.
+
+    Both halves are required. Without `tapped_permanent` the static would fire
+    off every permanent tapped for mana -- Mana Reflection's reach with Crypt
+    Ghast's payload, a much bigger card. Without `add_mana` it adds nothing. And
+    `affects`/`amount` are refused rather than ignored: the permanent is named
+    by `tapped_permanent` and the amount is printed in `add_mana`.
+    """
+    from automtg.engine.mana import parse_mana_production
+
+    if model.tapped_permanent is None or not model.add_mana:
+        raise DslError(
+            f"{where}: add_mana_on_tap needs 'tapped_permanent' (what was tapped, "
+            f"e.g. {{'subtypes': ['Swamp']}}) and 'add_mana' (the mana added, e.g. '{{B}}')"
+        )
+    if model.affects is not None or model.amount is not None:
+        raise DslError(
+            f"{where}: add_mana_on_tap takes 'affects_player', 'tapped_permanent', "
+            f"'add_mana' and an optional 'condition', and no 'affects' or 'amount'"
+        )
+    tapped = model.tapped_permanent
+    unknown = set(tapped) - TAPPED_PERMANENT_KEYS
+    if unknown or not tapped:
+        raise DslError(
+            f"{where}.tapped_permanent: may only name {sorted(TAPPED_PERMANENT_KEYS)} "
+            f"and must name at least one, got {sorted(tapped)}"
+        )
+    for key, known in (("types", KNOWN_TYPES), ("supertypes", KNOWN_SUPERTYPES)):
+        values = tapped.get(key, [])
+        if not isinstance(values, list) or not all(v in known for v in values):
+            raise DslError(f"{where}.tapped_permanent.{key}: unknown value in {values!r}")
+    subtypes = tapped.get("subtypes", [])
+    if not isinstance(subtypes, list) or not all(isinstance(v, str) and v for v in subtypes):
+        raise DslError(f"{where}.tapped_permanent.subtypes: a list of subtype names")
+    try:
+        produced = parse_mana_production(model.add_mana)
+    except Exception as exc:
+        raise DslError(f"{where}.add_mana: {exc}") from exc
+    if not any(produced):
+        raise DslError(f"{where}.add_mana: {model.add_mana!r} adds no mana")
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -2278,6 +2322,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'loss_multiplier' only means anything on a "
             f"replace_life_loss static, not on {model.effect!r}"
         )
+    if model.effect == "add_mana_on_tap":
+        _validate_add_mana_on_tap(model, where)
+    elif model.tapped_permanent is not None or model.add_mana is not None:
+        raise DslError(
+            f"{where}: 'tapped_permanent'/'add_mana' only mean anything on an "
+            f"add_mana_on_tap static, not on {model.effect!r}"
+        )
     if model.effect == "replace_draw":
         # Same refusals as `loss_multiplier`: 1 replaces a draw with an
         # identical draw and 0 is "draw nothing instead" -- a prevention, which
@@ -2467,6 +2518,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["except_first_in_draw_step"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
+    if model.tapped_permanent is not None:
+        static["tapped_permanent"] = dict(model.tapped_permanent)
+    if model.add_mana is not None:
+        static["add_mana"] = model.add_mana
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static

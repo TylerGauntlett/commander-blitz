@@ -63,6 +63,12 @@ KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
 KNOWN_KEYWORDS = frozenset(k.value for k in Keyword)
 KNOWN_COLORS = frozenset(c.value for c in Color)
 
+#: The keys `add_mana_on_tap`'s `tapped_permanent` may carry: what the tapped
+#: permanent *is*. Crypt Ghast's "a Swamp", Leyline of Abundance's "a creature",
+#: Vernal Bloom's "a Forest". Read against the permanent's current
+#: characteristics, so a land Urborg makes a Swamp counts.
+TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes"})
+
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
     {
@@ -176,6 +182,12 @@ STATIC_EFFECTS = frozenset(
         # where nothing can go on the stack.
         "double_land_mana",
         "freeze_opponent_lands",
+        # Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional
+        # {B}." A triggered mana ability (605.1b), which resolves immediately,
+        # so it is read at the mana choke point beside `double_land_mana` rather
+        # than queued: `tapped_permanent` says what was tapped, `add_mana` the
+        # fixed mana added.
+        "add_mana_on_tap",
         # "This creature can't be blocked by Humans", and Tromokratis'
         # "can't be blocked unless all creatures defending player controls
         # block it".  Read by `combat`, not by the characteristics pipeline.
@@ -304,6 +316,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
+        "add_mana_on_tap",
         "freeze_opponent_lands",
         "replace_life_loss",
         "replace_draw",

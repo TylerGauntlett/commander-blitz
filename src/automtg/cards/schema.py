@@ -565,6 +565,12 @@ class AbilityModel(BaseModel):
     #: drawn while its controller's own draw step is running is left alone;
     #: every other draw, that step's second included, is replaced.
     except_first_in_draw_step: bool = False
+    #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
+    #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
+    #: `loader.TAPPED_PERMANENT_KEYS`.
+    tapped_permanent: dict[str, Any] | None = None
+    #: ``add_mana_on_tap``: the fixed mana added -- Crypt Ghast's ``"{B}"``.
+    add_mana: str | None = None
 
 
 class ReplacementModel(BaseModel):

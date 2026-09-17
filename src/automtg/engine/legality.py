@@ -820,7 +820,7 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     two and the chip would otherwise promise one.
     """
     from .characteristics import player_doubles_land_mana
-    from .costs import mana_amount, mana_options_of, mana_produced
+    from .costs import mana_added_total, mana_amount, mana_options_of, mana_produced, plus_mana
     from .mana import format_symbols
 
     options = mana_options_of(state, oid, ability)
@@ -830,13 +830,14 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     doubled = "Land" in chars(state, oid).types and player_doubles_land_mana(
         state, state.objects[oid].controller
     )
-    return format_symbols(
-        mana_produced(
-            options[mana_option],
-            doubled=doubled,
-            times=mana_amount(state, oid, ability),
-        )
+    produced = mana_produced(
+        options[mana_option],
+        doubled=doubled,
+        times=mana_amount(state, oid, ability),
     )
+    if ability.cost is not None and ability.cost.tap:
+        produced = plus_mana(produced, mana_added_total(state, state.objects[oid].controller, oid))
+    return format_symbols(produced)
 
 
 def summarize(state: GameState) -> list[str]:  # pragma: no cover - debug helper

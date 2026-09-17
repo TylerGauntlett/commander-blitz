@@ -12700,3 +12700,42 @@ template's output): paying drains and gains, two opponents gain two, white pays
 the hybrid pip, the mana is really taken, declining does nothing, a player who
 cannot pay is not asked, two instances trigger twice, an opponent's spell does
 not trigger it, and a doubled loss gains double.
+
+## `add_mana_on_tap` — "Whenever you tap a Swamp for mana, add an additional {B}"
+
+### Overview
+
+Crypt Ghast's second line: a triggered mana ability (605.1b). It resolves right
+after the mana ability that triggered it, without the stack (605.4a). The same
+sentence is printed on Nirkana Revenant, Nissa, Who Shakes the World, Vernal
+Bloom, Gauntlet of Might and Leyline of Abundance.
+
+### Why the existing vocabulary would not do
+
+- `double_land_mana` (Vorinclex) is a bare boolean: no filter on what was
+  tapped, and it doubles what the land made instead of adding a fixed {B}.
+- A `triggered` ability cannot fire inside cost payment, where nothing may be
+  queued or asked, and there is no tapped-for-mana trigger event.
+- Nothing in the engine already did this, so it was not a documentation gap.
+
+### The shape
+
+- A player-wide static `add_mana_on_tap` with `affects_player`,
+  `tapped_permanent` (`types`/`subtypes`/`supertypes`, the new
+  `loader.TAPPED_PERMANENT_KEYS`) and `add_mana`.
+- `player_statics.mana_added_on_tap` returns `(source, mana)` per applicable
+  static, through `_active_player_statics`, so a `condition` is honoured.
+- It is read in `costs._sources_of` (planner), `costs.activate_mana_ability`
+  (the pool, tagged with the static's source, only for abilities with {T}) and
+  legality's chip label, all through `mana_added_total`/`plus_mana`.
+- Crypt Ghast is authored with the extort template's ability and this static.
+- The golden vocabulary is re-pinned for the new effect and key set.
+
+### Guarded by
+
+`tests/unit/test_add_mana_on_tap.py`: a Swamp makes two, a Forest one, no Ghast
+one, two Ghasts three, the extra pip tagged with the Ghast, an opponent's Swamp
+unaffected by `you`, `any` paying the tapper, a land made a Swamp counting, the
+solver paying {B}{B}{B}{B} from two Swamps (and not without), legality offering
+the spell (and not without), the effect ending with its source, the condition
+asked, and the loader refusals.

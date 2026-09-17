@@ -3912,6 +3912,8 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
+{ "kind": "static", "effect": "add_mana_on_tap", "affects_player": "you",
+  "tapped_permanent": { "subtypes": ["Swamp"] }, "add_mana": "{B}" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
@@ -3946,6 +3948,23 @@ nothing may stop to ask. Both are read at `costs.activate_mana_ability` instead.
 mana — a spell offered on doubled mana and then paid for on single mana would
 strand the payment mid-cast, which is why both go through one `mana_produced`
 helper.
+
+`add_mana_on_tap` is Crypt Ghast's "Whenever you tap a Swamp for mana, add an
+additional {B}." It is a triggered mana ability (605.1b), which resolves at once
+and never uses the stack (605.4a), so it is read at the mana choke point beside
+`double_land_mana` rather than written as a `triggered` ability. It has to be
+read in the same places too: `costs._sources_of` (so legality offers the spell
+the extra mana pays for), `costs.activate_mana_ability` (so the mana really
+arrives) and legality's chip label. `tapped_permanent` takes only `types`,
+`subtypes` and `supertypes`, matched against the tapped permanent's **current**
+characteristics, so a land Urborg made a Swamp counts. `add_mana` is the fixed
+mana added. `affects_player` names whose taps count: `"you"` for "whenever you
+tap", `"any"` for Vernal Bloom's "whenever a Forest is tapped for mana, its
+controller adds". The mana always goes to the player who tapped. Each static
+adds its mana separately, tagged with its own source. Only abilities with {T}
+in their cost count (106.12). The loader requires both keys and refuses
+`affects` and `amount`. "Enchanted land" (Wild Growth) and "one mana of any
+color" riders are not expressible yet.
 
 `freeze_opponent_lands` sets a **one-shot** `skip_next_untap`, cleared by the
 untap step it skips. That is deliberately not the `frozen_by` lock used by
