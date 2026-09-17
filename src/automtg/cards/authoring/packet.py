@@ -420,6 +420,7 @@ def reference() -> dict:
     from automtg.engine.effects.selectors import SELECTOR_KEYS
     from automtg.engine.effects.values import VALUE_KEYS
     from automtg.engine.enums import CardType, Keyword, Supertype
+    from automtg.engine.objects import PLAYABLE_DURATIONS
     from automtg.engine.triggers import TRIGGER_EVENTS
 
     from ..loader import (
@@ -474,6 +475,12 @@ def reference() -> dict:
         # the player-wide ones -- so a card needing any of them was filed as
         # blocked on a mechanic that already shipped.  Tromokratis was.
         "static_effects": sorted(STATIC_EFFECTS),
+        # The values `playable` takes on `exile`, `look_at_top` and
+        # `grant_playable` -- "you may play it" and how long for. `op_options`
+        # names the key and nothing its value may be, so a worker had no way to
+        # tell "until your next end step" or "for as long as it remains exiled"
+        # already shipped short of a load error.
+        "playable_durations": sorted(PLAYABLE_DURATIONS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
         # "This spell costs {1} less to cast for each ..." -- the arithmetic
         # heads, and the filter language beside them. The filter is

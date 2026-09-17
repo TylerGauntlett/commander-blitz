@@ -1183,6 +1183,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown 'playable' duration {duration!r} "
                 f"(implemented: {sorted(PLAYABLE_DURATIONS)})"
             )
+        if duration == "while_exiled":
+            # "For as long as they remain exiled" ends when the card leaves
+            # exile, which is the zone-change reset -- so it is only the printed
+            # duration on a card that is *in* exile. On a graveyard or a hand
+            # card the same reset would read "for as long as it remains
+            # there", which is a different sentence and a silent one.
+            objects = effect.get("objects")
+            in_exile = (
+                op == "exile"
+                or (op == "look_at_top" and effect.get("destination") == "exile")
+                or (
+                    op == "grant_playable"
+                    and isinstance(objects, Mapping)
+                    and objects.get("zone") == "exile"
+                )
+            )
+            if not in_exile:
+                raise DslError(
+                    f"{where}: 'playable': \"while_exiled\" lasts while the card is in "
+                    f"exile, so it needs cards being exiled or already there "
+                    f"(exile, look_at_top to exile, grant_playable over zone exile)"
+                )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a

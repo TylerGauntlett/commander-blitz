@@ -336,18 +336,20 @@ def _land_actions(state: GameState, pid: int) -> list[Action]:
     # played rather than cast -- so the permission has to reach both halves or
     # Florian's land half silently does nothing. Filtered per object below,
     # because only the flagged cards in exile are offered.
-    if any(
-        state.objects[oid].playable_by == pid and state.objects[oid].playable_live(state.turn)
-        for oid in state.players[pid].exile
-    ):
-        zones.append(
-            [
-                oid
-                for oid in state.players[pid].exile
-                if state.objects[oid].playable_by == pid
-                and state.objects[oid].playable_live(state.turn)
-            ]
-        )
+    #
+    # Every seat's exile, not only your own: exile is kept per owner, and Elder
+    # Brain exiles an *opponent's* hand and lets you play the lands in it. The
+    # cast side (`casting._cast_actions`) already walks every seat for the same
+    # reason; the flag is the permission, so the wider walk offers nothing that
+    # was not granted.
+    exiled = [
+        oid
+        for player in state.players
+        for oid in player.exile
+        if state.objects[oid].playable_by == pid and state.objects[oid].playable_live(state.turn)
+    ]
+    if exiled:
+        zones.append(exiled)
     if player_plays_lands_from_library_top(state, pid) and state.players[pid].library:
         # The top card only -- which is what the cards say, and the only part
         # of a hidden zone anybody is entitled to see.

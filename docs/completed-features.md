@@ -13036,3 +13036,36 @@ what a cast charges; activations offered off no mana, withheld without K'rrik or
 the life, the forced answer not asked, the real choice asked and honoured, the
 X ceiling; and a printed `{G/P}` activation payable with life. K'rrik, Son of
 Yawgmoth is authored.
+
+## `playable: "while_exiled"` — "for as long as they remain exiled"
+
+### Overview
+
+Elder Brain: *"You may play lands and cast spells from among the exiled cards for
+as long as they remain exiled."* The four durations the engine had either end
+(`this_turn`, `your_next_end_step`, `end_of_your_next_turn`) or forbid the turn
+of the grant (`later_turns`, Plot) -- and Elder Brain's cards are playable in the
+second main phase of the very combat that exiled them.
+
+### The shape
+
+- **`while_exiled`** in `PLAYABLE_DURATIONS`. `playable_live` already answers
+  True for a duration it has no clock for, and no hook in `turn` names it, so the
+  permission stands until the zone-change reset clears it.
+- **Loader.** Accepted on `exile`, on `look_at_top` into exile, and on
+  `grant_playable` whose selector reads `zone: "exile"`; refused elsewhere.
+- **Every seat's exile for a land drop.** `legality._land_actions` walked only
+  the player's own exile, so a land exiled out of an opponent's hand was never
+  offered -- the cast side (`casting._cast_actions`) already walked every seat.
+  `Game._play_land` now sets the land's controller to the player making the drop
+  before it moves, so it enters under their control (110.2) and not its owner's.
+- **Packet.** `reference()["playable_durations"]` lists the values, which no
+  worker could see before.
+
+### Guarded by
+
+`tests/unit/test_playable_while_exiled.py`: live on the turn of the grant, on the
+next turn and the one after; untouched by every expiry hook; gone once the card
+leaves exile and comes back, and used up by playing it; an opponent's exiled land
+offered and entering under your control; the loader's accept and refuse cases;
+and the packet listing.

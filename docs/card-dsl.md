@@ -3692,7 +3692,12 @@ graveyard that refills as you empty it, that is the loop, not a rounding error.
   "playable": "your_next_end_step" }                                // Haste Magic
 { "op": "exile", "objects": { ... },
   "playable": "end_of_your_next_turn" }                             // Light Up the Stage
+{ "op": "exile", "objects": { ... },
+  "playable": "while_exiled" }                                      // Elder Brain
 ```
+
+The values are `PLAYABLE_DURATIONS` in `engine/objects.py`, listed for workers as
+`playable_durations` in the packet reference.
 
 `playable_this_turn` is the impulse-draw permission and was the only one there
 was: a `playable_turn` on the object, compared against `state.turn` in seven
@@ -3722,6 +3727,19 @@ turn as well as the seat.
 Every reader goes through `GameObject.playable_live(turn)`. Generalising meant
 replacing all seven `playable_turn == state.turn` comparisons rather than adding
 an eighth, since that comparison *is* the this-turn duration.
+
+**`while_exiled`** is Elder Brain's "for as long as they remain exiled": live
+from the moment it is granted, and never expired by a hook. Leaving exile is a
+zone change, and `reset_permanent_state` clears every `playable_*` field on the
+way (400.7), which is exactly where the printed permission ends. For that reason
+the loader accepts it only where the card is in exile -- `exile`, `look_at_top`
+with `destination: "exile"`, or `grant_playable` over `zone: "exile"` -- since on
+a graveyard card the same reset would read "while it remains in the graveyard".
+
+The land half ("you may **play lands** … from among the exiled cards") walks
+every seat's exile, as the cast half always did: an opponent's card exiled by
+your effect sits in *their* exile. A land played that way enters under the
+control of the player who played it (110.2).
 
 ## Adding an op
 

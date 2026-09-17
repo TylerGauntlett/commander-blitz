@@ -273,6 +273,12 @@ class Game:
         # above is done before it: the enters replacements are applied inside
         # `move_object`, which cannot stop to ask, and nobody receives priority
         # between this question and the arrival.
+        # The player making the land drop controls the land (110.2),
+        # which is only news for a card they do not own -- one played out of an
+        # opponent's exile under Elder Brain's permission. Set before the move,
+        # so the enters replacements and the landfall event read the player
+        # who actually played it, the way `stack.push_spell` sets a spell's.
+        state.objects[oid].controller = pid
         yield from offer_enters_costs(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
