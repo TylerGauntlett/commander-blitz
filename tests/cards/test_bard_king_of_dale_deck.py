@@ -18,7 +18,8 @@ So the authoring expectations are floors, and these are the observations. Each
 class is one card and asserts the printed sentence the gate could not reach, plus
 the near miss -- the sentence that would be true of the card mis-written.
 
-Not here: Caretaker's Talent, whose engine support is still being built.
+No card in the deck list is skipped: no gate expectation proves a card's whole
+text, so every card named here has a class.
 """
 
 from __future__ import annotations
@@ -2266,3 +2267,110 @@ class TestWitchEnchanter:
         assert game.state.card_of(obj).id == "witch_blessed_meadow"
         assert not obj.tapped
         assert game.state.players[0].life == 37
+
+
+class TestCaretakersTalent:
+    """"Whenever one or more tokens you control enter, draw a card. This ability
+    triggers only once each turn." / "{W}: Level 2" / "When this Class becomes level 2,
+    create a token that's a copy of target token you control." / "{3}{W}: Level 3" /
+    "Creature tokens you control get +2/+2."
+
+    The gate cast it at level 1 into a sandbox where no token entered afterwards, and
+    never bought a level.
+    """
+
+    LEVEL_2, LEVEL_3 = 1, 3
+    ILLUSION = "illusion_1_1_u"
+
+    def position(self, builder, *, level: int = 1, active: int = 0):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["caretaker_s_talent"], level=level)
+            .battlefield(0, [self.ILLUSION, BEAR] + ["plains"] * 4)
+            .hand(0, [ANCHOR])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .active(active)
+            .build(advance=False)
+        )
+        # Placed rather than created, so the builder does not know it is a token.
+        game.state.objects[only_oid(game, self.ILLUSION, 0)].is_token = True
+        game.state.bump_chars()
+        game._advance()
+        return game, only_oid(game, "caretaker_s_talent", 0)
+
+    def test_two_token_creations_in_a_turn_draw_once(self, builder):
+        """Hermes makes a Bird on each of two spells: two batches, one card."""
+        game = (
+            builder(players=2)
+            .battlefield(0, ["caretaker_s_talent", "hermes_overseer_of_elpis", "plains", "plains"])
+            .hand(0, [ANCHOR, ANCHOR])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .build()
+        )
+        before = library(game, 0)
+        cast(game, ANCHOR)
+        assert before - library(game, 0) == 1
+        cast(game, ANCHOR)
+        assert len(tokens(game, "bird_1_1_u_flying_vigilance", 0)) == 2
+        assert before - library(game, 0) == 1, "only once each turn"
+
+    def test_a_nontoken_creature_entering_draws_nothing(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["caretaker_s_talent", "forest", "forest"])
+            .hand(0, [BEAR])
+            .battlefield(1, ["plains"])
+            .hand(1, [ANCHOR])
+            .build()
+        )
+        before = library(game, 0)
+        cast(game, BEAR)
+        assert library(game, 0) == before
+
+    def test_level_two_is_offered_at_level_one_only(self, builder):
+        game, talent = self.position(builder)
+        assert activations(game, talent, self.LEVEL_2)
+        game, talent = self.position(builder, level=2)
+        assert not activations(game, talent, self.LEVEL_2)
+
+    def test_level_two_is_not_offered_at_instant_speed(self, builder):
+        game, talent = self.position(builder, active=1)
+        pass_until(game, lambda g: g.pending() is not None and g.pending().player == 0)
+        assert game.state.active_player == 1
+        assert not activations(game, talent, self.LEVEL_2)
+
+    def test_level_three_is_not_offered_at_level_one(self, builder):
+        """A ladder: level 3 is bought from level 2, not skipped to."""
+        game, talent = self.position(builder)
+        assert not activations(game, talent, self.LEVEL_3)
+
+    def test_becoming_level_two_copies_a_token_and_level_three_does_not_again(self, builder):
+        game, talent = self.position(builder)
+        activate(game, talent, self.LEVEL_2)
+        assert game.state.objects[talent].class_level == 2
+        assert len(tokens(game, self.ILLUSION, 0)) == 2, "the Illusion and its copy"
+        assert count_on_battlefield(game, BEAR, 0) == 1, "a token, not the Bear"
+
+        pass_until(game, lambda g: g.state.active_player == 1)
+        pass_until(
+            game,
+            lambda g: g.state.active_player == 0
+            and g.state.step is Step.PRECOMBAT_MAIN
+            and g.pending() is not None
+            and g.pending().player == 0,
+        )
+        activate(game, talent, self.LEVEL_3)
+        assert game.state.objects[talent].class_level == 3
+        assert len(tokens(game, self.ILLUSION, 0)) == 2, "level 2's trigger does not fire again"
+
+    def test_at_level_three_creature_tokens_get_two(self, builder):
+        game, _ = self.position(builder, level=3)
+        illusion, bear = only_oid(game, self.ILLUSION, 0), only_oid(game, BEAR, 0)
+        assert (chars(game.state, illusion).power, chars(game.state, illusion).toughness) == (3, 3)
+        assert chars(game.state, bear).power == 2, "a nontoken creature is not buffed"
+
+    def test_below_level_three_they_do_not(self, builder):
+        game, _ = self.position(builder, level=2)
+        assert chars(game.state, only_oid(game, self.ILLUSION, 0)).power == 1
