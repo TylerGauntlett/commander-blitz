@@ -12309,3 +12309,57 @@ charged by `Game._cast`, which pays only `additional.without_mana()` per time.
 Casting the multikicker test anthem kicked three times on eight Plains taps two
 lands. `test_multikicker.py` asserts the offered counts and the read-back count,
 not the lands tapped, so nothing fails.
+
+## "Those opponents" — the targeted players as a selector's controller
+
+### Overview
+
+Call the Coppercoats' second sentence: *"Choose any number of target opponents.
+Create X 1/1 white Human Soldier creature tokens, where X is the number of
+creatures **those opponents** control."* Its gap record asked for a new
+"targeted-player selector", reasoning that `controller` accepts only fixed roles.
+
+### What was already there
+
+Nothing new was needed in the engine. A selector's `controller` is a full player
+spec (`selectors.matches` hands a Mapping clause to `select_players`), and
+`{"target": "t1"}` resolves through `ctx.target_players`, which returns every
+player ref under the id rather than the first. Cloak and Dagger's "creature
+**they** control" is the same clause with one seat in it. On resolution the
+context is built from `targeting.filter_legal`, so 608.2b already applies: a
+target that became illegal is not in the set, and a spell whose targets are all
+illegal does not resolve.
+
+The gap was written in good faith: the packet named `selector_keys` but never
+said what `controller` could hold, and the DSL reference's selector block listed
+`you|opponent|any` only.
+
+### What changed
+
+- **`loader.effects._validate_nested_player_refs`**: `_validate_effect` now walks
+  an effect's `objects`, `per`, `selector`, `affects`, `amount`, `count`, `power`
+  and `toughness` and validates every Mapping `controller`/`player` clause with
+  `_validate_player_spec`, wherever it is nested. Before, only the top-level
+  `player`/`chooser`/`controller` keys were checked, so
+  `{"count": {"controller": {"target": "t9"}}}` loaded and counted nobody, and so
+  did a `{"target": …}` naming a `permanent` target.
+- **Packet note** spelling the clause for "those opponents" / "they control",
+  and naming `controller: "opponent"` as the near miss.
+- **Docs**: the selector block's `controller` comment, and a card-dsl section.
+
+### Tier
+
+Loader validation and vocabulary. No op, event, decision or API field; nothing
+under `frontend/`.
+
+### Guarded by
+
+`tests/unit/test_targeted_players.py`, at a four-seat table with two, three and
+four creatures: one target counts that seat; two count both; the untargeted seat
+is never counted; all three count everyone; zero targets counts nobody; the
+`controller: "opponent"` counterfactual counts the whole table off one target;
+protection granted in response drops that seat while the other still counts;
+protection on the only target leaves no tokens; and the loader refuses an
+undeclared id, a non-player target, and an undeclared id nested inside `not`.
+
+Call the Coppercoats is not authored in this change.

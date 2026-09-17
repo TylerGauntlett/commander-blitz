@@ -312,6 +312,37 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
 
 
+def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check every player spec a selector or value carries *inside* it.
+
+    "Create X tokens, where X is the number of creatures **those opponents**
+    control" is ``{"count": {"types": ["Creature"], "controller": {"target":
+    "t1"}}}`` -- a player spec two levels down, in a value's selector. The
+    top-level keys an effect names a player with (``player``, ``chooser``,
+    ``controller``) were validated; one nested in a selector was not, so
+    ``{"target": "t9"}`` there loaded clean and counted nobody, and so did a
+    ``{"target": …}`` aimed at a `permanent` target, whose refs are never
+    players. Every failure here is a zero, which on a board looks like a card
+    that happened to find nothing.
+
+    Walked rather than read off known paths, because selectors nest -- inside
+    `any_of`, inside `max_count_of`, inside `sum` -- and it is the same check
+    wherever the clause sits. Only the two keys a selector spells a seat with
+    are read, and only in their mapping form: the words are checked by
+    `validate_selector` already.
+    """
+    if isinstance(node, Mapping):
+        for key, value in node.items():
+            path = f"{where}.{key}"
+            if key in ("controller", "player") and isinstance(value, Mapping):
+                _validate_player_spec(value, path, target_kinds)
+            else:
+                _validate_nested_player_refs(value, path, target_kinds)
+    elif isinstance(node, (list, tuple)):
+        for i, value in enumerate(node):
+            _validate_nested_player_refs(value, f"{where}[{i}]", target_kinds)
+
+
 def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Check an ``attacking`` clause: the boolean, or a player spec.
 
@@ -434,6 +465,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
         )
+    for key in ("objects", "per", "selector", "affects", "amount", "count", "power", "toughness"):
+        if key in effect:
+            _validate_nested_player_refs(effect[key], f"{where}.{key}", target_kinds)
     for key in ("objects", "per", "selector"):
         sub = effect.get(key)
         if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:

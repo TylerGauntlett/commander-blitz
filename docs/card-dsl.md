@@ -270,7 +270,8 @@ Every key is optional; all present keys must match.
 ```jsonc
 {
   "zone": "battlefield",          // library|hand|battlefield|graveyard|exile|stack|command
-  "controller": "you",            // you|opponent|any
+  "controller": "you",            // you|opponent|any, or a player spec: {"target": "t1"} is
+                                  // "…THEY control" / "…THOSE OPPONENTS control" -- every seat t1 chose
   "types": ["Creature"],          // all must be present
   "any_types": ["Artifact", "Enchantment"],   // any one is enough -- "artifact or enchantment"
   "any_of": [{"self_only": true}, {"is_commander": true}],  // a union of whole selectors
@@ -5765,6 +5766,42 @@ not the spec is `optional`.
 **At most one `"any"` spec per card, and it must come last.** `filter_legal`
 slices the stored refs spec by spec, so one of unknown size in the middle leaves
 no way to say where its refs end. Refused at load time.
+
+## "…the number of creatures those opponents control" — the players a spell targeted
+
+```jsonc
+// Call the Coppercoats: "Choose any number of target opponents. Create X 1/1
+// white Human Soldier creature tokens, where X is the number of creatures those
+// opponents control."
+"targets": [ { "id": "t1", "kind": "player", "count": "any",
+               "selector": { "controller": "opponent" } } ],
+"spell_effects": [
+  { "op": "create_token", "token": "human_soldier_1_1_w",
+    "amount": { "count": { "zone": "battlefield", "types": ["Creature"],
+                           "controller": { "target": "t1" } } } } ]
+```
+
+**No new vocabulary** — the spelling Cloak and Dagger uses for one seat reads a
+set of them unchanged. A selector's `controller` is a full player spec, and
+`{"target": "t1"}` resolves through `ctx.target_players`, which returns *every*
+player ref under that id: target two opponents and it matches creatures either
+of them controls. The same clause works anywhere a selector does — an effect's
+`objects`, a `count`, a `max_count_of` — and `player` scopes a zone the same way
+("…cards in those players' graveyards").
+
+`controller: "opponent"` is the near miss, and is exact only when every
+opponent was targeted. At a pod it counts the whole table, so targeting the
+opponent with two creatures still makes tokens for the one with four.
+
+608.2b is what keeps "those opponents" honest on resolution: the resolving
+context is built from `filter_legal`'s buckets, so an opponent who became an
+illegal target in response (protection, having left the game) is simply not in
+the set while the rest are still counted — and if every target is illegal the
+spell does not resolve. Zero targets is a legal cast and counts nobody.
+
+The loader checks the reference wherever it sits, however deeply nested: an
+undeclared id, or a `{"target": …}` naming a target whose kind is never a player
+(a `permanent`), is a load error. Both used to load and count nobody.
 
 ## "Return up to X target creature cards" — a count the game computes
 

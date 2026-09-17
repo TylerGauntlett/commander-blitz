@@ -667,6 +667,16 @@ def reference() -> dict:
             " set a *static ability* may read, because a static may only read"
             " printed characteristics -- do not mistake it for the whole"
             " selector language.",
+            "A selector's `controller` (and `player`, for a zone somebody owns)"
+            " takes a player spec as well as \"you\"/\"opponent\"/\"any\"."
+            " `{\"target\": \"t1\"}` there means EVERY player target t1 chose, so"
+            " \"the number of creatures those opponents control\" after \"choose"
+            " any number of target opponents\" is `{\"count\": {\"types\":"
+            " [\"Creature\"], \"controller\": {\"target\": \"t1\"}}}` -- and"
+            " \"creatures they control\" after one target player is the same"
+            " clause. Targets that became illegal are dropped on resolution."
+            " `controller: \"opponent\"` is NOT it: that counts every opponent,"
+            " targeted or not.",
             "\"This spell/ability costs {N} less\" is `cost_reduction` on the"
             " card, or `mana_reduction` on an activated ability's `cost` or a"
             " `flashback` node. It takes exactly one of `cost_reduction_keys`"
