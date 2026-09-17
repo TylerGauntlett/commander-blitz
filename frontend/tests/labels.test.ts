@@ -109,6 +109,29 @@ describe("describeEvent", () => {
     );
   });
 
+  it("tells an extra turn from an ordinary one, and says when one is skipped", () => {
+    // An extra turn does not complete a round, so "Your turn 2" twice reads as
+    // the log repeating itself; and a skipped one fires no `turn_began` at all,
+    // so without its own line the `default` fallthrough drops the only trace.
+    expect(
+      describeEvent(
+        event({ type: "turn_began", data: { turn: 4, round: 2, extra: true } }),
+        names,
+        0,
+      ),
+    ).toBe("-- Your extra turn 2 --");
+    expect(
+      describeEvent(event({ type: "turn_began", data: { turn: 3, round: 2 } }), names, 0),
+    ).toBe("-- Your turn 2 --");
+    expect(
+      describeEvent(
+        event({ type: "turn_skipped", player: 1, data: { extra: true } }),
+        names,
+        0,
+      ),
+    ).toBe("AI 1 skips an extra turn");
+  });
+
   it("numbers a Saga's chapter the way the card does", () => {
     // Another event the `default` fallthrough would drop in silence, and the one
     // line a player needs: the `counter_placed` beside it says "gets 1 lore",

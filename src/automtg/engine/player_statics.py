@@ -182,6 +182,21 @@ def player_skips_draw_step(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "skip_draw_step")
 
 
+def player_skips_extra_turn(state: GameState, pid: int) -> bool:
+    """Whether a ``skip_extra_turn`` static makes this player skip an extra turn.
+
+    Trouble in Pairs: "If an opponent would begin an extra turn, that player
+    skips that turn instead." Read by `turn._take_extra_turn` at the moment a
+    scheduled extra turn would begin, which is when a replacement effect applies
+    (614.10) -- not by the `extra_turn` op, whose job is only to schedule.
+
+    Only **extra** turns. The printed line is inert against the ordinary turn
+    order, and nothing else reads this, so there is no path by which it could
+    skip one.
+    """
+    return _player_static(state, pid, "skip_extra_turn")
+
+
 def attack_forbidden(state: GameState, oid: int) -> bool:
     """Is this creature under a global "can't attack" static?
 

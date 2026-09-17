@@ -362,6 +362,34 @@ class GameState:
     #: Extra phases actually entered this turn, against `MAX_EXTRA_PHASES_PER_TURN`.
     #: Counted rather than measured off the queue because the queue drains.
     extra_phases_taken: int = 0
+    #: Extra turns scheduled and not yet begun, as player ids. **Taken from the
+    #: end**: rule 500.7 adds each extra turn directly after the current one, so
+    #: the most recently created is taken first -- a stack, not a queue. A turn
+    #: created *during* an extra turn lands on top and comes straight after it,
+    #: ahead of the ones still waiting, which is the same sentence applied again.
+    #:
+    #: On the state rather than on a player because the order *between* players
+    #: is the point: Perch Protection hands its turn to an opponent, and it has
+    #: to interleave with whatever Time Warp its caster already had waiting.
+    #: Unlike `extra_phases` it survives the turn boundary -- crossing it is what
+    #: an extra turn is for. See `turn._begin_next_turn`.
+    extra_turns: list[int] = field(default_factory=list)
+    #: True while the current turn is an extra one. Read by the untap step, which
+    #: says so on `TURN_BEGAN`; nothing in the rules asks, since an extra turn is
+    #: a turn in every respect (500.7).
+    extra_turn: bool = False
+    #: The seat whose **ordinary** turn the table resumes after, while extra
+    #: turns are being taken; `None` otherwise, when `active_idx` is that seat.
+    #:
+    #: An extra turn moves the active player without moving the turn order.
+    #: Player 0 casts Perch Protection and player 1 takes the gift: the next
+    #: ordinary turn is still the one after *player 0's*, which in a pod is not
+    #: the seat after the player whose extra turn just ended.
+    turn_order_idx: int | None = None
+    #: The player whose turn most recently ended, or `None` before the first one
+    #: has. Day and night (726.2) ask about "the previous turn's active player",
+    #: which stopped being the seat to the right once turns could be extra.
+    previous_active: int | None = None
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
     #: False until the current step's turn-based actions have been performed.

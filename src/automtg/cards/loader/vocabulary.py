@@ -106,6 +106,12 @@ STATIC_EFFECTS = frozenset(
         # `skip_untap`, not a continuous effect, so a shared `step:` parameter
         # would still not have carried it.
         "skip_draw_step",
+        # "If an opponent would begin an extra turn, that player skips that turn
+        # instead." Trouble in Pairs. Player-wide, and a *replacement*: read by
+        # `turn._take_extra_turn` as a scheduled extra turn would begin (614.10),
+        # never at scheduling time, so a turn queued before the permanent arrived
+        # is still skipped. Only extra turns -- the ordinary order has no reader.
+        "skip_extra_turn",
         "play_lands_from_graveyard",
         # "Once during each of your turns, you may cast an artifact spell from
         # your graveyard." Edgar, Master Machinist. Player-wide like
@@ -264,6 +270,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "extra_land_drops",
         "no_hand_limit",
         "skip_draw_step",
+        "skip_extra_turn",
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",

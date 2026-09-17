@@ -11322,3 +11322,73 @@ boundary; and the load-time guards.
 The five cards are not authored in this change; their gap records stay until
 they are re-authored. Esper Sentinel still needs nothing else; The Queen of Dale's
 recruit is sayable with existing ops; Trouble in Pairs still needs extra turns.
+
+## `extra_turn` and `skip_extra_turn` — "take an extra turn after this one"
+
+### Overview
+
+Three gap records named one missing concept: Perch Protection ("Gift an extra
+turn"), Trouble in Pairs ("If an opponent would begin an extra turn, that player
+skips that turn instead") and Final Fortune ("Take an extra turn after this
+one"). The engine had no turn that was not the next live seat's —
+`turn._begin_next_turn` advanced `active_idx` by one and that was the whole turn
+order — so there was nothing for an op to add or a replacement to catch.
+
+### Why the existing vocabulary would not do
+
+- `extra_combat` and `extra_land_drop` add sub-steps *inside* the turn in
+  progress, and `extra_phases` is cleared at the very boundary an extra turn has
+  to cross.
+- `skip_draw_step` is the closest static and suppresses a turn-based action
+  inside a turn; it reaches nothing about the turn sequence.
+- Writing Perch Protection's `gift` label and dropping the reward would pass
+  every authoring gate and never hand over the promised turn.
+
+### The shape
+
+- **`GameState.extra_turns`**, a stack of player ids. Rule 500.7: added directly
+  after the current turn, one at a time, APNAP order for several players, most
+  recently created first. Popping from the end is all three, including a turn
+  created during an extra turn landing ahead of the ones already waiting.
+- **`GameState.turn_order_idx`**, the seat whose ordinary turn the table resumes
+  after. Without it, a turn gifted across a pod would be followed by the seat
+  after the *recipient*, skipping everyone between.
+- **`extra_turn` op** (`ops_player.py`), usual player spec defaulting to `"you"`.
+  `"gift_recipient"` already resolves to nobody on the unpromised line, so
+  Perch Protection's reward is one unconditional entry, as Parting Gust's Fish
+  is. The loader refuses `controller` on it by name — that is the key Parting
+  Gust aims with, and copied here it would be ignored and give the caster the
+  turn.
+- **`skip_extra_turn` static**, player-wide with `affects_player`. A replacement
+  (614.10) asked in `turn._take_extra_turn` as a queued turn would begin — not at
+  scheduling, so a turn queued before the permanent arrived is still skipped and
+  two queued turns are skipped one at a time. A skipped turn takes no turn number.
+- An extra turn takes a turn number and counts against the turn cap, but does
+  not complete a round.
+- `GameState.previous_active` replaces day/night's "the seat to the right" as
+  726.2's previous turn's active player, which an extra turn made wrong.
+
+### Tier D
+
+One new event, `turn_skipped`, since a skipped turn fires no `turn_began` and
+would otherwise leave no trace. `turn_began` carries `extra: true` on an extra
+turn only, so ordinary logs are byte-identical. Frontend: `describeEvent` reads
+"-- Your extra turn 2 --" and "AI 1 skips an extra turn"; `beatsFor` banners
+"Your Extra Turn" and a per-seat toned "skips their extra turn". No API field:
+the scheduled stack is not serialized.
+
+### Guarded by
+
+`tests/unit/test_extra_turn.py`: Time Warp's sequence and the control; a turn but
+not a round; `extra` only on extra turns; the recorded previous player; the gift
+promised, unpromised, and across a pod; newest first, a turn created during an
+extra turn, APNAP for "each player", an eliminated player's turn discarded; the
+skip for an opponent but not its controller, never for ordinary turns, one at a
+time, for a turn queued before it arrived, and not once it has gone; and the
+loader guards. Frontend: `tests/labels.test.ts`, `tests/events.test.ts`.
+
+No card is authored in this change and the gap records stay. Perch Protection
+needs nothing else: `bird_2_2_u_flying` has since shipped, and its promised
+branch is Teferi's Protection's three effects behind `gift_promised`; Trouble in Pairs' second line is
+sayable now that `nth` on `spell_cast` has shipped; Final Fortune still needs a
+delayed trigger scoped to the extra turn it created and a `lose_game` op.

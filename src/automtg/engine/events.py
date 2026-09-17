@@ -211,7 +211,14 @@ class EventType:
     ATTACKED_UNBLOCKED = "attacked_unblocked"
 
     # turn structure
+    #: ``data["extra"]`` is present, and True, only on an extra turn (500.7).
     TURN_BEGAN = "turn_began"
+    #: A scheduled extra turn that did not happen, because its player skipped it
+    #: (614.10) -- Trouble in Pairs. Emitted where the turn would have begun, and
+    #: the only trace of it: a skipped turn takes no turn number and fires no
+    #: `turn_began`, so without this the log shows a spell that promised a turn
+    #: and a table that silently moved on.
+    TURN_SKIPPED = "turn_skipped"
     STEP_BEGAN = "step_began"
     STEP_ENDED = "step_ended"
     UPKEEP = "upkeep"

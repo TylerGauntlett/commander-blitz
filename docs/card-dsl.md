@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-114 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+115 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -259,7 +259,7 @@ it, but a card that needed correcting was authored wrong.
 | Players | `become_monarch` `win_game` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
-| Turn structure | `extra_combat` |
+| Turn structure | `extra_combat` `extra_turn` |
 | Dice | `roll_dice` |
 | Control flow | `if` `for_each` `for_each_player` `may` `choose_mode` `choose_type` `choose_color` `choose_player` `choose_permanents` `repeat` `snapshot` `noop` `delay` `delayed_trigger` `join_forces` |
 
@@ -3517,7 +3517,7 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Thirteen static effects describe the *player* rather than a characteristic, so
+Fourteen static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -3526,6 +3526,7 @@ they take `affects_player` instead of `affects` — the full list is
   "affects_player": "you", "amount": { "const": 1 } }
 { "kind": "static", "effect": "no_hand_limit", "affects_player": "you" }
 { "kind": "static", "effect": "skip_draw_step", "affects_player": "you" }
+{ "kind": "static", "effect": "skip_extra_turn", "affects_player": "opponent" }
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
@@ -4358,6 +4359,53 @@ activated in an end step has no phase left to come after — and a turn takes at
 most `MAX_EXTRA_PHASES_PER_TURN` of them, which is the same kind of valve as the
 turn cap: the rules would let an untap-and-attack-again loop run for ever, and a
 self-play run cannot.
+
+## An extra turn
+
+```jsonc
+{ "op": "extra_turn" }                                  // Time Warp
+{ "op": "extra_turn", "player": "gift_recipient" }      // Perch Protection's gift
+{ "kind": "static", "effect": "skip_extra_turn",
+  "affects_player": "opponent" }                        // Trouble in Pairs
+```
+
+"Take an extra turn after this one." `player` is the usual player spec and
+defaults to `"you"`. The op only **schedules**: it pushes the seat onto
+`GameState.extra_turns` and `turn._begin_next_turn` takes it when the current
+turn ends, so an instant resolving on somebody else's turn still puts the extra
+turn directly after *that* turn. Rule 500.7 in full, which is three claims:
+
+- **Most recently created first.** `extra_turns` is a stack. A turn created
+  during an extra turn comes straight after it, ahead of the ones still waiting.
+- **Several players, one at a time, in APNAP order.** `"each_player"` pushes the
+  active player first, so the table takes them in reverse.
+- **The turn order does not move.** `GameState.turn_order_idx` remembers the
+  seat whose ordinary turn the table resumes after. Gifted to the seat across a
+  pod, the extra turn is taken and then the seat *between* goes next — setting
+  `active_idx` to the recipient and walking on from there would skip it.
+
+An extra turn is a turn in every respect: it takes a turn number, counts against
+the turn cap, untaps and draws. It does not complete a round, and its
+`turn_began` event carries `extra: true` (only then) so the log does not read as
+the same turn printed twice.
+
+The gift reward goes **first** in `spell_effects` (702.164b), and needs no `if`:
+`"gift_recipient"` resolves to nobody when no promise was made, exactly as
+Parting Gust's Fish does. Aim it with `player`. The loader refuses `controller`
+on this op by name, because that is the key Parting Gust's `create_token` uses,
+and copied here it would be ignored and hand the promised turn to the caster.
+
+`skip_extra_turn` is a player-wide static and a replacement (614.10): it is asked
+in `turn._take_extra_turn` as a scheduled extra turn *would begin*, never when
+the turn is created. So a turn queued before the permanent arrived is still
+skipped, one queued while it was out is taken if it has gone by then, and each
+queued turn is its own "would begin" — two waiting are skipped one at a time. A
+skipped turn takes no turn number and fires `turn_skipped` instead of
+`turn_began`. Ordinary turns have no reader for it at all.
+
+Not yet sayable: "at the beginning of **that turn's** end step" (Final Fortune) —
+a delayed trigger scoped to the extra turn an effect created. `delay`'s clock is
+still the turn it was created in.
 
 ## Granting an ability for as long as the permanent lasts
 

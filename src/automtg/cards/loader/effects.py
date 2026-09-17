@@ -1137,6 +1137,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: extra_combat takes no {key!r} -- an extra phase belongs "
                     f"to the turn in progress, whoever's turn that is"
                 )
+    if op == "extra_turn" and "controller" in effect:
+        # Whose turn it is goes in `player`, the key every player-naming op
+        # uses. `controller` is the near miss worth refusing by name: it is what
+        # Parting Gust's gift reward is aimed with, so a Perch Protection copied
+        # from it would load, ignore the key, and hand the promised turn to the
+        # *caster* -- a gift spell that pays its own controller instead.
+        raise DslError(
+            f"{where}: extra_turn names who takes the turn with 'player', "
+            f"not 'controller' (e.g. \"player\": \"gift_recipient\")"
+        )
     if op == "set_flag" and not effect.get("flag"):
         # A flag with no name writes nothing, so renown's once-only guard never
         # closes and the creature grows on every combat damage for ever.

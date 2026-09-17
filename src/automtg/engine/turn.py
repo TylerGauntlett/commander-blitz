@@ -12,7 +12,12 @@ from typing import TYPE_CHECKING, Any
 from . import combat as combat_mod
 from . import replacements, sagas, suspend
 from .actions import PendingDecision
-from .characteristics import player_has_no_hand_limit, player_skips_draw_step, untap_also
+from .characteristics import (
+    player_has_no_hand_limit,
+    player_skips_draw_step,
+    player_skips_extra_turn,
+    untap_also,
+)
 from .effects.context import EffectContext, ask_objects
 from .enums import DecisionKind, Keyword, Step
 from .events import EventType
@@ -356,8 +361,13 @@ def _untap_step(state: GameState) -> None:
         if obj is not None and obj.tapped and not obj.skip_next_untap:
             untap_permanent(state, oid)
     # Both counters: `turn` is the rules one, `round` is the one the log prints.
+    # `extra` only when it is one, so an ordinary turn's event -- which every
+    # recorded log and golden replay holds thousands of -- is byte-for-byte
+    # what it was. The log has to say it: an extra turn does not advance the
+    # round, so without the word it reads as the same turn printed twice.
+    extra = {"extra": True} if state.extra_turn else {}
     state.emit(
-        EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round
+        EventType.TURN_BEGAN, player=player.pid, turn=state.turn, round=state.round, **extra
     )
 
 
@@ -409,7 +419,15 @@ def _day_night(state: GameState, pid: int) -> None:
     # spells" and make it night before anybody had a chance to play.
     if state.turn <= 1:
         return
-    previous = state.players[(state.active_idx - 1) % len(state.players)].pid
+    # "The previous turn's active player" (726.2) -- recorded as the turn ended
+    # rather than taken as the seat to the right, which an extra turn makes
+    # wrong: after a Time Warp the previous turn was your own. The fallback is
+    # for a hand-built position that never crossed a turn boundary.
+    previous = (
+        state.previous_active
+        if state.previous_active is not None
+        else state.players[(state.active_idx - 1) % len(state.players)].pid
+    )
     cast = state.turn_ledger.spells_cast.get(previous, 0)
     if state.day_night == "day" and cast == 0:
         _become(state, "night", pid)
@@ -842,9 +860,24 @@ def _begin_next_turn(state: GameState) -> None:
     state.extra_phases.clear()
     state.resume_step = None
     state.extra_phases_taken = 0
-    before = state.active_idx
-    state.active_idx = state.next_alive_index(state.active_idx)
+    state.previous_active = state.active_player
+    # The seat the ordinary turn order continues from. While extra turns are
+    # being taken that is not the active seat -- see `GameState.turn_order_idx`.
+    before = state.active_idx if state.turn_order_idx is None else state.turn_order_idx
     state.turn += 1
+    extra = _take_extra_turn(state)
+    if extra is not None:
+        # An extra turn is a turn in every respect (500.7) -- it counts against
+        # the turn cap, it untaps, it draws -- except that the table's order
+        # does not move and no round is completed.
+        state.turn_order_idx = before
+        state.extra_turn = True
+        state.active_idx = next(i for i, p in enumerate(state.players) if p.pid == extra)
+        _enter_turn(state)
+        return
+    state.turn_order_idx = None
+    state.extra_turn = False
+    state.active_idx = state.next_alive_index(before)
     # A new round starts when the table wraps back past the player who started
     # the game.  Measured as position *relative to the starting player*, not as
     # a raw index: the starting seat is chosen at random, so "index wrapped to
@@ -858,6 +891,41 @@ def _begin_next_turn(state: GameState) -> None:
     start = state.starting_player
     if (state.active_idx - start) % seats <= (before - start) % seats:
         state.round += 1
+    _enter_turn(state)
+
+
+def _take_extra_turn(state: GameState) -> int | None:
+    """The player whose extra turn begins now, or `None` for the ordinary order.
+
+    Pops `GameState.extra_turns` from the end -- the most recently created turn
+    is taken first (500.7). Two kinds of entry are discarded rather than taken:
+
+    - one belonging to a player who has since left the game, who takes no more
+      turns of any kind;
+    - one its player **skips** (Trouble in Pairs: "if an opponent would begin an
+      extra turn, that player skips that turn instead"). A skip is a replacement
+      effect (614.1b, 614.10), so it is asked here, as the turn *would begin*,
+      and not when the turn was scheduled: an extra turn queued before the
+      enchantment arrived is still skipped, and one queued while it was out is
+      taken if the enchantment is gone by then. It removes exactly the one turn
+      that would have begun, so a player with two queued loses them one at a
+      time -- each is its own "would begin". The skipped turn never exists, so
+      it takes no turn number and nothing scheduled for "your next turn" waits
+      on it (614.10a).
+    """
+    while state.extra_turns:
+        pid = state.extra_turns.pop()
+        if not state.is_alive(pid):
+            continue
+        if player_skips_extra_turn(state, pid):
+            state.emit(EventType.TURN_SKIPPED, player=pid, extra=True)
+            continue
+        return pid
+    return None
+
+
+def _enter_turn(state: GameState) -> None:
+    """Reset the step walk to the top of the turn `_begin_next_turn` just chose."""
     state.step = Step.UNTAP
     state.step_started = False
     state.priority_idx = None

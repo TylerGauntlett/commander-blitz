@@ -300,8 +300,18 @@ export function describeEvent(
   switch (event.type) {
     case "turn_began":
       // The round, matching the phase track. `data.turn` is still on the event
-      // for anything that needs the rules counter.
-      return `-- ${whose} turn ${event.data.round ?? event.data.turn} --`;
+      // for anything that needs the rules counter. An extra turn (500.7) does
+      // not complete a round, so without the word it reads as the same turn
+      // printed twice; `data.extra` is only ever present, and true, on one.
+      return `-- ${whose} ${event.data.extra ? "extra turn" : "turn"} ${event.data.round ?? event.data.turn} --`;
+    /*
+     * An extra turn that did not happen, because its player skipped it (Trouble
+     * in Pairs, 614.10). A skipped turn fires no `turn_began`, so this line is
+     * the only trace of it: without it the log shows a spell that promised a
+     * turn and a table that silently moved on.
+     */
+    case "turn_skipped":
+      return `${who} ${v("skip", "skips")} an extra turn`;
     case "spell_cast":
       return `${who} ${v("cast", "casts")} ${card ?? "a spell"}`;
     case "spell_countered":

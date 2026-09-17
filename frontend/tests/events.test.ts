@@ -100,6 +100,38 @@ describe("beatsFor", () => {
     expect(beat.banner).toEqual({ text: "Edgar AI's Turn", tone: "neutral" });
   });
 
+  it("says when the turn is an extra one", () => {
+    // An extra turn does not complete a round, so a plain "Your Turn" twice in
+    // a row reads as the banner repeating itself.
+    const [beat] = beatsFor(
+      [event("turn_began", { turn: 4, extra: true }, { player: 0 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat.banner).toEqual({ text: "Your Extra Turn", tone: "neutral" });
+  });
+
+  it("banners a skipped extra turn, from the viewer's side", () => {
+    // `beatsFor` and `describeEvent` are parallel switches with parallel
+    // `default`s. A skipped turn fires no `turn_began`, so without a beat of its
+    // own the table simply moves on past the turn a spell promised.
+    const [mine] = beatsFor(
+      [event("turn_skipped", { extra: true }, { player: 0 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    const [theirs] = beatsFor(
+      [event("turn_skipped", { extra: true }, { player: 1 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(mine.banner).toEqual({ text: "You skip your extra turn", tone: "danger" });
+    expect(theirs.banner).toEqual({ text: "Edgar AI skips their extra turn", tone: "good" });
+  });
+
   it("banners an elimination and shakes", () => {
     const [beat] = beatsFor(
       [event("player_lost", { reason: "commander_damage" }, { player: 1 })],
@@ -381,6 +413,8 @@ describe("exit beats", () => {
 describe("beat text comes from describeEvent", () => {
   const cases: GameEvent[] = [
     event("turn_began", { turn: 3, round: 2 }),
+    event("turn_began", { turn: 4, round: 2, extra: true }),
+    event("turn_skipped", { extra: true }),
     event("spell_cast", { card: "sol_ring" }),
     event("land_played", { card: "forest" }),
     event("ability_triggered", { card: "scoured_barrens" }),
