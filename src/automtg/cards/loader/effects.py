@@ -1158,6 +1158,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'playable_this_turn' needs 'objects' -- "
             f"there is nothing to grant permission on"
         )
+    if "any_color" in effect:
+        # "…you may spend mana as though it were mana of any color to cast it"
+        # is a rider on a "you may play it" permission and means nothing
+        # without one: written on a bare exile it would load, print its
+        # sentence and relax nothing. And it is a narrower sentence than
+        # `any_type` (``{C}`` still wants colourless mana), so the two together
+        # say two different things about one spell.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'any_color' relaxes the cast a 'playable' permission "
+                f"grants, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect.get("any_type"):
+            raise DslError(
+                f"{where}: 'any_color' and 'any_type' are different printed "
+                f"sentences -- write the one the card says"
+            )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
         # card written before durations existed says, and `playable:

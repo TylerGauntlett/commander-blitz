@@ -13069,3 +13069,39 @@ next turn and the one after; untouched by every expiry hook; gone once the card
 leaves exile and comes back, and used up by playing it; an opponent's exiled land
 offered and entering under your control; the loader's accept and refuse cases;
 and the packet listing.
+
+## `any_color` — "spend mana as though it were mana of any color to cast it"
+
+### Overview
+
+Elder Brain's last sentence, and the half of it that makes the stolen hand usable.
+Not a documentation gap: no shipped card printed it, and `grant_playable`'s
+`any_type` (Valigarmanda) is a different, broader sentence -- "any type" lets
+coloured mana pay `{C}`, and "any color" does not.
+
+The gap record claimed colourless mana could still pay only generic; the ruling
+is the other way (Mycosynth Lattice: colourless mana may be spent as though it
+had a colour), and the implementation follows the ruling.
+
+### The shape
+
+- **`ManaCost.as_any_color`**: `{W}`-`{G}` and every hybrid / remaining Phyrexian
+  pip fold into one generic each; `{C}` and `X` stay; `text` is the printed cost.
+- **`GameObject.playable_any_color`**, written by `exile`, `look_at_top` and
+  `grant_playable` from `any_color`, cleared wherever `playable_any_type` is
+  (the zone-change reset and `turn._expire_permissions`).
+- **Priced and paid** in `_cast_variant` / `_priced_tuples` and `Game._cast`,
+  beside the any-type waiver and under the same `playable_live` gate.
+- **Loader**: needs a permission to ride on; refused beside `any_type`.
+
+K'rrik's Phyrexian conversion runs first, so a black pip bought with life leaves
+the cost before the colours are waived.
+
+### Guarded by
+
+`tests/unit/test_spend_mana_as_any_color.py`: the cost conversion (colours fold,
+`{C}` stays, a hybrid pip is one, X and the printed cost survive); a stolen
+`{B}{B}` spell castable off Plains, paid and resolved into its owner's
+graveyard; the strict counterfactual; hybrid pips at one each; the caster's own
+spells untouched; the flag leaving with the permission; a Sol Ring paying
+`{B}{B}`; `{C}` not waived; and the loader cases. Elder Brain is authored.

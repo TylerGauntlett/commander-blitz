@@ -875,6 +875,7 @@ def _priced_tuples(
     sources,
     *,
     any_type: bool,
+    any_color: bool = False,
 ) -> list[tuple[tuple, tuple[int, ...]]]:
     """Each target tuple this line may be cast with, and what paying for it taps.
 
@@ -905,7 +906,11 @@ def _priced_tuples(
         total = cost
         if extra and card.strive is not None:
             surcharge = card.strive.scaled(extra)
-            total = cost.plus(surcharge.as_any_type() if any_type else surcharge)
+            if any_type:
+                surcharge = surcharge.as_any_type()
+            elif any_color:
+                surcharge = surcharge.as_any_color()
+            total = cost.plus(surcharge)
         # Solve rather than merely test: the solution names the permanents that
         # would tap, which is what lets the client show a hovered spell eating
         # into the mana row.
@@ -1081,6 +1086,11 @@ def _cast_variant(
             # cost -- and the discounts below still only touch the generic part,
             # which by now is all there is.
             cost = cost.as_any_type()
+        elif permission.playable_any_color and permission.playable_live(state.turn):
+            # "…you may spend mana as though it were mana of any color to cast
+            # it." Relaxed at the same moment and for the same reason as the
+            # any-type waiver above, and read off the same card by `Game._cast`.
+            cost = cost.as_any_color()
         branch = chosen_additional(card, additional_choice)
         if additional_times and branch is not None:
             # The mana half of the additional cost, charged `additional_times` over.
@@ -1124,6 +1134,7 @@ def _cast_variant(
             pool,
             sources,
             any_type=permission.playable_any_type and permission.playable_live(state.turn),
+            any_color=permission.playable_any_color and permission.playable_live(state.turn),
         )
         if not priced:
             continue

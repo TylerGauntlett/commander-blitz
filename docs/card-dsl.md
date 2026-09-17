@@ -8344,6 +8344,27 @@ is read only while that permission is live (`playable_turn == state.turn`).
 Not on the player and not on the turn: the caster's other spells that turn are
 paid for normally, which is what the printed "**that** spell" says.
 
+### `any_color`
+
+```jsonc
+{ "op": "exile", "as": "exiled",
+  "objects": { "zone": "hand", "player": { "binding": "defender" }, "count": "all" },
+  "playable": "while_exiled", "any_color": true }                   // Elder Brain
+```
+
+"…you may spend mana as though it were mana of any **color** to cast it" is the
+narrower sibling, and it is its own sentence rather than `any_type` because
+``{C}`` is not a colour: mana spent as though it had a colour is still not
+colourless mana, so a `{C}` symbol still wants colourless mana. The other edge
+goes the generous way -- colourless mana *may* be spent as though it had a
+colour (the Mycosynth Lattice ruling), so a Sol Ring pays `{B}{B}`.
+`ManaCost.as_any_color` therefore folds every `{W}`-`{G}` symbol and each hybrid
+or Phyrexian pip still owed as mana into **one** generic apiece, and keeps `{C}`.
+
+Legal on `exile` and `look_at_top` beside `playable`, and on `grant_playable`;
+refused without a permission to ride on, and refused beside `any_type`. Written
+as `GameObject.playable_any_color`, cleared with the permission.
+
 Both sides read it — `legality._cast_variant` prices the line with the colours
 already waived, and `Game._cast` waives them again before paying — so a line
 that was offered is a line that can be paid. Getting only one of them is the

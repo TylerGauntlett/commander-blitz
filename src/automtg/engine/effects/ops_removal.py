@@ -285,6 +285,10 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = playable_duration
+                # Elder Brain's "you may spend mana as though it were mana of
+                # any color to cast it" -- printed beside the permission, and
+                # read only while it is live.
+                obj.playable_any_color = bool(spec.get("any_color"))
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.

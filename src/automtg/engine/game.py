@@ -432,6 +432,10 @@ class Game:
             # with. Both sides read the same flag off the same card, so a line
             # that was offered is a line that can be paid.
             cost = cost.as_any_type()
+        elif granted.playable_any_color and granted.playable_live(state.turn):
+            # Elder Brain's colour waiver, the paying half of the one
+            # `_cast_variant` priced the line with.
+            cost = cost.as_any_color()
 
         # Convoke and delve. Netted into `extra` alongside the commander tax
         # and emerge's sacrifice, so it goes through the same clamp: `pay`

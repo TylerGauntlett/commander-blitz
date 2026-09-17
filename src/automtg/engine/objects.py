@@ -593,6 +593,11 @@ class GameObject:
     #: kept on the card rather than on the player: the same turn's other spells
     #: are paid for normally.
     playable_any_type: bool = False
+    #: "…you may spend mana as though it were mana of any color to cast it" --
+    #: Elder Brain. `playable_any_type`'s narrower sibling (``{C}`` still wants
+    #: colourless mana), and kept beside it for the same reason: it rides on the
+    #: permission and expires with it.
+    playable_any_color: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -885,6 +890,7 @@ class GameObject:
         self.playable_sorcery_only = False
         self.playable_group = None
         self.playable_any_type = False
+        self.playable_any_color = False
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()

@@ -210,6 +210,7 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # the permission it is printed beside, and expires with it: the flag is
         # read only where `playable_turn` already gates the offer.
         obj.playable_any_type = any_type
+        obj.playable_any_color = bool(spec.get("any_color"))
 
 
 
@@ -440,6 +441,7 @@ def _move_found(
                 obj.playable_by = pid
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = duration
+                obj.playable_any_color = bool(spec.get("any_color"))
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What

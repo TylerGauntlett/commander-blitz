@@ -61,6 +61,7 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         obj.playable_by = None
         obj.playable_group = None
         obj.playable_any_type = False
+        obj.playable_any_color = False
         obj.playable_exiles = False
 
 

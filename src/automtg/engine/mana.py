@@ -208,6 +208,36 @@ class ManaCost:
             hybrid=(),
         )
 
+    def as_any_color(self) -> ManaCost:
+        """This cost as paid with mana spent "as though it were mana of any color".
+
+        Elder Brain: "you may spend mana as though it were mana of any color to
+        cast it." Every coloured symbol -- ``{W}`` through ``{G}``, and each hybrid
+        or Phyrexian pip still owed as mana -- may be paid with any one mana, the
+        colourless kind included (the Mycosynth Lattice ruling: colourless mana
+        spent this way is spent as though it had a colour). So each becomes one
+        generic, and a hybrid pip becomes **one** whatever its other half was,
+        because its coloured half is now payable with a single mana of anything.
+
+        ``{C}`` is not a colour and stays: mana spent as though it were any
+        *colour* is still not colourless mana, which is the whole difference from
+        :meth:`as_any_type` (Valigarmanda's "mana of any type"), where ``{C}``
+        folds too. ``X`` and ``text`` are left alone for the reasons given there,
+        and 609.4b is why this is a payment rule and never a new cost: mana value
+        and colour are read off the printed cost, not this one.
+        """
+        colorless = SYMBOL_INDEX[COLORLESS]
+        folded = sum(n for i, n in enumerate(self.colored) if i != colorless)
+        colored = [0] * N_SYMBOLS
+        colored[colorless] = self.colored[colorless]
+        return ManaCost(
+            generic=self.generic + folded + len(self.hybrid),
+            colored=tuple(colored),
+            x_count=self.x_count,
+            text=self.text,
+            hybrid=(),
+        )
+
     def symbols_of(self, color: str) -> int:
         """How many mana symbols of one colour appear in this cost — chroma.
 
