@@ -11843,3 +11843,76 @@ and the load-time guard.
 
 Faerie Artisans is not authored in this change; its gap record stays until it
 is.
+
+## `attacking_player` — "attacks you", not "attacks you and/or your planeswalkers"
+
+### Overview
+
+Trouble in Pairs: *"Whenever an opponent attacks you with two or more creatures,
+draws their second card each turn, or casts their second spell each turn, you
+draw a card."* One gap record, `attacking_player_selector`. Every other clause on
+the card was already expressible; the attack clause was one creature too wide.
+
+### Why the existing vocabulary would not do
+
+- `creatures_attack_player` with `defending: "you"` binds `attackers` as every
+  creature whose defending player is you. `combat.attackers[oid]` records the
+  player even for an attack aimed at their planeswalker (`add_attacker` refuses
+  a walker whose controller disagrees), so the binding is "you and/or
+  planeswalkers you control" -- which is Mangara, the Diplomat, already shipped,
+  and must keep meaning that.
+- Rule 506.2 makes a player and each planeswalker they control separate attack
+  targets (508.1b), so one creature at you and one at your planeswalker is one
+  creature attacking you. Counting the bare binding draws a card the printed
+  card does not.
+- `attacking` is a bare boolean with no notion of whom, and nothing in the
+  selector or value languages read `combat.attacking_planeswalker`.
+
+### The shape
+
+A selector key, `attacking_player: "you" | "opponent" | "any"`, relative to the
+ability's controller. It matches a creature that is attacking (`combat.attacking`,
+so a creature removed from combat does not), is **not** in
+`combat.attacking_planeswalker`, and whose defending player the word names. Out
+of combat it matches nothing. Trouble in Pairs' clause is:
+
+```jsonc
+"trigger": {
+  "event": "creatures_attack_player", "controller": "opponent", "defending": "you",
+  "condition": {"cmp": ">=",
+    "left": {"count": {"binding": "attackers", "attacking_player": "you"}},
+    "right": {"const": 2}}
+}
+```
+
+A selector key rather than a trigger option because it composes: it narrows the
+binding inside `count`, works on any battlefield pool, and needs no second
+reading of the event. The predicate lives in one function,
+`selectors.attacking_player_matches`, called from both `matches` and
+`triggers.matches_card_filter` -- a trigger filter is validated against the same
+`SELECTOR_KEYS`, and a key loaded there and ignored would be the silently-wider
+filter.
+
+### The loader guard
+
+`validate_selector` refuses anything but the three words. `true` is the tempting
+spelling (it is how `attacking` is written) and, read as a word, would name
+nobody.
+
+### Tier A
+
+No new op, event, decision kind or API field; nothing under `frontend/`. The
+authoring packet's `selector_keys` is derived from `SELECTOR_KEYS`, so workers see
+the key with no packet change.
+
+### Guarded by
+
+`tests/unit/test_attacking_player_selector.py`: one at you and one at your
+planeswalker counts 1 and does not fire; two at you counts 2 and fires; both at
+the planeswalker counts 0; the Mangara reading of the same split still fires; at
+a three-player pod, attacks at another opponent are not attacking you, and
+`opponent`/`any` name the other seats without ever counting a planeswalker; the
+trigger-filter half; nothing once combat ends; and the load-time refusals.
+
+Trouble in Pairs is not authored in this change; its gap record stays until it
+is.

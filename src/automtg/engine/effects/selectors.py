@@ -105,6 +105,23 @@ SELECTOR_KEYS = frozenset(
         "not_keywords",
         "tapped",
         "attacking",
+        #: "Whenever an opponent attacks **you** with two or more creatures" --
+        #: Trouble in Pairs. A creature attacking this player *itself*, and not
+        #: one of their planeswalkers: 506.2/508.1b make the player and each
+        #: planeswalker they control separate things to attack, so a creature
+        #: sent at your planeswalker is not attacking you.
+        #:
+        #: `attacking` is the near miss and has no notion of whom. The
+        #: `attackers` binding of `creatures_attack_player` with `defending:
+        #: "you"` is the other one and is deliberately wider: `combat.attackers`
+        #: records the defending *player* for a planeswalker attack too, which
+        #: is exactly Mangara, the Diplomat's "attacking you and/or planeswalkers
+        #: you control" and one creature too many for Trouble in Pairs. This key
+        #: narrows that binding (or any pool) by also reading
+        #: `combat.attacking_planeswalker`. `"you"`, `"opponent"` or `"any"`
+        #: (some player, never a planeswalker), relative to the ability's
+        #: controller.
+        "attacking_player",
         #: "Untap all creatures that **attacked this turn**" -- Relentless
         #: Assault, Aggravated Assault, Seize the Day. Not `attacking`, which is
         #: live combat state and is false for everything by the time these
@@ -715,6 +732,10 @@ def matches(
         selector["attacking"]
     ):
         return False
+    if (who := selector.get("attacking_player")) is not None and not attacking_player_matches(
+        combat, oid, str(who), ctx.controller
+    ):
+        return False
     if "blocked" in selector:
         # "…an **unblocked** attacking creature you control" -- ninjutsu. Not
         # the negation of `blocking`, which is about a *blocker*: this asks
@@ -763,6 +784,35 @@ def matches(
     ) is not bool(want):
         return False
 
+    return True
+
+
+#: What `attacking_player` may name, relative to the ability's controller.
+ATTACKING_PLAYER_WORDS = ("you", "opponent", "any")
+
+
+def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -> bool:
+    """Is ``oid`` attacking a **player** -- the one ``who`` names -- rather than a
+    planeswalker that player controls?
+
+    506.2 gives an attacking creature one of three things to attack: a player, a
+    planeswalker, or a battle. `combat.attackers[oid]` is the defending *player*
+    in the first two cases (`add_attacker` refuses a walker whose controller
+    disagrees), which is right for "attacks you or a planeswalker you control"
+    and one creature too many for "attacks you". `attacking_planeswalker` is
+    the record that tells them apart. Battles are not attackable in this engine;
+    when they are, their record belongs beside this one.
+
+    Shared by `matches` and `triggers.matches_card_filter`, so the effect and
+    trigger halves of the filter language cannot disagree about it.
+    """
+    if combat is None or not combat.attacking(oid) or oid in combat.attacking_planeswalker:
+        return False
+    defender = combat.attackers[oid]
+    if who == "you":
+        return defender == controller
+    if who == "opponent":
+        return defender != controller
     return True
 
 
@@ -1144,6 +1194,15 @@ def validate_selector(selector: Any, where: str) -> None:
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
             f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"
+        )
+    # A bare `true` is the tempting spelling -- it is how `attacking` is written
+    # -- and it would name nobody: the key is *which* player, and a boolean read
+    # as a word matches no branch, so every creature would silently fail it.
+    who = selector.get("attacking_player")
+    if who is not None and (not isinstance(who, str) or who not in ATTACKING_PLAYER_WORDS):
+        raise DslError(
+            f"{where}: 'attacking_player' names whom the creature attacks -- one of "
+            f"{list(ATTACKING_PLAYER_WORDS)}; use 'attacking' for true/false"
         )
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):

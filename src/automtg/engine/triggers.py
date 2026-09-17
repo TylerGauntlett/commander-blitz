@@ -1386,6 +1386,18 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
+    # Honoured here for the reason `tapped` above is: a trigger filter is
+    # validated against the same `SELECTOR_KEYS`, and a key that loaded and was
+    # then ignored would be silently wider -- a creature attacking your
+    # planeswalker would count as one attacking you.
+    who = filt.get("attacking_player")
+    if who is not None:
+        from .effects.selectors import attacking_player_matches
+
+        if not attacking_player_matches(
+            state.combat, oid, str(who), ability_source.controller
+        ):
+            return False
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False

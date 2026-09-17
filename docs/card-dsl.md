@@ -280,6 +280,7 @@ Every key is optional; all present keys must match.
   "not_supertypes": ["Basic"],    // "target NONBASIC land" -- see below
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
+  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
   "is_commander": false, "is_token": false, "damaged": true,
@@ -4512,6 +4513,42 @@ means. `{"zone": "battlefield", "attacking": true}` is the near miss and says
 something strictly larger: `attacking` is a bare boolean with no notion of
 *whom*, so on a split attack it also names the creatures attacking the trigger's
 own controller.
+
+### "Attacks **you**" is not "attacks you and/or your planeswalkers"
+
+```jsonc
+// Trouble in Pairs: "Whenever an opponent attacks you with two or more creatures"
+"trigger": {
+  "event": "creatures_attack_player",
+  "controller": "opponent",
+  "defending": "you",
+  "condition": {
+    "cmp": ">=",
+    "left": {"count": {"binding": "attackers", "attacking_player": "you"}},
+    "right": {"const": 2}
+  }
+}
+
+// Mangara, the Diplomat: "…if two or more of those creatures are attacking
+// you and/or planeswalkers you control" -- the bare binding
+"left": {"count": {"binding": "attackers"}}
+```
+
+Rule 506.2 makes a player and each planeswalker they control separate things to
+attack, so a creature sent at your planeswalker is **not** attacking you. The
+`attackers` binding above deliberately includes it — that is the "…or a
+planeswalker they control" half coming free — which is exactly Mangara's
+sentence and one creature too many for Trouble in Pairs: one creature at you and
+one at your planeswalker would draw a card.
+
+`attacking_player` is the selector key that says *whom*: `"you"`, `"opponent"` or
+`"any"` player, relative to the ability's controller, and never a creature whose
+attack is recorded in `combat.attacking_planeswalker`. It narrows the binding
+inside `count`, and works on any pool (`{"attacking_player": "opponent"}` over the
+battlefield) and in a trigger filter. Out of combat it matches nothing. It is a
+word, not a boolean — `true` is refused, because read as a word it would name
+nobody. `attacking` stays the whom-less boolean. Battles are not attackable in
+this engine; when they are, a creature attacking one belongs outside this key too.
 
 ## An additional combat phase
 
