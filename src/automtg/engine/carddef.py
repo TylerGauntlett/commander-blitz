@@ -891,6 +891,12 @@ class CardDef:
     #: under, so the residual gate can say which printed line the cost claims and
     #: check that the symbols on that line are the ones actually charged.
     multikicker: ManaCost | None = None
+    #: **Strive**: the mana added to the spell's total cost once for each target
+    #: beyond the first (601.2f). Read by `casting.strive_surcharge`, which both
+    #: legality and `Game._cast` price through, so the line offered and the
+    #: amount charged cannot disagree. Kept out of ``mana_cost`` for the reason
+    #: kicker is: mana value stays what is printed.
+    strive: ManaCost | None = None
     #: "Evoke {2}{U}" -- an alternative cost that *replaces* the printed one.
     #: Subtractive where ``kicker`` is additive, and like it kept out of
     #: ``mana_cost`` so mana value stays what is printed: an evoked

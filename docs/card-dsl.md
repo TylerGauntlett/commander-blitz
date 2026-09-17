@@ -9836,6 +9836,7 @@ them where it is sitting:
 "additional_optional": true                 // …"you may"
 "additional_repeatable": true               // …"any number of times"
 "multikicker": "{1}{W}"                     // …the printed name for exactly those three
+"strive": "{1}{W}"                          // costs this much more per target beyond the first
 ```
 
 #### Casting from the graveyard
@@ -10114,6 +10115,56 @@ loader has actually desugared the cost, and it checks that the **symbols printed
 on the line are the symbols charged** — a card declaring `multikicker: "{1}"`
 cannot claim a printed "Multikicker {2}{R}", and a line whose cost will not parse
 stays residual.
+
+#### Strive
+
+```jsonc
+// Call the Coppercoats: "Strive — This spell costs {1}{W} more to cast for
+// each target beyond the first. Choose any number of target opponents. …"
+"mana_cost": "{2}{W}",
+"strive": "{1}{W}",
+"targets": [ { "id": "t1", "kind": "player", "count": "any",
+               "selector": { "controller": "opponent" } } ]
+```
+
+A **cost increase** (601.2f: the total cost is the mana cost "plus all additional
+costs and cost increases, and minus all cost reductions"), sized by the targets
+announced at 601.2c. One target, or none — "any number" includes zero — costs
+the printed cost; three cost it plus `{1}{W}` twice. Kept out of `mana_cost`, so
+mana value stays what is printed.
+
+`cost_reduction` is the near miss and points the wrong way: it only subtracts,
+and it reads the battlefield rather than the spell's own targets. `multikicker`
+repeats a price, but the caster picks how many times independently of the
+targets, so a three-target cast paying nothing extra would load clean.
+
+Legality prices **each target count as its own line**. Cast lines are one action
+per target tuple, and every tuple used to share one payment solved at the
+printed price; now `casting._priced_tuples` solves the price for zero, one, two
+extra targets and stops at the first it cannot pay, so a count the caster cannot
+afford is never offered, and the first line — the one an AI or auto-answer
+takes — is the largest affordable one. The tuples are re-enumerated **one size
+at a time** rather than filtered: "any number" subsets come largest first and
+are cut at `MAX_TARGET_OPTIONS`, so on a board of six creatures a filter would
+find nothing it could pay for but the empty tuple. `Game._cast` charges the
+surcharge through the same `casting.strive_surcharge`, added to whichever price
+the line was offered at (flashback and the rest included, since an increase
+applies to every way of casting).
+
+The loader requires exactly **one** target spec with `count: "any"` — with a
+fixed count the surcharge is a constant that belongs in the mana cost, and with
+two specs "beyond the first" would have to choose whose refs count — and refuses
+a free or X strive, and strive beside overload, morph, bestow or mutate (each
+casts with targets the rule supplies). The fidelity audit reads "Strive —" as a
+mechanic line and accepts it when `strive` is set; for a permanent the residual
+gate claims the line only when the symbols before "more to cast" are the
+symbols charged.
+
+**Divergence**: the resolution-time casts that pay no mana cost of their own —
+`suspend.cast_for_free` (suspend, rebound, cascade and the rest) and the madness
+and miracle offers — cannot collect a surcharge, so a strive spell cast that way
+takes **at most one target**. 601.2f would let the caster pay for more; this is
+narrower than the printing, never wider.
 
 #### Overload
 

@@ -842,6 +842,114 @@ def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:
     return creatures[:4]
 
 
+def strive_surcharge(card: CardDef, targets) -> ManaCost | None:
+    """Strive: what this spell costs **more** for the targets it was cast with.
+
+    "This spell costs {1}{W} more to cast for each target beyond the first." A
+    cost increase (601.2f), and its size is fixed by the targets announced at
+    601.2c -- which is why it is a function of the target tuple and nothing
+    else. `None` when there is nothing to add: a card without strive, one
+    target, or none at all ("any number" includes zero, and zero targets is not
+    a target beyond the first).
+
+    Both sides price through here. Legality prices each target count as its own
+    line in `_priced_tuples`, and `Game._cast` adds the same surcharge to the
+    cost it charges, so the line offered and the mana taken cannot disagree.
+    """
+    if card.strive is None:
+        return None
+    extra = max(0, len(targets) - 1)
+    return card.strive.scaled(extra) if extra else None
+
+
+def _priced_tuples(
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    tuples,
+    cost: ManaCost,
+    net_generic: int,
+    pool,
+    sources,
+    *,
+    any_type: bool,
+) -> list[tuple[tuple, tuple[int, ...]]]:
+    """Each target tuple this line may be cast with, and what paying for it taps.
+
+    For almost every card that is one payment shared by every tuple, because the
+    targets do not change the price -- `req` is solved once and an unpayable
+    line offers nothing.
+
+    **Strive** is the exception: a tuple's price grows with its length, so the
+    same line is affordable with one target and not with three. Each count is
+    solved separately, from zero upwards, stopping at the first that cannot be
+    paid (more targets never cost less). A count past that is not offered at
+    all -- the rule the rest of legality keeps: an action on offer is an action
+    the engine can honour, and a three-target Call the Coppercoats on four lands
+    would be a cast that fails at payment.
+
+    And the tuples are **re-enumerated one size at a time** rather than
+    filtered. `enumerate_target_tuples` lists "any number" subsets largest first
+    and cuts the list at `MAX_TARGET_OPTIONS`, so with six creatures on the board
+    every kept tuple has four or more of them in it -- filtering those for an
+    affordable size would leave only the empty one. Capping the size alone is not
+    enough either: fifteen two-creature pairs fill the list before any single
+    target is reached, and one target is the line that costs nothing extra. Each
+    size gets its own enumeration, largest first, then the empty tuple last, the
+    order the rest of targeting keeps.
+    """
+
+    def solve(extra: int):
+        total = cost
+        if extra and card.strive is not None:
+            surcharge = card.strive.scaled(extra)
+            total = cost.plus(surcharge.as_any_type() if any_type else surcharge)
+        # Solve rather than merely test: the solution names the permanents that
+        # would tap, which is what lets the client show a hovered spell eating
+        # into the mana row.
+        req = total.with_x(0)
+        payment = solve_payment(req.with_generic(req.generic + net_generic), pool, sources)
+        if payment is None:
+            return None
+        # Sources only.  `Payment` does not itemise which floating mana it spent,
+        # so claiming a pool pip here would be a guess; the client dims source
+        # pips and says nothing about the pool.
+        return tuple(dict.fromkeys(tap[0] for tap in payment.taps))
+
+    if card.strive is None:
+        pays = solve(0)
+        return [] if pays is None else [(targets, pays) for targets in tuples]
+
+    largest = max((len(targets) for targets in tuples), default=0)
+    by_extra: list[tuple[int, ...]] = []
+    for extra in range(max(0, largest - 1) + 1):
+        pays = solve(extra)
+        if pays is None:
+            break
+        by_extra.append(pays)
+    if not by_extra:
+        return []
+    priced: list[tuple[tuple, tuple[int, ...]]] = []
+    for size in range(min(largest, len(by_extra)), 0, -1):
+        exact = [
+            targets
+            for targets in enumerate_target_tuples(
+                state,
+                pid,
+                card.targets,
+                oid,
+                exclude_sid=state.objects[oid].stack_id,
+                size_cap=size,
+            )
+            if len(targets) == size
+        ]
+        priced.extend((targets, by_extra[size - 1]) for targets in exact)
+    if () in tuples:
+        priced.append(((), by_extra[0]))
+    return priced
+
+
 def _cast_variant(
     state: GameState,
     pid: int,
@@ -995,18 +1103,22 @@ def _cast_variant(
             continue
         x = 0
 
-        # Solve rather than merely test: the solution names the permanents that
-        # would tap, which is what lets the client show a hovered spell eating into
-        # the mana row.  `can_pay_mana` would run the same solver and discard it.
-        req = cost.with_x(x)
-        req = req.with_generic(req.generic + extra_generic - discount)
-        payment = solve_payment(req, pool, sources)
-        if payment is None:
+        # Solved per target count for strive, once for everything else -- see
+        # `_priced_tuples`. `x` is 0 here, as the gate above explains.
+        priced = _priced_tuples(
+            state,
+            pid,
+            oid,
+            card,
+            tuples,
+            cost,
+            extra_generic - discount,
+            pool,
+            sources,
+            any_type=permission.playable_any_type and permission.playable_live(state.turn),
+        )
+        if not priced:
             continue
-        # Sources only.  `Payment` does not itemise which floating mana it spent, so
-        # claiming a pool pip here would be a guess; the client dims source pips and
-        # says nothing about the pool.
-        pays = tuple(dict.fromkeys(tap[0] for tap in payment.taps))
 
         label_base = f"Cast {card.name}"
         if kicked:
@@ -1061,7 +1173,7 @@ def _cast_variant(
             # clicking either, and they are otherwise identical.
             label_base += f" (paying {phyrexian_life} life)"
         actions: list[Action] = []
-        for targets in tuples:
+        for targets, pays in priced:
             label = label_base
             if targets:
                 label += " -> " + ", ".join(describe_ref(state, ref) for ref in targets)

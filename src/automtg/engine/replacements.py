@@ -220,7 +220,17 @@ def _offer_cast(
     price = Cost(mana=cost)
     if not can_pay(state, pid, price, oid):
         return False
-    options = enumerate_target_tuples(state, pid, card.targets, oid, limit=1)
+    # Strive's surcharge is not part of `price`, so the spell takes at most one
+    # target -- the count that owes none -- rather than every target on offer
+    # with its cost increase unpaid.
+    options = enumerate_target_tuples(
+        state,
+        pid,
+        card.targets,
+        oid,
+        limit=1,
+        size_cap=1 if card.strive is not None else None,
+    )
     if not options:
         return False
     # And its modes, for the one card shape whose targets belong to them --

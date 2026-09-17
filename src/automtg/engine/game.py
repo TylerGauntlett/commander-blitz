@@ -396,6 +396,15 @@ class Game:
         else:
             cost = card.mana_cost
 
+        # Strive (601.2f): "costs {1}{W} more to cast for each target beyond the
+        # first". Added to whichever price the branch above chose, because a cost
+        # increase applies to every way of casting the spell, and sized by the
+        # targets this action announced (601.2c) -- the tuple legality priced the
+        # line with, through the same `strive_surcharge`.
+        from .casting import strive_surcharge
+
+        cost = cost.plus(strive_surcharge(card, action.targets))
+
         # 107.4f, and the paying half of the line `_cast_variant` offered. The
         # bought pips leave the cost here, before every relaxation and discount
         # below, exactly as legality priced them -- so a line offered as "paying

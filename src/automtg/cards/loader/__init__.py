@@ -834,6 +834,32 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
             f"would always read 0"
         )
+    # Strive: "This spell costs {1}{W} more to cast for each target beyond the
+    # first." A cost *increase* (601.2f) whose size is the number of targets
+    # declared at 601.2c, so it only means something beside a target list whose
+    # size the caster picks -- and every strive printing is exactly one "any
+    # number of target …" spec. Anything else is refused rather than guessed:
+    # with a fixed count the surcharge is a constant that belongs in the mana
+    # cost, and with two specs "beyond the first" would have to decide which
+    # spec's refs count.
+    strive = ManaCost.parse(model.strive) if model.strive else None
+    if strive is not None:
+        if strive.x_count:
+            raise DslError(f"{where}: a strive cost with X is not implemented")
+        if strive.mana_value() == 0:
+            raise DslError(f"{where}: strive {model.strive!r} costs nothing")
+        if len(targets) != 1 or targets[0].count != "any" or mode_targets:
+            raise DslError(
+                f"{where}: 'strive' prices the targets of one 'any number of target' "
+                f"spec -- give the card exactly one target spec with count 'any'"
+            )
+        if model.overload or model.morph or model.bestow or model.mutate:
+            # Each of these casts the card with targets the rule supplies (none,
+            # or "enchant creature"), so the surcharge would price a list the
+            # card never declared. No strive printing has any of them.
+            raise DslError(
+                f"{where}: 'strive' does not compose with overload, morph, bestow or mutate"
+            )
     if model.dredge < 0:
         raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
     if model.morph_counter and model.morph is None:
@@ -1165,6 +1191,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker=kicker,
         gift=model.gift,
         multikicker=multikicker,
+        strive=strive,
         evoke=evoke,
         bestow=bestow,
         mutate=mutate,

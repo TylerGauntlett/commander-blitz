@@ -12225,3 +12225,87 @@ nothing under `frontend/`.
 normalised; an end-to-end search offers only the {1} from a library holding the
 land, the {X} and the {2}; the trigger and static readers agree; and the load
 refusals. `t_granting_saga`'s chapter III now uses the key.
+
+## `strive` — a cost that grows with the targets
+
+### Overview
+
+Call the Coppercoats: *"Strive — This spell costs {1}{W} more to cast for each
+target beyond the first. Choose any number of target opponents. …"* The same
+first line is on the Journey into Nyx strive cycle (Launch the Fleet, Twinflame,
+Ajani's Presence and the rest), each with one "any number of target" spec.
+
+### Why the existing vocabulary would not do
+
+- `cost_reduction` only subtracts, and every head it has reads the battlefield,
+  never the spell's own targets.
+- `multikicker` repeats a price, but the caster picks the count independently of
+  the targets, so a three-target cast that paid nothing extra would load clean.
+- Nothing in legality could price a line by its targets: `_cast_variant` solved
+  one payment and attached it to every target tuple.
+
+### The shape
+
+- **`strive: "{1}{W}"`** on `CardModel` and `CardDef`, kept out of `mana_cost`
+  so mana value stays printed.
+- **`casting.strive_surcharge(card, targets)`**: the surcharge scaled by
+  `len(targets) - 1`, or nothing for zero or one target. `Game._cast` adds it to
+  whichever cost the chosen branch picked (601.2f: an increase applies to every
+  way of casting).
+- **`casting._priced_tuples`** replaces the single solve in `_cast_variant`. For
+  a card without strive it is the old behaviour exactly: one payment, every
+  tuple. For strive it solves zero, one, two… extra targets and stops at the
+  first it cannot pay, then re-enumerates the tuples **one size at a time**
+  (`enumerate_target_tuples(..., size_cap=n)`, keeping only size `n`), largest
+  first, empty tuple last. A count the caster cannot pay is never offered, and
+  each line's `pays` names the lands its own count would tap.
+- **`size_cap`** on `enumerate_target_tuples` bounds a variable-size spec. It had
+  to bound the enumeration rather than filter the result: subsets come largest
+  first and are cut at `MAX_TARGET_OPTIONS`, so with six creatures every kept
+  tuple is a four-or-more pick, and single targets — the line that costs nothing
+  extra — are pushed out even by the fifteen pairs.
+- The free resolution-time casts (`suspend.cast_for_free`, and
+  `replacements._offer_cast` for madness and miracle) pass `size_cap=1` for a
+  strive card: they cannot collect the surcharge, so they take at most one
+  target rather than every target with the increase unpaid.
+
+### The loader guard
+
+Exactly one target spec, `count: "any"`, and no mode targets; a free or X strive
+is refused; so is strive beside overload, morph, bestow or mutate, each of which
+casts with targets the rule supplies.
+
+### Authoring
+
+`strive` joins `CARD_LEVEL_COST_KEYS` in the packet.
+`fidelity.unimplemented_mechanics` declares "strive" when the field is set, since
+`_MECHANIC_LINE` reads "Strive —" as a mechanic. `verify._covered` claims the
+line on a permanent only when the symbols before "more to cast for each target
+beyond the first" parse to the declared cost.
+
+### Tier
+
+A card-level cost: no op, event, decision kind or API field, nothing under
+`frontend/`. The action already carried its targets, which is all `Game._cast`
+needs to charge the right amount.
+
+### Guarded by
+
+`tests/unit/test_strive.py`: one target and zero targets tap three lands, two tap
+five, three tap seven; every chosen target is bound; seven lands offer counts
+0–3, six offer 0–2, three offer 0–1, two offer nothing; one Plains and four
+Islands offer no second target (the surcharge has a colour); the first line is
+the largest affordable one; each line's `pays` matches its count; on a six-bear
+board five lands still offer one and two targets and charge five for two; a free
+cast takes one target; the loader refusals; and the fidelity audit.
+
+Call the Coppercoats is not authored in this change.
+
+### Found along the way, not fixed
+
+Multikicker and replicate's **mana** half is priced by legality
+(`cost.plus(branch.mana.scaled(additional_times))` in `_cast_variant`) but never
+charged by `Game._cast`, which pays only `additional.without_mana()` per time.
+Casting the multikicker test anthem kicked three times on eight Plains taps two
+lands. `test_multikicker.py` asserts the offered counts and the read-back count,
+not the lands tapped, so nothing fails.

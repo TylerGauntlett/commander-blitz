@@ -791,6 +791,13 @@ class CardModel(BaseModel):
     #: action and ``{"kicked": true}`` can only answer yes or no, never how many.
     #: Give one or the other, not both spellings of the same slot.
     multikicker: str | None = None
+    #: **Strive** (Journey into Nyx): "This spell costs {1}{W} more to cast for
+    #: each target beyond the first." The mana string charged once per target
+    #: past the first, on a card whose one target spec is ``count: "any"``. A
+    #: cost *increase* under 601.2f, fixed by the targets chosen at 601.2c, so
+    #: legality prices each target count as its own cast line and never offers
+    #: a count the caster cannot pay for.
+    strive: str | None = None
     #: **Bestow {5}{W}** (702.103a): "If you cast this card for its bestow cost,
     #: it's an Aura spell with enchant creature. It becomes a creature again if
     #: it's not attached to a creature."

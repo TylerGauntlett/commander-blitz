@@ -370,6 +370,7 @@ def _spec_options(
     limit: int,
     bindings: Mapping[str, Any] | None,
     chosen: Mapping[str, Sequence[TargetRef]] | None,
+    size_cap: int | None = None,
 ) -> list[tuple[TargetRef, ...]]:
     """Every choice one spec offers, including declining where that is allowed.
 
@@ -406,6 +407,8 @@ def _spec_options(
         # is the whole of the difference between Marshal's Anthem cast with no
         # kicks and a {2}{W}{W} full-graveyard reanimation.
         ceiling = len(options) if count == "any" else min(int(count), len(options))
+        if size_cap is not None:
+            ceiling = min(ceiling, size_cap)
         subsets = [
             tuple(c)
             for size in range(ceiling, 0, -1)
@@ -451,8 +454,16 @@ def enumerate_target_tuples(
     exclude_sid: int | None = None,
     limit: int = MAX_TARGET_OPTIONS,
     bindings: Mapping[str, Any] | None = None,
+    size_cap: int | None = None,
 ) -> list[tuple[TargetRef, ...]]:
     """Every legal combination of targets, capped at ``limit``.
+
+    ``size_cap`` bounds how many refs a **variable-size** spec may take -- the
+    most targets a strive spell can pay for. It has to bound the enumeration
+    rather than filter its result: subsets come largest first and ``limit``
+    cuts the list, so with five creatures on the board the twelve options kept
+    are all four- and five-target picks, and filtering those for an affordable
+    size afterwards would leave nothing but the empty one.
 
     Returns ``[()]`` for a spell with no targets and ``[]`` when a required
     target has no legal choice (i.e. the spell cannot be cast at all).
@@ -502,6 +513,7 @@ def enumerate_target_tuples(
                 limit=limit,
                 bindings=bindings,
                 chosen=None,
+                size_cap=size_cap,
             )
         )
         grown: list[
@@ -520,6 +532,7 @@ def enumerate_target_tuples(
                     limit=limit,
                     bindings=bindings,
                     chosen=chosen,
+                    size_cap=size_cap,
                 )
             )
             for option in options:

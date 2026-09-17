@@ -75,6 +75,9 @@ CARD_LEVEL_COST_KEYS = (
     "pay_generic_with",  # str; convoke and its relatives
     "retrace",  # bool
     "splice",
+    #: "This spell costs {1}{W} more to cast for each target beyond the first";
+    #: needs exactly one target spec, with count "any".
+    "strive",
     "suspend",
 )
 
