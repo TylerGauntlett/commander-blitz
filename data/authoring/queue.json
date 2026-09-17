@@ -107308,7 +107308,7 @@
       "scryfall_id": "e1f723a8-0be9-4270-b451-a52d6b2fda4e",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Ghostly Sentinel": {
       "edhrec_rank": 29774,
@@ -280392,12 +280392,12 @@
     },
     "The Theorist, Jace Beleren": {
       "edhrec_rank": 22385,
-      "gate": "template",
+      "gate": null,
       "name": "The Theorist, Jace Beleren",
-      "reason": "no template for: At the beginning of each opponent's draw step, you draw a card",
+      "reason": "",
       "scryfall_id": "20bb8c55-4b0b-425f-8201-b54fa2fdde86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Thing": {

@@ -8476,6 +8476,14 @@
   "the_terror_of_serpent_s_pass": {
     "zone": "battlefield"
   },
+  "the_theorist_jace_beleren": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "the_warring_triad": {
     "battlefield_count": 33,
     "granted": {
