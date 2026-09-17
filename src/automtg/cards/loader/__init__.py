@@ -212,6 +212,112 @@ def _check_grant_targets(
             check(index, "grant_ability op", statics_ok=False)
 
 
+def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
+    """Each quoted emblem as a ``CardDef`` of its own (114).
+
+    An emblem has abilities and nothing else (114.3), so the definition is its
+    abilities plus the three things a display needs: a name in Scryfall's
+    "<card> Emblem" form, the type line ``Emblem`` and the quoted text. It
+    carries no card types, so no selector, filter or count that asks about
+    permanents or cards can ever match one.
+
+    Every ability works **from the command zone** (114.4), and that is written
+    by the loader rather than by the author: the default ``active_zones`` is the
+    battlefield, where an emblem never is, so an emblem that took the default
+    would load clean and never trigger.
+
+    **Triggered abilities only.** That is what `triggers._candidate_abilities`
+    already reads from the command zone (Edgar Markov's eminence). A static is
+    read by several separate walks -- the characteristic layers, the player
+    statics, the cost reductions -- none of which look at the command zone, and
+    an activated ability would have to be offered from it; either would load
+    and do nothing, so both are refused until one is built.
+    """
+    out: list[CardDef] = []
+    for i, emblem in enumerate(model.emblems):
+        here = f"{where}.emblems[{i}]"
+        if not emblem.abilities:
+            raise DslError(f"{here}: an emblem with no abilities is nothing (114.3)")
+        abilities: list[Ability] = []
+        for j, ability in enumerate(emblem.abilities):
+            if ability.kind != "triggered":
+                raise DslError(
+                    f"{here}.abilities[{j}]: only triggered abilities work from the "
+                    f"command zone so far, not {ability.kind!r} -- a static or "
+                    f"activated emblem ability would load and never apply"
+                )
+            if list(ability.active_zones) not in (["battlefield"], ["command"]):
+                raise DslError(
+                    f"{here}.abilities[{j}]: an emblem is only ever in the command "
+                    f"zone (114.1), so its abilities work there and nowhere else, "
+                    f"not in {ability.active_zones}"
+                )
+            if ability.trigger is not None and ability.trigger.source == "self":
+                # "this emblem" is never the subject of an event: nothing moves,
+                # taps, damages or targets it.
+                raise DslError(
+                    f"{here}.abilities[{j}]: an emblem is never the subject of a "
+                    f"trigger event, so 'source: self' could never fire"
+                )
+            commanded = ability.model_copy(update={"active_zones": ["command"]})
+            abilities.append(_compile_ability(commanded, j, here))
+        out.append(
+            CardDef(
+                id=f"{model.id}_emblem_{i}",
+                name=f"{model.name} Emblem",
+                oracle_text="\n".join(a.text for a in abilities),
+                abilities=tuple(abilities),
+                type_line="Emblem",
+            )
+        )
+    return tuple(out)
+
+
+def _check_emblem_references(
+    model: CardModel,
+    abilities: tuple[Ability, ...],
+    grantable: tuple[Ability, ...],
+    emblems: tuple[CardDef, ...],
+    where: str,
+) -> None:
+    """Every ``emblem`` op names an emblem this card writes, and every emblem
+    this card writes is given by something.
+
+    Out of range is silent at runtime -- the op would have nothing to hand over
+    -- and an emblem no op names is a quoted ability the card prints and never
+    delivers.
+    """
+    trees: list[Any] = [model.spell_effects]
+    trees.extend(a.effects for a in abilities)
+    trees.extend(a.effects for a in grantable)
+    for emblem in emblems:
+        trees.extend(a.effects for a in emblem.abilities)
+    named: set[int] = set()
+    for tree in trees:
+        for effect in _walk_effect_specs(tree):
+            if effect.get("op") != "emblem":
+                continue
+            index = effect.get("emblem")
+            try:
+                pos = int(index)
+            except (TypeError, ValueError):
+                raise DslError(
+                    f"{where}: emblem op needs 'emblem', an index into the card's "
+                    f"'emblems', got {index!r}"
+                ) from None
+            if not 0 <= pos < len(emblems):
+                raise DslError(
+                    f"{where}: emblem op names 'emblems[{pos}]' and this card has "
+                    f"{len(emblems)}"
+                )
+            named.add(pos)
+    for pos in range(len(emblems)):
+        if pos not in named:
+            raise DslError(
+                f"{where}: 'emblems[{pos}]' is written and no emblem op gives it to anybody"
+            )
+
+
 # ----------------------------------------------------------------------
 # public API
 # ----------------------------------------------------------------------
@@ -565,6 +671,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
 
     _check_grant_targets(model, abilities, grantable, where)
+    emblems = _compile_emblems(model, where)
+    _check_emblem_references(model, abilities, grantable, emblems, where)
 
     if model.cost_reduction is not None:
         _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
@@ -1172,6 +1280,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         replacements=_implied_replacements(model),
         abilities=abilities,
         grantable_abilities=grantable,
+        emblems=emblems,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
         back_face=model.back_face,

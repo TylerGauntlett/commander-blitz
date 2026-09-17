@@ -12535,3 +12535,57 @@ matter; the Plate's controller decides (handing it over changes the set, stealin
 the creature does not) and an opponent's commander is not yours; a red spell
 cannot target the equipped creature while a black one can; Equip commander
 reaches only the commander and Equip {5} reaches both; and the loader refusals.
+## `emblem` — "Target opponent gets an emblem with …" — 114
+
+### Overview
+
+Ob Nixilis Reignited's −8: *"Target opponent gets an emblem with 'Whenever a player
+draws a card, you lose 2 life.'"* Ninety-odd catalog cards print an emblem, nearly
+all of them planeswalker ultimates, and most of those emblems carry a triggered
+ability.
+
+### Why the existing vocabulary would not do
+
+- `delayed_trigger` belongs to the ability's controller, so its "you" is the
+  player who ultimated, and it carries a duration where an emblem lasts the game.
+- `grant_ability` hands an ability to a permanent and ends with it.
+
+### Tier: A, plus a new kind of object
+
+- **`CardModel.emblems`** (`EmblemModel`: `abilities`) compiles, in
+  `loader._compile_emblems`, to **`CardDef.emblems`** — a `CardDef` per emblem named
+  "<card> Emblem", type line `Emblem`, no types, whose abilities have
+  `active_zones` forced to the command zone.
+- **`GameObject.emblem`**, an index into the card's `emblems`, and
+  **`GameState.card_of`** returns that entry — so the existing command-zone
+  trigger walk (Edgar Markov's eminence), `stack.ability_of` and the serializer
+  all read the emblem with no change of their own.
+- **`primitives.give_emblem`** puts the object straight into the owner's command
+  zone (no zone change, so nothing listens) and records
+  `EventType.EMBLEM_CREATED`. Not a token, not a commander: no SBA removes it and
+  the commander cast walk skips it.
+- **`emblem` op** (`ops_player`) with a required `player` spec and `emblem`
+  index. The card is read off the new `EffectContext.source_def_id` — the stack
+  item's `def_id` — because an ultimate kills its planeswalker before it resolves.
+- Loader: `emblem`'s `player` and `emblem` are required; `_check_emblem_references`
+  refuses an out-of-range index and an emblem no op gives; `_compile_emblems`
+  refuses an empty emblem, a non-triggered ability, any zone but the command zone,
+  and `source: "self"`.
+
+### Frontend
+
+None built. State serialization is generic: an emblem arrives in `player_view`'s
+`command` list as a card view with its own name, type line and text, and the
+`/images` map has no entry for its id. `emblem_created` has no `describeEvent`
+case, so it is silently skipped in the log, and the command-zone badges count
+it beside the commander.
+
+### Guarded by
+
+`tests/unit/test_emblem.py`: the target opponent gets it in their command zone,
+owned and controlled by them, even though the ultimate killed the walker; "you get
+an emblem" goes to its controller; it is not a permanent, a token or a commander
+and is never offered as a cast; its owner loses 2 on every card anyone draws,
+including their own, one trigger per card and per emblem, and given to the
+controller it drains the controller instead; it is still there and draining two
+turns later; its card view and snapshot; and the loader refusals.

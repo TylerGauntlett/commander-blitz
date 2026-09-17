@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-117 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+118 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -256,7 +256,7 @@ it, but a card that needed correcting was authored wrong.
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
-| Players | `become_monarch` `win_game` `no_maximum_hand_size` |
+| Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` `extra_turn` |
@@ -4812,6 +4812,51 @@ skipped turn takes no turn number and fires `turn_skipped` instead of
 Not yet sayable: "at the beginning of **that turn's** end step" (Final Fortune) —
 a delayed trigger scoped to the extra turn an effect created. `delay`'s clock is
 still the turn it was created in.
+
+## Emblems — "Target opponent gets an emblem with …"
+
+Ob Nixilis Reignited, −8. The quoted abilities go under the card's `emblems`, one
+entry per emblem, and the `emblem` op gives one to a player by index:
+
+```jsonc
+{"kind": "activated",
+ "text": "−8: Target opponent gets an emblem with \"Whenever a player draws a card, you lose 2 life.\"",
+ "cost": {"loyalty": -8},
+ "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}],
+ "effects": [{"op": "emblem", "player": {"target": "t1"}, "emblem": 0}]}
+// …and at card level:
+"emblems": [
+  {"abilities": [
+    {"kind": "triggered",
+     "text": "Whenever a player draws a card, you lose 2 life.",
+     "trigger": {"event": "draw", "controller": "any"},
+     "effects": [{"op": "lose_life", "player": "you", "amount": {"const": 2}}]}]}]
+```
+
+An emblem (114) is an object in the command zone of the player who **gets** it,
+with abilities and no other characteristics, and nothing removes it. So:
+
+- **"You" on the emblem is its owner**, not the planeswalker's controller. That
+  is the whole of Ob Nixilis's ultimate, and it is why `delayed_trigger` — whose
+  "you" is the ability's controller, and which has a duration — cannot stand in.
+- **`player` is required.** Most emblems go to "you"; Ob Nixilis Reignited's,
+  Garruk, Apex Predator's and Chandra, Awakened Inferno's go to opponents, and a
+  default would read fine and hand the drawback to the wrong seat.
+- **Do not write `active_zones`.** The loader puts every emblem ability in the
+  command zone, and refuses any other zone.
+- **The source may be gone.** An ultimate usually spends the last loyalty; the op
+  reads the card the ability was activated from, not the board.
+- **Triggered abilities only, so far.** An emblem static ("Creatures you control
+  get +1/+1") or activated ability ("Tap an untapped artifact you control: This
+  emblem deals 1 damage…") is refused at load time: the static walks and the
+  activation offer do not look at the command zone, so either would load and do
+  nothing. The loader also refuses an emblem no `emblem` op gives, an index past
+  the end, an empty emblem, and `source: "self"` on an emblem trigger (nothing
+  ever happens *to* an emblem).
+
+The emblem shows up in `player_view`'s `command` list as its own card — name
+"<card> Emblem", type line `Emblem`, the quoted text — and the log records an
+`emblem_created` event.
 
 ## Granting an ability for as long as the permanent lasts
 

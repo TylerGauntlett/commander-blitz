@@ -1829,6 +1829,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     if op == "delayed_trigger":
         _validate_delayed_trigger(effect, where)
 
+    # "Target opponent gets an emblem" and "you get an emblem" differ by one
+    # player spec, and a default would silently pick one of them. Which emblem is
+    # checked against the card's own `emblems` by `_check_emblem_references`.
+    if op == "emblem":
+        if "player" not in effect:
+            raise DslError(f"{where}: emblem needs 'player' -- who gets it")
+        if "emblem" not in effect:
+            raise DslError(
+                f"{where}: emblem needs 'emblem' -- the index into the card's own 'emblems'"
+            )
+
     # A grant naming an ability the card does not have is a silent no-op: the
     # index defaults to 0 and every miss lands on the first grantable, or on
     # nothing at all. Both spellings are accepted by the op, so both are checked.

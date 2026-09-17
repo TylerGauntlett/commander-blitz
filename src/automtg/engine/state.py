@@ -462,6 +462,10 @@ class GameState:
         # several cards in the pile.
         if obj.merged_card is not None:
             return obj.merged_card
+        # An emblem (114) is not a face of the card that made it: it is one of
+        # that card's `emblems`, a definition with abilities and nothing else.
+        if obj.emblem is not None:
+            return self.registry.get(obj.def_id).emblems[obj.emblem]
         # A copy effect (706) applied in place -- Gogo. Asked before the printed
         # card is even fetched, because while it is copying, the copied card
         # *is* what this permanent is: its name, types, power, abilities and

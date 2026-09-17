@@ -237,3 +237,6 @@ def _walk_effects(card: CardDef):
     yield from _walk_effect_specs(card.spell_effects)
     for ability in card.abilities:
         yield from _walk_effect_specs(ability.effects)
+    for emblem in card.emblems:
+        for ability in emblem.abilities:
+            yield from _walk_effect_specs(ability.effects)

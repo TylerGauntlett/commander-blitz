@@ -622,6 +622,18 @@ class ReplacementModel(BaseModel):
     unless_cost: dict[str, Any] | None = None
 
 
+class EmblemModel(BaseModel):
+    """The abilities printed in one emblem's quotation marks (114.1).
+
+    An emblem has abilities and **no other characteristics** (114.3), so
+    abilities are the whole of it: no name, types, cost or colour to write.
+    """
+
+    model_config = Strict
+
+    abilities: list[AbilityModel] = Field(default_factory=list)
+
+
 class CardModel(BaseModel):
     """One card definition."""
 
@@ -663,6 +675,12 @@ class CardModel(BaseModel):
     #: from a ``grant_ability`` effect.  Separate from ``abilities`` because the
     #: card itself does not have them.
     grantable_abilities: list[AbilityModel] = Field(default_factory=list)
+    #: Emblems this card can give a player (114), referenced by index from an
+    #: ``emblem`` effect. Each entry is the quoted text of one emblem, written
+    #: as ordinary abilities -- "You get an emblem with "Whenever you cast a
+    #: spell, …"". Like ``grantable_abilities`` the card does not have them; an
+    #: emblem is its own object in the command zone and has nothing else.
+    emblems: list[EmblemModel] = Field(default_factory=list)
     is_token: bool = False
     #: The id of this card's **back face**, for a transforming double-faced
     #: card. The back face is an ordinary card entry in the same pool, marked

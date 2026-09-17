@@ -843,6 +843,12 @@ class CardDef:
     #: player, draw a card"`.  Kept apart from `abilities` because the card does
     #: not have them: they only exist on whatever it granted them to.
     grantable_abilities: tuple[Ability, ...] = ()
+    #: The emblems this card can give a player (114) -- "Target opponent gets an
+    #: emblem with …". Each is a whole ``CardDef`` of its own, compiled by the
+    #: loader, whose ``abilities`` all work from the command zone and which has
+    #: no other characteristics. An emblem object points back here by
+    #: ``GameObject.emblem``, and ``GameState.card_of`` returns the entry.
+    emblems: tuple[CardDef, ...] = ()
     type_line: str = ""
     is_token: bool = False
     #: The id of this card's back face -- a transforming double-faced card.

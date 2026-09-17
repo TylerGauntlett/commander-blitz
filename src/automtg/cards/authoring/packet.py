@@ -752,6 +752,14 @@ def reference() -> dict:
             " \"As long as ...\" / \"have ...\" is the `grant_ability` static,"
             " which may also grant a static. A granted activated ability works"
             " on the battlefield only.",
+            "\"You get an emblem with \\\"...\\\"\" / \"Target opponent gets an"
+            " emblem with \\\"...\\\"\" writes the quoted abilities once under the"
+            " card's `emblems` -- `[{\"abilities\": [...]}]`, no `active_zones`,"
+            " the loader puts them in the command zone -- and gives one with the"
+            " `emblem` op: `{\"op\": \"emblem\", \"player\": \"you\" | {\"target\":"
+            " \"t1\"}, \"emblem\": 0}`. `player` is required. \"You\" on the"
+            " emblem is the player who got it. Only triggered abilities may be on"
+            " an emblem so far; a static or activated one is a gap.",
             "A static ability's filter may only read printed characteristics.",
             "\"If one or more tokens would be created under your control, twice"
             " that many of those tokens are created instead\" (Parallel Lives,"

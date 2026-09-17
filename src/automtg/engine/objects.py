@@ -382,6 +382,13 @@ class GameObject:
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
     is_commander: bool = False
+    #: Set on an **emblem** (114): the index into ``emblems`` of the card named
+    #: by ``def_id``, which is the card whose effect created it. An emblem is an
+    #: object in its owner's command zone with abilities and no other
+    #: characteristics; `GameState.card_of` returns that entry, so its triggers,
+    #: its name and its text reach every reader through the one funnel. Nothing
+    #: moves an emblem and nothing removes one, so this is never cleared.
+    emblem: int | None = None
 
     # -- stack state ----------------------------------------------------------
     #: Set while this object is a spell on the stack (its StackItem id).
@@ -963,6 +970,8 @@ class GameObject:
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
+            # Only on an emblem, so every other object's snapshot is unchanged.
+            **({"emblem": self.emblem} if self.emblem is not None else {}),
         }
 
 

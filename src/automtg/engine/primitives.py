@@ -123,6 +123,28 @@ def shuffle_library(state: GameState, pid: int) -> None:
 # ----------------------------------------------------------------------
 
 
+def give_emblem(state: GameState, def_id: str, index: int, pid: int) -> int:
+    """Put ``emblems[index]`` of card ``def_id`` into ``pid``'s command zone (114).
+
+    114.2: an emblem is created in the command zone by an effect, and the player
+    who gets it **owns** it -- which is who "you" is on the emblem, and so the
+    difference between Ob Nixilis Reignited's ultimate draining the opponent and
+    draining its own controller.
+
+    Placed directly rather than through `move_object`: an emblem comes from
+    nowhere and does not *enter* the command zone from anywhere, so no zone
+    change happens and nothing that listens for one should hear it. It is not a
+    token (111.1) and not a card, so no state-based action removes it, and no
+    effect in the DSL moves an object out of the command zone that is not a
+    commander. It lasts the rest of the game.
+    """
+    obj = new_object(state, def_id, owner=pid, zone=Zone.COMMAND)
+    obj.emblem = index
+    state.players[pid].command.append(obj.oid)
+    state.emit(EventType.EMBLEM_CREATED, player=pid, source=obj.oid, card=def_id, emblem=index)
+    return obj.oid
+
+
 def become_monarch(state: GameState, pid: int, source: int | None = None) -> bool:
     """Make a player the monarch (721.2), taking it off whoever held it (721.4).
 

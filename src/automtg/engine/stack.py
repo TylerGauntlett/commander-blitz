@@ -726,6 +726,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         modes=item.modes,
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
+        source_def_id=card.id if card else "",
     )
     yield from execute(ctx, card.spell_effects)
     # "â€¦add this card's effects to that spell." After the host's own, in the
@@ -1058,6 +1059,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         modes=item.modes,
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
+        source_def_id=card.id if card else "",
     )
 
     # Intervening-if clauses are checked again on resolution (rule 603.4).
