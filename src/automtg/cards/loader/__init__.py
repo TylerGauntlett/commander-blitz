@@ -1635,6 +1635,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # and prevents none of it is the failure this whole pass exists to
         # refuse -- it would load, appear in the card's text, and never fire.
         raise DslError(f"{where}: 'prevent_damage' needs an 'amount' -- absorb N")
+    if model.effect == "crew_power_bonus" and model.amount is None:
+        # "As though its power were 0 greater" is not a printed sentence, and a
+        # bonus of nothing would load, print the Pilot's line, and crew exactly
+        # as a vanilla 1/1 does -- the token wearing most of a card.
+        raise DslError(
+            f"{where}: 'crew_power_bonus' needs an 'amount' -- "
+            f"crews Vehicles as though its power were N greater"
+        )
     if model.effect not in STATIC_EFFECTS:
         raise DslError(
             f"{where}: unknown static effect {model.effect!r} (implemented: {sorted(STATIC_EFFECTS)})"

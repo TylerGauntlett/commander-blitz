@@ -623,6 +623,13 @@ def reference() -> dict:
             " `skip_draw_step`, and a replacement that does something other"
             " than draw more cards (\"exile the top card instead\") is still a"
             " gap.",
+            "\"Crew N\" is an activated ability whose `cost` is `tap_permanents`"
+            " with `total_power: N`. \"This creature crews Vehicles as though"
+            " its power were 2 greater\" is the static `crew_power_bonus` with"
+            " `affects: {\"self_only\": true}` and `amount: {\"const\": 2}` --"
+            " not `buff`, which changes real power. The Pilot token printing"
+            " that line is `pilot_1_1_c_crew2`; a Pilot that also \"saddles"
+            " Mounts\" is a different token and is still a gap.",
             "`static_condition_keys` is what a static ability's optional"
             " `condition` may ask -- an \"as long as ...\" clause that switches"
             " the whole static on and off as the board moves. It is a third"

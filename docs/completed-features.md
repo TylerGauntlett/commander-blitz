@@ -11916,3 +11916,49 @@ trigger-filter half; nothing once combat ends; and the load-time refusals.
 
 Trouble in Pairs is not authored in this change; its gap record stays until it
 is.
+
+## `crew_power_bonus` — crewing as though power were greater
+
+### Overview
+
+Shorikai, Genesis Engine: *"Create a 1/1 colorless Pilot creature token with
+"This token crews Vehicles as though its power were 2 greater.""* Crew itself
+shipped long ago (`tap_permanents` with `total_power`); what was missing was the
+Pilot, and the Pilot was missing because its one printed line had no home. The
+bodies nearest it (`gnome_1_1_c`, `hero_1_1_c`) are the wrong creature type and
+drop the rider, and `buff` changes real power — a 3/1 that attacks for three.
+
+### Where it is read
+
+A static, `crew_power_bonus`, with `affects` and a required `amount`, answered
+by `characteristics.crew_power_bonus` (summed over every applicable static, like
+`prevented_damage`) and read by `costs._crew_power` — the renamed crew sum —
+alone. That sum decides both whether the crew is offered (`_tap_cost_pool`) and
+how much each creature takes off what is still needed as it is tapped (`pay`),
+so a Pilot picked first against crew 3 ends the question. Nothing in the
+characteristics pipeline sees it.
+
+### The token
+
+`pilot_1_1_c_crew2` in `data/cards/tokens.cards.json`: 1/1 colourless Pilot
+creature, the static on `{"self_only": true}`. The authoring packet's
+`token_ids` is derived from the pool, so it appears there with no further work.
+The "saddles Mounts and crews" Pilot is a different token and is not defined:
+the engine has no saddle.
+
+### Tier
+
+B-lite: a static and one reader. No op, no `EventType`, no decision kind, no API
+field, nothing under `frontend/`. The AI's action mask is
+`legality.legal_actions()`, which already reads the cost pool.
+
+### Guarded by
+
+`tests/unit/test_crew_power_bonus.py`: a Pilot and a 5/5 crew 8 and a vanilla
+1/1 with the same 5/5 does not; a Pilot alone crews 3; the bonus belongs to the
+Pilot and not to its companions; Hotshot Mechanic's nontoken copy of the line;
+a tapped Pilot adds nothing; the bonus stacks with an anthem; paying taps both
+creatures and stops as soon as the Pilot's crew power meets the number; the
+Pilot is still a 1/1 and attacks for one; the created token is the printed
+Pilot, crews while summoning sick, and is offered by the packet; and the
+load-time guards. Test cards live in `tests/data/crew_power_bonus.cards.json`.

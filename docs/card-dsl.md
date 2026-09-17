@@ -1645,6 +1645,36 @@ rather than taking every creature that could have helped.
 `count` and `total_power` together are refused: they are two different questions,
 and a card giving both would be paid by whichever was checked first.
 
+### Crews Vehicles as though its power were N greater
+
+```jsonc
+{ "kind": "static", "text": "This token crews Vehicles as though its power were 2 greater.",
+  "effect": "crew_power_bonus", "affects": { "self_only": true },
+  "amount": { "const": 2 } }
+```
+
+Hotshot Mechanic, and the Pilot token Shorikai, Reckoner Bankbuster, Prodigy's
+Prototype and Born to Drive make (`pilot_1_1_c_crew2`). What the creature adds to
+**a crew sum** goes up by N, and nothing else about it changes: the Pilot is a
+1/1 in combat, to `chars`, and to every other "total power" on the board.
+
+That is why it is not `buff`. A +2/+0 on the token is a 3/1 that attacks for
+three and counts three toward Ghalta's reduction; the printed Pilot does
+neither. The static is read by `costs._crew_power` alone — both for whether the
+crew is offered and for how much each tapped creature takes off what is still
+needed — and never by the characteristics pipeline, beside `prevent_damage`
+among the statics whose output one other rule asks for.
+
+It stacks with derived power (a Pilot under an anthem crews as a 4) and it
+cannot rescue a tapped creature, whose absence from the pool is decided first.
+`amount` is required: a bonus of nothing prints the line and crews as a vanilla
+creature. Only `total_power` on `tap_permanents` reads it, which is crew's by
+definition.
+
+**Saddle is not here.** Several newer Pilots print "saddles Mounts and crews
+Vehicles as though its power were 2 greater"; the engine has no saddle, so that
+token is a different id and is not defined.
+
 All three take a selector over the battlefield defaulting to `controller: "you"`,
 and all three make the ability **unavailable** when too little matches rather
 than cheaper: an ability whose bounce cost has nothing to bounce would cost only
@@ -2426,7 +2456,8 @@ characteristics — the loader rejects anything else. See
 ```
 
 Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
-`block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
+`block_restriction` · `prevent_damage` · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
+[`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
 [`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
@@ -8441,6 +8472,12 @@ carrying "This token gets +1/+1 for each artifact you control", which is a stati
 so a lone Construct is a 1/1 rather than a 0/0 that state-based actions bin on
 arrival. Written as `add_counters` it would freeze at its arrival size; written
 as `pump` it would wear off at cleanup.
+
+Nor need a token's ability be about itself in combat. Shorikai's Pilot
+(`pilot_1_1_c_crew2`) is a 1/1 carrying "This token crews Vehicles as though its
+power were 2 greater", a [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater)
+static — and a vanilla 1/1 Pilot in its place would be the near miss this section
+is about, differing by one printed sentence rather than one word.
 
 ## Which mechanism a printed keyword lands on
 

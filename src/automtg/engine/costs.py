@@ -1020,21 +1020,31 @@ def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | Non
         # Crew. The requirement is a *sum* rather than a headcount, so what
         # makes it payable is the whole pool's power and not its length -- one
         # 4/4 crews a Vehicle that four 0/1s cannot.
-        return pool if _total_power(state, pool) >= int(total_power) else []
+        return pool if _crew_power(state, pool) >= int(total_power) else []
     return pool if len(pool) >= count else []
 
 
-def _total_power(state: GameState, oids: list[int]) -> int:
+def _crew_power(state: GameState, oids: list[int]) -> int:
     """Summed **derived** power, which is the whole reason crew is not a count.
 
     An anthem, a pump spell or a +1/+1 counter all change who can crew a
     Vehicle, so the printed face is the wrong thing to read -- and reading it
     would be wrong in the direction that matters, refusing a crew the board
     plainly supports.
-    """
-    from .characteristics import chars
 
-    return sum(chars(state, oid).power for oid in oids if oid in state.objects)
+    Plus each creature's ``crew_power_bonus`` -- the Pilot's "crews Vehicles as
+    though its power were 2 greater". Added here and nowhere else, because this
+    sum is the only place the printed line reaches: the Pilot is a 1/1 for
+    combat and for every other reader of power, and `total_power` on
+    `tap_permanents` is crew's by definition (the loader refuses it elsewhere).
+    """
+    from .characteristics import chars, crew_power_bonus
+
+    return sum(
+        chars(state, oid).power + crew_power_bonus(state, oid)
+        for oid in oids
+        if oid in state.objects
+    )
 
 
 def _untap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -1228,7 +1238,7 @@ def pay(
                 if not picked:
                     break
                 chosen = picked[0]
-                needed -= _total_power(state, [chosen])
+                needed -= _crew_power(state, [chosen])
                 tap_permanent(state, chosen)
                 remaining.remove(chosen)
 

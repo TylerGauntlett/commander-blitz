@@ -1331,6 +1331,33 @@ def prevented_damage(state: GameState, oid: int) -> int:
     return total
 
 
+def crew_power_bonus(state: GameState, oid: int) -> int:
+    """How much greater this creature's power counts **while crewing** -- 702.122.
+
+    "This token crews Vehicles as though its power were 2 greater." Not a
+    characteristic, and that is the whole design: a `buff` would make the Pilot
+    a 3/1 that attacks for three, and the printed token is a 1/1 everywhere
+    except inside the one sum a crew cost takes. So this sits beside
+    `prevented_damage` -- a static whose output one *other* rule asks for, read
+    off the battlefield at the moment that rule runs -- and its one reader is
+    `costs._crew_power`.
+
+    Summed over every applicable static, so a creature granted a second one
+    counts both.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "crew_power_bonus":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
 def protection_from(state: GameState, oid: int) -> frozenset[str]:
     """The qualities this permanent has protection from.
 

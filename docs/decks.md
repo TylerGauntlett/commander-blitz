@@ -111,7 +111,7 @@ nothing re-checks it — which is exactly what
 
 ```
 data/cards/basics.cards.json    5 basic lands
-data/cards/tokens.cards.json    59 token definitions
+data/cards/tokens.cards.json    60 token definitions
 data/cards/core.cards.json      colourless staples shared by every deck
 data/cards/aesi.cards.json      the Simic half, shared with Isperia
 data/cards/edgar.cards.json     Edgar's Mardu vampires

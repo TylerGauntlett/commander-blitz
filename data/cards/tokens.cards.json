@@ -1564,6 +1564,35 @@
           }
         }
       ]
+    },
+    {
+      "id": "pilot_1_1_c_crew2",
+      "name": "Pilot Token",
+      "oracle_text": "1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pilot"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token crews Vehicles as though its power were 2 greater.",
+          "effect": "crew_power_bonus",
+          "affects": {
+            "self_only": true
+          },
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
     }
   ]
 }

@@ -151,6 +151,14 @@ STATIC_EFFECTS = frozenset(
         # keyword -- and *not* protection, which prevents all of it and three
         # other things besides. Read by `damage_permanent` alone.
         "prevent_damage",
+        # "This creature crews Vehicles as though its power were 2 greater." --
+        # Hotshot Mechanic, and the Pilot token Shorikai, Reckoner Bankbuster
+        # and a dozen others make. Parameterised on N, so a static and not a
+        # keyword -- and *not* `buff`, which changes the creature's real power:
+        # the Pilot stays a 1/1 in combat, for `power_of`, and for every other
+        # sum on the board. Read by `costs._crew_power` alone, the one sum a
+        # crew cost takes, and by nothing in the characteristics pipeline.
+        "crew_power_bonus",
         # Ancient Greenwarden.  A fact about the *player*, like the two above:
         # it is read by `triggers.collect` rather than by the characteristics
         # pipeline, and there is no object for it to attach to.
