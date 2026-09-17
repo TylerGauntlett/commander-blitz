@@ -290,6 +290,15 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     for ability in abilities_of(state, oid):
         if not solver_taps(ability):
             continue
+        # "{T}: Add {U}. Activate only if you control a Plains or an Island."
+        # -- Floodfarm Verge. 602.5c restricts a mana ability exactly as it does
+        # any other, and legality's `_activation_allowed` never sees this one:
+        # a tap-only mana ability is the solver's and is never offered. Skipped
+        # here, the Verge alone paid {U} for anything.
+        if ability.activation_condition is not None and not _mana_condition_met(
+            state, obj.controller, oid, ability
+        ):
+            continue
         out.append(
             ManaSource(
                 oid=oid,
@@ -310,6 +319,15 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
             )
         )
     return out
+
+
+def _mana_condition_met(state: GameState, pid: int, oid: int, ability: Ability) -> bool:
+    """ "Activate only if …" on a mana ability, asked as legality asks it."""
+    from .effects.conditions import evaluate
+    from .effects.context import EffectContext
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+    return bool(evaluate(ctx, ability.activation_condition))
 
 
 def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
