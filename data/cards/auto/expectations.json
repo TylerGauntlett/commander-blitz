@@ -2406,6 +2406,10 @@
   "esper_panorama": {
     "zone": "battlefield"
   },
+  "esper_sentinel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "espers_to_magicite": {
     "zone": "graveyard"
   },
@@ -4980,6 +4984,13 @@
     }
   },
   "maned_serval": {
+    "zone": "battlefield"
+  },
+  "mangara_the_diplomat": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mantis_rider": {
@@ -8454,6 +8465,10 @@
   "thaumaturge_s_familiar": {
     "zone": "battlefield"
   },
+  "the_council_of_four": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_emperor_of_palamecia_the_lord_master_of_hell": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8471,6 +8486,10 @@
   "the_ozolith": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "the_queen_of_dale": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_terror_of_serpent_s_pass": {

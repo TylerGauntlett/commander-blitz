@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "mangara_the_diplomat",
+    "name": "Mangara, the Diplomat",
+    "oracle_text": "Lifelink\nWhenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, draw a card.\nWhenever an opponent casts their second spell each turn, draw a card.",
+    "mana_cost": "{3}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Cleric"],
+    "power": 2,
+    "toughness": 4,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["lifelink"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, draw a card.",
+        "trigger": {
+          "event": "creatures_attack_player",
+          "controller": "opponent",
+          "defending": "you",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"binding": "attackers"}},
+            "right": {"const": 2}
+          }
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts their second spell each turn, draw a card.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "nth": 2
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

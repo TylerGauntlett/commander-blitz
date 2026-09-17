@@ -85502,12 +85502,12 @@
     },
     "Esper Sentinel": {
       "edhrec_rank": 77,
-      "gate": "template",
+      "gate": null,
       "name": "Esper Sentinel",
-      "reason": "no template for: Whenever an opponent casts their first noncreature spell each turn, draw a card unless tha",
+      "reason": "",
       "scryfall_id": "8b5a916f-a6f2-4e89-b38f-7e5bc0c2e032",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Esper Sojourners": {
@@ -165342,12 +165342,12 @@
     },
     "Mangara, the Diplomat": {
       "edhrec_rank": 612,
-      "gate": "template",
+      "gate": null,
       "name": "Mangara, the Diplomat",
-      "reason": "no template for: Whenever an opponent attacks with creatures, if two or more of those creatures are attacki",
+      "reason": "",
       "scryfall_id": "49d0d7ec-4bee-47d3-91a6-43510be65402",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Manglehorn": {
@@ -278072,12 +278072,12 @@
     },
     "The Council of Four": {
       "edhrec_rank": 2145,
-      "gate": "template",
+      "gate": null,
       "name": "The Council of Four",
-      "reason": "no template for: Whenever a player draws their second card during their turn, you draw a card",
+      "reason": "",
       "scryfall_id": "0873cfa8-046c-4b14-ae22-3fd6a691f763",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Creation of Avacyn": {
@@ -279822,12 +279822,12 @@
     },
     "The Queen of Dale": {
       "edhrec_rank": 16779,
-      "gate": "template",
+      "gate": null,
       "name": "The Queen of Dale",
-      "reason": "no template for: Whenever an opponent casts their first noncreature spell each turn, you recruit",
+      "reason": "",
       "scryfall_id": "4cff1878-3f23-4a0a-ad79-28a44921cca8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Rack": {
