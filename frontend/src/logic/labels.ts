@@ -433,6 +433,15 @@ export function describeEvent(
       const roman = ["I", "II", "III", "IV"][n - 1] ?? String(n);
       return `${card ?? "A Saga"} — chapter ${roman}`;
     }
+    /*
+     * A Class gained a level (716.4). Not a counter, so no `counter_placed`
+     * line says anything beside it, and it is the moment the next band of the
+     * card's abilities switches on -- the one thing the player bought.
+     */
+    case "became_level": {
+      const n = typeof event.data.level === "number" ? event.data.level : 0;
+      return `${card ?? "A Class"} becomes level ${n}`;
+    }
     case "control_changed":
       return `${who} ${v("gain", "gains")} control of ${card ?? "a permanent"}`;
     case "counter_placed":

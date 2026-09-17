@@ -308,6 +308,20 @@ def op_become_level(ctx: EffectContext, spec: Mapping[str, Any]):
     obj.class_level = level
     # The level is a pipeline input: a level-3 anthem switches on here.
     ctx.state.bump_chars()
+    # After the write, so what triggers off it is collected from a Class that
+    # already has the new level's abilities (716.4).
+    from ..events import EventType
+    from ..triggers import fire
+
+    fire(
+        ctx.state,
+        EventType.BECAME_LEVEL,
+        player=obj.controller,
+        source=oid,
+        oid=oid,
+        card=obj.def_id,
+        level=level,
+    )
 
 
 @register("freeze")

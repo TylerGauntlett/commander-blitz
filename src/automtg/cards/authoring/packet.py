@@ -590,7 +590,10 @@ def reference() -> dict:
             " rule 716.2a and the compiler supplies them. Every ability printed"
             " BELOW that line, up to the next level line, carries `\"level\": 2`"
             " whatever its kind; the abilities above the first level line carry"
-            " no `level`. The reminder line needs no ability.",
+            " no `level`. The reminder line needs no ability. \"When this"
+            " Class becomes level 2, ...\" is a triggered ability with"
+            " `\"level\": 2` and `trigger: {\"event\": \"becomes_level\","
+            " \"level\": 2}`.",
             "`required_keys` is the subset of each of those lists that is NOT"
             " optional -- every ability needs a `kind`, every target an `id`"
             " and a `kind`, every trigger an `event`. A spec missing one fails"

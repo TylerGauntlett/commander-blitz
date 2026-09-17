@@ -12418,3 +12418,47 @@ the loader refusals; and `tests/cards/test_every_card_works.py`'s activation
 sweep, which learned `_reach_the_level` and is run against the test Class.
 `tests/cards/golden_vocabulary.json` gains `become_level` and `_LEVEL_LINE_KEYS`.
 
+## `becomes_level` — "When this Class becomes level N" — 716.4
+
+### Overview
+
+The second commit of the Class subsystem. Eleven of the catalog's thirty-four
+Classes print "When this Class becomes level N, …" — Caretaker's Talent's copy of
+a token, Wizard Class's two cards, Cleric Class's reanimation — and it is usually
+the payoff for buying the level.
+
+### Why the existing vocabulary would not do
+
+- `ability_activated` fires when the level line is activated. The line uses the
+  stack, so that is before the Class is level 2, and fires even if the Class is
+  destroyed in response.
+- `counter_placed` needs a level counter, which a Class does not have, and fires
+  on every level, so the level-3 purchase would repeat the level-2 ability.
+
+### The shape
+
+- **`EventType.BECAME_LEVEL`** (`became_level`), with `oid`, `card` and `level`,
+  fired by `become_level` after the write and only when the level changed.
+- **`becomes_level`** in `TRIGGER_EVENTS` and `OBJECT_SUBJECT_TRIGGERS`, and
+  **`TriggerSpec.level`** / `TriggerModel.level`, compared in `triggers._matches`
+  the way `chapter` is.
+- The loader supplies `source: "self"`, requires `level` >= 2 on this event and
+  refuses it on any other, and `_check_class_levels` refuses a level no line
+  reaches or an ability printed under a higher band than the level it waits for.
+
+### Frontend
+
+Tier D: `describeEvent` reads "<card> becomes level N", and `beatsFor` floats
+"Level N" off the Class with the Saga chapter's pulse. Vitest in
+`tests/labels.test.ts` and `tests/events.test.ts`.
+
+### Guarded by
+
+`tests/unit/test_becomes_level_trigger.py`: the event and its payload; no event
+for a level that did not change; nothing while the level line is on the stack
+and nothing if the Class is destroyed in response; each rung fires once and only
+its own ability; another Class's level does not fire this one; Caretaker's
+Talent end to end (the level-2 token copy, the level-1 once-a-turn batched draw
+it sets off, no second copy at level 3, the level-3 anthem present only at 3);
+and the loader refusals.
+

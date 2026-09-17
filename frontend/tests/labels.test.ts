@@ -146,6 +146,17 @@ describe("describeEvent", () => {
     ).toBe("Oath Of Eorl — chapter II");
   });
 
+  it("says which level a Class became", () => {
+    // Otherwise dropped by the `default` fallthrough: a Class level is not a
+    // counter, so this is the only line that says the purchase landed.
+    expect(
+      describeEvent(
+        event({ type: "became_level", data: { card: "wizard_class", level: 3 } }),
+        names,
+      ),
+    ).toBe("Wizard Class becomes level 3");
+  });
+
   it("prettifies a card id rather than printing the raw slug", () => {
     expect(
       describeEvent(event({ type: "land_played", data: { card: "sol_ring" } }), names),

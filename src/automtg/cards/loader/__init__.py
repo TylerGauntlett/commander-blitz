@@ -1396,7 +1396,8 @@ def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where:
     """
     lines = sorted(a.becomes_level for a in abilities if a.becomes_level is not None)
     gated = sorted({a.level for a in abilities if a.level is not None})
-    if not lines and not gated:
+    waits = any(a.trigger is not None and a.trigger.event == "becomes_level" for a in abilities)
+    if not lines and not gated and not waits:
         return
     if "Class" not in model.subtypes:
         raise DslError(
@@ -1408,6 +1409,25 @@ def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where:
             f"(got {lines}); 716.2a only lets level N be gained from level N-1"
         )
     top = lines[-1] if lines else 1
+    for ability in abilities:
+        spec = ability.trigger
+        if spec is None or spec.event != "becomes_level" or spec.level is None:
+            continue
+        # "When this Class becomes level 3" on a Class whose lines stop at 2
+        # waits for a level nothing can reach; printed under level 3 on a
+        # "becomes level 2" trigger, it is not on the Class at the moment it
+        # would fire.
+        if spec.level > top:
+            raise DslError(
+                f"{where}: abilities[{ability.index}] waits for level {spec.level} "
+                f"but the level lines only reach {top}"
+            )
+        if ability.level is not None and ability.level > spec.level:
+            raise DslError(
+                f"{where}: abilities[{ability.index}] is printed under level "
+                f"{ability.level}, so it is not there when the Class becomes level "
+                f"{spec.level}"
+            )
     if gated and gated[-1] > top:
         raise DslError(
             f"{where}: an ability is printed under level {gated[-1]} but the level "
@@ -1624,6 +1644,25 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         if model.trigger.event == "self_enters":
             source = "self"
 
+        if model.trigger.level is not None and model.trigger.event != "becomes_level":
+            # Same reasoning as `counter` below: only BECAME_LEVEL carries a
+            # level, so anywhere else this would be a filter that never applies.
+            raise DslError(
+                f"{where}: 'level' on a trigger only means anything on becomes_level, "
+                f"not on {model.trigger.event!r}"
+            )
+        if model.trigger.event == "becomes_level":
+            # "When this Class becomes level 2." Without the number the ability
+            # fires at every level, which is the second token copy at level 3
+            # the gap record warned about. And it is always *this* Class, so the
+            # loader supplies `source: "self"` as it does for `self_enters`.
+            if model.trigger.level is None or model.trigger.level < 2:
+                raise DslError(
+                    f"{where}: a becomes_level trigger needs the 'level' it waits for, "
+                    f"2 or more -- every Class enters at 1 and never becomes it"
+                )
+            source = "self"
+
         if model.trigger.not_cause is not None and model.trigger.event not in (
             "self_enters",
             "permanent_enters",
@@ -1706,6 +1745,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
             batched=model.trigger.batched,
+            level=model.trigger.level,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(

@@ -486,6 +486,10 @@ class TriggerSpec:
     #: on the Saga sees it. Without the comparison a three-chapter Saga would
     #: resolve all three chapters on its first lore counter.
     chapter: int | None = None
+    #: Which level a ``becomes_level`` trigger fires on -- the "2" in "When this
+    #: Class becomes level 2". On the spec for `chapter`'s reason: it is a filter
+    #: on the event, and `triggers._matches` is handed the spec.
+    level: int | None = None
 
 
 def count_mode_specs(effects: Any) -> int:

@@ -174,6 +174,18 @@ describe("beatsFor", () => {
     });
   });
 
+  it("floats a Class's new level off the Class", () => {
+    // The same shape as a Saga's chapter: the level is not a counter, so no
+    // counter beat floats beside it, and nothing else on the board says the
+    // next band of abilities just switched on.
+    const [beat] = beatsFor([event("became_level", { level: 2 }, { source: 7 })], NAMES);
+    expect(beat.float).toEqual({
+      anchor: { kind: "object", oid: 7 },
+      value: "Level 2",
+      tone: "good",
+    });
+  });
+
   it("floats life gain up and life loss down", () => {
     const [gain] = beatsFor([event("life_gained", { amount: 5 })], NAMES);
     const [loss] = beatsFor([event("life_lost", { amount: 5 })], NAMES);

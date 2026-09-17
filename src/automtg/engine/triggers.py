@@ -122,6 +122,10 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: nothing, since it costs no life.
     "life_lost": EventType.LIFE_LOST,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
+    #: "When this Class becomes level 2" (716.4). Always `source: "self"` --
+    #: the loader supplies it -- and always with the `level` it waits for, which
+    #: is compared against the event exactly as `chapter` is.
+    "becomes_level": EventType.BECAME_LEVEL,
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
     #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
@@ -292,6 +296,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "counter_placed",
         "land_played",
         "becomes_monstrous",
+        # The Class whose level changed, so the supplied `source: "self"` means
+        # *this* Class and not every Class on the table.
+        "becomes_level",
         # The cycled card itself, so `source: "self"` scopes the trigger to the
         # card that was cycled rather than to every cycling anywhere.
         "cycle",
@@ -879,6 +886,12 @@ def _matches(
     # three-chapter Saga would put all three chapters on the stack off its first
     # lore counter.
     if spec.chapter is not None and event.data.get("chapter") != spec.chapter:
+        return False
+
+    # "When this Class becomes level **2**." One BECAME_LEVEL event carries the
+    # level reached, and without the comparison the level-2 ability would fire
+    # again as the Class became level 3.
+    if spec.level is not None and event.data.get("level") != spec.level:
         return False
 
     # "…**if it isn't a mana ability**." An intervening-if in the printed text

@@ -663,6 +663,27 @@ export function beatsFor(
       }
 
       /*
+       * A Class gaining a level.
+       *
+       * The Saga chapter's shape, and for its reason: a board moment on one
+       * permanent, whose consequence -- the abilities printed under the new
+       * level -- is otherwise invisible until something they do happens. The
+       * level badge on the card changes too, and this is what draws the eye to
+       * it.
+       */
+      case "became_level": {
+        if (event.source === null) return;
+        const anchor = { kind: "object", oid: event.source } as const;
+        push({
+          hold: 320,
+          sound: "chime",
+          float: { anchor, value: `Level ${num(event.data.level) ?? 0}`, tone: "good" },
+          fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+        });
+        return;
+      }
+
+      /*
        * The crown changing hands, which is a table-level moment and not a board
        * one: no permanent to flash, no number to float, nothing on screen that
        * changed. A banner is the only shape that fits, and it is the same shape

@@ -248,6 +248,9 @@ class TriggerModel(BaseModel):
     source: Literal["self"] | None = None
     filter: dict[str, Any] | None = None
     condition: dict[str, Any] | None = None
+    #: For ``becomes_level``: the level it waits for -- "When this Class becomes
+    #: level **2**". Required there and refused on every other event.
+    level: int | None = None
     #: For ``attacks``: whom the creature is attacking.  ``controller`` says
     #: whose creature is swinging, which is a different question -- "attacks you"
     #: needs this one.

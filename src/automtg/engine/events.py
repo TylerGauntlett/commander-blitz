@@ -104,6 +104,19 @@ class EventType:
     #: would say that the card on the board is now a different card.
     TRANSFORMED = "transformed"
     BECAME_MONSTROUS = "became_monstrous"
+    #: A Class's level **became** a number (716.4). ``source`` and
+    #: ``data["oid"]`` are the Class, ``data["level"]`` the level it is now.
+    #:
+    #: Fired by `become_level`, only when the level actually changed, and after
+    #: it changed -- so the abilities printed under the new level are already on
+    #: the permanent when trigger collection looks, and "When this Class becomes
+    #: level 2" (itself printed under level 2) is there to hear it.
+    #:
+    #: Its own event rather than `ability_activated` or `counter_placed`, the two
+    #: near misses the gap record named: the first is the moment the level line
+    #: is *activated*, a stack's width earlier and before an opponent has had the
+    #: chance to answer it, and neither can tell level 2 from level 3.
+    BECAME_LEVEL = "became_level"
     #: A Saga's lore counters **reached** a chapter number (714.2c). ``source``
     #: and ``data["oid"]`` are the Saga, ``data["chapter"]`` the number reached.
     #:

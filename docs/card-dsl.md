@@ -2073,7 +2073,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
-`creatures_deal_combat_damage` · `becomes_monstrous` ·
+`creatures_deal_combat_damage` · `becomes_monstrous` · `becomes_level` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player`
@@ -5382,8 +5382,11 @@ reject it.
    {"kind": "triggered", "text": "Whenever one or more tokens you control enter, …",
     "trigger": { ... }, "effects": [ ... ]},
    {"kind": "level", "level": 2, "text": "{W}: Level 2", "cost": {"mana": "{W}"}},
-   {"kind": "static", "level": 2, "text": "You may play an additional land on each of your turns.",
-    "effect": "extra_land_drops", ... },
+   {"kind": "triggered", "level": 2,
+    "text": "When this Class becomes level 2, create a token that's a copy of target token you control.",
+    "trigger": {"event": "becomes_level", "level": 2},
+    "targets": [{"id": "t1", "kind": "permanent", "selector": {"controller": "you", "is_token": true}}],
+    "effects": [{"op": "copy_permanent", "objects": {"target": "t1"}}]},
    {"kind": "level", "level": 3, "text": "{3}{W}: Level 3", "cost": {"mana": "{3}{W}"}},
    {"kind": "static", "level": 3, "text": "Creature tokens you control get +2/+2.",
     "effect": "buff", ... }]}
@@ -5442,6 +5445,24 @@ Saga rule.
 The reminder line "(Gain the next level as a sorcery to add its ability.)" needs
 no claim — it is parenthetical — and each level line is claimed by its own
 ability's `text`, like any other.
+
+### "When this Class becomes level N"
+
+`{"event": "becomes_level", "level": N}` (716.4). The loader supplies `source:
+"self"` — it is always *this* Class — and requires the `level`, 2 or more, which
+`triggers._matches` compares against the `level` on the `became_level` event
+exactly as a Saga's chapter number is compared. The event is fired by
+`become_level` **after** the level changes and only if it did, so the ability,
+printed under the level it waits for, is already on the Class when triggers are
+collected. Write the ability's own `level` as the band it is printed in; the
+loader refuses a band higher than the level the trigger waits for (the ability
+would not be there to hear it), a level no line reaches, and `level` on a
+trigger of any other event.
+
+The near misses, both named by the gap record: `ability_activated` fires when
+the level line is *activated*, a round of priority before the Class is level 2
+and whether or not it ever gets there; `counter_placed` on an invented level
+counter fires again at level 3.
 
 ## Planeswalkers
 
