@@ -1,0 +1,74 @@
+{
+  "card": {
+    "id": "crypt_ghast",
+    "name": "Crypt Ghast",
+    "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever you tap a Swamp for mana, add an additional {B}.",
+    "mana_cost": "{3}{B}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Spirit"
+    ],
+    "power": 2,
+    "toughness": 2,
+    "colors": [
+      "B"
+    ],
+    "color_identity": [
+      "B"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Extort: pay {W/B}?",
+            "pay": {
+              "mana": "{W/B}"
+            },
+            "effects": [
+              {
+                "op": "lose_life",
+                "player": "each_opponent",
+                "amount": {
+                  "const": 1
+                },
+                "as": "extorted"
+              },
+              {
+                "op": "gain_life",
+                "player": "you",
+                "amount": {
+                  "binding": "extorted"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Whenever you tap a Swamp for mana, add an additional {B}.",
+        "effect": "add_mana_on_tap",
+        "affects_player": "you",
+        "tapped_permanent": {
+          "subtypes": [
+            "Swamp"
+          ]
+        },
+        "add_mana": "{B}"
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -63,6 +63,12 @@ KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
 KNOWN_KEYWORDS = frozenset(k.value for k in Keyword)
 KNOWN_COLORS = frozenset(c.value for c in Color)
 
+#: The keys `add_mana_on_tap`'s `tapped_permanent` may carry: what the tapped
+#: permanent *is*. Crypt Ghast's "a Swamp", Leyline of Abundance's "a creature",
+#: Vernal Bloom's "a Forest". Read against the permanent's current
+#: characteristics, so a land Urborg makes a Swamp counts.
+TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes"})
+
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
     {
@@ -131,6 +137,12 @@ STATIC_EFFECTS = frozenset(
         # the permission without it is every spell in the deck castable off the
         # top at its printed cost, which is a different and much stronger card.
         "cast_from_library_top",
+        # "For each {B} in a cost, you may pay 2 life rather than pay that
+        # mana." K'rrik, Son of Yawgmoth. Player-wide: it changes how the
+        # player *pays*, in every cost, so there is no object to attach it to.
+        # Read by the cast line and by `costs.can_pay` / `costs.pay`, each of
+        # which reads a black pip as a Phyrexian one while it is on.
+        "black_mana_as_phyrexian",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -176,6 +188,12 @@ STATIC_EFFECTS = frozenset(
         # where nothing can go on the stack.
         "double_land_mana",
         "freeze_opponent_lands",
+        # Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional
+        # {B}." A triggered mana ability (605.1b), which resolves immediately,
+        # so it is read at the mana choke point beside `double_land_mana` rather
+        # than queued: `tapped_permanent` says what was tapped, `add_mana` the
+        # fixed mana added.
+        "add_mana_on_tap",
         # "This creature can't be blocked by Humans", and Tromokratis'
         # "can't be blocked unless all creatures defending player controls
         # block it".  Read by `combat`, not by the characteristics pipeline.
@@ -263,6 +281,19 @@ STATIC_EFFECTS = frozenset(
         # and by the life-loss half of `primitives.damage_player`, which are
         # the two places a player's life goes down.
         "replace_life_loss",
+        # Alhammarret's Archive.  "If you would gain life, you gain twice that
+        # much life instead."  The mirror of `replace_life_loss`, read by
+        # `primitives.gain_life` -- the one place a life total goes up, which
+        # lifelink reaches too.  Not a `you_gain_life` trigger that gains again:
+        # that is a second gain on the stack, visible to every life-gain trigger
+        # as its own event, and it re-triggers itself.
+        "replace_life_gain",
+        # Erebos, God of the Dead.  "Your opponents can't gain life."  A
+        # prohibition on a *player*, read by `primitives.gain_life` before any
+        # replacement of the gain, so an Alhammarret's Archive cannot double a
+        # forbidden gain.  Not `lock_life_total`, which is a one-shot op with a
+        # duration and forbids a loss as well.
+        "cant_gain_life",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -299,15 +330,19 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
+        "black_mana_as_phyrexian",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
         "double_land_triggers",
         "double_land_mana",
+        "add_mana_on_tap",
         "freeze_opponent_lands",
         "replace_life_loss",
+        "replace_life_gain",
         "replace_draw",
         "cant_cast_spells",
+        "cant_gain_life",
     }
 )
 

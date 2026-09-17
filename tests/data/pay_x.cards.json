@@ -1,0 +1,37 @@
+{
+  "_comment": "The Well of Lost Dreams shape: an optional {X} payment made while a trigger resolves, X announced up to a printed ceiling, and the paid X read back.",
+  "cards": [
+    {
+      "id": "t_well",
+      "name": "Test Well",
+      "oracle_text": "Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of life you gained. If you do, draw X cards.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of life you gained. If you do, draw X cards.",
+          "trigger": {"event": "you_gain_life", "controller": "you"},
+          "effects": [
+            {
+              "op": "may",
+              "pay": {"mana": "{X}"},
+              "x": {"max": {"binding": "amount"}, "as": "paid_x"},
+              "effects": [{"op": "draw", "player": "you", "amount": {"binding": "paid_x"}}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gain_three",
+      "name": "Test Gain Three",
+      "oracle_text": "You gain 3 life.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+    }
+  ]
+}

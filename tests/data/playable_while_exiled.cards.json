@@ -1,0 +1,34 @@
+{
+  "_comment": "A card that exists only for tests/unit/test_playable_while_exiled.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_brain_impulse` is Elder Brain's permission clock on an impulse draw: play the exiled card for as long as it remains exiled.",
+  "cards": [
+    {
+      "id": "t_brain_impulse",
+      "name": "Test Brain Impulse",
+      "oracle_text": "Exile the top card of your library. You may play that card for as long as it remains exiled.",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "you",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": 1
+          },
+          "destination": "exile",
+          "playable": "while_exiled"
+        }
+      ]
+    }
+  ]
+}

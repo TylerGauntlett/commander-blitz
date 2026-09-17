@@ -1,0 +1,176 @@
+{
+  "_comment": "Cards that exist only for the K'rrik payment test (tests/unit/test_black_mana_as_phyrexian.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_krrik` is K'rrik, Son of Yawgmoth's payment line alone. `t_night_bargain` is a {1}{B}{B} spell, `t_black_hybrid` a {B/R} one, `t_blood_font` an ability whose cost is {B}{B}, and `t_x_font` an {X}{B} ability, so the cast line, a hybrid pip, an activation's asked choice, an X ceiling and a printed Phyrexian activation (`t_phyrexian_font`) are each measured.",
+  "cards": [
+    {
+      "id": "t_krrik",
+      "name": "Test K'rrik",
+      "oracle_text": "For each {B} in a cost, you may pay 2 life rather than pay that mana.",
+      "mana_cost": "{4}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "For each {B} in a cost, you may pay 2 life rather than pay that mana.",
+          "effect": "black_mana_as_phyrexian",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_night_bargain",
+      "name": "Test Night Bargain",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{1}{B}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_black_hybrid",
+      "name": "Test Black Hybrid",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{B/R}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_blood_font",
+      "name": "Test Blood Font",
+      "oracle_text": "{B}{B}: You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{B}{B}: You gain 1 life.",
+          "cost": {
+            "mana": "{B}{B}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_x_font",
+      "name": "Test X Font",
+      "oracle_text": "{X}{B}: You gain X life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{X}{B}: You gain X life.",
+          "cost": {
+            "mana": "{X}{B}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "x": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_phyrexian_font",
+      "name": "Test Phyrexian Font",
+      "oracle_text": "{G/P}: You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{G/P}: You gain 1 life.",
+          "cost": {
+            "mana": "{G/P}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

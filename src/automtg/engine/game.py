@@ -273,6 +273,12 @@ class Game:
         # above is done before it: the enters replacements are applied inside
         # `move_object`, which cannot stop to ask, and nobody receives priority
         # between this question and the arrival.
+        # The player making the land drop controls the land (110.2),
+        # which is only news for a card they do not own -- one played out of an
+        # opponent's exile under Elder Brain's permission. Set before the move,
+        # so the enters replacements and the landfall event read the player
+        # who actually played it, the way `stack.push_spell` sets a spell's.
+        state.objects[oid].controller = pid
         yield from offer_enters_costs(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
@@ -402,7 +408,14 @@ class Game:
         # targets this action announced (601.2c) -- the tuple legality priced the
         # line with, through the same `strive_surcharge`.
         from .casting import strive_surcharge
+        from .player_statics import player_pays_life_for_black
 
+        if player_pays_life_for_black(state, pid):
+            # K'rrik's black pips, read as Phyrexian ones exactly where
+            # `_cast_variant` read them when it counted the lines -- on the
+            # variant's price and before strive -- so `action.phyrexian` buys
+            # the same pips here that it bought there.
+            cost = cost.black_as_phyrexian()
         cost = cost.plus(strive_surcharge(card, action.targets))
 
         # 107.4f, and the paying half of the line `_cast_variant` offered. The
@@ -419,6 +432,10 @@ class Game:
             # with. Both sides read the same flag off the same card, so a line
             # that was offered is a line that can be paid.
             cost = cost.as_any_type()
+        elif granted.playable_any_color and granted.playable_live(state.turn):
+            # Elder Brain's colour waiver, the paying half of the one
+            # `_cast_variant` priced the line with.
+            cost = cost.as_any_color()
 
         # Convoke and delve. Netted into `extra` alongside the commander tax
         # and emerge's sacrifice, so it goes through the same clamp: `pay`
@@ -470,6 +487,9 @@ class Game:
             # on, and this is the only moment they exist: `spend` decrements the
             # pool and one blue mana is then indistinguishable from another.
             record_colors_on=oid,
+            # The line already chose which pips are bought with life
+            # (`action.phyrexian`); every pip left in `cost` is paid with mana.
+            life_for_mana=False,
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return
@@ -720,10 +740,15 @@ class Game:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and
             # `costs.pay` make.
+            from .costs import most_life_for_mana
+
             x = yield from self._ask_x(
                 pid,
                 card.name,
-                ability.cost.mana,
+                # The ceiling is measured with every life-payable pip bought,
+                # the cheapest this cost can get; `pay` then asks for at least
+                # the pips the chosen X needs.
+                most_life_for_mana(state, pid, ability.cost, oid),
                 0,
                 purpose,
                 exclude_oid=oid if ability.cost.tap else None,

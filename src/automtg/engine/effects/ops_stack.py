@@ -228,6 +228,10 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         x=original.x,
         modes=original.modes,
         kicked=original.kicked,
+        # 707.10: a copy copies "additional or alternative costs" paid for the
+        # original. A copied Baleful Mastery cast for {1}{B} still hands an
+        # opponent a card; without this the copy was the rider-free half.
+        evoked=original.evoked,
         bindings=dict(original.bindings),
         description=f"{card.name} (copy)",
     )

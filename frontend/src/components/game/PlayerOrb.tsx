@@ -53,7 +53,7 @@ import {
   manaRow,
   markSpent,
 } from "../../logic/mana";
-import { commandersOf } from "../../logic/zoneGrouping";
+import { commandZoneCommanderCount, commandersOf } from "../../logic/zoneGrouping";
 import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
@@ -597,7 +597,7 @@ export function PlayerOrb({
               name="command"
               kind="cmd"
               label="CMD"
-              count={player.command.length}
+              count={commandZoneCommanderCount(player)}
               data-hint="Command zone"
             />
           </div>

@@ -25,20 +25,15 @@
         "trigger": {"event": "self_enters", "source": "self"},
         "effects": [
           {
-            "op": "for_each_player",
-            "players": "each_opponent",
-            "effects": [
-              {
-                "op": "lose_life",
-                "player": {"binding": "each_player"},
-                "amount": {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Vampire"]}}
-              },
-              {
-                "op": "gain_life",
-                "player": "you",
-                "amount": {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Vampire"]}}
-              }
-            ]
+            "op": "lose_life",
+            "player": "each_opponent",
+            "amount": {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Vampire"]}},
+            "as": "lost"
+          },
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {"binding": "lost"}
           }
         ]
       }

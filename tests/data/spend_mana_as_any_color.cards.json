@@ -1,0 +1,118 @@
+{
+  "_comment": "Cards that exist only for tests/unit/test_spend_mana_as_any_color.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_mind_theft` is Elder Brain's exile, permission and colour waiver as a free sorcery; `t_strict_theft` is the same without the waiver, the counterfactual. The three draw spells are a {B}{B}, a {C} and a {2/W}{2/W} cost, one per edge of the waiver.",
+  "cards": [
+    {
+      "id": "t_mind_theft",
+      "name": "Test Mind Theft",
+      "oracle_text": "Exile all cards from each opponent's hand. You may play lands and cast spells from among the exiled cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "hand",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "playable": "while_exiled",
+          "any_color": true
+        }
+      ]
+    },
+    {
+      "id": "t_strict_theft",
+      "name": "Test Strict Theft",
+      "oracle_text": "Exile all cards from each opponent's hand. You may play lands and cast spells from among the exiled cards for as long as they remain exiled.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "hand",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "playable": "while_exiled"
+        }
+      ]
+    },
+    {
+      "id": "t_black_draw",
+      "name": "Test Black Draw",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{B}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_colorless_draw",
+      "name": "Test Colorless Draw",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{C}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_hybrid_draw",
+      "name": "Test Hybrid Draw",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{2/W}{2/W}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    }
+  ]
+}

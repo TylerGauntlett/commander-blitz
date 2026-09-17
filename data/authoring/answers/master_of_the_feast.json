@@ -1,0 +1,29 @@
+{
+  "card": {
+    "id": "master_of_the_feast",
+    "name": "Master of the Feast",
+    "oracle_text": "Flying\nAt the beginning of your upkeep, each opponent draws a card.",
+    "mana_cost": "{1}{B}{B}",
+    "types": ["Enchantment", "Creature"],
+    "subtypes": ["Demon"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "power": 5,
+    "toughness": 5,
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, each opponent draws a card.",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "effects": [
+          {"op": "draw", "player": "each_opponent", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

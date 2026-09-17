@@ -1,0 +1,35 @@
+{
+  "_comment": "Cards that exist only for tests/unit/test_alternative_cost_paid.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_baleful_probe` is Baleful Mastery's shape: an instant with an unconditional cheaper alternative mana cost (the `evoke` slot, relabelled) whose payment is read by an `if` inside `spell_effects`.",
+  "cards": [
+    {
+      "id": "t_baleful_probe",
+      "name": "Test Baleful Probe",
+      "oracle_text": "You may pay {1}{B} rather than pay this spell's mana cost.\nIf the {1}{B} cost was paid, an opponent draws a card.\nExile target creature or planeswalker.",
+      "mana_cost": "{3}{B}",
+      "evoke": "{1}{B}",
+      "evoke_label": "paying {1}{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "any_types": ["Creature", "Planeswalker"]}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "if",
+          "condition": {"evoked": true},
+          "then": [
+            {"op": "choose_player", "players": "each_opponent", "as": "drawer", "prompt": "Choose an opponent to draw a card"},
+            {"op": "draw", "player": {"binding": "drawer"}, "amount": {"const": 1}}
+          ]
+        },
+        {"op": "exile", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

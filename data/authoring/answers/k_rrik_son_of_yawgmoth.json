@@ -1,0 +1,66 @@
+{
+  "card": {
+    "color_identity": [
+      "B"
+    ],
+    "colors": [
+      "B"
+    ],
+    "id": "k_rrik_son_of_yawgmoth",
+    "keywords": [
+      "lifelink"
+    ],
+    "mana_cost": "{4}{B/P}{B/P}{B/P}",
+    "name": "K'rrik, Son of Yawgmoth",
+    "oracle_text": "({B/P} can be paid with either {B} or 2 life.)\nLifelink\nFor each {B} in a cost, you may pay 2 life rather than pay that mana.\nWhenever you cast a black spell, put a +1/+1 counter on K'rrik.",
+    "power": 2,
+    "subtypes": [
+      "Phyrexian",
+      "Horror",
+      "Minion"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "toughness": 2,
+    "types": [
+      "Creature"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "For each {B} in a cost, you may pay 2 life rather than pay that mana.",
+        "effect": "black_mana_as_phyrexian",
+        "affects_player": "you"
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you cast a black spell, put a +1/+1 counter on K'rrik.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {
+            "colors": [
+              "B"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "const": 1
+            },
+            "objects": {
+              "self_only": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield"
+  }
+}

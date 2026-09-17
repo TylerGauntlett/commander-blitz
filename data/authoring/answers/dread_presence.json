@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "dread_presence",
+    "name": "Dread Presence",
+    "oracle_text": "Whenever a Swamp you control enters, choose one —\n• You draw a card and you lose 1 life.\n• This creature deals 2 damage to any target and you gain 2 life.",
+    "mana_cost": "{3}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Nightmare"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "power": 3,
+    "toughness": 3,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a Swamp you control enters, choose one — • You draw a card and you lose 1 life. • This creature deals 2 damage to any target and you gain 2 life.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {"subtypes": ["Swamp"]}
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "You draw a card and you lose 1 life.",
+                "effects": [
+                  {"op": "draw", "amount": {"const": 1}, "player": "you"},
+                  {"op": "lose_life", "amount": {"const": 1}, "player": "you"}
+                ]
+              },
+              {
+                "label": "This creature deals 2 damage to any target and you gain 2 life.",
+                "effects": [
+                  {"op": "damage", "amount": {"const": 2}, "target": "t1"},
+                  {"op": "gain_life", "amount": {"const": 2}, "player": "you"}
+                ]
+              }
+            ]
+          }
+        ],
+        "targets": [
+          {
+            "count": 1,
+            "id": "t1",
+            "kind": "any",
+            "mode": 1,
+            "selector": {"types": ["Creature"]}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

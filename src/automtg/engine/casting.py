@@ -18,6 +18,7 @@ from .costs import (
 )
 from .enums import ActionKind, Keyword, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
+from .player_statics import player_pays_life_for_black
 from .primitives import sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
@@ -874,6 +875,7 @@ def _priced_tuples(
     sources,
     *,
     any_type: bool,
+    any_color: bool = False,
 ) -> list[tuple[tuple, tuple[int, ...]]]:
     """Each target tuple this line may be cast with, and what paying for it taps.
 
@@ -904,7 +906,11 @@ def _priced_tuples(
         total = cost
         if extra and card.strive is not None:
             surcharge = card.strive.scaled(extra)
-            total = cost.plus(surcharge.as_any_type() if any_type else surcharge)
+            if any_type:
+                surcharge = surcharge.as_any_type()
+            elif any_color:
+                surcharge = surcharge.as_any_color()
+            total = cost.plus(surcharge)
         # Solve rather than merely test: the solution names the permanents that
         # would tap, which is what lets the client show a hovered spell eating
         # into the mana row.
@@ -1058,6 +1064,13 @@ def _cast_variant(
     # by `Game._cast` alongside it. One line per number of pips bought, which
     # is two for the whole printed cycle and three for Thundering Tanadon.
     printed = cost
+    if player_pays_life_for_black(state, pid):
+        # K'rrik: "For each {B} in a cost, you may pay 2 life rather than pay
+        # that mana." The same choice the Phyrexian line already carries, so it
+        # is made the same way -- each black pip becomes a `{B/P}` before the
+        # lines are counted, and one line per number bought falls out below.
+        # `Game._cast` makes the identical conversion before it charges.
+        printed = printed.black_as_phyrexian()
     out: list[Action] = []
     for phyrexian in range(printed.phyrexian_count + 1):
         cost, phyrexian_life = printed.paying_phyrexian(phyrexian)
@@ -1073,6 +1086,11 @@ def _cast_variant(
             # cost -- and the discounts below still only touch the generic part,
             # which by now is all there is.
             cost = cost.as_any_type()
+        elif permission.playable_any_color and permission.playable_live(state.turn):
+            # "…you may spend mana as though it were mana of any color to cast
+            # it." Relaxed at the same moment and for the same reason as the
+            # any-type waiver above, and read off the same card by `Game._cast`.
+            cost = cost.as_any_color()
         branch = chosen_additional(card, additional_choice)
         if additional_times and branch is not None:
             # The mana half of the additional cost, charged `additional_times` over.
@@ -1116,6 +1134,7 @@ def _cast_variant(
             pool,
             sources,
             any_type=permission.playable_any_type and permission.playable_live(state.turn),
+            any_color=permission.playable_any_color and permission.playable_live(state.turn),
         )
         if not priced:
             continue

@@ -6,7 +6,7 @@
  * this module is only about where a card goes.
  */
 
-import type { CardView, GameView } from "../api/types";
+import type { CardView, GameView, PlayerView } from "../api/types";
 
 /**
  * The lanes, declared front to back -- the order they render for the viewer,
@@ -130,6 +130,17 @@ export function playerOf(state: GameView, pid: number) {
 }
 
 /**
+ * How many commanders are sitting in a player's command zone.
+ *
+ * Not `player.command.length`: the command zone also holds emblems (114), and
+ * the seat's and orb's command pile is the commander's count -- an Ob Nixilis
+ * emblem must not read as a second commander waiting to be cast.
+ */
+export function commandZoneCommanderCount(player: PlayerView): number {
+  return player.command.filter((card) => card.is_commander).length;
+}
+
+/**
  * Find a card anywhere the viewer can see it.
  *
  * Decision options and action targets are bare oids, so every dialog that wants
@@ -156,7 +167,9 @@ export function playerOf(state: GameView, pid: number) {
  */
 export function commandersOf(state: GameView, pid: number): CardView[] {
   const player = state.players[pid];
-  const found: CardView[] = [...player.command];
+  // The command zone also holds emblems (114), which are neither commanders
+  // nor castable, and must not take the plinth or the seat's art.
+  const found: CardView[] = player.command.filter((card) => card.is_commander);
   const seen = new Set(found.map((card) => card.oid));
 
   const consider = (card: CardView | null) => {

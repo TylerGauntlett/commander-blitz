@@ -980,6 +980,14 @@ class TurnLedger:
     #: rule 118.2 says damage to a player causes that much life loss -- so
     #: spectacle triggers off a Lightning Bolt, which is the whole point of it.
     life_lost: dict[int, int] = field(default_factory=dict)
+    #: Life *gained* by each player this turn -- Witch of the Moors' "if you
+    #: gained life this turn". Folded off `LIFE_GAINED`, so it counts every
+    #: gain the engine makes (the op, lifelink) whatever was on the battlefield
+    #: at the time, and it counts the replaced amount the event carries. A gain
+    #: that did not happen -- a locked life total, a player who can't gain life
+    #: -- fires no event and is not counted. Not derivable from the life total:
+    #: gaining 2 and losing 2 leaves it where it was.
+    life_gained: dict[int, int] = field(default_factory=dict)
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
@@ -1128,6 +1136,7 @@ class TurnLedger:
         self.creatures_attacked.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
+        self.life_gained.clear()
         self.spells_cast.clear()
         self.spells_cast_ids.clear()
         self.combat_damage_types.clear()

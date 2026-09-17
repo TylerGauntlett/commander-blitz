@@ -159,6 +159,28 @@ describe("beatsFor", () => {
     expect(theirs.banner).toEqual({ text: "Edgar AI is the monarch", tone: "danger" });
   });
 
+  it("banners an emblem, told from the viewer's side", () => {
+    // Another table-level moment: the emblem sits in the command zone, which
+    // is a pile, so there is nothing to flash. Neutral, because an emblem is as
+    // often a curse handed to an opponent as a boon kept.
+    const data = { card: "ob_nixilis_reignited" };
+    const [mine] = beatsFor(
+      [event("emblem_created", data, { source: 900 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    const [theirs] = beatsFor(
+      [event("emblem_created", data, { player: 1, source: 900 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(mine.banner).toEqual({ text: "You get an emblem", tone: "neutral" });
+    expect(theirs.banner).toEqual({ text: "Edgar AI gets an emblem", tone: "neutral" });
+    expect(theirs.text).toBe("Edgar AI gets an emblem from Ob Nixilis Reignited");
+  });
+
   it("floats a Saga's chapter numeral off the Saga", () => {
     // `beatsFor` and `describeEvent` are parallel switches with parallel
     // `default`s, so a new event has to be added to both or it is dropped by

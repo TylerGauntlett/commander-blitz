@@ -420,6 +420,7 @@ def reference() -> dict:
     from automtg.engine.effects.selectors import SELECTOR_KEYS
     from automtg.engine.effects.values import VALUE_KEYS
     from automtg.engine.enums import CardType, Keyword, Supertype
+    from automtg.engine.objects import PLAYABLE_DURATIONS
     from automtg.engine.triggers import TRIGGER_EVENTS
 
     from ..loader import (
@@ -474,6 +475,12 @@ def reference() -> dict:
         # the player-wide ones -- so a card needing any of them was filed as
         # blocked on a mechanic that already shipped.  Tromokratis was.
         "static_effects": sorted(STATIC_EFFECTS),
+        # The values `playable` takes on `exile`, `look_at_top` and
+        # `grant_playable` -- "you may play it" and how long for. `op_options`
+        # names the key and nothing its value may be, so a worker had no way to
+        # tell "until your next end step" or "for as long as it remains exiled"
+        # already shipped short of a load error.
+        "playable_durations": sorted(PLAYABLE_DURATIONS),
         "static_filter_keys": sorted(STATIC_FILTER_KEYS),
         # "This spell costs {1} less to cast for each ..." -- the arithmetic
         # heads, and the filter language beside them. The filter is
@@ -645,6 +652,23 @@ def reference() -> dict:
             " spell filter: \"can't cast creature spells\", \"from anywhere"
             " other than their hands\" and \"more than one spell each turn\""
             " are still gaps, and so is \"can't activate abilities\".",
+            "\"If you would gain life, you gain twice that much life instead\""
+            " is the player-wide static `replace_life_gain` with"
+            " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
+            " replacement read wherever life is gained, lifelink included, so"
+            " it is NOT a `you_gain_life` trigger that gains again.",
+            "\"If you gained life this turn\" is the value"
+            " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
+            " `{\"const\": 0}` -- on a trigger, as its `condition` (an"
+            " intervening if). It is the turn's ledger, so it counts gains made"
+            " before the permanent entered; never an unprinted `you_gain_life`"
+            " trigger setting a flag.",
+            "\"Your opponents can't gain life\" is the player-wide static"
+            " `cant_gain_life` with `affects_player: \"opponent\"` (\"you\""
+            " and \"any\" for the other sentences). Every gain is stopped,"
+            " lifelink included, and no life-gain trigger fires; it beats a"
+            " `replace_life_gain`. \"Damage can't be prevented\" and \"your"
+            " life total can't change\" are other effects.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"
@@ -727,6 +751,14 @@ def reference() -> dict:
             " {\"colors\": [\"U\"]}}`, with no mana at all. The `condition` is"
             " needed only when the price is mana and nothing else -- an"
             " unconditional cheaper mana price is `evoke`.",
+            "`evoke` is the mechanism, not the keyword: an unconditional"
+            " alternative mana cost plus the `evoked` condition that reads"
+            " whether it was paid, with `evoke_label` naming the cost on the"
+            " cast line (\"dash\", or \"paying {1}{B}\" for a card that gives"
+            " it no name). It works on an instant or sorcery too, read inside"
+            " `spell_effects`: \"You may pay {1}{B} rather than pay this"
+            " spell's mana cost. If the {1}{B} cost was paid, ...\" is"
+            " `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`.",
             "Exiling from hand as a cost is two keys, the way discarding is:"
             " `exile_from_hand` picks a card by selector (\"a blue card\"),"
             " and `exile_self_from_hand` is \"Exile this card from your hand\""
@@ -744,6 +776,20 @@ def reference() -> dict:
             " \"As long as ...\" / \"have ...\" is the `grant_ability` static,"
             " which may also grant a static. A granted activated ability works"
             " on the battlefield only.",
+            "\"You get an emblem with \\\"...\\\"\" / \"Target opponent gets an"
+            " emblem with \\\"...\\\"\" writes the quoted abilities once under the"
+            " card's `emblems` -- `[{\"abilities\": [...]}]`, no `active_zones`,"
+            " the loader puts them in the command zone -- and gives one with the"
+            " `emblem` op: `{\"op\": \"emblem\", \"player\": \"you\" | {\"target\":"
+            " \"t1\"}, \"emblem\": 0}`. `player` is required. \"You\" on the"
+            " emblem is the player who got it. Only triggered abilities may be on"
+            " an emblem so far; a static or activated one is a gap.",
+            "\"Create a <Name> Role token attached to <it>\" is `create_token`"
+            " with `attached_to`, a selector naming the host -- never"
+            " `create_token` then `attach`, which makes the Role even when the"
+            " host is gone. The Role rule (one Role per player per permanent)"
+            " is a state-based action and is not written on the card. Only Role"
+            " tokens that exist in `token_ids` can be created.",
             "A static ability's filter may only read printed characteristics.",
             "\"If one or more tokens would be created under your control, twice"
             " that many of those tokens are created instead\" (Parallel Lives,"

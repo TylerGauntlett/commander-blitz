@@ -1495,6 +1495,30 @@ def crew_power_bonus(state: GameState, oid: int) -> int:
     return total
 
 
+#: The five colours as `from_colors` spells them.
+COLOR_LETTERS = frozenset({"W", "U", "B", "R", "G"})
+
+
+def commander_color_identity(state: GameState, pid: int) -> frozenset[str]:
+    """The colours in ``pid``'s commanders' color identity, as colour letters.
+
+    The union across partners, read off each commander's **printed**
+    `color_identity` wherever the commander is: identity is a deck-construction
+    fact (903.4), the same set in the command zone as on the battlefield or in a
+    graveyard, and `chars()` would answer a different question.
+
+    A player with no commander has an empty identity here, which is what 903.4
+    makes of a card asking about a commander that does not exist: its identity
+    has no colours -- so Commander's Plate protects from all five.
+    """
+    colors: set[str] = set()
+    for commander in state.commanders_of(pid):
+        obj = state.objects.get(commander)
+        if obj is not None:
+            colors |= set(state.card_of(obj).color_identity)
+    return frozenset(colors & COLOR_LETTERS)
+
+
 def protection_from(state: GameState, oid: int) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
@@ -1519,6 +1543,11 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
         out.update(static.get("from_types", ()))
         out.update(static.get("from_subtypes", ()))
         out.update(static.get("from_colors", ()))
+        if static.get("from_colors_outside_commander_identity"):
+            # "Your commander" is the static's controller's -- the Plate's, not
+            # the equipped creature's, and it follows the Equipment when it
+            # changes hands. Asked at read time for that reason.
+            out.update(COLOR_LETTERS - commander_color_identity(state, source_obj.controller))
     # "Creatures you control gain protection from each color until end of turn"
     # -- Akroma's Will. Granted protection is one `TempEffect` per quality, so it
     # joins the printed statics' qualities in the same flat set, and the four
@@ -1731,8 +1760,11 @@ from .player_statics import (  # noqa: F401
     graveyard_cast_arrival_ok,
     graveyard_cast_permissions,
     library_top_cast_permission,
+    life_gain_multiplier,
     life_loss_multiplier,
+    mana_added_on_tap,
     player_cant_cast_spells,
+    player_cant_gain_life,
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,

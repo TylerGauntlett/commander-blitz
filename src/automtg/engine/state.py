@@ -140,6 +140,10 @@ class GameState:
 
     next_oid: int = 1
     next_sid: int = 1
+    #: A game-wide counter for the timestamps rules ask to compare (613.7) that
+    #: arrival order on the battlefield cannot answer -- an Aura re-attached
+    #: after it arrived is newer than one that arrived later and never moved.
+    next_timestamp: int = 1
 
     #: Bumped whenever anything that could change derived characteristics changes.
     char_version: int = 0
@@ -462,6 +466,10 @@ class GameState:
         # several cards in the pile.
         if obj.merged_card is not None:
             return obj.merged_card
+        # An emblem (114) is not a face of the card that made it: it is one of
+        # that card's `emblems`, a definition with abilities and nothing else.
+        if obj.emblem is not None:
+            return self.registry.get(obj.def_id).emblems[obj.emblem]
         # A copy effect (706) applied in place -- Gogo. Asked before the printed
         # card is even fetched, because while it is copying, the copied card
         # *is* what this permanent is: its name, types, power, abilities and
@@ -595,6 +603,11 @@ class GameState:
         oid = self.next_oid
         self.next_oid += 1
         return oid
+
+    def alloc_timestamp(self) -> int:
+        stamp = self.next_timestamp
+        self.next_timestamp += 1
+        return stamp
 
     def alloc_sid(self) -> int:
         sid = self.next_sid
@@ -734,6 +747,13 @@ class GameState:
             if pid is not None:
                 amount = int(data.get("amount") or 0)
                 ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+        elif event.type == EventType.LIFE_GAINED:
+            # Witch of the Moors. Off the event rather than in `gain_life`, for
+            # the reason every other tally here is: lifelink and the op both
+            # fire it, and a gain that was forbidden or locked fires nothing.
+            if pid is not None:
+                amount = int(data.get("amount") or 0)
+                ledger.life_gained[pid] = ledger.life_gained.get(pid, 0) + amount
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1

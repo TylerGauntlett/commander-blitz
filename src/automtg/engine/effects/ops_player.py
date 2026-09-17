@@ -24,7 +24,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..primitives import become_monarch
+from ..primitives import become_monarch, give_emblem
 from . import register
 from .context import EffectContext
 from .selectors import select_players
@@ -159,3 +159,32 @@ def op_no_maximum_hand_size(ctx: EffectContext, spec: Mapping[str, Any]) -> None
     for pid in select_players(ctx, spec.get("player", "you")):
         ctx.state.players[pid].has_no_maximum_hand_size = True
 
+
+@register("emblem")
+def op_emblem(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You get an emblem with …" / "Target opponent gets an emblem with …" (114).
+
+    ``emblem`` is an index into this card's own ``emblems``, where the quoted
+    abilities are written out -- the same shape `grant_ability` uses for quoted
+    abilities it hands to a permanent. ``player`` is the usual **player spec**,
+    and it is required rather than defaulted: most emblems go to "you", but Ob
+    Nixilis Reignited's and Garruk, Apex Predator's go to a *target opponent*, and
+    a defaulted spec on either reads fine and hands the drawback to its own
+    controller.
+
+    The card is read off `EffectContext.source_def_id` -- the id snapshotted as
+    the ability went on the stack -- rather than off the source object, because
+    an ultimate usually spends the planeswalker's last loyalty and it is gone
+    before this resolves.
+    """
+    def_id = ctx.source_def_id
+    if not def_id and ctx.source_oid is not None and ctx.source_oid in ctx.state.objects:
+        def_id = ctx.state.card(ctx.source_oid).id
+    if not def_id or def_id not in ctx.state.registry:
+        return
+    index = int(spec["emblem"])
+    if not 0 <= index < len(ctx.state.registry.get(def_id).emblems):
+        return
+    for pid in select_players(ctx, spec["player"]):
+        give_emblem(ctx.state, def_id, index, pid)
+    yield from ()

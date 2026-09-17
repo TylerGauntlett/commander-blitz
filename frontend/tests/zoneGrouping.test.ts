@@ -3,6 +3,7 @@ import { counterBadges, manaPips, statLine } from "../src/logic/cardStyle";
 import {
   LANES,
   attachmentsFor,
+  commandZoneCommanderCount,
   commandersOf,
   findCard,
   findCardByDefId,
@@ -346,6 +347,24 @@ describe("commandersOf", () => {
     });
     expect(commandersOf(state, 0).map((c) => c.oid)).toEqual([50, 51]);
   });
+
+  it("does not take an emblem for a commander", () => {
+    // Emblems (114) live in the command zone too. One sitting beside a
+    // commander that has left must not become the plinth or the seat's art.
+    const emblem = card({
+      oid: 900,
+      name: "Ob Nixilis Reignited Emblem",
+      type_line: "Emblem",
+      zone: "command",
+      owner: 0,
+      controller: 0,
+    });
+    const state = gameView({
+      battlefield: [boss({ zone: "battlefield" })],
+      players: [player({ command: [emblem] }), player({ pid: 1 })],
+    });
+    expect(commandersOf(state, 0).map((c) => c.oid)).toEqual([50]);
+  });
 });
 
 /**
@@ -465,5 +484,14 @@ describe("findCard", () => {
     // `StackItemView.card` is nullable for exactly that case.
     const state = gameView({ stack: [stackItem({ card: null })] });
     expect(findCard(state, 1)).toBeNull();
+  });
+});
+
+describe("commandZoneCommanderCount", () => {
+  it("counts commanders, not the emblems beside them", () => {
+    const emblem = card({ oid: 900, type_line: "Emblem", zone: "command" });
+    const cmdr = card({ oid: 50, is_commander: true, zone: "command" });
+    expect(commandZoneCommanderCount(player({ command: [cmdr, emblem] }))).toBe(1);
+    expect(commandZoneCommanderCount(player({ command: [emblem] }))).toBe(0);
   });
 });

@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "defile",
+    "name": "Defile",
+    "oracle_text": "Target creature gets -1/-1 until end of turn for each Swamp you control.",
+    "mana_cost": "{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {"zone": "battlefield", "types": ["Creature"]},
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "pump",
+        "objects": {"target": "t1"},
+        "power": {
+          "times": [
+            {"const": -1},
+            {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Swamp"]}}
+          ]
+        },
+        "toughness": {
+          "times": [
+            {"const": -1},
+            {"count": {"zone": "battlefield", "controller": "you", "subtypes": ["Swamp"]}}
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard", "battlefield_count": 31, "graveyard_size": {"0": 4}}
+}

@@ -498,6 +498,13 @@ class AbilityModel(BaseModel):
     from_types: list[str] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
     from_colors: list[str] = Field(default_factory=list)
+    #: "Protection from each color that's not in your commander's color
+    #: identity" -- Commander's Plate. A colour set no printed list can name,
+    #: because it is the five colours minus a set read off the *controller's*
+    #: commanders, and it moves when the Equipment changes hands. Computed where
+    #: protection is read (`characteristics.protection_from`); no commander at
+    #: all is protection from all five (903.4).
+    from_colors_outside_commander_identity: bool = False
     #: ``set_colors``: the colours that *replace* the printed ones. The empty
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not
@@ -548,6 +555,12 @@ class AbilityModel(BaseModel):
     #: replaces a loss with itself, and 0 is "they lose no life" -- a
     #: prevention, which is a different sentence and a much stronger card.
     loss_multiplier: int | None = None
+    #: ``replace_life_gain``: what a life gain is multiplied by. Alhammarret's
+    #: Archive's "you gain **twice** that much life instead" is ``2``. Required,
+    #: and refused below 2 for `loss_multiplier`'s reasons: 1 replaces a gain
+    #: with itself, and 0 is "you gain no life" -- `cant_gain_life`, a
+    #: different sentence.
+    gain_multiplier: int | None = None
     #: ``replace_draw``: how many cards each replaced draw becomes. Thought
     #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
     #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1
@@ -558,6 +571,12 @@ class AbilityModel(BaseModel):
     #: drawn while its controller's own draw step is running is left alone;
     #: every other draw, that step's second included, is replaced.
     except_first_in_draw_step: bool = False
+    #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
+    #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
+    #: `loader.TAPPED_PERMANENT_KEYS`.
+    tapped_permanent: dict[str, Any] | None = None
+    #: ``add_mana_on_tap``: the fixed mana added -- Crypt Ghast's ``"{B}"``.
+    add_mana: str | None = None
 
 
 class ReplacementModel(BaseModel):
@@ -615,6 +634,18 @@ class ReplacementModel(BaseModel):
     unless_cost: dict[str, Any] | None = None
 
 
+class EmblemModel(BaseModel):
+    """The abilities printed in one emblem's quotation marks (114.1).
+
+    An emblem has abilities and **no other characteristics** (114.3), so
+    abilities are the whole of it: no name, types, cost or colour to write.
+    """
+
+    model_config = Strict
+
+    abilities: list[AbilityModel] = Field(default_factory=list)
+
+
 class CardModel(BaseModel):
     """One card definition."""
 
@@ -656,6 +687,12 @@ class CardModel(BaseModel):
     #: from a ``grant_ability`` effect.  Separate from ``abilities`` because the
     #: card itself does not have them.
     grantable_abilities: list[AbilityModel] = Field(default_factory=list)
+    #: Emblems this card can give a player (114), referenced by index from an
+    #: ``emblem`` effect. Each entry is the quoted text of one emblem, written
+    #: as ordinary abilities -- "You get an emblem with "Whenever you cast a
+    #: spell, …"". Like ``grantable_abilities`` the card does not have them; an
+    #: emblem is its own object in the command zone and has nothing else.
+    emblems: list[EmblemModel] = Field(default_factory=list)
     is_token: bool = False
     #: The id of this card's **back face**, for a transforming double-faced
     #: card. The back face is an ordinary card entry in the same pool, marked

@@ -56,7 +56,7 @@ import { stopId } from "../../input/stops";
 import { artUrl } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import { type Muster, musterOf } from "../../logic/threat";
-import { commandersOf } from "../../logic/zoneGrouping";
+import { commandZoneCommanderCount, commandersOf } from "../../logic/zoneGrouping";
 import type { PileKind } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
@@ -209,7 +209,7 @@ function zonesOf(player: PlayerView): SeatZone[] {
     zone: "command",
     kind: "cmd",
     label: "Command zone",
-    count: player.command.length,
+    count: commandZoneCommanderCount(player),
   });
   return zones;
 }

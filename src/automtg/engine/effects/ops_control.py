@@ -18,7 +18,7 @@ from ..carddef import Cost
 from ..zones import snapshot as capture_snapshot
 from . import execute, register
 from .conditions import evaluate
-from .context import EffectContext, ask_mode, ask_player, ask_yes_no
+from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
 
@@ -63,6 +63,15 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
 
     A cost the player cannot afford is not offered at all rather than offered
     and then failing -- 601.2 in spirit, and it keeps the yes/no honest.
+
+    ``x`` is "you may pay {X}, **where X is less than or equal to** the amount
+    of life you gained. If you do, draw X cards" -- Well of Lost Dreams. The
+    ``pay`` carries ``{X}``; ``x.max`` is the printed ceiling, a value
+    expression; ``x.as`` binds the announced X for the effects to read back
+    with ``{"binding": …}``. After the yes, the player announces X from 0 up to
+    the smaller of the ceiling and what they can actually pay -- `ask_x`, the
+    same question a spell's X is, so no new decision kind -- and exactly that
+    much is charged. See :func:`_announce_x`.
     """
     from ..costs import can_pay, pay
 
@@ -71,6 +80,7 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     prompt = str(spec.get("prompt") or ctx.source_name or "Optional effect")
     condition = spec.get("condition")
     pay_spec = spec.get("pay")
+    x_spec = spec.get("x")
     cost = cost_from_spec(pay_spec)
     if cost is not None and pay_spec is not None and pay_spec.get("times") is not None:
         # Cumulative upkeep: "pay its upkeep cost for each age counter on it".
@@ -92,8 +102,11 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
         if not (yield from ask_yes_no(ctx, prompt, chooser)):
             yield from execute(ctx, spec.get("else") or [])
             return
+        x = 0
+        if cost is not None and x_spec is not None:
+            x = yield from _announce_x(ctx, chooser, cost, x_spec)
         if cost is not None:
-            paid = yield from pay(ctx.state, chooser, cost, ctx.source_oid)
+            paid = yield from pay(ctx.state, chooser, cost, ctx.source_oid, x=x)
             if not paid:
                 # `can_pay` said yes a moment ago, so this is the board having
                 # changed underneath us. "If you do" is false, so the effects
@@ -119,9 +132,44 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
             if chooser not in seats:
                 seats.append(chooser)
             ctx.bindings[str(name)] = seats
+        if x_spec is not None:
+            # After the payment, so it is the X that was *paid*: "if you do,
+            # draw X cards" never sees a number nobody paid for.
+            ctx.bindings[str(x_spec["as"])] = x
         yield from execute(ctx, spec.get("effects") or [])
         if not spec.get("repeat") or not evaluate(ctx, condition):
             return
+
+
+def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[str, Any]):
+    """Ask how big X is for an optional ``{X}`` payment made mid-resolution.
+
+    The ceiling is the **smaller** of two numbers, and each alone is a wrong
+    card. The printed one (``x.max``) is the rule the card makes -- "less than
+    or equal to the amount of life you gained" -- and without it a Well pays
+    for ten cards off a one-life gain. What the player can pay is the rule
+    118.3 makes, and without it a prompt offers an X the payment then fails.
+
+    Read when the question is asked, after the yes, because mana abilities
+    activated in between are exactly what change the second number. A ceiling
+    of 0 asks nothing (`ask_x`'s own short-circuit) and charges {0}.
+    """
+    from ..costs import mana_sources
+    from ..mana import max_affordable_x
+
+    ceiling = max(0, evaluate_value(ctx, x_spec.get("max")))
+    affordable = max_affordable_x(
+        cost.mana,
+        ctx.state.players[chooser].mana_pool,
+        mana_sources(ctx.state, chooser),
+        cap=ceiling,
+    )
+    prompt = str(x_spec.get("prompt") or f"Choose X for {ctx.source_name or 'the payment'}")
+    return (
+        yield from ask_x(
+            ctx, prompt, max(0, min(ceiling, affordable)), chooser, per_point=cost.mana.x_count
+        )
+    )
 
 
 #: How many creature types a "choose a creature type" prompt will offer.

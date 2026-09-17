@@ -1,0 +1,46 @@
+{
+  "card": {
+    "id": "not_dead_after_all",
+    "name": "Not Dead After All",
+    "oracle_text": "Until end of turn, target creature you control gains \"When this creature dies, return it to the battlefield tapped under its owner's control, then create a Wicked Role token attached to it.\" (Enchanted creature gets +1/+1. When this token is put into a graveyard, each opponent loses 1 life.)",
+    "mana_cost": "{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "you"}
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, return it to the battlefield tapped under its owner's control, then create a Wicked Role token attached to it.",
+        "trigger": {"event": "dies", "source": "self", "controller": "any"},
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "battlefield",
+            "tapped": true,
+            "objects": {"zone": "graveyard", "self_only": true}
+          },
+          {
+            "op": "create_token",
+            "token": "wicked_role",
+            "attached_to": {"zone": "battlefield", "self_only": true}
+          }
+        ]
+      }
+    ],
+    "spell_effects": [
+      {"op": "grant_ability", "ability": 0, "objects": {"target": "t1"}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {"0": 1}
+  }
+}

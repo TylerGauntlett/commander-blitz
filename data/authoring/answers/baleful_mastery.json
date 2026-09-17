@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "baleful_mastery",
+    "name": "Baleful Mastery",
+    "oracle_text": "You may pay {1}{B} rather than pay this spell's mana cost.\nIf the {1}{B} cost was paid, an opponent draws a card.\nExile target creature or planeswalker.",
+    "mana_cost": "{3}{B}",
+    "evoke": "{1}{B}",
+    "evoke_label": "paying {1}{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {"zone": "battlefield", "any_types": ["Creature", "Planeswalker"]}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {"evoked": true},
+        "then": [
+          {
+            "op": "choose_player",
+            "players": "each_opponent",
+            "as": "drawer",
+            "prompt": "Choose an opponent to draw a card"
+          },
+          {"op": "draw", "player": {"binding": "drawer"}, "amount": {"const": 1}}
+        ]
+      },
+      {"op": "exile", "objects": {"target": "t1"}}
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 31,
+    "library_size": {"1": 20}
+  }
+}

@@ -414,6 +414,22 @@ export function describeEvent(
     case "became_monarch":
       return `${who} ${v("become", "becomes")} the monarch`;
     /*
+     * A player got an emblem (114.2).
+     *
+     * The same kind of silence as the crown: nothing moves, no permanent is
+     * involved, and the emblem changes the table for the rest of the game --
+     * Ob Nixilis's drains its owner on every card anyone draws. Without a line
+     * the player sees life vanish on every draw with nothing to say why.
+     *
+     * Named after the card whose emblem it is (`data.card`), not the emblem
+     * object: an ultimate usually kills its planeswalker before it resolves, so
+     * the card is the one thing the player just watched.
+     */
+    case "emblem_created":
+      return card
+        ? `${who} ${v("get", "gets")} an emblem from ${card}`
+        : `${who} ${v("get", "gets")} an emblem`;
+    /*
      * A Saga reached a chapter.
      *
      * The `counter_placed` line beside it already says "Oath of Eorl gets 1

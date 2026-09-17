@@ -1593,6 +1593,52 @@
           }
         }
       ]
+    },
+    {
+      "id": "wicked_role",
+      "name": "Wicked Role",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nWhen this Aura is put into a graveyard from the battlefield, each opponent loses 1 life.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura",
+        "Role"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "kind": "triggered",
+          "text": "When this Aura is put into a graveyard from the battlefield, each opponent loses 1 life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

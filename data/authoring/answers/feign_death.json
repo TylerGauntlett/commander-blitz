@@ -1,0 +1,43 @@
+{
+  "card": {
+    "id": "feign_death",
+    "name": "Feign Death",
+    "oracle_text": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.\"",
+    "mana_cost": "{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.",
+        "trigger": {"event": "dies", "source": "self", "controller": "any"},
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "battlefield",
+            "objects": {"self_only": true, "zone": "graveyard"},
+            "tapped": true,
+            "counters": {"+1/+1": 1}
+          }
+        ]
+      }
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 1,
+        "selector": {"types": ["Creature"], "zone": "battlefield"}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "grant_ability",
+        "ability_index": 0,
+        "objects": {"target": "t1"}
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}

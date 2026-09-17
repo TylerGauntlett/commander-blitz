@@ -1,0 +1,33 @@
+{
+  "card": {
+    "id": "alhammarret_s_archive",
+    "name": "Alhammarret's Archive",
+    "oracle_text": "If you would gain life, you gain twice that much life instead.\nIf you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+    "mana_cost": "{5}",
+    "supertypes": ["Legendary"],
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If you would gain life, you gain twice that much life instead.",
+        "effect": "replace_life_gain",
+        "affects_player": "you",
+        "gain_multiplier": 2
+      },
+      {
+        "kind": "static",
+        "text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+        "effect": "replace_draw",
+        "affects_player": "you",
+        "draw_multiplier": 2,
+        "except_first_in_draw_step": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

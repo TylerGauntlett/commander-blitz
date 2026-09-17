@@ -296,6 +296,25 @@ describe("the hooks the rest of the app holds", () => {
     expect(getByTestId("pile-1-graveyard").textContent).toBe("1");
   });
 
+  it("counts commanders in the command zone, not emblems", () => {
+    const state = view([], {
+      // The emblem first, so a seat that took the first command card as its
+      // commander would name the emblem.
+      command: [
+        card({
+          oid: 900,
+          name: "Ob Nixilis Reignited Emblem",
+          type_line: "Emblem",
+          zone: "command",
+        }),
+        card({ oid: 11, name: "Edgar Markov", is_commander: true, zone: "command" }),
+      ],
+    });
+    const { container, getByTestId } = renderSeat(state);
+    expect(getByTestId("pile-1-command").textContent).toBe("1");
+    expect(container.querySelector(".seat__cmdr")?.textContent).toBe("Edgar Markov");
+  });
+
   it("shows exile only once something is in it", () => {
     // Four marks or five, and the row has to survive the reflow -- which is why
     // the marks share the width rather than being placed.

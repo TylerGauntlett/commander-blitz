@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "temple_bell",
+    "name": "Temple Bell",
+    "oracle_text": "{T}: Each player draws a card.",
+    "mana_cost": "{3}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Each player draws a card.",
+        "cost": {"tap": true},
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "each_player"}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

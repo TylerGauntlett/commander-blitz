@@ -182,6 +182,40 @@ _CHANGELING = re.compile(r"^changeling$", re.I)
 #: ``Prowess`` -- a triggered ability spelled as a keyword.
 _PROWESS = re.compile(r"^prowess$", re.I)
 
+#: ``Extort`` (702.101a) -- "whenever you cast a spell, you may pay {W/B}. If you
+#: do, each opponent loses 1 life and you gain that much life."  Bare keyword
+#: only: `_bare` strips the reminder, and every printing of extort is the same
+#: ability, so there is no parameter to read.
+_EXTORT = re.compile(r"^extort$", re.I)
+
+#: The extort ability, shared by the template and by anything that must agree
+#: with it. "That much life" is the life the opponents *actually* lost, read off
+#: `lose_life`'s ``as`` binding -- not the opponent count, which a doubled or
+#: locked loss would make wrong.
+def extort_ability(text: str) -> dict:
+    return {
+        "kind": "triggered",
+        "text": text,
+        "trigger": {"event": "spell_cast", "controller": "you"},
+        "effects": [
+            {
+                "op": "may",
+                "prompt": "Extort: pay {W/B}?",
+                "pay": {"mana": "{W/B}"},
+                "effects": [
+                    {
+                        "op": "lose_life",
+                        "player": "each_opponent",
+                        "amount": {"const": 1},
+                        "as": "extorted",
+                    },
+                    {"op": "gain_life", "player": "you", "amount": {"binding": "extorted"}},
+                ],
+            }
+        ],
+    }
+
+
 #: "As an additional cost to cast this spell, sacrifice a creature."  The
 #: *mandatory* shape only: "you may sacrifice" is a different card and almost
 #: always drags a "When you do, ..." reflexive trigger along with it, which is
@@ -503,6 +537,11 @@ def _translate_line(line: str, *, is_spell: bool):
             Translation(effects=[], expect={}),
             "cycling",
         )
+
+    if _EXTORT.match(bare):
+        # Nothing to assert: the sandbox casts no spell after the card under
+        # test, so the trigger never fires there.
+        return ("trigger", extort_ability(line.strip()), Translation(effects=[], expect={}), "extort")
 
     if _PROWESS.match(bare):
         return (

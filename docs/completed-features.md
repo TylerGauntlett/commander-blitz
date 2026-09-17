@@ -12462,3 +12462,652 @@ Talent end to end (the level-2 token copy, the level-1 once-a-turn batched draw
 it sets off, no second copy at level 3, the level-3 anthem present only at 3);
 and the loader refusals.
 
+## "If the {1}{B} cost was paid" — reading the alternative cost while the spell resolves — 118.9, 707.10
+
+### Overview
+
+Baleful Mastery: "You may pay {1}{B} rather than pay this spell's mana cost. If
+the {1}{B} cost was paid, an opponent draws a card. Exile target creature or
+planeswalker." Not a documentation gap, though nearly one: `evoke` already *is*
+an unconditional alternative mana cost plus the `evoked` condition that reads
+which price was paid, and `evoke_label` already renames it on the cast line. What
+did not work was the timing. `stack.resolve` wrote `cast_evoked` onto the object
+only after `spell_effects`, which was enough for every card that had used it —
+each a creature asking from its enters trigger — and meant an `if` inside an
+instant's effects read `False` every time. The card would have loaded and been a
+strictly better removal spell than the one printed.
+
+### The shape
+
+- `stack._resolve_spell` writes `obj.cast_evoked` before the effects, beside
+  `cast_overloaded` and `cast_cost_option`; the later write is unchanged.
+- `put_copy_on_stack` copies `evoked` from the original (707.10: a copy copies
+  "additional or alternative costs"), so a copied Mastery cast for {1}{B} gives
+  out a second card — and a copied Mulldrifter cast for its evoke cost is
+  sacrificed too.
+- The packet's reference now says `evoke` works on an instant or sorcery and
+  that `evoke_label` names an unnamed price (`"paying {1}{B}"`).
+- "An opponent draws" is `choose_player` over `each_opponent` then `draw` to the
+  binding: one seat, the caster's choice, no prompt with a single opponent.
+
+### Guarded by
+
+`tests/unit/test_alternative_cost_paid.py`: both prices offered, two lands reach
+only the cheap one, the line's label, printed mana value; the opponent draws and
+the target is exiled on the cheap line and nobody draws on the printed one; at a
+three-player table the caster is asked, opponents only, and exactly the chosen
+seat draws; a fizzled spell hands out nothing; a copy of the cheap cast draws
+again and a copy of the printed cast does not; and the loader still refuses the
+rider without the cost and the cost without the rider.
+
+## `from_colors_outside_commander_identity` — protection from each colour your commander lacks — 903.4
+
+### Overview
+
+Commander's Plate: "Equipped creature gets +3/+3 and has protection from each
+color that's not in your commander's color identity. Equip commander {3}. Equip
+{5}". Everything but the protection was already expressible — `buff` on
+`{"attached": true}`, and two equip lines, one whose target selector adds
+`is_commander`. The protection static took colours only as a printed list, and
+the set here is the five colours *minus* the commanders' identity of whoever
+controls the Plate, which is a different list in every deck.
+
+### The shape
+
+- `AbilityModel.from_colors_outside_commander_identity` (bool), carried onto the
+  compiled static. The loader counts it as protection's quality, refuses it
+  beside `from_colors` and on any effect but `protection`.
+- `characteristics.commander_color_identity(state, pid)` — the union of the
+  printed `color_identity` of a player's commanders, wherever they are, as colour
+  letters.
+- `characteristics.protection_from` adds `WUBRG - commander_color_identity(state,
+  source.controller)` for a static carrying the flag. Computed at read time, so
+  a change of control of the Equipment changes the set; the four rules that read
+  protection (damage, enchant/equip, block, target) needed nothing.
+- No commander, or a colourless one: protection from all five (903.4).
+
+### Guarded by
+
+`tests/unit/test_protection_from_colors_outside_commander_identity.py`: mono-black
+leaves the other four, partners union, no commander and a colourless commander
+are all five, the +3/+3; nothing while unequipped; the commander's zone does not
+matter; the Plate's controller decides (handing it over changes the set, stealing
+the creature does not) and an opponent's commander is not yours; a red spell
+cannot target the equipped creature while a black one can; Equip commander
+reaches only the commander and Equip {5} reaches both; and the loader refusals.
+## `emblem` — "Target opponent gets an emblem with …" — 114
+
+### Overview
+
+Ob Nixilis Reignited's −8: *"Target opponent gets an emblem with 'Whenever a player
+draws a card, you lose 2 life.'"* Ninety-odd catalog cards print an emblem, nearly
+all of them planeswalker ultimates, and most of those emblems carry a triggered
+ability.
+
+### Why the existing vocabulary would not do
+
+- `delayed_trigger` belongs to the ability's controller, so its "you" is the
+  player who ultimated, and it carries a duration where an emblem lasts the game.
+- `grant_ability` hands an ability to a permanent and ends with it.
+
+### Tier: A, plus a new kind of object
+
+- **`CardModel.emblems`** (`EmblemModel`: `abilities`) compiles, in
+  `loader._compile_emblems`, to **`CardDef.emblems`** — a `CardDef` per emblem named
+  "<card> Emblem", type line `Emblem`, no types, whose abilities have
+  `active_zones` forced to the command zone.
+- **`GameObject.emblem`**, an index into the card's `emblems`, and
+  **`GameState.card_of`** returns that entry — so the existing command-zone
+  trigger walk (Edgar Markov's eminence), `stack.ability_of` and the serializer
+  all read the emblem with no change of their own.
+- **`primitives.give_emblem`** puts the object straight into the owner's command
+  zone (no zone change, so nothing listens) and records
+  `EventType.EMBLEM_CREATED`. Not a token, not a commander: no SBA removes it and
+  the commander cast walk skips it.
+- **`emblem` op** (`ops_player`) with a required `player` spec and `emblem`
+  index. The card is read off the new `EffectContext.source_def_id` — the stack
+  item's `def_id` — because an ultimate kills its planeswalker before it resolves.
+- Loader: `emblem`'s `player` and `emblem` are required; `_check_emblem_references`
+  refuses an out-of-range index and an emblem no op gives; `_compile_emblems`
+  refuses an empty emblem, a non-triggered ability, any zone but the command zone,
+  and `source: "self"`.
+
+### Frontend
+
+State serialization is generic: an emblem arrives in `player_view`'s `command`
+list as a card view with its own name, type line and text, and the `/images` map
+has no entry for its id. `emblem_created` is narrated — `describeEvent` logs "X
+gets an emblem from <card>", and `beatsFor` gives it a neutral banner shaped like
+`became_monarch`'s, neutral because an emblem is as often a curse handed to an
+opponent as a boon. The command zone holds more than commanders now, so
+`zoneGrouping.commandersOf` keeps only `is_commander` cards (an emblem had been
+able to become the seat's commander panel, name and art) and the command-pile
+badges in `OpponentSeat` and `PlayerOrb` count commanders through
+`commandZoneCommanderCount`. **Not built**: a display for emblems — the pile's
+viewer lists them, without art.
+
+### Guarded by
+
+`tests/unit/test_emblem.py`: the target opponent gets it in their command zone,
+owned and controlled by them, even though the ultimate killed the walker; "you get
+an emblem" goes to its controller; it is not a permanent, a token or a commander
+and is never offered as a cast; its owner loses 2 on every card anyone draws,
+including their own, one trigger per card and per emblem, and given to the
+controller it drains the controller instead; it is still there and draining two
+turns later; its card view and snapshot; and the loader refusals.
+
+## `wicked_role` — Role tokens, created attached — 303.7a / 704.5y
+
+### Overview
+
+Not Dead After All: *"Until end of turn, target creature you control gains 'When
+this creature dies, return it to the battlefield tapped under its owner's control,
+then create a Wicked Role token attached to it.'"* The pool had no Role and no
+Aura token of any kind; thirty-five catalog cards make Roles.
+
+### Why the existing vocabulary would not do
+
+- There was no token to create.
+- `create_token` then `attach` makes a Role even when the host is gone; the token
+  arrives unattached, 704.5m bins it, and a Wicked Role drains every opponent. The
+  Role rulings say it is not created.
+- Nothing implemented the Role rule.
+
+### The shape
+
+- **`wicked_role`** in `data/cards/tokens.cards.json`: Enchantment — Aura Role,
+  "Enchanted creature gets +1/+1" (`buff` on `attached`) and "When this Aura is
+  put into a graveyard from the battlefield, each opponent loses 1 life" (`dies`,
+  `source: self`).
+- **`create_token`'s `attached_to`**: resolves the host first and creates nothing
+  if none is on the battlefield; otherwise attaches each Aura it made, in creation
+  order.
+- **`GameObject.attached_timestamp`**, stamped by `primitives.attach` from the
+  new `GameState.alloc_timestamp` (613.7e).
+- **`sba._role_rule`** (704.5y): groups Roles by host and controller and puts all
+  but the newest into the graveyard.
+- Loader: `attached_to` only on `create_token`, validated as a selector, and only
+  naming an Aura token (`validate_token_references`). That check now also walks
+  `grantable_abilities`, which it never did — a granted ability naming an unknown
+  token loaded clean and crashed mid-game.
+
+### Frontend
+
+None. An Aura token is an ordinary attached permanent to the serializer.
+
+### Guarded by
+
+`tests/unit/test_wicked_role.py`: the token's types; created attached, +1/+1;
+drains when destroyed and when it falls off a dead creature; nothing created (and
+nothing drained) when the host is gone; your Role on an opponent's creature; a
+second Role replaces the first and the replaced Wicked Role drains; different
+players' Roles and different creatures' Roles coexist; newest by attachment, not
+arrival; Not Dead After All end to end (returns tapped wearing the Role, no drain;
+without it the creature stays dead; the grant is gone next turn); and the loader
+refusals, including an unknown token in a granted ability.
+## `lose_life` `as` — "the life lost this way"
+
+### Overview
+
+Gray Merchant of Asphodel: "each opponent loses X life, where X is your devotion
+to black. You gain life equal to the life lost this way." The second sentence
+reads the life the first one actually took, after replacements.
+
+### Why the existing vocabulary would not do
+
+- `primitives.lose_life` already returned the actual loss, but `op_lose_life`
+  discarded it, so nothing could read it.
+- Recomputing the amount in `gain_life` (Malakir Bloodwitch's shipped answer)
+  gains X against a Bloodletter-doubled 2X and against a locked 0.
+- `life_lost_this_turn` is the turn ledger, not this effect's loss.
+
+### The shape
+
+- `lose_life` joins `RECORDING_OPS`; `as` binds an int, the sum over every player
+  hit, overwriting any earlier value of that name.
+- The loader's existing `as` guard now accepts it on `lose_life`.
+- Malakir Bloodwitch's answer is rewritten onto the binding, so it is exact under
+  a replacement too.
+
+### Guarded by
+
+`tests/unit/test_life_lost_this_way.py`: the sum across two opponents, an int,
+zero, no `as` writes nothing, overwrite rather than accumulate, a doubled loss
+gains the doubled amount, a locked opponent contributes nothing, and the loader.
+
+## Extort — 702.101
+
+### Overview
+
+"Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1
+life and you gain that much life." Nineteen catalog cards print it; Crypt Ghast
+filed it as blocked.
+
+### Why the existing vocabulary would not do
+
+Every piece existed except "that much life": counting opponents is wrong under a
+loss doubler. The previous commit's `lose_life` `as` binding is that read, so
+extort needs no engine change and no `Keyword`.
+
+### The shape
+
+- `templates.extort_ability(text)`: a `spell_cast` trigger (controller you), a
+  `may` with `pay: {"mana": "{W/B}"}`, then `lose_life` each opponent 1 `as`
+  `extorted` and `gain_life` of the binding.
+- The `extort` template writes it for a bare "Extort" line. Syndic of Tithes,
+  Basilica Guards, Tithe Drinker, Knight of Obligation, Kingpin's Pet,
+  Syndicate Enforcer and Basilica Screecher now translate and pass all six gates.
+- `docs/keywords.md`'s row names the binding and the template.
+
+### Guarded by
+
+`tests/unit/test_extort.py`, against `t_extortioner` (pinned equal to the
+template's output): paying drains and gains, two opponents gain two, white pays
+the hybrid pip, the mana is really taken, declining does nothing, a player who
+cannot pay is not asked, two instances trigger twice, an opponent's spell does
+not trigger it, and a doubled loss gains double.
+
+## `add_mana_on_tap` — "Whenever you tap a Swamp for mana, add an additional {B}"
+
+### Overview
+
+Crypt Ghast's second line: a triggered mana ability (605.1b). It resolves right
+after the mana ability that triggered it, without the stack (605.4a). The same
+sentence is printed on Nirkana Revenant, Nissa, Who Shakes the World, Vernal
+Bloom, Gauntlet of Might and Leyline of Abundance.
+
+### Why the existing vocabulary would not do
+
+- `double_land_mana` (Vorinclex) is a bare boolean: no filter on what was
+  tapped, and it doubles what the land made instead of adding a fixed {B}.
+- A `triggered` ability cannot fire inside cost payment, where nothing may be
+  queued or asked, and there is no tapped-for-mana trigger event.
+- Nothing in the engine already did this, so it was not a documentation gap.
+
+### The shape
+
+- A player-wide static `add_mana_on_tap` with `affects_player`,
+  `tapped_permanent` (`types`/`subtypes`/`supertypes`, the new
+  `loader.TAPPED_PERMANENT_KEYS`) and `add_mana`.
+- `player_statics.mana_added_on_tap` returns `(source, mana)` per applicable
+  static, through `_active_player_statics`, so a `condition` is honoured.
+- It is read in `costs._sources_of` (planner), `costs.activate_mana_ability`
+  (the pool, tagged with the static's source, only for abilities with {T}) and
+  legality's chip label, all through `mana_added_total`/`plus_mana`.
+- Crypt Ghast is authored with the extort template's ability and this static.
+- The golden vocabulary is re-pinned for the new effect and key set.
+
+### Guarded by
+
+`tests/unit/test_add_mana_on_tap.py`: a Swamp makes two, a Forest one, no Ghast
+one, two Ghasts three, the extra pip tagged with the Ghast, an opponent's Swamp
+unaffected by `you`, `any` paying the tapper, a land made a Swamp counting, the
+solver paying {B}{B}{B}{B} from two Swamps (and not without), legality offering
+the spell (and not without), the effect ending with its source, the condition
+asked, and the loader refusals.
+was no replacement of life *gain* here; that is `replace_life_gain`, below.
+
+## `replace_life_gain` — "you gain twice that much life instead"
+
+### Overview
+
+Alhammarret's Archive: *"If you would gain life, you gain **twice that much life
+instead**."* Its second line, the draw doubler with Bard's exemption, already
+shipped as `replace_draw`; this was the half that kept the card out of the
+Sheoldred, the Apocalypse deck.
+
+### Why the existing vocabulary would not do
+
+- `replace_life_loss` multiplies losses only.
+- A `you_gain_life` trigger with a `gain_life` effect is a second gain: it uses
+  the stack, fires `LIFE_GAINED` a second time for every life-gain trigger on the
+  board, and re-triggers itself.
+
+### The shape
+
+- **`replace_life_gain`**, a player-wide static (`affects_player`,
+  `gain_multiplier`, optional `condition`), read by
+  `player_statics.life_gain_multiplier` through `_active_player_statics`.
+- **One call site**, `primitives.gain_life`, the only place a life total goes up.
+  Lifelink reaches it through `_apply_lifelink`, so lifelink is doubled and the
+  damage is not.
+- `gain_life` now returns, and `LIFE_GAINED` now carries, the replaced amount.
+- The life lock (118.5) is checked before the multiplier.
+- The loader requires `gain_multiplier`, refuses it below 2 and on any other
+  effect, and refuses `affects`/`amount` beside it.
+
+### Divergences
+
+Two doublers multiply (614.5); 616.1's ordering is not asked, which for a
+product cannot show.
+
+### Guarded by
+
+`tests/unit/test_life_gain_replacement.py`: the multiplier (controller only,
+`affects_player: "opponent"`, two doublers, the condition read), the gain and its
+return value, one event carrying 6, zero and a locked total, the Archive leaving,
+lifelink doubled without doubling the damage, a real cast spell, and the loader
+refusals. Alhammarret's Archive is authored whole.
+
+## `cant_gain_life` — "Your opponents can't gain life"
+
+### Overview
+
+Erebos, God of the Dead's third line. Its devotion clause (`set_types` under a
+`mana_symbols` condition) and its `{1}{B}, Pay 2 life: Draw a card` were already
+expressible; this was the line that kept the card blocked.
+
+### Why the existing vocabulary would not do
+
+- `lock_life_total` is a one-shot op with a fixed duration that stops losses as
+  well as gains, and does not follow a permanent staying on the battlefield.
+- `replace_life_gain` with a multiplier of 0 is refused, and would still be a
+  replacement that another replacement could reorder.
+
+### The shape
+
+- **`cant_gain_life`**, a player-wide static (`affects_player`, optional
+  `condition`), read by `player_statics.player_cant_gain_life`.
+- **One call site**, `primitives.gain_life`, after the life lock and **before**
+  `life_gain_multiplier`. Nothing moves and no `LIFE_GAINED` fires, so
+  life-gain triggers stay silent.
+- The loader refuses `affects` and `amount` beside it.
+
+### How it composes with `replace_life_gain`
+
+"Can't" wins (101.2). Checked first, so an opponent's Archive under Erebos gains
+nothing, and the Archive's own controller (who Erebos does not name) still
+gains double.
+
+### Guarded by
+
+`tests/unit/test_cant_gain_life.py`: who it names, `affects_player` both ways,
+the op and lifelink stopped (lifelink's damage still dealt), no event and no
+trigger, the lift when the source leaves, the condition read, the composition
+with a doubler on either side, and the loader refusals. Erebos, God of the Dead
+is authored whole.
+
+## `life_gained_this_turn` — "if you gained life this turn"
+
+### Overview
+
+Witch of the Moors: *"At the beginning of your end step, **if you gained life this
+turn**, each opponent sacrifices a creature of their choice and you return up to
+one target creature card from your graveyard to your hand."* The rest of the
+sentence (`for_each_player` over a `sacrifice` with the player's own choice, and
+an optional graveyard target) was already expressible.
+
+### Not a documentation gap
+
+The ledger had `life_lost`, `damage_taken` and the draw count, and nothing in the
+engine recorded a gain at all, so this was real work rather than a missing line
+in the packet.
+
+### Why the existing vocabulary would not do
+
+A `has_turn_flag` set by a `you_gain_life` trigger on the Witch is an ability the
+card does not print, and it misses a gain made before the Witch entered.
+
+### The shape
+
+- **`TurnLedger.life_gained`**, cleared with the ledger at cleanup.
+- Folded in `GameState.emit` off `LIFE_GAINED`, beside `life_lost`: every gain
+  counts (the op, lifelink), with the amount the event carries (doubled under
+  `replace_life_gain`), and a gain that did not happen fires no event.
+- **`{"life_gained_this_turn": <player spec>}`**, a value leaf; "if you gained
+  life" is a `cmp` `>` 0 on the trigger's `condition`, re-read on resolution.
+
+### Guarded by
+
+`tests/unit/test_life_gained_this_turn.py`: the fold, accumulation, lifelink, a
+loss that is not a gain, gain-then-loss, per player, zero, a locked total and
+`cant_gain_life` not counting, the condition, the refusal of an unknown
+spelling, an end-step trigger against a real turn with and without a gain and
+with a gain made before the permanent entered, and the tally gone next turn.
+Witch of the Moors is authored whole.
+
+## `half` — "half …, round up" — 107.1a
+
+### Overview
+
+Peer into the Abyss: *"Target player draws cards equal to **half** the number of
+cards in their library and loses **half** their life. **Round up** each time."*
+
+### Why the existing vocabulary would not do
+
+`value_keys` had `sum`, `minus`, `times`, `max` and `min` — no division and no
+rounding — so ceil(n/2) could not be built. `count` and `life_of` already read
+the library and the life total; only the halving was missing.
+
+### The shape
+
+- **`{"half": {"of": <value>, "round": "up" | "down"}}`** in `values.VALUE_KEYS`,
+  evaluated with floor division (negated around it for the ceiling).
+- **`validate_half`**: `of` required, `round` required and one of
+  `HALF_ROUNDING`, no other keys. A default direction is refused because both are
+  printed (107.1a), and the wrong one is invisible on every even number.
+
+### Guarded by
+
+`tests/unit/test_half_rounded.py`: Peer end to end on odd and even libraries and
+life totals, one life (lost entirely), an empty library (still costs life); both
+directions over 0, 1, 2, 7, 40 and a negative; composition inside and around
+`sum`; and every loader refusal.
+
+
+## `any_order` — "on the bottom of their library in any order" — 401.4
+
+### Overview
+
+Teferi's Puzzle Box: *"At the beginning of each player's draw step, that player
+puts the cards in their hand on the bottom of their library **in any order**, then
+draws that many cards."* The first half of the sentence.
+
+### Why the existing vocabulary would not do
+
+`put_on_top` with `bottom: true` resolved its selector through `choose_objects`,
+which for `count: "all"` returns the pool in hand order and moves each card with
+no question. `scry` and `look_at_top` order only cards taken off the top of the
+library, never cards from a hand.
+
+### The shape
+
+- **`any_order: true`** on `put_on_top`, read by `ops_cards._in_owners_order`:
+  per owner, `ask_objects` with a count of one over the cards left, purpose
+  `library_order`, until one remains. No new `DecisionKind`.
+- Each answer is the next card put there: the last chosen is the bottom card on
+  the bottom and the top card on top.
+- The loader refuses it on any other op, as a non-boolean, and beside `from_top`
+  or `owner_chooses`.
+
+### Guarded by
+
+`tests/unit/test_put_on_bottom_any_order.py`: the same hand under in two orders,
+the top of the library undisturbed, the top-of-library reading, one question per
+card but the last, the owner asked when the hand is an opponent's, one card and
+an empty hand asking nothing, and the loader refusals.
+
+
+## `put_on_top`'s `as` — "then draws that many cards"
+
+### Overview
+
+The second half of Teferi's Puzzle Box: *"…puts the cards in their hand on the
+bottom of their library in any order, **then draws that many cards**."*
+
+### Why the existing vocabulary would not do
+
+`put_on_top` carried no `as`, and the loader refuses an `as` on an op that
+records nothing. `cards_in_hand` read after the tuck is 0; `snapshot` captures one
+object, not a count; a per-card `for_each` interleaves the draws with the tucks.
+
+### The shape
+
+- **`put_on_top` in `RECORDING_OPS`**, binding the list of oids that
+  `move_object` actually left in a library — not those chosen.
+- Assigned, not accumulated, and written even when empty.
+- Read with the existing `{"count": {"binding": …}}`.
+
+### Guarded by
+
+`tests/unit/test_count_moved_cards.py`: a Puzzle Box test card on its owner's
+first draw step (no draw, 103.8a) with three, one and no cards in hand — the hand
+comes back the same size, off the top, with the old hand underneath; the binding
+names what arrived; a second tuck of nothing leaves an empty binding rather than
+a stale one; the loader accepts the key.
+
+
+## `may`'s `x` — "you may pay {X}, where X is less than or equal to…"
+
+### Overview
+
+Well of Lost Dreams: *"Whenever you gain life, you may pay {X}, where X is less
+than or equal to the amount of life you gained. If you do, draw X cards."*
+
+### Why the existing vocabulary would not do
+
+`may`'s `pay` charges a fixed cost, and `pay.times` scales it by a number the card
+computes — X equal to the gain, never less. `choose_x` was asked only by
+`game.py` at cast and activation time. `may` with `repeat` around {1} and one
+draw interleaves payments with draws and has no ceiling.
+
+### The shape
+
+- **`x: {"max": <value>, "as": <name>, "prompt"?}`** on `may`, beside a `pay`
+  whose mana carries `{X}`.
+- `ops_control._announce_x`: after the yes, `ask_x` over 0 up to
+  min(`max`, `max_affordable_x` of the player's pool and sources), then `pay`
+  with that `x`, then the paid X bound under `as` before the effects run.
+- The loader (`_validate_pay_x`) requires `max` and `as`, refuses an `{X}` with
+  no `x` and an `x` with no `{X}`, `x` anywhere but a paying `may`, and `x`
+  beside `repeat`, `pay.times` or `pay.mana_reduction`.
+
+### Guarded by
+
+`tests/unit/test_pay_x_on_resolution.py`: the ceiling is the life gained with
+plenty of mana and the mana with plenty of life; nothing open charges {0} without
+asking; X paid is X drawn and X tapped; a smaller X than the gain; X = 0; declining
+asks no X; and the loader refusals.
+### One narrowing, recorded -- and since lifted
+A Phyrexian pip in an **activated ability's** cost had to be paid with mana,
+because the choice was offered only as a cast line. Lifted by
+`black_mana_as_phyrexian` below, which needed the choice in every cost.
+## `black_mana_as_phyrexian` — K'rrik, Son of Yawgmoth's "for each {B} in a cost"
+
+### Overview
+
+*"For each {B} in a cost, you may pay 2 life rather than pay that mana."* The
+line the Sheoldred deck's K'rrik is played for. The gap record named it; no
+existing static could say it — `pay_life_instead` pays a whole spell's mana value
+off the top of the library, and `spell_cost_reduction` can only shrink generic
+mana.
+
+### The shape
+
+- **The static.** `black_mana_as_phyrexian`, player-wide (`affects_player`),
+  read by `player_statics.player_pays_life_for_black`.
+- **The cost.** `ManaCost.black_as_phyrexian` turns each `{B}` into a `{B/P}` and
+  gives every black hybrid pip (`{B/R}`, `{2/B}`) a life half, which is the
+  ruling: "if you choose to pay {B} this way, K'rrik's ability allows you to pay
+  life". Mana value, colours, chroma and `text` do not move.
+- **Spells** reuse the Phyrexian cast lines untouched: `_cast_variant` and
+  `Game._cast` convert the variant's price before counting / buying pips.
+  `paying_phyrexian` now buys single-symbol pips first, so a `{B}` is bought
+  before a `{B/R}` beside it.
+- **Every other cost** asks. `costs.life_for_mana_range` returns the fewest pips
+  that must be bought for the remainder to be payable and the most the life total
+  can buy (less any life the cost itself charges; none under a life lock);
+  `can_pay` / `can_pay_mana` offer the cost when that range exists, and `pay` asks
+  `CHOOSE_MODE` only when it holds more than one number. X ceilings on
+  activations are measured with every buyable pip bought
+  (`costs.most_life_for_mana`). The cast line passes `life_for_mana=False`.
+
+That second half is also what lifts the recorded narrowing on printed Phyrexian
+pips in activated abilities (Birthing Pod's `{1}{G/P}`): same code, no K'rrik
+needed.
+
+### Not modelled
+
+Two different life-payable pips in one cost (`{2/B}` beside `{B/R}`) are bought
+in a fixed order rather than asked; a strive surcharge's `{B}` is paid with mana.
+No shipped card prints either. In `docs/rules-coverage.md`.
+
+### Guarded by
+
+`tests/unit/test_black_mana_as_phyrexian.py`: the conversion (plain, hybrid,
+`{2/B}`, already-Phyrexian, untouched generic and other colours, the buying
+order); the cast lines with and without black sources, without K'rrik, under an
+opponent's K'rrik, a hybrid spell, a spell with no black; the 118.4 boundary;
+what a cast charges; activations offered off no mana, withheld without K'rrik or
+the life, the forced answer not asked, the real choice asked and honoured, the
+X ceiling; and a printed `{G/P}` activation payable with life. K'rrik, Son of
+Yawgmoth is authored.
+
+## `playable: "while_exiled"` — "for as long as they remain exiled"
+
+### Overview
+
+Elder Brain: *"You may play lands and cast spells from among the exiled cards for
+as long as they remain exiled."* The four durations the engine had either end
+(`this_turn`, `your_next_end_step`, `end_of_your_next_turn`) or forbid the turn
+of the grant (`later_turns`, Plot) -- and Elder Brain's cards are playable in the
+second main phase of the very combat that exiled them.
+
+### The shape
+
+- **`while_exiled`** in `PLAYABLE_DURATIONS`. `playable_live` already answers
+  True for a duration it has no clock for, and no hook in `turn` names it, so the
+  permission stands until the zone-change reset clears it.
+- **Loader.** Accepted on `exile`, on `look_at_top` into exile, and on
+  `grant_playable` whose selector reads `zone: "exile"`; refused elsewhere.
+- **Every seat's exile for a land drop.** `legality._land_actions` walked only
+  the player's own exile, so a land exiled out of an opponent's hand was never
+  offered -- the cast side (`casting._cast_actions`) already walked every seat.
+  `Game._play_land` now sets the land's controller to the player making the drop
+  before it moves, so it enters under their control (110.2) and not its owner's.
+- **Packet.** `reference()["playable_durations"]` lists the values, which no
+  worker could see before.
+
+### Guarded by
+
+`tests/unit/test_playable_while_exiled.py`: live on the turn of the grant, on the
+next turn and the one after; untouched by every expiry hook; gone once the card
+leaves exile and comes back, and used up by playing it; an opponent's exiled land
+offered and entering under your control; the loader's accept and refuse cases;
+and the packet listing.
+
+## `any_color` — "spend mana as though it were mana of any color to cast it"
+
+### Overview
+
+Elder Brain's last sentence, and the half of it that makes the stolen hand usable.
+Not a documentation gap: no shipped card printed it, and `grant_playable`'s
+`any_type` (Valigarmanda) is a different, broader sentence -- "any type" lets
+coloured mana pay `{C}`, and "any color" does not.
+
+The gap record claimed colourless mana could still pay only generic; the ruling
+is the other way (Mycosynth Lattice: colourless mana may be spent as though it
+had a colour), and the implementation follows the ruling.
+
+### The shape
+
+- **`ManaCost.as_any_color`**: `{W}`-`{G}` and every hybrid / remaining Phyrexian
+  pip fold into one generic each; `{C}` and `X` stay; `text` is the printed cost.
+- **`GameObject.playable_any_color`**, written by `exile`, `look_at_top` and
+  `grant_playable` from `any_color`, cleared wherever `playable_any_type` is
+  (the zone-change reset and `turn._expire_permissions`).
+- **Priced and paid** in `_cast_variant` / `_priced_tuples` and `Game._cast`,
+  beside the any-type waiver and under the same `playable_live` gate.
+- **Loader**: needs a permission to ride on; refused beside `any_type`.
+
+K'rrik's Phyrexian conversion runs first, so a black pip bought with life leaves
+the cost before the colours are waived.
+
+### Guarded by
+
+`tests/unit/test_spend_mana_as_any_color.py`: the cost conversion (colours fold,
+`{C}` stays, a hybrid pip is one, X and the printed cost survive); a stolen
+`{B}{B}` spell castable off Plains, paid and resolved into its owner's
+graveyard; the strict counterfactual; hybrid pips at one each; the caster's own
+spells untouched; the flag leaving with the permission; a Sol Ring paying
+`{B}{B}`; `{C}` not waived; and the loader cases. Elder Brain is authored.

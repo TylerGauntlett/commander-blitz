@@ -147,6 +147,12 @@ class EventType:
     #: becoming the monarch while already the monarch is a no-op, so "an opponent
     #: becomes the monarch" (Palace Jailer's duration) means what it says.
     BECAME_MONARCH = "became_monarch"
+    #: A player got an emblem (114.2). ``player`` is who owns it, ``source`` the
+    #: emblem object and ``data["card"]`` the card whose ``emblems`` it is.
+    #: Recorded rather than fired: nothing triggers on an emblem being created,
+    #: and nothing moves, so without it the log would never say the table just
+    #: changed for the rest of the game.
+    EMBLEM_CREATED = "emblem_created"
     #: A permanent's power/toughness or keywords changed without a counter and
     #: without a zone change -- a pump, an animated land, a granted keyword.
     #:
