@@ -235532,12 +235532,12 @@
     },
     "Sea Gate Restoration // Sea Gate, Reborn": {
       "edhrec_rank": 670,
-      "gate": "template",
+      "gate": null,
       "name": "Sea Gate Restoration // Sea Gate, Reborn",
-      "reason": "no template for: Draw cards equal to the number of cards in your hand plus one. You have no maximum hand si",
+      "reason": "",
       "scryfall_id": "193071fe-180b-4d35-ba78-9c16675c29fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sea Gate Stormcaller": {

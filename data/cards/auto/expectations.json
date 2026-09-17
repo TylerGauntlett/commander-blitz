@@ -7165,6 +7165,18 @@
   "sea_eagle": {
     "zone": "battlefield"
   },
+  "sea_gate_restoration_sea_gate_reborn": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "sea_scryer": {
     "zone": "battlefield"
   },
