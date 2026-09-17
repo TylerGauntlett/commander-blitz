@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**39 cards** blocked by **46** capabilities.
+**25 cards** blocked by **29** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,48 +18,31 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
-| [alternative-cost-paid-condition](#alternative-cost-paid-condition) | 1 | 1360 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
-| [black-mana-as-phyrexian](#black-mana-as-phyrexian) | 1 | 1070 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cant-gain-life](#cant-gain-life) | 1 | 2932 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
-| [count-moved-cards](#count-moved-cards) | 1 | 1922 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [doesnt-untap](#doesnt-untap) | 1 | 145 | static_effect |
-| [emblem](#emblem) | 1 | 4266 | op |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [extort](#extort) | 1 | 526 | keyword |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [half-rounded](#half-rounded) | 1 | 1264 | value |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [life-gained-this-turn](#life-gained-this-turn) | 1 | 2574 | value |
-| [life-lost-this-way](#life-lost-this-way) | 1 | 244 | value |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [pay-x-on-resolution](#pay-x-on-resolution) | 1 | 1125 | decision |
-| [playable-while-exiled](#playable-while-exiled) | 1 | 3807 | value |
-| [protection-from-colors-outside-commander-identity](#protection-from-colors-outside-commander-identity) | 1 | 491 | static_effect |
-| [put-on-bottom-any-order](#put-on-bottom-any-order) | 1 | 1922 | decision |
-| [replace-life-gain](#replace-life-gain) | 1 | 981 | replacement |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [spend-mana-as-any-color](#spend-mana-as-any-color) | 1 | 3807 | engine |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
-| [triggered-mana-on-tap](#triggered-mana-on-tap) | 1 | 526 | static_effect |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-| [wicked-role](#wicked-role) | 1 | 1099 | token |
 
 ## cast-as-though-flash
 
@@ -130,21 +113,6 @@ Blocks **1** card.
 
 </details>
 
-## alternative-cost-paid-condition
-
-Blocks **1** card.
-
-- **(engine)** an unconditional cheaper alternative mana cost on an instant or sorcery whose payment is readable by a condition while the spell itself resolves, so an `if` inside `spell_effects` can say "if the {1}{B} cost was paid, an opponent draws a card"
-  <br>Why the existing vocabulary won't do: `evoke` is the unconditional alternative mana cost and `evoked` is its condition, but resolve_top (engine/stack.py) writes `obj.cast_evoked = item.evoked` only AFTER `spell_effects` run (it is meant for a permanent's enters trigger), and EffectContext carries no evoked flag -- so on an instant the `evoked` condition always reads False and the opponent would never draw. `cast_overloaded`, `cast_cost_option` and `cast_from_graveyard` are set before the effects, but none of them records an alternative cost. `alternative_cost` (card-level) records no flag at all and requires a condition when the price is mana only. `cost_option` belongs to `additional_cost_options`, an additional cost, not a replacement for the mana cost.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Baleful Mastery** (rank 1360) — `baleful_mastery`
-  - You may pay {1}{B} rather than pay this spell's mana cost
-  - If the {1}{B} cost was paid, an opponent draws a card
-
-</details>
-
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -173,20 +141,6 @@ Blocks **1** card.
 
 </details>
 
-## black-mana-as-phyrexian
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: you) under which every {B} symbol in any cost its controller pays -- spell mana costs, additional/alternative costs, and activated ability costs, including mana abilities -- may be paid with 2 life instead, i.e. each {B} pip is treated as {B/P} while the permanent is on the battlefield; the cast/activate line must offer the per-pip life choice (1..N pips) the way phyrexian mana does
-  <br>Why the existing vocabulary won't do: Phyrexian mana is supported only for {X/P} pips printed in a card's own mana cost (and not in activated ability costs, per completed-features). `pay_life_instead` exists only on the cast_from_library_top static (Bolas's Citadel), which pays a whole spell's mana value in life for cards on top of the library, not per-{B}-pip for any cost from any zone. spell_cost_reduction reduces generic mana and cannot convert a coloured pip into a life payment.
-
-<details><summary>Cards waiting on this</summary>
-
-- **K'rrik, Son of Yawgmoth** (rank 1070) — `k_rrik_son_of_yawgmoth`
-  - For each {B} in a cost, you may pay 2 life rather than pay that mana.
-
-</details>
-
 ## cant-be-countered
 
 Blocks **1** card.
@@ -198,20 +152,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cant-gain-life
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static ability (affects_player: opponent/you/any) that, while its source is on the battlefield, stops the affected players' life totals from increasing: gain_life (and lifelink / any life gain path) does nothing for them, and life-gain triggers do not fire
-  <br>Why the existing vocabulary won't do: static_effects has replace_life_loss (multiplies losses only, not gains) and no gain prohibition; lock_life_total is a one-shot op with a fixed duration that forbids change in both directions for the named player, so it would also block life loss and would not track the permanent staying on the battlefield
-
-<details><summary>Cards waiting on this</summary>
-
-- **Erebos, God of the Dead** (rank 2932) — `erebos_god_of_the_dead`
-  - Your opponents can't gain life.
 
 </details>
 
@@ -227,20 +167,6 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
-
-</details>
-
-## count-moved-cards
-
-Blocks **1** card.
-
-- **(value)** a binding for how many cards an effect actually moved (e.g. `as` on put_on_top exposing the moved set, readable as `count`/`binding` by a following draw's amount), so 'then draws that many cards' reads the number put on the bottom
-  <br>Why the existing vocabulary won't do: put_on_top carries no `as`; snapshot captures only one object's characteristics, not a count; cards_in_hand read after the tuck is 0 and cannot be read beforehand into a binding. A for_each that tucks one card and draws one per iteration would interleave draws with tucks, which is a different card (draw triggers and a near-empty library behave differently)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi's Puzzle Box** (rank 1922) — `teferi_s_puzzle_box`
-  - At the beginning of each player's draw step, that player puts the cards in their hand on the bottom of their library in any order, then draws that many cards.
 
 </details>
 
@@ -314,20 +240,6 @@ Blocks **1** card.
 
 </details>
 
-## emblem
-
-Blocks **1** card.
-
-- **(op)** an op that gives a chosen player (here a target opponent) an emblem -- a permanent command-zone object with no characteristics that cannot be removed and carries a written ability (here a triggered ability: event draw by any player, effect lose_life 2 for the emblem's OWNER, i.e. the targeted opponent, not the planeswalker's controller)
-  <br>Why the existing vocabulary won't do: No op in reference creates a command-zone object. grant_ability attaches an ability to battlefield objects and ends when they leave; delayed_trigger carries a duration and belongs to the ability's controller, so its 'you' would be Ob Nixilis's controller rather than the opponent who owns the emblem, and it would not survive as a permanent object. There is no emblem-owning player concept for 'you' to resolve against.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ob Nixilis Reignited** (rank 4266) — `ob_nixilis_reignited`
-  - −8: Target opponent gets an emblem with "Whenever a player draws a card, you lose 2 life."
-
-</details>
-
 ## enters-replacement
 
 Blocks **1** card.
@@ -373,21 +285,6 @@ Blocks **1** card.
 
 </details>
 
-## extort
-
-Blocks **1** card.
-
-- **(keyword)** Extort: a spell_cast trigger (controller you) with an optional {W/B} payment; if paid, each opponent loses 1 life and you gain life equal to the total life actually lost that way
-  <br>Why the existing vocabulary won't do: spell_cast + may{pay} + lose_life is close, but lose_life has no `as` binding to read the life actually lost, so 'you gain that much life' can only be approximated by counting opponents; no extort keyword or template exists
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crypt Ghast** (rank 526) — `crypt_ghast`
-  - Whenever you tap a Swamp for mana, add an additional {B}.
-  - Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)
-
-</details>
-
 ## extra-turn
 
 Blocks **1** card.
@@ -400,21 +297,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## half-rounded
-
-Blocks **1** card.
-
-- **(value)** a value node that halves another value with a rounding direction, e.g. {"half": <value>, "round": "up"|"down"}, so the amount can be half of {"count": {"zone": "library", "player": {"target": "t1"}}} for draw and half of {"life_of": {"target": "t1"}} for lose_life, each rounded up; the library count and life must be read at the moment each instruction is performed (draw first, then life)
-  <br>Why the existing vocabulary won't do: value_keys has times, sum, minus, min and max but no division or rounding, so ceil(n/2) cannot be built from them; count and life_of can read the library size and life total, and draw/lose_life accept a player and amount, but there is no way to halve the result
-
-<details><summary>Cards waiting on this</summary>
-
-- **Peer into the Abyss** (rank 1264) — `peer_into_the_abyss`
-  - Target player draws cards equal to half the number of cards in their library and loses half their life.
-  - Round up each time.
 
 </details>
 
@@ -443,34 +325,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## life-gained-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-player turn tally of life gained (value `life_gained_this_turn` with a player, or a condition `gained_life_this_turn`), recorded by the engine on every life_gained event regardless of whether the source was on the battlefield, reset at cleanup, usable as an intervening-if trigger condition on an end_step trigger
-  <br>Why the existing vocabulary won't do: value_keys has life_lost_this_turn, damage_taken_this_turn and cards_drawn_this_turn but no life-gained counterpart, and no engine code tracks life gained per turn; has_turn_flag would need an unprinted you_gain_life trigger to set the flag, which misses life gained before this creature entered and adds an ability that claims no printed line
-
-<details><summary>Cards waiting on this</summary>
-
-- **Witch of the Moors** (rank 2574) — `witch_of_the_moors`
-  - At the beginning of your end step, if you gained life this turn, each opponent sacrifices a creature of their choice and you return up to one target creature card from your graveyard to your hand.
-
-</details>
-
-## life-lost-this-way
-
-Blocks **1** card.
-
-- **(value)** a way for a later effect in the same resolution to read the life ACTUALLY lost by a preceding lose_life (after replacements such as replace_life_loss doubling it, or lock_life_total reducing it to 0), summed over every player it hit -- e.g. `as` on the lose_life op binding that total as an int, readable through the existing `binding` value leaf by gain_life
-  <br>Why the existing vocabulary won't do: primitives.lose_life already returns what was actually lost, but op_lose_life discards the return value and takes only amount/player, so nothing can read it. Re-evaluating the amount in gain_life (the Malakir Bloodwitch pattern) gains X even when a Bloodletter-style replace_life_loss doubled the loss to 2X or a lock_life_total made it 0; life_lost_this_turn is a per-turn ledger total, not this effect's loss, and life_of cannot be captured before the loss because no op binds a number. Devotion itself is expressible as {"mana_symbols": {"of": "B", "objects": {"zone": "battlefield", "controller": "you"}}}; only the second sentence is blocked
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gray Merchant of Asphodel** (rank 244) — `gray_merchant_of_asphodel`
-  - You gain life equal to the life lost this way.
 
 </details>
 
@@ -535,77 +389,6 @@ Blocks **1** card.
 
 </details>
 
-## pay-x-on-resolution
-
-Blocks **1** card.
-
-- **(decision)** an optional mana payment made while a triggered ability resolves in which the player announces X (0..a ceiling given by a value expression, here {"binding": "amount"} from the you_gain_life trigger), pays {X} generic, and the chosen X is bound (e.g. `as: "x"`) so the if-you-do effects can read it -- draw {"binding": "x"} cards
-  <br>Why the existing vocabulary won't do: `may` with `pay` charges a fixed Cost, and `pay.times` only scales it by a value the card computes, not one the player chooses, so it could force X = life gained but not allow any smaller X. `ask_x` (the choose_x decision) exists only at cast/activation time in game.py, not as an effect op. `may` with `repeat` around pay {1} + draw 1 interleaves draws with payments (information the printed card does not give), has no ceiling at the life gained, and `repeat` with a count would let a player decline then accept.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Well of Lost Dreams** (rank 1125) — `well_of_lost_dreams`
-  - Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of life you gained. If you do, draw X cards.
-
-</details>
-
-## playable-while-exiled
-
-Blocks **1** card.
-
-- **(value)** a play-permission duration with no end and no delayed start -- "for as long as they remain exiled" -- usable on `exile`'s / `grant_playable`'s `playable` key, starting the turn the cards are exiled
-  <br>Why the existing vocabulary won't do: PLAYABLE_DURATIONS is this_turn, your_next_end_step, end_of_your_next_turn and later_turns; the first three expire, and later_turns (Plot) forbids playing on the current turn, but Elder Brain's cards are playable immediately during the same combat/second main phase
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elder Brain** (rank 3807) — `elder_brain`
-  - You may play lands and cast spells from among the exiled cards for as long as they remain exiled.
-  - If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.
-
-</details>
-
-## protection-from-colors-outside-commander-identity
-
-Blocks **1** card.
-
-- **(static_effect)** a `protection` static whose colour set is computed at runtime as the five colours minus the colours in the controller's commander(s)' color identity (e.g. `from_colors_outside_commander_identity: true`), applied to the equipped creature via `affects: {attached: ...}`; with no commander, protection from all five colours
-  <br>Why the existing vocabulary won't do: The `protection` static and `grant_protection` op take `from_colors` as a fixed printed list only; `commander_color_identity` exists as a value key (a count) and as `in_commander_identity` on `add_mana`, but nothing turns the commander's identity into a colour set for protection. The +3/+3 (`buff` on attached), Equip {5} and Equip commander {3} (`attach` with an `is_commander` target selector, sorcery speed) are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Commander's Plate** (rank 491) — `commander_s_plate`
-  - Equipped creature gets +3/+3 and has protection from each color that's not in your commander's color identity.
-
-</details>
-
-## put-on-bottom-any-order
-
-Blocks **1** card.
-
-- **(decision)** moving several cards to the bottom of a library lets the owning player choose their relative order (a library-ordering decision for a multi-card tuck), not the engine's pool order
-  <br>Why the existing vocabulary won't do: put_on_top with bottom: true resolves its selector via choose_objects, which for count 'all' returns the pool in hand order and moves each card with to_index=None; no prompt ever asks the player to order the cards. scry/look_at_top order only cards taken from the top of the library, not cards from hand
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi's Puzzle Box** (rank 1922) — `teferi_s_puzzle_box`
-  - At the beginning of each player's draw step, that player puts the cards in their hand on the bottom of their library in any order, then draws that many cards.
-
-</details>
-
-## replace-life-gain
-
-Blocks **1** card.
-
-- **(replacement)** a player-wide static replacement effect that modifies each life gain event for the affected player (affects_player: "you"), multiplying the amount gained by a gain_multiplier (2 here: Alhammarret's Archive, Boon Reflection, Rhox Faithmender)
-  <br>Why the existing vocabulary won't do: replace_life_loss with loss_multiplier only replaces life loss, and replace_draw / replace_token_creation cover other events; the you_gain_life trigger with gain_life would be a separate triggered gain (uses the stack, triggers life-gain triggers twice, and is not a replacement), which is an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Alhammarret's Archive** (rank 981) — `alhammarret_s_archive`
-  - If you would gain life, you gain twice that much life instead.
-
-</details>
-
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -665,21 +448,6 @@ Blocks **1** card.
 
 </details>
 
-## spend-mana-as-any-color
-
-Blocks **1** card.
-
-- **(engine)** a cast permission flag meaning "you may spend mana as though it were mana of any color to cast it": coloured pips may be paid with mana of any colour, but colourless mana still pays only generic/{C}
-  <br>Why the existing vocabulary won't do: grant_playable's `any_type` relaxes cost via ManaCost.as_any_type, which folds every coloured pip into generic so colourless mana can pay {B} -- that is "mana of any type" (Valigarmanda), strictly broader than "as though it were mana of any color"
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elder Brain** (rank 3807) — `elder_brain`
-  - You may play lands and cast spells from among the exiled cards for as long as they remain exiled.
-  - If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.
-
-</details>
-
 ## target-ability-on-stack
 
 Blocks **1** card.
@@ -694,21 +462,6 @@ Blocks **1** card.
 
 </details>
 
-## triggered-mana-on-tap
-
-Blocks **1** card.
-
-- **(static_effect)** a mana-choke-point effect for 'whenever you tap a <filtered land> for mana, add <fixed mana>': a filter on which lands count (subtypes Swamp) and a fixed mana string to add ({B}), resolved immediately inside payment like a mana ability (Crypt Ghast, Gauntlet of Power's land half, Wild Growth-style riders)
-  <br>Why the existing vocabulary won't do: double_land_mana is a boolean player static (player_doubles_land_mana) with no land filter and it adds one mana of the type the land produced, not a fixed {B}; there is no 'tapped_for_mana' trigger_event, and an add_mana ability needs to be activated rather than fired off another permanent's mana ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crypt Ghast** (rank 526) — `crypt_ghast`
-  - Whenever you tap a Swamp for mana, add an additional {B}.
-  - Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)
-
-</details>
-
 ## variant-dependent-targets
 
 Blocks **1** card.
@@ -720,19 +473,5 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
-
-</details>
-
-## wicked-role
-
-Blocks **1** card.
-
-- **(token)** A Wicked Role token: a colorless Aura enchantment token with subtype Role, 'Enchant creature', 'Enchanted creature gets +1/+1.' and 'When this token is put into a graveyard, each opponent loses 1 life.' — created attached to a named creature (the one just returned), obeying the Role rule (303.7a: if a creature has more than one Role controlled by the same player attached, all but the newest go to the graveyard)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and contains no Role or any Aura token at all; create_token carries `as` so a following `attach` could bind it, but there is no token to create, and nothing in the reference implements the one-Role-per-controller-per-creature state-based rule
-
-<details><summary>Cards waiting on this</summary>
-
-- **Not Dead After All** (rank 1099) — `not_dead_after_all`
-  - Until end of turn, target creature you control gains "When this creature dies, return it to the battlefield tapped under its owner's control, then create a Wicked Role token attached to it."
 
 </details>

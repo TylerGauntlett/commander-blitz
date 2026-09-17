@@ -161,6 +161,10 @@
       "graveyard"
     ]
   },
+  "alhammarret_s_archive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alley_strangler": {
     "zone": "battlefield"
   },
@@ -560,6 +564,13 @@
   },
   "balduvian_bears": {
     "zone": "battlefield"
+  },
+  "baleful_mastery": {
+    "battlefield_count": 31,
+    "library_size": {
+      "1": 20
+    },
+    "zone": "graveyard"
   },
   "baleful_strix": {
     "hand_size": {
@@ -1586,6 +1597,10 @@
   "combat_celebrant": {
     "zone": "battlefield"
   },
+  "commander_s_plate": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "commander_sofia_daguerre": {
     "graveyard_size": {
       "1": 1
@@ -1775,6 +1790,10 @@
     "zone": "battlefield"
   },
   "crumbling_necropolis": {
+    "zone": "battlefield"
+  },
+  "crypt_ghast": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "crypt_of_the_eternals": {
@@ -2356,6 +2375,9 @@
   "ekundu_griffin": {
     "zone": "battlefield"
   },
+  "elder_brain": {
+    "zone": "battlefield"
+  },
   "elder_deep_fiend": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2541,6 +2563,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "erebos_god_of_the_dead": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "erkenbrand_lord_of_westfold": {
     "battlefield_count": 33,
@@ -3661,6 +3687,14 @@
   "graven_cairns": {
     "zone": "battlefield"
   },
+  "gray_merchant_of_asphodel": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 42,
+      "1": 38
+    },
+    "zone": "battlefield"
+  },
   "gray_ogre": {
     "zone": "battlefield"
   },
@@ -4469,6 +4503,9 @@
     }
   },
   "jwari_scuttler": {
+    "zone": "battlefield"
+  },
+  "k_rrik_son_of_yawgmoth": {
     "zone": "battlefield"
   },
   "kabira_crossroads": {
@@ -5886,6 +5923,12 @@
   "norwood_ranger": {
     "zone": "battlefield"
   },
+  "not_dead_after_all": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "nourish": {
     "life": {
       "0": 46
@@ -5941,6 +5984,14 @@
     "tokens": {
       "count": 2,
       "id": "human_soldier_1_1_w"
+    },
+    "zone": "battlefield"
+  },
+  "ob_nixilis_reignited": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
     },
     "zone": "battlefield"
   },
@@ -6246,6 +6297,18 @@
       "0": 2
     },
     "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "peer_into_the_abyss": {
+    "hand_size": {
+      "0": 21
+    },
+    "library_size": {
+      "0": 20
+    },
+    "life": {
+      "0": 20
+    },
     "zone": "graveyard"
   },
   "peerless_ropemaster": {
@@ -8686,6 +8749,10 @@
     "battlefield_count": 0,
     "zone": "exile"
   },
+  "teferi_s_puzzle_box": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tempest_drake": {
     "zone": "battlefield"
   },
@@ -9866,6 +9933,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "well_of_lost_dreams": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wetland_sambar": {
     "zone": "battlefield"
   },
@@ -10066,6 +10137,10 @@
       "0": 1
     },
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "witch_of_the_moors": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "witch_s_familiar": {

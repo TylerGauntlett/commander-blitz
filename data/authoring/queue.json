@@ -5972,12 +5972,12 @@
     },
     "Alhammarret's Archive": {
       "edhrec_rank": 981,
-      "gate": "template",
+      "gate": null,
       "name": "Alhammarret's Archive",
-      "reason": "no template for: If you would gain life, you gain twice that much life instead",
+      "reason": "",
       "scryfall_id": "95d65164-0ce3-40cd-a647-7e7f355a5afb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Alhammarret, High Arbiter": {
@@ -19292,12 +19292,12 @@
     },
     "Baleful Mastery": {
       "edhrec_rank": 1360,
-      "gate": "template",
+      "gate": null,
       "name": "Baleful Mastery",
-      "reason": "no template for: You may pay {1}{B} rather than pay this spell's mana cost",
+      "reason": "",
       "scryfall_id": "579e20e7-1395-4a6c-a836-ae3419fc8808",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Baleful Stare": {
@@ -50492,12 +50492,12 @@
     },
     "Commander's Plate": {
       "edhrec_rank": 491,
-      "gate": "template",
+      "gate": null,
       "name": "Commander's Plate",
-      "reason": "no template for: Equipped creature gets +3/+3 and has protection from each color that's not in your command",
+      "reason": "",
       "scryfall_id": "228abefc-9f64-4d64-ad58-41b0201eb82e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Commanding Presence": {
@@ -57022,12 +57022,12 @@
     },
     "Crypt Ghast": {
       "edhrec_rank": 526,
-      "gate": "template",
+      "gate": null,
       "name": "Crypt Ghast",
-      "reason": "no template for: Extort",
+      "reason": "",
       "scryfall_id": "8f98d41c-f7c7-4bbe-a691-d024d1a4b48f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Crypt Incursion": {
@@ -79562,12 +79562,12 @@
     },
     "Elder Brain": {
       "edhrec_rank": 3807,
-      "gate": "template",
+      "gate": null,
       "name": "Elder Brain",
-      "reason": "no template for: Whenever this creature attacks a player, exile all cards from that player's hand, then the",
+      "reason": "",
       "scryfall_id": "14e49d20-170a-4b6a-ac82-d3ceaab226ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Elder Cathar": {
@@ -84822,12 +84822,12 @@
     },
     "Erebos, God of the Dead": {
       "edhrec_rank": 2932,
-      "gate": "template",
+      "gate": null,
       "name": "Erebos, God of the Dead",
-      "reason": "no template for: As long as your devotion to black is less than five, Erebos isn't a creature",
+      "reason": "",
       "scryfall_id": "ac8bdb4c-2d68-4cb4-904f-1649427751dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Erestor of the Council": {
@@ -116072,12 +116072,12 @@
     },
     "Gray Merchant of Asphodel": {
       "edhrec_rank": 244,
-      "gate": "template",
+      "gate": null,
       "name": "Gray Merchant of Asphodel",
-      "reason": "no template for: When this creature enters, each opponent loses X life, where X is your devotion to black. ",
+      "reason": "",
       "scryfall_id": "aabe12dc-59b7-4245-8369-9bfc6304cda8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gray Ogre": {
@@ -143742,12 +143742,12 @@
     },
     "K'rrik, Son of Yawgmoth": {
       "edhrec_rank": 1070,
-      "gate": "template",
+      "gate": null,
       "name": "K'rrik, Son of Yawgmoth",
-      "reason": "no template for: For each {B} in a cost, you may pay 2 life rather than pay that mana",
+      "reason": "",
       "scryfall_id": "45393005-78c7-4056-9ce6-310264922af3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "K'un-Lun Warrior": {
@@ -187352,12 +187352,12 @@
     },
     "Not Dead After All": {
       "edhrec_rank": 1099,
-      "gate": "template",
+      "gate": null,
       "name": "Not Dead After All",
-      "reason": "no template for: Until end of turn, target creature you control gains \"When this creature dies, return it t",
+      "reason": "",
       "scryfall_id": "d01a2b68-efe6-4027-846d-db7b19d9eef6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Not Forgotten": {
@@ -188822,12 +188822,12 @@
     },
     "Ob Nixilis Reignited": {
       "edhrec_rank": 4266,
-      "gate": "template",
+      "gate": null,
       "name": "Ob Nixilis Reignited",
-      "reason": "no template for: +1: You draw a card and you lose 1 life",
+      "reason": "",
       "scryfall_id": "5af237ad-9294-47f5-a338-f9ca4fce3e70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ob Nixilis Reignited Emblem": {
@@ -197762,12 +197762,12 @@
     },
     "Peer into the Abyss": {
       "edhrec_rank": 1264,
-      "gate": "template",
+      "gate": null,
       "name": "Peer into the Abyss",
-      "reason": "no template for: Target player draws cards equal to half the number of cards in their library and loses hal",
+      "reason": "",
       "scryfall_id": "a0f24135-69fb-41fc-9835-dc441fd60cf5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Peerless Recycling": {
@@ -274332,12 +274332,12 @@
     },
     "Teferi's Puzzle Box": {
       "edhrec_rank": 1922,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi's Puzzle Box",
-      "reason": "no template for: At the beginning of each player's draw step, that player puts the cards in their hand on t",
+      "reason": "",
       "scryfall_id": "6a7c98eb-3b75-43c3-843c-25fb93c1b8af",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Teferi's Realm": {
@@ -310832,12 +310832,12 @@
     },
     "Well of Lost Dreams": {
       "edhrec_rank": 1125,
-      "gate": "template",
+      "gate": null,
       "name": "Well of Lost Dreams",
-      "reason": "no template for: Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of li",
+      "reason": "",
       "scryfall_id": "aa00103a-6b87-416a-869a-557702844200",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Well-Laid Plans": {
@@ -314682,12 +314682,12 @@
     },
     "Witch of the Moors": {
       "edhrec_rank": 2574,
-      "gate": "template",
+      "gate": null,
       "name": "Witch of the Moors",
-      "reason": "no template for: At the beginning of your end step, if you gained life this turn, each opponent sacrifices ",
+      "reason": "",
       "scryfall_id": "d9367aa0-2da2-4ed5-b52a-c52e40a00adf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Witch's Cauldron": {
