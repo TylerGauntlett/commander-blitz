@@ -3107,6 +3107,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ghostly_prison": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ghostly_sentinel": {
     "zone": "battlefield"
   },
