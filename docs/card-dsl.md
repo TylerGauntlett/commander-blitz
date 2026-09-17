@@ -1060,7 +1060,25 @@ Anywhere a number is expected:
               "parity": "even" } }              //    ("odd" is the other half)
 { "rolled": { "binding": "roll", "face": 6 } }  // …how many came up 6
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
+{ "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
 ```
+
+`half` is the one division in the language, and it takes its rounding direction
+as a **required** key: 107.1a makes the card say which way a fraction goes, and
+both directions are printed (Peer into the Abyss rounds up, Heartless
+Hidetsugu rounds down), so a default would be wrong for half the cards that use
+it. Peer into the Abyss is two of them, each read as its own instruction runs:
+
+```jsonc
+{ "op": "draw", "player": { "target": "t1" },
+  "amount": { "half": { "of": { "count": { "zone": "library", "player": { "target": "t1" } } },
+                        "round": "up" } } },
+{ "op": "lose_life", "player": { "target": "t1" },
+  "amount": { "half": { "of": { "life_of": { "target": "t1" } }, "round": "up" } } }
+```
+
+Not a static magnitude (`static_value_keys` does not list it); no static prints a
+halving.
 
 `power_had` and `toughness_had` take no argument: they are always "the creature
 this trigger is about", the only object the death event snapshotted. `power_of

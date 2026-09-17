@@ -1,0 +1,27 @@
+{
+  "_comment": "The Peer into the Abyss shape: half of a library and half of a life total, each rounded up, each read as its own instruction is performed.",
+  "cards": [
+    {
+      "id": "t_peer",
+      "name": "Test Peer",
+      "oracle_text": "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "any"}}],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": {"target": "t1"},
+          "amount": {"half": {"of": {"count": {"zone": "library", "player": {"target": "t1"}}}, "round": "up"}}
+        },
+        {
+          "op": "lose_life",
+          "player": {"target": "t1"},
+          "amount": {"half": {"of": {"life_of": {"target": "t1"}}, "round": "up"}}
+        }
+      ]
+    }
+  ]
+}

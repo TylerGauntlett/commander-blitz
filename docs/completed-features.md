@@ -12859,3 +12859,31 @@ loss that is not a gain, gain-then-loss, per player, zero, a locked total and
 spelling, an end-step trigger against a real turn with and without a gain and
 with a gain made before the permanent entered, and the tally gone next turn.
 Witch of the Moors is authored whole.
+
+## `half` — "half …, round up" — 107.1a
+
+### Overview
+
+Peer into the Abyss: *"Target player draws cards equal to **half** the number of
+cards in their library and loses **half** their life. **Round up** each time."*
+
+### Why the existing vocabulary would not do
+
+`value_keys` had `sum`, `minus`, `times`, `max` and `min` — no division and no
+rounding — so ceil(n/2) could not be built. `count` and `life_of` already read
+the library and the life total; only the halving was missing.
+
+### The shape
+
+- **`{"half": {"of": <value>, "round": "up" | "down"}}`** in `values.VALUE_KEYS`,
+  evaluated with floor division (negated around it for the ceiling).
+- **`validate_half`**: `of` required, `round` required and one of
+  `HALF_ROUNDING`, no other keys. A default direction is refused because both are
+  printed (107.1a), and the wrong one is invisible on every even number.
+
+### Guarded by
+
+`tests/unit/test_half_rounded.py`: Peer end to end on odd and even libraries and
+life totals, one life (lost entirely), an empty library (still costs life); both
+directions over 0, 1, 2, 7, 40 and a negative; composition inside and around
+`sum`; and every loader refusal.

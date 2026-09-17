@@ -108,6 +108,11 @@ VALUE_KEYS = frozenset(
         "sum",
         "minus",
         "times",
+        # "…draws cards equal to **half** the number of cards in their library
+        # and loses **half** their life. **Round up** each time." -- Peer into
+        # the Abyss. Rule 107.1a: a fractional result is rounded the way the
+        # card says, so the direction is part of the node and not a default.
+        "half",
         "max",
         "min",
         "loop_value",
@@ -177,6 +182,12 @@ VALUE_KEYS = frozenset(
         "rolled",
     }
 )
+
+#: Rule 107.1a: "If a spell or ability could generate a fractional number, the
+#: spell or ability will tell you whether to round up or down." Both directions
+#: are printed -- Peer into the Abyss rounds up, and Heartless Hidetsugu's "half
+#: that player's life total, rounded down" is the other.
+HALF_ROUNDING = ("up", "down")
 
 #: The two face predicates ``{"rolled": …}` understands, beyond the bare count
 #: of dice thrown. `parity` is "for each even result"; `face` is "you rolled 6
@@ -531,6 +542,15 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         for e in expr["times"]:
             result *= evaluate_value(ctx, e)
         return result
+    if "half" in expr:
+        # Floor division, negated around for the ceiling, so an odd number
+        # rounds the printed way and an even one is exact either way. A
+        # negative life total halves towards the direction printed too, and the
+        # op reading it (a loss of a negative amount) does nothing, which is
+        # 107.1b.
+        spec = expr["half"]
+        n = evaluate_value(ctx, spec.get("of"))
+        return -(-n // 2) if spec.get("round") == "up" else n // 2
     if "max" in expr:
         return max((evaluate_value(ctx, e) for e in expr["max"]), default=0)
     if "min" in expr:
@@ -956,6 +976,27 @@ def validate_entered_filter(spec: Any, where: str) -> None:
         raise DslError(f"{where}.exclude_self: must be true or false")
 
 
+def validate_half(spec: Any, where: str) -> None:
+    """``{"half": {"of": <value>, "round": "up" | "down"}}``.
+
+    The direction is required, not defaulted: 107.1a makes the card say which
+    way to round, and a default would quietly pick one for the card that printed
+    the other -- on Peer into the Abyss a 7-card library draws 4, not 3.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: half takes an object with 'of' and 'round'")
+    if unknown := set(spec) - {"of", "round"}:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)} (half takes 'of' and 'round')")
+    if "of" not in spec:
+        raise DslError(f"{where}.of: half of what -- a value expression is required")
+    if spec.get("round") not in HALF_ROUNDING:
+        raise DslError(
+            f"{where}.round: must be one of {list(HALF_ROUNDING)} -- the card says which "
+            f"way to round (107.1a), got {spec.get('round')!r}"
+        )
+    validate_value(spec["of"], f"{where}.of")
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -975,6 +1016,8 @@ def validate_value(expr: Any, where: str) -> None:
                 raise DslError(f"{where}: {key} takes a list")
             for i, sub in enumerate(expr[key]):
                 validate_value(sub, f"{where}.{key}[{i}]")
+    if "half" in expr:
+        validate_half(expr["half"], f"{where}.half")
     if "count" in expr:
         from .selectors import validate_selector
 
