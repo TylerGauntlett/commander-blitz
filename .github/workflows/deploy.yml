@@ -111,14 +111,25 @@ jobs:
       # which specs failed, not which shard reached the failure first.
       fail-fast: false
       matrix:
+        # Five, not four. Playwright balances shards by test COUNT and keeps a
+        # file's tests together, and the big specs (pod, cycle3, action-panel)
+        # are lumpy enough that `--shard=i/4` leaves one leg carrying 42 of the
+        # 125 tests -- exactly what `i/3` leaves it carrying, so the fourth
+        # runner buys nothing at all. Measured with `--list`, per leg:
+        #   n=3: 42 42 41    n=4: 42 26 40 17    n=5: 28 25 31 24 17
+        # Five puts the longest leg at 31, which is about what the `python` job
+        # takes, and that is the floor worth aiming at -- below it the pull
+        # request waits on something else anyway.
+        #
         # `shards: 1` on the small projects rather than omitting it, so the run
         # command, the report name and the artifact name are one shape
         # everywhere. Playwright accepts --shard=1/1.
         include:
-          - { project: chromium, shard: 1, shards: 4 }
-          - { project: chromium, shard: 2, shards: 4 }
-          - { project: chromium, shard: 3, shards: 4 }
-          - { project: chromium, shard: 4, shards: 4 }
+          - { project: chromium, shard: 1, shards: 5 }
+          - { project: chromium, shard: 2, shards: 5 }
+          - { project: chromium, shard: 3, shards: 5 }
+          - { project: chromium, shard: 4, shards: 5 }
+          - { project: chromium, shard: 5, shards: 5 }
           - { project: handheld, shard: 1, shards: 1 }
           - { project: deckfit, shard: 1, shards: 1 }
     steps:

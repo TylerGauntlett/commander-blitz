@@ -95,7 +95,7 @@ check that says whether all of it passed:
 | `python` | `--only pytest --coverage --jobs 2` | the four suites and the 92% floor, under xdist |
 | `sim` | `--only sim` | the arena and the live server; no Node on the box at all |
 | `frontend` | `--only frontend --coverage` | build, lint, and the one vitest process that merges jsdom with both story projects |
-| `e2e` | `--only e2e --e2e-project P --e2e-shard i/n` | six legs: chromium sharded four ways, plus handheld and deckfit |
+| `e2e` | `--only e2e --e2e-project P --e2e-shard i/n` | seven legs: chromium sharded five ways, plus handheld and deckfit |
 
 **Sharding is the only parallelism this suite tolerates.** `workers` stays at 1 in
 `playwright.config.ts` because the app's motion is frame-driven and the runner
@@ -120,11 +120,13 @@ nobody notices.
 
 Two things about this are known and deliberately left alone:
 
-- **Shards are balanced by test count, not duration.** Playwright keeps a file's
-  tests together, and `pod.spec.ts`, `cycle3.spec.ts` and `action-panel.spec.ts`
-  are large, so one chromium leg can become the long pole. If the four legs spread
-  by more than about 2x, raise the shard count or split the heaviest file onto its
-  own leg.
+- **Shards are balanced by test count, not duration**, and Playwright keeps a
+  file's tests together, so the big specs (`pod`, `cycle3`, `action-panel`) make
+  the split lumpy. `--shard=i/4` left one leg carrying 42 of the 125 chromium
+  tests — the same long pole `i/3` leaves, so the fourth runner bought nothing.
+  Five legs put the longest at 31. Re-measure with
+  `npx playwright test --project=chromium --shard=i/n --list` after adding specs;
+  it costs nothing, because `--list` runs no tests.
 - **`E2E_SLOW=2` is now headroom rather than necessity.** It doubles every budget
   because the suite used to run after two Storybook browsers on the same box; on a
   dedicated runner it no longer does. Lowering it is a separate change, made and
