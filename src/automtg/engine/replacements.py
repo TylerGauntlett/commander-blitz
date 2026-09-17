@@ -156,7 +156,7 @@ def _dredge(state: GameState, pid: int) -> Generator[Any, list[int], bool]:
     return True
 
 
-def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], None]:
+def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     """"…when you draw it, if it's the first card you drew this turn."
 
     The card is revealed either way: 702.94a makes the reveal the trigger's
@@ -170,7 +170,7 @@ def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], 
     yield from _offer_cast(state, pid, oid, card.miracle, "miracle")
 
 
-def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], None]:
+def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     """"If you would discard this card, exile it instead."
 
     The exile happens whether or not the cast is taken, and that is the half a

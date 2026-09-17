@@ -527,7 +527,7 @@ def drop_illegal_attacks(state: GameState) -> list[int]:
     return dropped
 
 
-def finish_attackers(state: GameState) -> Generator[Any, list[int], None]:
+def finish_attackers(state: GameState) -> Generator[Any, list[int]]:
     """Lock in the attack: form bands, tap the attackers and fire their triggers.
 
     A generator because of the bands, and only because of them: 702.21b puts the
@@ -1162,7 +1162,7 @@ def _deals_damage_this_step(state: GameState, oid: int, first_strike_step: bool)
 
 def deal_combat_damage(
     state: GameState, *, first_strike_step: bool
-) -> Generator[Any, list[int], None]:
+) -> Generator[Any, list[int]]:
     """Collect every assignment, then apply them all at once.
 
     A generator because of banding, and only because of it: 702.21 moves the
@@ -1347,7 +1347,7 @@ def _monarch_transfer(
             return
 
 
-def _declare_bands(state: GameState) -> Generator[Any, list[int], None]:
+def _declare_bands(state: GameState) -> Generator[Any, list[int]]:
     """"One or more attacking creatures with banding and up to one without" (702.21b).
 
     Asked as **two** questions rather than one, because that sentence is two
