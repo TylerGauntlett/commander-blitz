@@ -18,7 +18,7 @@ from .characteristics import (
     printed_token_matches,
     token_creation_replacements,
 )
-from .enums import Keyword, Zone
+from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
 from .state import new_object
@@ -71,6 +71,13 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         # card can never be drawn without the tally seeing it.
         nth = state.cards_drawn_this_turn.get(pid, 0) + 1
         state.cards_drawn_this_turn[pid] = nth
+        # "…except the first one you draw in each of your draw steps." A card,
+        # not an attempt: counted here, after the move, so a dredged draw (which
+        # never reaches this function) leaves the next draw still the first.
+        if state.step is Step.DRAW:
+            state.cards_drawn_this_draw_step[pid] = (
+                state.cards_drawn_this_draw_step.get(pid, 0) + 1
+            )
         # "Whenever you draw your **second** card each turn." The ordinal of
         # *this* draw, put on the event so the answer is fixed where the ability
         # queues. The tally itself cannot be asked later: it keeps moving, and a
@@ -637,65 +644,92 @@ def spend_shield_counter(state: GameState, oid: int, *, source: int | None = Non
 
 def _token_creation_plan(
     state: GameState, def_id: str, controller: int, count: int
-) -> list[tuple[str, int]] | None:
+) -> list[tuple[str, int, bool]] | None:
     """What this token creation actually creates, after the `replace_token_creation`
-    statics ``controller`` has on the battlefield have had their say.
+    statics that reach ``controller`` have had their say.
 
-    Academy Manufactor ("if you would create a Clue, Food, or Treasure token,
-    instead create one of each") and Divine Visitation ("if one or more creature
-    tokens would be created under your control, that many 4/4 Angels are created
-    instead") are two printed sentences and one mechanism: **each token that was
-    about to be made becomes one of each id in ``create_instead``**.  Manufactor
-    lists three ids, so one Treasure becomes a Clue, a Food and a Treasure;
-    Divine Visitation lists one, so N Soldiers become N Angels and the count is
-    preserved for free.  There is no count multiplier and no mode flag, because
-    neither card needs one.
+    Each entry is ``(token id, how many, substituted)``.  ``substituted`` is
+    whether the entry is a *different* token from the one the creating effect
+    asked for -- which is what decides whether that effect's ``overrides`` still
+    describe it (see `create_token`).
+
+    The static has two axes, and a card uses exactly one of them:
+
+    - **``create_instead`` -- identity.**  Academy Manufactor ("if you would
+      create a Clue, Food, or Treasure token, instead create one of each") and
+      Divine Visitation ("if one or more creature tokens would be created under
+      your control, that many 4/4 Angels are created instead") are two printed
+      sentences and one mechanism: *each token that was about to be made becomes
+      one of each id in ``create_instead``*.  Manufactor lists three ids, so one
+      Treasure becomes a Clue, a Food and a Treasure; Divine Visitation lists
+      one, so N Soldiers become N Angels and the count is preserved for free.
+    - **``token_multiplier`` -- count.**  Doubling Season, Parallel Lives,
+      Anointed Procession, Bard, King of Dale: "twice that many **of those
+      tokens** are created instead".  The pending entry keeps its id -- and so
+      its ``overrides``, which is what makes a doubled copy token two copies
+      rather than a copy and a plain card -- and its count is multiplied.  The
+      card names no token, so no id could be written in ``create_instead``, and
+      listing one there would convert every other token into it.
 
     **What this is not.** It is not rule 616 and it is not a general replacement
     system.  There is no event object, nothing else in the engine can be
-    replaced, the affected player is never asked to order two replacements
-    (616.1), and nothing outside `create_token` consults these statics.
-    ``docs/rules-coverage.md`` records the general system as engine work that has
-    not been done; this is the one narrow hook the two cards above need, and a
-    third card of a different shape -- a count multiplier such as Doubling
-    Season, or a replacement of anything other than a token creation -- is more
-    engine work rather than a new row in a card file.
+    replaced, and nothing outside `create_token` consults these statics.
+    ``docs/rules-coverage.md`` records the general system as engine work that
+    has not been done.
 
-    Two rules the shape of the loop is entirely about:
+    Three rules the shape of the loop is entirely about:
 
     - **614.5, a replacement applies at most once to a given event.**  One pass
       over a fixed list of statics, each one seeing the plan as the statics
       before it left it.  So a Divine Visitation does not re-apply to the Angels
       it just made -- which is not an optimisation, it is the difference between
-      this card and an infinite loop -- and two Academy Manufactors turn one
-      Treasure into three of each rather than into nothing terminating.
-    - **The replacement is the *token's controller's*.**  Both cards say "you",
-      so a Divine Visitation across the table does not touch your Soldiers, and
-      the list is gathered for ``controller`` rather than for whoever controls
-      the effect that is creating the token.
+      this card and an infinite loop -- two Academy Manufactors turn one
+      Treasure into three of each rather than into nothing terminating, and a
+      Parallel Lives doubles a creation once, not its own doubled output again.
+    - **Several doublers compound.**  Each is a separate replacement of the one
+      event, each applied once, each to the event as the last one modified it:
+      one token under two doublers is 2 then 4, under three is 8.  The product
+      is the same in whatever order they apply, which is why 616.1's "the
+      affected player chooses the order" -- which this engine does not ask,
+      applying in battlefield order instead -- is invisible between doublers,
+      and between a doubler and an unfiltered substitution.  It is *not*
+      invisible between a filtered doubler and a substitution that changes
+      whether the filter matches (a Treasure-only doubler and a Manufactor); no
+      printed doubler filters that way today, and the divergence is recorded in
+      ``docs/rules-coverage.md``.
+    - **The replacement belongs to the *token's controller*.**  Every printed
+      card says "under your control" or "you", so the list is gathered for
+      ``controller`` -- the player the token arrives under -- rather than for
+      whoever controls the effect that is creating it: a Bard doubles the Elk an
+      opponent's Beast Within gives you, and not the token you give them.
+      ``affects_player: "any"`` is Primal Vigor, whose sentence names nobody.
 
     ``None`` means nothing applied, which is every token creation in a game
-    where neither card is on the battlefield: the caller then takes the original
-    path unchanged, ``overrides`` and all.
+    where none of these cards is on the battlefield: the caller then takes the
+    original path unchanged, ``overrides`` and all.
     """
     if count <= 0:
         return None
     statics = token_creation_replacements(state, controller)
     if not statics:
         return None
-    plan = [(def_id, count)]
+    plan: list[tuple[str, int, bool]] = [(def_id, count, False)]
     replaced = False
     for static in statics:
         selector = static.get("affects_token") or {}
         substitutes = static.get("create_instead") or ()
-        after: list[tuple[str, int]] = []
+        multiplier = int(static.get("token_multiplier") or 1)
+        after: list[tuple[str, int, bool]] = []
         matched = False
-        for pending_id, pending_count in plan:
-            if printed_token_matches(state, pending_id, selector):
-                matched = True
-                after.extend((str(sub), pending_count) for sub in substitutes)
+        for pending_id, pending_count, substituted in plan:
+            if not printed_token_matches(state, pending_id, selector):
+                after.append((pending_id, pending_count, substituted))
+                continue
+            matched = True
+            if substitutes:
+                after.extend((str(sub), pending_count, True) for sub in substitutes)
             else:
-                after.append((pending_id, pending_count))
+                after.append((pending_id, pending_count * multiplier, substituted))
         if matched:
             plan = after
             replaced = True
@@ -711,6 +745,7 @@ def create_token(
     tapped: bool = False,
     attacking: int | None = None,
     overrides: dict[str, Any] | None = None,
+    source: int | None = None,
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -728,18 +763,23 @@ def create_token(
     one place in the engine that consults them, because it is the one place a
     token creation can still be intercepted.  Everything the *creating effect*
     said about the token still applies to whatever is created instead -- tapped,
-    and attacking, which is the printed ruling -- but ``overrides`` do not: they
-    describe the token that was replaced and never made, so a substituted
-    creation drops them rather than painting somebody else's exception onto an
-    Angel.
+    and attacking, which is the printed ruling -- but ``overrides`` do not
+    survive a *substitution*: they describe the token that was replaced and
+    never made, so a substituted entry drops them rather than painting somebody
+    else's exception onto an Angel.  A *multiplied* entry keeps them, because
+    "twice that many of those tokens" are still those tokens: a doubled embalm
+    copy is two white Zombie copies.
+
+    ``source`` is the object whose effect is creating the tokens, and each one
+    is recorded in its `created_tokens` -- "tokens created with this creature"
+    (Faerie Artisans). A substituted token is recorded too: it is still the
+    token that effect created.
     """
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
-        plan = [(def_id, count)]
-    else:
-        overrides = None
+        plan = [(def_id, count, False)]
     made: list[int] = []
-    for token_id, token_count in plan:
+    for token_id, token_count, substituted in plan:
         for _ in range(max(0, token_count)):
             obj = new_object(
                 state,
@@ -749,8 +789,13 @@ def create_token(
                 controller=controller,
                 is_token=True,
             )
-            if overrides:
+            if overrides and not substituted:
                 obj.copy_overrides = dict(overrides)
+            # Before the move, so the token's own enters-triggers already see
+            # which object created it.
+            creator = state.objects.get(source) if source is not None else None
+            if creator is not None:
+                creator.created_tokens.add(obj.oid)
             # The token is created "nowhere" and then enters the battlefield, so
             # ETB triggers and enters-tapped replacements run through the normal
             # path.

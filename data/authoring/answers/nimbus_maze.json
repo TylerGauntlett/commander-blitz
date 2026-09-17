@@ -1,0 +1,81 @@
+{
+  "card": {
+    "id": "nimbus_maze",
+    "name": "Nimbus Maze",
+    "oracle_text": "{T}: Add {C}.\n{T}: Add {W}. Activate only if you control an Island.\n{T}: Add {U}. Activate only if you control a Plains.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {W}. Activate only if you control an Island.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "condition": {
+          "exists": {
+            "zone": "battlefield",
+            "controller": "you",
+            "subtypes": [
+              "Island"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{W}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U}. Activate only if you control a Plains.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "condition": {
+          "exists": {
+            "zone": "battlefield",
+            "controller": "you",
+            "subtypes": [
+              "Plains"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{U}"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

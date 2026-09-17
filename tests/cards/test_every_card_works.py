@@ -304,6 +304,7 @@ class TestActivatedAbilities:
                 game.state.battlefield.append(oid)
             else:
                 game.state.players[0].zone_list(zone).append(oid)
+            _reach_the_level(game, oid, ability)
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
             _provide_the_sacrifice(game, registry, ability)
@@ -317,6 +318,7 @@ class TestActivatedAbilities:
             game.state.bump_chars()
             game._advance()
             _provide_the_attacker(game, registry, ability)
+            _satisfy_the_attack_count(game, registry, ability)
 
             action = next(
                 (
@@ -346,6 +348,24 @@ def _home_zone(ability) -> Zone:
     """
     zones = ability.active_zones or (Zone.BATTLEFIELD,)
     return Zone.BATTLEFIELD if Zone.BATTLEFIELD in zones else zones[0]
+
+
+def _reach_the_level(game: Game, oid: int, ability) -> None:
+    """Stand a Class on the rung this ability needs (716).
+
+    Same family as `_pay_the_counters`, and the same argument: "not activatable"
+    must only ever mean the ability is broken. A card put on the battlefield
+    here is a level-1 Class, so every "{3}{W}: Level 3" (activatable only at
+    level 2) and every activated ability printed under level 2 or 3 would report
+    as unusable on a board that simply never bought the levels below it.
+
+    Written onto the object rather than bought through the level lines, as
+    `_pay_the_counters` writes loyalty: this arranges a position. The *lower*
+    rung is still refused -- a level-2 line on a level-2 Class is not offered --
+    so this cannot launder a ladder the engine gets wrong.
+    """
+    needed = max(ability.level or 1, (ability.becomes_level or 2) - 1)
+    game.state.objects[oid].class_level = needed
 
 
 def _afford_the_life(game: Game, ability) -> None:
@@ -391,9 +411,24 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
     # enters-with-counters replacement that carries a planeswalker's starting
     # loyalty never runs. Every minus ability would report as unusable on a
     # board that was never legal.
+    # An ultimate costs more than the printed number -- The Theorist's -6 on a
+    # starting loyalty of 3 -- so stock whichever is larger, as a counter cost
+    # is stocked below.
     loyalty = game.state.registry.get(game.state.objects[oid].def_id).loyalty
     if loyalty is not None:
-        game.state.objects[oid].counters["loyalty"] = loyalty
+        price = getattr(cost, "loyalty", None) if cost else None
+        needed = -int(price) if price is not None and int(price) < 0 else 0
+        game.state.objects[oid].counters["loyalty"] = max(loyalty, needed)
+    # A station striation (721): "12+ | {3}{W}, {T}: …" is an ability the
+    # permanent does not *have* below twelve charge counters, so a Planet placed
+    # with none reported its best line as missing. Stocked to exactly the
+    # number, which is the boundary the gate is written against -- one fewer
+    # and the ability is rightly absent.
+    threshold = getattr(ability, "threshold", None)
+    if threshold is not None:
+        kind, at_least = threshold
+        counters = game.state.objects[oid].counters
+        counters[kind] = max(counters.get(kind, 0), at_least)
     spec = getattr(cost, "remove_counters", None) if cost else None
     if not spec:
         return
@@ -473,6 +508,25 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
     for _ in range(int(spec.get("count", 1) or 1)):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+    # Crew's cost is a total power, not a count: Shorikai's Crew 8 needs eight
+    # power of untapped creatures, and the generic board's two may not reach it.
+    needed = int(spec.get("total_power", 0) or 0)
+    if needed:
+        strong = next(
+            (
+                c
+                for c in sorted(registry, key=lambda c: c.id)
+                if not c.is_token
+                and "Creature" in c.types
+                and isinstance(c.power, int)
+                and c.power > 0
+            ),
+            None,
+        )
+        if strong is not None:
+            for _ in range(-(-needed // strong.power)):
+                fodder = new_object(game.state, strong.id, owner=0, zone=Zone.BATTLEFIELD)
+                game.state.battlefield.append(fodder.oid)
 
 
 def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
@@ -562,6 +616,26 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     # pipeline input the characteristics layer reads the same way the real card
     # would have grown -- and `chars` is what the condition asks, so a card
     # naming the wrong characteristic still fails.
+    # "Activate only if this enchantment has four or more quest counters on it"
+    # -- Luminarch Ascension. Eleventh of the family, and the first activation
+    # condition to count counters on its own source rather than permanents on
+    # the board. `_pay_the_counters` stocks counters a *cost* removes; this is
+    # the same stocking for a condition that only reads them, and the two are
+    # separate because a card can have either without the other.
+    #
+    # Written onto the object rather than through `add_counters` deliberately:
+    # a quest counter arriving is an event some other card could react to, and
+    # this helper is arranging a position rather than playing a turn.
+    if "counters_on" in left:
+        spec = left["counters_on"] or {}
+        objects = spec.get("objects") or {}
+        if not objects.get("self_only"):
+            return
+        kind = str(spec.get("counter", PLUS_ONE))
+        game.state.objects[oid].counters[kind] = int(right["const"])
+        game.state.bump_chars()
+        return
+
     if "power_of" in left:
         want = int(right["const"])
         for _ in range(max(0, want - (chars(game.state, oid).power or 0))):
@@ -787,7 +861,11 @@ def _target_fodder(registry, spec):
     if spec.kind not in ("permanent", "any"):
         return None
     selector = spec.selector
-    types = {str(t) for t in selector.get("types") or ["Creature"]}
+    # "Target artifact **or** enchantment you control" -- Adagia, Windswept
+    # Bastion's 12+ line -- is `any_types`, and read as nothing it defaulted to
+    # a creature neither half accepts. The first listed type is one it does.
+    either = [str(t) for t in selector.get("any_types") or []]
+    types = {str(t) for t in selector.get("types") or either[:1] or ["Creature"]}
     subtypes = {str(s) for s in selector.get("subtypes") or []}
     forbidden = {str(s) for s in selector.get("not_supertypes") or []}
 
@@ -879,43 +957,114 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
     game.state.battlefield.append(attacker.oid)
     game.state.bump_chars()
 
-    # Walk to declare-attackers by passing priority. `_answer` is deliberately
-    # not reused: it declines combat outright, which is the whole thing being
-    # undone here.
+    if _walk_to_declare_attackers(game):
+        _declare_them(game, [attacker.oid])
+
+
+def _walk_to_declare_attackers(game: Game) -> bool:
+    """Pass priority until the declare-attackers decision is on the table.
+
+    `_answer` is deliberately not reused: it declines combat outright, which is
+    the whole thing being undone here. Shared by the two helpers that need the
+    game in combat -- one to point an ability at an attacker, one to satisfy a
+    clause counting how many attacked.
+    """
     for _ in range(40):
         decision = game.pending()
         if decision is None or game.over:
-            return
+            return False
         if decision.kind is DecisionKind.DECLARE_ATTACKERS:
-            break
+            return True
         if decision.kind is not DecisionKind.PRIORITY:
-            return
+            return False
         passing = next(
             (a for a in game.legal_actions() if a.kind is ActionKind.PASS), None
         )
         if passing is None:
-            return
+            return False
         game.apply(passing)
-    else:
-        return
+    return False
 
-    add = next(
-        (
-            a
-            for a in game.legal_actions()
-            if a.kind is ActionKind.ADD_ATTACKER and a.source == attacker.oid
-        ),
-        None,
-    )
-    if add is None:
-        return
-    game.apply(add)
+
+def _declare_them(game: Game, oids: list[int]) -> None:
+    """Declare each oid as an attacker, then close the declaration.
+
+    An oid the engine will not accept is skipped rather than asserted on: this
+    is a helper arranging a position, and "could not build the board" has to
+    stay distinguishable from "the ability is broken". The caller's own
+    assertion is what reports the failure.
+    """
+    for oid in oids:
+        add = next(
+            (
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ADD_ATTACKER and a.source == oid
+            ),
+            None,
+        )
+        if add is not None:
+            game.apply(add)
     finish = next(
         (a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION),
         None,
     )
     if finish is not None:
         game.apply(finish)
+
+
+def _satisfy_the_attack_count(game: Game, registry, ability) -> None:
+    """"Activate only if you attacked with two or more creatures this turn."
+
+    Tenth of the family, and the third that has to satisfy a clause by *doing*
+    the thing rather than by arranging the board -- `TurnLedger` records
+    creatures **declared as attackers**, so stocking the battlefield the way the
+    `count` branch does satisfies nothing, exactly as it satisfies nothing for
+    `permanents_entered_this_turn`.
+
+    Minas Tirith is the witness and is the first card in the pool to print this
+    clause as an *activation* condition. Windbrisk Heights had carried the same
+    value expression for as long, but inside an `if` in the ability's effects --
+    so the ability was always activatable and merely did nothing, and the shape
+    that gates activation itself had never been exercised.
+
+    Runs after `_provide_the_attacker` and reuses its walk, so a card wanting
+    both an attacking target and an attack count gets one trip to combat rather
+    than two. Creatures are made rather than borrowed from the board: the
+    sandbox's own two are props whose printed text is not this test's business,
+    and one of them being unable to attack would read as the ability failing.
+    """
+    condition = getattr(ability, "activation_condition", None)
+    if not isinstance(condition, dict) or "cmp" not in condition:
+        return
+    left, right = condition.get("left") or {}, condition.get("right") or {}
+    if "attackers_this_turn" not in left or "const" not in right:
+        return
+    if str(left["attackers_this_turn"]) != "you":
+        return
+    wanted = int(right["const"])
+    if wanted <= 0:
+        return
+
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token and c.is_creature and not c.keywords
+        ),
+        None,
+    )
+    if match is None:
+        return
+    oids: list[int] = []
+    for _ in range(wanted):
+        attacker = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+        attacker.entered_turn = 0
+        game.state.battlefield.append(attacker.oid)
+        oids.append(attacker.oid)
+    game.state.bump_chars()
+    if _walk_to_declare_attackers(game):
+        _declare_them(game, oids)
 
 
 class TestManaAbilities:

@@ -9,6 +9,7 @@
 import { describe, expect, it } from "vitest";
 import {
   type TypeTone,
+  counterBadges,
   frameTone,
   isPlainLand,
   isWounded,
@@ -366,5 +367,26 @@ describe("shortType", () => {
     // Only a *leading* run comes off. "Creature - Legendary" is not a real card,
     // but the anchoring is the property worth pinning.
     expect(shortType("Enchantment - Snow")).toBe("Enchantment - Snow");
+  });
+});
+
+describe("counterBadges", () => {
+  it("names each kind, with a count past one", () => {
+    const bear = card({ zone: "battlefield", counters: { "+1/+1": 3, stun: 1 } });
+    expect(counterBadges(bear)).toEqual(["+1/+1 x3", "stun"]);
+  });
+
+  it("leads with a Class's level, which is not a counter", () => {
+    const talent = card({ zone: "battlefield", level: 2, counters: {} });
+    expect(counterBadges(talent)).toEqual(["Level 2"]);
+  });
+
+  it("shows level 1 too, since a Class always has a level", () => {
+    const talent = card({ zone: "battlefield", level: 1, counters: { charge: 2 } });
+    expect(counterBadges(talent)).toEqual(["Level 1", "charge x2"]);
+  });
+
+  it("says nothing of a level for a card the server sent none for", () => {
+    expect(counterBadges(card({ zone: "battlefield", counters: {} }))).toEqual([]);
   });
 });

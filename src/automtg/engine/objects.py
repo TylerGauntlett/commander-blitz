@@ -244,6 +244,23 @@ class GameObject:
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
     monstrous: bool = False
+    #: **A Class's level** (716). Every permanent enters at level 1 (716.3) and
+    #: only a "{cost}: Level N" ability raises it -- through the `become_level`
+    #: op -- so on anything that is not a Class it is 1 for ever and gates
+    #: nothing.
+    #:
+    #: A property of the permanent, and **not a counter**: proliferate cannot
+    #: reach it, `move_counters` cannot take it, and "remove all counters" leaves
+    #: it alone. Not a copiable value either (707.2), so a token copy of a
+    #: level-3 Class is a fresh object at level 1.
+    #:
+    #: Set back to 1 as the object *enters* the battlefield
+    #: (`zones._enter_battlefield`) rather than cleared by
+    #: `reset_permanent_state` on the way out. The difference is last known
+    #: information: a leaves-the-battlefield trigger is collected off the object
+    #: after it has left (603.10a), and it has to see the abilities the Class had
+    #: at the level it had.
+    class_level: int = 1
     #: One-way words a permanent has become: ``renowned``, and whatever the next
     #: set prints. Generic where `monstrous` is a field of its own, because the
     #: pattern turned out to repeat and each new adjective would otherwise be a
@@ -607,6 +624,25 @@ class GameObject:
     #: `combat.attack_required` and never spent.
     goaded_by: set[int] = field(default_factory=set)
 
+    #: "…exile all other tokens **created with this creature**" -- Faerie
+    #: Artisans. The tokens an effect whose source is *this object* created,
+    #: written by `primitives.create_token` for `create_token` and
+    #: `copy_permanent` alike and read back by the `created_with` selector key.
+    #:
+    #: On the creator rather than on the token, because the link is to this
+    #: *object* and not to the card (607.2a's linked-ability shape): a creator
+    #: that leaves the battlefield and comes back is a new object (400.7), and
+    #: the tokens its previous incarnation made are no longer "created with
+    #: this creature". An oid survives every zone change, so a pointer on the
+    #: token could not tell the two incarnations apart without a generation
+    #: stamp the engine does not keep -- here `reset_permanent_state` ends the
+    #: link at exactly the moment the object ends.
+    #:
+    #: Never pruned as tokens leave: a token that left the battlefield has
+    #: ceased to exist (111.7), is in no zone a selector searches, and its oid
+    #: is never reused.
+    created_tokens: set[int] = field(default_factory=set)
+
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
     #: ``{"chosen_type_of": "self"}``.
@@ -636,9 +672,11 @@ class GameObject:
     #:
     #: A copy is a token whose ``def_id`` is the original's, so the "except"
     #: clause has nowhere to live on the card -- it is a property of this one
-    #: object. Kept deliberately small: added subtypes, replacement colours, and
-    #: whether the mana cost is gone. Anything richer belongs in a real
-    #: copiable-values layer, which this engine does not have.
+    #: object. The copiable values 707.9b lets an exception rewrite: replacement
+    #: colours, card types and base power/toughness; added card types,
+    #: subtypes and supertypes; and whether the mana cost is gone. Anything
+    #: richer belongs in a real copiable-values layer, which this engine does
+    #: not have.
     #:
     #: Preserved across zone changes for the same reason ``is_token`` is: it is
     #: part of what the object *is*, not something that happened to it.
@@ -773,6 +811,9 @@ class GameObject:
         # no longer the creature anybody goaded -- blink your own goaded
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
+        # The same new object: the tokens the old one made were not made by
+        # this one, so "tokens created with this creature" is none of them.
+        self.created_tokens = set()
         self.granted_keywords = set()
         self.granted_abilities_permanent = []
         self.tapped = False
@@ -911,6 +952,7 @@ class GameObject:
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
             "monstrous": self.monstrous,
+            "class_level": self.class_level,
             "flags": sorted(self.flags),
             "detained_by": self.detained_by,
             # Sorted rather than the set itself, so the snapshot is JSON and is

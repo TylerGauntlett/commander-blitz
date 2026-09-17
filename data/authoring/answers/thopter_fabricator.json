@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "thopter_fabricator",
+    "name": "Thopter Fabricator",
+    "oracle_text": "Flying\nWhenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying.\nCrew 2",
+    "mana_cost": "{2}{U}",
+    "types": ["Artifact"],
+    "subtypes": ["Vehicle"],
+    "power": 4,
+    "toughness": 4,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you draw your second card each turn, create a 1/1 colorless Thopter artifact creature token with flying.",
+        "trigger": {
+          "event": "draw",
+          "controller": "you",
+          "nth": 2
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "thopter_1_1_c_flying"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Crew 2",
+        "cost": {
+          "tap_permanents": {
+            "controller": "you",
+            "types": ["Creature"],
+            "total_power": 2
+          }
+        },
+        "effects": [
+          {
+            "op": "animate",
+            "types": ["Creature"],
+            "power": {"const": 4},
+            "toughness": {"const": 4},
+            "objects": {"zone": "battlefield", "self_only": true}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

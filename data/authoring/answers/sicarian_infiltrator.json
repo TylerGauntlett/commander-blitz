@@ -1,0 +1,79 @@
+{
+  "card": {
+    "id": "sicarian_infiltrator",
+    "name": "Sicarian Infiltrator",
+    "oracle_text": "Flash\nSquad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nBenediction of the Omnissiah — When this creature enters, draw a card.",
+    "mana_cost": "{2}{U}",
+    "types": [
+      "Artifact",
+      "Creature"
+    ],
+    "subtypes": [
+      "Human",
+      "Soldier"
+    ],
+    "power": 1,
+    "toughness": 2,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [
+      "flash"
+    ],
+    "additional_cost": {
+      "mana": "{2}"
+    },
+    "additional_optional": true,
+    "additional_repeatable": true,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "effects": [
+          {
+            "op": "copy_permanent",
+            "objects": {
+              "self_only": true
+            },
+            "amount": {
+              "additional_paid": true
+            },
+            "controller": "you"
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Benediction of the Omnissiah — When this creature enters, draw a card.",
+        "trigger": {
+          "event": "self_enters"
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "amount": {
+              "const": 1
+            },
+            "player": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    }
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "card": {
+    "id": "archaeomancer_s_map",
+    "name": "Archaeomancer's Map",
+    "oracle_text": "When this artifact enters, search your library for up to two basic Plains cards, reveal them, put them into your hand, then shuffle.\nWhenever a land an opponent controls enters, if that player controls more lands than you, you may put a land card from your hand onto the battlefield.",
+    "mana_cost": "{2}{W}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this artifact enters, search your library for up to two basic Plains cards, reveal them, put them into your hand, then shuffle.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": {
+              "const": 2
+            },
+            "destination": "hand",
+            "reveal": true,
+            "selector": {
+              "supertypes": [
+                "Basic"
+              ],
+              "subtypes": [
+                "Plains"
+              ],
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever a land an opponent controls enters, if that player controls more lands than you, you may put a land card from your hand onto the battlefield.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "opponent",
+          "filter": {
+            "types": [
+              "Land"
+            ]
+          },
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "zone": "battlefield",
+                "types": [
+                  "Land"
+                ],
+                "controller": {
+                  "binding": "event_player"
+                }
+              }
+            },
+            "right": {
+              "lands_you_control": true
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a land card from your hand onto the battlefield?",
+            "condition": {
+              "exists": {
+                "zone": "hand",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              }
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "count": 1,
+                  "chooser": "controller"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    }
+  }
+}

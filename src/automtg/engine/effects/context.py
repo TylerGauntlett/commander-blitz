@@ -132,6 +132,7 @@ def ask_targets(
     min_count: int,
     max_count: int,
     chooser: int,
+    purpose: str = "target",
 ) -> Generator[PendingDecision, list[int], list[TargetRef]]:
     """Declare targets as a **decision** rather than as part of an action.
 
@@ -151,6 +152,11 @@ def ask_targets(
     "choose a creature to sacrifice" -- the RL encoder, the heuristic agent,
     the client's prompt dialog and the authoring verifier -- answers this with
     no change.  The ``purpose`` tag is what tells them apart.
+
+    ``purpose`` is overridable because a mixed player-or-permanent pick is not
+    always a target: a token put onto the battlefield "attacking that player or
+    a planeswalker they control" chooses between exactly these two kinds of ref
+    (508.4) and targets nothing, so it says ``"attack"`` instead.
     """
     available = list(refs)
     if not available or max_count <= 0:
@@ -170,7 +176,7 @@ def ask_targets(
         context={
             "source": ctx.source_oid,
             "source_name": ctx.source_name,
-            "purpose": "target",
+            "purpose": purpose,
         },
     )
     answer = yield decision

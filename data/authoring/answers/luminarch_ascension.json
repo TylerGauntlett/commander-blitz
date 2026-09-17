@@ -1,0 +1,62 @@
+{
+  "card": {
+    "id": "luminarch_ascension",
+    "name": "Luminarch Ascension",
+    "oracle_text": "At the beginning of each opponent's end step, if you didn't lose life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)\n{1}{W}: Create a 4/4 white Angel creature token with flying. Activate only if this enchantment has four or more quest counters on it.",
+    "mana_cost": "{1}{W}",
+    "types": ["Enchantment"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each opponent's end step, if you didn't lose life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)",
+        "trigger": {
+          "event": "end_step",
+          "controller": "opponent",
+          "condition": {
+            "cmp": "==",
+            "left": {"life_lost_this_turn": "you"},
+            "right": {"const": 0}
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Put a quest counter on it?",
+            "effects": [
+              {
+                "op": "add_counters",
+                "counter": "quest",
+                "amount": {"const": 1},
+                "objects": {"self_only": true, "zone": "battlefield"}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{W}: Create a 4/4 white Angel creature token with flying. Activate only if this enchantment has four or more quest counters on it.",
+        "cost": {"mana": "{1}{W}"},
+        "condition": {
+          "cmp": ">=",
+          "left": {"counters_on": {"counter": "quest", "objects": {"self_only": true}}},
+          "right": {"const": 4}
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "angel_4_4_w_flying",
+            "amount": {"const": 1},
+            "controller": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

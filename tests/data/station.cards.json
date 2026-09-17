@@ -1,0 +1,63 @@
+{
+  "_comment": "Station (702.184, 721) -- a Planet with the station ability, a colourless tap, a 4+ striation and a 12+ mana striation, standing in for Uthros, Titanic Godcore and Adagia, Windswept Bastion. Test-only.",
+  "cards": [
+    {
+      "id": "t_station_planet",
+      "name": "Test Station Planet",
+      "oracle_text": "{T}: Add {C}.\nStation (Tap another creature you control: Put charge counters equal to its power on this Planet. Station only as a sorcery.)\n4+ | {1}, {T}: Draw a card. Activate only as a sorcery.\n12+ | {U}, {T}: Add {U} for each artifact you control.",
+      "types": ["Land"],
+      "subtypes": ["Planet"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{C}"}]
+        },
+        {
+          "kind": "activated",
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Planet. Station only as a sorcery.)",
+          "cost": {
+            "tap_permanents": {
+              "types": ["Creature"],
+              "exclude_self": true,
+              "as": "stationed"
+            }
+          },
+          "sorcery_speed_only": true,
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "charge",
+              "amount": {"power_of": {"binding": "stationed"}},
+              "objects": {"self_only": true}
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "4+ | {1}, {T}: Draw a card. Activate only as a sorcery.",
+          "threshold": {"counter": "charge", "at_least": 4},
+          "cost": {"mana": "{1}", "tap": true},
+          "sorcery_speed_only": true,
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "activated",
+          "text": "12+ | {U}, {T}: Add {U} for each artifact you control.",
+          "threshold": {"counter": "charge", "at_least": 12},
+          "cost": {"mana": "{U}", "tap": true},
+          "is_mana_ability": true,
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{U}",
+              "amount": {"count": {"controller": "you", "types": ["Artifact"]}}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "the_theorist_jace_beleren",
+    "name": "The Theorist, Jace Beleren",
+    "oracle_text": "At the beginning of each opponent's draw step, you draw a card.\n+1: Create a 1/1 blue Illusion creature token.\n−2: For each opponent, return up to one target artifact or creature that player controls to its owner's hand.\n−6: Draw three cards. Then put X +1/+1 counters on each creature you control, where X is the number of cards in your hand.",
+    "mana_cost": "{2}{U}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Jace"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "loyalty": 3,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each opponent's draw step, you draw a card.",
+        "trigger": {"event": "draw_step", "controller": "opponent"},
+        "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+      },
+      {
+        "kind": "activated",
+        "text": "+1: Create a 1/1 blue Illusion creature token.",
+        "cost": {"loyalty": 1},
+        "effects": [{"op": "create_token", "token": "illusion_1_1_u"}]
+      },
+      {
+        "kind": "activated",
+        "text": "−2: For each opponent, return up to one target artifact or creature that player controls to its owner's hand.",
+        "cost": {"loyalty": -2},
+        "targets": [{
+          "id": "t1",
+          "kind": "permanent",
+          "count": "any",
+          "one_per_player": true,
+          "selector": {"zone": "battlefield", "controller": "opponent", "any_types": ["Artifact", "Creature"]}
+        }],
+        "effects": [{"op": "return_to_hand", "objects": {"target": "t1"}}]
+      },
+      {
+        "kind": "activated",
+        "text": "−6: Draw three cards. Then put X +1/+1 counters on each creature you control, where X is the number of cards in your hand.",
+        "cost": {"loyalty": -6},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 3}},
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"cards_in_hand": "you"},
+            "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": "all"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 3}
+  }
+}

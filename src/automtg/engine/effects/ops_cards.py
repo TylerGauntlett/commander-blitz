@@ -41,14 +41,47 @@ def _replacements():
 
 @register("draw")
 def op_draw(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Draw cards.
+
+    ``as`` records **the players who actually drew at least one card** -- a set
+    of seats, the shape `may`'s `as` writes, read back with the
+    ``{"binding": …}`` player spec. Cut a Deal: "Each opponent draws a card,
+    then you draw a card for each opponent **who drew a card this way**."
+
+    The seat is taken from what `replacements.draw` returned, not from who was
+    told to draw, because the two differ in exactly the positions the rider was
+    printed for:
+
+    - an empty library draws nothing (121.4: that is an *attempt* to draw, whose
+      only consequence is the state-based loss of 704.5b), so that opponent
+      pays nothing out;
+    - a draw **replaced** is not a draw (121.6, 614.11) -- dredge returns a
+      card from the graveyard instead, and no card was drawn.
+
+    A miracle card that was drawn and then cast *was* drawn, and still counts.
+
+    The binding is written even when nobody drew, so a read after it answers
+    for this draw and not for an earlier one; and it **accumulates** across a
+    `for_each_player` loop the way `may`'s does, so "each player draws a card"
+    written one seat at a time still names every seat that drew.
+    """
     draw_with_replacements = _replacements().draw
 
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    name = spec.get("as")
+    drew: list[int] = []
     for pid in select_players(ctx, spec.get("player", "you")):
         # Dredge replaces *a* draw, whatever caused it, and miracle asks about
         # the first card drawn this turn however it arrived -- so every draw in
         # the engine goes through here except the opening hand.
-        yield from draw_with_replacements(ctx.state, pid, amount)
+        got = yield from draw_with_replacements(ctx.state, pid, amount)
+        if got and pid not in drew:
+            drew.append(pid)
+    if name:
+        previous = ctx.bindings.get(str(name))
+        seats = list(previous) if isinstance(previous, list) else []
+        seats.extend(pid for pid in drew if pid not in seats)
+        ctx.bindings[str(name)] = seats
 
 
 @register("discard")
@@ -1252,10 +1285,15 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     belongs to suspend, and a cascaded creature that could attack immediately
     would be a strictly better card.
     """
+    from ..player_statics import player_cant_cast_spells
     from ..suspend import cast_for_free
 
     obj = ctx.state.objects.get(oid)
     if obj is None:
+        return False
+    if player_cant_cast_spells(ctx.state, pid):
+        # Asked before the prompt: `cast_for_free` would refuse anyway, and a
+        # "you may cast" question whose yes does nothing is a lie on screen.
         return False
     if not (yield from ask_yes_no(ctx, prompt, pid)):
         return False
@@ -1289,12 +1327,16 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     may", so no `may` wrapper is needed and declining costs no second question.
     A player with nothing matching is not asked at all.
     """
+    from ..player_statics import player_cant_cast_spells
     from ..suspend import cast_for_free
     from .selectors import select_players
 
     selector = spec.get("selector") or {}
     prompt = "Cast a spell without paying its mana cost"
     for pid in select_players(ctx, spec.get("player", "you")):
+        if player_cant_cast_spells(ctx.state, pid):
+            # Voice of Victory: nothing to offer a player who cannot cast.
+            continue
         pool = [
             oid
             for oid in list(ctx.state.players[pid].hand)

@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "the_queen_of_dale",
+    "name": "The Queen of Dale",
+    "oracle_text": "Whenever an opponent casts their first noncreature spell each turn, you recruit. (Draw a card, then discard a card. If you discarded a nonland card, create a 1/1 white Human Soldier creature token.)",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Noble"],
+    "power": 2,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts their first noncreature spell each turn, you recruit. (Draw a card, then discard a card. If you discarded a nonland card, create a 1/1 white Human Soldier creature token.)",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent",
+          "filter": {"not_types": ["Creature"]},
+          "nth": 1
+        },
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 1}},
+          {"op": "discard", "player": "you", "amount": {"const": 1}, "as": "recruited"},
+          {
+            "op": "if",
+            "condition": {"exists": {"binding": "recruited", "not_types": ["Land"]}},
+            "then": [
+              {"op": "create_token", "token": "human_soldier_1_1_w", "amount": {"const": 1}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

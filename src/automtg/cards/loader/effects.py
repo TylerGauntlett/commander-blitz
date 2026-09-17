@@ -44,6 +44,7 @@ from .vocabulary import (
     DELAYED_TRIGGER_KEYS,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
+    KNOWN_SUPERTYPES,
     KNOWN_TYPES,
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
@@ -51,7 +52,73 @@ from .vocabulary import (
 )
 from .walk import (
     _check_counter_kind,
+    _mentions,
 )
+
+#: What `copy_permanent`'s ``except_`` may rewrite -- the copiable values of
+#: 707.9b that a printed exception has needed so far. Replacements: ``colors``,
+#: ``types``, ``power`` and ``toughness``. Additions: ``add_types``,
+#: ``add_subtypes`` and ``add_supertypes``. And ``no_mana_cost``.
+COPY_EXCEPT_KEYS = frozenset(
+    {
+        "colors",
+        "types",
+        "power",
+        "toughness",
+        "add_types",
+        "add_subtypes",
+        "add_supertypes",
+        "no_mana_cost",
+    }
+)
+
+
+#: The recorders whose `as` binding is a **set of seats** rather than of
+#: objects: `may` (the players who said yes) and `draw` (the players who
+#: actually drew). Both write a bare list of player ids.
+SEAT_RECORDING_OPS = frozenset({"draw", "may"})
+
+#: Every key whose value `resolve_pool` reads as a pool of **objects**. A bare
+#: `{"binding": …}` under any other key is a player spec.
+_OBJECT_POOL_KEYS = ("count", "exists", "objects", "per", "from", "attacker", "source_object")
+
+
+def _refuse_seats_read_as_objects(model: CardModel, where: str) -> None:
+    """A seat binding read as a pool of objects counts the wrong thing.
+
+    `resolve_pool` reads any bound list as oids, and a seat binding is a list of
+    player ids -- small integers that are also the ids of real objects. So
+    Cut a Deal written as ``{"count": {"binding": "drew"}}`` loads, resolves,
+    and draws one card for every *object* whose id happens to equal a seat that
+    drew -- right by accident while those objects exist, and wrong the moment
+    one of them leaves the game. The count of a seat set is a
+    `for_each_player` over it.
+    """
+    names: set[str] = set()
+
+    def collect(node: Mapping[str, Any]) -> bool:
+        if node.get("op") in SEAT_RECORDING_OPS and isinstance(node.get("as"), str):
+            names.add(node["as"])
+        return False
+
+    _mentions(model, collect)
+    if not names:
+        return
+
+    def reads_as_objects(node: Mapping[str, Any]) -> bool:
+        if node.get("exclude_binding") in names:
+            return True
+        return any(
+            isinstance(node.get(key), Mapping) and node[key].get("binding") in names
+            for key in _OBJECT_POOL_KEYS
+        )
+
+    if _mentions(model, reads_as_objects):
+        raise DslError(
+            f"{where}: reads a binding written by {sorted(SEAT_RECORDING_OPS)} as a pool "
+            f"of objects, but it holds players -- name the seats with the "
+            f"{{'binding': …}} player spec, and count them with a for_each_player over it"
+        )
 
 
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
@@ -245,6 +312,37 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
 
 
+def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[str, str]) -> None:
+    """Check every player spec a selector or value carries *inside* it.
+
+    "Create X tokens, where X is the number of creatures **those opponents**
+    control" is ``{"count": {"types": ["Creature"], "controller": {"target":
+    "t1"}}}`` -- a player spec two levels down, in a value's selector. The
+    top-level keys an effect names a player with (``player``, ``chooser``,
+    ``controller``) were validated; one nested in a selector was not, so
+    ``{"target": "t9"}`` there loaded clean and counted nobody, and so did a
+    ``{"target": …}`` aimed at a `permanent` target, whose refs are never
+    players. Every failure here is a zero, which on a board looks like a card
+    that happened to find nothing.
+
+    Walked rather than read off known paths, because selectors nest -- inside
+    `any_of`, inside `max_count_of`, inside `sum` -- and it is the same check
+    wherever the clause sits. Only the two keys a selector spells a seat with
+    are read, and only in their mapping form: the words are checked by
+    `validate_selector` already.
+    """
+    if isinstance(node, Mapping):
+        for key, value in node.items():
+            path = f"{where}.{key}"
+            if key in ("controller", "player") and isinstance(value, Mapping):
+                _validate_player_spec(value, path, target_kinds)
+            else:
+                _validate_nested_player_refs(value, path, target_kinds)
+    elif isinstance(node, (list, tuple)):
+        for i, value in enumerate(node):
+            _validate_nested_player_refs(value, f"{where}[{i}]", target_kinds)
+
+
 def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Check an ``attacking`` clause: the boolean, or a player spec.
 
@@ -330,6 +428,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(f"{where}: effect is missing 'op'")
     if op not in known_ops():
         raise DslError(f"{where}: unknown effect op {op!r} (implemented: {sorted(known_ops())})")
+    if op == "become_level":
+        # 716.2a's effect, supplied by the loader on a `kind: "level"` line and
+        # only there -- where the "only if level N-1, only as a sorcery"
+        # restriction comes with it. Written by hand anywhere else it is a level
+        # bought at instant speed, twice, or out of order.
+        raise DslError(
+            f"{where}: 'become_level' is written by the loader for a level line; "
+            f'write {{"kind": "level", "level": N, "cost": ...}} instead'
+        )
 
     for key in ("objects", "per", "selector", "affects"):
         if key in effect:
@@ -367,6 +474,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
         )
+    for key in ("objects", "per", "selector", "affects", "amount", "count", "power", "toughness"):
+        if key in effect:
+            _validate_nested_player_refs(effect[key], f"{where}.{key}", target_kinds)
     for key in ("objects", "per", "selector"):
         sub = effect.get(key)
         if isinstance(sub, Mapping) and "target" in sub and str(sub["target"]) not in target_kinds:
@@ -1012,11 +1122,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # somebody reads its colour.
         if not isinstance(overrides, Mapping):
             raise DslError(f"{where}: 'except_' must be an object")
-        unknown = set(overrides) - {"colors", "add_subtypes", "no_mana_cost", "types"}
+        unknown = set(overrides) - COPY_EXCEPT_KEYS
         if unknown:
             raise DslError(
                 f"{where}.except_: unsupported keys {sorted(unknown)} "
-                f"(implemented: 'colors', 'add_subtypes', 'no_mana_cost', 'types')"
+                f"(implemented: {sorted(COPY_EXCEPT_KEYS)})"
             )
         for color in overrides.get("colors") or ():
             if color not in KNOWN_COLORS:
@@ -1034,6 +1144,42 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for t in overrides["types"]:
                 if t not in KNOWN_TYPES:
                     raise DslError(f"{where}.except_.types: unknown card type {t!r}")
+        if "types" in overrides and "add_types" in overrides:
+            # One replaces and one adds, so together they say two different
+            # printed lines at once -- the order would be a guess.
+            raise DslError(
+                f"{where}.except_: 'types' replaces the card types and 'add_types' "
+                f"adds to them -- write the one the printed clause says"
+            )
+        for key, known, noun in (
+            ("add_types", KNOWN_TYPES, "card type"),
+            ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+        ):
+            if key not in overrides:
+                continue
+            added = overrides[key]
+            if not isinstance(added, list) or not added:
+                # An addition of nothing is a clause that does nothing, and
+                # "except it's legendary" dropped is a copy the legend rule
+                # never sees.
+                raise DslError(f"{where}.except_.{key}: must be a non-empty list")
+            for name in added:
+                if name not in known:
+                    raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+        for key in ("power", "toughness"):
+            # "...except it's a 4/4" (eternalize). The base size, so a number and
+            # never an expression: 707.9b makes it a copiable value, fixed when
+            # the copy is made, not something re-read as the game goes on.
+            if key in overrides:
+                value = overrides[key]
+                if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                    raise DslError(
+                        f"{where}.except_.{key}: must be a non-negative integer, got {value!r}"
+                    )
+        if ("power" in overrides) != ("toughness" in overrides):
+            # Every printed exception names a size as "N/N"; half of one is a
+            # typo that would leave the copied card's other half standing.
+            raise DslError(f"{where}.except_: 'power' and 'toughness' come as a pair")
     if op == "add_subtype":
         # An op that names no subtype is a printed sentence that does nothing,
         # and it would load and resolve exactly like one that works.
@@ -1100,6 +1246,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
     if op in ATTACKING_OPS and "attacking" in effect:
         _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
+    if op in ATTACKING_OPS and "or_planeswalker" in effect:
+        # "…attacking that player or a planeswalker they control." A widening of
+        # `attacking`, so it means nothing without one: beside no `attacking`
+        # (or `false`) it would load and the token would attack nobody, which
+        # reads as the printed card and drops the whole clause. A string such
+        # as "true" is refused for the same reason -- it is not the flag.
+        if not isinstance(effect["or_planeswalker"], bool):
+            raise DslError(f"{where}.or_planeswalker: must be true or false")
+        if effect["or_planeswalker"] and effect.get("attacking") in (None, False):
+            raise DslError(
+                f"{where}.or_planeswalker: widens `attacking` to 'that player or a "
+                f"planeswalker they control' and needs an `attacking` to widen"
+            )
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
@@ -1136,6 +1295,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(
                     f"{where}: extra_combat takes no {key!r} -- an extra phase belongs "
                     f"to the turn in progress, whoever's turn that is"
+                )
+    if op == "extra_turn" and "controller" in effect:
+        # Whose turn it is goes in `player`, the key every player-naming op
+        # uses. `controller` is the near miss worth refusing by name: it is what
+        # Parting Gust's gift reward is aimed with, so a Perch Protection copied
+        # from it would load, ignore the key, and hand the promised turn to the
+        # *caster* -- a gift spell that pays its own controller instead.
+        raise DslError(
+            f"{where}: extra_turn names who takes the turn with 'player', "
+            f"not 'controller' (e.g. \"player\": \"gift_recipient\")"
+        )
+    if op == "no_maximum_hand_size":
+        # The op's one lifetime is in its name: the rest of the game. A
+        # `duration` would load, be ignored, and turn Enter the Infinite's
+        # "until your next turn" into a permanent upgrade; `objects` and
+        # `controller` are the near misses copied from `set_flag` and
+        # `extra_turn`'s neighbours, and ignoring either names the caster by
+        # default -- the wrong seat for any "target player" version.
+        for key in ("duration", "objects", "controller"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: no_maximum_hand_size takes no {key!r} -- it lasts "
+                    f"the rest of the game, and names who with 'player'"
                 )
     if op == "set_flag" and not effect.get("flag"):
         # A flag with no name writes nothing, so renown's once-only guard never

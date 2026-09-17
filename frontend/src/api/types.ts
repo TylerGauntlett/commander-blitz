@@ -50,6 +50,11 @@ export interface CardView {
   tapped?: boolean;
   summoning_sick?: boolean;
   counters?: Record<string, number>;
+  /**
+   * A Class's level (rule 716), on the battlefield and only for a card that
+   * prints level lines. Not a counter, so never inside `counters`.
+   */
+  level?: number;
   attached_to?: number | null;
   attacking?: boolean;
   blocking?: boolean;

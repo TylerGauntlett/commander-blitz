@@ -1,0 +1,57 @@
+{
+  "_comment": "Cards that exist only for the crew-power-bonus test (tests/unit/test_crew_power_bonus.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_crew8_vehicle` is Shorikai's Crew 8 without the draw ability; `t_hotshot_mechanic` is Hotshot Mechanic's printed line on a nontoken creature, the witness that the static is not a token-only rider.",
+  "cards": [
+    {
+      "id": "t_crew8_vehicle",
+      "name": "Test Crew Eight Vehicle",
+      "oracle_text": "Crew 8 (Tap any number of creatures you control with total power 8 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "subtypes": ["Vehicle"],
+      "power": 8,
+      "toughness": 8,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 8 (Tap any number of creatures you control with total power 8 or more: This Vehicle becomes an artifact creature until end of turn.)",
+          "cost": {"tap_permanents": {"controller": "you", "types": ["Creature"], "total_power": 8}},
+          "effects": [
+            {"op": "animate", "objects": {"zone": "battlefield", "self_only": true},
+             "types": ["Artifact", "Creature"],
+             "power": {"const": 8}, "toughness": {"const": 8}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_five_five",
+      "name": "Test Five Five",
+      "mana_cost": "{4}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "power": 5,
+      "toughness": 5
+    },
+    {
+      "id": "t_hotshot_mechanic",
+      "name": "Test Hotshot Mechanic",
+      "oracle_text": "This creature crews Vehicles as though its power were 2 greater.",
+      "mana_cost": "{W}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Fox", "Pilot"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature crews Vehicles as though its power were 2 greater.",
+          "effect": "crew_power_bonus",
+          "affects": {"self_only": true},
+          "amount": {"const": 2}
+        }
+      ]
+    }
+  ]
+}

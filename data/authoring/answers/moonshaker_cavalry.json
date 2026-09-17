@@ -1,0 +1,55 @@
+{
+  "card": {
+    "id": "moonshaker_cavalry",
+    "name": "Moonshaker Cavalry",
+    "oracle_text": "Flying\nWhen this creature enters, creatures you control gain flying and get +X/+X until end of turn, where X is the number of creatures you control.",
+    "mana_cost": "{5}{W}{W}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Spirit", "Knight"],
+    "power": 6,
+    "toughness": 6,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, creatures you control gain flying and get +X/+X until end of turn, where X is the number of creatures you control.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "grant_keyword",
+            "keywords": ["flying"],
+            "duration": "until_end_of_turn",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": "all"
+            }
+          },
+          {
+            "op": "pump",
+            "power": {
+              "count": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+            },
+            "toughness": {
+              "count": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+            },
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"],
+              "count": "all"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "granted": {"keywords": ["flying"], "count": 3}
+  }
+}

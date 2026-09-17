@@ -1,3 +1,67 @@
+## Token doubling — "twice that many of those tokens" — 614.1a / 614.5 / 616.1
+
+### Overview
+
+Bard, King of Dale: *"If one or more tokens would be created under your control,
+**twice that many of those tokens are created instead**."* The same sentence is
+Parallel Lives, Anointed Procession, Doubling Season's token half, and — for every
+player — Primal Vigor.
+
+`replace_token_creation` already existed and was the right static on the wrong
+axis. `create_instead` rewrites *which* token is made (Academy Manufactor, Divine
+Visitation); a doubler names no token at all, so there was nothing to list, and
+listing an id would have turned every other token the player made into that one.
+`create_token`'s `amount` is on the creating effect, so it cannot see another
+card's creation; and a `token_created` trigger adds the copy later, on the stack,
+and re-triggers on its own token forever.
+
+### Tier: B — a second axis on an existing continuous effect
+
+No new op, decision or event. `AbilityModel.token_multiplier` and a branch in
+`primitives._token_creation_plan`.
+
+### What was built
+
+- **`token_multiplier`** on `replace_token_creation` (schema, loader guard, and
+  the whitelisted compile). Required to be 2 or more, and refused beside
+  `create_instead` — one axis per static.
+- **`_token_creation_plan`** entries became `(id, count, substituted)`. A
+  multiplied entry keeps its id and `substituted` flag and has its count scaled;
+  a substituted entry is marked, and only marked entries drop the creating
+  effect's `overrides`. Before, *any* replacement dropped them, which for a
+  doubler would have turned the second embalm copy back into the plain card.
+- **`token_creation_replacements`** reads `affects_player` through
+  `_reaches_player`, defaulting to `"you"` — which is exactly the old
+  source-controller filter, so Manufactor and Visitation are unchanged — and
+  `"any"` is Primal Vigor.
+
+### The rules it turns on
+
+- **614.5 — each replacement once per event**, in the existing single pass: a
+  doubler does not re-double its own output.
+- **Doublers compound.** Two are 4, three are 8: separate replacements of one
+  event, each applied to the event as the previous one left it.
+- **616.1 — the affected player orders them**, and the engine applies them in
+  battlefield order without asking. Doublers commute (a product), and a doubler
+  commutes with an unfiltered or type-preserving substitution (a doubler beside a
+  Divine Visitation is two Angels either way). The order would show only for a
+  doubler whose `affects_token` matches a token before a substitution and not
+  after — no printed doubler.
+- **"Under your control" is the token's controller.** A Bard doubles the token an
+  opponent's Beast Within gives you, and not the one your effect gives them.
+- **"Those tokens."** Copy tokens from `copy_permanent` double into copies with
+  their `overrides`; tapped-and-attacking tokens double into tapped attackers.
+  `create_token` is the only place a token is made, so both ops reach it.
+
+### Tests
+
+`tests/unit/test_token_doubling.py` — six classes: twice that many (and the
+`token_created` events for each), compounding (two, three, order-independence,
+no self-redoubling, beside a Visitation), whose tokens they are (opponent's
+creation untouched, opponent's doubler inert, an opponent's effect giving you a
+token doubled, Primal Vigor for both seats), those tokens (copy tokens, copy
+overrides, tapped and attacking), wearing off, and the loader refusals.
+
 ## `change_text` -- layer 3, and the four places "all instances" has to reach
 
 ### Overview
@@ -2295,9 +2359,9 @@ Not rule 616. There is no event object, no "replaced by" chain, and nothing
 outside `create_token` consults a replacement — 616.1's "the affected player
 chooses which applicable replacement to apply first" is answered by battlefield
 order instead of by asking, which is invisible for the pair above and is recorded
-in `docs/rules-coverage.md`. There is no count *multiplier* either, so Doubling
-Season, Parallel Lives, Anointed Procession and Ojer Taq remain blocked; that is
-a second capability, not a second key in a card file. A fourth entry on the
+in `docs/rules-coverage.md`. There was no count *multiplier* either, so Doubling
+Season, Parallel Lives, Anointed Procession and Ojer Taq stayed blocked; that was
+a second capability, since built — see *token doubling* above. A fourth entry on the
 enters-the-battlefield whitelist is still engine work.
 
 ### Tests
@@ -11251,3 +11315,1150 @@ back is a new object (400.7) whose controller has been asked nothing.
 paying life you do not have, so a player at 2 life is not shown a question whose
 "yes" cannot be honoured — which would otherwise leave the arrival depending on
 how a failed payment was reported.
+
+## `nth` on `spell_cast` — "their second spell", "their first noncreature spell"
+
+### Overview
+
+Five gap records named one capability: Esper Sentinel and The Queen of Dale
+("whenever an opponent casts their first noncreature spell each turn"), Mangara,
+the Diplomat and Trouble in Pairs ("…casts their second spell each turn"), and
+The Council of Four ("a player casts their second spell during their turn").
+Each is the question `nth` already answered for draws — *which* one was this, for
+the player who did it — asked of a cast.
+
+### Why the existing vocabulary would not do
+
+- `max_per_turn: 1` is counted per permanent. "An opponent casts **their**
+  first" is per opponent, so in a pod the first opponent's spell spends the cap
+  and the second's first spell taxes nothing. It cannot say "second" at all.
+- A `condition` on `spells_cast_this_turn` is re-asked on resolution (603.4). An
+  opponent who casts their second spell and a third in response has moved the
+  tally to 3 before the trigger resolves, and it is skipped. `>=` fires on every
+  spell after. Both are the draw-ordinal argument again.
+- A flat ordinal cannot say "noncreature": a creature then an instant is the
+  first noncreature spell and the second spell.
+
+### The shape
+
+`GameState._tally` already bumped `spells_cast[pid]` on every SPELL_CAST; it now
+writes the post-bump value onto the event as `data["nth"]`. The fold is the one
+place all three cast paths pass through (`game._cast`, the alternative-cost cast
+in `replacements.py`, suspend's free cast), so none can forget it.
+
+`triggers._matches` compares `nth` through `_ordinal`. Unfiltered, that is the
+event's value. With a `filter`, `_spell_ordinal` counts the caster's earlier
+entries in `TurnLedger.spells_cast_ids` matching the filter — cut at this cast's
+flat ordinal, so a later cast can never move an earlier one's place — and adds
+one for this spell, which the trigger's own `filter` check has to accept anyway.
+
+**Why the filter and not per-kind ordinals on the event:** the kinds are
+open-ended — noncreature, instant or sorcery, multicolored — and a fixed set on
+the event would be a vocabulary the next card outgrows. The printed family is
+always "their Nth *kind* spell", so the kind the trigger already filters on *is*
+the run it counts.
+
+**Printed faces only.** The earlier spells have left the stack, so they are
+matched with `_matches_printed`, the matcher the filtered
+`spells_cast_this_turn` value already uses. A filter key that reads board state
+would be applied to this spell and ignored on the earlier ones, so the loader
+refuses anything outside `triggers.ORDINAL_FILTER_KEYS` on a `spell_cast`
+trigger that carries `nth`.
+
+### Tier A
+
+No op, no `EventType` (the payload key rides on `spell_cast`), no decision kind,
+no API field, nothing under `frontend/`. The loader guard widened from `draw` to
+`draw` and `spell_cast`, and the authoring packet's note on `trigger_keys` now
+says so, and says why `max_per_turn` is not "an opponent's first".
+
+### Guarded by
+
+`tests/unit/test_spell_cast_nth.py`: the ordinal on the event per caster; only
+the second spell fires the unfiltered form, creature spells included; a third
+spell in response does not hide it, while the `condition` encoding
+(`t_nth_spell_condition`) resolves skipped; the noncreature run (a creature does
+not fire it, an instant after a creature does, a second noncreature does not);
+the run is cut at the cast; two opponents in a pod each fire it once; spells
+cast before the watcher entered still count; "during their turn"; the turn
+boundary; and the load-time guards.
+
+The five cards are not authored in this change; their gap records stay until
+they are re-authored. Esper Sentinel still needs nothing else; The Queen of Dale's
+recruit is sayable with existing ops; Trouble in Pairs still needs extra turns.
+
+## `extra_turn` and `skip_extra_turn` — "take an extra turn after this one"
+
+### Overview
+
+Three gap records named one missing concept: Perch Protection ("Gift an extra
+turn"), Trouble in Pairs ("If an opponent would begin an extra turn, that player
+skips that turn instead") and Final Fortune ("Take an extra turn after this
+one"). The engine had no turn that was not the next live seat's —
+`turn._begin_next_turn` advanced `active_idx` by one and that was the whole turn
+order — so there was nothing for an op to add or a replacement to catch.
+
+### Why the existing vocabulary would not do
+
+- `extra_combat` and `extra_land_drop` add sub-steps *inside* the turn in
+  progress, and `extra_phases` is cleared at the very boundary an extra turn has
+  to cross.
+- `skip_draw_step` is the closest static and suppresses a turn-based action
+  inside a turn; it reaches nothing about the turn sequence.
+- Writing Perch Protection's `gift` label and dropping the reward would pass
+  every authoring gate and never hand over the promised turn.
+
+### The shape
+
+- **`GameState.extra_turns`**, a stack of player ids. Rule 500.7: added directly
+  after the current turn, one at a time, APNAP order for several players, most
+  recently created first. Popping from the end is all three, including a turn
+  created during an extra turn landing ahead of the ones already waiting.
+- **`GameState.turn_order_idx`**, the seat whose ordinary turn the table resumes
+  after. Without it, a turn gifted across a pod would be followed by the seat
+  after the *recipient*, skipping everyone between.
+- **`extra_turn` op** (`ops_player.py`), usual player spec defaulting to `"you"`.
+  `"gift_recipient"` already resolves to nobody on the unpromised line, so
+  Perch Protection's reward is one unconditional entry, as Parting Gust's Fish
+  is. The loader refuses `controller` on it by name — that is the key Parting
+  Gust aims with, and copied here it would be ignored and give the caster the
+  turn.
+- **`skip_extra_turn` static**, player-wide with `affects_player`. A replacement
+  (614.10) asked in `turn._take_extra_turn` as a queued turn would begin — not at
+  scheduling, so a turn queued before the permanent arrived is still skipped and
+  two queued turns are skipped one at a time. A skipped turn takes no turn number.
+- An extra turn takes a turn number and counts against the turn cap, but does
+  not complete a round.
+- `GameState.previous_active` replaces day/night's "the seat to the right" as
+  726.2's previous turn's active player, which an extra turn made wrong.
+
+### Tier D
+
+One new event, `turn_skipped`, since a skipped turn fires no `turn_began` and
+would otherwise leave no trace. `turn_began` carries `extra: true` on an extra
+turn only, so ordinary logs are byte-identical. Frontend: `describeEvent` reads
+"-- Your extra turn 2 --" and "AI 1 skips an extra turn"; `beatsFor` banners
+"Your Extra Turn" and a per-seat toned "skips their extra turn". No API field:
+the scheduled stack is not serialized.
+
+### Guarded by
+
+`tests/unit/test_extra_turn.py`: Time Warp's sequence and the control; a turn but
+not a round; `extra` only on extra turns; the recorded previous player; the gift
+promised, unpromised, and across a pod; newest first, a turn created during an
+extra turn, APNAP for "each player", an eliminated player's turn discarded; the
+skip for an opponent but not its controller, never for ordinary turns, one at a
+time, for a turn queued before it arrived, and not once it has gone; and the
+loader guards. Frontend: `tests/labels.test.ts`, `tests/events.test.ts`.
+
+No card is authored in this change and the gap records stay. Perch Protection
+needs nothing else: `bird_2_2_u_flying` has since shipped, and its promised
+branch is Teferi's Protection's three effects behind `gift_promised`; Trouble in Pairs' second line is
+sayable now that `nth` on `spell_cast` has shipped; Final Fortune still needs a
+delayed trigger scoped to the extra turn it created and a `lose_game` op.
+
+## Copy exceptions — "except it's legendary", "…an artifact in addition", eternalize
+
+### Overview
+
+Rule 707.9b: a copy effect that modifies a characteristic "as part of the
+copying process" makes that characteristic a copiable value of the copy.
+`copy_permanent`'s `except_` already had embalm's `colors`, `add_subtypes` and
+`no_mana_cost`, and Espers to Magicite's replacing `types`. It gains:
+
+| key | printed clause | witness |
+|---|---|---|
+| `add_supertypes` | "except it's legendary" | Adagia, Windswept Bastion |
+| `add_types` | "except it's an artifact in addition to its other types" | Faerie Artisans |
+| `power`, `toughness` | eternalize's "except it's a 4/4 black Zombie …" | Champion of Wits |
+
+### Why the existing vocabulary would not do
+
+The loader refused every key outside the four, and `characteristics._compute`
+applied only those. `types` replaces, so it cannot say "in addition"; nothing
+in the DSL could touch a supertype; and `set_pt`/`animate` wear off at cleanup,
+where a copiable value is permanent.
+
+### The shape
+
+All three are applied in `_compute` to the printed face before any layer, where
+the rest of `copy_overrides` already was. The base size replaces the printed
+P/T, so a counter on an eternalized token makes it a 5/5. The loader holds the
+key set as `COPY_EXCEPT_KEYS` and refuses unknown supertypes and card types, an
+empty addition, `types` with `add_types`, half a size, and a size that is not a
+non-negative integer.
+
+**The legend rule had to move.** `sba._legend_rule` read `card.is_legendary`
+off the printed card, so a token copied "except it's legendary" would report
+Legendary in `chars` and never be put into the graveyard. It now reads the
+derived supertypes.
+
+Eternalize needs no keyword: it is embalm's activated ability from the
+graveyard with this bigger exception. Champion of Wits' printed line is Snake
+Wizard, so `add_subtypes: ["Zombie"]` completes "Zombie Snake Wizard".
+
+### Tier A
+
+No op, no event, no decision kind, no API field, nothing under `frontend/`.
+The authoring packet lists `except_` as a `copy_permanent` key, not its
+sub-keys, so it needs no change.
+
+### Guarded by
+
+`tests/unit/test_copy_except.py`: the legendary token and the untouched
+original, the legend rule keeping one of two legendary copies (and neither
+without the clause), a legendary selector; the artifact copy that is still a
+2/2 creature and is found by an artifact selector (and is not without the
+clause); the eternalized token's 4/4 size, black colour, mana value 0, added
+Zombie, a counter layering on top, and the original's size; and the load-time
+guards.
+
+The three cards are not authored in this change. Adagia, Windswept Bastion still
+needs Station (a cost that binds the tapped creature's power, and the "12+ |"
+threshold ability); Faerie Artisans still needs "tokens created with this
+creature"; Champion of Wits needs nothing else.
+
+## Draw tracking — "each opponent who drew a card this way"
+
+### Overview
+
+Cut a Deal: *"Each opponent draws a card, then you draw a card for each opponent
+who drew a card this way."* One gap record, `draw-tracking`. `draw` recorded
+nothing and the loader refused an `as` on it, so the second half had no honest
+spelling.
+
+### Why the existing vocabulary would not do
+
+- `for_each_player` over `"each_opponent"` counts opponents at the table, not
+  opponents who drew. It pays out for an opponent with an empty library (121.4:
+  an attempt to draw is not a draw) and for one whose draw dredge replaced
+  (121.6, 614.11). Both positions are reachable here.
+- `cards_drawn_this_turn` is a turn-wide tally that also counts draw steps.
+- `may`'s `as` is the only other seat-set binding, and wrapping a mandatory draw
+  in a `may` hands each opponent a choice the card does not print.
+
+### The shape
+
+`op_draw` keeps what `replacements.draw` returns and, given an `as`, writes the
+seats whose list was non-empty -- the list-of-player-ids shape `may` already
+writes and the `{"binding": …}` player spec already reads (seat order, living
+players only). It is written even when nobody drew, and accumulates across a
+`for_each_player` loop as `may`'s does. `draw` joins `RECORDING_OPS`, which is
+all the loader's `as` guard needed.
+
+### The loader guard
+
+`resolve_pool` reads any bound list as oids, so `{"count": {"binding": "drew"}}`
+would load and count *objects* whose ids equal the seats. The new
+`loader.effects._refuse_seats_read_as_objects` refuses a `draw` or `may` binding
+under any object-pool key (`count`, `exists`, `objects`, `per`, `from`,
+`attacker`, `source_object`) or in `exclude_binding`.
+
+### Tier A
+
+No new op, event, decision kind or API field; nothing under `frontend/`. The
+authoring packet needed nothing: `as` is not a per-op vocabulary list there.
+
+### Guarded by
+
+`tests/unit/test_draw_tracking.py`: the seats recorded; an empty library not
+recorded (and still flagged for the loss); a dredged draw not recorded and a
+declined dredge recorded; fewer cards than asked still recorded; the empty
+write; accumulation across a loop; the whole Cut a Deal effect list at two
+players, with a decked opponent, and at a four-player pod with and without one;
+and the load-time guards.
+
+Cut a Deal is not authored in this change; its gap record stays until it is.
+
+## `cant_cast_spells` — a player who may not cast, from anywhere, by any route
+
+### Overview
+
+Voice of Victory: *"Your opponents can't cast spells during your turn."* The
+engine had two cast prohibitions and both were the wrong shape. Split second
+(702.61a) is read off the stack, binds every player including its caster, and
+ends when the spell leaves; epic (702.50a) is a card-level rider that locks its
+own controller for the rest of the game. Neither can say "these seats, while
+this permanent is here, during this turn". The near misses in the static
+vocabulary were permissions and prices (`cast_from_graveyard`,
+`spell_cost_reduction`, `attack_tax`) or a mana tax (`freeze_opponent_lands`),
+and a `spell_cast` trigger that counters is not "can't cast": the spell is still
+cast, still paid for, and still fires cast triggers.
+
+### Where it is read
+
+A player-wide static in `PLAYER_WIDE_STATIC_EFFECTS`, answered by
+`player_statics.player_cant_cast_spells` through `_active_player_statics`, so
+`affects_player` and the `condition` are honoured exactly as they are for
+Bloodletter.
+
+- **Legality.** `casting._cast_actions` returns nothing, beside epic's gate and
+  before any zone is walked. 601.2 names no zone, so a gate in the hand loop
+  would pass every hand test and let flashback straight through.
+- **Resolution-time casts.** Rule 101.2: a "can't" beats a "may". Every cast a
+  resolving effect makes goes through one of three places, and each refuses:
+  `suspend.cast_for_free` (suspend, rebound, cascade, ripple, `cast_from_hand`,
+  `play_exiled`, `look_at_top`'s `cast_free`), `replacements._offer_cast`
+  (madness, miracle), and `op_cast_copy` — 707.12 makes casting a copy a cast,
+  even though the engine builds it with `put_copy_on_stack`. `_offer_free_cast`
+  and `cast_from_hand` check before asking, so no prompt is shown whose yes does
+  nothing. The refused card stays where the no-legal-target outcome already
+  leaves it: in exile for suspend and rebound, bottomed with the rest for
+  cascade, exiled for madness.
+
+### What it does not stop
+
+Copies (`copy_spell`, storm, epic's upkeep copy — 707.10, never cast), playing a
+land, the special actions suspend and foretell (116.2), and activated abilities.
+Each is pinned, because a lock that also withheld one would be a strictly
+stronger card that looks identical on the board.
+
+### Refused at load
+
+`affects_player` is required (as for every player-wide static), and `affects` or
+`amount` beside `cant_cast_spells` is a load error: nothing reads them, so
+"Your opponents can't cast creature spells" written with a filter would load as
+a lock on every spell.
+
+### Tier
+
+A static and its readers: no op, no `EventType`, no decision kind, no API field,
+nothing under `frontend/`. The AI needs nothing — its action mask is
+`legality.legal_actions()`. The authoring packet's `static_effects` list is
+derived from `STATIC_EFFECTS`, and a note now names the shape.
+
+### Guarded by
+
+`tests/unit/test_cant_cast_spells.py`: the opponent locked on your turn and free
+on theirs; the turn passing and the source leaving both lift it; the controller
+is unaffected; the unconditional twin locks either turn; flashback from the
+graveyard is withheld; abilities, land drops and spell copies survive; an
+opponent's cascade during your turn casts nothing and asks nothing, and the same
+cascade on their turn casts; `cast_for_free` refuses directly; madness still
+exiles but does not cast; cipher's cast-a-copy is refused, and allowed again on
+their turn; and the load-time guards.
+
+Voice of Victory is not authored in this change. Its Mobilize 2 line was already
+expressible (`create_token` with `tapped`/`attacking`/`as` plus a `delay`ed
+`sacrifice`), so the card is now fully answerable. Grand Abolisher, Drannith
+Magistrate and Deafening Silence need a spell filter or an ability lock and
+remain gaps.
+
+## `no_maximum_hand_size` — "for the rest of the game", off a sorcery
+
+### Overview
+
+Sea Gate Restoration // Sea Gate, Reborn was blocked on its last sentence: "You
+have no maximum hand size for the rest of the game." The catalogue prints the
+same one-shot on Finale of Revelation and Ancient Silver Dragon.
+
+### Why the existing vocabulary would not do
+
+- `no_hand_limit` is a **static**, read through `_active_player_statics`, which
+  walks the battlefield. A sorcery is never there, and a static in `abilities`
+  on an instant or sorcery is never read.
+- `grant_ability` cannot hand out a player-wide static, and there is no
+  permanent to grant it to.
+- `set_flag` writes onto an object, cleared on a zone change, and nothing in the
+  cleanup step reads the flag ledger.
+
+### The shape
+
+- **`PlayerState.has_no_maximum_hand_size`**, one-way, beside
+  `has_city_s_blessing` and `epic_source`, and on `PlayerState.to_dict`.
+- **`no_maximum_hand_size`** in `effects/ops_player.py`: the ordinary player
+  spec, defaulting to `"you"`, sets the flag on each seat named.
+- **`player_statics.player_has_no_hand_limit`** returns True for the flag before
+  asking the statics. `turn._cleanup_step` is unchanged: one reader, one rule
+  path (514.1), and a Reliquary Tower leaving does not clear the one-shot.
+
+### The loader guard
+
+`duration`, `objects` and `controller` on the op are load errors. The lifetime
+is the name; "until your next turn" (Enter the Infinite) would otherwise load
+and play as permanent.
+
+### Tier A
+
+No event, decision kind or API field; nothing under `frontend/`. The packet's
+`ops` and `op_options` are derived from the registry, so the op and its `player`
+key reach workers without a hand-written entry. `tests/cards/golden_vocabulary.json`
+gains the op name.
+
+### Guarded by
+
+`tests/unit/test_no_maximum_hand_size.py`: a nine-card hand survives cleanup,
+with the no-spell control discarding to seven; the opponent still discards; an
+`each_player` spec frees both; the spell is in the graveyard and the hand is
+still kept on the caster's next turn; the flag is on the serialized view; a
+Reliquary Tower alone still works and losing one does not clear the one-shot;
+and the load-time guards.
+
+Sea Gate Restoration is not authored in this change; its gap record stays until
+it is.
+
+## `replace_draw` — "if you would draw a card, draw two cards instead"
+
+### Overview
+
+Bard, King of Dale: *"If you would draw a card **except the first one you draw in
+each of your draw steps**, draw two cards instead."* Thought Reflection prints the
+plain form and Alhammarret's Archive prints Bard's exemption word for word, so one
+static carries both:
+
+```jsonc
+{ "kind": "static", "effect": "replace_draw", "affects_player": "you",
+  "draw_multiplier": 2, "except_first_in_draw_step": true }
+```
+
+The near miss is a `draw` **trigger** that draws one more. It fires after the
+card is already in hand, can be responded to, fires again on its own draw, and is
+a different card against anything that counts draws.
+
+### Where it is applied
+
+`replacements.draw` already took every draw after the opening hand one card at a
+time, because dredge replaces *a* draw and miracle asks about the first card of
+the turn. The doubler goes in the same per-card function, `_draw_one`: dredge is
+offered, then the applicable doublers, then the actual draw and miracle. Per card
+is required (121.2): the exemption is true of the draw step's first card and false
+of its second, so "draw two" there is one card then two.
+
+### The draw-step record
+
+`state.cards_drawn_this_draw_step`, cleared at the top of `turn._draw_step` and
+bumped in `primitives.draw_cards` only while `step is Step.DRAW`.
+`cards_drawn_this_turn` cannot answer the question: a card drawn during upkeep
+has already moved it, and the turn-based draw would then look like a second
+draw and be doubled. Only the controller's own draw step exempts anything
+("your draw steps"); their first draw during an opponent's draw step is doubled.
+A draw replaced by dredge draws no card, so the next card is still the first.
+
+### 614.5, 616.1
+
+Each recursion carries the set of doubler sources that already replaced the draw
+it came from. A doubler never re-doubles its own output, which also keeps the
+recursion finite, and a second doubler applies to each of those draws, so two
+Reflections make four. Thought Reflection beside Bard makes the turn-based draw
+three: the first of Reflection's two draws is the step's first card and Bard
+leaves it alone; the second is not.
+
+Dredge against a doubler is the one ordering that can change the outcome, and it
+is asked: dredge is offered on the original draw (taking it replaces the draw and
+nothing doubles), and if declined it is offered again on each draw the doubler
+made. Every order the player could choose is one of those paths. Two doublers
+commute, so their order is not asked.
+
+### Refused at load
+
+`draw_multiplier` is required and at least 2. `affects_player` is required, as on
+every player-wide static. `affects` and `amount` are refused, and so are
+`draw_multiplier` and `except_first_in_draw_step` on any other effect.
+
+### Tier
+
+A static and its reader: no op, no `EventType`, no decision kind (dredge's
+existing `ask_objects` question is re-used), no API field, nothing under
+`frontend/`. The packet's `static_effects` and `ability_keys` are derived, and a
+note names the shape.
+
+### Guarded by
+
+`tests/unit/test_draw_doubling.py`: the plain doubler on a draw, on draw two, on
+the turn-based draw, and as two `DRAW` events; the bare primitive (the opening
+hand) is not replaced. Bard's first draw-step draw is not doubled, the second is,
+and "draw two" there is three; upkeep and main-phase draws are doubled; two cards
+drawn in upkeep do not use up the exemption; each draw step's exemption is fresh;
+a real turn through the turn walk draws one. The opponent is unaffected, and the
+controller's draw during an opponent's draw step is doubled. Two doublers make
+four; two Bards leave the draw step's first draw alone; Reflection with Bard
+makes three. A doubled draw from a one-card library draws one and flags the
+empty draw. Dredging the original draw skips the doubling, and declining then
+dredging one of the two draws works. And the load-time guards.
+
+No card is authored in this change. Bard, King of Dale still needs
+`token_doubling` for its third line.
+
+## Created-with-source — "tokens created with this creature"
+
+### Overview
+
+Faerie Artisans: *"Whenever a nontoken creature an opponent controls enters,
+create a token that's a copy of that creature except it's an artifact in
+addition to its other types. Then exile all other tokens created with this
+creature."* One gap record, `created-with-source` (the copy's `add_types` half
+landed separately).
+
+### Why the existing vocabulary would not do
+
+- `create_token` and `copy_permanent` recorded no creator: the token had an
+  owner, a controller and `is_token`, and TOKEN_CREATED's `source` is the token
+  itself.
+- `as` does hold the copies, but a binding lives for one resolution and this
+  clause reaches copies made by earlier triggers, turns ago.
+- `{"is_token": true, "controller": "you"}` minus the fresh copy is a different
+  card: it exiles every Treasure, Clue and Soldier you control, and a second
+  Artisans' copy with them.
+
+### The shape
+
+Both ops pass `source=ctx.source_oid` to `primitives.create_token`, which adds
+each token it makes (a replacement-substituted one included) to the source's
+`GameObject.created_tokens` before the token enters. The `created_with: "self"`
+selector key matches a candidate in the ability source's set, and
+`triggers.matches_card_filter` honours the same key. "Other" is the op's `as`
+binding through `exclude_binding`.
+
+The record lives on the **creator**, not the token. The link is to this object
+(the 607.2a linked-ability shape): a creator that leaves the battlefield and
+returns is a new object (400.7), and the tokens its previous incarnation made are
+no longer "created with this creature". An oid survives every zone change here,
+so a pointer on the token could not tell the incarnations apart;
+`reset_permanent_state` clears `created_tokens` on the move instead, at exactly
+the moment the object ends. A token that left the battlefield has ceased to
+exist (111.7) and is in no zone a selector searches, so the set is never pruned.
+
+### The loader guard
+
+`validate_selector` refuses any `created_with` value but `"self"`, which would
+otherwise load and match no token.
+
+### Tier A
+
+No new op, event, decision kind or API field; nothing under `frontend/`. The
+packet's `selector_keys` is derived from `SELECTOR_KEYS`, so workers are shown
+the key with no packet change.
+
+### Guarded by
+
+`tests/unit/test_created_with_source.py`: the record written by `create_token`
+and `copy_permanent`, the selector reading it and nothing written without a
+source; Faerie Artisans end to end (`tests/data/created_with.cards.json`) — the
+artifact copy, the earlier copy exiled on the next trigger, the just-made copy
+surviving, another permanent's Treasure surviving (and exiled by the
+`is_token` approximation, the counterfactual), and two Artisans each keeping
+their own copy; a zone change clearing the record, a previous incarnation's copy
+surviving while the new incarnation still exiles its own; the trigger filter;
+and the load-time guard.
+
+Faerie Artisans is not authored in this change; its gap record stays until it
+is.
+
+## `attacking_player` — "attacks you", not "attacks you and/or your planeswalkers"
+
+### Overview
+
+Trouble in Pairs: *"Whenever an opponent attacks you with two or more creatures,
+draws their second card each turn, or casts their second spell each turn, you
+draw a card."* One gap record, `attacking_player_selector`. Every other clause on
+the card was already expressible; the attack clause was one creature too wide.
+
+### Why the existing vocabulary would not do
+
+- `creatures_attack_player` with `defending: "you"` binds `attackers` as every
+  creature whose defending player is you. `combat.attackers[oid]` records the
+  player even for an attack aimed at their planeswalker (`add_attacker` refuses
+  a walker whose controller disagrees), so the binding is "you and/or
+  planeswalkers you control" -- which is Mangara, the Diplomat, already shipped,
+  and must keep meaning that.
+- Rule 506.2 makes a player and each planeswalker they control separate attack
+  targets (508.1b), so one creature at you and one at your planeswalker is one
+  creature attacking you. Counting the bare binding draws a card the printed
+  card does not.
+- `attacking` is a bare boolean with no notion of whom, and nothing in the
+  selector or value languages read `combat.attacking_planeswalker`.
+
+### The shape
+
+A selector key, `attacking_player: "you" | "opponent" | "any"`, relative to the
+ability's controller. It matches a creature that is attacking (`combat.attacking`,
+so a creature removed from combat does not), is **not** in
+`combat.attacking_planeswalker`, and whose defending player the word names. Out
+of combat it matches nothing. Trouble in Pairs' clause is:
+
+```jsonc
+"trigger": {
+  "event": "creatures_attack_player", "controller": "opponent", "defending": "you",
+  "condition": {"cmp": ">=",
+    "left": {"count": {"binding": "attackers", "attacking_player": "you"}},
+    "right": {"const": 2}}
+}
+```
+
+A selector key rather than a trigger option because it composes: it narrows the
+binding inside `count`, works on any battlefield pool, and needs no second
+reading of the event. The predicate lives in one function,
+`selectors.attacking_player_matches`, called from both `matches` and
+`triggers.matches_card_filter` -- a trigger filter is validated against the same
+`SELECTOR_KEYS`, and a key loaded there and ignored would be the silently-wider
+filter.
+
+### The loader guard
+
+`validate_selector` refuses anything but the three words. `true` is the tempting
+spelling (it is how `attacking` is written) and, read as a word, would name
+nobody.
+
+### Tier A
+
+No new op, event, decision kind or API field; nothing under `frontend/`. The
+authoring packet's `selector_keys` is derived from `SELECTOR_KEYS`, so workers see
+the key with no packet change.
+
+### Guarded by
+
+`tests/unit/test_attacking_player_selector.py`: one at you and one at your
+planeswalker counts 1 and does not fire; two at you counts 2 and fires; both at
+the planeswalker counts 0; the Mangara reading of the same split still fires; at
+a three-player pod, attacks at another opponent are not attacking you, and
+`opponent`/`any` name the other seats without ever counting a planeswalker; the
+trigger-filter half; nothing once combat ends; and the load-time refusals.
+
+Trouble in Pairs is not authored in this change; its gap record stays until it
+is.
+
+## `crew_power_bonus` — crewing as though power were greater
+
+### Overview
+
+Shorikai, Genesis Engine: *"Create a 1/1 colorless Pilot creature token with
+"This token crews Vehicles as though its power were 2 greater.""* Crew itself
+shipped long ago (`tap_permanents` with `total_power`); what was missing was the
+Pilot, and the Pilot was missing because its one printed line had no home. The
+bodies nearest it (`gnome_1_1_c`, `hero_1_1_c`) are the wrong creature type and
+drop the rider, and `buff` changes real power — a 3/1 that attacks for three.
+
+### Where it is read
+
+A static, `crew_power_bonus`, with `affects` and a required `amount`, answered
+by `characteristics.crew_power_bonus` (summed over every applicable static, like
+`prevented_damage`) and read by `costs._crew_power` — the renamed crew sum —
+alone. That sum decides both whether the crew is offered (`_tap_cost_pool`) and
+how much each creature takes off what is still needed as it is tapped (`pay`),
+so a Pilot picked first against crew 3 ends the question. Nothing in the
+characteristics pipeline sees it.
+
+### The token
+
+`pilot_1_1_c_crew2` in `data/cards/tokens.cards.json`: 1/1 colourless Pilot
+creature, the static on `{"self_only": true}`. The authoring packet's
+`token_ids` is derived from the pool, so it appears there with no further work.
+The "saddles Mounts and crews" Pilot is a different token and is not defined:
+the engine has no saddle.
+
+### Tier
+
+B-lite: a static and one reader. No op, no `EventType`, no decision kind, no API
+field, nothing under `frontend/`. The AI's action mask is
+`legality.legal_actions()`, which already reads the cost pool.
+
+### Guarded by
+
+`tests/unit/test_crew_power_bonus.py`: a Pilot and a 5/5 crew 8 and a vanilla
+1/1 with the same 5/5 does not; a Pilot alone crews 3; the bonus belongs to the
+Pilot and not to its companions; Hotshot Mechanic's nontoken copy of the line;
+a tapped Pilot adds nothing; the bonus stacks with an anthem; paying taps both
+creatures and stops as soon as the Pilot's crew power meets the number; the
+Pilot is still a 1/1 and attacks for one; the created token is the printed
+Pilot, crews while summoning sick, and is offered by the packet; and the
+load-time guards. Test cards live in `tests/data/crew_power_bonus.cards.json`.
+
+## Station, the cost — "put charge counters equal to its power"
+
+### Overview
+
+Uthros, Titanic Godcore and Adagia, Windswept Bastion, the two Planets in the
+Bard, King of Dale deck: *"Station (Tap another creature you control: Put charge
+counters equal to its power on this Planet. Station only as a sorcery.)"* Rule
+702.184a. The first of two capabilities Station needs; the "12+ |" threshold is
+the second.
+
+### Why the existing vocabulary would not do
+
+- `tap_permanents` already charged "tap another creature you control", but it
+  was write-only: the creature was tapped and forgotten, so no effect could ask
+  its power.
+- `choose_permanents` + the `tap` op pays on resolution, so the ability could be
+  activated with nothing to tap and responded to before anything tapped.
+- A snapshot at payment misses a pump in response; a bare oid reads the
+  graveyard card's printed power once the creature has gone. The release notes
+  require both the live read and last-known information.
+
+### The shape
+
+`tap_permanents.as` names the one tapped permanent. `costs.pay` takes a
+`bindings` dict, `game._activate` hands it to `push_activated_ability`, and the
+binding is `{"paid_object": key}` pointing at a record in
+`GameState.paid_objects`. `zones.move_object` writes the departing permanent's
+derived power and toughness into any open record for it; `values._characteristic`
+reads the live permanent while the record is open and the record once it is
+filled. `_resolve_ability` prunes the records its item carried. `add_counters`
+clamps a negative amount to zero (107.1b).
+
+### Guarded by
+
+`tests/unit/test_station.py`: offered with a creature and not without one, not
+with only tapped creatures, only at sorcery speed; the creature tapped before
+resolution; counters equal to the tapped creature's power and not another's; a
+second activation adding; a pump in response counting; a pumped creature
+destroyed in response using its last-known power; negative power putting none
+and removing none; the record pruned; and the load-time guards. The test card is
+`tests/data/station.cards.json`.
+
+## Station symbols — "12+ | …", an ability had only at a counter count
+
+### Overview
+
+The second half of Station, rule 721: "As long as this permanent has N or more
+charge counters on it, it has [abilities]." Uthros, Titanic Godcore's
+"12+ | {U}, {T}: Add {U} for each artifact you control." and Adagia, Windswept
+Bastion's "12+ | {3}{W}, {T}: Create a token that's a copy of target artifact or
+enchantment you control, except it's legendary. Activate only as a sorcery."
+
+### Why the existing vocabulary would not do
+
+`condition` ("activate only if…") refuses the activation of an ability the
+permanent still has. Uthros's gated line is a mana ability, and mana abilities
+never pass through that check, so it would have tapped for blue from turn one.
+The rule is about existence, not permission.
+
+### The shape
+
+`threshold: {"counter": "charge", "at_least": 12}` on an activated ability,
+compiled to `Ability.threshold`. `characteristics.present_printed_abilities`
+drops the gated abilities an object does not meet (all of them off the
+battlefield) from `abilities_of` and `_derived_abilities`, which legality, the
+mana solver, the by-hand mana path, the AI and granted-ability provenance all
+read. `legality._ability_aims` checks it too, for `_offers_something_else`,
+which walks the printed face. Resolution is untouched: `ability_of` reads the
+printed list, so an ability on the stack survives losing the counters.
+
+The loader refuses a threshold on anything but an activated ability, on a
+grantable ability, an ungated ability after a gated one, and falling or
+mixed-counter thresholds: abilities are addressed by index, so an absent one may
+only drop a tail. `verify._covered` claims an `N+ |` line only through an ability
+gated at N whose text is the whole line. The activation sweep in
+`tests/cards/test_every_card_works.py` stocks the counters a threshold asks for,
+and its target prop now reads `any_types` ("target artifact or enchantment").
+
+### Not built
+
+Spacecraft becoming artifact creatures with a base P/T at their number, and gated
+keywords, statics and triggers. Neither Planet needs them; the loader refuses a
+gated non-activated ability.
+
+### Guarded by
+
+`tests/unit/test_station_threshold.py`: absent below 4 and present at exactly 4;
+the 12+ mana ability absent at 11 and present at 12 at its printed index; Station
+still offered past the last number; no striations in hand; removing a counter
+taking the ability away; an ability on the stack resolving after its counters
+are gone; the 12+ mana ability adding one blue per artifact and absent from the
+by-hand mana path at 11; the load-time guards; and the residual gate (the
+striated card claims every line, an ungated ability or a gate at another number
+does not).
+
+Neither card is authored in this change.
+
+## Granted activated abilities — a chapter that gives the Saga something to activate
+
+### Overview
+
+Urza's Saga: *"I — This Saga gains "{T}: Add {C}." II — This Saga gains "{2},
+{T}: Create a 0/0 colorless Construct artifact creature token with 'This token
+gets +1/+1 for each artifact you control.'""* A chapter resolves once and the
+gain outlives it, until the Saga leaves the battlefield (400.7). The gap record
+said chapter I "loads today"; it loaded and did nothing.
+
+### The two holes
+
+- **The op's grants never reached `abilities_of`.** `primitives.grant_ability`
+  writes a pointer onto the permanent, and only `triggers.collect` read it.
+  Legality, `costs.mana_sources` and `game._activate` read
+  `characteristics.abilities_of`, which appended *static* grants only. The op's
+  activated grants are now appended there too, with `(granter oid, pool index)`
+  provenance — and only its activated ones, since its triggered grants are
+  already yielded by `triggers.collect` and would otherwise fire twice.
+- **`stack.ability_of` resolved an activated ability off the printed list.**
+  That is why `grantable_abilities` refused any activated ability that was not a
+  mana ability (605.3a keeps those off the stack). `push_activated_ability` now
+  reads the derived list and records `granted_by` plus the index into the
+  granter's `grantable_abilities` — the pair a granted trigger already carried —
+  and `StackItem.granted_def_id` for a token granter that has ceased to exist.
+  On Urza's Saga the old lookup would have resolved the Construct ability as
+  chapter II, and `sagas.chapter_on_stack` would then have held off 704.5s: the
+  Saga would not be sacrificed after III while a Construct was on its way.
+
+### Refused at load
+
+A granted activated ability with `active_zones` other than the battlefield
+(granted cycling): a grant lives on a permanent, so it would never be offered.
+A granted chapter stays refused.
+
+### Tier
+
+A — no new op, decision kind, event or API field, nothing under `frontend/`. The
+loader refusal is lifted and two engine readers learn the op's grants.
+
+### Guarded by
+
+`tests/unit/test_granted_activated_abilities.py`, on `t_granting_saga`
+(`tests/data/granted_activated.cards.json`), which is Urza's Saga as the card
+will be written: played as a land it enters with its lore counter; chapter I's
+mana ability reaches the solver and survives cleanup; chapter II's ability is
+offered at its derived position, goes on the stack carrying its granter, and
+makes a 1/1 Construct — also after the Saga has left, and with the granter
+object gone; it is not mistaken for a chapter, so the Saga is sacrificed after
+III with the Construct still arriving; and a Saga that leaves and returns has
+neither grant until chapter I runs again. The two loader tests that pinned the
+old refusal (`test_restricted_mana.py`, `test_lose_all_abilities.py`) now pin
+the reversal.
+
+## `or_planeswalker` — a token attacking "that player or a planeswalker they control"
+
+### Overview
+
+Adeline, Resplendent Cathar was blocked on "…create a 1/1 white Human creature
+token that's tapped and attacking that player or a planeswalker they control."
+`attacking` could name a seat (Ainok Strike Leader) and nothing else, although a
+declared attacker has been able to attack a planeswalker since planeswalkers
+shipped.
+
+### Why the existing vocabulary would not do
+
+- `attacking` resolves through `_attacking_player` to a single **pid**; every
+  caller writes that pid into `combat.attackers` and no key on any op aims an
+  attacker at a permanent.
+- Writing only the seat is a narrower card: 506.2 makes a planeswalker a third
+  attack target, and this engine already refuses to treat attacking a walker as
+  attacking its controller (Ghostly Prison, goad).
+
+### The shape
+
+- **`or_planeswalker: true`** beside `attacking` on `create_token`,
+  `copy_permanent` and `put_onto_battlefield`, read by
+  `board_helpers._aim_at_planeswalker` after the permanents arrive.
+- **The choice is 508.4's**: the arriving creature's controller picks the seat or
+  one of that seat's planeswalkers, one question per creature, and no question
+  when the seat has no planeswalker.
+- **Recorded as a declared attack at a walker is**: `attackers[oid]` stays the
+  defending player, `attacking_planeswalker[oid]` names the walker, so damage
+  assignment (508.1, 506.4c) and every reader of either map need nothing new —
+  including the `attacking_planeswalker` selector being added alongside.
+
+### Tier A, and why no new decision kind
+
+`ask_targets` already poses a mixed list of player and object refs as a
+`CHOOSE_OBJECTS`; it gained an optional `purpose` (default `"target"`) so this
+question says `"attack"`, since nothing is targeted. The heuristic agent, the RL
+encoder, the client's prompt dialog and the authoring verifier all answer a
+`CHOOSE_OBJECTS` already, so the verifier cannot hang on it. No event, no API
+field, nothing under `frontend/`. The packet's `op_options` are derived from each
+op's source, following the helper call, so `or_planeswalker` reaches workers on
+all three ops without a hand-written entry.
+
+### The loader guard
+
+`or_planeswalker` without an `attacking` (or with `attacking: false`) is a load
+error — the token would attack nobody while the card reads as printed — and so is
+a non-boolean value.
+
+### Guarded by
+
+`tests/unit/test_token_attacking_planeswalker.py`: no planeswalker, another
+seat's planeswalker, or only your own means no question and the token attacks the
+player; with one, the token's controller (not the effect's) is offered exactly the
+seat and its walker; choosing the walker records it, choosing the player records
+none; two tokens choose separately; `attacking: true` widens the same way; no
+attack event fires; `put_onto_battlefield` and `copy_permanent` take the key; the
+printed card through real combat puts the Human's damage on the walker, deals
+nothing when the walker has left, asks only at the pod seats that have walkers,
+and falls back to the player under the passive answer; its `set_pt` power counts
+the creatures its controller has; and the load-time guards and packet options.
+
+Adeline is not authored in this change; its gap record stays until she is.
+
+## `mana_cost` — the printed cost, not the number read off it
+
+### Overview
+
+Urza's Saga, chapter III: *"Search your library for an artifact card with mana
+cost {0} or {1}, put it onto the battlefield, then shuffle."* The closest the
+selector language could say was `mana_value <= 1` with `not_colors` over all five
+colours and `x_in_mana_cost: false`, and that is a different card: 202.1b gives a
+card with no mana symbols **no** mana cost, and 23 artifacts in the catalog are
+that shape — Seat of the Synod, Darksteel Citadel and every Bridge among them.
+They have mana value 0, so the approximation fetches them; the Saga cannot.
+
+### What it compares
+
+`{"mana_cost": ["{0}", "{1}"]}` — any of a list of printed costs.
+`mana.printed_cost_is` compares symbol counts: generic, each coloured slot
+(`{C}` included), `{X}`, and each hybrid or Phyrexian pip as itself. So `{1}`
+matches one generic symbol and nothing else, a card with no cost matches
+nothing, and each wanted cost goes through the parser first, so `" {1} "` and
+`"{1}"` agree.
+
+### Where it is read
+
+Everywhere the key is legal, because an unread key loads and matches everything:
+`selectors.matches` (effects and targets), `triggers.matches_card_filter`,
+`characteristics._matches_printed` (static `affects`, counts, spell filters) and
+`cost_reduction._reduction_matches`. An embalm-style copy with "no mana cost" is
+honoured on the effect and trigger sides.
+
+### Refused at load
+
+A bare string (iterated it is characters), an empty list, an empty entry ("no
+cost" is exactly what never matches) and an unparsable cost — in
+`validate_selector` and in every static, spell and counting filter.
+
+### Tier
+
+A — a selector key and its readers. No op, event, decision kind or API field;
+nothing under `frontend/`.
+
+### Guarded by
+
+`tests/unit/test_mana_cost_selector.py`: {1} and {0} match; an artifact land, an
+{X}, a {2}, a {C}, a {W/P} and a {2/W} do not; a pip matches itself; spelling is
+normalised; an end-to-end search offers only the {1} from a library holding the
+land, the {X} and the {2}; the trigger and static readers agree; and the load
+refusals. `t_granting_saga`'s chapter III now uses the key.
+
+## `strive` — a cost that grows with the targets
+
+### Overview
+
+Call the Coppercoats: *"Strive — This spell costs {1}{W} more to cast for each
+target beyond the first. Choose any number of target opponents. …"* The same
+first line is on the Journey into Nyx strive cycle (Launch the Fleet, Twinflame,
+Ajani's Presence and the rest), each with one "any number of target" spec.
+
+### Why the existing vocabulary would not do
+
+- `cost_reduction` only subtracts, and every head it has reads the battlefield,
+  never the spell's own targets.
+- `multikicker` repeats a price, but the caster picks the count independently of
+  the targets, so a three-target cast that paid nothing extra would load clean.
+- Nothing in legality could price a line by its targets: `_cast_variant` solved
+  one payment and attached it to every target tuple.
+
+### The shape
+
+- **`strive: "{1}{W}"`** on `CardModel` and `CardDef`, kept out of `mana_cost`
+  so mana value stays printed.
+- **`casting.strive_surcharge(card, targets)`**: the surcharge scaled by
+  `len(targets) - 1`, or nothing for zero or one target. `Game._cast` adds it to
+  whichever cost the chosen branch picked (601.2f: an increase applies to every
+  way of casting).
+- **`casting._priced_tuples`** replaces the single solve in `_cast_variant`. For
+  a card without strive it is the old behaviour exactly: one payment, every
+  tuple. For strive it solves zero, one, two… extra targets and stops at the
+  first it cannot pay, then re-enumerates the tuples **one size at a time**
+  (`enumerate_target_tuples(..., size_cap=n)`, keeping only size `n`), largest
+  first, empty tuple last. A count the caster cannot pay is never offered, and
+  each line's `pays` names the lands its own count would tap.
+- **`size_cap`** on `enumerate_target_tuples` bounds a variable-size spec. It had
+  to bound the enumeration rather than filter the result: subsets come largest
+  first and are cut at `MAX_TARGET_OPTIONS`, so with six creatures every kept
+  tuple is a four-or-more pick, and single targets — the line that costs nothing
+  extra — are pushed out even by the fifteen pairs.
+- The free resolution-time casts (`suspend.cast_for_free`, and
+  `replacements._offer_cast` for madness and miracle) pass `size_cap=1` for a
+  strive card: they cannot collect the surcharge, so they take at most one
+  target rather than every target with the increase unpaid.
+
+### The loader guard
+
+Exactly one target spec, `count: "any"`, and no mode targets; a free or X strive
+is refused; so is strive beside overload, morph, bestow or mutate, each of which
+casts with targets the rule supplies.
+
+### Authoring
+
+`strive` joins `CARD_LEVEL_COST_KEYS` in the packet.
+`fidelity.unimplemented_mechanics` declares "strive" when the field is set, since
+`_MECHANIC_LINE` reads "Strive —" as a mechanic. `verify._covered` claims the
+line on a permanent only when the symbols before "more to cast for each target
+beyond the first" parse to the declared cost.
+
+### Tier
+
+A card-level cost: no op, event, decision kind or API field, nothing under
+`frontend/`. The action already carried its targets, which is all `Game._cast`
+needs to charge the right amount.
+
+### Guarded by
+
+`tests/unit/test_strive.py`: one target and zero targets tap three lands, two tap
+five, three tap seven; every chosen target is bound; seven lands offer counts
+0–3, six offer 0–2, three offer 0–1, two offer nothing; one Plains and four
+Islands offer no second target (the surcharge has a colour); the first line is
+the largest affordable one; each line's `pays` matches its count; on a six-bear
+board five lands still offer one and two targets and charge five for two; a free
+cast takes one target; the loader refusals; and the fidelity audit.
+
+Call the Coppercoats is not authored in this change.
+
+### Found along the way, not fixed
+
+Multikicker and replicate's **mana** half is priced by legality
+(`cost.plus(branch.mana.scaled(additional_times))` in `_cast_variant`) but never
+charged by `Game._cast`, which pays only `additional.without_mana()` per time.
+Casting the multikicker test anthem kicked three times on eight Plains taps two
+lands. `test_multikicker.py` asserts the offered counts and the read-back count,
+not the lands tapped, so nothing fails.
+
+## "Those opponents" — the targeted players as a selector's controller
+
+### Overview
+
+Call the Coppercoats' second sentence: *"Choose any number of target opponents.
+Create X 1/1 white Human Soldier creature tokens, where X is the number of
+creatures **those opponents** control."* Its gap record asked for a new
+"targeted-player selector", reasoning that `controller` accepts only fixed roles.
+
+### What was already there
+
+Nothing new was needed in the engine. A selector's `controller` is a full player
+spec (`selectors.matches` hands a Mapping clause to `select_players`), and
+`{"target": "t1"}` resolves through `ctx.target_players`, which returns every
+player ref under the id rather than the first. Cloak and Dagger's "creature
+**they** control" is the same clause with one seat in it. On resolution the
+context is built from `targeting.filter_legal`, so 608.2b already applies: a
+target that became illegal is not in the set, and a spell whose targets are all
+illegal does not resolve.
+
+The gap was written in good faith: the packet named `selector_keys` but never
+said what `controller` could hold, and the DSL reference's selector block listed
+`you|opponent|any` only.
+
+### What changed
+
+- **`loader.effects._validate_nested_player_refs`**: `_validate_effect` now walks
+  an effect's `objects`, `per`, `selector`, `affects`, `amount`, `count`, `power`
+  and `toughness` and validates every Mapping `controller`/`player` clause with
+  `_validate_player_spec`, wherever it is nested. Before, only the top-level
+  `player`/`chooser`/`controller` keys were checked, so
+  `{"count": {"controller": {"target": "t9"}}}` loaded and counted nobody, and so
+  did a `{"target": …}` naming a `permanent` target.
+- **Packet note** spelling the clause for "those opponents" / "they control",
+  and naming `controller: "opponent"` as the near miss.
+- **Docs**: the selector block's `controller` comment, and a card-dsl section.
+
+### Tier
+
+Loader validation and vocabulary. No op, event, decision or API field; nothing
+under `frontend/`.
+
+### Guarded by
+
+`tests/unit/test_targeted_players.py`, at a four-seat table with two, three and
+four creatures: one target counts that seat; two count both; the untargeted seat
+is never counted; all three count everyone; zero targets counts nobody; the
+`controller: "opponent"` counterfactual counts the whole table off one target;
+protection granted in response drops that seat while the other still counts;
+protection on the only target leaves no tokens; and the loader refuses an
+undeclared id, a non-player target, and an undeclared id nested inside `not`.
+
+Call the Coppercoats is not authored in this change.
+
+## Classes — levels, level lines and level-gated abilities — 716
+
+### Overview
+
+Caretaker's Talent, and every Class after it: "(Gain the next level as a sorcery
+to add its ability.) … / {W}: Level 2 / … / {3}{W}: Level 3 / Creature tokens you
+control get +2/+2." Thirty-four Classes in the catalog print the same three-band
+shape. This is the first commit of the Class subsystem, built under
+`/import-moxfield`'s rule 2 as a sequence of one-capability commits; the
+"becomes level N" trigger is the next.
+
+`docs/rules-coverage.md` held no decision about Classes. Its **Level up** row
+chose a counter plus a conditional static, and the gap record checked that
+spelling in full and refused it: the counter can be bought twice or out of
+order, a condition cannot switch a static off, and a `counter_placed` trigger
+fires again at level 3.
+
+### The shape
+
+- **`GameObject.class_level`**, 1 by default, set to 1 in
+  `zones._enter_battlefield` (716.3), on `to_dict`, and on the card view as
+  `level` for a card with level lines (`CardDef.top_level`).
+- **`kind: "level"`** in the card format, with `level` and `cost` and nothing
+  else (`_LEVEL_LINE_KEYS`). The loader compiles an activated ability with
+  `sorcery_speed_only`, the `become_level` effect and `Ability.becomes_level`.
+- **`legality._ability_aims`** refuses a level line unless the source is at
+  level N-1.
+- **`become_level`** sets the level and bumps the characteristics version; a
+  source off the battlefield is left alone. Refused in any authored effect.
+- **`level: N`** on any other ability becomes `Ability.level`.
+  `Ability.present_at` is the gate, applied by `present_printed_abilities` (the
+  derived list, with `AbilityKind.LATENT` stand-ins holding seats), by
+  `_ability_statics` and by `_active_player_statics`.
+- Load-time refusals: no `Class` subtype, a gapped or repeated ladder, a level no
+  line reaches, `level: 1`, a gate on a chapter/reflexive ability or off the
+  battlefield, and a level on a granted ability.
+
+### Frontend
+
+`CardView.level` in `api/types.ts`, and `counterBadges` leads with "Level N",
+so both the board face and the reader panel show it where counters already sit.
+Vitest in `tests/cardStyle.test.ts`.
+
+### Guarded by
+
+`tests/unit/test_class_levels.py`: the ladder (offered at N-1 only, resolves on
+the stack, sorcery speed, paid for, a departed source, set not increment); every
+reader of a gated ability (anthem, activated, triggered, player-wide static,
+lose-all-abilities); seats kept and `latent` stand-ins; the level is not a
+counter, not copied, reset on re-entry and kept on the way out; serialization;
+the loader refusals; and `tests/cards/test_every_card_works.py`'s activation
+sweep, which learned `_reach_the_level` and is run against the test Class.
+`tests/cards/golden_vocabulary.json` gains `become_level` and `_LEVEL_LINE_KEYS`.
+
+## `becomes_level` — "When this Class becomes level N" — 716.4
+
+### Overview
+
+The second commit of the Class subsystem. Eleven of the catalog's thirty-four
+Classes print "When this Class becomes level N, …" — Caretaker's Talent's copy of
+a token, Wizard Class's two cards, Cleric Class's reanimation — and it is usually
+the payoff for buying the level.
+
+### Why the existing vocabulary would not do
+
+- `ability_activated` fires when the level line is activated. The line uses the
+  stack, so that is before the Class is level 2, and fires even if the Class is
+  destroyed in response.
+- `counter_placed` needs a level counter, which a Class does not have, and fires
+  on every level, so the level-3 purchase would repeat the level-2 ability.
+
+### The shape
+
+- **`EventType.BECAME_LEVEL`** (`became_level`), with `oid`, `card` and `level`,
+  fired by `become_level` after the write and only when the level changed.
+- **`becomes_level`** in `TRIGGER_EVENTS` and `OBJECT_SUBJECT_TRIGGERS`, and
+  **`TriggerSpec.level`** / `TriggerModel.level`, compared in `triggers._matches`
+  the way `chapter` is.
+- The loader supplies `source: "self"`, requires `level` >= 2 on this event and
+  refuses it on any other, and `_check_class_levels` refuses a level no line
+  reaches or an ability printed under a higher band than the level it waits for.
+
+### Frontend
+
+Tier D: `describeEvent` reads "<card> becomes level N", and `beatsFor` floats
+"Level N" off the Class with the Saga chapter's pulse. Vitest in
+`tests/labels.test.ts` and `tests/events.test.ts`.
+
+### Guarded by
+
+`tests/unit/test_becomes_level_trigger.py`: the event and its payload; no event
+for a level that did not change; nothing while the level line is on the stack
+and nothing if the Class is destroyed in response; each rung fires once and only
+its own ability; another Class's level does not fire this one; Caretaker's
+Talent end to end (the level-2 token copy, the level-1 once-a-turn batched draw
+it sets off, no second copy at level 3, the level-3 anthem present only at 3);
+and the loader refusals.
+

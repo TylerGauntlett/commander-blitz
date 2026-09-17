@@ -1,0 +1,108 @@
+{
+  "card": {
+    "id": "tataru_taru",
+    "name": "Tataru Taru",
+    "oracle_text": "When Tataru Taru enters, you draw a card and target opponent may draw a card.\nScions' Secretary — Whenever an opponent draws a card, if it isn't that player's turn, create a tapped Treasure token. This ability triggers only once each turn.",
+    "mana_cost": "{1}{W}",
+    "supertypes": [
+      "Legendary"
+    ],
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Dwarf",
+      "Advisor"
+    ],
+    "power": 0,
+    "toughness": 3,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Tataru Taru enters, you draw a card and target opponent may draw a card.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "player",
+            "selector": {
+              "controller": "opponent"
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 1
+            }
+          },
+          {
+            "op": "may",
+            "player": {
+              "target": "t1"
+            },
+            "prompt": "Draw a card?",
+            "effects": [
+              {
+                "op": "draw",
+                "player": {
+                  "target": "t1"
+                },
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Scions' Secretary — Whenever an opponent draws a card, if it isn't that player's turn, create a tapped Treasure token. This ability triggers only once each turn.",
+        "trigger": {
+          "event": "draw",
+          "controller": "opponent",
+          "condition": {
+            "not": {
+              "is_active_player": {
+                "binding": "event_player"
+              }
+            }
+          },
+          "max_per_turn": 1
+        },
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "amount": {
+              "const": 1
+            },
+            "tapped": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    }
+  }
+}

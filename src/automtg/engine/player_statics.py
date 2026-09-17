@@ -22,7 +22,7 @@ from .characteristics import (
     resolve_chosen_colors,
     resolve_chosen_subtypes,
 )
-from .enums import Zone
+from .enums import Step, Zone
 from .objects import GameObject
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -67,6 +67,11 @@ def _active_player_statics(
             if not ability.is_static or not static:
                 continue
             if static.get("effect") != effect:
+                continue
+            # Druid Class's "You may play an additional land on each of your
+            # turns" is a level-2 ability: at level 1 the Class does not have it
+            # (716.2b). Asked here because this walk reads the printed face.
+            if not ability.present_at(obj.class_level):
                 continue
             if not _static_active(state, obj, static):
                 continue
@@ -117,6 +122,48 @@ def life_loss_multiplier(state: GameState, pid: int) -> int:
     return multiplier
 
 
+def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
+    """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
+
+    Thought Reflection: "If you would draw a card, draw two cards instead." Bard,
+    King of Dale and Alhammarret's Archive add "except the first one you draw in
+    each of your draw steps", which is ``except_first_in_draw_step``.
+
+    Each entry is ``(source oid, draw_multiplier)``. The oid is the identity
+    `replacements.draw` uses to keep 614.5 -- a replacement never applies twice
+    to the same event, so the draws a doubler produced are not doubled by that
+    doubler again, while a *second* doubler (a different oid) still applies to
+    each of them, which is how two compound (616.1).
+
+    Asked **per draw**, never once for a batch, because the exemption moves:
+    the answer for the first card of a draw step is not the answer for the
+    second (121.2 -- each card drawn is its own draw).
+    """
+    out: list[tuple[int, int]] = []
+    for obj, static in _active_player_statics(state, "replace_draw"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        if static.get("except_first_in_draw_step") and _first_draw_of_draw_step(state, pid):
+            continue
+        out.append((obj.oid, int(static.get("draw_multiplier", 1))))
+    return out
+
+
+def _first_draw_of_draw_step(state: GameState, pid: int) -> bool:
+    """Would the card ``pid`` is about to draw be the first of *their* draw step?
+
+    "Your draw steps": only the active player has one, so an opponent drawing
+    during it is never exempt. And "the first one you **draw**", a card rather
+    than the turn-based action: if that draw was skipped or dredged, whatever
+    card is drawn first in the step is still the first.
+    """
+    return (
+        state.step is Step.DRAW
+        and state.active_player == pid
+        and state.cards_drawn_this_draw_step.get(pid, 0) == 0
+    )
+
+
 def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     """Vorinclex: "whenever you tap a land for mana, add one mana of any type
     that land produced"."""
@@ -150,12 +197,22 @@ def players_doubling_land_triggers(state: GameState) -> frozenset[int]:
 
 
 def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
-    """Whether any ``no_hand_limit`` static frees this player from discarding.
+    """Whether this player has no maximum hand size (402.2, 514.1).
 
     Reliquary Tower, Thought Vessel, Nezahal. Written as a player-wide static
     like ``extra_land_drops`` rather than as a characteristic, because it is a
     fact about the *player* and there is no object for it to attach to.
+
+    Two sources, one answer. The statics above last as long as the permanent
+    printing them; `PlayerState.has_no_maximum_hand_size` is the one-shot
+    version -- Sea Gate Restoration's "for the rest of the game", written by the
+    `no_maximum_hand_size` op off a sorcery that is in the graveyard by the
+    time any cleanup step asks. Both are read here rather than the flag being
+    read in `turn._cleanup_step`, so there is one rule path to the hand limit
+    and nothing that asks it can see half the answer.
     """
+    if state.players[pid].has_no_maximum_hand_size:
+        return True
     return _player_static(state, pid, "no_hand_limit")
 
 
@@ -180,6 +237,21 @@ def player_skips_draw_step(state: GameState, pid: int) -> bool:
     controller may still cast Ancestral Recall.
     """
     return _player_static(state, pid, "skip_draw_step")
+
+
+def player_skips_extra_turn(state: GameState, pid: int) -> bool:
+    """Whether a ``skip_extra_turn`` static makes this player skip an extra turn.
+
+    Trouble in Pairs: "If an opponent would begin an extra turn, that player
+    skips that turn instead." Read by `turn._take_extra_turn` at the moment a
+    scheduled extra turn would begin, which is when a replacement effect applies
+    (614.10) -- not by the `extra_turn` op, whose job is only to schedule.
+
+    Only **extra** turns. The printed line is inert against the ordinary turn
+    order, and nothing else reads this, so there is no path by which it could
+    skip one.
+    """
+    return _player_static(state, pid, "skip_extra_turn")
 
 
 def attack_forbidden(state: GameState, oid: int) -> bool:
@@ -493,6 +565,32 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+def player_cant_cast_spells(state: GameState, pid: int) -> bool:
+    """ "Your opponents can't cast spells during your turn." Voice of Victory.
+
+    A prohibition on the *player*, read everywhere a spell can be cast rather
+    than at one of those places: `casting._cast_actions` withholds the cast
+    actions, and the three resolution-time casts -- `suspend.cast_for_free`
+    (suspend, rebound, cascade, ripple, `cast_from_hand`, `play_exiled`,
+    `look_at_top`'s `cast_free`), `replacements._offer_cast` (madness, miracle)
+    and `op_cast_copy` (707.12: casting a copy *is* casting) -- refuse it. Rule
+    101.2 is why the last three matter: when a rule or effect says a player
+    may cast something and another says they can't, the "can't" wins, so a
+    cascade trigger an opponent already has on the stack does not slip a free
+    spell past the lock.
+
+    What it does **not** stop, each on purpose: copying a spell (707.10 -- a
+    copy put on the stack was never cast), activating abilities, playing a
+    land, and the special actions suspend and foretell (116.2), none of which
+    is casting. Grand Abolisher's second half is a different static.
+
+    `affects_player` picks out the stopped seats and `condition` is the
+    "during your turn", both answered through `_active_player_statics`, so the
+    lock lifts the instant the source leaves or the turn passes.
+    """
+    return _player_static(state, pid, "cant_cast_spells")
+
+
 def player_reveals_library_top(state: GameState, pid: int) -> bool:
     """ "Play with the top card of your library revealed." Vampire Nocturnus.
 
@@ -667,16 +765,20 @@ def player_extra_land_drops(state: GameState, pid: int) -> int:
 
 
 def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str, Any]]:
-    """The active ``replace_token_creation`` statics ``pid`` controls, in battlefield order.
+    """The active ``replace_token_creation`` statics reaching ``pid``, in battlefield order.
 
-    Academy Manufactor and Divine Visitation. Read by
+    Academy Manufactor, Divine Visitation, and the doublers -- Doubling Season,
+    Parallel Lives, Bard, King of Dale. Read by
     `primitives._token_creation_plan` and by nothing else, the way
     `untap_during_each_untap_step` is read by the untap step alone: a token that
     is about to be created has no object for a characteristic to attach to, so
     this cannot be a layer -- it is a fact about what *will* be made.
 
-    Filtered on the source's controller rather than on `affects_player`, because
-    both printed cards say "you" and neither prints the opponent-facing half.
+    ``pid`` is the player the token will be created *under*. `affects_player` is
+    optional here and defaults to ``"you"`` -- every card before Primal Vigor
+    said "you" and was written without the key -- so the default is the
+    source's controller, and ``"any"`` is Primal Vigor's "if one or more tokens
+    would be created", which names nobody.
     Order is `state.battlefield` order, which is arrival order: rule 616.1 gives
     the choice of which replacement to apply first to the affected player, and
     this engine does not ask -- see `_token_creation_plan`, which owns that
@@ -685,7 +787,7 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
     return [
         static
         for obj, static in _active_player_statics(state, "replace_token_creation")
-        if obj.controller == pid
+        if _reaches_player(obj, static, pid)
     ]
 
 

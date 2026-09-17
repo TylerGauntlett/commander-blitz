@@ -436,9 +436,13 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
-    #: ``draw`` only: "whenever you draw your **second** card each turn".  The
-    #: ordinal the drawn card must have had, compared against ``nth`` on the
-    #: event.
+    #: ``draw`` and ``spell_cast`` only: "whenever you draw your **second**
+    #: card each turn", "whenever an opponent casts their **second** spell each
+    #: turn".  The ordinal the draw or cast must have had for its player this
+    #: turn, compared against ``nth`` on the event.  On ``spell_cast`` with a
+    #: ``filter`` it is the ordinal among that player's spells **matching** the
+    #: filter -- "their first noncreature spell" -- see
+    #: `triggers._spell_ordinal`.
     #:
     #: A restriction on the trigger rather than a ``condition``, and that is the
     #: whole of the feature.  The condition form -- ``cards_drawn_this_turn ==
@@ -482,6 +486,10 @@ class TriggerSpec:
     #: on the Saga sees it. Without the comparison a three-chapter Saga would
     #: resolve all three chapters on its first lore counter.
     chapter: int | None = None
+    #: Which level a ``becomes_level`` trigger fires on -- the "2" in "When this
+    #: Class becomes level 2". On the spec for `chapter`'s reason: it is a filter
+    #: on the event, and `triggers._matches` is handed the spec.
+    level: int | None = None
 
 
 def count_mode_specs(effects: Any) -> int:
@@ -656,6 +664,14 @@ class Ability:
     activate_steps: tuple[str, ...] = ()
     #: Forecast: "only once each turn", counted per (object, ability index).
     once_each_turn: bool = False
+    #: A station symbol (721): ``(counter kind, N)`` -- this permanent has the
+    #: ability only while it has N or more of that counter. Read by
+    #: `characteristics.abilities_of`, which leaves the ability out below N, so
+    #: every reader that asks what a permanent can do agrees it is not there.
+    #: The loader keeps these abilities after every ungated one and in rising
+    #: order, which is what keeps `abilities_of`'s indices stable: below a
+    #: threshold the list only ever loses a tail.
+    threshold: tuple[str, int] | None = None
     # activated + triggered
     targets: tuple[TargetSpec, ...] = ()
     #: Target specs owned by one **mode** each, the ability-level twin of
@@ -671,6 +687,32 @@ class Ability:
     effects: tuple[Mapping[str, Any], ...] = ()
     # static
     static: Mapping[str, Any] | None = None
+    # Class (716)
+    #: **The level this ability is printed under** -- the "Level 3" band a
+    #: Class's "Creature tokens you control get +2/+2" sits in. ``None`` on every
+    #: ability that is not gated, which includes a Class's level-1 abilities:
+    #: 716.2c puts those on the permanent at every level, so there is nothing to
+    #: record.
+    #:
+    #: A gate on *having* the ability, not on using it (716.2b: "a Class has the
+    #: abilities of its level and of each level below it"). Below the level the
+    #: ability is not there at all -- `characteristics.abilities_of` hands back a
+    #: :attr:`AbilityKind.LATENT` stand-in -- so it is not offered, not
+    #: collected as a trigger and not applied as a static. An `activation
+    #: condition` spelling would only have refused the activation, and could not
+    #: switch a static off.
+    level: int | None = None
+    #: **"{W}: Level 2"** -- this activated ability is a Class's level line, and
+    #: this is the level it gains (716.2a): "[Cost]: This Class's level becomes
+    #: N. Activate only if this Class is level N-1 and only as a sorcery."
+    #:
+    #: The restriction is `legality._ability_aims`' to enforce and is read off
+    #: this number, which is why it is a field and not a condition: "only if
+    #: level N-1" is what stops level 2 being bought twice and level 3 being
+    #: bought first, and a card author has no reason ever to write it differently.
+    #: The effect -- `become_level` -- is supplied by the loader, as a chapter's
+    #: trigger is.
+    becomes_level: int | None = None
 
     @property
     def cast_time_modes(self) -> Mapping[str, Any] | None:
@@ -733,6 +775,23 @@ class Ability:
     @property
     def is_static(self) -> bool:
         return self.kind is AbilityKind.STATIC
+
+    def present_at(self, class_level: int) -> bool:
+        """Does a permanent at ``class_level`` have this ability? (716.2b-c)
+
+        True for every ability without a printed level, which is every ability
+        on every card that is not a Class.
+        """
+        return self.level is None or class_level >= self.level
+
+    def latent(self) -> Ability:
+        """The :attr:`AbilityKind.LATENT` stand-in that holds this ability's seat.
+
+        Keeps ``index``, ``text`` and ``level`` -- enough to say *what* is
+        missing and why -- and nothing any reader could act on: no cost, no
+        trigger, no static, no effects, and not a mana ability.
+        """
+        return Ability(kind=AbilityKind.LATENT, index=self.index, text=self.text, level=self.level)
 
 
 @dataclass(frozen=True)
@@ -879,6 +938,12 @@ class CardDef:
     #: under, so the residual gate can say which printed line the cost claims and
     #: check that the symbols on that line are the ones actually charged.
     multikicker: ManaCost | None = None
+    #: **Strive**: the mana added to the spell's total cost once for each target
+    #: beyond the first (601.2f). Read by `casting.strive_surcharge`, which both
+    #: legality and `Game._cast` price through, so the line offered and the
+    #: amount charged cannot disagree. Kept out of ``mana_cost`` for the reason
+    #: kicker is: mana value stays what is printed.
+    strive: ManaCost | None = None
     #: "Evoke {2}{U}" -- an alternative cost that *replaces* the printed one.
     #: Subtractive where ``kicker`` is additive, and like it kept out of
     #: ``mana_cost`` so mana value stays what is printed: an evoked
@@ -1066,6 +1131,15 @@ class CardDef:
 
     def mana_abilities(self) -> tuple[Ability, ...]:
         return tuple(a for a in self.abilities if a.is_mana_ability)
+
+    @property
+    def top_level(self) -> int:
+        """The highest level this card's level lines reach, or 0 for a non-Class.
+
+        What the client is told a level for: a permanent that prints no
+        "{cost}: Level N" has no level worth showing.
+        """
+        return max((a.becomes_level or 0 for a in self.abilities), default=0)
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"<CardDef {self.id}>"

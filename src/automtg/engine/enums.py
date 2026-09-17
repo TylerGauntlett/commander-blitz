@@ -329,6 +329,22 @@ class AbilityKind(str, Enum):
     #: which is exactly what 603.11 asks for and the whole reason this is an
     #: ability on the card rather than more effects inside the spell.
     REFLEXIVE = "reflexive"
+    #: **A place held for an ability this permanent does not have right now** --
+    #: a Class's level-3 anthem on a Class that is level 1 (716.2b-c). Never
+    #: written in a card file and never compiled by the loader: only
+    #: `characteristics.abilities_of` produces one, standing in for the printed
+    #: ability at the printed ability's position.
+    #:
+    #: A stand-in rather than a gap in the list, because positions are addresses.
+    #: `Action.ability_index`, `StackItem.ability_index`, the per-turn trigger cap
+    #: and the once-each-turn ledger all name an ability by where it sits, and
+    #: `stack.ability_of` resolves an item against the *printed* list. Dropping a
+    #: level-3 ability from the middle would renumber everything after it, and a
+    #: "{3}{W}: Level 3" activated at level 2 would resolve as whatever printed
+    #: ability happened to sit at its old number. So the ability keeps its seat
+    #: and answers False to `is_activated`, `is_triggered` and `is_static`, which
+    #: every reader already asks before doing anything with an ability.
+    LATENT = "latent"
 
 
 class ActionKind(str, Enum):

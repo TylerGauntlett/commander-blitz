@@ -248,6 +248,9 @@ class TriggerModel(BaseModel):
     source: Literal["self"] | None = None
     filter: dict[str, Any] | None = None
     condition: dict[str, Any] | None = None
+    #: For ``becomes_level``: the level it waits for -- "When this Class becomes
+    #: level **2**". Required there and refused on every other event.
+    level: int | None = None
     #: For ``attacks``: whom the creature is attacking.  ``controller`` says
     #: whose creature is swinging, which is a different question -- "attacks you"
     #: needs this one.
@@ -267,7 +270,10 @@ class TriggerModel(BaseModel):
     #: Manabarbs that pings every land tap.
     mana_ability: bool | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
-    #: ordinal that draw must have had for its player this turn.  Matched where
+    #: ordinal that draw must have had for its player this turn.  For
+    #: ``spell_cast``: "whenever an opponent casts their second spell each
+    #: turn", counted over the spells matching ``filter`` when there is one
+    #: ("their first **noncreature** spell").  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
     nth: int | None = None
@@ -297,7 +303,7 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static", "chapter", "reflexive"]
+    kind: Literal["activated", "triggered", "static", "chapter", "reflexive", "level"]
     #: The name a `reflexive_trigger` op calls this ability by -- "when you do"
     #: has to point at *which* do. Required on ``kind: "reflexive"`` and refused
     #: on every other kind, and the loader checks the two halves name each
@@ -314,6 +320,18 @@ class AbilityModel(BaseModel):
     #: line contains no word saying *when*, so there is nothing for a card author
     #: to write and every Saga in print would have to write the same thing.
     chapter: int | None = None
+    #: **A Class's level** (716). Two readings of one number, both "the level
+    #: band this printed line belongs to":
+    #:
+    #: - on ``kind: "level"`` it is required, and it is the level the line
+    #:   *gains* -- "{W}: Level 2" is ``{"kind": "level", "level": 2, "cost":
+    #:   {"mana": "{W}"}}``. Nothing else goes on such a line: the loader supplies
+    #:   the sorcery-speed timing, the "only if level N-1" restriction and the
+    #:   effect, because 716.2a says all three and the printed line says none.
+    #: - on any other kind it is the level the ability is printed **under**, and
+    #:   the ability exists only while the Class is at that level or higher
+    #:   (716.2b). Omitted for a level-1 ability, which is always there.
+    level: int | None = None
 
     # activated
     cost: CostModel | None = None
@@ -361,6 +379,14 @@ class AbilityModel(BaseModel):
         Literal["upkeep", "draw_step", "precombat_main", "end_step"]
     ] = Field(default_factory=list)
     once_each_turn: bool = False
+    #: A station symbol (721): "12+ | {U}, {T}: Add {U} for each artifact you
+    #: control" -- ``{"counter": "charge", "at_least": 12}``. The permanent
+    #: **has** this ability only while it has that many counters; below it the
+    #: ability does not exist, so it is not offered, not a mana source and not
+    #: listed. Not ``condition``, which refuses an activation of an ability the
+    #: permanent still has. Activated abilities only, printed after every
+    #: ungated ability and in rising order.
+    threshold: dict[str, Any] | None = None
 
     # triggered
     trigger: TriggerModel | None = None
@@ -505,6 +531,14 @@ class AbilityModel(BaseModel):
     #: each" is a list of three and "that many are created instead" is a list of
     #: one. See `primitives._token_creation_plan`.
     create_instead: list[str] = Field(default_factory=list)
+    #: ``replace_token_creation``: what the count of each token about to be made
+    #: is multiplied by, the token itself unchanged. Bard, King of Dale's and
+    #: Parallel Lives' "twice that many of those tokens are created instead" is
+    #: ``2``. The other axis of the same static from `create_instead`, and a
+    #: static carries exactly one of the two: the doublers name no token, so no
+    #: id could be listed, and listing one would convert every token into it.
+    #: Refused below 2 for the reason `loss_multiplier` is.
+    token_multiplier: int | None = None
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:
@@ -514,6 +548,16 @@ class AbilityModel(BaseModel):
     #: replaces a loss with itself, and 0 is "they lose no life" -- a
     #: prevention, which is a different sentence and a much stronger card.
     loss_multiplier: int | None = None
+    #: ``replace_draw``: how many cards each replaced draw becomes. Thought
+    #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
+    #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1
+    #: replaces a draw with itself and 0 is "you draw nothing", a different card.
+    draw_multiplier: int | None = None
+    #: ``replace_draw``: "…except the first one you draw in each of your draw
+    #: steps" (Bard, King of Dale; Alhammarret's Archive). The first *card*
+    #: drawn while its controller's own draw step is running is left alone;
+    #: every other draw, that step's second included, is replaced.
+    except_first_in_draw_step: bool = False
 
 
 class ReplacementModel(BaseModel):
@@ -762,6 +806,13 @@ class CardModel(BaseModel):
     #: action and ``{"kicked": true}`` can only answer yes or no, never how many.
     #: Give one or the other, not both spellings of the same slot.
     multikicker: str | None = None
+    #: **Strive** (Journey into Nyx): "This spell costs {1}{W} more to cast for
+    #: each target beyond the first." The mana string charged once per target
+    #: past the first, on a card whose one target spec is ``count: "any"``. A
+    #: cost *increase* under 601.2f, fixed by the targets chosen at 601.2c, so
+    #: legality prices each target count as its own cast line and never offers
+    #: a count the caster cannot pay for.
+    strive: str | None = None
     #: **Bestow {5}{W}** (702.103a): "If you cast this card for its bestow cost,
     #: it's an Aura spell with enchant creature. It becomes a creature again if
     #: it's not attached to a creature."

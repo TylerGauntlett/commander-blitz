@@ -36,6 +36,19 @@ def _check_owner_key(filt: Mapping[str, Any], where: str) -> None:
         raise DslError(f"{where}.owner: must be one of {list(_FILTER_PLAYERS)}, got {owner!r}")
 
 
+def _check_mana_cost_key(filt: Any, where: str) -> None:
+    """``mana_cost`` in a static or spell filter is a list of printed costs.
+
+    The effect-side `validate_selector` makes the same check; static filters
+    are validated by key set alone, so without this a bare ``"{1}"`` would load
+    and be iterated as three characters, matching nothing.
+    """
+    if isinstance(filt, Mapping) and "mana_cost" in filt:
+        from automtg.engine.mana import validate_printed_cost_list
+
+        validate_printed_cost_list(filt["mana_cost"], where)
+
+
 def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """ "…of the chosen type" cannot survive being handed to another permanent.
 

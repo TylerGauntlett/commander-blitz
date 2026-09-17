@@ -13,7 +13,7 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
-from .characteristics import abilities_of, chars
+from .characteristics import abilities_of, chars, threshold_met
 from .costs import (
     can_pay,
     can_pay_mana,
@@ -641,8 +641,31 @@ def _ability_aims(
         return None
     if zone not in ability.active_zones:
         return None
+    if ability.threshold is not None:
+        # A station striation below its number is not on the permanent (721).
+        # `_activate_actions` never reaches one -- it walks `abilities_of`,
+        # which has already left it out -- but `_offers_something_else` walks
+        # the printed face, and a 12+ ability counted there would surface a
+        # Planet's tap-only mana ability on a Planet with nothing else to do.
+        obj = state.objects.get(oid)
+        if obj is None or not threshold_met(obj, ability):
+            return None
+    if ability.level is not None:
+        # A Class's ability above its level is not on the permanent (716.2b),
+        # and `_offers_something_else` walks the printed face for the reason the
+        # threshold check above gives.
+        obj = state.objects.get(oid)
+        if obj is None or not ability.present_at(obj.class_level):
+            return None
     if ability.sorcery_speed_only and not sorcery_speed:
         return None
+    # 716.2a: "{W}: Level 2" -- "Activate only if this Class is level 1". The
+    # restriction is what makes a level a ladder rather than a price list: level
+    # 2 cannot be bought twice, and level 3 cannot be bought before level 2.
+    if ability.becomes_level is not None:
+        source = state.objects.get(oid)
+        if source is None or source.class_level != ability.becomes_level - 1:
+            return None
     # Forecast: "activate only during your upkeep, and only once each turn".
     # Both are checked here rather than at payment, because they are permission
     # to activate at all (602.5c) -- an ability offered and then refused shows a

@@ -624,6 +624,8 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
         return sum(_from_oid(ctx, oid, which) for oid in oids)
     if isinstance(ref, Mapping) and "binding" in ref:
         value = ctx.bindings.get(str(ref["binding"]))
+        if isinstance(value, Mapping) and "paid_object" in value:
+            return _paid_object_value(ctx, value["paid_object"], which)
         if isinstance(value, Mapping):
             return int(value.get(which, 0))
         if isinstance(value, int):
@@ -646,6 +648,27 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
     if isinstance(ref, int):
         return _from_oid(ctx, ref, which)
     raise DslError(f"unparsable characteristic reference {ref!r}")
+
+
+def _paid_object_value(ctx: EffectContext, key: Any, which: str) -> int:
+    """A characteristic of the permanent a cost tapped and named.
+
+    Live while the permanent is still on the battlefield, and the last-known
+    number once `zones.move_object` has written one -- Station's "use its power
+    as it last existed on the battlefield". See `costs.bind_paid_object`.
+
+    A record that is gone -- its ability already resolved and pruned it -- reads
+    0, which is the most a reference with nothing behind it can honestly say.
+    """
+    record = ctx.state.paid_objects.get(key) if isinstance(key, int) else None
+    if record is None:
+        return 0
+    if record.get(which) is not None:
+        return int(record[which])
+    obj = ctx.state.objects.get(record["oid"])
+    if obj is None or not obj.on_battlefield:
+        return 0
+    return _from_oid(ctx, record["oid"], which)
 
 
 def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:

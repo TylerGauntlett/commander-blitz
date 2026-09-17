@@ -1,0 +1,70 @@
+{
+  "card": {
+    "id": "elesh_norn_grand_cenobite",
+    "name": "Elesh Norn, Grand Cenobite",
+    "oracle_text": "Vigilance\nOther creatures you control get +2/+2.\nCreatures your opponents control get -2/-2.",
+    "mana_cost": "{5}{W}{W}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Phyrexian",
+      "Praetor"
+    ],
+    "power": 4,
+    "toughness": 7,
+    "colors": [
+      "W"
+    ],
+    "color_identity": [
+      "W"
+    ],
+    "keywords": [
+      "vigilance"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other creatures you control get +2/+2.",
+        "effect": "buff",
+        "affects": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ],
+          "exclude_self": true
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 2
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Creatures your opponents control get -2/-2.",
+        "effect": "buff",
+        "affects": {
+          "controller": "opponent",
+          "types": [
+            "Creature"
+          ]
+        },
+        "power": {
+          "const": -2
+        },
+        "toughness": {
+          "const": -2
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

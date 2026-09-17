@@ -1,0 +1,20 @@
+{
+  "_comment": "Cards that exist only for the strive test (tests/unit/test_strive.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_strive_tap` is strive with the smallest effect that shows every target was really bound: a {2}{W} sorcery that taps any number of target creatures and costs {1}{W} more for each one beyond the first.",
+  "cards": [
+    {
+      "id": "t_strive_tap",
+      "name": "Test Striving Tap",
+      "oracle_text": "Strive — This spell costs {1}{W} more to cast for each target beyond the first.\nTap any number of target creatures.",
+      "mana_cost": "{2}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "strive": "{1}{W}",
+      "targets": [
+        { "id": "t1", "kind": "permanent", "count": "any",
+          "selector": { "zone": "battlefield", "types": ["Creature"] } }
+      ],
+      "spell_effects": [{ "op": "tap", "objects": { "target": "t1" } }]
+    }
+  ]
+}

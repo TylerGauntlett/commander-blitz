@@ -44,10 +44,11 @@ from automtg.engine.errors import DslError
 from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
 from automtg.engine.mana import ManaCost, ManaRestriction
 from automtg.engine.sagas import LORE, SAGA
-from automtg.engine.triggers import TRIGGER_EVENTS
+from automtg.engine.triggers import ORDINAL_FILTER_KEYS, TRIGGER_EVENTS
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (  # noqa: F401
+    _refuse_seats_read_as_objects,
     _refuse_targets_inside_a_delay,
     _validate_attacking,
     _validate_delayed_trigger,
@@ -140,6 +141,7 @@ from .vocabulary import (  # noqa: F401
 from .walk import (  # noqa: F401
     _before,
     _check_counter_kind,
+    _check_mana_cost_key,
     _check_owner_key,
     _effects_move_source,
     _mentions,
@@ -458,14 +460,32 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         validate_condition(replacement.condition, f"{where}.replacements[{i}].condition")
 
     abilities = tuple(_compile_ability(a, i, where) for i, a in enumerate(model.abilities))
+    _check_threshold_order(abilities, where)
     grantable = tuple(
         _compile_ability(a, i, f"{where}.grantable")
         for i, a in enumerate(model.grantable_abilities)
     )
+    if any(ability.threshold is not None for ability in grantable):
+        # A granted ability sits after the recipient's printed ones and is
+        # addressed through its granter's pool, so neither the suffix argument
+        # in `_check_threshold_order` nor `abilities_of`'s filter covers it.
+        raise DslError(f"{where}.grantable_abilities: a threshold is a printed striation")
     final_chapter = _final_chapter(model, abilities, where)
+    _check_class_levels(model, abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
+        if ability.level is not None or ability.becomes_level is not None:
+            # A level is a fact about the permanent that *prints* the line (716),
+            # and a granted ability sits on some other permanent -- whose level
+            # is 1 for ever unless it is a Class, and then it is that Class's
+            # own ladder. Either way the line would mean something the granting
+            # card never said.
+            raise DslError(
+                f"{where}.grantable[{ability.index}]: a Class level belongs to the "
+                f"card that prints it, so a granted ability cannot carry 'level' "
+                f"or be a 'level' line"
+            )
         if ability.kind is AbilityKind.TRIGGERED:
             # Tested against `AbilityKind.TRIGGERED` rather than `is_triggered`,
             # which is True for a *chapter* as well (714.1b). A granted chapter
@@ -474,23 +494,36 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # its own source, so granted to a creature it would wait for a number
             # nothing can ever reach.
             continue
-        if ability.is_mana_ability:
-            # A granted **mana** ability, which is the one activated kind that
-            # works. This used to be refused along with every other activated
-            # one, on the grounds that legality enumerates the printed list and
-            # so a granted activated ability "would be accepted here and then
-            # never appear". `characteristics.abilities_of` is what changed:
-            # legality, the payment solver and `game._activate` all read the
-            # derived list now, so a granted ability is offered, indexed and
-            # paid with exactly like a printed one.
+        if ability.is_activated:
+            # A granted **activated** ability, mana or not. Urza's Saga: "I —
+            # This Saga gains "{T}: Add {C}."" and "II — This Saga gains "{2},
+            # {T}: Create a … Construct …"".
             #
-            # The line stops at mana abilities because 605.3a is what makes them
-            # safe: a mana ability never uses the stack, so `stack.ability_of`
-            # -- which resolves an ability off its source's *printed* list, and
-            # must, since an ability on the stack outlives its source (608.2) --
-            # is never asked about one. A granted activated ability that did use
-            # the stack would reach it with an index into a list that no longer
-            # exists, and resolve as some other ability of that permanent.
+            # Offered, indexed and paid for because legality, the payment solver
+            # and `game._activate` all read `characteristics.abilities_of`, which
+            # appends a grant -- the static's and, since this line opened, the
+            # one-shot op's -- to the printed list.
+            #
+            # This stopped at mana abilities for as long as 605.3a was the only
+            # thing keeping a granted ability off `stack.ability_of`, which
+            # resolved off the source's *printed* list: a granted ability that
+            # used the stack reached it with an index into a list that did not
+            # hold it, and resolved as some other ability of the permanent -- on
+            # Urza's Saga, chapter II. `stack.push_activated_ability` now records
+            # where a granted ability lives (granter, index into its
+            # `grantable_abilities`) as it goes on the stack, the pair a granted
+            # trigger already carried, so it resolves after the grant has gone
+            # with its source (608.2).
+            zones = tuple(ability.active_zones or ())
+            if zones and zones != (Zone.BATTLEFIELD,):
+                # A grant lives on a *permanent*, and `abilities_of` only derives
+                # one there. Granted cycling would load clean and never be
+                # offered from the hand it is printed to work in.
+                raise DslError(
+                    f"{where}.grantable[{ability.index}]: a granted activated "
+                    f"ability works on the battlefield only, not from "
+                    f"{[z.value for z in zones]}"
+                )
             continue
         if ability.is_static and ability.static:
             # A granted **static**. Inspiring Leader: "Commander creatures you
@@ -522,11 +555,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                     ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
                 )
             continue
-        # An activated ability that is not a mana ability, and nothing else is
-        # left. Granting a keyword is what `grant_keyword` is for;
-        # `docs/rules-coverage.md` records the rest.
+        # A chapter, which is all that is left: its trigger compares the lore
+        # counters on its own source, so granted to anything else it would wait
+        # for a number nothing reaches. Granting a keyword is what
+        # `grant_keyword` is for; `docs/rules-coverage.md` records the rest.
         raise DslError(
-            f"{where}: only triggered, mana and static abilities can be granted, "
+            f"{where}: only triggered, activated and static abilities can be granted, "
             f"not {ability.kind.value}"
         )
 
@@ -812,6 +846,32 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
             f"would always read 0"
         )
+    # Strive: "This spell costs {1}{W} more to cast for each target beyond the
+    # first." A cost *increase* (601.2f) whose size is the number of targets
+    # declared at 601.2c, so it only means something beside a target list whose
+    # size the caster picks -- and every strive printing is exactly one "any
+    # number of target …" spec. Anything else is refused rather than guessed:
+    # with a fixed count the surcharge is a constant that belongs in the mana
+    # cost, and with two specs "beyond the first" would have to decide which
+    # spec's refs count.
+    strive = ManaCost.parse(model.strive) if model.strive else None
+    if strive is not None:
+        if strive.x_count:
+            raise DslError(f"{where}: a strive cost with X is not implemented")
+        if strive.mana_value() == 0:
+            raise DslError(f"{where}: strive {model.strive!r} costs nothing")
+        if len(targets) != 1 or targets[0].count != "any" or mode_targets:
+            raise DslError(
+                f"{where}: 'strive' prices the targets of one 'any number of target' "
+                f"spec -- give the card exactly one target spec with count 'any'"
+            )
+        if model.overload or model.morph or model.bestow or model.mutate:
+            # Each of these casts the card with targets the rule supplies (none,
+            # or "enchant creature"), so the surcharge would price a list the
+            # card never declared. No strive printing has any of them.
+            raise DslError(
+                f"{where}: 'strive' does not compose with overload, morph, bestow or mutate"
+            )
     if model.dredge < 0:
         raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
     if model.morph_counter and model.morph is None:
@@ -1052,6 +1112,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"dice, so it would always read 0"
         )
 
+    _refuse_seats_read_as_objects(model, where)
+
     # `of` names a *different* permanent to ask about -- Celes, Rune Knight's
     # "…or was cast from a graveyard", which is about the creature that just
     # entered rather than about Celes. The guard below is about a card asking
@@ -1141,6 +1203,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker=kicker,
         gift=model.gift,
         multikicker=multikicker,
+        strive=strive,
         evoke=evoke,
         bestow=bestow,
         mutate=mutate,
@@ -1161,7 +1224,218 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     )
 
 
+def _compile_threshold(
+    model: AbilityModel, kind: AbilityKind, where: str
+) -> tuple[str, int] | None:
+    """A station symbol's ``{"counter": "charge", "at_least": 12}``, or ``None``.
+
+    Activated abilities only. That is what the two Planets print, and it is
+    where the gate is honoured: `abilities_of` leaves the ability out, and
+    `legality`, the mana solver and the AI all read that list. A gated static or
+    trigger would also have to reach `_ability_statics`, the player statics and
+    the trigger collectors, which read printed faces -- so one is refused here
+    rather than loading as an ability that is always on.
+    """
+    spec = model.threshold
+    if spec is None:
+        return None
+    if kind is not AbilityKind.ACTIVATED:
+        raise DslError(
+            f"{where}.threshold: only an activated ability may be gated on a counter "
+            f"count so far, not a {kind.value} one"
+        )
+    unknown = set(spec) - {"counter", "at_least"}
+    if unknown:
+        raise DslError(f"{where}.threshold: unsupported keys {sorted(unknown)}")
+    counter = spec.get("counter")
+    at_least = spec.get("at_least")
+    if not isinstance(counter, str) or not counter:
+        raise DslError(f"{where}.threshold.counter: a counter kind, got {counter!r}")
+    _check_counter_kind(counter, f"{where}.threshold.counter")
+    if isinstance(at_least, bool) or not isinstance(at_least, int) or at_least < 1:
+        # "0+" would be an ability the permanent always has, which is no gate.
+        raise DslError(
+            f"{where}.threshold.at_least: a positive number of counters, got {at_least!r}"
+        )
+    return (counter, at_least)
+
+
+def _check_threshold_order(abilities: tuple[Ability, ...], where: str) -> None:
+    """Gated abilities come last, in rising order, on one counter.
+
+    Not tidiness: `Action.ability_index`, `StackItem.ability_index` and the
+    ledger address an ability by position in `abilities_of`, and resolution reads
+    the printed list at that position. Leaving out a gated ability from the
+    *middle* would shift every ability after it, so a resolving "{T}: Add {W}"
+    could run the Planet's 12+ line instead. Kept as a suffix, and rising, an
+    ability that is missing only ever takes the ones after it with it, and every
+    index that is still offered means what it printed. Station cards print their
+    striations exactly this way.
+    """
+    gated_seen = False
+    last: tuple[str, int] | None = None
+    for i, ability in enumerate(abilities):
+        if ability.threshold is None:
+            if gated_seen:
+                raise DslError(
+                    f"{where}.abilities[{i}]: an ungated ability after a threshold "
+                    f"ability; gated abilities come last"
+                )
+            continue
+        gated_seen = True
+        if last is not None and (
+            ability.threshold[0] != last[0] or ability.threshold[1] < last[1]
+        ):
+            raise DslError(
+                f"{where}.abilities[{i}].threshold: gated abilities count one counter "
+                f"in rising order, got {ability.threshold} after {last}"
+            )
+        last = ability.threshold
+
+
+#: The only keys a Class's level line may set. 716.2a says everything else the
+#: ability is -- its timing, its restriction and its effect -- so a line that
+#: writes any of those is a line the loader would have to either ignore or
+#: believe over the rule.
+_LEVEL_LINE_KEYS = frozenset({"kind", "text", "level", "cost", "sorcery_speed_only"})
+
+
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
+    """One printed ability, with a Class's level read off it (716).
+
+    ``kind: "level"`` is compiled as the activated ability 716.2a says it is.
+    ``level`` on anything else is checked here and stamped on the ability the
+    ordinary compiler builds, so no branch below has to know Classes exist.
+    """
+    import dataclasses
+
+    where = f"{card_where}.abilities[{index}]"
+    if model.kind == "level":
+        return _compile_level_line(model, index, card_where, where)
+    if model.level is None:
+        return _compile_printed_ability(model, index, card_where)
+    if model.level < 2:
+        # Level 1 is 716.2c's "always there", which is what omitting the key
+        # says. Written out it reads as a gate and gates nothing; below 1 there
+        # is no level a Class can be.
+        raise DslError(
+            f"{where}: 'level' is the level band an ability is printed under, from 2 "
+            f"up; a level-1 ability is always present and omits the key (got {model.level})"
+        )
+    if model.kind in ("chapter", "reflexive"):
+        # A chapter is a Saga's, and a Saga is not a Class. A reflexive ability
+        # is fired by the op above it, which is the thing to gate.
+        raise DslError(f"{where}: 'level' does not mean anything on a {model.kind} ability")
+    if list(model.active_zones) != ["battlefield"]:
+        # A level is a property of a permanent. A card in a graveyard has none
+        # to be at, so a gate there is either always shut or always open, and
+        # neither is what "Level 2" printed on the card means.
+        raise DslError(
+            f"{where}: a level-gated ability only exists on the battlefield, "
+            f"not in {model.active_zones}"
+        )
+    ability = _compile_printed_ability(model, index, card_where)
+    return dataclasses.replace(ability, level=model.level)
+
+
+def _compile_level_line(
+    model: AbilityModel, index: int, card_where: str, where: str
+) -> Ability:
+    """ "{W}: Level 2" -- 716.2a, which is a whole activated ability in four words.
+
+    "[Cost]: This Class's level becomes N. Activate only if this Class is level
+    N-1 and only as a sorcery." The card prints only the cost and the N, so
+    those are all a card writes; the loader supplies the timing, the
+    `become_level` effect, and `Ability.becomes_level` for legality's
+    restriction. The same reasoning a chapter's trigger is supplied on: every
+    Class in print would otherwise write the same three things, and any one of
+    them could write one wrong.
+    """
+    import dataclasses
+
+    if model.level is None or model.level < 2:
+        raise DslError(
+            f"{where}: a level line needs the 'level' it gains, 2 or more "
+            f"(\"{{W}}: Level 2\" is level 2; every Class starts at 1)"
+        )
+    if model.cost is None:
+        raise DslError(f"{where}: a level line needs the 'cost' printed before \"Level\"")
+    extra = set(model.model_fields_set) - _LEVEL_LINE_KEYS
+    if extra or (model.sorcery_speed_only is False and "sorcery_speed_only" in model.model_fields_set):
+        raise DslError(
+            f"{where}: a level line is its cost and its level; rule 716.2a supplies "
+            f"the rest, so it cannot also set {sorted(extra) or ['sorcery_speed_only: false']}"
+        )
+    activated = model.model_copy(
+        update={"kind": "activated", "level": None, "sorcery_speed_only": True}
+    )
+    ability = _compile_printed_ability(activated, index, card_where)
+    return dataclasses.replace(
+        ability,
+        effects=({"op": "become_level", "level": model.level},),
+        becomes_level=model.level,
+    )
+
+
+def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
+    """The card-level half of 716: the ladder has to be a ladder.
+
+    Refused, each because it loads clean and plays as a different card:
+
+    - level lines or level-gated abilities on a card with no ``Class`` subtype,
+      the Saga refusal's reason: the words are the mechanic's, and a card that is
+      not a Class is not one.
+    - two lines for one level, or a gap in the ladder. 716.2a lets level N be
+      bought only at level N-1, so a Class whose lines are 2 and 4 can never
+      reach 4, and a second "Level 2" is a second price for one level.
+    - an ability printed under a level no line reaches. It could never be
+      present, which is a printed line the card claims and never does.
+
+    A ``Class`` with no levels at all is accepted and inert, for the reason a
+    ``Saga`` with no chapters is: it is what an unimplemented one looks like.
+    """
+    lines = sorted(a.becomes_level for a in abilities if a.becomes_level is not None)
+    gated = sorted({a.level for a in abilities if a.level is not None})
+    waits = any(a.trigger is not None and a.trigger.event == "becomes_level" for a in abilities)
+    if not lines and not gated and not waits:
+        return
+    if "Class" not in model.subtypes:
+        raise DslError(
+            f"{where}: level lines and level-gated abilities need the 'Class' subtype (716)"
+        )
+    if lines != list(range(2, len(lines) + 2)):
+        raise DslError(
+            f"{where}: a Class's level lines must be one each for 2, 3, ... with no gap "
+            f"(got {lines}); 716.2a only lets level N be gained from level N-1"
+        )
+    top = lines[-1] if lines else 1
+    for ability in abilities:
+        spec = ability.trigger
+        if spec is None or spec.event != "becomes_level" or spec.level is None:
+            continue
+        # "When this Class becomes level 3" on a Class whose lines stop at 2
+        # waits for a level nothing can reach; printed under level 3 on a
+        # "becomes level 2" trigger, it is not on the Class at the moment it
+        # would fire.
+        if spec.level > top:
+            raise DslError(
+                f"{where}: abilities[{ability.index}] waits for level {spec.level} "
+                f"but the level lines only reach {top}"
+            )
+        if ability.level is not None and ability.level > spec.level:
+            raise DslError(
+                f"{where}: abilities[{ability.index}] is printed under level "
+                f"{ability.level}, so it is not there when the Class becomes level "
+                f"{spec.level}"
+            )
+    if gated and gated[-1] > top:
+        raise DslError(
+            f"{where}: an ability is printed under level {gated[-1]} but the level "
+            f"lines only reach {top}, so it could never be present"
+        )
+
+
+def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
     if (model.activate_steps or model.once_each_turn) and kind is not AbilityKind.ACTIVATED:
@@ -1172,6 +1446,8 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             f"{where}: 'activate_steps' and 'once_each_turn' restrict *activating*, "
             f"so they only mean anything on an activated ability"
         )
+
+    threshold = _compile_threshold(model, kind, where)
 
     if model.chapter is not None and kind is not AbilityKind.CHAPTER:
         # Silently ignored it would produce a card that reads "II --" and fires
@@ -1368,6 +1644,25 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         if model.trigger.event == "self_enters":
             source = "self"
 
+        if model.trigger.level is not None and model.trigger.event != "becomes_level":
+            # Same reasoning as `counter` below: only BECAME_LEVEL carries a
+            # level, so anywhere else this would be a filter that never applies.
+            raise DslError(
+                f"{where}: 'level' on a trigger only means anything on becomes_level, "
+                f"not on {model.trigger.event!r}"
+            )
+        if model.trigger.event == "becomes_level":
+            # "When this Class becomes level 2." Without the number the ability
+            # fires at every level, which is the second token copy at level 3
+            # the gap record warned about. And it is always *this* Class, so the
+            # loader supplies `source: "self"` as it does for `self_enters`.
+            if model.trigger.level is None or model.trigger.level < 2:
+                raise DslError(
+                    f"{where}: a becomes_level trigger needs the 'level' it waits for, "
+                    f"2 or more -- every Class enters at 1 and never becomes it"
+                )
+            source = "self"
+
         if model.trigger.not_cause is not None and model.trigger.event not in (
             "self_enters",
             "permanent_enters",
@@ -1403,22 +1698,38 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"ability_activated trigger, not on {model.trigger.event!r}"
             )
 
-        if model.trigger.nth is not None and model.trigger.event != "draw":
+        if model.trigger.nth is not None and model.trigger.event not in ("draw", "spell_cast"):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`
-            # carries an ordinal, so accepting it elsewhere would look like
-            # "your second card each turn" and be a restriction that never
-            # applies -- which, on a trigger, means an ability that fires on
-            # every event of its kind rather than one that never fires.
+            # and `spell_cast` carry an ordinal, so accepting it elsewhere would
+            # look like "your second card each turn" and be a restriction that
+            # never matches -- an ability that silently never fires.
             raise DslError(
-                f"{where}: 'nth' only means anything on a draw trigger, "
+                f"{where}: 'nth' only means anything on a draw or spell_cast trigger, "
                 f"not on {model.trigger.event!r}"
             )
         if model.trigger.nth is not None and model.trigger.nth < 1:
-            # Draws are ordinalled from 1. A zeroth or negative card is drawn by
+            # Ordinals count from 1. A zeroth or negative card or spell is
             # nothing, so this would silently be an ability that never triggers.
             raise DslError(
                 f"{where}: 'nth' is an ordinal from 1; "
-                f"no draw is the {model.trigger.nth}th card of a turn"
+                f"no {model.trigger.event} is the {model.trigger.nth}th of a turn"
+            )
+        if (
+            model.trigger.nth is not None
+            and model.trigger.event == "spell_cast"
+            and model.trigger.filter
+            and (unordinal := set(model.trigger.filter) - ORDINAL_FILTER_KEYS)
+        ):
+            # "Their first noncreature spell" counts the caster's earlier spells
+            # this turn against the filter, and those have left the stack: only
+            # their printed faces can be asked. A key that reads board state
+            # would be checked on this spell and ignored on the ones before it,
+            # so the run would be counted against a different filter than the
+            # one that fires the ability.
+            raise DslError(
+                f"{where}: 'nth' on a spell_cast trigger counts earlier spells by "
+                f"their printed faces, so its filter cannot use {sorted(unordinal)} "
+                f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
             )
 
         trigger = TriggerSpec(
@@ -1434,6 +1745,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
             batched=model.trigger.batched,
+            level=model.trigger.level,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(
@@ -1599,6 +1911,7 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
         is_cycling=model.is_cycling,
         activate_steps=tuple(model.activate_steps),
         once_each_turn=model.once_each_turn,
+        threshold=threshold,
         trigger=trigger,
         active_zones=active_zones,
         targets=targets,
@@ -1616,6 +1929,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # and prevents none of it is the failure this whole pass exists to
         # refuse -- it would load, appear in the card's text, and never fire.
         raise DslError(f"{where}: 'prevent_damage' needs an 'amount' -- absorb N")
+    if model.effect == "crew_power_bonus" and model.amount is None:
+        # "As though its power were 0 greater" is not a printed sentence, and a
+        # bonus of nothing would load, print the Pilot's line, and crew exactly
+        # as a vanilla 1/1 does -- the token wearing most of a card.
+        raise DslError(
+            f"{where}: 'crew_power_bonus' needs an 'amount' -- "
+            f"crews Vehicles as though its power were N greater"
+        )
     if model.effect not in STATIC_EFFECTS:
         raise DslError(
             f"{where}: unknown static effect {model.effect!r} (implemented: {sorted(STATIC_EFFECTS)})"
@@ -1623,6 +1944,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effects:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
 
+    for key in ("affects", "blockers", "cause_filter", "affects_spells"):
+        _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         unknown = set(model.affects) - STATIC_FILTER_KEYS
         if unknown:
@@ -1785,19 +2108,41 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_token: a token that does not exist yet has a "
                     f"printed face and nothing else; unsupported keys {sorted(unknown)}"
                 )
+        # Exactly one axis. Both at once is a shape no printed card takes, and
+        # neither is a replacement that says nothing about what is made.
+        if model.create_instead and model.token_multiplier is not None:
+            raise DslError(
+                f"{where}: replace_token_creation takes 'create_instead' (which "
+                f"tokens) or 'token_multiplier' (how many of those tokens), not both"
+            )
+        if model.token_multiplier is not None:
+            # 1 replaces a creation with itself, and 0 is "no tokens are
+            # created" -- a prevention, a different sentence and a much stronger
+            # card. The same refusal `replace_life_loss` makes.
+            if model.token_multiplier < 2:
+                raise DslError(
+                    f"{where}.token_multiplier: must be 2 or more; 1 replaces a "
+                    f"creation with itself and 0 creates nothing, which is a "
+                    f"different effect"
+                )
         # A replacement that creates nothing is not this effect. "Instead create
         # one of each" and "that many are created instead" both name what is
         # made; an empty list would silently *delete* every token its filter
         # matched, which is a different and much stronger card.
-        if not model.create_instead:
+        elif not model.create_instead:
             raise DslError(
                 f"{where}: replace_token_creation needs 'create_instead' -- the "
-                f"token ids created instead, one of each per token replaced"
+                f"token ids created instead, one of each per token replaced -- "
+                f"or 'token_multiplier' for \"twice that many of those tokens\""
             )
-    elif model.affects_token is not None or model.create_instead:
+    elif (
+        model.affects_token is not None
+        or model.create_instead
+        or model.token_multiplier is not None
+    ):
         raise DslError(
-            f"{where}: 'affects_token'/'create_instead' only mean anything on a "
-            f"replace_token_creation static, not on {model.effect!r}"
+            f"{where}: 'affects_token'/'create_instead'/'token_multiplier' only mean "
+            f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
     if model.effect == "replace_life_loss":
@@ -1824,9 +2169,50 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'loss_multiplier' only means anything on a "
             f"replace_life_loss static, not on {model.effect!r}"
         )
+    if model.effect == "replace_draw":
+        # Same refusals as `loss_multiplier`: 1 replaces a draw with an
+        # identical draw and 0 is "draw nothing instead" -- a prevention, which
+        # no doubler prints and which would load clean as a lock on the
+        # controller's own draws.
+        if model.draw_multiplier is None:
+            raise DslError(
+                f"{where}: replace_draw needs 'draw_multiplier' -- how many "
+                f"cards each replaced draw becomes"
+            )
+        if model.draw_multiplier < 2:
+            raise DslError(
+                f"{where}.draw_multiplier: must be 2 or more; "
+                f"1 replaces a draw with itself and 0 draws nothing, "
+                f"which is a different effect"
+            )
+        if model.affects is not None or model.amount is not None:
+            # Nothing reads either key; "if you would draw a card" names a
+            # player, and the size is `draw_multiplier`.
+            raise DslError(
+                f"{where}: replace_draw takes 'affects_player', "
+                f"'draw_multiplier', 'except_first_in_draw_step' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
+            )
+    elif model.draw_multiplier is not None or model.except_first_in_draw_step:
+        raise DslError(
+            f"{where}: 'draw_multiplier'/'except_first_in_draw_step' only mean "
+            f"anything on a replace_draw static, not on {model.effect!r}"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
+        if model.effect == "cant_cast_spells" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # Nothing reads either key. "Your opponents can't cast **creature**
+            # spells" written with a filter here would load clean and stop every
+            # spell -- a strictly stronger lock than the printed card, and one
+            # that looks right on screen. Refused until a spell filter is built.
+            raise DslError(
+                f"{where}: cant_cast_spells stops every spell the named players "
+                f"would cast; it takes 'affects_player' and an optional "
+                f"'condition', and no 'affects' or 'amount'"
+            )
     elif model.effect in (
         "spell_cost_reduction",
         "replace_token_creation",
@@ -1944,8 +2330,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects_token"] = dict(model.affects_token)
     if model.create_instead:
         static["create_instead"] = list(model.create_instead)
+    if model.token_multiplier is not None:
+        static["token_multiplier"] = model.token_multiplier
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
+    if model.draw_multiplier is not None:
+        static["draw_multiplier"] = model.draw_multiplier
+    if model.except_first_in_draw_step:
+        static["except_first_in_draw_step"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     # `double_triggers`' cause clause. Copied explicitly like every other field

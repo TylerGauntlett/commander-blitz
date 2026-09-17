@@ -1,0 +1,98 @@
+{
+  "_comment": "Cards that exist only for the attacking-player selector test (tests/unit/test_attacking_player_selector.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_pairs_watcher` is Trouble in Pairs' attack clause and `t_diplomat_watcher` is Mangara, the Diplomat's, each paying 1 life instead of a card so the count is readable off a life total.",
+  "cards": [
+    {
+      "id": "t_pairs_watcher",
+      "name": "Test Pairs Watcher",
+      "oracle_text": "Whenever an opponent attacks you with two or more creatures, you gain 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks you with two or more creatures, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "opponent",
+            "defending": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers",
+                  "attacking_player": "you"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_diplomat_watcher",
+      "name": "Test Diplomat Watcher",
+      "oracle_text": "Whenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, you gain 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "opponent",
+            "defending": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

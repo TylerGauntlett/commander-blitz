@@ -122,6 +122,10 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: nothing, since it costs no life.
     "life_lost": EventType.LIFE_LOST,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
+    #: "When this Class becomes level 2" (716.4). Always `source: "self"` --
+    #: the loader supplies it -- and always with the `level` it waits for, which
+    #: is compared against the event exactly as `chapter` is.
+    "becomes_level": EventType.BECAME_LEVEL,
     "counter_placed": EventType.COUNTER_PLACED,
     "creature_dies": EventType.DIES,
     #: "Whenever you **sacrifice** a token…" -- Mirkwood Bats. Not `dies`: a
@@ -292,6 +296,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "counter_placed",
         "land_played",
         "becomes_monstrous",
+        # The Class whose level changed, so the supplied `source: "self"` means
+        # *this* Class and not every Class on the table.
+        "becomes_level",
         # The cycled card itself, so `source: "self"` scopes the trigger to the
         # card that was cycled rather than to every cycling anywhere.
         "cycle",
@@ -881,6 +888,12 @@ def _matches(
     if spec.chapter is not None and event.data.get("chapter") != spec.chapter:
         return False
 
+    # "When this Class becomes level **2**." One BECAME_LEVEL event carries the
+    # level reached, and without the comparison the level-2 ability would fire
+    # again as the Class became level 3.
+    if spec.level is not None and event.data.get("level") != spec.level:
+        return False
+
     # "…**if it isn't a mana ability**." An intervening-if in the printed text
     # and a restriction here, because `condition` cannot reach it: every
     # condition key asks about the board or about the trigger's own card, and
@@ -910,7 +923,11 @@ def _matches(
     # survives the re-check and gains the opposite fault: a permanent entering
     # after two draws fires on the third card, where the printed card is silent
     # for the rest of the turn. This asks the only question that is stable.
-    if spec.nth is not None and event.data.get("nth") != spec.nth:
+    #
+    # `spell_cast` asks the same question of a cast -- "an opponent casts their
+    # second spell each turn" (Mangara) -- and, with a `filter`, of a *run* of
+    # casts: see `_spell_ordinal`.
+    if spec.nth is not None and _ordinal(state, spec, event) != spec.nth:
         return False
 
     actor = _actor(state, spec.event, event, subject_oid)
@@ -942,6 +959,72 @@ def _matches(
             return False
 
     return True
+
+
+#: The filter keys an ordinal can be counted over: exactly the ones
+#: `characteristics._matches_printed` reads. The earlier spells of the run have
+#: left the stack by the time a later one is cast, so only their printed faces
+#: are left to ask -- a board-state key (`mana_value` of a paid X, `paid_by`,
+#: `exclude_self`) would be answered for this spell and silently ignored for
+#: every spell before it. The loader refuses the rest.
+ORDINAL_FILTER_KEYS = frozenset(
+    {
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "min_colors",
+        "keywords",
+        "not_keywords",
+        "name",
+    }
+)
+
+
+def _ordinal(state: GameState, spec: TriggerSpec, event: GameEvent) -> int | None:
+    """The event's ordinal as ``spec`` counts it.
+
+    A draw's is on the event. So is a cast's, and that answers an unfiltered
+    `spell_cast` trigger; a filtered one is sent to `_spell_ordinal`.
+    """
+    nth = event.data.get("nth")
+    if spec.event != "spell_cast" or spec.filter is None or nth is None:
+        return nth
+    return _spell_ordinal(state, spec.filter, event.player, int(nth))
+
+
+def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, nth: int) -> int:
+    """This spell's place among the caster's spells **matching** ``filt`` this turn.
+
+    "Whenever an opponent casts their first **noncreature** spell each turn"
+    (Esper Sentinel) is not "their first spell, if it is noncreature": a player
+    who casts a creature and then an artifact is casting their first noncreature
+    spell with the artifact, and a flat ordinal of 2 would miss it. So the
+    trigger's own `filter` says which run is being counted -- the printed
+    family is always "their Nth <kind> spell", and the kinds are open-ended
+    (noncreature, instant or sorcery, multicolored), which is why the event does
+    not carry a fixed set of per-kind ordinals instead.
+
+    Counted off `TurnLedger.spells_cast_ids`, cut at this cast's flat ordinal so
+    that a spell cast later -- in response, before this trigger is read -- is not
+    in the run. The earlier spells are matched on their printed faces (see
+    `ORDINAL_FILTER_KEYS`); this spell itself counts as one because the trigger's
+    `filter` is checked against it anyway, and a spell that fails it never
+    fires the ability whatever this returns.
+    """
+    from .characteristics import _matches_printed
+
+    registry = state.registry
+    ids = state.turn_ledger.spells_cast_ids.get(pid, []) if pid is not None else []
+    earlier = sum(
+        1
+        for cast_id in ids[: nth - 1]
+        # `in` before `get`, as `values.py` does for the same list.
+        if cast_id in registry and _matches_printed(registry.get(cast_id), filt)
+    )
+    return earlier + 1
 
 
 def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict[str, Any]:
@@ -1255,6 +1338,12 @@ def matches_card_filter(
         wanted = ability_source.oid if paid_by == "self" else paid_by
         if wanted not in obj.mana_sources_spent:
             return False
+    # "Whenever a token created with this creature…" -- honoured here as well
+    # as in `selectors.matches` for `not_supertypes`' reason: a trigger filter
+    # is validated against the same keys, and one that loaded and did nothing
+    # would fire on every token at the table.
+    if filt.get("created_with") is not None and obj.oid not in ability_source.created_tokens:
+        return False
 
     who = filt.get("shares_a_type_with_commander")
     if who is not None:
@@ -1310,9 +1399,31 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
+    # Honoured here for the reason `tapped` above is: a trigger filter is
+    # validated against the same `SELECTOR_KEYS`, and a key that loaded and was
+    # then ignored would be silently wider -- a creature attacking your
+    # planeswalker would count as one attacking you.
+    who = filt.get("attacking_player")
+    if who is not None:
+        from .effects.selectors import attacking_player_matches
+
+        if not attacking_player_matches(
+            state.combat, oid, str(who), ability_source.controller
+        ):
+            return False
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False
+    # "…a spell with mana cost {1}". Honoured here for the reason `zone` and
+    # `not_supertypes` are: a trigger filter is validated against
+    # `SELECTOR_KEYS`, so a key this function did not read would load and
+    # trigger on every cost.
+    wanted_cost = filt.get("mana_cost")
+    if wanted_cost is not None:
+        from .effects.selectors import has_printed_cost
+
+        if not has_printed_cost(state, oid, wanted_cost):
+            return False
     # Power and toughness are read off the board when the subject is still on
     # it, and off the printed face otherwise. Everything above this line is a
     # characteristic no layer can change, which is why the rest of this function

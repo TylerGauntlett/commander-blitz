@@ -255,20 +255,42 @@ def push_activated_ability(
     x: int = 0,
     modes: tuple[int, ...] = (),
     modes_answered: bool = False,
+    bindings: dict[str, Any] | None = None,
 ) -> StackItem:
+    from .characteristics import abilities_of, granted_ability_origin
+
     card = state.card(source_oid)
-    ability = card.abilities[ability_index]
+    # The **derived** list, which is the one legality offered from and
+    # `game._activate` paid off. The printed list is shorter than it whenever the
+    # ability being activated was granted -- Urza's Saga's "{2}, {T}: Create a
+    # Construct" is at position 3 on the Saga and nowhere on its printed face.
+    ability = abilities_of(state, source_oid)[ability_index]
+    # Where the definition *lives*, settled now while the permanent still has
+    # it. 608.2: the ability resolves independently of its source, so by the
+    # time it does the Saga may have been sacrificed after chapter III and the
+    # grant with it. An index into the recipient's list would then read the
+    # printed list and resolve whatever sits there -- on Urza's Saga, chapter II
+    # -- so a granted ability goes on the stack as (granter, index into the
+    # granter's `grantable_abilities`), the pair `ability_of` already reads for a
+    # granted trigger.
+    origin = granted_ability_origin(state, source_oid, ability_index)
+    granted_by, stored_index = origin if origin is not None else (None, ability_index)
+    granted_def_id = state.card(granted_by).id if granted_by is not None else ""
     item = StackItem(
         sid=state.alloc_sid(),
         kind="ability",
         controller=controller,
         def_id=card.id,
         source_oid=source_oid,
-        ability_index=ability_index,
+        ability_index=stored_index,
+        granted_by=granted_by,
+        granted_def_id=granted_def_id,
         targets=tuple(targets),
         x=x,
         modes=modes,
         modes_answered=modes_answered,
+        # What the cost named as it was paid -- see `costs.bind_paid_object`.
+        bindings=dict(bindings or {}),
         description=f"{card.name}: {ability.text or 'activated ability'}",
     )
     state.stack.append(item)
@@ -300,9 +322,19 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
     granted_by = getattr(item_or_trig, "granted_by", None)
     if granted_by is not None:
         granter = state.objects.get(granted_by)
-        if granter is None:
-            return None
-        pool = state.card_of(granter).grantable_abilities
+        if granter is not None:
+            pool = state.card_of(granter).grantable_abilities
+        else:
+            # A granter that is a **token** and has since left: the token
+            # state-based action pops it out of `state.objects`, so there is no
+            # object to read the pool off -- the same hole the `def_id`
+            # fallback below closes for a printed ability. 608.2 says the
+            # ability resolves anyway, so the card is read off the id
+            # snapshotted when it was activated.
+            def_id = getattr(item_or_trig, "granted_def_id", "")
+            if not def_id or def_id not in state.registry:
+                return None
+            pool = state.registry.get(def_id).grantable_abilities
     else:
         source = state.objects.get(item_or_trig.source_oid)
         if source is not None:
@@ -666,7 +698,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # them.
     obj.cast_cost_option = item.cost_option
     # Gift (702.164a), for the same reason and at the same moment as the two
-    # above: "if the gift wasn't promised, return that card…" is an `if` inside
+    # above: "if the gift wasn't promised, return that cardâ€¦" is an `if` inside
     # `spell_effects`, and a promise written onto the object afterwards would
     # read "not promised" on every gift card ever cast. Written here as well as
     # onto the context so that whatever outlives the spell -- the delayed trigger
@@ -689,7 +721,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         source_name=card.name if card else item.description,
     )
     yield from execute(ctx, card.spell_effects)
-    # "…add this card's effects to that spell." After the host's own, in the
+    # "â€¦add this card's effects to that spell." After the host's own, in the
     # order they were spliced on, and through the *same* context -- which is
     # what makes them one spell rather than several, and is why a spliced card
     # may not declare targets of its own.
@@ -876,7 +908,7 @@ def _place_after_resolution(
     obj.showing_second_face = False
     controller = obj.controller
     if destination is Zone.BATTLEFIELD:
-        # "As this enters, you may pay …" -- the permanent-spell half of the
+        # "As this enters, you may pay â€¦" -- the permanent-spell half of the
         # same offer `game._play_land` makes for a land drop, and asked in the
         # same window and for the same reason.
         from .zones import offer_enters_costs
@@ -892,7 +924,7 @@ def _place_after_resolution(
         obj.revealed_to.add(obj.controller)
         state.bump_chars()
     if enters_tapped and destination is Zone.BATTLEFIELD:
-        # "…that artifact enters tapped" -- the rider on Edgar's graveyard-cast
+        # "â€¦that artifact enters tapped" -- the rider on Edgar's graveyard-cast
         # permission. After the move for the reason the two neighbours here give:
         # `reset_permanent_state` runs on the way onto the battlefield and
         # untaps, so a flag set beforehand would be wiped.
@@ -1042,6 +1074,12 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
     # intervening-if failed (603.4) never resolve, so neither may advance it.
     ctx.resolutions = state.turn_ledger.resolving(item.source_oid, item.ability_index)
     yield from execute(ctx, ability.effects)
+    # The records a cost named for this ability have been read for the last
+    # time; without this every Station activation would leave one behind for
+    # `zones.move_object` to walk for the rest of the game.
+    for value in item.bindings.values():
+        if isinstance(value, dict) and "paid_object" in value:
+            state.paid_objects.pop(value["paid_object"], None)
     state.emit(
         EventType.ABILITY_RESOLVED,
         player=item.controller,

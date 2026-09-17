@@ -117,6 +117,21 @@ class GameState:
     #: the subscriptions themselves -- the subscription stays armed for the rest
     #: of the turn and a second combat fires it again.
     armed_delays: list[DelayedTrigger] = field(default_factory=list)
+    #: The permanents a cost tapped **and named** -- `tap_permanents` with
+    #: ``as`` -- keyed by a serial the ability's binding carries. Station is
+    #: the witness: "put charge counters equal to **the tapped creature's**
+    #: power". The rules read that power as the ability resolves, and as the
+    #: creature last existed on the battlefield if it has gone (the Edge of
+    #: Eternities release notes), so the binding cannot be a snapshot taken at
+    #: payment -- a pump in response has to count -- and it cannot be a bare
+    #: oid either, because an oid outlives its permanent here and a graveyard
+    #: card answers with its printed power. Each record is ``{"oid", "power",
+    #: "toughness"}`` with ``None`` while the permanent is still on the
+    #: battlefield; `zones.move_object` fills the two numbers in at the moment
+    #: it leaves, which is the one moment they are still there to read.
+    #: Pruned when the ability that owns the record resolves.
+    paid_objects: dict[int, dict[str, Any]] = field(default_factory=dict)
+    next_paid_object: int = 1
 
     events: list[GameEvent] = field(default_factory=list)
     game_over: bool = False
@@ -185,6 +200,19 @@ class GameState:
     #: per-turn counter there, reset by the active player's own untap. This one
     #: cannot live by that rule, because you draw on other players' turns too.
     cards_drawn_this_turn: dict[int, int] = field(default_factory=dict)
+    #: "…except the first one you draw in each of your draw steps." (Bard, King
+    #: of Dale; Alhammarret's Archive.)
+    #:
+    #: player id -> cards drawn since the current draw step began. Counted only
+    #: while ``step is Step.DRAW`` and cleared as each draw step is entered, so
+    #: it is meaningful only while a draw step is running -- which is the only
+    #: time anything reads it.
+    #:
+    #: Not derivable from `cards_drawn_this_turn`: a card drawn during upkeep
+    #: moves the per-turn tally, and the draw step's first draw is then the
+    #: turn's *second*. A replacement keyed on the per-turn count would double
+    #: the turn-based draw on exactly those turns.
+    cards_drawn_this_draw_step: dict[int, int] = field(default_factory=dict)
     #: "This ability triggers only once each turn." Keyed by
     #: ``(source_oid, ability_index)`` -- per *permanent*, not per card, because
     #: two Welcoming Vampires each get their own draw. Counted where triggers
@@ -362,6 +390,34 @@ class GameState:
     #: Extra phases actually entered this turn, against `MAX_EXTRA_PHASES_PER_TURN`.
     #: Counted rather than measured off the queue because the queue drains.
     extra_phases_taken: int = 0
+    #: Extra turns scheduled and not yet begun, as player ids. **Taken from the
+    #: end**: rule 500.7 adds each extra turn directly after the current one, so
+    #: the most recently created is taken first -- a stack, not a queue. A turn
+    #: created *during* an extra turn lands on top and comes straight after it,
+    #: ahead of the ones still waiting, which is the same sentence applied again.
+    #:
+    #: On the state rather than on a player because the order *between* players
+    #: is the point: Perch Protection hands its turn to an opponent, and it has
+    #: to interleave with whatever Time Warp its caster already had waiting.
+    #: Unlike `extra_phases` it survives the turn boundary -- crossing it is what
+    #: an extra turn is for. See `turn._begin_next_turn`.
+    extra_turns: list[int] = field(default_factory=list)
+    #: True while the current turn is an extra one. Read by the untap step, which
+    #: says so on `TURN_BEGAN`; nothing in the rules asks, since an extra turn is
+    #: a turn in every respect (500.7).
+    extra_turn: bool = False
+    #: The seat whose **ordinary** turn the table resumes after, while extra
+    #: turns are being taken; `None` otherwise, when `active_idx` is that seat.
+    #:
+    #: An extra turn moves the active player without moving the turn order.
+    #: Player 0 casts Perch Protection and player 1 takes the gift: the next
+    #: ordinary turn is still the one after *player 0's*, which in a pod is not
+    #: the seat after the player whose extra turn just ended.
+    turn_order_idx: int | None = None
+    #: The player whose turn most recently ended, or `None` before the first one
+    #: has. Day and night (726.2) ask about "the previous turn's active player",
+    #: which stopped being the seat to the right once turns could be extra.
+    previous_active: int | None = None
     #: Set when cleanup performed an action and must repeat (rule 514.3a).
     cleanup_repeat: bool = False
     #: False until the current step's turn-based actions have been performed.
@@ -685,6 +741,18 @@ class GameState:
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:
                     ledger.spells_cast_ids.setdefault(pid, []).append(str(cast_id))
+                # "Whenever an opponent casts their **second** spell each turn."
+                # The ordinal is a fact about this cast, so it goes on the event
+                # -- the one thing a trigger reads at queue time and never again
+                # -- exactly as `draw_cards` writes `nth` on a DRAW. Written here
+                # rather than at the three places that fire SPELL_CAST (a normal
+                # cast, an alternative-cost cast, suspend's free cast) because
+                # this fold is the one place all of them pass through, and a cast
+                # path that forgot it would be a trigger that silently never
+                # fires. The ids list above is the same length at this moment, so
+                # `spells_cast_ids[pid][:nth]` is the run up to and including
+                # this spell however many are cast before a trigger reads it.
+                data["nth"] = ledger.spells_cast[pid]
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:

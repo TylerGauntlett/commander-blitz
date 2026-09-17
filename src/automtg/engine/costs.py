@@ -290,6 +290,15 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     for ability in abilities_of(state, oid):
         if not solver_taps(ability):
             continue
+        # "{T}: Add {U}. Activate only if you control a Plains or an Island."
+        # -- Floodfarm Verge. 602.5c restricts a mana ability exactly as it does
+        # any other, and legality's `_activation_allowed` never sees this one:
+        # a tap-only mana ability is the solver's and is never offered. Skipped
+        # here, the Verge alone paid {U} for anything.
+        if ability.activation_condition is not None and not _mana_condition_met(
+            state, obj.controller, oid, ability
+        ):
+            continue
         out.append(
             ManaSource(
                 oid=oid,
@@ -310,6 +319,15 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
             )
         )
     return out
+
+
+def _mana_condition_met(state: GameState, pid: int, oid: int, ability: Ability) -> bool:
+    """ "Activate only if …" on a mana ability, asked as legality asks it."""
+    from .effects.conditions import evaluate
+    from .effects.context import EffectContext
+
+    ctx = EffectContext(state=state, controller=pid, source_oid=oid)
+    return bool(evaluate(ctx, ability.activation_condition))
 
 
 def mana_amount(state: GameState, oid: int, ability: Ability) -> int:
@@ -1009,6 +1027,9 @@ def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | Non
     from .effects.selectors import resolve_pool
 
     spec = dict(cost.tap_permanents or {})
+    # `as` names what was tapped for the ability's effects; it says nothing
+    # about which permanents qualify, so the selector language never sees it.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     spec["tapped"] = False
@@ -1020,21 +1041,53 @@ def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | Non
         # Crew. The requirement is a *sum* rather than a headcount, so what
         # makes it payable is the whole pool's power and not its length -- one
         # 4/4 crews a Vehicle that four 0/1s cannot.
-        return pool if _total_power(state, pool) >= int(total_power) else []
+        return pool if _crew_power(state, pool) >= int(total_power) else []
     return pool if len(pool) >= count else []
 
 
-def _total_power(state: GameState, oids: list[int]) -> int:
+def bind_paid_object(state: GameState, oid: int) -> dict[str, int]:
+    """Name a permanent a cost tapped, so the ability's effects can read it.
+
+    The binding is a *reference to a record*, not a snapshot. Station's release
+    notes are explicit on both halves: the tapped creature's power is read **as
+    the station ability resolves**, so a pump spell cast in response counts;
+    and if the creature has left the battlefield by then, its power **as it last
+    existed there** is used. A snapshot at payment gets the first half wrong,
+    and a bare oid gets the second half wrong -- an oid survives its permanent
+    in this engine, and the graveyard card it points at answers with its printed
+    power, or not at all for a token.
+
+    So the record starts empty, `zones.move_object` writes the last-known
+    numbers into it as the permanent leaves, and `values._characteristic` reads
+    the live permanent while the record is empty and the record once it is not.
+    """
+    key = state.next_paid_object
+    state.next_paid_object += 1
+    state.paid_objects[key] = {"oid": oid, "power": None, "toughness": None}
+    return {"paid_object": key}
+
+
+def _crew_power(state: GameState, oids: list[int]) -> int:
     """Summed **derived** power, which is the whole reason crew is not a count.
 
     An anthem, a pump spell or a +1/+1 counter all change who can crew a
     Vehicle, so the printed face is the wrong thing to read -- and reading it
     would be wrong in the direction that matters, refusing a crew the board
     plainly supports.
-    """
-    from .characteristics import chars
 
-    return sum(chars(state, oid).power for oid in oids if oid in state.objects)
+    Plus each creature's ``crew_power_bonus`` -- the Pilot's "crews Vehicles as
+    though its power were 2 greater". Added here and nowhere else, because this
+    sum is the only place the printed line reaches: the Pilot is a 1/1 for
+    combat and for every other reader of power, and `total_power` on
+    `tap_permanents` is crew's by definition (the loader refuses it elsewhere).
+    """
+    from .characteristics import chars, crew_power_bonus
+
+    return sum(
+        chars(state, oid).power + crew_power_bonus(state, oid)
+        for oid in oids
+        if oid in state.objects
+    )
 
 
 def _untap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -1089,11 +1142,18 @@ def pay(
     extra_generic: int = 0,
     purpose: SpendPurpose | None = None,
     record_colors_on: int | None = None,
+    bindings: dict[str, Any] | None = None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
 
     Returns ``True`` on success.  Callers only invoke this after :func:`can_pay`,
     so a ``False`` return means the game state changed underneath them.
+
+    ``bindings`` is where a cost that **names** what paid it writes the name --
+    `tap_permanents` with ``as``, Station's "the tapped creature". The caller
+    hands the same dict to the stack item, so the ability's effects read it
+    back. ``None`` from every caller with no ability to hand it to; a named cost
+    paid there simply names nothing.
 
     ``purpose`` is what the mana is being spent on, and must be the same value
     legality used when it decided this was payable -- restricted mana is offered
@@ -1206,11 +1266,17 @@ def pay(
         spec = dict(cost.tap_permanents)
         count = int(spec.pop("count", 1) or 1)
         total_power = spec.pop("total_power", None)
+        name = spec.pop("as", None)
         pool = _tap_cost_pool(state, pid, cost, source_oid)
         if total_power is None:
             picked = yield from ask_objects(ctx, "Tap", pool, count, count, pid, "tap_cost")
             for oid in picked:
                 tap_permanent(state, oid)
+            if name and picked and bindings is not None:
+                # Station: "…equal to **the tapped creature's** power". Bound at
+                # the moment of payment -- 601.2h, the only moment the choice
+                # exists -- but *read* at resolution; see `bind_paid_object`.
+                bindings[str(name)] = bind_paid_object(state, picked[0])
         else:
             # Crew, asked one creature at a time. `ask_objects` takes counts,
             # not sums, so a single subset question could be answered with a
@@ -1228,7 +1294,7 @@ def pay(
                 if not picked:
                     break
                 chosen = picked[0]
-                needed -= _total_power(state, [chosen])
+                needed -= _crew_power(state, [chosen])
                 tap_permanent(state, chosen)
                 remaining.remove(chosen)
 

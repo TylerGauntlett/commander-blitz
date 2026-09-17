@@ -12498,6 +12498,76 @@
       ]
     },
     {
+      "id": "t_resplendent_marshal",
+      "name": "Test Resplendent Marshal",
+      "oracle_text": "Vigilance\nThis creature's power is equal to the number of creatures you control.\nWhenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+      "mana_cost": "{1}{W}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "keywords": [
+        "vigilance"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature's power is equal to the number of creatures you control.",
+          "effect": "set_pt",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack, for each opponent, create a 1/1 white Human creature token that's tapped and attacking that player or a planeswalker they control.",
+          "trigger": {
+            "event": "you_attack",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "for_each_player",
+              "players": "each_opponent",
+              "effects": [
+                {
+                  "op": "create_token",
+                  "token": "human_1_1_w",
+                  "tapped": true,
+                  "attacking": {
+                    "binding": "each_player"
+                  },
+                  "or_planeswalker": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_ink_scribe",
       "name": "Test Ink Scribe",
       "oracle_text": "Whenever a player attacks one of your opponents, that attacking player creates a tapped 2/1 white and black Inkling creature token with flying that's attacking that opponent.",
@@ -12861,6 +12931,150 @@
           "amount": {
             "const": 1
           }
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_opponent",
+      "name": "Test Second Spell Watcher",
+      "oracle_text": "Whenever an opponent casts their second spell each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent casts their second spell each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "opponent",
+            "nth": 2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_noncreature",
+      "name": "Test First Noncreature Spell Watcher",
+      "oracle_text": "Whenever an opponent casts their first noncreature spell each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent casts their first noncreature spell each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "opponent",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            },
+            "nth": 1
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_active",
+      "name": "Test Second Spell On Their Turn Watcher",
+      "oracle_text": "Whenever a player casts their second spell during their turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a player casts their second spell during their turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "any",
+            "nth": 2,
+            "condition": {
+              "is_active_player": {
+                "binding": "event_player"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_condition",
+      "name": "Test Second Spell Condition Watcher",
+      "oracle_text": "Whenever an opponent casts a spell, if it's their second spell this turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell, if it's their second spell this turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "opponent",
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "spells_cast_this_turn": {
+                  "binding": "event_player"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
         }
       ]
     }

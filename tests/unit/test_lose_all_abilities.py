@@ -290,9 +290,10 @@ class TestTheLoaderRefusals:
         )
         self.compile(card)
 
-    def test_a_granted_non_mana_activated_ability_is_still_refused(self):
-        """It would reach `stack.ability_of` with an index into a list that no
-        longer exists, and resolve as some other ability of that permanent."""
+    def test_a_granted_non_mana_activated_ability_is_allowed_too(self):
+        """Once refused because it would reach `stack.ability_of` with an index
+        into the printed list. It now carries its granter onto the stack; see
+        `tests/unit/test_granted_activated_abilities.py`."""
         card = self.base(
             grantable_abilities=[
                 {
@@ -303,8 +304,7 @@ class TestTheLoaderRefusals:
                 }
             ]
         )
-        with pytest.raises(DslError, match="not activated"):
-            self.compile(card)
+        self.compile(card)
 
 
 class TestTheSubtypeTable:

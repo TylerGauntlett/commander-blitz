@@ -87,6 +87,13 @@ def card_view(state: GameState, oid: int, *, revealed: bool = True) -> dict[str,
                 "blocking": bool(state.combat and state.combat.blocking(oid)),
             }
         )
+        if card.top_level:
+            # A Class's level (716). Not a counter, so `counters` above never
+            # carries it, and it is the one thing on the permanent that says
+            # which of its printed abilities are switched on. Sent only for a
+            # card with level lines, so every other permanent's view is as it
+            # was.
+            view["level"] = obj.class_level
     else:
         view.update(
             {

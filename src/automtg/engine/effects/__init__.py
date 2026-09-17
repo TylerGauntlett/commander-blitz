@@ -51,6 +51,13 @@ RECORDING_OPS = frozenset(
         #: and then asks what was discarded at all, not what the last player
         #: pitched. See `ops_cards.op_discard`.
         "discard",
+        #: The second recorder whose binding is a **set of seats**, beside
+        #: `may`: the players who actually drew at least one card. Cut a Deal's
+        #: "each opponent who drew a card this way" -- an opponent with an empty
+        #: library, or whose draw dredge replaced, drew nothing and is not one.
+        #: Read with the `{"binding": …}` player spec; the loader refuses it as
+        #: a pool of objects. See `ops_cards.op_draw`.
+        "draw",
         "exile",
         "gain_control",
         "join_forces",

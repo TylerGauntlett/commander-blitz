@@ -1,4 +1,5 @@
-"""The three replacements that stop to ask -- dredge, madness and miracle.
+"""The three replacements that stop to ask -- dredge, madness and miracle --
+and the draw doublers that have to be applied between them.
 
 Every replacement effect the engine had before this is applied *synchronously*
 and asks nothing: enters tapped, enters with counters, the commander zone change,
@@ -37,6 +38,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Cost
 from .enums import Zone
 from .events import EventType
+from .player_statics import draw_replacements
 from .primitives import discard_cards, draw_cards, mill_cards
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -49,21 +51,53 @@ def draw(state: GameState, pid: int, count: int) -> Generator[Any, list[int], li
     One at a time is forced rather than tidy: dredge replaces **a** draw, so a
     player drawing three may dredge the first and draw the other two, and
     miracle asks about the *first card drawn this turn*, which stops being true
-    after the first one.
+    after the first one. A `replace_draw` doubler is per draw for the same
+    reason (121.2): its exemption for "the first one you draw in each of your
+    draw steps" is true of one card and false of the next.
     """
     drawn: list[int] = []
     for _ in range(max(0, count)):
-        replaced = yield from _dredge(state, pid)
-        if replaced:
-            continue
-        # Read before the draw: `draw_cards` bumps the tally, and miracle's
-        # whole content is that this was the first.
-        was_first = state.cards_drawn_this_turn.get(pid, 0) == 0
-        got = draw_cards(state, pid, 1)
-        drawn.extend(got)
-        if got and was_first:
-            yield from _miracle(state, pid, got[0])
+        drawn.extend((yield from _draw_one(state, pid, frozenset())))
     return drawn
+
+
+def _draw_one(
+    state: GameState, pid: int, applied: frozenset[int]
+) -> Generator[Any, list[int], list[int]]:
+    """One draw, after every replacement that applies to it has had its say.
+
+    ``applied`` is the `replace_draw` sources that already replaced the draw
+    this one came from. 614.5: a replacement applies to an event once, so
+    Thought Reflection's two draws are not each doubled by Thought Reflection
+    again -- without the set this recursion never ends -- but a second doubler
+    is a different replacement, applies to *each* of them, and the two compound
+    to four.
+
+    **Ordering (616.1).** The affected player chooses which replacement applies
+    first, and the only order that can change an outcome here is dredge against
+    a doubler. It is offered by asking dredge first at every level: taking it
+    replaces this draw outright (it is no longer a draw, so no doubler sees it),
+    and declining lets the doubler turn it into draws that are each offered
+    dredge again. Every ordering the player could choose is one of those paths.
+    Two doublers commute, so their order is not asked.
+    """
+    replaced = yield from _dredge(state, pid)
+    if replaced:
+        return []
+    for source, multiplier in draw_replacements(state, pid):
+        if source in applied:
+            continue
+        out: list[int] = []
+        for _ in range(multiplier):
+            out.extend((yield from _draw_one(state, pid, applied | {source})))
+        return out
+    # Read before the draw: `draw_cards` bumps the tally, and miracle's
+    # whole content is that this was the first.
+    was_first = state.cards_drawn_this_turn.get(pid, 0) == 0
+    got = draw_cards(state, pid, 1)
+    if got and was_first:
+        yield from _miracle(state, pid, got[0])
+    return got
 
 
 def discard(
@@ -170,16 +204,33 @@ def _offer_cast(
     from . import stack, triggers
     from .costs import can_pay, pay
     from .effects.context import EffectContext, ask_yes_no
+    from .player_statics import player_cant_cast_spells
     from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
         return False
+    if player_cant_cast_spells(state, pid):
+        # Voice of Victory (101.2): the "can't" beats the "may", and it is
+        # checked before the question rather than after, because a prompt the
+        # player cannot act on is an offer the engine does not honour. A madness
+        # card stays in exile, the outcome declining already has.
+        return False
     card = state.card_of(obj)
     price = Cost(mana=cost)
     if not can_pay(state, pid, price, oid):
         return False
-    options = enumerate_target_tuples(state, pid, card.targets, oid, limit=1)
+    # Strive's surcharge is not part of `price`, so the spell takes at most one
+    # target -- the count that owes none -- rather than every target on offer
+    # with its cost increase unpaid.
+    options = enumerate_target_tuples(
+        state,
+        pid,
+        card.targets,
+        oid,
+        limit=1,
+        size_cap=1 if card.strive is not None else None,
+    )
     if not options:
         return False
     # And its modes, for the one card shape whose targets belong to them --
