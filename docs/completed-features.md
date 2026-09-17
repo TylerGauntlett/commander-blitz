@@ -12462,3 +12462,40 @@ Talent end to end (the level-2 token copy, the level-1 once-a-turn batched draw
 it sets off, no second copy at level 3, the level-3 anthem present only at 3);
 and the loader refusals.
 
+## "If the {1}{B} cost was paid" — reading the alternative cost while the spell resolves — 118.9, 707.10
+
+### Overview
+
+Baleful Mastery: "You may pay {1}{B} rather than pay this spell's mana cost. If
+the {1}{B} cost was paid, an opponent draws a card. Exile target creature or
+planeswalker." Not a documentation gap, though nearly one: `evoke` already *is*
+an unconditional alternative mana cost plus the `evoked` condition that reads
+which price was paid, and `evoke_label` already renames it on the cast line. What
+did not work was the timing. `stack.resolve` wrote `cast_evoked` onto the object
+only after `spell_effects`, which was enough for every card that had used it —
+each a creature asking from its enters trigger — and meant an `if` inside an
+instant's effects read `False` every time. The card would have loaded and been a
+strictly better removal spell than the one printed.
+
+### The shape
+
+- `stack._resolve_spell` writes `obj.cast_evoked` before the effects, beside
+  `cast_overloaded` and `cast_cost_option`; the later write is unchanged.
+- `put_copy_on_stack` copies `evoked` from the original (707.10: a copy copies
+  "additional or alternative costs"), so a copied Mastery cast for {1}{B} gives
+  out a second card — and a copied Mulldrifter cast for its evoke cost is
+  sacrificed too.
+- The packet's reference now says `evoke` works on an instant or sorcery and
+  that `evoke_label` names an unnamed price (`"paying {1}{B}"`).
+- "An opponent draws" is `choose_player` over `each_opponent` then `draw` to the
+  binding: one seat, the caster's choice, no prompt with a single opponent.
+
+### Guarded by
+
+`tests/unit/test_alternative_cost_paid.py`: both prices offered, two lands reach
+only the cheap one, the line's label, printed mana value; the opponent draws and
+the target is exiled on the cheap line and nobody draws on the printed one; at a
+three-player table the caster is asked, opponents only, and exactly the chosen
+seat draws; a fizzled spell hands out nothing; a copy of the cheap cast draws
+again and a copy of the printed cast does not; and the loader still refuses the
+rider without the cost and the cost without the rider.

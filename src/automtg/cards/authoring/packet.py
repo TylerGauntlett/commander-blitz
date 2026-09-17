@@ -727,6 +727,14 @@ def reference() -> dict:
             " {\"colors\": [\"U\"]}}`, with no mana at all. The `condition` is"
             " needed only when the price is mana and nothing else -- an"
             " unconditional cheaper mana price is `evoke`.",
+            "`evoke` is the mechanism, not the keyword: an unconditional"
+            " alternative mana cost plus the `evoked` condition that reads"
+            " whether it was paid, with `evoke_label` naming the cost on the"
+            " cast line (\"dash\", or \"paying {1}{B}\" for a card that gives"
+            " it no name). It works on an instant or sorcery too, read inside"
+            " `spell_effects`: \"You may pay {1}{B} rather than pay this"
+            " spell's mana cost. If the {1}{B} cost was paid, ...\" is"
+            " `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`.",
             "Exiling from hand as a cost is two keys, the way discarding is:"
             " `exile_from_hand` picks a card by selector (\"a blue card\"),"
             " and `exile_self_from_hand` is \"Exile this card from your hand\""

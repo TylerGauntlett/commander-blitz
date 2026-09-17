@@ -10745,6 +10745,37 @@ saying, in the action list and on screen, that it is not evoke.
 `{"evoked": true}`, which works because the flag is written onto the object at
 resolution and outlives the spell — see the note under Kicker.
 
+**An unnamed alternative cost on an instant or sorcery** is the same slot.
+Baleful Mastery prints no keyword — "You may pay {1}{B} rather than pay this
+spell's mana cost. If the {1}{B} cost was paid, an opponent draws a card." — and
+that is `evoke` under a label that says what is being paid, with the rider as an
+`if` inside `spell_effects`:
+
+```jsonc
+"mana_cost": "{3}{B}",
+"evoke": "{1}{B}", "evoke_label": "paying {1}{B}",
+"spell_effects": [
+  { "op": "if", "condition": { "evoked": true },
+    "then": [
+      { "op": "choose_player", "players": "each_opponent", "as": "drawer",
+        "prompt": "Choose an opponent to draw a card" },
+      { "op": "draw", "player": { "binding": "drawer" }, "amount": { "const": 1 } } ] },
+  { "op": "exile", "objects": { "target": "t1" } } ]
+```
+
+The flag is written onto the object **before** `spell_effects` run as well as
+after, the moment `cast_overloaded` and `cast_cost_option` are written; written
+only afterwards, as it was while every reader was an enters trigger, the `if`
+read `False` on every instant and the card was a two-mana exile with no drawback.
+A copy of the spell carries the flag (707.10 copies alternative costs paid), so
+a copied Mastery cast for `{1}{B}` hands out a second card. `alternative_cost` is
+the wrong field for this: it records no flag at all, and it refuses an
+unconditional mana-only price precisely because that is `evoke`.
+
+"An opponent draws" is `choose_player`, not `"each_opponent"` and not
+`"opponent"` — at a pod the caster names one seat as the spell resolves, and a
+two-player game is asked nothing.
+
 **Emerge** is the third alternative cost and the only one whose price is not
 fixed: it is reduced by the mana value of the creature sacrificed, so legality
 offers **one line per sacrificeable creature** rather than one line with a flag.
