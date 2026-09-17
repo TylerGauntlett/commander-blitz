@@ -71,6 +71,11 @@ RECORDING_OPS = frozenset(
         #: `mill`, so a `player: "each_player"` look binds every seat's cards
         #: rather than the last one's. See `ops_cards.op_look_at_top`.
         "look_at_top",
+        #: The one recorder whose binding is a plain **int**: the life actually
+        #: lost, after replacements, summed over every player the op hit --
+        #: "you gain life equal to the life lost this way" (Gray Merchant of
+        #: Asphodel) and extort's "that much life". See `ops_life.op_lose_life`.
+        "lose_life",
         #: The only recorder whose binding is a **set of seats**: `may` writes
         #: the players who said yes, read back with the `{"binding": …}` player
         #: spec. Snort's "each opponent who discarded their hand this way" is

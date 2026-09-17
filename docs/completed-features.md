@@ -12639,3 +12639,32 @@ players' Roles and different creatures' Roles coexist; newest by attachment, not
 arrival; Not Dead After All end to end (returns tapped wearing the Role, no drain;
 without it the creature stays dead; the grant is gone next turn); and the loader
 refusals, including an unknown token in a granted ability.
+## `lose_life` `as` — "the life lost this way"
+
+### Overview
+
+Gray Merchant of Asphodel: "each opponent loses X life, where X is your devotion
+to black. You gain life equal to the life lost this way." The second sentence
+reads the life the first one actually took, after replacements.
+
+### Why the existing vocabulary would not do
+
+- `primitives.lose_life` already returned the actual loss, but `op_lose_life`
+  discarded it, so nothing could read it.
+- Recomputing the amount in `gain_life` (Malakir Bloodwitch's shipped answer)
+  gains X against a Bloodletter-doubled 2X and against a locked 0.
+- `life_lost_this_turn` is the turn ledger, not this effect's loss.
+
+### The shape
+
+- `lose_life` joins `RECORDING_OPS`; `as` binds an int, the sum over every player
+  hit, overwriting any earlier value of that name.
+- The loader's existing `as` guard now accepts it on `lose_life`.
+- Malakir Bloodwitch's answer is rewritten onto the binding, so it is exact under
+  a replacement too.
+
+### Guarded by
+
+`tests/unit/test_life_lost_this_way.py`: the sum across two opponents, an int,
+zero, no `as` writes nothing, overwrite rather than accumulate, a doubled loss
+gains the doubled amount, a locked opponent contributes nothing, and the loader.

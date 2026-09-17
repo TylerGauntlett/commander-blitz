@@ -604,7 +604,7 @@ in the pool is unchanged.
 The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
 `reveal`, `exile`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
 `join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
-`may` and `draw`. **No other op does**, and an `as` on one
+`may`, `draw` and `lose_life`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
 read of it would be 0, and the card's second sentence would silently do nothing.
 
@@ -3087,6 +3087,31 @@ ward {0}.
 Two doublers **multiply**: each replacement applies once (614.5), so a loss
 doubled twice is quadrupled. 616.1 lets the affected player order two applicable
 replacements and this engine does not ask — for a product the order cannot show.
+
+## "You gain life equal to the life lost this way"
+
+```jsonc
+// Gray Merchant of Asphodel
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [
+    { "op": "lose_life", "player": "each_opponent", "as": "lost",
+      "amount": { "mana_symbols": { "of": "B",
+                  "objects": { "zone": "battlefield", "controller": "you" } } } },
+    { "op": "gain_life", "player": "you", "amount": { "binding": "lost" } } ] }
+```
+
+`lose_life`'s `as` binds **the life actually lost**, summed over every player the
+one op hit, as a plain int read back with `{"binding": …}`. Actually lost is the
+point: `primitives.lose_life` returns the loss after the replacement above, so a
+doubled drain gains the doubled amount, and a player whose life total can't
+change (`lock_life_total`) lost nothing and pays nothing back. Recomputing the
+`amount` inside the `gain_life` is the near miss — right exactly while nothing
+replaces the loss. Malakir Bloodwitch was written that way and now uses the
+binding. Extort's "you gain that much life" is the same read.
+
+The binding is this op's loss alone: a second `lose_life` with the same `as`
+overwrites it rather than adding to it.
 
 ## "If you would draw a card, draw two cards instead"
 
