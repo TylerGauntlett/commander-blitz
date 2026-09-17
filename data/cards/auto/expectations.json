@@ -9034,6 +9034,14 @@
   "urza_s_power_plant": {
     "zone": "battlefield"
   },
+  "urza_s_saga": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
   "urza_s_tower": {
     "zone": "battlefield"
   },
