@@ -13168,6 +13168,113 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more tokens you control enter, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": true
+            },
+            "max_per_turn": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{W}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{W}: Level 2"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "level": 2,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_token": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Class becomes level 2, create a token that's a copy of target token you control.",
+          "trigger": {
+            "event": "becomes_level",
+            "level": 2
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{W}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{3}{W}: Level 3"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "level": 3,
+          "power": {
+            "const": 2
+          },
+          "text": "Creature tokens you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "caretaker_s_talent",
+      "mana_cost": "{2}{W}",
+      "name": "Caretaker's Talent",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhenever one or more tokens you control enter, draw a card. This ability triggers only once each turn.\n{W}: Level 2\nWhen this Class becomes level 2, create a token that's a copy of target token you control.\n{3}{W}: Level 3\nCreature tokens you control get +2/+2.",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

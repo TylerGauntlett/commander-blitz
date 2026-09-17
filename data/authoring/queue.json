@@ -39722,12 +39722,12 @@
     },
     "Caretaker's Talent": {
       "edhrec_rank": 640,
-      "gate": "template",
+      "gate": null,
       "name": "Caretaker's Talent",
-      "reason": "no template for: Whenever one or more tokens you control enter, draw a card. This ability triggers only onc",
+      "reason": "",
       "scryfall_id": "ad5ea98a-e36e-4ab9-b4da-cc572f3777db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cargo Ship": {
