@@ -3142,6 +3142,35 @@ every player-wide static; `affects` and `amount` are refused, and
 A replacement that does something *other* than draw more ("exile the top card of
 your library instead") is not this static.
 
+## Role tokens — "create a Wicked Role token attached to it"
+
+Not Dead After All. `create_token`'s `attached_to` is a selector naming the
+permanent an **Aura token** is created attached to:
+
+```jsonc
+{"op": "create_token", "token": "wicked_role",
+ "attached_to": {"zone": "battlefield", "self_only": true}}
+```
+
+Not `create_token` followed by `attach`. The two differ exactly when the host has
+left the battlefield: a Role that would be created attached to a permanent that
+is gone **is not created**, whereas a created-then-attached token arrives on
+nothing, is put into the graveyard by 704.5m and — for a Wicked Role — drains
+every opponent on the way. The loader refuses `attached_to` on any other op, and
+on a token that is not an Aura.
+
+`wicked_role` is in `tokens.cards.json`: an Enchantment — Aura Role token with
+"Enchanted creature gets +1/+1" and a `dies` trigger (a permanent put into a
+graveyard from the battlefield) that makes each opponent lose 1 life.
+
+The **Role rule** (303.7a, 704.5y) is a state-based action and needs nothing on
+the card: if a permanent has two or more Roles controlled by the same player
+attached, all but the one attached most recently are put into their owners'
+graveyards. "Most recently" is `GameObject.attached_timestamp`, stamped by every
+`attach` (613.7e), so a Role moved onto a permanent is newer than one created
+there earlier. Being put into the graveyard is not destruction, so a Wicked Role
+replaced this way still drains.
+
 ## Making a token that is already attacking
 
 ```jsonc

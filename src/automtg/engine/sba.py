@@ -43,6 +43,7 @@ def check(state: GameState) -> bool:
     changed |= _planeswalker_deaths(state)
     changed |= _finished_sagas(state)
     changed |= _legend_rule(state)
+    changed |= _role_rule(state)
     changed |= _ascend(state)
     return changed
 
@@ -487,6 +488,39 @@ def _creature_deaths(state: GameState) -> bool:
                 # lethal damage would survive on one counter until somebody next
                 # got priority, then die a check at a time.
                 changed = True
+    return changed
+
+
+def _role_rule(state: GameState) -> bool:
+    """704.5y: one Role per player per permanent, the newest kept (303.7a).
+
+    "If a permanent has more than one Role controlled by the same player
+    attached to it, each of those Roles except the one with the most recent
+    timestamp is put into its owner's graveyard." Not destroyed and not
+    sacrificed -- put into the graveyard, so a Wicked Role replaced this way
+    still drains on its way out.
+
+    Newest by `attached_timestamp`, which is when each became attached (613.7e),
+    not by arrival: a Role moved onto a permanent is newer than one created
+    there earlier. Roles controlled by *different* players coexist.
+    """
+    changed = False
+    groups: dict[tuple[int, int], list[int]] = {}
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or obj.attached_to is None:
+            continue
+        if "Role" not in chars(state, oid).subtypes:
+            continue
+        groups.setdefault((obj.attached_to, obj.controller), []).append(oid)
+    for oids in groups.values():
+        if len(oids) < 2:
+            continue
+        order = {oid: i for i, oid in enumerate(state.battlefield)}
+        oids.sort(key=lambda o: (state.objects[o].attached_timestamp, order[o]))
+        for oid in oids[:-1]:
+            move_object(state, oid, Zone.GRAVEYARD, cause="role_rule")
+            changed = True
     return changed
 
 

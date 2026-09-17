@@ -140,6 +140,10 @@ class GameState:
 
     next_oid: int = 1
     next_sid: int = 1
+    #: A game-wide counter for the timestamps rules ask to compare (613.7) that
+    #: arrival order on the battlefield cannot answer -- an Aura re-attached
+    #: after it arrived is newer than one that arrived later and never moved.
+    next_timestamp: int = 1
 
     #: Bumped whenever anything that could change derived characteristics changes.
     char_version: int = 0
@@ -599,6 +603,11 @@ class GameState:
         oid = self.next_oid
         self.next_oid += 1
         return oid
+
+    def alloc_timestamp(self) -> int:
+        stamp = self.next_timestamp
+        self.next_timestamp += 1
+        return stamp
 
     def alloc_sid(self) -> int:
         sid = self.next_sid

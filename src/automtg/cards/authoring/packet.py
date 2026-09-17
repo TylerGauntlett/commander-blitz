@@ -760,6 +760,12 @@ def reference() -> dict:
             " \"t1\"}, \"emblem\": 0}`. `player` is required. \"You\" on the"
             " emblem is the player who got it. Only triggered abilities may be on"
             " an emblem so far; a static or activated one is a gap.",
+            "\"Create a <Name> Role token attached to <it>\" is `create_token`"
+            " with `attached_to`, a selector naming the host -- never"
+            " `create_token` then `attach`, which makes the Role even when the"
+            " host is gone. The Role rule (one Role per player per permanent)"
+            " is a state-based action and is not written on the card. Only Role"
+            " tokens that exist in `token_ids` can be created.",
             "A static ability's filter may only read printed characteristics.",
             "\"If one or more tokens would be created under your control, twice"
             " that many of those tokens are created instead\" (Parallel Lives,"

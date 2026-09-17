@@ -11,6 +11,7 @@ from ..errors import DslError
 from ..objects import playable_duration_of
 from ..primitives import (
     add_counters,
+    attach,
     create_token,
     sacrifice_forbidden,
 )
@@ -530,9 +531,25 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     See `_attacking_player`. ``or_planeswalker`` widens it to "…that player or a
     planeswalker they control", the token's controller choosing as it arrives;
     see `_aim_at_planeswalker`.
+
+    ``attached_to`` is "create a Wicked Role token **attached to it**" (Not Dead
+    After All): a selector naming the permanent the Aura token is created
+    attached to. It is not `create_token` then `attach`, because the two differ
+    exactly when the host is gone. The Role rulings say a Role token that would
+    be created attached to a permanent no longer on the battlefield **is not
+    created** -- whereas a created-then-attached token would arrive unattached,
+    be put into the graveyard by 704.5m, and fire its own "when this is put into
+    a graveyard" on the way out. So the host is resolved first and, with none on
+    the battlefield, nothing is made.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
+    host: int | None = None
+    if "attached_to" in spec:
+        hosts = yield from choose_objects(ctx, spec["attached_to"], "Create it attached to")
+        host = next((oid for oid in hosts if ctx.state.objects[oid].on_battlefield), None)
+        if host is None:
+            return
     attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for pid in _players(ctx, spec.get("controller", "you")):
@@ -547,6 +564,12 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 source=ctx.source_oid,
             )
         )
+    if host is not None:
+        # In creation order, so a doubled Role's second token is the newer one
+        # and the Role rule keeps it.
+        for oid in made:
+            if ctx.state.card(oid).is_aura:
+                attach(ctx.state, oid, host)
     if made and attacking is not None:
         _offer_blocks_to(ctx, attacking)
     yield from _aim_at_planeswalker(ctx, spec, made, attacking)

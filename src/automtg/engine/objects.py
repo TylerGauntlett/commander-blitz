@@ -204,6 +204,13 @@ class GameObject:
     #: `_detach_all` and cleared by `attach`; a stale value is harmless because
     #: oids are never reused, so it can only ever match the object it named.
     last_attached_to: int | None = None
+    #: When this became attached to what it is attached to -- 613.7e gives an
+    #: Aura, Equipment or Fortification a **new timestamp** as it becomes
+    #: attached. Written by `primitives.attach` from `GameState.alloc_timestamp`,
+    #: and read by the Role rule (704.5y), which keeps the newest Role. Zero on
+    #: anything never attached; stale once detached, which is harmless because
+    #: nothing reads it for an object that is not attached.
+    attached_timestamp: int = 0
     #: **The player this Aura enchants** -- "Enchant opponent" (Overencumbered),
     #: "Enchant player" (Sleeper's Robe). 303.4a lets an Aura's enchant ability
     #: name a *player*, and 704.5n is the state-based action that follows: an

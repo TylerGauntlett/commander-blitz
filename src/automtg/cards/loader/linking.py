@@ -227,6 +227,13 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
         for effect in _walk_effects(card):
             if effect.get("op") == "create_token":
                 check(card, str(effect.get("token")), "create_token")
+                if "attached_to" in effect and not cards[str(effect.get("token"))].is_aura:
+                    # Only an Aura is attached by `op_create_token`; anything
+                    # else would be created and hang on nothing.
+                    raise DslError(
+                        f"{card.id}: create_token 'attached_to' needs an Aura token, "
+                        f"and {effect.get('token')!r} is not one"
+                    )
         for ability in card.abilities:
             static = ability.static or {}
             for token_id in static.get("create_instead", ()):
@@ -236,6 +243,11 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
 def _walk_effects(card: CardDef):
     yield from _walk_effect_specs(card.spell_effects)
     for ability in card.abilities:
+        yield from _walk_effect_specs(ability.effects)
+    # A quoted ability the card hands to something else makes tokens too --
+    # Not Dead After All's Wicked Role is created by the creature it granted
+    # the death trigger to -- and an unknown id there crashes mid-game instead.
+    for ability in card.grantable_abilities:
         yield from _walk_effect_specs(ability.effects)
     for emblem in card.emblems:
         for ability in emblem.abilities:

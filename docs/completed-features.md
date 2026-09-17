@@ -12589,3 +12589,53 @@ and is never offered as a cast; its owner loses 2 on every card anyone draws,
 including their own, one trigger per card and per emblem, and given to the
 controller it drains the controller instead; it is still there and draining two
 turns later; its card view and snapshot; and the loader refusals.
+
+## `wicked_role` — Role tokens, created attached — 303.7a / 704.5y
+
+### Overview
+
+Not Dead After All: *"Until end of turn, target creature you control gains 'When
+this creature dies, return it to the battlefield tapped under its owner's control,
+then create a Wicked Role token attached to it.'"* The pool had no Role and no
+Aura token of any kind; thirty-five catalog cards make Roles.
+
+### Why the existing vocabulary would not do
+
+- There was no token to create.
+- `create_token` then `attach` makes a Role even when the host is gone; the token
+  arrives unattached, 704.5m bins it, and a Wicked Role drains every opponent. The
+  Role rulings say it is not created.
+- Nothing implemented the Role rule.
+
+### The shape
+
+- **`wicked_role`** in `data/cards/tokens.cards.json`: Enchantment — Aura Role,
+  "Enchanted creature gets +1/+1" (`buff` on `attached`) and "When this Aura is
+  put into a graveyard from the battlefield, each opponent loses 1 life" (`dies`,
+  `source: self`).
+- **`create_token`'s `attached_to`**: resolves the host first and creates nothing
+  if none is on the battlefield; otherwise attaches each Aura it made, in creation
+  order.
+- **`GameObject.attached_timestamp`**, stamped by `primitives.attach` from the
+  new `GameState.alloc_timestamp` (613.7e).
+- **`sba._role_rule`** (704.5y): groups Roles by host and controller and puts all
+  but the newest into the graveyard.
+- Loader: `attached_to` only on `create_token`, validated as a selector, and only
+  naming an Aura token (`validate_token_references`). That check now also walks
+  `grantable_abilities`, which it never did — a granted ability naming an unknown
+  token loaded clean and crashed mid-game.
+
+### Frontend
+
+None. An Aura token is an ordinary attached permanent to the serializer.
+
+### Guarded by
+
+`tests/unit/test_wicked_role.py`: the token's types; created attached, +1/+1;
+drains when destroyed and when it falls off a dead creature; nothing created (and
+nothing drained) when the host is gone; your Role on an opponent's creature; a
+second Role replaces the first and the replaced Wicked Role drains; different
+players' Roles and different creatures' Roles coexist; newest by attachment, not
+arrival; Not Dead After All end to end (returns tapped wearing the Role, no drain;
+without it the creature stays dead; the grant is gone next turn); and the loader
+refusals, including an unknown token in a granted ability.

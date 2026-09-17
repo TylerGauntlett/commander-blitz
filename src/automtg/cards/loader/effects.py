@@ -1235,6 +1235,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if "attached_to" in effect:
+        # "Create a Wicked Role token attached to it." Only `create_token` reads
+        # the key; on any other op it would load and attach nothing. That the
+        # token is an Aura is checked by `validate_token_references`, which is
+        # where token ids resolve.
+        if op != "create_token":
+            raise DslError(f"{where}: 'attached_to' is read only by create_token")
+        validate_selector(effect["attached_to"], f"{where}.attached_to")
     if op == "create_token" and "controller" in effect:
         # Whose tokens these are, as a full player spec -- `op_create_token`
         # loops `select_players` over it. Unchecked until gift needed to aim one

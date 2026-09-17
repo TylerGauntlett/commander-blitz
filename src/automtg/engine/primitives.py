@@ -859,6 +859,7 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     if protected_from(state, target_oid, aura_oid):
         return False
     aura.attached_to = target_oid
+    aura.attached_timestamp = state.alloc_timestamp()
     # A fresh attachment supersedes the remembered one, so an Equipment moved to
     # a second creature cannot still answer for the first.
     aura.last_attached_to = None
