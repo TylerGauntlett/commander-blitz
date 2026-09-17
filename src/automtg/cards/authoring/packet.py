@@ -603,6 +603,14 @@ def reference() -> dict:
             " over. Either way the other half is an ordinary card entry in the"
             " same pool, and your packet's `back_face` block carries its printed"
             " text -- write it as a second entry, do not file a gap.",
+            "A `tap_permanents` cost may carry `as`, naming THE one permanent it"
+            " tapped so the ability's effects can read it: Station (\"Tap another"
+            " creature you control: Put charge counters equal to its power on"
+            " this Planet\") is `{\"tap_permanents\": {\"types\": [\"Creature\"],"
+            " \"exclude_self\": true, \"as\": \"stationed\"}}` with"
+            " `sorcery_speed_only` and an `add_counters` whose amount is"
+            " `{\"power_of\": {\"binding\": \"stationed\"}}`. Never a `count`"
+            " above 1 or a `total_power` beside it.",
             "`condition_keys` and `value_keys` are what an `if` can ask and what"
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"

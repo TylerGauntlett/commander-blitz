@@ -117,6 +117,21 @@ class GameState:
     #: the subscriptions themselves -- the subscription stays armed for the rest
     #: of the turn and a second combat fires it again.
     armed_delays: list[DelayedTrigger] = field(default_factory=list)
+    #: The permanents a cost tapped **and named** -- `tap_permanents` with
+    #: ``as`` -- keyed by a serial the ability's binding carries. Station is
+    #: the witness: "put charge counters equal to **the tapped creature's**
+    #: power". The rules read that power as the ability resolves, and as the
+    #: creature last existed on the battlefield if it has gone (the Edge of
+    #: Eternities release notes), so the binding cannot be a snapshot taken at
+    #: payment -- a pump in response has to count -- and it cannot be a bare
+    #: oid either, because an oid outlives its permanent here and a graveyard
+    #: card answers with its printed power. Each record is ``{"oid", "power",
+    #: "toughness"}`` with ``None`` while the permanent is still on the
+    #: battlefield; `zones.move_object` fills the two numbers in at the moment
+    #: it leaves, which is the one moment they are still there to read.
+    #: Pruned when the ability that owns the record resolves.
+    paid_objects: dict[int, dict[str, Any]] = field(default_factory=dict)
+    next_paid_object: int = 1
 
     events: list[GameEvent] = field(default_factory=list)
     game_over: bool = False

@@ -98,6 +98,24 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
     # it is lifted out before the selector language sees it.
     tap_selector = dict(model.tap_permanents) if model.tap_permanents is not None else None
     total_power = tap_selector.pop("total_power", None) if tap_selector is not None else None
+    # `as` is Station's "**the tapped creature's** power": a name the ability's
+    # effects read the tapped permanent back through. Also a property of the
+    # cost rather than a test on a candidate, so lifted out beside
+    # `total_power`.
+    tap_name = tap_selector.pop("as", None) if tap_selector is not None else None
+    if tap_selector is not None and "as" in (model.tap_permanents or {}):
+        if not isinstance(tap_name, str) or not tap_name:
+            raise DslError(
+                f"{where}.cost.tap_permanents.as: a binding name, got {tap_name!r}"
+            )
+        if total_power is not None or int(tap_selector.get("count", 1) or 1) != 1:
+            # "The tapped creature" is one creature. Crew and "tap five
+            # Vampires" tap several, and a name bound to the first of them
+            # would read one creature's power where the card meant nobody's.
+            raise DslError(
+                f"{where}.cost.tap_permanents.as: names *the* tapped permanent, so "
+                f"the cost must tap exactly one -- no 'total_power', no 'count' above 1"
+            )
     validate_selector(tap_selector, f"{where}.cost.tap_permanents")
     if total_power is not None:
         if not isinstance(total_power, int) or total_power < 1:

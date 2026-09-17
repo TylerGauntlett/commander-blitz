@@ -255,6 +255,7 @@ def push_activated_ability(
     x: int = 0,
     modes: tuple[int, ...] = (),
     modes_answered: bool = False,
+    bindings: dict[str, Any] | None = None,
 ) -> StackItem:
     card = state.card(source_oid)
     ability = card.abilities[ability_index]
@@ -269,6 +270,8 @@ def push_activated_ability(
         x=x,
         modes=modes,
         modes_answered=modes_answered,
+        # What the cost named as it was paid -- see `costs.bind_paid_object`.
+        bindings=dict(bindings or {}),
         description=f"{card.name}: {ability.text or 'activated ability'}",
     )
     state.stack.append(item)
@@ -1042,6 +1045,12 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
     # intervening-if failed (603.4) never resolve, so neither may advance it.
     ctx.resolutions = state.turn_ledger.resolving(item.source_oid, item.ability_index)
     yield from execute(ctx, ability.effects)
+    # The records a cost named for this ability have been read for the last
+    # time; without this every Station activation would leave one behind for
+    # `zones.move_object` to walk for the rest of the game.
+    for value in item.bindings.values():
+        if isinstance(value, dict) and "paid_object" in value:
+            state.paid_objects.pop(value["paid_object"], None)
     state.emit(
         EventType.ABILITY_RESOLVED,
         player=item.controller,

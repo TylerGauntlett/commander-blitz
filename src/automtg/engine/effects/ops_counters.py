@@ -32,7 +32,12 @@ from .values import evaluate_value
 
 @register("add_counters")
 def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
-    amount = evaluate_value(ctx, spec.get("amount", 1))
+    # Rule 107.1b: a calculation that comes out negative uses zero. "Put
+    # counters equal to its power" with a -1/-1 creature puts none -- Station's
+    # release notes say so outright -- where the primitive, handed -1, would
+    # *remove* one, because a negative `add_counter` is how removal is spelled
+    # underneath.
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
     kind = str(spec.get("counter", "+1/+1"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put counters on")
     for oid in oids:

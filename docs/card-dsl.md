@@ -1418,6 +1418,8 @@ What an activated ability charges, and what `may`'s `pay` spends:
   "return_to_hand": { "types": ["Land"] },       // a selector; the permanent comes back
   "tap_permanents": { "subtypes": ["Vampire"], "count": 5 },  // taps *others*; they stay
   "tap_permanents": { "types": ["Creature"], "total_power": 3 },  // crew 3
+  "tap_permanents": { "types": ["Creature"], "exclude_self": true,
+                      "as": "stationed" },       // Station: names *the* tapped creature
   "untap_permanents": { "types": ["Creature"], "count": 2 },  // untaps *others*; they stay
   "discard": 1, "discard_selector": { "types": ["Land"] },
   "discard_self": true,                           // cycling: *this* card, no choice
@@ -1674,6 +1676,41 @@ definition.
 **Saddle is not here.** Several newer Pilots print "saddles Mounts and crews
 Vehicles as though its power were 2 greater"; the engine has no saddle, so that
 token is a different id and is not defined.
+
+### Station — a tap cost that names what it tapped
+
+```jsonc
+{ "kind": "activated",
+  "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Planet. Station only as a sorcery.)",
+  "cost": { "tap_permanents": { "types": ["Creature"], "exclude_self": true,
+                                "as": "stationed" } },
+  "sorcery_speed_only": true,
+  "effects": [ { "op": "add_counters", "counter": "charge",
+                 "amount": { "power_of": { "binding": "stationed" } },
+                 "objects": { "self_only": true } } ] }
+```
+
+Rule 702.184a: "Tap another untapped creature you control: Put a number of charge
+counters on this permanent equal to **the tapped creature's** power. Activate only
+as a sorcery." `as` on `tap_permanents` binds the tapped permanent under that
+name, and `power_of`/`toughness_of` `{"binding": …}` read it back. No keyword
+sugar: Station is written out like crew is.
+
+What the binding holds is set by the Edge of Eternities release notes. The power
+is read **as the ability resolves** — a pump in response counts — and **as the
+creature last existed on the battlefield** if it has gone. So it is neither a
+snapshot at payment nor a bare oid (which here outlives the permanent and reads
+the graveyard card's printed power): it is a reference to a record in
+`GameState.paid_objects` that `zones.move_object` fills in as the permanent
+leaves. The record is dropped once the ability resolves.
+
+`as` names *the* tapped permanent, so the loader refuses it beside a `count`
+above 1 or a `total_power`. And `add_counters` now clamps a negative amount to
+zero (107.1b): a creature with negative power stations nothing rather than
+removing counters.
+
+Not `choose_permanents` + the `tap` op + `add_counters`: that pays on resolution,
+so the ability could be activated with nothing to tap.
 
 All three take a selector over the battlefield defaulting to `controller: "you"`,
 and all three make the ability **unavailable** when too little matches rather

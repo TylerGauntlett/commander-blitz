@@ -11962,3 +11962,45 @@ creatures and stops as soon as the Pilot's crew power meets the number; the
 Pilot is still a 1/1 and attacks for one; the created token is the printed
 Pilot, crews while summoning sick, and is offered by the packet; and the
 load-time guards. Test cards live in `tests/data/crew_power_bonus.cards.json`.
+
+## Station, the cost — "put charge counters equal to its power"
+
+### Overview
+
+Uthros, Titanic Godcore and Adagia, Windswept Bastion, the two Planets in the
+Bard, King of Dale deck: *"Station (Tap another creature you control: Put charge
+counters equal to its power on this Planet. Station only as a sorcery.)"* Rule
+702.184a. The first of two capabilities Station needs; the "12+ |" threshold is
+the second.
+
+### Why the existing vocabulary would not do
+
+- `tap_permanents` already charged "tap another creature you control", but it
+  was write-only: the creature was tapped and forgotten, so no effect could ask
+  its power.
+- `choose_permanents` + the `tap` op pays on resolution, so the ability could be
+  activated with nothing to tap and responded to before anything tapped.
+- A snapshot at payment misses a pump in response; a bare oid reads the
+  graveyard card's printed power once the creature has gone. The release notes
+  require both the live read and last-known information.
+
+### The shape
+
+`tap_permanents.as` names the one tapped permanent. `costs.pay` takes a
+`bindings` dict, `game._activate` hands it to `push_activated_ability`, and the
+binding is `{"paid_object": key}` pointing at a record in
+`GameState.paid_objects`. `zones.move_object` writes the departing permanent's
+derived power and toughness into any open record for it; `values._characteristic`
+reads the live permanent while the record is open and the record once it is
+filled. `_resolve_ability` prunes the records its item carried. `add_counters`
+clamps a negative amount to zero (107.1b).
+
+### Guarded by
+
+`tests/unit/test_station.py`: offered with a creature and not without one, not
+with only tapped creatures, only at sorcery speed; the creature tapped before
+resolution; counters equal to the tapped creature's power and not another's; a
+second activation adding; a pump in response counting; a pumped creature
+destroyed in response using its last-known power; negative power putting none
+and removing none; the record pruned; and the load-time guards. The test card is
+`tests/data/station.cards.json`.

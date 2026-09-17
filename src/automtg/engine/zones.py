@@ -150,6 +150,15 @@ def move_object(
     if was_on_battlefield:
         _seen = chars(state, oid)
         had_power, had_toughness = _seen.power, _seen.toughness
+        # And for the same reason, into any record a cost made of this
+        # permanent: Station reads "the tapped creature's power" at resolution,
+        # as the creature last existed on the battlefield if it has gone. See
+        # `costs.bind_paid_object`. A record already filled in belongs to an
+        # earlier departure -- the creature left, came back as a new object
+        # (400.7) and is leaving again -- and keeps the answer it had.
+        for record in state.paid_objects.values():
+            if record["oid"] == oid and record["power"] is None:
+                record["power"], record["toughness"] = had_power, had_toughness
     else:
         had_power = had_toughness = 0
     # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
