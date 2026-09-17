@@ -255,6 +255,15 @@ STATIC_EFFECTS = frozenset(
         # and by the life-loss half of `primitives.damage_player`, which are
         # the two places a player's life goes down.
         "replace_life_loss",
+        # Voice of Victory.  "Your opponents can't cast spells during your
+        # turn."  A prohibition on a *player*, so it takes `affects_player` and
+        # no `affects`, and it is read wherever a spell can be cast rather than
+        # by the characteristics pipeline: `casting._cast_actions` withholds the
+        # actions, and `suspend.cast_for_free`, `replacements._offer_cast` and
+        # `op_cast_copy` refuse the casts a resolving effect would make (101.2).
+        # Not `split_second`, which lives on the stack and binds every player,
+        # and not `epic`, which is a card-level rider with no seat or duration.
+        "cant_cast_spells",
     }
 )
 
@@ -281,6 +290,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "double_land_mana",
         "freeze_opponent_lands",
         "replace_life_loss",
+        "cant_cast_spells",
     }
 )
 

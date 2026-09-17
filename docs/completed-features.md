@@ -11505,3 +11505,77 @@ players, with a decked opponent, and at a four-player pod with and without one;
 and the load-time guards.
 
 Cut a Deal is not authored in this change; its gap record stays until it is.
+
+## `cant_cast_spells` — a player who may not cast, from anywhere, by any route
+
+### Overview
+
+Voice of Victory: *"Your opponents can't cast spells during your turn."* The
+engine had two cast prohibitions and both were the wrong shape. Split second
+(702.61a) is read off the stack, binds every player including its caster, and
+ends when the spell leaves; epic (702.50a) is a card-level rider that locks its
+own controller for the rest of the game. Neither can say "these seats, while
+this permanent is here, during this turn". The near misses in the static
+vocabulary were permissions and prices (`cast_from_graveyard`,
+`spell_cost_reduction`, `attack_tax`) or a mana tax (`freeze_opponent_lands`),
+and a `spell_cast` trigger that counters is not "can't cast": the spell is still
+cast, still paid for, and still fires cast triggers.
+
+### Where it is read
+
+A player-wide static in `PLAYER_WIDE_STATIC_EFFECTS`, answered by
+`player_statics.player_cant_cast_spells` through `_active_player_statics`, so
+`affects_player` and the `condition` are honoured exactly as they are for
+Bloodletter.
+
+- **Legality.** `casting._cast_actions` returns nothing, beside epic's gate and
+  before any zone is walked. 601.2 names no zone, so a gate in the hand loop
+  would pass every hand test and let flashback straight through.
+- **Resolution-time casts.** Rule 101.2: a "can't" beats a "may". Every cast a
+  resolving effect makes goes through one of three places, and each refuses:
+  `suspend.cast_for_free` (suspend, rebound, cascade, ripple, `cast_from_hand`,
+  `play_exiled`, `look_at_top`'s `cast_free`), `replacements._offer_cast`
+  (madness, miracle), and `op_cast_copy` — 707.12 makes casting a copy a cast,
+  even though the engine builds it with `put_copy_on_stack`. `_offer_free_cast`
+  and `cast_from_hand` check before asking, so no prompt is shown whose yes does
+  nothing. The refused card stays where the no-legal-target outcome already
+  leaves it: in exile for suspend and rebound, bottomed with the rest for
+  cascade, exiled for madness.
+
+### What it does not stop
+
+Copies (`copy_spell`, storm, epic's upkeep copy — 707.10, never cast), playing a
+land, the special actions suspend and foretell (116.2), and activated abilities.
+Each is pinned, because a lock that also withheld one would be a strictly
+stronger card that looks identical on the board.
+
+### Refused at load
+
+`affects_player` is required (as for every player-wide static), and `affects` or
+`amount` beside `cant_cast_spells` is a load error: nothing reads them, so
+"Your opponents can't cast creature spells" written with a filter would load as
+a lock on every spell.
+
+### Tier
+
+A static and its readers: no op, no `EventType`, no decision kind, no API field,
+nothing under `frontend/`. The AI needs nothing — its action mask is
+`legality.legal_actions()`. The authoring packet's `static_effects` list is
+derived from `STATIC_EFFECTS`, and a note now names the shape.
+
+### Guarded by
+
+`tests/unit/test_cant_cast_spells.py`: the opponent locked on your turn and free
+on theirs; the turn passing and the source leaving both lift it; the controller
+is unaffected; the unconditional twin locks either turn; flashback from the
+graveyard is withheld; abilities, land drops and spell copies survive; an
+opponent's cascade during your turn casts nothing and asks nothing, and the same
+cascade on their turn casts; `cast_for_free` refuses directly; madness still
+exiles but does not cast; cipher's cast-a-copy is refused, and allowed again on
+their turn; and the load-time guards.
+
+Voice of Victory is not authored in this change. Its Mobilize 2 line was already
+expressible (`create_token` with `tapped`/`attacking`/`as` plus a `delay`ed
+`sacrifice`), so the card is now fully answerable. Grand Abolisher, Drannith
+Magistrate and Deafening Silence need a spell filter or an ability lock and
+remain gaps.

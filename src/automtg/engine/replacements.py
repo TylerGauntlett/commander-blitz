@@ -170,10 +170,17 @@ def _offer_cast(
     from . import stack, triggers
     from .costs import can_pay, pay
     from .effects.context import EffectContext, ask_yes_no
+    from .player_statics import player_cant_cast_spells
     from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
+        return False
+    if player_cant_cast_spells(state, pid):
+        # Voice of Victory (101.2): the "can't" beats the "may", and it is
+        # checked before the question rather than after, because a prompt the
+        # player cannot act on is an offer the engine does not honour. A madness
+        # card stays in exile, the outcome declining already has.
         return False
     card = state.card_of(obj)
     price = Cost(mana=cost)

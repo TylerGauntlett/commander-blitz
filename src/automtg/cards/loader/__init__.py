@@ -1846,6 +1846,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
+        if model.effect == "cant_cast_spells" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # Nothing reads either key. "Your opponents can't cast **creature**
+            # spells" written with a filter here would load clean and stop every
+            # spell -- a strictly stronger lock than the printed card, and one
+            # that looks right on screen. Refused until a spell filter is built.
+            raise DslError(
+                f"{where}: cant_cast_spells stops every spell the named players "
+                f"would cast; it takes 'affects_player' and an optional "
+                f"'condition', and no 'affects' or 'amount'"
+            )
     elif model.effect in (
         "spell_cost_reduction",
         "replace_token_creation",

@@ -1,0 +1,60 @@
+{
+  "_comment": "Cards that exist only for the cast prohibition test (tests/unit/test_cant_cast_spells.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_voice` is Voice of Victory's static without the Mobilize half -- opponents can't cast spells, but only during its controller's turn. `t_quiet_voice` drops the turn condition, so an opponent's own priority window can be locked and the per-zone and resolution-time casts tested without driving a turn. `t_flashback_shock` is a one-mana flashback instant, the graveyard cast the top-of-function gate has to reach.",
+  "cards": [
+    {
+      "id": "t_voice",
+      "name": "Test Voice",
+      "oracle_text": "Your opponents can't cast spells during your turn.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Bard"],
+      "power": 1,
+      "toughness": 3,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't cast spells during your turn.",
+          "effect": "cant_cast_spells",
+          "affects_player": "opponent",
+          "condition": {"is_your_turn": true}
+        }
+      ]
+    },
+    {
+      "id": "t_quiet_voice",
+      "name": "Test Quiet Voice",
+      "oracle_text": "Your opponents can't cast spells.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 1,
+      "toughness": 3,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Your opponents can't cast spells.",
+          "effect": "cant_cast_spells",
+          "affects_player": "opponent"
+        }
+      ]
+    },
+    {
+      "id": "t_flashback_shock",
+      "name": "Test Flashback Shock",
+      "oracle_text": "Test Flashback Shock deals 2 damage to any target.\nFlashback {R}",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "flashback": {"mana": "{R}"},
+      "targets": [{"id": "t1", "kind": "any", "count": 1, "selector": {}}],
+      "spell_effects": [
+        {"op": "damage", "target": "t1", "amount": {"const": 2}}
+      ]
+    }
+  ]
+}

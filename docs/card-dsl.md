@@ -3538,6 +3538,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
+{ "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 ```
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is
@@ -3573,6 +3574,39 @@ helper.
 untap step it skips. That is deliberately not the `frozen_by` lock used by
 `freeze`, which holds for as long as its source is on the battlefield: two
 different lifetimes, so two different fields.
+
+`cant_cast_spells` is Voice of Victory's "Your opponents can't cast spells during
+your turn" — `affects_player` names the locked seats and the ordinary static
+`condition` is the "during your turn":
+
+```jsonc
+{ "kind": "static",
+  "text": "Your opponents can't cast spells during your turn.",
+  "effect": "cant_cast_spells",
+  "affects_player": "opponent",
+  "condition": { "is_your_turn": true } }
+```
+
+It is a prohibition on the **player**, so it is read everywhere a spell can be
+cast rather than in one of those places. `casting._cast_actions` withholds every
+cast action before it walks a single zone — hand, graveyard (flashback, retrace,
+Edgar), exile (foretell, adventure, plot), the Citadel top, the command zone and
+a prepared copy alike. And because rule 101.2 makes a "can't" beat a "may", the
+casts a *resolving* effect makes are refused too: `suspend.cast_for_free` (the
+floor under suspend, rebound, cascade, ripple, `cast_from_hand`, `play_exiled`
+and `look_at_top`'s `cast_free`), `replacements._offer_cast` (madness, miracle)
+and `cast_copy` (707.12: casting a copy is casting). The ops that ask "you may
+cast" check before asking, so no prompt appears whose yes would do nothing; a
+refused suspend or rebound card stays in exile, a refused cascade hit is bottomed
+with the rest, and a madness card is still exiled.
+
+What it leaves alone, on purpose: `copy_spell` and storm-style copies (707.10 —
+never cast), playing lands and the special actions suspend and foretell (116.2),
+and activated abilities (Grand Abolisher's second sentence is a different
+static). It takes no spell filter yet, and `affects` or `amount` beside it is a
+load error rather than ignored — "can't cast **creature** spells" written with a
+filter would otherwise load as a lock on every spell. Drannith Magistrate,
+Deafening Silence and Grand Abolisher remain gaps.
 
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus

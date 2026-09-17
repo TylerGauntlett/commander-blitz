@@ -507,6 +507,7 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     got here -- so nothing gained a prompt.
     """
     from ..effects.ops_stack import put_copy_on_stack
+    from ..player_statics import player_cant_cast_spells
     from ..structs import StackItem
     from .context import ask_yes_no
     from .selectors import resolve_pool
@@ -516,6 +517,11 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     else:
         oids = [ctx.source_oid] if ctx.source_oid is not None else []
     optional = bool(spec.get("optional"))
+    if player_cant_cast_spells(ctx.state, ctx.controller):
+        # 707.12: casting a copy of a card *is* casting a spell, even though
+        # this engine builds it as a copy -- so Voice of Victory stops it, where
+        # `copy_spell` (a copy that was never cast, 707.10) is untouched.
+        return
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:

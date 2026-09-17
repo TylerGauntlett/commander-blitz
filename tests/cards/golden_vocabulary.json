@@ -179,6 +179,7 @@
    "player"
   ],
   "PLAYER_WIDE_STATIC_EFFECTS": [
+   "cant_cast_spells",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",
@@ -283,6 +284,7 @@
    "cant_attack_you",
    "cant_block",
    "cant_block_alone",
+   "cant_cast_spells",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",
@@ -380,6 +382,7 @@
    "types"
   ],
   "UNGRANTABLE_STATIC_EFFECTS": [
+   "cant_cast_spells",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",

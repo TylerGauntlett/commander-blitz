@@ -1568,6 +1568,7 @@ from .player_statics import (  # noqa: F401
     graveyard_cast_permissions,
     library_top_cast_permission,
     life_loss_multiplier,
+    player_cant_cast_spells,
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,

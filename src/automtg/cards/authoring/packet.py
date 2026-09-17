@@ -607,6 +607,13 @@ def reference() -> dict:
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"
             " against `{\"const\": 0}` and needs no new op.",
+            "\"Your opponents can't cast spells during your turn\" is the"
+            " player-wide static `cant_cast_spells` with `affects_player:"
+            " \"opponent\"` and `condition: {\"is_your_turn\": true}`. It stops"
+            " every spell from every zone, free casts included, and takes no"
+            " spell filter: \"can't cast creature spells\", \"from anywhere"
+            " other than their hands\" and \"more than one spell each turn\""
+            " are still gaps, and so is \"can't activate abilities\".",
             "`static_condition_keys` is what a static ability's optional"
             " `condition` may ask -- an \"as long as ...\" clause that switches"
             " the whole static on and off as the board moves. It is a third"

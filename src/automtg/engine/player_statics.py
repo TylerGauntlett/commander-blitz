@@ -508,6 +508,32 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+def player_cant_cast_spells(state: GameState, pid: int) -> bool:
+    """ "Your opponents can't cast spells during your turn." Voice of Victory.
+
+    A prohibition on the *player*, read everywhere a spell can be cast rather
+    than at one of those places: `casting._cast_actions` withholds the cast
+    actions, and the three resolution-time casts -- `suspend.cast_for_free`
+    (suspend, rebound, cascade, ripple, `cast_from_hand`, `play_exiled`,
+    `look_at_top`'s `cast_free`), `replacements._offer_cast` (madness, miracle)
+    and `op_cast_copy` (707.12: casting a copy *is* casting) -- refuse it. Rule
+    101.2 is why the last three matter: when a rule or effect says a player
+    may cast something and another says they can't, the "can't" wins, so a
+    cascade trigger an opponent already has on the stack does not slip a free
+    spell past the lock.
+
+    What it does **not** stop, each on purpose: copying a spell (707.10 -- a
+    copy put on the stack was never cast), activating abilities, playing a
+    land, and the special actions suspend and foretell (116.2), none of which
+    is casting. Grand Abolisher's second half is a different static.
+
+    `affects_player` picks out the stopped seats and `condition` is the
+    "during your turn", both answered through `_active_player_statics`, so the
+    lock lifts the instant the source leaves or the turn passes.
+    """
+    return _player_static(state, pid, "cant_cast_spells")
+
+
 def player_reveals_library_top(state: GameState, pid: int) -> bool:
     """ "Play with the top card of your library revealed." Vampire Nocturnus.
 

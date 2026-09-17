@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 from . import suspend as suspend_mod
 from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost
-from .characteristics import chars
+from .characteristics import chars, player_cant_cast_spells
 from .costs import (
     can_pay,
     commander_cost,
@@ -32,6 +32,16 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # legality gate rather than a cost or a condition, because it is not
         # about any one card -- and lands are unaffected, which is why it is
         # here rather than in `legal_actions`.
+        return out
+    if player_cant_cast_spells(state, pid):
+        # "Your opponents can't cast spells during your turn" -- Voice of
+        # Victory. Here, at the top, rather than per zone below, because the
+        # prohibition is about the player and not about where the card is: a
+        # flashback, a foretold card, a Citadel top, a commander and a prepared
+        # copy are all casts, and a gate written into any one block would leave
+        # the rest open. Lands and suspend are not offered from this function,
+        # so they stay, which is 116.2's line between a cast and a special
+        # action.
         return out
 
     # Per object, not per card name -- see the note on _land_actions.
