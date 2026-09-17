@@ -109,12 +109,16 @@ jobs:
       - name: Verify with coverage and e2e
         run: python scripts/verify.py --quick --coverage --e2e --verbose
 
+      # Failures only, and short-lived: the traces and reports are for debugging
+      # a red run, and every green run's upload used to sit for the 90-day
+      # default until the repo hit its Actions storage quota.
       - name: Keep the reports
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: slow-gate-reports
           if-no-files-found: ignore
+          retention-days: 3
           path: |
             frontend/e2e-report
             frontend/test-results
@@ -152,6 +156,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }} # Injected; nothing to configure.
 
       - uses: docker/build-push-action@v6
+        env:
+          # Otherwise every push leaves a .dockerbuild record artifact behind.
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           push: true
