@@ -20452,12 +20452,12 @@
     },
     "Bard, King of Dale": {
       "edhrec_rank": 21754,
-      "gate": "template",
+      "gate": null,
       "name": "Bard, King of Dale",
-      "reason": "no template for: If you would draw a card except the first one you draw in each of your draw steps, draw tw",
+      "reason": "",
       "scryfall_id": "a4adb258-381e-4e64-9f93-9fcf943be360",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bargain": {
