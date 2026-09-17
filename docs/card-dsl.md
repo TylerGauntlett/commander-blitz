@@ -1828,7 +1828,7 @@ creature" would also draw off Arixmethes waking up. The kind is also copied into
 other event, for the same reason as `defending`.
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw` or a `spell_cast` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -1854,6 +1854,38 @@ other way: a permanent that enters *after* its controller has drawn two cards
 fires on the next draw, where the printed card does nothing for the rest of the
 turn. An ordinal is a fact about the draw, not about the board, so it is settled
 where the ability queues and never re-asked.
+
+On `spell_cast` it is "whenever a player casts their **Nth** spell each turn",
+counted **per caster** — the ledger fold writes each cast's ordinal for the
+player who cast it onto SPELL_CAST, so `controller` picks whose casts fire it
+and every seat has a first and a second spell of their own. With a `filter`, the
+ordinal is counted over that player's spells **matching the filter**: "their
+first *noncreature* spell" is the first noncreature one, so a creature followed
+by an instant fires on the instant.
+
+```jsonc
+// Mangara, the Diplomat; Trouble in Pairs' third clause
+{ "event": "spell_cast", "controller": "opponent", "nth": 2 }
+// Esper Sentinel; The Queen of Dale
+{ "event": "spell_cast", "controller": "opponent",
+  "filter": { "not_types": ["Creature"] }, "nth": 1 }
+// The Council of Four: "a player casts their second spell during their turn"
+{ "event": "spell_cast", "controller": "any", "nth": 2,
+  "condition": { "is_active_player": { "binding": "event_player" } } }
+```
+
+Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the
+first opponent's spell spends it and the second opponent's first spell does
+nothing — right only for "whenever **you** cast your first … each turn". A
+`condition` on `spells_cast_this_turn` fails the 603.4 re-check exactly as the
+draw form does, whenever the caster holds priority and casts again in response.
+And an unfiltered `nth` with a `filter` beside it would have meant "their first
+spell, if it is noncreature", which is not the printed card — so the filter is
+what is counted. The earlier spells of the run have left the stack, so they are
+matched on their printed faces, and the loader refuses a filter key that
+`_matches_printed` cannot read (`mana_value`, `paid_by`, `exclude_self`, …) on a
+`spell_cast` trigger carrying `nth`: `types` `any_types` `not_types` `subtypes`
+`supertypes` `colors` `min_colors` `keywords` `not_keywords` `name`.
 
 One placement is one trigger, however many counters it puts: `add_counters`
 fires a single event with `amount` on it. That is correct for "a +1/+1 counter"

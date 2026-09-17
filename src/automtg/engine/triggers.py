@@ -910,7 +910,11 @@ def _matches(
     # survives the re-check and gains the opposite fault: a permanent entering
     # after two draws fires on the third card, where the printed card is silent
     # for the rest of the turn. This asks the only question that is stable.
-    if spec.nth is not None and event.data.get("nth") != spec.nth:
+    #
+    # `spell_cast` asks the same question of a cast -- "an opponent casts their
+    # second spell each turn" (Mangara) -- and, with a `filter`, of a *run* of
+    # casts: see `_spell_ordinal`.
+    if spec.nth is not None and _ordinal(state, spec, event) != spec.nth:
         return False
 
     actor = _actor(state, spec.event, event, subject_oid)
@@ -942,6 +946,72 @@ def _matches(
             return False
 
     return True
+
+
+#: The filter keys an ordinal can be counted over: exactly the ones
+#: `characteristics._matches_printed` reads. The earlier spells of the run have
+#: left the stack by the time a later one is cast, so only their printed faces
+#: are left to ask -- a board-state key (`mana_value` of a paid X, `paid_by`,
+#: `exclude_self`) would be answered for this spell and silently ignored for
+#: every spell before it. The loader refuses the rest.
+ORDINAL_FILTER_KEYS = frozenset(
+    {
+        "types",
+        "any_types",
+        "not_types",
+        "subtypes",
+        "supertypes",
+        "colors",
+        "min_colors",
+        "keywords",
+        "not_keywords",
+        "name",
+    }
+)
+
+
+def _ordinal(state: GameState, spec: TriggerSpec, event: GameEvent) -> int | None:
+    """The event's ordinal as ``spec`` counts it.
+
+    A draw's is on the event. So is a cast's, and that answers an unfiltered
+    `spell_cast` trigger; a filtered one is sent to `_spell_ordinal`.
+    """
+    nth = event.data.get("nth")
+    if spec.event != "spell_cast" or spec.filter is None or nth is None:
+        return nth
+    return _spell_ordinal(state, spec.filter, event.player, int(nth))
+
+
+def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, nth: int) -> int:
+    """This spell's place among the caster's spells **matching** ``filt`` this turn.
+
+    "Whenever an opponent casts their first **noncreature** spell each turn"
+    (Esper Sentinel) is not "their first spell, if it is noncreature": a player
+    who casts a creature and then an artifact is casting their first noncreature
+    spell with the artifact, and a flat ordinal of 2 would miss it. So the
+    trigger's own `filter` says which run is being counted -- the printed
+    family is always "their Nth <kind> spell", and the kinds are open-ended
+    (noncreature, instant or sorcery, multicolored), which is why the event does
+    not carry a fixed set of per-kind ordinals instead.
+
+    Counted off `TurnLedger.spells_cast_ids`, cut at this cast's flat ordinal so
+    that a spell cast later -- in response, before this trigger is read -- is not
+    in the run. The earlier spells are matched on their printed faces (see
+    `ORDINAL_FILTER_KEYS`); this spell itself counts as one because the trigger's
+    `filter` is checked against it anyway, and a spell that fails it never
+    fires the ability whatever this returns.
+    """
+    from .characteristics import _matches_printed
+
+    registry = state.registry
+    ids = state.turn_ledger.spells_cast_ids.get(pid, []) if pid is not None else []
+    earlier = sum(
+        1
+        for cast_id in ids[: nth - 1]
+        # `in` before `get`, as `values.py` does for the same list.
+        if cast_id in registry and _matches_printed(registry.get(cast_id), filt)
+    )
+    return earlier + 1
 
 
 def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict[str, Any]:

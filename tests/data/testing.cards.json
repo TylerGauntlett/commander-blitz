@@ -12863,6 +12863,150 @@
           }
         }
       ]
+    },
+    {
+      "id": "t_nth_spell_opponent",
+      "name": "Test Second Spell Watcher",
+      "oracle_text": "Whenever an opponent casts their second spell each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent casts their second spell each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "opponent",
+            "nth": 2
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_noncreature",
+      "name": "Test First Noncreature Spell Watcher",
+      "oracle_text": "Whenever an opponent casts their first noncreature spell each turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent casts their first noncreature spell each turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "opponent",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            },
+            "nth": 1
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_active",
+      "name": "Test Second Spell On Their Turn Watcher",
+      "oracle_text": "Whenever a player casts their second spell during their turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a player casts their second spell during their turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "any",
+            "nth": 2,
+            "condition": {
+              "is_active_player": {
+                "binding": "event_player"
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nth_spell_condition",
+      "name": "Test Second Spell Condition Watcher",
+      "oracle_text": "Whenever an opponent casts a spell, if it's their second spell this turn, create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{W}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell, if it's their second spell this turn, create a 1/1 white Human Soldier creature token.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "opponent",
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "spells_cast_this_turn": {
+                  "binding": "event_player"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

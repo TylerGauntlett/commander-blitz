@@ -436,9 +436,13 @@ class TriggerSpec:
     #: permanents this clause exists for are exactly the ones with both kinds on
     #: them (a fetchland's sacrifice ability and its mana tap; a Signet).
     mana_ability: bool | None = None
-    #: ``draw`` only: "whenever you draw your **second** card each turn".  The
-    #: ordinal the drawn card must have had, compared against ``nth`` on the
-    #: event.
+    #: ``draw`` and ``spell_cast`` only: "whenever you draw your **second**
+    #: card each turn", "whenever an opponent casts their **second** spell each
+    #: turn".  The ordinal the draw or cast must have had for its player this
+    #: turn, compared against ``nth`` on the event.  On ``spell_cast`` with a
+    #: ``filter`` it is the ordinal among that player's spells **matching** the
+    #: filter -- "their first noncreature spell" -- see
+    #: `triggers._spell_ordinal`.
     #:
     #: A restriction on the trigger rather than a ``condition``, and that is the
     #: whole of the feature.  The condition form -- ``cards_drawn_this_turn ==

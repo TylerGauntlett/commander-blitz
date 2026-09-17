@@ -267,7 +267,10 @@ class TriggerModel(BaseModel):
     #: Manabarbs that pings every land tap.
     mana_ability: bool | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
-    #: ordinal that draw must have had for its player this turn.  Matched where
+    #: ordinal that draw must have had for its player this turn.  For
+    #: ``spell_cast``: "whenever an opponent casts their second spell each
+    #: turn", counted over the spells matching ``filter`` when there is one
+    #: ("their first **noncreature** spell").  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
     nth: int | None = None

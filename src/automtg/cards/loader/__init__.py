@@ -44,7 +44,7 @@ from automtg.engine.errors import DslError
 from automtg.engine.mana import SYMBOLS as MANA_SYMBOLS
 from automtg.engine.mana import ManaCost, ManaRestriction
 from automtg.engine.sagas import LORE, SAGA
-from automtg.engine.triggers import TRIGGER_EVENTS
+from automtg.engine.triggers import ORDINAL_FILTER_KEYS, TRIGGER_EVENTS
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (  # noqa: F401
@@ -1403,22 +1403,38 @@ def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Abilit
                 f"ability_activated trigger, not on {model.trigger.event!r}"
             )
 
-        if model.trigger.nth is not None and model.trigger.event != "draw":
+        if model.trigger.nth is not None and model.trigger.event not in ("draw", "spell_cast"):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`
-            # carries an ordinal, so accepting it elsewhere would look like
-            # "your second card each turn" and be a restriction that never
-            # applies -- which, on a trigger, means an ability that fires on
-            # every event of its kind rather than one that never fires.
+            # and `spell_cast` carry an ordinal, so accepting it elsewhere would
+            # look like "your second card each turn" and be a restriction that
+            # never matches -- an ability that silently never fires.
             raise DslError(
-                f"{where}: 'nth' only means anything on a draw trigger, "
+                f"{where}: 'nth' only means anything on a draw or spell_cast trigger, "
                 f"not on {model.trigger.event!r}"
             )
         if model.trigger.nth is not None and model.trigger.nth < 1:
-            # Draws are ordinalled from 1. A zeroth or negative card is drawn by
+            # Ordinals count from 1. A zeroth or negative card or spell is
             # nothing, so this would silently be an ability that never triggers.
             raise DslError(
                 f"{where}: 'nth' is an ordinal from 1; "
-                f"no draw is the {model.trigger.nth}th card of a turn"
+                f"no {model.trigger.event} is the {model.trigger.nth}th of a turn"
+            )
+        if (
+            model.trigger.nth is not None
+            and model.trigger.event == "spell_cast"
+            and model.trigger.filter
+            and (unordinal := set(model.trigger.filter) - ORDINAL_FILTER_KEYS)
+        ):
+            # "Their first noncreature spell" counts the caster's earlier spells
+            # this turn against the filter, and those have left the stack: only
+            # their printed faces can be asked. A key that reads board state
+            # would be checked on this spell and ignored on the ones before it,
+            # so the run would be counted against a different filter than the
+            # one that fires the ability.
+            raise DslError(
+                f"{where}: 'nth' on a spell_cast trigger counts earlier spells by "
+                f"their printed faces, so its filter cannot use {sorted(unordinal)} "
+                f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
             )
 
         trigger = TriggerSpec(

@@ -685,6 +685,18 @@ class GameState:
                 # rather than about a count. `card` is the face that was cast.
                 if (cast_id := data.get("card")) is not None:
                     ledger.spells_cast_ids.setdefault(pid, []).append(str(cast_id))
+                # "Whenever an opponent casts their **second** spell each turn."
+                # The ordinal is a fact about this cast, so it goes on the event
+                # -- the one thing a trigger reads at queue time and never again
+                # -- exactly as `draw_cards` writes `nth` on a DRAW. Written here
+                # rather than at the three places that fire SPELL_CAST (a normal
+                # cast, an alternative-cost cast, suspend's free cast) because
+                # this fold is the one place all of them pass through, and a cast
+                # path that forgot it would be a trigger that silently never
+                # fires. The ids list above is the same length at this moment, so
+                # `spells_cast_ids[pid][:nth]` is the run up to and including
+                # this spell however many are cast before a trigger reads it.
+                data["nth"] = ledger.spells_cast[pid]
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:

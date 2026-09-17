@@ -11251,3 +11251,74 @@ back is a new object (400.7) whose controller has been asked nothing.
 paying life you do not have, so a player at 2 life is not shown a question whose
 "yes" cannot be honoured — which would otherwise leave the arrival depending on
 how a failed payment was reported.
+
+## `nth` on `spell_cast` — "their second spell", "their first noncreature spell"
+
+### Overview
+
+Five gap records named one capability: Esper Sentinel and The Queen of Dale
+("whenever an opponent casts their first noncreature spell each turn"), Mangara,
+the Diplomat and Trouble in Pairs ("…casts their second spell each turn"), and
+The Council of Four ("a player casts their second spell during their turn").
+Each is the question `nth` already answered for draws — *which* one was this, for
+the player who did it — asked of a cast.
+
+### Why the existing vocabulary would not do
+
+- `max_per_turn: 1` is counted per permanent. "An opponent casts **their**
+  first" is per opponent, so in a pod the first opponent's spell spends the cap
+  and the second's first spell taxes nothing. It cannot say "second" at all.
+- A `condition` on `spells_cast_this_turn` is re-asked on resolution (603.4). An
+  opponent who casts their second spell and a third in response has moved the
+  tally to 3 before the trigger resolves, and it is skipped. `>=` fires on every
+  spell after. Both are the draw-ordinal argument again.
+- A flat ordinal cannot say "noncreature": a creature then an instant is the
+  first noncreature spell and the second spell.
+
+### The shape
+
+`GameState._tally` already bumped `spells_cast[pid]` on every SPELL_CAST; it now
+writes the post-bump value onto the event as `data["nth"]`. The fold is the one
+place all three cast paths pass through (`game._cast`, the alternative-cost cast
+in `replacements.py`, suspend's free cast), so none can forget it.
+
+`triggers._matches` compares `nth` through `_ordinal`. Unfiltered, that is the
+event's value. With a `filter`, `_spell_ordinal` counts the caster's earlier
+entries in `TurnLedger.spells_cast_ids` matching the filter — cut at this cast's
+flat ordinal, so a later cast can never move an earlier one's place — and adds
+one for this spell, which the trigger's own `filter` check has to accept anyway.
+
+**Why the filter and not per-kind ordinals on the event:** the kinds are
+open-ended — noncreature, instant or sorcery, multicolored — and a fixed set on
+the event would be a vocabulary the next card outgrows. The printed family is
+always "their Nth *kind* spell", so the kind the trigger already filters on *is*
+the run it counts.
+
+**Printed faces only.** The earlier spells have left the stack, so they are
+matched with `_matches_printed`, the matcher the filtered
+`spells_cast_this_turn` value already uses. A filter key that reads board state
+would be applied to this spell and ignored on the earlier ones, so the loader
+refuses anything outside `triggers.ORDINAL_FILTER_KEYS` on a `spell_cast`
+trigger that carries `nth`.
+
+### Tier A
+
+No op, no `EventType` (the payload key rides on `spell_cast`), no decision kind,
+no API field, nothing under `frontend/`. The loader guard widened from `draw` to
+`draw` and `spell_cast`, and the authoring packet's note on `trigger_keys` now
+says so, and says why `max_per_turn` is not "an opponent's first".
+
+### Guarded by
+
+`tests/unit/test_spell_cast_nth.py`: the ordinal on the event per caster; only
+the second spell fires the unfiltered form, creature spells included; a third
+spell in response does not hide it, while the `condition` encoding
+(`t_nth_spell_condition`) resolves skipped; the noncreature run (a creature does
+not fire it, an instant after a creature does, a second noncreature does not);
+the run is cut at the cast; two opponents in a pod each fire it once; spells
+cast before the watcher entered still count; "during their turn"; the turn
+boundary; and the load-time guards.
+
+The five cards are not authored in this change; their gap records stay until
+they are re-authored. Esper Sentinel still needs nothing else; The Queen of Dale's
+recruit is sayable with existing ops; Trouble in Pairs still needs extra turns.
