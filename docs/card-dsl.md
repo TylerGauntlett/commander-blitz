@@ -289,6 +289,7 @@ Every key is optional; all present keys must match.
   "x_in_mana_cost": true,         // "target spell WITH {X} IN ITS MANA COST" -- see below
   "exclude_self": true,           // "other ... you control"
   "exclude_binding": "subject",   // "each OTHER attacking creature"
+  "created_with": "self",         // "tokens CREATED WITH THIS CREATURE" -- see below
   "shares_a_type_with": "subject",// "...that shares a creature type with it"
   "shares_a_color_with": "it",   // radiance -- "...that shares a color with it"
   "shares_a_name_with": "victim",// "...with the same name as that permanent"
@@ -579,6 +580,41 @@ The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`
 `may` and `draw`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
 read of it would be 0, and the card's second sentence would silently do nothing.
+
+### Tokens "created with this creature" — `created_with`
+
+```jsonc
+// Faerie Artisans
+{ "kind": "triggered",
+  "trigger": { "event": "permanent_enters", "controller": "opponent",
+               "filter": { "types": ["Creature"], "is_token": false } },
+  "effects": [
+    { "op": "copy_permanent", "objects": { "binding": "subject" },
+      "except_": { "add_types": ["Artifact"] }, "as": "the_copy" },
+    { "op": "exile", "objects": { "zone": "battlefield", "controller": "any",
+        "created_with": "self", "exclude_binding": "the_copy" } } ] }
+```
+
+A binding lives for one resolution, and "all other tokens created with this
+creature" reaches the copies made by *earlier* triggers, turns ago. So both
+token-making ops — `create_token` and `copy_permanent` — record every token they
+make on the ability's **source**, in `GameObject.created_tokens`, and
+`created_with: "self"` reads it back. `"self"` is the only spelling; anything
+else is a load error. "Other" is the `as` binding through `exclude_binding`, so
+the copy this resolution made is spared.
+
+The link is to the **object**, not the card. A creator that leaves the
+battlefield and comes back is a new object (400.7), and the tokens its previous
+incarnation made are no longer "created with this creature" — so the record sits
+on the creator and `reset_permanent_state` clears it on every zone change. A
+pointer on the token could not tell the two incarnations apart, since an oid
+survives every move. Tokens that have left the battlefield have ceased to exist
+and are in no zone a selector searches, so the set is never pruned.
+
+`{"is_token": true, "controller": "you"}` minus the fresh copy is the near miss,
+and a different card: it exiles every Treasure, Clue and Soldier you control, and
+a second Artisans' copy with them. The key is honoured in trigger filters too
+("whenever a token created with this creature…"), read off the ability's source.
 
 ### `sacrifice`'s `snapshot` — what the creature *had*
 

@@ -1325,6 +1325,12 @@ def matches_card_filter(
         wanted = ability_source.oid if paid_by == "self" else paid_by
         if wanted not in obj.mana_sources_spent:
             return False
+    # "Whenever a token created with this creature…" -- honoured here as well
+    # as in `selectors.matches` for `not_supertypes`' reason: a trigger filter
+    # is validated against the same keys, and one that loaded and did nothing
+    # would fire on every token at the table.
+    if filt.get("created_with") is not None and obj.oid not in ability_source.created_tokens:
+        return False
 
     who = filt.get("shares_a_type_with_commander")
     if who is not None:

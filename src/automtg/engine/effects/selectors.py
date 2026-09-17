@@ -226,6 +226,13 @@ SELECTOR_KEYS = frozenset(
         # *this* source put there, read back by its own leaves-trigger.
         "exiled_with",
         "phased_out_with",
+        #: "…exile all other tokens **created with this creature**" -- Faerie
+        #: Artisans. The tokens this object's own effects created, read off the
+        #: source's `created_tokens`; `"self"` is the only spelling. Scoped to
+        #: this *object*, so tokens a previous incarnation made (400.7) and
+        #: tokens another permanent made are not in it. "Other" is
+        #: `exclude_binding` over the `as` the creating op wrote.
+        "created_with",
         # "…dealt damage by this creature this turn." A trigger filter rather
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
@@ -673,6 +680,14 @@ def matches(
         want = ctx.source_oid if who == "self" else who
         if obj.exiled_by is None or obj.exiled_by != want:
             return False
+    if "created_with" in selector:
+        # "…tokens created with this creature" -- the ones this object's
+        # effects made, and no others. `is_token` plus `controller: "you"` is
+        # the reachable approximation and it is a different card: it exiles
+        # every Treasure, Clue and Soldier its controller has.
+        creator = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+        if creator is None or oid not in creator.created_tokens:
+            return False
     if "phased_out_with" in selector:
         # "…until this enchantment leaves the battlefield" -- the permanents
         # *this* card phased out, and no others. The phasing twin of
@@ -1090,6 +1105,10 @@ def validate_selector(selector: Any, where: str) -> None:
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
+    if "created_with" in selector and selector["created_with"] != "self":
+        # A card can only name itself as the creator; any other value would
+        # load and then silently match no token at all.
+        raise DslError(f"{where}: created_with must be 'self', got {selector['created_with']!r}")
     chooser = selector.get("chooser")
     if chooser is not None and chooser not in ("controller", "owner", "none"):
         # Anything else is an ordinary player spec -- "each opponent chooses a

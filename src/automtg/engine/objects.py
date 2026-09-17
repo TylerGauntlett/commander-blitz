@@ -607,6 +607,25 @@ class GameObject:
     #: `combat.attack_required` and never spent.
     goaded_by: set[int] = field(default_factory=set)
 
+    #: "…exile all other tokens **created with this creature**" -- Faerie
+    #: Artisans. The tokens an effect whose source is *this object* created,
+    #: written by `primitives.create_token` for `create_token` and
+    #: `copy_permanent` alike and read back by the `created_with` selector key.
+    #:
+    #: On the creator rather than on the token, because the link is to this
+    #: *object* and not to the card (607.2a's linked-ability shape): a creator
+    #: that leaves the battlefield and comes back is a new object (400.7), and
+    #: the tokens its previous incarnation made are no longer "created with
+    #: this creature". An oid survives every zone change, so a pointer on the
+    #: token could not tell the two incarnations apart without a generation
+    #: stamp the engine does not keep -- here `reset_permanent_state` ends the
+    #: link at exactly the moment the object ends.
+    #:
+    #: Never pruned as tokens leave: a token that left the battlefield has
+    #: ceased to exist (111.7), is in no zone a selector searches, and its oid
+    #: is never reused.
+    created_tokens: set[int] = field(default_factory=set)
+
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
     #: ``{"chosen_type_of": "self"}``.
@@ -775,6 +794,9 @@ class GameObject:
         # no longer the creature anybody goaded -- blink your own goaded
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
+        # The same new object: the tokens the old one made were not made by
+        # this one, so "tokens created with this creature" is none of them.
+        self.created_tokens = set()
         self.granted_keywords = set()
         self.granted_abilities_permanent = []
         self.tapped = False

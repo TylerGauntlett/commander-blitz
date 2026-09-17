@@ -536,6 +536,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 amount,
                 tapped=bool(spec.get("tapped")),
                 attacking=attacking,
+                source=ctx.source_oid,
             )
         )
     if made and attacking is not None:
@@ -573,6 +574,11 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     same card: Flamerush Rider's "create a token that's a copy of another target
     attacking creature… Exile **the token** at end of combat." The binding holds
     the copies, never the thing copied -- ``{"target": …}`` already names that.
+
+    Both ops record what they made on the ability's source (`created_tokens`),
+    which the `created_with` selector key reads: Faerie Artisans' "exile all
+    other tokens created with this creature", with ``as`` plus
+    `exclude_binding` sparing the copy this resolution just made.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     oids = resolve_pool(ctx, spec.get("objects"))
@@ -596,6 +602,7 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
                     tapped=bool(spec.get("tapped")),
                     attacking=attacking,
                     overrides=dict(overrides) if overrides else None,
+                    source=ctx.source_oid,
                 )
             )
     if made and attacking is not None:

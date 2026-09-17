@@ -11778,3 +11778,68 @@ dredging one of the two draws works. And the load-time guards.
 
 No card is authored in this change. Bard, King of Dale still needs
 `token_doubling` for its third line.
+
+## Created-with-source — "tokens created with this creature"
+
+### Overview
+
+Faerie Artisans: *"Whenever a nontoken creature an opponent controls enters,
+create a token that's a copy of that creature except it's an artifact in
+addition to its other types. Then exile all other tokens created with this
+creature."* One gap record, `created-with-source` (the copy's `add_types` half
+landed separately).
+
+### Why the existing vocabulary would not do
+
+- `create_token` and `copy_permanent` recorded no creator: the token had an
+  owner, a controller and `is_token`, and TOKEN_CREATED's `source` is the token
+  itself.
+- `as` does hold the copies, but a binding lives for one resolution and this
+  clause reaches copies made by earlier triggers, turns ago.
+- `{"is_token": true, "controller": "you"}` minus the fresh copy is a different
+  card: it exiles every Treasure, Clue and Soldier you control, and a second
+  Artisans' copy with them.
+
+### The shape
+
+Both ops pass `source=ctx.source_oid` to `primitives.create_token`, which adds
+each token it makes (a replacement-substituted one included) to the source's
+`GameObject.created_tokens` before the token enters. The `created_with: "self"`
+selector key matches a candidate in the ability source's set, and
+`triggers.matches_card_filter` honours the same key. "Other" is the op's `as`
+binding through `exclude_binding`.
+
+The record lives on the **creator**, not the token. The link is to this object
+(the 607.2a linked-ability shape): a creator that leaves the battlefield and
+returns is a new object (400.7), and the tokens its previous incarnation made are
+no longer "created with this creature". An oid survives every zone change here,
+so a pointer on the token could not tell the incarnations apart;
+`reset_permanent_state` clears `created_tokens` on the move instead, at exactly
+the moment the object ends. A token that left the battlefield has ceased to
+exist (111.7) and is in no zone a selector searches, so the set is never pruned.
+
+### The loader guard
+
+`validate_selector` refuses any `created_with` value but `"self"`, which would
+otherwise load and match no token.
+
+### Tier A
+
+No new op, event, decision kind or API field; nothing under `frontend/`. The
+packet's `selector_keys` is derived from `SELECTOR_KEYS`, so workers are shown
+the key with no packet change.
+
+### Guarded by
+
+`tests/unit/test_created_with_source.py`: the record written by `create_token`
+and `copy_permanent`, the selector reading it and nothing written without a
+source; Faerie Artisans end to end (`tests/data/created_with.cards.json`) — the
+artifact copy, the earlier copy exiled on the next trigger, the just-made copy
+surviving, another permanent's Treasure surviving (and exiled by the
+`is_token` approximation, the counterfactual), and two Artisans each keeping
+their own copy; a zone change clearing the record, a previous incarnation's copy
+surviving while the new incarnation still exiles its own; the trigger filter;
+and the load-time guard.
+
+Faerie Artisans is not authored in this change; its gap record stays until it
+is.

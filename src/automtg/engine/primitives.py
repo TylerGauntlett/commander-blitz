@@ -745,6 +745,7 @@ def create_token(
     tapped: bool = False,
     attacking: int | None = None,
     overrides: dict[str, Any] | None = None,
+    source: int | None = None,
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -768,6 +769,11 @@ def create_token(
     else's exception onto an Angel.  A *multiplied* entry keeps them, because
     "twice that many of those tokens" are still those tokens: a doubled embalm
     copy is two white Zombie copies.
+
+    ``source`` is the object whose effect is creating the tokens, and each one
+    is recorded in its `created_tokens` -- "tokens created with this creature"
+    (Faerie Artisans). A substituted token is recorded too: it is still the
+    token that effect created.
     """
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
@@ -785,6 +791,11 @@ def create_token(
             )
             if overrides and not substituted:
                 obj.copy_overrides = dict(overrides)
+            # Before the move, so the token's own enters-triggers already see
+            # which object created it.
+            creator = state.objects.get(source) if source is not None else None
+            if creator is not None:
+                creator.created_tokens.add(obj.oid)
             # The token is created "nowhere" and then enters the battlefield, so
             # ETB triggers and enters-tapped replacements run through the normal
             # path.
