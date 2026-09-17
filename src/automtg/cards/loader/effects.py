@@ -1250,6 +1250,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: extra_turn names who takes the turn with 'player', "
             f"not 'controller' (e.g. \"player\": \"gift_recipient\")"
         )
+    if op == "no_maximum_hand_size":
+        # The op's one lifetime is in its name: the rest of the game. A
+        # `duration` would load, be ignored, and turn Enter the Infinite's
+        # "until your next turn" into a permanent upgrade; `objects` and
+        # `controller` are the near misses copied from `set_flag` and
+        # `extra_turn`'s neighbours, and ignoring either names the caster by
+        # default -- the wrong seat for any "target player" version.
+        for key in ("duration", "objects", "controller"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: no_maximum_hand_size takes no {key!r} -- it lasts "
+                    f"the rest of the game, and names who with 'player'"
+                )
     if op == "set_flag" and not effect.get("flag"):
         # A flag with no name writes nothing, so renown's once-only guard never
         # closes and the creature grows on every combat damage for ever.

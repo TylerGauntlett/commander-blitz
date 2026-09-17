@@ -78,6 +78,14 @@ class PlayerState:
     #: a graveyard while the restriction and the copies go on, so the flag lives
     #: on the *player* and not on the object.
     epic_source: int | None = None
+    #: "You have no maximum hand size **for the rest of the game**" (Sea Gate
+    #: Restoration, Finale of Revelation, Ancient Silver Dragon). One-way, like
+    #: `has_city_s_blessing` and `epic_source`, and on the player for their
+    #: reason: the spell that granted it is in a graveyard before the first
+    #: cleanup step it matters in. Written by the `no_maximum_hand_size` op and
+    #: read by `player_statics.player_has_no_hand_limit` beside the battlefield
+    #: `no_hand_limit` statics, so cleanup (514.1) has one question to ask.
+    has_no_maximum_hand_size: bool = False
 
     #: Skip priority windows where this player has nothing worth responding to.
     #: Off by default so the RL environment and the golden tests still see every
@@ -141,5 +149,6 @@ class PlayerState:
             "poison": self.poison,
             "has_lost": self.has_lost,
             "has_city_s_blessing": self.has_city_s_blessing,
+            "has_no_maximum_hand_size": self.has_no_maximum_hand_size,
             "loss_reason": self.loss_reason.value if self.loss_reason else None,
         }

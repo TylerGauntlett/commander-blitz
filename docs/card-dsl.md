@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-115 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+116 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -256,7 +256,7 @@ it, but a card that needed correcting was authored wrong.
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
-| Players | `become_monarch` `win_game` |
+| Players | `become_monarch` `win_game` `no_maximum_hand_size` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` `extra_turn` |
@@ -10133,6 +10133,31 @@ prohibition over this whole subsystem, not a clause of this op. And the pod's
 ending is a simplification — by 800.4 a player who wins a multiplayer game leaves
 it and the survivors play on, while here the game ends for everybody. See
 [rules-coverage.md](rules-coverage.md).
+
+### "No maximum hand size for the rest of the game"
+
+```jsonc
+// Sea Gate Restoration — "Draw cards equal to the number of cards in your hand
+// plus one. You have no maximum hand size for the rest of the game."
+[ { "op": "draw", "amount": { "sum": [ { "cards_in_hand": "you" }, { "const": 1 } ] } },
+  { "op": "no_maximum_hand_size", "player": "you" } ]
+```
+
+The one-shot twin of the `no_hand_limit` static, for the cards whose source
+never reaches the battlefield — Sea Gate Restoration, Finale of Revelation's
+X-is-10 branch, Ancient Silver Dragon's trigger. A static lasts as long as the
+permanent printing it, and a sorcery is in the graveyard before the first cleanup
+step it matters in; so the op writes `PlayerState.has_no_maximum_hand_size`,
+one-way and on the player like `has_city_s_blessing`, and
+`player_statics.player_has_no_hand_limit` reads it **beside** the statics. There
+is one question for the cleanup step (514.1) to ask, and a Reliquary Tower
+leaving the battlefield cannot take the one-shot with it.
+
+Takes the ordinary player spec, defaulting to `"you"`. The lifetime is in the
+name and is the whole game: a `duration` is a load error, because Enter the
+Infinite's "until your next turn" would otherwise load, be ignored, and become
+permanent. `objects` and `controller` are refused too — the neighbouring ops'
+spellings, either of which would silently fall back to the caster.
 
 ### Flashback
 

@@ -529,6 +529,7 @@
   "move_counters",
   "must_attack",
   "must_block",
+  "no_maximum_hand_size",
   "noop",
   "pair",
   "phase_in",

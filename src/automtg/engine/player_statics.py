@@ -150,12 +150,22 @@ def players_doubling_land_triggers(state: GameState) -> frozenset[int]:
 
 
 def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
-    """Whether any ``no_hand_limit`` static frees this player from discarding.
+    """Whether this player has no maximum hand size (402.2, 514.1).
 
     Reliquary Tower, Thought Vessel, Nezahal. Written as a player-wide static
     like ``extra_land_drops`` rather than as a characteristic, because it is a
     fact about the *player* and there is no object for it to attach to.
+
+    Two sources, one answer. The statics above last as long as the permanent
+    printing them; `PlayerState.has_no_maximum_hand_size` is the one-shot
+    version -- Sea Gate Restoration's "for the rest of the game", written by the
+    `no_maximum_hand_size` op off a sorcery that is in the graveyard by the
+    time any cleanup step asks. Both are read here rather than the flag being
+    read in `turn._cleanup_step`, so there is one rule path to the hand limit
+    and nothing that asks it can see half the answer.
     """
+    if state.players[pid].has_no_maximum_hand_size:
+        return True
     return _player_static(state, pid, "no_hand_limit")
 
 

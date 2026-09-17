@@ -136,3 +136,26 @@ def op_extra_turn(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
     for pid in state.turn_order():
         if pid in named:
             state.extra_turns.append(pid)
+
+
+@register("no_maximum_hand_size")
+def op_no_maximum_hand_size(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "You have no maximum hand size for the rest of the game." (402.2)
+
+    Sea Gate Restoration, Finale of Revelation's X-is-10 branch, Ancient Silver
+    Dragon. The printed static ``no_hand_limit`` already says the same words,
+    and could not carry these cards: it exists only while a permanent printing
+    it is on the battlefield, and a sorcery never is. This is the one-shot
+    that outlives its source -- it sets `PlayerState.has_no_maximum_hand_size`,
+    one-way, and `player_statics.player_has_no_hand_limit` reads that flag
+    beside the statics, so the cleanup step (514.1) asks one question either
+    way.
+
+    Takes the usual **player spec**, defaulting to ``"you"``. Named for the
+    lifetime it has, which is the whole game: "until your next turn" (Enter the
+    Infinite) is a different, *ending* effect and the loader refuses a
+    ``duration`` here rather than reading it as this.
+    """
+    for pid in select_players(ctx, spec.get("player", "you")):
+        ctx.state.players[pid].has_no_maximum_hand_size = True
+

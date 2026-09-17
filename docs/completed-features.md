@@ -11643,3 +11643,56 @@ expressible (`create_token` with `tapped`/`attacking`/`as` plus a `delay`ed
 `sacrifice`), so the card is now fully answerable. Grand Abolisher, Drannith
 Magistrate and Deafening Silence need a spell filter or an ability lock and
 remain gaps.
+
+## `no_maximum_hand_size` — "for the rest of the game", off a sorcery
+
+### Overview
+
+Sea Gate Restoration // Sea Gate, Reborn was blocked on its last sentence: "You
+have no maximum hand size for the rest of the game." The catalogue prints the
+same one-shot on Finale of Revelation and Ancient Silver Dragon.
+
+### Why the existing vocabulary would not do
+
+- `no_hand_limit` is a **static**, read through `_active_player_statics`, which
+  walks the battlefield. A sorcery is never there, and a static in `abilities`
+  on an instant or sorcery is never read.
+- `grant_ability` cannot hand out a player-wide static, and there is no
+  permanent to grant it to.
+- `set_flag` writes onto an object, cleared on a zone change, and nothing in the
+  cleanup step reads the flag ledger.
+
+### The shape
+
+- **`PlayerState.has_no_maximum_hand_size`**, one-way, beside
+  `has_city_s_blessing` and `epic_source`, and on `PlayerState.to_dict`.
+- **`no_maximum_hand_size`** in `effects/ops_player.py`: the ordinary player
+  spec, defaulting to `"you"`, sets the flag on each seat named.
+- **`player_statics.player_has_no_hand_limit`** returns True for the flag before
+  asking the statics. `turn._cleanup_step` is unchanged: one reader, one rule
+  path (514.1), and a Reliquary Tower leaving does not clear the one-shot.
+
+### The loader guard
+
+`duration`, `objects` and `controller` on the op are load errors. The lifetime
+is the name; "until your next turn" (Enter the Infinite) would otherwise load
+and play as permanent.
+
+### Tier A
+
+No event, decision kind or API field; nothing under `frontend/`. The packet's
+`ops` and `op_options` are derived from the registry, so the op and its `player`
+key reach workers without a hand-written entry. `tests/cards/golden_vocabulary.json`
+gains the op name.
+
+### Guarded by
+
+`tests/unit/test_no_maximum_hand_size.py`: a nine-card hand survives cleanup,
+with the no-spell control discarding to seven; the opponent still discards; an
+`each_player` spec frees both; the spell is in the graveyard and the hand is
+still kept on the caster's next turn; the flag is on the serialized view; a
+Reliquary Tower alone still works and losing one does not clear the one-shot;
+and the load-time guards.
+
+Sea Gate Restoration is not authored in this change; its gap record stays until
+it is.

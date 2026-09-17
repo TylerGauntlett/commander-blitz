@@ -1,0 +1,25 @@
+{
+  "_comment": "Cards that exist only for the no-maximum-hand-size test (tests/unit/test_no_maximum_hand_size.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sea_gate` is Sea Gate Restoration's second sentence on its own, on a one-mana sorcery so the test can cast it from a single Island. `t_hand_freedom_for_all` names every player, which is the spec's other end.",
+  "cards": [
+    {
+      "id": "t_sea_gate",
+      "name": "Test Sea Gate",
+      "oracle_text": "You have no maximum hand size for the rest of the game.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [{ "op": "no_maximum_hand_size" }]
+    },
+    {
+      "id": "t_hand_freedom_for_all",
+      "name": "Test Hand Freedom For All",
+      "oracle_text": "Each player has no maximum hand size for the rest of the game.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [{ "op": "no_maximum_hand_size", "player": "each_player" }]
+    }
+  ]
+}
