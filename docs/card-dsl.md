@@ -266,6 +266,20 @@ the top card. One card asks nothing. Each owner orders only their own cards.
 Refused beside `from_top` (an ordinal is one position, not a run) and beside
 `owner_chooses` (a per-card choice of end), and on any other op.
 
+`as` on `put_on_top` binds **the cards that arrived in a library** -- the rest of
+the Box's sentence, "then draws **that many** cards":
+
+```jsonc
+{ "op": "put_on_top", "bottom": true, "any_order": true, "as": "tucked",
+  "objects": { "zone": "hand", "player": { "binding": "event_player" }, "count": "all" } },
+{ "op": "draw", "player": { "binding": "event_player" },
+  "amount": { "count": { "binding": "tucked" } } }
+```
+
+`cards_in_hand` is the near miss and reads 0 once the hand has gone under. What
+arrived rather than what was chosen, so a commander sent to the command zone
+instead is not counted; written even when nothing moved.
+
 The loader refuses `from_top` on any other op: `draw` and friends read `amount`
 and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors

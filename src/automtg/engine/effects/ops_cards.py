@@ -1674,6 +1674,14 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     put into one position of a library at the same time, and without it the
     cards went in pool order, which for a hand is whatever order it was held in
     and nobody chose. See :func:`_in_owners_order`.
+
+    ``as`` records **the cards that actually went into a library**, read back
+    as ``{"count": {"binding": …}}`` -- the Box's "then draws **that many**
+    cards". Nothing else can say that number: `cards_in_hand` read after the
+    tuck is 0, and read before it there is nowhere to keep it. It is what moved
+    rather than what was chosen, because a commander its owner sends to the
+    command zone instead (903.9b) was never put on the bottom. Written even
+    when nothing moved, so a read answers for this tuck and not an earlier one.
     """
     depth = max(1, evaluate_value(ctx, spec.get("from_top", 1)))
     # "…puts it on the **bottom** of their library", and Ice Magic's "on their
@@ -1685,6 +1693,7 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put on top of library")
     if spec.get("any_order"):
         oids = yield from _in_owners_order(ctx, oids, bottom)
+    moved: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
         if obj is None:
@@ -1698,7 +1707,7 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             to_bottom = not (
                 yield from ask_yes_no(ctx, "Put it on top of your library?", obj.owner)
             )
-        move_object(
+        arrived = move_object(
             ctx.state,
             oid,
             Zone.LIBRARY,
@@ -1710,6 +1719,8 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             cause="tuck",
             by=ctx.source_oid,
         )
+        if arrived.zone is Zone.LIBRARY:
+            moved.append(oid)
         # Only the top is announced as the top. The client renders both the same
         # way (`FxLayer` has no exit animation for either), but a card buried
         # four deep has not gone anywhere the opponent can see next turn, and the
@@ -1719,6 +1730,8 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             source=oid,
             to="library_top" if depth == 1 else "library",
         )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = moved
 
 
 def _in_owners_order(ctx: EffectContext, oids: list[int], bottom: bool):

@@ -1,0 +1,29 @@
+{
+  "card": {
+    "id": "teferi_s_puzzle_box",
+    "name": "Teferi's Puzzle Box",
+    "oracle_text": "At the beginning of each player's draw step, that player puts the cards in their hand on the bottom of their library in any order, then draws that many cards.",
+    "mana_cost": "{4}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's draw step, that player puts the cards in their hand on the bottom of their library in any order, then draws that many cards.",
+        "trigger": {"event": "draw_step", "controller": "any"},
+        "effects": [
+          {
+            "op": "put_on_top",
+            "bottom": true,
+            "any_order": true,
+            "objects": {"zone": "hand", "player": {"binding": "event_player"}, "count": "all"},
+            "as": "tucked"
+          },
+          {"op": "draw", "player": {"binding": "event_player"}, "amount": {"count": {"binding": "tucked"}}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

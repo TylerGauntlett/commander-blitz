@@ -93,6 +93,13 @@ RECORDING_OPS = frozenset(
         #: Kefka turns on that distinction: "each player who owns a spell you
         #: cast this way loses life equal to its mana value".
         "play_exiled",
+        #: The cards actually put into a library -- Teferi's Puzzle Box, "puts
+        #: the cards in their hand on the bottom of their library in any order,
+        #: then draws **that many** cards". Read after the tuck, the hand is
+        #: empty; the binding is the only place the number survives. What
+        #: arrived, not what was chosen: a commander redirected to the command
+        #: zone was not put there. See `ops_cards.op_put_on_top`.
+        "put_on_top",
         "reveal",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than

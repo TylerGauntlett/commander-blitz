@@ -12920,3 +12920,32 @@ library, never cards from a hand.
 the top of the library undisturbed, the top-of-library reading, one question per
 card but the last, the owner asked when the hand is an opponent's, one card and
 an empty hand asking nothing, and the loader refusals.
+
+
+## `put_on_top`'s `as` — "then draws that many cards"
+
+### Overview
+
+The second half of Teferi's Puzzle Box: *"…puts the cards in their hand on the
+bottom of their library in any order, **then draws that many cards**."*
+
+### Why the existing vocabulary would not do
+
+`put_on_top` carried no `as`, and the loader refuses an `as` on an op that
+records nothing. `cards_in_hand` read after the tuck is 0; `snapshot` captures one
+object, not a count; a per-card `for_each` interleaves the draws with the tucks.
+
+### The shape
+
+- **`put_on_top` in `RECORDING_OPS`**, binding the list of oids that
+  `move_object` actually left in a library — not those chosen.
+- Assigned, not accumulated, and written even when empty.
+- Read with the existing `{"count": {"binding": …}}`.
+
+### Guarded by
+
+`tests/unit/test_count_moved_cards.py`: a Puzzle Box test card on its owner's
+first draw step (no draw, 103.8a) with three, one and no cards in hand — the hand
+comes back the same size, off the top, with the old hand underneath; the binding
+names what arrived; a second tuck of nothing leaves an empty binding rather than
+a stale one; the loader accepts the key.
