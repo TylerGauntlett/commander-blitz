@@ -12574,11 +12574,17 @@ ability.
 
 ### Frontend
 
-None built. State serialization is generic: an emblem arrives in `player_view`'s
-`command` list as a card view with its own name, type line and text, and the
-`/images` map has no entry for its id. `emblem_created` has no `describeEvent`
-case, so it is silently skipped in the log, and the command-zone badges count
-it beside the commander.
+State serialization is generic: an emblem arrives in `player_view`'s `command`
+list as a card view with its own name, type line and text, and the `/images` map
+has no entry for its id. `emblem_created` is narrated — `describeEvent` logs "X
+gets an emblem from <card>", and `beatsFor` gives it a neutral banner shaped like
+`became_monarch`'s, neutral because an emblem is as often a curse handed to an
+opponent as a boon. The command zone holds more than commanders now, so
+`zoneGrouping.commandersOf` keeps only `is_commander` cards (an emblem had been
+able to become the seat's commander panel, name and art) and the command-pile
+badges in `OpponentSeat` and `PlayerOrb` count commanders through
+`commandZoneCommanderCount`. **Not built**: a display for emblems — the pile's
+viewer lists them, without art.
 
 ### Guarded by
 

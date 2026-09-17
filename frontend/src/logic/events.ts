@@ -710,6 +710,29 @@ export function beatsFor(
         return;
       }
 
+      /*
+       * An emblem (114): another table-level moment, and so the monarch's
+       * shape. There is nothing on the board to flash -- the emblem lives in
+       * the command zone, which is a pile rather than a drawn card -- and its
+       * effect lasts the game while showing nothing until it next triggers.
+       *
+       * Toned neutral, unlike the crown: an emblem is as often a curse handed to
+       * an opponent (Ob Nixilis) as a boon kept by the walker's controller, and
+       * the event does not say which.
+       */
+      case "emblem_created": {
+        const mine = event.player === viewerSeat;
+        push({
+          hold: 520,
+          sound: "chime",
+          banner: {
+            text: mine ? "You get an emblem" : `${who} gets an emblem`,
+            tone: "neutral",
+          },
+        });
+        return;
+      }
+
       case "attackers_declared":
         push({
           hold: 520,

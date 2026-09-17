@@ -109,6 +109,39 @@ describe("describeEvent", () => {
     );
   });
 
+  it("says who got an emblem, and from which card", () => {
+    // Nothing moves when an emblem is made, so without this line the player
+    // sees a drain on every draw with nothing in the log to say why.
+    expect(
+      describeEvent(
+        event({
+          type: "emblem_created",
+          player: 1,
+          source: 900,
+          data: { card: "ob_nixilis_reignited" },
+        }),
+        names,
+        0,
+      ),
+    ).toBe("AI 1 gets an emblem from Ob Nixilis Reignited");
+    expect(
+      describeEvent(
+        event({
+          type: "emblem_created",
+          player: 0,
+          source: 900,
+          data: { card: "ob_nixilis_reignited" },
+        }),
+        names,
+        0,
+        () => "Ob Nixilis, Reignited",
+      ),
+    ).toBe("You get an emblem from Ob Nixilis, Reignited");
+    expect(describeEvent(event({ type: "emblem_created", player: 1 }), names, 0)).toBe(
+      "AI 1 gets an emblem",
+    );
+  });
+
   it("tells an extra turn from an ordinary one, and says when one is skipped", () => {
     // An extra turn does not complete a round, so "Your turn 2" twice reads as
     // the log repeating itself; and a skipped one fires no `turn_began` at all,
