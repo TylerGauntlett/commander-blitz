@@ -181,6 +181,7 @@
   ],
   "PLAYER_WIDE_STATIC_EFFECTS": [
    "add_mana_on_tap",
+   "black_mana_as_phyrexian",
    "cant_cast_spells",
    "cant_gain_life",
    "cast_from_graveyard",
@@ -285,6 +286,7 @@
    "add_subtype",
    "attack_tax",
    "attacks_if_able",
+   "black_mana_as_phyrexian",
    "block_restriction",
    "buff",
    "cant_attack",
@@ -402,6 +404,7 @@
   ],
   "UNGRANTABLE_STATIC_EFFECTS": [
    "add_mana_on_tap",
+   "black_mana_as_phyrexian",
    "cant_cast_spells",
    "cant_gain_life",
    "cast_from_graveyard",
