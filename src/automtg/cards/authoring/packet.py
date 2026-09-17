@@ -650,6 +650,12 @@ def reference() -> dict:
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"
             " replacement read wherever life is gained, lifelink included, so"
             " it is NOT a `you_gain_life` trigger that gains again.",
+            "\"Your opponents can't gain life\" is the player-wide static"
+            " `cant_gain_life` with `affects_player: \"opponent\"` (\"you\""
+            " and \"any\" for the other sentences). Every gain is stopped,"
+            " lifelink included, and no life-gain trigger fires; it beats a"
+            " `replace_life_gain`. \"Damage can't be prevented\" and \"your"
+            " life total can't change\" are other effects.",
             "\"If you would draw a card, draw two cards instead\" is the"
             " player-wide static `replace_draw` with `affects_player: \"you\"`"
             " and `draw_multiplier: 2`; \"...except the first one you draw in"

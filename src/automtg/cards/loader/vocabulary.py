@@ -282,6 +282,12 @@ STATIC_EFFECTS = frozenset(
         # that is a second gain on the stack, visible to every life-gain trigger
         # as its own event, and it re-triggers itself.
         "replace_life_gain",
+        # Erebos, God of the Dead.  "Your opponents can't gain life."  A
+        # prohibition on a *player*, read by `primitives.gain_life` before any
+        # replacement of the gain, so an Alhammarret's Archive cannot double a
+        # forbidden gain.  Not `lock_life_total`, which is a one-shot op with a
+        # duration and forbids a loss as well.
+        "cant_gain_life",
         # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
         # would draw a card, draw two cards instead", optionally "except the
         # first one you draw in each of your draw steps".  Read by
@@ -329,6 +335,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_life_gain",
         "replace_draw",
         "cant_cast_spells",
+        "cant_gain_life",
     }
 )
 

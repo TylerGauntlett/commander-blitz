@@ -182,6 +182,7 @@
   "PLAYER_WIDE_STATIC_EFFECTS": [
    "add_mana_on_tap",
    "cant_cast_spells",
+   "cant_gain_life",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",
@@ -292,6 +293,7 @@
    "cant_block",
    "cant_block_alone",
    "cant_cast_spells",
+   "cant_gain_life",
    "cast_from_graveyard",
    "cast_from_library_top",
    "crew_power_bonus",
@@ -401,6 +403,7 @@
   "UNGRANTABLE_STATIC_EFFECTS": [
    "add_mana_on_tap",
    "cant_cast_spells",
+   "cant_gain_life",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",

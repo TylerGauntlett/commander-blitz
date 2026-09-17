@@ -15,6 +15,7 @@ from .characteristics import (
     chars,
     life_gain_multiplier,
     life_loss_multiplier,
+    player_cant_gain_life,
     player_protected_from,
     printed_token_matches,
     token_creation_replacements,
@@ -223,6 +224,13 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
     # a gain that fired the event while moving no life would pay out for a gain
     # that did not happen.
     if life_locked(state, pid):
+        return 0
+    # "Your opponents can't gain life" (Erebos). The same refusal as the lock
+    # and for the same reason no event fires: a life-gain trigger paying out
+    # for a gain that was forbidden is the card's opponent getting the payoff
+    # anyway. Asked before the multiplier, so an Archive cannot double a
+    # forbidden gain into a permitted one -- "can't" wins (101.2).
+    if player_cant_gain_life(state, pid):
         return 0
     # "You gain twice that much life instead" (614.1a). After the lock for the
     # reason `lose_life` reads its multiplier after it: twice nothing is nothing.

@@ -2390,6 +2390,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
+        if model.effect == "cant_gain_life" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # "Your opponents can't gain life" names players and nothing else.
+            # Nothing reads either key, and a filter written here ("can't gain
+            # life from creatures") would load clean and forbid every gain.
+            raise DslError(
+                f"{where}: cant_gain_life stops every life gain for the named "
+                f"players; it takes 'affects_player' and an optional "
+                f"'condition', and no 'affects' or 'amount'"
+            )
         if model.effect == "cant_cast_spells" and (
             model.affects is not None or model.amount is not None
         ):

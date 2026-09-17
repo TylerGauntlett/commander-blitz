@@ -145,6 +145,26 @@ def life_gain_multiplier(state: GameState, pid: int) -> int:
     return multiplier
 
 
+def player_cant_gain_life(state: GameState, pid: int) -> bool:
+    """Is ``pid`` forbidden from gaining life right now?  Usually false.
+
+    Erebos, God of the Dead: "Your opponents can't gain life."  A prohibition
+    on a *player*, read through `_active_player_statics` like every other
+    player-wide static, so it lifts the moment its source leaves the
+    battlefield and an "as long as" clause beside it is asked.
+
+    One reader, `primitives.gain_life`, because that is the one place a life
+    total goes up -- the `gain_life` op and lifelink both arrive there -- and it
+    is asked **before** `life_gain_multiplier`: a gain that cannot happen is not
+    doubled into one that can (101.2, "can't" beats every effect that would
+    make it happen, a replacement included).
+    """
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(state, "cant_gain_life")
+    )
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 

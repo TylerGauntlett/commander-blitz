@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "erebos_god_of_the_dead",
+    "name": "Erebos, God of the Dead",
+    "oracle_text": "Indestructible\nAs long as your devotion to black is less than five, Erebos isn't a creature. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)\nYour opponents can't gain life.\n{1}{B}, Pay 2 life: Draw a card.",
+    "mana_cost": "{3}{B}",
+    "supertypes": ["Legendary"],
+    "types": ["Enchantment", "Creature"],
+    "subtypes": ["God"],
+    "power": 5,
+    "toughness": 7,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["indestructible"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "As long as your devotion to black is less than five, Erebos isn't a creature. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+        "effect": "set_types",
+        "affects": {"self_only": true},
+        "types": ["Enchantment"],
+        "condition": {
+          "cmp": "<",
+          "left": {"mana_symbols": {"of": "B", "objects": {"controller": "you"}}},
+          "right": {"const": 5}
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Your opponents can't gain life.",
+        "effect": "cant_gain_life",
+        "affects_player": "opponent"
+      },
+      {
+        "kind": "activated",
+        "text": "{1}{B}, Pay 2 life: Draw a card.",
+        "cost": {"mana": "{1}{B}", "pay_life": 2},
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

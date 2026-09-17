@@ -1764,6 +1764,7 @@ from .player_statics import (  # noqa: F401
     life_loss_multiplier,
     mana_added_on_tap,
     player_cant_cast_spells,
+    player_cant_gain_life,
     player_doubles_land_mana,
     player_extra_land_drops,
     player_has_no_hand_limit,

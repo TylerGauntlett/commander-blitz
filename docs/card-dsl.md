@@ -2564,6 +2564,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` �
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
 [`replace_life_gain`](#if-you-would-gain-life-you-gain-twice-that-much-life-instead) ·
+[`cant_gain_life`](#your-opponents-cant-gain-life) ·
 [`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
@@ -3161,6 +3162,26 @@ every life-gain trigger pays out on, and a loop.
 itself, and 0 is "you gain no life", which is a different sentence. Two doublers
 multiply (614.5). A locked life total (118.5) stays locked — twice nothing is
 nothing.
+
+## "Your opponents can't gain life"
+
+```jsonc
+// Erebos, God of the Dead
+{ "kind": "static",
+  "text": "Your opponents can't gain life.",
+  "effect": "cant_gain_life",
+  "affects_player": "opponent" }
+```
+
+A prohibition on players, read by `primitives.gain_life` — the one place a
+life total goes up, so the `gain_life` op and lifelink are both stopped. A
+forbidden gain fires **no** `LIFE_GAINED`, so "whenever you gain life" does not
+trigger and the turn's life-gained tally does not move. It is asked before
+`replace_life_gain`: an Archive cannot double a forbidden gain into a permitted
+one (101.2). It lifts the moment its source leaves the battlefield; that is
+the difference from `lock_life_total`, a one-shot op with a duration that also
+forbids losing life. Takes `affects_player` and an optional `condition` and
+nothing else.
 
 ## "If you would draw a card, draw two cards instead"
 
@@ -3944,6 +3965,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
+{ "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 ```

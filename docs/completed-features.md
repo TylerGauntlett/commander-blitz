@@ -12782,3 +12782,41 @@ product cannot show.
 return value, one event carrying 6, zero and a locked total, the Archive leaving,
 lifelink doubled without doubling the damage, a real cast spell, and the loader
 refusals. Alhammarret's Archive is authored whole.
+
+## `cant_gain_life` — "Your opponents can't gain life"
+
+### Overview
+
+Erebos, God of the Dead's third line. Its devotion clause (`set_types` under a
+`mana_symbols` condition) and its `{1}{B}, Pay 2 life: Draw a card` were already
+expressible; this was the line that kept the card blocked.
+
+### Why the existing vocabulary would not do
+
+- `lock_life_total` is a one-shot op with a fixed duration that stops losses as
+  well as gains, and does not follow a permanent staying on the battlefield.
+- `replace_life_gain` with a multiplier of 0 is refused, and would still be a
+  replacement that another replacement could reorder.
+
+### The shape
+
+- **`cant_gain_life`**, a player-wide static (`affects_player`, optional
+  `condition`), read by `player_statics.player_cant_gain_life`.
+- **One call site**, `primitives.gain_life`, after the life lock and **before**
+  `life_gain_multiplier`. Nothing moves and no `LIFE_GAINED` fires, so
+  life-gain triggers stay silent.
+- The loader refuses `affects` and `amount` beside it.
+
+### How it composes with `replace_life_gain`
+
+"Can't" wins (101.2). Checked first, so an opponent's Archive under Erebos gains
+nothing, and the Archive's own controller (who Erebos does not name) still
+gains double.
+
+### Guarded by
+
+`tests/unit/test_cant_gain_life.py`: who it names, `affects_player` both ways,
+the op and lifelink stopped (lifelink's damage still dealt), no event and no
+trigger, the lift when the source leaves, the condition read, the composition
+with a doubler on either side, and the loader refusals. Erebos, God of the Dead
+is authored whole.
