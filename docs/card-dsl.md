@@ -2797,8 +2797,45 @@ Two printed sentences, one static:
 two: Manufactor lists three ids, so one Treasure becomes a Clue, a Food and a
 Treasure (and *two* Treasures become two of each); Divine Visitation lists one,
 so N Soldiers become N Angels and "that many" is preserved without a count ever
-being written down. There is no count multiplier — Doubling Season and Parallel
-Lives are still blocked, deliberately.
+being written down.
+
+**"Twice that many of those tokens are created instead."** The static's second
+axis is the **count**, and a static carries exactly one of the two:
+
+```jsonc
+// Bard, King of Dale (also Parallel Lives, Anointed Procession, Doubling Season's token half)
+{ "kind": "static",
+  "text": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.",
+  "effect": "replace_token_creation",
+  "token_multiplier": 2 }
+```
+
+```jsonc
+// Primal Vigor's token half: every player's tokens, not just yours
+{ "kind": "static",
+  "text": "If one or more tokens would be created, twice that many of those tokens are created instead.",
+  "effect": "replace_token_creation",
+  "affects_player": "any",
+  "token_multiplier": 2 }
+```
+
+**Each matched token entry keeps its identity and has its count multiplied.** A
+doubler names no token, so it cannot be a `create_instead` list — listing an id
+would turn every other token into that one. Because the token is unchanged,
+everything about it survives: a copy token (`copy_permanent`) doubles into two
+copies, embalm's `overrides` stay on both, and `"tapped": true` / `attacking`
+apply to each.
+
+- **Several doublers compound**: each is a separate replacement applied once to
+  the event as the previous one left it — one token under two doublers is four,
+  under three is eight. `affects_token` narrows a doubler the same way it narrows
+  a substitution (Ojer Taq's "creature tokens"), and a doubler beside a Divine
+  Visitation makes twice that many Angels.
+- **`affects_player`** is optional on `replace_token_creation` and defaults to
+  `"you"`, which is the token's controller — the seat the token arrives under,
+  not whoever controls the creating effect. `"any"` is Primal Vigor.
+- `token_multiplier` must be **2 or more** (1 replaces the creation with itself,
+  0 is a prevention), and it and `create_instead` together are refused.
 
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to
@@ -2817,14 +2854,15 @@ Three rules the mechanism is entirely shaped by:
   there are two: two Divine Visitations still make N Angels, and two Academy
   Manufactors turn one Treasure into **three of each**, which is the printed
   ruling.
-- **The replacement belongs to the token's controller.** Both cards say "you", so
+- **The replacement belongs to the token's controller.** The cards say "you", so
   the statics consulted are the ones the seat *the token arrives under* controls
   — not the seat that controls whatever is creating it. A Manufactor's controller
   handing an opponent a Treasure hands them one Treasure.
 - **Only the identity is replaced.** Everything else the creating effect said
   still applies, so `"tapped": true` into a Divine Visitation is a tapped Angel
   and `attacking` still joins combat. Embalm-style `overrides` are the exception
-  and are dropped: they describe the token that was replaced and never made.
+  and are dropped from a *substituted* token: they describe the token that was
+  replaced and never made. A *multiplied* token keeps them.
 
 This is a hook inside `primitives.create_token` and **not** a general rule-616
 replacement system — see [rules-coverage](rules-coverage.md#not-implemented).

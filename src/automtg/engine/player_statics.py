@@ -708,16 +708,20 @@ def player_extra_land_drops(state: GameState, pid: int) -> int:
 
 
 def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str, Any]]:
-    """The active ``replace_token_creation`` statics ``pid`` controls, in battlefield order.
+    """The active ``replace_token_creation`` statics reaching ``pid``, in battlefield order.
 
-    Academy Manufactor and Divine Visitation. Read by
+    Academy Manufactor, Divine Visitation, and the doublers -- Doubling Season,
+    Parallel Lives, Bard, King of Dale. Read by
     `primitives._token_creation_plan` and by nothing else, the way
     `untap_during_each_untap_step` is read by the untap step alone: a token that
     is about to be created has no object for a characteristic to attach to, so
     this cannot be a layer -- it is a fact about what *will* be made.
 
-    Filtered on the source's controller rather than on `affects_player`, because
-    both printed cards say "you" and neither prints the opponent-facing half.
+    ``pid`` is the player the token will be created *under*. `affects_player` is
+    optional here and defaults to ``"you"`` -- every card before Primal Vigor
+    said "you" and was written without the key -- so the default is the
+    source's controller, and ``"any"`` is Primal Vigor's "if one or more tokens
+    would be created", which names nobody.
     Order is `state.battlefield` order, which is arrival order: rule 616.1 gives
     the choice of which replacement to apply first to the affected player, and
     this engine does not ask -- see `_token_creation_plan`, which owns that
@@ -726,7 +730,7 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
     return [
         static
         for obj, static in _active_player_statics(state, "replace_token_creation")
-        if obj.controller == pid
+        if _reaches_player(obj, static, pid)
     ]
 
 

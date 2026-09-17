@@ -1804,19 +1804,41 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_token: a token that does not exist yet has a "
                     f"printed face and nothing else; unsupported keys {sorted(unknown)}"
                 )
+        # Exactly one axis. Both at once is a shape no printed card takes, and
+        # neither is a replacement that says nothing about what is made.
+        if model.create_instead and model.token_multiplier is not None:
+            raise DslError(
+                f"{where}: replace_token_creation takes 'create_instead' (which "
+                f"tokens) or 'token_multiplier' (how many of those tokens), not both"
+            )
+        if model.token_multiplier is not None:
+            # 1 replaces a creation with itself, and 0 is "no tokens are
+            # created" -- a prevention, a different sentence and a much stronger
+            # card. The same refusal `replace_life_loss` makes.
+            if model.token_multiplier < 2:
+                raise DslError(
+                    f"{where}.token_multiplier: must be 2 or more; 1 replaces a "
+                    f"creation with itself and 0 creates nothing, which is a "
+                    f"different effect"
+                )
         # A replacement that creates nothing is not this effect. "Instead create
         # one of each" and "that many are created instead" both name what is
         # made; an empty list would silently *delete* every token its filter
         # matched, which is a different and much stronger card.
-        if not model.create_instead:
+        elif not model.create_instead:
             raise DslError(
                 f"{where}: replace_token_creation needs 'create_instead' -- the "
-                f"token ids created instead, one of each per token replaced"
+                f"token ids created instead, one of each per token replaced -- "
+                f"or 'token_multiplier' for \"twice that many of those tokens\""
             )
-    elif model.affects_token is not None or model.create_instead:
+    elif (
+        model.affects_token is not None
+        or model.create_instead
+        or model.token_multiplier is not None
+    ):
         raise DslError(
-            f"{where}: 'affects_token'/'create_instead' only mean anything on a "
-            f"replace_token_creation static, not on {model.effect!r}"
+            f"{where}: 'affects_token'/'create_instead'/'token_multiplier' only mean "
+            f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
     if model.effect == "replace_life_loss":
@@ -1975,6 +1997,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects_token"] = dict(model.affects_token)
     if model.create_instead:
         static["create_instead"] = list(model.create_instead)
+    if model.token_multiplier is not None:
+        static["token_multiplier"] = model.token_multiplier
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
     if model.affects_player is not None:

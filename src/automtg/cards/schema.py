@@ -508,6 +508,14 @@ class AbilityModel(BaseModel):
     #: each" is a list of three and "that many are created instead" is a list of
     #: one. See `primitives._token_creation_plan`.
     create_instead: list[str] = Field(default_factory=list)
+    #: ``replace_token_creation``: what the count of each token about to be made
+    #: is multiplied by, the token itself unchanged. Bard, King of Dale's and
+    #: Parallel Lives' "twice that many of those tokens are created instead" is
+    #: ``2``. The other axis of the same static from `create_instead`, and a
+    #: static carries exactly one of the two: the doublers name no token, so no
+    #: id could be listed, and listing one would convert every token into it.
+    #: Refused below 2 for the reason `loss_multiplier` is.
+    token_multiplier: int | None = None
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:

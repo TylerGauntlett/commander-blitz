@@ -1,3 +1,67 @@
+## Token doubling — "twice that many of those tokens" — 614.1a / 614.5 / 616.1
+
+### Overview
+
+Bard, King of Dale: *"If one or more tokens would be created under your control,
+**twice that many of those tokens are created instead**."* The same sentence is
+Parallel Lives, Anointed Procession, Doubling Season's token half, and — for every
+player — Primal Vigor.
+
+`replace_token_creation` already existed and was the right static on the wrong
+axis. `create_instead` rewrites *which* token is made (Academy Manufactor, Divine
+Visitation); a doubler names no token at all, so there was nothing to list, and
+listing an id would have turned every other token the player made into that one.
+`create_token`'s `amount` is on the creating effect, so it cannot see another
+card's creation; and a `token_created` trigger adds the copy later, on the stack,
+and re-triggers on its own token forever.
+
+### Tier: B — a second axis on an existing continuous effect
+
+No new op, decision or event. `AbilityModel.token_multiplier` and a branch in
+`primitives._token_creation_plan`.
+
+### What was built
+
+- **`token_multiplier`** on `replace_token_creation` (schema, loader guard, and
+  the whitelisted compile). Required to be 2 or more, and refused beside
+  `create_instead` — one axis per static.
+- **`_token_creation_plan`** entries became `(id, count, substituted)`. A
+  multiplied entry keeps its id and `substituted` flag and has its count scaled;
+  a substituted entry is marked, and only marked entries drop the creating
+  effect's `overrides`. Before, *any* replacement dropped them, which for a
+  doubler would have turned the second embalm copy back into the plain card.
+- **`token_creation_replacements`** reads `affects_player` through
+  `_reaches_player`, defaulting to `"you"` — which is exactly the old
+  source-controller filter, so Manufactor and Visitation are unchanged — and
+  `"any"` is Primal Vigor.
+
+### The rules it turns on
+
+- **614.5 — each replacement once per event**, in the existing single pass: a
+  doubler does not re-double its own output.
+- **Doublers compound.** Two are 4, three are 8: separate replacements of one
+  event, each applied to the event as the previous one left it.
+- **616.1 — the affected player orders them**, and the engine applies them in
+  battlefield order without asking. Doublers commute (a product), and a doubler
+  commutes with an unfiltered or type-preserving substitution (a doubler beside a
+  Divine Visitation is two Angels either way). The order would show only for a
+  doubler whose `affects_token` matches a token before a substitution and not
+  after — no printed doubler.
+- **"Under your control" is the token's controller.** A Bard doubles the token an
+  opponent's Beast Within gives you, and not the one your effect gives them.
+- **"Those tokens."** Copy tokens from `copy_permanent` double into copies with
+  their `overrides`; tapped-and-attacking tokens double into tapped attackers.
+  `create_token` is the only place a token is made, so both ops reach it.
+
+### Tests
+
+`tests/unit/test_token_doubling.py` — six classes: twice that many (and the
+`token_created` events for each), compounding (two, three, order-independence,
+no self-redoubling, beside a Visitation), whose tokens they are (opponent's
+creation untouched, opponent's doubler inert, an opponent's effect giving you a
+token doubled, Primal Vigor for both seats), those tokens (copy tokens, copy
+overrides, tapped and attacking), wearing off, and the loader refusals.
+
 ## `change_text` -- layer 3, and the four places "all instances" has to reach
 
 ### Overview
@@ -2295,9 +2359,9 @@ Not rule 616. There is no event object, no "replaced by" chain, and nothing
 outside `create_token` consults a replacement — 616.1's "the affected player
 chooses which applicable replacement to apply first" is answered by battlefield
 order instead of by asking, which is invisible for the pair above and is recorded
-in `docs/rules-coverage.md`. There is no count *multiplier* either, so Doubling
-Season, Parallel Lives, Anointed Procession and Ojer Taq remain blocked; that is
-a second capability, not a second key in a card file. A fourth entry on the
+in `docs/rules-coverage.md`. There was no count *multiplier* either, so Doubling
+Season, Parallel Lives, Anointed Procession and Ojer Taq stayed blocked; that was
+a second capability, since built — see *token doubling* above. A fourth entry on the
 enters-the-battlefield whitelist is still engine work.
 
 ### Tests

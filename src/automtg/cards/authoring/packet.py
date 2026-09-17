@@ -678,6 +678,15 @@ def reference() -> dict:
             " different cost: it is \"Exile this artifact\" and requires the"
             " source to be on the battlefield.",
             "A static ability's filter may only read printed characteristics.",
+            "\"If one or more tokens would be created under your control, twice"
+            " that many of those tokens are created instead\" (Parallel Lives,"
+            " Anointed Procession, Doubling Season's token half) is a"
+            " `replace_token_creation` static with `token_multiplier: 2` and no"
+            " `create_instead` -- the tokens keep their identity, so copies stay"
+            " copies. `create_instead` is the OTHER axis (which token is made"
+            " instead) and a static takes one or the other. \"Creature tokens\""
+            " is an `affects_token` filter; a sentence naming no player (\"if one"
+            " or more tokens would be created\") adds `affects_player: \"any\"`.",
             "`snapshot` is how a card reads a value after its target has left --"
             " there is no general last-known-information system.",
             "A mana ability's MANA half may contain only `add_mana`, or one"
