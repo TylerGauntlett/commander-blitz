@@ -1,0 +1,19 @@
+{
+  "card_id": "peer_into_the_abyss",
+  "name": "Peer into the Abyss",
+  "oracle_text": "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time.",
+  "blocked_sentences": [
+    "Target player draws cards equal to half the number of cards in their library and loses half their life.",
+    "Round up each time."
+  ],
+  "needs": [
+    {
+      "capability": "half_rounded",
+      "kind": "value",
+      "what": "a value node that halves another value with a rounding direction, e.g. {\"half\": <value>, \"round\": \"up\"|\"down\"}, so the amount can be half of {\"count\": {\"zone\": \"library\", \"player\": {\"target\": \"t1\"}}} for draw and half of {\"life_of\": {\"target\": \"t1\"}} for lose_life, each rounded up; the library count and life must be read at the moment each instruction is performed (draw first, then life)",
+      "why_existing_wont_do": "value_keys has times, sum, minus, min and max but no division or rounding, so ceil(n/2) cannot be built from them; count and life_of can read the library size and life total, and draw/lose_life accept a player and amount, but there is no way to halve the result"
+    }
+  ],
+  "closest_existing": ["times", "minus", "life_of", "count"],
+  "confidence": "high"
+}

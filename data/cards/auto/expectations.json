@@ -818,6 +818,18 @@
   "blood_glutton": {
     "zone": "battlefield"
   },
+  "blood_pact": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "bloodfire_expert": {
     "zone": "battlefield"
   },
@@ -825,6 +837,17 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "bloodgift_demon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
     },
     "zone": "battlefield"
   },
@@ -1104,6 +1127,10 @@
     "zone": "battlefield"
   },
   "cabal_evangel": {
+    "zone": "battlefield"
+  },
+  "cabal_stronghold": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "caelorna_coral_tyrant": {
@@ -1842,11 +1869,35 @@
   "dakmor_scorpion": {
     "zone": "battlefield"
   },
+  "damnable_pact": {
+    "hand_size": {
+      "0": 21
+    },
+    "library_size": {
+      "0": 20
+    },
+    "life": {
+      "0": 20
+    },
+    "zone": "graveyard"
+  },
   "dancing_scimitar": {
     "zone": "battlefield"
   },
   "daring_thunder_thief": {
     "zone": "battlefield"
+  },
+  "dark_deal": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "dark_ritual": {
     "graveyard_size": {
@@ -1978,6 +2029,13 @@
       "graveyard"
     ]
   },
+  "decanter_of_endless_water": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "deceptive_landscape": {
     "zone": "battlefield"
   },
@@ -2001,6 +2059,13 @@
   },
   "defiant_khenra": {
     "zone": "battlefield"
+  },
+  "defile": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "deft_duelist": {
     "zone": "battlefield"
@@ -2105,6 +2170,9 @@
       "0": 41
     }
   },
+  "dismember": {
+    "zone": "graveyard"
+  },
   "distant_melody": {
     "hand_size": {
       "0": 1
@@ -2170,6 +2238,10 @@
     "zone": "battlefield"
   },
   "drakewing_krasis": {
+    "zone": "battlefield"
+  },
+  "dread_presence": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dread_statuary": {
@@ -2293,6 +2365,21 @@
   },
   "eldrazi_devastator": {
     "zone": "battlefield"
+  },
+  "eldritch_pact": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "electrodominance": {
     "hand_size": {
@@ -2631,6 +2718,14 @@
     },
     "zone": "graveyard"
   },
+  "fate_unraveler": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "fateful_absence": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -2678,6 +2773,9 @@
       "0": 1
     },
     "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "feign_death": {
     "zone": "graveyard"
   },
   "feiyi_snake": {
@@ -2936,6 +3034,10 @@
   "font_of_fertility": {
     "zone": "battlefield"
   },
+  "font_of_mythos": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "foot_headquarters": {
     "life": {
       "0": 41
@@ -3181,6 +3283,10 @@
     },
     "zone": "battlefield"
   },
+  "geier_reach_sanitarium": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "geist_of_the_moors": {
     "zone": "battlefield"
   },
@@ -3336,6 +3442,10 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "gixian_puppeteer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "glacial_floodplain": {
     "zone": "battlefield"
@@ -3587,6 +3697,13 @@
     "zone": "battlefield"
   },
   "greatsword": {
+    "zone": "battlefield"
+  },
+  "greed": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "greel_s_caress": {
@@ -4009,6 +4126,10 @@
   "hovermyr": {
     "zone": "battlefield"
   },
+  "howling_mine": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "huatli_s_snubhorn": {
     "zone": "battlefield"
   },
@@ -4141,6 +4262,13 @@
       "graveyard"
     ]
   },
+  "infernal_grasp": {
+    "life": {
+      "0": 38,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "inkmoth_nexus": {
     "zone": "battlefield"
   },
@@ -4271,6 +4399,13 @@
     "zone": "battlefield"
   },
   "jeskai_windscout": {
+    "zone": "battlefield"
+  },
+  "jet_medallion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "jetmir_s_garden": {
@@ -5172,6 +5307,10 @@
     },
     "zone": "battlefield"
   },
+  "master_of_the_feast": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mek_leth_berserker": {
     "zone": "battlefield"
   },
@@ -5262,6 +5401,10 @@
     "life": {
       "0": 44
     }
+  },
+  "mikokoro_center_of_the_sea": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "millennial_gargoyle": {
     "zone": "battlefield"
@@ -5533,6 +5676,9 @@
   "mutavault": {
     "zone": "battlefield"
   },
+  "mutilate": {
+    "zone": "graveyard"
+  },
   "myriad_landscape": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5798,6 +5944,14 @@
     },
     "zone": "battlefield"
   },
+  "ob_nixilis_the_hate_twisted": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "obelisk_of_bant": {
     "zone": "battlefield"
   },
@@ -5958,6 +6112,13 @@
   },
   "otawara_soaring_city": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "otherworld_atlas": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "oubliette": {
@@ -6395,6 +6556,17 @@
   "prowling_caracal": {
     "zone": "battlefield"
   },
+  "psychosis_crawler": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "pull_from_the_grave": {
     "graveyard_size": {
       "0": 1
@@ -6557,6 +6729,10 @@
     "zone": "battlefield"
   },
   "ranger_s_longbow": {
+    "zone": "battlefield"
+  },
+  "rankle_master_of_pranks": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "raptor_companion": {
@@ -7178,6 +7354,16 @@
   "scouting_hawk": {
     "zone": "battlefield"
   },
+  "scrawling_crawler": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "scrounger_of_souls": {
     "zone": "battlefield"
   },
@@ -7298,6 +7484,10 @@
   "segovian_leviathan": {
     "zone": "battlefield"
   },
+  "seizan_perverter_of_truth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sejiri_refuge": {
     "life": {
       "0": 41
@@ -7414,6 +7604,21 @@
     "zone": "battlefield"
   },
   "sheltering_landscape": {
+    "zone": "battlefield"
+  },
+  "sheoldred_s_edict": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
+  "sheoldred_the_apocalypse": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "shepherd_of_the_lost": {
@@ -7549,6 +7754,18 @@
       "0": 37
     },
     "zone": "battlefield"
+  },
+  "sign_in_blood": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "silent_artisan": {
     "zone": "battlefield"
@@ -7818,6 +8035,9 @@
   },
   "snowfield_sinkhole": {
     "zone": "battlefield"
+  },
+  "snuff_out": {
+    "zone": "graveyard"
   },
   "soaring_drake": {
     "zone": "battlefield"
@@ -8474,6 +8694,13 @@
       "0": 43
     }
   },
+  "temple_bell": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "temple_garden": {
     "zone": "battlefield"
   },
@@ -8985,6 +9212,16 @@
   "undersea_invader": {
     "zone": "battlefield"
   },
+  "underworld_dreams": {
+    "battlefield_count": 33,
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
+  "undying_malice": {
+    "zone": "graveyard"
+  },
   "unexplained_absence": {
     "library_size": {
       "0": 39,
@@ -9265,6 +9502,16 @@
     ]
   },
   "vigilant_baloth": {
+    "zone": "battlefield"
+  },
+  "vilis_broker_of_blood": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "village_rites": {

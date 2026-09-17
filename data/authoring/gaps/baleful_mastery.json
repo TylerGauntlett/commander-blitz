@@ -1,0 +1,19 @@
+{
+  "card_id": "baleful_mastery",
+  "name": "Baleful Mastery",
+  "oracle_text": "You may pay {1}{B} rather than pay this spell's mana cost.\nIf the {1}{B} cost was paid, an opponent draws a card.\nExile target creature or planeswalker.",
+  "blocked_sentences": [
+    "You may pay {1}{B} rather than pay this spell's mana cost",
+    "If the {1}{B} cost was paid, an opponent draws a card"
+  ],
+  "needs": [
+    {
+      "capability": "alternative_cost_paid_condition",
+      "kind": "engine",
+      "what": "an unconditional cheaper alternative mana cost on an instant or sorcery whose payment is readable by a condition while the spell itself resolves, so an `if` inside `spell_effects` can say \"if the {1}{B} cost was paid, an opponent draws a card\"",
+      "why_existing_wont_do": "`evoke` is the unconditional alternative mana cost and `evoked` is its condition, but resolve_top (engine/stack.py) writes `obj.cast_evoked = item.evoked` only AFTER `spell_effects` run (it is meant for a permanent's enters trigger), and EffectContext carries no evoked flag -- so on an instant the `evoked` condition always reads False and the opponent would never draw. `cast_overloaded`, `cast_cost_option` and `cast_from_graveyard` are set before the effects, but none of them records an alternative cost. `alternative_cost` (card-level) records no flag at all and requires a condition when the price is mana only. `cost_option` belongs to `additional_cost_options`, an additional cost, not a replacement for the mana cost."
+    }
+  ],
+  "closest_existing": ["evoke", "alternative_cost", "overload"],
+  "confidence": "high"
+}

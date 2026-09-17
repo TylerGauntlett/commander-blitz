@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "underworld_dreams",
+    "name": "Underworld Dreams",
+    "oracle_text": "Whenever an opponent draws a card, this enchantment deals 1 damage to that player.",
+    "mana_cost": "{B}{B}{B}",
+    "types": ["Enchantment"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent draws a card, this enchantment deals 1 damage to that player.",
+        "trigger": {"event": "draw", "controller": "opponent"},
+        "effects": [
+          {"op": "damage", "amount": {"const": 1}, "player": {"binding": "event_player"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "life": {"1": 40}}
+}

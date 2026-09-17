@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "font_of_mythos",
+    "name": "Font of Mythos",
+    "oracle_text": "At the beginning of each player's draw step, that player draws two additional cards.",
+    "mana_cost": "{4}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's draw step, that player draws two additional cards.",
+        "trigger": {"event": "draw_step", "controller": "any"},
+        "effects": [
+          {"op": "draw", "amount": {"const": 2}, "player": {"binding": "event_player"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

@@ -1,0 +1,27 @@
+{
+  "card": {
+    "id": "seizan_perverter_of_truth",
+    "name": "Seizan, Perverter of Truth",
+    "oracle_text": "At the beginning of each player's upkeep, that player loses 2 life and draws two cards.",
+    "mana_cost": "{3}{B}{B}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Demon", "Spirit"],
+    "power": 6,
+    "toughness": 5,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's upkeep, that player loses 2 life and draws two cards.",
+        "trigger": {"event": "upkeep", "controller": "any"},
+        "effects": [
+          {"op": "lose_life", "player": {"binding": "event_player"}, "amount": {"const": 2}},
+          {"op": "draw", "player": {"binding": "event_player"}, "amount": {"const": 2}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

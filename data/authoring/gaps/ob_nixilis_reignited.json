@@ -1,0 +1,18 @@
+{
+  "card_id": "ob_nixilis_reignited",
+  "name": "Ob Nixilis Reignited",
+  "oracle_text": "+1: You draw a card and you lose 1 life.\n−3: Destroy target creature.\n−8: Target opponent gets an emblem with \"Whenever a player draws a card, you lose 2 life.\"",
+  "blocked_sentences": [
+    "−8: Target opponent gets an emblem with \"Whenever a player draws a card, you lose 2 life.\""
+  ],
+  "needs": [
+    {
+      "capability": "emblem",
+      "kind": "op",
+      "what": "an op that gives a chosen player (here a target opponent) an emblem -- a permanent command-zone object with no characteristics that cannot be removed and carries a written ability (here a triggered ability: event draw by any player, effect lose_life 2 for the emblem's OWNER, i.e. the targeted opponent, not the planeswalker's controller)",
+      "why_existing_wont_do": "No op in reference creates a command-zone object. grant_ability attaches an ability to battlefield objects and ends when they leave; delayed_trigger carries a duration and belongs to the ability's controller, so its 'you' would be Ob Nixilis's controller rather than the opponent who owns the emblem, and it would not survive as a permanent object. There is no emblem-owning player concept for 'you' to resolve against."
+    }
+  ],
+  "closest_existing": ["delayed_trigger", "grant_ability"],
+  "confidence": "high"
+}

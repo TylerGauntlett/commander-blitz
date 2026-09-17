@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "mikokoro_center_of_the_sea",
+    "name": "Mikokoro, Center of the Sea",
+    "oracle_text": "{T}: Add {C}.\n{2}, {T}: Each player draws a card.",
+    "mana_cost": "",
+    "supertypes": ["Legendary"],
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, {T}: Each player draws a card.",
+        "cost": {"mana": "{2}", "tap": true},
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "each_player"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
