@@ -107302,12 +107302,12 @@
     },
     "Ghostly Prison": {
       "edhrec_rank": 161,
-      "gate": "template",
+      "gate": null,
       "name": "Ghostly Prison",
-      "reason": "no template for: Creatures can't attack you unless their controller pays {2} for each creature they control",
+      "reason": "",
       "scryfall_id": "e1f723a8-0be9-4270-b451-a52d6b2fda4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Ghostly Sentinel": {
