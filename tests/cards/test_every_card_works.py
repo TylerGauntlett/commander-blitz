@@ -392,9 +392,14 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
     # enters-with-counters replacement that carries a planeswalker's starting
     # loyalty never runs. Every minus ability would report as unusable on a
     # board that was never legal.
+    # An ultimate costs more than the printed number -- The Theorist's -6 on a
+    # starting loyalty of 3 -- so stock whichever is larger, as a counter cost
+    # is stocked below.
     loyalty = game.state.registry.get(game.state.objects[oid].def_id).loyalty
     if loyalty is not None:
-        game.state.objects[oid].counters["loyalty"] = loyalty
+        price = getattr(cost, "loyalty", None) if cost else None
+        needed = -int(price) if price is not None and int(price) < 0 else 0
+        game.state.objects[oid].counters["loyalty"] = max(loyalty, needed)
     spec = getattr(cost, "remove_counters", None) if cost else None
     if not spec:
         return
