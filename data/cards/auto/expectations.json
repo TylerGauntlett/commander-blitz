@@ -7428,6 +7428,10 @@
   "shorecomber_crab": {
     "zone": "battlefield"
   },
+  "shorikai_genesis_engine": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "short_bow": {
     "zone": "battlefield"
   },

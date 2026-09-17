@@ -243262,12 +243262,12 @@
     },
     "Shorikai, Genesis Engine": {
       "edhrec_rank": 2301,
-      "gate": "template",
+      "gate": null,
       "name": "Shorikai, Genesis Engine",
-      "reason": "no template for: {1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token",
+      "reason": "",
       "scryfall_id": "04fe475d-5f84-41e5-b2b3-10005dce74f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Short Bow": {

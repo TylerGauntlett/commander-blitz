@@ -1,0 +1,51 @@
+{
+  "card": {
+    "id": "shorikai_genesis_engine",
+    "name": "Shorikai, Genesis Engine",
+    "oracle_text": "{1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"\nCrew 8 (Tap any number of creatures you control with total power 8 or more: This Vehicle becomes an artifact creature until end of turn.)",
+    "mana_cost": "{2}{W}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Artifact"],
+    "subtypes": ["Vehicle"],
+    "power": 8,
+    "toughness": 8,
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}, {T}: Draw two cards, then discard a card. Create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
+        "cost": {"mana": "{1}", "tap": true},
+        "effects": [
+          {"op": "draw", "amount": {"const": 2}, "player": "you"},
+          {"op": "discard", "amount": {"const": 1}, "player": "you"},
+          {"op": "create_token", "token": "pilot_1_1_c_crew2"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Crew 8",
+        "cost": {
+          "tap_permanents": {
+            "controller": "you",
+            "types": ["Creature"],
+            "total_power": 8
+          }
+        },
+        "effects": [
+          {
+            "op": "animate",
+            "types": ["Creature"],
+            "power": {"const": 8},
+            "toughness": {"const": 8},
+            "objects": {"zone": "battlefield", "self_only": true}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
