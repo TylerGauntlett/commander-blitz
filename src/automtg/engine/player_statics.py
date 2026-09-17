@@ -122,6 +122,49 @@ def life_loss_multiplier(state: GameState, pid: int) -> int:
     return multiplier
 
 
+def life_gain_multiplier(state: GameState, pid: int) -> int:
+    """What a life gain by ``pid`` is multiplied by right now.  Usually 1.
+
+    Alhammarret's Archive: "If you would gain life, you gain twice that much
+    life instead."  The mirror of :func:`life_loss_multiplier`, and read the
+    same way for the same reasons: through `_active_player_statics`, so an "as
+    long as" clause beside it is asked; **multiplied**, not summed, because two
+    Archives are two replacements of one event each applying once (614.5) and
+    a gain doubled twice is quadrupled; and 616.1's ordering is not asked,
+    which for a product cannot show.
+
+    Asked by `primitives.gain_life` only, which is the one place a life total
+    goes up -- lifelink reaches it too (702.15b), so a lifelinking creature
+    under an Archive gains twice the damage it dealt, while the damage itself
+    is untouched.
+    """
+    multiplier = 1
+    for obj, static in _active_player_statics(state, "replace_life_gain"):
+        if _reaches_player(obj, static, pid):
+            multiplier *= int(static.get("gain_multiplier", 1))
+    return multiplier
+
+
+def player_cant_gain_life(state: GameState, pid: int) -> bool:
+    """Is ``pid`` forbidden from gaining life right now?  Usually false.
+
+    Erebos, God of the Dead: "Your opponents can't gain life."  A prohibition
+    on a *player*, read through `_active_player_statics` like every other
+    player-wide static, so it lifts the moment its source leaves the
+    battlefield and an "as long as" clause beside it is asked.
+
+    One reader, `primitives.gain_life`, because that is the one place a life
+    total goes up -- the `gain_life` op and lifelink both arrive there -- and it
+    is asked **before** `life_gain_multiplier`: a gain that cannot happen is not
+    doubled into one that can (101.2, "can't" beats every effect that would
+    make it happen, a replacement included).
+    """
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(state, "cant_gain_life")
+    )
+
+
 def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
 
@@ -170,6 +213,45 @@ def player_doubles_land_mana(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "double_land_mana")
 
 
+def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, tuple[int, ...]]]:
+    """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
+
+    Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." A
+    triggered mana ability (605.1b): it triggers off a mana ability and resolves
+    immediately, never using the stack (605.4a), so it is answered here at the
+    mana choke point beside `player_doubles_land_mana` rather than queued.
+
+    Returns ``(source oid, mana)`` pairs, one per applicable static, so the pool
+    can tag each pip with the permanent whose ability made it -- the Ghast, not
+    the Swamp. Two Ghasts add two {B}: each is its own triggered ability.
+
+    ``tapped_permanent`` is matched against the tapped permanent's *current*
+    characteristics, so a land Urborg, Tomb of Yawgmoth has made a Swamp is a
+    Swamp. ``affects_player`` names whose taps count -- "you" for Crypt Ghast,
+    "any" for "whenever a Forest is tapped for mana, its controller adds"
+    (Vernal Bloom). The mana always goes to the player who tapped.
+    """
+    from .mana import parse_mana_production
+
+    out: list[tuple[int, tuple[int, ...]]] = []
+    tapped: Any = None
+    for source, static in _active_player_statics(state, "add_mana_on_tap"):
+        if not _reaches_player(source, static, pid):
+            continue
+        if tapped is None:
+            tapped = chars(state, oid)
+        wanted = static.get("tapped_permanent") or {}
+        if not all(t in tapped.types for t in wanted.get("types", [])):
+            continue
+        if not all(t in tapped.supertypes for t in wanted.get("supertypes", [])):
+            continue
+        subtypes = wanted.get("subtypes", [])
+        if subtypes and not any(t in tapped.subtypes for t in subtypes):
+            continue
+        out.append((source.oid, parse_mana_production(str(static.get("add_mana", "")))))
+    return out
+
+
 def players_freezing_opponent_lands(state: GameState) -> frozenset[int]:
     """Everyone whose ``freeze_opponent_lands`` static is on the battlefield.
 
@@ -214,6 +296,18 @@ def player_has_no_hand_limit(state: GameState, pid: int) -> bool:
     if state.players[pid].has_no_maximum_hand_size:
         return True
     return _player_static(state, pid, "no_hand_limit")
+
+
+def player_pays_life_for_black(state: GameState, pid: int) -> bool:
+    """Whether every ``{B}`` in a cost this player pays may be paid with 2 life.
+
+    K'rrik, Son of Yawgmoth: "For each {B} in a cost, you may pay 2 life rather
+    than pay that mana." A fact about the *payer*, read wherever a cost is
+    priced -- the cast line in `casting._cast_variant` and `Game._cast`, and
+    every other cost through `costs.can_pay` / `costs.pay` -- by turning each
+    black pip into a Phyrexian one with `ManaCost.black_as_phyrexian`.
+    """
+    return _player_static(state, pid, "black_mana_as_phyrexian")
 
 
 def player_skips_draw_step(state: GameState, pid: int) -> bool:

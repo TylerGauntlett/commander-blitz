@@ -1,0 +1,35 @@
+{
+  "card": {
+    "id": "bloodgift_demon",
+    "name": "Bloodgift Demon",
+    "oracle_text": "Flying\nAt the beginning of your upkeep, target player draws a card and loses 1 life.",
+    "mana_cost": "{3}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Demon"],
+    "power": 5,
+    "toughness": 4,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of your upkeep, target player draws a card and loses 1 life.",
+        "trigger": {"event": "upkeep", "controller": "you"},
+        "targets": [
+          {"id": "t1", "kind": "player", "selector": {"controller": "any"}, "count": 1}
+        ],
+        "effects": [
+          {"op": "draw", "player": {"target": "t1"}, "amount": {"const": 1}},
+          {"op": "lose_life", "player": {"target": "t1"}, "amount": {"const": 1}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1},
+    "life": {"0": 40, "1": 40}
+  }
+}

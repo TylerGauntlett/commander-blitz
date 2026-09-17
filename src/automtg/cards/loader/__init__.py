@@ -134,6 +134,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_LIFE_PLAYERS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
+    TAPPED_PERMANENT_KEYS,
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
     WAS_CAST_TRIGGERS,
@@ -210,6 +211,112 @@ def _check_grant_targets(
                 continue
             index = effect.get("ability", effect.get("ability_index"))
             check(index, "grant_ability op", statics_ok=False)
+
+
+def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:
+    """Each quoted emblem as a ``CardDef`` of its own (114).
+
+    An emblem has abilities and nothing else (114.3), so the definition is its
+    abilities plus the three things a display needs: a name in Scryfall's
+    "<card> Emblem" form, the type line ``Emblem`` and the quoted text. It
+    carries no card types, so no selector, filter or count that asks about
+    permanents or cards can ever match one.
+
+    Every ability works **from the command zone** (114.4), and that is written
+    by the loader rather than by the author: the default ``active_zones`` is the
+    battlefield, where an emblem never is, so an emblem that took the default
+    would load clean and never trigger.
+
+    **Triggered abilities only.** That is what `triggers._candidate_abilities`
+    already reads from the command zone (Edgar Markov's eminence). A static is
+    read by several separate walks -- the characteristic layers, the player
+    statics, the cost reductions -- none of which look at the command zone, and
+    an activated ability would have to be offered from it; either would load
+    and do nothing, so both are refused until one is built.
+    """
+    out: list[CardDef] = []
+    for i, emblem in enumerate(model.emblems):
+        here = f"{where}.emblems[{i}]"
+        if not emblem.abilities:
+            raise DslError(f"{here}: an emblem with no abilities is nothing (114.3)")
+        abilities: list[Ability] = []
+        for j, ability in enumerate(emblem.abilities):
+            if ability.kind != "triggered":
+                raise DslError(
+                    f"{here}.abilities[{j}]: only triggered abilities work from the "
+                    f"command zone so far, not {ability.kind!r} -- a static or "
+                    f"activated emblem ability would load and never apply"
+                )
+            if list(ability.active_zones) not in (["battlefield"], ["command"]):
+                raise DslError(
+                    f"{here}.abilities[{j}]: an emblem is only ever in the command "
+                    f"zone (114.1), so its abilities work there and nowhere else, "
+                    f"not in {ability.active_zones}"
+                )
+            if ability.trigger is not None and ability.trigger.source == "self":
+                # "this emblem" is never the subject of an event: nothing moves,
+                # taps, damages or targets it.
+                raise DslError(
+                    f"{here}.abilities[{j}]: an emblem is never the subject of a "
+                    f"trigger event, so 'source: self' could never fire"
+                )
+            commanded = ability.model_copy(update={"active_zones": ["command"]})
+            abilities.append(_compile_ability(commanded, j, here))
+        out.append(
+            CardDef(
+                id=f"{model.id}_emblem_{i}",
+                name=f"{model.name} Emblem",
+                oracle_text="\n".join(a.text for a in abilities),
+                abilities=tuple(abilities),
+                type_line="Emblem",
+            )
+        )
+    return tuple(out)
+
+
+def _check_emblem_references(
+    model: CardModel,
+    abilities: tuple[Ability, ...],
+    grantable: tuple[Ability, ...],
+    emblems: tuple[CardDef, ...],
+    where: str,
+) -> None:
+    """Every ``emblem`` op names an emblem this card writes, and every emblem
+    this card writes is given by something.
+
+    Out of range is silent at runtime -- the op would have nothing to hand over
+    -- and an emblem no op names is a quoted ability the card prints and never
+    delivers.
+    """
+    trees: list[Any] = [model.spell_effects]
+    trees.extend(a.effects for a in abilities)
+    trees.extend(a.effects for a in grantable)
+    for emblem in emblems:
+        trees.extend(a.effects for a in emblem.abilities)
+    named: set[int] = set()
+    for tree in trees:
+        for effect in _walk_effect_specs(tree):
+            if effect.get("op") != "emblem":
+                continue
+            index = effect.get("emblem")
+            try:
+                pos = int(index)
+            except (TypeError, ValueError):
+                raise DslError(
+                    f"{where}: emblem op needs 'emblem', an index into the card's "
+                    f"'emblems', got {index!r}"
+                ) from None
+            if not 0 <= pos < len(emblems):
+                raise DslError(
+                    f"{where}: emblem op names 'emblems[{pos}]' and this card has "
+                    f"{len(emblems)}"
+                )
+            named.add(pos)
+    for pos in range(len(emblems)):
+        if pos not in named:
+            raise DslError(
+                f"{where}: 'emblems[{pos}]' is written and no emblem op gives it to anybody"
+            )
 
 
 # ----------------------------------------------------------------------
@@ -565,6 +672,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
 
     _check_grant_targets(model, abilities, grantable, where)
+    emblems = _compile_emblems(model, where)
+    _check_emblem_references(model, abilities, grantable, emblems, where)
 
     if model.cost_reduction is not None:
         _validate_cost_reduction(model.cost_reduction, f"{where}.cost_reduction")
@@ -1172,6 +1281,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         replacements=_implied_replacements(model),
         abilities=abilities,
         grantable_abilities=grantable,
+        emblems=emblems,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
         back_face=model.back_face,
@@ -1921,6 +2031,49 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
 
 
+def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
+    """ "Whenever you tap a Swamp for mana, add an additional {B}." Crypt Ghast.
+
+    Both halves are required. Without `tapped_permanent` the static would fire
+    off every permanent tapped for mana -- Mana Reflection's reach with Crypt
+    Ghast's payload, a much bigger card. Without `add_mana` it adds nothing. And
+    `affects`/`amount` are refused rather than ignored: the permanent is named
+    by `tapped_permanent` and the amount is printed in `add_mana`.
+    """
+    from automtg.engine.mana import parse_mana_production
+
+    if model.tapped_permanent is None or not model.add_mana:
+        raise DslError(
+            f"{where}: add_mana_on_tap needs 'tapped_permanent' (what was tapped, "
+            f"e.g. {{'subtypes': ['Swamp']}}) and 'add_mana' (the mana added, e.g. '{{B}}')"
+        )
+    if model.affects is not None or model.amount is not None:
+        raise DslError(
+            f"{where}: add_mana_on_tap takes 'affects_player', 'tapped_permanent', "
+            f"'add_mana' and an optional 'condition', and no 'affects' or 'amount'"
+        )
+    tapped = model.tapped_permanent
+    unknown = set(tapped) - TAPPED_PERMANENT_KEYS
+    if unknown or not tapped:
+        raise DslError(
+            f"{where}.tapped_permanent: may only name {sorted(TAPPED_PERMANENT_KEYS)} "
+            f"and must name at least one, got {sorted(tapped)}"
+        )
+    for key, known in (("types", KNOWN_TYPES), ("supertypes", KNOWN_SUPERTYPES)):
+        values = tapped.get(key, [])
+        if not isinstance(values, list) or not all(v in known for v in values):
+            raise DslError(f"{where}.tapped_permanent.{key}: unknown value in {values!r}")
+    subtypes = tapped.get("subtypes", [])
+    if not isinstance(subtypes, list) or not all(isinstance(v, str) and v for v in subtypes):
+        raise DslError(f"{where}.tapped_permanent.subtypes: a list of subtype names")
+    try:
+        produced = parse_mana_production(model.add_mana)
+    except Exception as exc:
+        raise DslError(f"{where}.add_mana: {exc}") from exc
+    if not any(produced):
+        raise DslError(f"{where}.add_mana: {model.add_mana!r} adds no mana")
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -2169,6 +2322,42 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'loss_multiplier' only means anything on a "
             f"replace_life_loss static, not on {model.effect!r}"
         )
+    if model.effect == "add_mana_on_tap":
+        _validate_add_mana_on_tap(model, where)
+    elif model.tapped_permanent is not None or model.add_mana is not None:
+        raise DslError(
+            f"{where}: 'tapped_permanent'/'add_mana' only mean anything on an "
+            f"add_mana_on_tap static, not on {model.effect!r}"
+        )
+    if model.effect == "replace_life_gain":
+        # The mirror of `replace_life_loss`, refused for its reasons: 1 replaces
+        # a gain with an identical gain, and 0 is "you gain no life" -- which
+        # is `cant_gain_life`, a different sentence that also stops the
+        # life-gain triggers rather than firing them for nothing.
+        if model.gain_multiplier is None:
+            raise DslError(
+                f"{where}: replace_life_gain needs 'gain_multiplier' -- what the "
+                f"life gain is multiplied by"
+            )
+        if model.gain_multiplier < 2:
+            raise DslError(
+                f"{where}.gain_multiplier: must be 2 or more; "
+                f"1 replaces a gain with itself and 0 is \"can't gain life\", "
+                f"which is a different effect"
+            )
+        if model.affects is not None or model.amount is not None:
+            # "If you would gain life" names a player, and the size is
+            # `gain_multiplier`; nothing reads either key.
+            raise DslError(
+                f"{where}: replace_life_gain takes 'affects_player', "
+                f"'gain_multiplier' and an optional 'condition', and no "
+                f"'affects' or 'amount'"
+            )
+    elif model.gain_multiplier is not None:
+        raise DslError(
+            f"{where}: 'gain_multiplier' only means anything on a "
+            f"replace_life_gain static, not on {model.effect!r}"
+        )
     if model.effect == "replace_draw":
         # Same refusals as `loss_multiplier`: 1 replaces a draw with an
         # identical draw and 0 is "draw nothing instead" -- a prevention, which
@@ -2201,6 +2390,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
+        if model.effect == "cant_gain_life" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # "Your opponents can't gain life" names players and nothing else.
+            # Nothing reads either key, and a filter written here ("can't gain
+            # life from creatures") would load clean and forbid every gain.
+            raise DslError(
+                f"{where}: cant_gain_life stops every life gain for the named "
+                f"players; it takes 'affects_player' and an optional "
+                f"'condition', and no 'affects' or 'amount'"
+            )
         if model.effect == "cant_cast_spells" and (
             model.affects is not None or model.amount is not None
         ):
@@ -2302,12 +2502,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     qualities = [*model.from_types, *model.from_subtypes, *model.from_colors]
+    if model.from_colors_outside_commander_identity:
+        # A quality, and the loudest kind of one: it is up to five colours.
+        qualities.append("outside commander identity")
     if model.effect == "protection":
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
         # exists to stop.
         if not qualities:
-            raise DslError(f"{where}: protection needs from_types/from_subtypes/from_colors")
+            raise DslError(
+                f"{where}: protection needs from_types/from_subtypes/from_colors/"
+                f"from_colors_outside_commander_identity"
+            )
+        if model.from_colors_outside_commander_identity and model.from_colors:
+            # The computed set already covers every colour the commander lacks,
+            # and a printed colour *inside* the identity is a second sentence no
+            # card prints. Written together, one of the two is dead weight or a
+            # silent widening, and nothing on the board would say which.
+            raise DslError(
+                f"{where}: 'from_colors_outside_commander_identity' is the whole "
+                f"colour set; do not also list 'from_colors'"
+            )
         for t in model.from_types:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
@@ -2315,7 +2530,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown color {c!r} in from_colors")
     elif qualities:
-        raise DslError(f"{where}: from_types/from_subtypes/from_colors need effect 'protection'")
+        raise DslError(
+            f"{where}: from_types/from_subtypes/from_colors/"
+            f"from_colors_outside_commander_identity need effect 'protection'"
+        )
 
     _validate_static_condition(model.condition, f"{where}.condition")
 
@@ -2334,12 +2552,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["token_multiplier"] = model.token_multiplier
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
+    if model.gain_multiplier is not None:
+        static["gain_multiplier"] = model.gain_multiplier
     if model.draw_multiplier is not None:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:
         static["except_first_in_draw_step"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
+    if model.tapped_permanent is not None:
+        static["tapped_permanent"] = dict(model.tapped_permanent)
+    if model.add_mana is not None:
+        static["add_mana"] = model.add_mana
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static
@@ -2365,6 +2589,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         value = getattr(model, field_name)
         if value:
             static[field_name] = list(value)
+    if model.from_colors_outside_commander_identity:
+        static["from_colors_outside_commander_identity"] = True
     if model.blockers is not None:
         static["blockers"] = dict(model.blockers)
     if model.require_all:

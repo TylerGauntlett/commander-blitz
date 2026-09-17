@@ -204,6 +204,13 @@ class GameObject:
     #: `_detach_all` and cleared by `attach`; a stale value is harmless because
     #: oids are never reused, so it can only ever match the object it named.
     last_attached_to: int | None = None
+    #: When this became attached to what it is attached to -- 613.7e gives an
+    #: Aura, Equipment or Fortification a **new timestamp** as it becomes
+    #: attached. Written by `primitives.attach` from `GameState.alloc_timestamp`,
+    #: and read by the Role rule (704.5y), which keeps the newest Role. Zero on
+    #: anything never attached; stale once detached, which is harmless because
+    #: nothing reads it for an object that is not attached.
+    attached_timestamp: int = 0
     #: **The player this Aura enchants** -- "Enchant opponent" (Overencumbered),
     #: "Enchant player" (Sleeper's Robe). 303.4a lets an Aura's enchant ability
     #: name a *player*, and 704.5n is the state-based action that follows: an
@@ -382,6 +389,13 @@ class GameObject:
     # -- identity flags, preserved across zone changes ------------------------
     is_token: bool = False
     is_commander: bool = False
+    #: Set on an **emblem** (114): the index into ``emblems`` of the card named
+    #: by ``def_id``, which is the card whose effect created it. An emblem is an
+    #: object in its owner's command zone with abilities and no other
+    #: characteristics; `GameState.card_of` returns that entry, so its triggers,
+    #: its name and its text reach every reader through the one funnel. Nothing
+    #: moves an emblem and nothing removes one, so this is never cleared.
+    emblem: int | None = None
 
     # -- stack state ----------------------------------------------------------
     #: Set while this object is a spell on the stack (its StackItem id).
@@ -579,6 +593,11 @@ class GameObject:
     #: kept on the card rather than on the player: the same turn's other spells
     #: are paid for normally.
     playable_any_type: bool = False
+    #: "…you may spend mana as though it were mana of any color to cast it" --
+    #: Elder Brain. `playable_any_type`'s narrower sibling (``{C}`` still wants
+    #: colourless mana), and kept beside it for the same reason: it rides on the
+    #: permission and expires with it.
+    playable_any_color: bool = False
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -871,6 +890,7 @@ class GameObject:
         self.playable_sorcery_only = False
         self.playable_group = None
         self.playable_any_type = False
+        self.playable_any_color = False
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
@@ -963,6 +983,8 @@ class GameObject:
             "skip_next_untap": self.skip_next_untap,
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
+            # Only on an emblem, so every other object's snapshot is unchanged.
+            **({"emblem": self.emblem} if self.emblem is not None else {}),
         }
 
 
@@ -979,6 +1001,13 @@ PLAYABLE_DURATIONS = (
     #: exile until it is cast -- and a start that is not now: the turn it was
     #: plotted on is the one turn it may *not* be cast.
     "later_turns",
+    #: Elder Brain: "You may play lands and cast spells from among the exiled
+    #: cards **for as long as they remain exiled**." No end and no delayed start.
+    #: Nothing expires it because nothing has to: leaving exile is a zone change,
+    #: and `reset_permanent_state` clears every `playable_*` field on the way
+    #: (400.7), which is exactly the moment the printed permission ends. The
+    #: loader refuses it anywhere the card is not in exile for that reason.
+    "while_exiled",
 )
 
 

@@ -172,9 +172,11 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         chosen = obj.cast_cost_option if obj is not None else None
         return chosen == int(cond["cost_option"])
     if "evoked" in cond:
-        # Only ever read on the battlefield -- "it's sacrificed when it
-        # enters" is an ETB trigger -- but written the same way as `kicked`
-        # so the two cannot drift.
+        # Read in both lifetimes. On the battlefield it is "it's sacrificed
+        # when it enters", an ETB trigger; on the stack it is "if the {1}{B}
+        # cost was paid", an `if` inside an instant's `spell_effects`. Both
+        # read the object, which `stack.resolve` writes *before* the effects
+        # run and again as the permanent lands -- `overloaded`'s shape.
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         was_evoked = obj is not None and obj.cast_evoked
         return was_evoked == bool(cond["evoked"])

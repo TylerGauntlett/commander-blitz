@@ -18,6 +18,7 @@ from automtg.engine.effects.values import (
 )
 from automtg.engine.enums import SUBTYPE_CLASS
 from automtg.engine.errors import DslError
+from automtg.engine.mana import ManaCost
 from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
@@ -119,6 +120,34 @@ def _refuse_seats_read_as_objects(model: CardModel, where: str) -> None:
             f"of objects, but it holds players -- name the seats with the "
             f"{{'binding': …}} player spec, and count them with a for_each_player over it"
         )
+
+
+def _validate_pay_x(effect: Mapping[str, Any], where: str) -> None:
+    """``may``'s ``x``: the ceiling on an announced X, and where X is bound.
+
+    Both halves are required. A missing ``max`` is "pay any amount", which is
+    join forces and not this; a missing ``as`` pays for X cards and draws none.
+    """
+    spec = effect["x"]
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}.x: must be an object with 'max' and 'as'")
+    if unknown := set(spec) - {"max", "as", "prompt"}:
+        raise DslError(f"{where}.x: unsupported keys {sorted(unknown)} (takes 'max', 'as', 'prompt')")
+    if "max" not in spec:
+        raise DslError(f"{where}.x.max: the printed ceiling on X is required")
+    validate_value(spec["max"], f"{where}.x.max")
+    if not (isinstance(spec.get("as"), str) and spec["as"]):
+        raise DslError(f"{where}.x.as: a binding name for the announced X is required")
+    if effect.get("repeat"):
+        # Each yes would announce and bind a new X over the last one, and no
+        # printed "repeat this process" pays an X.
+        raise DslError(f"{where}.x: an announced X cannot be combined with 'repeat'")
+    if effect["pay"].get("times") is not None:
+        raise DslError(f"{where}.x: an announced X cannot be combined with 'pay.times'")
+    if effect["pay"].get("mana_reduction") is not None:
+        # The ceiling is priced off the printed mana; a reduction would make the
+        # offered X and the charged X disagree.
+        raise DslError(f"{where}.x: an announced X cannot be combined with 'pay.mana_reduction'")
 
 
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
@@ -613,6 +642,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.pay: 'x_value' belongs to an activated ability's cost, "
                 f"not to an optional payment"
             )
+        x_symbols = ManaCost.parse(effect["pay"].get("mana")).x_count
+        if x_symbols and "x" not in effect:
+            # Nothing announces an X for an optional payment unless the effect
+            # says how, so `{X}` here would charge {0} and run the "if you do"
+            # branch for free -- the silent reading of Well of Lost Dreams.
+            raise DslError(
+                f"{where}.pay: an optional {{X}} payment needs 'x' -- its ceiling "
+                f"('max') and the binding the announced X is read back from ('as')"
+            )
+        if "x" in effect and not x_symbols:
+            raise DslError(f"{where}: 'x' announces the {{X}} of 'pay', and its mana has none")
+        if "x" in effect:
+            _validate_pay_x(effect, where)
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
             # nothing else, so a `times` beside a cost with no mana would load
@@ -621,6 +663,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(times, f"{where}.pay.times")
             if not effect["pay"].get("mana"):
                 raise DslError(f"{where}.pay: 'times' multiplies the mana cost, and there is none")
+    if "x" in effect and (op != "may" or "pay" not in effect):
+        # `may` without a `pay` has no {X} to announce, and every other op
+        # ignores the key -- the card would load and draw 0.
+        raise DslError(f"{where}: 'x' announces the {{X}} of a may's 'pay', not of {op!r}")
     if op == "win_game" and "condition" in effect:
         # "**If you rolled 6 exactly seven times**, you win the game" (Luck
         # Bobblehead). A top-level `condition` is read by `if` and by `may` and
@@ -654,6 +700,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.from_top: depth counts from 1 (1 is the top card); got {depth}"
             )
+    if "any_order" in effect:
+        # "…on the bottom of their library **in any order**" (Teferi's Puzzle
+        # Box, 401.4). Only `put_on_top` reads it; on another op it would load
+        # and leave the order to the pool, which is the misreading it exists to
+        # stop.
+        if op != "put_on_top":
+            raise DslError(
+                f"{where}: 'any_order' arranges cards put into a library, and only "
+                f"put_on_top reads it, not {op!r}"
+            )
+        if not isinstance(effect["any_order"], bool):
+            raise DslError(f"{where}: 'any_order' is true or false")
+        if effect["any_order"] and "from_top" in effect:
+            # An ordinal is one position in the library; several cards arranged
+            # "in any order" are a run of positions, and nothing printed says
+            # both.
+            raise DslError(f"{where}: 'any_order' cannot be combined with 'from_top'")
+        if effect["any_order"] and effect.get("owner_chooses"):
+            # "Its owner puts it on their choice of the top or bottom" is one
+            # card and one question per card; a run arranged together has to
+            # go to one end, so the two sentences cannot share an effect.
+            raise DslError(f"{where}: 'any_order' cannot be combined with 'owner_chooses'")
     if "cast_free" in effect and op != "look_at_top":
         # "…without paying its mana cost" is free, and every other op that could
         # plausibly be written with it (`exile`, `search_library`, `reveal`)
@@ -1090,6 +1158,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'playable_this_turn' needs 'objects' -- "
             f"there is nothing to grant permission on"
         )
+    if "any_color" in effect:
+        # "…you may spend mana as though it were mana of any color to cast it"
+        # is a rider on a "you may play it" permission and means nothing
+        # without one: written on a bare exile it would load, print its
+        # sentence and relax nothing. And it is a narrower sentence than
+        # `any_type` (``{C}`` still wants colourless mana), so the two together
+        # say two different things about one spell.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'any_color' relaxes the cast a 'playable' permission "
+                f"grants, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect.get("any_type"):
+            raise DslError(
+                f"{where}: 'any_color' and 'any_type' are different printed "
+                f"sentences -- write the one the card says"
+            )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
         # card written before durations existed says, and `playable:
@@ -1115,6 +1205,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown 'playable' duration {duration!r} "
                 f"(implemented: {sorted(PLAYABLE_DURATIONS)})"
             )
+        if duration == "while_exiled":
+            # "For as long as they remain exiled" ends when the card leaves
+            # exile, which is the zone-change reset -- so it is only the printed
+            # duration on a card that is *in* exile. On a graveyard or a hand
+            # card the same reset would read "for as long as it remains
+            # there", which is a different sentence and a silent one.
+            objects = effect.get("objects")
+            in_exile = (
+                op == "exile"
+                or (op == "look_at_top" and effect.get("destination") == "exile")
+                or (
+                    op == "grant_playable"
+                    and isinstance(objects, Mapping)
+                    and objects.get("zone") == "exile"
+                )
+            )
+            if not in_exile:
+                raise DslError(
+                    f"{where}: 'playable': \"while_exiled\" lasts while the card is in "
+                    f"exile, so it needs cards being exiled or already there "
+                    f"(exile, look_at_top to exile, grant_playable over zone exile)"
+                )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a
@@ -1235,6 +1347,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if "attached_to" in effect:
+        # "Create a Wicked Role token attached to it." Only `create_token` reads
+        # the key; on any other op it would load and attach nothing. That the
+        # token is an Aura is checked by `validate_token_references`, which is
+        # where token ids resolve.
+        if op != "create_token":
+            raise DslError(f"{where}: 'attached_to' is read only by create_token")
+        validate_selector(effect["attached_to"], f"{where}.attached_to")
     if op == "create_token" and "controller" in effect:
         # Whose tokens these are, as a full player spec -- `op_create_token`
         # loops `select_players` over it. Unchecked until gift needed to aim one
@@ -1828,6 +1948,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if op == "delayed_trigger":
         _validate_delayed_trigger(effect, where)
+
+    # "Target opponent gets an emblem" and "you get an emblem" differ by one
+    # player spec, and a default would silently pick one of them. Which emblem is
+    # checked against the card's own `emblems` by `_check_emblem_references`.
+    if op == "emblem":
+        if "player" not in effect:
+            raise DslError(f"{where}: emblem needs 'player' -- who gets it")
+        if "emblem" not in effect:
+            raise DslError(
+                f"{where}: emblem needs 'emblem' -- the index into the card's own 'emblems'"
+            )
 
     # A grant naming an ability the card does not have is a silent no-op: the
     # index defaults to 0 and every miss lands on the first grantable, or on

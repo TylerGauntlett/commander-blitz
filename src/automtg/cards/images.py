@@ -527,6 +527,13 @@ def resolve(card: CardDef, index: CardIndex) -> IndexEntry | None:
             hit = index.lookup(key, token=True)
             if hit is not None:
                 return hit
+        # A Role token is printed two to a card and stored under the joined
+        # pair ("Wicked // Cursed"), not as a token row and not as "Wicked
+        # Role", so neither its subtypes nor its name find it.
+        if "Role" in card.subtypes and card.name.endswith(" Role"):
+            hit = index.lookup(card.name.removesuffix(" Role"), joined=True)
+            if hit is not None:
+                return hit
         # A few "tokens" have real printings -- Treasure and Food, for instance.
         return index.lookup(token_key(card))
     # A double-faced card is one row in the catalog, under the joined name

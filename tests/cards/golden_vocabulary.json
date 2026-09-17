@@ -180,7 +180,10 @@
    "player"
   ],
   "PLAYER_WIDE_STATIC_EFFECTS": [
+   "add_mana_on_tap",
+   "black_mana_as_phyrexian",
    "cant_cast_spells",
+   "cant_gain_life",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",
@@ -192,6 +195,7 @@
    "play_lands_from_graveyard",
    "play_lands_from_library_top",
    "replace_draw",
+   "replace_life_gain",
    "replace_life_loss",
    "reveal_library_top",
    "skip_draw_step",
@@ -278,9 +282,11 @@
    "library"
   ],
   "STATIC_EFFECTS": [
+   "add_mana_on_tap",
    "add_subtype",
    "attack_tax",
    "attacks_if_able",
+   "black_mana_as_phyrexian",
    "block_restriction",
    "buff",
    "cant_attack",
@@ -289,6 +295,7 @@
    "cant_block",
    "cant_block_alone",
    "cant_cast_spells",
+   "cant_gain_life",
    "cast_from_graveyard",
    "cast_from_library_top",
    "crew_power_bonus",
@@ -307,6 +314,7 @@
    "prevent_damage",
    "protection",
    "replace_draw",
+   "replace_life_gain",
    "replace_life_loss",
    "replace_token_creation",
    "reveal_library_top",
@@ -379,6 +387,11 @@
    "types",
    "zone"
   ],
+  "TAPPED_PERMANENT_KEYS": [
+   "subtypes",
+   "supertypes",
+   "types"
+  ],
   "TOKEN_FILTER_KEYS": [
    "colors",
    "keywords",
@@ -390,7 +403,10 @@
    "types"
   ],
   "UNGRANTABLE_STATIC_EFFECTS": [
+   "add_mana_on_tap",
+   "black_mana_as_phyrexian",
    "cant_cast_spells",
+   "cant_gain_life",
    "cast_from_graveyard",
    "cast_from_library_top",
    "double_land_mana",
@@ -404,6 +420,7 @@
    "play_lands_from_graveyard",
    "play_lands_from_library_top",
    "replace_draw",
+   "replace_life_gain",
    "replace_life_loss",
    "replace_token_creation",
    "reveal_library_top",
@@ -509,6 +526,7 @@
   "detain",
   "discard",
   "draw",
+  "emblem",
   "encode",
   "exile",
   "exile_and_return",

@@ -1,0 +1,66 @@
+{
+  "_comment": "Cards that exist only for the life-gain replacement test (tests/unit/test_life_gain_replacement.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_archive` is Alhammarret's Archive's first line on its own. `t_turn_archive` adds an \"as long as it's your turn\" condition no printed doubler has, so the test can pin that the condition is actually read rather than stored. `t_opponent_archive` points the same replacement at the opponents, the half no printed card has and the only way to test `affects_player` here. `t_gain_spell` is the plain `gain_life` op; the lifelinking source is `t_lifelink_bear` from life_loss_replacement.cards.json.",
+  "cards": [
+    {
+      "id": "t_archive",
+      "name": "Test Archive",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would gain life, you gain twice that much life instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "you",
+          "gain_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "t_turn_archive",
+      "name": "Test Turn Archive",
+      "oracle_text": "If you would gain life during your turn, you gain twice that much life instead.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would gain life during your turn, you gain twice that much life instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "you",
+          "gain_multiplier": 2,
+          "condition": {"is_your_turn": true}
+        }
+      ]
+    },
+    {
+      "id": "t_opponent_archive",
+      "name": "Test Opponent Archive",
+      "oracle_text": "If an opponent would gain life, they gain twice that much life instead.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an opponent would gain life, they gain twice that much life instead.",
+          "effect": "replace_life_gain",
+          "affects_player": "opponent",
+          "gain_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "t_gain_spell",
+      "name": "Test Gain Spell",
+      "oracle_text": "You gain 3 life.",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {"op": "gain_life", "player": "you", "amount": {"const": 3}}
+      ]
+    }
+  ]
+}

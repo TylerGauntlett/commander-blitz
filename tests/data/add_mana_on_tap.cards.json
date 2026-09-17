@@ -1,0 +1,99 @@
+{
+  "_comment": "Shapes for tests/unit/test_add_mana_on_tap.py. t_crypt_ghast is Crypt Ghast's second line alone; t_turn_ghast gates it on is_your_turn so the condition is shown to be asked; t_vernal_bloom is the any-player spelling ('whenever a Forest is tapped for mana, its controller adds'); t_swamp_maker makes every land a Swamp, Urborg's half, so the static is shown to read current subtypes; t_black_four_drop costs {B}{B}{B}{B}, castable off two Swamps only with the extra mana.",
+  "cards": [
+    {
+      "id": "t_crypt_ghast",
+      "name": "Test Crypt Ghast",
+      "oracle_text": "Whenever you tap a Swamp for mana, add an additional {B}.",
+      "mana_cost": "{3}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Spirit"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a Swamp for mana, add an additional {B}.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {"subtypes": ["Swamp"]},
+          "add_mana": "{B}"
+        }
+      ]
+    },
+    {
+      "id": "t_turn_ghast",
+      "name": "Test Turn Ghast",
+      "oracle_text": "As long as it's your turn, whenever you tap a Swamp for mana, add an additional {B}.",
+      "mana_cost": "{3}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Spirit"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as it's your turn, whenever you tap a Swamp for mana, add an additional {B}.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {"subtypes": ["Swamp"]},
+          "add_mana": "{B}",
+          "condition": {"is_your_turn": true}
+        }
+      ]
+    },
+    {
+      "id": "t_vernal_bloom",
+      "name": "Test Vernal Bloom",
+      "oracle_text": "Whenever a Forest is tapped for mana, its controller adds an additional {G}.",
+      "mana_cost": "{3}{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever a Forest is tapped for mana, its controller adds an additional {G}.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "any",
+          "tapped_permanent": {"subtypes": ["Forest"]},
+          "add_mana": "{G}"
+        }
+      ]
+    },
+    {
+      "id": "t_swamp_maker",
+      "name": "Test Swamp Maker",
+      "oracle_text": "Each land is a Swamp in addition to its other land types.",
+      "mana_cost": "{2}{B}",
+      "types": ["Enchantment"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each land is a Swamp in addition to its other land types.",
+          "effect": "add_subtype",
+          "affects": {"controller": "any", "types": ["Land"]},
+          "subtypes": ["Swamp"]
+        }
+      ]
+    },
+    {
+      "id": "t_black_four_drop",
+      "name": "Test Black Four-Drop",
+      "oracle_text": "",
+      "mana_cost": "{B}{B}{B}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Horror"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["B"],
+      "color_identity": ["B"]
+    }
+  ]
+}

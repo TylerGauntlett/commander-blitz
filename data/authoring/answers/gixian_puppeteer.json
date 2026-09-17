@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "gixian_puppeteer",
+    "name": "Gixian Puppeteer",
+    "oracle_text": "Whenever you draw your second card each turn, each opponent loses 2 life and you gain 2 life.\nWhen this creature dies, return another target creature card with mana value 3 or less from your graveyard to the battlefield.",
+    "mana_cost": "{3}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Phyrexian", "Warlock"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you draw your second card each turn, each opponent loses 2 life and you gain 2 life.",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [
+          {"op": "lose_life", "player": "each_opponent", "amount": {"const": 2}},
+          {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this creature dies, return another target creature card with mana value 3 or less from your graveyard to the battlefield.",
+        "trigger": {"event": "dies", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "types": ["Creature"],
+              "mana_value": {"op": "<=", "value": {"const": 3}},
+              "exclude_self": true
+            },
+            "count": 1
+          }
+        ],
+        "effects": [
+          {"op": "put_onto_battlefield", "objects": {"target": "t1"}, "controller": "you"}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

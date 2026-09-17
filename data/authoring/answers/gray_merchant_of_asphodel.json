@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "gray_merchant_of_asphodel",
+    "name": "Gray Merchant of Asphodel",
+    "oracle_text": "When this creature enters, each opponent loses X life, where X is your devotion to black. You gain life equal to the life lost this way. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+    "mana_cost": "{3}{B}{B}",
+    "types": ["Creature"],
+    "subtypes": ["Zombie"],
+    "power": 2,
+    "toughness": 4,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, each opponent loses X life, where X is your devotion to black. You gain life equal to the life lost this way. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "lose_life",
+            "player": "each_opponent",
+            "amount": {"mana_symbols": {"of": "B", "objects": {"zone": "battlefield", "controller": "you"}}},
+            "as": "lost"
+          },
+          {
+            "op": "gain_life",
+            "player": "you",
+            "amount": {"binding": "lost"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 42, "1": 38}
+  }
+}

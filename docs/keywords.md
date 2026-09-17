@@ -240,7 +240,7 @@ This is the long tail, and where the build order comes from.
 | Exert | free | `attacks` trigger, `may`, then `skip_untap` and whatever the card does — cashed by `test_exert.py`. A card that guards it with "if this creature hasn't been exerted **this turn**" (Combat Celebrant) adds `set_turn_flag` inside the `may` and `{"not": {"has_turn_flag": "exerted"}}` as the intervening-if | `set_turn_flag` |
 | Exploit | free | `self_enters` trigger, `may`, then `sacrifice` and whatever the card does — cashed by `test_exploit_and_bloodrush.py` | — |
 | Explore | shipped | op — the branch reads the card just revealed, which no condition can name | `explore` |
-| Extort | free | `spell_cast` trigger, then `may` with `pay`, then `lose_life` on each opponent and `gain_life` | — |
+| Extort | free | `spell_cast` trigger, then `may` with `pay` `{W/B}`, then `lose_life` on each opponent with `as` and `gain_life` of that binding ("that much" is the loss after replacement) — written by the `extort` template (`templates.extort_ability`), cashed by `test_extort.py` | — |
 | Fabricate | free | `self_enters` trigger, then `choose_mode` between `add_counters` and `create_token` | — |
 | Fading | free | `upkeep` trigger with an `if` on `counters_on` — "if you can't" is an ordinary comparison, and the sacrifice is the `else` | — |
 | Fateseal | free | `scry` with `player` naming whose library and `chooser` naming who decides | — |

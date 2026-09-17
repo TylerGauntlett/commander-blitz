@@ -365,6 +365,19 @@ describe("the zone piles", () => {
     expect(pile?.querySelector(".pile__leaf--top")?.textContent).toBe("200");
   });
 
+  it("counts commanders in the command zone, not emblems", () => {
+    const emblem = card({
+      oid: 900,
+      name: "Ob Nixilis Reignited Emblem",
+      type_line: "Emblem",
+      zone: "command",
+    });
+    const { container } = renderOrb({ command: [commander(), emblem] });
+    const pile = container.querySelector('[data-testid="pile-0-command"]');
+    expect(pile?.querySelector(".pile__leaf--top")?.textContent).toBe("1");
+    expect(container.querySelector('[data-testid="commander-900"]')).toBeNull();
+  });
+
   it("draws as many leaves as the arithmetic says", () => {
     const { container } = renderOrb({ library_count: 37 });
     const pile = container.querySelector('[data-testid="pile-0-library"]');

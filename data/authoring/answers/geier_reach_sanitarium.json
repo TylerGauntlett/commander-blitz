@@ -1,0 +1,37 @@
+{
+  "card": {
+    "id": "geier_reach_sanitarium",
+    "name": "Geier Reach Sanitarium",
+    "oracle_text": "{T}: Add {C}.\n{2}, {T}: Each player draws a card, then discards a card.",
+    "mana_cost": "",
+    "supertypes": ["Legendary"],
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, {T}: Each player draws a card, then discards a card.",
+        "cost": {"mana": "{2}", "tap": true},
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": "each_player"},
+          {
+            "op": "for_each_player",
+            "players": "each_player",
+            "effects": [
+              {"op": "discard", "amount": {"const": 1}, "player": {"binding": "each_player"}}
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

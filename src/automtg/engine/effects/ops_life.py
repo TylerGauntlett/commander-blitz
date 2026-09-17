@@ -30,9 +30,26 @@ def op_gain_life(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("lose_life")
 def op_lose_life(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Each opponent loses X life. You gain life equal to the life lost this way."
+
+    ``as`` binds **the life actually lost**, summed over every player this one
+    op touched, as an int read back with ``{"binding": …}`` (Gray Merchant of
+    Asphodel, Malakir Bloodwitch, extort's "that much life"). Actually lost, not
+    asked for: `primitives.lose_life` returns the loss after replacements, so a
+    Bloodletter-doubled drain gains the doubled amount and a locked life total
+    gains nothing. Recomputing
+    ``amount`` in the gain would agree with the printed card only while nothing
+    replaces the loss, which is exactly when nobody checks.
+
+    The binding is written by this op alone and overwrites any earlier value of
+    the same name: "the life lost *this way*" is this sentence's loss.
+    """
     amount = evaluate_value(ctx, spec.get("amount", 1))
+    total = 0
     for pid in select_players(ctx, spec.get("player", "you")):
-        lose_life(ctx.state, pid, amount, source=ctx.source_oid)
+        total += lose_life(ctx.state, pid, amount, source=ctx.source_oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = total
 
 
 @register("add_poison")

@@ -1812,6 +1812,38 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "replace_life_gain",
+          "gain_multiplier": 2,
+          "kind": "static",
+          "text": "If you would gain life, you gain twice that much life instead."
+        },
+        {
+          "affects_player": "you",
+          "draw_multiplier": 2,
+          "effect": "replace_draw",
+          "except_first_in_draw_step": true,
+          "kind": "static",
+          "text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "alhammarret_s_archive",
+      "mana_cost": "{5}",
+      "name": "Alhammarret's Archive",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.\nIf you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -5988,6 +6020,69 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "evoke": "{1}{B}",
+      "evoke_label": "paying {1}{B}",
+      "id": "baleful_mastery",
+      "mana_cost": "{3}{B}",
+      "name": "Baleful Mastery",
+      "oracle_text": "You may pay {1}{B} rather than pay this spell's mana cost.\nIf the {1}{B} cost was paid, an opponent draws a card.\nExile target creature or planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "evoked": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "as": "drawer",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to draw a card"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "binding": "drawer"
+              }
+            }
+          ]
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -8828,6 +8923,52 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blood_pact",
+      "mana_cost": "{2}{B}",
+      "name": "Blood Pact",
+      "oracle_text": "Target player draws two cards and loses 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -8959,6 +9100,70 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "At the beginning of your upkeep, target player draws a card and loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodgift_demon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Bloodgift Demon",
+      "oracle_text": "Flying\nAt the beginning of your upkeep, target player draws a card and loses 1 life.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -12082,6 +12287,64 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ],
+                  "supertypes": [
+                    "Basic"
+                  ],
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{3}, {T}: Add {B} for each basic Swamp you control."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "cabal_stronghold",
+      "name": "Cabal Stronghold",
+      "oracle_text": "{T}: Add {C}.\n{3}, {T}: Add {B} for each basic Swamp you control.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -17600,6 +17863,103 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 3,
+          "text": "Equipped creature gets +3/+3 and has protection from each color that's not in your commander's color identity.",
+          "toughness": 3
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "protection",
+          "from_colors_outside_commander_identity": true,
+          "kind": "static",
+          "text": "Equipped creature gets +3/+3 and has protection from each color that's not in your commander's color identity."
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "is_commander": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip commander {3}"
+        },
+        {
+          "cost": {
+            "mana": "{5}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {5}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "commander_s_plate",
+      "mana_cost": "{1}",
+      "name": "Commander's Plate",
+      "oracle_text": "Equipped creature gets +3/+3 and has protection from each color that's not in your commander's color identity.\nEquip commander {3}\nEquip {5}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "as": "victim",
@@ -19532,6 +19892,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "as": "extorted",
+                  "op": "lose_life",
+                  "player": "each_opponent"
+                },
+                {
+                  "amount": {
+                    "binding": "extorted"
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{W/B}"
+              },
+              "prompt": "Extort: pay {W/B}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        },
+        {
+          "add_mana": "{B}",
+          "affects_player": "you",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "subtypes": [
+              "Swamp"
+            ]
+          },
+          "text": "Whenever you tap a Swamp for mana, add an additional {B}."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "crypt_ghast",
+      "mana_cost": "{3}{B}",
+      "name": "Crypt Ghast",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever you tap a Swamp for mana, add an additional {B}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -20577,6 +21006,52 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "damnable_pact",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Damnable Pact",
+      "oracle_text": "Target player draws X cards and loses X life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "dancing_scimitar",
@@ -20625,6 +21100,57 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dark_deal",
+      "mana_cost": "{2}{B}",
+      "name": "Dark Deal",
+      "oracle_text": "Each player discards all the cards in their hand, then draws that many cards minus one.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "pitched",
+          "op": "discard",
+          "player": "each_player",
+          "whole_hand": true
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "count": {
+                      "binding": "pitched",
+                      "controller": {
+                        "binding": "each_player"
+                      }
+                    }
+                  },
+                  {
+                    "const": 1
+                  }
+                ]
+              },
+              "op": "draw",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -21867,6 +22393,81 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "decanter_of_endless_water",
+      "mana_cost": "{3}",
+      "name": "Decanter of Endless Water",
+      "oracle_text": "You have no maximum hand size.\n{T}: Add one mana of any color.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -22113,6 +22714,75 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "defile",
+      "mana_cost": "{B}",
+      "name": "Defile",
+      "oracle_text": "Target creature gets -1/-1 until end of turn for each Swamp you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "times": [
+              {
+                "const": -1
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "toughness": {
+            "times": [
+              {
+                "const": -1
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -23365,6 +24035,49 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dismember",
+      "mana_cost": "{1}{B/P}{B/P}",
+      "name": "Dismember",
+      "oracle_text": "({B/P} can be paid with either {B} or 2 life.)\nTarget creature gets -5/-5 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -5
+          },
+          "toughness": {
+            "const": -5
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -23996,6 +24709,101 @@
         "Drake"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "You draw a card and you lose 1 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    },
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "op": "gain_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "This creature deals 2 damage to any target and you gain 2 life."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever a Swamp you control enters, choose one — • You draw a card and you lose 1 life. • This creature deals 2 damage to any target and you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Swamp"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dread_presence",
+      "mana_cost": "{3}{B}",
+      "name": "Dread Presence",
+      "oracle_text": "Whenever a Swamp you control enters, choose one —\n• You draw a card and you lose 1 life.\n• This creature deals 2 damage to any target and you gain 2 life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Nightmare"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -25423,6 +26231,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "any_color": true,
+              "as": "exiled",
+              "objects": {
+                "count": "all",
+                "player": {
+                  "binding": "defender"
+                },
+                "zone": "hand"
+              },
+              "op": "exile",
+              "playable": "while_exiled"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "exiled"
+                }
+              },
+              "op": "draw",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks a player, exile all cards from that player's hand, then they draw that many cards. You may play lands and cast spells from among the exiled cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any color to cast it",
+          "trigger": {
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "any"
+            },
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "elder_brain",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Elder Brain",
+      "oracle_text": "Menace\nWhenever this creature attacks a player, exile all cards from that player's hand, then they draw that many cards. You may play lands and cast spells from among the exiled cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -25495,6 +26366,62 @@
       "toughness": 9,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eldritch_pact",
+      "mana_cost": "{6}{B}",
+      "name": "Eldritch Pact",
+      "oracle_text": "Target player draws X cards and loses X life, where X is the number of cards in their graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "player": {
+                "target": "t1"
+              },
+              "zone": "graveyard"
+            }
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "count": {
+              "player": {
+                "target": "t1"
+              },
+              "zone": "graveyard"
+            }
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -27247,6 +28174,83 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "mana_symbols": {
+                "objects": {
+                  "controller": "you"
+                },
+                "of": "B"
+              }
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "As long as your devotion to black is less than five, Erebos isn't a creature. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+          "types": [
+            "Enchantment"
+          ]
+        },
+        {
+          "affects_player": "opponent",
+          "effect": "cant_gain_life",
+          "kind": "static",
+          "text": "Your opponents can't gain life."
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}",
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{B}, Pay 2 life: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "erebos_god_of_the_dead",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Erebos, God of the Dead",
+      "oracle_text": "Indestructible\nAs long as your devotion to black is less than five, Erebos isn't a creature. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)\nYour opponents can't gain life.\n{1}{B}, Pay 2 life: Draw a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -28756,6 +29760,49 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, this creature deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "fate_unraveler",
+      "mana_cost": "{3}{B}",
+      "name": "Fate Unraveler",
+      "oracle_text": "Whenever an opponent draws a card, this creature deals 1 damage to that player.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Hag"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -29132,6 +30179,69 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "feign_death",
+      "mana_cost": "{B}",
+      "name": "Feign Death",
+      "oracle_text": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "ability_index": 0,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -31701,6 +32811,39 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's draw step, that player draws two additional cards.",
+          "trigger": {
+            "controller": "any",
+            "event": "draw_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "font_of_mythos",
+      "mana_cost": "{4}",
+      "name": "Font of Mythos",
+      "oracle_text": "At the beginning of each player's draw step, that player draws two additional cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -34136,6 +35279,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Each player draws a card, then discards a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "geier_reach_sanitarium",
+      "mana_cost": "",
+      "name": "Geier Reach Sanitarium",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: Each player draws a card, then discards a card.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -35543,6 +36749,93 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw your second card each turn, each opponent loses 2 life and you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature dies, return another target creature card with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gixian_puppeteer",
+      "mana_cost": "{3}{B}",
+      "name": "Gixian Puppeteer",
+      "oracle_text": "Whenever you draw your second card each turn, each opponent loses 2 life and you gain 2 life.\nWhen this creature dies, return another target creature card with mana value 3 or less from your graveyard to the battlefield.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Warlock"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -38054,6 +39347,60 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_symbols": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "battlefield"
+                  },
+                  "of": "B"
+                }
+              },
+              "as": "lost",
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "binding": "lost"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, each opponent loses X life, where X is your devotion to black. You gain life equal to the life lost this way. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gray_merchant_of_asphodel",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Gray Merchant of Asphodel",
+      "oracle_text": "When this creature enters, each opponent loses X life, where X is your devotion to black. You gain life equal to the life lost this way. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -38508,6 +39855,41 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{B}",
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}, Pay 2 life: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "greed",
+      "mana_cost": "{3}{B}",
+      "name": "Greed",
+      "oracle_text": "{B}, Pay 2 life: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -43225,6 +44607,45 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's draw step, if this artifact is untapped, that player draws an additional card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "self_only": true,
+                "tapped": false
+              }
+            },
+            "controller": "any",
+            "event": "draw_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "howling_mine",
+      "mana_cost": "{2}",
+      "name": "Howling Mine",
+      "oracle_text": "At the beginning of each player's draw step, if this artifact is untapped, that player draws an additional card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -44829,6 +46250,50 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "infernal_grasp",
+      "mana_cost": "{1}{B}",
+      "name": "Infernal Grasp",
+      "oracle_text": "Destroy target creature. You lose 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -46412,6 +47877,34 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "colors": [
+              "B"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Black spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "jet_medallion",
+      "mana_cost": "{2}",
+      "name": "Jet Medallion",
+      "oracle_text": "Black spells you cast cost {1} less to cast.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -47290,6 +48783,68 @@
         "Crab"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "black_mana_as_phyrexian",
+          "kind": "static",
+          "text": "For each {B} in a cost, you may pay 2 life rather than pay that mana."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a black spell, put a +1/+1 counter on K'rrik.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "B"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "k_rrik_son_of_yawgmoth",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{4}{B/P}{B/P}{B/P}",
+      "name": "K'rrik, Son of Yawgmoth",
+      "oracle_text": "({B/P} can be paid with either {B} or 2 life.)\nLifelink\nFor each {B} in a cost, you may pay 2 life rather than pay that mana.\nWhenever you cast a black spell, put a +1/+1 counter on K'rrik.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Horror",
+        "Minion"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -54505,38 +56060,25 @@
         {
           "effects": [
             {
-              "effects": [
-                {
-                  "amount": {
-                    "count": {
-                      "controller": "you",
-                      "subtypes": [
-                        "Vampire"
-                      ],
-                      "zone": "battlefield"
-                    }
-                  },
-                  "op": "lose_life",
-                  "player": {
-                    "binding": "each_player"
-                  }
-                },
-                {
-                  "amount": {
-                    "count": {
-                      "controller": "you",
-                      "subtypes": [
-                        "Vampire"
-                      ],
-                      "zone": "battlefield"
-                    }
-                  },
-                  "op": "gain_life",
-                  "player": "you"
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Vampire"
+                  ],
+                  "zone": "battlefield"
                 }
-              ],
-              "op": "for_each_player",
-              "players": "each_opponent"
+              },
+              "as": "lost",
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "binding": "lost"
+              },
+              "op": "gain_life",
+              "player": "you"
             }
           ],
           "kind": "triggered",
@@ -56263,6 +57805,50 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each opponent draws a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "master_of_the_feast",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Master of the Feast",
+      "oracle_text": "Flying\nAt the beginning of your upkeep, each opponent draws a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -57047,6 +58633,54 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Each player draws a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mikokoro_center_of_the_sea",
+      "mana_cost": "",
+      "name": "Mikokoro, Center of the Sea",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: Each player draws a card.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -60083,6 +61717,67 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mutilate",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Mutilate",
+      "oracle_text": "All creatures get -1/-1 until end of turn for each Swamp you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "times": [
+              {
+                "const": -1
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "toughness": {
+            "times": [
+              {
+                "const": -1
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Swamp"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -62403,6 +64098,75 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            },
+            {
+              "attached_to": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "create_token",
+              "token": "wicked_role"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield tapped under its owner's control, then create a Wicked Role token attached to it.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "not_dead_after_all",
+      "mana_cost": "{B}",
+      "name": "Not Dead After All",
+      "oracle_text": "Until end of turn, target creature you control gains \"When this creature dies, return it to the battlefield tapped under its owner's control, then create a Wicked Role token attached to it.\" (Enchanted creature gets +1/+1. When this token is put into a graveyard, each opponent loses 1 life.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "ability": 0,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -62946,6 +64710,217 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: You draw a card and you lose 1 life."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target creature."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "emblem": 0,
+              "op": "emblem",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "−8: Target opponent gets an emblem with \"Whenever a player draws a card, you lose 2 life.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "emblems": [
+        {
+          "abilities": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "lose_life",
+                  "player": "you"
+                }
+              ],
+              "kind": "triggered",
+              "text": "Whenever a player draws a card, you lose 2 life.",
+              "trigger": {
+                "controller": "any",
+                "event": "draw"
+              }
+            }
+          ]
+        }
+      ],
+      "id": "ob_nixilis_reignited",
+      "loyalty": 5,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Ob Nixilis Reignited",
+      "oracle_text": "+1: You draw a card and you lose 1 life.\n−3: Destroy target creature.\n−8: Target opponent gets an emblem with \"Whenever a player draws a card, you lose 2 life.\"",
+      "source": "auto",
+      "subtypes": [
+        "Nixilis"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, Ob Nixilis deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw"
+          }
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": {
+                "controller_of": "victim"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Destroy target creature. Its controller draws two cards."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ob_nixilis_the_hate_twisted",
+      "loyalty": 5,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Ob Nixilis, the Hate-Twisted",
+      "oracle_text": "Whenever an opponent draws a card, Ob Nixilis deals 1 damage to that player.\n−2: Destroy target creature. Its controller draws two cards.",
+      "source": "auto",
+      "subtypes": [
+        "Nixilis"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -64792,6 +66767,63 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Put a charge counter on this artifact."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Each player draws a card for each charge counter on this artifact."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "otherworld_atlas",
+      "mana_cost": "{4}",
+      "name": "Otherworld Atlas",
+      "oracle_text": "{T}: Put a charge counter on this artifact.\n{T}: Each player draws a card for each charge counter on this artifact.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -66081,6 +68113,69 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "peer_into_the_abyss",
+      "mana_cost": "{4}{B}{B}{B}",
+      "name": "Peer into the Abyss",
+      "oracle_text": "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "half": {
+              "of": {
+                "count": {
+                  "player": {
+                    "target": "t1"
+                  },
+                  "zone": "library"
+                }
+              },
+              "round": "up"
+            }
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "half": {
+              "of": {
+                "life_of": {
+                  "target": "t1"
+                }
+              },
+              "round": "up"
+            }
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -69705,6 +71800,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          },
+          "text": "Psychosis Crawler's power and toughness are each equal to the number of cards in your hand.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "zone": "hand"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "psychosis_crawler",
+      "mana_cost": "{5}",
+      "name": "Psychosis Crawler",
+      "oracle_text": "Psychosis Crawler's power and toughness are each equal to the number of cards in your hand.\nWhenever you draw a card, each opponent loses 1 life.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Horror"
+      ],
+      "toughness": 0,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -71386,6 +73539,118 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 3,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "effects": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "op": "discard",
+                          "player": {
+                            "binding": "each_player"
+                          }
+                        }
+                      ],
+                      "op": "for_each_player",
+                      "players": "each_player"
+                    }
+                  ],
+                  "label": "Each player discards a card."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": "each_player"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "each_player"
+                    }
+                  ],
+                  "label": "Each player loses 1 life and draws a card."
+                },
+                {
+                  "effects": [
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "owner",
+                            "controller": {
+                              "binding": "each_player"
+                            },
+                            "count": 1,
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "battlefield"
+                          },
+                          "op": "sacrifice"
+                        }
+                      ],
+                      "op": "for_each_player",
+                      "players": "each_player"
+                    }
+                  ],
+                  "label": "Each player sacrifices a creature of their choice."
+                }
+              ],
+              "op": "choose_mode",
+              "up_to": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Rankle deals combat damage to a player, choose any number —\n• Each player discards a card.\n• Each player loses 1 life and draws a card.\n• Each player sacrifices a creature of their choice.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "rankle_master_of_pranks",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Rankle, Master of Pranks",
+      "oracle_text": "Flying, haste\nWhenever Rankle deals combat damage to a player, choose any number —\n• Each player discards a card.\n• Each player loses 1 life and draws a card.\n• Each player sacrifices a creature of their choice.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -77642,6 +79907,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each player draws a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, that player loses 1 life.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "scrawling_crawler",
+      "mana_cost": "{3}",
+      "name": "Scrawling Crawler",
+      "oracle_text": "At the beginning of your upkeep, each player draws a card.\nWhenever an opponent draws a card, that player loses 1 life.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Construct"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -78983,6 +81305,61 @@
         "Leviathan"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's upkeep, that player loses 2 life and draws two cards.",
+          "trigger": {
+            "controller": "any",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "seizan_perverter_of_truth",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Seizan, Perverter of Truth",
+      "oracle_text": "At the beginning of each player's upkeep, that player loses 2 life and draws two cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon",
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -80554,6 +82931,179 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sheoldred_s_edict",
+      "mana_cost": "{1}{B}",
+      "name": "Sheoldred's Edict",
+      "oracle_text": "Choose one —\n• Each opponent sacrifices a nontoken creature of their choice.\n• Each opponent sacrifices a creature token of their choice.\n• Each opponent sacrifices a planeswalker of their choice.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": {
+                          "binding": "each_player"
+                        },
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "is_token": false,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "for_each_player",
+                  "players": "each_opponent"
+                }
+              ],
+              "label": "Each opponent sacrifices a nontoken creature of their choice."
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": {
+                          "binding": "each_player"
+                        },
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "is_token": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "for_each_player",
+                  "players": "each_opponent"
+                }
+              ],
+              "label": "Each opponent sacrifices a creature token of their choice."
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": {
+                          "binding": "each_player"
+                        },
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "types": [
+                          "Planeswalker"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "for_each_player",
+                  "players": "each_opponent"
+                }
+              ],
+              "label": "Each opponent sacrifices a planeswalker of their choice."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, they lose 2 life.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sheoldred_the_apocalypse",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Sheoldred, the Apocalypse",
+      "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Praetor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -82135,6 +84685,52 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sign_in_blood",
+      "mana_cost": "{B}{B}",
+      "name": "Sign in Blood",
+      "oracle_text": "Target player draws two cards and loses 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -84765,6 +87361,59 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "alternative_cost": {
+        "condition": {
+          "exists": {
+            "controller": "you",
+            "subtypes": [
+              "Swamp"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        "pay_life": 4
+      },
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "snuff_out",
+      "mana_cost": "{3}{B}",
+      "name": "Snuff Out",
+      "oracle_text": "If you control a Swamp, you may pay 4 life rather than pay this spell's mana cost.\nDestroy target nonblack creature. It can't be regenerated.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "no_regeneration": true,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_colors": [
+              "B"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -92829,6 +95478,54 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "any_order": true,
+              "as": "tucked",
+              "bottom": true,
+              "objects": {
+                "count": "all",
+                "player": {
+                  "binding": "event_player"
+                },
+                "zone": "hand"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "tucked"
+                }
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's draw step, that player puts the cards in their hand on the bottom of their library in any order, then draws that many cards.",
+          "trigger": {
+            "controller": "any",
+            "event": "draw_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "teferi_s_puzzle_box",
+      "mana_cost": "{4}",
+      "name": "Teferi's Puzzle Box",
+      "oracle_text": "At the beginning of each player's draw step, that player puts the cards in their hand on the bottom of their library in any order, then draws that many cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -92894,6 +95591,36 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Each player draws a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "temple_bell",
+      "mana_cost": "{3}",
+      "name": "Temple Bell",
+      "oracle_text": "{T}: Each player draws a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -99067,6 +101794,106 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws a card, this enchantment deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "underworld_dreams",
+      "mana_cost": "{B}{B}{B}",
+      "name": "Underworld Dreams",
+      "oracle_text": "Whenever an opponent draws a card, this enchantment deals 1 damage to that player.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "undying_malice",
+      "mana_cost": "{B}",
+      "name": "Undying Malice",
+      "oracle_text": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "ability_index": 0,
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_ability"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -102148,6 +104975,86 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{B}",
+            "pay_life": 2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": -1
+              },
+              "toughness": {
+                "const": -1
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{B}, Pay 2 life: Target creature gets -1/-1 until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you lose life, draw that many cards. (Damage causes loss of life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "life_lost"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vilis_broker_of_blood",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{B}{B}",
+      "name": "Vilis, Broker of Blood",
+      "oracle_text": "Flying\n{B}, Pay 2 life: Target creature gets -1/-1 until end of turn.\nWhenever you lose life, draw that many cards. (Damage causes loss of life.)",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
@@ -105710,6 +108617,51 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "paid_x"
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{X}"
+              },
+              "x": {
+                "as": "paid_x",
+                "max": {
+                  "binding": "amount"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of life you gained. If you do, draw X cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "well_of_lost_dreams",
+      "mana_cost": "{4}",
+      "name": "Well of Lost Dreams",
+      "oracle_text": "Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of life you gained. If you do, draw X cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -107559,6 +110511,96 @@
         "Warlock"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, if you gained life this turn, each opponent sacrifices a creature of their choice and you return up to one target creature card from your graveyard to your hand.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "witch_of_the_moors",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Witch of the Moors",
+      "oracle_text": "Deathtouch\nAt the beginning of your end step, if you gained life this turn, each opponent sacrifices a creature of their choice and you return up to one target creature card from your graveyard to your hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

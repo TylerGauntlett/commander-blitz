@@ -71,6 +71,11 @@ RECORDING_OPS = frozenset(
         #: `mill`, so a `player: "each_player"` look binds every seat's cards
         #: rather than the last one's. See `ops_cards.op_look_at_top`.
         "look_at_top",
+        #: The one recorder whose binding is a plain **int**: the life actually
+        #: lost, after replacements, summed over every player the op hit --
+        #: "you gain life equal to the life lost this way" (Gray Merchant of
+        #: Asphodel) and extort's "that much life". See `ops_life.op_lose_life`.
+        "lose_life",
         #: The only recorder whose binding is a **set of seats**: `may` writes
         #: the players who said yes, read back with the `{"binding": …}` player
         #: spec. Snort's "each opponent who discarded their hand this way" is
@@ -88,6 +93,13 @@ RECORDING_OPS = frozenset(
         #: Kefka turns on that distinction: "each player who owns a spell you
         #: cast this way loses life equal to its mana value".
         "play_exiled",
+        #: The cards actually put into a library -- Teferi's Puzzle Box, "puts
+        #: the cards in their hand on the bottom of their library in any order,
+        #: then draws **that many** cards". Read after the tuck, the hand is
+        #: empty; the binding is the only place the number survives. What
+        #: arrived, not what was chosen: a commander redirected to the command
+        #: zone was not put there. See `ops_cards.op_put_on_top`.
+        "put_on_top",
         "reveal",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than

@@ -85,6 +85,25 @@ class TestTemplatesProduceCardsTheEngineAgreesWith:
         assert verdict.ok, str(verdict)
 
 
+class TestExtort:
+    """A bare "Extort" line becomes `templates.extort_ability`, behaviour pinned
+    in tests/unit/test_extort.py; here, that real printed cards translate and
+    pass all six gates."""
+
+    @pytest.mark.parametrize("card", ["Syndic of Tithes", "Basilica Guards", "Kingpin's Pet"])
+    def test_it_translates_and_verifies(self, index, hand_written, card):
+        result, verdict = run(index, hand_written, card)
+        assert result.ok, result.reason
+        assert "extort" in result.used
+        assert verdict.ok, str(verdict)
+
+    def test_the_ability_it_writes_is_the_shared_one(self, index, hand_written):
+        result, _ = run(index, hand_written, "Syndic of Tithes")
+        payload = result.model.model_dump(exclude_none=True)
+        (ability,) = [a for a in payload["abilities"] if a["kind"] == "triggered"]
+        assert ability["effects"] == T.extort_ability(ability["text"])["effects"]
+
+
 class TestItRefusesRatherThanGuessing:
     def test_a_card_with_one_untranslatable_line_produces_nothing(self, index, hand_written):
         """All or nothing.

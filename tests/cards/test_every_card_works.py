@@ -839,6 +839,11 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             continue
         obj = new_object(game.state, match.id, owner=_seat_for(game, spec), zone=Zone.BATTLEFIELD)
         obj.entered_turn = 0
+        # Commander's Plate's "Equip commander {3}" (702.6f) targets only a
+        # commander, and the sandbox has none. The flag is set only when the
+        # spec asks for it, so every other target stays an ordinary creature.
+        if spec.selector.get("is_commander"):
+            obj.is_commander = True
         game.state.battlefield.append(obj.oid)
     game.state.bump_chars()
 

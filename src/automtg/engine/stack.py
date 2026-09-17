@@ -697,6 +697,13 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # `spell_effects` would read None and every tier would resolve as none of
     # them.
     obj.cast_cost_option = item.cost_option
+    # And the evoke slot, for the same reason. It shipped for Mulldrifter, whose
+    # "it's sacrificed when it enters" reads the flag on the *permanent*, so the
+    # write after `spell_effects` below was enough -- until an instant paid for
+    # it. Baleful Mastery's "if the {1}{B} cost was paid, an opponent draws a
+    # card" is an `if` inside `spell_effects`, and written only afterwards the
+    # opponent never drew once: a strictly cheaper removal spell.
+    obj.cast_evoked = item.evoked
     # Gift (702.164a), for the same reason and at the same moment as the two
     # above: "if the gift wasn't promised, return that cardâ€¦" is an `if` inside
     # `spell_effects`, and a promise written onto the object afterwards would
@@ -719,6 +726,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         modes=item.modes,
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
+        source_def_id=card.id if card else "",
     )
     yield from execute(ctx, card.spell_effects)
     # "â€¦add this card's effects to that spell." After the host's own, in the
@@ -1051,6 +1059,7 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         modes=item.modes,
         modes_answered=item.modes_answered,
         source_name=card.name if card else item.description,
+        source_def_id=card.id if card else "",
     )
 
     # Intervening-if clauses are checked again on resolution (rule 603.4).

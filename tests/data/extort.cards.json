@@ -1,0 +1,61 @@
+{
+  "_comment": "Shapes for tests/unit/test_extort.py. t_extortioner carries exactly the ability templates.extort_ability builds, and the test pins that the two agree.",
+  "cards": [
+    {
+      "id": "t_extortioner",
+      "name": "Test Extortioner",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Extort: pay {W/B}?",
+              "pay": {
+                "mana": "{W/B}"
+              },
+              "effects": [
+                {
+                  "op": "lose_life",
+                  "player": "each_opponent",
+                  "amount": {
+                    "const": 1
+                  },
+                  "as": "extorted"
+                },
+                {
+                  "op": "gain_life",
+                  "player": "you",
+                  "amount": {
+                    "binding": "extorted"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

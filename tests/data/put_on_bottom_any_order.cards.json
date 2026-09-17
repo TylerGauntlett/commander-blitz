@@ -1,0 +1,45 @@
+{
+  "_comment": "Several cards tucked at once, ordered by their owner (401.4): the bottom, the top, and a pool order control.",
+  "cards": [
+    {
+      "id": "t_tuck_hand_bottom_ordered",
+      "name": "Test Ordered Bottom Tuck",
+      "oracle_text": "Put the cards in your hand on the bottom of your library in any order.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {"op": "put_on_top", "bottom": true, "any_order": true,
+         "objects": {"zone": "hand", "player": "you", "count": "all"}}
+      ]
+    },
+    {
+      "id": "t_tuck_hand_top_ordered",
+      "name": "Test Ordered Top Tuck",
+      "oracle_text": "Put the cards in your hand on top of your library in any order.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {"op": "put_on_top", "any_order": true,
+         "objects": {"zone": "hand", "player": "you", "count": "all"}}
+      ]
+    },
+    {
+      "id": "t_tuck_opponents_hand_bottom_ordered",
+      "name": "Test Ordered Tuck Of Their Hand",
+      "oracle_text": "Target opponent puts the cards in their hand on the bottom of their library in any order.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}],
+      "spell_effects": [
+        {"op": "put_on_top", "bottom": true, "any_order": true,
+         "objects": {"zone": "hand", "player": {"target": "t1"}, "count": "all"}}
+      ]
+    }
+  ]
+}

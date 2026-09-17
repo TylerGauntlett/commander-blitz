@@ -5972,13 +5972,13 @@
     },
     "Alhammarret's Archive": {
       "edhrec_rank": 981,
-      "gate": "template",
+      "gate": null,
       "name": "Alhammarret's Archive",
-      "reason": "no template for: If you would gain life, you gain twice that much life instead",
+      "reason": "",
       "scryfall_id": "95d65164-0ce3-40cd-a647-7e7f355a5afb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Alhammarret, High Arbiter": {
       "edhrec_rank": 19596,
@@ -19292,13 +19292,13 @@
     },
     "Baleful Mastery": {
       "edhrec_rank": 1360,
-      "gate": "template",
+      "gate": null,
       "name": "Baleful Mastery",
-      "reason": "no template for: You may pay {1}{B} rather than pay this spell's mana cost",
+      "reason": "",
       "scryfall_id": "579e20e7-1395-4a6c-a836-ae3419fc8808",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Baleful Stare": {
       "edhrec_rank": 24572,
@@ -27972,13 +27972,13 @@
     },
     "Blood Pact": {
       "edhrec_rank": 3364,
-      "gate": "template",
+      "gate": null,
       "name": "Blood Pact",
-      "reason": "no template for: Target player draws two cards and loses 2 life",
+      "reason": "",
       "scryfall_id": "ee769671-655b-40d6-a6d8-bf8c901df17f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Blood Pet": {
       "edhrec_rank": 2670,
@@ -28522,13 +28522,13 @@
     },
     "Bloodgift Demon": {
       "edhrec_rank": 3524,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodgift Demon",
-      "reason": "no template for: At the beginning of your upkeep, target player draws a card and loses 1 life",
+      "reason": "",
       "scryfall_id": "04151a78-eb5a-4cb2-aa1f-e4835f3124c1",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Bloodhall Ooze": {
       "edhrec_rank": 21173,
@@ -37142,13 +37142,13 @@
     },
     "Cabal Stronghold": {
       "edhrec_rank": 971,
-      "gate": "template",
+      "gate": null,
       "name": "Cabal Stronghold",
-      "reason": "proxy simplified it: mana scales with 'basic Swamp you control'; implemented as one",
+      "reason": "",
       "scryfall_id": "0bda51ef-ee3e-48d4-92e2-c9083bbe0f80",
-      "source": "",
-      "status": "unexpressible",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Cabal Surgeon": {
       "edhrec_rank": 29615,
@@ -50492,13 +50492,13 @@
     },
     "Commander's Plate": {
       "edhrec_rank": 491,
-      "gate": "template",
+      "gate": null,
       "name": "Commander's Plate",
-      "reason": "no template for: Equipped creature gets +3/+3 and has protection from each color that's not in your command",
+      "reason": "",
       "scryfall_id": "228abefc-9f64-4d64-ad58-41b0201eb82e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Commanding Presence": {
       "edhrec_rank": 16341,
@@ -57022,13 +57022,13 @@
     },
     "Crypt Ghast": {
       "edhrec_rank": 526,
-      "gate": "template",
+      "gate": null,
       "name": "Crypt Ghast",
-      "reason": "no template for: Extort",
+      "reason": "",
       "scryfall_id": "8f98d41c-f7c7-4bbe-a691-d024d1a4b48f",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Crypt Incursion": {
       "edhrec_rank": 4412,
@@ -59842,13 +59842,13 @@
     },
     "Damnable Pact": {
       "edhrec_rank": 3112,
-      "gate": "template",
+      "gate": null,
       "name": "Damnable Pact",
-      "reason": "no template for: Target player draws X cards and loses X life",
+      "reason": "",
       "scryfall_id": "17fa6dc2-5a2e-4758-9ca4-e020eb032d74",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Damnation": {
       "edhrec_rank": 376,
@@ -60542,13 +60542,13 @@
     },
     "Dark Deal": {
       "edhrec_rank": 1453,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Deal",
-      "reason": "no template for: Each player discards all the cards in their hand, then draws that many cards minus one",
+      "reason": "",
       "scryfall_id": "d6f0fcd5-232f-4e99-8cfc-ea0fe9c915a6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dark Deed": {
       "edhrec_rank": 19756,
@@ -63782,13 +63782,13 @@
     },
     "Decanter of Endless Water": {
       "edhrec_rank": 308,
-      "gate": "template",
+      "gate": null,
       "name": "Decanter of Endless Water",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "e8be8435-8fb4-47d2-8e7c-0350f354ddbd",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Decaying Soil": {
       "edhrec_rank": 24721,
@@ -64942,13 +64942,13 @@
     },
     "Defile": {
       "edhrec_rank": 984,
-      "gate": "template",
+      "gate": null,
       "name": "Defile",
-      "reason": "no template for: Target creature gets -1/-1 until end of turn for each Swamp you control",
+      "reason": "",
       "scryfall_id": "17810fef-8186-421b-bb55-83396d5caf34",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Defiled Crypt // Cadaver Lab": {
       "edhrec_rank": 5630,
@@ -69562,13 +69562,13 @@
     },
     "Dismember": {
       "edhrec_rank": 931,
-      "gate": "template",
+      "gate": null,
       "name": "Dismember",
-      "reason": "no template for: Target creature gets -5/-5 until end of turn",
+      "reason": "",
       "scryfall_id": "94c131d2-6b55-456c-a30d-e5ffb6d5efd7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dismiss into Dream": {
       "edhrec_rank": 11447,
@@ -73892,13 +73892,13 @@
     },
     "Dread Presence": {
       "edhrec_rank": 2538,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Presence",
-      "reason": "no template for: Whenever a Swamp you control enters, choose one —",
+      "reason": "",
       "scryfall_id": "b98f8d65-e326-42a1-97e3-630416595eeb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dread Reaper": {
       "edhrec_rank": 31003,
@@ -79562,13 +79562,13 @@
     },
     "Elder Brain": {
       "edhrec_rank": 3807,
-      "gate": "template",
+      "gate": null,
       "name": "Elder Brain",
-      "reason": "no template for: Whenever this creature attacks a player, exile all cards from that player's hand, then the",
+      "reason": "",
       "scryfall_id": "14e49d20-170a-4b6a-ac82-d3ceaab226ea",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Elder Cathar": {
       "edhrec_rank": 24865,
@@ -79882,13 +79882,13 @@
     },
     "Eldritch Pact": {
       "edhrec_rank": 11078,
-      "gate": "template",
+      "gate": null,
       "name": "Eldritch Pact",
-      "reason": "no template for: Target player draws X cards and loses X life, where X is the number of cards in their grav",
+      "reason": "",
       "scryfall_id": "281a741f-288c-4f19-b200-cacef57674e9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Electric Eel": {
       "edhrec_rank": 31447,
@@ -84822,13 +84822,13 @@
     },
     "Erebos, God of the Dead": {
       "edhrec_rank": 2932,
-      "gate": "template",
+      "gate": null,
       "name": "Erebos, God of the Dead",
-      "reason": "no template for: As long as your devotion to black is less than five, Erebos isn't a creature",
+      "reason": "",
       "scryfall_id": "ac8bdb4c-2d68-4cb4-904f-1649427751dc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Erestor of the Council": {
       "edhrec_rank": 11338,
@@ -91212,13 +91212,13 @@
     },
     "Fate Unraveler": {
       "edhrec_rank": 1696,
-      "gate": "template",
+      "gate": null,
       "name": "Fate Unraveler",
-      "reason": "no template for: Whenever an opponent draws a card, this creature deals 1 damage to that player",
+      "reason": "",
       "scryfall_id": "30250c4d-2c16-4d03-874e-aec39d8e72a9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Fate of the Sun-Cryst": {
       "edhrec_rank": 14604,
@@ -92282,13 +92282,13 @@
     },
     "Feign Death": {
       "edhrec_rank": 1493,
-      "gate": "template",
+      "gate": null,
       "name": "Feign Death",
-      "reason": "no template for: Until end of turn, target creature gains \"When this creature dies, return it to the battle",
+      "reason": "",
       "scryfall_id": "36c959c3-dd37-46ca-850f-f423955effe3",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Feint": {
       "edhrec_rank": 28714,
@@ -98892,13 +98892,13 @@
     },
     "Font of Mythos": {
       "edhrec_rank": 2193,
-      "gate": "template",
+      "gate": null,
       "name": "Font of Mythos",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws two additional cards",
+      "reason": "",
       "scryfall_id": "1aa882aa-3ad2-4b3a-bc14-5dfa47528941",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Font of Progress": {
       "edhrec_rank": 21747,
@@ -105412,13 +105412,13 @@
     },
     "Geier Reach Sanitarium": {
       "edhrec_rank": 436,
-      "gate": "template",
+      "gate": null,
       "name": "Geier Reach Sanitarium",
-      "reason": "no template for: {2}, {T}: Each player draws a card, then discards a card",
+      "reason": "",
       "scryfall_id": "4b9c92f0-4242-4a3e-9ede-6a4935f5c75d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Geist Snatch": {
       "edhrec_rank": 23712,
@@ -109092,13 +109092,13 @@
     },
     "Gixian Puppeteer": {
       "edhrec_rank": 4097,
-      "gate": "template",
+      "gate": null,
       "name": "Gixian Puppeteer",
-      "reason": "no template for: Whenever you draw your second card each turn, each opponent loses 2 life and you gain 2 li",
+      "reason": "",
       "scryfall_id": "2cc86e18-ffbc-4c5f-a694-922332b146cc",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gixian Skullflayer": {
       "edhrec_rank": 18929,
@@ -116072,13 +116072,13 @@
     },
     "Gray Merchant of Asphodel": {
       "edhrec_rank": 244,
-      "gate": "template",
+      "gate": null,
       "name": "Gray Merchant of Asphodel",
-      "reason": "no template for: When this creature enters, each opponent loses X life, where X is your devotion to black. ",
+      "reason": "",
       "scryfall_id": "aabe12dc-59b7-4245-8369-9bfc6304cda8",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Gray Ogre": {
       "edhrec_rank": 30575,
@@ -116592,13 +116592,13 @@
     },
     "Greed": {
       "edhrec_rank": 2121,
-      "gate": "template",
+      "gate": null,
       "name": "Greed",
-      "reason": "no template for: {B}, Pay 2 life: Draw a card",
+      "reason": "",
       "scryfall_id": "86ee3699-7fbb-4662-ba36-a1a7e19d161d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Greed's Gambit": {
       "edhrec_rank": 14170,
@@ -129842,13 +129842,13 @@
     },
     "Howling Mine": {
       "edhrec_rank": 723,
-      "gate": "template",
+      "gate": null,
       "name": "Howling Mine",
-      "reason": "no template for: At the beginning of each player's draw step, if this artifact is untapped, that player dra",
+      "reason": "",
       "scryfall_id": "5abb0ef7-8ca2-4115-9441-4163943f1cfb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Howling Moon": {
       "edhrec_rank": 5881,
@@ -135172,13 +135172,13 @@
     },
     "Infernal Grasp": {
       "edhrec_rank": 261,
-      "gate": "template",
+      "gate": null,
       "name": "Infernal Grasp",
-      "reason": "no template for: Destroy target creature. You lose 2 life",
+      "reason": "",
       "scryfall_id": "f67b323d-0dda-45f8-84b7-d883ce5045a8",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Infernal Harvest": {
       "edhrec_rank": 29045,
@@ -141772,13 +141772,13 @@
     },
     "Jet Medallion": {
       "edhrec_rank": 273,
-      "gate": "template",
+      "gate": null,
       "name": "Jet Medallion",
-      "reason": "no template for: Black spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "29b25772-8512-4270-851b-289cd182d819",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Jet's Brainwashing": {
       "edhrec_rank": 13310,
@@ -143742,13 +143742,13 @@
     },
     "K'rrik, Son of Yawgmoth": {
       "edhrec_rank": 1070,
-      "gate": "template",
+      "gate": null,
       "name": "K'rrik, Son of Yawgmoth",
-      "reason": "no template for: For each {B} in a cost, you may pay 2 life rather than pay that mana",
+      "reason": "",
       "scryfall_id": "45393005-78c7-4056-9ce6-310264922af3",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "K'un-Lun Warrior": {
       "edhrec_rank": 25272,
@@ -167882,13 +167882,13 @@
     },
     "Master of the Feast": {
       "edhrec_rank": 4543,
-      "gate": "template",
+      "gate": null,
       "name": "Master of the Feast",
-      "reason": "no template for: At the beginning of your upkeep, each opponent draws a card",
+      "reason": "",
       "scryfall_id": "2ff21a18-d655-4f2b-80db-baada1213fd7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Master of the Hunt": {
       "edhrec_rank": 29228,
@@ -171842,13 +171842,13 @@
     },
     "Mikokoro, Center of the Sea": {
       "edhrec_rank": 1164,
-      "gate": "template",
+      "gate": null,
       "name": "Mikokoro, Center of the Sea",
-      "reason": "no template for: {2}, {T}: Each player draws a card",
+      "reason": "",
       "scryfall_id": "d80eb098-5433-4b1e-aad5-0fd31bf598dd",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Mila, Crafty Companion // Lukka, Wayward Bonder": {
       "edhrec_rank": 9093,
@@ -180042,13 +180042,13 @@
     },
     "Mutilate": {
       "edhrec_rank": 2366,
-      "gate": "template",
+      "gate": null,
       "name": "Mutilate",
-      "reason": "no template for: All creatures get -1/-1 until end of turn for each Swamp you control",
+      "reason": "",
       "scryfall_id": "a0a4ffd3-f116-4e9a-b46a-b92402ab2afb",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Mutinous Massacre": {
       "edhrec_rank": 7036,
@@ -187352,13 +187352,13 @@
     },
     "Not Dead After All": {
       "edhrec_rank": 1099,
-      "gate": "template",
+      "gate": null,
       "name": "Not Dead After All",
-      "reason": "no template for: Until end of turn, target creature you control gains \"When this creature dies, return it t",
+      "reason": "",
       "scryfall_id": "d01a2b68-efe6-4027-846d-db7b19d9eef6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Not Forgotten": {
       "edhrec_rank": 17676,
@@ -188822,13 +188822,13 @@
     },
     "Ob Nixilis Reignited": {
       "edhrec_rank": 4266,
-      "gate": "template",
+      "gate": null,
       "name": "Ob Nixilis Reignited",
-      "reason": "no template for: +1: You draw a card and you lose 1 life",
+      "reason": "",
       "scryfall_id": "5af237ad-9294-47f5-a338-f9ca4fce3e70",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ob Nixilis Reignited Emblem": {
       "edhrec_rank": null,
@@ -188912,13 +188912,13 @@
     },
     "Ob Nixilis, the Hate-Twisted": {
       "edhrec_rank": 4048,
-      "gate": "template",
+      "gate": null,
       "name": "Ob Nixilis, the Hate-Twisted",
-      "reason": "no template for: Whenever an opponent draws a card, Ob Nixilis deals 1 damage to that player",
+      "reason": "",
       "scryfall_id": "e7400da3-22f2-4238-8e8a-969794790209",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Obeka, Brute Chronologist": {
       "edhrec_rank": 7643,
@@ -193822,13 +193822,13 @@
     },
     "Otherworld Atlas": {
       "edhrec_rank": 7019,
-      "gate": "template",
+      "gate": null,
       "name": "Otherworld Atlas",
-      "reason": "no template for: {T}: Put a charge counter on this artifact",
+      "reason": "",
       "scryfall_id": "46e4aa67-4643-42ff-8172-200498686494",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Otherworldly Escort": {
       "edhrec_rank": 19485,
@@ -197762,13 +197762,13 @@
     },
     "Peer into the Abyss": {
       "edhrec_rank": 1264,
-      "gate": "template",
+      "gate": null,
       "name": "Peer into the Abyss",
-      "reason": "no template for: Target player draws cards equal to half the number of cards in their library and loses hal",
+      "reason": "",
       "scryfall_id": "a0f24135-69fb-41fc-9835-dc441fd60cf5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Peerless Recycling": {
       "edhrec_rank": 2677,
@@ -207852,13 +207852,13 @@
     },
     "Psychosis Crawler": {
       "edhrec_rank": 442,
-      "gate": "template",
+      "gate": null,
       "name": "Psychosis Crawler",
-      "reason": "no template for: 's power and toughness are each equal to the number of cards in your hand",
+      "reason": "",
       "scryfall_id": "8fa39403-6de1-4b05-bc95-e24a89b7fdf7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Psychotic Episode": {
       "edhrec_rank": 16545,
@@ -213612,13 +213612,13 @@
     },
     "Rankle, Master of Pranks": {
       "edhrec_rank": 1357,
-      "gate": "template",
+      "gate": null,
       "name": "Rankle, Master of Pranks",
-      "reason": "no template for: Whenever Rankle deals combat damage to a player, choose any number —",
+      "reason": "",
       "scryfall_id": "4821d865-2a46-4611-ab93-1a9fdde08302",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Ransack": {
       "edhrec_rank": 28946,
@@ -234722,13 +234722,13 @@
     },
     "Scrawling Crawler": {
       "edhrec_rank": 619,
-      "gate": "template",
+      "gate": null,
       "name": "Scrawling Crawler",
-      "reason": "no template for: At the beginning of your upkeep, each player draws a card",
+      "reason": "",
       "scryfall_id": "aca0a5b7-fbb3-48fb-bc0a-b03b10329178",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Scream Puff": {
       "edhrec_rank": 15128,
@@ -237442,13 +237442,13 @@
     },
     "Seizan, Perverter of Truth": {
       "edhrec_rank": 3594,
-      "gate": "template",
+      "gate": null,
       "name": "Seizan, Perverter of Truth",
-      "reason": "no template for: At the beginning of each player's upkeep, that player loses 2 life and draws two cards",
+      "reason": "",
       "scryfall_id": "880e5fd1-2090-4dc1-ac78-537303531f89",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Seize Opportunity": {
       "edhrec_rank": 11626,
@@ -241802,13 +241802,13 @@
     },
     "Sheoldred's Edict": {
       "edhrec_rank": 1150,
-      "gate": "template",
+      "gate": null,
       "name": "Sheoldred's Edict",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "dca66a1b-0acd-4b79-b5fe-16f2930f9c1b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sheoldred's Headcleaver": {
       "edhrec_rank": 14345,
@@ -241842,13 +241842,13 @@
     },
     "Sheoldred, the Apocalypse": {
       "edhrec_rank": 458,
-      "gate": "template",
+      "gate": null,
       "name": "Sheoldred, the Apocalypse",
-      "reason": "no template for: Whenever you draw a card, you gain 2 life",
+      "reason": "",
       "scryfall_id": "c68629ff-72b3-40a2-b578-cddb6ddb4ccf",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Shepherd of Heroes": {
       "edhrec_rank": 21375,
@@ -245012,13 +245012,13 @@
     },
     "Sign in Blood": {
       "edhrec_rank": 231,
-      "gate": "template",
+      "gate": null,
       "name": "Sign in Blood",
-      "reason": "no template for: Target player draws two cards and loses 2 life",
+      "reason": "",
       "scryfall_id": "b89d9372-8682-4a61-a003-8bccfbb6cbb4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Signal Pest": {
       "edhrec_rank": 6190,
@@ -251832,13 +251832,13 @@
     },
     "Snuff Out": {
       "edhrec_rank": 729,
-      "gate": "template",
+      "gate": null,
       "name": "Snuff Out",
-      "reason": "no template for: If you control a Swamp, you may pay 4 life rather than pay this spell's mana cost",
+      "reason": "",
       "scryfall_id": "a3b1fc65-3620-4052-a1f8-1779d95029c7",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "So Shiny": {
       "edhrec_rank": 25830,
@@ -274332,13 +274332,13 @@
     },
     "Teferi's Puzzle Box": {
       "edhrec_rank": 1922,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi's Puzzle Box",
-      "reason": "no template for: At the beginning of each player's draw step, that player puts the cards in their hand on t",
+      "reason": "",
       "scryfall_id": "6a7c98eb-3b75-43c3-843c-25fb93c1b8af",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Teferi's Realm": {
       "edhrec_rank": 22966,
@@ -275102,13 +275102,13 @@
     },
     "Temple Bell": {
       "edhrec_rank": 1928,
-      "gate": "template",
+      "gate": null,
       "name": "Temple Bell",
-      "reason": "no template for: {T}: Each player draws a card",
+      "reason": "",
       "scryfall_id": "d520799b-b099-4d57-b7de-c32869b57362",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Temple Elder": {
       "edhrec_rank": 31605,
@@ -295092,13 +295092,13 @@
     },
     "Underworld Dreams": {
       "edhrec_rank": 1424,
-      "gate": "template",
+      "gate": null,
       "name": "Underworld Dreams",
-      "reason": "no template for: Whenever an opponent draws a card, this enchantment deals 1 damage to that player",
+      "reason": "",
       "scryfall_id": "a549b913-556a-4aeb-899e-438ff6874f56",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Underworld Fires": {
       "edhrec_rank": 23447,
@@ -295192,13 +295192,13 @@
     },
     "Undying Malice": {
       "edhrec_rank": 1337,
-      "gate": "template",
+      "gate": null,
       "name": "Undying Malice",
-      "reason": "no template for: Until end of turn, target creature gains \"When this creature dies, return it to the battle",
+      "reason": "",
       "scryfall_id": "97b3cf11-e352-4ee1-8c03-13898f576ef9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Undying Rage": {
       "edhrec_rank": 17139,
@@ -302342,13 +302342,13 @@
     },
     "Vilis, Broker of Blood": {
       "edhrec_rank": 1110,
-      "gate": "template",
+      "gate": null,
       "name": "Vilis, Broker of Blood",
-      "reason": "no template for: {B}, Pay 2 life: Target creature gets -1/-1 until end of turn",
+      "reason": "",
       "scryfall_id": "d68ce39b-0847-4132-b3b5-8bc25f2e7be9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Village Bell-Ringer": {
       "edhrec_rank": 3611,
@@ -310832,13 +310832,13 @@
     },
     "Well of Lost Dreams": {
       "edhrec_rank": 1125,
-      "gate": "template",
+      "gate": null,
       "name": "Well of Lost Dreams",
-      "reason": "no template for: Whenever you gain life, you may pay {X}, where X is less than or equal to the amount of li",
+      "reason": "",
       "scryfall_id": "aa00103a-6b87-416a-869a-557702844200",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Well-Laid Plans": {
       "edhrec_rank": 22938,
@@ -314682,13 +314682,13 @@
     },
     "Witch of the Moors": {
       "edhrec_rank": 2574,
-      "gate": "template",
+      "gate": null,
       "name": "Witch of the Moors",
-      "reason": "no template for: At the beginning of your end step, if you gained life this turn, each opponent sacrifices ",
+      "reason": "",
       "scryfall_id": "d9367aa0-2da2-4ed5-b52a-c52e40a00adf",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Witch's Cauldron": {
       "edhrec_rank": 10297,

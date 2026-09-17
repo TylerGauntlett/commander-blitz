@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "sheoldred_the_apocalypse",
+    "name": "Sheoldred, the Apocalypse",
+    "oracle_text": "Deathtouch\nWhenever you draw a card, you gain 2 life.\nWhenever an opponent draws a card, they lose 2 life.",
+    "mana_cost": "{2}{B}{B}",
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Phyrexian", "Praetor"],
+    "power": 4,
+    "toughness": 5,
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "keywords": ["deathtouch"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever you draw a card, you gain 2 life.",
+        "trigger": {"event": "draw", "controller": "you"},
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent draws a card, they lose 2 life.",
+        "trigger": {"event": "draw", "controller": "opponent"},
+        "effects": [
+          {"op": "lose_life", "player": {"binding": "event_player"}, "amount": {"const": 2}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 40, "1": 40}
+  }
+}

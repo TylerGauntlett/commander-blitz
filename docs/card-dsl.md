@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-117 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+118 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -248,6 +248,38 @@ exile with extra steps. Three details are only ever visible when they are wrong:
   key can read a library's order, so it is pinned in
   `tests/unit/test_library_depth.py` rather than by the authoring gate.
 
+`any_order: true` is "…puts the cards in their hand on the bottom of their
+library **in any order**" (Teferi's Puzzle Box). Rule 401.4 lets the **owner**
+arrange several cards put into one end of a library at once; without the flag
+they go in pool order, which for a hand is the order it was held in and which
+nobody chose.
+
+```jsonc
+{ "op": "put_on_top", "bottom": true, "any_order": true,
+  "objects": { "zone": "hand", "player": { "binding": "event_player" }, "count": "all" } }
+```
+
+The owner is asked one card at a time (`ask_objects` with a count of one,
+purpose `library_order`) until one card is left, and each answer is the next card
+**put** there: on the bottom the last card chosen is the bottom card, on top it is
+the top card. One card asks nothing. Each owner orders only their own cards.
+Refused beside `from_top` (an ordinal is one position, not a run) and beside
+`owner_chooses` (a per-card choice of end), and on any other op.
+
+`as` on `put_on_top` binds **the cards that arrived in a library** -- the rest of
+the Box's sentence, "then draws **that many** cards":
+
+```jsonc
+{ "op": "put_on_top", "bottom": true, "any_order": true, "as": "tucked",
+  "objects": { "zone": "hand", "player": { "binding": "event_player" }, "count": "all" } },
+{ "op": "draw", "player": { "binding": "event_player" },
+  "amount": { "count": { "binding": "tucked" } } }
+```
+
+`cards_in_hand` is the near miss and reads 0 once the hand has gone under. What
+arrived rather than what was chosen, so a commander sent to the command zone
+instead is not counted; written even when nothing moved.
+
 The loader refuses `from_top` on any other op: `draw` and friends read `amount`
 and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
@@ -256,7 +288,7 @@ it, but a card that needed correcting was authored wrong.
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
-| Players | `become_monarch` `win_game` `no_maximum_hand_size` |
+| Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` `extra_turn` |
@@ -604,7 +636,7 @@ in the pool is unchanged.
 The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
 `reveal`, `exile`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
 `join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
-`may` and `draw`. **No other op does**, and an `as` on one
+`may`, `draw` and `lose_life`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
 read of it would be 0, and the card's second sentence would silently do nothing.
 
@@ -1039,6 +1071,7 @@ Anywhere a number is expected:
     { "controller": "you", "subtypes": ["Human"], "exclude_self": true } }
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
+{ "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
@@ -1059,7 +1092,25 @@ Anywhere a number is expected:
               "parity": "even" } }              //    ("odd" is the other half)
 { "rolled": { "binding": "roll", "face": 6 } }  // …how many came up 6
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
+{ "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
 ```
+
+`half` is the one division in the language, and it takes its rounding direction
+as a **required** key: 107.1a makes the card say which way a fraction goes, and
+both directions are printed (Peer into the Abyss rounds up, Heartless
+Hidetsugu rounds down), so a default would be wrong for half the cards that use
+it. Peer into the Abyss is two of them, each read as its own instruction runs:
+
+```jsonc
+{ "op": "draw", "player": { "target": "t1" },
+  "amount": { "half": { "of": { "count": { "zone": "library", "player": { "target": "t1" } } },
+                        "round": "up" } } },
+{ "op": "lose_life", "player": { "target": "t1" },
+  "amount": { "half": { "of": { "life_of": { "target": "t1" } }, "round": "up" } } }
+```
+
+Not a static magnitude (`static_value_keys` does not list it); no static prints a
+halving.
 
 `power_had` and `toughness_had` take no argument: they are always "the creature
 this trigger is about", the only object the death event snapshotted. `power_of
@@ -2563,6 +2614,8 @@ Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` �
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
+[`replace_life_gain`](#if-you-would-gain-life-you-gain-twice-that-much-life-instead) ·
+[`cant_gain_life`](#your-opponents-cant-gain-life) ·
 [`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
@@ -3088,6 +3141,99 @@ Two doublers **multiply**: each replacement applies once (614.5), so a loss
 doubled twice is quadrupled. 616.1 lets the affected player order two applicable
 replacements and this engine does not ask — for a product the order cannot show.
 
+## "You gain life equal to the life lost this way"
+
+```jsonc
+// Gray Merchant of Asphodel
+{ "kind": "triggered",
+  "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [
+    { "op": "lose_life", "player": "each_opponent", "as": "lost",
+      "amount": { "mana_symbols": { "of": "B",
+                  "objects": { "zone": "battlefield", "controller": "you" } } } },
+    { "op": "gain_life", "player": "you", "amount": { "binding": "lost" } } ] }
+```
+
+`lose_life`'s `as` binds **the life actually lost**, summed over every player the
+one op hit, as a plain int read back with `{"binding": …}`. Actually lost is the
+point: `primitives.lose_life` returns the loss after the replacement above, so a
+doubled drain gains the doubled amount, and a player whose life total can't
+change (`lock_life_total`) lost nothing and pays nothing back. Recomputing the
+`amount` inside the `gain_life` is the near miss — right exactly while nothing
+replaces the loss. Malakir Bloodwitch was written that way and now uses the
+binding. Extort's "you gain that much life" is the same read.
+
+The binding is this op's loss alone: a second `lose_life` with the same `as`
+overwrites it rather than adding to it.
+
+### Extort
+
+Extort (702.101) is this read inside a `may`, and is written by the template
+tier on every bare "Extort" line (`templates.extort_ability`):
+
+```jsonc
+{ "kind": "triggered", "text": "Extort (Whenever you cast a spell, …)",
+  "trigger": { "event": "spell_cast", "controller": "you" },
+  "effects": [
+    { "op": "may", "prompt": "Extort: pay {W/B}?", "pay": { "mana": "{W/B}" },
+      "effects": [
+        { "op": "lose_life", "player": "each_opponent", "amount": { "const": 1 }, "as": "extorted" },
+        { "op": "gain_life", "player": "you", "amount": { "binding": "extorted" } } ] } ] }
+```
+
+Any spell you cast triggers it, creature spells included. `{W/B}` is hybrid, so
+either colour pays, and a player who can pay neither is not asked. Each instance
+triggers separately (702.101b). "Gain that much life" is not the opponent count:
+under a loss doubler it is double. "Other creatures you control have extort"
+(Pontiff of Blight) is a granted keyword the engine does not model and stays a
+gap.
+## "If you would gain life, you gain twice that much life instead"
+
+```jsonc
+// Alhammarret's Archive, Boon Reflection, Rhox Faithmender
+{ "kind": "static",
+  "text": "If you would gain life, you gain twice that much life instead.",
+  "effect": "replace_life_gain",
+  "affects_player": "you",
+  "gain_multiplier": 2 }
+```
+
+The mirror of `replace_life_loss`, read by `primitives.gain_life` — the **one**
+place a life total goes up, which the `gain_life` op and lifelink (702.15b) both
+reach. So a lifelinking creature under an Archive gains twice the damage it
+dealt, and the damage itself is not doubled.
+
+`LIFE_GAINED` carries the **replaced** amount, and `gain_life` returns it: a
+"whenever you gain life, put that many +1/+1 counters" trigger reads 6 off a
+doubled gain of 3, agreeing with the life total. It is not a `you_gain_life`
+trigger that gains again — that is a second gain on the stack, a second event
+every life-gain trigger pays out on, and a loop.
+
+`gain_multiplier` is required and must be **2 or more**: 1 replaces a gain with
+itself, and 0 is "you gain no life", which is a different sentence. Two doublers
+multiply (614.5). A locked life total (118.5) stays locked — twice nothing is
+nothing.
+
+## "Your opponents can't gain life"
+
+```jsonc
+// Erebos, God of the Dead
+{ "kind": "static",
+  "text": "Your opponents can't gain life.",
+  "effect": "cant_gain_life",
+  "affects_player": "opponent" }
+```
+
+A prohibition on players, read by `primitives.gain_life` — the one place a
+life total goes up, so the `gain_life` op and lifelink are both stopped. A
+forbidden gain fires **no** `LIFE_GAINED`, so "whenever you gain life" does not
+trigger and the turn's life-gained tally does not move. It is asked before
+`replace_life_gain`: an Archive cannot double a forbidden gain into a permitted
+one (101.2). It lifts the moment its source leaves the battlefield; that is
+the difference from `lock_life_total`, a one-shot op with a duration that also
+forbids losing life. Takes `affects_player` and an optional `condition` and
+nothing else.
+
 ## "If you would draw a card, draw two cards instead"
 
 ```jsonc
@@ -3141,6 +3287,35 @@ every player-wide static; `affects` and `amount` are refused, and
 `draw_multiplier`/`except_first_in_draw_step` are refused on any other effect.
 A replacement that does something *other* than draw more ("exile the top card of
 your library instead") is not this static.
+
+## Role tokens — "create a Wicked Role token attached to it"
+
+Not Dead After All. `create_token`'s `attached_to` is a selector naming the
+permanent an **Aura token** is created attached to:
+
+```jsonc
+{"op": "create_token", "token": "wicked_role",
+ "attached_to": {"zone": "battlefield", "self_only": true}}
+```
+
+Not `create_token` followed by `attach`. The two differ exactly when the host has
+left the battlefield: a Role that would be created attached to a permanent that
+is gone **is not created**, whereas a created-then-attached token arrives on
+nothing, is put into the graveyard by 704.5m and — for a Wicked Role — drains
+every opponent on the way. The loader refuses `attached_to` on any other op, and
+on a token that is not an Aura.
+
+`wicked_role` is in `tokens.cards.json`: an Enchantment — Aura Role token with
+"Enchanted creature gets +1/+1" and a `dies` trigger (a permanent put into a
+graveyard from the battlefield) that makes each opponent lose 1 life.
+
+The **Role rule** (303.7a, 704.5y) is a state-based action and needs nothing on
+the card: if a permanent has two or more Roles controlled by the same player
+attached, all but the one attached most recently are put into their owners'
+graveyards. "Most recently" is `GameObject.attached_timestamp`, stamped by every
+`attach` (613.7e), so a Role moved onto a permanent is newer than one created
+there earlier. Being put into the graveyard is not destruction, so a Wicked Role
+replaced this way still drains.
 
 ## Making a token that is already attacking
 
@@ -3340,8 +3515,36 @@ teaching the solver about life is also what keeps the rest honest: `{2}{U/P}`
 paid the life way is still a `{2}` that a tax raises and a cost reduction
 shrinks, which is precisely what an `alternative_cost` could never express.
 
-Phyrexian pips in an **activated ability's** cost are not offered as lines and so
-must be paid with mana. No shipped card prints one; see `docs/rules-coverage.md`.
+Every **other** cost -- an activated ability, a mana ability tapped by hand, a
+special action (suspend, foretell, turning a morph face up), "unless its
+controller pays" -- has no lines, so the choice is asked while paying:
+`costs.pay` finds the fewest pips that must be bought for the rest to be
+payable and the most the life total can buy (`costs.life_for_mana_range`), and
+asks how many (`CHOOSE_MODE`, "Pay 2 life for 1 mana symbol") only when those
+differ. `can_pay` and `can_pay_mana` offer the cost when any number in that
+range leaves a payable remainder, and an `{X}` ceiling is measured with every
+buyable pip bought (`costs.most_life_for_mana`). The cast line alone passes
+`pay(..., life_for_mana=False)`, because `Action.phyrexian` already answered.
+
+### `black_mana_as_phyrexian` — K'rrik's "For each {B} in a cost"
+
+```jsonc
+{ "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
+```
+
+K'rrik, Son of Yawgmoth: *"For each {B} in a cost, you may pay 2 life rather than
+pay that mana."* A player-wide static, and the whole mechanism is
+`ManaCost.black_as_phyrexian`: while it reaches the payer, each `{B}` in a cost
+they pay is read as a `{B/P}`, so the Phyrexian machinery above does the rest --
+cast lines for a spell, the asked choice for everything else.
+
+The rulings fix the edges, and each is a test in
+`tests/unit/test_black_mana_as_phyrexian.py`: every cost the player pays counts
+(spells, activations, special actions); a hybrid pip that *may* be paid with
+black (`{B/R}`, `{2/B}`) gains the life half too; generic mana never does; and the
+cost itself does not change -- mana value, colour and chroma read the same.
+When bought pips must be picked, a single-symbol pip goes first
+(`paying_phyrexian`), since anything that pays `{B}` also pays `{B/R}`.
 
 ### Restricted mana
 
@@ -3489,7 +3692,12 @@ graveyard that refills as you empty it, that is the loop, not a rounding error.
   "playable": "your_next_end_step" }                                // Haste Magic
 { "op": "exile", "objects": { ... },
   "playable": "end_of_your_next_turn" }                             // Light Up the Stage
+{ "op": "exile", "objects": { ... },
+  "playable": "while_exiled" }                                      // Elder Brain
 ```
+
+The values are `PLAYABLE_DURATIONS` in `engine/objects.py`, listed for workers as
+`playable_durations` in the packet reference.
 
 `playable_this_turn` is the impulse-draw permission and was the only one there
 was: a `playable_turn` on the object, compared against `state.turn` in seven
@@ -3519,6 +3727,19 @@ turn as well as the seat.
 Every reader goes through `GameObject.playable_live(turn)`. Generalising meant
 replacing all seven `playable_turn == state.turn` comparisons rather than adding
 an eighth, since that comparison *is* the this-turn duration.
+
+**`while_exiled`** is Elder Brain's "for as long as they remain exiled": live
+from the moment it is granted, and never expired by a hook. Leaving exile is a
+zone change, and `reset_permanent_state` clears every `playable_*` field on the
+way (400.7), which is exactly where the printed permission ends. For that reason
+the loader accepts it only where the card is in exile -- `exile`, `look_at_top`
+with `destination: "exile"`, or `grant_playable` over `zone: "exile"` -- since on
+a graveyard card the same reset would read "while it remains in the graveyard".
+
+The land half ("you may **play lands** … from among the exiled cards") walks
+every seat's exile, as the cast half always did: an opponent's card exiled by
+your effect sits in *their* exile. A land played that way enters under the
+control of the player who played it (110.2).
 
 ## Adding an op
 
@@ -3818,7 +4039,7 @@ ignored whose turn it is looks identical on every board you would think to try.
 
 ## Player-wide statics
 
-Fourteen static effects describe the *player* rather than a characteristic, so
+Seventeen static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -3836,10 +4057,15 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
+{ "kind": "static", "effect": "add_mana_on_tap", "affects_player": "you",
+  "tapped_permanent": { "subtypes": ["Swamp"] }, "add_mana": "{B}" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
+{ "kind": "static", "effect": "replace_life_gain", "affects_player": "you", "gain_multiplier": 2 }
+{ "kind": "static", "effect": "cant_gain_life", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
+{ "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 ```
 
 `skip_draw_step` is Necropotence's first line, and the whole of its design is
@@ -3870,6 +4096,23 @@ nothing may stop to ask. Both are read at `costs.activate_mana_ability` instead.
 mana — a spell offered on doubled mana and then paid for on single mana would
 strand the payment mid-cast, which is why both go through one `mana_produced`
 helper.
+
+`add_mana_on_tap` is Crypt Ghast's "Whenever you tap a Swamp for mana, add an
+additional {B}." It is a triggered mana ability (605.1b), which resolves at once
+and never uses the stack (605.4a), so it is read at the mana choke point beside
+`double_land_mana` rather than written as a `triggered` ability. It has to be
+read in the same places too: `costs._sources_of` (so legality offers the spell
+the extra mana pays for), `costs.activate_mana_ability` (so the mana really
+arrives) and legality's chip label. `tapped_permanent` takes only `types`,
+`subtypes` and `supertypes`, matched against the tapped permanent's **current**
+characteristics, so a land Urborg made a Swamp counts. `add_mana` is the fixed
+mana added. `affects_player` names whose taps count: `"you"` for "whenever you
+tap", `"any"` for Vernal Bloom's "whenever a Forest is tapped for mana, its
+controller adds". The mana always goes to the player who tapped. Each static
+adds its mana separately, tagged with its own source. Only abilities with {T}
+in their cost count (106.12). The loader requires both keys and refuses
+`affects` and `amount`. "Enchanted land" (Wild Growth) and "one mana of any
+color" riders are not expressible yet.
 
 `freeze_opponent_lands` sets a **one-shot** `skip_next_untap`, cleared by the
 untap step it skips. That is deliberately not the `frozen_by` lock used by
@@ -4056,6 +4299,30 @@ A cost the player cannot afford is not offered at all, rather than asked and
 then failed. The full `Cost` shape is accepted, not just mana, and it is
 validated at load time through the same model an ability's cost uses, so a
 misspelled key is a load error rather than a cost silently dropped.
+
+### "You may pay {X}, where X is less than or equal to…"
+
+`x` announces the `{X}` of the `pay` as the ability resolves. `max` is the
+printed ceiling, a value expression; `as` binds the X that was paid:
+
+```jsonc
+// Well of Lost Dreams: whenever you gain life, you may pay {X}, where X is less
+//                      than or equal to the amount of life you gained.
+//                      If you do, draw X cards.
+{ "op": "may", "pay": { "mana": "{X}" },
+  "x": { "max": { "binding": "amount" }, "as": "paid_x" },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "binding": "paid_x" } } ] }
+```
+
+After the yes, the player is asked `choose_x` (the decision a spell's X uses)
+from 0 up to the **smaller** of `max` and what they can pay, and exactly that X is
+charged. `pay.times` is the near miss: it scales a cost by a number the card
+computes, so it could only charge X equal to the life gained, never less.
+
+`{X}` in an optional `pay` without `x` is refused (nothing would announce X, so
+it would charge {0}), as is `x` without an `{X}`, without `max` or `as`, on any
+op but a `may` with a `pay`, and beside `repeat`, `pay.times` or
+`pay.mana_reduction`.
 
 ### "…unless that player pays {1}"
 
@@ -4812,6 +5079,51 @@ skipped turn takes no turn number and fires `turn_skipped` instead of
 Not yet sayable: "at the beginning of **that turn's** end step" (Final Fortune) —
 a delayed trigger scoped to the extra turn an effect created. `delay`'s clock is
 still the turn it was created in.
+
+## Emblems — "Target opponent gets an emblem with …"
+
+Ob Nixilis Reignited, −8. The quoted abilities go under the card's `emblems`, one
+entry per emblem, and the `emblem` op gives one to a player by index:
+
+```jsonc
+{"kind": "activated",
+ "text": "−8: Target opponent gets an emblem with \"Whenever a player draws a card, you lose 2 life.\"",
+ "cost": {"loyalty": -8},
+ "targets": [{"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}],
+ "effects": [{"op": "emblem", "player": {"target": "t1"}, "emblem": 0}]}
+// …and at card level:
+"emblems": [
+  {"abilities": [
+    {"kind": "triggered",
+     "text": "Whenever a player draws a card, you lose 2 life.",
+     "trigger": {"event": "draw", "controller": "any"},
+     "effects": [{"op": "lose_life", "player": "you", "amount": {"const": 2}}]}]}]
+```
+
+An emblem (114) is an object in the command zone of the player who **gets** it,
+with abilities and no other characteristics, and nothing removes it. So:
+
+- **"You" on the emblem is its owner**, not the planeswalker's controller. That
+  is the whole of Ob Nixilis's ultimate, and it is why `delayed_trigger` — whose
+  "you" is the ability's controller, and which has a duration — cannot stand in.
+- **`player` is required.** Most emblems go to "you"; Ob Nixilis Reignited's,
+  Garruk, Apex Predator's and Chandra, Awakened Inferno's go to opponents, and a
+  default would read fine and hand the drawback to the wrong seat.
+- **Do not write `active_zones`.** The loader puts every emblem ability in the
+  command zone, and refuses any other zone.
+- **The source may be gone.** An ultimate usually spends the last loyalty; the op
+  reads the card the ability was activated from, not the board.
+- **Triggered abilities only, so far.** An emblem static ("Creatures you control
+  get +1/+1") or activated ability ("Tap an untapped artifact you control: This
+  emblem deals 1 damage…") is refused at load time: the static walks and the
+  activation offer do not look at the command zone, so either would load and do
+  nothing. The loader also refuses an emblem no `emblem` op gives, an index past
+  the end, an empty emblem, and `source: "self"` on an emblem trigger (nothing
+  ever happens *to* an emblem).
+
+The emblem shows up in `player_view`'s `command` list as its own card — name
+"<card> Emblem", type line `Emblem`, the quoted text — and the log records an
+`emblem_created` event.
 
 ## Granting an ability for as long as the permanent lasts
 
@@ -8032,6 +8344,27 @@ is read only while that permission is live (`playable_turn == state.turn`).
 Not on the player and not on the turn: the caster's other spells that turn are
 paid for normally, which is what the printed "**that** spell" says.
 
+### `any_color`
+
+```jsonc
+{ "op": "exile", "as": "exiled",
+  "objects": { "zone": "hand", "player": { "binding": "defender" }, "count": "all" },
+  "playable": "while_exiled", "any_color": true }                   // Elder Brain
+```
+
+"…you may spend mana as though it were mana of any **color** to cast it" is the
+narrower sibling, and it is its own sentence rather than `any_type` because
+``{C}`` is not a colour: mana spent as though it had a colour is still not
+colourless mana, so a `{C}` symbol still wants colourless mana. The other edge
+goes the generous way -- colourless mana *may* be spent as though it had a
+colour (the Mycosynth Lattice ruling), so a Sol Ring pays `{B}{B}`.
+`ManaCost.as_any_color` therefore folds every `{W}`-`{G}` symbol and each hybrid
+or Phyrexian pip still owed as mana into **one** generic apiece, and keeps `{C}`.
+
+Legal on `exile` and `look_at_top` beside `playable`, and on `grant_playable`;
+refused without a permission to ride on, and refused beside `any_type`. Written
+as `GameObject.playable_any_color`, cleared with the permission.
+
 Both sides read it — `legality._cast_variant` prices the line with the colours
 already waived, and `Game._cast` waives them again before paying — so a line
 that was offered is a line that can be paid. Getting only one of them is the
@@ -9430,6 +9763,27 @@ let you target your own protected creature.
 A `protection` static that names no quality is rejected at load time; it would
 load, look implemented, and protect from nothing.
 
+**Protection from the colours outside your commander's identity.** Commander's
+Plate — "Equipped creature gets +3/+3 and has protection from each color that's
+not in your commander's color identity" — names a colour set no printed list can,
+so it is a flag in place of `from_colors`:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "attached": true },
+  "from_colors_outside_commander_identity": true }
+```
+
+`protection_from` computes it each time it is read: `W U B R G` minus the printed
+`color_identity` of every commander of the **static's controller** — "your" is
+whoever controls the Plate, so it follows the Equipment when it changes hands and
+does not move when the equipped creature does. Partners are a union; the
+commander's zone does not matter, because identity is printed (903.4). A player
+with no commander, or a colourless one, gets protection from all five. The flag
+counts as the static's quality, is refused beside `from_colors` (it is already the
+whole colour set) and on any effect but `protection`. The +3/+3 is an ordinary
+`buff` static on `{"attached": true}`, and "Equip commander {3}" is an equip line
+whose target selector adds `"is_commander": true`.
+
 ### Absorb, which is not protection with a number
 
 ```jsonc
@@ -10744,6 +11098,37 @@ saying, in the action list and on screen, that it is not evoke.
 "It's sacrificed when it enters" is an ordinary `self_enters` trigger gated on
 `{"evoked": true}`, which works because the flag is written onto the object at
 resolution and outlives the spell — see the note under Kicker.
+
+**An unnamed alternative cost on an instant or sorcery** is the same slot.
+Baleful Mastery prints no keyword — "You may pay {1}{B} rather than pay this
+spell's mana cost. If the {1}{B} cost was paid, an opponent draws a card." — and
+that is `evoke` under a label that says what is being paid, with the rider as an
+`if` inside `spell_effects`:
+
+```jsonc
+"mana_cost": "{3}{B}",
+"evoke": "{1}{B}", "evoke_label": "paying {1}{B}",
+"spell_effects": [
+  { "op": "if", "condition": { "evoked": true },
+    "then": [
+      { "op": "choose_player", "players": "each_opponent", "as": "drawer",
+        "prompt": "Choose an opponent to draw a card" },
+      { "op": "draw", "player": { "binding": "drawer" }, "amount": { "const": 1 } } ] },
+  { "op": "exile", "objects": { "target": "t1" } } ]
+```
+
+The flag is written onto the object **before** `spell_effects` run as well as
+after, the moment `cast_overloaded` and `cast_cost_option` are written; written
+only afterwards, as it was while every reader was an enters trigger, the `if`
+read `False` on every instant and the card was a two-mana exile with no drawback.
+A copy of the spell carries the flag (707.10 copies alternative costs paid), so
+a copied Mastery cast for `{1}{B}` hands out a second card. `alternative_cost` is
+the wrong field for this: it records no flag at all, and it refuses an
+unconditional mana-only price precisely because that is `evoke`.
+
+"An opponent draws" is `choose_player`, not `"each_opponent"` and not
+`"opponent"` — at a pod the caster names one seat as the spell resolves, and a
+two-player game is asked nothing.
 
 **Emerge** is the third alternative cost and the only one whose price is not
 fixed: it is reduced by the mana value of the creature sacrificed, so legality

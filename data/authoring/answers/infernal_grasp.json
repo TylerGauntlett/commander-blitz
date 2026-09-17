@@ -1,0 +1,24 @@
+{
+  "card": {
+    "id": "infernal_grasp",
+    "name": "Infernal Grasp",
+    "oracle_text": "Destroy target creature. You lose 2 life.",
+    "mana_cost": "{1}{B}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {"zone": "battlefield", "types": ["Creature"]},
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {"op": "destroy", "objects": {"target": "t1"}},
+      {"op": "lose_life", "player": "you", "amount": {"const": 2}}
+    ]
+  },
+  "expectation": {"zone": "graveyard", "life": {"0": 38, "1": 40}}
+}

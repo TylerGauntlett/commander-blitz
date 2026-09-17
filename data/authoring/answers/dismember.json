@@ -1,0 +1,28 @@
+{
+  "card": {
+    "id": "dismember",
+    "name": "Dismember",
+    "oracle_text": "({B/P} can be paid with either {B} or 2 life.)\nTarget creature gets -5/-5 until end of turn.",
+    "mana_cost": "{1}{B/P}{B/P}",
+    "types": ["Instant"],
+    "colors": ["B"],
+    "color_identity": ["B"],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "selector": {"zone": "battlefield", "types": ["Creature"]},
+        "count": 1
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "pump",
+        "objects": {"target": "t1"},
+        "power": {"const": -5},
+        "toughness": {"const": -5}
+      }
+    ]
+  },
+  "expectation": {"zone": "graveyard"}
+}

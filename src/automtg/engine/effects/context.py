@@ -50,6 +50,13 @@ class EffectContext:
     loop_value: Any = None
     #: Card id of the source, for log messages.
     source_name: str = ""
+    #: The id of the card the resolving spell or ability was put on the stack
+    #: from -- `StackItem.def_id`, snapshotted then. Read where an effect needs
+    #: something written on its own card after the source may have gone: a
+    #: planeswalker's ultimate usually takes its last loyalty, so by the time
+    #: "you get an emblem" resolves the planeswalker is in a graveyard or, as a
+    #: token copy, nowhere.
+    source_def_id: str = ""
     #: How many times this ability has resolved this turn, *counting this one*.
     #: Set by ``stack.resolve_top``; 0 for a spell, which has no ability index
     #: and cannot ask.  Carried here rather than looked up from the ledger

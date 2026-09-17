@@ -13,7 +13,9 @@ from typing import TYPE_CHECKING, Any
 from . import sagas
 from .characteristics import (
     chars,
+    life_gain_multiplier,
     life_loss_multiplier,
+    player_cant_gain_life,
     player_protected_from,
     printed_token_matches,
     token_creation_replacements,
@@ -123,6 +125,28 @@ def shuffle_library(state: GameState, pid: int) -> None:
 # ----------------------------------------------------------------------
 
 
+def give_emblem(state: GameState, def_id: str, index: int, pid: int) -> int:
+    """Put ``emblems[index]`` of card ``def_id`` into ``pid``'s command zone (114).
+
+    114.2: an emblem is created in the command zone by an effect, and the player
+    who gets it **owns** it -- which is who "you" is on the emblem, and so the
+    difference between Ob Nixilis Reignited's ultimate draining the opponent and
+    draining its own controller.
+
+    Placed directly rather than through `move_object`: an emblem comes from
+    nowhere and does not *enter* the command zone from anywhere, so no zone
+    change happens and nothing that listens for one should hear it. It is not a
+    token (111.1) and not a card, so no state-based action removes it, and no
+    effect in the DSL moves an object out of the command zone that is not a
+    commander. It lasts the rest of the game.
+    """
+    obj = new_object(state, def_id, owner=pid, zone=Zone.COMMAND)
+    obj.emblem = index
+    state.players[pid].command.append(obj.oid)
+    state.emit(EventType.EMBLEM_CREATED, player=pid, source=obj.oid, card=def_id, emblem=index)
+    return obj.oid
+
+
 def become_monarch(state: GameState, pid: int, source: int | None = None) -> bool:
     """Make a player the monarch (721.2), taking it off whoever held it (721.4).
 
@@ -183,6 +207,16 @@ def life_locked(state: GameState, pid: int) -> bool:
 
 
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
+    """Put life on a player, applying any replacement of the gain.
+
+    Returns **what was actually gained**, and `LIFE_GAINED` carries the same
+    number: under Alhammarret's Archive a "gain 3" is a gain of 6, and a
+    "whenever you gain life, put that many +1/+1 counters" trigger that read
+    the unreplaced 3 would disagree with the life total it is reacting to.
+
+    The one place a life total goes up -- `op_gain_life` and lifelink both
+    arrive here -- so it is the one place the replacement is read.
+    """
     if amount <= 0:
         return 0
     # "Your life total can't change" (118.5). Nothing gained, and **no event**:
@@ -191,6 +225,16 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
     # that did not happen.
     if life_locked(state, pid):
         return 0
+    # "Your opponents can't gain life" (Erebos). The same refusal as the lock
+    # and for the same reason no event fires: a life-gain trigger paying out
+    # for a gain that was forbidden is the card's opponent getting the payoff
+    # anyway. Asked before the multiplier, so an Archive cannot double a
+    # forbidden gain into a permitted one -- "can't" wins (101.2).
+    if player_cant_gain_life(state, pid):
+        return 0
+    # "You gain twice that much life instead" (614.1a). After the lock for the
+    # reason `lose_life` reads its multiplier after it: twice nothing is nothing.
+    amount *= life_gain_multiplier(state, pid)
     state.players[pid].life += amount
     fire(state, EventType.LIFE_GAINED, player=pid, source=source, amount=amount)
     return amount
@@ -837,6 +881,7 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     if protected_from(state, target_oid, aura_oid):
         return False
     aura.attached_to = target_oid
+    aura.attached_timestamp = state.alloc_timestamp()
     # A fresh attachment supersedes the remembered one, so an Equipment moved to
     # a second creature cannot still answer for the first.
     aura.last_attached_to = None

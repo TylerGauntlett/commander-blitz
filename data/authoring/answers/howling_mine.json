@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "howling_mine",
+    "name": "Howling Mine",
+    "oracle_text": "At the beginning of each player's draw step, if this artifact is untapped, that player draws an additional card.",
+    "mana_cost": "{2}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's draw step, if this artifact is untapped, that player draws an additional card.",
+        "trigger": {
+          "event": "draw_step",
+          "controller": "any",
+          "condition": {"exists": {"self_only": true, "tapped": false}}
+        },
+        "effects": [
+          {"op": "draw", "amount": {"const": 1}, "player": {"binding": "event_player"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
