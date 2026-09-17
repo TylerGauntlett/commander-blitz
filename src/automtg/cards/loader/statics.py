@@ -38,6 +38,7 @@ from .vocabulary import (
 )
 from .walk import (
     _check_counter_kind,
+    _check_mana_cost_key,
     _check_owner_key,
 )
 
@@ -167,6 +168,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
                 f"permanent, and a reduction counts a board"
             )
         _check_owner_key(filt, f"{where}.{key}")
+        _check_mana_cost_key(filt, f"{where}.{key}")
         _check_reduction_type_names(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
@@ -177,6 +179,7 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
     """A filter in a *counting* position -- ``{"count": ...}`` or ``exists``."""
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object")
+    _check_mana_cost_key(spec, where)
     zone = str(spec.get("zone", "battlefield"))
     if zone not in STATIC_COUNT_ZONES:
         raise DslError(

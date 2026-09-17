@@ -12177,3 +12177,51 @@ and falls back to the player under the passive answer; its `set_pt` power counts
 the creatures its controller has; and the load-time guards and packet options.
 
 Adeline is not authored in this change; its gap record stays until she is.
+
+## `mana_cost` — the printed cost, not the number read off it
+
+### Overview
+
+Urza's Saga, chapter III: *"Search your library for an artifact card with mana
+cost {0} or {1}, put it onto the battlefield, then shuffle."* The closest the
+selector language could say was `mana_value <= 1` with `not_colors` over all five
+colours and `x_in_mana_cost: false`, and that is a different card: 202.1b gives a
+card with no mana symbols **no** mana cost, and 23 artifacts in the catalog are
+that shape — Seat of the Synod, Darksteel Citadel and every Bridge among them.
+They have mana value 0, so the approximation fetches them; the Saga cannot.
+
+### What it compares
+
+`{"mana_cost": ["{0}", "{1}"]}` — any of a list of printed costs.
+`mana.printed_cost_is` compares symbol counts: generic, each coloured slot
+(`{C}` included), `{X}`, and each hybrid or Phyrexian pip as itself. So `{1}`
+matches one generic symbol and nothing else, a card with no cost matches
+nothing, and each wanted cost goes through the parser first, so `" {1} "` and
+`"{1}"` agree.
+
+### Where it is read
+
+Everywhere the key is legal, because an unread key loads and matches everything:
+`selectors.matches` (effects and targets), `triggers.matches_card_filter`,
+`characteristics._matches_printed` (static `affects`, counts, spell filters) and
+`cost_reduction._reduction_matches`. An embalm-style copy with "no mana cost" is
+honoured on the effect and trigger sides.
+
+### Refused at load
+
+A bare string (iterated it is characters), an empty list, an empty entry ("no
+cost" is exactly what never matches) and an unparsable cost — in
+`validate_selector` and in every static, spell and counting filter.
+
+### Tier
+
+A — a selector key and its readers. No op, event, decision kind or API field;
+nothing under `frontend/`.
+
+### Guarded by
+
+`tests/unit/test_mana_cost_selector.py`: {1} and {0} match; an artifact land, an
+{X}, a {2}, a {C}, a {W/P} and a {2/W} do not; a pip matches itself; spelling is
+normalised; an end-to-end search offers only the {1} from a library holding the
+land, the {X} and the {2}; the trigger and static readers agree; and the load
+refusals. `t_granting_saga`'s chapter III now uses the key.

@@ -1401,6 +1401,16 @@ def matches_card_filter(
     mv = filt.get("mana_value")
     if mv is not None and not _compare(card.mana_value, mv):
         return False
+    # "…a spell with mana cost {1}". Honoured here for the reason `zone` and
+    # `not_supertypes` are: a trigger filter is validated against
+    # `SELECTOR_KEYS`, so a key this function did not read would load and
+    # trigger on every cost.
+    wanted_cost = filt.get("mana_cost")
+    if wanted_cost is not None:
+        from .effects.selectors import has_printed_cost
+
+        if not has_printed_cost(state, oid, wanted_cost):
+            return False
     # Power and toughness are read off the board when the subject is still on
     # it, and off the printed face otherwise. Everything above this line is a
     # characteristic no layer can change, which is why the rest of this function

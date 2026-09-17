@@ -153,6 +153,13 @@ SELECTOR_KEYS = frozenset(
         #: is restricted to W/U/B/R/G, so it cannot filter a pool and has no
         #: spelling for X.
         "x_in_mana_cost",
+        #: "Search your library for an artifact card **with mana cost {0} or
+        #: {1}**" -- Urza's Saga. A list of printed costs, any of which matches,
+        #: compared symbol for symbol (`mana.printed_cost_is`). `mana_value`
+        #: cannot say it: an artifact land has no mana cost and mana value 0, and
+        #: `{X}` scores 0 too, so `mana_value <= 1` finds both and the printed
+        #: card finds neither.
+        "mana_cost",
         "exclude_self",
         #: "each **other** attacking creature" -- exclude whichever object a
         #: trigger bound under this name.  `exclude_self` cannot do it: it
@@ -783,6 +790,8 @@ def matches(
         card.mana_cost.x_count > 0
     ) is not bool(want):
         return False
+    if (want := selector.get("mana_cost")) is not None and not has_printed_cost(ctx.state, oid, want):
+        return False
 
     return True
 
@@ -814,6 +823,24 @@ def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -
     if who == "opponent":
         return defender != controller
     return True
+
+
+def has_printed_cost(state, oid: int, wanted) -> bool:
+    """Does this object's printed mana cost equal one of ``wanted``?
+
+    Read off `card_of`, so a split half or an Adventure answers for the face in
+    play. An object a copy effect gave "no mana cost" (embalm, eternalize) has
+    none, whatever the card it copies prints -- the same override `mana_value_of`
+    honours.
+    """
+    from ..mana import printed_cost_is
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
+        return False
+    return printed_cost_is(state.card_of(obj).mana_cost, wanted)
 
 
 def _compare(value: int, spec: Any, ctx: EffectContext) -> bool:
@@ -1204,6 +1231,10 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{where}: 'attacking_player' names whom the creature attacks -- one of "
             f"{list(ATTACKING_PLAYER_WORDS)}; use 'attacking' for true/false"
         )
+    if "mana_cost" in selector:
+        from ..mana import validate_printed_cost_list
+
+        validate_printed_cost_list(selector["mana_cost"], where)
     count = selector.get("count")
     if isinstance(count, str) and count not in ("all", "any"):
         raise DslError(f"{where}: unknown count {count!r}; use 'all', 'any' or a value")

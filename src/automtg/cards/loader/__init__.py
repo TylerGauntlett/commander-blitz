@@ -141,6 +141,7 @@ from .vocabulary import (  # noqa: F401
 from .walk import (  # noqa: F401
     _before,
     _check_counter_kind,
+    _check_mana_cost_key,
     _check_owner_key,
     _effects_move_source,
     _mentions,
@@ -1742,6 +1743,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effects:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
 
+    for key in ("affects", "blockers", "cause_filter", "affects_spells"):
+        _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         unknown = set(model.affects) - STATIC_FILTER_KEYS
         if unknown:

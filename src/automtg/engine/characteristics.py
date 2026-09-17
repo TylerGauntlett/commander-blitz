@@ -1279,6 +1279,14 @@ def _matches_printed(
     name = selector.get("name")
     if name is not None and card.name != name:
         return False
+    # "…with mana cost {0} or {1}." The printed cost, symbol for symbol -- see
+    # `mana.printed_cost_is`. As printed as a name, so no layer can move it.
+    wanted_cost = selector.get("mana_cost")
+    if wanted_cost is not None:
+        from .mana import printed_cost_is
+
+        if not printed_cost_is(card.mana_cost, wanted_cost):
+            return False
     return True
 
 

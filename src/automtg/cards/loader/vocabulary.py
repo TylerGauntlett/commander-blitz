@@ -396,6 +396,8 @@ SPELL_FILTER_KEYS = frozenset(
         "keywords",
         "not_keywords",
         "name",
+        # "…spells with mana cost {X}". Printed, so `_matches_printed` reads it.
+        "mana_cost",
     }
 )
 
@@ -418,6 +420,9 @@ STATIC_FILTER_KEYS = frozenset(
         # negated form, which the effect-side selector language always had
         # and the static one did not.
         "not_keywords",
+        # "…with mana cost {0} or {1}". The printed cost, which no layer moves,
+        # so it is as safe here as `types` is. See `mana.printed_cost_is`.
+        "mana_cost",
         "tapped",
         "is_commander",
         # "Commander creatures you **own**."  903.3 makes ownership the relation
@@ -630,6 +635,8 @@ STATIC_ZONE_FILTER_KEYS = frozenset(
         "colors",
         "keywords",
         "not_keywords",
+        # A card in a graveyard has a printed cost, too.
+        "mana_cost",
     }
 )
 

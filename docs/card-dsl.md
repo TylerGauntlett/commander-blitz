@@ -288,6 +288,7 @@ Every key is optional; all present keys must match.
   "toughness":  { "op": "<=", "value": { "const": 2 } },
   "mana_value": { "op": "<=", "value": { "const": 3 } },
   "x_in_mana_cost": true,         // "target spell WITH {X} IN ITS MANA COST" -- see below
+  "mana_cost": ["{0}", "{1}"],    // "WITH MANA COST {0} OR {1}" -- printed symbols; no cost never matches
   "exclude_self": true,           // "other ... you control"
   "exclude_binding": "subject",   // "each OTHER attacking creature"
   "created_with": "self",         // "tokens CREATED WITH THIS CREATURE" -- see below
@@ -399,7 +400,31 @@ A non-boolean is refused at load time. The key sits beside `mana_value`, which
 for — and it is a truthy dict, so it would have meant `true` by accident while
 `0` would have quietly meant `false`. It is deliberately not in
 `STATIC_FILTER_KEYS`: a static filter matches permanents, where X is 0 and the
-question is not asked, and no static in the engine reads a cost at all.
+question is not asked.
+
+`mana_cost` is the printed cost itself, as a list of costs any one of which
+matches — Urza's Saga's "an artifact card **with mana cost {0} or {1}**":
+
+```jsonc
+"selector": { "types": ["Artifact"], "mana_cost": ["{0}", "{1}"] }
+```
+
+It compares symbols, not numbers (`mana.printed_cost_is`). A card with **no mana
+cost** — an artifact land, Lotus Bloom — never matches (202.1b: that is not a
+cost of {0}, though both are mana value 0). `{X}` is not `{0}`, `{C}` is not
+`{1}`, and hybrid and Phyrexian pips (`{W/P}`, `{2/W}`) are themselves, never the
+generic or coloured mana they can be paid with. Each wanted cost is normalised
+through the cost parser, so spacing and letter case do not matter. The nearest
+older spelling — `mana_value <= 1` with `not_colors` and `x_in_mana_cost: false`
+— fetches Seat of the Synod, which the Saga cannot.
+
+A bare string, an empty list and an empty entry are refused at load time. Unlike
+`x_in_mana_cost` it *is* in `STATIC_FILTER_KEYS`, `SPELL_FILTER_KEYS` and the
+off-battlefield counting keys, because a printed cost is as fixed as a name; it
+is read by `selectors.matches`, trigger filters, `_matches_printed` and
+cost-reduction counts. A copy that has "no mana cost" (embalm, eternalize) never
+matches on the effect and trigger sides; `_matches_printed` sees only the card
+face and does not know about that override.
 
 `types` and `any_types` are the two halves of the same question and the
 difference is load-bearing. `types` is *and* — `["Artifact", "Enchantment"]`

@@ -53,12 +53,7 @@
               "count": 1,
               "destination": "battlefield",
               "shuffle": true,
-              "selector": {
-                "types": ["Artifact"],
-                "mana_value": {"op": "<=", "value": {"const": 1}},
-                "not_colors": ["W", "U", "B", "R", "G"],
-                "x_in_mana_cost": false
-              }
+              "selector": {"types": ["Artifact"], "mana_cost": ["{0}", "{1}"]}
             }
           ]
         }

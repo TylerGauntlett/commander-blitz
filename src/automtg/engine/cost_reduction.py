@@ -268,6 +268,11 @@ def _reduction_matches(state: GameState, pid: int, filt: Any, source_oid: int | 
             continue
         if (want := filt.get("not_keywords")) and set(want) & set(keywords):
             continue
+        if (want := filt.get("mana_cost")) is not None:
+            from .effects.selectors import has_printed_cost
+
+            if not has_printed_cost(state, oid, want):
+                continue
         # Board state, and only the three kinds of it a reduction can see. Each
         # is a pipeline *input* -- nothing in the characteristics layer writes
         # a tapped flag, a token flag or a combat assignment -- so reading them

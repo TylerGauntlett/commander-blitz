@@ -1,0 +1,29 @@
+{
+  "cards": [
+    {"id": "t_mc_one", "name": "Test Cost One Artifact", "oracle_text": "", "mana_cost": "{1}", "types": ["Artifact"]},
+    {"id": "t_mc_zero", "name": "Test Cost Zero Artifact", "oracle_text": "", "mana_cost": "{0}", "types": ["Artifact"]},
+    {"id": "t_mc_land", "name": "Test Artifact Land", "oracle_text": "", "types": ["Artifact", "Land"]},
+    {"id": "t_mc_x", "name": "Test X Artifact", "oracle_text": "", "mana_cost": "{X}", "types": ["Artifact"]},
+    {"id": "t_mc_two", "name": "Test Cost Two Artifact", "oracle_text": "", "mana_cost": "{2}", "types": ["Artifact"]},
+    {"id": "t_mc_colorless", "name": "Test Colorless Pip Artifact", "oracle_text": "", "mana_cost": "{C}", "types": ["Artifact"]},
+    {"id": "t_mc_phyrexian", "name": "Test Phyrexian Artifact", "oracle_text": "", "mana_cost": "{W/P}", "types": ["Artifact"], "colors": ["W"], "color_identity": ["W"]},
+    {"id": "t_mc_twobrid", "name": "Test Twobrid Artifact", "oracle_text": "", "mana_cost": "{2/W}", "types": ["Artifact"], "colors": ["W"], "color_identity": ["W"]},
+    {
+      "id": "t_mc_search",
+      "name": "Test Cheap Artifact Tutor",
+      "oracle_text": "Search your library for an artifact card with mana cost {0} or {1}, put it onto the battlefield, then shuffle.",
+      "mana_cost": "{1}",
+      "types": ["Sorcery"],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "player": "you",
+          "count": 1,
+          "destination": "battlefield",
+          "shuffle": true,
+          "selector": {"types": ["Artifact"], "mana_cost": ["{0}", "{1}"]}
+        }
+      ]
+    }
+  ]
+}
