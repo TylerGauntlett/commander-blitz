@@ -625,7 +625,11 @@ def readable(text: str) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    # Raw, so the usage block in the module docstring survives `--help` as the
+    # two columns it was written as rather than one reflowed paragraph.
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--quick", action="store_true", help="skip the slow stages")
     parser.add_argument("--no-frontend", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="stream each stage's output")
