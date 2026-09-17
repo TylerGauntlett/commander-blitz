@@ -471,9 +471,21 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # in `_check_threshold_order` nor `abilities_of`'s filter covers it.
         raise DslError(f"{where}.grantable_abilities: a threshold is a printed striation")
     final_chapter = _final_chapter(model, abilities, where)
+    _check_class_levels(model, abilities, where)
     _check_reflexive_wiring(model, abilities, where)
 
     for ability in grantable:
+        if ability.level is not None or ability.becomes_level is not None:
+            # A level is a fact about the permanent that *prints* the line (716),
+            # and a granted ability sits on some other permanent -- whose level
+            # is 1 for ever unless it is a Class, and then it is that Class's
+            # own ladder. Either way the line would mean something the granting
+            # card never said.
+            raise DslError(
+                f"{where}.grantable[{ability.index}]: a Class level belongs to the "
+                f"card that prints it, so a granted ability cannot carry 'level' "
+                f"or be a 'level' line"
+            )
         if ability.kind is AbilityKind.TRIGGERED:
             # Tested against `AbilityKind.TRIGGERED` rather than `is_triggered`,
             # which is True for a *chapter* as well (714.1b). A granted chapter
@@ -1281,7 +1293,129 @@ def _check_threshold_order(abilities: tuple[Ability, ...], where: str) -> None:
         last = ability.threshold
 
 
+#: The only keys a Class's level line may set. 716.2a says everything else the
+#: ability is -- its timing, its restriction and its effect -- so a line that
+#: writes any of those is a line the loader would have to either ignore or
+#: believe over the rule.
+_LEVEL_LINE_KEYS = frozenset({"kind", "text", "level", "cost", "sorcery_speed_only"})
+
+
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
+    """One printed ability, with a Class's level read off it (716).
+
+    ``kind: "level"`` is compiled as the activated ability 716.2a says it is.
+    ``level`` on anything else is checked here and stamped on the ability the
+    ordinary compiler builds, so no branch below has to know Classes exist.
+    """
+    import dataclasses
+
+    where = f"{card_where}.abilities[{index}]"
+    if model.kind == "level":
+        return _compile_level_line(model, index, card_where, where)
+    if model.level is None:
+        return _compile_printed_ability(model, index, card_where)
+    if model.level < 2:
+        # Level 1 is 716.2c's "always there", which is what omitting the key
+        # says. Written out it reads as a gate and gates nothing; below 1 there
+        # is no level a Class can be.
+        raise DslError(
+            f"{where}: 'level' is the level band an ability is printed under, from 2 "
+            f"up; a level-1 ability is always present and omits the key (got {model.level})"
+        )
+    if model.kind in ("chapter", "reflexive"):
+        # A chapter is a Saga's, and a Saga is not a Class. A reflexive ability
+        # is fired by the op above it, which is the thing to gate.
+        raise DslError(f"{where}: 'level' does not mean anything on a {model.kind} ability")
+    if list(model.active_zones) != ["battlefield"]:
+        # A level is a property of a permanent. A card in a graveyard has none
+        # to be at, so a gate there is either always shut or always open, and
+        # neither is what "Level 2" printed on the card means.
+        raise DslError(
+            f"{where}: a level-gated ability only exists on the battlefield, "
+            f"not in {model.active_zones}"
+        )
+    ability = _compile_printed_ability(model, index, card_where)
+    return dataclasses.replace(ability, level=model.level)
+
+
+def _compile_level_line(
+    model: AbilityModel, index: int, card_where: str, where: str
+) -> Ability:
+    """ "{W}: Level 2" -- 716.2a, which is a whole activated ability in four words.
+
+    "[Cost]: This Class's level becomes N. Activate only if this Class is level
+    N-1 and only as a sorcery." The card prints only the cost and the N, so
+    those are all a card writes; the loader supplies the timing, the
+    `become_level` effect, and `Ability.becomes_level` for legality's
+    restriction. The same reasoning a chapter's trigger is supplied on: every
+    Class in print would otherwise write the same three things, and any one of
+    them could write one wrong.
+    """
+    import dataclasses
+
+    if model.level is None or model.level < 2:
+        raise DslError(
+            f"{where}: a level line needs the 'level' it gains, 2 or more "
+            f"(\"{{W}}: Level 2\" is level 2; every Class starts at 1)"
+        )
+    if model.cost is None:
+        raise DslError(f"{where}: a level line needs the 'cost' printed before \"Level\"")
+    extra = set(model.model_fields_set) - _LEVEL_LINE_KEYS
+    if extra or (model.sorcery_speed_only is False and "sorcery_speed_only" in model.model_fields_set):
+        raise DslError(
+            f"{where}: a level line is its cost and its level; rule 716.2a supplies "
+            f"the rest, so it cannot also set {sorted(extra) or ['sorcery_speed_only: false']}"
+        )
+    activated = model.model_copy(
+        update={"kind": "activated", "level": None, "sorcery_speed_only": True}
+    )
+    ability = _compile_printed_ability(activated, index, card_where)
+    return dataclasses.replace(
+        ability,
+        effects=({"op": "become_level", "level": model.level},),
+        becomes_level=model.level,
+    )
+
+
+def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where: str) -> None:
+    """The card-level half of 716: the ladder has to be a ladder.
+
+    Refused, each because it loads clean and plays as a different card:
+
+    - level lines or level-gated abilities on a card with no ``Class`` subtype,
+      the Saga refusal's reason: the words are the mechanic's, and a card that is
+      not a Class is not one.
+    - two lines for one level, or a gap in the ladder. 716.2a lets level N be
+      bought only at level N-1, so a Class whose lines are 2 and 4 can never
+      reach 4, and a second "Level 2" is a second price for one level.
+    - an ability printed under a level no line reaches. It could never be
+      present, which is a printed line the card claims and never does.
+
+    A ``Class`` with no levels at all is accepted and inert, for the reason a
+    ``Saga`` with no chapters is: it is what an unimplemented one looks like.
+    """
+    lines = sorted(a.becomes_level for a in abilities if a.becomes_level is not None)
+    gated = sorted({a.level for a in abilities if a.level is not None})
+    if not lines and not gated:
+        return
+    if "Class" not in model.subtypes:
+        raise DslError(
+            f"{where}: level lines and level-gated abilities need the 'Class' subtype (716)"
+        )
+    if lines != list(range(2, len(lines) + 2)):
+        raise DslError(
+            f"{where}: a Class's level lines must be one each for 2, 3, ... with no gap "
+            f"(got {lines}); 716.2a only lets level N be gained from level N-1"
+        )
+    top = lines[-1] if lines else 1
+    if gated and gated[-1] > top:
+        raise DslError(
+            f"{where}: an ability is printed under level {gated[-1]} but the level "
+            f"lines only reach {top}, so it could never be present"
+        )
+
+
+def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
     if (model.activate_steps or model.once_each_turn) and kind is not AbilityKind.ACTIVATED:

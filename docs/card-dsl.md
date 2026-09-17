@@ -66,7 +66,7 @@ to `data/catalog/cards.sqlite`, and one runs all six authoring gates over it.
 
 ## Effect ops
 
-116 of them. Each takes a spec dict; the common fields are `objects` (a selector),
+117 of them. Each takes a spec dict; the common fields are `objects` (a selector),
 `player` (a player spec) and `amount` (a value expression).
 
 | Group | Ops |
@@ -254,7 +254,7 @@ strictly better card. A zero or negative ordinal is refused too — the op floor
 it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
-| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` |
+| Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` |
 | Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
@@ -5373,6 +5373,75 @@ nothing and it is never sacrificed. That is what an unimplemented Saga in
 unrepresentable rather than unimplemented. An *authored* Saga cannot use the same
 hole — its printed chapter lines would go unclaimed and the residual gate would
 reject it.
+
+## Classes
+
+```jsonc
+{"types": ["Enchantment"], "subtypes": ["Class"],
+ "abilities": [
+   {"kind": "triggered", "text": "Whenever one or more tokens you control enter, …",
+    "trigger": { ... }, "effects": [ ... ]},
+   {"kind": "level", "level": 2, "text": "{W}: Level 2", "cost": {"mana": "{W}"}},
+   {"kind": "static", "level": 2, "text": "You may play an additional land on each of your turns.",
+    "effect": "extra_land_drops", ... },
+   {"kind": "level", "level": 3, "text": "{3}{W}: Level 3", "cost": {"mana": "{3}{W}"}},
+   {"kind": "static", "level": 3, "text": "Creature tokens you control get +2/+2.",
+    "effect": "buff", ... }]}
+```
+
+Rule 716, in two spellings of one key. `level` is always "the level band this
+printed line belongs to":
+
+| written | means | rule |
+|---|---|---|
+| `{"kind": "level", "level": N, "cost": …}` | "[Cost]: This Class's level becomes N. Activate only if this Class is level N-1 and only as a sorcery." | 716.2a |
+| `"level": N` on any other ability | the ability exists only while the Class is level N or higher | 716.2b |
+| no `level` | a level-1 ability, there at every level | 716.2c |
+
+**A level line is its cost and its number, and nothing else.** The loader
+compiles it into an activated ability with `sorcery_speed_only`, the
+`become_level` effect, and `Ability.becomes_level` for legality's "only if level
+N-1" — and refuses `effects`, `targets`, `condition` or anything else written on
+it, because 716.2a already says what the ability is and a line that disagreed
+would be believed over the rule. `become_level` written by hand anywhere is
+refused for the same reason: without the restriction it is a level bought twice,
+out of order, or at instant speed.
+
+**A level-gated ability is absent, not inert.** Below its level
+`characteristics.abilities_of` hands back an `AbilityKind.LATENT` stand-in at the
+ability's printed position — not offered, not collected as a trigger, not applied
+as a static — and the two printed-face walks (`_ability_statics` for "loses all
+abilities" and "have …", `player_statics` for Druid Class's extra land) ask the
+same `Ability.present_at`. An `activation_condition` on `counters_on` is the near
+miss and was checked in full by the gap record: it cannot switch a static off, it
+does not stop level 2 being bought four times, and a `counter_placed` trigger on
+the invented counter fires again at level 3.
+
+**The seat is kept** because a position is an address: `Action.ability_index`,
+`StackItem.ability_index`, the per-turn trigger cap and the once-each-turn ledger
+all name an ability by where it sits. Dropping a level-3 ability from the middle
+of the list would renumber the lines after it.
+
+**The level is not a counter** (716.3). It lives on `GameObject.class_level`,
+enters at 1, and proliferate, `move_counters` and "remove all counters" cannot
+reach it; nor is it copiable (707.2), so a token copy of a level-3 Class is a
+fresh level-1 one. It is set back to 1 as a permanent *enters*, not as it leaves,
+so a leaves-the-battlefield trigger collected off the departed object still sees
+the level it left at (603.10a). The client receives it as `level` on the card
+view of any card with level lines, and shows it as a "Level N" badge beside the
+counters.
+
+Refused at load: level lines or gated abilities without the `Class` subtype; a
+ladder with a gap or a repeated rung (level lines must be exactly 2, 3, …); an
+ability printed under a level no line reaches; `"level": 1` written out (omit
+it); a gate on a chapter or reflexive ability, or on one active anywhere but the
+battlefield; and `level` on a granted ability, whose recipient's level is not the
+printing card's. A `Class` with no level lines at all is accepted and inert, the
+Saga rule.
+
+The reminder line "(Gain the next level as a sorcery to add its ability.)" needs
+no claim — it is parenthetical — and each level line is claimed by its own
+ability's `text`, like any other.
 
 ## Planeswalkers
 

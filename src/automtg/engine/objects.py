@@ -244,6 +244,23 @@ class GameObject:
     #: Set once "it becomes monstrous"; the whole point of the word is that it
     #: only happens once, so the ability checks this before doing anything.
     monstrous: bool = False
+    #: **A Class's level** (716). Every permanent enters at level 1 (716.3) and
+    #: only a "{cost}: Level N" ability raises it -- through the `become_level`
+    #: op -- so on anything that is not a Class it is 1 for ever and gates
+    #: nothing.
+    #:
+    #: A property of the permanent, and **not a counter**: proliferate cannot
+    #: reach it, `move_counters` cannot take it, and "remove all counters" leaves
+    #: it alone. Not a copiable value either (707.2), so a token copy of a
+    #: level-3 Class is a fresh object at level 1.
+    #:
+    #: Set back to 1 as the object *enters* the battlefield
+    #: (`zones._enter_battlefield`) rather than cleared by
+    #: `reset_permanent_state` on the way out. The difference is last known
+    #: information: a leaves-the-battlefield trigger is collected off the object
+    #: after it has left (603.10a), and it has to see the abilities the Class had
+    #: at the level it had.
+    class_level: int = 1
     #: One-way words a permanent has become: ``renowned``, and whatever the next
     #: set prints. Generic where `monstrous` is a field of its own, because the
     #: pattern turned out to repeat and each new adjective would otherwise be a
@@ -935,6 +952,7 @@ class GameObject:
             "entered_turn": self.entered_turn,
             "until_eot": [t.to_dict() for t in self.until_eot],
             "monstrous": self.monstrous,
+            "class_level": self.class_level,
             "flags": sorted(self.flags),
             "detained_by": self.detained_by,
             # Sorted rather than the set itself, so the snapshot is JSON and is

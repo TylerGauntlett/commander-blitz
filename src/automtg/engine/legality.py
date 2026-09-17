@@ -650,8 +650,22 @@ def _ability_aims(
         obj = state.objects.get(oid)
         if obj is None or not threshold_met(obj, ability):
             return None
+    if ability.level is not None:
+        # A Class's ability above its level is not on the permanent (716.2b),
+        # and `_offers_something_else` walks the printed face for the reason the
+        # threshold check above gives.
+        obj = state.objects.get(oid)
+        if obj is None or not ability.present_at(obj.class_level):
+            return None
     if ability.sorcery_speed_only and not sorcery_speed:
         return None
+    # 716.2a: "{W}: Level 2" -- "Activate only if this Class is level 1". The
+    # restriction is what makes a level a ladder rather than a price list: level
+    # 2 cannot be bought twice, and level 3 cannot be bought before level 2.
+    if ability.becomes_level is not None:
+        source = state.objects.get(oid)
+        if source is None or source.class_level != ability.becomes_level - 1:
+            return None
     # Forecast: "activate only during your upkeep, and only once each turn".
     # Both are checked here rather than at payment, because they are permission
     # to activate at all (602.5c) -- an ability offered and then refused shows a

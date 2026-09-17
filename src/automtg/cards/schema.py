@@ -300,7 +300,7 @@ class AbilityModel(BaseModel):
 
     model_config = Strict
 
-    kind: Literal["activated", "triggered", "static", "chapter", "reflexive"]
+    kind: Literal["activated", "triggered", "static", "chapter", "reflexive", "level"]
     #: The name a `reflexive_trigger` op calls this ability by -- "when you do"
     #: has to point at *which* do. Required on ``kind: "reflexive"`` and refused
     #: on every other kind, and the loader checks the two halves name each
@@ -317,6 +317,18 @@ class AbilityModel(BaseModel):
     #: line contains no word saying *when*, so there is nothing for a card author
     #: to write and every Saga in print would have to write the same thing.
     chapter: int | None = None
+    #: **A Class's level** (716). Two readings of one number, both "the level
+    #: band this printed line belongs to":
+    #:
+    #: - on ``kind: "level"`` it is required, and it is the level the line
+    #:   *gains* -- "{W}: Level 2" is ``{"kind": "level", "level": 2, "cost":
+    #:   {"mana": "{W}"}}``. Nothing else goes on such a line: the loader supplies
+    #:   the sorcery-speed timing, the "only if level N-1" restriction and the
+    #:   effect, because 716.2a says all three and the printed line says none.
+    #: - on any other kind it is the level the ability is printed **under**, and
+    #:   the ability exists only while the Class is at that level or higher
+    #:   (716.2b). Omitted for a level-1 ability, which is always there.
+    level: int | None = None
 
     # activated
     cost: CostModel | None = None

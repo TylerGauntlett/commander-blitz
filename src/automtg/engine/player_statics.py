@@ -68,6 +68,11 @@ def _active_player_statics(
                 continue
             if static.get("effect") != effect:
                 continue
+            # Druid Class's "You may play an additional land on each of your
+            # turns" is a level-2 ability: at level 1 the Class does not have it
+            # (716.2b). Asked here because this walk reads the printed face.
+            if not ability.present_at(obj.class_level):
+                continue
             if not _static_active(state, obj, static):
                 continue
             yield obj, static

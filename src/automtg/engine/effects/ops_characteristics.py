@@ -281,6 +281,35 @@ def op_monstrosity(ctx: EffectContext, spec: Mapping[str, Any]):
     )
 
 
+@register("become_level")
+def op_become_level(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "This Class's level becomes N." -- the resolution of "{cost}: Level N".
+
+    716.2a's whole effect, and never written by a card: the loader supplies it
+    on a ``kind: "level"`` ability, the way it supplies a chapter's trigger, and
+    refuses it anywhere else. The *restriction* half of the same rule ("only if
+    this Class is level N-1") is a legality question and lives in
+    `legality._ability_aims`; by the time this runs the ability was legal.
+
+    **Becomes**, literally. The level is set to N, not raised by one, so a copy
+    of the level-2 ability resolving on a Class already at 2 changes nothing.
+
+    A source that has left the battlefield has no level to set: the ability
+    still resolves (113.7a) and does nothing, which is what the printed card
+    does with a Class destroyed in response.
+    """
+    oid = ctx.source_oid
+    obj = ctx.state.objects.get(oid) if oid is not None else None
+    if obj is None or not obj.on_battlefield:
+        return
+    level = int(spec["level"])
+    if obj.class_level == level:
+        return
+    obj.class_level = level
+    # The level is a pipeline input: a level-3 anthem switches on here.
+    ctx.state.bump_chars()
+
+
 @register("freeze")
 def op_freeze(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "…don't untap during their controllers' untap steps for as long as you

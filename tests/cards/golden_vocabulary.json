@@ -462,6 +462,13 @@
   "_FILTER_PLAYERS": [
    "you",
    "opponent"
+  ],
+  "_LEVEL_LINE_KEYS": [
+   "cost",
+   "kind",
+   "level",
+   "sorcery_speed_only",
+   "text"
   ]
  },
  "ops": [
@@ -474,6 +481,7 @@
   "attach",
   "aura_swap",
   "become_copy",
+  "become_level",
   "become_monarch",
   "become_prepared",
   "cant_attack_player",

@@ -12363,3 +12363,58 @@ protection on the only target leaves no tokens; and the loader refuses an
 undeclared id, a non-player target, and an undeclared id nested inside `not`.
 
 Call the Coppercoats is not authored in this change.
+
+## Classes — levels, level lines and level-gated abilities — 716
+
+### Overview
+
+Caretaker's Talent, and every Class after it: "(Gain the next level as a sorcery
+to add its ability.) … / {W}: Level 2 / … / {3}{W}: Level 3 / Creature tokens you
+control get +2/+2." Thirty-four Classes in the catalog print the same three-band
+shape. This is the first commit of the Class subsystem, built under
+`/import-moxfield`'s rule 2 as a sequence of one-capability commits; the
+"becomes level N" trigger is the next.
+
+`docs/rules-coverage.md` held no decision about Classes. Its **Level up** row
+chose a counter plus a conditional static, and the gap record checked that
+spelling in full and refused it: the counter can be bought twice or out of
+order, a condition cannot switch a static off, and a `counter_placed` trigger
+fires again at level 3.
+
+### The shape
+
+- **`GameObject.class_level`**, 1 by default, set to 1 in
+  `zones._enter_battlefield` (716.3), on `to_dict`, and on the card view as
+  `level` for a card with level lines (`CardDef.top_level`).
+- **`kind: "level"`** in the card format, with `level` and `cost` and nothing
+  else (`_LEVEL_LINE_KEYS`). The loader compiles an activated ability with
+  `sorcery_speed_only`, the `become_level` effect and `Ability.becomes_level`.
+- **`legality._ability_aims`** refuses a level line unless the source is at
+  level N-1.
+- **`become_level`** sets the level and bumps the characteristics version; a
+  source off the battlefield is left alone. Refused in any authored effect.
+- **`level: N`** on any other ability becomes `Ability.level`.
+  `Ability.present_at` is the gate, applied by `present_printed_abilities` (the
+  derived list, with `AbilityKind.LATENT` stand-ins holding seats), by
+  `_ability_statics` and by `_active_player_statics`.
+- Load-time refusals: no `Class` subtype, a gapped or repeated ladder, a level no
+  line reaches, `level: 1`, a gate on a chapter/reflexive ability or off the
+  battlefield, and a level on a granted ability.
+
+### Frontend
+
+`CardView.level` in `api/types.ts`, and `counterBadges` leads with "Level N",
+so both the board face and the reader panel show it where counters already sit.
+Vitest in `tests/cardStyle.test.ts`.
+
+### Guarded by
+
+`tests/unit/test_class_levels.py`: the ladder (offered at N-1 only, resolves on
+the stack, sorcery speed, paid for, a departed source, set not increment); every
+reader of a gated ability (anthem, activated, triggered, player-wide static,
+lose-all-abilities); seats kept and `latent` stand-ins; the level is not a
+counter, not copied, reset on re-entry and kept on the way out; serialization;
+the loader refusals; and `tests/cards/test_every_card_works.py`'s activation
+sweep, which learned `_reach_the_level` and is run against the test Class.
+`tests/cards/golden_vocabulary.json` gains `become_level` and `_LEVEL_LINE_KEYS`.
+

@@ -428,6 +428,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(f"{where}: effect is missing 'op'")
     if op not in known_ops():
         raise DslError(f"{where}: unknown effect op {op!r} (implemented: {sorted(known_ops())})")
+    if op == "become_level":
+        # 716.2a's effect, supplied by the loader on a `kind: "level"` line and
+        # only there -- where the "only if level N-1, only as a sorcery"
+        # restriction comes with it. Written by hand anywhere else it is a level
+        # bought at instant speed, twice, or out of order.
+        raise DslError(
+            f"{where}: 'become_level' is written by the loader for a level line; "
+            f'write {{"kind": "level", "level": N, "cost": ...}} instead'
+        )
 
     for key in ("objects", "per", "selector", "affects"):
         if key in effect:

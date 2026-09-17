@@ -304,6 +304,7 @@ class TestActivatedAbilities:
                 game.state.battlefield.append(oid)
             else:
                 game.state.players[0].zone_list(zone).append(oid)
+            _reach_the_level(game, oid, ability)
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
             _provide_the_sacrifice(game, registry, ability)
@@ -347,6 +348,24 @@ def _home_zone(ability) -> Zone:
     """
     zones = ability.active_zones or (Zone.BATTLEFIELD,)
     return Zone.BATTLEFIELD if Zone.BATTLEFIELD in zones else zones[0]
+
+
+def _reach_the_level(game: Game, oid: int, ability) -> None:
+    """Stand a Class on the rung this ability needs (716).
+
+    Same family as `_pay_the_counters`, and the same argument: "not activatable"
+    must only ever mean the ability is broken. A card put on the battlefield
+    here is a level-1 Class, so every "{3}{W}: Level 3" (activatable only at
+    level 2) and every activated ability printed under level 2 or 3 would report
+    as unusable on a board that simply never bought the levels below it.
+
+    Written onto the object rather than bought through the level lines, as
+    `_pay_the_counters` writes loyalty: this arranges a position. The *lower*
+    rung is still refused -- a level-2 line on a level-2 Class is not offered --
+    so this cannot launder a ladder the engine gets wrong.
+    """
+    needed = max(ability.level or 1, (ability.becomes_level or 2) - 1)
+    game.state.objects[oid].class_level = needed
 
 
 def _afford_the_life(game: Game, ability) -> None:

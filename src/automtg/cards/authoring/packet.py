@@ -581,6 +581,16 @@ def reference() -> dict:
             " refuses it on any other -- it is in `ability_keys` because it is"
             " a real field, and writing it on a triggered ability is a gate-2"
             " rejection.",
+            "A **Class** (\"(Gain the next level as a sorcery to add its"
+            " ability.)\") is `subtypes: [\"Class\"]` plus two spellings of"
+            " `level`. A printed \"{W}: Level 2\" line is"
+            " `{\"kind\": \"level\", \"level\": 2, \"text\": \"{W}: Level 2\","
+            " \"cost\": {\"mana\": \"{W}\"}}` and nothing else -- the sorcery"
+            " timing, the \"only from level 1\" restriction and the effect are"
+            " rule 716.2a and the compiler supplies them. Every ability printed"
+            " BELOW that line, up to the next level line, carries `\"level\": 2`"
+            " whatever its kind; the abilities above the first level line carry"
+            " no `level`. The reminder line needs no ability.",
             "`required_keys` is the subset of each of those lists that is NOT"
             " optional -- every ability needs a `kind`, every target an `id`"
             " and a `kind`, every trigger an `event`. A spec missing one fails"

@@ -461,6 +461,12 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
                 static = ability.static if ability.is_static else None
                 if not static or static.get("effect") not in ABILITY_STATICS:
                     continue
+                # A Class's level-3 "loses all abilities" or "have …" is not
+                # there at level 2 (716.2b). Read off the printed face for the
+                # regress this function's callers document, so the level gate
+                # `present_printed_abilities` applies has to be applied here too.
+                if not ability.present_at(obj.class_level):
+                    continue
                 if _static_active(state, obj, static):
                     out.append((obj, static))
         state.ability_static_cache = out
@@ -524,19 +530,48 @@ def threshold_met(obj: GameObject, ability: Ability) -> bool:
 def present_printed_abilities(
     obj: GameObject, printed: tuple[Ability, ...]
 ) -> tuple[Ability, ...]:
-    """The printed abilities this object actually has, station gates applied.
+    """The printed abilities this object actually has, with both gates applied.
 
-    The ability below its threshold is **absent**, not refused: it is not
-    offered, not a mana source for the payment solver, not listed for the
-    client and not the AI's to consider, because every one of those reads
-    `abilities_of`. Refusing it in `legality` alone -- `condition`'s shape --
+    Two printed conditions on *having* an ability rather than on using it, and
+    one function for both because every reader of `abilities_of` has to agree
+    about them. The ability that fails either is **absent**, not refused: it is
+    not offered, not a mana source for the payment solver, not collected as a
+    trigger, not applied as a static, not listed for the client and not the
+    AI's to consider. Refusing it in `legality` alone -- `condition`'s shape --
     would leave it a mana source, since the solver never asks legality.
 
-    Only ever drops a tail, which is what keeps indices meaning what they
-    printed; the loader holds gated abilities to the end of the list and to
-    rising order for exactly that. The last ability is checked first, so a card
-    with no striations pays one attribute read.
+    Indices must keep meaning what they printed (`Action.ability_index`,
+    `StackItem.ability_index`, the per-turn trigger cap and the once-each-turn
+    ledger all address an ability by position), and the two gates keep that
+    promise in two ways:
+
+    - **A Class level (716.2b-c)** swaps each ability printed above the
+      object's level for its :meth:`Ability.latent` stand-in *at the same
+      seat*. A Class interleaves its level lines with its gated abilities, so
+      nothing could be dropped without renumbering the lines after it. Applied
+      in every zone: a leaves-the-battlefield trigger is collected off the
+      object after it has left (603.10a), and `GameObject.class_level` still
+      holds the level it left at.
+    - **A station threshold (721)** drops the ability. The loader holds those to
+      the end of the list and to rising order, so below its number the list only
+      ever loses a tail.
+
+    The seat-keeping pass runs first, so it never changes the length the
+    tail-dropping pass relies on.
+
+    **Not** `stack.ability_of`'s list, and that is deliberate: an ability on the
+    stack resolves whatever happens to its source (113.7a), so resolution reads
+    `printed_abilities`.
+
+    The same tuple back, untouched, for a card with neither -- every card but a
+    Class or a Planet -- at the cost of one level check per ability and one
+    attribute read.
     """
+    level = obj.class_level
+    if not all(ability.present_at(level) for ability in printed):
+        printed = tuple(
+            ability if ability.present_at(level) else ability.latent() for ability in printed
+        )
     if not printed or printed[-1].threshold is None:
         return printed
     present = tuple(ability for ability in printed if threshold_met(obj, ability))
@@ -555,8 +590,9 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     still does something.
 
     So this is the one function that answers the question, and every one of
-    those readers now asks it. Off the battlefield it is the printed list
-    unchanged, which is every card in hand, on the stack and in a graveyard.
+    those readers now asks it. Off the battlefield it is the printed list with
+    only the gates of `present_printed_abilities` applied, which for every card
+    in hand, on the stack and in a graveyard is the printed list.
 
     **Indices are stable and meaningful.** `Action.ability_index`,
     `StackItem.ability_index` and the RL action space all address an ability by
