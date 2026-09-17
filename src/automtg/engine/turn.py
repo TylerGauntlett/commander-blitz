@@ -597,6 +597,10 @@ def _draw_step(state: GameState) -> Generator[Any, list[int], None]:
     `Game._run`, so nothing above here changed.
     """
     pid = state.active_player
+    # "…the first one you draw in each of your draw steps." A fresh count per
+    # draw step, cleared before the turn-based draw so that draw -- or, when it
+    # is skipped, whatever draws first in this step -- is the first.
+    state.cards_drawn_this_draw_step.clear()
     # In a two-player game the starting player skips their first draw.
     skip = state.turn == 1 and pid == state.starting_player and state.num_players == 2
     # "Skip your draw step." Necropotence. Only the turn-based draw (504.1) is

@@ -11696,3 +11696,85 @@ and the load-time guards.
 
 Sea Gate Restoration is not authored in this change; its gap record stays until
 it is.
+
+## `replace_draw` — "if you would draw a card, draw two cards instead"
+
+### Overview
+
+Bard, King of Dale: *"If you would draw a card **except the first one you draw in
+each of your draw steps**, draw two cards instead."* Thought Reflection prints the
+plain form and Alhammarret's Archive prints Bard's exemption word for word, so one
+static carries both:
+
+```jsonc
+{ "kind": "static", "effect": "replace_draw", "affects_player": "you",
+  "draw_multiplier": 2, "except_first_in_draw_step": true }
+```
+
+The near miss is a `draw` **trigger** that draws one more. It fires after the
+card is already in hand, can be responded to, fires again on its own draw, and is
+a different card against anything that counts draws.
+
+### Where it is applied
+
+`replacements.draw` already took every draw after the opening hand one card at a
+time, because dredge replaces *a* draw and miracle asks about the first card of
+the turn. The doubler goes in the same per-card function, `_draw_one`: dredge is
+offered, then the applicable doublers, then the actual draw and miracle. Per card
+is required (121.2): the exemption is true of the draw step's first card and false
+of its second, so "draw two" there is one card then two.
+
+### The draw-step record
+
+`state.cards_drawn_this_draw_step`, cleared at the top of `turn._draw_step` and
+bumped in `primitives.draw_cards` only while `step is Step.DRAW`.
+`cards_drawn_this_turn` cannot answer the question: a card drawn during upkeep
+has already moved it, and the turn-based draw would then look like a second
+draw and be doubled. Only the controller's own draw step exempts anything
+("your draw steps"); their first draw during an opponent's draw step is doubled.
+A draw replaced by dredge draws no card, so the next card is still the first.
+
+### 614.5, 616.1
+
+Each recursion carries the set of doubler sources that already replaced the draw
+it came from. A doubler never re-doubles its own output, which also keeps the
+recursion finite, and a second doubler applies to each of those draws, so two
+Reflections make four. Thought Reflection beside Bard makes the turn-based draw
+three: the first of Reflection's two draws is the step's first card and Bard
+leaves it alone; the second is not.
+
+Dredge against a doubler is the one ordering that can change the outcome, and it
+is asked: dredge is offered on the original draw (taking it replaces the draw and
+nothing doubles), and if declined it is offered again on each draw the doubler
+made. Every order the player could choose is one of those paths. Two doublers
+commute, so their order is not asked.
+
+### Refused at load
+
+`draw_multiplier` is required and at least 2. `affects_player` is required, as on
+every player-wide static. `affects` and `amount` are refused, and so are
+`draw_multiplier` and `except_first_in_draw_step` on any other effect.
+
+### Tier
+
+A static and its reader: no op, no `EventType`, no decision kind (dredge's
+existing `ask_objects` question is re-used), no API field, nothing under
+`frontend/`. The packet's `static_effects` and `ability_keys` are derived, and a
+note names the shape.
+
+### Guarded by
+
+`tests/unit/test_draw_doubling.py`: the plain doubler on a draw, on draw two, on
+the turn-based draw, and as two `DRAW` events; the bare primitive (the opening
+hand) is not replaced. Bard's first draw-step draw is not doubled, the second is,
+and "draw two" there is three; upkeep and main-phase draws are doubled; two cards
+drawn in upkeep do not use up the exemption; each draw step's exemption is fresh;
+a real turn through the turn walk draws one. The opponent is unaffected, and the
+controller's draw during an opponent's draw step is doubled. Two doublers make
+four; two Bards leave the draw step's first draw alone; Reflection with Bard
+makes three. A doubled draw from a one-card library draws one and flags the
+empty draw. Dredging the original draw skips the doubling, and declining then
+dredging one of the two draws works. And the load-time guards.
+
+No card is authored in this change. Bard, King of Dale still needs
+`token_doubling` for its third line.

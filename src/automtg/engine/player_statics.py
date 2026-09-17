@@ -22,7 +22,7 @@ from .characteristics import (
     resolve_chosen_colors,
     resolve_chosen_subtypes,
 )
-from .enums import Zone
+from .enums import Step, Zone
 from .objects import GameObject
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -115,6 +115,48 @@ def life_loss_multiplier(state: GameState, pid: int) -> int:
         if _reaches_player(obj, static, pid):
             multiplier *= int(static.get("loss_multiplier", 1))
     return multiplier
+
+
+def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
+    """The ``replace_draw`` statics that apply to ``pid``'s next draw right now.
+
+    Thought Reflection: "If you would draw a card, draw two cards instead." Bard,
+    King of Dale and Alhammarret's Archive add "except the first one you draw in
+    each of your draw steps", which is ``except_first_in_draw_step``.
+
+    Each entry is ``(source oid, draw_multiplier)``. The oid is the identity
+    `replacements.draw` uses to keep 614.5 -- a replacement never applies twice
+    to the same event, so the draws a doubler produced are not doubled by that
+    doubler again, while a *second* doubler (a different oid) still applies to
+    each of them, which is how two compound (616.1).
+
+    Asked **per draw**, never once for a batch, because the exemption moves:
+    the answer for the first card of a draw step is not the answer for the
+    second (121.2 -- each card drawn is its own draw).
+    """
+    out: list[tuple[int, int]] = []
+    for obj, static in _active_player_statics(state, "replace_draw"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        if static.get("except_first_in_draw_step") and _first_draw_of_draw_step(state, pid):
+            continue
+        out.append((obj.oid, int(static.get("draw_multiplier", 1))))
+    return out
+
+
+def _first_draw_of_draw_step(state: GameState, pid: int) -> bool:
+    """Would the card ``pid`` is about to draw be the first of *their* draw step?
+
+    "Your draw steps": only the active player has one, so an opponent drawing
+    during it is never exempt. And "the first one you **draw**", a card rather
+    than the turn-based action: if that draw was skipped or dredged, whatever
+    card is drawn first in the step is still the first.
+    """
+    return (
+        state.step is Step.DRAW
+        and state.active_player == pid
+        and state.cards_drawn_this_draw_step.get(pid, 0) == 0
+    )
 
 
 def player_doubles_land_mana(state: GameState, pid: int) -> bool:

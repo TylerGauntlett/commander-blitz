@@ -525,6 +525,16 @@ class AbilityModel(BaseModel):
     #: replaces a loss with itself, and 0 is "they lose no life" -- a
     #: prevention, which is a different sentence and a much stronger card.
     loss_multiplier: int | None = None
+    #: ``replace_draw``: how many cards each replaced draw becomes. Thought
+    #: Reflection's and Bard, King of Dale's "draw **two** cards instead" is
+    #: ``2``. Required, and refused below 2 for `loss_multiplier`'s reasons: 1
+    #: replaces a draw with itself and 0 is "you draw nothing", a different card.
+    draw_multiplier: int | None = None
+    #: ``replace_draw``: "…except the first one you draw in each of your draw
+    #: steps" (Bard, King of Dale; Alhammarret's Archive). The first *card*
+    #: drawn while its controller's own draw step is running is left alone;
+    #: every other draw, that step's second included, is replaced.
+    except_first_in_draw_step: bool = False
 
 
 class ReplacementModel(BaseModel):

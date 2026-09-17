@@ -185,6 +185,19 @@ class GameState:
     #: per-turn counter there, reset by the active player's own untap. This one
     #: cannot live by that rule, because you draw on other players' turns too.
     cards_drawn_this_turn: dict[int, int] = field(default_factory=dict)
+    #: "…except the first one you draw in each of your draw steps." (Bard, King
+    #: of Dale; Alhammarret's Archive.)
+    #:
+    #: player id -> cards drawn since the current draw step began. Counted only
+    #: while ``step is Step.DRAW`` and cleared as each draw step is entered, so
+    #: it is meaningful only while a draw step is running -- which is the only
+    #: time anything reads it.
+    #:
+    #: Not derivable from `cards_drawn_this_turn`: a card drawn during upkeep
+    #: moves the per-turn tally, and the draw step's first draw is then the
+    #: turn's *second*. A replacement keyed on the per-turn count would double
+    #: the turn-based draw on exactly those turns.
+    cards_drawn_this_draw_step: dict[int, int] = field(default_factory=dict)
     #: "This ability triggers only once each turn." Keyed by
     #: ``(source_oid, ability_index)`` -- per *permanent*, not per card, because
     #: two Welcoming Vampires each get their own draw. Counted where triggers

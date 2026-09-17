@@ -2392,6 +2392,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` �
 `block_restriction` · `prevent_damage` · [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
 [`replace_life_loss`](#if-a-player-would-lose-life-they-lose-twice-that-much-instead) ·
+[`replace_draw`](#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
 `extra_land_drops`, plus the player-wide ones below.
@@ -2915,6 +2916,60 @@ ward {0}.
 Two doublers **multiply**: each replacement applies once (614.5), so a loss
 doubled twice is quadrupled. 616.1 lets the affected player order two applicable
 replacements and this engine does not ask — for a product the order cannot show.
+
+## "If you would draw a card, draw two cards instead"
+
+```jsonc
+// Thought Reflection
+{ "kind": "static",
+  "text": "If you would draw a card, draw two cards instead.",
+  "effect": "replace_draw",
+  "affects_player": "you",
+  "draw_multiplier": 2 }
+
+// Bard, King of Dale; Alhammarret's Archive
+{ "kind": "static",
+  "text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+  "effect": "replace_draw",
+  "affects_player": "you",
+  "draw_multiplier": 2,
+  "except_first_in_draw_step": true }
+```
+
+A **replacement** of each draw, applied in `replacements.draw` before any card
+moves -- every draw after the opening hand goes through that function one card at
+a time, which is also where dredge and miracle are offered. It is not a `draw`
+trigger that draws an extra card: that one puts the second card in hand after the
+first, can be responded to, and re-triggers on its own draw forever.
+
+**Per card (121.2).** "Draw two" under a doubler is four draws, and every one of
+them is a `DRAW` event with its own `nth`, so "whenever you draw a card" sees all
+of them. `except_first_in_draw_step` is asked per card too: "draw two" as the
+first draw of Bard's controller's draw step is one card and then two.
+
+**"The first one you draw in each of your draw steps"** is counted by
+`state.cards_drawn_this_draw_step`, cleared as each draw step begins and bumped
+only while one runs -- not by `cards_drawn_this_turn`, which a draw during upkeep
+has already moved. Only the controller's *own* draw step exempts anything; their
+first draw during an opponent's draw step is doubled.
+
+**Two doublers compound.** Each replacement applies once to an event (614.5), so
+a doubler's two draws are not doubled by it again, but a second doubler applies to
+each of them: two Thought Reflections make four, and Thought Reflection beside
+Bard makes the draw step's turn-based draw three (the first of Reflection's two is
+the step's first card and Bard leaves it; the second is not). **Against dredge**
+the affected player picks the order (616.1): dredge is offered first on the
+original draw -- taking it replaces the draw outright and nothing doubles -- and,
+if declined, again on each draw the doubler made. **An empty library** stops a
+doubled draw the way it stops "draw two": the cards that are there are drawn and
+the rest are attempts (104.3c).
+
+`draw_multiplier` is required and must be **2 or more** (1 replaces a draw with
+itself, 0 draws nothing -- a different card); `affects_player` is required as on
+every player-wide static; `affects` and `amount` are refused, and
+`draw_multiplier`/`except_first_in_draw_step` are refused on any other effect.
+A replacement that does something *other* than draw more ("exile the top card of
+your library instead") is not this static.
 
 ## Making a token that is already attacking
 
@@ -3576,6 +3631,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "double_land_mana", "affects_player": "you" }
 { "kind": "static", "effect": "freeze_opponent_lands", "affects_player": "opponent" }
 { "kind": "static", "effect": "replace_life_loss", "affects_player": "opponent" }
+{ "kind": "static", "effect": "replace_draw", "affects_player": "you", "draw_multiplier": 2 }
 { "kind": "static", "effect": "cant_cast_spells", "affects_player": "opponent" }
 ```
 

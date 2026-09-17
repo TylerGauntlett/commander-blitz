@@ -614,6 +614,15 @@ def reference() -> dict:
             " spell filter: \"can't cast creature spells\", \"from anywhere"
             " other than their hands\" and \"more than one spell each turn\""
             " are still gaps, and so is \"can't activate abilities\".",
+            "\"If you would draw a card, draw two cards instead\" is the"
+            " player-wide static `replace_draw` with `affects_player: \"you\"`"
+            " and `draw_multiplier: 2`; \"...except the first one you draw in"
+            " each of your draw steps\" adds `except_first_in_draw_step: true`."
+            " It is a real replacement of each draw, so it is NOT a `draw`"
+            " trigger that draws an extra card. \"Skip your draw step\" is"
+            " `skip_draw_step`, and a replacement that does something other"
+            " than draw more cards (\"exile the top card instead\") is still a"
+            " gap.",
             "`static_condition_keys` is what a static ability's optional"
             " `condition` may ask -- an \"as long as ...\" clause that switches"
             " the whole static on and off as the board moves. It is a third"

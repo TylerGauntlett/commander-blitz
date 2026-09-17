@@ -18,7 +18,7 @@ from .characteristics import (
     printed_token_matches,
     token_creation_replacements,
 )
-from .enums import Keyword, Zone
+from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
 from .state import new_object
@@ -71,6 +71,13 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         # card can never be drawn without the tally seeing it.
         nth = state.cards_drawn_this_turn.get(pid, 0) + 1
         state.cards_drawn_this_turn[pid] = nth
+        # "…except the first one you draw in each of your draw steps." A card,
+        # not an attempt: counted here, after the move, so a dredged draw (which
+        # never reaches this function) leaves the next draw still the first.
+        if state.step is Step.DRAW:
+            state.cards_drawn_this_draw_step[pid] = (
+                state.cards_drawn_this_draw_step.get(pid, 0) + 1
+            )
         # "Whenever you draw your **second** card each turn." The ordinal of
         # *this* draw, put on the event so the answer is fixed where the ability
         # queues. The tally itself cannot be asked later: it keeps moving, and a

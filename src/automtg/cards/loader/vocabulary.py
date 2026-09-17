@@ -255,6 +255,14 @@ STATIC_EFFECTS = frozenset(
         # and by the life-loss half of `primitives.damage_player`, which are
         # the two places a player's life goes down.
         "replace_life_loss",
+        # Thought Reflection, Bard, King of Dale, Alhammarret's Archive.  "If you
+        # would draw a card, draw two cards instead", optionally "except the
+        # first one you draw in each of your draw steps".  Read by
+        # `replacements.draw`, which every draw after the opening hand goes
+        # through one card at a time -- the only place a draw can still be
+        # replaced; a `draw` trigger fires after the card is in hand and would
+        # add a card alongside rather than instead.
+        "replace_draw",
         # Voice of Victory.  "Your opponents can't cast spells during your
         # turn."  A prohibition on a *player*, so it takes `affects_player` and
         # no `affects`, and it is read wherever a spell can be cast rather than
@@ -290,6 +298,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "double_land_mana",
         "freeze_opponent_lands",
         "replace_life_loss",
+        "replace_draw",
         "cant_cast_spells",
     }
 )

@@ -1865,6 +1865,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'loss_multiplier' only means anything on a "
             f"replace_life_loss static, not on {model.effect!r}"
         )
+    if model.effect == "replace_draw":
+        # Same refusals as `loss_multiplier`: 1 replaces a draw with an
+        # identical draw and 0 is "draw nothing instead" -- a prevention, which
+        # no doubler prints and which would load clean as a lock on the
+        # controller's own draws.
+        if model.draw_multiplier is None:
+            raise DslError(
+                f"{where}: replace_draw needs 'draw_multiplier' -- how many "
+                f"cards each replaced draw becomes"
+            )
+        if model.draw_multiplier < 2:
+            raise DslError(
+                f"{where}.draw_multiplier: must be 2 or more; "
+                f"1 replaces a draw with itself and 0 draws nothing, "
+                f"which is a different effect"
+            )
+        if model.affects is not None or model.amount is not None:
+            # Nothing reads either key; "if you would draw a card" names a
+            # player, and the size is `draw_multiplier`.
+            raise DslError(
+                f"{where}: replace_draw takes 'affects_player', "
+                f"'draw_multiplier', 'except_first_in_draw_step' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
+            )
+    elif model.draw_multiplier is not None or model.except_first_in_draw_step:
+        raise DslError(
+            f"{where}: 'draw_multiplier'/'except_first_in_draw_step' only mean "
+            f"anything on a replace_draw static, not on {model.effect!r}"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
@@ -2001,6 +2030,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["token_multiplier"] = model.token_multiplier
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
+    if model.draw_multiplier is not None:
+        static["draw_multiplier"] = model.draw_multiplier
+    if model.except_first_in_draw_step:
+        static["except_first_in_draw_step"] = True
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     # `double_triggers`' cause clause. Copied explicitly like every other field
