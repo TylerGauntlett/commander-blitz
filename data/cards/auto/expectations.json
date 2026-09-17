@@ -1280,6 +1280,19 @@
   "champion_of_arashin": {
     "zone": "battlefield"
   },
+  "champion_of_wits": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "champions_from_beyond": {
     "battlefield_count": 53,
     "tokens": {
@@ -1747,6 +1760,16 @@
   },
   "custodian_of_the_trove": {
     "zone": "battlefield"
+  },
+  "cut_a_deal": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39,
+      "1": 19
+    },
+    "zone": "graveyard"
   },
   "cyan_vengeful_samurai": {
     "battlefield_count": 33,
@@ -6035,6 +6058,10 @@
   "perception_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "perch_protection": {
+    "battlefield_count": 0,
+    "zone": "exile"
   },
   "peregrine_griffin": {
     "zone": "battlefield"

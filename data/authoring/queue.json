@@ -43162,12 +43162,12 @@
     },
     "Champion of Wits": {
       "edhrec_rank": 7065,
-      "gate": "template",
+      "gate": null,
       "name": "Champion of Wits",
-      "reason": "no template for: When this creature enters, you may draw cards equal to its power. If you do, discard two c",
+      "reason": "",
       "scryfall_id": "cf76d414-9424-4fd5-a1ff-2ff345ad6b0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Champion of the Clachan": {
@@ -58942,12 +58942,12 @@
     },
     "Cut a Deal": {
       "edhrec_rank": 1018,
-      "gate": "template",
+      "gate": null,
       "name": "Cut a Deal",
-      "reason": "no template for: Each opponent draws a card, then you draw a card for each opponent who drew a card this wa",
+      "reason": "",
       "scryfall_id": "088388a6-1cc3-4782-91af-504e70f40a97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cut of the Profits": {
@@ -198172,12 +198172,12 @@
     },
     "Perch Protection": {
       "edhrec_rank": 2371,
-      "gate": "template",
+      "gate": null,
       "name": "Perch Protection",
-      "reason": "no template for: Gift an extra turn",
+      "reason": "",
       "scryfall_id": "1f81d6ea-9a76-43b9-b030-d40c5cfbeefe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Peregrin Took": {
