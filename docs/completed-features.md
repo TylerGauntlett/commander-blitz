@@ -12059,3 +12059,57 @@ striated card claims every line, an ungated ability or a gate at another number
 does not).
 
 Neither card is authored in this change.
+
+## Granted activated abilities — a chapter that gives the Saga something to activate
+
+### Overview
+
+Urza's Saga: *"I — This Saga gains "{T}: Add {C}." II — This Saga gains "{2},
+{T}: Create a 0/0 colorless Construct artifact creature token with 'This token
+gets +1/+1 for each artifact you control.'""* A chapter resolves once and the
+gain outlives it, until the Saga leaves the battlefield (400.7). The gap record
+said chapter I "loads today"; it loaded and did nothing.
+
+### The two holes
+
+- **The op's grants never reached `abilities_of`.** `primitives.grant_ability`
+  writes a pointer onto the permanent, and only `triggers.collect` read it.
+  Legality, `costs.mana_sources` and `game._activate` read
+  `characteristics.abilities_of`, which appended *static* grants only. The op's
+  activated grants are now appended there too, with `(granter oid, pool index)`
+  provenance — and only its activated ones, since its triggered grants are
+  already yielded by `triggers.collect` and would otherwise fire twice.
+- **`stack.ability_of` resolved an activated ability off the printed list.**
+  That is why `grantable_abilities` refused any activated ability that was not a
+  mana ability (605.3a keeps those off the stack). `push_activated_ability` now
+  reads the derived list and records `granted_by` plus the index into the
+  granter's `grantable_abilities` — the pair a granted trigger already carried —
+  and `StackItem.granted_def_id` for a token granter that has ceased to exist.
+  On Urza's Saga the old lookup would have resolved the Construct ability as
+  chapter II, and `sagas.chapter_on_stack` would then have held off 704.5s: the
+  Saga would not be sacrificed after III while a Construct was on its way.
+
+### Refused at load
+
+A granted activated ability with `active_zones` other than the battlefield
+(granted cycling): a grant lives on a permanent, so it would never be offered.
+A granted chapter stays refused.
+
+### Tier
+
+A — no new op, decision kind, event or API field, nothing under `frontend/`. The
+loader refusal is lifted and two engine readers learn the op's grants.
+
+### Guarded by
+
+`tests/unit/test_granted_activated_abilities.py`, on `t_granting_saga`
+(`tests/data/granted_activated.cards.json`), which is Urza's Saga as the card
+will be written: played as a land it enters with its lore counter; chapter I's
+mana ability reaches the solver and survives cleanup; chapter II's ability is
+offered at its derived position, goes on the stack carrying its granter, and
+makes a 1/1 Construct — also after the Saga has left, and with the granter
+object gone; it is not mistaken for a chapter, so the Saga is sacrificed after
+III with the Construct still arriving; and a Saga that leaves and returns has
+neither grant until chapter I runs again. The two loader tests that pinned the
+old refusal (`test_restricted_mana.py`, `test_lose_all_abilities.py`) now pin
+the reversal.

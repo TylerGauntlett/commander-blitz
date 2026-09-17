@@ -708,6 +708,16 @@ def reference() -> dict:
             " an ability with `active_zones: [\"hand\"]`. `exile_self` is a"
             " different cost: it is \"Exile this artifact\" and requires the"
             " source to be on the battlefield.",
+            "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add"
+            " {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is"
+            " written once under the card's `grantable_abilities` and handed"
+            " over by index. A one-shot gain is the `grant_ability` op --"
+            " `duration: \"permanent\"` when no duration is printed, and"
+            " `objects: {\"self_only\": true}` for \"this Saga gains\" -- and"
+            " it may grant a triggered or an activated ability, mana or not."
+            " \"As long as ...\" / \"have ...\" is the `grant_ability` static,"
+            " which may also grant a static. A granted activated ability works"
+            " on the battlefield only.",
             "A static ability's filter may only read printed characteristics.",
             "\"If one or more tokens would be created under your control, twice"
             " that many of those tokens are created instead\" (Parallel Lives,"

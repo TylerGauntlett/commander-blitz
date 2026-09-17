@@ -194,18 +194,15 @@ class TestGrantedAbilities:
 class TestWhatCanBeGranted:
     base = {"id": "probe", "name": "Probe", "types": ["Artifact"]}
 
-    def test_a_non_mana_activated_ability_is_refused(self):
-        """It would be accepted and then resolve as some other ability.
+    def test_a_non_mana_activated_ability_may_be_granted(self):
+        """Refused for as long as it would have resolved as some other ability.
 
-        A granted activated ability that used the stack would reach
-        `stack.ability_of` with an index into a list that no longer exists --
-        that helper resolves off the source's *printed* abilities, and must,
-        because an ability on the stack outlives its source (608.2).
-
-        A granted **static** was refused beside it and is no longer: statics
-        reach the pipeline through `characteristics._battlefield_statics`, which
-        walks the *derived* list, so a granted one arrives sourced on its
-        recipient. See `tests/unit/test_granted_static_ability.py`.
+        A granted activated ability that used the stack used to reach
+        `stack.ability_of` with an index into its source's *printed* abilities.
+        It now goes on the stack carrying the granter and its index into the
+        granter's pool, so it resolves as itself even after its source is gone
+        (608.2). Urza's Saga is the card; see
+        `tests/unit/test_granted_activated_abilities.py`.
         """
         model = CardModel.model_validate({
             **self.base,
@@ -215,8 +212,7 @@ class TestWhatCanBeGranted:
                 "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
             }],
         })
-        with pytest.raises(DslError, match="not activated"):
-            compile_card(model)
+        compile_card(model)
 
     def test_a_mana_ability_may_be_granted(self):
         """Narrowed from "triggered only" when `characteristics.abilities_of`

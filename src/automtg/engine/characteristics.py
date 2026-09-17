@@ -576,7 +576,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
-    if not statics:
+    if not statics and not _has_op_grants(obj):
         return printed
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
@@ -621,6 +621,61 @@ def _derived_abilities(
         index = int(static.get("ability", 0))
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
+    out.extend(_op_granted_activated(state, obj))
+    return out
+
+
+def _has_op_grants(obj: GameObject) -> bool:
+    """Is anything on this permanent a one-shot ``grant_ability`` record?
+
+    The cheap half of `_op_granted_activated`, asked on `abilities_of`'s fast
+    path: almost no permanent carries one, and those that do must not be
+    answered with the printed list.
+    """
+    return any(
+        temp.kind == "ability" for temp in (*obj.until_eot, *obj.granted_abilities_permanent)
+    )
+
+
+def _op_granted_activated(
+    state: GameState, obj: GameObject
+) -> list[tuple[Ability, tuple[int, int]]]:
+    """The **activated** abilities the `grant_ability` *op* has handed this permanent.
+
+    Urza's Saga: "I — This Saga gains "{T}: Add {C}."" and "II — This Saga gains
+    "{2}, {T}: Create a … Construct …"". A chapter resolves once and the gain
+    outlives it, so the grant is a record on the permanent (`primitives.
+    grant_ability`), not a static recomputed from a granter's "as long as".
+
+    Until this, that record was read by exactly one reader -- `triggers`, through
+    `primitives.granted_abilities` -- so an op-granted *activated* ability was
+    held and never offered: legality, the payment solver and `game._activate`
+    all read `abilities_of`, and `abilities_of` only knew the static grants.
+    Appended here with the same provenance a static grant carries, so an
+    activation can tell `stack.ability_of` where the definition lives (608.2).
+
+    **Activated only.** An op-granted *triggered* ability is already yielded by
+    `triggers.collect` off the record itself; listing it here too would fire it
+    twice. And the loader refuses an op-granted static.
+
+    Read off the two live lists and never off ``left_with``: that is a departure
+    snapshot for leave-the-battlefield triggers, and the whole point of 400.7 is
+    that the object which comes back has none of it.
+    """
+    out: list[tuple[Ability, tuple[int, int]]] = []
+    for temp in (*obj.until_eot, *obj.granted_abilities_permanent):
+        if temp.kind != "ability" or temp.ability_index is None or temp.source is None:
+            continue
+        granter = state.objects.get(temp.source)
+        if granter is None:
+            continue
+        pool = state.card_of(granter).grantable_abilities
+        if not 0 <= temp.ability_index < len(pool):
+            continue
+        ability = pool[temp.ability_index]
+        if not ability.is_activated:
+            continue
+        out.append((ability, (granter.oid, temp.ability_index)))
     return out
 
 
@@ -644,7 +699,7 @@ def granted_ability_origin(state: GameState, oid: int, index: int) -> tuple[int,
     if obj.face_down:
         return None
     statics = _ability_statics(state)
-    if not statics:
+    if not statics and not _has_op_grants(obj):
         return None
     derived = _derived_abilities(state, obj, statics)
     if 0 <= index < len(derived):

@@ -6026,14 +6026,11 @@ ability.
 
 `grantable_abilities` used to refuse anything but a triggered ability, on the
 grounds that a granted activated one "would be accepted here and then never
-appear". `abilities_of` is what changed that, and the refusal is now narrowed to
-exactly the safe width: **a granted activated ability must be a mana ability**.
-605.3a is what makes that safe — a mana ability never uses the stack, so
-`stack.ability_of`, which resolves an ability off its source's *printed* list and
-must (an ability on the stack outlives its source, 608.2), is never asked about
-one. A granted activated ability that did use the stack would reach it with an
-index into a list that no longer exists and resolve as some other ability of that
-permanent.
+appear". `abilities_of` is what changed that. For a while the line then stopped
+at mana abilities, because 605.3a kept them off `stack.ability_of`, which
+resolved an activated ability off its source's *printed* list. That line is gone
+too — see [A granted activated ability that uses the
+stack](#a-granted-activated-ability-that-uses-the-stack).
 
 ### A granted *static*
 
@@ -9333,13 +9330,56 @@ of it rather than a copy:
 ```
 
 It becomes the **recipient's** ability: "whenever *this creature* deals combat
-damage" means the creature, not the artifact that lent it. Until end of turn.
+damage" means the creature, not the artifact that lent it. Until end of turn,
+or `"duration": "permanent"` for a grant that prints no duration.
 
-Only **triggered** abilities may be granted, and the loader says so rather than
-accepting the others silently. A granted static has no place in the fixed-order
-characteristics pipeline, and a granted activated ability would need `Action` to
-carry where it came from before legality could offer it — so it would compile and
-then never appear.
+The op may grant a **triggered** or an **activated** ability (mana or not). A
+static is refused on the op — its grants are pointers `_battlefield_statics`
+never walks — and is granted with the `grant_ability` *static* instead. A
+granted activated ability must work on the battlefield: one with other
+`active_zones` (granted cycling) is refused, since a grant lives on a permanent.
+
+### A granted activated ability that uses the stack
+
+```jsonc
+// Urza's Saga — Enchantment Land — Urza's Saga
+"grantable_abilities": [
+  {"kind": "activated", "text": "{T}: Add {C}.", "is_mana_ability": true,
+   "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{C}"}]},
+  {"kind": "activated",
+   "text": "{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This token gets +1/+1 for each artifact you control.'",
+   "cost": {"mana": "{2}", "tap": true},
+   "effects": [{"op": "create_token", "token": "construct_0_0_c_artifact_buff", "controller": "you"}]}
+],
+"abilities": [
+  {"kind": "chapter", "chapter": 1, "text": "I — This Saga gains \"{T}: Add {C}.\"",
+   "effects": [{"op": "grant_ability", "ability": 0, "duration": "permanent",
+                "objects": {"self_only": true}}]},
+  {"kind": "chapter", "chapter": 2, "text": "II — This Saga gains \"{2}, {T}: Create a …\"",
+   "effects": [{"op": "grant_ability", "ability": 1, "duration": "permanent",
+                "objects": {"self_only": true}}]}
+]
+```
+
+A chapter resolves once and what it grants outlives it, until the Saga leaves
+(400.7). Two things make that work, and each alone ships a card that looks right:
+
+- **The op's grants are in `abilities_of`.** They were read only by `triggers`,
+  so an op-granted activated ability was held and never offered: legality, the
+  payment solver and `game._activate` all read `abilities_of`. The op's
+  *activated* grants are now appended there with their provenance, like a
+  static's; its triggered grants are not, because `triggers.collect` already
+  yields those and would fire them twice.
+- **The stack item says where the ability lives.** `push_activated_ability`
+  records `granted_by` (the granter) and an `ability_index` into the granter's
+  `grantable_abilities` — the pair a granted trigger already carried — plus the
+  granter's card id for a token granter that has ceased to exist. 608.2: the
+  ability resolves after the Saga has been sacrificed and the grant gone with it.
+  Resolved off the Saga's printed list it would be *chapter II*, which would also
+  tell 704.5s a chapter is still on the stack and keep the Saga from being
+  sacrificed after III.
+
+See `tests/unit/test_granted_activated_abilities.py`.
 
 ## Two piles
 

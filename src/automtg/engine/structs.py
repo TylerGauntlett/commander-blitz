@@ -716,6 +716,10 @@ class StackItem:
     description: str = ""
     #: See `TriggerInstance.granted_by`.
     granted_by: int | None = None
+    #: The granter's card id, snapshotted as a granted ability is activated.
+    #: Read only when the granter object itself is gone -- a token popped by the
+    #: token state-based action -- so the ability still resolves (608.2).
+    granted_def_id: str = ""
 
     @property
     def is_spell(self) -> bool:

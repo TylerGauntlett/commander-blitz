@@ -481,23 +481,36 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             # its own source, so granted to a creature it would wait for a number
             # nothing can ever reach.
             continue
-        if ability.is_mana_ability:
-            # A granted **mana** ability, which is the one activated kind that
-            # works. This used to be refused along with every other activated
-            # one, on the grounds that legality enumerates the printed list and
-            # so a granted activated ability "would be accepted here and then
-            # never appear". `characteristics.abilities_of` is what changed:
-            # legality, the payment solver and `game._activate` all read the
-            # derived list now, so a granted ability is offered, indexed and
-            # paid with exactly like a printed one.
+        if ability.is_activated:
+            # A granted **activated** ability, mana or not. Urza's Saga: "I —
+            # This Saga gains "{T}: Add {C}."" and "II — This Saga gains "{2},
+            # {T}: Create a … Construct …"".
             #
-            # The line stops at mana abilities because 605.3a is what makes them
-            # safe: a mana ability never uses the stack, so `stack.ability_of`
-            # -- which resolves an ability off its source's *printed* list, and
-            # must, since an ability on the stack outlives its source (608.2) --
-            # is never asked about one. A granted activated ability that did use
-            # the stack would reach it with an index into a list that no longer
-            # exists, and resolve as some other ability of that permanent.
+            # Offered, indexed and paid for because legality, the payment solver
+            # and `game._activate` all read `characteristics.abilities_of`, which
+            # appends a grant -- the static's and, since this line opened, the
+            # one-shot op's -- to the printed list.
+            #
+            # This stopped at mana abilities for as long as 605.3a was the only
+            # thing keeping a granted ability off `stack.ability_of`, which
+            # resolved off the source's *printed* list: a granted ability that
+            # used the stack reached it with an index into a list that did not
+            # hold it, and resolved as some other ability of the permanent -- on
+            # Urza's Saga, chapter II. `stack.push_activated_ability` now records
+            # where a granted ability lives (granter, index into its
+            # `grantable_abilities`) as it goes on the stack, the pair a granted
+            # trigger already carried, so it resolves after the grant has gone
+            # with its source (608.2).
+            zones = tuple(ability.active_zones or ())
+            if zones and zones != (Zone.BATTLEFIELD,):
+                # A grant lives on a *permanent*, and `abilities_of` only derives
+                # one there. Granted cycling would load clean and never be
+                # offered from the hand it is printed to work in.
+                raise DslError(
+                    f"{where}.grantable[{ability.index}]: a granted activated "
+                    f"ability works on the battlefield only, not from "
+                    f"{[z.value for z in zones]}"
+                )
             continue
         if ability.is_static and ability.static:
             # A granted **static**. Inspiring Leader: "Commander creatures you
@@ -529,11 +542,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                     ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
                 )
             continue
-        # An activated ability that is not a mana ability, and nothing else is
-        # left. Granting a keyword is what `grant_keyword` is for;
-        # `docs/rules-coverage.md` records the rest.
+        # A chapter, which is all that is left: its trigger compares the lore
+        # counters on its own source, so granted to anything else it would wait
+        # for a number nothing reaches. Granting a keyword is what
+        # `grant_keyword` is for; `docs/rules-coverage.md` records the rest.
         raise DslError(
-            f"{where}: only triggered, mana and static abilities can be granted, "
+            f"{where}: only triggered, activated and static abilities can be granted, "
             f"not {ability.kind.value}"
         )
 
