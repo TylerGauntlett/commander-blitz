@@ -20493,6 +20493,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana",
+              "player": "you"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": "any"
+          },
+          "text": "Remove a +1/+1 counter from this creature: Add {C}{C}. Spend this mana only to activate abilities."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}: Put a +1/+1 counter on this creature."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "cryptic_trilobite",
+      "mana_cost": "{X}{X}",
+      "name": "Cryptic Trilobite",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.\nRemove a +1/+1 counter from this creature: Add {C}{C}. Spend this mana only to activate abilities.\n{1}, {T}: Put a +1/+1 counter on this creature.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Trilobite"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

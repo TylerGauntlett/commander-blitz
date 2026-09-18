@@ -57242,12 +57242,12 @@
     },
     "Cryptic Trilobite": {
       "edhrec_rank": 6916,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptic Trilobite",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "a73c630c-c98d-4f8a-9e6a-2576d5fec4ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cryptid Inspector": {

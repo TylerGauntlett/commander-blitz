@@ -1852,6 +1852,14 @@
     },
     "zone": "graveyard"
   },
+  "cryptic_trilobite": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 15,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "crystacean": {
     "zone": "battlefield"
   },

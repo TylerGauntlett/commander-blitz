@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **36** capabilities.
+**29 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [mana-restriction-activate-any](#mana-restriction-activate-any) | 1 | 6916 | cost |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
@@ -393,20 +392,6 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
-
-</details>
-
-## mana-restriction-activate-any
-
-Blocks **1** card.
-
-- **(cost)** An unrestricted spelling of the ACTIVATE half of an ability's `mana_restriction` -- "Spend this mana only to activate abilities", with no restriction whatsoever on the source of the ability. Concretely: a wildcard group (e.g. `"mana_restriction": {"activate": "any"}` or `{"activate": true}`) that the loader compiles to a RestrictionGroup satisfied by every SpendPurpose whose `kind` is ACTIVATE, and by no CAST purpose at all. The same shape then covers the sibling printings the queue already holds -- Omen Hawker's "{T}: Add {C}{U}. Spend this mana only to activate abilities." and Automated Artificer's "only to activate an ability or cast an artifact spell" (a wildcard activate half beside a named cast half).
-  <br>Why the existing vocabulary won't do: `mana_restriction` (ability_keys; src/automtg/cards/loader/mana.py:282) is the right field and already has the cast/activate split for Secluded Courtyard, but every group it can hold is a set of literal card type / subtype NAMES -- `RestrictionGroup.satisfied_by` (src/automtg/engine/mana.py:745) asks `required <= purpose.names and not (forbidden & purpose.names)`, where `purpose.names` is the types+subtypes of the source whose ability is being activated (`costs.ability_purpose`). There is no name that every source has, so no group can mean "any ability". `_restriction_groups` explicitly refuses an empty group ("restricts nothing; omit it for ordinary mana"), and the only non-literal leaf allowed is `{"chosen_type_of": "self"}`, which is this card's chosen subtype, not a wildcard. The two workarounds are both wrong in ways the brief forbids: omitting `mana_restriction` entirely makes plainly unrestricted mana that can also cast spells -- a strictly better card, which is exactly what the shipped Omen Hawker (data/cards/auto/templates.cards.json:65853) and Automated Artificer (:5255) approximations do today -- and a forbidden-only group built from an invented type word (`[[{"not": "nosuchtype"}]]`) smuggles a sentinel through a shape check whose own docstring warns that a name no card has freezes mana into something unspendable. The card's other two lines are expressible and were not written as a partial answer: "This creature enters with X +1/+1 counters on it" is the card-level `replacements` entry `{"event": "self_enters_with_counters", "counter": "+1/+1", "amount": {"x": true}}` (Goldvein Hydra prints the identical sentence), and "{1}, {T}: Put a +1/+1 counter on this creature" is an activated ability with `cost: {"mana": "{1}", "tap": true}` and `add_counters` on `self_only`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cryptic Trilobite** (rank 6916) — `cryptic_trilobite`
-  - Remove a +1/+1 counter from this creature: Add {C}{C}. Spend this mana only to activate abilities.
 
 </details>
 
