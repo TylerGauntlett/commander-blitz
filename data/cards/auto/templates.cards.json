@@ -82087,6 +82087,115 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "kicked": true
+              },
+              "else": [
+                {
+                  "duration": "once_this_turn",
+                  "effects": [
+                    {
+                      "new_targets": true,
+                      "op": "copy_spell"
+                    }
+                  ],
+                  "op": "delayed_trigger",
+                  "text": "Copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. You may choose new targets for the copy.",
+                  "trigger": {
+                    "condition": {
+                      "exists": {
+                        "any_types": [
+                          "Instant",
+                          "Sorcery"
+                        ],
+                        "binding": "subject",
+                        "mana_value": {
+                          "op": "<=",
+                          "value": {
+                            "const": 2
+                          }
+                        },
+                        "zone": "stack"
+                      }
+                    },
+                    "controller": "you",
+                    "event": "spell_cast"
+                  }
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "duration": "once_this_turn",
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "new_targets": true,
+                      "op": "copy_spell"
+                    }
+                  ],
+                  "op": "delayed_trigger",
+                  "text": "Copy the next instant or sorcery spell with mana value 2 or less you cast this turn twice when you cast it. You may choose new targets for the copies.",
+                  "trigger": {
+                    "condition": {
+                      "exists": {
+                        "any_types": [
+                          "Instant",
+                          "Sorcery"
+                        ],
+                        "binding": "subject",
+                        "mana_value": {
+                          "op": "<=",
+                          "value": {
+                            "const": 2
+                          }
+                        },
+                        "zone": "stack"
+                      }
+                    },
+                    "controller": "you",
+                    "event": "spell_cast"
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. If this creature was kicked, copy that spell twice instead. You may choose new targets for the copies.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sea_gate_stormcaller",
+      "kicker": "{4}{U}",
+      "mana_cost": "{1}{U}",
+      "name": "Sea Gate Stormcaller",
+      "oracle_text": "Kicker {4}{U}\nWhen this creature enters, copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. If this creature was kicked, copy that spell twice instead. You may choose new targets for the copies.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

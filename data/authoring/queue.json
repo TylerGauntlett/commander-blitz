@@ -235542,12 +235542,12 @@
     },
     "Sea Gate Stormcaller": {
       "edhrec_rank": 18627,
-      "gate": "template",
+      "gate": null,
       "name": "Sea Gate Stormcaller",
-      "reason": "no template for: Kicker {4}{U}",
+      "reason": "",
       "scryfall_id": "17b79895-30ac-4bb4-bbe3-033a0dfcf1d6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sea Gate Wreckage": {

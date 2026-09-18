@@ -7656,6 +7656,10 @@
     },
     "zone": "graveyard"
   },
+  "sea_gate_stormcaller": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sea_scryer": {
     "zone": "battlefield"
   },

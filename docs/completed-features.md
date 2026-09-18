@@ -13492,3 +13492,57 @@ load-time guards.
 Leonin Shikari's "you may activate equip abilities any time you could cast an
 instant" — the same seam pointed at equip. Nothing on `Ability` marks an equip
 ability, so it stays a gap rather than becoming a word that half means it.
+
+## `once_this_turn` — "the next spell you cast this turn"
+
+### Overview
+
+Sea Gate Stormcaller. A third value for a delayed trigger's `duration`, and the
+one :data:`DELAYED_DURATIONS` had already described in the negative:
+
+> The two axes — repeating-or-once, and turn-scoped-or-not — happen to be
+> correlated in both printed cards … a card that separated them would need a
+> third entry here rather than a different reading of these two. That card does
+> not exist in the pool; when it does, this is where it goes.
+
+### The shape
+
+Fires **once**, like `until_it_fires`, and expires at cleanup, like `this_turn`.
+One line of engine: `triggers._arm_delayed` strikes it off as it arms, beside
+`until_it_fires`. The expiry needed nothing — `turn._cleanup_step` keeps only
+`until_it_fires`, so anything else is dropped whether or not it ever fired.
+
+Both existing values are wrong on exactly one axis, and both were **measured in a
+real game** rather than reasoned about:
+
+- `this_turn` re-arms on every matching spell. A kicked Stormcaller copied a
+  second Night's Whisper twice as well — that is a Thousand-Year Storm.
+- `until_it_fires` outlives the turn, because `_cleanup_step`'s retention clause
+  was written for Palace Jailer, whose crown may not move for six turns. A
+  Stormcaller whose controller casts nothing cheap copies a spell on a later turn.
+
+Latching `this_turn` by hand is not a substitute either: `set_turn_flag`'s
+`objects` go through `resolve_pool`, whose `self_only` finds the source only while
+it is on the battlefield, so the latch stops the moment the 2/1 dies and the card
+copies every cheap spell for the rest of the turn.
+
+### Guarded by
+
+`tests/unit/test_delayed_once_this_turn.py`: one firing and not a second; the
+subscription actually struck off the state rather than ignored afterwards; an
+unfired subscription gone by the next turn, and a later spell not firing it; both
+near misses kept as live cards and measured as controls (`this_turn` gaining twice,
+`until_it_fires` gaining on a later turn); the condition-as-filter discriminating in
+both directions, including that a passed-over spell does **not** spend the
+subscription; and the load-time guards, the misspelling among them — a typo falling
+through to the `this_turn` default would silently retime the card.
+
+### Not done
+
+A `filter` on a delayed trigger's `trigger`. `matches_card_filter` reads eight
+clauses off the permanent hosting the ability — `self_only`, `exclude_self`,
+`attached_to`, `haunting`, `encoded_on`, the damage ledger, `controller`, and
+`resolve_chosen_subtypes` — and a delayed ability has no such permanent. A
+`condition` over the `subject` binding expresses the same filter exactly, which is
+what Sea Gate Stormcaller uses and what the tests above pin; the cost is that every
+card of this shape spells its filter as a condition rather than as a filter.

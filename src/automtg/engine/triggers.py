@@ -498,7 +498,12 @@ def _arm_delayed(state: GameState, event: GameEvent) -> None:
         state.armed_delays.append(
             replace(delayed, bindings=_delayed_bindings(delayed, spec, event))
         )
-        if delayed.duration == "until_it_fires":
+        if delayed.duration in ("until_it_fires", "once_this_turn"):
+            # `once_this_turn` is struck off here for the same reason and at the
+            # same moment, and differs only in what `turn._cleanup_step` does
+            # with one that never fired: "the **next** instant or sorcery spell
+            # you cast this turn" is one firing, and the subscription is gone at
+            # end of turn either way.
             spent.append(delayed)
     if spent:
         # Identity, not equality: two Palace Jailers each holding a creature

@@ -91,6 +91,7 @@
       "level",
       "loss_multiplier",
       "mana_restriction",
+      "mill_multiplier",
       "once_each_turn",
       "pay_life_instead",
       "power",
@@ -229,6 +230,7 @@
       "keywords",
       "mana_cost",
       "not_keywords",
+      "not_supertypes",
       "not_types",
       "owner",
       "self_only",
@@ -340,6 +342,9 @@
     ],
     "op_options": {
       "<=": [
+        "value"
+      ],
+      "=": [
         "value"
       ],
       ">": [
@@ -1129,6 +1134,7 @@
       "shares_a_name_with",
       "shares_a_type_with",
       "shares_a_type_with_commander",
+      "shares_permanent_type_with",
       "subtypes",
       "supertypes",
       "tapped",
@@ -1152,6 +1158,7 @@
       "top_of_library"
     ],
     "static_effects": [
+      "activate_loyalty_as_though_instant",
       "add_mana_on_tap",
       "add_subtype",
       "attack_tax",
@@ -1166,6 +1173,7 @@
       "cant_block_alone",
       "cant_cast_spells",
       "cant_gain_life",
+      "cast_as_though_flash",
       "cast_from_graveyard",
       "cast_from_library_top",
       "crew_power_bonus",
@@ -1184,8 +1192,10 @@
       "prevent_damage",
       "protection",
       "replace_draw",
+      "replace_empty_draw",
       "replace_life_gain",
       "replace_life_loss",
+      "replace_mill",
       "replace_token_creation",
       "reveal_library_top",
       "set_colors",
@@ -1193,6 +1203,7 @@
       "set_types",
       "skip_draw_step",
       "skip_extra_turn",
+      "skip_untap_step",
       "spell_cost_reduction",
       "spells_cant_be_countered",
       "untap_during_each_untap_step",
@@ -1211,6 +1222,7 @@
       "keywords",
       "mana_cost",
       "not_keywords",
+      "not_supertypes",
       "not_types",
       "owner",
       "paired",

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**27 cards** blocked by **34** capabilities.
+**26 cards** blocked by **32** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,8 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 18627 | trigger_event |
-| [delayed-trigger-once-this-turn](#delayed-trigger-once-this-turn) | 1 | 18627 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
@@ -186,34 +184,6 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-
-</details>
-
-## delayed-trigger-filter
-
-Blocks **1** card.
-
-- **(trigger_event)** A `filter` on a delayed_trigger's `trigger`, so a delayed spell_cast subscription can say WHICH spell it watches -- here "instant or sorcery spell with mana value 2 or less". The hosted form of the same trigger already takes one.
-  <br>Why the existing vocabulary won't do: loader/effects.py _validate_delayed_trigger refuses every trigger key outside DELAYED_TRIGGER_KEYS = {event, controller, condition}, on the grounds that a filter is read off the hosting permanent and a delayed ability has none -- but a spell_cast filter is read off the SPELL, not off the host, so the reasoning does not hold for this event. Jin-Gitaxias, Progress Tyrant writes exactly this filter (`any_types` plus a mana_value clause) as a hosted trigger and it works. This one is the softer half of the two needs: a condition of {"exists": {"binding": "subject", "zone": "stack", "any_types": ["Instant", "Sorcery"], "mana_value": {"op": "<=", "value": {"const": 2}}}} does emulate the filter exactly -- verified in a real game, a mana value 4 sorcery and a mana value 2 creature spell were both correctly passed over -- so if the duration above is fixed this could be left as it is, at the cost of every card of this shape spelling its filter as an unobvious condition over an undocumented binding.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sea Gate Stormcaller** (rank 18627) — `sea_gate_stormcaller`
-  - When this creature enters, copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. If this creature was kicked, copy that spell twice instead. You may choose new targets for the copies.
-
-</details>
-
-## delayed-trigger-once-this-turn
-
-Blocks **1** card.
-
-- **(op)** A third value for delayed_trigger's `duration` -- a subscription that fires AT MOST ONCE and still expires at cleanup. That is the whole of "the NEXT instant or sorcery spell ... you cast THIS TURN": one firing, and gone at end of turn whether or not it ever fired. Equivalently, honour `max_per_turn`/`nth` on a delayed trigger the way a hosted trigger already does, with the turn-scoped expiry kept.
-  <br>Why the existing vocabulary won't do: engine/structs.py DELAYED_DURATIONS has exactly two values and each is wrong on one axis, measured in a real game rather than reasoned about. `this_turn` re-arms on every matching spell: a kicked Stormcaller copied a SECOND Night's Whisper twice as well (life 40->34->28), which is a Thousand-Year Storm, not this card. `until_it_fires` fires exactly once but turn._cleanup_step deliberately keeps it (`d.duration == "until_it_fires"` is the retention clause written for Palace Jailer), so a Stormcaller whose owner casts no cheap spell that turn copies one on a later turn instead. Latching `this_turn` by hand with set_turn_flag/has_turn_flag is not a substitute either: set_turn_flag's `objects` go through resolve_pool, whose `self_only` only finds the source while it is on the battlefield, so the latch silently stops working the moment the 2/1 dies -- measured, and the card then copied every cheap spell for the rest of the turn. There is no player-scoped flag (set_turn_flag takes only `flag` and `objects`, has_turn_flag reads ctx.source_oid), and `resolutions_this_turn` reads ctx.resolutions, which run_armed_delays never sets, so it is 0 for every delayed firing.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sea Gate Stormcaller** (rank 18627) — `sea_gate_stormcaller`
-  - When this creature enters, copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. If this creature was kicked, copy that spell twice instead. You may choose new targets for the copies.
 
 </details>
 
