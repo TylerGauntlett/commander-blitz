@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "jace_wielder_of_mysteries",
+    "name": "Jace, Wielder of Mysteries",
+    "oracle_text": "If you would draw a card while your library has no cards in it, you win the game instead.\n+1: Target player mills two cards. Draw a card.\n−8: Draw seven cards. Then if your library has no cards in it, you win the game.",
+    "mana_cost": "{1}{U}{U}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Jace"],
+    "loyalty": 4,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If you would draw a card while your library has no cards in it, you win the game instead.",
+        "effect": "replace_empty_draw",
+        "affects_player": "you"
+      },
+      {
+        "kind": "activated",
+        "text": "+1: Target player mills two cards. Draw a card.",
+        "cost": {"loyalty": 1},
+        "targets": [
+          {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "any"}}
+        ],
+        "effects": [
+          {"op": "mill", "amount": {"const": 2}, "player": {"target": "t1"}},
+          {"op": "draw", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "−8: Draw seven cards. Then if your library has no cards in it, you win the game.",
+        "cost": {"loyalty": -8},
+        "effects": [
+          {"op": "draw", "amount": {"const": 7}, "player": "you"},
+          {
+            "op": "if",
+            "condition": {"not": {"exists": {"zone": "library", "player": "you"}}},
+            "then": [{"op": "win_game", "player": "you"}]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 4}
+  }
+}

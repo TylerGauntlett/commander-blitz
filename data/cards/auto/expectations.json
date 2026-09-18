@@ -1579,6 +1579,13 @@
   "cloudreader_sphinx": {
     "zone": "battlefield"
   },
+  "cloudstone_curio": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "coastal_peak": {
     "zone": "battlefield"
   },
@@ -4476,6 +4483,14 @@
     "zone": "battlefield"
   },
   "izzet_signet": {
+    "zone": "battlefield"
+  },
+  "jace_wielder_of_mysteries": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "jackhammer": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**33 cards** blocked by **39** capabilities.
+**30 cards** blocked by **36** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [mana-restriction-activate-any](#mana-restriction-activate-any) | 1 | 6916 | cost |
-| [mill-doubling](#mill-doubling) | 1 | 2124 | static_effect |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
@@ -46,13 +45,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [shares-a-color](#shares-a-color) | 1 | 3647 | condition |
-| [shares-permanent-type](#shares-permanent-type) | 1 | 2576 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-targets-permanent-trigger](#spell-targets-permanent-trigger) | 1 | 5502 | trigger_event |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-| [win-on-empty-library-draw](#win-on-empty-library-draw) | 1 | 1085 | static_effect |
 
 ## cast-as-though-flash
 
@@ -413,20 +410,6 @@ Blocks **1** card.
 
 </details>
 
-## mill-doubling
-
-Blocks **1** card.
-
-- **(static_effect)** A player-wide static replacement effect -- e.g. `replace_mill` with `affects_player` and a `mill_multiplier` -- that intercepts every mill event a given player would perform, from any source (a spell's `mill` op, a `mill` cost, another permanent's trigger), and multiplies the number of cards milled. Must be a true replacement read at the point the mill happens, not an extra mill afterwards, so that it applies to mills caused by the opponent's own cards and stacks multiplicatively with other mill replacements.
-  <br>Why the existing vocabulary won't do: `static_effects` carries the whole family of value replacements -- `replace_draw` (`draw_multiplier`), `replace_life_gain` (`gain_multiplier`), `replace_life_loss` (`loss_multiplier`), `replace_token_creation` (`token_multiplier`) -- but there is no mill member of it, and `ability_keys` has no `mill_multiplier` to go with one. `mill` exists only as an effect op and as a cost, i.e. as something this card's controller does, never as an event that can be replaced. There is also no `mill` or `cards_to_graveyard` entry in `trigger_events`, so it cannot be approximated as a triggered ability that mills again: `cards_to_graveyard_this_turn` is a value, readable only where some other trigger already fired.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bruvac the Grandiloquent** (rank 2124) — `bruvac_the_grandiloquent`
-  - If an opponent would mill one or more cards, they mill twice that many cards instead.
-
-</details>
-
 ## multikicker
 
 Blocks **1** card.
@@ -532,20 +515,6 @@ Blocks **1** card.
 
 </details>
 
-## shares-permanent-type
-
-Blocks **1** card.
-
-- **(selector)** a selector clause that matches a candidate whose CARD TYPES intersect the card types of an object bound by the trigger -- the card-type twin of `shares_a_type_with`, e.g. `shares_a_card_type_with: "subject"`, compared on derived `types` (Artifact, Battle, Creature, Enchantment, Land, Planeswalker) rather than on subtypes, so that a creature entering finds the other creatures, a land entering finds the other lands, and an artifact creature entering finds both. Needed on a `return_to_hand` inside a `may` on a `permanent_enters` trigger, alongside `exclude_binding: "subject"` for the printed 'another'
-  <br>Why the existing vocabulary won't do: `shares_a_type_with` is the near miss and is the wrong axis: selectors.py reads `chars(state, other).subtypes` and intersects it with the candidate's subtypes, so it implements '...that shares a CREATURE type with it' (Goblin with Goblin). Written on this card it would return another Goblin when a Goblin entered and would find nothing at all when a typeless permanent or a land entered -- a card that quietly does something narrower than printed. `shares_a_type_with_commander` is subtypes again and points at the commander rather than at the trigger's binding. `types` and `any_types` are literal lists fixed when the card is written, but which permanent type matters is decided at resolution by whatever just entered, so no fixed list expresses the clause; `not_types` (the only other type-side key) has the same problem inverted. There is no condition in `condition_keys` that can read the card types of a binding either, so the line cannot be faked as a `choose_mode` over five type-gated branches -- and that spelling would also hand the choice of type to the wrong place instead of simply letting the controller pick any legal permanent.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cloudstone Curio** (rank 2576) — `cloudstone_curio`
-  - Whenever a nonartifact permanent you control enters, you may return another permanent you control that shares a permanent type with it to its owner's hand.
-
-</details>
-
 ## single-target-spell-restriction
 
 Blocks **1** card.
@@ -615,19 +584,5 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
-
-</details>
-
-## win-on-empty-library-draw
-
-Blocks **1** card.
-
-- **(static_effect)** A player-wide static replacement of the *attempt* to draw from an empty library -- the Laboratory Maniac / Jace, Wielder of Mysteries effect. It must sit in the same place `replace_draw` does (`engine/replacements.py`, which every post-opening-hand draw passes through one card at a time) but fire on the branch `replace_draw` never reaches: the case where the library is empty and no card can be moved. Instead of multiplying the draw it replaces it outright, so the draw never happens, the 104.3c/704.5b "will lose" flag that `primitives.draw` sets is never set, and the drawing player wins the game immediately. Suggested spelling: a new player-wide static effect, e.g. `replace_empty_draw` with `affects_player` and an outcome of `win`, alongside the existing `replace_draw` in `PLAYER_WIDE_STATIC_EFFECTS` and `vocabulary.STATIC_EFFECTS`. It must be a real replacement read wherever a draw is attempted (a spell's `draw` op, the draw step, a `draw` rider on another card's effect), and it must survive the source leaving only in the sense that it applies while the permanent is on the battlefield -- i.e. an ordinary static, not a one-shot.
-  <br>Why the existing vocabulary won't do: `replace_draw` is the only member of the draw-replacement family and it is a pure multiplier: the loader (`cards/loader/__init__.py`) requires `draw_multiplier` and explicitly refuses a value below 2 ("1 replaces a draw with itself and 0 draws nothing, which is a different effect"), and it accepts nothing beside `affects_player`, `draw_multiplier`, `except_first_in_draw_step` and a `condition` -- there is no key on it that can name a different outcome, and the packet's own note says a replacement that does something other than draw more cards is still a gap. Nothing else in `static_effects` touches drawing: `skip_draw_step` removes the draw step rather than replacing a draw, and `replace_life_gain`/`replace_life_loss`/`replace_token_creation` are the same multiplier shape on other events. `win_game` exists only as an effect op (Halo Fountain, Luck Bobblehead both run it inside an activated ability's `effects`), so it can only be reached by something that resolves, and it is not available to a static. It cannot be approximated as a triggered ability either: `trigger_events` has `draw`, but that event fires only after a card actually reaches a hand, and the printed line is precisely about the case where no card can be drawn -- `engine/primitives.py` treats an empty library as an *attempt* to draw, setting the player's "will lose" flag (704.5b) with no draw event at all, so a `draw` trigger would never fire and the state-based loss would still be checked and applied before any such trigger could win the game. There is likewise no `would_lose_the_game`, `draws_from_empty_library` or similar trigger event to hang it on, and `condition_keys` has nothing that a static can use to intercept an event.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jace, Wielder of Mysteries** (rank 1085) — `jace_wielder_of_mysteries`
-  - If you would draw a card while your library has no cards in it, you win the game instead.
 
 </details>

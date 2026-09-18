@@ -48772,12 +48772,12 @@
     },
     "Cloudstone Curio": {
       "edhrec_rank": 2576,
-      "gate": "template",
+      "gate": null,
       "name": "Cloudstone Curio",
-      "reason": "no template for: Whenever a nonartifact permanent you control enters, you may return another permanent you ",
+      "reason": "",
       "scryfall_id": "0ab28c16-d50c-407a-b914-f7c645aa0269",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cloudthresher": {
@@ -140382,12 +140382,12 @@
     },
     "Jace, Wielder of Mysteries": {
       "edhrec_rank": 1085,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Wielder of Mysteries",
-      "reason": "no template for: If you would draw a card while your library has no cards in it, you win the game instead",
+      "reason": "",
       "scryfall_id": "6dece604-04f2-48ac-8e6c-ef850c0db190",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Jace, the Living Guildpact": {
