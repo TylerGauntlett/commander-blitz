@@ -1,0 +1,78 @@
+{
+  "_comment": "Cards that exist only for the flash-permission test (tests/unit/test_cast_as_though_flash.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_barracuda` is Tidal Barracuda's first line alone -- any player may cast as though they had flash -- without the prohibition half, so the permission can be read on its own. `t_orrery` is the Vedalken Orrery / Leyline of Anticipation shape, the same permission scoped to its controller. `t_own_turn_orrery` carries a condition, so the wearing-off has something to wear off. `t_sorcery` is a plain sorcery with no flash of its own: the witness that the permission is doing the work.",
+  "cards": [
+    {
+      "id": "t_barracuda",
+      "name": "Test Barracuda",
+      "oracle_text": "Any player may cast spells as though they had flash.",
+      "mana_cost": "{3}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Fish"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Any player may cast spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "any"
+        }
+      ]
+    },
+    {
+      "id": "t_orrery",
+      "name": "Test Orrery",
+      "oracle_text": "You may cast spells as though they had flash.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_own_turn_orrery",
+      "name": "Test Fairweather Orrery",
+      "oracle_text": "During your turn, you may cast spells as though they had flash.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "During your turn, you may cast spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "condition": {"is_your_turn": true}
+        }
+      ]
+    },
+    {
+      "id": "t_sorcery",
+      "name": "Test Plain Sorcery",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "amount": {"const": 1}, "player": "you"}]
+    },
+    {
+      "id": "t_flash_sorcery_target",
+      "name": "Test Plain Creature Spell",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "types": ["Creature"],
+      "subtypes": ["Boar"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    }
+  ]
+}

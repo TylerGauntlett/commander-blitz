@@ -13386,3 +13386,56 @@ happening and the font actually tapping; the solver's three answers from
 `t_unrestricted_font` is kept as a live card because it is the strictly better
 card this closes — the spelling shipped Omen Hawker and Automated Artificer use
 today, which casts spells their printed lines forbid.
+
+## `cast_as_though_flash` — "any player may cast spells as though they had flash"
+
+### Overview
+
+Tidal Barracuda; Leyline of Anticipation and Vedalken Orrery with
+`affects_player: "you"`. The permissive twin of `cant_cast_spells`, and the first
+static in the engine that widens a **timing** window rather than a zone one.
+
+### The shape
+
+A player-wide static taking `affects_player` ("you" / "opponent" / "any") and an
+optional `condition`, and no `affects` or `amount` — both are load errors, for
+the same reason its twin refuses them: "you may cast **Spirit** spells as though
+they had flash" written with a filter would load clean and hand the permission to
+every spell.
+
+**The seam is `casting._timing_ok`.** It read
+
+    if card.is_instant or Keyword.FLASH.value in card.keywords: return True
+    return sorcery_speed
+
+— printed characteristics and the window, with no `state` and no `pid`, so
+nothing a permanent did could be consulted from it. That is the block three gap
+records recorded. It now takes both.
+
+**Widened there rather than at one cast path**, because every zone a spell can be
+cast from asks that same function: hand, graveyard (flashback, retrace), exile
+(foretell, adventure, plot), a Bolas's Citadel top, and a second face. Twelve call
+sites, one answer. A permission written into the hand loop would pass every
+obvious test and leave the other six at sorcery speed.
+
+**It permits and never compels.** 101.2 still gives a "can't" the last word, so a
+seat under `cant_cast_spells` casts nothing — which is the pairing Tidal Barracuda
+prints on one card, and the reason that card is the right witness.
+
+### Guarded by
+
+`tests/unit/test_cast_as_though_flash.py`: the sorcery-speed baseline as a control
+on both sides (a plain sorcery off-turn, an instant either way); the permission
+lifting the window for a sorcery and a creature spell, on the opponent's turn and
+in a non-main step; the wearing-off when the source leaves; `affects_player`
+separating "you" from "any", in both directions, with the predicate and the action
+list asserted together; the `condition` honoured and un-honoured; the prohibition
+outranking the permission, against the un-locked control; a *granted* `flash`
+keyword still not doing it, which is the near miss; and the three load-time guards.
+
+### Not done
+
+The turn-scoped op form — "you may cast spells this turn as though they had flash"
+(Borne Upon a Wind, Emergence Zone) — which writes this same permission with a
+turn on it. A second capability and a second run; neither card is in the deck this
+was built for.

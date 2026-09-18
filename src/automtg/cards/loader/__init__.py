@@ -2452,6 +2452,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"would cast; it takes 'affects_player' and an optional "
                 f"'condition', and no 'affects' or 'amount'"
             )
+        if model.effect == "cast_as_though_flash" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # The same guard as its prohibitive twin, for the same reason and
+            # pointing the other way. "You may cast **Spirit** spells as though
+            # they had flash" written with a filter here would load clean and
+            # hand the permission to *every* spell -- a strictly better card
+            # than the printed one, and one that reads correctly on screen.
+            # Refused until a spell filter is built.
+            raise DslError(
+                f"{where}: cast_as_though_flash lifts the timing window for every "
+                f"spell the named players cast; it takes 'affects_player' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
+            )
     elif model.effect in (
         "spell_cost_reduction",
         "replace_token_creation",

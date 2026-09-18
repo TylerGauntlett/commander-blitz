@@ -284472,12 +284472,12 @@
     },
     "Tidal Barracuda": {
       "edhrec_rank": 4338,
-      "gate": "template",
+      "gate": null,
       "name": "Tidal Barracuda",
-      "reason": "no template for: Any player may cast spells as though they had flash",
+      "reason": "",
       "scryfall_id": "229710dc-5e91-44d2-bf2a-c98a745df3b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Tidal Bore": {

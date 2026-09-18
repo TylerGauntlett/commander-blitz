@@ -100470,6 +100470,44 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "any",
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "Any player may cast spells as though they had flash."
+        },
+        {
+          "affects_player": "opponent",
+          "condition": {
+            "is_your_turn": true
+          },
+          "effect": "cant_cast_spells",
+          "kind": "static",
+          "text": "Your opponents can't cast spells during your turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tidal_barracuda",
+      "mana_cost": "{3}{U}",
+      "name": "Tidal Barracuda",
+      "oracle_text": "Any player may cast spells as though they had flash.\nYour opponents can't cast spells during your turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Fish"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "U"

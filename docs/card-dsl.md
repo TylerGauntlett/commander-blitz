@@ -4222,6 +4222,39 @@ load error rather than ignored — "can't cast **creature** spells" written with
 filter would otherwise load as a lock on every spell. Drannith Magistrate,
 Deafening Silence and Grand Abolisher remain gaps.
 
+`cast_as_though_flash` is its permissive twin — Tidal Barracuda's "Any player may
+cast spells as though they had flash", and Leyline of Anticipation and Vedalken
+Orrery with `affects_player: "you"`:
+
+```jsonc
+{ "kind": "static",
+  "text": "Any player may cast spells as though they had flash.",
+  "effect": "cast_as_though_flash",
+  "affects_player": "any" }
+```
+
+The only static that widens a **timing** window rather than a zone one, and the
+reason `casting._timing_ok` takes a `state` and a `pid` at all: it used to decide
+casting speed from printed characteristics alone (`card.is_instant or FLASH in
+card.keywords`), so nothing on the board could be consulted from it. One seam,
+and every zone a spell can be cast from asks it — a permission written into the
+hand loop would pass the obvious tests and leave flashback, foretell, adventure,
+plot and the Citadel top at sorcery speed.
+
+Granting the `flash` keyword is the near miss and cannot stand in three times
+over: `_timing_ok` reads the **CardDef**'s printed keywords and never an object's
+granted ones; `static_filter_keys` has no `zone`, so a static's filter cannot name
+the cards in a hand; and the printed line covers cards drawn *after* the source
+arrived, which no pool resolved once can reach. `grant_playable` is a zone
+permission and leaves printed timing untouched.
+
+It permits and never compels, so 101.2 is unaffected: a seat under
+`cant_cast_spells` still casts nothing, which is exactly the pairing Tidal
+Barracuda prints on one card. Like its twin it takes no spell filter yet, and
+`affects` or `amount` beside it is a load error rather than ignored — "you may
+cast **Spirit** spells as though they had flash" written with a filter would
+otherwise hand the permission to every spell.
+
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus
 Dryad of the Ilysian Grove is two drops from anywhere, which is correct.

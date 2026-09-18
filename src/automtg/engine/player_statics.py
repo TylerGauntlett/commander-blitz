@@ -777,6 +777,35 @@ def player_cant_cast_spells(state: GameState, pid: int) -> bool:
     return _player_static(state, pid, "cant_cast_spells")
 
 
+def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
+    """"Any player may cast spells as though they had flash." Tidal Barracuda.
+
+    Also Leyline of Anticipation and Vedalken Orrery, with
+    ``affects_player: "you"``. The permissive twin of `player_cant_cast_spells`,
+    and the first thing in the engine that can widen a *timing* window rather
+    than a zone one.
+
+    Read in `casting._timing_ok`, which is why that function had to learn
+    `state` and `pid`: it decided casting speed from printed characteristics
+    alone (`card.is_instant or FLASH in card.keywords`) and took neither, so no
+    permanent on the board could be consulted from it. One seam, twelve callers,
+    and every zone a spell can be cast from goes through it -- hand, graveyard,
+    exile, a Citadel top, a second face -- which is the whole reason the check
+    lives there and not in `_cast_actions` beside the prohibition.
+
+    Granting `Keyword.FLASH` is the tempting substitute and is wrong three times
+    over: `_timing_ok` reads the **CardDef**'s keywords and never an object's
+    granted ones; a static's filter has no `zone`, so it could not name the cards
+    in hand even if it did; and the permission covers cards drawn after the
+    source arrived, which no pool resolved once could reach.
+
+    It permits and never compels, so it cannot make a spell castable that some
+    other rule forbids: 101.2 still gives a "can't" the last word, and
+    `player_cant_cast_spells` is checked before any of this.
+    """
+    return _player_static(state, pid, "cast_as_though_flash")
+
+
 def player_reveals_library_top(state: GameState, pid: int) -> bool:
     """ "Play with the top card of your library revealed." Vampire Nocturnus.
 

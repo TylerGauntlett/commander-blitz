@@ -10,11 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**29 cards** blocked by **35** capabilities.
+**28 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cast-as-though-flash](#cast-as-though-flash) | 3 | 536 | op, static_effect |
+| [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-as-though-instant](#activate-as-though-instant) | 1 | 2199 | static_effect |
@@ -52,14 +52,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 
 ## cast-as-though-flash
 
-Blocks **3** cards.
+Blocks **2** cards.
 
 - **(op)** an effect op that writes a turn-scoped, per-player timing permission -- "you may cast spells this turn as though they had flash" -- that `legality._timing_ok` consults alongside the printed keyword. It must cover every spell cast for the rest of the turn, including cards not yet in hand when it resolved, and ideally carry an optional selector so narrower printings ("cast creature spells", "cast this spell as though it had flash") reach the same permission
   <br>Why the existing vocabulary won't do: Casting speed is decided entirely by `legality._timing_ok` (src/automtg/engine/legality.py:680), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef -- and otherwise defers to the sorcery-speed window from `_can_act_at_sorcery_speed`. Nothing writable from an effect widens it. `grant_keyword` with `flash` is the tempting substitute and is wrong twice: `_timing_ok` never reads an object's granted keywords, and even if it did, an `objects` pool resolved at resolution would reach only the cards already in hand, while this line covers the whole turn -- including the card this very spell draws, which is the point of the pairing. `grant_playable` (ops_cards.py:132) is a *zone* permission (`playable_by`/`playable_turn`), letting a card be cast from somewhere other than hand at its printed timing; it moves no timing restriction. `set_turn_flag` writes a flag only `has_turn_flag` conditions read, and no legality path consults the turn ledger for casting speed. `static_effects` has `cast_from_graveyard` and `cast_from_library_top` -- again zone permissions, not timing ones. The second sentence, "Draw a card.", is plain `draw`, so only the first line is blocked and no partial answer was written. Identical to the block already recorded for Emergence Zone.
 - **(op)** an effect op that writes a turn-scoped, per-player timing permission -- "you may cast spells this turn as though they had flash" -- that `legality._timing_ok` consults alongside the printed keyword, ideally with an optional selector so the narrower printings ("cast creature spells", "cast Spirit spells", "cast this spell as though it had flash") and the permanent/static form ("During each opponent's end step, you may cast spells as though they had flash") land on the same permission
   <br>Why the existing vocabulary won't do: Timing is decided entirely by `legality._timing_ok` (src/automtg/engine/legality.py:680), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef -- and otherwise falls back to the sorcery-speed window from `_can_act_at_sorcery_speed`. Nothing in the game state can widen it. `grant_keyword` with `flash` is the tempting substitute and is wrong twice: `_timing_ok` never reads an object's granted keywords, and even if it did, the grant would reach only the cards sitting in hand when the ability resolved, while the printed line covers every spell cast for the rest of the turn -- cards drawn later, cards cast from other zones, cards that were not yet visible. `grant_playable` (ops_cards.py:132) is a *zone* permission, not a timing one: it sets `playable_by`/`playable_turn` so a card may be cast from somewhere other than hand, at its printed timing, and it moves no timing restriction at all. `set_turn_flag` writes a flag only `has_turn_flag` conditions read; no legality path consults the turn ledger for casting speed. `become_prepared` and `play_exiled` are both about a specific stashed card, not a standing permission over the whole turn. The rest of the line -- the `{1}` + `tap` + `sacrifice` cost and the mana ability -- is fully expressible; only the effect is missing, so no partial answer was written.
-- **(static_effect)** a player-wide static timing permission -- the standing, permanent-sourced form of "cast spells as though they had flash" (Leyline of Anticipation, Vedalken Orrery, Tidal Barracuda) -- taking `affects_player` ("you" / "opponent" / "any") like `cant_cast_spells` does, and consulted by the casting-speed check for every spell that player casts from any zone while the source is on the battlefield. It should share one permission with the turn-scoped op already asked for by Borne Upon a Wind and Emergence Zone, and ideally carry an optional spell filter so the narrower printings ("you may cast Spirit spells as though they had flash", "legendary spells and artifact spells") land on the same mechanism. Reaching it requires widening `_timing_ok` itself, which today takes no state or player.
-  <br>Why the existing vocabulary won't do: Casting speed is decided by `_timing_ok(card, sorcery_speed)` (src/automtg/engine/casting.py:367), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef, with no `state` or `pid` parameter at all, so no static a permanent puts on the board can be consulted from there. `static_effects` has no timing entry: `cast_from_graveyard` and `cast_from_library_top` are *zone* permissions (where a card may be cast from), not *when*, and `spells_cant_be_countered` and `cant_cast_spells` are the only other spell-wide statics -- `cant_cast_spells` prohibits and has no permissive counterpart. A `grant_keyword` static with `flash` is the tempting substitute and is wrong three times over: `_timing_ok` reads `card.keywords`, never an object's granted keywords; `static_filter_keys` has no `zone`, so a static's filter cannot even name the cards in hand (it reads battlefield permanents, where flash does nothing); and the line covers every player's spells from every zone, including cards drawn after the Barracuda entered. `grant_playable` is again a zone permission (`playable_by`/`playable_turn`) that leaves printed timing intact. Same block already recorded for Borne Upon a Wind and Emergence Zone, which need the one-shot turn-scoped version; this card needs the static form and the `affects_player: "any"` reach. The card's second line, "Your opponents can't cast spells during your turn.", is fully expressible (static `cant_cast_spells` with `affects_player: "opponent"` and `condition: {"is_your_turn": true}`), so only the first sentence is blocked and no partial answer was written -- a Barracuda with only the prohibition is a strictly different, strictly worse card.
 
 <details><summary>Cards waiting on this</summary>
 
@@ -67,8 +65,6 @@ Blocks **3** cards.
   - {1}, {T}, Sacrifice this land: You may cast spells this turn as though they had flash.
 - **Borne Upon a Wind** (rank 649) — `borne_upon_a_wind`
   - You may cast spells this turn as though they had flash.
-- **Tidal Barracuda** (rank 4338) — `tidal_barracuda`
-  - Any player may cast spells as though they had flash.
 
 </details>
 

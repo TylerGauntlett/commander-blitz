@@ -269,7 +269,7 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
         card = state.card(oid)
         if card.suspend is None:
             continue
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         cost, counters = card.suspend
         if not can_pay_mana(state, pid, cost):
@@ -429,7 +429,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
             return "land_drop"
         return None
 
-    if not _timing_ok(card, sorcery_speed):
+    if not _timing_ok(state, pid, card, sorcery_speed):
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.

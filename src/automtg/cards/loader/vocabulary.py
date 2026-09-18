@@ -340,6 +340,16 @@ STATIC_EFFECTS = frozenset(
         # Not `split_second`, which lives on the stack and binds every player,
         # and not `epic`, which is a card-level rider with no seat or duration.
         "cant_cast_spells",
+        # Tidal Barracuda; Leyline of Anticipation; Vedalken Orrery.  "Any
+        # player may cast spells as though they had flash."  The permissive twin
+        # of the prohibition above, and the only static that widens a *timing*
+        # window rather than a zone one -- read in `casting._timing_ok`, the one
+        # seam every cast path asks, whichever zone the spell is coming from.
+        # Granting `flash` cannot stand in: `_timing_ok` reads the CardDef's
+        # printed keywords and never an object's granted ones, a static's filter
+        # has no `zone` with which to name the cards in hand, and the permission
+        # has to cover cards drawn after the source arrived.
+        "cast_as_though_flash",
     }
 )
 
@@ -377,6 +387,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_mill",
         "replace_empty_draw",
         "cant_cast_spells",
+        "cast_as_though_flash",
         "cant_gain_life",
     }
 )
