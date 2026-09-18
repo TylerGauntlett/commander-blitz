@@ -20,6 +20,7 @@ from automtg.engine.effects.values import (
 from automtg.engine.errors import DslError
 from automtg.engine.mana import (
     CHOSEN_TYPE,
+    WILDCARD,
     ManaRestriction,
     RestrictionGroup,
     parse_mana_production,
@@ -330,7 +331,26 @@ def _mana_restriction(spec: Any, where: str) -> ManaRestriction:
             raise DslError(
                 f"{where}: 'mana_restriction' permits nothing at all; omit it for ordinary mana"
             )
+        if spec.get("cast") == WILDCARD and spec.get("activate") == WILDCARD:
+            # Both halves unrestricted is ordinary mana wearing a restriction,
+            # and the one shape that would make `"any"` a way to say nothing.
+            raise DslError(
+                f"{where}: 'mana_restriction' of {WILDCARD!r} on both halves restricts "
+                f"nothing; omit it for ordinary mana"
+            )
         return restriction
+    if spec == WILDCARD:
+        # A bare restriction is the *cast* half, so a bare wildcard is mana that
+        # pays for every spell ever printed and merely declines to activate an
+        # ability. No card prints that, and the shape is one keystroke from the
+        # line that is meant -- "spend this mana only to activate abilities" --
+        # which it would silently invert into a strictly better card. The
+        # wildcard is only ever one named half of the mapping.
+        raise DslError(
+            f"{where}: a bare {WILDCARD!r} 'mana_restriction' restricts nothing worth "
+            f"saying; name the half it belongs to, as {{{WILDCARD!r}: ...}} under "
+            f"'cast' or 'activate'"
+        )
     return ManaRestriction(cast=_restriction_groups(spec, where))
 
 
@@ -339,9 +359,27 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
 
     ``None`` is an omitted half and means "never", which is the whole of how a
     card that says only "to cast" refuses to fund an activation.
+
+    ``"any"`` is the other end of the same axis: one empty group, which
+    `RestrictionGroup.satisfied_by` satisfies for every purpose of that kind
+    (``required <= names`` with nothing required). "Spend this mana only to
+    **activate abilities**" (Cryptic Trilobite, Omen Hawker) names no type at
+    all, and every group this language can otherwise hold is a set of literal
+    type or subtype names -- there is no name every source has.
+
+    The restriction is real because it lives in the *other* half: with `cast`
+    omitted, this mana can never pay for a spell. That is why the wildcard is
+    not "no restriction", and why both halves being ``"any"`` is refused above.
+
+    Spelled as an explicit word rather than accepted as an empty list, which
+    stays an error: ``[]`` is what a mistake looks like, and the difference
+    between "I meant everything" and "I left this blank" is a strictly better
+    card.
     """
     if spec is None:
         return ()
+    if spec == WILDCARD:
+        return (RestrictionGroup(),)
     groups = [spec] if isinstance(spec, str) else list(spec)
     if not groups:
         raise DslError(f"{where}: 'mana_restriction' is empty; omit it for ordinary mana")

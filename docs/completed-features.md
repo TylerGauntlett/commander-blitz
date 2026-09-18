@@ -13339,3 +13339,50 @@ wrong; two creatures with no shared subtype still matching, with a fixture-sanit
 assertion so the test cannot go vacuous; an artifact creature reaching both pools
 and a plain creature not reaching the artifacts; the self-match and its
 exclusion; and an unbound name failing closed.
+
+## `"any"` — "spend this mana only to activate abilities"
+
+### Overview
+
+Cryptic Trilobite; Omen Hawker. `mana_restriction` already carried the
+cast/activate split Secluded Courtyard needed, but every group either half could
+hold was a set of literal card type or subtype **names**:
+`RestrictionGroup.satisfied_by` asks `required <= names`, where `names` is the
+types and subtypes of the source whose ability is being activated. This line
+names no type at all, and there is no name that every source has — so nothing in
+the language could mean it.
+
+### The shape
+
+`"any"` in place of a half's list of groups, compiling to a single **empty**
+`RestrictionGroup` — satisfied for every purpose of that kind, nothing being
+required.
+
+**The restriction lives in the other half.** With no `cast` groups the mana can
+never pay for a spell, and `ManaRestriction` already documented an empty tuple as
+"never". That is the whole of what the printed line forbids, which is why the
+wildcard is not the same thing as no restriction.
+
+**Refused on both halves at once**, which is ordinary mana wearing a restriction,
+and **refused bare**: a bare restriction is the `cast` half, so a bare `"any"`
+would be mana that pays for every spell ever printed and merely declines to
+activate an ability — one keystroke from the line that was meant, and silent.
+
+A word rather than an accepted empty list. `[]` stays a load error, because a
+blank is what a mistake looks like and reading it as "everything" is how a
+strictly better card ships quietly.
+
+### Guarded by
+
+`tests/unit/test_mana_restriction_activate_any.py`: the empty group funding an
+Enchantment, a Land and a Creature sink with the same `{2}` ability — three type
+lines sharing no literal name, which is the argument that no enumeration could
+have stood in — and the empty name set, which no enumeration reaches at all; the
+mana refusing every spell, which is the printed restriction; the payment actually
+happening and the font actually tapping; the solver's three answers from
+`mana_sources`, against `t_unrestricted_font` as the control; the mirror
+`{"cast": "any"}`; and the three load-time guards.
+
+`t_unrestricted_font` is kept as a live card because it is the strictly better
+card this closes — the spelling shipped Omen Hawker and Automated Artificer use
+today, which casts spells their printed lines forbid.

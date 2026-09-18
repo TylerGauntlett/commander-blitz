@@ -352,10 +352,16 @@ class AbilityModel(BaseModel):
     #: the mana is allowed to pay for -- Secluded Courtyard's "…or activate an
     #: ability of a creature source of the chosen type". A bare string or list is
     #: the ``cast`` half alone, which is what every other printing says.
+    #:
+    #: Either half of the object may be the word ``"any"`` instead of a list of
+    #: groups -- "Spend this mana only to activate abilities" (Cryptic Trilobite,
+    #: Omen Hawker), which names no type at all. The loader refuses it on both
+    #: halves at once and refuses it bare, where it would read as the ``cast``
+    #: half and quietly make ordinary mana.
     mana_restriction: (
         str
         | list[str | dict[str, Any] | list[str | dict[str, Any]]]
-        | dict[str, list[str | dict[str, Any] | list[str | dict[str, Any]]]]
+        | dict[str, str | list[str | dict[str, Any] | list[str | dict[str, Any]]]]
         | None
     ) = None
     sorcery_speed_only: bool = False
