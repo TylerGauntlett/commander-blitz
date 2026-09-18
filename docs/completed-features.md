@@ -13300,3 +13300,42 @@ drawing as usual; the win landing on the draw that empties the library; an
 opponent decking being unaffected (the near miss a player-agnostic
 implementation passes silently); the permission ending with its source; and the
 load-time guards.
+
+## `shares_permanent_type_with` — "shares a permanent type with it"
+
+### Overview
+
+Cloudstone Curio. The selector language had two dynamic "shares a … with"
+clauses — `shares_a_type_with` (subtypes) and `shares_a_color_with` (colours) —
+and no card-type member.
+
+### The shape
+
+A selector key taking a binding name, intersecting **`types`** where its sibling
+intersects `subtypes`. Read from derived characteristics on both sides.
+
+A separate key rather than a mode of the subtype one, because the wrong reading
+is *quietly narrower*: written with `shares_a_type_with`, Cloudstone Curio finds
+another Goblin when a Goblin enters and **nothing at all** when a land, a
+typeless artifact, or any permanent without shared creature types enters. That
+card loads clean, prints the right sentence and does a fraction of it.
+
+A literal `types` list cannot stand in: which permanent type matters is decided
+at resolution by whatever just entered.
+
+An intersection, so an artifact creature reaches both the artifacts and the
+creatures (205.2a). Both objects are on the battlefield, where every card type
+is a permanent type (110.4a), so no spell type can appear on either side.
+
+The printed **"another"** is `exclude_binding`, not this clause — a permanent
+shares a type with itself, and without the exclusion the card bounces whatever
+just entered.
+
+### Guarded by
+
+`tests/unit/test_shares_permanent_type.py`: a creature finding creatures and not
+lands; a land finding a land, which is exactly the case the subtype reading gets
+wrong; two creatures with no shared subtype still matching, with a fixture-sanity
+assertion so the test cannot go vacuous; an artifact creature reaching both pools
+and a plain creature not reaching the artifacts; the self-match and its
+exclusion; and an unbound name failing closed.
