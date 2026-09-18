@@ -414,11 +414,40 @@ def _pay_the_counters(game: Game, oid: int, ability) -> None:
     # An ultimate costs more than the printed number -- The Theorist's -6 on a
     # starting loyalty of 3 -- so stock whichever is larger, as a counter cost
     # is stocked below.
-    loyalty = game.state.registry.get(game.state.objects[oid].def_id).loyalty
+    card = game.state.registry.get(game.state.objects[oid].def_id)
+    loyalty = card.loyalty
     if loyalty is not None:
         price = getattr(cost, "loyalty", None) if cost else None
         needed = -int(price) if price is not None and int(price) < 0 else 0
         game.state.objects[oid].counters["loyalty"] = max(loyalty, needed)
+    # The same replacement, for every card that is not a planeswalker. A
+    # printed **0/0** whose size comes from "this creature enters with X +1/+1
+    # counters on it" (614.1c) is placed here with nothing on it, and the
+    # state-based action bins it before the first priority window -- so its
+    # abilities reported as unusable from a graveyard. Cryptic Trilobite found
+    # this; loyalty was the same bug, noticed one card type earlier.
+    #
+    # Only enough counters to live, not the X a real cast would have announced.
+    # This arranges a position, and a larger creature proves nothing more.
+    # Written straight onto the object for the reason the loyalty line above is:
+    # a counter arriving is an event other cards react to, and nothing here is
+    # playing a turn.
+    for replacement in card.replacements or ():
+        if replacement.get("event") != "self_enters_with_counters":
+            continue
+        kind = str(replacement.get("counter") or PLUS_ONE)
+        amount = replacement.get("amount")
+        if isinstance(amount, dict) and "const" in amount:
+            wanted = int(amount["const"])
+        elif isinstance(amount, int):
+            wanted = int(amount)
+        else:
+            # An X, or anything else decided as the spell resolves. One counter
+            # is enough for a 0/0 to survive, which is all this is for.
+            wanted = max(1, 1 - int(card.toughness or 0))
+        counters = game.state.objects[oid].counters
+        counters[kind] = max(counters.get(kind, 0), wanted)
+    game.state.bump_chars()
     # A station striation (721): "12+ | {3}{W}, {T}: …" is an ability the
     # permanent does not *have* below twelve charge counters, so a Planet placed
     # with none reported its best line as missing. Stocked to exactly the
