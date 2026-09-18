@@ -1,0 +1,46 @@
+{
+  "card": {
+    "id": "merchant_scroll",
+    "name": "Merchant Scroll",
+    "oracle_text": "Search your library for a blue instant card, reveal that card, put it into your hand, then shuffle.",
+    "mana_cost": "{1}{U}",
+    "types": [
+      "Sorcery"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "search_library",
+        "player": "you",
+        "count": 1,
+        "destination": "hand",
+        "reveal": true,
+        "selector": {
+          "types": [
+            "Instant"
+          ],
+          "colors": [
+            "U"
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "library_size": {
+      "0": 39
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

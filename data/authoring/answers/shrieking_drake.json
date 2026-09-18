@@ -1,0 +1,56 @@
+{
+  "card": {
+    "id": "shrieking_drake",
+    "name": "Shrieking Drake",
+    "oracle_text": "Flying\nWhen this creature enters, return a creature you control to its owner's hand.",
+    "mana_cost": "{U}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Drake"
+    ],
+    "power": 1,
+    "toughness": 1,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "keywords": [
+      "flying"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this creature enters, return a creature you control to its owner's hand.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "return_to_hand",
+            "objects": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "count": 1,
+              "chooser": "controller"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
+  }
+}

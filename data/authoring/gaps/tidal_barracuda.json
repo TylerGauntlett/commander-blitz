@@ -1,0 +1,23 @@
+{
+  "card_id": "tidal_barracuda",
+  "name": "Tidal Barracuda",
+  "oracle_text": "Any player may cast spells as though they had flash.\nYour opponents can't cast spells during your turn.",
+  "blocked_sentences": [
+    "Any player may cast spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "cast_as_though_flash",
+      "kind": "static_effect",
+      "what": "a player-wide static timing permission -- the standing, permanent-sourced form of \"cast spells as though they had flash\" (Leyline of Anticipation, Vedalken Orrery, Tidal Barracuda) -- taking `affects_player` (\"you\" / \"opponent\" / \"any\") like `cant_cast_spells` does, and consulted by the casting-speed check for every spell that player casts from any zone while the source is on the battlefield. It should share one permission with the turn-scoped op already asked for by Borne Upon a Wind and Emergence Zone, and ideally carry an optional spell filter so the narrower printings (\"you may cast Spirit spells as though they had flash\", \"legendary spells and artifact spells\") land on the same mechanism. Reaching it requires widening `_timing_ok` itself, which today takes no state or player.",
+      "why_existing_wont_do": "Casting speed is decided by `_timing_ok(card, sorcery_speed)` (src/automtg/engine/casting.py:367), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef, with no `state` or `pid` parameter at all, so no static a permanent puts on the board can be consulted from there. `static_effects` has no timing entry: `cast_from_graveyard` and `cast_from_library_top` are *zone* permissions (where a card may be cast from), not *when*, and `spells_cant_be_countered` and `cant_cast_spells` are the only other spell-wide statics -- `cant_cast_spells` prohibits and has no permissive counterpart. A `grant_keyword` static with `flash` is the tempting substitute and is wrong three times over: `_timing_ok` reads `card.keywords`, never an object's granted keywords; `static_filter_keys` has no `zone`, so a static's filter cannot even name the cards in hand (it reads battlefield permanents, where flash does nothing); and the line covers every player's spells from every zone, including cards drawn after the Barracuda entered. `grant_playable` is again a zone permission (`playable_by`/`playable_turn`) that leaves printed timing intact. Same block already recorded for Borne Upon a Wind and Emergence Zone, which need the one-shot turn-scoped version; this card needs the static form and the `affects_player: \"any\"` reach. The card's second line, \"Your opponents can't cast spells during your turn.\", is fully expressible (static `cant_cast_spells` with `affects_player: \"opponent\"` and `condition: {\"is_your_turn\": true}`), so only the first sentence is blocked and no partial answer was written -- a Barracuda with only the prohibition is a strictly different, strictly worse card."
+    }
+  ],
+  "closest_existing": [
+    "cant_cast_spells",
+    "grant_keyword",
+    "grant_playable",
+    "cast_from_graveyard"
+  ],
+  "confidence": "high"
+}

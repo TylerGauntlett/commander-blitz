@@ -1,0 +1,23 @@
+{
+  "card_id": "intruder_alarm",
+  "name": "Intruder Alarm",
+  "oracle_text": "Creatures don't untap during their controllers' untap steps.\nWhenever a creature enters, untap all creatures.",
+  "blocked_sentences": [
+    "Creatures don't untap during their controllers' untap steps."
+  ],
+  "needs": [
+    {
+      "capability": "doesnt_untap",
+      "kind": "static_effect",
+      "what": "A static continuous effect, readable at the untap step, that stops every permanent matching a printed-characteristic filter (here: Creature, ANY controller -- both players, and creatures that enter after this enchantment) from untapping during its controller's untap step, for as long as the source is on the battlefield -- the Intruder Alarm / Back to Basics / Winter Orb shape. The filter must reach an opponent's creatures too, so the effect cannot be scoped to the source's controller.",
+      "why_existing_wont_do": "static_effects has no untap prohibition at all: untap_during_each_untap_step is the opposite (it adds untaps), and freeze_opponent_lands is Vorinclex's tap-for-mana rider on lands only, applied one-shot at the moment an opponent taps a land for mana. The two untap holds the untap step consults are both per-object and applied by an op at resolution: skip_next_untap (the skip_untap op) is spent by a single untap step, and frozen_by (the freeze op) locks only the objects chosen when that effect resolved, so creatures that enter on later turns -- exactly the ones this card's own second ability keeps making relevant -- would never be caught. A permanent's static ability cannot run an op, and there is no trigger event for 'a player's untap step begins' to hang one on. Without it the card is inverted -- the second printed line alone is a pure-upside untap engine with none of the drawback -- which is why no partial answer was written."
+    }
+  ],
+  "closest_existing": [
+    "freeze",
+    "skip_untap",
+    "freeze_opponent_lands",
+    "untap_during_each_untap_step"
+  ],
+  "confidence": "high"
+}

@@ -10,48 +10,62 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **29** capabilities.
+**37 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
+| [cast-as-though-flash](#cast-as-though-flash) | 3 | 536 | op, static_effect |
+| [doesnt-untap](#doesnt-untap) | 3 | 145 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
+| [activate-as-though-instant](#activate-as-though-instant) | 1 | 2199 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
+| [any-number-in-deck](#any-number-in-deck) | 1 | 10124 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [delayed-trigger-filter](#delayed-trigger-filter) | 1 | 18627 | trigger_event |
+| [delayed-trigger-once-this-turn](#delayed-trigger-once-this-turn) | 1 | 18627 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [doesnt-untap](#doesnt-untap) | 1 | 145 | static_effect |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [forced-discard-trigger](#forced-discard-trigger) | 1 | 5502 | trigger_event |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [mana-restriction-activate-any](#mana-restriction-activate-any) | 1 | 6916 | cost |
+| [mill-doubling](#mill-doubling) | 1 | 2124 | static_effect |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [repeat-while](#repeat-while) | 1 | 3647 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [shares-a-color](#shares-a-color) | 1 | 3647 | condition |
+| [shares-permanent-type](#shares-permanent-type) | 1 | 2576 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [spell-targets-permanent-trigger](#spell-targets-permanent-trigger) | 1 | 5502 | trigger_event |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
+| [win-on-empty-library-draw](#win-on-empty-library-draw) | 1 | 1085 | static_effect |
 
 ## cast-as-though-flash
 
-Blocks **2** cards.
+Blocks **3** cards.
 
 - **(op)** an effect op that writes a turn-scoped, per-player timing permission -- "you may cast spells this turn as though they had flash" -- that `legality._timing_ok` consults alongside the printed keyword. It must cover every spell cast for the rest of the turn, including cards not yet in hand when it resolved, and ideally carry an optional selector so narrower printings ("cast creature spells", "cast this spell as though it had flash") reach the same permission
   <br>Why the existing vocabulary won't do: Casting speed is decided entirely by `legality._timing_ok` (src/automtg/engine/legality.py:680), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef -- and otherwise defers to the sorcery-speed window from `_can_act_at_sorcery_speed`. Nothing writable from an effect widens it. `grant_keyword` with `flash` is the tempting substitute and is wrong twice: `_timing_ok` never reads an object's granted keywords, and even if it did, an `objects` pool resolved at resolution would reach only the cards already in hand, while this line covers the whole turn -- including the card this very spell draws, which is the point of the pairing. `grant_playable` (ops_cards.py:132) is a *zone* permission (`playable_by`/`playable_turn`), letting a card be cast from somewhere other than hand at its printed timing; it moves no timing restriction. `set_turn_flag` writes a flag only `has_turn_flag` conditions read, and no legality path consults the turn ledger for casting speed. `static_effects` has `cast_from_graveyard` and `cast_from_library_top` -- again zone permissions, not timing ones. The second sentence, "Draw a card.", is plain `draw`, so only the first line is blocked and no partial answer was written. Identical to the block already recorded for Emergence Zone.
 - **(op)** an effect op that writes a turn-scoped, per-player timing permission -- "you may cast spells this turn as though they had flash" -- that `legality._timing_ok` consults alongside the printed keyword, ideally with an optional selector so the narrower printings ("cast creature spells", "cast Spirit spells", "cast this spell as though it had flash") and the permanent/static form ("During each opponent's end step, you may cast spells as though they had flash") land on the same permission
   <br>Why the existing vocabulary won't do: Timing is decided entirely by `legality._timing_ok` (src/automtg/engine/legality.py:680), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef -- and otherwise falls back to the sorcery-speed window from `_can_act_at_sorcery_speed`. Nothing in the game state can widen it. `grant_keyword` with `flash` is the tempting substitute and is wrong twice: `_timing_ok` never reads an object's granted keywords, and even if it did, the grant would reach only the cards sitting in hand when the ability resolved, while the printed line covers every spell cast for the rest of the turn -- cards drawn later, cards cast from other zones, cards that were not yet visible. `grant_playable` (ops_cards.py:132) is a *zone* permission, not a timing one: it sets `playable_by`/`playable_turn` so a card may be cast from somewhere other than hand, at its printed timing, and it moves no timing restriction at all. `set_turn_flag` writes a flag only `has_turn_flag` conditions read; no legality path consults the turn ledger for casting speed. `become_prepared` and `play_exiled` are both about a specific stashed card, not a standing permission over the whole turn. The rest of the line -- the `{1}` + `tap` + `sacrifice` cost and the mana ability -- is fully expressible; only the effect is missing, so no partial answer was written.
+- **(static_effect)** a player-wide static timing permission -- the standing, permanent-sourced form of "cast spells as though they had flash" (Leyline of Anticipation, Vedalken Orrery, Tidal Barracuda) -- taking `affects_player` ("you" / "opponent" / "any") like `cant_cast_spells` does, and consulted by the casting-speed check for every spell that player casts from any zone while the source is on the battlefield. It should share one permission with the turn-scoped op already asked for by Borne Upon a Wind and Emergence Zone, and ideally carry an optional spell filter so the narrower printings ("you may cast Spirit spells as though they had flash", "legendary spells and artifact spells") land on the same mechanism. Reaching it requires widening `_timing_ok` itself, which today takes no state or player.
+  <br>Why the existing vocabulary won't do: Casting speed is decided by `_timing_ok(card, sorcery_speed)` (src/automtg/engine/casting.py:367), which returns True only for `card.is_instant` or `Keyword.FLASH.value in card.keywords` -- printed characteristics read off the CardDef, with no `state` or `pid` parameter at all, so no static a permanent puts on the board can be consulted from there. `static_effects` has no timing entry: `cast_from_graveyard` and `cast_from_library_top` are *zone* permissions (where a card may be cast from), not *when*, and `spells_cant_be_countered` and `cant_cast_spells` are the only other spell-wide statics -- `cant_cast_spells` prohibits and has no permissive counterpart. A `grant_keyword` static with `flash` is the tempting substitute and is wrong three times over: `_timing_ok` reads `card.keywords`, never an object's granted keywords; `static_filter_keys` has no `zone`, so a static's filter cannot even name the cards in hand (it reads battlefield permanents, where flash does nothing); and the line covers every player's spells from every zone, including cards drawn after the Barracuda entered. `grant_playable` is again a zone permission (`playable_by`/`playable_turn`) that leaves printed timing intact. Same block already recorded for Borne Upon a Wind and Emergence Zone, which need the one-shot turn-scoped version; this card needs the static form and the `affects_player: "any"` reach. The card's second line, "Your opponents can't cast spells during your turn.", is fully expressible (static `cant_cast_spells` with `affects_player: "opponent"` and `condition: {"is_your_turn": true}`), so only the first sentence is blocked and no partial answer was written -- a Barracuda with only the prohibition is a strictly different, strictly worse card.
 
 <details><summary>Cards waiting on this</summary>
 
@@ -59,6 +73,30 @@ Blocks **2** cards.
   - {1}, {T}, Sacrifice this land: You may cast spells this turn as though they had flash.
 - **Borne Upon a Wind** (rank 649) — `borne_upon_a_wind`
   - You may cast spells this turn as though they had flash.
+- **Tidal Barracuda** (rank 4338) — `tidal_barracuda`
+  - Any player may cast spells as though they had flash.
+
+</details>
+
+## doesnt-untap
+
+Blocks **3** cards.
+
+- **(static_effect)** A static continuous effect, readable at the untap step, that stops every permanent matching a printed-characteristic filter (here: Land without the Basic supertype, any controller, including permanents that enter after this enchantment) from untapping during its controller's untap step, for as long as the source is on the battlefield -- the Back to Basics / Winter Orb / Rising Waters shape.
+  <br>Why the existing vocabulary won't do: static_effects has no untap prohibition at all: untap_during_each_untap_step is the opposite (it adds untaps), and freeze_opponent_lands is Vorinclex's tap-for-mana rider -- it sets skip_next_untap on a land only at the moment an opponent taps it for mana, so it misses untapped and non-mana-tapped lands, never touches the controller's own lands, and is one-shot. The two untap holds untap_all consults are both per-object and applied by an op at resolution: skip_next_untap (the skip_untap op) is spent by one untap step, and frozen_by (the freeze op) locks only the specific objects chosen when the effect resolved, so lands played on later turns would never be caught. A permanent's static ability cannot run an op, and there is no trigger event for 'a player's untap step begins' to hang one on.
+- **(static_effect)** A static continuous effect, readable at the untap step, that stops every permanent matching a printed-characteristic filter (here: Creature, ANY controller -- both players, and creatures that enter after this enchantment) from untapping during its controller's untap step, for as long as the source is on the battlefield -- the Intruder Alarm / Back to Basics / Winter Orb shape. The filter must reach an opponent's creatures too, so the effect cannot be scoped to the source's controller.
+  <br>Why the existing vocabulary won't do: static_effects has no untap prohibition at all: untap_during_each_untap_step is the opposite (it adds untaps), and freeze_opponent_lands is Vorinclex's tap-for-mana rider on lands only, applied one-shot at the moment an opponent taps a land for mana. The two untap holds the untap step consults are both per-object and applied by an op at resolution: skip_next_untap (the skip_untap op) is spent by a single untap step, and frozen_by (the freeze op) locks only the objects chosen when that effect resolved, so creatures that enter on later turns -- exactly the ones this card's own second ability keeps making relevant -- would never be caught. A permanent's static ability cannot run an op, and there is no trigger event for 'a player's untap step begins' to hang one on. Without it the card is inverted -- the second printed line alone is a pure-upside untap engine with none of the drawback -- which is why no partial answer was written.
+- **(static_effect)** a static effect -- say `skip_untap_step` -- that a permanent prints on itself (and, with a filter, on others: Winter Orb, Kismet, Stasis-likes) meaning "doesn't untap during its controller's untap step", read by the untap step alongside `skip_next_untap` and `frozen_by`. It must be a printed characteristic with no lifetime of its own: it holds for exactly as long as the ability is on the battlefield, is spent by nothing, and must not fight `skip_next_untap` (the untap step must not consume that one-shot on a permanent already held by the static), while leaving explicit `untap` effects -- Mana Vault's own upkeep payment -- free to untap it
+  <br>Why the existing vocabulary won't do: `static_effects` carries `untap_during_each_untap_step`, the exact inverse, and nothing that suppresses untapping; `characteristics.untap_also` is the only untap-related static reader and it only adds permanents to the untap set. The two engine fields that do suppress untapping are both written by resolution, not by a printed static: `skip_untap` sets `skip_next_untap`, which `primitives.untap_all` clears in the very untap step it skips (a one-shot -- it would hold Mana Vault for one turn and release it on the next), and `freeze` sets `frozen_by` to the source oid for its source's lifetime. Both are `ops`, so the only way to reach either is to invent a triggered ability (`self_enters` + `freeze` on `self_only`) to carry a line that is printed as a static -- which the residual gate would see as a triggered ability claiming a static sentence, and which would additionally sit on the stack, be responded to, and be re-installed on every re-entry rather than simply being true while the artifact is on the battlefield.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mana Vault** (rank 145) — `mana_vault`
+  - This artifact doesn't untap during your untap step.
+- **Intruder Alarm** (rank 1725) — `intruder_alarm`
+  - Creatures don't untap during their controllers' untap steps.
+- **Back to Basics** (rank 5179) — `back_to_basics`
+  - Nonbasic lands don't untap during their controllers' untap steps.
 
 </details>
 
@@ -99,6 +137,20 @@ Blocks **2** cards.
 
 </details>
 
+## activate-as-though-instant
+
+Blocks **1** card.
+
+- **(static_effect)** a static timing permission that lifts an activated ability's sorcery-speed window -- "You may activate loyalty abilities of Teferi on any player's turn any time you could cast an instant" (Teferi, Master of Time) and "You may activate equip abilities any time you could cast an instant" (Leonin Shikari, already in the queue). It needs (a) an authorable static, e.g. `activate_as_though_instant` taking a filter over the abilities it frees -- the source's own loyalty abilities here, equip abilities on permanents you control there -- and (b) a read of it inside `legality._ability_aims`, so the `ability.sorcery_speed_only and not sorcery_speed` refusal at src/automtg/engine/legality.py:662 can be waived per ability rather than only per card. The 606.3 one-loyalty-ability-per-permanent-per-turn limit at legality.py:685 is NOT waived by this line and must stay; only the sorcery-speed window (your turn, a main phase, empty stack) moves.
+  <br>Why the existing vocabulary won't do: Sorcery speed is forced on, not authored, for every loyalty ability: the loader builds the ability with `sorcery_speed_only=model.sorcery_speed_only or (cost is not None and cost.loyalty is not None)` (src/automtg/cards/loader/__init__.py:2016), so writing `sorcery_speed_only: false` on a `{"loyalty": 1}` ability is swallowed by the `or` and changes nothing -- there is no authorable way to reach the flag at all. `legality._ability_aims` then refuses the ability whenever `_can_act_at_sorcery_speed` is false, and that helper (legality.py:308) is exactly the two things this card removes: `state.active_player == pid` and `state.step in (PRECOMBAT_MAIN, POSTCOMBAT_MAIN) and not state.stack`. Nothing on an ability widens it: `activate_steps` and `once_each_turn` (ability_keys) are further *restrictions* on when an ability may be used, never permissions, and naming every step in `activate_steps` still leaves `sorcery_speed_only` True; `condition`/`activation_condition` gates an activation off board state, it cannot ungate the timing check. `static_effects` has no timing entry of any kind -- `cast_from_graveyard` and `cast_from_library_top` are *zone* permissions for casting cards, `cant_cast_spells` is a prohibition with no permissive counterpart, and none of them are consulted on the ability-activation path. The `flash` keyword and `grant_keyword` are the tempting substitutes and are wrong: flash is read only by the spell-casting timing check, never by `_ability_aims`, and it says nothing about activating an ability. This is a near neighbour of the `cast_as_though_flash` gap already filed by Borne Upon a Wind, Emergence Zone and Tidal Barracuda, but it is a different door: that one widens the *casting* timing check for spells, this one widens the *activation* timing check for abilities, and closing either leaves the other shut. The card's other three lines are each fully expressible today -- "+1: Draw a card, then discard a card." is `draw` + `discard`; "−3: Target creature you don't control phases out." is the `phase_out` op on a targeted creature with `controller: "opponent"`; "−10: Take two extra turns after this one." is two `extra_turn` ops -- and the planeswalker chassis itself is fine (loyalty costs compile, starting loyalty becomes a `self_enters_with_counters`). Only the first line is blocked, so no partial answer was written: a Teferi whose loyalty abilities are sorcery-speed only is a materially different and much weaker card, and the printed line would be left unclaimed by the residual gate.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teferi, Master of Time** (rank 2199) — `teferi_master_of_time`
+  - You may activate loyalty abilities of Teferi on any player's turn any time you could cast an instant.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -110,6 +162,22 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## any-number-in-deck
+
+Blocks **1** card.
+
+- **(engine)** a residual-gate claimant for the printed deck-construction sentence, exactly the entry `verify._covered` already keeps for every other line no ability can carry (kicker, multikicker, gift, ascend, cost_reduction, emerge, evoke, bestow, additional_cost, uncounterable, devoid). One branch: `if card.any_number_in_deck and stripped.lower().startswith("a deck can have any number of cards named"): return True`, strict the way bestow's and devoid's claimants are -- `CardDef.any_number_in_deck` only returns True when the name inside the printed sentence is the card's OWN name, so the words cannot be claimed without the rule behind them, and Nazgul's "up to nine" still fails the gate rather than being laundered through. Everything else about this card is already expressible and verified: with that one branch patched in memory, the payload below passes all six gates unchanged. Ship the card with it.
+
+{"card": {"id": "persistent_petitioners", "name": "Persistent Petitioners", "oracle_text": "<verbatim, all three lines>", "mana_cost": "{1}{U}", "types": ["Creature"], "subtypes": ["Human", "Advisor"], "power": 1, "toughness": 3, "colors": ["U"], "color_identity": ["U"], "abilities": [{"kind": "activated", "text": "{1}, {T}: Target player mills a card. (They put the top card of their library into their graveyard.)", "cost": {"mana": "{1}", "tap": true}, "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "any"}}], "effects": [{"op": "mill", "amount": {"const": 1}, "player": {"target": "t1"}}]}, {"kind": "activated", "text": "Tap four untapped Advisors you control: Target player mills twelve cards.", "cost": {"tap_permanents": {"subtypes": ["Advisor"], "count": 4}}, "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "any"}}], "effects": [{"op": "mill", "amount": {"const": 12}, "player": {"target": "t1"}}]}]}, "expectation": {"zone": "battlefield", "battlefield_count": 33}}
+  <br>Why the existing vocabulary won't do: The sentence is rule 903.5b's deck-construction exception, and the engine already implements it: `CardDef.any_number_in_deck` (src/automtg/engine/carddef.py) parses the printed line and `registry.validate_deck` honours it, so a twenty-Petitioners deck imports as the legal deck it is. There is nothing left for the card to say -- and nothing it *can* say. `claimed_lines` consumes a line three ways and none reaches this one: `lift_keywords` needs a line that is nothing but ability keywords, `spell_effects` only blanket-claims lines on an instant or sorcery, and `_covered` needs either a card-level claimant (there is none for this field) or an ability whose `text` is the line. No ability can honestly be that ability: an AbilityModel is activated, triggered or static; `_compile_static` refuses a static without an `effect` from STATIC_EFFECTS and none of the 44 says anything about deck construction; and an activated or triggered ability carrying the line would be a card that mills or taps when the printed sentence does nothing during a game at all. Writing the line onto ability 2's `text` -- the only other way past `_covered`, which also matches a printed line contained in a longer claim -- is the laundering the gate exists to catch, and would leave a line nobody implements looking implemented. Verified empirically rather than reasoned: the payload above fails `verify` at gate 3 with "printed text not represented: A deck can have any number of cards named", and passes all six gates the moment the one `_covered` branch exists. Same shape as d4af1b3c (bestow -- "the printed cost the residual gate could not hear") and e4987745 (a spell that exiles itself), both of which were closed by adding the missing claimant rather than by bending the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Persistent Petitioners** (rank 10124) — `persistent_petitioners`
+  - A deck can have any number of cards named Persistent Petitioners.
 
 </details>
 
@@ -184,6 +252,34 @@ Blocks **1** card.
 
 </details>
 
+## delayed-trigger-filter
+
+Blocks **1** card.
+
+- **(trigger_event)** A `filter` on a delayed_trigger's `trigger`, so a delayed spell_cast subscription can say WHICH spell it watches -- here "instant or sorcery spell with mana value 2 or less". The hosted form of the same trigger already takes one.
+  <br>Why the existing vocabulary won't do: loader/effects.py _validate_delayed_trigger refuses every trigger key outside DELAYED_TRIGGER_KEYS = {event, controller, condition}, on the grounds that a filter is read off the hosting permanent and a delayed ability has none -- but a spell_cast filter is read off the SPELL, not off the host, so the reasoning does not hold for this event. Jin-Gitaxias, Progress Tyrant writes exactly this filter (`any_types` plus a mana_value clause) as a hosted trigger and it works. This one is the softer half of the two needs: a condition of {"exists": {"binding": "subject", "zone": "stack", "any_types": ["Instant", "Sorcery"], "mana_value": {"op": "<=", "value": {"const": 2}}}} does emulate the filter exactly -- verified in a real game, a mana value 4 sorcery and a mana value 2 creature spell were both correctly passed over -- so if the duration above is fixed this could be left as it is, at the cost of every card of this shape spelling its filter as an unobvious condition over an undocumented binding.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sea Gate Stormcaller** (rank 18627) — `sea_gate_stormcaller`
+  - When this creature enters, copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. If this creature was kicked, copy that spell twice instead. You may choose new targets for the copies.
+
+</details>
+
+## delayed-trigger-once-this-turn
+
+Blocks **1** card.
+
+- **(op)** A third value for delayed_trigger's `duration` -- a subscription that fires AT MOST ONCE and still expires at cleanup. That is the whole of "the NEXT instant or sorcery spell ... you cast THIS TURN": one firing, and gone at end of turn whether or not it ever fired. Equivalently, honour `max_per_turn`/`nth` on a delayed trigger the way a hosted trigger already does, with the turn-scoped expiry kept.
+  <br>Why the existing vocabulary won't do: engine/structs.py DELAYED_DURATIONS has exactly two values and each is wrong on one axis, measured in a real game rather than reasoned about. `this_turn` re-arms on every matching spell: a kicked Stormcaller copied a SECOND Night's Whisper twice as well (life 40->34->28), which is a Thousand-Year Storm, not this card. `until_it_fires` fires exactly once but turn._cleanup_step deliberately keeps it (`d.duration == "until_it_fires"` is the retention clause written for Palace Jailer), so a Stormcaller whose owner casts no cheap spell that turn copies one on a later turn instead. Latching `this_turn` by hand with set_turn_flag/has_turn_flag is not a substitute either: set_turn_flag's `objects` go through resolve_pool, whose `self_only` only finds the source while it is on the battlefield, so the latch silently stops working the moment the 2/1 dies -- measured, and the card then copied every cheap spell for the rest of the turn. There is no player-scoped flag (set_turn_flag takes only `flag` and `objects`, has_turn_flag reads ctx.source_oid), and `resolutions_this_turn` reads ctx.resolutions, which run_armed_delays never sets, so it is 0 for every delayed firing.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sea Gate Stormcaller** (rank 18627) — `sea_gate_stormcaller`
+  - When this creature enters, copy the next instant or sorcery spell with mana value 2 or less you cast this turn when you cast it. If this creature was kicked, copy that spell twice instead. You may choose new targets for the copies.
+
+</details>
+
 ## delirium
 
 Blocks **1** card.
@@ -223,20 +319,6 @@ Blocks **1** card.
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
-
-## doesnt-untap
-
-Blocks **1** card.
-
-- **(static_effect)** a static effect -- say `skip_untap_step` -- that a permanent prints on itself (and, with a filter, on others: Winter Orb, Kismet, Stasis-likes) meaning "doesn't untap during its controller's untap step", read by the untap step alongside `skip_next_untap` and `frozen_by`. It must be a printed characteristic with no lifetime of its own: it holds for exactly as long as the ability is on the battlefield, is spent by nothing, and must not fight `skip_next_untap` (the untap step must not consume that one-shot on a permanent already held by the static), while leaving explicit `untap` effects -- Mana Vault's own upkeep payment -- free to untap it
-  <br>Why the existing vocabulary won't do: `static_effects` carries `untap_during_each_untap_step`, the exact inverse, and nothing that suppresses untapping; `characteristics.untap_also` is the only untap-related static reader and it only adds permanents to the untap set. The two engine fields that do suppress untapping are both written by resolution, not by a printed static: `skip_untap` sets `skip_next_untap`, which `primitives.untap_all` clears in the very untap step it skips (a one-shot -- it would hold Mana Vault for one turn and release it on the next), and `freeze` sets `frozen_by` to the source oid for its source's lifetime. Both are `ops`, so the only way to reach either is to invent a triggered ability (`self_enters` + `freeze` on `self_only`) to carry a line that is printed as a static -- which the residual gate would see as a triggered ability claiming a static sentence, and which would additionally sit on the stack, be responded to, and be re-installed on every re-entry rather than simply being true while the artifact is on the battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mana Vault** (rank 145) — `mana_vault`
-  - This artifact doesn't untap during your untap step.
 
 </details>
 
@@ -300,6 +382,21 @@ Blocks **1** card.
 
 </details>
 
+## forced-discard-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** A `discard` trigger able to say *who caused the discard* and to fire from the discarded card's own hand: "When a spell or ability an opponent controls causes you to discard this card". Needs (a) the cause's controller recorded on the DISCARD event -- `discard_cards` / `primitives.py:100` currently fires `EventType.DISCARD` with only `player`, `source` and `oid`, so nothing distinguishes an opponent's Mind Rot from a cleanup-step discard, your own rummaging, or a discard paid as a cost -- exposed as a trigger clause (e.g. `cause_controller: "opponent"` on the trigger, matching the spelling `double_triggers` already uses for statics), and (b) the discard being a spell-or-ability effect rather than a turn-based action or a cost. The ability must function while the card is in hand and match only itself (`active_zones: ["hand"]` plus a `self_only` filter on the discarded card); the effect half, `copy_permanent` at a target permanent, already exists.
+  <br>Why the existing vocabulary won't do: `trigger_keys` has `controller`, but on a `discard` trigger `_actor` deliberately returns `event.player` -- the player who *discarded* (triggers.py:1185 and the comment above it) -- so `controller: "opponent"` would mean "an opponent discarded a card", not "an opponent made you discard". `not_cause` compares `event.data["cause"]`, which the discard event never sets. `cause_controller`/`cause_events`/`cause_filter` exist only on the `double_triggers` static (loader/__init__.py:2574, triggers.py:_cause_matches) and are read from a battlefield static, not from a triggered ability, and not for DISCARD. Writing the line as a plain `discard` trigger with `controller: "you"` would fire on every discard you make -- your own cleanup-step discards and any cost you pay with this card -- which is a strictly better card than the printed one, so no partial answer was written. The first line, Changeling, is expressible (an `add_subtype` static over the engine's closed creature-type set) but is not written here because the other two lines are blocked.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orvar, the All-Form** (rank 5502) — `orvar_the_all_form`
+  - Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.
+  - When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.
+
+</details>
+
 ## imprint
 
 Blocks **1** card.
@@ -339,6 +436,34 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## mana-restriction-activate-any
+
+Blocks **1** card.
+
+- **(cost)** An unrestricted spelling of the ACTIVATE half of an ability's `mana_restriction` -- "Spend this mana only to activate abilities", with no restriction whatsoever on the source of the ability. Concretely: a wildcard group (e.g. `"mana_restriction": {"activate": "any"}` or `{"activate": true}`) that the loader compiles to a RestrictionGroup satisfied by every SpendPurpose whose `kind` is ACTIVATE, and by no CAST purpose at all. The same shape then covers the sibling printings the queue already holds -- Omen Hawker's "{T}: Add {C}{U}. Spend this mana only to activate abilities." and Automated Artificer's "only to activate an ability or cast an artifact spell" (a wildcard activate half beside a named cast half).
+  <br>Why the existing vocabulary won't do: `mana_restriction` (ability_keys; src/automtg/cards/loader/mana.py:282) is the right field and already has the cast/activate split for Secluded Courtyard, but every group it can hold is a set of literal card type / subtype NAMES -- `RestrictionGroup.satisfied_by` (src/automtg/engine/mana.py:745) asks `required <= purpose.names and not (forbidden & purpose.names)`, where `purpose.names` is the types+subtypes of the source whose ability is being activated (`costs.ability_purpose`). There is no name that every source has, so no group can mean "any ability". `_restriction_groups` explicitly refuses an empty group ("restricts nothing; omit it for ordinary mana"), and the only non-literal leaf allowed is `{"chosen_type_of": "self"}`, which is this card's chosen subtype, not a wildcard. The two workarounds are both wrong in ways the brief forbids: omitting `mana_restriction` entirely makes plainly unrestricted mana that can also cast spells -- a strictly better card, which is exactly what the shipped Omen Hawker (data/cards/auto/templates.cards.json:65853) and Automated Artificer (:5255) approximations do today -- and a forbidden-only group built from an invented type word (`[[{"not": "nosuchtype"}]]`) smuggles a sentinel through a shape check whose own docstring warns that a name no card has freezes mana into something unspendable. The card's other two lines are expressible and were not written as a partial answer: "This creature enters with X +1/+1 counters on it" is the card-level `replacements` entry `{"event": "self_enters_with_counters", "counter": "+1/+1", "amount": {"x": true}}` (Goldvein Hydra prints the identical sentence), and "{1}, {T}: Put a +1/+1 counter on this creature" is an activated ability with `cost: {"mana": "{1}", "tap": true}` and `add_counters` on `self_only`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cryptic Trilobite** (rank 6916) — `cryptic_trilobite`
+  - Remove a +1/+1 counter from this creature: Add {C}{C}. Spend this mana only to activate abilities.
+
+</details>
+
+## mill-doubling
+
+Blocks **1** card.
+
+- **(static_effect)** A player-wide static replacement effect -- e.g. `replace_mill` with `affects_player` and a `mill_multiplier` -- that intercepts every mill event a given player would perform, from any source (a spell's `mill` op, a `mill` cost, another permanent's trigger), and multiplies the number of cards milled. Must be a true replacement read at the point the mill happens, not an extra mill afterwards, so that it applies to mills caused by the opponent's own cards and stacks multiplicatively with other mill replacements.
+  <br>Why the existing vocabulary won't do: `static_effects` carries the whole family of value replacements -- `replace_draw` (`draw_multiplier`), `replace_life_gain` (`gain_multiplier`), `replace_life_loss` (`loss_multiplier`), `replace_token_creation` (`token_multiplier`) -- but there is no mill member of it, and `ability_keys` has no `mill_multiplier` to go with one. `mill` exists only as an effect op and as a cost, i.e. as something this card's controller does, never as an event that can be replaced. There is also no `mill` or `cards_to_graveyard` entry in `trigger_events`, so it cannot be approximated as a triggered ability that mills again: `cards_to_graveyard_this_turn` is a value, readable only where some other trigger already fired.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bruvac the Grandiloquent** (rank 2124) — `bruvac_the_grandiloquent`
+  - If an opponent would mill one or more cards, they mill twice that many cards instead.
 
 </details>
 
@@ -389,6 +514,20 @@ Blocks **1** card.
 
 </details>
 
+## repeat-while
+
+Blocks **1** card.
+
+- **(op)** A mandatory loop op that runs a body again whenever a condition evaluated AFTER the body still holds -- 'repeat this process' with no player choice and no count knowable up front -- and whose body sees only what the latest iteration produced. Concretely: a `while`/`repeat` variant taking `condition` plus `effects`, re-evaluating the condition against bindings written by the iteration that just ran, with each iteration's `as` binding scoped to that iteration (or a `reset`/`scoped` flag on the binding) and the same 100-iteration guard `repeat` and `may` already use.
+  <br>Why the existing vocabulary won't do: `repeat` evaluates its `amount` once, above the loop (ops_control.op_repeat), so the count cannot depend on what the body milled -- there is no number to write here at all. `may` with `repeat: true` is the only unbounded loop in the language and it is a player-choice loop: it asks the controller yes/no before every iteration and stops at the first no, and its `condition` only gates whether the question is asked rather than replacing it. Sphinx's Tutelage never asks, so a `may` version is a strictly weaker, different card (the controller could decline, and the opponent's mill would be optional). Separately, `mill`'s `as` binding deliberately ACCUMULATES across calls (`earlier + milled`), so even inside a loop the color test would be run over every card milled so far instead of over the two cards the latest mill put in the graveyard, which is what 'milled this way' means on each repetition.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sphinx's Tutelage** (rank 3647) — `sphinx_s_tutelage`
+  - Whenever you draw a card, target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.
+
+</details>
+
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -419,6 +558,34 @@ Blocks **1** card.
 
 </details>
 
+## shares-a-color
+
+Blocks **1** card.
+
+- **(condition)** A test over a POOL asking whether two or more cards in it share a color -- 'if two nonland cards that share a color were milled this way'. Wanted as a condition/selector clause that takes a pool (e.g. `{"binding": "milled", "not_types": ["Land"]}`) and is true when any two members' color sets intersect, i.e. a pairwise intersection over the pool rather than a property of one object.
+  <br>Why the existing vocabulary won't do: `shares_a_color_with` resolves its argument through `_bound_oid` (effects/selectors.py), which reads ONE oid and returns None for a list binding -- and a `mill` `as` binding is always a list -- so the clause matches nothing when pointed at the milled cards. Every other color reader is per-object: `colors`/`not_colors` test a fixed color, `min_colors` counts colors on a single card, and `distinct` (values.py) is restricted to DISTINCT_OF = power and basic land type, so it cannot count colors either. The Locke, Treasure Hunter idiom the mill binding was built for -- `{"exists": {"binding": "mugged", "types": ["Land"]}}` -- is a per-object property test and cannot express a relation BETWEEN two milled cards; `exists` with `count: 2` would say 'two nonland cards were milled', dropping the color clause entirely and making the card loop far more often than printed.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sphinx's Tutelage** (rank 3647) — `sphinx_s_tutelage`
+  - Whenever you draw a card, target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.
+
+</details>
+
+## shares-permanent-type
+
+Blocks **1** card.
+
+- **(selector)** a selector clause that matches a candidate whose CARD TYPES intersect the card types of an object bound by the trigger -- the card-type twin of `shares_a_type_with`, e.g. `shares_a_card_type_with: "subject"`, compared on derived `types` (Artifact, Battle, Creature, Enchantment, Land, Planeswalker) rather than on subtypes, so that a creature entering finds the other creatures, a land entering finds the other lands, and an artifact creature entering finds both. Needed on a `return_to_hand` inside a `may` on a `permanent_enters` trigger, alongside `exclude_binding: "subject"` for the printed 'another'
+  <br>Why the existing vocabulary won't do: `shares_a_type_with` is the near miss and is the wrong axis: selectors.py reads `chars(state, other).subtypes` and intersects it with the candidate's subtypes, so it implements '...that shares a CREATURE type with it' (Goblin with Goblin). Written on this card it would return another Goblin when a Goblin entered and would find nothing at all when a typeless permanent or a land entered -- a card that quietly does something narrower than printed. `shares_a_type_with_commander` is subtypes again and points at the commander rather than at the trigger's binding. `types` and `any_types` are literal lists fixed when the card is written, but which permanent type matters is decided at resolution by whatever just entered, so no fixed list expresses the clause; `not_types` (the only other type-side key) has the same problem inverted. There is no condition in `condition_keys` that can read the card types of a binding either, so the line cannot be faked as a `choose_mode` over five type-gated branches -- and that spelling would also hand the choice of type to the wrong place instead of simply letting the controller pick any legal permanent.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloudstone Curio** (rank 2576) — `cloudstone_curio`
+  - Whenever a nonartifact permanent you control enters, you may return another permanent you control that shares a permanent type with it to its owner's hand.
+
+</details>
+
 ## single-target-spell-restriction
 
 Blocks **1** card.
@@ -430,6 +597,21 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## spell-targets-permanent-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** Two halves of one mechanic, both hanging off the `spell_cast` event. (1) An intervening-if a `spell_cast` trigger can ask about the *triggering spell's own targets* -- "if it targets one or more other permanents you control" -- i.e. a condition that resolves the chosen targets of the spell that just went on the stack, filters them by an ordinary selector (permanent, controller `you`, `exclude_self`) and is true when at least one survives. (2) A binding that carries that same filtered set of targeted permanents into the ability's effects, so `copy_permanent` can be pointed at one of them (`objects: {"binding": "spell_targets", "count": 1}` with the controller choosing, per 'one of those permanents'). Concretely: put the spell's target oids on the SPELL_CAST payload in `Game._cast` (src/automtg/engine/game.py:703, which today carries only player/source/oid/spell_oid/sid/card/kicked), add that key to `EVENT_BINDING_KEYS` (src/automtg/engine/triggers.py:1056) so it reaches `event_bindings`, and add a condition key that filters it. Both halves are needed together -- the condition alone would make the card copy an arbitrary permanent, which is a different and much stronger card.
+  <br>Why the existing vocabulary won't do: The `spell_cast` trigger's `filter` reads characteristics of the spell card only (types, colors, mana_value); nothing in `selector_keys`, `condition_keys` or `trigger_keys` reaches another object's targets. `{"target": "t1"}` is the near miss and is the wrong scope by construction: `selectors.py` resolves it through `ctx.target_oids`, which is the *ability's own* declared target specs (the source comment at selectors.py:1060 says exactly this), so it can never name what somebody else's spell chose. `becomes_target` is the other near miss and is a per-permanent trigger: it fires on the permanent being targeted, so writing it on Orvar would only ever see spells aimed at Orvar himself, and there is no way to put a trigger on every permanent you control. The SPELL_CAST event carries no target information at all (game.py:703), so even a new condition key would have nothing to read, and `EVENT_BINDING_KEYS` has no list-of-oids entry for a spell's targets (`attackers` is the only list binding and is combat-only). Approximating it as an unconditional `spell_cast` trigger plus `copy_permanent` over `{"zone": "battlefield", "controller": "you", "exclude_self": true}` would fire on targetless spells and copy any permanent, not one the spell targeted -- strictly stronger, so it was not written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orvar, the All-Form** (rank 5502) — `orvar_the_all_form`
+  - Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.
+  - When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.
 
 </details>
 
@@ -473,5 +655,19 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
+
+</details>
+
+## win-on-empty-library-draw
+
+Blocks **1** card.
+
+- **(static_effect)** A player-wide static replacement of the *attempt* to draw from an empty library -- the Laboratory Maniac / Jace, Wielder of Mysteries effect. It must sit in the same place `replace_draw` does (`engine/replacements.py`, which every post-opening-hand draw passes through one card at a time) but fire on the branch `replace_draw` never reaches: the case where the library is empty and no card can be moved. Instead of multiplying the draw it replaces it outright, so the draw never happens, the 104.3c/704.5b "will lose" flag that `primitives.draw` sets is never set, and the drawing player wins the game immediately. Suggested spelling: a new player-wide static effect, e.g. `replace_empty_draw` with `affects_player` and an outcome of `win`, alongside the existing `replace_draw` in `PLAYER_WIDE_STATIC_EFFECTS` and `vocabulary.STATIC_EFFECTS`. It must be a real replacement read wherever a draw is attempted (a spell's `draw` op, the draw step, a `draw` rider on another card's effect), and it must survive the source leaving only in the sense that it applies while the permanent is on the battlefield -- i.e. an ordinary static, not a one-shot.
+  <br>Why the existing vocabulary won't do: `replace_draw` is the only member of the draw-replacement family and it is a pure multiplier: the loader (`cards/loader/__init__.py`) requires `draw_multiplier` and explicitly refuses a value below 2 ("1 replaces a draw with itself and 0 draws nothing, which is a different effect"), and it accepts nothing beside `affects_player`, `draw_multiplier`, `except_first_in_draw_step` and a `condition` -- there is no key on it that can name a different outcome, and the packet's own note says a replacement that does something other than draw more cards is still a gap. Nothing else in `static_effects` touches drawing: `skip_draw_step` removes the draw step rather than replacing a draw, and `replace_life_gain`/`replace_life_loss`/`replace_token_creation` are the same multiplier shape on other events. `win_game` exists only as an effect op (Halo Fountain, Luck Bobblehead both run it inside an activated ability's `effects`), so it can only be reached by something that resolves, and it is not available to a static. It cannot be approximated as a triggered ability either: `trigger_events` has `draw`, but that event fires only after a card actually reaches a hand, and the printed line is precisely about the case where no card can be drawn -- `engine/primitives.py` treats an empty library as an *attempt* to draw, setting the player's "will lose" flag (704.5b) with no draw event at all, so a `draw` trigger would never fire and the state-based loss would still be checked and applied before any such trigger could win the game. There is likewise no `would_lose_the_game`, `draws_from_empty_library` or similar trigger event to hang it on, and `condition_keys` has nothing that a static can use to intercept an event.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jace, Wielder of Mysteries** (rank 1085) — `jace_wielder_of_mysteries`
+  - If you would draw a card while your library has no cards in it, you win the game instead.
 
 </details>

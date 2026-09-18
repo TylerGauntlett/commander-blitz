@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "castle_vantress",
+    "name": "Castle Vantress",
+    "oracle_text": "This land enters tapped unless you control an Island.\n{T}: Add {U}.\n{2}{U}{U}, {T}: Scry 2.",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [
+      "U"
+    ],
+    "replacements": [
+      {
+        "event": "self_enters_tapped",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Island"
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {U}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{U}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}{U}{U}, {T}: Scry 2.",
+        "cost": {
+          "mana": "{2}{U}{U}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "scry",
+            "player": "you",
+            "amount": {
+              "const": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

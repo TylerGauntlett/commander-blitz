@@ -1,0 +1,23 @@
+{
+  "card_id": "back_to_basics",
+  "name": "Back to Basics",
+  "oracle_text": "Nonbasic lands don't untap during their controllers' untap steps.",
+  "blocked_sentences": [
+    "Nonbasic lands don't untap during their controllers' untap steps."
+  ],
+  "needs": [
+    {
+      "capability": "doesnt_untap",
+      "kind": "static_effect",
+      "what": "A static continuous effect, readable at the untap step, that stops every permanent matching a printed-characteristic filter (here: Land without the Basic supertype, any controller, including permanents that enter after this enchantment) from untapping during its controller's untap step, for as long as the source is on the battlefield -- the Back to Basics / Winter Orb / Rising Waters shape.",
+      "why_existing_wont_do": "static_effects has no untap prohibition at all: untap_during_each_untap_step is the opposite (it adds untaps), and freeze_opponent_lands is Vorinclex's tap-for-mana rider -- it sets skip_next_untap on a land only at the moment an opponent taps it for mana, so it misses untapped and non-mana-tapped lands, never touches the controller's own lands, and is one-shot. The two untap holds untap_all consults are both per-object and applied by an op at resolution: skip_next_untap (the skip_untap op) is spent by one untap step, and frozen_by (the freeze op) locks only the specific objects chosen when the effect resolved, so lands played on later turns would never be caught. A permanent's static ability cannot run an op, and there is no trigger event for 'a player's untap step begins' to hang one on."
+    }
+  ],
+  "closest_existing": [
+    "freeze",
+    "skip_untap",
+    "freeze_opponent_lands",
+    "untap_during_each_untap_step"
+  ],
+  "confidence": "high"
+}

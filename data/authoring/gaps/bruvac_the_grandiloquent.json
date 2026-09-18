@@ -1,0 +1,23 @@
+{
+  "card_id": "bruvac_the_grandiloquent",
+  "name": "Bruvac the Grandiloquent",
+  "oracle_text": "If an opponent would mill one or more cards, they mill twice that many cards instead. (To mill a card, a player puts the top card of their library into their graveyard.)",
+  "blocked_sentences": [
+    "If an opponent would mill one or more cards, they mill twice that many cards instead."
+  ],
+  "needs": [
+    {
+      "capability": "mill_doubling",
+      "kind": "static_effect",
+      "what": "A player-wide static replacement effect -- e.g. `replace_mill` with `affects_player` and a `mill_multiplier` -- that intercepts every mill event a given player would perform, from any source (a spell's `mill` op, a `mill` cost, another permanent's trigger), and multiplies the number of cards milled. Must be a true replacement read at the point the mill happens, not an extra mill afterwards, so that it applies to mills caused by the opponent's own cards and stacks multiplicatively with other mill replacements.",
+      "why_existing_wont_do": "`static_effects` carries the whole family of value replacements -- `replace_draw` (`draw_multiplier`), `replace_life_gain` (`gain_multiplier`), `replace_life_loss` (`loss_multiplier`), `replace_token_creation` (`token_multiplier`) -- but there is no mill member of it, and `ability_keys` has no `mill_multiplier` to go with one. `mill` exists only as an effect op and as a cost, i.e. as something this card's controller does, never as an event that can be replaced. There is also no `mill` or `cards_to_graveyard` entry in `trigger_events`, so it cannot be approximated as a triggered ability that mills again: `cards_to_graveyard_this_turn` is a value, readable only where some other trigger already fired."
+    }
+  ],
+  "closest_existing": [
+    "replace_draw",
+    "replace_life_gain",
+    "replace_life_loss",
+    "replace_token_creation"
+  ],
+  "confidence": "high"
+}

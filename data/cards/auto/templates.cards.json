@@ -2085,6 +2085,40 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another permanent you control enters, each opponent mills a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "altar_of_the_brood",
+      "mana_cost": "{1}",
+      "name": "Altar of the Brood",
+      "oracle_text": "Whenever another permanent you control enters, each opponent mills a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",
@@ -4120,6 +4154,100 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "archmage_s_charm",
+      "mana_cost": "{U}{U}{U}",
+      "name": "Archmage's Charm",
+      "oracle_text": "Choose one —\n• Counter target spell.\n• Target player draws two cards.\n• Gain control of target nonland permanent with mana value 1 or less.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ],
+              "label": "Counter target spell."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "drawer"
+                  }
+                }
+              ],
+              "label": "Target player draws two cards."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "stolen"
+                  },
+                  "op": "gain_control"
+                }
+              ],
+              "label": "Gain control of target nonland permanent with mana value 1 or less."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "spell",
+          "mode": 0,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "drawer",
+          "kind": "player",
+          "mode": 1,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "stolen",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 1
+              }
+            },
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -13959,6 +14087,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}{U}, {T}: Scry 2."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "castle_vantress",
+      "name": "Castle Vantress",
+      "oracle_text": "This land enters tapped unless you control an Island.\n{T}: Add {U}.\n{2}{U}{U}, {T}: Scry 2.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "subtypes": [
+                  "Island"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -18399,6 +18589,61 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "bottom": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{T}, Sacrifice this artifact: Put up to one target card from your graveyard on the bottom of your library. Draw a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "conjurer_s_bauble",
+      "mana_cost": "{1}",
+      "name": "Conjurer's Bauble",
+      "oracle_text": "{T}, Sacrifice this artifact: Put up to one target card from your graveyard on the bottom of your library. Draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -20044,6 +20289,96 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "cryptic_command",
+      "mana_cost": "{1}{U}{U}{U}",
+      "name": "Cryptic Command",
+      "oracle_text": "Choose two —\n• Counter target spell.\n• Return target permanent to its owner's hand.\n• Tap all creatures your opponents control.\n• Draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ],
+              "label": "Counter target spell."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "bounced"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Return target permanent to its owner's hand."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "opponent",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "tap"
+                }
+              ],
+              "label": "Tap all creatures your opponents control."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "label": "Draw a card."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "spell",
+          "mode": 0,
+          "selector": {}
+        },
+        {
+          "count": 1,
+          "id": "bounced",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -24714,6 +25049,35 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dramatic_reversal",
+      "mana_cost": "{1}{U}",
+      "name": "Dramatic Reversal",
+      "oracle_text": "Untap all nonland permanents you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "untap"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -25199,6 +25563,58 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "Whenever you cast a blue spell, target player mills two cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "U"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "drowned_secrets",
+      "mana_cost": "{1}{U}",
+      "name": "Drowned Secrets",
+      "oracle_text": "Whenever you cast a blue spell, target player mills two cards.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -27309,6 +27725,89 @@
         "Rogue"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Emry enters, mill four cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_playable",
+              "playable_this_turn": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "player": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{T}: Choose target artifact card in your graveyard. You may cast that card this turn. (You still pay its costs. Timing rules still apply.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Artifact"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "emry_lurker_of_the_loch",
+      "mana_cost": "{2}{U}",
+      "name": "Emry, Lurker of the Loch",
+      "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nWhen Emry enters, mill four cards.\n{T}: Choose target artifact card in your graveyard. You may cast that card this turn. (You still pay its costs. Timing rules still apply.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -32190,6 +32689,68 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "half": {
+                  "of": {
+                    "count": {
+                      "player": {
+                        "target": "t1"
+                      },
+                      "zone": "library"
+                    }
+                  },
+                  "round": "up"
+                }
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, target player mills half their library, rounded up.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "fleet_swallower",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Fleet Swallower",
+      "oracle_text": "Whenever this creature attacks, target player mills half their library, rounded up.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Fish"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -32737,6 +33298,77 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "any",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "Players have no maximum hand size."
+        },
+        {
+          "cost": {
+            "mana": "{X}{X}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{X}{X}, {T}: Each player draws X cards."
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "cards_in_hand": {
+                      "binding": "each_player"
+                    }
+                  },
+                  "op": "mill",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}, {T}: Each opponent mills cards equal to the number of cards in their hand."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "folio_of_fancies",
+      "mana_cost": "{1}{U}",
+      "name": "Folio of Fancies",
+      "oracle_text": "Players have no maximum hand size.\n{X}{X}, {T}: Each player draws X cards.\n{2}{U}, {T}: Each opponent mills cards equal to the number of cards in their hand.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -47100,6 +47732,76 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "link": "self",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "mana_value": {
+                      "op": "<=",
+                      "value": {
+                        "const": 2
+                      }
+                    },
+                    "types": [
+                      "Instant"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Imprint — When this artifact enters, you may exile an instant card with mana value 2 or less from your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  },
+                  "op": "cast_copy",
+                  "optional": true
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: You may copy the exiled card. If you do, you may cast the copy without paying its mana cost."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "isochron_scepter",
+      "mana_cost": "{2}",
+      "name": "Isochron Scepter",
+      "oracle_text": "Imprint — When this artifact enters, you may exile an instant card with mana value 2 or less from your hand.\n{2}, {T}: You may copy the exiled card. If you do, you may cast the copy without paying its mana cost.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -49588,6 +50290,75 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "colors": [
+              "U"
+            ],
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Blue creature spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "skip_untap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a creature spell, target creature an opponent controls doesn't untap during its controller's next untap step.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "kefnet_s_monument",
+      "mana_cost": "{3}",
+      "name": "Kefnet's Monument",
+      "oracle_text": "Blue creature spells you cast cost {1} less to cast.\nWhenever you cast a creature spell, target creature an opponent controls doesn't untap during its controller's next untap step.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -55670,6 +56441,67 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "maddening_cacophony",
+      "kicker": "{3}{U}",
+      "mana_cost": "{1}{U}",
+      "name": "Maddening Cacophony",
+      "oracle_text": "Kicker {3}{U}\nEach opponent mills eight cards. If this spell was kicked, instead each opponent mills half their library, rounded up.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "kicked": true
+          },
+          "else": [
+            {
+              "amount": {
+                "const": 8
+              },
+              "op": "mill",
+              "player": "each_opponent"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "half": {
+                      "of": {
+                        "count": {
+                          "player": {
+                            "binding": "each_player"
+                          },
+                          "zone": "library"
+                        }
+                      },
+                      "round": "up"
+                    }
+                  },
+                  "op": "mill",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -58055,6 +58887,43 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell, that player mills two cards.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "memory_erosion",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Memory Erosion",
+      "oracle_text": "Whenever an opponent casts a spell, that player mills two cards.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -58146,6 +59015,39 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "merchant_scroll",
+      "mana_cost": "{1}{U}",
+      "name": "Merchant Scroll",
+      "oracle_text": "Search your library for a blue instant card, reveal that card, put it into your hand, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "destination": "hand",
+          "op": "search_library",
+          "player": "you",
+          "reveal": true,
+          "selector": {
+            "colors": [
+              "U"
+            ],
+            "types": [
+              "Instant"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -58570,6 +59472,135 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "hour",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}: Put an hour counter on this artifact."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "hour",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each upkeep, put an hour counter on this artifact.",
+          "trigger": {
+            "controller": "any",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "hand"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "objects": {
+                "count": "all",
+                "player": "you",
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 7
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When the twelfth hour counter is put on this artifact, shuffle your hand and graveyard into your library, then draw seven cards. Exile this artifact.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_on": {
+                  "counter": "hour",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 12
+              }
+            },
+            "counter": "hour",
+            "event": "counter_placed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "midnight_clock",
+      "mana_cost": "{2}{U}",
+      "name": "Midnight Clock",
+      "oracle_text": "{T}: Add {U}.\n{2}{U}: Put an hour counter on this artifact.\nAt the beginning of each upkeep, put an hour counter on this artifact.\nWhen the twelfth hour counter is put on this artifact, shuffle your hand and graveyard into your library, then draw seven cards. Exile this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -61160,6 +62191,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{1}{U}{U}"
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "mana_value_of": {
+                      "self": true
+                    }
+                  }
+                }
+              },
+              "shuffle": true
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Transmute {1}{U}{U} ({1}{U}{U}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "muddle_the_mixture",
+      "mana_cost": "{U}{U}",
+      "name": "Muddle the Mixture",
+      "oracle_text": "Counter target instant or sorcery spell.\nTransmute {1}{U}{U} ({1}{U}{U}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -62108,6 +63208,107 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {U}.)"
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "target": "t1"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "put_on_top"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put the targeted instant or sorcery card on top of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this land enters untapped, you may put target instant or sorcery card from your graveyard on top of your library.",
+          "trigger": {
+            "event": "self_enters",
+            "filter": {
+              "tapped": false
+            },
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "mystic_sanctuary",
+      "name": "Mystic Sanctuary",
+      "oracle_text": "({T}: Add {U}.)\nThis land enters tapped unless you control three or more other Islands.\nWhen this land enters untapped, you may put target instant or sorcery card from your graveyard on top of your library.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Island"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Island"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -71411,6 +72612,87 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{2}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "prismite",
+      "mana_cost": "{2}",
+      "name": "Prismite",
+      "oracle_text": "{2}: Add one mana of any color.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -78683,6 +79965,34 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "colors": [
+              "U"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Blue spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sapphire_medallion",
+      "mana_cost": "{2}",
+      "name": "Sapphire Medallion",
+      "oracle_text": "Blue spells you cast cost {1} less to cast.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -84042,6 +85352,54 @@
         "Bird"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, return a creature you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shrieking_drake",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}",
+      "name": "Shrieking Drake",
+      "oracle_text": "Flying\nWhen this creature enters, return a creature you control to its owner's hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Drake"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -95375,6 +96733,35 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "draw_multiplier": 2,
+          "effect": "replace_draw",
+          "except_first_in_draw_step": true,
+          "kind": "static",
+          "text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "teferi_s_ageless_insight",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Teferi's Ageless Insight",
+      "oracle_text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -95523,6 +96910,77 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, draw a card, then discard a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever you draw a card, target opponent mills two cards. (They put the top two cards of their library into their graveyard.)",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "teferi_s_tutelage",
+      "mana_cost": "{2}{U}",
+      "name": "Teferi's Tutelage",
+      "oracle_text": "When this enchantment enters, draw a card, then discard a card.\nWhenever you draw a card, target opponent mills two cards. (They put the top two cards of their library into their graveyard.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -96752,6 +98210,85 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_symbols": {
+                  "objects": {
+                    "controller": "you",
+                    "zone": "battlefield"
+                  },
+                  "of": "U"
+                }
+              },
+              "destination": "library_top",
+              "objects": {
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "mana_symbols": {
+                    "objects": {
+                      "controller": "you",
+                      "zone": "battlefield"
+                    },
+                    "of": "U"
+                  }
+                },
+                "right": {
+                  "count": {
+                    "player": "you",
+                    "zone": "library"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "win_game",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top X cards of your library, where X is your devotion to blue. Put up to one of them on top of your library and the rest on the bottom of your library in a random order. If X is greater than or equal to the number of cards in your library, you win the game. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thassa_s_oracle",
+      "mana_cost": "{U}{U}",
+      "name": "Thassa's Oracle",
+      "oracle_text": "When this creature enters, look at the top X cards of your library, where X is your devotion to blue. Put up to one of them on top of your library and the rest on the bottom of your library in a random order. If X is greater than or equal to the number of cards in your library, you win the game. (Each {U} in the mana costs of permanents you control counts toward your devotion to blue.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Merfolk",
+        "Wizard"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -98970,6 +100507,72 @@
           },
           "effects": [
             {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{1}{U}{U}"
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "mana_value_of": {
+                      "self": true
+                    }
+                  }
+                }
+              },
+              "shuffle": true
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Transmute {1}{U}{U} ({1}{U}{U}, Discard this card: Search your library for a card with mana value 0, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "tolaria_west",
+      "name": "Tolaria West",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\nTransmute {1}{U}{U} ({1}{U}{U}, Discard this card: Search your library for a card with mana value 0, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "amount": {
                 "count": {
                   "controller": "you",
@@ -99954,6 +101557,53 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "traumatize",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Traumatize",
+      "oracle_text": "Target player mills half their library, rounded down.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "half": {
+              "of": {
+                "count": {
+                  "player": {
+                    "target": "t1"
+                  },
+                  "zone": "library"
+                }
+              },
+              "round": "down"
+            }
+          },
+          "op": "mill",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -103920,6 +105570,102 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              [
+                "artifact"
+              ]
+            ],
+            "cast": [
+              [
+                "artifact"
+              ]
+            ]
+          },
+          "text": "{T}: Add two mana of any one color. Spend this mana only to cast artifact spells or activate abilities of artifacts."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "vedalken_engineer",
+      "mana_cost": "{1}{U}",
+      "name": "Vedalken Engineer",
+      "oracle_text": "{T}: Add two mana of any one color. Spend this mana only to cast artifact spells or activate abilities of artifacts.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Artificer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "else": [
@@ -105450,6 +107196,57 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "visions_of_beyond",
+      "mana_cost": "{U}",
+      "name": "Visions of Beyond",
+      "oracle_text": "Draw a card. If a graveyard has twenty or more cards in it, draw three cards instead.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "max_count_of": {
+                "objects": {
+                  "zone": "graveyard"
+                },
+                "player": "each_player"
+              }
+            },
+            "right": {
+              "const": 20
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

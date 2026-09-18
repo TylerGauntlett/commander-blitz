@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "prismite",
+    "name": "Prismite",
+    "oracle_text": "{2}: Add one mana of any color.",
+    "mana_cost": "{2}",
+    "types": [
+      "Artifact",
+      "Creature"
+    ],
+    "subtypes": [
+      "Golem"
+    ],
+    "power": 2,
+    "toughness": 1,
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{2}: Add one mana of any color.",
+        "is_mana_ability": true,
+        "cost": {
+          "mana": "{2}"
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              { "label": "White", "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+              { "label": "Blue", "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+              { "label": "Black", "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+              { "label": "Red", "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+              { "label": "Green", "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}
