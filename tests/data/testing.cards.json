@@ -13184,6 +13184,29 @@
           "mill_multiplier": 2
         }
       ]
+    },
+    {
+      "id": "t_lab_maniac",
+      "name": "Test Lab Maniac",
+      "oracle_text": "If you would draw a card while your library has no cards in it, you win the game instead.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would draw a card while your library has no cards in it, you win the game instead.",
+          "effect": "replace_empty_draw",
+          "affects_player": "you"
+        }
+      ]
     }
   ]
 }

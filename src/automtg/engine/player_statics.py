@@ -192,6 +192,24 @@ def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     return out
 
 
+def wins_on_empty_draw(state: GameState, pid: int) -> bool:
+    """Does ``pid`` win instead of drawing from an empty library?
+
+    Jace, Wielder of Mysteries and Laboratory Maniac: "If you would draw a card
+    while your library has no cards in it, you win the game instead."
+
+    A plain yes/no rather than a multiplier, because the replacement has no
+    size -- it substitutes a different outcome for the draw rather than scaling
+    it, which is exactly why it could not be spelled as a `replace_draw` whose
+    only key is a number the loader refuses below 2.
+
+    Read in `replacements._draw_one`, the seam every post-opening-hand draw
+    passes through one card at a time, so it applies to a `draw` op, the draw
+    step, and a `draw` rider on somebody else's card alike.
+    """
+    return _player_static(state, pid, "replace_empty_draw")
+
+
 def mill_multiplier(state: GameState, pid: int) -> int:
     """How many times over ``pid`` mills, right now (`replace_mill`).
 

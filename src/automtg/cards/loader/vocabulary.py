@@ -322,6 +322,15 @@ STATIC_EFFECTS = frozenset(
         # one would fire after the cards were already in the graveyard and mill
         # again alongside rather than instead.
         "replace_mill",
+        # Jace, Wielder of Mysteries; Laboratory Maniac.  "If you would draw a
+        # card while your library has no cards in it, you win the game instead."
+        # The one draw-replacement branch `replace_draw` can never reach, since
+        # there is no card to multiply -- and it substitutes a different
+        # *outcome* rather than a size, which is why it could not be a key on
+        # that static, whose only parameter is a number refused below 2.  Read
+        # in `replacements._draw_one`, before the doublers, so an empty library
+        # wins on the first of a doubled pair rather than after both have failed.
+        "replace_empty_draw",
         # Voice of Victory.  "Your opponents can't cast spells during your
         # turn."  A prohibition on a *player*, so it takes `affects_player` and
         # no `affects`, and it is read wherever a spell can be cast rather than
@@ -366,6 +375,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         # one choke point every mill goes through, so a `mill` op, a `mill`
         # cost and dredge are all replaced, whoever caused them.
         "replace_mill",
+        "replace_empty_draw",
         "cant_cast_spells",
         "cant_gain_life",
     }

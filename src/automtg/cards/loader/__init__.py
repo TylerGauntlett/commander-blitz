@@ -2416,6 +2416,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'mill_multiplier' only means anything on a replace_mill "
             f"static, not on {model.effect!r}"
         )
+    if model.effect == "replace_empty_draw" and (
+        model.affects is not None or model.amount is not None
+    ):
+        # The replacement has no size -- it substitutes winning for drawing --
+        # so there is nothing for either key to mean, and a key nothing reads
+        # would load clean and print a line that promises more than it does.
+        raise DslError(
+            f"{where}: replace_empty_draw takes 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")

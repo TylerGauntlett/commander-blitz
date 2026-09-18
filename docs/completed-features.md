@@ -13259,3 +13259,44 @@ implementation passes silently); `affects_player: "you"` for Fraying Sanity's
 half; two doublers compounding to 4×; a mill of zero not being an event;
 701.13b's short library milling what is there rather than over-counting; the
 hold ending when the source leaves; and the load-time guards.
+
+## `replace_empty_draw` — "you win the game instead"
+
+### Overview
+
+Jace, Wielder of Mysteries; Laboratory Maniac. The draw-replacement family had
+one member, `replace_draw`, and it is a pure multiplier — the loader requires
+`draw_multiplier` and refuses anything below 2, so no key on it can name a
+different outcome. This is also the one branch that static can never reach:
+there is no card to multiply when the library is empty.
+
+### The shape
+
+A player-wide static with no parameters (`affects_player`, and the loader
+refuses `affects` and `amount` — the replacement has no size), read in
+`replacements._draw_one`.
+
+**It replaces the draw rather than reacting to it**, and that is the whole
+design. `primitives.draw_cards` treats an empty library as an *attempt*: it sets
+the 104.3c "will lose" flag and fires no `DRAW` event at all. A trigger would
+therefore fail twice over — nothing to fire on, and the state-based action would
+eliminate the player at the next check regardless, which comes before anything a
+trigger could do. Replacing means `draw_cards` is never called and the flag is
+never set.
+
+**Checked before the doublers.** A `replace_draw` turns one draw into two, each
+offered this replacement in turn, so an empty library wins on the first of them
+rather than after both have tried and failed.
+
+The win goes through `sba.declare_win`, which eliminates every *other* player
+and lets `check_game_over` draw its own conclusion (104.2a). The engine has one
+writer of a game result and this is not a second one.
+
+### Guarded by
+
+`tests/unit/test_replace_empty_draw.py`: the win, and the ordinary 104.3c loss
+without the static; the "will lose" flag never being set; a non-empty library
+drawing as usual; the win landing on the draw that empties the library; an
+opponent decking being unaffected (the near miss a player-agnostic
+implementation passes silently); the permission ending with its source; and the
+load-time guards.
