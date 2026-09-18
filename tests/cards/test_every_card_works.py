@@ -834,6 +834,16 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             add_dummy_spell(game, 0 if spec.selector.get("controller") == "you" else 1)
         return
     for spec in ability.targets:
+        if spec.kind == "card_in_graveyard":
+            # Emry, Lurker of the Loch -- "{T}: Choose target artifact card in
+            # your graveyard." The fodder below is stocked onto the
+            # *battlefield*, where a card in a graveyard can never be pointed
+            # at, so the ability reported as unusable when it was only unaimed.
+            # Conditional on the spec asking for it, so no other card's board
+            # changes: this is the fourth prop in this family and the first that
+            # has to choose a zone.
+            _stock_the_graveyard(game, registry, spec)
+            continue
         match = _target_fodder(registry, spec)
         if match is None:
             continue
@@ -846,6 +856,40 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             obj.is_commander = True
         game.state.battlefield.append(obj.oid)
     game.state.bump_chars()
+
+
+def _stock_the_graveyard(game: Game, registry, spec) -> None:
+    """Put a card the spec accepts into the graveyard it names.
+
+    Emry, Lurker of the Loch is the witness: "{T}: Choose target **artifact
+    card in your graveyard**." The sandbox's graveyard holds two creature
+    cards, so an artifact-typed spec has nothing to point at.
+
+    Deliberately dumb like the rest of this family: the selector is read only
+    far enough to pick a card and a seat -- `types`, and whose graveyard --
+    never to decide whether the result is a legal target. That answer stays
+    `enumerate_target_tuples`', so no second copy of `matches` moves into the
+    tests.
+    """
+    selector = spec.selector
+    types = {str(t) for t in selector.get("types") or []}
+    match = next(
+        (
+            c
+            for c in sorted(registry, key=lambda c: c.id)
+            if not c.is_token and c.front_face is None and types <= set(c.types)
+        ),
+        None,
+    )
+    if match is None:
+        return
+    # "your graveyard" is the default; `player`/`controller` is the only other
+    # thing a shipped spec says, and it is read the way `_seat_for` reads it.
+    owner = 0
+    if selector.get("player") == "opponent" or selector.get("controller") == "opponent":
+        owner = next((p.pid for p in game.state.players if p.pid != 0), 0)
+    obj = new_object(game.state, match.id, owner=owner, zone=Zone.GRAVEYARD)
+    game.state.players[owner].graveyard.append(obj.oid)
 
 
 def _seat_for(game: Game, spec) -> int:
