@@ -157,6 +157,88 @@ class TestDedupe:
         assert [row[0] for row in rows] == sorted(row[0] for row in rows)
 
 
+#: The two fixture Forests differ only in scan quality, so the sort has a clear
+#: opinion about which one wins.  Pinning the loser is the sharpest test there
+#: is that a pin overrules taste rather than merely agreeing with it.
+LORES_FOREST = "2f5b488e-d725-4ef7-90f4-71091325c0b6"
+HIGHRES_FOREST = "0000419b-0bba-4488-8f7a-6194544ce91e"
+
+
+def _forest_id(records, pins):
+    rows = builder.extract_records(records, include_funny=False, pins=pins)
+    return next(row[1] for row in rows if row[0] == "Forest")
+
+
+class TestArtPins:
+    """A named exception beats retuning the sort for 32,000 cards."""
+
+    def test_a_pin_beats_the_better_scan(self, records):
+        assert _forest_id(records, {"Forest": LORES_FOREST}) == LORES_FOREST
+
+    def test_no_pins_leaves_the_sort_alone(self, records):
+        assert _forest_id(records, {}) == HIGHRES_FOREST
+
+    def test_a_pin_holds_whatever_order_the_dump_arrives_in(self, records):
+        # The pin is applied as records stream past, so a better printing
+        # arriving *after* the pinned one must not displace it.
+        keepers = [r for r in records if builder.is_wanted(r, include_funny=False)]
+        for seed in (1, 2, 3):
+            shuffled = list(keepers)
+            random.Random(seed).shuffle(shuffled)
+            assert _forest_id(shuffled, {"Forest": LORES_FOREST}) == LORES_FOREST
+
+    def test_a_pin_at_an_unknown_id_says_so_and_changes_nothing(self, records, capsys):
+        # The dump may predate the printing, or the id may just be wrong. Either
+        # way the card silently keeps its old art, so the build has to say it.
+        assert _forest_id(records, {"Forest": "not-a-real-id"}) == HIGHRES_FOREST
+        assert "art pin for 'Forest'" in capsys.readouterr().out
+
+    def test_a_pin_cannot_smuggle_in_a_printing_we_cannot_show(self, records):
+        # `Forest // Forest` is an art series: a different illustration wearing
+        # a real card's name. Pinning one must not get it past `is_wanted`.
+        art_series = next(r for r in records if r["layout"] == "art_series")
+        rows = builder.extract_records(
+            records, include_funny=False, pins={art_series["name"]: art_series["id"]}
+        )
+        assert art_series["name"] not in [row[0] for row in rows]
+
+    def test_the_committed_pins_name_printings_the_catalog_actually_has(self):
+        # A pin whose card resolved to a different printing means the file and
+        # the index have drifted apart -- the art on disk is then nobody's
+        # choice, just whichever build ran last.
+        pins = builder.read_art_pins()
+        catalog = images_module.catalog_path()
+        if not pins or not catalog.exists():
+            pytest.skip("no pins, or no committed catalog to check them against")
+        index = CardIndex(catalog)
+        try:
+            for name, scryfall_id in pins.items():
+                entry = index.lookup(name)
+                assert entry is not None, f"pinned card {name!r} is not in the catalog"
+                assert entry.scryfall_id == scryfall_id, (
+                    f"{name!r} is pinned to {scryfall_id} but the index holds "
+                    f"{entry.scryfall_id} -- rebuild: python scripts/build_card_index.py"
+                )
+        finally:
+            index.close()
+
+    def test_a_missing_pin_file_is_not_a_failed_build(self, tmp_path):
+        assert builder.read_art_pins(tmp_path / "absent.json") == {}
+
+    def test_unreadable_pins_are_not_a_failed_build(self, tmp_path):
+        broken = tmp_path / "art_pins.json"
+        broken.write_text("{ not json", encoding="utf-8")
+        assert builder.read_art_pins(broken) == {}
+
+    def test_a_bare_id_is_accepted_as_well_as_a_documented_entry(self, tmp_path):
+        path = tmp_path / "art_pins.json"
+        path.write_text(
+            json.dumps({"pins": {"A": "id-a", "B": {"scryfall_id": "id-b", "why": "..."}}}),
+            encoding="utf-8",
+        )
+        assert builder.read_art_pins(path) == {"A": "id-a", "B": "id-b"}
+
+
 class TestTheWrittenIndex:
     def test_every_name_is_queryable(self, index):
         assert len(index) == 4
