@@ -1745,6 +1745,24 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{' or '.join(repr(e) for e in sorted(DEFENDING_TRIGGERS))}, "
                 f"not on {model.trigger.event!r}"
             )
+        if model.trigger.cause_controller is not None:
+            # Only `discard` records a cause, so the clause on anything else
+            # would load, read as "a spell or ability an opponent controls
+            # caused this", and refuse to fire for ever -- the inert-card
+            # failure, which is the quieter half of the pair `defending` guards
+            # against above.
+            if model.trigger.event != "discard":
+                raise DslError(
+                    f"{where}: 'cause_controller' only means anything on 'discard', "
+                    f"not on {model.trigger.event!r} -- no other event records what "
+                    f"caused it"
+                )
+            if model.trigger.cause_controller not in ("you", "opponent", "any"):
+                raise DslError(
+                    f"{where}: unknown cause_controller "
+                    f"{model.trigger.cause_controller!r}"
+                )
+
         # `self_enters` and `permanent_enters` are the same engine event, and
         # what separates them is `source: "self"`. Omitting it on `self_enters`
         # therefore produced a card that fired on *every* permanent entering --
@@ -1850,6 +1868,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
+            cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
             mana_ability=model.trigger.mana_ability,
             nth=model.trigger.nth,

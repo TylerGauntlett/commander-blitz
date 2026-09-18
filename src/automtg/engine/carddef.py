@@ -433,6 +433,15 @@ class TriggerSpec:
     #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
     #: behind "if it wasn't put onto the battlefield with this ability".
     not_cause: str | None = None
+    #: Who controlled the spell or ability that *caused* this event, relative to
+    #: the ability's controller -- "when a spell or ability **an opponent
+    #: controls** causes you to discard this card" (Orvar, the All-Form).
+    #: ``discard`` only, and deliberately not ``controller``: `_actor` answers
+    #: that with the player who discarded, so `controller: "opponent"` would
+    #: read "an opponent discarded a card", which is a different sentence.
+    #: ``None`` on an event nobody caused -- the cleanup-step discard, and a
+    #: discard paid as a cost -- so a trigger naming it never fires on either.
+    cause_controller: str | None = None
     #: Which counter kind a ``counter_placed`` trigger cares about.  The event
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.

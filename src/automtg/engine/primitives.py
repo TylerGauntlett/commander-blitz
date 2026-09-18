@@ -91,14 +91,37 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
     return drawn
 
 
-def discard_cards(state: GameState, pid: int, oids: Sequence[int]) -> list[int]:
+def discard_cards(
+    state: GameState, pid: int, oids: Sequence[int], *, caused_by: int | None = None
+) -> list[int]:
+    """Discard these cards, recording who *made* the player discard them.
+
+    ``caused_by`` is the controller of the spell or ability that caused it, and
+    ``None`` when nobody did: the cleanup-step discard (a turn-based action) and
+    a discard paid as a cost are both nobody's doing. "When a spell or ability an
+    opponent controls causes you to discard this card" (Orvar, the All-Form) is
+    exactly that distinction, and the event carried only the player who
+    discarded -- which cannot tell an opponent's Mind Rot from your own
+    rummaging, your cleanup step, or a cost you paid with this very card.
+
+    Not the trigger's `controller` clause, which `_actor` answers with the
+    discarding player: written there, Orvar's line would read "an opponent
+    discarded a card".
+    """
     out = []
     for oid in oids:
         obj = state.objects.get(oid)
         if obj is None or obj.zone is not Zone.HAND:
             continue
         move_object(state, oid, Zone.GRAVEYARD, to_player=pid, cause="discard")
-        fire(state, EventType.DISCARD, player=pid, source=oid, oid=oid)
+        fire(
+            state,
+            EventType.DISCARD,
+            player=pid,
+            source=oid,
+            oid=oid,
+            cause_controller=caused_by,
+        )
         out.append(oid)
     return out
 

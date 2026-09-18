@@ -122,9 +122,14 @@ def _draw_one(
 
 
 def discard(
-    state: GameState, pid: int, oids: Sequence[int]
+    state: GameState, pid: int, oids: Sequence[int], *, caused_by: int | None = None
 ) -> Generator[Any, list[int], list[int]]:
-    """Discard these cards, sending any with madness to exile and offering the cast."""
+    """Discard these cards, sending any with madness to exile and offering the cast.
+
+    ``caused_by`` is passed through to `discard_cards`: the controller of the
+    spell or ability that caused the discard, or ``None`` for the cleanup step
+    and for a discard paid as a cost. See that function.
+    """
     ordinary: list[int] = []
     for oid in oids:
         obj = state.objects.get(oid)
@@ -135,7 +140,7 @@ def discard(
             ordinary.append(oid)
             continue
         yield from _madness(state, pid, oid)
-    return discard_cards(state, pid, ordinary)
+    return discard_cards(state, pid, ordinary, caused_by=caused_by)
 
 
 # ----------------------------------------------------------------------
