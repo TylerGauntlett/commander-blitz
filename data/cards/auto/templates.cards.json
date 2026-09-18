@@ -68079,6 +68079,147 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling"
+        },
+        {
+          "effects": [
+            {
+              "as": "chosen",
+              "objects": {
+                "binding": "spell_targets",
+                "controller": "you",
+                "count": 1,
+                "exclude_self": true,
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Copy one of the targeted permanents"
+            },
+            {
+              "objects": {
+                "binding": "chosen"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "spell_targets",
+                "controller": "you",
+                "exclude_self": true,
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.",
+          "trigger": {
+            "cause_controller": "opponent",
+            "controller": "you",
+            "event": "discard",
+            "filter": {
+              "self_only": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "orvar_the_all_form",
+      "mana_cost": "{3}{U}",
+      "name": "Orvar, the All-Form",
+      "oracle_text": "Changeling\nWhenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.\nWhen a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {

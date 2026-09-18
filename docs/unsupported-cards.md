@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **30** capabilities.
+**24 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [forced-discard-trigger](#forced-discard-trigger) | 1 | 5502 | trigger_event |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -40,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-targets-permanent-trigger](#spell-targets-permanent-trigger) | 1 | 5502 | trigger_event |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
@@ -287,21 +285,6 @@ Blocks **1** card.
 
 </details>
 
-## forced-discard-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** A `discard` trigger able to say *who caused the discard* and to fire from the discarded card's own hand: "When a spell or ability an opponent controls causes you to discard this card". Needs (a) the cause's controller recorded on the DISCARD event -- `discard_cards` / `primitives.py:100` currently fires `EventType.DISCARD` with only `player`, `source` and `oid`, so nothing distinguishes an opponent's Mind Rot from a cleanup-step discard, your own rummaging, or a discard paid as a cost -- exposed as a trigger clause (e.g. `cause_controller: "opponent"` on the trigger, matching the spelling `double_triggers` already uses for statics), and (b) the discard being a spell-or-ability effect rather than a turn-based action or a cost. The ability must function while the card is in hand and match only itself (`active_zones: ["hand"]` plus a `self_only` filter on the discarded card); the effect half, `copy_permanent` at a target permanent, already exists.
-  <br>Why the existing vocabulary won't do: `trigger_keys` has `controller`, but on a `discard` trigger `_actor` deliberately returns `event.player` -- the player who *discarded* (triggers.py:1185 and the comment above it) -- so `controller: "opponent"` would mean "an opponent discarded a card", not "an opponent made you discard". `not_cause` compares `event.data["cause"]`, which the discard event never sets. `cause_controller`/`cause_events`/`cause_filter` exist only on the `double_triggers` static (loader/__init__.py:2574, triggers.py:_cause_matches) and are read from a battlefield static, not from a triggered ability, and not for DISCARD. Writing the line as a plain `discard` trigger with `controller: "you"` would fire on every discard you make -- your own cleanup-step discards and any cost you pay with this card -- which is a strictly better card than the printed one, so no partial answer was written. The first line, Changeling, is expressible (an `add_subtype` static over the engine's closed creature-type set) but is not written here because the other two lines are blocked.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orvar, the All-Form** (rank 5502) — `orvar_the_all_form`
-  - Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.
-  - When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.
-
-</details>
-
 ## imprint
 
 Blocks **1** card.
@@ -432,21 +415,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## spell-targets-permanent-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** Two halves of one mechanic, both hanging off the `spell_cast` event. (1) An intervening-if a `spell_cast` trigger can ask about the *triggering spell's own targets* -- "if it targets one or more other permanents you control" -- i.e. a condition that resolves the chosen targets of the spell that just went on the stack, filters them by an ordinary selector (permanent, controller `you`, `exclude_self`) and is true when at least one survives. (2) A binding that carries that same filtered set of targeted permanents into the ability's effects, so `copy_permanent` can be pointed at one of them (`objects: {"binding": "spell_targets", "count": 1}` with the controller choosing, per 'one of those permanents'). Concretely: put the spell's target oids on the SPELL_CAST payload in `Game._cast` (src/automtg/engine/game.py:703, which today carries only player/source/oid/spell_oid/sid/card/kicked), add that key to `EVENT_BINDING_KEYS` (src/automtg/engine/triggers.py:1056) so it reaches `event_bindings`, and add a condition key that filters it. Both halves are needed together -- the condition alone would make the card copy an arbitrary permanent, which is a different and much stronger card.
-  <br>Why the existing vocabulary won't do: The `spell_cast` trigger's `filter` reads characteristics of the spell card only (types, colors, mana_value); nothing in `selector_keys`, `condition_keys` or `trigger_keys` reaches another object's targets. `{"target": "t1"}` is the near miss and is the wrong scope by construction: `selectors.py` resolves it through `ctx.target_oids`, which is the *ability's own* declared target specs (the source comment at selectors.py:1060 says exactly this), so it can never name what somebody else's spell chose. `becomes_target` is the other near miss and is a per-permanent trigger: it fires on the permanent being targeted, so writing it on Orvar would only ever see spells aimed at Orvar himself, and there is no way to put a trigger on every permanent you control. The SPELL_CAST event carries no target information at all (game.py:703), so even a new condition key would have nothing to read, and `EVENT_BINDING_KEYS` has no list-of-oids entry for a spell's targets (`attackers` is the only list binding and is combat-only). Approximating it as an unconditional `spell_cast` trigger plus `copy_permanent` over `{"zone": "battlefield", "controller": "you", "exclude_self": true}` would fire on targetless spells and copy any permanent, not one the spell targeted -- strictly stronger, so it was not written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orvar, the All-Form** (rank 5502) — `orvar_the_all_form`
-  - Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.
-  - When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.
 
 </details>
 

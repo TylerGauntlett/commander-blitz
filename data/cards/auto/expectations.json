@@ -6316,6 +6316,13 @@
   "orochi_sustainer": {
     "zone": "battlefield"
   },
+  "orvar_the_all_form": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "orzhov_basilica": {
     "battlefield_count": 32,
     "hand_size": {

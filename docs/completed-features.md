@@ -13632,3 +13632,91 @@ and milling *more* on the exact board where the scoped one stops, which is the
 accumulating-binding trap measured rather than argued; the guard stopping at a
 hundred against a library deep enough that the deck is not what stops it; and the
 load-time guards for a missing condition, a missing body and a malformed `reset`.
+
+## `spell_targets` — "if it targets one or more other permanents you control"
+
+### Overview
+
+Orvar, the All-Form. A trigger that asks about **another spell's chosen targets**.
+`SPELL_CAST` carried the caster, the spell and its card, and no target information
+at all — so even a new condition key would have had nothing to read.
+
+### The shape
+
+One payload key. `Game._cast` puts the spell's **object** targets on the event and
+`EVENT_BINDING_KEYS` carries them into the trigger's bindings; from there the
+existing language does the rest, which is why no new condition key and no new op
+were needed:
+
+- the intervening-if is `{"exists": {"binding": "spell_targets", …}}`, the same
+  binding-plus-filter shape Sphinx's Tutelage uses over `milled`;
+- the effect points at the same pool, so the token copies a permanent the spell
+  actually chose.
+
+**Both halves are one key, and that is the point.** A condition without the
+binding lets the card copy any permanent you control — a different and much
+stronger card, kept live in the test as the control.
+
+**Object targets only.** A spell aimed at a player has targets that are not
+permanents, and a list mixing seat numbers with oids would be read as oids by
+every consumer: both are `int`, and `_bound_oids` cannot tell them apart.
+
+The printed "**one of** those permanents" is `choose_permanents` followed by
+`copy_permanent` over the resulting binding. `copy_permanent` resolves its pool
+through `resolve_pool`, which is not a generator and so cannot ask a question — a
+`count` inside its own `objects` would silently copy the whole pool.
+
+Two near misses: `{"target": "t1"}` resolves through `ctx.target_oids`, the
+*ability's own* declared targets, so it can never name what somebody else's spell
+chose; and `becomes_target` is per-permanent, so written here it would see only
+spells aimed at Orvar himself.
+
+### Guarded by
+
+`tests/unit/test_spell_targets.py`: a spell targeting your creature making a copy,
+and the copy being of the *right* permanent; an untargeted spell and a
+player-targeting spell doing nothing; the payload holding no player ids; both
+halves of "other permanents you control" — a spell aimed at Orvar himself and one
+aimed at an opponent's creature; and the unconditional spelling kept live, firing
+on a targetless spell where the real card does not.
+
+## `cause_controller` — "when a spell or ability an opponent controls causes you to discard this card"
+
+### Overview
+
+Orvar, the All-Form's third line. A trigger that fires from the **hand**, on the
+card being discarded, and only when somebody else made it happen.
+
+### The shape
+
+`discard_cards` takes a `caused_by` — the controller of the spell or ability that
+caused it — and puts it on the event; `cause_controller` on a `discard` trigger
+reads it. The `DISCARD` event carried the player who *discarded* and nothing about
+who made them, which cannot separate an opponent's Mind Rot from your own
+rummaging, a cost you paid with this very card, or the cleanup-step discard. The
+printed line fires on exactly one of the four.
+
+`controller` is the near miss and asks the other question: `_actor` answers it with
+the discarding player, so `controller: "opponent"` reads "an opponent discarded a
+card".
+
+**`None` is the load-bearing value.** An event nobody caused — the cleanup step, a
+discard paid as a cost — fails the clause in every direction. That is the whole of
+what keeps this from being a card that also fires on its controller's own discards,
+and the unclaused spelling is kept live and measured firing on all of them.
+
+**The trigger is scanned on the discarded card itself**, beside the
+leave-the-battlefield branch and for exactly its reason: `discard_cards` moves the
+card to the graveyard before firing the event, so by the time the walk runs the
+hand no longer holds it and `active_zones: ["hand"]` would match nothing. Scoped by
+the ability declaring that it worked in the hand it was discarded from, so a
+`discard` trigger written for the battlefield or graveyard is not quietly widened.
+
+### Guarded by
+
+`tests/unit/test_forced_discard_trigger.py`: an opponent's Mind Rot firing it; your
+own rummaging not; the cause recorded on the event in both directions, read
+directly so clause and payload cannot drift; an uncaused discard recording `None`
+and not firing the trigger; the unclaused spelling kept live and firing on your own
+discard where the real card does not; and the load-time guards, including the
+refusal on any event but `discard`.

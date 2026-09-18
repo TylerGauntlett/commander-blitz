@@ -193452,12 +193452,12 @@
     },
     "Orvar, the All-Form": {
       "edhrec_rank": 5502,
-      "gate": "template",
+      "gate": null,
       "name": "Orvar, the All-Form",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, if it targets one or more other permanents ",
+      "reason": "",
       "scryfall_id": "0bfdc564-51cc-4523-9d84-9d07907f41fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Orysa, Tide Choreographer": {
