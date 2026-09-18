@@ -13111,3 +13111,47 @@ the cost before the colours are waived.
 graveyard; the strict counterfactual; hybrid pips at one each; the caster's own
 spells untouched; the flag leaving with the permission; a Sol Ring paying
 `{B}{B}`; `{C}` not waived; and the loader cases. Elder Brain is authored.
+
+## `any_number_in_deck` — "A deck can have any number of cards named …"
+
+### Overview
+
+Rule 903.5b says a Commander deck may contain only one of any card with a
+particular English name **other than basic lands**, and then adds "unless that
+card's text says otherwise". Only the basic-land half was read, so a deck built
+on twenty Persistent Petitioners — a legal deck, and an archetype — failed
+construction outright and could not be imported at all.
+
+### The shape
+
+- **`CardDef.any_number_in_deck`** parses the printed sentence and matches the
+  name inside it against the card's **own** name, so Shadowborn Apostle does not
+  license a playset of Relentless Rats and a card that merely quotes another's
+  line receives nothing.
+- **`validate_deck`** asks it beside `is_basic`; `tests/cards/test_deck_legality.py`
+  asks the same predicate rather than its own copy, so the two cannot drift.
+- **`verify._covered`** grows one claimant for the line, and this is the half
+  that actually kept the card out of the pool. The sentence is a
+  *deck-construction* rule read while a deck is built, so once the card is an
+  object in a game there is nothing left for it to do and no ability can
+  honestly carry it — an `AbilityModel` is activated, triggered or static, and
+  this is none of the three. Petitioners failed gate 3 with both of its real
+  lines implemented and verified. The claimant is strict for `bestow`'s and
+  `devoid`'s reason: gated on `any_number_in_deck`, so the words cannot be
+  claimed without the rule standing behind them.
+
+### Not modelled
+
+Nazgûl's "A deck can have **up to nine** cards named Nazgûl" — a different limit
+needing a different answer. Unmatched, it keeps the one-copy default, which
+refuses a legal deck rather than admitting an unbounded one; that is the safe
+direction for a construction check to be incomplete in, and the gate does not
+launder the line either.
+
+### Guarded by
+
+`tests/unit/test_any_number_in_deck.py`: twenty Petitioners legal and the same
+deck with an ordinary card still singleton; the sentence matched against the
+card's own name; basic lands exempt by the rule with no sentence to read; Nazgûl
+unmatched in both the rule and the gate; and the claimant scoped to its own
+line. Persistent Petitioners is authored.

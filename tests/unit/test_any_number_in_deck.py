@@ -26,8 +26,11 @@ direction:
 
 from __future__ import annotations
 
+from automtg.cards.authoring.verify import _covered
 from automtg.cards.registry import CardRegistry, DeckList, validate_deck
 from automtg.engine.carddef import CardDef
+
+PRINTED_LINE = "A deck can have any number of cards named Persistent Petitioners."
 
 PETITIONERS_TEXT = (
     "{1}, {T}: Target player mills a card.\n"
@@ -140,3 +143,45 @@ class TestTheUnreadLimitRejects:
         )
         assert island.is_basic
         assert not island.any_number_in_deck
+
+
+class TestTheResidualGateCanHearTheLine:
+    """The other half: gate 3 has to let the printed sentence be claimed.
+
+    The rule above is read by `validate_deck` while a deck is being built, so by
+    the time the card is an object in a game the line has nothing left to do and
+    no ability can honestly carry it -- an AbilityModel is activated, triggered
+    or static, and this is none of the three. Without a claimant in
+    `verify._covered`, Persistent Petitioners failed the text-attribution gate
+    with both of its real lines implemented and verified, which is what kept the
+    card out of the pool.
+    """
+
+    def test_the_line_is_claimed_when_the_card_grants_it(self):
+        card = _card(
+            "persistent_petitioners", "Persistent Petitioners", oracle_text=PETITIONERS_TEXT
+        )
+        assert _covered(card, PRINTED_LINE)
+
+    def test_quoting_another_cards_sentence_is_not_claimed(self):
+        """The strictness is inherited from the rule, not restated here.
+
+        `any_number_in_deck` is False for a card the sentence does not name, so
+        the words alone cannot satisfy the gate -- the claimant cannot be used to
+        launder a line onto a card that does not actually have the rule.
+        """
+        impostor = _card("impostor", "Impostor", oracle_text=PRINTED_LINE)
+        assert not _covered(impostor, PRINTED_LINE)
+
+    def test_the_nazgul_sentence_is_not_claimed(self):
+        """An unparsed limit stays residual rather than being waved through."""
+        line = "A deck can have up to nine cards named Nazgûl."
+        nazgul = _card("nazgul", "Nazgûl", oracle_text=f"Menace\n{line}")
+        assert not _covered(nazgul, line)
+
+    def test_an_unrelated_line_is_still_residual(self):
+        """The claimant is scoped to its own sentence and claims nothing else."""
+        card = _card(
+            "persistent_petitioners", "Persistent Petitioners", oracle_text=PETITIONERS_TEXT
+        )
+        assert not _covered(card, "Target player mills a card.")
