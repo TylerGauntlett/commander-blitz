@@ -55,6 +55,16 @@ def registry_images_path() -> Path:
     return data_dir() / "catalog" / "registry_images.json"
 
 
+def art_pins_path() -> Path:
+    """Printings chosen by hand, where the dedupe's taste is not ours.
+
+    Small, committed, and read only by ``scripts/build_card_index.py`` at build
+    time -- nothing at runtime consults it, because by then the choice is
+    already baked into the index and the owned bytes.
+    """
+    return data_dir() / "catalog" / "art_pins.json"
+
+
 def generated_images_path() -> Path:
     """The same shape as :func:`registry_images_path`, for imported cards.
 
