@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **32** capabilities.
+**25 cards** blocked by **30** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,10 +37,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [repeat-while](#repeat-while) | 1 | 3647 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
-| [shares-a-color](#shares-a-color) | 1 | 3647 | condition |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-targets-permanent-trigger](#spell-targets-permanent-trigger) | 1 | 5502 | trigger_event |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -393,20 +391,6 @@ Blocks **1** card.
 
 </details>
 
-## repeat-while
-
-Blocks **1** card.
-
-- **(op)** A mandatory loop op that runs a body again whenever a condition evaluated AFTER the body still holds -- 'repeat this process' with no player choice and no count knowable up front -- and whose body sees only what the latest iteration produced. Concretely: a `while`/`repeat` variant taking `condition` plus `effects`, re-evaluating the condition against bindings written by the iteration that just ran, with each iteration's `as` binding scoped to that iteration (or a `reset`/`scoped` flag on the binding) and the same 100-iteration guard `repeat` and `may` already use.
-  <br>Why the existing vocabulary won't do: `repeat` evaluates its `amount` once, above the loop (ops_control.op_repeat), so the count cannot depend on what the body milled -- there is no number to write here at all. `may` with `repeat: true` is the only unbounded loop in the language and it is a player-choice loop: it asks the controller yes/no before every iteration and stops at the first no, and its `condition` only gates whether the question is asked rather than replacing it. Sphinx's Tutelage never asks, so a `may` version is a strictly weaker, different card (the controller could decline, and the opponent's mill would be optional). Separately, `mill`'s `as` binding deliberately ACCUMULATES across calls (`earlier + milled`), so even inside a loop the color test would be run over every card milled so far instead of over the two cards the latest mill put in the graveyard, which is what 'milled this way' means on each repetition.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sphinx's Tutelage** (rank 3647) — `sphinx_s_tutelage`
-  - Whenever you draw a card, target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.
-
-</details>
-
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -434,20 +418,6 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
-
-</details>
-
-## shares-a-color
-
-Blocks **1** card.
-
-- **(condition)** A test over a POOL asking whether two or more cards in it share a color -- 'if two nonland cards that share a color were milled this way'. Wanted as a condition/selector clause that takes a pool (e.g. `{"binding": "milled", "not_types": ["Land"]}`) and is true when any two members' color sets intersect, i.e. a pairwise intersection over the pool rather than a property of one object.
-  <br>Why the existing vocabulary won't do: `shares_a_color_with` resolves its argument through `_bound_oid` (effects/selectors.py), which reads ONE oid and returns None for a list binding -- and a `mill` `as` binding is always a list -- so the clause matches nothing when pointed at the milled cards. Every other color reader is per-object: `colors`/`not_colors` test a fixed color, `min_colors` counts colors on a single card, and `distinct` (values.py) is restricted to DISTINCT_OF = power and basic land type, so it cannot count colors either. The Locke, Treasure Hunter idiom the mill binding was built for -- `{"exists": {"binding": "mugged", "types": ["Land"]}}` -- is a per-object property test and cannot express a relation BETWEEN two milled cards; `exists` with `count: 2` would say 'two nonland cards were milled', dropping the color clause entirely and making the card loop far more often than printed.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sphinx's Tutelage** (rank 3647) — `sphinx_s_tutelage`
-  - Whenever you draw a card, target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.
 
 </details>
 

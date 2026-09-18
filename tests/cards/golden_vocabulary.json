@@ -594,6 +594,7 @@
   "regenerate",
   "remove_counters",
   "repeat",
+  "repeat_while",
   "replace_deaths",
   "replace_leaves_battlefield",
   "return_from_graveyard",

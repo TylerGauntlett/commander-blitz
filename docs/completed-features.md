@@ -13588,3 +13588,47 @@ green against blue not sharing; both colourless cases; the `not_types` filter
 applied before the pairing, including the one-card-left case; the counting
 spelling kept as a live card and gaining on the exact board where the colour
 clause does not; and the load-time guards, a bare `true` among them.
+
+## `repeat_while` — "repeat this process"
+
+### Overview
+
+Sphinx's Tutelage: "Whenever you draw a card, target opponent mills two cards. If
+two nonland cards that share a color were milled this way, repeat this process."
+The loop half; the colour question is `two_share_a_color`.
+
+### The shape
+
+A **do-while**. The body always runs once — that first mill is what the trigger is
+about — and `condition` is re-read after each pass, because the printed sentence is
+a decision about repeating rather than a guard on starting.
+
+Neither existing loop expresses it. `repeat` evaluates `amount` once, above the
+loop, so the count must be knowable before the body runs, and here there is no
+number to write at all. `may` with `repeat: true` is the language's only other
+unbounded loop and is a *player-choice* loop: it asks the controller yes/no before
+every pass and stops at the first no, and its `condition` only gates whether the
+question is asked. Sphinx's Tutelage never asks anybody, so that spelling is a
+different and strictly weaker card — its controller could decline, and the
+opponent's mill would be optional.
+
+**`reset` is the subtle half.** `mill`'s `as` binding deliberately accumulates
+(`earlier + milled`), because the ops it was built for ask about everything a spell
+milled. Inside a loop that is the wrong question: the second pass would test the
+colour clause over all four cards milled so far, where "milled this way" is per
+repetition. It is cleared before the first pass too, so a binding of the same name
+written earlier in the same resolution cannot leak in.
+
+The hundred-iteration guard is `repeat`'s and `may`'s, for the same reason: one
+pathological board must not hang a game.
+
+### Guarded by
+
+`tests/unit/test_repeat_while.py`: the body running once when the condition is
+false immediately, and when the filter empties the pool; one, two and three passes
+on stacked libraries; the boundary, where a matching pass is followed by a
+non-matching one and the cards below are never reached; the unscoped card kept live
+and milling *more* on the exact board where the scoped one stops, which is the
+accumulating-binding trap measured rather than argued; the guard stopping at a
+hundred against a library deep enough that the deck is not what stops it; and the
+load-time guards for a missing condition, a missing body and a malformed `reset`.

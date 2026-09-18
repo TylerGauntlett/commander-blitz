@@ -90357,6 +90357,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "two_share_a_color": {
+                  "binding": "milled",
+                  "not_types": [
+                    "Land"
+                  ]
+                }
+              },
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "as": "milled",
+                  "op": "mill",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ],
+              "op": "repeat_while",
+              "reset": [
+                "milled"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever you draw a card, target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{5}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}{U}: Draw a card, then discard a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sphinx_s_tutelage",
+      "mana_cost": "{2}{U}",
+      "name": "Sphinx's Tutelage",
+      "oracle_text": "Whenever you draw a card, target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.\n{5}{U}: Draw a card, then discard a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"

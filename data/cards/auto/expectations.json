@@ -8388,6 +8388,10 @@
     },
     "zone": "battlefield"
   },
+  "sphinx_s_tutelage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spider_woman_stunning_savior": {
     "zone": "battlefield"
   },

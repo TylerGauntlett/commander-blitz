@@ -256652,12 +256652,12 @@
     },
     "Sphinx's Tutelage": {
       "edhrec_rank": 3647,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx's Tutelage",
-      "reason": "no template for: Whenever you draw a card, target opponent mills two cards. If two nonland cards that share",
+      "reason": "",
       "scryfall_id": "94a3673b-6003-4612-a8f6-02829aa9de7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sphinx-Bone Wand": {
