@@ -4037,6 +4037,76 @@ printed static is not.
 on your own untap step these creatures untap regardless, so a version that
 ignored whose turn it is looks identical on every board you would think to try.
 
+## Doubling a mill
+
+    Bruvac the Grandiloquent — "If an opponent would mill one or more cards,
+    they mill twice that many cards instead."
+
+```jsonc
+{ "kind": "static", "effect": "replace_mill",
+  "affects_player": "opponent", "mill_multiplier": 2 }
+```
+
+A player-wide static, so it takes `affects_player` and no `affects`; the loader
+refuses `affects`, `amount`, and a multiplier below 2 (1 replaces a mill with
+itself, 0 is a prevention no doubler prints).
+
+Applied in `primitives.mill_cards`, and that is the point rather than an
+implementation detail: it is the one choke point every mill goes through — the
+`mill` op, the `mill` cost, and dredge — so the replacement catches mills the
+*opponent's own* cards cause. Bruvac's controller is never the one being milled,
+so a doubling written into `op_mill` would be inert on the card it exists for.
+
+It multiplies a **count**, once, where `replace_draw` recurses per card. That is
+701.13a against 121.2: milling N cards is one event, drawing N cards is N draws.
+Two doublers compound to four (616.1) as the product across sources, and because
+each source is visited once none applies twice (614.5) without needing the
+`applied` set `replacements._draw_one` carries.
+
+A mill of zero is not an event, so no doubler applies — "one or more" is read
+rather than left to arithmetic.
+
+## Not untapping at all
+
+    Back to Basics — "Nonbasic lands don't untap during their controllers'
+    untap steps."
+    Mana Vault — "This artifact doesn't untap during your untap step."
+
+```jsonc
+{ "kind": "static", "effect": "skip_untap_step",
+  "affects": { "controller": "any", "types": ["Land"], "not_supertypes": ["Basic"] } }
+
+{ "kind": "static", "effect": "skip_untap_step", "affects": { "self_only": true } }
+```
+
+The exact inverse of the section above, read in the same place —
+`primitives.untap_all`, through `player_statics.untap_held` — and for the same
+reason.
+
+`controller: "any"` is load-bearing on both enchantments that print this line.
+"**Their controllers'** untap steps" locks the whole table, and that symmetry is
+the drawback Intruder Alarm is built around; a version reaching only its own
+controller's permanents is a strictly stronger, one-sided card.
+
+It is checked **before** `skip_next_untap` rather than after, so a permanent this
+static is already holding does not spend somebody else's one-shot — the flag is
+still waiting when the static's source leaves. And it is read by the untap step
+alone, so explicit `untap` effects are untouched: Mana Vault's own upkeep payment
+untaps it, and Intruder Alarm's "untap all creatures" trigger — the card's whole
+engine — works as printed.
+
+The two fields that already suppressed untapping cannot carry a printed static.
+`skip_next_untap` is a one-shot spent by the very untap step it skips, so it
+releases Mana Vault a turn later; `frozen_by` is written by the `freeze` op.
+Both are ops, so reaching either from a static means inventing a `self_enters`
+trigger for a line that is printed as a static — which the residual gate would
+see as a trigger claiming a static sentence.
+
+`not_supertypes` is the negation of `supertypes`, added here for `not_keywords`'
+reason: the effect-side selector language always had it and the static one did
+not. It is **not** interchangeable with a `not_types` complement —
+`not_types: ["Land"]` is every permanent that is not a land, the opposite set.
+
 ## Player-wide statics
 
 Seventeen static effects describe the *player* rather than a characteristic, so

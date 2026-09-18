@@ -10,17 +10,15 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**37 cards** blocked by **41** capabilities.
+**33 cards** blocked by **39** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 3 | 536 | op, static_effect |
-| [doesnt-untap](#doesnt-untap) | 3 | 145 | static_effect |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-as-though-instant](#activate-as-though-instant) | 1 | 2199 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
-| [any-number-in-deck](#any-number-in-deck) | 1 | 10124 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -75,28 +73,6 @@ Blocks **3** cards.
   - You may cast spells this turn as though they had flash.
 - **Tidal Barracuda** (rank 4338) — `tidal_barracuda`
   - Any player may cast spells as though they had flash.
-
-</details>
-
-## doesnt-untap
-
-Blocks **3** cards.
-
-- **(static_effect)** A static continuous effect, readable at the untap step, that stops every permanent matching a printed-characteristic filter (here: Land without the Basic supertype, any controller, including permanents that enter after this enchantment) from untapping during its controller's untap step, for as long as the source is on the battlefield -- the Back to Basics / Winter Orb / Rising Waters shape.
-  <br>Why the existing vocabulary won't do: static_effects has no untap prohibition at all: untap_during_each_untap_step is the opposite (it adds untaps), and freeze_opponent_lands is Vorinclex's tap-for-mana rider -- it sets skip_next_untap on a land only at the moment an opponent taps it for mana, so it misses untapped and non-mana-tapped lands, never touches the controller's own lands, and is one-shot. The two untap holds untap_all consults are both per-object and applied by an op at resolution: skip_next_untap (the skip_untap op) is spent by one untap step, and frozen_by (the freeze op) locks only the specific objects chosen when the effect resolved, so lands played on later turns would never be caught. A permanent's static ability cannot run an op, and there is no trigger event for 'a player's untap step begins' to hang one on.
-- **(static_effect)** A static continuous effect, readable at the untap step, that stops every permanent matching a printed-characteristic filter (here: Creature, ANY controller -- both players, and creatures that enter after this enchantment) from untapping during its controller's untap step, for as long as the source is on the battlefield -- the Intruder Alarm / Back to Basics / Winter Orb shape. The filter must reach an opponent's creatures too, so the effect cannot be scoped to the source's controller.
-  <br>Why the existing vocabulary won't do: static_effects has no untap prohibition at all: untap_during_each_untap_step is the opposite (it adds untaps), and freeze_opponent_lands is Vorinclex's tap-for-mana rider on lands only, applied one-shot at the moment an opponent taps a land for mana. The two untap holds the untap step consults are both per-object and applied by an op at resolution: skip_next_untap (the skip_untap op) is spent by a single untap step, and frozen_by (the freeze op) locks only the objects chosen when that effect resolved, so creatures that enter on later turns -- exactly the ones this card's own second ability keeps making relevant -- would never be caught. A permanent's static ability cannot run an op, and there is no trigger event for 'a player's untap step begins' to hang one on. Without it the card is inverted -- the second printed line alone is a pure-upside untap engine with none of the drawback -- which is why no partial answer was written.
-- **(static_effect)** a static effect -- say `skip_untap_step` -- that a permanent prints on itself (and, with a filter, on others: Winter Orb, Kismet, Stasis-likes) meaning "doesn't untap during its controller's untap step", read by the untap step alongside `skip_next_untap` and `frozen_by`. It must be a printed characteristic with no lifetime of its own: it holds for exactly as long as the ability is on the battlefield, is spent by nothing, and must not fight `skip_next_untap` (the untap step must not consume that one-shot on a permanent already held by the static), while leaving explicit `untap` effects -- Mana Vault's own upkeep payment -- free to untap it
-  <br>Why the existing vocabulary won't do: `static_effects` carries `untap_during_each_untap_step`, the exact inverse, and nothing that suppresses untapping; `characteristics.untap_also` is the only untap-related static reader and it only adds permanents to the untap set. The two engine fields that do suppress untapping are both written by resolution, not by a printed static: `skip_untap` sets `skip_next_untap`, which `primitives.untap_all` clears in the very untap step it skips (a one-shot -- it would hold Mana Vault for one turn and release it on the next), and `freeze` sets `frozen_by` to the source oid for its source's lifetime. Both are `ops`, so the only way to reach either is to invent a triggered ability (`self_enters` + `freeze` on `self_only`) to carry a line that is printed as a static -- which the residual gate would see as a triggered ability claiming a static sentence, and which would additionally sit on the stack, be responded to, and be re-installed on every re-entry rather than simply being true while the artifact is on the battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mana Vault** (rank 145) — `mana_vault`
-  - This artifact doesn't untap during your untap step.
-- **Intruder Alarm** (rank 1725) — `intruder_alarm`
-  - Creatures don't untap during their controllers' untap steps.
-- **Back to Basics** (rank 5179) — `back_to_basics`
-  - Nonbasic lands don't untap during their controllers' untap steps.
 
 </details>
 
@@ -162,22 +138,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## any-number-in-deck
-
-Blocks **1** card.
-
-- **(engine)** a residual-gate claimant for the printed deck-construction sentence, exactly the entry `verify._covered` already keeps for every other line no ability can carry (kicker, multikicker, gift, ascend, cost_reduction, emerge, evoke, bestow, additional_cost, uncounterable, devoid). One branch: `if card.any_number_in_deck and stripped.lower().startswith("a deck can have any number of cards named"): return True`, strict the way bestow's and devoid's claimants are -- `CardDef.any_number_in_deck` only returns True when the name inside the printed sentence is the card's OWN name, so the words cannot be claimed without the rule behind them, and Nazgul's "up to nine" still fails the gate rather than being laundered through. Everything else about this card is already expressible and verified: with that one branch patched in memory, the payload below passes all six gates unchanged. Ship the card with it.
-
-{"card": {"id": "persistent_petitioners", "name": "Persistent Petitioners", "oracle_text": "<verbatim, all three lines>", "mana_cost": "{1}{U}", "types": ["Creature"], "subtypes": ["Human", "Advisor"], "power": 1, "toughness": 3, "colors": ["U"], "color_identity": ["U"], "abilities": [{"kind": "activated", "text": "{1}, {T}: Target player mills a card. (They put the top card of their library into their graveyard.)", "cost": {"mana": "{1}", "tap": true}, "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "any"}}], "effects": [{"op": "mill", "amount": {"const": 1}, "player": {"target": "t1"}}]}, {"kind": "activated", "text": "Tap four untapped Advisors you control: Target player mills twelve cards.", "cost": {"tap_permanents": {"subtypes": ["Advisor"], "count": 4}}, "targets": [{"id": "t1", "kind": "player", "selector": {"controller": "any"}}], "effects": [{"op": "mill", "amount": {"const": 12}, "player": {"target": "t1"}}]}]}, "expectation": {"zone": "battlefield", "battlefield_count": 33}}
-  <br>Why the existing vocabulary won't do: The sentence is rule 903.5b's deck-construction exception, and the engine already implements it: `CardDef.any_number_in_deck` (src/automtg/engine/carddef.py) parses the printed line and `registry.validate_deck` honours it, so a twenty-Petitioners deck imports as the legal deck it is. There is nothing left for the card to say -- and nothing it *can* say. `claimed_lines` consumes a line three ways and none reaches this one: `lift_keywords` needs a line that is nothing but ability keywords, `spell_effects` only blanket-claims lines on an instant or sorcery, and `_covered` needs either a card-level claimant (there is none for this field) or an ability whose `text` is the line. No ability can honestly be that ability: an AbilityModel is activated, triggered or static; `_compile_static` refuses a static without an `effect` from STATIC_EFFECTS and none of the 44 says anything about deck construction; and an activated or triggered ability carrying the line would be a card that mills or taps when the printed sentence does nothing during a game at all. Writing the line onto ability 2's `text` -- the only other way past `_covered`, which also matches a printed line contained in a longer claim -- is the laundering the gate exists to catch, and would leave a line nobody implements looking implemented. Verified empirically rather than reasoned: the payload above fails `verify` at gate 3 with "printed text not represented: A deck can have any number of cards named", and passes all six gates the moment the one `_covered` branch exists. Same shape as d4af1b3c (bestow -- "the printed cost the residual gate could not hear") and e4987745 (a spell that exiles itself), both of which were closed by adding the missing claimant rather than by bending the card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Persistent Petitioners** (rank 10124) — `persistent_petitioners`
-  - A deck can have any number of cards named Persistent Petitioners.
 
 </details>
 

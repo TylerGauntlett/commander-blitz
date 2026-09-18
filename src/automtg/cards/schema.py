@@ -571,6 +571,15 @@ class AbilityModel(BaseModel):
     #: drawn while its controller's own draw step is running is left alone;
     #: every other draw, that step's second included, is replaced.
     except_first_in_draw_step: bool = False
+    #: ``replace_mill``: how many cards each replaced mill becomes. Bruvac the
+    #: Grandiloquent's and Fraying Sanity's "mill **twice** that many cards
+    #: instead" is ``2``. Required, and refused below 2 for `draw_multiplier`'s
+    #: reasons: 1 replaces a mill with itself and 0 mills nothing.
+    #:
+    #: Unlike `draw_multiplier` this scales a **count**, not a number of events:
+    #: 701.13a makes milling N cards one event, where 121.2 makes drawing N
+    #: cards N draws.
+    mill_multiplier: int | None = None
     #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.

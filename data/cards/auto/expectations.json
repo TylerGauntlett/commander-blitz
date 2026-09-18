@@ -572,6 +572,10 @@
   "azure_drake": {
     "zone": "battlefield"
   },
+  "back_to_basics": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bad_river": {
     "zone": "battlefield"
   },
@@ -1121,6 +1125,10 @@
     "zone": "battlefield"
   },
   "brushstrider": {
+    "zone": "battlefield"
+  },
+  "bruvac_the_grandiloquent": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "bull_cerodon": {
@@ -4414,6 +4422,10 @@
     },
     "zone": "graveyard"
   },
+  "intruder_alarm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ior_ruin_expedition": {
     "zone": "battlefield"
   },
@@ -6471,6 +6483,10 @@
     "zone": "battlefield"
   },
   "perilous_landscape": {
+    "zone": "battlefield"
+  },
+  "persistent_petitioners": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "phantom_monster": {

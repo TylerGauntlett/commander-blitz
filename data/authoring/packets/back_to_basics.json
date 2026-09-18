@@ -215,6 +215,7 @@
       "keywords",
       "mana_cost",
       "not_keywords",
+      "not_supertypes",
       "not_types",
       "owner",
       "self_only",
@@ -326,6 +327,9 @@
     ],
     "op_options": {
       "<=": [
+        "value"
+      ],
+      "=": [
         "value"
       ],
       ">": [
@@ -1179,6 +1183,7 @@
       "set_types",
       "skip_draw_step",
       "skip_extra_turn",
+      "skip_untap_step",
       "spell_cost_reduction",
       "spells_cant_be_countered",
       "untap_during_each_untap_step",
@@ -1197,6 +1202,7 @@
       "keywords",
       "mana_cost",
       "not_keywords",
+      "not_supertypes",
       "not_types",
       "owner",
       "paired",

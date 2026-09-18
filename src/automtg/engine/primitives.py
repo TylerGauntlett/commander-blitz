@@ -23,6 +23,7 @@ from .characteristics import (
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
+from .player_statics import mill_multiplier, untap_held
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -103,6 +104,20 @@ def discard_cards(state: GameState, pid: int, oids: Sequence[int]) -> list[int]:
 
 
 def mill_cards(state: GameState, pid: int, count: int) -> list[int]:
+    """Put the top ``count`` cards of ``pid``'s library into their graveyard.
+
+    The one choke point every mill goes through -- the `mill` op, the `mill`
+    cost and dredge (702.52a) -- which is why `replace_mill` is applied here:
+    Bruvac the Grandiloquent doubles the mills an *opponent's own* cards cause,
+    and a doubling written into the op would only ever see this card's side.
+
+    701.13a: milling N cards is one event, so the replacement multiplies the
+    count once rather than recursing per card the way a draw doubler must.
+    """
+    # "If an opponent would **mill one or more cards**" -- a mill of nothing is
+    # no event, so there is nothing to replace and no doubler applies.
+    if count > 0:
+        count *= mill_multiplier(state, pid)
     player = state.players[pid]
     out = []
     for _ in range(max(0, count)):
@@ -1435,10 +1450,20 @@ def untap_all(state: GameState, pid: int) -> list[int]:
     this is where that is noticed, because the untap step is the only moment the
     lock has any effect.
     """
+    # Read once for the whole step rather than per permanent: it is a scan of
+    # every battlefield static, and Intruder Alarm on a full board would make
+    # the untap step quadratic asked one permanent at a time.
+    held = untap_held(state, pid)
     untapped = []
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
         if obj is None or obj.controller != pid:
+            continue
+        if oid in held:
+            # Checked *before* `skip_next_untap` so the static does not spend
+            # somebody else's one-shot. A permanent held by both is held by the
+            # static for as long as its source is out, and the flag is still
+            # waiting when that source leaves.
             continue
         if obj.skip_next_untap:
             # Spent by *this* untap step whether or not there was anything to

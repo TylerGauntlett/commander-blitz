@@ -1291,6 +1291,15 @@ def _matches_printed(
     supertypes = selector.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False
+    # "**Nonbasic** lands don't untap during their controllers' untap steps"
+    # (Back to Basics). The negated form, which the effect-side selector
+    # language always had and the static one did not -- the same asymmetry
+    # `not_keywords` above was added to close. A complement over `types` is not
+    # a spelling of it: `not_types: ["Land"]` is every permanent that is not a
+    # land, which is the opposite set.
+    not_supertypes = selector.get("not_supertypes")
+    if not_supertypes and set(not_supertypes) & set(card.supertypes):
+        return False
     colors = selector.get("colors")
     if colors and not (set(colors) & card.colors):
         return False

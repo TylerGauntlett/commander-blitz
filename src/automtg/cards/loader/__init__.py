@@ -2387,6 +2387,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'draw_multiplier'/'except_first_in_draw_step' only mean "
             f"anything on a replace_draw static, not on {model.effect!r}"
         )
+    if model.effect == "replace_mill":
+        # `draw_multiplier`'s refusals, for its reasons: 1 replaces a mill with
+        # an identical mill, and 0 is "mill nothing instead" -- a prevention,
+        # which no doubler prints and which would load clean as a lock on the
+        # named player's mills.
+        if model.mill_multiplier is None:
+            raise DslError(
+                f"{where}: replace_mill needs 'mill_multiplier' -- how many "
+                f"cards each replaced mill becomes"
+            )
+        if model.mill_multiplier < 2:
+            raise DslError(
+                f"{where}.mill_multiplier: must be 2 or more; "
+                f"1 replaces a mill with itself and 0 mills nothing, "
+                f"which is a different effect"
+            )
+        if model.affects is not None or model.amount is not None:
+            # "If an opponent would mill one or more cards" names a player, and
+            # the size is `mill_multiplier`; nothing reads either key.
+            raise DslError(
+                f"{where}: replace_mill takes 'affects_player', "
+                f"'mill_multiplier' and an optional 'condition', "
+                f"and no 'affects' or 'amount'"
+            )
+    elif model.mill_multiplier is not None:
+        raise DslError(
+            f"{where}: 'mill_multiplier' only means anything on a replace_mill "
+            f"static, not on {model.effect!r}"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
@@ -2558,6 +2587,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:
         static["except_first_in_draw_step"] = True
+    if model.mill_multiplier is not None:
+        static["mill_multiplier"] = model.mill_multiplier
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:

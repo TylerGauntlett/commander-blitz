@@ -18622,12 +18622,12 @@
     },
     "Back to Basics": {
       "edhrec_rank": 5179,
-      "gate": "template",
+      "gate": null,
       "name": "Back to Basics",
-      "reason": "no template for: Nonbasic lands don't untap during their controllers' untap steps",
+      "reason": "",
       "scryfall_id": "de0dbb1c-ae8e-4f40-b7b4-016fea692da9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Back to Nature": {
@@ -35612,12 +35612,12 @@
     },
     "Bruvac the Grandiloquent": {
       "edhrec_rank": 2124,
-      "gate": "template",
+      "gate": null,
       "name": "Bruvac the Grandiloquent",
-      "reason": "no template for: If an opponent would mill one or more cards, they mill twice that many cards instead",
+      "reason": "",
       "scryfall_id": "27611498-176f-435a-91ad-f97e8c5d26de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bubble Matrix": {
@@ -137482,12 +137482,12 @@
     },
     "Intruder Alarm": {
       "edhrec_rank": 1725,
-      "gate": "template",
+      "gate": null,
       "name": "Intruder Alarm",
-      "reason": "no template for: Creatures don't untap during their controllers' untap steps",
+      "reason": "",
       "scryfall_id": "0ef9c823-3810-4e1f-8bb4-aba59e29c111",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Intruding Soulrager": {
@@ -198592,12 +198592,12 @@
     },
     "Persistent Petitioners": {
       "edhrec_rank": 10124,
-      "gate": "template",
+      "gate": null,
       "name": "Persistent Petitioners",
-      "reason": "no template for: {1}, {T}: Target player mills a card",
+      "reason": "",
       "scryfall_id": "27be522d-bdef-4a95-a405-98247c58b71a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Persistent Specimen": {

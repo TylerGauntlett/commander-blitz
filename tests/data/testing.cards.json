@@ -13077,6 +13077,113 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_vault_self_lock",
+      "name": "Test Vault",
+      "oracle_text": "This artifact doesn't untap during your untap step.",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This artifact doesn't untap during your untap step.",
+          "effect": "skip_untap_step",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_back_to_basics",
+      "name": "Test Back to Basics",
+      "oracle_text": "Nonbasic lands don't untap during their controllers' untap steps.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Nonbasic lands don't untap during their controllers' untap steps.",
+          "effect": "skip_untap_step",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ],
+            "not_supertypes": [
+              "Basic"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_intruder_alarm_lock",
+      "name": "Test Alarm",
+      "oracle_text": "Creatures don't untap during their controllers' untap steps.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures don't untap during their controllers' untap steps.",
+          "effect": "skip_untap_step",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_bruvac_doubler",
+      "name": "Test Mill Doubler",
+      "oracle_text": "If an opponent would mill one or more cards, they mill twice that many cards instead.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Advisor"
+      ],
+      "power": 1,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If an opponent would mill one or more cards, they mill twice that many cards instead.",
+          "effect": "replace_mill",
+          "affects_player": "opponent",
+          "mill_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "t_self_mill_doubler",
+      "name": "Test Fraying Sanity",
+      "oracle_text": "If you would mill one or more cards, you mill twice that many cards instead.",
+      "mana_cost": "{2}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would mill one or more cards, you mill twice that many cards instead.",
+          "effect": "replace_mill",
+          "affects_player": "you",
+          "mill_multiplier": 2
+        }
+      ]
     }
   ]
 }

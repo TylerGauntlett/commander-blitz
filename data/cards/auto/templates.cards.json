@@ -6012,6 +6012,38 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "not_supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Nonbasic lands don't untap during their controllers' untap steps."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "back_to_basics",
+      "mana_cost": "{2}{U}",
+      "name": "Back to Basics",
+      "oracle_text": "Nonbasic lands don't untap during their controllers' untap steps.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "sacrifice": {
               "self_only": true,
@@ -12116,6 +12148,40 @@
         "Beast"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "opponent",
+          "effect": "replace_mill",
+          "kind": "static",
+          "mill_multiplier": 2,
+          "text": "If an opponent would mill one or more cards, they mill twice that many cards instead."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "bruvac_the_grandiloquent",
+      "mana_cost": "{2}{U}",
+      "name": "Bruvac the Grandiloquent",
+      "oracle_text": "If an opponent would mill one or more cards, they mill twice that many cards instead. (To mill a card, a player puts the top card of their library into their graveyard.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -47410,6 +47476,61 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "skip_untap_step",
+          "kind": "static",
+          "text": "Creatures don't untap during their controllers' untap steps."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature enters, untap all creatures.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "intruder_alarm",
+      "mana_cost": "{2}{U}",
+      "name": "Intruder Alarm",
+      "oracle_text": "Creatures don't untap during their controllers' untap steps.\nWhenever a creature enters, untap all creatures.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -69827,6 +69948,90 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Target player mills a card. (They put the top card of their library into their graveyard.)"
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "count": 4,
+              "subtypes": [
+                "Advisor"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 12
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "Tap four untapped Advisors you control: Target player mills twelve cards."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "persistent_petitioners",
+      "mana_cost": "{1}{U}",
+      "name": "Persistent Petitioners",
+      "oracle_text": "{1}, {T}: Target player mills a card. (They put the top card of their library into their graveyard.)\nTap four untapped Advisors you control: Target player mills twelve cards.\nA deck can have any number of cards named Persistent Petitioners.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

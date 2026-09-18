@@ -13155,3 +13155,107 @@ deck with an ordinary card still singleton; the sentence matched against the
 card's own name; basic lands exempt by the rule with no sentence to read; Nazgûl
 unmatched in both the rule and the gate; and the claimant scoped to its own
 line. Persistent Petitioners is authored.
+
+## `skip_untap_step` — "doesn't untap during their controllers' untap steps"
+
+### Overview
+
+Back to Basics, Intruder Alarm, Winter Orb, Mana Vault. `static_effects` carried
+`untap_during_each_untap_step` — the exact inverse, which *adds* untaps — and
+nothing that suppressed one. 145 catalog cards were waiting on it.
+
+### The shape
+
+- **`player_statics.untap_held(state, active_pid)`** returns the oids held down,
+  written directly beside its inverse `untap_also` and read in the same place
+  for the same reason: whether a permanent untaps is a fact about a *set* of
+  permanents at one moment in the turn, and no characteristic carries it.
+- **`primitives.untap_all`** consults it once per step rather than once per
+  permanent — Intruder Alarm on a full board would otherwise make the untap step
+  quadratic.
+- **`not_supertypes`** joins the static filter language so Back to Basics can say
+  "**nonbasic** lands". The negation of `supertypes`, added for `not_keywords`'
+  stated reason: the effect-side selector language always had it and the static
+  one did not. A `not_types` complement is not a spelling of it — that is every
+  permanent which is not a land, the opposite set.
+
+### Why not the two fields that already suppressed untapping
+
+Both are written by resolution rather than printed on a card. `skip_next_untap`
+is a one-shot that `untap_all` spends in the very untap step it skips, so it
+holds Mana Vault for one turn and releases it on the next; `frozen_by` is set by
+the `freeze` op. Both are ops, so the only route from a printed static was to
+invent a `self_enters` trigger for a line that is printed as a static — which
+would sit on the stack, be respondable, and reinstall on every re-entry.
+
+### The three things that would each be a different card
+
+- **Any controller.** Both enchantments say "their controllers' untap steps".
+  `affects` may name `controller: "any"`, as `cant_attack` already does. Intruder
+  Alarm locking only its own side would be a one-sided card rather than the
+  symmetric drawback it is built around.
+- **It must not spend `skip_next_untap`.** `untap_all` checks the held set
+  *first*, so a static already covering a permanent does not burn somebody
+  else's one-shot.
+- **Explicit untaps still work.** Read by the untap step alone, so Mana Vault's
+  upkeep payment untaps it and Intruder Alarm's own "untap all creatures"
+  trigger — the card's entire engine — is unaffected.
+
+### Guarded by
+
+`tests/unit/test_skip_untap_step.py`: the self-lock and its counterfactual; an
+explicit untap still working; the hold ending when the source leaves; an
+opponent's creature held on their own untap step, with the pair that makes it
+mean something; the `not_supertypes` clause, where a basic land must *not* be
+held; and both halves of the `skip_next_untap` interaction.
+
+## `replace_mill` — "they mill twice that many cards instead"
+
+### Overview
+
+Bruvac the Grandiloquent, Fraying Sanity. `static_effects` carried the whole
+`replace_*` family — `replace_draw`, `replace_life_gain`, `replace_life_loss`,
+`replace_token_creation` — and no mill member. `mill` existed only as an effect
+op and as a cost: as something *this card's controller does*, never as an event
+that could be replaced.
+
+### The shape
+
+A player-wide static (`affects_player`, no `affects`) with a required
+`mill_multiplier` of 2 or more, applied in **`primitives.mill_cards`**.
+
+That placement is the capability. `mill_cards` is the one choke point every mill
+goes through — the `mill` op, the `mill` cost, and dredge (702.52a) — so Bruvac
+doubles the mills an *opponent's own* cards cause, which is the entire card. A
+doubling written into `op_mill` would only ever see mills its own controller
+caused, and Bruvac's controller is not the one being milled.
+
+### Why it is not shaped like `replace_draw`
+
+`draw_replacements` returns `(source, multiplier)` pairs and
+`replacements._draw_one` recurses per card with an `applied` set, because 121.2
+makes drawing N cards **N separate draws** and the "except the first one you draw
+in each of your draw steps" exemption moves between them.
+
+701.13a makes milling N cards **one event**. So `mill_multiplier` returns a
+single factor, the mill is replaced once in place by multiplying its count, and
+there is no per-card recursion for 614.5 to guard against. Two doublers are two
+different replacements applying to the same event and compound (616.1) to four —
+the product across sources, each visited once.
+
+### Not modelled
+
+A `mill` trigger event, which is the tempting approximation and a different
+card: it would fire after the cards were already in the graveyard and mill again
+*alongside* rather than *instead*, parting company from the printed card the
+moment anything cares how many cards were milled at once, or the library runs
+short.
+
+### Guarded by
+
+`tests/unit/test_replace_mill.py`: an opponent milling double with its
+counterfactual; the controller **not** doubled (the near miss a player-agnostic
+implementation passes silently); `affects_player: "you"` for Fraying Sanity's
+half; two doublers compounding to 4×; a mill of zero not being an event;
+701.13b's short library milling what is there rather than over-counting; the
+hold ending when the source leaves; and the load-time guards.

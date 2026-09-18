@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "bruvac_the_grandiloquent",
+    "name": "Bruvac the Grandiloquent",
+    "oracle_text": "If an opponent would mill one or more cards, they mill twice that many cards instead. (To mill a card, a player puts the top card of their library into their graveyard.)",
+    "mana_cost": "{2}{U}",
+    "types": [
+      "Creature"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Human",
+      "Advisor"
+    ],
+    "power": 1,
+    "toughness": 4,
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If an opponent would mill one or more cards, they mill twice that many cards instead.",
+        "effect": "replace_mill",
+        "affects_player": "opponent",
+        "mill_multiplier": 2
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

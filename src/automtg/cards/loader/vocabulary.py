@@ -202,6 +202,13 @@ STATIC_EFFECTS = frozenset(
         # characteristics pipeline: it is a fact about when a set of
         # permanents untaps, which no characteristic can carry.
         "untap_during_each_untap_step",
+        # Mana Vault ("This artifact doesn't untap during your untap step"),
+        # Back to Basics, Intruder Alarm, Winter Orb.  The exact inverse of the
+        # line above and read in the same place, `primitives.untap_all`, for the
+        # same reason.  Its `affects` routinely names permanents its controller
+        # does not control -- both printed sentences say "their controllers'
+        # untap steps" -- so like `cant_attack` it is not a fact about one side.
+        "skip_untap_step",
         # Stormtide Leviathan.  Read by `combat.can_attack`.  A global
         # prohibition, so unlike every other static here its `affects`
         # routinely names creatures its own controller does not control.
@@ -302,6 +309,19 @@ STATIC_EFFECTS = frozenset(
         # replaced; a `draw` trigger fires after the card is in hand and would
         # add a card alongside rather than instead.
         "replace_draw",
+        # Bruvac the Grandiloquent, Fraying Sanity.  "If an opponent would mill
+        # one or more cards, they mill twice that many cards instead."  The mill
+        # member of the family above, and the shape differs from `replace_draw`
+        # in one rules-relevant way: 701.13a makes milling N cards **one** event,
+        # not N of them, so this multiplies a count once rather than recursing
+        # per card the way `replacements._draw_one` must for 121.2.  Read in
+        # `primitives.mill_cards`, the single choke point every mill goes
+        # through -- a `mill` op, a `mill` cost and dredge (702.52a) alike --
+        # which is what makes it apply to mills the *opponent's* own cards cause.
+        # A `mill` trigger could not do it: there is no such trigger event, and
+        # one would fire after the cards were already in the graveyard and mill
+        # again alongside rather than instead.
+        "replace_mill",
         # Voice of Victory.  "Your opponents can't cast spells during your
         # turn."  A prohibition on a *player*, so it takes `affects_player` and
         # no `affects`, and it is read wherever a spell can be cast rather than
@@ -341,6 +361,11 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "replace_life_loss",
         "replace_life_gain",
         "replace_draw",
+        # Bruvac the Grandiloquent, Fraying Sanity. The mill member of the
+        # `replace_*` family above, applied in `primitives.mill_cards` -- the
+        # one choke point every mill goes through, so a `mill` op, a `mill`
+        # cost and dredge are all replaced, whoever caused them.
+        "replace_mill",
         "cant_cast_spells",
         "cant_gain_life",
     }
@@ -455,6 +480,12 @@ STATIC_FILTER_KEYS = frozenset(
         # negated form, which the effect-side selector language always had
         # and the static one did not.
         "not_keywords",
+        # "**Nonbasic** lands don't untap during their controllers' untap
+        # steps" (Back to Basics). The negation of `supertypes` above, added
+        # for `not_keywords`' reason: the effect-side selector language always
+        # had it and the static one did not. Not the same as a `not_types`
+        # complement, which would be every permanent that is not a land.
+        "not_supertypes",
         # "…with mana cost {0} or {1}". The printed cost, which no layer moves,
         # so it is as safe here as `types` is. See `mana.printed_cost_is`.
         "mana_cost",
