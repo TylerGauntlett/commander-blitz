@@ -33,6 +33,7 @@ data/catalog/
 ├── bulk/                        the Scryfall dump. NEVER committed.
 │   ├── .gitignore                 ← the only thing between a refresh and a huge commit
 │   └── default_cards-*.jsonl.gz   ~74 MB, a download cache
+├── art_pins.json                printings chosen by hand (committed, tiny)
 ├── cards.sqlite                 the built index          (committed, ~14 MB)
 └── registry_images.json         the engine's cards only  (committed, ~104 KB)
 data/art/{card_id}.jpg           owned image bytes        (committed, ~63 MB)
@@ -108,9 +109,48 @@ Override with `--bulk-type` if you need something else.
   not-textless, then newest, then set, then id. The last key is what makes two
   builds of the same bundle byte-identical, so a refresh commit shows what
   actually changed instead of noise.
+- **Pinned**, where that order picks the wrong picture. See below.
 - **Image URLs are never stored.** Every Scryfall image URL is a pure function of
   the card's 36-character id, so the index stores the id and derives the rest.
   Storing both sizes verbatim would add ~6.7 MB of pure redundancy.
+
+### When the sort picks the wrong picture
+
+"Newest" is a good proxy for "best scan" and a bad one for "the art people mean".
+A reprint with a fresh illustration is strictly newer than the printing the card
+is *known* by, so it wins — which is how Sheoldred, the Apocalypse came to show
+a 2026 Secret Lair borderless instead of Chris Rahn's Dominaria United art.
+
+`data/catalog/art_pins.json` names the printing to use, and a pinned printing
+wins outright — no later record can displace it, which is the point, since the
+pin exists precisely because `better()` would choose something else:
+
+```json
+{ "pins": { "Sheoldred, the Apocalypse": {
+    "scryfall_id": "d67be074-cdd4-41d9-ac89-0a0456c4e4b2",
+    "printing": "dmu #107", "artist": "Chris Rahn", "why": "..." } } }
+```
+
+Add a pin, then rebuild — `build_card_index.py` followed by
+`fetch_card_art.py --only <card_id> --force`, since the art fetcher skips files
+already on disk and would otherwise keep the old bytes under the new id.
+
+Three things the pin file is deliberately not allowed to do:
+
+- **Retune the sort.** A preference term added to rescue one card silently
+  reshuffles the other 32,000. A named exception is auditable; a nudged weight
+  is not.
+- **Get an unshowable printing in.** A pin still has to pass `is_wanted`, so it
+  cannot smuggle in a digital-only row or an `art_series` one — the latter being
+  2,650 different illustrations wearing real cards' names.
+- **Fail quietly.** A pin that matches nothing in the dump — a wrong id, or a
+  dump older than the printing — leaves the card on its old art, so the build
+  prints a warning, and a test asserts every committed pin matches the printing
+  the committed index actually holds.
+
+**Pick the unstamped printing.** Prerelease and promo-pack scans have their seal
+printed *over the illustration*, inside the `art_crop` band the app shows, so
+`dmu #107` is pinned rather than the otherwise identical `pdmu #107s`.
 
 Then each engine card is matched to a printing (`src/automtg/cards/images.py`):
 

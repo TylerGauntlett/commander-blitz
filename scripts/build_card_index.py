@@ -51,6 +51,7 @@ from automtg.cards.images import (
     COLUMNS,
     SCHEMA,
     CardIndex,
+    art_pins_path,
     build_registry_images,
     catalog_path,
     read_registry_images,
@@ -353,6 +354,30 @@ def open_bundle(source: Path):
     return source.open(encoding="utf-8")
 
 
+def read_art_pins(path: Path | None = None) -> dict[str, str]:
+    """``{card name: scryfall id}`` -- the printings we pick by hand.
+
+    :func:`better` encodes a general taste (best scan, newest, not a promo) and
+    it is right almost everywhere.  Where it is not, the answer is a named
+    exception rather than a new preference term: tuning the sort to rescue one
+    card silently reshuffles the other 32,000.
+
+    A missing or unreadable file means no pins, not a failed build -- the file
+    is an override, and a build with none is the ordinary case.
+    """
+    target = art_pins_path() if path is None else path
+    try:
+        raw = json.loads(target.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    pins: dict[str, str] = {}
+    for name, entry in (raw.get("pins") or {}).items():
+        scryfall_id = entry.get("scryfall_id") if isinstance(entry, dict) else entry
+        if name and scryfall_id:
+            pins[name] = scryfall_id
+    return pins
+
+
 def dedupe_key(record: dict) -> tuple[str, int]:
     """One winner per ``(name, is a token)``, not per name.
 
@@ -368,28 +393,58 @@ def dedupe_key(record: dict) -> tuple[str, int]:
     )
 
 
-def extract_records(records: Iterable[dict], *, include_funny: bool = False) -> list[tuple]:
+def extract_records(
+    records: Iterable[dict],
+    *,
+    include_funny: bool = False,
+    pins: dict[str, str] | None = None,
+) -> list[tuple]:
     """Reduce records to one winning printing per ``(name, is a token)``.
 
     Split out of :func:`extract` so the dedupe can be tested without inventing a
     bulk dump on disk -- it is the part with the judgement in it.
+
+    A pinned printing wins outright and no later record can displace it, which
+    is the whole point: the pin exists because :func:`better` would choose
+    something else.  A pin still has to name a printing that :func:`is_wanted`
+    keeps -- a pin at a digital-only or art-series row would put a card we
+    cannot show into the index, and a pin is not a licence for that.
     """
+    pinned = read_art_pins() if pins is None else pins
     best: dict[tuple[str, int], dict] = {}
+    claimed: set[tuple[str, int]] = set()
     for record in records:
         if not is_wanted(record, include_funny=include_funny):
             continue
         if not record.get("name"):
             continue
         key = dedupe_key(record)
+        if pinned.get(key[0]) == record.get("id"):
+            best[key] = record
+            claimed.add(key)
+            continue
+        if key in claimed:
+            continue
         incumbent = best.get(key)
         if incumbent is None or better(record, incumbent):
             best[key] = record
+    unmatched = sorted(set(pinned) - {key[0] for key in claimed})
+    for name in unmatched:
+        # Loud, because a pin that matches nothing is silently the old art: the
+        # dump may predate the printing, or the id may simply be wrong.
+        print(f"  WARNING: art pin for {name!r} matched no printing in this dump")
     # Sorted by the same pair the table is keyed on, so two builds of one dump
     # stay byte-identical.
     return sorted((to_row(r) for r in best.values()), key=lambda row: (row[0], row[13]))
 
 
-def extract(source: Path, *, include_funny: bool, limit: int | None = None) -> list[tuple]:
+def extract(
+    source: Path,
+    *,
+    include_funny: bool,
+    limit: int | None = None,
+    pins: dict[str, str] | None = None,
+) -> list[tuple]:
     """One streaming pass.  Never holds the dump in memory, only the winners."""
 
     def stream():
@@ -408,7 +463,7 @@ def extract(source: Path, *, include_funny: bool, limit: int | None = None) -> l
                     continue
 
     scanned = 0
-    rows = extract_records(stream(), include_funny=include_funny)
+    rows = extract_records(stream(), include_funny=include_funny, pins=pins)
     print(f"  scanned {scanned:,} records -> {len(rows):,} distinct printings")
     return rows
 

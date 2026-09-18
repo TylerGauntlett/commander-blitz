@@ -1,0 +1,11 @@
+{
+  "_comment": "Printings chosen by hand. build_card_index.py's dedupe prefers the best scan, then not-a-promo, then the newest printing -- good taste for 32,000 cards and wrong for a few, usually because a recent reprint carries an illustration nobody thinks of as the card. A pin names the printing we want and the dedupe stops arguing. Keyed on the exact Scryfall card name; the value's scryfall_id must name a printing the build keeps (English, not digital-only, not an art series, and with an art_crop).",
+  "pins": {
+    "Sheoldred, the Apocalypse": {
+      "scryfall_id": "d67be074-cdd4-41d9-ac89-0a0456c4e4b2",
+      "printing": "dmu #107",
+      "artist": "Chris Rahn",
+      "why": "The dedupe took the 2026 Secret Lair borderless (Nicky Barkla) because it is the newest highres scan. Chris Rahn's Dominaria United illustration is the one the card is known by. Pinned to the unstamped #107 rather than the prerelease promo #107s: the prerelease date seal is printed over the art, so it lands inside the art_crop the app shows."
+    }
+  }
+}
