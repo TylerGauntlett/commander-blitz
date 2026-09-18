@@ -32,6 +32,15 @@ from automtg.cards.registry import default_registry  # noqa: E402
 
 
 def main() -> int:
+    # Oracle text carries characters cp1252 has no room for -- U+2212 in
+    # Teferi, Master of Time's "-3:" is the one that found this -- and a Windows
+    # console defaults to cp1252, so printing a card's notes killed the run
+    # before it could write --json. Reconfigure the streams rather than sanitise
+    # the text: a deck report should print what the card actually says.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("deck", help="a Moxfield deck URL or bare public id")
     parser.add_argument("--dry-run", action="store_true", help="write nothing to data/generated/")
