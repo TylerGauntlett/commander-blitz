@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**25 cards** blocked by **29** capabilities.
+**24 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,7 +26,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [doesnt-untap](#doesnt-untap) | 1 | 145 | static_effect |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -223,20 +222,6 @@ Blocks **1** card.
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
-
-## doesnt-untap
-
-Blocks **1** card.
-
-- **(static_effect)** a static effect -- say `skip_untap_step` -- that a permanent prints on itself (and, with a filter, on others: Winter Orb, Kismet, Stasis-likes) meaning "doesn't untap during its controller's untap step", read by the untap step alongside `skip_next_untap` and `frozen_by`. It must be a printed characteristic with no lifetime of its own: it holds for exactly as long as the ability is on the battlefield, is spent by nothing, and must not fight `skip_next_untap` (the untap step must not consume that one-shot on a permanent already held by the static), while leaving explicit `untap` effects -- Mana Vault's own upkeep payment -- free to untap it
-  <br>Why the existing vocabulary won't do: `static_effects` carries `untap_during_each_untap_step`, the exact inverse, and nothing that suppresses untapping; `characteristics.untap_also` is the only untap-related static reader and it only adds permanents to the untap set. The two engine fields that do suppress untapping are both written by resolution, not by a printed static: `skip_untap` sets `skip_next_untap`, which `primitives.untap_all` clears in the very untap step it skips (a one-shot -- it would hold Mana Vault for one turn and release it on the next), and `freeze` sets `frozen_by` to the source oid for its source's lifetime. Both are `ops`, so the only way to reach either is to invent a triggered ability (`self_enters` + `freeze` on `self_only`) to carry a line that is printed as a static -- which the residual gate would see as a triggered ability claiming a static sentence, and which would additionally sit on the stack, be responded to, and be re-installed on every re-entry rather than simply being true while the artifact is on the battlefield.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mana Vault** (rank 145) — `mana_vault`
-  - This artifact doesn't untap during your untap step.
 
 </details>
 

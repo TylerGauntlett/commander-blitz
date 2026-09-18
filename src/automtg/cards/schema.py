@@ -259,6 +259,12 @@ class TriggerModel(BaseModel):
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.
     not_cause: str | None = None
+    #: "When a spell or ability **an opponent controls** causes you to discard
+    #: this card" -- Orvar, the All-Form. Who controlled the spell or ability
+    #: that caused the discard, relative to this ability's controller. `discard`
+    #: only, and it is not `controller`: on a discard trigger that names the
+    #: player who *discarded*, so it would read "an opponent discarded a card".
+    cause_controller: str | None = None
     #: For ``counter_placed``: which kind of counter this cares about.  Without
     #: it "whenever a +1/+1 counter is put on this creature" also fires on
     #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
@@ -352,10 +358,16 @@ class AbilityModel(BaseModel):
     #: the mana is allowed to pay for -- Secluded Courtyard's "…or activate an
     #: ability of a creature source of the chosen type". A bare string or list is
     #: the ``cast`` half alone, which is what every other printing says.
+    #:
+    #: Either half of the object may be the word ``"any"`` instead of a list of
+    #: groups -- "Spend this mana only to activate abilities" (Cryptic Trilobite,
+    #: Omen Hawker), which names no type at all. The loader refuses it on both
+    #: halves at once and refuses it bare, where it would read as the ``cast``
+    #: half and quietly make ordinary mana.
     mana_restriction: (
         str
         | list[str | dict[str, Any] | list[str | dict[str, Any]]]
-        | dict[str, list[str | dict[str, Any] | list[str | dict[str, Any]]]]
+        | dict[str, str | list[str | dict[str, Any] | list[str | dict[str, Any]]]]
         | None
     ) = None
     sorcery_speed_only: bool = False
@@ -571,6 +583,15 @@ class AbilityModel(BaseModel):
     #: drawn while its controller's own draw step is running is left alone;
     #: every other draw, that step's second included, is replaced.
     except_first_in_draw_step: bool = False
+    #: ``replace_mill``: how many cards each replaced mill becomes. Bruvac the
+    #: Grandiloquent's and Fraying Sanity's "mill **twice** that many cards
+    #: instead" is ``2``. Required, and refused below 2 for `draw_multiplier`'s
+    #: reasons: 1 replaces a mill with itself and 0 mills nothing.
+    #:
+    #: Unlike `draw_multiplier` this scales a **count**, not a number of events:
+    #: 701.13a makes milling N cards one event, where 121.2 makes drawing N
+    #: cards N draws.
+    mill_multiplier: int | None = None
     #: ``add_mana_on_tap``: what a tapped permanent must be for the static to
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.

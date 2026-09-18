@@ -192,6 +192,47 @@ def draw_replacements(state: GameState, pid: int) -> list[tuple[int, int]]:
     return out
 
 
+def wins_on_empty_draw(state: GameState, pid: int) -> bool:
+    """Does ``pid`` win instead of drawing from an empty library?
+
+    Jace, Wielder of Mysteries and Laboratory Maniac: "If you would draw a card
+    while your library has no cards in it, you win the game instead."
+
+    A plain yes/no rather than a multiplier, because the replacement has no
+    size -- it substitutes a different outcome for the draw rather than scaling
+    it, which is exactly why it could not be spelled as a `replace_draw` whose
+    only key is a number the loader refuses below 2.
+
+    Read in `replacements._draw_one`, the seam every post-opening-hand draw
+    passes through one card at a time, so it applies to a `draw` op, the draw
+    step, and a `draw` rider on somebody else's card alike.
+    """
+    return _player_static(state, pid, "replace_empty_draw")
+
+
+def mill_multiplier(state: GameState, pid: int) -> int:
+    """How many times over ``pid`` mills, right now (`replace_mill`).
+
+    Bruvac the Grandiloquent: "If an opponent would mill one or more cards, they
+    mill twice that many cards instead." Fraying Sanity says it of one player.
+
+    Returns a single factor rather than `draw_replacements`' list of
+    ``(source, multiplier)`` pairs, and the difference is a rules one rather
+    than a convenience. 701.13a makes milling N cards **one** event, where 121.2
+    makes drawing N cards N separate draws -- so a mill is replaced once, in
+    place, by multiplying its count, and there is no per-card recursion for
+    614.5 to guard against. Two Bruvacs are two different replacements applying
+    to the same event, so they compound (616.1) to four, which is the product
+    taken here; and because each source is visited once, none applies twice.
+    """
+    factor = 1
+    for obj, static in _active_player_statics(state, "replace_mill"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        factor *= max(1, int(static.get("mill_multiplier", 1)))
+    return factor
+
+
 def _first_draw_of_draw_step(state: GameState, pid: int) -> bool:
     """Would the card ``pid`` is about to draw be the first of *their* draw step?
 
@@ -648,6 +689,57 @@ def untap_also(state: GameState, active_pid: int) -> list[int]:
     return out
 
 
+def untap_held(state: GameState, active_pid: int) -> set[int]:
+    """Permanents a static stops from untapping (`skip_untap_step`).
+
+    "Nonbasic lands don't untap during their controllers' untap steps" (Back to
+    Basics); "Creatures don't untap during their controllers' untap steps"
+    (Intruder Alarm); "This artifact doesn't untap during your untap step"
+    (Mana Vault, `affects: {"self": true}`).
+
+    The exact inverse of :func:`untap_also` directly above, and read in the same
+    place for the same reason: whether a permanent untaps is a fact about a set
+    of permanents at one moment in the turn, not a characteristic of any one of
+    them, so it belongs at the untap step rather than layered into `chars`.
+
+    Three things this has to get right, each of which would be a different card:
+
+    * **Any controller, not just the source's.** Both printed sentences say
+      "their controllers' untap steps" -- Intruder Alarm stops the whole table
+      untapping, which is the drawback the card is built around. `untap_also`
+      filters to `source_obj.controller` because Murkfiend Liege says "you
+      control"; this one must not.
+    * **It is a printed characteristic with no lifetime of its own.** It holds
+      for exactly as long as the source is on the battlefield, and is spent by
+      nothing -- unlike `skip_next_untap`, which `untap_all` consumes in the
+      untap step it skips.
+    * **It must not fight `skip_next_untap`.** A permanent already held by this
+      static must not *also* burn its one-shot: `untap_all` checks this set
+      first and leaves the flag alone, or Mana Vault's own static would eat the
+      skip a Winter Orb effect had put there and release it a turn early.
+
+    Explicit `untap` effects are untouched -- this is read only by the untap
+    step, so Mana Vault's own upkeep payment still untaps it (302.6 / the
+    printed card), exactly as `frozen_by` leaves targeted untaps alone.
+    """
+    held: set[int] = set()
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "skip_untap_step":
+            continue
+        for oid in state.battlefield:
+            obj = state.objects.get(oid)
+            if obj is None:
+                continue
+            # The active player's untap step is the only one being resolved, so
+            # a permanent somebody else controls is not untapping now anyway;
+            # narrowing here keeps the set to what this step would have touched.
+            if obj.controller != active_pid:
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                held.add(oid)
+    return held
+
+
 def _player_static(state: GameState, pid: int, effect: str) -> bool:
     """Whether any *active* permanent grants ``effect`` to this player.
 
@@ -683,6 +775,35 @@ def player_cant_cast_spells(state: GameState, pid: int) -> bool:
     lock lifts the instant the source leaves or the turn passes.
     """
     return _player_static(state, pid, "cant_cast_spells")
+
+
+def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
+    """"Any player may cast spells as though they had flash." Tidal Barracuda.
+
+    Also Leyline of Anticipation and Vedalken Orrery, with
+    ``affects_player: "you"``. The permissive twin of `player_cant_cast_spells`,
+    and the first thing in the engine that can widen a *timing* window rather
+    than a zone one.
+
+    Read in `casting._timing_ok`, which is why that function had to learn
+    `state` and `pid`: it decided casting speed from printed characteristics
+    alone (`card.is_instant or FLASH in card.keywords`) and took neither, so no
+    permanent on the board could be consulted from it. One seam, twelve callers,
+    and every zone a spell can be cast from goes through it -- hand, graveyard,
+    exile, a Citadel top, a second face -- which is the whole reason the check
+    lives there and not in `_cast_actions` beside the prohibition.
+
+    Granting `Keyword.FLASH` is the tempting substitute and is wrong three times
+    over: `_timing_ok` reads the **CardDef**'s keywords and never an object's
+    granted ones; a static's filter has no `zone`, so it could not name the cards
+    in hand even if it did; and the permission covers cards drawn after the
+    source arrived, which no pool resolved once could reach.
+
+    It permits and never compels, so it cannot make a spell castable that some
+    other rule forbids: 101.2 still gives a "can't" the last word, and
+    `player_cant_cast_spells` is checked before any of this.
+    """
+    return _player_static(state, pid, "cast_as_though_flash")
 
 
 def player_reveals_library_top(state: GameState, pid: int) -> bool:

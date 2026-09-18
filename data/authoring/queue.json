@@ -6832,13 +6832,13 @@
     },
     "Altar of the Brood": {
       "edhrec_rank": 1425,
-      "gate": "template",
+      "gate": null,
       "name": "Altar of the Brood",
-      "reason": "no template for: Whenever another permanent you control enters, each opponent mills a card",
+      "reason": "",
       "scryfall_id": "0d656542-f0cd-485d-9d74-05573a2d49e4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Altar of the Goyf": {
       "edhrec_rank": 9679,
@@ -12122,13 +12122,13 @@
     },
     "Archmage's Charm": {
       "edhrec_rank": 1746,
-      "gate": "template",
+      "gate": null,
       "name": "Archmage's Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "9e991c4c-bd6d-4cea-9a07-e69febf4ecc4",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Archmage's Newt": {
       "edhrec_rank": 13300,
@@ -18622,13 +18622,13 @@
     },
     "Back to Basics": {
       "edhrec_rank": 5179,
-      "gate": "template",
+      "gate": null,
       "name": "Back to Basics",
-      "reason": "no template for: Nonbasic lands don't untap during their controllers' untap steps",
+      "reason": "",
       "scryfall_id": "de0dbb1c-ae8e-4f40-b7b4-016fea692da9",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Back to Nature": {
       "edhrec_rank": 9703,
@@ -35612,13 +35612,13 @@
     },
     "Bruvac the Grandiloquent": {
       "edhrec_rank": 2124,
-      "gate": "template",
+      "gate": null,
       "name": "Bruvac the Grandiloquent",
-      "reason": "no template for: If an opponent would mill one or more cards, they mill twice that many cards instead",
+      "reason": "",
       "scryfall_id": "27611498-176f-435a-91ad-f97e8c5d26de",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Bubble Matrix": {
       "edhrec_rank": 18933,
@@ -40692,13 +40692,13 @@
     },
     "Castle Vantress": {
       "edhrec_rank": 982,
-      "gate": "template",
+      "gate": null,
       "name": "Castle Vantress",
-      "reason": "no template for: {2}{U}{U}, {T}: Scry 2",
+      "reason": "",
       "scryfall_id": "dead85f7-865c-4f7d-ad6c-014d4e90f8be",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Casualties of War": {
       "edhrec_rank": 1767,
@@ -48772,13 +48772,13 @@
     },
     "Cloudstone Curio": {
       "edhrec_rank": 2576,
-      "gate": "template",
+      "gate": null,
       "name": "Cloudstone Curio",
-      "reason": "no template for: Whenever a nonartifact permanent you control enters, you may return another permanent you ",
+      "reason": "",
       "scryfall_id": "0ab28c16-d50c-407a-b914-f7c645aa0269",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Cloudthresher": {
       "edhrec_rank": 16758,
@@ -51522,13 +51522,13 @@
     },
     "Conjurer's Bauble": {
       "edhrec_rank": 5448,
-      "gate": "template",
+      "gate": null,
       "name": "Conjurer's Bauble",
-      "reason": "no template for: {T}, Sacrifice this artifact: Put up to one target card from your graveyard on the bottom ",
+      "reason": "",
       "scryfall_id": "2d32960e-d182-455f-8e74-eb11b10050da",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Conjurer's Closet": {
       "edhrec_rank": 483,
@@ -57182,13 +57182,13 @@
     },
     "Cryptic Command": {
       "edhrec_rank": 1613,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptic Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "7b182d1f-be0f-4b97-bca3-083483f7713c",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Cryptic Cruiser": {
       "edhrec_rank": 26924,
@@ -57242,13 +57242,13 @@
     },
     "Cryptic Trilobite": {
       "edhrec_rank": 6916,
-      "gate": "template",
+      "gate": null,
       "name": "Cryptic Trilobite",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "a73c630c-c98d-4f8a-9e6a-2576d5fec4ee",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Cryptid Inspector": {
       "edhrec_rank": 17042,
@@ -73642,13 +73642,13 @@
     },
     "Dramatic Reversal": {
       "edhrec_rank": 651,
-      "gate": "template",
+      "gate": null,
       "name": "Dramatic Reversal",
-      "reason": "no template for: Untap all nonland permanents you control",
+      "reason": "",
       "scryfall_id": "2ad14406-4504-4951-83f0-82c298964d6c",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Dramatist's Puppet": {
       "edhrec_rank": 20547,
@@ -75492,13 +75492,13 @@
     },
     "Drowned Secrets": {
       "edhrec_rank": 8434,
-      "gate": "template",
+      "gate": null,
       "name": "Drowned Secrets",
-      "reason": "no template for: Whenever you cast a blue spell, target player mills two cards",
+      "reason": "",
       "scryfall_id": "bfc98428-7a0f-445f-9d48-eeb76c3e10d6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Drowner Initiate": {
       "edhrec_rank": 22192,
@@ -82822,13 +82822,13 @@
     },
     "Emry, Lurker of the Loch": {
       "edhrec_rank": 602,
-      "gate": "template",
+      "gate": null,
       "name": "Emry, Lurker of the Loch",
-      "reason": "no template for: Affinity for artifacts",
+      "reason": "",
       "scryfall_id": "c977d89a-bfd1-4e98-9d95-3e41c53dd188",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Enatu Golem": {
       "edhrec_rank": 28835,
@@ -97082,13 +97082,13 @@
     },
     "Fleet Swallower": {
       "edhrec_rank": 4917,
-      "gate": "template",
+      "gate": null,
       "name": "Fleet Swallower",
-      "reason": "no template for: Whenever this creature attacks, target player mills half their library, rounded up",
+      "reason": "",
       "scryfall_id": "fd334816-f058-4296-b1c3-924f22e91820",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Fleet-Footed Monk": {
       "edhrec_rank": 29748,
@@ -98742,13 +98742,13 @@
     },
     "Folio of Fancies": {
       "edhrec_rank": 2803,
-      "gate": "template",
+      "gate": null,
       "name": "Folio of Fancies",
-      "reason": "no template for: Players have no maximum hand size",
+      "reason": "",
       "scryfall_id": "f48f8449-911a-4df8-9928-99ff3b20972d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Folk Hero": {
       "edhrec_rank": 3974,
@@ -137482,13 +137482,13 @@
     },
     "Intruder Alarm": {
       "edhrec_rank": 1725,
-      "gate": "template",
+      "gate": null,
       "name": "Intruder Alarm",
-      "reason": "no template for: Creatures don't untap during their controllers' untap steps",
+      "reason": "",
       "scryfall_id": "0ef9c823-3810-4e1f-8bb4-aba59e29c111",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Intruding Soulrager": {
       "edhrec_rank": 25014,
@@ -139472,13 +139472,13 @@
     },
     "Isochron Scepter": {
       "edhrec_rank": 731,
-      "gate": "template",
+      "gate": null,
       "name": "Isochron Scepter",
-      "reason": "no template for: Imprint — When this artifact enters, you may exile an instant card with mana value 2 or le",
+      "reason": "",
       "scryfall_id": "d4f4ccdc-ffeb-4393-836d-f46204ad9b65",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Isolate": {
       "edhrec_rank": 25991,
@@ -140382,13 +140382,13 @@
     },
     "Jace, Wielder of Mysteries": {
       "edhrec_rank": 1085,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Wielder of Mysteries",
-      "reason": "no template for: If you would draw a card while your library has no cards in it, you win the game instead",
+      "reason": "",
       "scryfall_id": "6dece604-04f2-48ac-8e6c-ef850c0db190",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Jace, the Living Guildpact": {
       "edhrec_rank": 17349,
@@ -146502,13 +146502,13 @@
     },
     "Kefnet's Monument": {
       "edhrec_rank": 5053,
-      "gate": "template",
+      "gate": null,
       "name": "Kefnet's Monument",
-      "reason": "no template for: Blue creature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "f5d20f0a-aa7c-4d40-acb2-2b86666afd53",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Kei Takahashi": {
       "edhrec_rank": 29749,
@@ -162742,13 +162742,13 @@
     },
     "Maddening Cacophony": {
       "edhrec_rank": 1627,
-      "gate": "template",
+      "gate": null,
       "name": "Maddening Cacophony",
-      "reason": "no template for: Kicker {3}{U}",
+      "reason": "",
       "scryfall_id": "5e032240-a2f3-4455-81c2-b235c4c1e07e",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Maddening Hex": {
       "edhrec_rank": 3896,
@@ -169462,13 +169462,13 @@
     },
     "Memory Erosion": {
       "edhrec_rank": 3664,
-      "gate": "template",
+      "gate": null,
       "name": "Memory Erosion",
-      "reason": "no template for: Whenever an opponent casts a spell, that player mills two cards",
+      "reason": "",
       "scryfall_id": "1ac12aba-0ec6-4922-94cb-1b77634a603b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Memory Guardian": {
       "edhrec_rank": 13711,
@@ -169882,13 +169882,13 @@
     },
     "Merchant Scroll": {
       "edhrec_rank": 2590,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant Scroll",
-      "reason": "no template for: Search your library for a blue instant card, reveal that card, put it into your hand, then",
+      "reason": "",
       "scryfall_id": "979ad872-75c2-49ed-a4c6-7e0c7595e900",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Merchant Ship": {
       "edhrec_rank": 28409,
@@ -171332,13 +171332,13 @@
     },
     "Midnight Clock": {
       "edhrec_rank": 627,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Clock",
-      "reason": "no template for: {2}{U}: Put an hour counter on this artifact",
+      "reason": "",
       "scryfall_id": "d401b4af-649d-4b97-864d-5796a1a8e22b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Midnight Covenant": {
       "edhrec_rank": 27475,
@@ -179172,13 +179172,13 @@
     },
     "Muddle the Mixture": {
       "edhrec_rank": 684,
-      "gate": "template",
+      "gate": null,
       "name": "Muddle the Mixture",
-      "reason": "no template for: Counter target instant or sorcery spell",
+      "reason": "",
       "scryfall_id": "e3585baf-be10-456e-968d-7a3fa4f06060",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Muddle, the Ever-Changing": {
       "edhrec_rank": 11112,
@@ -180982,13 +180982,13 @@
     },
     "Mystic Sanctuary": {
       "edhrec_rank": 174,
-      "gate": "template",
+      "gate": null,
       "name": "Mystic Sanctuary",
-      "reason": "no template for: When this land enters untapped, you may put target instant or sorcery card from your grave",
+      "reason": "",
       "scryfall_id": "4cd86997-d7b9-4b5b-9488-11f5c679e4d3",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Mystic Skull // Mystic Monstrosity": {
       "edhrec_rank": 16352,
@@ -193452,13 +193452,13 @@
     },
     "Orvar, the All-Form": {
       "edhrec_rank": 5502,
-      "gate": "template",
+      "gate": null,
       "name": "Orvar, the All-Form",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, if it targets one or more other permanents ",
+      "reason": "",
       "scryfall_id": "0bfdc564-51cc-4523-9d84-9d07907f41fe",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Orysa, Tide Choreographer": {
       "edhrec_rank": 19174,
@@ -198592,13 +198592,13 @@
     },
     "Persistent Petitioners": {
       "edhrec_rank": 10124,
-      "gate": "template",
+      "gate": null,
       "name": "Persistent Petitioners",
-      "reason": "no template for: {1}, {T}: Target player mills a card",
+      "reason": "",
       "scryfall_id": "27be522d-bdef-4a95-a405-98247c58b71a",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Persistent Specimen": {
       "edhrec_rank": 7332,
@@ -206052,13 +206052,13 @@
     },
     "Prismite": {
       "edhrec_rank": 14033,
-      "gate": "template",
+      "gate": null,
       "name": "Prismite",
-      "reason": "no template for: {2}: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "eedce8ab-771a-4247-9504-72ae0629df83",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Prismwake Merrow": {
       "edhrec_rank": 30179,
@@ -231242,13 +231242,13 @@
     },
     "Sapphire Medallion": {
       "edhrec_rank": 370,
-      "gate": "template",
+      "gate": null,
       "name": "Sapphire Medallion",
-      "reason": "no template for: Blue spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "4ec271e4-1813-4ee7-bfd5-5a0c39d2d25d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Saprazzan Bailiff": {
       "edhrec_rank": 29751,
@@ -235542,13 +235542,13 @@
     },
     "Sea Gate Stormcaller": {
       "edhrec_rank": 18627,
-      "gate": "template",
+      "gate": null,
       "name": "Sea Gate Stormcaller",
-      "reason": "no template for: Kicker {4}{U}",
+      "reason": "",
       "scryfall_id": "17b79895-30ac-4bb4-bbe3-033a0dfcf1d6",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sea Gate Wreckage": {
       "edhrec_rank": 5493,
@@ -243642,13 +243642,13 @@
     },
     "Shrieking Drake": {
       "edhrec_rank": 4541,
-      "gate": "template",
+      "gate": null,
       "name": "Shrieking Drake",
-      "reason": "no template for: When this creature enters, return a creature you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "9f1cc39f-898c-4e92-82a0-a17606b60574",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Shrieking Grotesque": {
       "edhrec_rank": 31099,
@@ -256652,13 +256652,13 @@
     },
     "Sphinx's Tutelage": {
       "edhrec_rank": 3647,
-      "gate": "template",
+      "gate": null,
       "name": "Sphinx's Tutelage",
-      "reason": "no template for: Whenever you draw a card, target opponent mills two cards. If two nonland cards that share",
+      "reason": "",
       "scryfall_id": "94a3673b-6003-4612-a8f6-02829aa9de7d",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Sphinx-Bone Wand": {
       "edhrec_rank": 14971,
@@ -274222,13 +274222,13 @@
     },
     "Teferi's Ageless Insight": {
       "edhrec_rank": 591,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi's Ageless Insight",
-      "reason": "no template for: If you would draw a card except the first one you draw in each of your draw steps, draw tw",
+      "reason": "",
       "scryfall_id": "b4077e58-a497-4c8f-8e58-919c3204ad52",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Teferi's Ageless Insight // Teferi's Ageless Insight": {
       "edhrec_rank": 591,
@@ -274402,13 +274402,13 @@
     },
     "Teferi's Tutelage": {
       "edhrec_rank": 5138,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi's Tutelage",
-      "reason": "no template for: When this enchantment enters, draw a card, then discard a card",
+      "reason": "",
       "scryfall_id": "aefc721d-7c0b-4b3a-8131-f466bf3e7949",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Teferi's Veil": {
       "edhrec_rank": 11327,
@@ -274472,13 +274472,13 @@
     },
     "Teferi, Master of Time": {
       "edhrec_rank": 2199,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi, Master of Time",
-      "reason": "no template for: You may activate loyalty abilities of Teferi on any player's turn any time you could cast ",
+      "reason": "",
       "scryfall_id": "20a271b3-c3a9-47c6-bc8b-b580ede1968b",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Teferi, Temporal Archmage": {
       "edhrec_rank": 4330,
@@ -277412,13 +277412,13 @@
     },
     "Thassa's Oracle": {
       "edhrec_rank": 427,
-      "gate": "template",
+      "gate": null,
       "name": "Thassa's Oracle",
-      "reason": "no template for: When this creature enters, look at the top X cards of your library, where X is your devoti",
+      "reason": "",
       "scryfall_id": "69e615d8-1b79-4a82-ba9f-ee211d67dc95",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Thassa's Rebuff": {
       "edhrec_rank": 14912,
@@ -284472,13 +284472,13 @@
     },
     "Tidal Barracuda": {
       "edhrec_rank": 4338,
-      "gate": "template",
+      "gate": null,
       "name": "Tidal Barracuda",
-      "reason": "no template for: Any player may cast spells as though they had flash",
+      "reason": "",
       "scryfall_id": "229710dc-5e91-44d2-bf2a-c98a745df3b5",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tidal Bore": {
       "edhrec_rank": 14253,
@@ -286352,13 +286352,13 @@
     },
     "Tolaria West": {
       "edhrec_rank": 3263,
-      "gate": "template",
+      "gate": null,
       "name": "Tolaria West",
-      "reason": "no template for: Transmute {1}{U}{U}",
+      "reason": "",
       "scryfall_id": "42dfc4d1-7043-4859-b177-8ad4027ef835",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Tolarian Academy": {
       "edhrec_rank": null,
@@ -289282,13 +289282,13 @@
     },
     "Traumatize": {
       "edhrec_rank": 2752,
-      "gate": "template",
+      "gate": null,
       "name": "Traumatize",
-      "reason": "no template for: Target player mills half their library, rounded down",
+      "reason": "",
       "scryfall_id": "d7706745-60fd-4fdb-9083-931b05a3e2b1",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Travel Preparations": {
       "edhrec_rank": 21641,
@@ -299512,13 +299512,13 @@
     },
     "Vedalken Engineer": {
       "edhrec_rank": 5957,
-      "gate": "template",
+      "gate": null,
       "name": "Vedalken Engineer",
-      "reason": "no template for: {T}: Add two mana of any one color. Spend this mana only to cast artifact spells or activa",
+      "reason": "",
       "scryfall_id": "b46f0f64-4c1d-4a65-af67-a675c34119f1",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Vedalken Entrancer": {
       "edhrec_rank": 25880,
@@ -303402,13 +303402,13 @@
     },
     "Visions of Beyond": {
       "edhrec_rank": 3552,
-      "gate": "template",
+      "gate": null,
       "name": "Visions of Beyond",
-      "reason": "no template for: Draw a card. If a graveyard has twenty or more cards in it, draw three cards instead",
+      "reason": "",
       "scryfall_id": "42506388-0cde-413c-9fd3-b2a6f656ecfe",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Visions of Brutality": {
       "edhrec_rank": 13230,

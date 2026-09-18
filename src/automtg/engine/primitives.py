@@ -23,6 +23,7 @@ from .characteristics import (
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
+from .player_statics import mill_multiplier, untap_held
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -90,19 +91,56 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
     return drawn
 
 
-def discard_cards(state: GameState, pid: int, oids: Sequence[int]) -> list[int]:
+def discard_cards(
+    state: GameState, pid: int, oids: Sequence[int], *, caused_by: int | None = None
+) -> list[int]:
+    """Discard these cards, recording who *made* the player discard them.
+
+    ``caused_by`` is the controller of the spell or ability that caused it, and
+    ``None`` when nobody did: the cleanup-step discard (a turn-based action) and
+    a discard paid as a cost are both nobody's doing. "When a spell or ability an
+    opponent controls causes you to discard this card" (Orvar, the All-Form) is
+    exactly that distinction, and the event carried only the player who
+    discarded -- which cannot tell an opponent's Mind Rot from your own
+    rummaging, your cleanup step, or a cost you paid with this very card.
+
+    Not the trigger's `controller` clause, which `_actor` answers with the
+    discarding player: written there, Orvar's line would read "an opponent
+    discarded a card".
+    """
     out = []
     for oid in oids:
         obj = state.objects.get(oid)
         if obj is None or obj.zone is not Zone.HAND:
             continue
         move_object(state, oid, Zone.GRAVEYARD, to_player=pid, cause="discard")
-        fire(state, EventType.DISCARD, player=pid, source=oid, oid=oid)
+        fire(
+            state,
+            EventType.DISCARD,
+            player=pid,
+            source=oid,
+            oid=oid,
+            cause_controller=caused_by,
+        )
         out.append(oid)
     return out
 
 
 def mill_cards(state: GameState, pid: int, count: int) -> list[int]:
+    """Put the top ``count`` cards of ``pid``'s library into their graveyard.
+
+    The one choke point every mill goes through -- the `mill` op, the `mill`
+    cost and dredge (702.52a) -- which is why `replace_mill` is applied here:
+    Bruvac the Grandiloquent doubles the mills an *opponent's own* cards cause,
+    and a doubling written into the op would only ever see this card's side.
+
+    701.13a: milling N cards is one event, so the replacement multiplies the
+    count once rather than recursing per card the way a draw doubler must.
+    """
+    # "If an opponent would **mill one or more cards**" -- a mill of nothing is
+    # no event, so there is nothing to replace and no doubler applies.
+    if count > 0:
+        count *= mill_multiplier(state, pid)
     player = state.players[pid]
     out = []
     for _ in range(max(0, count)):
@@ -1435,10 +1473,20 @@ def untap_all(state: GameState, pid: int) -> list[int]:
     this is where that is noticed, because the untap step is the only moment the
     lock has any effect.
     """
+    # Read once for the whole step rather than per permanent: it is a scan of
+    # every battlefield static, and Intruder Alarm on a full board would make
+    # the untap step quadratic asked one permanent at a time.
+    held = untap_held(state, pid)
     untapped = []
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
         if obj is None or obj.controller != pid:
+            continue
+        if oid in held:
+            # Checked *before* `skip_next_untap` so the static does not spend
+            # somebody else's one-shot. A permanent held by both is held by the
+            # static for as long as its source is out, and the flag is still
+            # waiting when that source leaves.
             continue
         if obj.skip_next_untap:
             # Spent by *this* untap step whether or not there was anything to

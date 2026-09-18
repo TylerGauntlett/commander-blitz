@@ -12,6 +12,7 @@ loader has already validated every key and op name against the registries.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
@@ -21,6 +22,17 @@ from .mana import ManaCost, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
 LAND_TYPE = CardType.LAND.value
+
+#: The deck-construction exception of 903.5b, printed on the card that grants it:
+#: "A deck can have any number of cards named Persistent Petitioners."  Matched
+#: against the card's own name, because the sentence names the card it applies to
+#: and Shadowborn Apostle does not license a playset of Relentless Rats.
+#:
+#: Deliberately *not* matching Nazgûl's "A deck can have up to nine cards named
+#: Nazgûl." -- a different limit needing a different answer.  Unmatched, that card
+#: keeps the one-copy default, which rejects a legal deck rather than admitting an
+#: illegal one; that is the safe direction for a check to be incomplete in.
+_ANY_NUMBER = re.compile(r"A deck can have any number of cards named ([^.\n]+)\.")
 
 
 @dataclass(frozen=True)
@@ -421,6 +433,15 @@ class TriggerSpec:
     #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
     #: behind "if it wasn't put onto the battlefield with this ability".
     not_cause: str | None = None
+    #: Who controlled the spell or ability that *caused* this event, relative to
+    #: the ability's controller -- "when a spell or ability **an opponent
+    #: controls** causes you to discard this card" (Orvar, the All-Form).
+    #: ``discard`` only, and deliberately not ``controller``: `_actor` answers
+    #: that with the player who discarded, so `controller: "opponent"` would
+    #: read "an opponent discarded a card", which is a different sentence.
+    #: ``None`` on an event nobody caused -- the cleanup-step discard, and a
+    #: discard paid as a cost -- so a trigger naming it never fires on either.
+    cause_controller: str | None = None
     #: Which counter kind a ``counter_placed`` trigger cares about.  The event
     #: has always carried it; nothing read it, so every such trigger fired on
     #: every kind.  Fathom Mage is the witness.
@@ -1118,6 +1139,19 @@ class CardDef:
     @property
     def is_basic(self) -> bool:
         return Supertype.BASIC.value in self.supertypes
+
+    @property
+    def any_number_in_deck(self) -> bool:
+        """Does the card itself lift the one-copy limit of 903.5b?
+
+        Basic lands are exempt by the rule; a handful of cards -- Persistent
+        Petitioners, Relentless Rats, Rat Colony, Shadowborn Apostle, Dragon's
+        Approach -- are exempt by their own printed sentence.  This reads that
+        sentence, so a deck running twenty Petitioners imports as the legal deck
+        it is instead of failing construction.
+        """
+        match = _ANY_NUMBER.search(self.oracle_text)
+        return match is not None and match.group(1).strip() == self.name
 
     @property
     def is_aura(self) -> bool:

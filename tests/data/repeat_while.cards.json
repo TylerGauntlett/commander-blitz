@@ -1,0 +1,69 @@
+{
+  "_comment": "Shapes for tests/unit/test_repeat_while.py. `t_tutelage_spell` is Sphinx's Tutelage's whole sentence as a sorcery, so the loop and the colour condition can be driven together without a draw trigger in the way. `t_tutelage_unscoped` is the same card without the `reset`, kept live because it is the wrong card the accumulating `mill` binding makes: on its second pass the colour question is asked over every card milled so far. `t_forever_loop` has a condition that never goes false, and exists to pin the hundred-iteration guard.",
+  "cards": [
+    {
+      "id": "t_tutelage_spell",
+      "name": "Test Tutelage Spell",
+      "oracle_text": "Target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+      ],
+      "spell_effects": [
+        {
+          "op": "repeat_while",
+          "reset": ["milled"],
+          "condition": {"two_share_a_color": {"binding": "milled", "not_types": ["Land"]}},
+          "effects": [
+            {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 2}, "as": "milled"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_tutelage_unscoped",
+      "name": "Test Unscoped Tutelage",
+      "oracle_text": "Target opponent mills two cards. If two nonland cards that share a color were milled this way, repeat this process.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+      ],
+      "spell_effects": [
+        {
+          "op": "repeat_while",
+          "condition": {"two_share_a_color": {"binding": "milled", "not_types": ["Land"]}},
+          "effects": [
+            {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 2}, "as": "milled"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_forever_loop",
+      "name": "Test Forever Loop",
+      "oracle_text": "Target opponent mills a card. Repeat this process.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+      ],
+      "spell_effects": [
+        {
+          "op": "repeat_while",
+          "condition": {"cmp": ">=", "left": {"const": 1}, "right": {"const": 1}},
+          "effects": [
+            {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 1}, "as": "milled"}
+          ]
+        }
+      ]
+    }
+  ]
+}

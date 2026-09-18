@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "vedalken_engineer",
+    "name": "Vedalken Engineer",
+    "oracle_text": "{T}: Add two mana of any one color. Spend this mana only to cast artifact spells or activate abilities of artifacts.",
+    "mana_cost": "{1}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Vedalken", "Artificer"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add two mana of any one color. Spend this mana only to cast artifact spells or activate abilities of artifacts.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {"label": "W", "effects": [{"op": "add_mana", "mana": "{W}{W}"}]},
+              {"label": "U", "effects": [{"op": "add_mana", "mana": "{U}{U}"}]},
+              {"label": "B", "effects": [{"op": "add_mana", "mana": "{B}{B}"}]},
+              {"label": "R", "effects": [{"op": "add_mana", "mana": "{R}{R}"}]},
+              {"label": "G", "effects": [{"op": "add_mana", "mana": "{G}{G}"}]}
+            ]
+          }
+        ],
+        "mana_restriction": {
+          "cast": [["artifact"]],
+          "activate": [["artifact"]]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "card": {
+    "id": "sapphire_medallion",
+    "name": "Sapphire Medallion",
+    "oracle_text": "Blue spells you cast cost {1} less to cast.",
+    "mana_cost": "{2}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Blue spells you cast cost {1} less to cast.",
+        "effect": "spell_cost_reduction",
+        "affects_spells": {"controller": "you", "colors": ["U"]},
+        "amount": {"const": 1}
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

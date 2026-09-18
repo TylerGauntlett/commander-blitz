@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "teferi_s_ageless_insight",
+    "name": "Teferi's Ageless Insight",
+    "oracle_text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+    "mana_cost": "{2}{U}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Enchantment"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",
+        "effect": "replace_draw",
+        "affects_player": "you",
+        "draw_multiplier": 2,
+        "except_first_in_draw_step": true
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

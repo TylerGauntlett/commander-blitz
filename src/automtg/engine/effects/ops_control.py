@@ -647,6 +647,56 @@ def op_repeat(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.loop_value = previous
 
 
+@register("repeat_while")
+def op_repeat_while(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Run a body, then run it again for as long as ``condition`` still holds.
+
+    "Target opponent mills two cards. If two nonland cards that share a color
+    were milled this way, **repeat this process**" -- Sphinx's Tutelage.
+
+    A **do-while**: the condition is evaluated *after* each pass, because the
+    printed sentence is a decision about repeating and not a guard on starting.
+    The body always runs once, which on this card is the mill the trigger is
+    about.
+
+    `repeat` cannot express it. It evaluates `amount` once, above the loop, so
+    the count has to be knowable before the body runs -- and here there is no
+    number to write at all: how many times depends on what each mill turns up.
+
+    `may` with `repeat: true` is the language's only other unbounded loop and is
+    a **player-choice** loop: it asks the controller yes/no before every pass and
+    stops at the first no, and its `condition` only gates whether the question is
+    asked. Sphinx's Tutelage never asks anybody, so a `may` spelling is a
+    different and strictly weaker card -- its controller could decline, and the
+    opponent's mill would be optional.
+
+    ``reset`` names the bindings cleared before each pass, and it is not a
+    convenience. `mill`'s `as` binding deliberately **accumulates** (``earlier +
+    milled``), so without it the second pass would ask the colour question over
+    all four cards milled so far rather than over the two this pass produced --
+    and "milled this way" is per repetition. Cleared before the first pass too,
+    so a binding of the same name written earlier in the same resolution cannot
+    leak in.
+
+    The same 100-iteration guard `repeat` and `may` use: one pathological board
+    must not hang a game.
+    """
+    condition = spec.get("condition")
+    body = spec.get("effects") or []
+    reset = [str(name) for name in (spec.get("reset") or ())]
+    previous = ctx.loop_value
+    try:
+        for i in range(100):
+            ctx.loop_value = i
+            for name in reset:
+                ctx.bindings.pop(name, None)
+            yield from execute(ctx, body)
+            if not evaluate(ctx, condition):
+                return
+    finally:
+        ctx.loop_value = previous
+
+
 @register("snapshot")
 def op_snapshot(ctx: EffectContext, spec: Mapping[str, Any]):
     """Capture last-known information about an object under a name.

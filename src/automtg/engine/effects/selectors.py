@@ -177,6 +177,15 @@ SELECTOR_KEYS = frozenset(
         #: granted types count.  Not expressible with `subtypes`, which takes a
         #: literal list fixed when the card is written.
         "shares_a_type_with",
+        #: "…another permanent you control that **shares a permanent type**
+        #: with it" -- Cloudstone Curio. The card-type twin of the clause
+        #: above, reading `types` where that one reads `subtypes`. A separate
+        #: key rather than a mode, because the two ask different questions and
+        #: the wrong one is quietly narrower: on this card the subtype reading
+        #: finds another Goblin when a Goblin enters and nothing at all when a
+        #: land does. `types` takes a literal list fixed when the card is
+        #: written, and which permanent type matters is decided at resolution.
+        "shares_permanent_type_with",
         #: "…and all tokens that player controls **with the same name as that
         #: permanent**" -- Legions to Ashes. The dynamic twin of `name`, which
         #: takes a literal string fixed when the card is written; which name
@@ -565,6 +574,30 @@ def matches(
             return False
         theirs = chars(state, other).subtypes if state.objects.get(other) else frozenset()
         if not (subtypes & theirs):
+            return False
+    if (name := selector.get("shares_permanent_type_with")) is not None:
+        # "…another permanent you control that shares a **permanent type** with
+        # it" -- Cloudstone Curio. The card-type twin of the clause above, and a
+        # separate key rather than a mode of it because the two read different
+        # halves of the type line: that one intersects *subtypes* and so says
+        # "shares a creature type with it" (Goblin with Goblin), which on this
+        # card would find another Goblin when a Goblin entered and nothing at
+        # all when a land did -- quietly narrower than printed.
+        #
+        # `types` is a literal list fixed when the card is written and cannot
+        # stand in, because which permanent type matters is decided at
+        # resolution by whatever just entered.
+        other = _bound_oid(ctx, str(name))
+        if other is None:
+            return False
+        theirs = chars(state, other).types if state.objects.get(other) else frozenset()
+        # An intersection, so an artifact creature entering finds both the
+        # artifacts and the creatures -- 205.2a lets an object have several card
+        # types, and the printed "a permanent type" is satisfied by any one of
+        # them. Spell types (Instant, Sorcery) cannot appear on either side
+        # here: both objects are on the battlefield, where every card type is a
+        # permanent type (110.4a).
+        if not (set(types) & set(theirs)):
             return False
     if (who := selector.get("shares_a_type_with_commander")) is not None and not (
         subtypes & _commander_subtypes(ctx, str(who))

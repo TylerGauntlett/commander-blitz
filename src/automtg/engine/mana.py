@@ -691,6 +691,22 @@ class ManaPool:
 #: trick `characteristics.resolve_chosen_subtypes` plays with `"\0none"`.
 CHOSEN_TYPE = "\0chosen"
 
+#: The word a card file uses for an **unrestricted half** of a mana restriction:
+#: "Spend this mana only to activate abilities" (Cryptic Trilobite, Omen Hawker),
+#: which names no type at all.
+#:
+#: It compiles to a single empty :class:`RestrictionGroup`, which
+#: `satisfied_by` accepts for every purpose of that kind -- nothing is required,
+#: so the subset test holds whatever the names are. The *restriction* is then
+#: carried entirely by the other half being omitted: with no `cast` groups, this
+#: mana can never pay for a spell, which is the whole of what the printed line
+#: forbids.
+#:
+#: A word rather than an accepted empty list, which stays a load error. `[]` is
+#: what a mistake looks like, and reading a blank as "everything" is how a
+#: strictly better card ships quietly.
+WILDCARD = "any"
+
 #: The two things mana is ever spent on, and the two halves a printed spend
 #: restriction distinguishes: "Spend this mana only to **cast** a creature spell
 #: of the chosen type or **activate an ability of** a creature source of the

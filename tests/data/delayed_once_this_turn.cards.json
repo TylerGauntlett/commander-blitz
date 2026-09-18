@@ -1,0 +1,120 @@
+{
+  "_comment": "Shapes for tests/unit/test_delayed_once_this_turn.py. Three instants installing the same spell-cast subscription with the three durations, so the one under test can be read against both near misses on the same board. Life is the counter, because it records how many times a subscription fired and not merely whether it did. `t_once_cheap_watcher` carries the mana-value condition Sea Gate Stormcaller needs, spelled the way a delayed trigger has to spell a filter.",
+  "cards": [
+    {
+      "id": "t_once_gain",
+      "name": "Test Once Gain",
+      "oracle_text": "The next spell you cast this turn, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "The next spell you cast this turn, you gain 1 life.",
+          "duration": "once_this_turn",
+          "trigger": {"event": "spell_cast", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_every_gain",
+      "name": "Test Every Gain",
+      "oracle_text": "Whenever you cast a spell this turn, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "Whenever you cast a spell this turn, you gain 1 life.",
+          "duration": "this_turn",
+          "trigger": {"event": "spell_cast", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_forever_gain",
+      "name": "Test Forever Gain",
+      "oracle_text": "The next spell you cast, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "The next spell you cast, you gain 1 life.",
+          "duration": "until_it_fires",
+          "trigger": {"event": "spell_cast", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_once_cheap_gain",
+      "name": "Test Once Cheap Gain",
+      "oracle_text": "The next instant or sorcery spell with mana value 2 or less you cast this turn, you gain 1 life.",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "The next instant or sorcery spell with mana value 2 or less you cast this turn, you gain 1 life.",
+          "duration": "once_this_turn",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "zone": "stack",
+                "any_types": ["Instant", "Sorcery"],
+                "mana_value": {"op": "<=", "value": {"const": 2}}
+              }
+            }
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_cheap_sorcery",
+      "name": "Test Cheap Sorcery",
+      "oracle_text": "You gain 0 life.",
+      "mana_cost": "{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 0}}]
+    },
+    {
+      "id": "t_dear_sorcery",
+      "name": "Test Dear Sorcery",
+      "oracle_text": "You gain 0 life.",
+      "mana_cost": "{3}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 0}}]
+    },
+    {
+      "id": "t_cheap_creature",
+      "name": "Test Cheap Creature",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "types": ["Creature"],
+      "subtypes": ["Goblin"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    }
+  ]
+}

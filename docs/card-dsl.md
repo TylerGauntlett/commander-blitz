@@ -1012,6 +1012,34 @@ boolean because the number is what the rule says and reads the same on the rarer
 "three or more colors". Honoured by all three matchers: the selector language, the
 trigger filter, and `_matches_printed`.
 
+### "Two cards that share a color" — `two_share_a_color`
+
+```jsonc
+{ "two_share_a_color": { "binding": "milled", "not_types": ["Land"] } }
+```
+
+A **condition**, not a selector clause, and the only colour question in the
+language that is about a *relation between two cards* rather than a property of
+one — "if two nonland cards that share a color were milled this way" (Sphinx's
+Tutelage). It takes a pool and is true when any two members' colour sets
+intersect.
+
+Nothing above can say it. `colors` and `not_colors` test a member against a
+colour fixed when the card is written, and this card names no colour; `min_colors`
+counts the colours on a single card, so it asks whether a *multicolored* card was
+milled; and `shares_a_color_with` — the near-namesake — resolves its argument
+through `_bound_oid`, which reads one oid and returns `None` for a list, so
+pointed at a `mill`'s always-a-list `as` binding it matches nothing at all.
+
+`exists` with a count is the near miss and drops the colour clause entirely: "two
+nonland cards were milled" is true on almost every mill, which on Sphinx's
+Tutelage is a far longer loop than the card prints.
+
+Colourless cards share no colour with anything — the intersection is empty, which
+is the printed ruling rather than a special case. Colours are read the way
+`selectors.matches` reads them: derived on the battlefield, printed anywhere else,
+and a milled card is in a graveyard.
+
 ### Granting rebound to a spell that does not print it
 
 ```jsonc
@@ -4037,6 +4065,76 @@ printed static is not.
 on your own untap step these creatures untap regardless, so a version that
 ignored whose turn it is looks identical on every board you would think to try.
 
+## Doubling a mill
+
+    Bruvac the Grandiloquent — "If an opponent would mill one or more cards,
+    they mill twice that many cards instead."
+
+```jsonc
+{ "kind": "static", "effect": "replace_mill",
+  "affects_player": "opponent", "mill_multiplier": 2 }
+```
+
+A player-wide static, so it takes `affects_player` and no `affects`; the loader
+refuses `affects`, `amount`, and a multiplier below 2 (1 replaces a mill with
+itself, 0 is a prevention no doubler prints).
+
+Applied in `primitives.mill_cards`, and that is the point rather than an
+implementation detail: it is the one choke point every mill goes through — the
+`mill` op, the `mill` cost, and dredge — so the replacement catches mills the
+*opponent's own* cards cause. Bruvac's controller is never the one being milled,
+so a doubling written into `op_mill` would be inert on the card it exists for.
+
+It multiplies a **count**, once, where `replace_draw` recurses per card. That is
+701.13a against 121.2: milling N cards is one event, drawing N cards is N draws.
+Two doublers compound to four (616.1) as the product across sources, and because
+each source is visited once none applies twice (614.5) without needing the
+`applied` set `replacements._draw_one` carries.
+
+A mill of zero is not an event, so no doubler applies — "one or more" is read
+rather than left to arithmetic.
+
+## Not untapping at all
+
+    Back to Basics — "Nonbasic lands don't untap during their controllers'
+    untap steps."
+    Mana Vault — "This artifact doesn't untap during your untap step."
+
+```jsonc
+{ "kind": "static", "effect": "skip_untap_step",
+  "affects": { "controller": "any", "types": ["Land"], "not_supertypes": ["Basic"] } }
+
+{ "kind": "static", "effect": "skip_untap_step", "affects": { "self_only": true } }
+```
+
+The exact inverse of the section above, read in the same place —
+`primitives.untap_all`, through `player_statics.untap_held` — and for the same
+reason.
+
+`controller: "any"` is load-bearing on both enchantments that print this line.
+"**Their controllers'** untap steps" locks the whole table, and that symmetry is
+the drawback Intruder Alarm is built around; a version reaching only its own
+controller's permanents is a strictly stronger, one-sided card.
+
+It is checked **before** `skip_next_untap` rather than after, so a permanent this
+static is already holding does not spend somebody else's one-shot — the flag is
+still waiting when the static's source leaves. And it is read by the untap step
+alone, so explicit `untap` effects are untouched: Mana Vault's own upkeep payment
+untaps it, and Intruder Alarm's "untap all creatures" trigger — the card's whole
+engine — works as printed.
+
+The two fields that already suppressed untapping cannot carry a printed static.
+`skip_next_untap` is a one-shot spent by the very untap step it skips, so it
+releases Mana Vault a turn later; `frozen_by` is written by the `freeze` op.
+Both are ops, so reaching either from a static means inventing a `self_enters`
+trigger for a line that is printed as a static — which the residual gate would
+see as a trigger claiming a static sentence.
+
+`not_supertypes` is the negation of `supertypes`, added here for `not_keywords`'
+reason: the effect-side selector language always had it and the static one did
+not. It is **not** interchangeable with a `not_types` complement —
+`not_types: ["Land"]` is every permanent that is not a land, the opposite set.
+
 ## Player-wide statics
 
 Seventeen static effects describe the *player* rather than a characteristic, so
@@ -4151,6 +4249,39 @@ static). It takes no spell filter yet, and `affects` or `amount` beside it is a
 load error rather than ignored — "can't cast **creature** spells" written with a
 filter would otherwise load as a lock on every spell. Drannith Magistrate,
 Deafening Silence and Grand Abolisher remain gaps.
+
+`cast_as_though_flash` is its permissive twin — Tidal Barracuda's "Any player may
+cast spells as though they had flash", and Leyline of Anticipation and Vedalken
+Orrery with `affects_player: "you"`:
+
+```jsonc
+{ "kind": "static",
+  "text": "Any player may cast spells as though they had flash.",
+  "effect": "cast_as_though_flash",
+  "affects_player": "any" }
+```
+
+The only static that widens a **timing** window rather than a zone one, and the
+reason `casting._timing_ok` takes a `state` and a `pid` at all: it used to decide
+casting speed from printed characteristics alone (`card.is_instant or FLASH in
+card.keywords`), so nothing on the board could be consulted from it. One seam,
+and every zone a spell can be cast from asks it — a permission written into the
+hand loop would pass the obvious tests and leave flashback, foretell, adventure,
+plot and the Citadel top at sorcery speed.
+
+Granting the `flash` keyword is the near miss and cannot stand in three times
+over: `_timing_ok` reads the **CardDef**'s printed keywords and never an object's
+granted ones; `static_filter_keys` has no `zone`, so a static's filter cannot name
+the cards in a hand; and the printed line covers cards drawn *after* the source
+arrived, which no pool resolved once can reach. `grant_playable` is a zone
+permission and leaves printed timing untouched.
+
+It permits and never compels, so 101.2 is unaffected: a seat under
+`cant_cast_spells` still casts nothing, which is exactly the pairing Tidal
+Barracuda prints on one card. Like its twin it takes no spell filter yet, and
+`affects` or `amount` beside it is a load error rather than ignored — "you may
+cast **Spirit** spells as though they had flash" written with a filter would
+otherwise hand the permission to every spell.
 
 The two land permissions widen *where* a land may be played from, never how
 many — `lands_played` still enforces one drop a turn, so Ramunap Excavator plus

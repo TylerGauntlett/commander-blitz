@@ -1,0 +1,111 @@
+{
+  "_comment": "Cards for tests/unit/test_activate_loyalty_as_though_instant.py. `t_instant_walker` is Teferi, Master of Time's timing line on an otherwise ordinary two-ability walker -- the static names its own loyalty abilities with `self_only`, which is the printed 'of Teferi'. `t_patient_walker` is the same walker without the line: the control, and the proof that the window is what moves. `t_orrery_walker` points the same static at *other* permanents, so the filter can be shown to be read rather than assumed to mean 'self'. `t_plain_walker` is its subject.",
+  "cards": [
+    {
+      "id": "t_instant_walker",
+      "name": "Test Instant Walker",
+      "oracle_text": "You may activate loyalty abilities of Test Instant Walker on any player's turn any time you could cast an instant.\n+1: You gain 2 life.\n-3: Draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Teferi"],
+      "loyalty": 4,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may activate loyalty abilities of Test Instant Walker on any player's turn any time you could cast an instant.",
+          "effect": "activate_loyalty_as_though_instant",
+          "affects": {"self_only": true}
+        },
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        },
+        {
+          "kind": "activated",
+          "text": "-3: Draw a card.",
+          "cost": {"loyalty": -3},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_patient_walker",
+      "name": "Test Patient Walker",
+      "oracle_text": "+1: You gain 2 life.\n-3: Draw a card.",
+      "mana_cost": "{2}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Narset"],
+      "loyalty": 4,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        },
+        {
+          "kind": "activated",
+          "text": "-3: Draw a card.",
+          "cost": {"loyalty": -3},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_walker_orrery",
+      "name": "Test Walker Orrery",
+      "oracle_text": "You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant.",
+          "effect": "activate_loyalty_as_though_instant",
+          "affects": {"controller": "you", "types": ["Planeswalker"]}
+        }
+      ]
+    },
+    {
+      "id": "t_tapper_walker",
+      "name": "Test Tapper Walker",
+      "oracle_text": "+1: You gain 2 life.\n{T}: You gain 1 life.",
+      "mana_cost": "{2}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Tamiyo"],
+      "loyalty": 4,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may activate loyalty abilities of Test Tapper Walker on any player's turn any time you could cast an instant.",
+          "effect": "activate_loyalty_as_though_instant",
+          "affects": {"self_only": true}
+        },
+        {
+          "kind": "activated",
+          "text": "+1: You gain 2 life.",
+          "cost": {"loyalty": 1},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: You gain 1 life.",
+          "cost": {"tap": true},
+          "sorcery_speed_only": true,
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

@@ -13,7 +13,12 @@ from . import combat as combat_mod
 from . import suspend as suspend_mod
 from .actions import Action, PendingDecision
 from .carddef import CardDef, Cost
-from .characteristics import abilities_of, chars, threshold_met
+from .characteristics import (
+    abilities_of,
+    chars,
+    loyalty_activation_timing_waived,
+    threshold_met,
+)
 from .costs import (
     can_pay,
     can_pay_mana,
@@ -269,7 +274,7 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
         card = state.card(oid)
         if card.suspend is None:
             continue
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         cost, counters = card.suspend
         if not can_pay_mana(state, pid, cost):
@@ -429,7 +434,7 @@ def unplayable_reason(state: GameState, pid: int, oid: int) -> str | None:
             return "land_drop"
         return None
 
-    if not _timing_ok(card, sorcery_speed):
+    if not _timing_ok(state, pid, card, sorcery_speed):
         return "timing"
 
     # Hand cards never owe commander tax -- that is a command-zone cost only.
@@ -659,7 +664,20 @@ def _ability_aims(
         obj = state.objects.get(oid)
         if obj is None or not ability.present_at(obj.class_level):
             return None
-    if ability.sorcery_speed_only and not sorcery_speed:
+    # "You may activate loyalty abilities of Teferi on any player's turn any time
+    # you could cast an instant." The one permission that reaches this refusal,
+    # and it reaches only the loyalty half: the 606.3 once-per-turn limit below is
+    # the other half of that rule and is **not** waived, or the card would be
+    # three cards' worth of itself every turn.
+    if (
+        ability.sorcery_speed_only
+        and not sorcery_speed
+        and not (
+            ability.cost is not None
+            and ability.cost.loyalty is not None
+            and loyalty_activation_timing_waived(state, oid)
+        )
+    ):
         return None
     # 716.2a: "{W}: Level 2" -- "Activate only if this Class is level 1". The
     # restriction is what makes a level a ladder rather than a price list: level

@@ -1,0 +1,79 @@
+{
+  "card": {
+    "id": "folio_of_fancies",
+    "name": "Folio of Fancies",
+    "oracle_text": "Players have no maximum hand size.\n{X}{X}, {T}: Each player draws X cards.\n{2}{U}, {T}: Each opponent mills cards equal to the number of cards in their hand.",
+    "mana_cost": "{1}{U}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Book"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Players have no maximum hand size.",
+        "effect": "no_hand_limit",
+        "affects_player": "any"
+      },
+      {
+        "kind": "activated",
+        "text": "{X}{X}, {T}: Each player draws X cards.",
+        "cost": {
+          "mana": "{X}{X}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "each_player",
+            "amount": {
+              "x": true
+            }
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}{U}, {T}: Each opponent mills cards equal to the number of cards in their hand.",
+        "cost": {
+          "mana": "{2}{U}",
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "for_each_player",
+            "players": "each_opponent",
+            "effects": [
+              {
+                "op": "mill",
+                "player": {
+                  "binding": "each_player"
+                },
+                "amount": {
+                  "cards_in_hand": {
+                    "binding": "each_player"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

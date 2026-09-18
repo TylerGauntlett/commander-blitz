@@ -1,0 +1,79 @@
+{
+  "card": {
+    "id": "muddle_the_mixture",
+    "name": "Muddle the Mixture",
+    "oracle_text": "Counter target instant or sorcery spell.\nTransmute {1}{U}{U} ({1}{U}{U}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)",
+    "mana_cost": "{U}{U}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "spell",
+        "count": 1,
+        "selector": {
+          "any_types": [
+            "Instant",
+            "Sorcery"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "counter",
+        "target": "t1"
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Transmute {1}{U}{U} ({1}{U}{U}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)",
+        "active_zones": [
+          "hand"
+        ],
+        "sorcery_speed_only": true,
+        "cost": {
+          "mana": "{1}{U}{U}",
+          "discard_self": true
+        },
+        "effects": [
+          {
+            "op": "search_library",
+            "player": "you",
+            "count": 1,
+            "reveal": true,
+            "destination": "hand",
+            "shuffle": true,
+            "selector": {
+              "mana_value": {
+                "op": "=",
+                "value": {
+                  "mana_value_of": {
+                    "self": true
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    }
+  }
+}

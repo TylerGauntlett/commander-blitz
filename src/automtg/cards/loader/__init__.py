@@ -1745,6 +1745,24 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{' or '.join(repr(e) for e in sorted(DEFENDING_TRIGGERS))}, "
                 f"not on {model.trigger.event!r}"
             )
+        if model.trigger.cause_controller is not None:
+            # Only `discard` records a cause, so the clause on anything else
+            # would load, read as "a spell or ability an opponent controls
+            # caused this", and refuse to fire for ever -- the inert-card
+            # failure, which is the quieter half of the pair `defending` guards
+            # against above.
+            if model.trigger.event != "discard":
+                raise DslError(
+                    f"{where}: 'cause_controller' only means anything on 'discard', "
+                    f"not on {model.trigger.event!r} -- no other event records what "
+                    f"caused it"
+                )
+            if model.trigger.cause_controller not in ("you", "opponent", "any"):
+                raise DslError(
+                    f"{where}: unknown cause_controller "
+                    f"{model.trigger.cause_controller!r}"
+                )
+
         # `self_enters` and `permanent_enters` are the same engine event, and
         # what separates them is `source: "self"`. Omitting it on `self_enters`
         # therefore produced a card that fired on *every* permanent entering --
@@ -1850,6 +1868,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
+            cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
             mana_ability=model.trigger.mana_ability,
             nth=model.trigger.nth,
@@ -2387,6 +2406,45 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'draw_multiplier'/'except_first_in_draw_step' only mean "
             f"anything on a replace_draw static, not on {model.effect!r}"
         )
+    if model.effect == "replace_mill":
+        # `draw_multiplier`'s refusals, for its reasons: 1 replaces a mill with
+        # an identical mill, and 0 is "mill nothing instead" -- a prevention,
+        # which no doubler prints and which would load clean as a lock on the
+        # named player's mills.
+        if model.mill_multiplier is None:
+            raise DslError(
+                f"{where}: replace_mill needs 'mill_multiplier' -- how many "
+                f"cards each replaced mill becomes"
+            )
+        if model.mill_multiplier < 2:
+            raise DslError(
+                f"{where}.mill_multiplier: must be 2 or more; "
+                f"1 replaces a mill with itself and 0 mills nothing, "
+                f"which is a different effect"
+            )
+        if model.affects is not None or model.amount is not None:
+            # "If an opponent would mill one or more cards" names a player, and
+            # the size is `mill_multiplier`; nothing reads either key.
+            raise DslError(
+                f"{where}: replace_mill takes 'affects_player', "
+                f"'mill_multiplier' and an optional 'condition', "
+                f"and no 'affects' or 'amount'"
+            )
+    elif model.mill_multiplier is not None:
+        raise DslError(
+            f"{where}: 'mill_multiplier' only means anything on a replace_mill "
+            f"static, not on {model.effect!r}"
+        )
+    if model.effect == "replace_empty_draw" and (
+        model.affects is not None or model.amount is not None
+    ):
+        # The replacement has no size -- it substitutes winning for drawing --
+        # so there is nothing for either key to mean, and a key nothing reads
+        # would load clean and print a line that promises more than it does.
+        raise DslError(
+            f"{where}: replace_empty_draw takes 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
     if model.effect in PLAYER_WIDE_STATIC_EFFECTS:
         if model.affects_player is None:
             raise DslError(f"{where}: {model.effect} needs 'affects_player'")
@@ -2412,6 +2470,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: cant_cast_spells stops every spell the named players "
                 f"would cast; it takes 'affects_player' and an optional "
                 f"'condition', and no 'affects' or 'amount'"
+            )
+        if model.effect == "cast_as_though_flash" and (
+            model.affects is not None or model.amount is not None
+        ):
+            # The same guard as its prohibitive twin, for the same reason and
+            # pointing the other way. "You may cast **Spirit** spells as though
+            # they had flash" written with a filter here would load clean and
+            # hand the permission to *every* spell -- a strictly better card
+            # than the printed one, and one that reads correctly on screen.
+            # Refused until a spell filter is built.
+            raise DslError(
+                f"{where}: cast_as_though_flash lifts the timing window for every "
+                f"spell the named players cast; it takes 'affects_player' and an "
+                f"optional 'condition', and no 'affects' or 'amount'"
             )
     elif model.effect in (
         "spell_cost_reduction",
@@ -2478,6 +2550,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
+
+    if model.effect == "activate_loyalty_as_though_instant":
+        # Whose loyalty abilities, in the permanent-filter language every other
+        # `affects` static uses. Required rather than defaulted to "self": a
+        # missing filter matches *every* permanent, so the omission would hand
+        # every planeswalker on the table instant-speed loyalty -- the loudest
+        # possible over-grant, arriving silently.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: activate_loyalty_as_though_instant needs 'affects' -- "
+                f"whose loyalty abilities are freed; {{'self_only': true}} is the "
+                f"printed \"loyalty abilities of this permanent\""
+            )
+        if model.affects_player is not None or model.amount is not None:
+            # It is about a permanent's abilities, not about a seat, and it has
+            # no size. A key nothing reads would load clean and promise more
+            # than the static does.
+            raise DslError(
+                f"{where}: activate_loyalty_as_though_instant takes 'affects' and an "
+                f"optional 'condition', and no 'affects_player' or 'amount'"
+            )
 
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
@@ -2558,6 +2651,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["draw_multiplier"] = model.draw_multiplier
     if model.except_first_in_draw_step:
         static["except_first_in_draw_step"] = True
+    if model.mill_multiplier is not None:
+        static["mill_multiplier"] = model.mill_multiplier
     if model.affects_player is not None:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:

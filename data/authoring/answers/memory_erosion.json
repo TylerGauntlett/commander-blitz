@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "memory_erosion",
+    "name": "Memory Erosion",
+    "oracle_text": "Whenever an opponent casts a spell, that player mills two cards.",
+    "mana_cost": "{1}{U}{U}",
+    "types": [
+      "Enchantment"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever an opponent casts a spell, that player mills two cards.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "opponent"
+        },
+        "effects": [
+          {
+            "op": "mill",
+            "player": {
+              "binding": "event_player"
+            },
+            "amount": {
+              "const": 2
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

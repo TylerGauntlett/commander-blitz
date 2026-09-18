@@ -1,0 +1,70 @@
+{
+  "card": {
+    "id": "emry_lurker_of_the_loch",
+    "name": "Emry, Lurker of the Loch",
+    "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nWhen Emry enters, mill four cards.\n{T}: Choose target artifact card in your graveyard. You may cast that card this turn. (You still pay its costs. Timing rules still apply.)",
+    "mana_cost": "{2}{U}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Merfolk", "Wizard"],
+    "power": 1,
+    "toughness": 2,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "cost_reduction": {
+      "count": {
+        "controller": "you",
+        "types": ["Artifact"],
+        "zone": "battlefield"
+      }
+    },
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Emry enters, mill four cards.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "mill",
+            "amount": {"const": 4},
+            "player": "you"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Choose target artifact card in your graveyard. You may cast that card this turn. (You still pay its costs. Timing rules still apply.)",
+        "cost": {"tap": true},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "zone": "graveyard",
+              "player": "you",
+              "types": ["Artifact"]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "grant_playable",
+            "objects": {"target": "t1"},
+            "playable_this_turn": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "library_size": {"0": 36},
+    "graveyard_size": {"0": 6},
+    "hand_size": {"0": 1}
+  }
+}

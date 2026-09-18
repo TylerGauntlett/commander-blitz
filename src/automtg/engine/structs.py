@@ -844,13 +844,23 @@ class DelayedTrigger:
 #:     six of them.  `triggers._arm_delayed` strikes it off as it arms, and
 #:     `turn._cleanup_step` leaves it alone.
 #:
-#: The two axes -- repeating-or-once, and turn-scoped-or-not -- happen to be
-#: correlated in both printed cards, which is why this is one field rather than
-#: two booleans.  They are **not** the same question, and a card that separated
-#: them ("the first time a creature dies this turn") would need a third entry
-#: here rather than a different reading of these two.  That card does not exist
-#: in the pool; when it does, this is where it goes.
-DELAYED_DURATIONS = ("this_turn", "until_it_fires")
+#: ``once_this_turn``
+#:     "Copy the **next** instant or sorcery spell with mana value 2 or less you
+#:     cast **this turn**" (Sea Gate Stormcaller).  The card the note below used
+#:     to say did not exist: it separates the two axes, firing **once** like
+#:     `until_it_fires` and expiring at cleanup like `this_turn`.  Struck off by
+#:     `triggers._arm_delayed` as it arms, and dropped by `turn._cleanup_step`
+#:     whether or not it ever fired.
+#:
+#: The two axes -- repeating-or-once, and turn-scoped-or-not -- are correlated in
+#: the first two printed shapes, which is why this is one field rather than two
+#: booleans.  They are **not** the same question, and `once_this_turn` is the
+#: combination the other two cannot express: `this_turn` re-arms on every
+#: matching spell, which on Sea Gate Stormcaller is a Thousand-Year Storm, and
+#: `until_it_fires` outlives the turn, so a Stormcaller whose controller casts
+#: nothing cheap copies a spell on some later turn instead.  Both were measured
+#: in a real game rather than reasoned about.
+DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn")
 
 
 @dataclass(frozen=True)
