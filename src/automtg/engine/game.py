@@ -251,7 +251,7 @@ class Game:
     # priority actions
     # ------------------------------------------------------------------
 
-    def _play_land(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
+    def _play_land(self, pid: int, action: Action) -> Generator[Any, list[int]]:
         state = self.state
         oid = action.source
         card = state.card(oid)
@@ -291,7 +291,7 @@ class Game:
             card=card.id,
         )
 
-    def _cast(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
+    def _cast(self, pid: int, action: Action) -> Generator[Any, list[int]]:
         state = self.state
         oid = action.source
         obj = state.objects[oid]
@@ -713,7 +713,7 @@ class Game:
             kicked=1 if action.kicked else 0,
         )
 
-    def _activate(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
+    def _activate(self, pid: int, action: Action) -> Generator[Any, list[int]]:
         state = self.state
         oid = action.source
         card = state.card(oid)
@@ -891,7 +891,7 @@ class Game:
             )
         )
 
-    def _turn_face_up(self, pid: int, obj) -> Generator[Any, list[int], None]:
+    def _turn_face_up(self, pid: int, obj) -> Generator[Any, list[int]]:
         """Pay the price and reveal what was underneath (707.9a, 701.34c).
 
         Which price is *how it got there*: a card cast face down for morph turns
@@ -1141,7 +1141,7 @@ class Game:
             out.extend(chosen)
         return tuple(out)
 
-    def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int], None]:
+    def _activate_mana(self, pid: int, action: Action) -> Generator[Any, list[int]]:
         """Tap a permanent for mana by hand.
 
         Deliberately *not* :meth:`_activate`: a mana ability never uses the
@@ -1440,7 +1440,7 @@ def _should_auto_pass(state: GameState, options: list[Action]) -> bool:
 # ----------------------------------------------------------------------
 
 
-def _opening_sequence(state: GameState) -> Generator[Any, list[int], None]:
+def _opening_sequence(state: GameState) -> Generator[Any, list[int]]:
     """London mulligans, then set up turn 1."""
     for pid in [p.pid for p in state.players]:
         draw_cards(state, pid, STARTING_HAND)

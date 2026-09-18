@@ -129,7 +129,7 @@ def known_ops() -> frozenset[str]:
     return frozenset(OPS)
 
 
-def execute(ctx, effects: Iterable[Mapping[str, Any]]) -> Generator[Any, Any, None]:
+def execute(ctx, effects: Iterable[Mapping[str, Any]]) -> Generator[Any, Any]:
     """Run a list of effect dicts in order.
 
     Non-generator ops are called and their result discarded; generator ops are
@@ -139,7 +139,7 @@ def execute(ctx, effects: Iterable[Mapping[str, Any]]) -> Generator[Any, Any, No
         yield from execute_one(ctx, spec)
 
 
-def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any, None]:
+def execute_one(ctx, spec: Mapping[str, Any]) -> Generator[Any, Any]:
     op_name = spec.get("op")
     fn = OPS.get(op_name)
     if fn is None:

@@ -18,7 +18,7 @@ RUN npm run build
 
 
 # --- server ------------------------------------------------------------------
-FROM python:3.11-slim AS server
+FROM python:3.13-slim AS server
 
 # PYTHONUNBUFFERED so `docker compose logs` shows a traceback as it happens
 # rather than whenever the buffer flushes.
