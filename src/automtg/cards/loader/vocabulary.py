@@ -350,6 +350,21 @@ STATIC_EFFECTS = frozenset(
         # has no `zone` with which to name the cards in hand, and the permission
         # has to cover cards drawn after the source arrived.
         "cast_as_though_flash",
+        # Teferi, Master of Time.  "You may activate loyalty abilities of Teferi
+        # on any player's turn any time you could cast an instant."  `affects`
+        # says whose loyalty abilities are freed -- `{"self_only": true}` is the
+        # printed "of Teferi".  Read in `legality._ability_aims`, which is where
+        # `sorcery_speed_only` refuses an ability; the loader forces that flag on
+        # for every loyalty ability (`model.sorcery_speed_only or cost.loyalty is
+        # not None`), so no card could reach it and the permission had to come
+        # from the board.  It lifts the *window* only: 606.3's one-loyalty-
+        # ability-per-permanent-per-turn limit is checked separately and stands.
+        #
+        # Named for loyalty because that is the half that can be answered
+        # exactly.  Leonin Shikari's "you may activate equip abilities any time
+        # you could cast an instant" wants this seam pointed at equip, and
+        # nothing on `Ability` marks an equip ability yet.
+        "activate_loyalty_as_though_instant",
     }
 )
 

@@ -8932,6 +8932,14 @@
       "0": 41
     }
   },
+  "teferi_master_of_time": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "teferi_s_ageless_insight": {
     "battlefield_count": 33,
     "zone": "battlefield"

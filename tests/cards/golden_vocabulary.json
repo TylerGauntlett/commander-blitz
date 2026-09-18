@@ -61,6 +61,7 @@
    "event"
   ],
   "GRANTABLE_STATIC_EFFECTS": [
+   "activate_loyalty_as_though_instant",
    "add_subtype",
    "attack_tax",
    "attacks_if_able",
@@ -287,6 +288,7 @@
    "library"
   ],
   "STATIC_EFFECTS": [
+   "activate_loyalty_as_though_instant",
    "add_mana_on_tap",
    "add_subtype",
    "attack_tax",

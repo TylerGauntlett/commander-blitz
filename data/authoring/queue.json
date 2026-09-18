@@ -274472,12 +274472,12 @@
     },
     "Teferi, Master of Time": {
       "edhrec_rank": 2199,
-      "gate": "template",
+      "gate": null,
       "name": "Teferi, Master of Time",
-      "reason": "no template for: You may activate loyalty abilities of Teferi on any player's turn any time you could cast ",
+      "reason": "",
       "scryfall_id": "20a271b3-c3a9-47c6-bc8b-b580ede1968b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Teferi, Temporal Archmage": {

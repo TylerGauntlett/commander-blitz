@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**28 cards** blocked by **35** capabilities.
+**27 cards** blocked by **34** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
-| [activate-as-though-instant](#activate-as-though-instant) | 1 | 2199 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
@@ -102,20 +101,6 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## activate-as-though-instant
-
-Blocks **1** card.
-
-- **(static_effect)** a static timing permission that lifts an activated ability's sorcery-speed window -- "You may activate loyalty abilities of Teferi on any player's turn any time you could cast an instant" (Teferi, Master of Time) and "You may activate equip abilities any time you could cast an instant" (Leonin Shikari, already in the queue). It needs (a) an authorable static, e.g. `activate_as_though_instant` taking a filter over the abilities it frees -- the source's own loyalty abilities here, equip abilities on permanents you control there -- and (b) a read of it inside `legality._ability_aims`, so the `ability.sorcery_speed_only and not sorcery_speed` refusal at src/automtg/engine/legality.py:662 can be waived per ability rather than only per card. The 606.3 one-loyalty-ability-per-permanent-per-turn limit at legality.py:685 is NOT waived by this line and must stay; only the sorcery-speed window (your turn, a main phase, empty stack) moves.
-  <br>Why the existing vocabulary won't do: Sorcery speed is forced on, not authored, for every loyalty ability: the loader builds the ability with `sorcery_speed_only=model.sorcery_speed_only or (cost is not None and cost.loyalty is not None)` (src/automtg/cards/loader/__init__.py:2016), so writing `sorcery_speed_only: false` on a `{"loyalty": 1}` ability is swallowed by the `or` and changes nothing -- there is no authorable way to reach the flag at all. `legality._ability_aims` then refuses the ability whenever `_can_act_at_sorcery_speed` is false, and that helper (legality.py:308) is exactly the two things this card removes: `state.active_player == pid` and `state.step in (PRECOMBAT_MAIN, POSTCOMBAT_MAIN) and not state.stack`. Nothing on an ability widens it: `activate_steps` and `once_each_turn` (ability_keys) are further *restrictions* on when an ability may be used, never permissions, and naming every step in `activate_steps` still leaves `sorcery_speed_only` True; `condition`/`activation_condition` gates an activation off board state, it cannot ungate the timing check. `static_effects` has no timing entry of any kind -- `cast_from_graveyard` and `cast_from_library_top` are *zone* permissions for casting cards, `cant_cast_spells` is a prohibition with no permissive counterpart, and none of them are consulted on the ability-activation path. The `flash` keyword and `grant_keyword` are the tempting substitutes and are wrong: flash is read only by the spell-casting timing check, never by `_ability_aims`, and it says nothing about activating an ability. This is a near neighbour of the `cast_as_though_flash` gap already filed by Borne Upon a Wind, Emergence Zone and Tidal Barracuda, but it is a different door: that one widens the *casting* timing check for spells, this one widens the *activation* timing check for abilities, and closing either leaves the other shut. The card's other three lines are each fully expressible today -- "+1: Draw a card, then discard a card." is `draw` + `discard`; "−3: Target creature you don't control phases out." is the `phase_out` op on a targeted creature with `controller: "opponent"`; "−10: Take two extra turns after this one." is two `extra_turn` ops -- and the planeswalker chassis itself is fine (loyalty costs compile, starting loyalty becomes a `self_enters_with_counters`). Only the first line is blocked, so no partial answer was written: a Teferi whose loyalty abilities are sorcery-speed only is a materially different and much weaker card, and the printed line would be left unclaimed by the residual gate.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Teferi, Master of Time** (rank 2199) — `teferi_master_of_time`
-  - You may activate loyalty abilities of Teferi on any player's turn any time you could cast an instant.
 
 </details>
 

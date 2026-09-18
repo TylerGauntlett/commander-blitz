@@ -13439,3 +13439,56 @@ The turn-scoped op form — "you may cast spells this turn as though they had fl
 (Borne Upon a Wind, Emergence Zone) — which writes this same permission with a
 turn on it. A second capability and a second run; neither card is in the deck this
 was built for.
+
+## `activate_loyalty_as_though_instant` — Teferi's timing line
+
+### Overview
+
+Teferi, Master of Time: "You may activate loyalty abilities of Teferi on any
+player's turn any time you could cast an instant."
+
+### The shape
+
+A static taking `affects` — whose loyalty abilities are freed, in the ordinary
+permanent-filter language, where `{"self_only": true}` is the printed "of Teferi"
+— and an optional `condition`. No `affects_player` and no `amount`; both are load
+errors. `affects` is **required** rather than defaulted to self, because a missing
+filter matches every permanent and would hand the whole table instant-speed
+loyalty in silence.
+
+**It could not be an ability key.** The loader forces sorcery speed on for every
+loyalty ability:
+
+    sorcery_speed_only = model.sorcery_speed_only or (cost is not None and cost.loyalty is not None)
+
+so `sorcery_speed_only: false` written on the card is swallowed by the `or`. There
+is no spelling that reaches the flag, which is why the permission arrives from the
+board instead.
+
+**606.3 is two rules and this lifts one of them.** The window moves; the
+one-loyalty-ability-per-permanent-per-turn limit is a separate check in
+`_ability_aims` and stands. A waiver written as "skip the 606.3 check" rather than
+"skip the timing check" passes every obvious test and quietly turns one
+planeswalker into three cards a turn.
+
+**A different door from `cast_as_though_flash`.** That static widens the *casting*
+window for spells; this one the *activation* window for abilities. Closing either
+leaves the other shut, and neither leaks into the other.
+
+### Guarded by
+
+`tests/unit/test_activate_loyalty_as_though_instant.py`: the sorcery-speed
+baseline on a walker without the line (off-turn and off-main-phase); the
+permission lifting both halves of the window, together and separately; the
+once-per-turn limit still biting, on your turn and theirs; a non-loyalty
+sorcery-speed ability on the same permanent staying refused; the `affects` filter
+actually read — an "orrery" form reaching another permanent's walker, and Teferi's
+`self_only` form not reaching its neighbour — plus the wearing-off; the two
+timing permissions not leaking into one another in either direction; and the four
+load-time guards.
+
+### Not done
+
+Leonin Shikari's "you may activate equip abilities any time you could cast an
+instant" — the same seam pointed at equip. Nothing on `Ability` marks an equip
+ability, so it stays a gap rather than becoming a word that half means it.

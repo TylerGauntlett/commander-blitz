@@ -2532,6 +2532,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
 
+    if model.effect == "activate_loyalty_as_though_instant":
+        # Whose loyalty abilities, in the permanent-filter language every other
+        # `affects` static uses. Required rather than defaulted to "self": a
+        # missing filter matches *every* permanent, so the omission would hand
+        # every planeswalker on the table instant-speed loyalty -- the loudest
+        # possible over-grant, arriving silently.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: activate_loyalty_as_though_instant needs 'affects' -- "
+                f"whose loyalty abilities are freed; {{'self_only': true}} is the "
+                f"printed \"loyalty abilities of this permanent\""
+            )
+        if model.affects_player is not None or model.amount is not None:
+            # It is about a permanent's abilities, not about a seat, and it has
+            # no size. A key nothing reads would load clean and promise more
+            # than the static does.
+            raise DslError(
+                f"{where}: activate_loyalty_as_though_instant takes 'affects' and an "
+                f"optional 'condition', and no 'affects_player' or 'amount'"
+            )
+
     if model.effect == "set_types" and not model.types:
         raise DslError(f"{where}: set_types needs the types it sets")
 
