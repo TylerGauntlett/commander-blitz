@@ -13546,3 +13546,45 @@ clauses off the permanent hosting the ability — `self_only`, `exclude_self`,
 `condition` over the `subject` binding expresses the same filter exactly, which is
 what Sea Gate Stormcaller uses and what the tests above pin; the cost is that every
 card of this shape spells its filter as a condition rather than as a filter.
+
+## `two_share_a_color` — "two cards that share a color"
+
+### Overview
+
+Sphinx's Tutelage: "If two nonland cards that share a color were milled this way,
+repeat this process." The colour half of that sentence; the loop is
+`repeat_while`.
+
+### The shape
+
+A condition taking a **pool**, true when any two members' colour sets intersect.
+Pairwise and short-circuiting: the question is whether any two share, not how
+many do.
+
+It is the only colour question in the language that asks about a *relation
+between two cards*. Every other reader is per-object, and each fails differently:
+
+- `colors` / `not_colors` test a member against a colour fixed when the card is
+  written. This card names no colour.
+- `min_colors` counts the colours on a single card, so it answers "was a
+  multicolored card milled".
+- `shares_a_color_with` is the near-namesake and resolves its argument through
+  `_bound_oid`, which reads one oid and returns `None` for a list. A `mill`'s `as`
+  binding is always a list, so the clause matches nothing at all — a card that
+  loads, prints the sentence and never fires.
+- `distinct` is restricted to power and basic land type.
+
+`exists` with a count is the tempting substitute and drops the colour clause
+entirely: "two nonland cards were milled" is true on almost every mill.
+
+Colourless cards share no colour with anything. That falls out of the intersection
+being empty rather than being special-cased, and it is the printed ruling: two
+artifacts do not continue the process.
+
+### Guarded by
+
+`tests/unit/test_two_share_a_color.py`: two greens sharing; green against red and
+green against blue not sharing; both colourless cases; the `not_types` filter
+applied before the pairing, including the one-card-left case; the counting
+spelling kept as a live card and gaining on the exact board where the colour
+clause does not; and the load-time guards, a bare `true` among them.

@@ -1012,6 +1012,34 @@ boolean because the number is what the rule says and reads the same on the rarer
 "three or more colors". Honoured by all three matchers: the selector language, the
 trigger filter, and `_matches_printed`.
 
+### "Two cards that share a color" — `two_share_a_color`
+
+```jsonc
+{ "two_share_a_color": { "binding": "milled", "not_types": ["Land"] } }
+```
+
+A **condition**, not a selector clause, and the only colour question in the
+language that is about a *relation between two cards* rather than a property of
+one — "if two nonland cards that share a color were milled this way" (Sphinx's
+Tutelage). It takes a pool and is true when any two members' colour sets
+intersect.
+
+Nothing above can say it. `colors` and `not_colors` test a member against a
+colour fixed when the card is written, and this card names no colour; `min_colors`
+counts the colours on a single card, so it asks whether a *multicolored* card was
+milled; and `shares_a_color_with` — the near-namesake — resolves its argument
+through `_bound_oid`, which reads one oid and returns `None` for a list, so
+pointed at a `mill`'s always-a-list `as` binding it matches nothing at all.
+
+`exists` with a count is the near miss and drops the colour clause entirely: "two
+nonland cards were milled" is true on almost every mill, which on Sphinx's
+Tutelage is a far longer loop than the card prints.
+
+Colourless cards share no colour with anything — the intersection is empty, which
+is the printed ruling rather than a special case. Colours are read the way
+`selectors.matches` reads them: derived on the battlefield, printed anywhere else,
+and a milled card is in a graveyard.
+
 ### Granting rebound to a spell that does not print it
 
 ```jsonc
