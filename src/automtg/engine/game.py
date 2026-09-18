@@ -711,6 +711,19 @@ class Game:
             # has to name the face that was actually cast.
             card=item.def_id,
             kicked=1 if action.kicked else 0,
+            # "…**if it targets** one or more other permanents you control"
+            # (Orvar, the All-Form). The objects this spell chose, so a trigger
+            # watching the cast can ask about them and then point an effect at
+            # one. Nothing else on this payload can answer it: `oid` and
+            # `spell_oid` are the spell itself, and the trigger's own `filter`
+            # reads the spell card's characteristics.
+            #
+            # The **object** targets only. A spell aimed at a player or at
+            # another spell has targets that are not permanents, and a list
+            # mixing seat numbers with oids would be read as oids by every
+            # consumer -- `_bound_oids` cannot tell them apart, since both are
+            # `int`. Ordinary selector keys narrow it the rest of the way.
+            spell_targets=[ref.id for ref in item.targets if ref.kind == "object"],
         )
 
     def _activate(self, pid: int, action: Action) -> Generator[Any, list[int]]:

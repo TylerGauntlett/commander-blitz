@@ -807,8 +807,19 @@ def _candidate_abilities(state: GameState, event: GameEvent):
                     continue
                 yield from emit_from(obj, zone)
 
-    # Leave-the-battlefield triggers on the object that just left.
-    subject = event.data.get("oid") if event.type in (EventType.DIES, EventType.LEAVES_BATTLEFIELD) else None
+    # Leave-the-battlefield triggers on the object that just left -- and the
+    # discard trigger on the card that just left a *hand*, which is the same
+    # shape one zone over. "When a spell or ability an opponent controls causes
+    # you to discard this card" (Orvar, the All-Form) is an ability that
+    # functions in hand, and `discard_cards` moves the card to the graveyard
+    # before firing the event, so by the time this walk runs the hand no longer
+    # holds it and `active_zones: ["hand"]` matches nothing. Exactly the reason
+    # this branch exists for the battlefield.
+    subject = (
+        event.data.get("oid")
+        if event.type in (EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.DISCARD)
+        else None
+    )
     if subject is not None and subject not in seen:
         obj = state.objects.get(subject)
         if obj is not None:
@@ -829,6 +840,18 @@ def _candidate_abilities(state: GameState, event: GameEvent):
                 if not ability.is_triggered or ability.trigger is None:
                     continue
                 if ability.trigger.event in LEAVE_TRIGGERS and ability.trigger.source == "self":
+                    yield obj, ability
+                elif (
+                    event.type is EventType.DISCARD
+                    and ability.trigger.event == "discard"
+                    and Zone.HAND in ability.active_zones
+                ):
+                    # Scoped by the ability declaring that it worked in the hand
+                    # it was discarded from, so a `discard` trigger written for
+                    # the battlefield or the graveyard is not quietly widened.
+                    # Which *card* was discarded is then the trigger's own
+                    # `filter` -- `self_only` on this card, which is the printed
+                    # "this card".
                     yield obj, ability
 
 
@@ -877,6 +900,25 @@ def _matches(
     # time the ability resolves the cause is no longer anywhere to be read.
     if spec.not_cause is not None and event.data.get("cause") == spec.not_cause:
         return False
+
+    # "When **a spell or ability an opponent controls** causes you to discard
+    # this card" -- Orvar, the All-Form. Who made the discard happen, which is a
+    # different question from who discarded: `_actor` answers the `controller`
+    # clause on a DISCARD with `event.player`, the discarding player, so
+    # `controller: "opponent"` there reads "an opponent discarded a card".
+    #
+    # A `None` cause is an event nobody caused -- the cleanup-step discard, a
+    # turn-based action, and a discard paid as a cost -- and fails the clause in
+    # every direction. That is the whole of what keeps this from being a
+    # strictly better card that also fires on its controller's own rummaging.
+    if spec.cause_controller is not None:
+        cause = event.data.get("cause_controller")
+        if cause is None:
+            return False
+        if spec.cause_controller == "you" and cause != obj.controller:
+            return False
+        if spec.cause_controller == "opponent" and cause == obj.controller:
+            return False
 
     # "Whenever a +1/+1 counter is put on this creature". `add_counters` has
     # always put the kind on the event and nothing read it, so an unfiltered
@@ -1089,6 +1131,24 @@ EVENT_BINDING_KEYS = (
     # whom, so on a split attack it also names the creatures attacking the
     # trigger's own controller.
     "attackers",
+    # "Whenever you cast an instant or sorcery spell, **if it targets one or
+    # more other permanents you control**, create a token that's a copy of one
+    # of those permanents" -- Orvar, the All-Form. The object targets of the
+    # spell that just went on the stack, written by `Game._cast`, and the second
+    # list binding here.
+    #
+    # Both halves of that card are this one key. The intervening-if is
+    # `{"exists": {"binding": "spell_targets", ...}}` and the effect points
+    # `copy_permanent` at the same pool -- which matters, because a condition
+    # without the binding would let the card copy an arbitrary permanent, a
+    # different and much stronger card.
+    #
+    # `{"target": "t1"}` is the near miss and is the wrong scope by
+    # construction: `selectors` resolves it through `ctx.target_oids`, which is
+    # the *ability's own* declared targets, so it can never name what somebody
+    # else's spell chose. `becomes_target` is the other, and is a per-permanent
+    # trigger -- written on Orvar it would only ever see spells aimed at Orvar.
+    "spell_targets",
     # Persist and undying: what was on the creature before it died, which
     # nothing can read off the object afterwards.
     "had_counters",
