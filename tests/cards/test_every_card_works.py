@@ -449,27 +449,16 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     spec = getattr(cost, "sacrifice", None) if cost else None
     if not spec:
         return
-    subtypes = {str(s) for s in spec.get("subtypes") or []}
-    types = {str(t) for t in spec.get("types") or ["Creature"]}
-    match = next(
-        (
-            c
-            for c in sorted(registry, key=lambda c: c.id)
-            if not c.is_token
-            and types <= set(c.types)
-            and (not subtypes or subtypes & set(c.subtypes))
-        ),
-        None,
-    )
-    if match is None:
-        return
     # As many as the cost asks for, not one. Bolas's Citadel sacrifices **ten**
     # nonland permanents, and a board handed a single creature reported a
     # working card as unusable -- the same false negative this helper exists to
     # prevent, one order of magnitude up.
     count = spec.get("count", 1)
-    wanted = int(count) if isinstance(count, int) else 1
-    for _ in range(max(1, wanted)):
+    wanted = max(1, int(count) if isinstance(count, int) else 1)
+    match = _fodder_for(registry, spec, wanted)
+    if match is None:
+        return
+    for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
 
@@ -491,21 +480,11 @@ def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
     spec = getattr(cost, "tap_permanents", None) if cost else None
     if not spec:
         return
-    subtypes = {str(s) for s in spec.get("subtypes") or []}
-    types = {str(t) for t in spec.get("types") or ["Creature"]}
-    match = next(
-        (
-            c
-            for c in sorted(registry, key=lambda c: c.id)
-            if not c.is_token
-            and types <= set(c.types)
-            and (not subtypes or subtypes & set(c.subtypes))
-        ),
-        None,
-    )
+    wanted = int(spec.get("count", 1) or 1)
+    match = _fodder_for(registry, spec, wanted)
     if match is None:
         return
-    for _ in range(int(spec.get("count", 1) or 1)):
+    for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
     # Crew's cost is a total power, not a count: Shorikai's Crew 8 needs eight
@@ -546,21 +525,11 @@ def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
     spec = getattr(cost, "untap_permanents", None) if cost else None
     if not spec:
         return
-    subtypes = {str(s) for s in spec.get("subtypes") or []}
-    types = {str(t) for t in spec.get("types") or ["Creature"]}
-    match = next(
-        (
-            c
-            for c in sorted(registry, key=lambda c: c.id)
-            if not c.is_token
-            and types <= set(c.types)
-            and (not subtypes or subtypes & set(c.subtypes))
-        ),
-        None,
-    )
+    wanted = int(spec.get("count", 1) or 1)
+    match = _fodder_for(registry, spec, wanted)
     if match is None:
         return
-    for _ in range(int(spec.get("count", 1) or 1)):
+    for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         fodder.tapped = True
         game.state.battlefield.append(fodder.oid)
@@ -667,10 +636,11 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     selector = left["count"]
     if selector.get("zone", "battlefield") != "battlefield":
         return
-    match = _fodder_for(registry, selector)
+    wanted = int(right["const"])
+    match = _fodder_for(registry, selector, wanted)
     if match is None:
         return
-    for _ in range(int(right["const"])):
+    for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
 
@@ -700,10 +670,11 @@ def _make_permanents_enter(game: Game, registry, left: dict, count: int) -> None
     spec = left.get("permanents_entered_this_turn") or {}
     if spec.get("controller", "you") != "you":
         return
-    match = _fodder_for(registry, {"types": spec.get("types") or ["Creature"]})
+    wanted = max(1, count)
+    match = _fodder_for(registry, {"types": spec.get("types") or ["Creature"]}, wanted)
     if match is None:
         return
-    create_token(game.state, match.id, 0, max(1, count))
+    create_token(game.state, match.id, 0, wanted)
 
 
 def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
@@ -749,26 +720,39 @@ def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
     return True
 
 
-def _fodder_for(registry, selector: dict):
+def _fodder_for(registry, selector: dict, count: int = 1):
     """The first card in the pool matching a counting filter's types.
 
-    Shared by the two branches of `_satisfy_the_activation_condition` that satisfy
-    a count by putting permanents out, so "what counts as one of those" cannot
-    drift between them.
+    Shared by every helper that satisfies a requirement by putting permanents
+    out, so "what counts as one of those" cannot drift between them.
+
+    **A legendary card is passed over when more than one copy is needed.** The
+    pool is searched in id order, so the first Advisor is
+    `bruvac_the_grandiloquent` -- and four copies of a legendary creature is
+    *one* copy once the legend rule (704.5j) has been applied at the next
+    state-based check. That reported Persistent Petitioners' "Tap four untapped
+    Advisors you control" as unusable: a working card, failing on a board the
+    sandbox had quietly emptied.
+
+    A preference rather than a filter, with the legendary card still taken when
+    it is the only match: a board one short is a more honest failure than a
+    board with nothing on it at all, and it fails loudly either way.
     """
     subtypes = {str(s) for s in selector.get("subtypes") or []}
     types = {str(t) for t in selector.get("types") or ["Creature"]}
-    return next(
-        (
-            c
-            for c in sorted(registry, key=lambda c: c.id)
-            if not c.is_token
-            and c.front_face is None
-            and types <= set(c.types)
-            and (not subtypes or subtypes & set(c.subtypes))
-        ),
-        None,
-    )
+    matches = [
+        c
+        for c in sorted(registry, key=lambda c: c.id)
+        if not c.is_token
+        and c.front_face is None
+        and types <= set(c.types)
+        and (not subtypes or subtypes & set(c.subtypes))
+    ]
+    if not matches:
+        return None
+    if count > 1:
+        return next((c for c in matches if not c.is_legendary), matches[0])
+    return matches[0]
 
 
 def _stock_the_hand(game: Game, ability) -> None:
