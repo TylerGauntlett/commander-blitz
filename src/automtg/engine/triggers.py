@@ -585,7 +585,7 @@ def _delayed_bindings(
     return bindings
 
 
-def run_armed_delays(state: GameState) -> Generator[Any, list[int], None]:
+def run_armed_delays(state: GameState) -> Generator[Any, list[int]]:
     """Resolve every delayed ability whose event has fired.
 
     Directly rather than on the stack, which is the divergence

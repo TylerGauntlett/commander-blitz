@@ -619,7 +619,7 @@ def free_cast_modes(
     return modes, tuple(refs)
 
 
-def resolve_top(state: GameState) -> Generator[Any, list[int], None]:
+def resolve_top(state: GameState) -> Generator[Any, list[int]]:
     """Resolve the top object of the stack.  Yields decisions its effects need."""
     if not state.stack:
         return
@@ -630,7 +630,7 @@ def resolve_top(state: GameState) -> Generator[Any, list[int], None]:
         yield from _resolve_ability(state, item)
 
 
-def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int], None]:
+def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int]]:
     assert item.oid is not None
     obj = state.objects.get(item.oid)
     if obj is None:
@@ -773,7 +773,7 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
 
 def _merge_mutation(
     state: GameState, item: StackItem, targets
-) -> Generator[Any, list[int], None]:
+) -> Generator[Any, list[int]]:
     """Put a mutating creature over or under the permanent it targeted.
 
     "Over or under" is the caster's, and it is asked *here* rather than as the
@@ -1006,7 +1006,7 @@ def _attach_aura(state: GameState, obj, card: CardDef, targets, specs) -> None:
                 return
 
 
-def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[int], None]:
+def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[int]]:
     source = state.objects.get(item.source_oid) if item.source_oid is not None else None
     # The ability first, and the card only once there is something to resolve.
     # `ability_of` already copes with a source that is gone -- a token that

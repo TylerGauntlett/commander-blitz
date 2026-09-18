@@ -4,10 +4,16 @@ Every commit to `main` that passes `scripts/verify.py` is built into a container
 image and deployed to a DigitalOcean droplet. Nothing is deployed by hand.
 
 ```
-push to main ──▶ verify ──▶ build image ──▶ push to GHCR ──▶ ssh + compose up ──▶ /health
-                  │                                                                  │
-                  └── a failure here stops everything ───────────────────────────────┘
+                  ┌── python ──┐
+push to main ──▶ lint ─ sim ───┼─▶ gate ──▶ build image ──▶ push to GHCR ──▶ ssh + compose up ──▶ /health
+                  └── frontend ┘    │                                                                │
+                                    └── a failure here stops everything ─────────────────────────────┘
 ```
+
+A pull request runs the same jobs plus a six-leg `e2e` matrix; a push to main
+skips that half, having already run it on the pull request that became the
+merge. `gate` is the single check that judges them all, and the only one `build`
+waits on.
 
 - **Pipeline** — [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)
 - **Image** — [`Dockerfile`](../Dockerfile), published to `ghcr.io/tylergauntlett/auto-mtg`
@@ -201,12 +207,16 @@ imported decks are not recoverable from the repo.
 machine is the only record of what exists. Losing it means importing the
 resources by hand, or deleting them in the DO console and re-applying.
 
-**The verify gate has two silent skips**, both defused in the workflow and worth
-remembering if you ever edit it. `verify.py` prints `SKIP frontend` and exits
-zero when `frontend/node_modules` is missing, and skips the story tests when no
-Chromium build is present. The workflow runs `npm ci` and
-`npx playwright install --with-deps chromium` so that neither gate passes
-vacuously.
+**The verify gate had three silent skips, and they are now enforced rather than
+remembered.** `verify.py` prints `SKIP frontend` and exits zero when
+`frontend/node_modules` is missing, when neither npm nor bun is on PATH, and
+skips the story and Playwright stages when no Chromium build is present. The
+workflow still runs `npm ci` and `npx playwright install --with-deps chromium`,
+but every job now also passes `--strict`, which turns all three into failures —
+so a job whose toolchain went missing fails instead of passing having asserted
+nothing. Two further guards matter now that the gate is nine jobs rather than
+one: an unknown `--only` group is an argparse error, and a slice that selects
+zero stages exits 1 rather than reporting success.
 
 ## HTTPS
 

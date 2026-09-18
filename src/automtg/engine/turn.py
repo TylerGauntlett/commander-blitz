@@ -65,7 +65,7 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         obj.playable_exiles = False
 
 
-def begin_step(state: GameState) -> Generator[Any, list[int], None]:
+def begin_step(state: GameState) -> Generator[Any, list[int]]:
     """Perform the turn-based actions for the step the game has just entered."""
     state.step_started = True
     state.triggers_this_step = 0
@@ -191,7 +191,7 @@ def grant_extra_phases(state: GameState, kinds: Sequence[str]) -> list[str]:
     return queued
 
 
-def _run_delayed(state: GameState) -> Generator[Any, list[int], None]:
+def _run_delayed(state: GameState) -> Generator[Any, list[int]]:
     """Resolve anything scheduled for the step just entered.
 
     Resolved directly rather than put on the stack. That is a divergence -- a
@@ -273,7 +273,7 @@ def _delay_due(state: GameState, delayed: DelayedTrigger) -> bool:
     return True
 
 
-def _monarch_draw(state: GameState) -> Generator[Any, list[int], None]:
+def _monarch_draw(state: GameState) -> Generator[Any, list[int]]:
     """"At the beginning of the monarch's end step, that player draws a card" (721.3).
 
     The other of the monarch's two inherent triggered abilities, and the one that
@@ -590,7 +590,7 @@ def _epic_copy(state: GameState, pid: int) -> None:
     put_copy_on_stack(state, pid, template)
 
 
-def _draw_step(state: GameState) -> Generator[Any, list[int], None]:
+def _draw_step(state: GameState) -> Generator[Any, list[int]]:
     """The turn's draw -- and the one place dredge and miracle can interrupt it.
 
     A generator because those two ask a question, which is the whole reason this
@@ -654,7 +654,7 @@ def _next_blocker_decision(state: GameState) -> None:
     combat_mod.finish_blockers(state)
 
 
-def _cleanup_step(state: GameState) -> Generator[Any, list[int], None]:
+def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     pid = state.active_player
     player = state.players[pid]
     excess = 0 if player_has_no_hand_limit(state, pid) else len(player.hand) - MAX_HAND_SIZE

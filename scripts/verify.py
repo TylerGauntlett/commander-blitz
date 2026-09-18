@@ -10,8 +10,21 @@ Runs every check in dependency order and stops at the first failure, so the firs
 thing it prints about a broken build is the thing that broke.
 
 ``--coverage`` and ``--e2e`` are opt-in because each costs tens of minutes: the
-default gate is what runs on every push, and ``verify-slow`` in
-``.github/workflows/deploy.yml`` runs the two flags on pull requests.
+default gate is what runs locally, and CI passes both.
+
+CI runs this same script, one *slice* per runner, which is what the rest of the
+flags are for::
+
+    --only lint,pytest   # the stage groups to run; GROUPS lists them
+    --jobs 2             # the pytest suites under xdist, N workers
+    --e2e-project X      # one Playwright project rather than all three
+    --e2e-shard 2/4      # ...and one shard of it
+    --strict             # a stage that skips itself FAILS instead
+
+Those exist so nine runners can share the work the sequential list describes,
+without any of them being able to quietly assert nothing: ``--strict`` and the
+"no stages selected" check are the two guards, and `.github/workflows/deploy.yml`
+is the map of which slice runs where.
 """
 
 from __future__ import annotations
@@ -43,6 +56,23 @@ PY = sys.executable
 DECODE = {"encoding": "utf-8", "errors": "replace"}
 
 
+#: The stage groups `--only` selects from, which is also how CI fans this gate
+#: out across runners: one job per group, plus a matrix over the e2e projects.
+#: A local run with no `--only` runs all of them, in this order, as it always has.
+GROUPS = ("lint", "pytest", "sim", "frontend", "e2e")
+
+
+class StrictSkip(RuntimeError):
+    """A stage skipped itself while ``--strict`` said every stage must run.
+
+    Three stages skip themselves when their tooling is absent -- no npm/bun, no
+    ``node_modules``, no Chromium -- and each one leaves the gate exiting *zero*.
+    That is right on a fresh clone and wrong on a runner, where a missing browser
+    means the job asserted nothing and said so in a line nobody reads. CI passes
+    ``--strict``, which turns all three into this.
+    """
+
+
 class Stage:
     """One named check.
 
@@ -59,6 +89,7 @@ class Stage:
         slow: bool = False,
         fn=None,
         env: dict[str, str] | None = None,
+        group: str = "pytest",
     ):
         self.name = name
         self.command = command
@@ -66,6 +97,7 @@ class Stage:
         self.slow = slow
         self.fn = fn
         self.env = env
+        self.group = group
 
     def run(self, verbose: bool) -> tuple[bool, float, str]:
         if self.fn is not None:
@@ -186,23 +218,48 @@ def run_live_server_stage(verbose: bool) -> tuple[bool, float, str]:
 #: stages append into one data file and a final stage reads it back.
 PYTHON_COVERAGE_FLOOR = 92
 
+#: Suites that must not be handed to xdist even when `--jobs` asks for it.
+#:
+#: The escape hatch for `tests/server`, which runs genuine ThreadPoolExecutor
+#: races against a TestClient and polls with real sleeps: two workers on a
+#: two-core runner halve the CPU each race gets. Its deadlines are generous
+#: enough that it should hold, so this starts empty -- but if the HTTP API stage
+#: starts flaking under `--jobs`, `frozenset({"tests/server"})` is the fix, and
+#: at ~134s serial that suite costs almost nothing to serialize.
+SERIAL_SUITES: frozenset[str] = frozenset()
 
-def python_stages(quick: bool, coverage: bool = False) -> list[Stage]:
+
+def python_stages(quick: bool, coverage: bool = False, jobs: int = 0) -> list[Stage]:
     def pytest(suite: str, *extra: str) -> list[str]:
         command = [PY, "-m", "pytest", suite, *extra]
+        if jobs and suite not in SERIAL_SUITES:
+            # `loadfile`, not the default `load`: it keeps a file's tests on one
+            # worker, so the module-scoped fixtures (the catalog sample in
+            # test_proxy_against_the_catalog, `records` in test_card_index) are
+            # built once per file rather than once per worker per file. It also
+            # preserves any intra-file ordering assumption for free.
+            command += ["-n", str(jobs), "--dist", "loadfile"]
         if coverage:
             # No per-stage report: the summary comes once, from the floor stage.
             command += ["--cov=src/automtg", "--cov-append", "--cov-report="]
         return command
 
     stages = [
-        Stage("lint", [PY, "-m", "ruff", "check", "src", "scripts", "tests"]),
-        Stage("card files and deck legality", [PY, "scripts/validate_decks.py"]),
+        Stage("lint", [PY, "-m", "ruff", "check", "src", "scripts", "tests"], group="lint"),
+        Stage(
+            "card files and deck legality",
+            [PY, "scripts/validate_decks.py"],
+            group="lint",
+        ),
         # Exits 0 with a printed SKIP on any machine without a Scryfall bulk
         # dump, which is every machine but the one that last refreshed it. It
         # only fails when a dump *is* present and the committed index no longer
         # matches it -- which is the case worth catching before a commit.
-        Stage("card index is current", [PY, "scripts/build_card_index.py", "--check"]),
+        Stage(
+            "card index is current",
+            [PY, "scripts/build_card_index.py", "--check"],
+            group="lint",
+        ),
     ]
     if coverage:
         stages.append(Stage("coverage: start fresh", [PY, "-m", "coverage", "erase"]))
@@ -237,6 +294,7 @@ def python_stages(quick: bool, coverage: bool = False) -> list[Stage]:
                     "0.25",
                 ],
                 slow=True,
+                group="sim",
             )
         )
     stages.append(
@@ -244,6 +302,7 @@ def python_stages(quick: bool, coverage: bool = False) -> list[Stage]:
             "live server: full games at 2p, 4p and one pod",
             fn=run_live_server_stage,
             slow=True,
+            group="sim",
         )
     )
     return stages
@@ -290,7 +349,7 @@ def chromium_installed() -> bool:
 E2E_PROJECTS = ("chromium", "handheld", "deckfit")
 
 
-def run_e2e_stage(project: str):
+def run_e2e_stage(project: str, shard: str | None = None):
     """One Playwright project, with its verdict sorted into the two kinds.
 
     The suite's verdict was not reproducible: the same unchanged commit produced
@@ -301,11 +360,21 @@ def run_e2e_stage(project: str):
     failure it was -- a timeout is a budget problem or a busy machine, an
     assertion is a bug -- and the budgets themselves are scaled by `E2E_SLOW`,
     because this stage runs after two Storybook browsers on the same box.
+
+    ``shard`` is Playwright's ``i/n``, which CI uses to spread one project over
+    several runners. Sharding is the only parallelism this suite can take:
+    `playwright.config.ts` keeps ``workers`` at 1 because the app's motion is
+    frame-driven and the runner already draws ~11 fps under tracing, so a second
+    worker on the same box produces timeouts rather than speed. A second *box*
+    costs nothing, because `--shard` partitions the test list before the run.
     """
 
     def run(verbose: bool) -> tuple[bool, float, str]:
         started = time.time()
-        report = FRONTEND / "test-results" / f"e2e-{project}.json"
+        # "2/4" is not a filename -- and a shard's report must not land on a
+        # sibling shard's, or the vacuous-pass check below reads the wrong run.
+        suffix = f"-{shard.replace('/', 'of')}" if shard else ""
+        report = FRONTEND / "test-results" / f"e2e-{project}{suffix}.json"
         report.parent.mkdir(exist_ok=True)
         # A stale report from an earlier run would otherwise be read as this
         # run's verdict, and the "no report" check below would never fire.
@@ -319,8 +388,11 @@ def run_e2e_stage(project: str):
         npx = shutil.which("npx")
         if npx is None:
             return False, time.time() - started, "e2e: npx is not on PATH"
+        command = [npx, "playwright", "test", f"--project={project}", "--reporter=list,json"]
+        if shard:
+            command.append(f"--shard={shard}")
         result = subprocess.run(
-            [npx, "playwright", "test", f"--project={project}", "--reporter=list,json"],
+            command,
             cwd=FRONTEND,
             capture_output=not verbose,
             text=True,
@@ -344,19 +416,26 @@ def run_e2e_stage(project: str):
             print(readable(verdict), flush=True)
         output += "\n" + verdict
         # No report means no tests ran, whatever the exit code says. A stage
-        # that asserts nothing must not pass.
-        ok = result.returncode == 0 and report.is_file()
+        # that asserts nothing must not pass. The count is the same check one
+        # level down, and it is sharding that makes it worth having: `--shard=5/4`
+        # or a `testMatch` that stopped matching writes a perfectly valid report
+        # describing zero tests, and exits 0.
+        ok = result.returncode == 0 and report.is_file() and sum(e2e_counts(report).values()) > 0
         return ok, time.time() - started, output
 
     return run
 
 
-def e2e_verdict(report: Path) -> str:
-    """Timeouts and assertions, counted apart, from a Playwright JSON report."""
+def e2e_results(report: Path) -> tuple[dict[str, int], dict[str, list[str]]] | None:
+    """One walk of a Playwright JSON report: per-status counts, and the titles.
+
+    ``None`` when there is no readable report at all, which the two callers
+    report differently -- a missing report is a *failed* stage, not an empty one.
+    """
     try:
         data = json.loads(report.read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return "e2e: no JSON report was written"
+        return None
     kinds: dict[str, list[str]] = {"timedOut": [], "failed": [], "expected-failure": []}
     counts: dict[str, int] = {}
 
@@ -376,6 +455,23 @@ def e2e_verdict(report: Path) -> str:
 
     for suite in data.get("suites", []):
         walk(suite, [suite.get("title", "")])
+    return counts, kinds
+
+
+def e2e_counts(report: Path) -> dict[str, int]:
+    """How many tests ended in each status. Empty when there is no report."""
+    results = e2e_results(report)
+    return results[0] if results else {}
+
+
+def e2e_verdict(report: Path) -> str:
+    """Timeouts and assertions, counted apart, from a Playwright JSON report."""
+    results = e2e_results(report)
+    if results is None:
+        return "e2e: no JSON report was written"
+    counts, kinds = results
+    if not counts:
+        return "e2e: the report is empty -- no test ran"
     lines = ["e2e: " + ", ".join(f"{n} {k}" for k, n in sorted(counts.items()))]
     if kinds["timedOut"]:
         lines.append("  TIMED OUT (a budget or a busy machine, not an assertion):")
@@ -390,13 +486,27 @@ def e2e_verdict(report: Path) -> str:
 
 
 def frontend_stages(
-    runner: str, quick: bool, coverage: bool = False, e2e: bool = False
+    runner: str,
+    quick: bool,
+    coverage: bool = False,
+    e2e: bool = False,
+    projects: tuple[str, ...] = E2E_PROJECTS,
+    shard: str | None = None,
+    strict: bool = False,
+    want: frozenset[str] = frozenset(GROUPS),
 ) -> list[Stage]:
+    """The frontend half of the gate.
+
+    ``want`` is the set of groups the caller will actually keep, and it is what
+    ``strict`` is measured against: a runner slicing off ``--only e2e`` has no
+    Storybook stage to miss, so a missing browser must fail it for *Playwright*
+    or not at all. Naming the wrong reason is how a strict mode stops being read.
+    """
     # Both runners accept `<runner> run <script>`, and the package's test script
     # goes through vitest, so one spelling works for both.
     stages = [
-        Stage("frontend build", [runner, "run", "build"], cwd=FRONTEND),
-        Stage("frontend lint", [runner, "run", "lint"], cwd=FRONTEND),
+        Stage("frontend build", [runner, "run", "build"], cwd=FRONTEND, group="frontend"),
+        Stage("frontend lint", [runner, "run", "lint"], cwd=FRONTEND, group="frontend"),
     ]
     if coverage and chromium_installed():
         # Every vitest project in ONE process, so the jsdom run and the two
@@ -410,6 +520,7 @@ def frontend_stages(
                 [runner, "run", "test:coverage"],
                 cwd=FRONTEND,
                 slow=True,
+                group="frontend",
             )
         )
     elif coverage:
@@ -422,12 +533,15 @@ def frontend_stages(
                 [runner, "run", "test:coverage", "--", "--project=unit"],
                 cwd=FRONTEND,
                 env={"COVERAGE_FLOORS": "off"},
+                group="frontend",
             )
         )
     else:
         # jsdom only. The stories are a separate vitest project and a separate
         # stage below, so this one keeps meaning exactly what it always meant.
-        stages.append(Stage("frontend tests", [runner, "run", "test"], cwd=FRONTEND))
+        stages.append(
+            Stage("frontend tests", [runner, "run", "test"], cwd=FRONTEND, group="frontend")
+        )
 
     # The static build is pure -- it needs no browser -- so it can always run,
     # and it is what catches a story that no longer compiles.
@@ -438,6 +552,7 @@ def frontend_stages(
                 [runner, "run", "build-storybook"],
                 cwd=FRONTEND,
                 slow=True,
+                group="frontend",
             )
         )
 
@@ -450,6 +565,7 @@ def frontend_stages(
                 [runner, "run", "test:stories"],
                 cwd=FRONTEND,
                 slow=True,
+                group="frontend",
             )
         )
         # The same stories again at a Steam Deck's 1280x800, which is a separate
@@ -467,20 +583,28 @@ def frontend_stages(
                 [runner, "run", "test:stories:handheld"],
                 cwd=FRONTEND,
                 slow=True,
+                group="frontend",
             )
         )
+    elif strict and "frontend" in want:
+        raise StrictSkip("storybook stories need Chromium: npx playwright install chromium")
     else:
         print("SKIP storybook stories: run `npx playwright install chromium` in frontend/\n")
 
     if e2e and chromium_installed():
-        for project in E2E_PROJECTS:
+        for project in projects:
             stages.append(
                 Stage(
-                    f"playwright: {project}",
-                    fn=run_e2e_stage(project),
+                    # The shard is part of the name so a red CI leg says which
+                    # slice it was, and so a developer can re-run just that one.
+                    f"playwright: {project}" + (f" (shard {shard})" if shard else ""),
+                    fn=run_e2e_stage(project, shard),
                     slow=True,
+                    group="e2e",
                 )
             )
+    elif e2e and strict and "e2e" in want:
+        raise StrictSkip("playwright needs Chromium: npx playwright install chromium")
     elif e2e:
         print("SKIP playwright: run `npx playwright install chromium` in frontend/\n")
 
@@ -501,7 +625,11 @@ def readable(text: str) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    # Raw, so the usage block in the module docstring survives `--help` as the
+    # two columns it was written as rather than one reflowed paragraph.
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     parser.add_argument("--quick", action="store_true", help="skip the slow stages")
     parser.add_argument("--no-frontend", action="store_true")
     parser.add_argument("--verbose", action="store_true", help="stream each stage's output")
@@ -515,17 +643,98 @@ def main() -> int:
         action="store_true",
         help="also run the three Playwright projects (needs Chromium; ~40 minutes)",
     )
+    parser.add_argument(
+        "--only",
+        default="",
+        metavar="GROUPS",
+        help="comma-separated stage groups to run: " + ",".join(GROUPS) + " "
+        "(CI fans these out across runners; the default is all of them)",
+    )
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=0,
+        metavar="N",
+        help="run the pytest suites under xdist with N workers (default: serial)",
+    )
+    parser.add_argument(
+        "--e2e-project",
+        action="append",
+        choices=E2E_PROJECTS,
+        dest="e2e_projects",
+        help="limit --e2e to one Playwright project (repeatable)",
+    )
+    parser.add_argument(
+        "--e2e-shard",
+        metavar="I/N",
+        help="Playwright --shard for this run; the JSON report is named per shard",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="every SKIP is a failure -- what CI passes, so a runner missing a "
+        "browser fails the job instead of passing it vacuously",
+    )
     args = parser.parse_args()
 
-    stages = python_stages(args.quick, coverage=args.coverage)
-    if not args.no_frontend:
+    want = set(args.only.split(",")) if args.only else set(GROUPS)
+    unknown = want - set(GROUPS)
+    if unknown:
+        # Not a warning. A typo'd group would otherwise silently run nothing,
+        # which is the failure mode this whole flag exists to make impossible.
+        parser.error(f"unknown stage group(s): {', '.join(sorted(unknown))}")
+    # Asking for an e2e slice is asking for e2e; nobody should have to pass both.
+    if args.e2e_shard or args.e2e_projects or (args.only and "e2e" in want):
+        args.e2e = True
+
+    if args.coverage and sys.version_info >= (3, 12):
+        # sys.monitoring rather than the C trace function: the cards suite went
+        # 222s -> 933s under the old tracer on a runner. `setdefault`, so
+        # COVERAGE_CORE=ctrace still works for anyone bisecting a difference.
+        # Set here rather than in the workflow, so a developer running
+        # `--coverage` gets the same saving and CI stays this script.
+        os.environ.setdefault("COVERAGE_CORE", "sysmon")
+
+    stages = [
+        stage
+        for stage in python_stages(args.quick, coverage=args.coverage, jobs=args.jobs)
+        if stage.group in want
+    ]
+    # Only when something wanted needs it: the `sim` job has no node_modules and
+    # no business probing for them.
+    if not args.no_frontend and want & {"frontend", "e2e"}:
         runner = frontend_runner()
-        if runner is None:
-            print("SKIP frontend: neither bun nor npm is on PATH\n")
-        elif not (FRONTEND / "node_modules").exists():
-            print("SKIP frontend: run `bun install` (or `npm install`) in frontend/ first\n")
-        else:
-            stages += frontend_stages(runner, args.quick, coverage=args.coverage, e2e=args.e2e)
+        try:
+            if runner is None:
+                raise StrictSkip("neither bun nor npm is on PATH")
+            if not (FRONTEND / "node_modules").exists():
+                raise StrictSkip("run `bun install` (or `npm install`) in frontend/ first")
+            stages += [
+                stage
+                for stage in frontend_stages(
+                    runner,
+                    args.quick,
+                    coverage=args.coverage,
+                    e2e=args.e2e,
+                    projects=tuple(args.e2e_projects or E2E_PROJECTS),
+                    shard=args.e2e_shard,
+                    strict=args.strict,
+                    want=frozenset(want),
+                )
+                if stage.group in want
+            ]
+        except StrictSkip as skip:
+            if args.strict:
+                print(f"STRICT: {skip}")
+                return 1
+            print(f"SKIP frontend: {skip}\n")
+
+    if not stages:
+        # The point of the whole exercise. `--only e2e` on a runner with no
+        # Chromium used to print a SKIP and exit zero, having asserted nothing --
+        # and one silent job in a fan-out of nine is exactly what nobody notices.
+        print("no stages selected -- nothing was verified")
+        return 1
 
     print(f"Commander Blitz verification - {len(stages)} stages\n")
     total = 0.0
@@ -546,6 +755,8 @@ def main() -> int:
     print(f"\nAll {len(stages)} stages passed in {total:.1f}s.")
     if args.quick:
         print("(--quick skipped the arena and the training tests)")
+    elif args.only:
+        print(f"(--only {args.only}: this was one slice of the gate, not all of it)")
     else:
         # Informational, never a failing stage: the suite counts in
         # `docs/testing.md` drifted twice between two audits (TECH_DEBT SD-01).

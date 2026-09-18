@@ -17,117 +17,186 @@ concurrency:
 env:
   IMAGE_NAME: ghcr.io/tylergauntlett/auto-mtg # GHCR paths must be lowercase.
 
+# `scripts/verify.py` is still the whole gate and still the thing a developer
+# runs; what changed is that its stage groups are dealt out across runners
+# instead of being walked end to end twice. `--only` names the slice, `--strict`
+# makes a stage that skips itself fail instead, and `gate` below is the one
+# check that says whether all of it passed.
 jobs:
-  verify:
-    name: scripts/verify.py
+  # The front door, and deliberately cheap. `cancel-in-progress` means a
+  # superseded pull request pays for whatever was running: before this split
+  # that was one job, and nine concurrent runners would have been ~9x the bill
+  # for a push that was already obsolete. ~2 minutes buys that back.
+  lint:
+    name: lint and card data
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1 # .git is ~130MB; no stage reads history.
+      - uses: ./.github/actions/setup
+      - run: python scripts/verify.py --only lint --strict --verbose
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: pyproject.toml
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install Python package
-        run: pip install -e ".[dev]"
-
-      # Not optional. verify.py prints "SKIP frontend" and *exits zero* when
-      # frontend/node_modules is missing, so without this the build, lint,
-      # vitest and storybook stages would all pass vacuously.
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      # The same trap a second time: the "storybook stories" stage skips itself
-      # unless a chromium build is present, because the stories need a real
-      # layout engine. Installing it here is what makes that stage mean anything.
-      - name: Install Chromium for the story tests
-        working-directory: frontend
-        run: npx playwright install --with-deps chromium
-
-      # Runs every stage: ruff, deck legality, the card index check, the four
-      # pytest suites, the 120-game arena, a live uvicorn playing full games at
-      # 2p and 4p, then the frontend build/lint/test and the storybook pair.
-      - name: Verify
-        run: python scripts/verify.py --verbose
-
-  # The slow half of the gate: coverage floors and the three Playwright
-  # projects. Pull requests only, and it does not gate the deploy -- `build`
-  # needs `verify`, not this -- because together these are ~40 minutes that a
-  # push to main should not wait on twice. `scripts/verify.py --coverage --e2e`
-  # is the same thing on a developer's machine.
-  verify-slow:
-    name: coverage floors and Playwright
-    needs: verify
-    if: github.event_name == 'pull_request'
+  python:
+    name: python suites + coverage floor
+    needs: lint
     runs-on: ubuntu-latest
-    # Measured 2026-09-05: the four suites under coverage take ~32 minutes on
-    # a developer machine and the three Playwright projects ~35 more.
-    timeout-minutes: 120
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: pip
-          cache-dependency-path: pyproject.toml
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install Python package
-        run: pip install -e ".[dev]"
-
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm ci
-
-      - name: Install Chromium for the stories and the e2e suite
-        working-directory: frontend
-        run: npx playwright install --with-deps chromium
-
-      # `--quick` skips the arena and the live server, which `verify` already
-      # ran on this same SHA; what this job adds is the coverage floors over
-      # every suite and the Playwright projects at all three viewports.
-      - name: Verify with coverage and e2e
-        run: python scripts/verify.py --quick --coverage --e2e --verbose
-
-      # Failures only, and short-lived: the traces and reports are for debugging
-      # a red run, and every green run's upload used to sit for the 90-day
-      # default until the repo hit its Actions storage quota.
-      - name: Keep the reports
-        if: failure()
+      - uses: ./.github/actions/setup
+      # `--coverage` on every event now, not just pull requests: sysmon (which
+      # the 3.13 bump bought) makes the floors nearly free, so a push to main
+      # holds them too. `--jobs 2` is the runner's core count.
+      - run: python scripts/verify.py --only pytest --coverage --jobs 2 --strict --verbose
+      - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: slow-gate-reports
+          name: coverage-data
           if-no-files-found: ignore
           retention-days: 3
-          path: |
-            frontend/e2e-report
-            frontend/test-results
-            frontend/coverage
-            .coverage
+          path: .coverage
+
+  # The two stages that play whole games. No Node at all -- this job never
+  # touches frontend/ -- which is why `--only sim` must not probe for it.
+  sim:
+    name: arena and live server
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup
+      - run: python scripts/verify.py --only sim --strict --verbose
+
+  frontend:
+    name: frontend, stories and coverage floors
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup
+        with:
+          node: "true"
+          chromium: "true" # the coverage stage runs both story projects in a real browser
+      - run: python scripts/verify.py --only frontend --coverage --strict --verbose
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          if-no-files-found: ignore
+          retention-days: 3
+          path: frontend/coverage
+
+  # Pull requests only, as before: ~30 minutes of browser that a push to main
+  # should not wait on, having already run it on the pull request that became
+  # the merge. Sharded across runners rather than parallelised on one, because
+  # `workers` must stay at 1 -- see run_e2e_stage in scripts/verify.py.
+  e2e:
+    name: playwright ${{ matrix.project }} ${{ matrix.shard }}/${{ matrix.shards }}
+    needs: lint
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      # One shard's failure must not hide the rest: the verdict worth having is
+      # which specs failed, not which shard reached the failure first.
+      fail-fast: false
+      matrix:
+        # Five, not four. Playwright balances shards by test COUNT and keeps a
+        # file's tests together, and the big specs (pod, cycle3, action-panel)
+        # are lumpy enough that `--shard=i/4` leaves one leg carrying 42 of the
+        # 125 tests -- exactly what `i/3` leaves it carrying, so the fourth
+        # runner buys nothing at all. Measured with `--list`, per leg:
+        #   n=3: 42 42 41    n=4: 42 26 40 17    n=5: 28 25 31 24 17
+        # Five puts the longest leg at 31, which is about what the `python` job
+        # takes, and that is the floor worth aiming at -- below it the pull
+        # request waits on something else anyway.
+        #
+        # `shards: 1` on the small projects rather than omitting it, so the run
+        # command, the report name and the artifact name are one shape
+        # everywhere. Playwright accepts --shard=1/1.
+        include:
+          - { project: chromium, shard: 1, shards: 5 }
+          - { project: chromium, shard: 2, shards: 5 }
+          - { project: chromium, shard: 3, shards: 5 }
+          - { project: chromium, shard: 4, shards: 5 }
+          - { project: chromium, shard: 5, shards: 5 }
+          - { project: handheld, shard: 1, shards: 1 }
+          - { project: deckfit, shard: 1, shards: 1 }
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: ./.github/actions/setup
+        with:
+          node: "true"
+          chromium: "true"
+      - run: >
+          python scripts/verify.py --only e2e
+          --e2e-project ${{ matrix.project }}
+          --e2e-shard ${{ matrix.shard }}/${{ matrix.shards }}
+          --strict --verbose
+      # Failures only, and short-lived: traces and videos are for debugging a red
+      # run, and every green run's upload used to sit for the 90-day default
+      # until the repo hit its Actions storage quota. The name must be unique per
+      # leg -- v4 rejects a duplicate -- and may not contain a slash.
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ matrix.project }}-${{ matrix.shard }}of${{ matrix.shards }}
+          if-no-files-found: ignore
+          retention-days: 3
+          path: frontend/test-results
+
+  # The one check that means "the gate passed", and the only one `build` needs.
+  gate:
+    name: verify gate
+    # `always()`, not `!cancelled()`: a skipped job counts as *passing* to branch
+    # protection, so this must run and judge even when an upstream job was
+    # cancelled -- otherwise a cancelled run is indistinguishable from a green one.
+    if: always()
+    needs: [lint, python, sim, frontend, e2e]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Every required job is green
+        env:
+          LINT: ${{ needs.lint.result }}
+          PY: ${{ needs.python.result }}
+          SIM: ${{ needs.sim.result }}
+          FE: ${{ needs.frontend.result }}
+          E2E: ${{ needs.e2e.result }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          echo "lint=$LINT python=$PY sim=$SIM frontend=$FE e2e=$E2E event=$EVENT"
+          fail=0
+          # Compared against the literal "success", so cancelled, failure and an
+          # unexpected skip are all red. `needs.e2e.result` is already the
+          # aggregate over the matrix: one bad shard fails it.
+          for pair in "lint:$LINT" "python:$PY" "sim:$SIM" "frontend:$FE"; do
+            [ "${pair#*:}" = success ] || { echo "${pair%%:*} reported ${pair#*:}"; fail=1; }
+          done
+          # e2e is pull-request-only, so a skip is correct there and only there.
+          if [ "$EVENT" = pull_request ] && [ "$E2E" != success ]; then
+            echo "e2e reported $E2E"; fail=1
+          elif [ "$EVENT" != pull_request ] && [ "$E2E" != skipped ]; then
+            echo "e2e should not have run on $EVENT (reported $E2E)"; fail=1
+          fi
+          exit $fail
 
   build:
     name: build and push image
-    needs: verify
+    needs: gate
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30

@@ -58,8 +58,8 @@ python scripts/verify.py --e2e        # the three Playwright projects, after the
 ```
 
 Both are off by default because each costs tens of minutes, and both run on every
-pull request in the `verify-slow` job of `.github/workflows/deploy.yml` (which does
-not gate the deploy; `verify` does).
+pull request — split across runners rather than in one job. See **How CI slices
+this** below.
 
 `--coverage` appends the four Python suites into one data file and holds the floor
 **once**, at the end, over all of them — no single suite can reach it alone, which is
@@ -82,6 +82,56 @@ stage also hands its own interpreter to `playwright.config.ts` as `PYTHON`, beca
 has no `.venv` for the config's default path to find.
 
 Playwright's own suite can still be invoked directly (`cd frontend && npx playwright test`).
+
+### How CI slices this
+
+The gate is one script and nine jobs. `.github/workflows/deploy.yml` runs
+`verify.py` once per runner with `--only`, and a final `gate` job is the single
+check that says whether all of it passed:
+
+| job | slice | why it is its own runner |
+|---|---|---|
+| `lint` | `--only lint` | ~2 minutes in front of everything, so a superseded pull request wastes one runner and not nine — `cancel-in-progress` bills what was running |
+| `python` | `--only pytest --coverage --jobs 2` | the four suites and the 92% floor, under xdist |
+| `sim` | `--only sim` | the arena and the live server; no Node on the box at all |
+| `frontend` | `--only frontend --coverage` | build, lint, and the one vitest process that merges jsdom with both story projects |
+| `e2e` | `--only e2e --e2e-project P --e2e-shard i/n` | seven legs: chromium sharded five ways, plus handheld and deckfit |
+
+**Sharding is the only parallelism this suite tolerates.** `workers` stays at 1 in
+`playwright.config.ts` because the app's motion is frame-driven and the runner
+draws ~11 fps under tracing, so a second worker on the same box produces timeouts
+rather than speed. `--shard` partitions the test list *before* the run, so a
+second *box* costs nothing: each leg boots its own uvicorn and vite, and the
+server holds games in process memory, so there is no state to share.
+
+**The e2e reports are per shard.** `--e2e-shard 2/4` writes
+`frontend/test-results/e2e-chromium-2of4.json`, because a shard whose report
+landed on a sibling's would have the verdict read for the wrong run. The stage
+also counts the tests in that report and fails a slice that ran none: `--shard=5/4`
+writes a valid report describing zero tests and exits 0, which the older
+"did a report appear?" check would have passed. Summing the four chromium shards
+is therefore the check worth making after touching any of this — they must add up
+to the whole project.
+
+Every job passes `--strict`, which turns the three self-skips (no npm/bun, no
+`node_modules`, no Chromium) into failures. A skip that exits zero is right on a
+fresh clone and wrong on a runner, and one silent job out of nine is exactly what
+nobody notices.
+
+Two things about this are known and deliberately left alone:
+
+- **Shards are balanced by test count, not duration**, and Playwright keeps a
+  file's tests together, so the big specs (`pod`, `cycle3`, `action-panel`) make
+  the split lumpy. `--shard=i/4` left one leg carrying 42 of the 125 chromium
+  tests — the same long pole `i/3` leaves, so the fourth runner bought nothing.
+  Five legs put the longest at 31. Re-measure with
+  `npx playwright test --project=chromium --shard=i/n --list` after adding specs;
+  it costs nothing, because `--list` runs no tests.
+- **`E2E_SLOW=2` is now headroom rather than necessity.** It doubles every budget
+  because the suite used to run after two Storybook browsers on the same box; on a
+  dedicated runner it no longer does. Lowering it is a separate change, made and
+  observed on its own — FT-06's timeout class is not something to debug alongside
+  a CI restructure.
 
 It runs as **two projects at two viewports**, and the split is the safety
 argument for the handheld work rather than a convenience:
