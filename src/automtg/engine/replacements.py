@@ -38,7 +38,7 @@ from typing import TYPE_CHECKING, Any
 from .carddef import Cost
 from .enums import Zone
 from .events import EventType
-from .player_statics import draw_replacements
+from .player_statics import draw_replacements, wins_on_empty_draw
 from .primitives import discard_cards, draw_cards, mill_cards
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -84,6 +84,27 @@ def _draw_one(
     replaced = yield from _dredge(state, pid)
     if replaced:
         return []
+    # "If you would draw a card while your library has no cards in it, you win
+    # the game instead" (Jace, Wielder of Mysteries; Laboratory Maniac). The one
+    # branch `replace_draw` can never reach, because there is no card to
+    # multiply. Checked **before** the doublers deliberately: a doubler turns
+    # one draw into two draws and each is offered this replacement in turn, so
+    # an empty library wins on the first of them rather than after both have
+    # tried and failed.
+    #
+    # Replacing the draw is the whole of it -- `draw_cards` is never called, so
+    # the 104.3c "will lose" flag it sets is never set and the state-based
+    # action that would eliminate this player never fires. An implementation
+    # that let the draw happen and won afterwards would lose the race: `sba`
+    # checks the flag at the next opportunity, which is before anything a
+    # trigger could do.
+    if not state.players[pid].library and wins_on_empty_draw(state, pid):
+        # Deferred like `_dredge`'s imports below: `sba` imports `primitives`,
+        # which this module also imports, so the edge only closes at call time.
+        from .sba import declare_win
+
+        declare_win(state, pid)
+        return []
     for source, multiplier in draw_replacements(state, pid):
         if source in applied:
             continue
@@ -101,9 +122,14 @@ def _draw_one(
 
 
 def discard(
-    state: GameState, pid: int, oids: Sequence[int]
+    state: GameState, pid: int, oids: Sequence[int], *, caused_by: int | None = None
 ) -> Generator[Any, list[int], list[int]]:
-    """Discard these cards, sending any with madness to exile and offering the cast."""
+    """Discard these cards, sending any with madness to exile and offering the cast.
+
+    ``caused_by`` is passed through to `discard_cards`: the controller of the
+    spell or ability that caused the discard, or ``None`` for the cleanup step
+    and for a discard paid as a cost. See that function.
+    """
     ordinary: list[int] = []
     for oid in oids:
         obj = state.objects.get(oid)
@@ -114,7 +140,7 @@ def discard(
             ordinary.append(oid)
             continue
         yield from _madness(state, pid, oid)
-    return discard_cards(state, pid, ordinary)
+    return discard_cards(state, pid, ordinary, caused_by=caused_by)
 
 
 # ----------------------------------------------------------------------

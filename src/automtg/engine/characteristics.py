@@ -1291,6 +1291,15 @@ def _matches_printed(
     supertypes = selector.get("supertypes")
     if supertypes and not set(supertypes).issubset(card.supertypes):
         return False
+    # "**Nonbasic** lands don't untap during their controllers' untap steps"
+    # (Back to Basics). The negated form, which the effect-side selector
+    # language always had and the static one did not -- the same asymmetry
+    # `not_keywords` above was added to close. A complement over `types` is not
+    # a spelling of it: `not_types: ["Land"]` is every permanent that is not a
+    # land, which is the opposite set.
+    not_supertypes = selector.get("not_supertypes")
+    if not_supertypes and set(not_supertypes) & set(card.supertypes):
+        return False
     colors = selector.get("colors")
     if colors and not (set(colors) & card.colors):
         return False
@@ -1781,3 +1790,41 @@ from .player_statics import (  # noqa: F401
     token_creation_replacements,
     untap_also,
 )
+
+
+def loyalty_activation_timing_waived(state: GameState, oid: int) -> bool:
+    """May this permanent's loyalty abilities be activated at instant speed?
+
+    "You may activate loyalty abilities of Teferi on any player's turn any time
+    you could cast an instant" -- Teferi, Master of Time. The
+    `activate_loyalty_as_though_instant` static, whose `affects` says whose
+    loyalty abilities are freed (``{"self_only": true}`` on this card, which is
+    the printed "of Teferi").
+
+    Read in `legality._ability_aims`, which refuses an ability outright when
+    `ability.sorcery_speed_only and not sorcery_speed`. Sorcery speed is forced
+    on for every loyalty ability by the loader -- ``sorcery_speed_only =
+    model.sorcery_speed_only or cost.loyalty is not None`` -- so writing
+    ``sorcery_speed_only: false`` on the card is swallowed by the `or` and there
+    was no authorable way to reach the flag at all. The permission had to arrive
+    from the board instead.
+
+    **Only the window moves.** 606.3 is two rules, and this line lifts one of
+    them: a loyalty ability is still one per permanent per turn, which
+    `_ability_aims` checks separately and which is not waived here. A waiver
+    that took both would be three cards' worth of Teferi every turn.
+
+    Named for loyalty rather than for abilities in general, because that is the
+    half that can be answered exactly. Leonin Shikari's "you may activate equip
+    abilities any time you could cast an instant" wants the same seam pointed at
+    equip, and nothing on `Ability` marks an equip ability yet -- so it stays a
+    gap rather than becoming a word that half means it.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    return any(
+        static.get("effect") == "activate_loyalty_as_though_instant"
+        and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _battlefield_statics(state)
+    )

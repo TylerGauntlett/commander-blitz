@@ -1,0 +1,53 @@
+{
+  "card": {
+    "id": "cloudstone_curio",
+    "name": "Cloudstone Curio",
+    "oracle_text": "Whenever a nonartifact permanent you control enters, you may return another permanent you control that shares a permanent type with it to its owner's hand.",
+    "mana_cost": "{3}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a nonartifact permanent you control enters, you may return another permanent you control that shares a permanent type with it to its owner's hand.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "not_types": [
+              "Artifact"
+            ]
+          }
+        },
+        "effects": [
+          {
+            "op": "may",
+            "effects": [
+              {
+                "op": "return_to_hand",
+                "objects": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "shares_permanent_type_with": "subject",
+                  "exclude_binding": "subject",
+                  "count": 1,
+                  "chooser": "controller"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

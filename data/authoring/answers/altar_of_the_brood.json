@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "altar_of_the_brood",
+    "name": "Altar of the Brood",
+    "oracle_text": "Whenever another permanent you control enters, each opponent mills a card.",
+    "mana_cost": "{1}",
+    "types": [
+      "Artifact"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever another permanent you control enters, each opponent mills a card.",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "exclude_self": true
+          }
+        },
+        "effects": [
+          {
+            "op": "mill",
+            "player": "each_opponent",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

@@ -251,7 +251,7 @@ def validate_deck(deck: DeckList, registry: CardRegistry) -> list[str]:
                 f"{card_id!r} identity {sorted(card.color_identity)} "
                 f"is outside {sorted(identity)}"
             )
-        if qty > 1 and not card.is_basic:
+        if qty > 1 and not (card.is_basic or card.any_number_in_deck):
             problems.append(f"{card_id!r} appears {qty} times but is not a basic land")
         if card.is_token:
             problems.append(f"{card_id!r} is a token and cannot be in a deck")

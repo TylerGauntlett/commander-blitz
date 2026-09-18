@@ -604,6 +604,27 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # seat and the usual vocabulary is available.
         _validate_player_spec(effect["chooser"], f"{where}.chooser", target_kinds)
 
+    if op == "repeat_while":
+        # Both halves are load-bearing and each has a distinct silent failure.
+        # Without `condition` the loop runs to its hundred-iteration guard every
+        # time; without `effects` it is a hundred passes of nothing. Neither
+        # crashes, and both read on the card as the printed sentence.
+        validate_condition(effect.get("condition"), f"{where}.condition")
+        if effect.get("condition") is None:
+            raise DslError(
+                f"{where}: repeat_while needs a 'condition' -- it is re-read after "
+                f"each pass, and without one the loop only ever stops at the guard"
+            )
+        if not effect.get("effects"):
+            raise DslError(f"{where}: repeat_while needs 'effects' to repeat")
+        reset = effect.get("reset")
+        if reset is not None and (
+            not isinstance(reset, list) or not all(isinstance(n, str) for n in reset)
+        ):
+            raise DslError(
+                f"{where}.reset: a list of binding names to clear before each pass"
+            )
+
     if op == "may" and "pay" in effect:
         # "You may pay {2}. If you do, draw a card." Validated through the same
         # CostModel an activated ability's cost uses, so an unknown key here is a

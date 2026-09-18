@@ -39,7 +39,11 @@ class TestDecksAreLegal:
     def test_singleton_except_basic_lands(self, deck_id, decks, real_registry):
         for card_id, qty in decks[deck_id].cards:
             if qty > 1:
-                assert real_registry.get(card_id).is_basic, (
+                card = real_registry.get(card_id)
+                # 903.5b exempts basic lands, and a card whose own text says so
+                # (Persistent Petitioners). Asked with the same predicate
+                # `validate_deck` uses, so the two cannot drift apart.
+                assert card.is_basic or card.any_number_in_deck, (
                     f"{deck_id}: {card_id} appears {qty} times but is not a basic land"
                 )
 

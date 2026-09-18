@@ -143,7 +143,12 @@ def op_discard(ctx: EffectContext, spec: Mapping[str, Any]):
             floor = 0 if up_to else take
             picked = yield from ask_objects(ctx, "Discard", hand, floor, take, pid, "discard")
         taken.extend(picked)
-        yield from _replacements().discard(ctx.state, pid, picked)
+        # Both discard ops are reached only from a resolving spell or ability,
+        # so the controller of that spell or ability is what "a spell or ability
+        # an opponent controls causes you to discard" is about. The cleanup step
+        # and a discard paid as a cost do not come through here, and stay
+        # uncaused.
+        yield from _replacements().discard(ctx.state, pid, picked, caused_by=ctx.controller)
     if name:
         ctx.bindings[str(name)] = taken
 
@@ -1090,7 +1095,12 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
             if (card := ctx.state.objects.get(o)) is not None
             and not ctx.state.card_of(card).is_land
         )
-        yield from _replacements().discard(ctx.state, pid, picked)
+        # Both discard ops are reached only from a resolving spell or ability,
+        # so the controller of that spell or ability is what "a spell or ability
+        # an opponent controls causes you to discard" is about. The cleanup step
+        # and a discard paid as a cost do not come through here, and stay
+        # uncaused.
+        yield from _replacements().discard(ctx.state, pid, picked, caused_by=ctx.controller)
         add_counters(ctx.state, oid, PLUS_ONE, nonland, source=ctx.source_oid)
         ctx.state.emit(
             "connive",

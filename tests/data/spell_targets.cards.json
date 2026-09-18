@@ -1,0 +1,260 @@
+{
+  "_comment": "Shapes for tests/unit/test_spell_targets.py. `t_orvar` is Orvar, the All-Form's second line alone -- no Changeling, no discard trigger -- so the binding can be read on its own. `t_orvar_unconditional` is the near miss the gap record refused to write: the same trigger with no intervening-if and a copy over every permanent you control, which fires on targetless spells and copies something the spell never chose. `t_pump_other` and `t_pump_player` are the spells that do and do not satisfy the clause.",
+  "cards": [
+    {
+      "id": "t_orvar",
+      "name": "Test Orvar",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, if it targets one or more other permanents you control, create a token that's a copy of one of those permanents.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            },
+            "condition": {
+              "exists": {
+                "binding": "spell_targets",
+                "zone": "battlefield",
+                "controller": "you",
+                "exclude_self": true
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "choose_permanents",
+              "as": "chosen",
+              "prompt": "Copy one of the targeted permanents",
+              "objects": {
+                "binding": "spell_targets",
+                "zone": "battlefield",
+                "controller": "you",
+                "exclude_self": true,
+                "count": 1
+              }
+            },
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "binding": "chosen"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_orvar_unconditional",
+      "name": "Test Loose Orvar",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a token that's a copy of a permanent you control.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, create a token that's a copy of a permanent you control.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "choose_permanents",
+              "as": "chosen",
+              "prompt": "Copy a permanent you control",
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "exclude_self": true,
+                "count": 1
+              }
+            },
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "binding": "chosen"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pump_other",
+      "name": "Test Pump Other",
+      "oracle_text": "Target Bear gets +1/+1 until end of turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "subtypes": [
+              "Bear"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "target": "t1",
+          "power": 1,
+          "toughness": 1
+        }
+      ]
+    },
+    {
+      "id": "t_pump_player",
+      "name": "Test Player Bolt",
+      "oracle_text": "Target player gains 1 life.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "count": 1,
+          "selector": {}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": {
+            "target": "t1"
+          },
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_untargeted_gain",
+      "name": "Test Untargeted Gain",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_pump_shapeshifter",
+      "name": "Test Pump Shapeshifter",
+      "oracle_text": "Target Shapeshifter gets +1/+1 until end of turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "subtypes": [
+              "Shapeshifter"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "target": "t1",
+          "power": 1,
+          "toughness": 1
+        }
+      ]
+    }
+  ]
+}

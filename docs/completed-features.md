@@ -13111,3 +13111,612 @@ the cost before the colours are waived.
 graveyard; the strict counterfactual; hybrid pips at one each; the caster's own
 spells untouched; the flag leaving with the permission; a Sol Ring paying
 `{B}{B}`; `{C}` not waived; and the loader cases. Elder Brain is authored.
+
+## `any_number_in_deck` — "A deck can have any number of cards named …"
+
+### Overview
+
+Rule 903.5b says a Commander deck may contain only one of any card with a
+particular English name **other than basic lands**, and then adds "unless that
+card's text says otherwise". Only the basic-land half was read, so a deck built
+on twenty Persistent Petitioners — a legal deck, and an archetype — failed
+construction outright and could not be imported at all.
+
+### The shape
+
+- **`CardDef.any_number_in_deck`** parses the printed sentence and matches the
+  name inside it against the card's **own** name, so Shadowborn Apostle does not
+  license a playset of Relentless Rats and a card that merely quotes another's
+  line receives nothing.
+- **`validate_deck`** asks it beside `is_basic`; `tests/cards/test_deck_legality.py`
+  asks the same predicate rather than its own copy, so the two cannot drift.
+- **`verify._covered`** grows one claimant for the line, and this is the half
+  that actually kept the card out of the pool. The sentence is a
+  *deck-construction* rule read while a deck is built, so once the card is an
+  object in a game there is nothing left for it to do and no ability can
+  honestly carry it — an `AbilityModel` is activated, triggered or static, and
+  this is none of the three. Petitioners failed gate 3 with both of its real
+  lines implemented and verified. The claimant is strict for `bestow`'s and
+  `devoid`'s reason: gated on `any_number_in_deck`, so the words cannot be
+  claimed without the rule standing behind them.
+
+### Not modelled
+
+Nazgûl's "A deck can have **up to nine** cards named Nazgûl" — a different limit
+needing a different answer. Unmatched, it keeps the one-copy default, which
+refuses a legal deck rather than admitting an unbounded one; that is the safe
+direction for a construction check to be incomplete in, and the gate does not
+launder the line either.
+
+### Guarded by
+
+`tests/unit/test_any_number_in_deck.py`: twenty Petitioners legal and the same
+deck with an ordinary card still singleton; the sentence matched against the
+card's own name; basic lands exempt by the rule with no sentence to read; Nazgûl
+unmatched in both the rule and the gate; and the claimant scoped to its own
+line. Persistent Petitioners is authored.
+
+## `skip_untap_step` — "doesn't untap during their controllers' untap steps"
+
+### Overview
+
+Back to Basics, Intruder Alarm, Winter Orb, Mana Vault. `static_effects` carried
+`untap_during_each_untap_step` — the exact inverse, which *adds* untaps — and
+nothing that suppressed one. 145 catalog cards were waiting on it.
+
+### The shape
+
+- **`player_statics.untap_held(state, active_pid)`** returns the oids held down,
+  written directly beside its inverse `untap_also` and read in the same place
+  for the same reason: whether a permanent untaps is a fact about a *set* of
+  permanents at one moment in the turn, and no characteristic carries it.
+- **`primitives.untap_all`** consults it once per step rather than once per
+  permanent — Intruder Alarm on a full board would otherwise make the untap step
+  quadratic.
+- **`not_supertypes`** joins the static filter language so Back to Basics can say
+  "**nonbasic** lands". The negation of `supertypes`, added for `not_keywords`'
+  stated reason: the effect-side selector language always had it and the static
+  one did not. A `not_types` complement is not a spelling of it — that is every
+  permanent which is not a land, the opposite set.
+
+### Why not the two fields that already suppressed untapping
+
+Both are written by resolution rather than printed on a card. `skip_next_untap`
+is a one-shot that `untap_all` spends in the very untap step it skips, so it
+holds Mana Vault for one turn and releases it on the next; `frozen_by` is set by
+the `freeze` op. Both are ops, so the only route from a printed static was to
+invent a `self_enters` trigger for a line that is printed as a static — which
+would sit on the stack, be respondable, and reinstall on every re-entry.
+
+### The three things that would each be a different card
+
+- **Any controller.** Both enchantments say "their controllers' untap steps".
+  `affects` may name `controller: "any"`, as `cant_attack` already does. Intruder
+  Alarm locking only its own side would be a one-sided card rather than the
+  symmetric drawback it is built around.
+- **It must not spend `skip_next_untap`.** `untap_all` checks the held set
+  *first*, so a static already covering a permanent does not burn somebody
+  else's one-shot.
+- **Explicit untaps still work.** Read by the untap step alone, so Mana Vault's
+  upkeep payment untaps it and Intruder Alarm's own "untap all creatures"
+  trigger — the card's entire engine — is unaffected.
+
+### Guarded by
+
+`tests/unit/test_skip_untap_step.py`: the self-lock and its counterfactual; an
+explicit untap still working; the hold ending when the source leaves; an
+opponent's creature held on their own untap step, with the pair that makes it
+mean something; the `not_supertypes` clause, where a basic land must *not* be
+held; and both halves of the `skip_next_untap` interaction.
+
+## `replace_mill` — "they mill twice that many cards instead"
+
+### Overview
+
+Bruvac the Grandiloquent, Fraying Sanity. `static_effects` carried the whole
+`replace_*` family — `replace_draw`, `replace_life_gain`, `replace_life_loss`,
+`replace_token_creation` — and no mill member. `mill` existed only as an effect
+op and as a cost: as something *this card's controller does*, never as an event
+that could be replaced.
+
+### The shape
+
+A player-wide static (`affects_player`, no `affects`) with a required
+`mill_multiplier` of 2 or more, applied in **`primitives.mill_cards`**.
+
+That placement is the capability. `mill_cards` is the one choke point every mill
+goes through — the `mill` op, the `mill` cost, and dredge (702.52a) — so Bruvac
+doubles the mills an *opponent's own* cards cause, which is the entire card. A
+doubling written into `op_mill` would only ever see mills its own controller
+caused, and Bruvac's controller is not the one being milled.
+
+### Why it is not shaped like `replace_draw`
+
+`draw_replacements` returns `(source, multiplier)` pairs and
+`replacements._draw_one` recurses per card with an `applied` set, because 121.2
+makes drawing N cards **N separate draws** and the "except the first one you draw
+in each of your draw steps" exemption moves between them.
+
+701.13a makes milling N cards **one event**. So `mill_multiplier` returns a
+single factor, the mill is replaced once in place by multiplying its count, and
+there is no per-card recursion for 614.5 to guard against. Two doublers are two
+different replacements applying to the same event and compound (616.1) to four —
+the product across sources, each visited once.
+
+### Not modelled
+
+A `mill` trigger event, which is the tempting approximation and a different
+card: it would fire after the cards were already in the graveyard and mill again
+*alongside* rather than *instead*, parting company from the printed card the
+moment anything cares how many cards were milled at once, or the library runs
+short.
+
+### Guarded by
+
+`tests/unit/test_replace_mill.py`: an opponent milling double with its
+counterfactual; the controller **not** doubled (the near miss a player-agnostic
+implementation passes silently); `affects_player: "you"` for Fraying Sanity's
+half; two doublers compounding to 4×; a mill of zero not being an event;
+701.13b's short library milling what is there rather than over-counting; the
+hold ending when the source leaves; and the load-time guards.
+
+## `replace_empty_draw` — "you win the game instead"
+
+### Overview
+
+Jace, Wielder of Mysteries; Laboratory Maniac. The draw-replacement family had
+one member, `replace_draw`, and it is a pure multiplier — the loader requires
+`draw_multiplier` and refuses anything below 2, so no key on it can name a
+different outcome. This is also the one branch that static can never reach:
+there is no card to multiply when the library is empty.
+
+### The shape
+
+A player-wide static with no parameters (`affects_player`, and the loader
+refuses `affects` and `amount` — the replacement has no size), read in
+`replacements._draw_one`.
+
+**It replaces the draw rather than reacting to it**, and that is the whole
+design. `primitives.draw_cards` treats an empty library as an *attempt*: it sets
+the 104.3c "will lose" flag and fires no `DRAW` event at all. A trigger would
+therefore fail twice over — nothing to fire on, and the state-based action would
+eliminate the player at the next check regardless, which comes before anything a
+trigger could do. Replacing means `draw_cards` is never called and the flag is
+never set.
+
+**Checked before the doublers.** A `replace_draw` turns one draw into two, each
+offered this replacement in turn, so an empty library wins on the first of them
+rather than after both have tried and failed.
+
+The win goes through `sba.declare_win`, which eliminates every *other* player
+and lets `check_game_over` draw its own conclusion (104.2a). The engine has one
+writer of a game result and this is not a second one.
+
+### Guarded by
+
+`tests/unit/test_replace_empty_draw.py`: the win, and the ordinary 104.3c loss
+without the static; the "will lose" flag never being set; a non-empty library
+drawing as usual; the win landing on the draw that empties the library; an
+opponent decking being unaffected (the near miss a player-agnostic
+implementation passes silently); the permission ending with its source; and the
+load-time guards.
+
+## `shares_permanent_type_with` — "shares a permanent type with it"
+
+### Overview
+
+Cloudstone Curio. The selector language had two dynamic "shares a … with"
+clauses — `shares_a_type_with` (subtypes) and `shares_a_color_with` (colours) —
+and no card-type member.
+
+### The shape
+
+A selector key taking a binding name, intersecting **`types`** where its sibling
+intersects `subtypes`. Read from derived characteristics on both sides.
+
+A separate key rather than a mode of the subtype one, because the wrong reading
+is *quietly narrower*: written with `shares_a_type_with`, Cloudstone Curio finds
+another Goblin when a Goblin enters and **nothing at all** when a land, a
+typeless artifact, or any permanent without shared creature types enters. That
+card loads clean, prints the right sentence and does a fraction of it.
+
+A literal `types` list cannot stand in: which permanent type matters is decided
+at resolution by whatever just entered.
+
+An intersection, so an artifact creature reaches both the artifacts and the
+creatures (205.2a). Both objects are on the battlefield, where every card type
+is a permanent type (110.4a), so no spell type can appear on either side.
+
+The printed **"another"** is `exclude_binding`, not this clause — a permanent
+shares a type with itself, and without the exclusion the card bounces whatever
+just entered.
+
+### Guarded by
+
+`tests/unit/test_shares_permanent_type.py`: a creature finding creatures and not
+lands; a land finding a land, which is exactly the case the subtype reading gets
+wrong; two creatures with no shared subtype still matching, with a fixture-sanity
+assertion so the test cannot go vacuous; an artifact creature reaching both pools
+and a plain creature not reaching the artifacts; the self-match and its
+exclusion; and an unbound name failing closed.
+
+## `"any"` — "spend this mana only to activate abilities"
+
+### Overview
+
+Cryptic Trilobite; Omen Hawker. `mana_restriction` already carried the
+cast/activate split Secluded Courtyard needed, but every group either half could
+hold was a set of literal card type or subtype **names**:
+`RestrictionGroup.satisfied_by` asks `required <= names`, where `names` is the
+types and subtypes of the source whose ability is being activated. This line
+names no type at all, and there is no name that every source has — so nothing in
+the language could mean it.
+
+### The shape
+
+`"any"` in place of a half's list of groups, compiling to a single **empty**
+`RestrictionGroup` — satisfied for every purpose of that kind, nothing being
+required.
+
+**The restriction lives in the other half.** With no `cast` groups the mana can
+never pay for a spell, and `ManaRestriction` already documented an empty tuple as
+"never". That is the whole of what the printed line forbids, which is why the
+wildcard is not the same thing as no restriction.
+
+**Refused on both halves at once**, which is ordinary mana wearing a restriction,
+and **refused bare**: a bare restriction is the `cast` half, so a bare `"any"`
+would be mana that pays for every spell ever printed and merely declines to
+activate an ability — one keystroke from the line that was meant, and silent.
+
+A word rather than an accepted empty list. `[]` stays a load error, because a
+blank is what a mistake looks like and reading it as "everything" is how a
+strictly better card ships quietly.
+
+### Guarded by
+
+`tests/unit/test_mana_restriction_activate_any.py`: the empty group funding an
+Enchantment, a Land and a Creature sink with the same `{2}` ability — three type
+lines sharing no literal name, which is the argument that no enumeration could
+have stood in — and the empty name set, which no enumeration reaches at all; the
+mana refusing every spell, which is the printed restriction; the payment actually
+happening and the font actually tapping; the solver's three answers from
+`mana_sources`, against `t_unrestricted_font` as the control; the mirror
+`{"cast": "any"}`; and the three load-time guards.
+
+`t_unrestricted_font` is kept as a live card because it is the strictly better
+card this closes — the spelling shipped Omen Hawker and Automated Artificer use
+today, which casts spells their printed lines forbid.
+
+## `cast_as_though_flash` — "any player may cast spells as though they had flash"
+
+### Overview
+
+Tidal Barracuda; Leyline of Anticipation and Vedalken Orrery with
+`affects_player: "you"`. The permissive twin of `cant_cast_spells`, and the first
+static in the engine that widens a **timing** window rather than a zone one.
+
+### The shape
+
+A player-wide static taking `affects_player` ("you" / "opponent" / "any") and an
+optional `condition`, and no `affects` or `amount` — both are load errors, for
+the same reason its twin refuses them: "you may cast **Spirit** spells as though
+they had flash" written with a filter would load clean and hand the permission to
+every spell.
+
+**The seam is `casting._timing_ok`.** It read
+
+    if card.is_instant or Keyword.FLASH.value in card.keywords: return True
+    return sorcery_speed
+
+— printed characteristics and the window, with no `state` and no `pid`, so
+nothing a permanent did could be consulted from it. That is the block three gap
+records recorded. It now takes both.
+
+**Widened there rather than at one cast path**, because every zone a spell can be
+cast from asks that same function: hand, graveyard (flashback, retrace), exile
+(foretell, adventure, plot), a Bolas's Citadel top, and a second face. Twelve call
+sites, one answer. A permission written into the hand loop would pass every
+obvious test and leave the other six at sorcery speed.
+
+**It permits and never compels.** 101.2 still gives a "can't" the last word, so a
+seat under `cant_cast_spells` casts nothing — which is the pairing Tidal Barracuda
+prints on one card, and the reason that card is the right witness.
+
+### Guarded by
+
+`tests/unit/test_cast_as_though_flash.py`: the sorcery-speed baseline as a control
+on both sides (a plain sorcery off-turn, an instant either way); the permission
+lifting the window for a sorcery and a creature spell, on the opponent's turn and
+in a non-main step; the wearing-off when the source leaves; `affects_player`
+separating "you" from "any", in both directions, with the predicate and the action
+list asserted together; the `condition` honoured and un-honoured; the prohibition
+outranking the permission, against the un-locked control; a *granted* `flash`
+keyword still not doing it, which is the near miss; and the three load-time guards.
+
+### Not done
+
+The turn-scoped op form — "you may cast spells this turn as though they had flash"
+(Borne Upon a Wind, Emergence Zone) — which writes this same permission with a
+turn on it. A second capability and a second run; neither card is in the deck this
+was built for.
+
+## `activate_loyalty_as_though_instant` — Teferi's timing line
+
+### Overview
+
+Teferi, Master of Time: "You may activate loyalty abilities of Teferi on any
+player's turn any time you could cast an instant."
+
+### The shape
+
+A static taking `affects` — whose loyalty abilities are freed, in the ordinary
+permanent-filter language, where `{"self_only": true}` is the printed "of Teferi"
+— and an optional `condition`. No `affects_player` and no `amount`; both are load
+errors. `affects` is **required** rather than defaulted to self, because a missing
+filter matches every permanent and would hand the whole table instant-speed
+loyalty in silence.
+
+**It could not be an ability key.** The loader forces sorcery speed on for every
+loyalty ability:
+
+    sorcery_speed_only = model.sorcery_speed_only or (cost is not None and cost.loyalty is not None)
+
+so `sorcery_speed_only: false` written on the card is swallowed by the `or`. There
+is no spelling that reaches the flag, which is why the permission arrives from the
+board instead.
+
+**606.3 is two rules and this lifts one of them.** The window moves; the
+one-loyalty-ability-per-permanent-per-turn limit is a separate check in
+`_ability_aims` and stands. A waiver written as "skip the 606.3 check" rather than
+"skip the timing check" passes every obvious test and quietly turns one
+planeswalker into three cards a turn.
+
+**A different door from `cast_as_though_flash`.** That static widens the *casting*
+window for spells; this one the *activation* window for abilities. Closing either
+leaves the other shut, and neither leaks into the other.
+
+### Guarded by
+
+`tests/unit/test_activate_loyalty_as_though_instant.py`: the sorcery-speed
+baseline on a walker without the line (off-turn and off-main-phase); the
+permission lifting both halves of the window, together and separately; the
+once-per-turn limit still biting, on your turn and theirs; a non-loyalty
+sorcery-speed ability on the same permanent staying refused; the `affects` filter
+actually read — an "orrery" form reaching another permanent's walker, and Teferi's
+`self_only` form not reaching its neighbour — plus the wearing-off; the two
+timing permissions not leaking into one another in either direction; and the four
+load-time guards.
+
+### Not done
+
+Leonin Shikari's "you may activate equip abilities any time you could cast an
+instant" — the same seam pointed at equip. Nothing on `Ability` marks an equip
+ability, so it stays a gap rather than becoming a word that half means it.
+
+## `once_this_turn` — "the next spell you cast this turn"
+
+### Overview
+
+Sea Gate Stormcaller. A third value for a delayed trigger's `duration`, and the
+one :data:`DELAYED_DURATIONS` had already described in the negative:
+
+> The two axes — repeating-or-once, and turn-scoped-or-not — happen to be
+> correlated in both printed cards … a card that separated them would need a
+> third entry here rather than a different reading of these two. That card does
+> not exist in the pool; when it does, this is where it goes.
+
+### The shape
+
+Fires **once**, like `until_it_fires`, and expires at cleanup, like `this_turn`.
+One line of engine: `triggers._arm_delayed` strikes it off as it arms, beside
+`until_it_fires`. The expiry needed nothing — `turn._cleanup_step` keeps only
+`until_it_fires`, so anything else is dropped whether or not it ever fired.
+
+Both existing values are wrong on exactly one axis, and both were **measured in a
+real game** rather than reasoned about:
+
+- `this_turn` re-arms on every matching spell. A kicked Stormcaller copied a
+  second Night's Whisper twice as well — that is a Thousand-Year Storm.
+- `until_it_fires` outlives the turn, because `_cleanup_step`'s retention clause
+  was written for Palace Jailer, whose crown may not move for six turns. A
+  Stormcaller whose controller casts nothing cheap copies a spell on a later turn.
+
+Latching `this_turn` by hand is not a substitute either: `set_turn_flag`'s
+`objects` go through `resolve_pool`, whose `self_only` finds the source only while
+it is on the battlefield, so the latch stops the moment the 2/1 dies and the card
+copies every cheap spell for the rest of the turn.
+
+### Guarded by
+
+`tests/unit/test_delayed_once_this_turn.py`: one firing and not a second; the
+subscription actually struck off the state rather than ignored afterwards; an
+unfired subscription gone by the next turn, and a later spell not firing it; both
+near misses kept as live cards and measured as controls (`this_turn` gaining twice,
+`until_it_fires` gaining on a later turn); the condition-as-filter discriminating in
+both directions, including that a passed-over spell does **not** spend the
+subscription; and the load-time guards, the misspelling among them — a typo falling
+through to the `this_turn` default would silently retime the card.
+
+### Not done
+
+A `filter` on a delayed trigger's `trigger`. `matches_card_filter` reads eight
+clauses off the permanent hosting the ability — `self_only`, `exclude_self`,
+`attached_to`, `haunting`, `encoded_on`, the damage ledger, `controller`, and
+`resolve_chosen_subtypes` — and a delayed ability has no such permanent. A
+`condition` over the `subject` binding expresses the same filter exactly, which is
+what Sea Gate Stormcaller uses and what the tests above pin; the cost is that every
+card of this shape spells its filter as a condition rather than as a filter.
+
+## `two_share_a_color` — "two cards that share a color"
+
+### Overview
+
+Sphinx's Tutelage: "If two nonland cards that share a color were milled this way,
+repeat this process." The colour half of that sentence; the loop is
+`repeat_while`.
+
+### The shape
+
+A condition taking a **pool**, true when any two members' colour sets intersect.
+Pairwise and short-circuiting: the question is whether any two share, not how
+many do.
+
+It is the only colour question in the language that asks about a *relation
+between two cards*. Every other reader is per-object, and each fails differently:
+
+- `colors` / `not_colors` test a member against a colour fixed when the card is
+  written. This card names no colour.
+- `min_colors` counts the colours on a single card, so it answers "was a
+  multicolored card milled".
+- `shares_a_color_with` is the near-namesake and resolves its argument through
+  `_bound_oid`, which reads one oid and returns `None` for a list. A `mill`'s `as`
+  binding is always a list, so the clause matches nothing at all — a card that
+  loads, prints the sentence and never fires.
+- `distinct` is restricted to power and basic land type.
+
+`exists` with a count is the tempting substitute and drops the colour clause
+entirely: "two nonland cards were milled" is true on almost every mill.
+
+Colourless cards share no colour with anything. That falls out of the intersection
+being empty rather than being special-cased, and it is the printed ruling: two
+artifacts do not continue the process.
+
+### Guarded by
+
+`tests/unit/test_two_share_a_color.py`: two greens sharing; green against red and
+green against blue not sharing; both colourless cases; the `not_types` filter
+applied before the pairing, including the one-card-left case; the counting
+spelling kept as a live card and gaining on the exact board where the colour
+clause does not; and the load-time guards, a bare `true` among them.
+
+## `repeat_while` — "repeat this process"
+
+### Overview
+
+Sphinx's Tutelage: "Whenever you draw a card, target opponent mills two cards. If
+two nonland cards that share a color were milled this way, repeat this process."
+The loop half; the colour question is `two_share_a_color`.
+
+### The shape
+
+A **do-while**. The body always runs once — that first mill is what the trigger is
+about — and `condition` is re-read after each pass, because the printed sentence is
+a decision about repeating rather than a guard on starting.
+
+Neither existing loop expresses it. `repeat` evaluates `amount` once, above the
+loop, so the count must be knowable before the body runs, and here there is no
+number to write at all. `may` with `repeat: true` is the language's only other
+unbounded loop and is a *player-choice* loop: it asks the controller yes/no before
+every pass and stops at the first no, and its `condition` only gates whether the
+question is asked. Sphinx's Tutelage never asks anybody, so that spelling is a
+different and strictly weaker card — its controller could decline, and the
+opponent's mill would be optional.
+
+**`reset` is the subtle half.** `mill`'s `as` binding deliberately accumulates
+(`earlier + milled`), because the ops it was built for ask about everything a spell
+milled. Inside a loop that is the wrong question: the second pass would test the
+colour clause over all four cards milled so far, where "milled this way" is per
+repetition. It is cleared before the first pass too, so a binding of the same name
+written earlier in the same resolution cannot leak in.
+
+The hundred-iteration guard is `repeat`'s and `may`'s, for the same reason: one
+pathological board must not hang a game.
+
+### Guarded by
+
+`tests/unit/test_repeat_while.py`: the body running once when the condition is
+false immediately, and when the filter empties the pool; one, two and three passes
+on stacked libraries; the boundary, where a matching pass is followed by a
+non-matching one and the cards below are never reached; the unscoped card kept live
+and milling *more* on the exact board where the scoped one stops, which is the
+accumulating-binding trap measured rather than argued; the guard stopping at a
+hundred against a library deep enough that the deck is not what stops it; and the
+load-time guards for a missing condition, a missing body and a malformed `reset`.
+
+## `spell_targets` — "if it targets one or more other permanents you control"
+
+### Overview
+
+Orvar, the All-Form. A trigger that asks about **another spell's chosen targets**.
+`SPELL_CAST` carried the caster, the spell and its card, and no target information
+at all — so even a new condition key would have had nothing to read.
+
+### The shape
+
+One payload key. `Game._cast` puts the spell's **object** targets on the event and
+`EVENT_BINDING_KEYS` carries them into the trigger's bindings; from there the
+existing language does the rest, which is why no new condition key and no new op
+were needed:
+
+- the intervening-if is `{"exists": {"binding": "spell_targets", …}}`, the same
+  binding-plus-filter shape Sphinx's Tutelage uses over `milled`;
+- the effect points at the same pool, so the token copies a permanent the spell
+  actually chose.
+
+**Both halves are one key, and that is the point.** A condition without the
+binding lets the card copy any permanent you control — a different and much
+stronger card, kept live in the test as the control.
+
+**Object targets only.** A spell aimed at a player has targets that are not
+permanents, and a list mixing seat numbers with oids would be read as oids by
+every consumer: both are `int`, and `_bound_oids` cannot tell them apart.
+
+The printed "**one of** those permanents" is `choose_permanents` followed by
+`copy_permanent` over the resulting binding. `copy_permanent` resolves its pool
+through `resolve_pool`, which is not a generator and so cannot ask a question — a
+`count` inside its own `objects` would silently copy the whole pool.
+
+Two near misses: `{"target": "t1"}` resolves through `ctx.target_oids`, the
+*ability's own* declared targets, so it can never name what somebody else's spell
+chose; and `becomes_target` is per-permanent, so written here it would see only
+spells aimed at Orvar himself.
+
+### Guarded by
+
+`tests/unit/test_spell_targets.py`: a spell targeting your creature making a copy,
+and the copy being of the *right* permanent; an untargeted spell and a
+player-targeting spell doing nothing; the payload holding no player ids; both
+halves of "other permanents you control" — a spell aimed at Orvar himself and one
+aimed at an opponent's creature; and the unconditional spelling kept live, firing
+on a targetless spell where the real card does not.
+
+## `cause_controller` — "when a spell or ability an opponent controls causes you to discard this card"
+
+### Overview
+
+Orvar, the All-Form's third line. A trigger that fires from the **hand**, on the
+card being discarded, and only when somebody else made it happen.
+
+### The shape
+
+`discard_cards` takes a `caused_by` — the controller of the spell or ability that
+caused it — and puts it on the event; `cause_controller` on a `discard` trigger
+reads it. The `DISCARD` event carried the player who *discarded* and nothing about
+who made them, which cannot separate an opponent's Mind Rot from your own
+rummaging, a cost you paid with this very card, or the cleanup-step discard. The
+printed line fires on exactly one of the four.
+
+`controller` is the near miss and asks the other question: `_actor` answers it with
+the discarding player, so `controller: "opponent"` reads "an opponent discarded a
+card".
+
+**`None` is the load-bearing value.** An event nobody caused — the cleanup step, a
+discard paid as a cost — fails the clause in every direction. That is the whole of
+what keeps this from being a card that also fires on its controller's own discards,
+and the unclaused spelling is kept live and measured firing on all of them.
+
+**The trigger is scanned on the discarded card itself**, beside the
+leave-the-battlefield branch and for exactly its reason: `discard_cards` moves the
+card to the graveyard before firing the event, so by the time the walk runs the
+hand no longer holds it and `active_zones: ["hand"]` would match nothing. Scoped by
+the ability declaring that it worked in the hand it was discarded from, so a
+`discard` trigger written for the battlefield or graveyard is not quietly widened.
+
+### Guarded by
+
+`tests/unit/test_forced_discard_trigger.py`: an opponent's Mind Rot firing it; your
+own rummaging not; the cause recorded on the event in both directions, read
+directly so clause and payload cannot drift; an uncaused discard recording `None`
+and not firing the trigger; the unclaused spelling kept live and firing on your own
+discard where the real card does not; and the load-time guards, including the
+refusal on any event but `discard`.

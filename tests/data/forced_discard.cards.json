@@ -1,0 +1,180 @@
+{
+  "_comment": "Shapes for tests/unit/test_forced_discard_trigger.py. `t_forced_orvar` is Orvar, the All-Form's third line alone -- it lives in hand, matches only itself, and fires only when an opponent's spell or ability made you discard it. `t_loose_orvar` drops the `cause_controller` clause, which is the strictly better card the gap record refused to write: it also fires on your own rummaging, on a cost you paid with this very card, and on the cleanup-step discard. `t_mind_rot` is an opponent's forced discard; `t_rummage` is your own.",
+  "cards": [
+    {
+      "id": "t_forced_orvar",
+      "name": "Test Forced Orvar",
+      "oracle_text": "When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When a spell or ability an opponent controls causes you to discard this card, create a token that's a copy of target permanent.",
+          "active_zones": [
+            "hand"
+          ],
+          "trigger": {
+            "event": "discard",
+            "controller": "you",
+            "cause_controller": "opponent",
+            "filter": {
+              "self_only": true
+            }
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_loose_orvar",
+      "name": "Test Loose Forced Orvar",
+      "oracle_text": "When you discard this card, create a token that's a copy of target permanent.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you discard this card, create a token that's a copy of target permanent.",
+          "active_zones": [
+            "hand"
+          ],
+          "trigger": {
+            "event": "discard",
+            "controller": "you",
+            "filter": {
+              "self_only": true
+            }
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "copy_permanent",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_mind_rot",
+      "name": "Test Mind Rot",
+      "oracle_text": "Target opponent discards two cards.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "count": 1,
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": {
+            "target": "t1"
+          },
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_rummage",
+      "name": "Test Rummage",
+      "oracle_text": "You discard two cards.",
+      "mana_cost": "{U}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1282,6 +1282,26 @@ def _covered(card: CardDef, line: str) -> bool:
     # card printing Devoid while carrying colours has not implemented it.
     if stripped.lower().startswith("devoid") and not card.colors:
         return True
+
+    # "A deck can have any number of cards named Persistent Petitioners." is a
+    # *deck-construction* rule (903.5b), not a game rule: it is read by
+    # `validate_deck` while a deck is being built, and by the time the card is
+    # an object in a game it has nothing left to do. So no ability can honestly
+    # claim it -- an AbilityModel is activated, triggered or static, and this is
+    # none of the three -- and Persistent Petitioners failed gate 3 with both of
+    # its real lines implemented and verified.
+    #
+    # Strict like `bestow`'s and `devoid`'s claimants rather than a bare prefix
+    # skip: `CardDef.any_number_in_deck` returns True only when the name inside
+    # the printed sentence is the card's *own* name, so the words cannot be
+    # claimed without the rule standing behind them. A card that merely quotes
+    # another card's sentence still fails the gate, and Nazgul's "A deck can
+    # have up to nine cards named Nazgul" -- a different limit, deliberately
+    # unparsed -- is not laundered through here either.
+    if card.any_number_in_deck and stripped.lower().startswith(
+        "a deck can have any number of cards named"
+    ):
+        return True
     # "12+ | {U}, {T}: Add {U} for each artifact you control." A station
     # striation (721) is claimed only by an ability gated at that very number,
     # and only by its whole text. The loose substring match below would let an

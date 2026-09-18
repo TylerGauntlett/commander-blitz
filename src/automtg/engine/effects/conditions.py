@@ -38,6 +38,15 @@ CONDITION_KEYS = frozenset(
         "any",
         "not",
         "exists",
+        #: "If two nonland cards that **share a color** were milled this way"
+        #: (Sphinx's Tutelage). A relation *between* two members of a pool, and
+        #: the only condition here that is not a property of one object: every
+        #: other colour reader asks about a single card (`colors`/`not_colors`
+        #: against a fixed colour, `min_colors` counting one card's own), and
+        #: `shares_a_color_with` resolves its argument through `_bound_oid`,
+        #: which reads one oid and returns None for the list binding a `mill`
+        #: always writes.
+        "two_share_a_color",
         "zone_is",
         "is_your_turn",
         "kicked",
@@ -135,6 +144,8 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         from .selectors import resolve_pool
 
         return bool(resolve_pool(ctx, cond["exists"]))
+    if "two_share_a_color" in cond:
+        return _two_share_a_color(ctx, cond["two_share_a_color"])
     if "zone_is" in cond:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         return obj is not None and obj.zone.value == cond["zone_is"]
@@ -393,6 +404,11 @@ def validate_condition(cond: Any, where: str) -> None:
         validate_condition(cond["not"], f"{where}.not")
     if "exists" in cond:
         validate_selector(cond["exists"], f"{where}.exists")
+    if "two_share_a_color" in cond:
+        # Validated as the pool it is. A bare `true` here would be a card that
+        # loads, prints "if two nonland cards that share a color were milled
+        # this way" and asks about nothing.
+        validate_selector(cond["two_share_a_color"], f"{where}.two_share_a_color")
     if "cmp" in cond:
         validate_value(cond.get("left"), f"{where}.left")
         validate_value(cond.get("right"), f"{where}.right")
@@ -474,3 +490,49 @@ def validate_condition(cond: Any, where: str) -> None:
             raise DslError(
                 f"{where}.combat_damage_by: every entry must be a subtype name, got {names!r}"
             )
+
+
+def _two_share_a_color(ctx: EffectContext, selector: Mapping[str, Any]) -> bool:
+    """Do any two cards in this pool have a colour in common?
+
+    "If two nonland cards that share a color were milled this way, repeat this
+    process" -- Sphinx's Tutelage. A **relation between two members** of a pool,
+    which is what makes it a condition of its own rather than a selector clause:
+    every other colour reader in the language asks a question about one card.
+    `colors` and `not_colors` test against a colour fixed when the card is
+    written; `min_colors` counts the colours on a single object; and
+    `shares_a_color_with` resolves its argument through `_bound_oid`, which reads
+    one oid and returns ``None`` for a list -- and a `mill`'s `as` binding is
+    always a list, so that clause matches nothing at all when pointed here.
+
+    `exists` with a count is the near miss and drops the colour clause entirely:
+    "two nonland cards were milled" repeats on almost every mill, which is a far
+    longer loop than the card prints.
+
+    Colourless cards share no colour with anything, which falls out of the
+    intersection being empty and is the printed ruling: two colourless cards do
+    not continue the process. Pairwise, and short-circuiting on the first pair
+    found -- the question is whether *any* two share, not how many do.
+
+    Colours are read the way `selectors.matches` reads them, derived on the
+    battlefield and printed anywhere else. The cards this is asked about are in a
+    graveyard, so it is the printed face, which is what "cards ... milled this
+    way" means.
+    """
+    from .selectors import resolve_pool
+
+    seen: list[frozenset[str]] = []
+    for oid in resolve_pool(ctx, selector):
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        if obj.on_battlefield:
+            from ..characteristics import chars
+
+            colors = frozenset(chars(ctx.state, oid).colors)
+        else:
+            colors = frozenset(ctx.state.card_of(obj).colors)
+        if any(colors & other for other in seen):
+            return True
+        seen.append(colors)
+    return False

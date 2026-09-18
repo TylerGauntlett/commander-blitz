@@ -1,0 +1,39 @@
+{
+  "card": {
+    "id": "conjurer_s_bauble",
+    "name": "Conjurer's Bauble",
+    "oracle_text": "{T}, Sacrifice this artifact: Put up to one target card from your graveyard on the bottom of your library. Draw a card.",
+    "mana_cost": "{1}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice this artifact: Put up to one target card from your graveyard on the bottom of your library. Draw a card.",
+        "cost": {
+          "tap": true,
+          "sacrifice": { "zone": "battlefield", "controller": "you", "self_only": true, "count": 1 }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "selector": { "zone": "graveyard", "controller": "you" },
+            "count": 1,
+            "optional": true
+          }
+        ],
+        "effects": [
+          { "op": "put_on_top", "bottom": true, "objects": { "target": "t1" } },
+          { "op": "draw", "player": "you", "amount": { "const": 1 } }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": { "0": 1 }
+  }
+}

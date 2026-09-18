@@ -1,0 +1,192 @@
+{
+  "_comment": "Shapes for tests/unit/test_mana_restriction_activate_any.py. t_trilobite_mana is Cryptic Trilobite's second line: 'Add {C}{C}. Spend this mana only to activate abilities.' t_unrestricted_font is the spelling shipped before the wildcard existed -- the restriction simply omitted -- kept as a live card because it is the strictly better card the wildcard avoids, and the test says so. The three sinks have the same {2} ability and deliberately different type lines: no literal name a restriction group could require is shared by an Enchantment, a Land and a Creature, which is what makes 'any' unfakeable by enumeration.",
+  "cards": [
+    {
+      "id": "t_trilobite_mana",
+      "name": "Test Trilobite Font",
+      "oracle_text": "{T}: Add {C}{C}. Spend this mana only to activate abilities.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}. Spend this mana only to activate abilities.",
+          "cost": {
+            "tap": true
+          },
+          "is_mana_ability": true,
+          "mana_restriction": {
+            "activate": "any"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}{C}",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_unrestricted_font",
+      "name": "Test Unrestricted Font",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}.",
+          "cost": {
+            "tap": true
+          },
+          "is_mana_ability": true,
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}{C}",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cast_any_font",
+      "name": "Test Cast Any Font",
+      "oracle_text": "{T}: Add {C}{C}. Spend this mana only to cast spells.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}. Spend this mana only to cast spells.",
+          "cost": {
+            "tap": true
+          },
+          "is_mana_ability": true,
+          "mana_restriction": {
+            "cast": "any"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}{C}",
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sink_enchantment",
+      "name": "Test Enchantment Sink",
+      "oracle_text": "{2}: You gain 1 life.",
+      "mana_cost": "{1}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: You gain 1 life.",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sink_land",
+      "name": "Test Land Sink",
+      "oracle_text": "{2}: You gain 1 life.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: You gain 1 life.",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_sink_creature",
+      "name": "Test Creature Sink",
+      "oracle_text": "{2}: You gain 1 life.",
+      "mana_cost": "{1}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Crab"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: You gain 1 life.",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_generic_spell",
+      "name": "Test Generic Spell",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "amount": {
+            "const": 1
+          },
+          "player": "you"
+        }
+      ]
+    }
+  ]
+}

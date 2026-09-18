@@ -1,0 +1,58 @@
+{
+  "_comment": "Shapes for tests/unit/test_two_share_a_color.py. `t_color_miller` is Sphinx's Tutelage's clause with a life gain where the repeat will go, so the condition can be read on its own before the loop op exists. `t_any_two_miller` is the near miss the gap record names -- `exists` with a count, which drops the colour clause entirely -- kept as a live card so the difference is measured rather than argued.",
+  "cards": [
+    {
+      "id": "t_color_miller",
+      "name": "Test Colour Miller",
+      "oracle_text": "Target opponent mills two cards. If two nonland cards that share a color were milled this way, you gain 1 life.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+      ],
+      "spell_effects": [
+        {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 2}, "as": "milled"},
+        {
+          "op": "if",
+          "condition": {
+            "two_share_a_color": {"binding": "milled", "not_types": ["Land"]}
+          },
+          "then": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_any_two_miller",
+      "name": "Test Any Two Miller",
+      "oracle_text": "Target opponent mills two cards. If two nonland cards were milled this way, you gain 1 life.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "player", "count": 1, "selector": {"controller": "opponent"}}
+      ],
+      "spell_effects": [
+        {"op": "mill", "player": {"target": "t1"}, "amount": {"const": 2}, "as": "milled"},
+        {
+          "op": "if",
+          "condition": {
+            "cmp": ">=",
+            "left": {"count": {"binding": "milled", "not_types": ["Land"]}},
+            "right": {"const": 2}
+          },
+          "then": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_colorless_rock",
+      "name": "Test Colourless Rock",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"]
+    }
+  ]
+}

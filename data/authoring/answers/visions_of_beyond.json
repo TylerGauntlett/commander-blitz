@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "visions_of_beyond",
+    "name": "Visions of Beyond",
+    "oracle_text": "Draw a card. If a graveyard has twenty or more cards in it, draw three cards instead.",
+    "mana_cost": "{U}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "U"
+    ],
+    "color_identity": [
+      "U"
+    ],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "max_count_of": {
+              "player": "each_player",
+              "objects": {
+                "zone": "graveyard"
+              }
+            }
+          },
+          "right": {
+            "const": 20
+          }
+        },
+        "then": [
+          {
+            "op": "draw",
+            "amount": {
+              "const": 3
+            }
+          }
+        ],
+        "else": [
+          {
+            "op": "draw",
+            "amount": {
+              "const": 1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "graveyard_size": {
+      "0": 3
+    }
+  }
+}

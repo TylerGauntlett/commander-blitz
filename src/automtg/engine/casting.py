@@ -18,7 +18,7 @@ from .costs import (
 )
 from .enums import ActionKind, Keyword, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
-from .player_statics import player_pays_life_for_black
+from .player_statics import player_casts_as_though_flash, player_pays_life_for_black
 from .primitives import sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
@@ -56,7 +56,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # Adventure was gated on the front face's type line would be castable at
         # the wrong speed in one direction or the other.
         out.extend(_second_face_actions(state, pid, oid, card, Zone.HAND, sorcery_speed))
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
@@ -81,7 +81,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # having that much and not on surviving it. A line offered and then
         # unpayable would be an action the engine could not honour.
         affordable = state.players[pid].life >= card.mana_value
-        if not card.is_land and affordable and _timing_ok(card, sorcery_speed):
+        if not card.is_land and affordable and _timing_ok(state, pid, card, sorcery_speed):
             out.extend(
                 _cast_variant(
                     state,
@@ -103,7 +103,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if not obj.on_adventure or obj.owner != pid:
             continue
         card = state.card(oid)
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
@@ -144,7 +144,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # offer it with something on the stack.
         if obj.playable_sorcery_only and not sorcery_speed:
             continue
-        if card.is_land or not _timing_ok(card, sorcery_speed):
+        if card.is_land or not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(
             _cast_options(state, pid, oid, card, extra_generic=0, free=obj.playable_free)
@@ -156,7 +156,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # the printed cost paid in two instalments with the discount thrown in.
     for oid in suspend_mod.foretold_cards(state, pid):
         card = state.card(oid)
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         ft_tuples = enumerate_target_tuples(state, pid, card.targets, oid)
         out.extend(
@@ -199,7 +199,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # face is *offered* rather than a condition on the cast -- there is no
         # hand line to refuse.
         out.extend(_second_face_actions(state, pid, oid, card, Zone.GRAVEYARD, sorcery_speed))
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         # "Once during each of your turns, you may cast an artifact spell from
         # your graveyard" -- Edgar. A permission granted by a *permanent*, so
@@ -257,7 +257,7 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if not obj.is_commander:
             continue
         card = state.card(oid)
-        if not _timing_ok(card, sorcery_speed):
+        if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=commander_cost(state, oid)))
     return out
@@ -289,7 +289,7 @@ def _prepared_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         if card.prepared_face is None:
             continue
         face = state.registry.get(card.prepared_face)
-        if not _timing_ok(face, sorcery_speed):
+        if not _timing_ok(state, pid, face, sorcery_speed):
             continue
         tuples = enumerate_target_tuples(state, pid, face.targets, obj.oid)
         if not tuples:
@@ -327,7 +327,7 @@ def _second_face_actions(
     # would put a land on the stack, which is not a thing that can happen.
     if face.is_land:
         return []
-    if not _timing_ok(face, sorcery_speed):
+    if not _timing_ok(state, pid, face, sorcery_speed):
         return []
     tuples = enumerate_target_tuples(
         state, pid, face.targets, oid, exclude_sid=state.objects[oid].stack_id
@@ -364,10 +364,30 @@ def _second_face_actions(
 SECOND_FACE_ZONES = {"hand": Zone.HAND, "graveyard": Zone.GRAVEYARD}
 
 
-def _timing_ok(card: CardDef, sorcery_speed: bool) -> bool:
+def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -> bool:
+    """May ``pid`` cast this card at the present moment?
+
+    Printed characteristics first, then the sorcery-speed window -- and between
+    them, the one thing on the board that can widen the window: "you may cast
+    spells as though they had flash" (Tidal Barracuda, Leyline of Anticipation,
+    Vedalken Orrery).
+
+    `state` and `pid` are here for that permission alone. Without them this read
+    printed characteristics off the `CardDef` and nothing a permanent did could
+    reach it, which is the block three gap records recorded. Every zone a spell
+    can be cast from asks this same question, so widening it here reaches all of
+    them at once rather than one cast path at a time.
+
+    A permission, not a compulsion: it can only turn a "no" into a "yes" for the
+    *timing* question. Anything that forbids the cast outright -- 101.2's rule
+    that "can't" beats "can", `player_cant_cast_spells`, epic -- is asked
+    elsewhere and is unaffected.
+    """
     if card.is_instant or Keyword.FLASH.value in card.keywords:
         return True
-    return sorcery_speed
+    if sorcery_speed:
+        return True
+    return player_casts_as_though_flash(state, pid)
 
 
 def _cast_options(
