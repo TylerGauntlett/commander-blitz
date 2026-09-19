@@ -1,0 +1,18 @@
+{
+  "card_id": "bear_umbra",
+  "name": "Bear Umbra",
+  "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\"\nUmbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)",
+  "blocked_sentences": [
+    "Umbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)"
+  ],
+  "needs": [
+    {
+      "capability": "umbra_armor",
+      "kind": "keyword",
+      "what": "\"Umbra armor\" recognised as the printed name of the existing totem armor keyword (702.88a), so an Aura carrying keywords: [\"totem_armor\"] claims the printed line. Concretely: a printed-name alias consulted by cards.proxy.lift_keywords / cards.loader.vocabulary.KNOWN_KEYWORDS mapping the printed word \"Umbra armor\" to the Keyword.TOTEM_ARMOR value, the way KNOWN_KEYWORDS already matches every other keyword whose printed word equals its enum value. This affects every Umbra card in the cycle (Bear/Snake/Spider/Hyena/Eel/Mammoth/Boar/Drake/Crab/Indomitable Ancients-style umbras), all of which print \"Umbra armor\" and none of which print \"Totem armor\".",
+      "why_existing_wont_do": "The rules keyword itself is already in the engine: Keyword.TOTEM_ARMOR exists in engine/enums.py and engine/zones.destroy honours it, and the rest of this card verifies clean against it (buff +2/+2, the granted attacks trigger via grantable_abilities + a grant_ability static, expectation target_pt_delta +2/+2 and granted totem_armor). What is missing is purely the printed-word mapping: KNOWN_KEYWORDS is frozenset(k.value for k in Keyword), so lift_keywords case-folds the printed line \"Umbra armor\" to \"umbra_armor\", finds no such member, and verify.claimed_lines leaves the line unclaimed -- gate 3 rejects with \"residual: printed text not represented: Umbra armor\". No ability can claim it instead: an AbilityModel is activated, triggered or static, and totem armor is a keyword replacement read by zones.destroy, not any of the three, so the only way to claim the line today would be to attach the printed text to an ability that does not implement it."
+    }
+  ],
+  "closest_existing": ["totem_armor", "indestructible", "regenerate"],
+  "confidence": "high"
+}

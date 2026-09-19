@@ -1,0 +1,67 @@
+{
+  "card": {
+    "id": "strip_mine",
+    "name": "Strip Mine",
+    "oracle_text": "{T}: Add {C}.\n{T}, Sacrifice this land: Destroy target land.",
+    "mana_cost": "",
+    "types": [
+      "Land"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}, Sacrifice this land: Destroy target land.",
+        "cost": {
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "destroy",
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

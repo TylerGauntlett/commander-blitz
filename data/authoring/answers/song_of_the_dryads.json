@@ -1,0 +1,99 @@
+{
+  "card": {
+    "id": "song_of_the_dryads",
+    "name": "Song of the Dryads",
+    "oracle_text": "Enchant permanent\nEnchanted permanent is a colorless Forest land.",
+    "mana_cost": "{2}{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "subtypes": [
+      "Aura"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "targets": [
+      {
+        "id": "enchanted",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield"
+        }
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {G}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{G}"
+          }
+        ]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Enchanted permanent is a colorless Forest land.",
+        "effect": "set_types",
+        "affects": {
+          "attached": true
+        },
+        "types": [
+          "Land"
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Enchanted permanent is a colorless Forest land.",
+        "effect": "add_subtype",
+        "affects": {
+          "attached": true
+        },
+        "subtypes": [
+          "Forest"
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Enchanted permanent is a colorless Forest land.",
+        "effect": "set_colors",
+        "affects": {
+          "attached": true
+        },
+        "colors": []
+      },
+      {
+        "kind": "static",
+        "text": "Enchanted permanent is a colorless Forest land.",
+        "effect": "lose_all_abilities",
+        "affects": {
+          "attached": true
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Enchanted permanent is a colorless Forest land.",
+        "effect": "grant_ability",
+        "affects": {
+          "attached": true
+        },
+        "ability": 0
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

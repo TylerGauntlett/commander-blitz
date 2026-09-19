@@ -10,38 +10,149 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**24 cards** blocked by **28** capabilities.
+**54 cards** blocked by **61** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
+| [cant-be-countered](#cant-be-countered) | 3 | 114 | engine, static_effect |
+| [attached-tapped-for-mana](#attached-tapped-for-mana) | 2 | 210 | static_effect |
+| [attachment-count](#attachment-count) | 2 | 3190 | selector, value |
+| [becomes-tapped](#becomes-tapped) | 2 | 97 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [delirium](#delirium) | 2 | 362 | value |
+| [fight](#fight) | 2 | 686 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
+| [ability-cost-reduction](#ability-cost-reduction) | 1 | 3190 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
-| [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [battle](#battle) | 1 | 686 | engine |
+| [cant-sacrifice](#cant-sacrifice) | 1 | 4134 | static_effect |
+| [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
+| [choose-permanent-type](#choose-permanent-type) | 1 | 6999 | op, selector |
+| [chosen-color-mana-on-tap](#chosen-color-mana-on-tap) | 1 | 345 | static_effect |
+| [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
+| [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
+| [cost-reduction-total-mana-value](#cost-reduction-total-mana-value) | 1 | 906 | value |
+| [counter-placement-replacement](#counter-placement-replacement) | 1 | 5450 | replacement |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [delirium](#delirium) | 1 | 1799 | value |
+| [delayed-trigger-object-scope](#delayed-trigger-object-scope) | 1 | 1050 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
+| [double-damage](#double-damage) | 1 | 4176 | replacement |
+| [drawn-this-turn](#drawn-this-turn) | 1 | 259 | selector |
+| [enters-as-a-copy](#enters-as-a-copy) | 1 | 1649 | replacement |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
+| [equip](#equip) | 1 | 3190 | engine |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [first-combat-phase](#first-combat-phase) | 1 | 1173 | value |
+| [forest-dryad-token](#forest-dryad-token) | 1 | 4309 | token |
+| [grant-static-ability](#grant-static-ability) | 1 | 3821 | op |
+| [historic](#historic) | 1 | 906 | selector |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [living-weapon](#living-weapon) | 1 | 1044 | token |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
+| [mana-doesnt-empty](#mana-doesnt-empty) | 1 | 6298 | engine |
+| [mana-restriction-supertype](#mana-restriction-supertype) | 1 | 157 | engine |
+| [modified](#modified) | 1 | 2412 | selector |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [mutate](#mutate) | 1 | 3835 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
+| [rename-permanent](#rename-permanent) | 1 | 3821 | op |
+| [search-destination-by-type](#search-destination-by-type) | 1 | 624 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [static-value-multiplier](#static-value-multiplier) | 1 | 12440 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [umbra-armor](#umbra-armor) | 1 | 886 | keyword |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
+| [x-dependent-target](#x-dependent-target) | 1 | 864 | engine |
+
+## cant-be-countered
+
+Blocks **3** cards.
+
+- **(engine)** uncounterability that rides on the mana a restricted mana ability produced -- a flag on the mana ability (beside its `mana_restriction`) saying "a spell this mana helped cast can't be countered", carried through payment onto the spell object and read by the `counter` op. The engine already records which permanents' mana abilities paid for a spell (`objects.py:158` `mana_sources_spent`, written by `costs.py:1577`), so what is missing is a load-time key for the claim and a third arm in `ops_stack._shielded_by_a_static`'s caller (`ops_stack.py:387`) that asks whether any oid in `item.mana_sources_spent` belongs to an ability making it
+  <br>Why the existing vocabulary won't do: The two uncounterable mechanisms in `reference` both decide from printed characteristics alone and neither can see the mana. The card-level rider `uncounterable` (`carddef.py:919`, read at `ops_stack.py:387`) is one card saying it about *itself*, so it cannot cover the creature spell Cavern funds. The static effect `spells_cant_be_countered` is the closest -- it does protect other players' spells and it does take an optional `affects_spells` filter -- but that filter is matched by `_matches_printed(card, filt)` (`ops_stack.py:283`), printed characteristics only, and `static_filter_keys` has no `paid_by` or any other way to ask which permanent's mana was spent. Writing it as `spells_cant_be_countered` with `affects_spells: {"types": ["Creature"], "subtypes": [{"chosen_type_of": "self"}]}` is a strictly better card than the printed one: every creature spell of the chosen type would become uncounterable whether or not Cavern's mana paid for it, and it would leave Cavern's third printed line claimed by two abilities, which the residual gate reads as a line nobody owns. The `paid_by` key that asks exactly this question exists only in *trigger* filters (`triggers.py:1401`), and a trigger cannot stop a counterspell that is already resolving. No op grants it either: `grant_rebound` and `grant_plot` write a flag onto a spell on the stack, but there is no `grant_uncounterable`, and a mana ability may in any case carry only `add_mana`/`choose_mode` plus a rider from {add_counters, add_poison, damage, gain_life, lose_life, remove_counters}, none of which touch the stack.
+- **(engine)** a rider on a restricted mana ability -- e.g. `uncounterable: true` beside `mana_restriction` -- that travels with the mana: a spell any of whose cost was paid with mana from that ability can't be countered. The produced mana must carry the tag through `costs`/`mana` payment into the stack item, and `ops_stack.op_counter` must consult the stack item's paid-with tag alongside the printed `uncounterable` flag and the `spells_cant_be_countered` static
+  <br>Why the existing vocabulary won't do: Uncounterable-ness has exactly two spellings, and neither is conditional on how a spell was paid for. The card-level `uncounterable` boolean (src/automtg/cards/schema.py:759 -> src/automtg/engine/carddef.py:919) is read off the spell's own registry definition by `op_counter` (src/automtg/engine/effects/ops_stack.py:387) -- one card saying it about itself, ungrantable, and it is the wrong card here: the Halfling is not the spell. The `spells_cant_be_countered` static (`_shielded_by_a_static`, ops_stack.py:264) can cover *other* spells and its optional `affects_spells` filter reads printed characteristics, so `{"supertypes": ["Legendary"]}` would load -- and it is a strictly better and differently-worded card: it would protect every legendary spell on the table, including opponents' and including ones cast with no Halfling mana at all, for as long as the Halfling is on the battlefield, where the printed line protects only the one spell this particular mana helped cast. It is also not sayable as written: the clause is the tail of the mana ability's printed sentence, and a separate static would have to claim a printed line the card does not have, which the residual gate rejects. Nothing joins the two: `Payment`/`ManaSource` (src/automtg/engine/mana.py:847) carry a `ManaRestriction` that only *filters which sources may pay*, with no channel back to the resulting stack item, and the mana-ability rider ops (MANA_RIDER_OPS = add_counters, add_poison, damage, gain_life, lose_life, remove_counters) are all on-activation effects that cannot touch a spell cast later.
+- **(static_effect)** a static ability on a permanent that makes *other* spells uncounterable -- a `cant_be_countered` static whose filter picks the spells it protects (here every spell its controller controls), consulted by the `counter` op against the stack item's controller and characteristics rather than against the casting card's own printed flag, so that a spell cast after this creature is already on the battlefield survives being countered
+  <br>Why the existing vocabulary won't do: The engine's only uncounterable-ness is the card-level `uncounterable` boolean (src/automtg/cards/schema.py:577 -> src/automtg/engine/carddef.py:747), which the `counter` op reads straight off the spell's own registry definition (src/automtg/engine/effects/ops_stack.py:253) -- it is a printed property of one card, so it can say line 1 ("This spell can't be countered") and nothing more; it cannot be granted, and there is no filter or controller on it. Nothing in `static_effects` reaches the stack at all: `ward` and `protection` are the closest, and both tax or forbid *targeting* a permanent while leaving countering untouched, and `spell_cost_reduction` is the only static that looks at spells and it only changes their price. As docs/card-dsl.md:9110 says outright, statics do not reach a spell on the stack, so this needs new plumbing in the `counter` op, not a new card field.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cavern of Souls** (rank 114) — `cavern_of_souls`
+  - {T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.
+- **Delighted Halfling** (rank 157) — `delighted_halfling`
+  - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
+- **Hexing Squelcher** (rank 717) — `hexing_squelcher`
+  - Spells you control can't be countered.
+
+</details>
+
+## attached-tapped-for-mana
+
+Blocks **2** cards.
+
+- **(static_effect)** An `attached: true` key on the `add_mana_on_tap` static's `tapped_permanent`, so the triggered mana ability fires only off the permanent this Aura is attached to rather than off every permanent matching a type line. Concretely: add "attached" to `cards/loader/vocabulary.TAPPED_PERMANENT_KEYS` (currently frozenset({"types", "subtypes", "supertypes"}), src/automtg/cards/loader/vocabulary.py:70), accept and validate it in `_validate_add_mana_on_tap` (src/automtg/cards/loader/__init__.py:2053), and honour it in `engine/player_statics.mana_added_on_tap` (src/automtg/engine/player_statics.py:258) by comparing the tapped oid against the static source's `attached_to` before the type/subtype filters. This unblocks the whole Wild Growth / Fertile Ground / Overgrowth / Utopia Sprawl cycle -- every Aura printing "Whenever enchanted land is tapped for mana, its controller adds an additional ..." -- none of which can be said today.
+  <br>Why the existing vocabulary won't do: `add_mana_on_tap` is otherwise exactly this sentence: it is documented in engine/player_statics.mana_added_on_tap as a 605.1b triggered mana ability resolved at the mana choke point without the stack, and `affects_player: "any"` is already the "its controller adds" seat (the docstring names Vernal Bloom's "whenever a Forest is tapped for mana, its controller adds" as its case). What it cannot say is WHICH Forest: `tapped_permanent` may carry only types/subtypes/supertypes, read against the tapped permanent's own characteristics, with no reference to the static's source at all. Writing `{"subtypes": ["Forest"]}` would print Vernal Bloom -- all six Forests in the sandbox and every Forest an opponent controls -- instead of the one land this {G} Aura is attached to, which is the entire cost/power balance of the card, so it is a softening rather than a spelling. The static's optional `condition` cannot recover it either: `static_condition_keys` has `is_attached`, which asks only whether the source is attached to something, not what was tapped -- the tapped permanent is not in scope for a condition. `affects: {"attached": true}`, the ordinary Aura idiom, is refused outright by `_validate_add_mana_on_tap` ("takes 'affects_player', 'tapped_permanent', 'add_mana' and an optional 'condition', and no 'affects' or 'amount'"), because `affects` names a recipient and this static has none. The nearest non-static route is an `ability_activated` trigger with `mana_ability: true` and a filter, and it is wrong twice: it fires on the ACTIVATION of a mana ability rather than on the land being tapped for mana, and, decisively, an ordinary triggered ability queues on the stack and drains at the next priority (see the comment at src/automtg/engine/game.py:1188), so the extra mana would arrive after the spell being paid for -- the precise failure `add_mana_on_tap` exists to avoid. Unrelated to the existing `becomes-tapped` gap (City of Brass), which asks for a stack-using trigger on a permanent becoming tapped for ANY reason; this asks only that an existing mana-time static be able to name its own host.
+- **(static_effect)** Let the existing `add_mana_on_tap` static scope its `tapped_permanent` to the ONE permanent the source is attached to, rather than only to a class of permanent -- i.e. `{"tapped_permanent": {"attached": true}}`, the spelling every other Aura static already uses for "enchanted permanent". Concretely: `TAPPED_PERMANENT_KEYS` (src/automtg/cards/loader/vocabulary.py:66) gains `attached`; `_validate_add_mana_on_tap` (src/automtg/cards/loader/__init__.py:2053) accepts it beside the existing types/subtypes/supertypes and still requires `add_mana`; and `mana_added_on_tap` (src/automtg/engine/player_statics.py:258) checks the tapped `oid` against the static source's attached-to permanent before it runs the characteristic checks, so the two can be combined ("enchanted Forest"). The mana already goes to the player who tapped, which is exactly "its controller adds", so `affects_player: "any"` plus this key says the whole printed line. This one key unblocks the whole aura-ramp family that prints the same sentence -- Wild Growth, Utopia Sprawl, Fertile Ground, Overgrowth, Market Festival, Weirding Wood, Trace of Abundance. Utopia Sprawl needs one more thing on top of it (its added mana is a colour chosen as the Aura entered, which `add_mana` cannot read off the permanent); Wild Growth's fixed {G} needs nothing but this.
+  <br>Why the existing vocabulary won't do: `add_mana_on_tap` is the right effect and is already in the right place: `mana_added_on_tap` (src/automtg/engine/player_statics.py:258) is consulted at the mana choke point from `costs.py:574`, so its mana joins the pool immediately without using the stack, which is what a triggered mana ability must do (605.1b / 605.4a). What it cannot say is WHICH permanent. `TAPPED_PERMANENT_KEYS` is frozen to `{types, subtypes, supertypes}` and is matched against the tapped permanent's current characteristics as a class, and `_validate_add_mana_on_tap` explicitly REFUSES `affects` on this effect ("takes 'affects_player', 'tapped_permanent', 'add_mana' and an optional 'condition', and no 'affects' or 'amount'") -- so `affects: {"attached": true}`, the exact spelling Alexi's Cloak and Arcane Flight use for "enchanted creature", is a load error here. `affects_player` is not a substitute: it narrows WHOSE taps count ("you" for Crypt Ghast, "any" for Vernal Bloom), never which permanent, and its reach is the whole battlefield. The only approximation available, `{"affects_player": "any", "tapped_permanent": {"types": ["Land"]}}`, is Vernal Bloom's card and not this one: in the sandbox it would make all 30 lands each add an additional {G} off a one-mana Aura enchanting exactly one of them. `static_condition_keys`' `is_attached` only asks whether the Aura is attached to something, not what was tapped. `double_land_mana` (Vorinclex) is the other tap-for-mana static and is wrong twice over -- every land its controller taps, and it copies a type that land produced instead of a fixed {G}. The triggered spelling is worse, not merely uglier: `{"event": "ability_activated", "mana_ability": true, "filter": {"attached": true}}` looks exact, but game.py:1209 documents that only the BY-HAND activation path emits it -- the mana abilities the payment solver taps to pay for a spell go through `costs.pay_mana` -> `activate_mana_ability` and emit nothing at all -- so the trigger would be silent in precisely the case the card is played for; and even when it did fire, a triggered ability queues and drains at the next priority (603.3), so the extra {G} would arrive after the spell had already been paid for. It also asks the wrong question (any activation of a mana ability, tapping or not). The `becomes-tapped` gap already on file is a third, separate event: a land becomes tapped by attacking or by an opponent's Icy Manipulator without being tapped for mana, and the solver's auto-tap fires no activation trigger at all, so neither event is the other's substitute. The rest of the card is expressible -- "Enchant land" is the card-level target `{"id": "enchanted", "kind": "permanent", "selector": {"types": ["Land"], "zone": "battlefield"}}` -- but with the only printed ability blocked there is nothing to write a partial answer around.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wild Growth** (rank 210) — `wild_growth`
+  - Whenever enchanted land is tapped for mana, its controller adds an additional {G}.
+- **Utopia Sprawl** (rank 345) — `utopia_sprawl`
+  - Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.
+
+</details>
+
+## attachment-count
+
+Blocks **2** cards.
+
+- **(selector)** a way for a filter to name the permanents attached to a given host -- the Equipment and Auras hanging off the creature this Equipment is itself attached to -- so a static's `condition` can be `{"cmp": ">=", "left": {"count": {"subtypes": ["Equipment"], "attached_to_host": true}}, "right": {"const": 2}}`. Concretely: a `static_filter_keys` entry (and its twin in `selector_keys`) that matches every battlefield object whose `attached_to` equals the SOURCE's `attached_to`, i.e. its fellow attachments, including the source itself so "two or more" counts the printed way. It is board state (`GameObject.attached_to`) like the existing `attached` key, so it is a pipeline input and safe inside a static.
+  <br>Why the existing vocabulary won't do: `attached` is the only attachment word a static filter has and it points the OTHER way: `characteristics._matches` short-circuits `if selector.get("attached"): return obj.oid == source.attached_to`, so it matches exactly one object -- the host this Equipment is stapled to -- which is how "equipped creature has double strike" is written. Combined with `subtypes: ["Equipment"]` it matches the equipped CREATURE and therefore counts 0, never the other Equipment on it. `effects/selectors.py` spells `attached` the same way (`oid not in (source.attached_to, source.last_attached_to)`), so the wider selector language cannot say it either. `is_attached` (in `static_condition_keys`) is a yes/no about the source's own `attached_to`/`attached_to_player` and carries no filter and no count, so it cannot ask how many Equipment share a host; `counters` counts counters, not permanents; and `count`/`exists` in `static_value_keys`/`static_condition_keys` can only be handed a filter built from `static_filter_keys`, which has no key relating one attachment to another. Writing the static with no condition, or with a condition that is merely "this Equipment is attached", would grant double strike off a single Equipment -- a strictly stronger card.
+- **(value)** A static magnitude that counts the Auras and Equipment attached to the permanent the static affects, and scales it (x2 per attachment). Two halves: a static filter key for 'permanents attached to <that object>', and an arithmetic leaf in the static value language so a count can be multiplied
+  <br>Why the existing vocabulary won't do: `static_filter_keys`'s `attached` points the other way -- `characteristics._matches` implements it as `obj.oid == source.attached_to`, i.e. it selects the enchanted creature itself, so a `{"count": {"attached": true, "subtypes": [...]}}` asks how many permanents ARE the enchanted creature (0 or 1), not how many hang off it; there is no `attached_to` key in the static filter list. And `STATIC_VALUE_KEYS` is `const`, `count`, `mana_symbols`, `counters_on`, `permanents_entered_this_turn` plus the per-player life/count leaves -- no `times`, `sum` or `half` (those are effect-side `value_keys` only, and `characteristics._static_value` raises DslError on an unknown leaf), so even a correct count could not become +2/+2 per attachment. Separately, 'Aura and Equipment' is an or-of-subtypes and static `subtypes` is a conjunction, with no `any_subtypes` beside `any_types`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strong Back** (rank 3190) — `strong_back`
+  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
+  - Aura spells you cast that target enchanted creature cost {3} less to cast.
+  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
+- **Brass Knuckles** (rank 4965) — `brass_knuckles`
+  - Equipped creature has double strike as long as two or more Equipment are attached to it.
+
+</details>
+
+## becomes-tapped
+
+Blocks **2** cards.
+
+- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped, for any reason -- paying a tap cost, attacking, or being tapped by another effect -- with the tapped permanent as the source so it can deal the damage
+  <br>Why the existing vocabulary won't do: trigger_events has becomes_untapped but no tapped counterpart, so the exact inverse is simply absent. ability_activated is the nearest reachable substitute and is wrong twice over: it fires on activation of the mana ability rather than on the tap itself, so it would miss every other way the land becomes tapped (attacking, Sunken Ruins-style outside taps) and would still fire on a hypothetical untapped-cost ability that never taps.
+- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped for any reason -- paying a tap cost, being declared as an attacker, or being tapped by another player's effect -- with the newly tapped permanent as the trigger's source, so a granted ability on it can read its power and deal damage from it
+  <br>Why the existing vocabulary won't do: trigger_events carries becomes_untapped but no tapped counterpart, so the exact inverse is simply absent; engine/turn.py's phase_in docstring names a "becomes tapped" trigger only as the thing it is careful not to fire, and nothing emits one. The nearest reachable substitutes are both wrong: ability_activated fires on the activation of a tap-cost ability rather than on the tap, so it misses attacking and every outside tap and fires for untapped-cost abilities that never tap; attacks covers only the combat case and none of the others. This is the same missing event already filed for City of Brass, here needed on a granted ability rather than a printed one.
+
+<details><summary>Cards waiting on this</summary>
+
+- **City of Brass** (rank 97) — `city_of_brass`
+  - Whenever this land becomes tapped, it deals 1 damage to you.
+- **Legolas's Quick Reflexes** (rank 1482) — `legolas_s_quick_reflexes`
+  - Untap target creature. Until end of turn, it gains hexproof, reach, and "Whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature."
+
+</details>
 
 ## cast-as-though-flash
 
@@ -79,6 +190,47 @@ Blocks **2** cards.
 
 </details>
 
+## delirium
+
+Blocks **2** cards.
+
+- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/automtg/cards/loader.py:3169) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
+  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
+- **(value)** a counting leaf for the number of *distinct card types* among the cards in a zone, reachable from an activated ability's `condition` -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool. Unlike Dragon's Rage Channeler's static delirium, this card needs it only in the *effect/condition* value language: an activated ability's `condition` is evaluated through `legality._activation_allowed` -> `effects.conditions.evaluate` -> `evaluate_value`, so a `cmp` of `{"distinct": {"of": "card_type", ...}}` against `{"const": 4}` with `>=` would be the whole restriction, with no `STATIC_VALUE_KEYS` change required. One `DISTINCT_OF` entry therefore closes this card and the many queued `Activate only if there are four or more card types...` / `Whenever this creature attacks, if there are four or more card types...` delirium cards at once; admitting the same leaf to `STATIC_VALUE_KEYS` additionally closes the static half already filed under this slug.
+  <br>Why the existing vocabulary won't do: `count` is the closest leaf and is the wrong measurement: it counts *objects* matching a filter, so four creature cards in the graveyard read 4 and would satisfy a `>= 4` delirium must reject, while an instant, a land, an artifact and a creature also read 4 and pass only by coincidence -- the same distinction `values.py` already spells out for domain. `distinct` is the leaf that counts distinct values, but `DISTINCT_OF` admits only `power` (coven) and `basic_land_type` (domain) and a fourth spelling is a hard load error, so the card-type reading cannot be named at all. `threshold` on an ability is not it either: it is the Station gate (`characteristics.threshold_met`), which reads a *counter* count on the source permanent. Enumerating the clause as `any`-of-`all`-of-`exists` over every 4-subset of the card types is 126 branches, silently wrong when a new type is printed, and an approximation rather than the sentence. The `condition` slot itself is real and unblocked -- `Ability.activation_condition` is honoured by `legality._ability_aims` -- only its magnitude cannot be said.
+
+The rest of the printed line is NOT what blocks this card, and was checked rather than assumed. `become_copy` (src/automtg/engine/effects/ops_removal.py) takes its model from `choose_objects(ctx, spec["copying"])`, and a bare `{"target": "t1"}` selector short-circuits in `selectors.resolve_pool` before any zone default is applied, so a graveyard card *is* a legal copy source; `state.card_of` then reads the model's def id, which a graveyard object carries exactly as a battlefield one does (`copy_permanent` already relies on this for embalm). `card_in_graveyard` is a real target kind (`targeting.py`), and `{"zone": "graveyard", "controller": "you", "not_types": ["Instant", "Sorcery"]}` is how the shipped pool writes "target permanent card in your graveyard" (Sun Titan, data/cards/isperia.cards.json). So the copy half is expressible today and no partial answer was written only because the activation restriction on the same printed line is not.
+
+One adjacent finding for whoever builds this, not filed as a need because the packet's `oracle_text` does not print the clause: the paper card's "…until end of turn, except it's still a land" would need an override key on `become_copy` beyond `except_name`. `become_copy` writes only `obj.copying`, `obj.copying_name` and `obj.copying_until_eot`, and `state.card_of` applies the override to the *name* alone, so a copied creature card would strip the land types and the `{T}: Add {G}` ability with them. `copy_permanent` has the general `except_`/`except` override map, but it makes a new token and cannot alter the land in place.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shifting Woodland** (rank 362) — `shifting_woodland`
+  - Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.
+- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
+  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+
+</details>
+
+## fight
+
+Blocks **2** cards.
+
+- **(op)** A `fight` op naming two creatures (here the spell's two targets) that makes each deal damage equal to its power to the other simultaneously, with 701.12c's all-or-nothing rule: if either creature is an illegal target or has left the battlefield when the spell resolves, neither deals damage. It must cope with an 'up to one' second target, so that with no opponent's creature chosen the fight simply does not happen while the +2/+2 still does.
+  <br>Why the existing vocabulary won't do: `fight` is not in `ops` and no card in the shipped pool prints the word — the mechanic has never been built. The nearest composition is two `damage` ops with `source_object` and `amount: {'power_of': {'target': ...}}`, which is a different card three ways: the damages become sequential, so the second reads a power the first has already changed (wither, deathtouch-plus-pump, any dealt_damage trigger that pumps); the two halves are independent, so when the opponent's creature is an illegal target only that half is skipped instead of both, and this card's own creature would take free damage from a fight that rules-wise never occurred; and nothing binds the pair as one action, so a replacement or prevention effect that reads a fight sees two unrelated damage events. `pump` covers the +2/+2 half exactly, which is why only the fight sentence is recorded here.
+- **(op)** A `fight` op naming two creatures -- here the activated ability's two targets, the first restricted to creatures you control and the second 'another target creature', any controller but not the first -- that makes each deal damage equal to its power to the other simultaneously, as one action, with 701.12c's all-or-nothing rule: if either creature is an illegal target or has left the battlefield as the ability resolves, neither deals damage. Both halves must read power at the same instant, and the pair must be one fight event so that damage replacement, prevention and 'whenever this creature fights' effects see it as such. Ulvenwald Tracker needs the mandatory two-target form; Bridgeworks Battle needs the same op to tolerate an 'up to one' second target.
+  <br>Why the existing vocabulary won't do: `fight` is in neither the packet's `ops` list nor the engine: 119 ops are registered across src/automtg/engine/effects/ops_*.py and none is a fight, and the only two cards in data/generated/cards/pool.cards.json whose oracle text contains 'fights' are this card and Bridgeworks Battle, both sitting there with empty specs. The declaration halves already exist, which is exactly what makes the approximation tempting: a target's `selector` takes `exclude_binding` (src/automtg/engine/effects/selectors.py:562) so 'another' is sayable, and `damage` takes `source_object` plus an `amount` of `{"power_of": {"target": "t1"}}` (src/automtg/engine/effects/values.py:354), so two `damage` ops would load. They would be a different card three ways. The damages become sequential, so the second reads a power the first has already altered -- a dealt_damage trigger that pumps, wither counters, a first-strike-irrelevant deathtouch kill that removes the creature before it strikes back, and the creature that dies to the first damage never deals its own. The two halves are independent, so if the opponent's creature is gone on resolution only that half is skipped and your own creature still takes free damage from a fight that rules-wise never happened -- the reverse of 701.12c. And nothing binds the pair as one action, so anything reading a fight sees two unrelated damage events. `damage` is the closest op and `pump` the closest neighbour for the Bridgeworks half; neither can make one simultaneous exchange.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bridgeworks Battle // Tanglespan Bridgeworks** (rank 686) — `bridgeworks_battle_tanglespan_bridgeworks`
+  - Battle — Siege (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
+  - It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)
+- **Ulvenwald Tracker** (rank 2966) — `ulvenwald_tracker`
+  - {1}{G}, {T}: Target creature you control fights another target creature.
+
+</details>
+
 ## lose-the-game
 
 Blocks **2** cards.
@@ -95,6 +247,22 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
+
+</details>
+
+## ability-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** A battlefield static that discounts the activation cost of activated abilities printed on OTHER permanents, filtered by who activates them and by what the ability is attached/aimed at -- the mirror of `spell_cost_reduction`, but for activated abilities instead of spells
+  <br>Why the existing vocabulary won't do: `spell_cost_reduction` is the only cost-lowering static in `static_effects`, and `player_statics.spell_cost_reduction` is called from `cost_reduction`/`costs` with a CardDef being cast, so it prices spells only. The one reduction that touches an activated ability is `mana_reduction` in `cost_keys`, and `schema.CostModel.mana_reduction` says it is applied by `costs.ability_mana` for 'this cost node' -- it lives inside the ability's own `cost`, so only the card printing the equip ability could discount it, never a different permanent's Aura.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strong Back** (rank 3190) — `strong_back`
+  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
+  - Aura spells you cast that target enchanted creature cost {3} less to cast.
+  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
 
 </details>
 
@@ -126,31 +294,90 @@ Blocks **1** card.
 
 </details>
 
-## becomes-tapped
+## battle
 
 Blocks **1** card.
 
-- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped, for any reason -- paying a tap cost, attacking, or being tapped by another effect -- with the tapped permanent as the source so it can deal the damage
-  <br>Why the existing vocabulary won't do: trigger_events has becomes_untapped but no tapped counterpart, so the exact inverse is simply absent. ability_activated is the nearest reachable substitute and is wrong twice over: it fires on activation of the mana ability rather than on the tap itself, so it would miss every other way the land becomes tapped (attacking, Sunken Ruins-style outside taps) and would still fire on a hypothetical untapped-cost ability that never taps.
+- **(engine)** The Battle card type as a working permanent: a card-level defence number so a battle enters with that many defence counters the way a planeswalker enters with loyalty (614.1c, a loader-written self_enters_with_counters, not a trigger); a protector chosen as it enters, which is an opponent and a third defender kind in the declare-attackers step, so you and the other players may attack the battle; damage dealt to a battle removing defence counters; and the state-based 'defeated' sequence at zero counters — exile the battle, then cast its back face transformed without paying its mana cost. That last step is the only way the printed back half, Tanglespan Bridgeworks, is ever reached, so without it the card is half a card no matter how the front is written.
+  <br>Why the existing vocabulary won't do: The type itself loads — CardType.BATTLE is in engine/enums.py and the 'Siege' subtype maps onto it — and that is precisely the trap, because nothing behind it exists. docs/rules-coverage.md lists 'No loyalty, no defence | Planeswalkers and Battles enter play and then sit there', puts 'battles' under Not implemented with 'Attacking battles' under Combat, and src/automtg/cards/proxy.py:410 records the same ('battles enter play but have no defence or protector here'). No card-level defence field exists anywhere in the reference block; self_enters_with_counters could place counters, but no combat rule removes them and no state-based action watches for zero. The `transform` op is the wrong motion: a defeated Siege is exiled and then *cast* from exile, arriving as a cast spell, where transform turns a permanent over in place — and `back_face` alone gives no event that would ever call it. Writing the front as the packet's starting_point suggests (types: ['Sorcery'], the enters trigger's effect as spell_effects, type_line 'Sorcery // Land') is the approximation to refuse: it silently drops the card type, the defence, the protector, the attackability and the entire back face, since a sorcery has nothing to turn over to and the land becomes unreachable.
 
 <details><summary>Cards waiting on this</summary>
 
-- **City of Brass** (rank 97) — `city_of_brass`
-  - Whenever this land becomes tapped, it deals 1 damage to you.
+- **Bridgeworks Battle // Tanglespan Bridgeworks** (rank 686) — `bridgeworks_battle_tanglespan_bridgeworks`
+  - Battle — Siege (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
+  - It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)
 
 </details>
 
-## cant-be-countered
+## cant-sacrifice
 
 Blocks **1** card.
 
-- **(static_effect)** a static ability on a permanent that makes *other* spells uncounterable -- a `cant_be_countered` static whose filter picks the spells it protects (here every spell its controller controls), consulted by the `counter` op against the stack item's controller and characteristics rather than against the casting card's own printed flag, so that a spell cast after this creature is already on the battlefield survives being countered
-  <br>Why the existing vocabulary won't do: The engine's only uncounterable-ness is the card-level `uncounterable` boolean (src/automtg/cards/schema.py:577 -> src/automtg/engine/carddef.py:747), which the `counter` op reads straight off the spell's own registry definition (src/automtg/engine/effects/ops_stack.py:253) -- it is a printed property of one card, so it can say line 1 ("This spell can't be countered") and nothing more; it cannot be granted, and there is no filter or controller on it. Nothing in `static_effects` reaches the stack at all: `ward` and `protection` are the closest, and both tax or forbid *targeting* a permanent while leaving countering untouched, and `spell_cost_reduction` is the only static that looks at spells and it only changes their price. As docs/card-dsl.md:9110 says outright, statics do not reach a spell on the stack, so this needs new plumbing in the `counter` op, not a new card field.
+- **(static_effect)** a static-ability form of the sacrifice prohibition -- a `cant_sacrifice` entry in `static_effects` taking an `affects` filter (here `{"attached": true}`) and lasting as long as the source is on the battlefield, so the permanents it names cannot be chosen to pay a sacrifice cost or be taken by the `sacrifice` op, with no duration word at all
+  <br>Why the existing vocabulary won't do: `cant_sacrifice` exists only as a one-shot op: the loader requires both `objects` (resolved once, when the effect resolves) and a `duration`, and `this_turn` is the sole implemented duration, so it can express Call for Aid's "this turn" clause but not an Equipment's open-ended "equipped creature ... can't be sacrificed". Putting it in an ability's `effects` would also need something to make the ability fire, and there is no trigger for "becomes attached" in `trigger_events`; an Equipment's continuous grant is a static, and `static_effects` has no sacrifice prohibition of any kind. The near relatives all fail for the reasons the op's own docstring already records: `lock_abilities` stops only the permanent's own activated abilities and says nothing about an outlet elsewhere or about the `sacrifice` op, `replace_deaths` redirects the card after the sacrifice has already been paid for, and `grant_keyword` indestructible is explicitly not a sacrifice prohibition (701.17a).
 
 <details><summary>Cards waiting on this</summary>
 
-- **Hexing Squelcher** (rank 717) — `hexing_squelcher`
-  - Spells you control can't be countered.
+- **Assault Suit** (rank 4134) — `assault_suit`
+  - Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.
+
+</details>
+
+## cast-timing-restriction
+
+Blocks **1** card.
+
+- **(engine)** a card-level field that NARROWS when a spell may be cast to a named set of steps/phases -- e.g. `cast_steps: ["precombat_main", "begin_combat", "declare_attackers", "declare_blockers"]` or a `cast_before_step: "combat_damage"` rider -- read by `_timing_ok` so the cast action is simply not offered outside that window, for either player's turn, from every zone a spell can be cast from. The same field clears the whole printed family already sitting in the queue: "Cast this spell only during combat after blockers are declared" (Fog of Gnats shape), "Cast this spell only during the declare attackers step and only if you've been attacked this turn", and the matching `activate_steps` lines for spells.
+  <br>Why the existing vocabulary won't do: `_timing_ok` (src/automtg/engine/casting.py:367, re-exported by legality.py) is the only gate on casting speed and it can only ever WIDEN: it returns True for `card.is_instant` or a printed `flash`, then for the sorcery-speed window, then for `player_casts_as_though_flash`. Berserk is an Instant, so it returns True at the first line and no board state or card field can pull it back. `activate_steps` (schema.py:390, checked at legality.py:693) is the nearest real thing and is exactly the restriction wanted, but the loader refuses it on anything that is not an ACTIVATED ability (loader/__init__.py:1551) and the cast path never consults it -- it is an ability field, and a spell cast is not an ability activation. `sorcery_speed_only` is the same field's neighbour and is both ability-only and the wrong window (it would forbid casting during combat, which is the half of the turn Berserk is printed for). `cast_during` is a resolution-time CONDITION read off the object's stamped `cast_step` (conditions.py:325) at PHASE granularity -- it cannot see the combat damage step, and wrapping the effects in it would still let the spell be cast at any time and then quietly do nothing, which is the approximation this brief forbids. `split_second` and `uncounterable` are the only card-level riders touching the stack and neither restricts timing. No field on CardModel (schema.py:675-1041) narrows a cast window at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Berserk** (rank 3632) — `berserk`
+  - Cast this spell only before the combat damage step.
+
+</details>
+
+## choose-permanent-type
+
+Blocks **1** card.
+
+- **(op)** a resolution-time choice of one of the six *card* types that are permanent types (110.4a: Artifact, Battle, Creature, Enchantment, Land, Planeswalker), recorded on the resolving object so the effects after it can read it back -- the natural spelling being the existing `choose_type` op taught a second axis (e.g. `{"op": "choose_type", "of": "permanent_type"}`) writing a slot beside `GameObject.chosen_type` (src/automtg/engine/objects.py:672), since the printed clause on this card, on Bitter Ordeal's kin and on every "choose a card type" card (Culling the Weak-style graveyard sweeps, Slaughter Games' relatives) is always a card type and never a creature subtype
+  <br>Why the existing vocabulary won't do: `choose_type` is the closest and asks a different question: `op_choose_type` (src/automtg/engine/effects/ops_control.py:184) builds its option list from `_creature_types(ctx)` -> `CardRegistry.creature_types()` (src/automtg/cards/registry.py:97), which is a survey of every creature **subtype** in the pool -- Elf, Goblin, Sliver -- capped at `MAX_TYPE_CHOICES`. "Artifact" and "Enchantment" are never in that list, so the op cannot offer, and `obj.chosen_type` cannot hold, a permanent type. `choose_color` is the same shape one axis over and offers the five colours. `choose_mode` with one mode per permanent type is an enumeration, not the sentence, and is wrong twice: a spell whose whole effect tree is one top-level `choose_mode` has its modes answered at **cast** by `Game._cast` / 601.2b (documented at ops_control.py:364-376), while this card chooses on resolution, so the choice would be locked in and public a whole stack earlier; and the card is printed as a non-modal sorcery, so the six bullets would be text it does not have.
+- **(selector)** a selector/filter leaf that stands in for the chosen permanent type wherever a literal `types` list stands -- the mirror of `chosen_type_of` one key over, e.g. `{"types": [{"chosen_type_of": "self"}]}` resolved against the resolving source, so `return_from_graveyard` can be pointed at "all cards of the chosen type" in your graveyard
+  <br>Why the existing vocabulary won't do: `chosen_type_of` is the closest existing thing and only reaches `subtypes`: `characteristics.resolve_chosen_subtypes` (src/automtg/engine/characteristics.py:1155) rewrites the `subtypes` list alone, and every caller -- `selectors.matches` (src/automtg/engine/effects/selectors.py:531, gated on `selector.get("subtypes")`), `player_statics`, `triggers._matches`, `costs` -- reads it only through that key; the loader's `_CHOSEN_QUALITY_KEYS` (src/automtg/cards/loader/vocabulary.py:563) admits it in the same one place. A selector's `types` is matched as literal strings against `c.types`/`card.types` in `selectors.matches`, so a mapping entry there is not resolved, and a filter of `subtypes: [{"chosen_type_of": "self"}]` would ask for a creature subtype named Artifact and match nothing. `shares_permanent_type_with` is the only card-type-valued clause in the language and compares one object against **another object's** types (selectors.py:579), not against a type a player named, so it cannot express "the chosen type". Writing a literal `types` list (all six, or just `["Creature"]`) drops the printed choice entirely. The rest of the card is expressible and was not written: `return_from_graveyard` with `destination: "hand"` over `{"zone": "graveyard", "controller": "you", "count": "all"}` covers the return, and `flashback` is a `card_level_cost_keys` field.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Creeping Renaissance** (rank 6999) — `creeping_renaissance`
+  - Choose a permanent type. Return all cards of the chosen type from your graveyard to your hand.
+
+</details>
+
+## chosen-color-mana-on-tap
+
+Blocks **1** card.
+
+- **(static_effect)** Let the `add_mana_on_tap` static's `add_mana` be `{"chosen_color_of": "self"}` as well as a literal mana string, so "adds an additional one mana of the chosen color" reads the colour named on the static's own source permanent. Concretely: widen `AbilityModel.add_mana` (src/automtg/cards/schema.py:599, today `str | None` under a Strict model) to the same string-or-{"chosen_color_of": "self"} union the `add_mana` op already accepts, validate it in `_validate_add_mana_on_tap` the way loader/effects.py:1763 validates the op's `mana`, and resolve it in `engine/player_statics.mana_added_on_tap` from `source.chosen_color` -- adding nothing when no colour has been chosen yet, matching `characteristics.resolve_chosen_color_list`'s existing match-nothing default.
+  <br>Why the existing vocabulary won't do: The chosen-colour machinery all exists and stops one layer short of this static. `choose_color` on a `self_enters` trigger records the colour on the permanent (Heraldic Banner, data/cards/auto/templates.cards.json), `{"chosen_color_of": "self"}` is a legal leaf in the `add_mana` OP's `mana` (src/automtg/cards/loader/effects.py:1755-1770) and in a static's `colors` filter and in `grant_protection.from_colors` -- but the `add_mana_on_tap` static's `add_mana` is a plain `str` fed straight to `engine.mana.parse_mana_production`, so a dict there fails Strict schema validation before the loader's own check runs. Substituting a literal is not available: any one of {W}{U}{B}{R}{G} is a different card, and "{W}{U}{B}{R}{G}" would add five mana rather than one of a chosen colour. Nor can the mana ability route say it: a mana ability's `add_mana` op does accept `{"chosen_color_of": "self"}` (that is how Heraldic Banner's "{T}: Add one mana of the chosen color" is written), but that is an ability the controller activates by tapping THIS permanent -- Utopia Sprawl is not tapped and has no mana ability; the mana is additional to what the enchanted Forest already produced. The `add_mana` op's `player` key cannot bridge it either, because there is no ability here for the op to live in that fires at mana time.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Utopia Sprawl** (rank 345) — `utopia_sprawl`
+  - Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.
+
+</details>
+
+## combat-damage-to-planeswalker
+
+Blocks **1** card.
+
+- **(trigger_event)** a way to trigger on combat damage one named permanent deals to a PLANESWALKER, carrying the damage as the `amount` binding so "draw that many cards" can read it. Cheapest shape: an `or_planeswalker: true` key on a `deals_combat_damage_to_player` trigger, fired from `primitives.damage_permanent` (src/automtg/engine/primitives.py:588) when `is_combat` and the victim is a Planeswalker -- either as a second COMBAT_DAMAGE_TO_PLAYER emission whose `player` is the walker's controller, or as a companion `deals_combat_damage_to_planeswalker` event scoped by `source: "self"` the way `deals_damage_to_player` is (triggers.py:314-324). It clears the whole printed family -- "deals combat damage to a player or planeswalker" on Ragavan-shaped attack payoffs, equipment and the saboteur cycle -- not just this card.
+  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is player-only by construction: COMBAT_DAMAGE_TO_PLAYER is fired inside `primitives.damage_player` (src/automtg/engine/primitives.py:456) and damage to a planeswalker never reaches that function -- it goes through `damage_permanent`, which fires only DAMAGE_DEALT with `to="permanent"` (primitives.py:588). Using it alone would silently drop the planeswalker half of the printed line. `dealt_damage` is the DSL name for that permanent-half event and is scoped the wrong way round: `EVENT_HALVES["dealt_damage"] = "permanent"` and its subject is the permanent that WAS dealt the damage (triggers.py:310-313, enrage), so `source: "self"` on it means "this creature was damaged", and no trigger clause anywhere -- `filter`, `source`, `controller`, `defending` -- can say "damage dealt BY this permanent" on that half. `deals_damage_to_player` reads the dealer but is again the player half of the same event, so it too never sees a planeswalker. `or_planeswalker` already exists as a key but only on the attack-placement ops (`create_token`, `copy_permanent`, `put_onto_battlefield`, loader/effects.py:1390), where it widens which SEAT a token attacks; nothing reads it on a trigger.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hunter's Insight** (rank 1050) — `hunter_s_insight`
+  - Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.
 
 </details>
 
@@ -169,6 +396,50 @@ Blocks **1** card.
 
 </details>
 
+## cost-reduction-by-target
+
+Blocks **1** card.
+
+- **(selector)** A cost-reduction filter clause that asks what the spell or ability being priced is TARGETING -- here, 'that target enchanted creature', i.e. a target equal to the object the discounting Aura is attached to
+  <br>Why the existing vocabulary won't do: `SPELL_FILTER_KEYS` (the `affects_spells` vocabulary) is deliberately the printed face plus `controller`, and its own comment says so: board state a card in hand does not have is excluded. It is matched by `characteristics._matches_printed`, which is handed a CardDef with no chosen targets, because legality prices the spell before it is on the stack. So `{"subtypes": ["Aura"], "controller": "you"}` would discount EVERY Aura you cast, not only the ones aimed at the enchanted creature -- a softening, not the printed card. `COST_REDUCTION_REFUSED_FILTER_KEYS` further refuses `attached` in a reduction filter, so the enchanted creature cannot even be named there.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strong Back** (rank 3190) — `strong_back`
+  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
+  - Aura spells you cast that target enchanted creature cost {3} less to cast.
+  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
+
+</details>
+
+## cost-reduction-total-mana-value
+
+Blocks **1** card.
+
+- **(value)** a fifth cost-reduction shape, `total_mana_value: {filter}`, that SUMS the mana values of every permanent its filter matches, alongside the existing `count`, `total_power` and `greatest_mana_value` -- the mana-value analogue of `total_power`, read by `reduction_amount` in src/automtg/engine/cost_reduction.py and admitted to `COST_REDUCTION_KEYS` in src/automtg/cards/loader/vocabulary.py
+  <br>Why the existing vocabulary won't do: `cost_reduction` takes exactly one of `count`, `total_power`, `amount`, `greatest_mana_value`. `greatest_mana_value` reads mana values but takes a MAXIMUM, and its own docstring says it is a separate key precisely because it must not sum -- two permanents of mana value 3 and 5 give 5, not 8. `total_power` sums, but sums power, which an Equipment-and-Saga board mostly has none of (a Saga and a Signet are power 0, yet mana value 3 and 2). `count` gives 1 per permanent, and `amount` is a flat number needing a condition. The effect-value language already sums mana values -- `mana_value_of` with an `objects` ref, used by Phoenix's "total mana value of other permanents you control" -- but that language is `value_keys`, unreachable from a `cost_reduction` spec, which the loader restricts to `COST_REDUCTION_KEYS`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Excalibur, Sword of Eden** (rank 906) — `excalibur_sword_of_eden`
+  - This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)
+
+</details>
+
+## counter-placement-replacement
+
+Blocks **1** card.
+
+- **(replacement)** a `replace_counters` static in `static_effects`, on the same axis as `replace_token_creation`/`replace_draw`: it intercepts a batch of counters about to be put on an object and rewrites the amount, taking a counter-kind filter (`+1/+1` here), an `affects` filter for whose objects it applies to (`{"controller": "you", "types": ["Creature"]}`), and a magnitude spelled as a flat addend (Hardened Scales, High Score: n + 1) as well as a multiplier (Doubling Season, Corpsejack Menace: n * 2). It has to be read inside `primitives.add_counters` (src/automtg/engine/primitives.py:644), which is the single funnel every placement comes through -- `add_counters`, `move_counters`, `proliferate`, the `counters` key on `put_onto_battlefield`, and enters-with-counters -- so the replacement applies once per batch, before the `counter_placed` event fires and before any chapter/Saga comparison reads the new total.
+  <br>Why the existing vocabulary won't do: `static_effects` has replacement statics for tokens, draws, life gain, life loss and milling (`replace_token_creation`, `replace_draw`, `replace_life_gain`, `replace_life_loss`, `replace_mill`) and none at all for counters, and none of their fields (`token_multiplier`, `draw_multiplier`, `gain_multiplier`, `loss_multiplier`) names a counter kind or an addend -- every one of them is a multiplier of 2 or more, which the loader enforces (src/automtg/cards/loader/__init__.py:2294), so even a counter-flavoured clone of them could not say "plus one". `src/automtg/engine/replacements.py` handles only zone-change and enters-the-battlefield replacements and never sees a counter. `primitives.add_counters` applies the amount it is handed verbatim and consults no static, so there is no seam to hook today. The nearest reachable thing is the `counter_placed` trigger event with `counter: "+1/+1"`, and it is the wrong sentence twice over: a trigger uses the stack (so the extra counter arrives later, after state-based actions and after any other trigger that read the count), and its own `add_counters` would fire `counter_placed` again, so it self-retriggers without an unprinted guard. `proliferate` is the other near miss and only adds one of a kind already present, on objects chosen at resolution, not as a replacement.
+
+<details><summary>Cards waiting on this</summary>
+
+- **High Score** (rank 5450) — `high_score`
+  - If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.
+
+</details>
+
 ## counter-to-exile
 
 Blocks **1** card.
@@ -183,17 +454,17 @@ Blocks **1** card.
 
 </details>
 
-## delirium
+## delayed-trigger-object-scope
 
 Blocks **1** card.
 
-- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/automtg/cards/loader.py:3169) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
-  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
+- **(trigger_event)** a way to bind a `delayed_trigger` to ONE chosen object -- e.g. `source: {"target": "t1"}` or `source: {"binding": "chosen"}` on the delayed trigger spec, compared in `triggers._delayed_matches` against the event's subject/source oid -- so "Whenever THAT CREATURE deals combat damage ... this turn" fires for the creature the spell targeted and for no other.
+  <br>Why the existing vocabulary won't do: `DELAYED_TRIGGER_KEYS` is `{"event", "controller", "condition"}` (src/automtg/cards/loader/vocabulary.py:841) and the loader rejects every other clause outright (loader/effects.py:421-427), because a delayed ability has no hosting permanent to read `source` or `filter` off. `controller: "you"` is the only narrowing available, which widens the card to "whenever ANY creature you control deals combat damage" -- a strictly different, far stronger card. The `condition` escape does not reach it either: the event folds `subject` and `amount` into the bindings (triggers._delayed_bindings, triggers.py:564-590), but `condition_keys` has no clause that compares two object bindings for identity -- `combat_damage_by` reads the turn ledger's damage TYPES (conditions.py:222-229, prowl), not which object dealt it, and `exists`/`cmp` take selectors and values, not an oid equality test. `grant_ability` with a grantable "Whenever this creature deals combat damage to a player, draw that many cards" (default duration until end of turn) is the closest working workaround and is why this need is second rather than first, but it is a different object in the rules: the ability lives ON the creature, so a `lose_all_abilities` effect strips it and a control change hands the draws to the new controller, where 603.7 keeps the delayed ability with the player who resolved the spell.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
-  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+- **Hunter's Insight** (rank 1050) — `hunter_s_insight`
+  - Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.
 
 </details>
 
@@ -225,6 +496,49 @@ Blocks **1** card.
 
 </details>
 
+## double-damage
+
+Blocks **1** card.
+
+- **(replacement)** A permanent-level static effect that multiplies damage as a replacement (615/616), in both directions, with a filter on each side. Concretely a `static_effects` entry -- e.g. `replace_damage` -- carrying `damage_multiplier: 2` plus two optional `static_filter_keys` filters: a source filter ("if <this source> would deal damage", here `{"attached": true}` for the equipped creature) and a recipient filter ("...to <this object>", again `{"attached": true}`), and a `combat_only: true` switch because this card doubles combat damage only while Furnace of Rath and Gratuitous Violence double all damage. It has to be read inside `damage_player` and `damage_permanent` in `src/automtg/engine/primitives.py` (the same places `protected_from` and `prevented_damage` are consulted), after prevention and before the damage is marked, so that lifelink, deathtouch, infect, the DAMAGE_DEALT ledger and commander-damage tallies all see the doubled number -- which is what makes it a replacement and not a trigger. The same one capability closes Furnace of Rath, Dictate of the Twin Gods, Gratuitous Violence, Angrath's Marauders and Fiery Emancipation (x3).
+  <br>Why the existing vocabulary won't do: No damage-modifying static exists at all. The multiplier replacements the engine has are life and card economy only -- `replace_life_gain` (`gain_multiplier`), `replace_life_loss` (`loss_multiplier`), `replace_draw` (`draw_multiplier`), `replace_mill` (`mill_multiplier`) and `replace_token_creation` (`token_multiplier`); all five are PLAYER-wide statics resolved in `engine/player_statics.py` keyed by player id, so none of them can be attached to a permanent, filtered by source or recipient, or reach combat damage. `replace_life_loss` is the nearest miss and is genuinely wrong here: damage is not life loss (it is marked on creatures, feeds deathtouch and infect, and only incidentally reduces a player's life), so doubling the loss would leave a doubled hit on a creature undoubled and would also double non-damage life loss. The only damage-facing statics are `prevent_damage` and `protection`, which subtract or forbid and have no way to add; `src/automtg/engine/primitives.py` `damage_player`/`damage_permanent` consult `shielded`, `protected_from` and `prevented_damage` and then mark `amount` unchanged, so there is no hook on the damage path where an increase could be applied. `double_triggers` and `double_land_triggers` double triggered abilities, not damage, and the `damage` op multiplies nothing and would in any case be a one-shot effect rather than a continuous replacement. Nothing in `ops` can approximate this without changing the card: a `dealt_damage` or `deals_combat_damage_to_player` trigger that deals the damage again resolves from the stack after state-based actions, so a doubled lethal hit would kill the creature once and then shoot a dead object, first strike and deathtouch would be scored on the printed number, and the redundant damage would come from the Flail rather than from the creature.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inquisitor's Flail** (rank 4176) — `inquisitor_s_flail`
+  - If equipped creature would deal combat damage, it deals double that damage instead.
+  - If another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.
+
+</details>
+
+## drawn-this-turn
+
+Blocks **1** card.
+
+- **(selector)** A selector key that narrows a zone to the cards that were drawn this turn -- e.g. `drawn_this_turn: true` on `{"zone": "hand", "player": "you", "count": 2}` -- backed by a per-object record of the turn on which a card was drawn, written where every draw already funnels through (`replacements._draw_one` / `replacements.draw`, the same place miracle and dredge hook). Nothing else on this card is missing: the trigger is `draw_step`, the optional two extra draws are `may` + `draw`, and the per-card cost-or-consequence is a `for_each` over the chosen binding whose body is `may` with `pay: {"pay_life": 4}` and `else: [put_on_top {objects: {binding: "each"}}]` -- the shipped Mystic Remora idiom. Only the pool that `for_each` iterates cannot be built.
+  <br>Why the existing vocabulary won't do: The nearest thing in `reference` is the value `cards_drawn_this_turn`, but it is a per-player integer tally (`GameState.cards_drawn_this_turn`, cleared each turn) with no record of which cards those were, so it can size an amount and never name an object. No key in `selector_keys` filters a card by how or when it reached a zone: `arrived_this_turn_from` is not a selector key at all (it is a static-ability field read only by `graveyard_cast_arrival_ok`, and it asks about a graveyard, not a hand), and `GameObject` tracks `entered_turn`, `graveyard_turn` and `graveyard_from` but has no field for a draw. The `draw` op's `as` binding is documented as recording the player seats that drew, not the drawn card objects, so there is no binding to hand to `for_each` either -- and it would in any case be the wrong set, since the printed line is every card drawn this turn, including the normal draw-step draw and any drawn before Sylvan Library's trigger.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sylvan Library** (rank 259) — `sylvan_library`
+  - If you do, choose two cards in your hand drawn this turn.
+
+</details>
+
+## enters-as-a-copy
+
+Blocks **1** card.
+
+- **(replacement)** A fifth entry on the enters-the-battlefield replacement whitelist -- a `self_enters_as_copy` event (or a `copy` key inside `ReplacementModel.modify`) that, as the permanent is put onto the battlefield, asks its controller whether to copy something and, if they say yes, re-points the arriving object's `def_id` at the chosen permanent's *before* the object is ever seen as itself (614.1b / 706.2). It needs three things `modify` does not currently carry: a `copying` **selector** naming the legal pool (`{"zone": "battlefield", "subtypes": ["Equipment"]}`; the same shape serves "any land on the battlefield" and "any creature on the battlefield"), an **optional** flag for the printed "You may", and a decision point inside the zone change, since the choice is made by a player. An `except_`/`except_name` rider belongs on it too, because most of this family prints one ("except it's a Cave in addition to its other types", "except it has \"When this creature enters, destroy up to one other target creature with the same name...\""), and it must compose with the existing tapped form, since the common printing is "enter **tapped** as a copy". Wanted by Masterwork of Ingenuity and the whole enters-as-a-copy family already sitting unimplemented in the pool -- Vesuva/Thespian's Stage-style "You may have this land enter tapped as a copy of any land on the battlefield" (data/cards/auto/templates.cards.json:107117), the Cave variant (:26395) and the Polymorphine creature (:12961).
+  <br>Why the existing vocabulary won't do: `ReplacementModel.event` (src/automtg/cards/schema.py:614) is a closed `Literal` of exactly four values -- `self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared` -- and `_enter_battlefield` (src/automtg/engine/zones.py:491) honours only `tapped`, `counters` and `prepared` out of `modify`; there is no branch that could change the arriving object's identity, and docs/rules-coverage.md lists "Copying a permanent as anything but a token" under Not implemented and says in the same row that "a fifth entry on the enters-the-battlefield whitelist ... is engine work". `copy_permanent` is not it: it calls `create_token` with the source's `def_id` (src/automtg/engine/effects/ops_removal.py:587-650), so it makes a *new token* and never touches the object it is pointed at -- Masterwork must enter as the real card, which is the whole difference between it and a clone token (it stays a card, it can be Equipped and returned, and its copy is set as it arrives). `become_copy` is the right *mechanism* but the wrong *timing*: it applies in place, and its only reachable spelling here is a `self_enters` triggered ability running `may` + `become_copy` with `duration: "permanent"` and `copying: {"zone": "battlefield", "subtypes": ["Equipment"]}` -- which is an approximation, not the card. 614.1b means the permanent is never on the battlefield as Masterwork of Ingenuity at all, whereas a trigger puts it there as itself, gives every other player and every `permanent_enters` trigger a window to see a 1-mana Equipment named Masterwork of Ingenuity, resolves after state-based actions and the legend rule have already looked at the board (copying a legendary Equipment would then need a second legend check that never comes), and -- decisively -- misses the copied Equipment's own enters triggers, which a real 614 replacement makes fire because the thing that entered *was* that Equipment. The engine also has no general rule-616 machinery (no event object, no replaced-by chain), so this cannot be bolted on as a generic replacement; `create_instead`/`replace_token_creation` is the token-creation axis and there is no object yet for it to act on, and `animate`, `set_types` and `add_subtype` overwrite named characteristics with literals rather than taking another object's whole printed face. Separately, the sandbox contains no Equipment on either battlefield, so even the trigger approximation would be unobservable beyond `{"zone": "battlefield"}`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Masterwork of Ingenuity** (rank 1649) — `masterwork_of_ingenuity`
+  - You may have this Equipment enter as a copy of any Equipment on the battlefield.
+
+</details>
+
 ## enters-replacement
 
 Blocks **1** card.
@@ -236,6 +550,22 @@ Blocks **1** card.
 
 - **Mox Diamond** (rank 246) — `mox_diamond`
   - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
+
+</details>
+
+## equip
+
+Blocks **1** card.
+
+- **(engine)** A marker on a compiled ability saying it is an *equip* ability, so a static's filter can name 'equip abilities' as a class
+  <br>Why the existing vocabulary won't do: `cards/authoring/templates.py` compiles 'Equip {2}' into an ordinary activated ability whose cost is mana and whose effect is `attach` -- nothing distinguishes it from any other activated ability that attaches something. `loader/vocabulary.py` states this outright beside `activate_loyalty_as_though_instant`: 'Leonin Shikari's "you may activate equip abilities any time you could cast an instant" wants this seam pointed at equip, and nothing on `Ability` marks an equip ability yet.' Without the marker the discount could not be limited to equip.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strong Back** (rank 3190) — `strong_back`
+  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
+  - Aura spells you cast that target enchanted creature cost {3} less to cast.
+  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
 
 </details>
 
@@ -285,6 +615,62 @@ Blocks **1** card.
 
 </details>
 
+## first-combat-phase
+
+Blocks **1** card.
+
+- **(value)** A way for a trigger's intervening `condition` to ask whether the combat phase now in progress is the turn's FIRST one -- either a dedicated condition key (`is_first_combat`) or, better, a value such as `{"combats_this_turn": true}` usable in a `cmp` against `{"const": 1}`. Engine side it needs a per-turn combat counter: `GameState.combat_number` is documented as monotonic for the whole game and deliberately never reset per turn (src/automtg/engine/state.py:95-103, bumped only in combat.start_combat), so nothing currently distinguishes 'combat 1 of this turn' from 'combat 4 of this game'.
+  <br>Why the existing vocabulary won't do: The closest thing in `reference` is the trigger key `max_per_turn: 1` (Aurelia-style 'attacks for the first time each turn'), but that is a cap on how often the ABILITY fires, not a question about the phase: if the equipped creature does not attack in the turn's first combat but does attack in a later combat phase granted by another effect, `max_per_turn: 1` still fires and hands out an extra combat, which the printed intervening if exists precisely to forbid -- the difference is an unbounded combat loop, not a corner case. `has_turn_flag`/`set_turn_flag` could only answer it if some ability wrote the flag at begin_combat, and Genji Glove prints no such line (an unprinted extra ability would fail the residual text gate). `cast_during` reads the step stamped on an object as it was cast, not the phase the game is in now, and no entry in `value_keys` (`attackers_this_turn`, `attacked_this_turn`, `resolutions_this_turn`, ...) counts combat phases.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Genji Glove** (rank 1173) — `genji_glove`
+  - Whenever equipped creature attacks, if it's the first combat phase of the turn, untap it. After this phase, there is an additional combat phase.
+
+</details>
+
+## forest-dryad-token
+
+Blocks **1** card.
+
+- **(token)** A Forest Dryad token in the closed `token_ids` pool -- `forest_dryad_1_1_g`, "1/1 green Forest Dryad land creature" -- added to data/cards/tokens.cards.json: `{"id": "forest_dryad_1_1_g", "name": "Forest Dryad Token", "types": ["Land", "Creature"], "subtypes": ["Forest", "Dryad"], "colors": ["G"], "color_identity": ["G"], "power": 1, "toughness": 1, "is_token": true, "abilities": [{"kind": "activated", "text": "{T}: Add {G}.", "is_mana_ability": true, "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{G}"}]}]}`. The characteristics are exactly the shipped card `dryad_arbor` (templates.cards.json: types ["Land", "Creature"], subtypes ["Forest", "Dryad"], 1/1, green) plus `is_token`, so the card model already supports a Land Creature -- only the token entry is missing. The explicit `{T}: Add {G}` ability is needed because the engine does NOT derive a basic land type's mana ability: BASIC_LAND_TYPES in src/automtg/engine/effects/values.py:211 is used only for domain counting, and data/cards/basics.cards.json writes Forest's mana ability out by hand. (Note that `dryad_arbor` itself was imported without one, so it currently taps for nothing; the token should not copy that.) This same token is printed by at least three other queued cards -- data/authoring/queue.json has it for Autumn Willow ("When Autumn Willow enters, create a 1/1 green Forest Dryad land creature token"), a "Create X 1/1 green Forest Dryad land creature tokens" card, and Jyoti -- so the one data entry unblocks four cards. Nothing else about this line needs engine work: the trigger is `{"event": "attacks", "filter": {"attached": true}}` -- `attacks` is in `trigger_events` and Equipment triggers on the equipped creature are already written this way -- and the effect is a plain `create_token`.
+  <br>Why the existing vocabulary won't do: `token_ids` is a CLOSED list of 61 tokens and holds no Dryad, no Forest, and no Land-typed token of any kind (a scan of data/cards/tokens.cards.json for types containing "Land" and for the subtypes "Forest"/"Dryad" returns nothing), so `create_token` cannot name one and an invented id fails to load. The nearest bodies in the pool are `saproling_1_1_g` (1/1 green Saproling creature) and `insect_1_1_g` (1/1 green Insect creature): right size and colour, but both are creature-only tokens with no land types. Substituting either makes a materially different card, and in two directions at once -- the real token is a land, so it enters as a permanent that taps for {G} and, being a Forest, it also raises Staff of Titania's own first line ("+X/+X, where X is the number of Forests you control") by one for every token made. A Saproling raises neither. The brief forbids a nearly-right token, and the closest existing card, `dryad_arbor`, is a real card in the library, not something `create_token` can conjure.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Staff of Titania** (rank 4309) — `staff_of_titania`
+  - Whenever equipped creature attacks, create a 1/1 green Forest Dryad land creature token. (It's affected by summoning sickness.)
+
+</details>
+
+## grant-static-ability
+
+Blocks **1** card.
+
+- **(op)** a one-shot `grant_ability` that can hand over a STATIC from `grantable_abilities` (here the `buff` "Equipped creature gets +3/+3", an `attached` filter) with `duration: "permanent"`, by recording the grant somewhere `_battlefield_statics` walks rather than only where `triggers`/`abilities_of` do.
+  <br>Why the existing vocabulary won't do: The `grant_ability` op is the closest existing thing and the loader refuses this use outright: `_check_grant_targets` (src/automtg/cards/loader/__init__.py:158-197) raises "the grant_ability *op* hands over a pointer that the characteristics pipeline never reads, so granting the static 'grantable_abilities[n]' with it would do nothing". The `grant_ability` STATIC can grant a static, but a static on this card is always on -- it would give +3/+3 to whatever the artifact is attached to from turn one, with no transformation and no equip, and no `static_condition_keys` clause can switch it on when the trigger resolves (same gap as above). The equip {3} half is fine on its own -- an activated ability with `cost: {"mana": "{3}"}`, an `attach` effect and `sorcery_speed_only`, exactly as data/cards/auto/templates.cards.json:20-46 writes it for +2 Mace -- so only the quoted static is blocked here.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Irencrag** (rank 3821) — `the_irencrag`
+  - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
+
+</details>
+
+## historic
+
+Blocks **1** card.
+
+- **(selector)** an or-of-characteristics filter inside a cost reduction -- `any_of` (as the effect-side selector language already has) or a `historic: true` key -- so a reduction can count permanents that are Artifact OR Legendary OR Saga, i.e. a disjunction across types, supertypes and subtypes at once
+  <br>Why the existing vocabulary won't do: A cost-reduction filter may use `STATIC_FILTER_KEYS` plus `zone` (COST_REDUCTION_FILTER_KEYS), and `_reduction_matches` ANDs every key it reads: `{"types":["Artifact"],"supertypes":["Legendary"],"subtypes":["Saga"]}` matches only a permanent that is all three at once, which nothing is. `any_types` is the closest listed key, but it is an or over TYPES only (`set(any_types) & card.types`) and Legendary is a supertype and Saga a subtype, so it cannot reach either half; it is also not read by `_reduction_matches` at all today. `any_of` is how the shipped pool spells historic -- Lost to Legend's target selector in data/cards/auto/templates.cards.json is exactly `any_of: [{types:[Artifact]}, {supertypes:[Legendary]}, {subtypes:[Saga]}]` -- but `any_of` is a `selector_keys` entry, not a static or reduction filter key, so the loader rejects it here.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Excalibur, Sword of Eden** (rank 906) — `excalibur_sword_of_eden`
+  - This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)
+
+</details>
+
 ## imprint
 
 Blocks **1** card.
@@ -313,6 +699,20 @@ Blocks **1** card.
 
 </details>
 
+## living-weapon
+
+Blocks **1** card.
+
+- **(token)** a Germ token in the closed `token_ids` pool -- `germ_0_0_b`, "0/0 black Phyrexian Germ creature": `{"id": "germ_0_0_b", "name": "Germ Token", "types": ["Creature"], "subtypes": ["Phyrexian", "Germ"], "colors": ["B"], "color_identity": ["B"], "power": 0, "toughness": 0, "is_token": true}` added to data/cards/tokens.cards.json. Every living weapon card (Batterskull, Bonehoard, Flayer Husk, Skinwing, Nettlecyst) prints exactly this token, so the one entry unblocks the whole keyword. The rest of living weapon needs no engine work: docs/keywords.md line 275 already lists it as free -- a `self_enters` trigger whose effects are `create_token` (with `as` binding the new token) followed by `attach` with `attachment: {"self_only": true}` pointing at that binding -- and `create_token` carries `attached_to`, which says the whole line in a single op.
+  <br>Why the existing vocabulary won't do: `token_ids` is a CLOSED list and holds no Germ and no Phyrexian of any kind (grep of data/cards/tokens.cards.json for "germ" and "phyrexian" is empty), so `create_token` cannot name one and any id I invented would fail to load. The nearest bodies in the pool are `construct_0_0_c_artifact_buff` (0/0, but colorless, an artifact creature, a Construct, and it carries a printed buff ability Nettlecyst's Germ does not have) and `plant_0_1_g` (0/1 green Plant). Substituting either changes the token's color, types, subtypes and/or toughness -- a 0/1 green Plant survives with no Equipment on it and a colorless artifact Construct adds a body to Nettlecyst's own "for each artifact you control" count, both strictly different cards -- and the brief forbids a nearly-right token. The other two printed lines are expressible as written: "Equipped creature gets +1/+1 for each artifact and/or enchantment you control" is a `buff` static with `affects: {"attached": true}` whose power and toughness are `{"count": {"controller": "you", "any_types": ["Artifact", "Enchantment"]}}` (`any_types`, `attached` and `controller` are all in `static_filter_keys`, `count` is in `static_value_keys`), and "Equip {2}" is the shipped activated-ability shape used by aeronaut_s_wings. Only the token blocks the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nettlecyst** (rank 1044) — `nettlecyst`
+  - Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)
+
+</details>
+
 ## look-at-random-card-in-hand
 
 Blocks **1** card.
@@ -324,6 +724,62 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## lose-all-abilities
+
+Blocks **1** card.
+
+- **(op)** a one-shot, permanent-duration "it loses all other abilities" applied by a resolving effect to a named object (typically `objects: {"self_only": true}`) -- i.e. the `lose_all_abilities` static's effect available as an op, or a `duration: "permanent"` self-applied form, so a trigger can strip the source's printed mana ability and its own trigger at the moment the player says yes.
+  <br>Why the existing vocabulary won't do: `lose_all_abilities` exists only as a STATIC effect (src/automtg/cards/loader/vocabulary.py:91; `ABILITY_STATICS = ("lose_all_abilities", "grant_ability")`, src/automtg/engine/characteristics.py:439) and is not in `ops`, so no trigger can apply it. Written as a static on The Irencrag instead it would be unconditional -- it is gathered off the PRINTED face (characteristics.py:430-441), so it would strip "{T}: Add {C}" from the moment the artifact entered, before any legendary creature ever arrived, which is a different and strictly worse card. `static_condition_keys` cannot gate it on the transformation either: it offers `all`, `any`, `cmp`, `counters`, `exists`, `has_city_s_blessing`, `is_attached`, `is_your_turn`, `not`, `top_of_library` and nothing that reads a flag set by a trigger (`has_flag` is in `condition_keys`, not `static_condition_keys`). Gating it on `counters` would work mechanically but this card prints no counter, so that is an invented cost, not this sentence.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Irencrag** (rank 3821) — `the_irencrag`
+  - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
+
+</details>
+
+## mana-doesnt-empty
+
+Blocks **1** card.
+
+- **(engine)** Mana that survives the end of a step or phase -- the Upwelling / Kruphix / Omnath effect, printed here as a rider on one add_mana rather than as a standing static. Concretely: ManaPool (src/automtg/engine/mana.py) needs to carry persistence pip by pip alongside its existing `tags` provenance list, so that `ManaPool.clear()` keeps the marked pips instead of zeroing `amounts`, plus a turn-boundary sweep that does empty them (rule 500.4 still applies at cleanup, and "until end of turn" means the exemption expires there). Then an authoring spelling: either a `persists_until_end_of_turn` key on the `add_mana` op marking only the mana that op produced, or a player-wide entry in `static_effects` for the cards that print the standing version -- this card needs the per-add_mana form, because only the mana this trigger made is exempt.
+  <br>Why the existing vocabulary won't do: `add_mana` and `add_mana_per` are the only ops that put mana in a pool and neither has any key touching its lifetime -- op_options for `add_mana` is amount/in_commander_identity/mana/player/reflecting/split, and op_add_mana (engine/effects/ops_mana.py) simply calls `mana_pool.add_tuple`. `state.empty_all_mana_pools` calls `ManaPool.clear()`, which unconditionally replaces `amounts` with zeros and `tags` with empty lists; it is called from turn.py at every step/phase boundary and from sba.py, and there is no flag, tag or per-pip field it consults. `mana_restriction` is the nearest thing in the DSL that qualifies mana, but it is a spend-only-on narrowing, and the loader raises "'mana_restriction' needs 'is_mana_ability'" -- this is a triggered ability that uses the stack, not a mana ability. `delayed_trigger` and `delay` cannot stand in either: they schedule effects at a later step, and by then the pool has already been cleared, so re-adding mana there would be a different card that makes mana twice. Dropping the sentence leaves a Tanuki Transplanter whose mana vanishes the instant the declare-attackers step ends, which is the whole point of the card -- the ramp is meant to be spendable in the postcombat main phase.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tanuki Transplanter** (rank 6298) — `tanuki_transplanter`
+  - Until end of turn, you don't lose this mana as steps and phases end.
+
+</details>
+
+## mana-restriction-supertype
+
+Blocks **1** card.
+
+- **(engine)** a mana spend restriction that can name a **supertype** -- "Spend this mana only to cast a legendary spell". `costs.spell_purpose` must put the spell's supertypes into the `SpendPurpose.names` it hands `ManaSource.permits` (or carry them as a third axis beside types and subtypes), and `loader/mana._restriction_name` must accept and mark a supertype name rather than freezing it as an ordinary literal, so that `["legendary"]` matches a Legendary creature spell and nothing else. It must compose with the existing all-of groups, so "a legendary creature spell" stays sayable as one group
+  <br>Why the existing vocabulary won't do: `mana_restriction` is the right field and it cannot reach this word. `costs.spell_purpose` (src/automtg/engine/costs.py:91) builds the purpose as `frozenset(t.lower() for t in (*card.types, *card.subtypes))` -- types and subtypes only -- and `CardDef.supertypes` is a separate frozenset beside them (src/automtg/engine/carddef.py:826), never consulted; `ability_purpose` (costs.py:109) does the same for the activate half. `loader/mana._restriction_name` (src/automtg/cards/loader/mana.py:436) documents its entries as "a card type, or a subtype" and validates only that a name looks like a word, so writing `"legendary"` loads clean and then matches no purpose ever -- exactly the silent failure that comment warns about, a Halfling whose second ability makes mana that can never be spent on anything. The nearby spellings are all narrower: `{"chosen_type_of": "self"}` is the one dynamic leaf and reads the permanent's chosen creature type (Cavern of Souls), not a supertype; `{"not": ...}` negates a literal type; `"any"` (mana.WILDCARD) is refused on the `cast` half exactly because it would make ordinary mana. Dropping the restriction and printing a plain `add_mana` of any color is a strictly better card -- a one-mana Birds of Paradise -- and the `supertypes` key that does exist lives in `selector_keys`/`static_filter_keys`, which pick permanents on the battlefield and are not read by the payment solver at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Delighted Halfling** (rank 157) — `delighted_halfling`
+  - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
+
+</details>
+
+## modified
+
+Blocks **1** card.
+
+- **(selector)** a selector predicate for "modified" -- a permanent that has one or more counters of any kind on it, or has an Equipment attached to it, or is enchanted by an Aura its controller controls (702.x reminder: "Equipment, Auras you control, and counters are modifications"). It must be usable inside an effect's `objects` (so `grant_keyword` can gather "modified creatures you control"), and, since dozens of queued cards print "Modified creatures you control have trample" and "as long as it's modified", also as a `static_filter_keys` entry and a `static_condition_keys` clause
+  <br>Why the existing vocabulary won't do: `attached` is the closest selector key and is the reverse relation: selectors.py reads it off `ctx.source_oid` and matches only the single permanent the ability's own Aura/Equipment source is attached to (`source.attached_to` / `last_attached_to`), so it cannot ask of an arbitrary creature whether anything is attached TO it, and Silkguard is an instant that is attached to nothing. `counters_on` exists only in `value_keys`/`static_value_keys` -- it is an amount or a side of a `cmp`, never a filter on a pool, and `selector.count` is the pool's size limit, not a counter count. `keywords`/`subtypes`/`any_of` can express the "Auras, Equipment" half but have no term for the third branch, and `STATIC_FILTER_KEYS` is smaller still (no counter or attachment key at all). No card in data/cards/auto/templates.cards.json prints the word "modified"; ~30 queue entries are blocked on it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Silkguard** (rank 2412) — `silkguard`
+  - Auras, Equipment, and modified creatures you control gain hexproof until end of turn. (Equipment, Auras you control, and counters are modifications.)
 
 </details>
 
@@ -339,6 +795,20 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## mutate
+
+Blocks **1** card.
+
+- **(trigger_event)** A DSL trigger event -- name it `mutates` -- for 702.140e, "whenever this creature mutates", so a card can write {"kind": "triggered", "trigger": {"event": "mutates", "source": "self"}, "targets": [...], "effects": [{"op": "destroy", ...}]}. The engine already produces the moment: src/automtg/engine/primitives.py:1334, at the end of merge_permanents, calls state.emit("mutated", player=host.controller, source=host_oid, oid=host_oid, card=host.merged_card.id). Three pieces are missing. (1) A name-to-EventType row in TRIGGER_EVENTS (src/automtg/engine/triggers.py:28) plus the EventType member the emit currently sidesteps by passing a bare string. (2) The event must actually be handed to the trigger bus: GameState.emit (src/automtg/engine/state.py:617) only appends to the log -- its own docstring says "The caller is responsible for handing the event to the trigger bus" -- and _merge_mutation (src/automtg/engine/stack.py:~767) never calls triggers.fire/collect for it, so nothing can hear the mutation today. (3) Membership in OBJECT_SUBJECT_TRIGGERS (src/automtg/engine/triggers.py:269) so `source: "self"` means the merged permanent, which is the printed subject: 702.140e fires the ability on the merged creature whether the mutating card went over or under, and it must fire for an ability that came in on the newcomer as well as for one already on the host -- both are in the one synthesised CardDef merge_permanents writes to host.merged_card, so the host oid the emit already carries is the correct subject. Timing: the ability triggers as merge_permanents completes, during _merge_mutation inside spell resolution, so the triggered ability goes on the stack after the mutate spell finishes resolving and chooses its target then.
+  <br>Why the existing vocabulary won't do: No entry in the packet's `trigger_events` reaches a mutation. `self_enters` is the closest and is wrong by construction: a mutating spell never becomes a permanent of its own -- stack.py's resolve comments say so out loud ("the spell does not become a permanent of its own, so it never reaches `_place_after_resolution`") and _merge_mutation returns before any enter happens, so neither the newcomer nor the host enters the battlefield and no enters trigger fires. `permanent_enters` fails for the same reason and would also fire for every unrelated permanent. `counter_placed`, `becomes_monstrous` and `becomes_level` are the other "this permanent changed state" events and are each tied to their own mechanic's counter or level, none of which mutate touches (702.140c is explicit that counters, damage, auras and summoning sickness are unchanged). `ability_activated` and `spell_cast` reach the cast, not the mutation, and would fire on a normal {3}{G} cast too, which is exactly when the printed ability must NOT fire. There is no `condition` in `condition_keys` that asks "was this cast for its mutate cost" either -- `kicked`, `evoked` and `cost_option` each read a different cost node, and StackItem.mutated / CastAction.mutated are engine-internal with no DSL spelling -- so the trigger cannot be faked as a self_enters with an intervening if.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gemrazer** (rank 3835) — `gemrazer`
+  - Whenever this creature mutates, destroy target artifact or enchantment an opponent controls.
 
 </details>
 
@@ -371,6 +841,34 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+
+</details>
+
+## rename-permanent
+
+Blocks **1** card.
+
+- **(op)** a way for a resolving effect to change a permanent's NAME for as long as it stays on the battlefield -- cheapest shape: a `name` key on the existing `add_subtype`/`animate` family (or a `becomes` op carrying `name`, `subtypes`, `supertypes`) written onto the object the way `add_subtypes` writes types (src/automtg/engine/effects/ops_characteristics.py:44-49), plus a name layer in `characteristics` so `selector.name` and the legend rule read the new name. It clears the whole "becomes a ... named X" family -- The Irencrag/Everflame, Kenrith's Transformation-style renames, and the Equipment-transforming artifacts printed alongside it.
+  <br>Why the existing vocabulary won't do: Nothing in the engine can change a name. `characteristics.py:1319-1321` says so in as many words at the `selector.name` test -- "A name is the most printed characteristic there is and nothing in the pipeline can change one, so it is safe here for the same reason `types` is" -- and the characteristics pipeline has no name layer at all. The two near misses are both wrong shapes: `change_text` is creature-type only and the loader refuses anything else (`change_text only implements 'creature_type'`, src/automtg/cards/loader/effects.py:1958), and `become_copy`'s `except_name` (src/automtg/engine/effects/ops_removal.py:103-128) sets `copying_name` only as a rider on copying some OTHER object -- there is no "Everflame, Heroes' Legacy" card in the pool to copy, and copying one would also replace the type line, cost and abilities that this card is supposed to keep choosing for itself. `add_subtype` can give it Equipment and it is already printed Legendary, so the type half of the sentence is the only half that is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Irencrag** (rank 3821) — `the_irencrag`
+  - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
+
+</details>
+
+## search-destination-by-type
+
+Blocks **1** card.
+
+- **(op)** a destination on `search_library`/`search_zones` that is chosen by the *found card's own printed type* rather than fixed by the author -- e.g. a `destination_if` list of `{selector, to, tapped}` branches taken in order (here `{"selector": {"types": ["Land"]}, "to": "battlefield", "tapped": true}` with a fallback `to: "hand"`), so one search over one creature-or-land pool makes one choice and each card found takes exactly one zone change, before the single shuffle. The `tapped` flag has to travel with the branch, because only the land half of the printed sentence arrives tapped. Wanted by Archdruid's Charm and the whole "put it onto the battlefield if it's a land, otherwise into your hand" family (Traverse the Ulvenwald's delirium half, Grow from the Ashes' kin, Scout the Wilderness)
+  <br>Why the existing vocabulary won't do: `_search` (src/automtg/engine/effects/ops_cards.py:310) resolves exactly one `DESTINATIONS[spec.get("destination", "hand")]` and one `tapped = bool(spec.get("tapped"))` before it ever looks at what was picked, and hands every card to `_move_found` (ops_cards.py:410), which moves them all to that same zone -- nothing in `op_options` for either search op branches on the card. `look_at_top` is the only lookup with more than one destination (`destinations`, ops_cards.py:528) and its steps are a *player's* choice of which card goes where, one card each, over the top N of the library rather than a search -- it cannot read a card's type and it cannot search. Writing `search_library` with `as: "found"`, `destination: "hand"` and then an `if` on the binding running `put_onto_battlefield {"objects": {"binding": "found"}, "tapped": true}` is an approximation, not the card: the land really enters the hand first (a second zone change, visible to hand-size effects and to anything that replaces or triggers on a card being put into a hand, and publicly a card in hand rather than one that went library-to-battlefield), and it arrives on the battlefield *after* `_search`'s shuffle rather than before it. Two `search_library` ops guarded by an `if` is worse still -- the printed card is one look at one pool and one choice, so a second search would shuffle twice and let the player look at the library again, and no condition can be asked before the choice has been made. `search_zones` differs only in which zones form the pool, and `two_piles`' `to`/`other` split is over the top of the library by piles, not by card type.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Archdruid's Charm** (rank 624) — `archdruid_s_charm`
+  - • Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.
 
 </details>
 
@@ -433,6 +931,20 @@ Blocks **1** card.
 
 </details>
 
+## static-value-multiplier
+
+Blocks **1** card.
+
+- **(value)** An arithmetic leaf in the STATIC value language so a static's magnitude can be a MULTIPLE of a count -- concretely a `times` (and, while somebody is in there, `sum`/`minus`/`half`) entry added to `STATIC_VALUE_KEYS` in src/automtg/cards/loader/vocabulary.py:768, validated recursively in `_validate_static_value` (src/automtg/cards/loader/statics.py) and evaluated in `characteristics._static_value` (src/automtg/engine/characteristics.py), so this card's buff can read `"power": {"times": [{"const": 2}, {"count": {"controller": "you", "subtypes": ["Equipment"], "zone": "battlefield"}}]}`. It is safe inside a static for exactly the reason the existing `count` leaf is: both operands are already-permitted pipeline INPUTS (a constant and a board count of printed characteristics), and multiplying two inputs reads nothing derived, so no static comes to depend on another static's output and the fixed order of layers-lite stays acyclic. The effect side already has the identical node -- `times` is in `value_keys` and implemented at src/automtg/engine/effects/values.py:540 -- so this is the smallest possible port, not a new idea. It is the arithmetic half of the `attachment_count_buff` need already filed by Strong Back (whose other half, an attached-to-host filter, this card does NOT need: "Equipment you control" is a plain board count), and it closes every "+N/+N for each ..." anthem with N greater than 1.
+  <br>Why the existing vocabulary won't do: `buff` with `affects: {"attached": true}` and a `count` magnitude is the right static and it is shipped -- Crown of Gondor writes "Equipped creature gets +1/+1 for each creature you control" exactly that way (data/cards/auto/templates.cards.json:20083) -- but its magnitude can only BE the count. `STATIC_VALUE_KEYS` is `const`, `count`, `mana_symbols`, `counters_on`, `permanents_entered_this_turn` plus the per-player life/count leaves, and nothing in it combines two values: `_validate_static_value` refuses any other key outright ("static values may only use ...") and `characteristics._static_value` raises DslError on an unknown leaf rather than reading 0, so `{"times": [...]}` -- legal on the effect side -- fails to load here. `counters_on` scales a static the way this card needs but counts counters on an object, and nothing on Swordsman's Steel places any. The two approximations both change the card and are refused: writing `{"const": 2}` makes a flat +2/+2 that ignores every other Equipment, and writing the count alone makes +1/+1 per Equipment -- a strictly weaker card in both cases. Splitting the doubling across two buffs is not available either: an ability may not carry two statics (loader/__init__.py:2117, "static abilities cannot have 'effects'"), and two separate static abilities would be two claimants for one printed line, i.e. a duplicated sentence rather than the card as printed. The other two lines need nothing new -- the enters trigger is a `self_enters` triggered ability running `draw` with `amount: {"count": {"controller": "you", "subtypes": ["Equipment"], "zone": "battlefield"}}` (the shipped Mass Appeal shape), and "Equip {3}" is the shipped sorcery-speed activated `attach` ability used by +2 Mace and Buster Sword. Only the doubled magnitude blocks the card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Swordsman's Steel** (rank 12440) — `swordsman_s_steel`
+  - Equipped creature gets +2/+2 for each Equipment you control.
+
+</details>
+
 ## target-ability-on-stack
 
 Blocks **1** card.
@@ -447,6 +959,20 @@ Blocks **1** card.
 
 </details>
 
+## umbra-armor
+
+Blocks **1** card.
+
+- **(keyword)** "Umbra armor" recognised as the printed name of the existing totem armor keyword (702.88a), so an Aura carrying keywords: ["totem_armor"] claims the printed line. Concretely: a printed-name alias consulted by cards.proxy.lift_keywords / cards.loader.vocabulary.KNOWN_KEYWORDS mapping the printed word "Umbra armor" to the Keyword.TOTEM_ARMOR value, the way KNOWN_KEYWORDS already matches every other keyword whose printed word equals its enum value. This affects every Umbra card in the cycle (Bear/Snake/Spider/Hyena/Eel/Mammoth/Boar/Drake/Crab/Indomitable Ancients-style umbras), all of which print "Umbra armor" and none of which print "Totem armor".
+  <br>Why the existing vocabulary won't do: The rules keyword itself is already in the engine: Keyword.TOTEM_ARMOR exists in engine/enums.py and engine/zones.destroy honours it, and the rest of this card verifies clean against it (buff +2/+2, the granted attacks trigger via grantable_abilities + a grant_ability static, expectation target_pt_delta +2/+2 and granted totem_armor). What is missing is purely the printed-word mapping: KNOWN_KEYWORDS is frozenset(k.value for k in Keyword), so lift_keywords case-folds the printed line "Umbra armor" to "umbra_armor", finds no such member, and verify.claimed_lines leaves the line unclaimed -- gate 3 rejects with "residual: printed text not represented: Umbra armor". No ability can claim it instead: an AbilityModel is activated, triggered or static, and totem armor is a keyword replacement read by zones.destroy, not any of the three, so the only way to claim the line today would be to attach the printed text to an ability that does not implement it.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Bear Umbra** (rank 886) — `bear_umbra`
+  - Umbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)
+
+</details>
+
 ## variant-dependent-targets
 
 Blocks **1** card.
@@ -458,5 +984,29 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
+
+</details>
+
+## x-dependent-target
+
+Blocks **1** card.
+
+- **(engine)** An activated ability whose TARGET legality reads the X announced for its own cost -- 601.2b's X is chosen before 601.2c declares targets, so "target nontoken artifact you control with mana value X" is a target pool that only exists once X is known. Concretely: (1) `legality._ability_aims` (src/automtg/engine/legality.py:733-757) must enumerate the payable values of X for an ability whose `cost.mana.x_count` is set and pair each with the targets legal AT that X -- one Action per (x, target) pair, exactly the shape `ability_modes` already took when 601.2b's *mode* had to be fixed before its targets (same function, lines 757-776) -- and set `Action.x` to that value instead of the hard-coded `x = 0` at legality.py:549, with `Game._activate_ability` (src/automtg/engine/game.py:750-775) taking the announced X off the action rather than calling `_ask_x` again; (2) `targeting._spec_options`, `enumerate_target_tuples` and `still_legal` must take an `x` and put it on the `EffectContext` they build (src/automtg/engine/targeting.py:61, 448, 597), and `stack.resolve_top`'s 608.2b re-check must pass `item.x` through `filter_legal` (src/automtg/engine/stack.py:658, 1022) so the target is re-checked against the X that was actually paid. The selector leaf itself then needs nothing new: `selectors._compare` already evaluates `mana_value` through `evaluate_value`, so `{"mana_value": {"op": "=", "value": {"x": true}}}` becomes correct the moment the context carries X. This closes the whole "target ... with mana value X" family, not just this land -- and the same wiring is what any future "{X}: target creature with power X" needs.
+  <br>Why the existing vocabulary won't do: The copy half is NOT the blocker and was checked rather than assumed: `become_copy` (src/automtg/engine/effects/ops_removal.py:86-130) applies a copy in place, takes `duration: "permanent"` (Clone's shape, the one this card wants) and `objects: {"self_only": true}`, so "this land becomes a copy of <that artifact>" is already expressible -- this is the same op the Masterwork of Ingenuity gap filed `enters_as_a_copy` against for being the wrong timing, and here the timing is right. `{X}` in an activated ability's cost is real too: `game._ask_x` asks for it and `costs.pay` charges it. What cannot be said is the link between the two.
+
+The near misses, each of which fails silently rather than loudly:
+
+- `{"mana_value": {"op": "=", "value": {"x": true}}}` on the target's selector LOADS -- `loader.targets._compile_target` runs only `validate_selector`, which has no guard against a value expression here, and `VALUE_KEYS` contains `x` -- and is then read at X = 0 twice over, because every `EffectContext` targeting builds leaves `x` at its dataclass default of 0 (src/automtg/engine/effects/context.py:35): once in `targeting._spec_options` when legality enumerates the candidates, and again in `still_legal` when 608.2b re-checks on resolution. The card would load clean and play as "target nontoken artifact you control with mana value 0", which is a strictly different and mostly empty card. This is why the clause is filed rather than written.
+- `total_mana_value` on the target spec is a flat `int` cap (`loader/targets.py:268-283`, `targeting._within_total`), not a value expression, and it is a `<=` ceiling across several picks rather than "is exactly X", so it can say neither the number nor the comparison.
+- `cost.x_value` is the opposite direction: it is how an ability DEFINES its own X from the board ("X is the mana value of that card", `loader/mana.py:39-55`, `costs.defined_x`) and legality then prices the ability at that fixed number. This card's X is announced by the player (`legality.py:731-744` offers the ability only at the x = 0 floor and `game._activate_ability` asks afterwards), so there is nothing on the board for `x_value` to read, and an `x_value` ability is deliberately never asked for an X at all.
+- `x_in_mana_cost` is a predicate ("has an {X} symbol at all"), and `selectors.py:1246-1256` says in as many words that it is not a number and that `mana_value` is the key for comparisons.
+- Dropping "target" and choosing the artifact on resolution with `choose_permanents` (whose `objects` selector IS evaluated with the resolving ability's X) would make the clause work mechanically, and is exactly the softening the brief forbids: it would let the land copy a hexproof or shroud artifact, skip the 608.2b fizzle when the artifact leaves in response, and stop the ability being offered as an illegal-target activation at all. Not written.
+
+No card in the shipped pool reads X in a target selector -- `data/cards/**` has no `mana_value` clause naming `x`, and the three "mana value X" lines in data/cards/auto/templates.cards.json (:27033, :28763, :31932) are all resolution-time `search_library`/`look_at_top` selectors, where the `EffectContext` does carry the spell's X. So this is a first, and a gate would have caught the silent X = 0 reading only by the target pool being wrong, not by the card failing to load.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Mycosynth Gardens** (rank 864) — `the_mycosynth_gardens`
+  - {X}, {T}: This land becomes a copy of target nontoken artifact you control with mana value X.
 
 </details>

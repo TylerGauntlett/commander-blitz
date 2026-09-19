@@ -1,0 +1,18 @@
+{
+  "card_id": "ulvenwald_tracker",
+  "name": "Ulvenwald Tracker",
+  "oracle_text": "{1}{G}, {T}: Target creature you control fights another target creature.",
+  "blocked_sentences": [
+    "{1}{G}, {T}: Target creature you control fights another target creature."
+  ],
+  "needs": [
+    {
+      "capability": "fight",
+      "kind": "op",
+      "what": "A `fight` op naming two creatures -- here the activated ability's two targets, the first restricted to creatures you control and the second 'another target creature', any controller but not the first -- that makes each deal damage equal to its power to the other simultaneously, as one action, with 701.12c's all-or-nothing rule: if either creature is an illegal target or has left the battlefield as the ability resolves, neither deals damage. Both halves must read power at the same instant, and the pair must be one fight event so that damage replacement, prevention and 'whenever this creature fights' effects see it as such. Ulvenwald Tracker needs the mandatory two-target form; Bridgeworks Battle needs the same op to tolerate an 'up to one' second target.",
+      "why_existing_wont_do": "`fight` is in neither the packet's `ops` list nor the engine: 119 ops are registered across src/automtg/engine/effects/ops_*.py and none is a fight, and the only two cards in data/generated/cards/pool.cards.json whose oracle text contains 'fights' are this card and Bridgeworks Battle, both sitting there with empty specs. The declaration halves already exist, which is exactly what makes the approximation tempting: a target's `selector` takes `exclude_binding` (src/automtg/engine/effects/selectors.py:562) so 'another' is sayable, and `damage` takes `source_object` plus an `amount` of `{\"power_of\": {\"target\": \"t1\"}}` (src/automtg/engine/effects/values.py:354), so two `damage` ops would load. They would be a different card three ways. The damages become sequential, so the second reads a power the first has already altered -- a dealt_damage trigger that pumps, wither counters, a first-strike-irrelevant deathtouch kill that removes the creature before it strikes back, and the creature that dies to the first damage never deals its own. The two halves are independent, so if the opponent's creature is gone on resolution only that half is skipped and your own creature still takes free damage from a fight that rules-wise never happened -- the reverse of 701.12c. And nothing binds the pair as one action, so anything reading a fight sees two unrelated damage events. `damage` is the closest op and `pump` the closest neighbour for the Bridgeworks half; neither can make one simultaneous exchange."
+    }
+  ],
+  "closest_existing": ["damage", "pump", "exclude_binding", "power_of"],
+  "confidence": "high"
+}

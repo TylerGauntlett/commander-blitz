@@ -1,0 +1,23 @@
+{
+  "card_id": "shifting_woodland",
+  "name": "Shifting Woodland",
+  "oracle_text": "This land enters tapped unless you control a Forest.\n{T}: Add {G}.\nDelirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.",
+  "blocked_sentences": [
+    "Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard."
+  ],
+  "needs": [
+    {
+      "capability": "delirium",
+      "kind": "value",
+      "what": "a counting leaf for the number of *distinct card types* among the cards in a zone, reachable from an activated ability's `condition` -- the natural spelling being `{\"distinct\": {\"of\": \"card_type\", \"objects\": {\"zone\": \"graveyard\", \"controller\": \"you\"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool. Unlike Dragon's Rage Channeler's static delirium, this card needs it only in the *effect/condition* value language: an activated ability's `condition` is evaluated through `legality._activation_allowed` -> `effects.conditions.evaluate` -> `evaluate_value`, so a `cmp` of `{\"distinct\": {\"of\": \"card_type\", ...}}` against `{\"const\": 4}` with `>=` would be the whole restriction, with no `STATIC_VALUE_KEYS` change required. One `DISTINCT_OF` entry therefore closes this card and the many queued `Activate only if there are four or more card types...` / `Whenever this creature attacks, if there are four or more card types...` delirium cards at once; admitting the same leaf to `STATIC_VALUE_KEYS` additionally closes the static half already filed under this slug.",
+      "why_existing_wont_do": "`count` is the closest leaf and is the wrong measurement: it counts *objects* matching a filter, so four creature cards in the graveyard read 4 and would satisfy a `>= 4` delirium must reject, while an instant, a land, an artifact and a creature also read 4 and pass only by coincidence -- the same distinction `values.py` already spells out for domain. `distinct` is the leaf that counts distinct values, but `DISTINCT_OF` admits only `power` (coven) and `basic_land_type` (domain) and a fourth spelling is a hard load error, so the card-type reading cannot be named at all. `threshold` on an ability is not it either: it is the Station gate (`characteristics.threshold_met`), which reads a *counter* count on the source permanent. Enumerating the clause as `any`-of-`all`-of-`exists` over every 4-subset of the card types is 126 branches, silently wrong when a new type is printed, and an approximation rather than the sentence. The `condition` slot itself is real and unblocked -- `Ability.activation_condition` is honoured by `legality._ability_aims` -- only its magnitude cannot be said.\n\nThe rest of the printed line is NOT what blocks this card, and was checked rather than assumed. `become_copy` (src/automtg/engine/effects/ops_removal.py) takes its model from `choose_objects(ctx, spec[\"copying\"])`, and a bare `{\"target\": \"t1\"}` selector short-circuits in `selectors.resolve_pool` before any zone default is applied, so a graveyard card *is* a legal copy source; `state.card_of` then reads the model's def id, which a graveyard object carries exactly as a battlefield one does (`copy_permanent` already relies on this for embalm). `card_in_graveyard` is a real target kind (`targeting.py`), and `{\"zone\": \"graveyard\", \"controller\": \"you\", \"not_types\": [\"Instant\", \"Sorcery\"]}` is how the shipped pool writes \"target permanent card in your graveyard\" (Sun Titan, data/cards/isperia.cards.json). So the copy half is expressible today and no partial answer was written only because the activation restriction on the same printed line is not.\n\nOne adjacent finding for whoever builds this, not filed as a need because the packet's `oracle_text` does not print the clause: the paper card's \"…until end of turn, except it's still a land\" would need an override key on `become_copy` beyond `except_name`. `become_copy` writes only `obj.copying`, `obj.copying_name` and `obj.copying_until_eot`, and `state.card_of` applies the override to the *name* alone, so a copied creature card would strip the land types and the `{T}: Add {G}` ability with them. `copy_permanent` has the general `except_`/`except` override map, but it makes a new token and cannot alter the land in place."
+    }
+  ],
+  "closest_existing": [
+    "distinct",
+    "count",
+    "threshold",
+    "become_copy"
+  ],
+  "confidence": "high"
+}

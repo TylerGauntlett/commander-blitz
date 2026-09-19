@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "sixth_sense",
+    "name": "Sixth Sense",
+    "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature deals combat damage to a player, you may draw a card.\"",
+    "mana_cost": "{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "subtypes": [
+      "Aura"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "targets": [
+      {
+        "id": "enchanted",
+        "kind": "permanent",
+        "selector": {
+          "zone": "battlefield",
+          "types": [
+            "Creature"
+          ]
+        }
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature deals combat damage to a player, you may draw a card.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "effects": [
+              {
+                "op": "draw",
+                "player": "you",
+                "amount": {
+                  "const": 1
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {
+          "attached": true
+        },
+        "text": "Enchanted creature has \"Whenever this creature deals combat damage to a player, you may draw a card.\""
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

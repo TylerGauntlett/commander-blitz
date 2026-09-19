@@ -52,6 +52,10 @@
   "adanto_vanguard": {
     "zone": "battlefield"
   },
+  "adaptive_omnitool": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adarkar_wastes": {
     "zone": "battlefield"
   },
@@ -334,6 +338,10 @@
       "0": 43
     }
   },
+  "arbor_elf": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "arborback_stomper": {
     "life": {
       "0": 45
@@ -581,6 +589,15 @@
   },
   "badlands": {
     "zone": "battlefield"
+  },
+  "bala_ged_recovery_bala_ged_sanctuary": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
   },
   "balduvian_barbarians": {
     "zone": "battlefield"
@@ -867,6 +884,10 @@
   "bloodfire_expert": {
     "zone": "battlefield"
   },
+  "bloodforged_battle_axe": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodghast": {
     "battlefield_count": 33,
     "hand_size": {
@@ -958,6 +979,10 @@
     "zone": "battlefield"
   },
   "bolas_s_citadel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bone_sabres": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -1155,11 +1180,22 @@
     },
     "zone": "battlefield"
   },
+  "buried_ruin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "burrowing": {
     "zone": [
       "battlefield",
       "graveyard"
     ]
+  },
+  "buster_sword": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "cabal_coffers": {
     "zone": "battlefield"
@@ -1678,6 +1714,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "conqueror_s_flail": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "consider": {
@@ -2800,6 +2840,10 @@
     "zone": "battlefield"
   },
   "falkenrath_reaver": {
+    "zone": "battlefield"
+  },
+  "fanatic_of_rhonas": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fang_of_shigeki": {
@@ -3948,6 +3992,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hammer_of_nazahn": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "hand_of_silumgar": {
     "zone": "battlefield"
   },
@@ -4289,6 +4343,13 @@
   "hundroog": {
     "zone": "battlefield"
   },
+  "hunter_s_talent": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "hurloon_minotaur": {
     "zone": "battlefield"
   },
@@ -4438,6 +4499,10 @@
     "zone": "graveyard"
   },
   "intruder_alarm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "inventors_fair": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -4669,6 +4734,10 @@
   "keen_eyed_archers": {
     "zone": "battlefield"
   },
+  "keen_sense": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "keeneye_aven": {
     "zone": "battlefield"
   },
@@ -4868,6 +4937,10 @@
   "krenko_s_enforcer": {
     "zone": "battlefield"
   },
+  "krosan_grip": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "krovikan_scoundrel": {
     "zone": "battlefield"
   },
@@ -4925,6 +4998,13 @@
   "lava_serpent": {
     "zone": "battlefield"
   },
+  "lavaspur_boots": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "lazotep_archway": {
     "zone": "battlefield"
   },
@@ -4964,6 +5044,14 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "level_up": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
   },
   "leyline_prowler": {
     "zone": "battlefield"
@@ -5451,6 +5539,13 @@
   "mask_of_avacyn": {
     "zone": "battlefield"
   },
+  "mask_of_memory": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "mass_appeal": {
     "graveyard_size": {
       "0": 3
@@ -5784,6 +5879,12 @@
     "zone": "battlefield"
   },
   "mossfire_valley": {
+    "zone": "battlefield"
+  },
+  "mosswort_bridge": {
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "mountain_bandit": {
@@ -6682,6 +6783,10 @@
   "pouncing_cheetah": {
     "zone": "battlefield"
   },
+  "power_fist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prairie_stream": {
     "zone": "battlefield"
   },
@@ -6965,6 +7070,16 @@
   "rakdos_signet": {
     "zone": "battlefield"
   },
+  "ram_through": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "ramirez_depietro": {
     "zone": "battlefield"
   },
@@ -7172,6 +7287,9 @@
   "retreat_to_kazandu": {
     "zone": "battlefield"
   },
+  "return_of_the_wildspeaker": {
+    "zone": "graveyard"
+  },
   "revitalize": {
     "hand_size": {
       "0": 2
@@ -7262,6 +7380,9 @@
   },
   "risen_sanctuary": {
     "zone": "battlefield"
+  },
+  "rishkar_s_expertise": {
+    "zone": "graveyard"
   },
   "rite_of_flame": {
     "battlefield_count": 32,
@@ -7762,6 +7883,10 @@
   "selfless_squire": {
     "zone": "battlefield"
   },
+  "selvala_heart_of_the_wilds": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "senate_griffin": {
     "zone": "battlefield"
   },
@@ -8125,6 +8250,10 @@
   "sivitri_scarzam": {
     "zone": "battlefield"
   },
+  "sixth_sense": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skeletal_crocodile": {
     "zone": "battlefield"
   },
@@ -8338,6 +8467,10 @@
     "zone": "graveyard"
   },
   "somberwald_dryad": {
+    "zone": "battlefield"
+  },
+  "song_of_the_dryads": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sorin_imperious_bloodlord": {
@@ -8653,6 +8786,10 @@
   "strider_harness": {
     "zone": "battlefield"
   },
+  "strip_mine": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "striped_bears": {
     "hand_size": {
       "0": 2
@@ -8821,6 +8958,10 @@
   "swooping_lookout": {
     "zone": "battlefield"
   },
+  "sword_of_fire_and_ice": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sword_of_vengeance": {
     "zone": "battlefield"
   },
@@ -8897,6 +9038,13 @@
     "zone": "battlefield"
   },
   "talisman_of_unity": {
+    "zone": "battlefield"
+  },
+  "talon_gates_of_madara": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "talon_trooper": {
@@ -9330,6 +9478,10 @@
     ]
   },
   "torsten_von_ursus": {
+    "zone": "battlefield"
+  },
+  "toski_bearer_of_secrets": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "touch_of_brilliance": {

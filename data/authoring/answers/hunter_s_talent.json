@@ -1,0 +1,174 @@
+{
+  "card": {
+    "id": "hunter_s_talent",
+    "name": "Hunter's Talent",
+    "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, target creature you control deals damage equal to its power to target creature you don't control.\n{1}{G}: Level 2\nWhenever you attack, target attacking creature gets +1/+0 and gains trample until end of turn.\n{3}{G}: Level 3\nAt the beginning of your end step, if you control a creature with power 4 or greater, draw a card.",
+    "mana_cost": "{1}{G}",
+    "types": [
+      "Enchantment"
+    ],
+    "subtypes": [
+      "Class"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this Class enters, target creature you control deals damage equal to its power to target creature you don't control.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          {
+            "id": "t2",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "damage",
+            "amount": {
+              "power_of": {
+                "target": "t1"
+              }
+            },
+            "objects": {
+              "target": "t2"
+            },
+            "source_object": {
+              "target": "t1"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "level",
+        "level": 2,
+        "text": "{1}{G}: Level 2",
+        "cost": {
+          "mana": "{1}{G}"
+        }
+      },
+      {
+        "kind": "triggered",
+        "level": 2,
+        "text": "Whenever you attack, target attacking creature gets +1/+0 and gains trample until end of turn.",
+        "trigger": {
+          "event": "you_attack",
+          "controller": "you"
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "attacking": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "pump",
+            "objects": {
+              "target": "t1"
+            },
+            "power": {
+              "const": 1
+            },
+            "toughness": {
+              "const": 0
+            }
+          },
+          {
+            "op": "grant_keyword",
+            "keywords": [
+              "trample"
+            ],
+            "objects": {
+              "target": "t1"
+            }
+          }
+        ]
+      },
+      {
+        "kind": "level",
+        "level": 3,
+        "text": "{3}{G}: Level 3",
+        "cost": {
+          "mana": "{3}{G}"
+        }
+      },
+      {
+        "kind": "triggered",
+        "level": 3,
+        "text": "At the beginning of your end step, if you control a creature with power 4 or greater, draw a card.",
+        "trigger": {
+          "event": "end_step",
+          "controller": "you",
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield",
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              }
+            }
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "amount": {
+              "const": 1
+            },
+            "player": "you"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}

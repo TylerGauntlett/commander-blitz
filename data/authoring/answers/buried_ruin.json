@@ -1,0 +1,49 @@
+{
+  "card": {
+    "id": "buried_ruin",
+    "name": "Buried Ruin",
+    "oracle_text": "{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Return target artifact card from your graveyard to your hand.",
+    "mana_cost": "",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{C}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "{2}, {T}, Sacrifice this land: Return target artifact card from your graveyard to your hand.",
+        "cost": {
+          "mana": "{2}",
+          "tap": true,
+          "sacrifice": {"zone": "battlefield", "controller": "you", "self_only": true, "count": 1}
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "types": ["Artifact"]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "return_from_graveyard",
+            "destination": "hand",
+            "objects": {"target": "t1"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

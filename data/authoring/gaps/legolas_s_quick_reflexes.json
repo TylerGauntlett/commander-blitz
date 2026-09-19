@@ -1,0 +1,18 @@
+{
+  "card_id": "legolas_s_quick_reflexes",
+  "name": "Legolas's Quick Reflexes",
+  "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nUntap target creature. Until end of turn, it gains hexproof, reach, and \"Whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature.\"",
+  "blocked_sentences": [
+    "Untap target creature. Until end of turn, it gains hexproof, reach, and \"Whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature.\""
+  ],
+  "needs": [
+    {
+      "capability": "becomes_tapped",
+      "kind": "trigger_event",
+      "what": "a trigger event fired whenever a permanent becomes tapped for any reason -- paying a tap cost, being declared as an attacker, or being tapped by another player's effect -- with the newly tapped permanent as the trigger's source, so a granted ability on it can read its power and deal damage from it",
+      "why_existing_wont_do": "trigger_events carries becomes_untapped but no tapped counterpart, so the exact inverse is simply absent; engine/turn.py's phase_in docstring names a \"becomes tapped\" trigger only as the thing it is careful not to fire, and nothing emits one. The nearest reachable substitutes are both wrong: ability_activated fires on the activation of a tap-cost ability rather than on the tap, so it misses attacking and every outside tap and fires for untapped-cost abilities that never tap; attacks covers only the combat case and none of the others. This is the same missing event already filed for City of Brass, here needed on a granted ability rather than a printed one."
+    }
+  ],
+  "closest_existing": ["becomes_untapped", "ability_activated", "attacks"],
+  "confidence": "high"
+}

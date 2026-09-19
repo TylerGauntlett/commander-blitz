@@ -1,0 +1,77 @@
+{
+  "card": {
+    "id": "level_up",
+    "name": "Level Up",
+    "oracle_text": "Enchant creature\nWhen this Aura enters, put a +1/+1 counter on enchanted creature.\nEnchanted creature has \"Whenever this creature attacks, double the number of +1/+1 counters on it. Then if it has power 10 or greater, draw a card.\"",
+    "mana_cost": "{1}{G}",
+    "types": ["Enchantment"],
+    "subtypes": ["Aura"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "targets": [
+      {
+        "id": "enchanted",
+        "kind": "permanent",
+        "selector": {"types": ["Creature"], "zone": "battlefield"}
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature attacks, double the number of +1/+1 counters on it. Then if it has power 10 or greater, draw a card.",
+        "trigger": {"event": "attacks", "source": "self"},
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {
+              "counters_on": {
+                "counter": "+1/+1",
+                "objects": {"self_only": true, "zone": "battlefield"}
+              }
+            },
+            "objects": {"self_only": true, "zone": "battlefield"}
+          },
+          {
+            "op": "if",
+            "condition": {
+              "cmp": ">=",
+              "left": {"power_of": {"self": true}},
+              "right": {"const": 10}
+            },
+            "then": [
+              {"op": "draw", "amount": {"const": 1}, "player": "you"}
+            ]
+          }
+        ]
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When this Aura enters, put a +1/+1 counter on enchanted creature.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"attached": true, "count": "all", "zone": "battlefield"}
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"attached": true},
+        "text": "Enchanted creature has \"Whenever this creature attacks, double the number of +1/+1 counters on it. Then if it has power 10 or greater, draw a card.\""
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "target_pt_delta": {"power": 1, "toughness": 1}
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "card": {
+    "id": "power_fist",
+    "name": "Power Fist",
+    "oracle_text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\"\nEquip {2}",
+    "mana_cost": "{1}{G}",
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "types": ["Artifact"],
+    "subtypes": ["Equipment"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "grant_keyword",
+        "keywords": ["trample"],
+        "affects": {"attached": true},
+        "text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\""
+      },
+      {
+        "kind": "static",
+        "effect": "grant_ability",
+        "ability": 0,
+        "affects": {"attached": true},
+        "text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\""
+      },
+      {
+        "kind": "activated",
+        "cost": {"mana": "{2}"},
+        "sorcery_speed_only": true,
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": ["Creature"]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {"target": "equip_target"}
+          }
+        ],
+        "text": "Equip {2}"
+      }
+    ],
+    "grantable_abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.",
+        "trigger": {
+          "event": "deals_combat_damage_to_player",
+          "source": "self"
+        },
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"binding": "amount"},
+            "objects": {"binding": "subject"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

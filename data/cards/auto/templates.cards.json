@@ -727,6 +727,107 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Equipped creature gets +1/+1 for each artifact you control.",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Artifact"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, look at the top six cards of your library. You may reveal an artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "adaptive_omnitool",
+      "mana_cost": "{2}",
+      "name": "Adaptive Omnitool",
+      "oracle_text": "Equipped creature gets +1/+1 for each artifact you control.\nWhenever equipped creature attacks, look at the top six cards of your library. You may reveal an artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -3506,6 +3607,60 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "subtypes": [
+                  "Forest"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Untap target Forest."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "arbor_elf",
+      "mana_cost": "{G}",
+      "name": "Arbor Elf",
+      "oracle_text": "{T}: Untap target Forest.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -6134,6 +6289,78 @@
         "Swamp",
         "Mountain"
       ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bala_ged_recovery_bala_ged_sanctuary",
+      "mana_cost": "{2}{G}",
+      "name": "Bala Ged Recovery // Bala Ged Sanctuary",
+      "oracle_text": "Return target card from your graveyard to your hand.",
+      "second_face": "bala_ged_sanctuary",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "destination": "hand",
+          "objects": {
+            "target": "gy_card"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "gy_card",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "bala_ged_sanctuary",
+      "name": "Bala Ged Sanctuary",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
       "types": [
         "Land"
       ]
@@ -9183,6 +9410,86 @@
       "abilities": [
         {
           "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, create a token that's a copy of this Equipment",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bloodforged_battle_axe",
+      "mana_cost": "{1}",
+      "name": "Bloodforged Battle-Axe",
+      "oracle_text": "Equipped creature gets +2/+0.\nWhenever equipped creature deals combat damage to a player, create a token that's a copy of this Equipment.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "self_only": true
           },
           "effect": "cant_block",
@@ -10111,6 +10418,81 @@
       "source": "auto",
       "supertypes": [
         "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, put four +1/+1 counters on it.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bone_sabres",
+      "mana_cost": "{2}{G}",
+      "name": "Bone Sabres",
+      "oracle_text": "Whenever equipped creature attacks, put four +1/+1 counters on it.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
       ],
       "types": [
         "Artifact"
@@ -12383,6 +12765,71 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{2}, {T}, Sacrifice this land: Return target artifact card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "buried_ruin",
+      "mana_cost": "",
+      "name": "Buried Ruin",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Return target artifact card from your graveyard to your hand.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -12422,6 +12869,95 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 3,
+          "text": "Equipped creature gets +3/+2.",
+          "toughness": 2
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "op": "cast_from_hand",
+              "player": "you",
+              "selector": {
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "binding": "amount"
+                  }
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, draw a card, then you may cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "buster_sword",
+      "mana_cost": "{3}",
+      "name": "Buster Sword",
+      "oracle_text": "Equipped creature gets +3/+2.\nWhenever equipped creature deals combat damage to a player, draw a card, then you may cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -18750,6 +19286,159 @@
       "name": "Conjurer's Bauble",
       "oracle_text": "{T}, Sacrifice this artifact: Put up to one target card from your graveyard on the bottom of your library. Draw a card.",
       "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "W"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Equipped creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "U"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Equipped creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "B"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Equipped creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "R"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Equipped creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "G"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Equipped creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects_player": "opponent",
+          "condition": {
+            "all": [
+              {
+                "is_attached": true
+              },
+              {
+                "is_your_turn": true
+              }
+            ]
+          },
+          "effect": "cant_cast_spells",
+          "kind": "static",
+          "text": "As long as this Equipment is attached to a creature, your opponents can't cast spells during your turn."
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "conqueror_s_flail",
+      "mana_cost": "{2}",
+      "name": "Conqueror's Flail",
+      "oracle_text": "Equipped creature gets +1/+1 for each color among permanents you control.\nAs long as this Equipment is attached to a creature, your opponents can't cast spells during your turn.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
       "types": [
         "Artifact"
       ]
@@ -30221,6 +30910,110 @@
         "Vampire"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "power": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{G}{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Ferocious — {T}: Add {G}{G}{G}{G}. Activate only if you control a creature with power 4 or greater."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{2}{G}{G}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "add_subtypes": [
+                  "Zombie"
+                ],
+                "colors": [
+                  "B"
+                ],
+                "no_mana_cost": true,
+                "power": 4,
+                "toughness": 4
+              },
+              "objects": {
+                "controller": "any",
+                "self_only": true,
+                "zone": "exile"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Eternalize {2}{G}{G} ({2}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Snake Druid with no mana cost. Eternalize only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fanatic_of_rhonas",
+      "mana_cost": "{1}{G}",
+      "name": "Fanatic of Rhonas",
+      "oracle_text": "{T}: Add {G}.\nFerocious — {T}: Add {G}{G}{G}{G}. Activate only if you control a creature with power 4 or greater.\nEternalize {2}{G}{G} ({2}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Snake Druid with no mana cost. Eternalize only as a sorcery.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Druid"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -41943,6 +42736,125 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attachment": {
+                    "binding": "subject"
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may",
+              "prompt": "Attach that Equipment to target creature you control?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Hammer of Nazahn or another Equipment you control enters, you may attach that Equipment to target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Equipment"
+              ]
+            }
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0 and has indestructible.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+0 and has indestructible."
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {4}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hammer_of_nazahn",
+      "mana_cost": "{4}",
+      "name": "Hammer of Nazahn",
+      "oracle_text": "Whenever Hammer of Nazahn or another Equipment you control enters, you may attach that Equipment to target creature you control.\nEquipped creature gets +2/+0 and has indestructible.\nEquip {4}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -45761,6 +46673,172 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "target": "t1"
+                }
+              },
+              "objects": {
+                "target": "t2"
+              },
+              "op": "damage",
+              "source_object": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Class enters, target creature you control deals damage equal to its power to target creature you don't control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{1}{G}: Level 2"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "level": 2,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you attack, target attacking creature gets +1/+0 and gains trample until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{3}{G}: Level 3"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "level": 3,
+          "text": "At the beginning of your end step, if you control a creature with power 4 or greater, draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hunter_s_talent",
+      "mana_cost": "{1}{G}",
+      "name": "Hunter's Talent",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, target creature you control deals damage equal to its power to target creature you don't control.\n{1}{G}: Level 2\nWhenever you attack, target attacking creature gets +1/+0 and gains trample until end of turn.\n{3}{G}: Level 3\nAt the beginning of your end step, if you control a creature with power 4 or greater, draw a card.",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -47640,6 +48718,110 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if you control three or more artifacts, you gain 1 life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 3
+            }
+          },
+          "cost": {
+            "mana": "{4}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              "shuffle": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}, Sacrifice Inventors' Fair: Search your library for an artifact card, reveal it, put it into your hand, then shuffle. Activate only if you control three or more artifacts."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "inventors_fair",
+      "name": "Inventors' Fair",
+      "oracle_text": "At the beginning of your upkeep, if you control three or more artifacts, you gain 1 life.\n{T}: Add {C}.\n{4}, {T}, Sacrifice Inventors' Fair: Search your library for an artifact card, reveal it, put it into your hand, then shuffle. Activate only if you control three or more artifacts.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -50355,6 +51537,65 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature deals damage to an opponent, you may draw a card.",
+          "trigger": {
+            "controller": "any",
+            "defending": "opponent",
+            "event": "deals_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "keen_sense",
+      "mana_cost": "{G}",
+      "name": "Keen Sense",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature deals damage to an opponent, you may draw a card.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -52763,6 +54004,45 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "krosan_grip",
+      "mana_cost": "{2}{G}",
+      "name": "Krosan Grip",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nDestroy target artifact or enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "split_second": true,
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -53215,6 +54495,89 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+0 and has haste and ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +1/+0 and has haste and ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)"
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "cost": {
+            "mana": "{1}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Equipped creature gets +1/+0 and has haste and ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)"
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "lavaspur_boots",
+      "mana_cost": "{1}",
+      "name": "Lavaspur Boots",
+      "oracle_text": "Equipped creature gets +1/+0 and has haste and ward {1}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)\nEquip {1}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -53628,6 +54991,122 @@
       "mana_cost": "{B}",
       "name": "Leshrac's Rite",
       "oracle_text": "Enchant creature\nEnchanted creature has swampwalk. (It can't be blocked as long as defending player controls a Swamp.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, put a +1/+1 counter on enchanted creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"Whenever this creature attacks, double the number of +1/+1 counters on it. Then if it has power 10 or greater, draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "power_of": {
+                    "self": true
+                  }
+                },
+                "right": {
+                  "const": 10
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, double the number of +1/+1 counters on it. Then if it has power 10 or greater, draw a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "level_up",
+      "mana_cost": "{1}{G}",
+      "name": "Level Up",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, put a +1/+1 counter on enchanted creature.\nEnchanted creature has \"Whenever this creature attacks, double the number of +1/+1 counters on it. Then if it has power 10 or greater, draw a card.\"",
       "source": "auto",
       "subtypes": [
         "Aura"
@@ -58867,6 +60346,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature deals combat damage to a player, you may draw two cards. If you do, discard a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mask_of_memory",
+      "mana_cost": "{2}",
+      "name": "Mask of Memory",
+      "oracle_text": "Whenever equipped creature deals combat damage to a player, you may draw two cards. If you do, discard a card.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -62094,6 +63653,98 @@
       "id": "mossfire_valley",
       "name": "Mossfire Valley",
       "oracle_text": "{1}, {T}: Add {R}{G}.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "hideaway"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Hideaway 4",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "power_of": {
+                    "objects": {
+                      "controller": "you",
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 10
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "op": "play_exiled"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Play the exiled card without paying its mana cost?"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, {T}: You may play the exiled card without paying its mana cost if creatures you control have total power 10 or greater."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "mosswort_bridge",
+      "mana_cost": "",
+      "name": "Mosswort Bridge",
+      "oracle_text": "Hideaway 4 (When this land enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nThis land enters tapped.\n{T}: Add {G}.\n{G}, {T}: You may play the exiled card without paying its mana cost if creatures you control have total power 10 or greater.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
       "source": "auto",
       "types": [
         "Land"
@@ -72087,6 +73738,99 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "power_fist",
+      "mana_cost": "{1}{G}",
+      "name": "Power Fist",
+      "oracle_text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\"\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -75177,6 +76921,90 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ram_through",
+      "mana_cost": "{1}{G}",
+      "name": "Ram Through",
+      "oracle_text": "Target creature you control deals damage equal to its power to target creature you don't control. If the creature you control has trample, excess damage is dealt to that creature's controller instead.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "exists": {
+              "keywords": [
+                "trample"
+              ],
+              "target": "t1"
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "power_of": {
+                  "target": "t1"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "target": "t1"
+              },
+              "target": "t2"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "power_of": {
+                  "target": "t1"
+                }
+              },
+              "excess_to": "controller",
+              "op": "damage",
+              "source_object": {
+                "target": "t1"
+              },
+              "target": "t2"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "U"
       ],
@@ -77235,6 +79063,80 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "return_of_the_wildspeaker",
+      "mana_cost": "{4}{G}",
+      "name": "Return of the Wildspeaker",
+      "oracle_text": "Choose one —\n• Draw cards equal to the greatest power among non-Human creatures you control.\n• Non-Human creatures you control get +3/+3 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "extreme_value": {
+                      "objects": {
+                        "controller": "you",
+                        "not_subtypes": [
+                          "Human"
+                        ],
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "of": "power",
+                      "pick": "greatest"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "label": "Draw cards equal to the greatest power among non-Human creatures you control."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "not_subtypes": [
+                      "Human"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 3
+                  },
+                  "toughness": {
+                    "const": 3
+                  }
+                }
+              ],
+              "label": "Non-Human creatures you control get +3/+3 until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -78070,6 +79972,53 @@
       "toughness": 8,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rishkar_s_expertise",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Rishkar's Expertise",
+      "oracle_text": "Draw cards equal to the greatest power among creatures you control.\nYou may cast a spell with mana value 5 or less from your hand without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "extreme_value": {
+              "objects": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "of": "power",
+              "pick": "greatest"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "op": "cast_from_hand",
+          "player": "you",
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 5
+              }
+            }
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -83565,6 +85514,127 @@
         {
           "effects": [
             {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "power_of": {
+                    "binding": "subject"
+                  }
+                },
+                "right": {
+                  "extreme_value": {
+                    "objects": {
+                      "exclude_binding": "subject",
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    },
+                    "of": "power",
+                    "pick": "greatest"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": {
+                        "controller_of": "subject"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "player": {
+                    "controller_of": "subject"
+                  },
+                  "prompt": "Draw a card?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature enters, its controller may draw a card if its power is greater than each other creature's power.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "extreme_value": {
+                  "objects": {
+                    "controller": "you",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "of": "power",
+                  "pick": "greatest"
+                }
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{G}, {T}: Add X mana in any combination of colors, where X is the greatest power among creatures you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "selvala_heart_of_the_wilds",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Selvala, Heart of the Wilds",
+      "oracle_text": "Whenever another creature enters, its controller may draw a card if its power is greater than each other creature's power.\n{G}, {T}: Add X mana in any combination of colors, where X is the greatest power among creatures you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Scout"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -87582,6 +89652,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"Whenever this creature deals combat damage to a player, you may draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, you may draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "sixth_sense",
+      "mana_cost": "{G}",
+      "name": "Sixth Sense",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature deals combat damage to a player, you may draw a card.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -89814,6 +91950,100 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Forest land.",
+          "types": [
+            "Land"
+          ]
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Forest"
+          ],
+          "text": "Enchanted permanent is a colorless Forest land."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "colors": [],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Forest land."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Forest land."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted permanent is a colorless Forest land."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "id": "song_of_the_dryads",
+      "mana_cost": "{2}{G}",
+      "name": "Song of the Dryads",
+      "oracle_text": "Enchant permanent\nEnchanted permanent is a colorless Forest land.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -93364,6 +95594,68 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Sacrifice this land: Destroy target land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "strip_mine",
+      "mana_cost": "",
+      "name": "Strip Mine",
+      "oracle_text": "{T}: Add {C}.\n{T}, Sacrifice this land: Destroy target land.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -95577,6 +97869,117 @@
           "power": {
             "const": 2
           },
+          "text": "Equipped creature gets +2/+2 and has protection from red and from blue.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "R",
+            "U"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has protection from red and from blue."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever equipped creature deals combat damage to a player, this Equipment deals 2 damage to any target and you draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sword_of_fire_and_ice",
+      "mana_cost": "{3}",
+      "name": "Sword of Fire and Ice",
+      "oracle_text": "Equipped creature gets +2/+2 and has protection from red and from blue.\nWhenever equipped creature deals combat damage to a player, this Equipment deals 2 damage to any target and you draw a card.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
           "text": "Equipped creature gets +2/+0 and has first strike, vigilance, trample, and haste",
           "toughness": {
             "const": 0
@@ -96818,6 +99221,149 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "phase_out"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this land enters, up to one target creature phases out.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{C}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{1}, {T}: Add one mana of any color."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}: Put this card from your hand onto the battlefield."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "talon_gates_of_madara",
+      "name": "Talon Gates of Madara",
+      "oracle_text": "When this land enters, up to one target creature phases out.\n{T}: Add {C}.\n{1}, {T}: Add one mana of any color.\n{4}: Put this card from your hand onto the battlefield.",
+      "source": "auto",
+      "subtypes": [
+        "Gate"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {
@@ -101890,6 +104436,61 @@
       "types": [
         "Creature"
       ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Toski attacks each combat if able."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "toski_bearer_of_secrets",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "Toski, Bearer of Secrets",
+      "oracle_text": "This spell can't be countered.\nIndestructible\nToski attacks each combat if able.\nWhenever a creature you control deals combat damage to a player, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Squirrel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ],
+      "uncounterable": true
     },
     {
       "color_identity": [

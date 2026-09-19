@@ -1,0 +1,23 @@
+{
+  "card_id": "masterwork_of_ingenuity",
+  "name": "Masterwork of Ingenuity",
+  "oracle_text": "You may have this Equipment enter as a copy of any Equipment on the battlefield.",
+  "blocked_sentences": [
+    "You may have this Equipment enter as a copy of any Equipment on the battlefield."
+  ],
+  "needs": [
+    {
+      "capability": "enters_as_a_copy",
+      "kind": "replacement",
+      "what": "A fifth entry on the enters-the-battlefield replacement whitelist -- a `self_enters_as_copy` event (or a `copy` key inside `ReplacementModel.modify`) that, as the permanent is put onto the battlefield, asks its controller whether to copy something and, if they say yes, re-points the arriving object's `def_id` at the chosen permanent's *before* the object is ever seen as itself (614.1b / 706.2). It needs three things `modify` does not currently carry: a `copying` **selector** naming the legal pool (`{\"zone\": \"battlefield\", \"subtypes\": [\"Equipment\"]}`; the same shape serves \"any land on the battlefield\" and \"any creature on the battlefield\"), an **optional** flag for the printed \"You may\", and a decision point inside the zone change, since the choice is made by a player. An `except_`/`except_name` rider belongs on it too, because most of this family prints one (\"except it's a Cave in addition to its other types\", \"except it has \\\"When this creature enters, destroy up to one other target creature with the same name...\\\"\"), and it must compose with the existing tapped form, since the common printing is \"enter **tapped** as a copy\". Wanted by Masterwork of Ingenuity and the whole enters-as-a-copy family already sitting unimplemented in the pool -- Vesuva/Thespian's Stage-style \"You may have this land enter tapped as a copy of any land on the battlefield\" (data/cards/auto/templates.cards.json:107117), the Cave variant (:26395) and the Polymorphine creature (:12961).",
+      "why_existing_wont_do": "`ReplacementModel.event` (src/automtg/cards/schema.py:614) is a closed `Literal` of exactly four values -- `self_enters`, `self_enters_tapped`, `self_enters_with_counters`, `self_enters_prepared` -- and `_enter_battlefield` (src/automtg/engine/zones.py:491) honours only `tapped`, `counters` and `prepared` out of `modify`; there is no branch that could change the arriving object's identity, and docs/rules-coverage.md lists \"Copying a permanent as anything but a token\" under Not implemented and says in the same row that \"a fifth entry on the enters-the-battlefield whitelist ... is engine work\". `copy_permanent` is not it: it calls `create_token` with the source's `def_id` (src/automtg/engine/effects/ops_removal.py:587-650), so it makes a *new token* and never touches the object it is pointed at -- Masterwork must enter as the real card, which is the whole difference between it and a clone token (it stays a card, it can be Equipped and returned, and its copy is set as it arrives). `become_copy` is the right *mechanism* but the wrong *timing*: it applies in place, and its only reachable spelling here is a `self_enters` triggered ability running `may` + `become_copy` with `duration: \"permanent\"` and `copying: {\"zone\": \"battlefield\", \"subtypes\": [\"Equipment\"]}` -- which is an approximation, not the card. 614.1b means the permanent is never on the battlefield as Masterwork of Ingenuity at all, whereas a trigger puts it there as itself, gives every other player and every `permanent_enters` trigger a window to see a 1-mana Equipment named Masterwork of Ingenuity, resolves after state-based actions and the legend rule have already looked at the board (copying a legendary Equipment would then need a second legend check that never comes), and -- decisively -- misses the copied Equipment's own enters triggers, which a real 614 replacement makes fire because the thing that entered *was* that Equipment. The engine also has no general rule-616 machinery (no event object, no replaced-by chain), so this cannot be bolted on as a generic replacement; `create_instead`/`replace_token_creation` is the token-creation axis and there is no object yet for it to act on, and `animate`, `set_types` and `add_subtype` overwrite named characteristics with literals rather than taking another object's whole printed face. Separately, the sandbox contains no Equipment on either battlefield, so even the trigger approximation would be unobservable beyond `{\"zone\": \"battlefield\"}`."
+    }
+  ],
+  "closest_existing": [
+    "become_copy",
+    "copy_permanent",
+    "self_enters_with_counters",
+    "self_enters_tapped"
+  ],
+  "confidence": "high"
+}

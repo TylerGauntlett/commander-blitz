@@ -1,0 +1,23 @@
+{
+  "card_id": "archdruid_s_charm",
+  "name": "Archdruid's Charm",
+  "oracle_text": "Choose one —\n• Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.\n• Put a +1/+1 counter on target creature you control. It deals damage equal to its power to target creature you don't control.\n• Exile target artifact or enchantment.",
+  "blocked_sentences": [
+    "• Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "search_destination_by_type",
+      "kind": "op",
+      "what": "a destination on `search_library`/`search_zones` that is chosen by the *found card's own printed type* rather than fixed by the author -- e.g. a `destination_if` list of `{selector, to, tapped}` branches taken in order (here `{\"selector\": {\"types\": [\"Land\"]}, \"to\": \"battlefield\", \"tapped\": true}` with a fallback `to: \"hand\"`), so one search over one creature-or-land pool makes one choice and each card found takes exactly one zone change, before the single shuffle. The `tapped` flag has to travel with the branch, because only the land half of the printed sentence arrives tapped. Wanted by Archdruid's Charm and the whole \"put it onto the battlefield if it's a land, otherwise into your hand\" family (Traverse the Ulvenwald's delirium half, Grow from the Ashes' kin, Scout the Wilderness)",
+      "why_existing_wont_do": "`_search` (src/automtg/engine/effects/ops_cards.py:310) resolves exactly one `DESTINATIONS[spec.get(\"destination\", \"hand\")]` and one `tapped = bool(spec.get(\"tapped\"))` before it ever looks at what was picked, and hands every card to `_move_found` (ops_cards.py:410), which moves them all to that same zone -- nothing in `op_options` for either search op branches on the card. `look_at_top` is the only lookup with more than one destination (`destinations`, ops_cards.py:528) and its steps are a *player's* choice of which card goes where, one card each, over the top N of the library rather than a search -- it cannot read a card's type and it cannot search. Writing `search_library` with `as: \"found\"`, `destination: \"hand\"` and then an `if` on the binding running `put_onto_battlefield {\"objects\": {\"binding\": \"found\"}, \"tapped\": true}` is an approximation, not the card: the land really enters the hand first (a second zone change, visible to hand-size effects and to anything that replaces or triggers on a card being put into a hand, and publicly a card in hand rather than one that went library-to-battlefield), and it arrives on the battlefield *after* `_search`'s shuffle rather than before it. Two `search_library` ops guarded by an `if` is worse still -- the printed card is one look at one pool and one choice, so a second search would shuffle twice and let the player look at the library again, and no condition can be asked before the choice has been made. `search_zones` differs only in which zones form the pool, and `two_piles`' `to`/`other` split is over the top of the library by piles, not by card type."
+    }
+  ],
+  "closest_existing": [
+    "search_library",
+    "search_split_destinations",
+    "put_onto_battlefield",
+    "look_at_top"
+  ],
+  "confidence": "high"
+}
