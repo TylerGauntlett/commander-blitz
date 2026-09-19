@@ -1790,6 +1790,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: add_mana needs 'mana' (or 'reflecting', or "
             f"'in_commander_identity', or 'split')"
         )
+    if "persists_until_end_of_turn" in effect:
+        # "Until end of turn, you don't lose this mana as steps and phases end."
+        # Read only by the two ops that put mana in a pool: anywhere else the
+        # printed promise is simply dropped, and the card reads as though the
+        # mana lasted when it did not.
+        if op not in ("add_mana", "add_mana_per"):
+            raise DslError(
+                f"{where}: 'persists_until_end_of_turn' is read only by add_mana "
+                f"and add_mana_per, not by {op!r}"
+            )
+        if effect["persists_until_end_of_turn"] is not True:
+            raise DslError(
+                f"{where}.persists_until_end_of_turn: the only value is true -- "
+                f"ordinary mana is the default and says nothing"
+            )
     if op == "add_mana" and effect.get("split") is not None:
         # "Add X mana in any combination of {U} and/or {R}" -- Vivi Ornitier.
         # The colours are a list and the size is an `amount`; `mana` says the

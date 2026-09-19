@@ -800,9 +800,15 @@ class GameState:
     # misc
     # ------------------------------------------------------------------
 
-    def empty_all_mana_pools(self) -> None:
+    def empty_all_mana_pools(self, keep_for_turn: int | None = None) -> None:
+        """Empty every pool, sparing mana that says it survives this turn.
+
+        ``keep_for_turn`` is the current turn at an ordinary step or phase
+        boundary and ``None`` at the end of the turn, which is where "until end
+        of turn" runs out.
+        """
         for p in self.players:
-            lost = p.mana_pool.clear()
+            lost = p.mana_pool.clear(keep_for_turn)
             if lost:
                 self.emit("mana_emptied", player=p.pid, amount=lost)
 

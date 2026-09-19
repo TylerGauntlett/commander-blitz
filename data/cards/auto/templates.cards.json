@@ -101180,6 +101180,151 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "effects": [
+                {
+                  "mana": "{G}",
+                  "op": "add_mana",
+                  "persists_until_end_of_turn": true
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or equipped creature attacks, add an amount of {G} equal to its power. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "objects": {
+                    "attached": true,
+                    "count": "all",
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "effects": [
+                {
+                  "mana": "{G}",
+                  "op": "add_mana",
+                  "persists_until_end_of_turn": true
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or equipped creature attacks, add an amount of {G} equal to its power. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Reconfigure {3}",
+          "types": [
+            "Artifact"
+          ]
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "reconfigure_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "reconfigure_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Reconfigure {3}"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unattach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Reconfigure {3}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tanuki_transplanter",
+      "mana_cost": "{3}{G}",
+      "name": "Tanuki Transplanter",
+      "oracle_text": "Whenever this creature or equipped creature attacks, add an amount of {G} equal to its power. Until end of turn, you don't lose this mana as steps and phases end.\nReconfigure {3} ({3}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Equipment",
+        "Dog"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

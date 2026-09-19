@@ -9177,6 +9177,10 @@
   "tanglepool_bridge": {
     "zone": "battlefield"
   },
+  "tanuki_transplanter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "taoist_hermit": {
     "zone": "battlefield"
   },

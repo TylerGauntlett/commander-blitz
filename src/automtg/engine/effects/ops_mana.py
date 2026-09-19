@@ -40,6 +40,17 @@ def mana_string(ctx: EffectContext, spec: Mapping[str, Any]) -> str:
     return "".join(f"{{{c}}}" for c in resolve_chosen_color_list([mana], source))
 
 
+
+def _persists_through(ctx: EffectContext, spec: Mapping[str, Any]) -> int:
+    """The turn this mana survives to the end of, or ``-1`` for ordinary mana.
+
+    "Until end of turn, you don't lose this mana as steps and phases end"
+    (Tanuki Transplanter). The turn is read here, as the mana is added, because
+    that is the only moment the effect exists: afterwards there is nothing but
+    mana in a pool, and a pool cannot say which turn made a promise about it.
+    """
+    return ctx.state.turn if spec.get("persists_until_end_of_turn") else -1
+
 @register("add_mana")
 def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
     symbols = mana_string(ctx, spec)
@@ -47,7 +58,9 @@ def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     produced = parse_mana_production(symbols)
     for pid in select_players(ctx, spec.get("player", "you")):
-        ctx.state.players[pid].mana_pool.add_tuple(produced, source=ctx.source_oid)
+        ctx.state.players[pid].mana_pool.add_tuple(
+            produced, source=ctx.source_oid, persists_through_turn=_persists_through(ctx, spec)
+        )
         ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
 
 
@@ -63,7 +76,9 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     scaled = tuple(v * count for v in unit)
     for pid in select_players(ctx, spec.get("player", "you")):
-        ctx.state.players[pid].mana_pool.add_tuple(scaled, source=ctx.source_oid)
+        ctx.state.players[pid].mana_pool.add_tuple(
+            scaled, source=ctx.source_oid, persists_through_turn=_persists_through(ctx, spec)
+        )
         ctx.state.emit(
             EventType.MANA_ADDED,
             player=pid,

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**35 cards** blocked by **45** capabilities.
+**34 cards** blocked by **44** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -46,7 +46,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
-| [mana-doesnt-empty](#mana-doesnt-empty) | 1 | 6298 | engine |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [mutate](#mutate) | 1 | 3835 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -531,20 +530,6 @@ Blocks **1** card.
 
 - **The Irencrag** (rank 3821) — `the_irencrag`
   - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
-
-</details>
-
-## mana-doesnt-empty
-
-Blocks **1** card.
-
-- **(engine)** Mana that survives the end of a step or phase -- the Upwelling / Kruphix / Omnath effect, printed here as a rider on one add_mana rather than as a standing static. Concretely: ManaPool (src/automtg/engine/mana.py) needs to carry persistence pip by pip alongside its existing `tags` provenance list, so that `ManaPool.clear()` keeps the marked pips instead of zeroing `amounts`, plus a turn-boundary sweep that does empty them (rule 500.4 still applies at cleanup, and "until end of turn" means the exemption expires there). Then an authoring spelling: either a `persists_until_end_of_turn` key on the `add_mana` op marking only the mana that op produced, or a player-wide entry in `static_effects` for the cards that print the standing version -- this card needs the per-add_mana form, because only the mana this trigger made is exempt.
-  <br>Why the existing vocabulary won't do: `add_mana` and `add_mana_per` are the only ops that put mana in a pool and neither has any key touching its lifetime -- op_options for `add_mana` is amount/in_commander_identity/mana/player/reflecting/split, and op_add_mana (engine/effects/ops_mana.py) simply calls `mana_pool.add_tuple`. `state.empty_all_mana_pools` calls `ManaPool.clear()`, which unconditionally replaces `amounts` with zeros and `tags` with empty lists; it is called from turn.py at every step/phase boundary and from sba.py, and there is no flag, tag or per-pip field it consults. `mana_restriction` is the nearest thing in the DSL that qualifies mana, but it is a spend-only-on narrowing, and the loader raises "'mana_restriction' needs 'is_mana_ability'" -- this is a triggered ability that uses the stack, not a mana ability. `delayed_trigger` and `delay` cannot stand in either: they schedule effects at a later step, and by then the pool has already been cleared, so re-adding mana there would be a different card that makes mana twice. Dropping the sentence leaves a Tanuki Transplanter whose mana vanishes the instant the declare-attackers step ends, which is the whole point of the card -- the ramp is meant to be spendable in the postcombat main phase.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tanuki Transplanter** (rank 6298) — `tanuki_transplanter`
-  - Until end of turn, you don't lose this mana as steps and phases end.
 
 </details>
 

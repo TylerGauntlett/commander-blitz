@@ -551,6 +551,14 @@ class Pip(NamedTuple):
 
     source: int | None = None
     uncounterable: bool = False
+    #: The turn through which this pip survives step and phase boundaries --
+    #: "Until end of turn, you don't lose this mana as steps and phases end"
+    #: (Tanuki Transplanter). ``-1``, the default, is ordinary mana.
+    #:
+    #: The turn rather than a flag, for `GameObject.drawn_turn`'s reason: a flag
+    #: would need clearing at the turn boundary, and mana that forgot to be
+    #: cleared is mana that never empties.
+    persists_through_turn: int = -1
 
 
 @dataclass(frozen=True)
@@ -610,10 +618,11 @@ class ManaPool:
         source: int | None = None,
         *,
         uncounterable: bool = False,
+        persists_through_turn: int = -1,
     ) -> None:
         index = SYMBOL_INDEX[symbol]
         self.amounts[index] += count
-        self.tags[index].extend([Pip(source, uncounterable)] * count)
+        self.tags[index].extend([Pip(source, uncounterable, persists_through_turn)] * count)
 
     def add_tuple(
         self,
@@ -621,8 +630,9 @@ class ManaPool:
         source: int | None = None,
         *,
         uncounterable: bool = False,
+        persists_through_turn: int = -1,
     ) -> None:
-        pip = Pip(source, uncounterable)
+        pip = Pip(source, uncounterable, persists_through_turn)
         for i, v in enumerate(produced):
             self.amounts[i] += v
             self.tags[i].extend([pip] * v)
@@ -630,11 +640,25 @@ class ManaPool:
     def total(self) -> int:
         return sum(self.amounts)
 
-    def clear(self) -> int:
-        """Empty the pool, returning how much mana was lost."""
-        lost = sum(self.amounts)
-        self.amounts = _zeros()
-        self.tags = [[] for _ in range(N_SYMBOLS)]
+    def clear(self, keep_for_turn: int | None = None) -> int:
+        """Empty the pool, returning how much mana was lost.
+
+        ``keep_for_turn`` spares the pips that say they survive that turn's step
+        and phase boundaries -- Tanuki Transplanter's "until end of turn, you
+        don't lose this mana". ``None`` empties everything, which is what the
+        end of the turn does and what every caller wanting a clean pool means.
+        """
+        if keep_for_turn is None:
+            lost = sum(self.amounts)
+            self.amounts = _zeros()
+            self.tags = [[] for _ in range(N_SYMBOLS)]
+            return lost
+        lost = 0
+        for i, pips in enumerate(self.tags):
+            kept = [pip for pip in pips if pip.persists_through_turn == keep_for_turn]
+            lost += len(pips) - len(kept)
+            self.tags[i] = kept
+            self.amounts[i] = len(kept)
         return lost
 
     def copy(self) -> ManaPool:

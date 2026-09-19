@@ -1,0 +1,29 @@
+{
+  "_comment": "Shapes for tests/unit/test_mana_doesnt_empty.py. t_mde_keep adds {G}{G} that survives steps and phases until end of turn; t_mde_plain is the identical spell without the rider, the control that proves the assertions are about the rider and not about sorceries. Both cost {0} so a position needs no lands and the pool under test holds only what the spell put there.",
+  "cards": [
+    {
+      "id": "t_mde_keep",
+      "name": "Test Kept Mana",
+      "oracle_text": "Add {G}{G}. Until end of turn, you don't lose this mana as steps and phases end.",
+      "mana_cost": "{0}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {"op": "add_mana", "mana": "{G}{G}", "persists_until_end_of_turn": true}
+      ]
+    },
+    {
+      "id": "t_mde_plain",
+      "name": "Test Plain Mana",
+      "oracle_text": "Add {G}{G}.",
+      "mana_cost": "{0}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {"op": "add_mana", "mana": "{G}{G}"}
+      ]
+    }
+  ]
+}

@@ -240,6 +240,20 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
                 f"{where}: mana abilities may only contain 'add_mana' "
                 f"(or a single 'choose_mode' of them), got {effect.get('op')!r}"
             )
+        if effect.get("persists_until_end_of_turn"):
+            # A real mana ability never runs its effects: `mana_options_of`
+            # reads the symbols at load time and `activate_mana_ability` adds
+            # them itself, which is what keeps activation inside cost payment
+            # decision-free. So the rider would be read by nobody and the
+            # printed promise would simply vanish. Refused here rather than
+            # honoured, because honouring it means teaching cost payment to run
+            # effects -- and no printed card asks for that: Omnath and Upwelling
+            # say it as a static about *all* your mana, not about a pip.
+            raise DslError(
+                f"{where}: 'persists_until_end_of_turn' is not read inside a mana "
+                f"ability -- its mana is added from the parsed symbols, not by "
+                f"running this effect"
+            )
         if isinstance(effect.get("mana"), Mapping):
             # `{"chosen_color_of": "self"}` is one symbol whose colour is not
             # known at load time, so it cannot be summed with anything and it

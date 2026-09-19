@@ -273122,12 +273122,12 @@
     },
     "Tanuki Transplanter": {
       "edhrec_rank": 6298,
-      "gate": "template",
+      "gate": null,
       "name": "Tanuki Transplanter",
-      "reason": "no template for: Whenever this creature or equipped creature attacks, add an amount of {G} equal to its pow",
+      "reason": "",
       "scryfall_id": "45ea5ead-9fd8-4909-96aa-d4e970891c93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Taoist Hermit": {

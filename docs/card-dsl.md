@@ -1407,6 +1407,41 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Mana that doesn't empty as steps and phases end
+
+```jsonc
+// Tanuki Transplanter
+{ "op": "repeat", "amount": { "power_of": "trigger_source" },
+  "effects": [
+    { "op": "add_mana", "mana": "{G}", "persists_until_end_of_turn": true }
+  ] }
+```
+
+500.4 empties every mana pool as each step and phase ends, and `turn.advance`
+did that unconditionally. Mana added by an attack trigger therefore lived until
+the end of the declare-attackers step and no longer — one boundary short of ever
+reaching the main phase the card is for.
+
+**The pip carries it, not the player.** The printed sentence is about *this*
+mana: a Tanuki attack promises nothing about the mana already floating from a
+land tapped a moment earlier, and the two sit in the same pool. `Pip` grows a
+`persists_through_turn`, `ManaPool.clear` takes a `keep_for_turn`, and
+`empty_all_mana_pools` passes the current turn at every boundary but the cleanup
+step's — which is the `advance` that ends the turn, and so is exactly where
+"until end of turn" runs out. (Omnath and Upwelling *do* say it about all your
+mana; they say it as a static, which is a different card and a different
+mechanism.)
+
+**The turn, not a flag**, for `drawn_this_turn`'s reason above: a flag would have
+to be cleared at the turn boundary, and mana that forgot to be cleared is mana
+that never empties.
+
+Read only by `add_mana` and `add_mana_per`, and **refused inside a mana
+ability**: a mana ability never runs its effects — `activate_mana_ability` adds
+the parsed symbols itself, which is what keeps activation inside cost payment
+decision-free — so the rider would be read by nobody and the promise would
+silently vanish.
+
 ### Cards in a hand drawn this turn
 
 ```jsonc
