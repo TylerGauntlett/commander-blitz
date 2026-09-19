@@ -1,0 +1,128 @@
+{
+  "_comment": "Shapes for tests/unit/test_cant_sacrifice_static.py. t_suit is Assault Suit's prohibition alone -- a cant_sacrifice static with affects {attached: true} -- and t_open_suit is the same protecting every creature you control, so the tests can show the filter is really read rather than matching whatever is nearest. t_altar is a sacrifice OUTLET: its activated ability costs a creature, which is the cost road into temp_effects.sacrifice_forbidden. The effect road needs no card of its own: op_sacrifice filters its pool with the same sacrifice_forbidden predicate the cost road reads, which is the point of there being one seam, and testing.cards.json already ships a t_edict. t_cs_bear and t_cs_dork are the fodder.",
+  "cards": [
+    {
+      "id": "t_suit",
+      "name": "Test Assault Suit",
+      "oracle_text": "Equipped creature can't be sacrificed.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Equipment"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature can't be sacrificed.",
+          "effect": "cant_sacrifice",
+          "affects": {
+            "attached": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_open_suit",
+      "name": "Test Open Suit",
+      "oracle_text": "Creatures you control can't be sacrificed.",
+      "mana_cost": "{3}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control can't be sacrificed.",
+          "effect": "cant_sacrifice",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_altar",
+      "name": "Test Altar",
+      "oracle_text": "Sacrifice a creature: You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Sacrifice a creature: You gain 1 life.",
+          "cost": {
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cs_bear",
+      "name": "Test Sacrifice Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_cs_dork",
+      "name": "Test Sacrifice Dork",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

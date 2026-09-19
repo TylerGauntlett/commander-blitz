@@ -2218,6 +2218,17 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f'{{"controller": "any", "subtypes": ["Inkling"]}}'
         )
+    if model.effect == "cant_sacrifice" and model.affects is None:
+        # A missing filter matches nothing, so a filterless prohibition protects
+        # nobody -- the card loads, prints "can't be sacrificed" and does not.
+        # Never the whole board: no printed card says that, and the wildcard
+        # reading of an absent filter would turn a one-permanent clause into a
+        # two-sided lock on every sacrifice outlet in the game.
+        raise DslError(
+            f"{where}: cant_sacrifice as a static needs an 'affects' filter "
+            f'naming what it protects -- e.g. {{"attached": true}} for '
+            f"Assault Suit's equipped creature"
+        )
     if model.effect == "cast_from_library_top" and not model.pay_life_instead:
         raise DslError(
             f"{where}: cast_from_library_top needs 'pay_life_instead' -- "

@@ -15122,12 +15122,12 @@
     },
     "Assault Suit": {
       "edhrec_rank": 4134,
-      "gate": "template",
+      "gate": null,
       "name": "Assault Suit",
-      "reason": "no template for: Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, an",
+      "reason": "",
       "scryfall_id": "92b22076-b04e-4d65-9d9c-d3e4c7a3cf1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Assault Zeppelid": {

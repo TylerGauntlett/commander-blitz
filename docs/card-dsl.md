@@ -1186,6 +1186,35 @@ discard would have to ask a question inside the declare-attackers decision, and
 no printed pillowfort asks for one. A tax with no cost is refused for the reason
 ward {0} is — it is `cant_attack` wearing a costume.
 
+### Forbidding a sacrifice, continuously
+
+```jsonc
+// Assault Suit
+{ "kind": "static",
+  "text": "Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.",
+  "effect": "cant_sacrifice",
+  "affects": { "attached": true } }
+```
+
+The continuous half of the `cant_sacrifice` **op**, and a second mechanism for
+the reason `cant_attack_you` is not the `cant_attack_player` op: the op records a
+*set of permanents*, named when a spell resolved, and a static is a *filter*
+recomputed every time it is asked. That difference is Assault Suit — the
+protection must **end** when the Suit is unequipped or destroyed and **move**
+when it is equipped elsewhere, and a recorded set does neither.
+
+Both are read at one seam, `temp_effects.sacrifice_forbidden`, which is asked
+where a player *chooses* what to sacrifice rather than at `zones.sacrifice`. That
+closes both roads the rule does not distinguish: a sacrifice **cost** becomes
+unpayable and is never offered (701.17b), and the **`sacrifice` op** picks
+something else. `zones.sacrifice` is deliberately not the funnel, because the
+game also sacrifices with nobody choosing — 704.5s finishing a Saga — and a
+silent failure there would spin the state-based-action loop.
+
+`affects` is required. Absent it matches nothing, so the card would load, print
+"can't be sacrificed" and not do it; read as a wildcard instead it would be
+worse, turning a one-permanent clause into a lock on every outlet in the game.
+
 ### Forbidding an attack on you rather than pricing it
 
 ```jsonc

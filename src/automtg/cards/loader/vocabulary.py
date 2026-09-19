@@ -286,6 +286,15 @@ STATIC_EFFECTS = frozenset(
         # seats with no creature filter.  Unlike that op, this one **does** reach
         # the defender's planeswalkers, because this sentence names them.
         "cant_attack_you",
+        # "Equipped creature ... can't be sacrificed" (Assault Suit, 701.17b).
+        # The continuous half of the `cant_sacrifice` op, and it has to be a
+        # second mechanism for the reason `cant_attack_you` is not the
+        # `cant_attack_player` op: that one records a *set* of permanents named
+        # when a spell resolved, and an Equipment's prohibition must end when it
+        # is unequipped and move when it is equipped elsewhere -- neither of
+        # which a recorded set can do. Read at `temp_effects.sacrifice_forbidden`,
+        # the one seam both roads to a sacrifice already go through.
+        "cant_sacrifice",
         # Ward. Parameterised on a *cost*, so it cannot be a keyword for the
         # reason `protection` cannot: `KNOWN_KEYWORDS` is a set of bare strings
         # and there is nowhere in one to put the `{1}`. Read by

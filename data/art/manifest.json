@@ -811,6 +811,12 @@
     "file": "assault_griffin.jpg",
     "scryfall_id": "704286a5-e3a8-4517-85e5-6447c5c2530f"
   },
+  "assault_suit": {
+    "artist": "James Paick",
+    "bytes": 41156,
+    "file": "assault_suit.jpg",
+    "scryfall_id": "92b22076-b04e-4d65-9d9c-d3e4c7a3cf1c"
+  },
   "assault_zeppelid": {
     "artist": "Jeremy Jarvis",
     "bytes": 74592,

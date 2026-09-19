@@ -1,0 +1,129 @@
+{
+  "card": {
+    "id": "assault_suit",
+    "name": "Assault Suit",
+    "oracle_text": "Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.\nAt the beginning of each opponent's upkeep, you may have that player gain control of equipped creature until end of turn. If you do, untap it.\nEquip {3}",
+    "mana_cost": "{4}",
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.",
+        "effect": "buff",
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 2
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.",
+        "effect": "grant_keyword",
+        "affects": {
+          "attached": true
+        },
+        "keywords": [
+          "haste"
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.",
+        "effect": "cant_attack_you",
+        "affects": {
+          "attached": true
+        }
+      },
+      {
+        "kind": "static",
+        "text": "Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.",
+        "effect": "cant_sacrifice",
+        "affects": {
+          "attached": true
+        }
+      },
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each opponent's upkeep, you may have that player gain control of equipped creature until end of turn. If you do, untap it.",
+        "trigger": {
+          "event": "upkeep",
+          "controller": "opponent"
+        },
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Have that player gain control of equipped creature until end of turn?",
+            "effects": [
+              {
+                "op": "gain_control",
+                "player": {
+                  "binding": "event_player"
+                },
+                "duration": "until_end_of_turn",
+                "objects": {
+                  "attached": true,
+                  "count": "all",
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "op": "untap",
+                "objects": {
+                  "attached": true,
+                  "count": "all",
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "Equip {3}",
+        "cost": {
+          "mana": "{3}"
+        },
+        "sorcery_speed_only": true,
+        "targets": [
+          {
+            "id": "equip_target",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {
+              "zone": "battlefield",
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

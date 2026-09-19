@@ -512,6 +512,10 @@
   "assault_griffin": {
     "zone": "battlefield"
   },
+  "assault_suit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "assault_zeppelid": {
     "zone": "battlefield"
   },

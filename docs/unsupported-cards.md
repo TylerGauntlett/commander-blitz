@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**46 cards** blocked by **53** capabilities.
+**45 cards** blocked by **52** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [battle](#battle) | 1 | 686 | engine |
-| [cant-sacrifice](#cant-sacrifice) | 1 | 4134 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
 | [choose-permanent-type](#choose-permanent-type) | 1 | 6999 | op, selector |
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
@@ -241,20 +240,6 @@ Blocks **1** card.
 - **Bridgeworks Battle // Tanglespan Bridgeworks** (rank 686) — `bridgeworks_battle_tanglespan_bridgeworks`
   - Battle — Siege (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
   - It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)
-
-</details>
-
-## cant-sacrifice
-
-Blocks **1** card.
-
-- **(static_effect)** a static-ability form of the sacrifice prohibition -- a `cant_sacrifice` entry in `static_effects` taking an `affects` filter (here `{"attached": true}`) and lasting as long as the source is on the battlefield, so the permanents it names cannot be chosen to pay a sacrifice cost or be taken by the `sacrifice` op, with no duration word at all
-  <br>Why the existing vocabulary won't do: `cant_sacrifice` exists only as a one-shot op: the loader requires both `objects` (resolved once, when the effect resolves) and a `duration`, and `this_turn` is the sole implemented duration, so it can express Call for Aid's "this turn" clause but not an Equipment's open-ended "equipped creature ... can't be sacrificed". Putting it in an ability's `effects` would also need something to make the ability fire, and there is no trigger for "becomes attached" in `trigger_events`; an Equipment's continuous grant is a static, and `static_effects` has no sacrifice prohibition of any kind. The near relatives all fail for the reasons the op's own docstring already records: `lock_abilities` stops only the permanent's own activated abilities and says nothing about an outlet elsewhere or about the `sacrifice` op, `replace_deaths` redirects the card after the sacrifice has already been paid for, and `grant_keyword` indestructible is explicitly not a sacrifice prohibition (701.17a).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Assault Suit** (rank 4134) — `assault_suit`
-  - Equipped creature gets +2/+2, has haste, can't attack you or planeswalkers you control, and can't be sacrificed.
 
 </details>
 
