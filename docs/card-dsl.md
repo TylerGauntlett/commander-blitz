@@ -1407,6 +1407,32 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Narrowing when a spell may be cast
+
+```jsonc
+// Berserk
+{ "types": ["Instant"], "cast_before_step": "combat_damage" }
+```
+
+`casting._timing_ok` is the one gate on casting speed and it could only **widen**.
+It returns True the moment it sees an instant, and everything after it — `flash`,
+`cast_as_though_flash`, an ability's `sorcery_speed_only` — is another way of
+saying yes. Nothing on a card could say no.
+
+`cast_before_step` names the step the window closes at, and it is asked **first**,
+before any of the widening branches. Written after them it would load, read
+exactly like the printed card, and never once refuse a cast.
+
+**510.4 is why the card names one step and the engine checks another.** With
+first strike on the board a combat phase has two combat damage steps, and both of
+them are combat damage steps — so "only before the combat damage step" closes at
+the earlier one. The card file says what the card prints; `_WINDOW_CLOSES` reads
+the rule.
+
+A misspelled step is a load error rather than a fall back to "no restriction",
+which would be a strictly better Berserk: castable after blockers, with the
+damage already dealt.
+
 ### Choosing a permanent type, and reading it back
 
 ```jsonc

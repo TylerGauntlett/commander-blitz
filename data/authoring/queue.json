@@ -23942,12 +23942,12 @@
     },
     "Berserk": {
       "edhrec_rank": 3632,
-      "gate": "template",
+      "gate": null,
       "name": "Berserk",
-      "reason": "no template for: Cast this spell only before the combat damage step",
+      "reason": "",
       "scryfall_id": "0fe6e7d3-7e33-4e6b-91c8-47fd4ba3cb5b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Berserk Murlodont": {

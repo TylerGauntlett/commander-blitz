@@ -8364,6 +8364,81 @@
       ]
     },
     {
+      "cast_before_step": "combat_damage",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "berserk",
+      "mana_cost": "{G}",
+      "name": "Berserk",
+      "oracle_text": "Cast this spell only before the combat damage step.\nTarget creature gains trample and gets +X/+0 until end of turn, where X is its power. At the beginning of the next end step, destroy that creature if it attacked this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "trample"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "as": "berserked",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacked_this_turn": true,
+                "binding": "berserked",
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "op": "delay",
+          "step": "end_step",
+          "text": "At the beginning of the next end step, destroy that creature if it attacked this turn."
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "additional_cost": {
         "discard": 1
       },

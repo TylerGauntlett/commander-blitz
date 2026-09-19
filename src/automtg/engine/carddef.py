@@ -17,7 +17,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
-from .enums import AbilityKind, CardType, Keyword, Supertype, Zone
+from .enums import AbilityKind, CardType, Keyword, Step, Supertype, Zone
 from .mana import ManaCost, ManaRestriction
 
 #: Types whose subtypes contribute to Commander colour identity checks.
@@ -928,6 +928,15 @@ class CardDef:
     uncounterable: bool = False
     #: Split second: read off the stack by `legality.split_second_active`.
     split_second: bool = False
+    #: "Cast this spell only before the combat damage step" (Berserk). The step
+    #: at which the casting window **closes**, read by `casting._timing_ok`.
+    #:
+    #: The one card field that *narrows* when a spell may be cast. Everything
+    #: else about timing widens -- `flash`, `cast_as_though_flash`,
+    #: `sorcery_speed_only` on an ability -- and `_timing_ok` returns True for an
+    #: instant before any of them are consulted, so a restriction written
+    #: anywhere else could not be reached at all.
+    cast_before_step: Step | None = None
     #: Buyback: a kicked spell returns to its owner's hand instead of the
     #: graveyard when it finishes resolving.
     buyback: bool = False

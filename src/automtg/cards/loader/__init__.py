@@ -38,6 +38,7 @@ from automtg.engine.effects.values import (
 from automtg.engine.enums import (
     AbilityKind,
     CardType,
+    Step,
     Zone,
 )
 from automtg.engine.errors import DslError
@@ -1261,6 +1262,22 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     types = frozenset(model.types)
     subtypes = frozenset(model.subtypes)
 
+    # "Cast this spell only before the combat damage step" (Berserk). Resolved
+    # here rather than at the check, so a misspelled step is a load error: left
+    # to the engine it would read as "no restriction" and the card would be a
+    # strictly better Berserk, castable after blockers with the damage already
+    # dealt.
+    cast_before_step = None
+    if model.cast_before_step is not None:
+        try:
+            cast_before_step = Step[str(model.cast_before_step).upper()]
+        except KeyError:
+            raise DslError(
+                f"{model.id}: unknown cast_before_step "
+                f"{model.cast_before_step!r} (one of "
+                f"{[s.name.lower() for s in Step]})"
+            ) from None
+
     return CardDef(
         id=model.id,
         name=model.name,
@@ -1293,6 +1310,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         fuse=model.fuse,
         uncounterable=model.uncounterable,
         split_second=model.split_second,
+        cast_before_step=cast_before_step,
         buyback=model.buyback,
         rebound=model.rebound,
         exiles_itself=model.exiles_itself,

@@ -780,6 +780,15 @@
     },
     "zone": "battlefield"
   },
+  "berserk": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "big_score": {
     "battlefield_count": 34,
     "hand_size": {

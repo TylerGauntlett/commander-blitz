@@ -769,6 +769,10 @@ class CardModel(BaseModel):
     #: A card-level flag rather than an ability, because it is true of the
     #: *spell on the stack* and there is no permanent for it to sit on.
     split_second: bool = False
+    #: "Cast this spell only before the combat damage step" (Berserk). The name
+    #: of the step the casting window closes at, lowercased -- the only card
+    #: field that narrows when a spell may be cast.
+    cast_before_step: str | None = None
     #: **Buyback**: "You may pay an additional cost as you cast this spell. If
     #: you do, put it into your hand instead of your graveyard as it resolves."
     #:

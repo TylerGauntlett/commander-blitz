@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**38 cards** blocked by **48** capabilities.
+**37 cards** blocked by **47** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [battle](#battle) | 1 | 686 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
@@ -202,20 +201,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cast-timing-restriction
-
-Blocks **1** card.
-
-- **(engine)** a card-level field that NARROWS when a spell may be cast to a named set of steps/phases -- e.g. `cast_steps: ["precombat_main", "begin_combat", "declare_attackers", "declare_blockers"]` or a `cast_before_step: "combat_damage"` rider -- read by `_timing_ok` so the cast action is simply not offered outside that window, for either player's turn, from every zone a spell can be cast from. The same field clears the whole printed family already sitting in the queue: "Cast this spell only during combat after blockers are declared" (Fog of Gnats shape), "Cast this spell only during the declare attackers step and only if you've been attacked this turn", and the matching `activate_steps` lines for spells.
-  <br>Why the existing vocabulary won't do: `_timing_ok` (src/automtg/engine/casting.py:367, re-exported by legality.py) is the only gate on casting speed and it can only ever WIDEN: it returns True for `card.is_instant` or a printed `flash`, then for the sorcery-speed window, then for `player_casts_as_though_flash`. Berserk is an Instant, so it returns True at the first line and no board state or card field can pull it back. `activate_steps` (schema.py:390, checked at legality.py:693) is the nearest real thing and is exactly the restriction wanted, but the loader refuses it on anything that is not an ACTIVATED ability (loader/__init__.py:1551) and the cast path never consults it -- it is an ability field, and a spell cast is not an ability activation. `sorcery_speed_only` is the same field's neighbour and is both ability-only and the wrong window (it would forbid casting during combat, which is the half of the turn Berserk is printed for). `cast_during` is a resolution-time CONDITION read off the object's stamped `cast_step` (conditions.py:325) at PHASE granularity -- it cannot see the combat damage step, and wrapping the effects in it would still let the spell be cast at any time and then quietly do nothing, which is the approximation this brief forbids. `split_second` and `uncounterable` are the only card-level riders touching the stack and neither restricts timing. No field on CardModel (schema.py:675-1041) narrows a cast window at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Berserk** (rank 3632) — `berserk`
-  - Cast this spell only before the combat damage step.
 
 </details>
 

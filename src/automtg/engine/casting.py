@@ -16,7 +16,7 @@ from .costs import (
     can_pay,
     commander_cost,
 )
-from .enums import ActionKind, Keyword, Zone
+from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
 from .player_statics import player_casts_as_though_flash, player_pays_life_for_black
 from .primitives import sacrifice_forbidden
@@ -364,6 +364,19 @@ def _second_face_actions(
 SECOND_FACE_ZONES = {"hand": Zone.HAND, "graveyard": Zone.GRAVEYARD}
 
 
+#: Where a `cast_before_step` bound really closes the window.
+#:
+#: 510.4: with first strike on the board a combat phase has **two** combat
+#: damage steps, and both of them are combat damage steps. "Only before the
+#: combat damage step" therefore closes at the earlier one -- so a card may say
+#: what it prints and the engine reads the rule.
+_WINDOW_CLOSES: dict[Step, Step] = {Step.COMBAT_DAMAGE: Step.FIRST_STRIKE_DAMAGE}
+
+
+def _window_closes_at(named: Step) -> Step:
+    return _WINDOW_CLOSES.get(named, named)
+
+
 def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -> bool:
     """May ``pid`` cast this card at the present moment?
 
@@ -382,7 +395,17 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
     *timing* question. Anything that forbids the cast outright -- 101.2's rule
     that "can't" beats "can", `player_cant_cast_spells`, epic -- is asked
     elsewhere and is unaffected.
+
+    `cast_before_step` is the one thing here that **narrows**, so it is asked
+    first. "Cast this spell only before the combat damage step" (Berserk) is
+    printed on an instant, and every other branch below returns True for an
+    instant before anything could reach it -- a restriction written after them
+    would load, read as the printed card and never once refuse a cast.
     """
+    if card.cast_before_step is not None and state.step >= _window_closes_at(
+        card.cast_before_step
+    ):
+        return False
     if card.is_instant or Keyword.FLASH.value in card.keywords:
         return True
     if sorcery_speed:
