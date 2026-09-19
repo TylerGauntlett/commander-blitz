@@ -40,8 +40,10 @@ from tests.conftest import oids_of
 
 GROWTH = "t_wild_growth"  # the Aura: "whenever enchanted land is tapped for mana"
 BLOOM = "t_vernal_bloom"  # the class spelling: "whenever a Forest is tapped"
+SPRAWL = "t_utopia_sprawl"  # the same, adding "one mana of the chosen color"
 
 G = SYMBOL_INDEX["G"]
+U = SYMBOL_INDEX["U"]
 
 
 def board(builder, *, lands=("forest", "forest"), enchantment=GROWTH):
@@ -128,6 +130,48 @@ class TestTheControllerIsWhoeverTapped:
         assert sum(game.state.players[0].mana_pool.amounts) == 0
 
 
+class TestTheChosenColourRider:
+    """Utopia Sprawl: "its controller adds one mana of the chosen color".
+
+    Deliberately the same ``{"chosen_color_of": "self"}`` spelling the ``add_mana``
+    *op* takes, so one card cannot mean two different things by one key.
+    """
+
+    def test_it_adds_the_chosen_colour(self, builder):
+        game, aura, lands = board(builder, enchantment=SPRAWL)
+        game.state.objects[aura].chosen_color = "U"
+        attach(game.state, aura, lands[0])
+        pool = tap_for_mana(game, lands[0])
+        assert pool[U] == 1
+        assert pool[G] == 1, "the Forest still makes its own green"
+
+    def test_a_different_choice_makes_different_mana(self, builder):
+        """The colour is really read, rather than a green constant that happens
+        to match the land."""
+        game, aura, lands = board(builder, enchantment=SPRAWL)
+        game.state.objects[aura].chosen_color = "G"
+        attach(game.state, aura, lands[0])
+        assert tap_for_mana(game, lands[0])[G] == 2
+
+    def test_no_colour_chosen_yet_adds_nothing(self, builder):
+        """This runs inside cost payment, where nothing may stop to ask (605.1a).
+
+        So an unanswered choice adds nothing -- the match-nothing default the
+        chosen colour has everywhere else -- rather than guessing a colour.
+        """
+        game, aura, lands = board(builder, enchantment=SPRAWL)
+        attach(game.state, aura, lands[0])
+        pool = tap_for_mana(game, lands[0])
+        assert sum(pool) == 1
+        assert pool[G] == 1
+
+    def test_it_still_only_pays_out_for_the_enchanted_land(self, builder):
+        game, aura, lands = board(builder, enchantment=SPRAWL)
+        game.state.objects[aura].chosen_color = "U"
+        attach(game.state, aura, lands[0])
+        assert tap_for_mana(game, lands[1])[U] == 0
+
+
 class TestTheLoaderRefusesTheAmbiguousSpellings:
     def _card(self, tapped: dict) -> CardModel:
         return CardModel.model_validate(
@@ -163,3 +207,14 @@ class TestTheLoaderRefusesTheAmbiguousSpellings:
     def test_an_empty_tapped_permanent_is_still_refused(self):
         with pytest.raises(DslError, match="tapped_permanent"):
             compile_card(self._card({}))
+
+    def test_the_only_dynamic_add_mana_is_the_chosen_colour(self):
+        """A dict that is not that one spelling is refused rather than ignored.
+
+        Ignored, it would be a static that silently adds nothing -- an inert
+        ability on a card that looks implemented.
+        """
+        card = self._card({"attached": True})
+        card.abilities[0].add_mana = {"chosen_color_of": "enchanted"}
+        with pytest.raises(DslError, match="chosen_color_of"):
+            compile_card(card)

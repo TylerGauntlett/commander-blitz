@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/test_add_mana_on_tap.py. t_crypt_ghast is Crypt Ghast's second line alone; t_turn_ghast gates it on is_your_turn so the condition is shown to be asked; t_vernal_bloom is the any-player spelling ('whenever a Forest is tapped for mana, its controller adds'); t_swamp_maker makes every land a Swamp, Urborg's half, so the static is shown to read current subtypes; t_black_four_drop costs {B}{B}{B}{B}, castable off two Swamps only with the extra mana. t_wild_growth is the Aura spelling ('whenever enchanted land is tapped for mana, its controller adds an additional {G}') -- tapped_permanent {'attached': true}, naming the one land it is attached to rather than a class of land.",
+  "_comment": "Shapes for tests/unit/test_add_mana_on_tap.py. t_crypt_ghast is Crypt Ghast's second line alone; t_turn_ghast gates it on is_your_turn so the condition is shown to be asked; t_vernal_bloom is the any-player spelling ('whenever a Forest is tapped for mana, its controller adds'); t_swamp_maker makes every land a Swamp, Urborg's half, so the static is shown to read current subtypes; t_black_four_drop costs {B}{B}{B}{B}, castable off two Swamps only with the extra mana. t_wild_growth is the Aura spelling ('whenever enchanted land is tapped for mana, its controller adds an additional {G}') -- tapped_permanent {'attached': true}, naming the one land it is attached to rather than a class of land. t_utopia_sprawl adds the chosen-colour rider on top -- add_mana {'chosen_color_of': 'self'}, the same spelling the add_mana op uses, read off the Aura at the mana choke point.",
   "cards": [
     {
       "id": "t_crypt_ghast",
@@ -191,6 +191,64 @@
             "attached": true
           },
           "add_mana": "{G}"
+        }
+      ]
+    },
+    {
+      "id": "t_utopia_sprawl",
+      "name": "Test Utopia Sprawl",
+      "oracle_text": "Enchant Forest\nAs this Aura enters, choose a color.\nWhenever enchanted Forest is tapped for mana, its controller adds one mana of the chosen color.",
+      "mana_cost": "{G}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "subtypes": [
+              "Forest"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Whenever enchanted Forest is tapped for mana, its controller adds one mana of the chosen color.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "any",
+          "tapped_permanent": {
+            "attached": true
+          },
+          "add_mana": {
+            "chosen_color_of": "self"
+          }
         }
       ]
     }

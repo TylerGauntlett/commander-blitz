@@ -297592,12 +297592,12 @@
     },
     "Utopia Sprawl": {
       "edhrec_rank": 345,
-      "gate": "template",
+      "gate": null,
       "name": "Utopia Sprawl",
-      "reason": "no template for: Enchant Forest",
+      "reason": "",
       "scryfall_id": "299236c6-e9a1-4ddb-bbfb-f8530b025391",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Utopia Tree": {

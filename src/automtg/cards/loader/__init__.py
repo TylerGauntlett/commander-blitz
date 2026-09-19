@@ -2096,6 +2096,18 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
             f"{where}.tapped_permanent.attached: must be true if present "
             f"(omit the key to match a class of permanent instead)"
         )
+    if isinstance(model.add_mana, dict):
+        # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
+        # about the source and cannot be parsed now, so the shape is checked here
+        # and the colour is read at the mana choke point. Deliberately the same
+        # spelling the `add_mana` op accepts, so one card cannot mean two things
+        # by it; a source that has chosen nothing yet adds nothing.
+        if set(model.add_mana) != {"chosen_color_of"} or model.add_mana["chosen_color_of"] != "self":
+            raise DslError(
+                f'{where}.add_mana: the only dynamic form is {{"chosen_color_of": "self"}}, '
+                f"not {model.add_mana!r}"
+            )
+        return
     try:
         produced = parse_mana_production(model.add_mana)
     except Exception as exc:

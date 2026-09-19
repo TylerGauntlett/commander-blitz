@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**52 cards** blocked by **60** capabilities.
+**51 cards** blocked by **58** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,13 +24,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [ability-cost-reduction](#ability-cost-reduction) | 1 | 3190 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
-| [attached-tapped-for-mana](#attached-tapped-for-mana) | 1 | 345 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [battle](#battle) | 1 | 686 | engine |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 4134 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
 | [choose-permanent-type](#choose-permanent-type) | 1 | 6999 | op, selector |
-| [chosen-color-mana-on-tap](#chosen-color-mana-on-tap) | 1 | 345 | static_effect |
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
@@ -261,20 +259,6 @@ Blocks **1** card.
 
 </details>
 
-## attached-tapped-for-mana
-
-Blocks **1** card.
-
-- **(static_effect)** An `attached: true` key on the `add_mana_on_tap` static's `tapped_permanent`, so the triggered mana ability fires only off the permanent this Aura is attached to rather than off every permanent matching a type line. Concretely: add "attached" to `cards/loader/vocabulary.TAPPED_PERMANENT_KEYS` (currently frozenset({"types", "subtypes", "supertypes"}), src/automtg/cards/loader/vocabulary.py:70), accept and validate it in `_validate_add_mana_on_tap` (src/automtg/cards/loader/__init__.py:2053), and honour it in `engine/player_statics.mana_added_on_tap` (src/automtg/engine/player_statics.py:258) by comparing the tapped oid against the static source's `attached_to` before the type/subtype filters. This unblocks the whole Wild Growth / Fertile Ground / Overgrowth / Utopia Sprawl cycle -- every Aura printing "Whenever enchanted land is tapped for mana, its controller adds an additional ..." -- none of which can be said today.
-  <br>Why the existing vocabulary won't do: `add_mana_on_tap` is otherwise exactly this sentence: it is documented in engine/player_statics.mana_added_on_tap as a 605.1b triggered mana ability resolved at the mana choke point without the stack, and `affects_player: "any"` is already the "its controller adds" seat (the docstring names Vernal Bloom's "whenever a Forest is tapped for mana, its controller adds" as its case). What it cannot say is WHICH Forest: `tapped_permanent` may carry only types/subtypes/supertypes, read against the tapped permanent's own characteristics, with no reference to the static's source at all. Writing `{"subtypes": ["Forest"]}` would print Vernal Bloom -- all six Forests in the sandbox and every Forest an opponent controls -- instead of the one land this {G} Aura is attached to, which is the entire cost/power balance of the card, so it is a softening rather than a spelling. The static's optional `condition` cannot recover it either: `static_condition_keys` has `is_attached`, which asks only whether the source is attached to something, not what was tapped -- the tapped permanent is not in scope for a condition. `affects: {"attached": true}`, the ordinary Aura idiom, is refused outright by `_validate_add_mana_on_tap` ("takes 'affects_player', 'tapped_permanent', 'add_mana' and an optional 'condition', and no 'affects' or 'amount'"), because `affects` names a recipient and this static has none. The nearest non-static route is an `ability_activated` trigger with `mana_ability: true` and a filter, and it is wrong twice: it fires on the ACTIVATION of a mana ability rather than on the land being tapped for mana, and, decisively, an ordinary triggered ability queues on the stack and drains at the next priority (see the comment at src/automtg/engine/game.py:1188), so the extra mana would arrive after the spell being paid for -- the precise failure `add_mana_on_tap` exists to avoid. Unrelated to the existing `becomes-tapped` gap (City of Brass), which asks for a stack-using trigger on a permanent becoming tapped for ANY reason; this asks only that an existing mana-time static be able to name its own host.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Utopia Sprawl** (rank 345) — `utopia_sprawl`
-  - Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.
-
-</details>
-
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -345,20 +329,6 @@ Blocks **1** card.
 
 - **Creeping Renaissance** (rank 6999) — `creeping_renaissance`
   - Choose a permanent type. Return all cards of the chosen type from your graveyard to your hand.
-
-</details>
-
-## chosen-color-mana-on-tap
-
-Blocks **1** card.
-
-- **(static_effect)** Let the `add_mana_on_tap` static's `add_mana` be `{"chosen_color_of": "self"}` as well as a literal mana string, so "adds an additional one mana of the chosen color" reads the colour named on the static's own source permanent. Concretely: widen `AbilityModel.add_mana` (src/automtg/cards/schema.py:599, today `str | None` under a Strict model) to the same string-or-{"chosen_color_of": "self"} union the `add_mana` op already accepts, validate it in `_validate_add_mana_on_tap` the way loader/effects.py:1763 validates the op's `mana`, and resolve it in `engine/player_statics.mana_added_on_tap` from `source.chosen_color` -- adding nothing when no colour has been chosen yet, matching `characteristics.resolve_chosen_color_list`'s existing match-nothing default.
-  <br>Why the existing vocabulary won't do: The chosen-colour machinery all exists and stops one layer short of this static. `choose_color` on a `self_enters` trigger records the colour on the permanent (Heraldic Banner, data/cards/auto/templates.cards.json), `{"chosen_color_of": "self"}` is a legal leaf in the `add_mana` OP's `mana` (src/automtg/cards/loader/effects.py:1755-1770) and in a static's `colors` filter and in `grant_protection.from_colors` -- but the `add_mana_on_tap` static's `add_mana` is a plain `str` fed straight to `engine.mana.parse_mana_production`, so a dict there fails Strict schema validation before the loader's own check runs. Substituting a literal is not available: any one of {W}{U}{B}{R}{G} is a different card, and "{W}{U}{B}{R}{G}" would add five mana rather than one of a chosen colour. Nor can the mana ability route say it: a mana ability's `add_mana` op does accept `{"chosen_color_of": "self"}` (that is how Heraldic Banner's "{T}: Add one mana of the chosen color" is written), but that is an ability the controller activates by tapping THIS permanent -- Utopia Sprawl is not tapped and has no mana ability; the mana is additional to what the enchanted Forest already produced. The `add_mana` op's `player` key cannot bridge it either, because there is no ability here for the op to live in that fires at mana time.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Utopia Sprawl** (rank 345) — `utopia_sprawl`
-  - Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.
 
 </details>
 

@@ -281,8 +281,6 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
     matches nothing, which is the same answer a state-based action is about to
     give by binning it.
     """
-    from .mana import parse_mana_production
-
     out: list[tuple[int, tuple[int, ...]]] = []
     tapped: Any = None
     for source, static in _active_player_statics(state, "add_mana_on_tap"):
@@ -300,8 +298,30 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
         subtypes = wanted.get("subtypes", [])
         if subtypes and not any(t in tapped.subtypes for t in subtypes):
             continue
-        out.append((source.oid, parse_mana_production(str(static.get("add_mana", "")))))
+        out.append((source.oid, _mana_added(source, static.get("add_mana", ""))))
     return out
+
+
+def _mana_added(source: Any, add_mana: Any) -> tuple[int, ...]:
+    """The mana one ``add_mana_on_tap`` static adds, as a production tuple.
+
+    Almost always the literal the card printed. ``{"chosen_color_of": "self"}``
+    is Utopia Sprawl's "one mana of the chosen color", where the symbol is a
+    question about the Aura and cannot be known until the colour has been
+    chosen. The same spelling and the same reader as the ``add_mana`` *op*, so
+    one card cannot mean two things by it.
+
+    A source that has chosen no colour yet adds **nothing** -- the match-nothing
+    default the chosen colour has everywhere else, and the only safe answer here,
+    since this runs inside cost payment where nothing may stop to ask (605.1a).
+    """
+    from .characteristics import resolve_chosen_color_list
+    from .mana import parse_mana_production
+
+    if isinstance(add_mana, Mapping):
+        colors = resolve_chosen_color_list([add_mana], source)
+        return parse_mana_production("".join(f"{{{c}}}" for c in colors))
+    return parse_mana_production(str(add_mana))
 
 
 def players_freezing_opponent_lands(state: GameState) -> frozenset[int]:

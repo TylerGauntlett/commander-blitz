@@ -596,8 +596,10 @@ class AbilityModel(BaseModel):
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.
     tapped_permanent: dict[str, Any] | None = None
-    #: ``add_mana_on_tap``: the fixed mana added -- Crypt Ghast's ``"{B}"``.
-    add_mana: str | None = None
+    #: ``add_mana_on_tap``: the mana added -- Crypt Ghast's ``"{B}"``, or
+    #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
+    #: chosen color", the same spelling the ``add_mana`` op uses.
+    add_mana: str | dict[str, Any] | None = None
 
 
 class ReplacementModel(BaseModel):

@@ -108202,6 +108202,65 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "add_mana": {
+            "chosen_color_of": "self"
+          },
+          "affects_player": "any",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "attached": true
+          },
+          "text": "Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "utopia_sprawl",
+      "mana_cost": "{G}",
+      "name": "Utopia Sprawl",
+      "oracle_text": "Enchant Forest\nAs this Aura enters, choose a color.\nWhenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "subtypes": [
+              "Forest"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

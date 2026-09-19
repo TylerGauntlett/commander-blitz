@@ -4216,8 +4216,10 @@ controller adds". The mana always goes to the player who tapped. Each static
 adds its mana separately, tagged with its own source. Only abilities with {T}
 in their cost count (106.12). The loader requires both keys and refuses
 `affects` and `amount`. "Enchanted land" (Wild Growth, Utopia Sprawl) is
-`{"attached": true}`; the "one mana of the chosen color" rider is not expressible
-yet.
+`{"attached": true}`. `add_mana` also takes `{"chosen_color_of": "self"}` for
+Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`
+op uses, read off the static's own source, and adding nothing while no colour has
+been chosen, since this runs inside cost payment where nothing may stop to ask.
 
 `freeze_opponent_lands` sets a **one-shot** `skip_next_untap`, cleared by the
 untap step it skips. That is deliberately not the `frozen_by` lock used by
