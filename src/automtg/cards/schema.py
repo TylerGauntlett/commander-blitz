@@ -370,6 +370,11 @@ class AbilityModel(BaseModel):
         | dict[str, str | list[str | dict[str, Any] | list[str | dict[str, Any]]]]
         | None
     ) = None
+    #: "…**and that spell can't be countered**" -- Cavern of Souls, Delighted
+    #: Halfling. A rider on the mana this ability makes, not on this card: the
+    #: spell it was spent on becomes uncounterable. Only meaningful beside
+    #: ``is_mana_ability``, and the loader refuses it anywhere else.
+    mana_uncounterable: bool = False
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.

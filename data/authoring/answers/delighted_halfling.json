@@ -1,0 +1,111 @@
+{
+  "card": {
+    "id": "delighted_halfling",
+    "name": "Delighted Halfling",
+    "oracle_text": "{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.",
+    "mana_cost": "{G}",
+    "types": [
+      "Creature"
+    ],
+    "subtypes": [
+      "Halfling",
+      "Citizen"
+    ],
+    "power": 1,
+    "toughness": 2,
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {C}.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "op": "add_mana",
+            "mana": "{C}"
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.",
+        "is_mana_ability": true,
+        "cost": {
+          "tap": true
+        },
+        "mana_restriction": {
+          "cast": [
+            [
+              "legendary"
+            ]
+          ]
+        },
+        "mana_uncounterable": true,
+        "effects": [
+          {
+            "op": "choose_mode",
+            "modes": [
+              {
+                "label": "W",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{W}"
+                  }
+                ]
+              },
+              {
+                "label": "U",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{U}"
+                  }
+                ]
+              },
+              {
+                "label": "B",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{B}"
+                  }
+                ]
+              },
+              {
+                "label": "R",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{R}"
+                  }
+                ]
+              },
+              {
+                "label": "G",
+                "effects": [
+                  {
+                    "op": "add_mana",
+                    "mana": "{G}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}

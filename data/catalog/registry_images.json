@@ -1523,6 +1523,10 @@
     "artist": "Mark Romanoski",
     "scryfall_id": "cbaf8288-9b14-485c-af61-20ec745ced6a"
   },
+  "cavern_of_souls": {
+    "artist": "Pedro Correa",
+    "scryfall_id": "09f9b3b8-090e-4152-8d44-52d92375905b"
+  },
   "caves_of_koilos": {
     "artist": "Julian Kok Joon Wen",
     "scryfall_id": "a8a57915-5226-4d3c-ae8e-a55c50f3c131"
@@ -2326,6 +2330,10 @@
   "deft_duelist": {
     "artist": "David Palumbo",
     "scryfall_id": "c4885a83-9410-4c88-b45e-1e1626fe90ea"
+  },
+  "delighted_halfling": {
+    "artist": "Heather Hudson",
+    "scryfall_id": "9158f904-bf34-4cc0-9a6c-34893da29f22"
   },
   "demolition_field": {
     "artist": "David Frasheski",

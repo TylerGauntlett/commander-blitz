@@ -1585,6 +1585,10 @@ def pay_mana(
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
+        # Accumulated with `or`, not assigned, for `mana_spent`'s reason: a cast
+        # pays in more than one call when it has an additional cost, and a spell
+        # paid for partly with Cavern mana was paid for with Cavern mana.
+        obj.uncounterable_mana_spent = obj.uncounterable_mana_spent or spent.uncounterable
         # Accumulated rather than assigned: a cast pays in more than one call
         # when it has an additional cost, and "how much mana was spent to cast
         # it" is all of them.
@@ -1648,11 +1652,18 @@ def activate_mana_ability(
         # checked against the board in `pay_mana` instead.
         tap_permanent(state, oid)
 
-    # Tagged with the permanent that made it. The tag is the whole of what
-    # Path of Ancestry's "when that mana is spent" reads back, and it is
-    # knowable only here -- a pool of six integers cannot say where a pip
-    # came from once it has landed in it.
-    state.players[pid].mana_pool.add_tuple(produced, source=oid)
+    # Tagged with the permanent that made it, and with any rider the ability
+    # attached. The tag is the whole of what Path of Ancestry's "when that mana
+    # is spent" reads back, and it is knowable only here -- a pool of six
+    # integers cannot say where a pip came from once it has landed in it.
+    #
+    # The rider is read off the **ability**, not the permanent, because Cavern of
+    # Souls has two mana abilities and only the second one prints "…and that
+    # spell can't be countered": recorded per permanent, its plain {C} would make
+    # the spell uncounterable too.
+    state.players[pid].mana_pool.add_tuple(
+        produced, source=oid, uncounterable=ability.mana_uncounterable
+    )
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     # The triggered mana ability's mana is its source's, not the land's: tagged
     # with the Ghast, so provenance readers see who really made it.

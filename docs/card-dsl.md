@@ -3741,6 +3741,43 @@ creature source of the chosen type**." Three things are load-bearing:
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
 
+### Mana that makes the spell uncounterable
+
+```jsonc
+// Cavern of Souls' second mana ability
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",
+  "cost": { "tap": true },
+  "mana_restriction": { "cast": [["creature", { "chosen_type_of": "self" }]] },
+  "mana_uncounterable": true,
+  "effects": [ /* one choose_mode of add_manas */ ] }
+```
+
+The engine had two ways to say "can't be countered" and neither is this one. The
+card-level `uncounterable` rider is a spell saying it about *itself*, so every
+copy would be uncounterable however it was cast — the Cavern need not even be on
+the battlefield. The `spells_cant_be_countered` static is somebody else saying it
+about a *class* of spell, so it would protect every creature spell of the chosen
+type on the table, whoever cast it and whatever paid for it.
+
+The printed sentence is narrower than both: this spell, because of this mana. So
+the rider rides the **pip** — `mana.Pip` carries it, `ManaPool.spend` reports
+whether any consumed pip had it, `costs.pay_mana` writes that onto the spell's
+object at the one instant it is knowable, and `op_counter` reads it there.
+
+**The pip and not the permanent**, because Cavern has *two* mana abilities and
+only the second prints the clause: recorded per permanent, its plain `{C}` would
+make the spell uncounterable too. *Any* spent pip is enough — the sentence is
+about the spell the mana was spent on and says nothing about the rest of its
+cost. The flag is refused on anything that is not a mana ability, where it would
+load and never be read.
+
+Supertypes are legal restriction names alongside types and subtypes, which is
+Delighted Halfling's "only to cast a **legendary** spell". They were the quiet
+omission: `_restriction_name` accepts any alphabetic word, so "legendary" loaded
+clean and matched nothing on any card in the game — mana that could never be
+spent, which reads on the board as a land that taps for nothing.
+
 ### Counting the spells you cast, by type
 
 ```jsonc

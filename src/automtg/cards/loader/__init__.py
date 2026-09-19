@@ -2014,6 +2014,11 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         if not model.is_mana_ability:
             raise DslError(f"{where}: 'mana_restriction' needs 'is_mana_ability'")
         mana_restriction = _mana_restriction(model.mana_restriction, where)
+    if model.mana_uncounterable and not model.is_mana_ability:
+        # It rides the mana, so on an ability that makes none it would load and
+        # never be read -- a card printing "that spell can't be countered" that
+        # does not.
+        raise DslError(f"{where}: 'mana_uncounterable' needs 'is_mana_ability'")
 
     return Ability(
         kind=kind,
@@ -2030,6 +2035,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
+        mana_uncounterable=model.mana_uncounterable,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
         # here rather than left to an author to remember -- one omitted flag and

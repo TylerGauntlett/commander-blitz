@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
+from typing import NamedTuple
 
 from .enums import COLOR_ORDER, COLORLESS, Color
 from .errors import DslError
@@ -533,11 +534,30 @@ class Requirement:
         )
 
 
+class Pip(NamedTuple):
+    """One unit of mana in the pool, and what is known about where it came from.
+
+    The pool holds six integers; everything else about a unit of mana lives
+    here, one entry per point of ``amounts``.
+
+    ``source`` is the permanent whose mana ability made it, or ``None`` for mana
+    an effect produced. ``uncounterable`` is Cavern of Souls' rider -- "…and
+    that spell can't be countered" -- and it has to ride the **pip** rather than
+    the permanent, because Cavern has two mana abilities and only the second one
+    prints the clause. Recorded per permanent instead, tapping a Cavern for its
+    plain ``{C}`` would make the spell uncounterable too, which is a strictly
+    better card than the one printed.
+    """
+
+    source: int | None = None
+    uncounterable: bool = False
+
+
 @dataclass(frozen=True)
 class SpentMana:
     """What one payment actually consumed.
 
-    Both halves exist only at the instant `spend` runs: once the pool is
+    Every half exists only at the instant `spend` runs: once the pool is
     decremented one blue mana is indistinguishable from another, and the
     permanent that made it is indistinguishable from every other permanent.
     """
@@ -547,21 +567,26 @@ class SpentMana:
     #: "When **that mana** is spent..." -- which permanents' mana abilities made
     #: the mana this payment consumed. Path of Ancestry, Opal Palace.
     sources: frozenset[int] = frozenset()
+    #: Whether **any** pip this payment consumed carried Cavern of Souls' rider.
+    #: Any, not all: the printed sentence makes the spell uncounterable if that
+    #: mana was spent on it, and says nothing about the rest of its cost.
+    uncounterable: bool = False
 
 
 class ManaPool:
     """Floating mana.  Emptied at the end of every step and phase.
 
     ``amounts`` is the count per symbol and ``tags`` is the same thing pip by
-    pip: ``tags[i]`` holds one entry for each of ``amounts[i]``, naming the
-    permanent whose mana ability made it, or ``None`` for mana that came from an
-    effect rather than from a permanent. The two are kept the same length by
-    every method here, which is why nothing outside this class may touch
-    ``amounts`` directly.
+    pip: ``tags[i]`` holds one :class:`Pip` for each of ``amounts[i]``, naming
+    the permanent whose mana ability made it and any rider that permanent's
+    ability attached to it. The two are kept the same length by every method
+    here, which is why nothing outside this class may touch ``amounts``
+    directly.
 
     Provenance is a list rather than a set because "that mana" is a *unit* of
     mana and not a colour: a pool holding one black from Path of Ancestry and
-    one black from a Swamp has to be able to spend either.
+    one black from a Swamp has to be able to spend either. It is also why the
+    rider lives here rather than on the permanent -- see :class:`Pip`.
     """
 
     __slots__ = ("amounts", "tags")
@@ -569,24 +594,38 @@ class ManaPool:
     def __init__(
         self,
         amounts: Sequence[int] | None = None,
-        tags: Sequence[Sequence[int | None]] | None = None,
+        tags: Sequence[Sequence[Pip]] | None = None,
     ) -> None:
         self.amounts: list[int] = list(amounts) if amounts else _zeros()
-        self.tags: list[list[int | None]] = (
+        self.tags: list[list[Pip]] = (
             [list(t) for t in tags]
             if tags is not None
-            else [[None] * n for n in self.amounts]
+            else [[Pip()] * n for n in self.amounts]
         )
 
-    def add(self, symbol: str, count: int = 1, source: int | None = None) -> None:
+    def add(
+        self,
+        symbol: str,
+        count: int = 1,
+        source: int | None = None,
+        *,
+        uncounterable: bool = False,
+    ) -> None:
         index = SYMBOL_INDEX[symbol]
         self.amounts[index] += count
-        self.tags[index].extend([source] * count)
+        self.tags[index].extend([Pip(source, uncounterable)] * count)
 
-    def add_tuple(self, produced: Sequence[int], source: int | None = None) -> None:
+    def add_tuple(
+        self,
+        produced: Sequence[int],
+        source: int | None = None,
+        *,
+        uncounterable: bool = False,
+    ) -> None:
+        pip = Pip(source, uncounterable)
         for i, v in enumerate(produced):
             self.amounts[i] += v
-            self.tags[i].extend([source] * v)
+            self.tags[i].extend([pip] * v)
 
     def total(self) -> int:
         return sum(self.amounts)
@@ -601,7 +640,7 @@ class ManaPool:
     def copy(self) -> ManaPool:
         return ManaPool(self.amounts, self.tags)
 
-    def _take(self, index: int, count: int) -> list[int | None]:
+    def _take(self, index: int, count: int) -> list[Pip]:
         """Deduct ``count`` pips of one symbol and report who made them.
 
         **Newest first.** Which same-coloured pip a payment consumes is the
@@ -638,13 +677,25 @@ class ManaPool:
         """
         spent: set[str] = set()
         made_by: set[int] = set()
+        # "…and that spell can't be countered." Any pip carrying the rider makes
+        # the whole payment carry it: the printed sentence is about the spell the
+        # mana was spent on, and says nothing about the rest of its cost.
+        rider = False
+
+        def record(taken: list[Pip]) -> None:
+            nonlocal rider
+            for pip in taken:
+                if pip.source is not None:
+                    made_by.add(pip.source)
+                rider = rider or pip.uncounterable
+
         remaining_generic = req.generic
         for i in range(N_SYMBOLS):
             need = req.colored[i]
             if need:
                 if self.amounts[i] < need:
                     raise ValueError("pool cannot cover colored requirement")
-                made_by.update(t for t in self._take(i, need) if t is not None)
+                record(self._take(i, need))
                 if i < len(COLOR_ORDER):
                     spent.add(COLOR_ORDER[i].value)
         # Hybrid pips choose their half here, and must choose it the *same* way
@@ -659,7 +710,7 @@ class ManaPool:
                 if symbol < 0:
                     remaining_generic += pip.generic or 0
                 else:
-                    made_by.update(t for t in self._take(symbol, 1) if t is not None)
+                    record(self._take(symbol, 1))
                     if symbol < len(COLOR_ORDER):
                         spent.add(COLOR_ORDER[symbol].value)
         # Pay generic from the most plentiful symbols first so scarce colours are
@@ -669,11 +720,15 @@ class ManaPool:
             if self.amounts[best] <= 0:
                 raise ValueError("pool cannot cover generic requirement")
             take = min(self.amounts[best], remaining_generic)
-            made_by.update(t for t in self._take(best, take) if t is not None)
+            record(self._take(best, take))
             remaining_generic -= take
             if best < len(COLOR_ORDER):
                 spent.add(COLOR_ORDER[best].value)
-        return SpentMana(colors=frozenset(spent), sources=frozenset(made_by))
+        return SpentMana(
+            colors=frozenset(spent),
+            sources=frozenset(made_by),
+            uncounterable=rider,
+        )
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper
         return f"ManaPool({self.to_dict()})"

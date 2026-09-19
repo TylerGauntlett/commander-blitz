@@ -1408,6 +1408,10 @@
       "graveyard"
     ]
   },
+  "cavern_of_souls": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "caves_of_koilos": {
     "zone": "battlefield"
   },
@@ -2208,6 +2212,10 @@
     "zone": "graveyard"
   },
   "deft_duelist": {
+    "zone": "battlefield"
+  },
+  "delighted_halfling": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "demolition_field": {

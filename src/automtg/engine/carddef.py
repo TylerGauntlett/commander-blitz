@@ -666,6 +666,15 @@ class Ability:
     #: shape; a group may hold `mana.CHOSEN_TYPE`, resolved per permanent by
     #: `costs.resolve_mana_restriction` rather than at load time.
     mana_restriction: ManaRestriction | None = None
+    #: "…**and that spell can't be countered**" -- Cavern of Souls, Delighted
+    #: Halfling. A rider on the *mana*, so it travels on the pip
+    #: (`mana.Pip.uncounterable`) rather than on this permanent: Cavern has two
+    #: mana abilities and only one prints the clause, so anything recorded per
+    #: permanent would make its plain ``{C}`` uncounterable too.
+    #:
+    #: Ability-level rather than card-level for the same reason, and distinct
+    #: from `CardDef.uncounterable`, which is a spell speaking about itself.
+    mana_uncounterable: bool = False
     sorcery_speed_only: bool = False
     #: "Activate only if you control five or more Vampires." An *activation
     #: restriction*, checked by `legality` before the ability is offered, and

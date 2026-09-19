@@ -156,6 +156,15 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: Whether any mana spent casting this carried Cavern of Souls' rider --
+    #: "…and that spell can't be countered". Written by `costs.pay_mana` beside
+    #: `mana_sources_spent`, at the same instant and for the same reason: the
+    #: pool holds six integers and a pip's rider is gone the moment it is spent.
+    #:
+    #: Distinct from `CardDef.uncounterable`, which is a spell saying it about
+    #: itself. This one is what somebody *else* said about it, exactly as
+    #: `granted_rebound` is to `CardDef.rebound`.
+    uncounterable_mana_spent: bool = False
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as

@@ -2271,6 +2271,12 @@
     "file": "cave_sense.jpg",
     "scryfall_id": "cbaf8288-9b14-485c-af61-20ec745ced6a"
   },
+  "cavern_of_souls": {
+    "artist": "Pedro Correa",
+    "bytes": 96347,
+    "file": "cavern_of_souls.jpg",
+    "scryfall_id": "09f9b3b8-090e-4152-8d44-52d92375905b"
+  },
   "caves_of_koilos": {
     "artist": "Julian Kok Joon Wen",
     "file": "caves_of_koilos.jpg",
@@ -3478,6 +3484,12 @@
     "bytes": 78753,
     "file": "deft_duelist.jpg",
     "scryfall_id": "c4885a83-9410-4c88-b45e-1e1626fe90ea"
+  },
+  "delighted_halfling": {
+    "artist": "Heather Hudson",
+    "bytes": 54142,
+    "file": "delighted_halfling.jpg",
+    "scryfall_id": "9158f904-bf34-4cc0-9a6c-34893da29f22"
   },
   "demolition_field": {
     "artist": "David Frasheski",

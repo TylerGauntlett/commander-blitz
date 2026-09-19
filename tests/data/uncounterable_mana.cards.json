@@ -1,0 +1,213 @@
+{
+  "_comment": "Shapes for tests/unit/test_uncounterable_mana.py. t_cavern is Cavern of Souls' two mana abilities: index 0 is the plain {C} with no rider, index 1 adds one mana of any colour with mana_uncounterable. Two abilities on ONE permanent is the whole point -- it is why the rider has to travel on the pip rather than on the permanent. t_plain_rock makes the same any-colour mana with no rider, the control. t_uc_spell is a {G} creature to cast and t_counterspell counters target spell.",
+  "cards": [
+    {
+      "id": "t_cavern",
+      "name": "Test Cavern",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell, and that spell can't be countered.",
+      "types": [
+        "Land"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast a creature spell, and that spell can't be countered.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "creature"
+              ]
+            ]
+          },
+          "mana_uncounterable": true,
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_uc_plain_rock",
+      "name": "Test Uncounterable Control Rock",
+      "oracle_text": "{T}: Add one mana of any color.",
+      "types": [
+        "Land"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_uc_spell",
+      "name": "Test Counterable Bear",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_uc_counterspell",
+      "name": "Test Cavern Counterspell",
+      "oracle_text": "Counter target spell.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "s1",
+          "kind": "spell",
+          "selector": {
+            "zone": "stack"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "s1"
+        }
+      ]
+    }
+  ]
+}

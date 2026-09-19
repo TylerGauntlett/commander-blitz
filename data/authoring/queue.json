@@ -41572,12 +41572,12 @@
     },
     "Cavern of Souls": {
       "edhrec_rank": 114,
-      "gate": "template",
+      "gate": null,
       "name": "Cavern of Souls",
-      "reason": "no template for: As this land enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "09f9b3b8-090e-4152-8d44-52d92375905b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Cavern-Hoard Dragon": {
@@ -65292,12 +65292,12 @@
     },
     "Delighted Halfling": {
       "edhrec_rank": 157,
-      "gate": "template",
+      "gate": null,
       "name": "Delighted Halfling",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that s",
+      "reason": "",
       "scryfall_id": "9158f904-bf34-4cc0-9a6c-34893da29f22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Delightful Discovery": {

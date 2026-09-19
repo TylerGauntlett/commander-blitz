@@ -10,11 +10,10 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**43 cards** blocked by **50** capabilities.
+**41 cards** blocked by **50** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
-| [cant-be-countered](#cant-be-countered) | 3 | 114 | engine, static_effect |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [delirium](#delirium) | 2 | 362 | value |
@@ -24,6 +23,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [battle](#battle) | 1 | 686 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
+| [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
 | [choose-permanent-type](#choose-permanent-type) | 1 | 6999 | op, selector |
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
@@ -64,28 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 | [x-dependent-target](#x-dependent-target) | 1 | 864 | engine |
-
-## cant-be-countered
-
-Blocks **3** cards.
-
-- **(engine)** uncounterability that rides on the mana a restricted mana ability produced -- a flag on the mana ability (beside its `mana_restriction`) saying "a spell this mana helped cast can't be countered", carried through payment onto the spell object and read by the `counter` op. The engine already records which permanents' mana abilities paid for a spell (`objects.py:158` `mana_sources_spent`, written by `costs.py:1577`), so what is missing is a load-time key for the claim and a third arm in `ops_stack._shielded_by_a_static`'s caller (`ops_stack.py:387`) that asks whether any oid in `item.mana_sources_spent` belongs to an ability making it
-  <br>Why the existing vocabulary won't do: The two uncounterable mechanisms in `reference` both decide from printed characteristics alone and neither can see the mana. The card-level rider `uncounterable` (`carddef.py:919`, read at `ops_stack.py:387`) is one card saying it about *itself*, so it cannot cover the creature spell Cavern funds. The static effect `spells_cant_be_countered` is the closest -- it does protect other players' spells and it does take an optional `affects_spells` filter -- but that filter is matched by `_matches_printed(card, filt)` (`ops_stack.py:283`), printed characteristics only, and `static_filter_keys` has no `paid_by` or any other way to ask which permanent's mana was spent. Writing it as `spells_cant_be_countered` with `affects_spells: {"types": ["Creature"], "subtypes": [{"chosen_type_of": "self"}]}` is a strictly better card than the printed one: every creature spell of the chosen type would become uncounterable whether or not Cavern's mana paid for it, and it would leave Cavern's third printed line claimed by two abilities, which the residual gate reads as a line nobody owns. The `paid_by` key that asks exactly this question exists only in *trigger* filters (`triggers.py:1401`), and a trigger cannot stop a counterspell that is already resolving. No op grants it either: `grant_rebound` and `grant_plot` write a flag onto a spell on the stack, but there is no `grant_uncounterable`, and a mana ability may in any case carry only `add_mana`/`choose_mode` plus a rider from {add_counters, add_poison, damage, gain_life, lose_life, remove_counters}, none of which touch the stack.
-- **(engine)** a rider on a restricted mana ability -- e.g. `uncounterable: true` beside `mana_restriction` -- that travels with the mana: a spell any of whose cost was paid with mana from that ability can't be countered. The produced mana must carry the tag through `costs`/`mana` payment into the stack item, and `ops_stack.op_counter` must consult the stack item's paid-with tag alongside the printed `uncounterable` flag and the `spells_cant_be_countered` static
-  <br>Why the existing vocabulary won't do: Uncounterable-ness has exactly two spellings, and neither is conditional on how a spell was paid for. The card-level `uncounterable` boolean (src/automtg/cards/schema.py:759 -> src/automtg/engine/carddef.py:919) is read off the spell's own registry definition by `op_counter` (src/automtg/engine/effects/ops_stack.py:387) -- one card saying it about itself, ungrantable, and it is the wrong card here: the Halfling is not the spell. The `spells_cant_be_countered` static (`_shielded_by_a_static`, ops_stack.py:264) can cover *other* spells and its optional `affects_spells` filter reads printed characteristics, so `{"supertypes": ["Legendary"]}` would load -- and it is a strictly better and differently-worded card: it would protect every legendary spell on the table, including opponents' and including ones cast with no Halfling mana at all, for as long as the Halfling is on the battlefield, where the printed line protects only the one spell this particular mana helped cast. It is also not sayable as written: the clause is the tail of the mana ability's printed sentence, and a separate static would have to claim a printed line the card does not have, which the residual gate rejects. Nothing joins the two: `Payment`/`ManaSource` (src/automtg/engine/mana.py:847) carry a `ManaRestriction` that only *filters which sources may pay*, with no channel back to the resulting stack item, and the mana-ability rider ops (MANA_RIDER_OPS = add_counters, add_poison, damage, gain_life, lose_life, remove_counters) are all on-activation effects that cannot touch a spell cast later.
-- **(static_effect)** a static ability on a permanent that makes *other* spells uncounterable -- a `cant_be_countered` static whose filter picks the spells it protects (here every spell its controller controls), consulted by the `counter` op against the stack item's controller and characteristics rather than against the casting card's own printed flag, so that a spell cast after this creature is already on the battlefield survives being countered
-  <br>Why the existing vocabulary won't do: The engine's only uncounterable-ness is the card-level `uncounterable` boolean (src/automtg/cards/schema.py:577 -> src/automtg/engine/carddef.py:747), which the `counter` op reads straight off the spell's own registry definition (src/automtg/engine/effects/ops_stack.py:253) -- it is a printed property of one card, so it can say line 1 ("This spell can't be countered") and nothing more; it cannot be granted, and there is no filter or controller on it. Nothing in `static_effects` reaches the stack at all: `ward` and `protection` are the closest, and both tax or forbid *targeting* a permanent while leaving countering untouched, and `spell_cost_reduction` is the only static that looks at spells and it only changes their price. As docs/card-dsl.md:9110 says outright, statics do not reach a spell on the stack, so this needs new plumbing in the `counter` op, not a new card field.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cavern of Souls** (rank 114) — `cavern_of_souls`
-  - {T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.
-- **Delighted Halfling** (rank 157) — `delighted_halfling`
-  - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
-- **Hexing Squelcher** (rank 717) — `hexing_squelcher`
-  - Spells you control can't be countered.
-
-</details>
 
 ## cast-as-though-flash
 
@@ -234,6 +212,20 @@ Blocks **1** card.
 
 - **City of Brass** (rank 97) — `city_of_brass`
   - Whenever this land becomes tapped, it deals 1 damage to you.
+
+</details>
+
+## cant-be-countered
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability on a permanent that makes *other* spells uncounterable -- a `cant_be_countered` static whose filter picks the spells it protects (here every spell its controller controls), consulted by the `counter` op against the stack item's controller and characteristics rather than against the casting card's own printed flag, so that a spell cast after this creature is already on the battlefield survives being countered
+  <br>Why the existing vocabulary won't do: The engine's only uncounterable-ness is the card-level `uncounterable` boolean (src/automtg/cards/schema.py:577 -> src/automtg/engine/carddef.py:747), which the `counter` op reads straight off the spell's own registry definition (src/automtg/engine/effects/ops_stack.py:253) -- it is a printed property of one card, so it can say line 1 ("This spell can't be countered") and nothing more; it cannot be granted, and there is no filter or controller on it. Nothing in `static_effects` reaches the stack at all: `ward` and `protection` are the closest, and both tax or forbid *targeting* a permanent while leaving countering untouched, and `spell_cost_reduction` is the only static that looks at spells and it only changes their price. As docs/card-dsl.md:9110 says outright, statics do not reach a spell on the stack, so this needs new plumbing in the `counter` op, not a new card field.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hexing Squelcher** (rank 717) — `hexing_squelcher`
+  - Spells you control can't be countered.
 
 </details>
 
