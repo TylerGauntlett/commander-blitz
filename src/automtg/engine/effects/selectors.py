@@ -54,6 +54,13 @@ SELECTOR_KEYS = frozenset(
         #: or Equipment is attached to, read off the ability's source.  Already
         #: in ``STATIC_FILTER_KEYS``; this is the same word on the effect side.
         "attached",
+        #: "**modified** creatures you control" (Silkguard, and the whole Kamigawa
+        #: cycle) -- a permanent with a counter on it, equipped, or enchanted by
+        #: an Aura you control. A definition rather than a characteristic, which
+        #: is why it is one key and not three: a card that spelled it out would
+        #: have to say "or" across three unrelated relationships, and the
+        #: selector language is a conjunction.
+        "modified",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -498,6 +505,46 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     return ctx.state.alive()
 
 
+def _is_modified(ctx: EffectContext, oid: int) -> bool:
+    """"Modified" -- a counter on it, an Equipment attached, or your Aura.
+
+    The keyword-action definition, and each of its three limbs is a different
+    relationship read from a different direction:
+
+    - **a counter of any kind**, not just +1/+1. A Role's, a loyalty counter, a
+      stun counter -- the reminder text says "counters" and means it.
+    - **equipped**, by anybody's Equipment. An Equipment stapled to your
+      creature by an opponent still modifies it; the definition asks what is
+      attached, not who owns it.
+    - **enchanted by an Aura you control.** This limb *does* ask, and it is the
+      one asymmetry in the definition: an opponent's Pacifism does not make your
+      creature modified. "You" is the effect's controller, since that is who the
+      sentence naming modified creatures belongs to.
+
+    Answered by walking the battlefield for attachments rather than by reading a
+    list on the creature, because attachment is stored one way -- on the Aura or
+    Equipment, as `attached_to` -- and nothing walks back along it. That is the
+    same fact `attached_to_host` is built on, one relationship read from the
+    other end.
+    """
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    if any(n > 0 for n in obj.counters.values()):
+        return True
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is None or other.attached_to != oid:
+            continue
+        subtypes = chars(state, other_oid).subtypes
+        if "Equipment" in subtypes:
+            return True
+        if "Aura" in subtypes and other.controller == ctx.controller:
+            return True
+    return False
+
+
 def matches(
     ctx: EffectContext,
     oid: int,
@@ -559,6 +606,8 @@ def matches(
         source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
+    if selector.get("modified") and not _is_modified(ctx, oid):
+        return False
     if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or
         # a `snapshot`, and a **list** for an op that recorded what it produced.

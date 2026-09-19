@@ -2957,6 +2957,16 @@ a graveyard is not tapped, not attacking and attached to nothing, so `tapped`,
 `exclude_self`, `is_token` and `is_commander` are rejected there at load time
 rather than loading and matching nothing.
 
+`modified` is the keyword-action definition, as one key: a permanent with a
+counter of any kind on it, **or** equipped by any Equipment, **or** enchanted by
+an Aura *you* control. One key and not three clauses because the selector
+language is a conjunction and the definition is a disjunction across three
+unrelated relationships. The Aura limb is the only one that asks about control,
+and that asymmetry is the card: an opponent's Pacifism does not make your
+creature modified, so Silkguard written without it would hand hexproof to
+exactly the creature the opponent was answering. Effect-side only — the cards
+that print the word grant something once, not continuously.
+
 `attached` and `attached_to_host` are the two ends of one relationship, and a
 card that prints "attached to it" needs the second. `attached` names the **host**
 — the creature this Aura or Equipment is on — which is what every "equipped

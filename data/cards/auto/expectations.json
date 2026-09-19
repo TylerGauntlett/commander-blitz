@@ -8191,6 +8191,15 @@
   "silent_observer": {
     "zone": "battlefield"
   },
+  "silkguard": {
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "silver_erne": {
     "zone": "battlefield"
   },

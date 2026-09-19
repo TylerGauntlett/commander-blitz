@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**47 cards** blocked by **54** capabilities.
+**46 cards** blocked by **53** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
 | [mana-doesnt-empty](#mana-doesnt-empty) | 1 | 6298 | engine |
 | [mana-restriction-supertype](#mana-restriction-supertype) | 1 | 157 | engine |
-| [modified](#modified) | 1 | 2412 | selector |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [mutate](#mutate) | 1 | 3835 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -660,20 +659,6 @@ Blocks **1** card.
 
 - **Delighted Halfling** (rank 157) — `delighted_halfling`
   - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
-
-</details>
-
-## modified
-
-Blocks **1** card.
-
-- **(selector)** a selector predicate for "modified" -- a permanent that has one or more counters of any kind on it, or has an Equipment attached to it, or is enchanted by an Aura its controller controls (702.x reminder: "Equipment, Auras you control, and counters are modifications"). It must be usable inside an effect's `objects` (so `grant_keyword` can gather "modified creatures you control"), and, since dozens of queued cards print "Modified creatures you control have trample" and "as long as it's modified", also as a `static_filter_keys` entry and a `static_condition_keys` clause
-  <br>Why the existing vocabulary won't do: `attached` is the closest selector key and is the reverse relation: selectors.py reads it off `ctx.source_oid` and matches only the single permanent the ability's own Aura/Equipment source is attached to (`source.attached_to` / `last_attached_to`), so it cannot ask of an arbitrary creature whether anything is attached TO it, and Silkguard is an instant that is attached to nothing. `counters_on` exists only in `value_keys`/`static_value_keys` -- it is an amount or a side of a `cmp`, never a filter on a pool, and `selector.count` is the pool's size limit, not a counter count. `keywords`/`subtypes`/`any_of` can express the "Auras, Equipment" half but have no term for the third branch, and `STATIC_FILTER_KEYS` is smaller still (no counter or attachment key at all). No card in data/cards/auto/templates.cards.json prints the word "modified"; ~30 queue entries are blocked on it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Silkguard** (rank 2412) — `silkguard`
-  - Auras, Equipment, and modified creatures you control gain hexproof until end of turn. (Equipment, Auras you control, and counters are modifications.)
 
 </details>
 

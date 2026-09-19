@@ -1,0 +1,85 @@
+{
+  "card": {
+    "id": "silkguard",
+    "name": "Silkguard",
+    "oracle_text": "Put a +1/+1 counter on each of up to X target creatures you control.\nAuras, Equipment, and modified creatures you control gain hexproof until end of turn. (Equipment, Auras you control, and counters are modifications.)",
+    "mana_cost": "{X}{G}",
+    "types": [
+      "Instant"
+    ],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": {
+          "x": true
+        },
+        "up_to": true,
+        "selector": {
+          "zone": "battlefield",
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "add_counters",
+        "counter": "+1/+1",
+        "amount": {
+          "const": 1
+        },
+        "objects": {
+          "target": "t1"
+        }
+      },
+      {
+        "op": "grant_keyword",
+        "keywords": [
+          "hexproof"
+        ],
+        "duration": "until_end_of_turn",
+        "objects": {
+          "zone": "battlefield",
+          "controller": "you",
+          "count": "all",
+          "any_of": [
+            {
+              "subtypes": [
+                "Aura"
+              ]
+            },
+            {
+              "subtypes": [
+                "Equipment"
+              ]
+            },
+            {
+              "types": [
+                "Creature"
+              ],
+              "modified": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "granted": {
+      "keywords": [
+        "hexproof"
+      ],
+      "count": 2
+    }
+  }
+}
