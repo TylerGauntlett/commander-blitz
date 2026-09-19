@@ -1,0 +1,151 @@
+{
+  "_comment": "Shapes for tests/unit/test_mana_restriction_supertype.py. t_halfling_mana is Delighted Halfling's second mana ability alone -- one mana of any colour, spendable only on a legendary spell. t_legend_spell and t_plain_spell are the same creature with and without the Legendary supertype, and both cost {G}, so the only thing that can separate them is the restriction. t_legend_artifact is legendary without being a creature, since 'legendary spell' names the supertype and nothing else.",
+  "cards": [
+    {
+      "id": "t_halfling_mana",
+      "name": "Test Halfling",
+      "oracle_text": "{T}: Add one mana of any color. Spend this mana only to cast a legendary spell.",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Halfling"
+      ],
+      "power": 1,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast a legendary spell.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "legendary"
+              ]
+            ]
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_legend_spell",
+      "name": "Test Legendary Bear",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_plain_spell",
+      "name": "Test Ordinary Bear",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_legend_artifact",
+      "name": "Test Legendary Relic",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Artifact"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    }
+  ]
+}

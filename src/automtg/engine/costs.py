@@ -91,18 +91,28 @@ def mana_sources(
 def spell_purpose(card: CardDef) -> SpendPurpose:
     """What restricted mana would have to allow, to *cast* this card.
 
-    Subtypes as well as types, because the printed clause names either: "…only
-    to cast a creature spell" is a type, and "…only to cast Vampire, Cleric,
-    and/or Demon spells" is three subtypes. One flat set of lowercased names on
-    both sides, matched by :meth:`ManaSource.permits` -- which is where the
-    printed "and/or" (an any-of) and "a creature spell **of** the chosen type"
-    (an all-of) are told apart.
+    Subtypes and supertypes as well as types, because the printed clause names
+    any of the three: "…only to cast a creature spell" is a type, "…only to cast
+    Vampire, Cleric, and/or Demon spells" is three subtypes, and Delighted
+    Halfling's "…only to cast a **legendary** spell" is a supertype. One flat set
+    of lowercased names on both sides, matched by :meth:`ManaSource.permits` --
+    which is where the printed "and/or" (an any-of) and "a creature spell **of**
+    the chosen type" (an all-of) are told apart.
+
+    The supertypes were the quiet omission. `loader.mana._restriction_name`
+    accepts any alphabetic word, so "legendary" loaded clean and then matched
+    nothing on every card in the game -- mana that was permanently unspendable,
+    which reads on the board as a land that taps for nothing rather than as an
+    error.
 
     Tagged :data:`CAST`, which is the half of the purpose that keeps every
     restriction shipped before Secluded Courtyard meaning what it printed.
     """
     return SpendPurpose(
-        kind=CAST, names=frozenset(t.lower() for t in (*card.types, *card.subtypes))
+        kind=CAST,
+        names=frozenset(
+            t.lower() for t in (*card.types, *card.subtypes, *card.supertypes)
+        ),
     )
 
 
@@ -134,10 +144,10 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
         return SpendPurpose(kind=ACTIVATE, names=frozenset())
     if obj.on_battlefield:
         c = chars(state, oid)
-        names = (*c.types, *c.subtypes)
+        names = (*c.types, *c.subtypes, *c.supertypes)
     else:
         card = state.card_of(obj)
-        names = (*card.types, *card.subtypes)
+        names = (*card.types, *card.subtypes, *card.supertypes)
     return SpendPurpose(kind=ACTIVATE, names=frozenset(t.lower() for t in names))
 
 

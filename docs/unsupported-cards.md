@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**43 cards** blocked by **51** capabilities.
+**43 cards** blocked by **50** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -51,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
 | [mana-doesnt-empty](#mana-doesnt-empty) | 1 | 6298 | engine |
-| [mana-restriction-supertype](#mana-restriction-supertype) | 1 | 157 | engine |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [mutate](#mutate) | 1 | 3835 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -625,20 +624,6 @@ Blocks **1** card.
 
 - **Tanuki Transplanter** (rank 6298) — `tanuki_transplanter`
   - Until end of turn, you don't lose this mana as steps and phases end.
-
-</details>
-
-## mana-restriction-supertype
-
-Blocks **1** card.
-
-- **(engine)** a mana spend restriction that can name a **supertype** -- "Spend this mana only to cast a legendary spell". `costs.spell_purpose` must put the spell's supertypes into the `SpendPurpose.names` it hands `ManaSource.permits` (or carry them as a third axis beside types and subtypes), and `loader/mana._restriction_name` must accept and mark a supertype name rather than freezing it as an ordinary literal, so that `["legendary"]` matches a Legendary creature spell and nothing else. It must compose with the existing all-of groups, so "a legendary creature spell" stays sayable as one group
-  <br>Why the existing vocabulary won't do: `mana_restriction` is the right field and it cannot reach this word. `costs.spell_purpose` (src/automtg/engine/costs.py:91) builds the purpose as `frozenset(t.lower() for t in (*card.types, *card.subtypes))` -- types and subtypes only -- and `CardDef.supertypes` is a separate frozenset beside them (src/automtg/engine/carddef.py:826), never consulted; `ability_purpose` (costs.py:109) does the same for the activate half. `loader/mana._restriction_name` (src/automtg/cards/loader/mana.py:436) documents its entries as "a card type, or a subtype" and validates only that a name looks like a word, so writing `"legendary"` loads clean and then matches no purpose ever -- exactly the silent failure that comment warns about, a Halfling whose second ability makes mana that can never be spent on anything. The nearby spellings are all narrower: `{"chosen_type_of": "self"}` is the one dynamic leaf and reads the permanent's chosen creature type (Cavern of Souls), not a supertype; `{"not": ...}` negates a literal type; `"any"` (mana.WILDCARD) is refused on the `cast` half exactly because it would make ordinary mana. Dropping the restriction and printing a plain `add_mana` of any color is a strictly better card -- a one-mana Birds of Paradise -- and the `supertypes` key that does exist lives in `selector_keys`/`static_filter_keys`, which pick permanents on the battlefield and are not read by the payment solver at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Delighted Halfling** (rank 157) — `delighted_halfling`
-  - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
 
 </details>
 

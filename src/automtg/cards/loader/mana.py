@@ -442,17 +442,22 @@ def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
                 f'{{"chosen_type_of": "self"}}, not {dict(entry)!r}'
             )
         return CHOSEN_TYPE
-    # A card type, or a subtype. Subtypes are open-ended in Magic and there is no
-    # closed list to check one against, so the guard is the weaker "looks like a
-    # word": a typo here produces mana that can never be spent, which is a
-    # strictly worse card than the printed one -- the safe direction, but a
-    # silent one, so it is worth the shape check.
+    # A card type, a supertype, or a subtype. Subtypes are open-ended in Magic
+    # and there is no closed list to check one against, so the guard is the
+    # weaker "looks like a word": a typo here produces mana that can never be
+    # spent, which is a strictly worse card than the printed one -- the safe
+    # direction, but a silent one, so it is worth the shape check.
+    #
+    # "legendary" was exactly that failure until `costs.spell_purpose` learned to
+    # read supertypes: it passed this check, matched nothing on any card in the
+    # game, and read on the board as a land that taps for nothing.
     if (
         not isinstance(entry, str)
         or not entry
         or not entry.replace("-", "").replace(" ", "").isalpha()
     ):
         raise DslError(
-            f"{where}: unparsable mana restriction {entry!r} (a card type or subtype, lowercased)"
+            f"{where}: unparsable mana restriction {entry!r} "
+            f"(a card type, supertype or subtype, lowercased)"
         )
     return entry.lower()
