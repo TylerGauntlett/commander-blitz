@@ -86,6 +86,9 @@
    "untap_during_each_untap_step",
    "ward"
   ],
+  "KEYWORD_ALIASES": {
+   "umbra_armor": "totem_armor"
+  },
   "KNOWN_COLORS": [
    "B",
    "G",

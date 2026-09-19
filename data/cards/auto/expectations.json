@@ -724,6 +724,20 @@
   "bear_cub": {
     "zone": "battlefield"
   },
+  "bear_umbra": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "totem_armor"
+      ]
+    },
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "beastcaller_savant": {
     "zone": "battlefield"
   },

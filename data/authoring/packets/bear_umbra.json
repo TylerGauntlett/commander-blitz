@@ -1449,6 +1449,9 @@
       "G"
     ],
     "id": "bear_umbra",
+    "keywords": [
+      "totem_armor"
+    ],
     "mana_cost": "{2}{G}{G}",
     "name": "Bear Umbra",
     "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\"\nUmbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)",
@@ -1462,8 +1465,7 @@
   "template_said": "no template for: Enchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you",
   "todo": [
     "Enchant creature",
-    "Enchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\"",
-    "Umbra armor"
+    "Enchanted creature gets +2/+2 and has \"Whenever this creature attacks, untap all lands you control.\""
   ],
   "toughness": null,
   "type_line": "Enchantment — Aura"

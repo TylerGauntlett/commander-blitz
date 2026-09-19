@@ -63,6 +63,30 @@ KNOWN_SUPERTYPES = frozenset(s.value for s in Supertype)
 KNOWN_KEYWORDS = frozenset(k.value for k in Keyword)
 KNOWN_COLORS = frozenset(c.value for c in Color)
 
+#: Printed spellings of a keyword the engine already has under another word.
+#:
+#: Rule 702.88 is *totem armor*, and the Rise of the Eldrazi Umbra cycle prints
+#: the identical ability as "Umbra armor" -- one mechanic with two names on real
+#: cardboard, and Scryfall's ``keywords`` array repeats the printed one. Without
+#: this the replacement is fully implemented (``zones.destroy`` reads
+#: ``Keyword.TOTEM_ARMOR``) and yet no Umbra can ship, because the printed line
+#: folds to a word that is in no vocabulary and the residual gate reports it
+#: unclaimed.
+#:
+#: An alias, deliberately, rather than a second ``Keyword`` member: two enum
+#: values for one ability would need every reader to check both, and the one
+#: that forgot would be a card that quietly loses its totem armor.
+KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
+
+
+def normalize_keyword(word: str) -> str:
+    """A printed keyword folded to the word the engine knows it by.
+
+    Applied wherever printed text or Scryfall's array becomes a keyword, so the
+    two spellings of one ability meet before anything compares them.
+    """
+    return KEYWORD_ALIASES.get(word, word)
+
 #: The keys `add_mana_on_tap`'s `tapped_permanent` may carry: what the tapped
 #: permanent *is*. Crypt Ghast's "a Swamp", Leyline of Abundance's "a creature",
 #: Vernal Bloom's "a Forest". Read against the permanent's current

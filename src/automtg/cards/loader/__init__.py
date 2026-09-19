@@ -112,6 +112,7 @@ from .vocabulary import (  # noqa: F401
     DEFENDING_TRIGGERS,
     DELAYED_TRIGGER_KEYS,
     GRANTABLE_STATIC_EFFECTS,
+    KEYWORD_ALIASES,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
@@ -138,6 +139,7 @@ from .vocabulary import (  # noqa: F401
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
     WAS_CAST_TRIGGERS,
+    normalize_keyword,
 )
 from .walk import (  # noqa: F401
     _before,

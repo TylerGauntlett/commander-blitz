@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**54 cards** blocked by **61** capabilities.
+**53 cards** blocked by **60** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -72,7 +72,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-value-multiplier](#static-value-multiplier) | 1 | 12440 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
-| [umbra-armor](#umbra-armor) | 1 | 886 | keyword |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 | [x-dependent-target](#x-dependent-target) | 1 | 864 | engine |
 
@@ -956,20 +955,6 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
-
-</details>
-
-## umbra-armor
-
-Blocks **1** card.
-
-- **(keyword)** "Umbra armor" recognised as the printed name of the existing totem armor keyword (702.88a), so an Aura carrying keywords: ["totem_armor"] claims the printed line. Concretely: a printed-name alias consulted by cards.proxy.lift_keywords / cards.loader.vocabulary.KNOWN_KEYWORDS mapping the printed word "Umbra armor" to the Keyword.TOTEM_ARMOR value, the way KNOWN_KEYWORDS already matches every other keyword whose printed word equals its enum value. This affects every Umbra card in the cycle (Bear/Snake/Spider/Hyena/Eel/Mammoth/Boar/Drake/Crab/Indomitable Ancients-style umbras), all of which print "Umbra armor" and none of which print "Totem armor".
-  <br>Why the existing vocabulary won't do: The rules keyword itself is already in the engine: Keyword.TOTEM_ARMOR exists in engine/enums.py and engine/zones.destroy honours it, and the rest of this card verifies clean against it (buff +2/+2, the granted attacks trigger via grantable_abilities + a grant_ability static, expectation target_pt_delta +2/+2 and granted totem_armor). What is missing is purely the printed-word mapping: KNOWN_KEYWORDS is frozenset(k.value for k in Keyword), so lift_keywords case-folds the printed line "Umbra armor" to "umbra_armor", finds no such member, and verify.claimed_lines leaves the line unclaimed -- gate 3 rejects with "residual: printed text not represented: Umbra armor". No ability can claim it instead: an AbilityModel is activated, triggered or static, and totem armor is a keyword replacement read by zones.destroy, not any of the three, so the only way to claim the line today would be to attach the printed text to an ability that does not implement it.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bear Umbra** (rank 886) — `bear_umbra`
-  - Umbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)
 
 </details>
 
