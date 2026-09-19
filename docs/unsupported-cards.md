@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**44 cards** blocked by **52** capabilities.
+**43 cards** blocked by **51** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -62,7 +62,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-value-multiplier](#static-value-multiplier) | 1 | 12440 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
 | [x-dependent-target](#x-dependent-target) | 1 | 864 | engine |
@@ -788,20 +787,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-value-multiplier
-
-Blocks **1** card.
-
-- **(value)** An arithmetic leaf in the STATIC value language so a static's magnitude can be a MULTIPLE of a count -- concretely a `times` (and, while somebody is in there, `sum`/`minus`/`half`) entry added to `STATIC_VALUE_KEYS` in src/automtg/cards/loader/vocabulary.py:768, validated recursively in `_validate_static_value` (src/automtg/cards/loader/statics.py) and evaluated in `characteristics._static_value` (src/automtg/engine/characteristics.py), so this card's buff can read `"power": {"times": [{"const": 2}, {"count": {"controller": "you", "subtypes": ["Equipment"], "zone": "battlefield"}}]}`. It is safe inside a static for exactly the reason the existing `count` leaf is: both operands are already-permitted pipeline INPUTS (a constant and a board count of printed characteristics), and multiplying two inputs reads nothing derived, so no static comes to depend on another static's output and the fixed order of layers-lite stays acyclic. The effect side already has the identical node -- `times` is in `value_keys` and implemented at src/automtg/engine/effects/values.py:540 -- so this is the smallest possible port, not a new idea. It is the arithmetic half of the `attachment_count_buff` need already filed by Strong Back (whose other half, an attached-to-host filter, this card does NOT need: "Equipment you control" is a plain board count), and it closes every "+N/+N for each ..." anthem with N greater than 1.
-  <br>Why the existing vocabulary won't do: `buff` with `affects: {"attached": true}` and a `count` magnitude is the right static and it is shipped -- Crown of Gondor writes "Equipped creature gets +1/+1 for each creature you control" exactly that way (data/cards/auto/templates.cards.json:20083) -- but its magnitude can only BE the count. `STATIC_VALUE_KEYS` is `const`, `count`, `mana_symbols`, `counters_on`, `permanents_entered_this_turn` plus the per-player life/count leaves, and nothing in it combines two values: `_validate_static_value` refuses any other key outright ("static values may only use ...") and `characteristics._static_value` raises DslError on an unknown leaf rather than reading 0, so `{"times": [...]}` -- legal on the effect side -- fails to load here. `counters_on` scales a static the way this card needs but counts counters on an object, and nothing on Swordsman's Steel places any. The two approximations both change the card and are refused: writing `{"const": 2}` makes a flat +2/+2 that ignores every other Equipment, and writing the count alone makes +1/+1 per Equipment -- a strictly weaker card in both cases. Splitting the doubling across two buffs is not available either: an ability may not carry two statics (loader/__init__.py:2117, "static abilities cannot have 'effects'"), and two separate static abilities would be two claimants for one printed line, i.e. a duplicated sentence rather than the card as printed. The other two lines need nothing new -- the enters trigger is a `self_enters` triggered ability running `draw` with `amount: {"count": {"controller": "you", "subtypes": ["Equipment"], "zone": "battlefield"}}` (the shipped Mass Appeal shape), and "Equip {3}" is the shipped sorcery-speed activated `attach` ability used by +2 Mace and Buster Sword. Only the doubled magnitude blocks the card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Swordsman's Steel** (rank 12440) — `swordsman_s_steel`
-  - Equipped creature gets +2/+2 for each Equipment you control.
 
 </details>
 

@@ -1186,6 +1186,35 @@ discard would have to ask a question inside the declare-attackers decision, and
 no printed pillowfort asks for one. A tax with no cost is refused for the reason
 ward {0} is — it is `cant_attack` wearing a costume.
 
+### A static magnitude that counts in twos
+
+```jsonc
+// Swordsman's Steel
+{ "kind": "static", "effect": "buff",
+  "text": "Equipped creature gets +2/+2 for each Equipment you control.",
+  "affects": { "attached": true },
+  "power":     { "times": [ { "count": { "controller": "you", "subtypes": ["Equipment"] } }, { "const": 2 } ] },
+  "toughness": { "times": [ { "count": { "controller": "you", "subtypes": ["Equipment"] } }, { "const": 2 } ] } }
+```
+
+`buff` with a `count` magnitude has shipped since Crown of Gondor and always
+stepped by exactly one: every leaf in the static value language *measures*
+something and nothing combined two. `times` is a list of factors, multiplied —
+the same spelling and shape as the effect-side `times`, so one word means one
+thing in both languages.
+
+Splitting the doubling across two `buff` statics is not the alternative it looks
+like. A static carries no `effects`, so it would have to be two *abilities*, and
+the residual gate asks which printed line each ability claims — two abilities
+claiming one sentence is what that gate exists to refuse.
+
+Safe inside a static for `count`'s reason: every factor it may contain is a
+pipeline input, so a magnitude built from them cannot depend on another static's
+output. The loader recurses into the factors, because the key-difference check
+reads only the outermost keys and an effect-side leaf smuggled inside would
+otherwise load and then reach `_static_value` as vocabulary it cannot evaluate.
+A single-element product is refused: that is a `count` wearing a hat.
+
 ### Forbidding a sacrifice, continuously
 
 ```jsonc

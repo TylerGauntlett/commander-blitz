@@ -965,6 +965,24 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return int(expr["const"])
     if "count" in expr:
         return _count_matching(state, expr["count"], source)
+    if "times" in expr:
+        # "+2/+2 for each Equipment you control" -- Swordsman's Steel. A count
+        # with a step bigger than one, which the language could not say: every
+        # other leaf here *measures* something and nothing combined two.
+        #
+        # Splitting the doubling across two `buff` statics is not the
+        # alternative it looks like. A static may carry no `effects`, so it
+        # would have to be two abilities, and the residual gate asks which
+        # printed line each ability claims -- two abilities claiming one
+        # sentence is exactly what that gate exists to catch.
+        #
+        # Deliberately the same spelling and the same shape as the effect-side
+        # `times`: a list of factors, multiplied. Safe here for `count`'s
+        # reason, since every factor it can contain is a pipeline input.
+        result = 1
+        for factor in expr["times"]:
+            result *= _static_value(state, factor, source)
+        return result
     if "mana_symbols" in expr:
         # Chroma -- Primalcrux's "power and toughness are each equal to the
         # number of green mana symbols in the mana costs of permanents you

@@ -9018,6 +9018,13 @@
   "sword_of_vengeance": {
     "zone": "battlefield"
   },
+  "swordsman_s_steel": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "swordwise_centaur": {
     "zone": "battlefield"
   },

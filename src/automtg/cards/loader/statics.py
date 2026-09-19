@@ -317,6 +317,19 @@ def _validate_static_value(value: Any, where: str) -> None:
         raise DslError(f"{where}: an empty object is not a static value")
     if "count" in value:
         _validate_static_count_filter(value["count"], f"{where}.count")
+    if "times" in value:
+        # Recursive, so the factors are held to this same list -- a `times`
+        # holding an effect-side leaf would otherwise slip past the difference
+        # check above, which only reads the outermost keys, and reach
+        # `_static_value` as vocabulary it cannot evaluate.
+        factors = value["times"]
+        if not isinstance(factors, list) or len(factors) < 2:
+            raise DslError(
+                f"{where}.times: a list of at least two factors to multiply, "
+                f'e.g. [{{"count": {{...}}}}, {{"const": 2}}]'
+            )
+        for i, factor in enumerate(factors):
+            _validate_static_value(factor, f"{where}.times[{i}]")
     if "permanents_entered_this_turn" in value:
         # Kinbinding: "Creatures you control get +X/+X, where X is the number of
         # creatures that entered the battlefield under your control this turn."

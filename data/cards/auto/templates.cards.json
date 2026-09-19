@@ -98702,6 +98702,115 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Equipment enters, draw a card for each Equipment you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": 2
+              }
+            ]
+          },
+          "text": "Equipped creature gets +2/+2 for each Equipment you control.",
+          "toughness": {
+            "times": [
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "const": 2
+              }
+            ]
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "swordsman_s_steel",
+      "mana_cost": "{4}",
+      "name": "Swordsman's Steel",
+      "oracle_text": "When this Equipment enters, draw a card for each Equipment you control.\nEquipped creature gets +2/+2 for each Equipment you control.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

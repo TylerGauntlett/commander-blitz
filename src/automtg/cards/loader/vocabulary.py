@@ -819,8 +819,16 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: inline so the authoring packet can show it -- a worker shown `value_keys` and
 #: not this one reads the effect-side list as the whole language, which is how
 #: Door of Destinies came to be filed as a gap.
+#: `times` is the one leaf here that does not *measure* anything: it multiplies
+#: the others, for "+2/+2 for each Equipment you control" (Swordsman's Steel) --
+#: a count with a step bigger than one. Two `buff` statics are not the
+#: alternative they look like, since a static carries no `effects` and so it
+#: would be two abilities claiming one printed line, which the residual gate
+#: exists to refuse. Same spelling and shape as the effect-side `times`.
 STATIC_VALUE_KEYS = (
-    frozenset({"const", "count", "mana_symbols", "counters_on", "permanents_entered_this_turn"})
+    frozenset(
+        {"const", "count", "times", "mana_symbols", "counters_on", "permanents_entered_this_turn"}
+    )
     | STATIC_LIFE_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
