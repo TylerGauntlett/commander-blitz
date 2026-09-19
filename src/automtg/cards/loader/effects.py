@@ -1368,6 +1368,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if "destination_if" in effect:
+        # "Put it onto the battlefield tapped if it's a land card. Otherwise,
+        # put it into your hand." Only the two search ops read it; anywhere else
+        # it would load and be ignored, and the card would send every card it
+        # found to one place -- which is the printed line with half its sentence
+        # missing.
+        if op not in ("search_library", "search_zones"):
+            raise DslError(
+                f"{where}: 'destination_if' is read only by search_library "
+                f"and search_zones"
+            )
+        branches = effect["destination_if"]
+        if not isinstance(branches, list) or not branches:
+            raise DslError(
+                f"{where}.destination_if: a non-empty list of "
+                f"{{'selector': …, 'to': …}} branches"
+            )
+        for i, branch in enumerate(branches):
+            at = f"{where}.destination_if[{i}]"
+            if not isinstance(branch, dict) or "selector" not in branch:
+                raise DslError(f"{at}: needs a 'selector' saying which cards it catches")
+            validate_selector(branch["selector"], f"{at}.selector")
+            to = branch.get("to", "hand")
+            if to not in DESTINATIONS:
+                raise DslError(f"{at}.to: unknown destination {to!r}")
     # Two axes, one op: a creature type (the default) or a permanent type. A
     # near-miss word here would fall through to the creature-type branch and ask
     # the wrong question -- a card printing "choose a permanent type" that offers

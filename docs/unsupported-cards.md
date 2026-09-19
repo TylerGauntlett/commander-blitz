@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**37 cards** blocked by **47** capabilities.
+**36 cards** blocked by **46** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [rename-permanent](#rename-permanent) | 1 | 3821 | op |
-| [search-destination-by-type](#search-destination-by-type) | 1 | 624 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -636,20 +635,6 @@ Blocks **1** card.
 
 - **The Irencrag** (rank 3821) — `the_irencrag`
   - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
-
-</details>
-
-## search-destination-by-type
-
-Blocks **1** card.
-
-- **(op)** a destination on `search_library`/`search_zones` that is chosen by the *found card's own printed type* rather than fixed by the author -- e.g. a `destination_if` list of `{selector, to, tapped}` branches taken in order (here `{"selector": {"types": ["Land"]}, "to": "battlefield", "tapped": true}` with a fallback `to: "hand"`), so one search over one creature-or-land pool makes one choice and each card found takes exactly one zone change, before the single shuffle. The `tapped` flag has to travel with the branch, because only the land half of the printed sentence arrives tapped. Wanted by Archdruid's Charm and the whole "put it onto the battlefield if it's a land, otherwise into your hand" family (Traverse the Ulvenwald's delirium half, Grow from the Ashes' kin, Scout the Wilderness)
-  <br>Why the existing vocabulary won't do: `_search` (src/automtg/engine/effects/ops_cards.py:310) resolves exactly one `DESTINATIONS[spec.get("destination", "hand")]` and one `tapped = bool(spec.get("tapped"))` before it ever looks at what was picked, and hands every card to `_move_found` (ops_cards.py:410), which moves them all to that same zone -- nothing in `op_options` for either search op branches on the card. `look_at_top` is the only lookup with more than one destination (`destinations`, ops_cards.py:528) and its steps are a *player's* choice of which card goes where, one card each, over the top N of the library rather than a search -- it cannot read a card's type and it cannot search. Writing `search_library` with `as: "found"`, `destination: "hand"` and then an `if` on the binding running `put_onto_battlefield {"objects": {"binding": "found"}, "tapped": true}` is an approximation, not the card: the land really enters the hand first (a second zone change, visible to hand-size effects and to anything that replaces or triggers on a card being put into a hand, and publicly a card in hand rather than one that went library-to-battlefield), and it arrives on the battlefield *after* `_search`'s shuffle rather than before it. Two `search_library` ops guarded by an `if` is worse still -- the printed card is one look at one pool and one choice, so a second search would shuffle twice and let the player look at the library again, and no condition can be asked before the choice has been made. `search_zones` differs only in which zones form the pool, and `two_piles`' `to`/`other` split is over the top of the library by piles, not by card type.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Archdruid's Charm** (rank 624) — `archdruid_s_charm`
-  - • Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.
 
 </details>
 

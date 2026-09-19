@@ -4160,6 +4160,139 @@
       "colors": [
         "G"
       ],
+      "id": "archdruid_s_charm",
+      "mana_cost": "{G}{G}{G}",
+      "name": "Archdruid's Charm",
+      "oracle_text": "Choose one —\n• Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.\n• Put a +1/+1 counter on target creature you control. It deals damage equal to its power to target creature you don't control.\n• Exile target artifact or enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "destination_if": [
+                    {
+                      "selector": {
+                        "types": [
+                          "Land"
+                        ]
+                      },
+                      "tapped": true,
+                      "to": "battlefield"
+                    }
+                  ],
+                  "op": "search_library",
+                  "reveal": true,
+                  "selector": {
+                    "any_types": [
+                      "Creature",
+                      "Land"
+                    ]
+                  },
+                  "shuffle": true
+                }
+              ],
+              "label": "Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "target": "pumped"
+                  },
+                  "op": "add_counters"
+                },
+                {
+                  "amount": {
+                    "power_of": {
+                      "target": "pumped"
+                    }
+                  },
+                  "objects": {
+                    "target": "struck"
+                  },
+                  "op": "damage",
+                  "source_object": {
+                    "target": "pumped"
+                  }
+                }
+              ],
+              "label": "Put a +1/+1 counter on target creature you control. It deals damage equal to its power to target creature you don't control."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "banished"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target artifact or enchantment."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "pumped",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "struck",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "banished",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
       "id": "archers_of_qarsi",
       "keywords": [
         "defender",

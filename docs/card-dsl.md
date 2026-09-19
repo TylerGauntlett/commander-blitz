@@ -1407,6 +1407,37 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A search whose destination depends on what it found
+
+```jsonc
+// Archdruid's Charm, first mode
+{ "op": "search_library",
+  "selector": { "any_types": ["Creature", "Land"] },
+  "reveal": true, "shuffle": true,
+  "destination": "hand",
+  "destination_if": [ { "selector": { "types": ["Land"] },
+                        "to": "battlefield", "tapped": true } ] }
+```
+
+`_search` resolved one `DESTINATIONS[…]` and one `tapped` **before** it saw what
+was picked, and `_move_found` sent everything there — so "put it onto the
+battlefield tapped if it's a land card, otherwise put it into your hand" could
+not be written. The shapes that look like a workaround are approximations: `as` +
+`if` + `put_onto_battlefield` really does pass the land through your hand, and it
+arrives after the search's shuffle.
+
+`destination_if` is a list of branches tried **in order**, first match winning,
+with the op's own `destination` as the fallthrough. In order and with a default
+rather than two mutually exclusive filters, because that is the shape of the
+printed sentence — "if it's a land … otherwise …" — and two filters could both
+miss. Each branch carries its own `tapped`.
+
+Branches match the **printed** face, which is what they ask about and all there
+is: the card is still in the library when the question is put. A branch with no
+`selector` is refused (it is the default wearing a hat, and would swallow the
+fallthrough), and the key is refused on any op but the two searches, where it
+would load and be ignored — the printed line with half its sentence missing.
+
 ### Narrowing when a spell may be cast
 
 ```jsonc

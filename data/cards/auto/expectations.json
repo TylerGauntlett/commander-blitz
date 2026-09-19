@@ -395,6 +395,16 @@
   "archangel": {
     "zone": "battlefield"
   },
+  "archdruid_s_charm": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "archers_of_qarsi": {
     "zone": "battlefield"
   },

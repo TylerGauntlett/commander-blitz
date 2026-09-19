@@ -11812,12 +11812,12 @@
     },
     "Archdruid's Charm": {
       "edhrec_rank": 624,
-      "gate": "template",
+      "gate": null,
       "name": "Archdruid's Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "00c2c17b-889b-416b-af58-c4039efec2bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Archelos, Lagoon Mystic": {

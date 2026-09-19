@@ -407,6 +407,42 @@ def _search_sharing(ctx: EffectContext, prompt: str, pool: list[int], take: int,
     return list(first) + list(more)
 
 
+def _to_top(spec: Mapping[str, Any], destination: Zone) -> bool:
+    """Whether a library destination means the top of it."""
+    return spec.get("destination") == "library_top"
+
+
+def _destination_for(
+    ctx: EffectContext,
+    oid: int,
+    spec: Mapping[str, Any],
+    default: Zone,
+    default_tapped: bool,
+) -> tuple[Zone, bool]:
+    """Where this particular found card goes, and whether it arrives tapped.
+
+    `destination_if` is a list of ``{"selector": …, "to": …, "tapped": …}``
+    branches, tried in order against the card's printed face; the op's own
+    ``destination`` is the fallthrough. Order matters and is the card's, so
+    "onto the battlefield tapped if it's a land, otherwise your hand" is one
+    branch and a default rather than two mutually exclusive filters that could
+    both miss.
+    """
+    branches = spec.get("destination_if")
+    if not branches:
+        return default, default_tapped
+    from .selectors import matches
+
+    for branch in branches:
+        selector = branch.get("selector") or {}
+        if matches(ctx, oid, selector, default_zone=None):
+            return (
+                DESTINATIONS[str(branch.get("to", "hand"))],
+                bool(branch.get("tapped")),
+            )
+    return default, default_tapped
+
+
 def _move_found(
     ctx: EffectContext,
     picked: list[int],
@@ -416,8 +452,20 @@ def _move_found(
     tapped: bool,
     cause: str,
 ) -> None:
-    """Send the cards a library lookup turned up to their destination."""
+    """Send the cards a library lookup turned up to their destination.
+
+    Usually one destination for the whole search. ``destination_if`` is the
+    exception -- "Search your library for a creature or land card and reveal it.
+    **Put it onto the battlefield tapped if it's a land card. Otherwise, put it
+    into your hand.**" (Archdruid's Charm) -- where the destination is a question
+    about the card, and cannot be answered until the card has been chosen.
+
+    Read per card and in order, first match winning, with ``destination`` as the
+    fallthrough. The branches match on the **printed** face, which is what they
+    are asking about and also all there is: the card is still in the library.
+    """
     for oid in picked:
+        destination, tapped = _destination_for(ctx, oid, spec, destination, tapped)
         if destination is Zone.BATTLEFIELD:
             # to_player only picks the destination zone list; the battlefield
             # is global, so controller has to be set explicitly or the
@@ -430,7 +478,10 @@ def _move_found(
             oid,
             destination,
             to_player=pid,
-            to_top=spec.get("destination") == "library_top",
+            # Read off the resolved zone rather than off `spec`, so a
+            # `destination_if` branch that sends one card to the top of the
+            # library is honoured and the others are not dragged there with it.
+            to_top=destination is Zone.LIBRARY and _to_top(spec, destination),
             tapped=tapped,
             cause=cause,
         )
