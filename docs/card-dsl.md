@@ -1407,6 +1407,31 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Cards in a hand drawn this turn
+
+```jsonc
+// Sylvan Library
+{ "op": "choose_permanents", "as": "kept",
+  "objects": { "zone": "hand", "controller": "you",
+               "drawn_this_turn": true, "count": 2 } }
+```
+
+`GameState.cards_drawn_this_turn` has existed as long as the draw tally, and it
+is a per-player **integer**: it says how many, and no selector can ask which.
+Nothing else tells a card drawn a moment ago from one that has sat in hand since
+the opening draw — both are just cards in a hand — so the fact has to be recorded
+as the card is drawn or it is gone.
+
+`draw_cards` records it, for the tally's own reason: every draw passes through
+that function, so a card cannot be drawn without being marked.
+
+**The turn, not a flag.** A boolean would need clearing at a turn boundary, which
+is one more thing for the boundary to forget, and a stale `true` reads as a card
+drawn this turn that was not. Comparing a recorded turn against the current one
+is self-clearing.
+
+Effect-side only: nothing continuous asks the question.
+
 ### A search whose destination depends on what it found
 
 ```jsonc

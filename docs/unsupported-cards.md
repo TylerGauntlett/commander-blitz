@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**36 cards** blocked by **46** capabilities.
+**35 cards** blocked by **45** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -34,7 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [double-damage](#double-damage) | 1 | 4176 | replacement |
-| [drawn-this-turn](#drawn-this-turn) | 1 | 259 | selector |
 | [enters-as-a-copy](#enters-as-a-copy) | 1 | 1649 | replacement |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [equip](#equip) | 1 | 3190 | engine |
@@ -358,20 +357,6 @@ Blocks **1** card.
 - **Inquisitor's Flail** (rank 4176) — `inquisitor_s_flail`
   - If equipped creature would deal combat damage, it deals double that damage instead.
   - If another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.
-
-</details>
-
-## drawn-this-turn
-
-Blocks **1** card.
-
-- **(selector)** A selector key that narrows a zone to the cards that were drawn this turn -- e.g. `drawn_this_turn: true` on `{"zone": "hand", "player": "you", "count": 2}` -- backed by a per-object record of the turn on which a card was drawn, written where every draw already funnels through (`replacements._draw_one` / `replacements.draw`, the same place miracle and dredge hook). Nothing else on this card is missing: the trigger is `draw_step`, the optional two extra draws are `may` + `draw`, and the per-card cost-or-consequence is a `for_each` over the chosen binding whose body is `may` with `pay: {"pay_life": 4}` and `else: [put_on_top {objects: {binding: "each"}}]` -- the shipped Mystic Remora idiom. Only the pool that `for_each` iterates cannot be built.
-  <br>Why the existing vocabulary won't do: The nearest thing in `reference` is the value `cards_drawn_this_turn`, but it is a per-player integer tally (`GameState.cards_drawn_this_turn`, cleared each turn) with no record of which cards those were, so it can size an amount and never name an object. No key in `selector_keys` filters a card by how or when it reached a zone: `arrived_this_turn_from` is not a selector key at all (it is a static-ability field read only by `graveyard_cast_arrival_ok`, and it asks about a graveyard, not a hand), and `GameObject` tracks `entered_turn`, `graveyard_turn` and `graveyard_from` but has no field for a draw. The `draw` op's `as` binding is documented as recording the player seats that drew, not the drawn card objects, so there is no binding to hand to `for_each` either -- and it would in any case be the wrong set, since the printed line is every card drawn this turn, including the normal draw-step draw and any drawn before Sylvan Library's trigger.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sylvan Library** (rank 259) — `sylvan_library`
-  - If you do, choose two cards in your hand drawn this turn.
 
 </details>
 

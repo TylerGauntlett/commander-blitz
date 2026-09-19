@@ -74,6 +74,13 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
         # card can never be drawn without the tally seeing it.
         nth = state.cards_drawn_this_turn.get(pid, 0) + 1
         state.cards_drawn_this_turn[pid] = nth
+        # ...and the same fact per card, for "cards in your hand drawn this
+        # turn" (Sylvan Library). Written here for the tally's reason: every
+        # draw passes through this function, so a card cannot be drawn without
+        # being marked.
+        obj = state.objects.get(oid)
+        if obj is not None:
+            obj.drawn_turn = state.turn
         # "…except the first one you draw in each of your draw steps." A card,
         # not an attempt: counted here, after the move, so a dredged draw (which
         # never reaches this function) leaves the next draw still the first.

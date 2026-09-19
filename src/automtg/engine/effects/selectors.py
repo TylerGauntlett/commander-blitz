@@ -54,6 +54,11 @@ SELECTOR_KEYS = frozenset(
         #: or Equipment is attached to, read off the ability's source.  Already
         #: in ``STATIC_FILTER_KEYS``; this is the same word on the effect side.
         "attached",
+        #: "Choose two cards in your hand **drawn this turn**" -- Sylvan Library.
+        #: `GameState.cards_drawn_this_turn` says how many and no selector could
+        #: ask which; this reads the mark `draw_cards` puts on each card as it is
+        #: drawn. Effect-side only: nothing continuous asks the question.
+        "drawn_this_turn",
         #: "**modified** creatures you control" (Silkguard, and the whole Kamigawa
         #: cycle) -- a permanent with a counter on it, equipped, or enchanted by
         #: an Aura you control. A definition rather than a characteristic, which
@@ -638,6 +643,11 @@ def matches(
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
     if selector.get("modified") and not _is_modified(ctx, oid):
+        return False
+    if selector.get("drawn_this_turn") and obj.drawn_turn != state.turn:
+        # Compared against the turn rather than read as a flag, so nothing has
+        # to clear it at a turn boundary -- a stale `true` would read as a card
+        # drawn this turn that was not.
         return False
     if (name := selector.get("exclude_binding")) is not None and oid in _bound_oids(ctx, str(name)):
         # `_bound_oids`, not `_bound_oid`: a binding is one oid for a trigger or

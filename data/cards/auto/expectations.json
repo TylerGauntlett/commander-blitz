@@ -9083,6 +9083,10 @@
   "sylvan_caryatid": {
     "zone": "battlefield"
   },
+  "sylvan_library": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "taiga": {
     "zone": "battlefield"
   },

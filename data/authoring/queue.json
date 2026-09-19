@@ -270572,12 +270572,12 @@
     },
     "Sylvan Library": {
       "edhrec_rank": 259,
-      "gate": "template",
+      "gate": null,
       "name": "Sylvan Library",
-      "reason": "no template for: At the beginning of your draw step, you may draw two additional cards. If you do, choose t",
+      "reason": "",
       "scryfall_id": "26a7c62c-12ed-493c-ba95-0f55fec83686",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Sylvan Messenger": {

@@ -99628,6 +99628,84 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "as": "kept",
+                  "objects": {
+                    "controller": "you",
+                    "count": 2,
+                    "drawn_this_turn": true,
+                    "zone": "hand"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose two cards drawn this turn"
+                },
+                {
+                  "effects": [
+                    {
+                      "else": [
+                        {
+                          "objects": {
+                            "binding": "each"
+                          },
+                          "op": "put_on_top"
+                        }
+                      ],
+                      "op": "may",
+                      "pay": {
+                        "pay_life": 4
+                      },
+                      "player": "you",
+                      "prompt": "Pay 4 life to keep this card?"
+                    }
+                  ],
+                  "objects": {
+                    "binding": "kept"
+                  },
+                  "op": "for_each"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw two additional cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your draw step, you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those cards, pay 4 life or put the card on top of your library.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw_step",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "sylvan_library",
+      "mana_cost": "{1}{G}",
+      "name": "Sylvan Library",
+      "oracle_text": "At the beginning of your draw step, you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those cards, pay 4 life or put the card on top of your library.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

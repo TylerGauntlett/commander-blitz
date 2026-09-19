@@ -156,6 +156,19 @@ class GameObject:
     #: instant: the pool holds six integers and the permanent that made a pip is
     #: unrecoverable the moment the pip is gone.
     mana_sources_spent: frozenset[int] = frozenset()
+    #: The turn this card was **drawn**, or -1 if it never was. "Choose two
+    #: cards in your hand drawn this turn" -- Sylvan Library.
+    #:
+    #: `GameState.cards_drawn_this_turn` is the near miss and is a per-player
+    #: integer: it says how many, and no selector can ask *which*. This is the
+    #: same fact per card, and it has to be recorded as the card is drawn --
+    #: nothing about a card in hand afterwards distinguishes one drawn this turn
+    #: from one that has sat there since the opening hand.
+    #:
+    #: The turn rather than a flag, so it needs no clearing: a mark that had to
+    #: be reset would be one more thing for a turn boundary to forget, and a
+    #: stale `true` reads as a card drawn this turn that was not.
+    drawn_turn: int = -1
     #: Whether any mana spent casting this carried Cavern of Souls' rider --
     #: "…and that spell can't be countered". Written by `costs.pay_mana` beside
     #: `mana_sources_spent`, at the same instant and for the same reason: the
