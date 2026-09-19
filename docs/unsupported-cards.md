@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**49 cards** blocked by **56** capabilities.
+**48 cards** blocked by **55** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [delirium](#delirium) | 2 | 362 | value |
-| [fight](#fight) | 2 | 686 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [ability-cost-reduction](#ability-cost-reduction) | 1 | 3190 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -186,25 +185,6 @@ One adjacent finding for whoever builds this, not filed as a need because the pa
   - Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
-
-</details>
-
-## fight
-
-Blocks **2** cards.
-
-- **(op)** A `fight` op naming two creatures (here the spell's two targets) that makes each deal damage equal to its power to the other simultaneously, with 701.12c's all-or-nothing rule: if either creature is an illegal target or has left the battlefield when the spell resolves, neither deals damage. It must cope with an 'up to one' second target, so that with no opponent's creature chosen the fight simply does not happen while the +2/+2 still does.
-  <br>Why the existing vocabulary won't do: `fight` is not in `ops` and no card in the shipped pool prints the word — the mechanic has never been built. The nearest composition is two `damage` ops with `source_object` and `amount: {'power_of': {'target': ...}}`, which is a different card three ways: the damages become sequential, so the second reads a power the first has already changed (wither, deathtouch-plus-pump, any dealt_damage trigger that pumps); the two halves are independent, so when the opponent's creature is an illegal target only that half is skipped instead of both, and this card's own creature would take free damage from a fight that rules-wise never occurred; and nothing binds the pair as one action, so a replacement or prevention effect that reads a fight sees two unrelated damage events. `pump` covers the +2/+2 half exactly, which is why only the fight sentence is recorded here.
-- **(op)** A `fight` op naming two creatures -- here the activated ability's two targets, the first restricted to creatures you control and the second 'another target creature', any controller but not the first -- that makes each deal damage equal to its power to the other simultaneously, as one action, with 701.12c's all-or-nothing rule: if either creature is an illegal target or has left the battlefield as the ability resolves, neither deals damage. Both halves must read power at the same instant, and the pair must be one fight event so that damage replacement, prevention and 'whenever this creature fights' effects see it as such. Ulvenwald Tracker needs the mandatory two-target form; Bridgeworks Battle needs the same op to tolerate an 'up to one' second target.
-  <br>Why the existing vocabulary won't do: `fight` is in neither the packet's `ops` list nor the engine: 119 ops are registered across src/automtg/engine/effects/ops_*.py and none is a fight, and the only two cards in data/generated/cards/pool.cards.json whose oracle text contains 'fights' are this card and Bridgeworks Battle, both sitting there with empty specs. The declaration halves already exist, which is exactly what makes the approximation tempting: a target's `selector` takes `exclude_binding` (src/automtg/engine/effects/selectors.py:562) so 'another' is sayable, and `damage` takes `source_object` plus an `amount` of `{"power_of": {"target": "t1"}}` (src/automtg/engine/effects/values.py:354), so two `damage` ops would load. They would be a different card three ways. The damages become sequential, so the second reads a power the first has already altered -- a dealt_damage trigger that pumps, wither counters, a first-strike-irrelevant deathtouch kill that removes the creature before it strikes back, and the creature that dies to the first damage never deals its own. The two halves are independent, so if the opponent's creature is gone on resolution only that half is skipped and your own creature still takes free damage from a fight that rules-wise never happened -- the reverse of 701.12c. And nothing binds the pair as one action, so anything reading a fight sees two unrelated damage events. `damage` is the closest op and `pump` the closest neighbour for the Bridgeworks half; neither can make one simultaneous exchange.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bridgeworks Battle // Tanglespan Bridgeworks** (rank 686) — `bridgeworks_battle_tanglespan_bridgeworks`
-  - Battle — Siege (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
-  - It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)
-- **Ulvenwald Tracker** (rank 2966) — `ulvenwald_tracker`
-  - {1}{G}, {T}: Target creature you control fights another target creature.
 
 </details>
 

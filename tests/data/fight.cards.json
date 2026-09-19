@@ -1,0 +1,219 @@
+{
+  "_comment": "Shapes for tests/unit/test_fight.py. t_fighter is Ulvenwald Tracker's ability alone -- 'Target creature you control fights another target creature' -- written as a sorcery so the test can cast it rather than activate it. t_self_fighter points both halves of the op at ONE binding, which is how 701.12d is reachable from a card file: targeting already refuses the same permanent for two separate target slots. The creatures are vanillas of the sizes the exchange turns on, plus a lifelinker and a deathtoucher, since dealing the damage BY the creature rather than by the spell is what makes those two work.",
+  "cards": [
+    {
+      "id": "t_f_2_2",
+      "name": "Test Fight Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_f_3_3",
+      "name": "Test Fight Ogre",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_f_1_1",
+      "name": "Test Fight Dork",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_f_0_4",
+      "name": "Test Fight Wall",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 0,
+      "toughness": 4,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_f_lifelink",
+      "name": "Test Fight Lifelinker",
+      "oracle_text": "Lifelink",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "lifelink"
+      ]
+    },
+    {
+      "id": "t_f_deathtouch",
+      "name": "Test Fight Adder",
+      "oracle_text": "Deathtouch",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "deathtouch"
+      ]
+    },
+    {
+      "id": "t_fighter",
+      "name": "Test Fight Spell",
+      "oracle_text": "Target creature you control fights another target creature.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "mine",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        {
+          "id": "theirs",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "exclude_binding": "mine"
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "fight",
+          "objects": {
+            "target": "mine"
+          },
+          "other": {
+            "target": "theirs"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_self_fighter",
+      "name": "Test Self Fight Spell",
+      "oracle_text": "Target creature fights itself.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "a",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "fight",
+          "objects": {
+            "target": "a"
+          },
+          "other": {
+            "target": "a"
+          }
+        }
+      ]
+    }
+  ]
+}

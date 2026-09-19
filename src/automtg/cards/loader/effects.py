@@ -1368,6 +1368,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "fight":
+        # Both halves, or it is not a fight. With one missing the op resolves to
+        # nothing and the card silently does half of what it prints -- and the
+        # half it would drop is the one that hits *your* creature, so the card
+        # would be strictly better than printed rather than merely weaker.
+        for key in ("objects", "other"):
+            if key not in effect:
+                raise DslError(
+                    f"{where}: fight needs both 'objects' and 'other' -- the two "
+                    f"creatures that deal damage to each other (701.12a)"
+                )
+            validate_selector(effect[key], f"{where}.{key}")
     if "attached_to" in effect:
         # "Create a Wicked Role token attached to it." Only `create_token` reads
         # the key; on any other op it would load and attach nothing. That the

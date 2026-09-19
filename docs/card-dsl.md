@@ -287,7 +287,7 @@ it, but a card that needed correcting was authored wrong.
 
 | Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` |
-| Life & damage | `gain_life` `lose_life` `damage` `add_poison` `prevent_damage` `lock_life_total` |
+| Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `lock_life_total` |
 | Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
@@ -4220,6 +4220,30 @@ in their cost count (106.12). The loader requires both keys and refuses
 Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`
 op uses, read off the static's own source, and adding nothing while no colour has
 been chosen, since this runs inside cost payment where nothing may stop to ask.
+
+### `fight`
+
+"Target creature you control fights another target creature" (Ulvenwald Tracker).
+`objects` and `other` are the two creatures; the loader requires both.
+
+Two sequential `damage` ops are the near miss and are a different effect three
+ways over, which is why this is an op rather than a shorthand:
+
+- **701.12a is simultaneous.** Both powers are read before either blow lands, so
+  a creature that dies in the exchange still deals its damage. Sequenced, a 3/3
+  kills a 2/2 and walks away untouched — strictly better than the printed card.
+- **701.12c is all-or-nothing.** If either creature has left the battlefield by
+  the time the fight would happen, *neither* deals damage. Sequenced, whichever
+  half still has a legal subject fires.
+- **Each blow is dealt by the creature**, not by the spell, which is what makes
+  lifelink gain its controller life and deathtouch lethal. `damage`'s
+  `source_object` says that too, but only for one dealer at a time.
+
+701.12d — a creature cannot fight itself — is checked on the pair. Targeting
+already refuses the same permanent for two separate target slots, so the
+reachable mistake is a card naming one *binding* on both halves, and that does
+nothing rather than dealing itself damage twice. Zero power is not a special
+case, but the guard is per-blow, so a 0/1 fighting a 3/3 still takes its three.
 
 `freeze_opponent_lands` sets a **one-shot** `skip_next_untap`, cleared by the
 untap step it skips. That is deliberately not the `frozen_by` lock used by

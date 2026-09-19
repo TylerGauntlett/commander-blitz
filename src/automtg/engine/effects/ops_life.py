@@ -205,6 +205,60 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
                 damage_player(ctx.state, ref.id, amount, dealer)
 
 
+@register("fight")
+def op_fight(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Two creatures each deal damage equal to their power to the other (701.12a).
+
+    "Target creature you control fights another target creature" -- Ulvenwald
+    Tracker; Bridgeworks Battle's second sentence is the same keyword action.
+
+    Two sequential ``damage`` ops are the near miss, and they are a different
+    effect three ways over. **The exchange is simultaneous**: powers are read
+    before either blow lands, so a creature that dies to the first still deals
+    its damage, where the sequential spelling lets the bigger creature kill the
+    smaller one and walk away untouched. **It is all-or-nothing** (701.12c): if
+    either creature has left the battlefield by the time the fight happens,
+    *neither* deals damage, where the sequential spelling would still fire the
+    surviving half. And each blow is dealt **by the creature**, not by the
+    spell, which is what makes lifelink gain its controller life and deathtouch
+    kill -- ``source_object`` on ``damage`` can say that, but only one dealer at
+    a time.
+
+    701.12d: a creature cannot fight itself. If both halves resolve to the same
+    permanent nothing happens at all, rather than it dealing itself damage
+    twice.
+
+    Zero power is not a special case -- ``damage_permanent`` ignores a
+    non-positive amount -- but a 0/1 fighting a 3/3 must still *take* its three,
+    so the guard is per-blow and never abandons the exchange.
+    """
+    from ..characteristics import chars
+
+    state = ctx.state
+    left = resolve_pool(ctx, spec.get("objects"))
+    right = resolve_pool(ctx, spec.get("other"))
+    if not left or not right:
+        return
+    a, b = left[0], right[0]
+    if a == b:
+        # 701.12d. Reachable whenever one selector could pick what the other
+        # already named; `exclude_binding` is how a card says "another", and a
+        # card that omits it should do nothing rather than hit itself twice.
+        return
+
+    both = [state.objects.get(a), state.objects.get(b)]
+    if any(o is None or not o.on_battlefield for o in both):
+        return  # 701.12c -- neither deals damage.
+
+    # Read both powers before either blow lands. This is the whole of what makes
+    # it a fight rather than two damages: the loser of the exchange has already
+    # had its power read by the time it dies.
+    power_a = chars(state, a).power or 0
+    power_b = chars(state, b).power or 0
+    damage_permanent(state, b, power_a, a)
+    damage_permanent(state, a, power_b, b)
+
+
 def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> None:
     """ "Excess damage is dealt to that creature's controller instead."
 

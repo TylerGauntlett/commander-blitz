@@ -9683,6 +9683,10 @@
   "ukud_cobra": {
     "zone": "battlefield"
   },
+  "ulvenwald_tracker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "umara_entangler": {
     "zone": "battlefield"
   },

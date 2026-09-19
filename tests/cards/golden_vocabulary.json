@@ -553,6 +553,7 @@
   "extra_combat",
   "extra_land_drop",
   "extra_turn",
+  "fight",
   "for_each",
   "for_each_player",
   "freeze",

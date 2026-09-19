@@ -293962,12 +293962,12 @@
     },
     "Ulvenwald Tracker": {
       "edhrec_rank": 2966,
-      "gate": "template",
+      "gate": null,
       "name": "Ulvenwald Tracker",
-      "reason": "no template for: {1}{G}, {T}: Target creature you control fights another target creature",
+      "reason": "",
       "scryfall_id": "1bf611cc-6a54-40bb-8fc3-b66d942254db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Umara Entangler": {

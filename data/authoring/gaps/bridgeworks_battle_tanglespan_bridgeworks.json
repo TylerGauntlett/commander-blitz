@@ -12,14 +12,14 @@
       "kind": "engine",
       "what": "The Battle card type as a working permanent: a card-level defence number so a battle enters with that many defence counters the way a planeswalker enters with loyalty (614.1c, a loader-written self_enters_with_counters, not a trigger); a protector chosen as it enters, which is an opponent and a third defender kind in the declare-attackers step, so you and the other players may attack the battle; damage dealt to a battle removing defence counters; and the state-based 'defeated' sequence at zero counters — exile the battle, then cast its back face transformed without paying its mana cost. That last step is the only way the printed back half, Tanglespan Bridgeworks, is ever reached, so without it the card is half a card no matter how the front is written.",
       "why_existing_wont_do": "The type itself loads — CardType.BATTLE is in engine/enums.py and the 'Siege' subtype maps onto it — and that is precisely the trap, because nothing behind it exists. docs/rules-coverage.md lists 'No loyalty, no defence | Planeswalkers and Battles enter play and then sit there', puts 'battles' under Not implemented with 'Attacking battles' under Combat, and src/automtg/cards/proxy.py:410 records the same ('battles enter play but have no defence or protector here'). No card-level defence field exists anywhere in the reference block; self_enters_with_counters could place counters, but no combat rule removes them and no state-based action watches for zero. The `transform` op is the wrong motion: a defeated Siege is exiled and then *cast* from exile, arriving as a cast spell, where transform turns a permanent over in place — and `back_face` alone gives no event that would ever call it. Writing the front as the packet's starting_point suggests (types: ['Sorcery'], the enters trigger's effect as spell_effects, type_line 'Sorcery // Land') is the approximation to refuse: it silently drops the card type, the defence, the protector, the attackability and the entire back face, since a sorcery has nothing to turn over to and the land becomes unreachable."
-    },
-    {
-      "capability": "fight",
-      "kind": "op",
-      "what": "A `fight` op naming two creatures (here the spell's two targets) that makes each deal damage equal to its power to the other simultaneously, with 701.12c's all-or-nothing rule: if either creature is an illegal target or has left the battlefield when the spell resolves, neither deals damage. It must cope with an 'up to one' second target, so that with no opponent's creature chosen the fight simply does not happen while the +2/+2 still does.",
-      "why_existing_wont_do": "`fight` is not in `ops` and no card in the shipped pool prints the word — the mechanic has never been built. The nearest composition is two `damage` ops with `source_object` and `amount: {'power_of': {'target': ...}}`, which is a different card three ways: the damages become sequential, so the second reads a power the first has already changed (wither, deathtouch-plus-pump, any dealt_damage trigger that pumps); the two halves are independent, so when the opponent's creature is an illegal target only that half is skipped instead of both, and this card's own creature would take free damage from a fight that rules-wise never occurred; and nothing binds the pair as one action, so a replacement or prevention effect that reads a fight sees two unrelated damage events. `pump` covers the +2/+2 half exactly, which is why only the fight sentence is recorded here."
     }
   ],
-  "closest_existing": ["transform", "damage", "self_enters_with_counters", "pump", "sagas"],
+  "closest_existing": [
+    "transform",
+    "damage",
+    "self_enters_with_counters",
+    "pump",
+    "sagas"
+  ],
   "confidence": "high"
 }
