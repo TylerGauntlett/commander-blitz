@@ -1407,6 +1407,48 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Choosing a permanent type, and reading it back
+
+```jsonc
+// Creeping Renaissance
+"spell_effects": [
+  { "op": "choose_type", "of": "permanent_type" },
+  { "op": "return_from_graveyard", "destination": "hand",
+    "objects": { "zone": "graveyard", "controller": "you", "count": "all",
+                 "types": [ { "chosen_card_type_of": "self" } ] } }
+]
+```
+
+`choose_type` already asked "pick one of these labels" and recorded the answer;
+what it could only ask about was **creature** types, because its options come
+from `CardRegistry.creature_types()` and its answer lands in
+`GameObject.chosen_type`, whose one reader substitutes into a filter's
+`subtypes`. A card naming a *card* type had no way to say either half.
+
+`of` is the axis — `creature_type` (the default) or `permanent_type` — and it is
+a parameter rather than a second op because the decision, the prompt, the storage
+and the read-back have the same shape on both. A near-miss word is a load error,
+since it would fall through to the creature branch and offer Vampire on a card
+that prints "choose a permanent type".
+
+It writes a **separate slot**, `chosen_card_type`, read back by
+`{"chosen_card_type_of": "self"}` in a selector's `types`. One field for both
+axes would make "of the chosen type" ambiguous at every reader, and the reader
+that guessed wrong would match nothing — silently. The leaf is refused outside
+`types`, and a near-miss spelling is refused too: unrefused it would freeze into
+a name no card has and match nothing for ever.
+
+The options are the six types rule 110.4a calls permanent types, in its printed
+(alphabetical) order — a fixed list for `COLOR_CHOICES`' reason, since every one
+is always a legal answer and a fixed order keeps a replay picking the same type
+from the same index. Battle and Planeswalker are offered although neither is
+modelled: they are legal answers at a real table, and a list that quietly held
+four would make a card that offers the wrong choices rather than one that
+refuses.
+
+A source that has chosen nothing yet matches **nothing** — "all cards of the
+chosen type" before a type is chosen returns nothing, not the whole graveyard.
+
 ### Which combat phase of the turn this is
 
 ```jsonc

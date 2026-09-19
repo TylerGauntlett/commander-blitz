@@ -55482,12 +55482,12 @@
     },
     "Creeping Renaissance": {
       "edhrec_rank": 6999,
-      "gate": "template",
+      "gate": null,
       "name": "Creeping Renaissance",
-      "reason": "no template for: Choose a permanent type. Return all cards of the chosen type from your graveyard to your h",
+      "reason": "",
       "scryfall_id": "71569961-d56c-43f9-ae51-d86561419743",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Creeping Tar Pit": {

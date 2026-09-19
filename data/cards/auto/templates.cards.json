@@ -21003,6 +21003,46 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "flashback": {
+        "mana": "{5}{G}{G}"
+      },
+      "id": "creeping_renaissance",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Creeping Renaissance",
+      "oracle_text": "Choose a permanent type. Return all cards of the chosen type from your graveyard to your hand.\nFlashback {5}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "of": "permanent_type",
+          "op": "choose_type",
+          "prompt": "Choose a permanent type"
+        },
+        {
+          "destination": "hand",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              {
+                "chosen_card_type_of": "self"
+              }
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [

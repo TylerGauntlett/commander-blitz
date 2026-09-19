@@ -1863,6 +1863,12 @@
   "crazed_skirge": {
     "zone": "battlefield"
   },
+  "creeping_renaissance": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "crimson_kobolds": {
     "zone": "battlefield"
   },

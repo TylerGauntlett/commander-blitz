@@ -505,6 +505,30 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     return ctx.state.alive()
 
 
+def _resolve_chosen_card_type(
+    selector: Mapping[str, Any], source: Any
+) -> Mapping[str, Any]:
+    """Turn ``types: [{"chosen_card_type_of": "self"}]`` into the chosen type.
+
+    The card-type twin of `characteristics.resolve_chosen_subtypes`, and it
+    makes the same choice at the same boundary: a source that has chosen nothing
+    yet matches **nothing**. "All cards of the chosen type" before a type is
+    chosen should return nothing, not the whole graveyard -- and the sentinel is
+    a name no card has for exactly that reason.
+    """
+    out: list[str] = []
+    for entry in selector["types"]:
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_card_type_of") == "self":
+            chosen = getattr(source, "chosen_card_type", None)
+            if chosen is None:
+                return {**selector, "types": ["\0none"]}
+            out.append(chosen)
+    return {**selector, "types": out}
+
+
 def _is_modified(ctx: EffectContext, oid: int) -> bool:
     """"Modified" -- a counter on it, an Equipment attached, or your Aura.
 
@@ -579,6 +603,13 @@ def matches(
         from ..characteristics import resolve_chosen_subtypes
 
         selector = resolve_chosen_subtypes(
+            selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        )
+    # "Return all cards of **the chosen type** from your graveyard" -- Creeping
+    # Renaissance. The card-type twin of the substitution above, and effect-side
+    # only: no printed card reads a chosen permanent type from a static.
+    if selector.get("types") and any(isinstance(e, Mapping) for e in selector["types"]):
+        selector = _resolve_chosen_card_type(
             selector, state.objects.get(ctx.source_oid) if ctx.source_oid else None
         )
 
@@ -1354,6 +1385,24 @@ def validate_selector(selector: Any, where: str) -> None:
     # because every selector, on every op and every target spec, comes through.
     for key in ("types", "any_types", "not_types"):
         for name in selector.get(key) or ():
+            # "…cards of **the chosen type**" (Creeping Renaissance). The one
+            # entry here that is not a literal name, substituted per resolution
+            # by `_resolve_chosen_card_type` rather than at load time, because
+            # the choice does not exist until the spell resolves. Validated as
+            # exactly that spelling: a near miss that fell through would freeze
+            # into a name no card has and match nothing for ever.
+            if isinstance(name, Mapping):
+                if key != "types":
+                    raise DslError(
+                        f"{where}: the chosen card type may only appear in 'types', "
+                        f"not {key!r}"
+                    )
+                if set(name) != {"chosen_card_type_of"} or name["chosen_card_type_of"] != "self":
+                    raise DslError(
+                        f'{where}: the only dynamic card type is '
+                        f'{{"chosen_card_type_of": "self"}}, not {dict(name)!r}'
+                    )
+                continue
             if name not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
     # Same argument, and sharper for the negated key: a misspelled *positive*

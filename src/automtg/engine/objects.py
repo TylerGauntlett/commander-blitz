@@ -680,6 +680,18 @@ class GameObject:
     #: again.
     chosen_type: str | None = None
 
+    #: "Choose a permanent type." Creeping Renaissance, and every "choose a card
+    #: type" sweep. One of the six card types 110.4a calls permanent types, read
+    #: back through ``{"chosen_card_type_of": "self"}`` in a selector's ``types``.
+    #:
+    #: A second slot rather than a second meaning for `chosen_type`, because the
+    #: two are different axes and a card may want either: `chosen_type` holds a
+    #: *creature* type (Vanquisher's Banner's "Vampire"), this holds a *card*
+    #: type ("Enchantment"). One field would make "of the chosen type" ambiguous
+    #: at every reader, and the reader that guessed wrong would match nothing --
+    #: silently, which is the failure mode this engine is built to refuse.
+    chosen_card_type: str | None = None
+
     #: "As this artifact enters, choose a color." Heraldic Banner. The colour
     #: letter (``"W"``…``"G"``) this permanent's controller named, read back by
     #: its own abilities through ``{"chosen_color_of": "self"}``.
@@ -874,6 +886,7 @@ class GameObject:
         self.exiled_by = None
         self.phased_out_by = None
         self.chosen_type = None
+        self.chosen_card_type = None
         self.chosen_color = None
         self.added_subtypes = ()
         self.text_changes = ()

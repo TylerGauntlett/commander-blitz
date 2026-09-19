@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**39 cards** blocked by **49** capabilities.
+**38 cards** blocked by **48** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,7 +24,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
-| [choose-permanent-type](#choose-permanent-type) | 1 | 6999 | op, selector |
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
@@ -217,22 +216,6 @@ Blocks **1** card.
 
 - **Berserk** (rank 3632) — `berserk`
   - Cast this spell only before the combat damage step.
-
-</details>
-
-## choose-permanent-type
-
-Blocks **1** card.
-
-- **(op)** a resolution-time choice of one of the six *card* types that are permanent types (110.4a: Artifact, Battle, Creature, Enchantment, Land, Planeswalker), recorded on the resolving object so the effects after it can read it back -- the natural spelling being the existing `choose_type` op taught a second axis (e.g. `{"op": "choose_type", "of": "permanent_type"}`) writing a slot beside `GameObject.chosen_type` (src/automtg/engine/objects.py:672), since the printed clause on this card, on Bitter Ordeal's kin and on every "choose a card type" card (Culling the Weak-style graveyard sweeps, Slaughter Games' relatives) is always a card type and never a creature subtype
-  <br>Why the existing vocabulary won't do: `choose_type` is the closest and asks a different question: `op_choose_type` (src/automtg/engine/effects/ops_control.py:184) builds its option list from `_creature_types(ctx)` -> `CardRegistry.creature_types()` (src/automtg/cards/registry.py:97), which is a survey of every creature **subtype** in the pool -- Elf, Goblin, Sliver -- capped at `MAX_TYPE_CHOICES`. "Artifact" and "Enchantment" are never in that list, so the op cannot offer, and `obj.chosen_type` cannot hold, a permanent type. `choose_color` is the same shape one axis over and offers the five colours. `choose_mode` with one mode per permanent type is an enumeration, not the sentence, and is wrong twice: a spell whose whole effect tree is one top-level `choose_mode` has its modes answered at **cast** by `Game._cast` / 601.2b (documented at ops_control.py:364-376), while this card chooses on resolution, so the choice would be locked in and public a whole stack earlier; and the card is printed as a non-modal sorcery, so the six bullets would be text it does not have.
-- **(selector)** a selector/filter leaf that stands in for the chosen permanent type wherever a literal `types` list stands -- the mirror of `chosen_type_of` one key over, e.g. `{"types": [{"chosen_type_of": "self"}]}` resolved against the resolving source, so `return_from_graveyard` can be pointed at "all cards of the chosen type" in your graveyard
-  <br>Why the existing vocabulary won't do: `chosen_type_of` is the closest existing thing and only reaches `subtypes`: `characteristics.resolve_chosen_subtypes` (src/automtg/engine/characteristics.py:1155) rewrites the `subtypes` list alone, and every caller -- `selectors.matches` (src/automtg/engine/effects/selectors.py:531, gated on `selector.get("subtypes")`), `player_statics`, `triggers._matches`, `costs` -- reads it only through that key; the loader's `_CHOSEN_QUALITY_KEYS` (src/automtg/cards/loader/vocabulary.py:563) admits it in the same one place. A selector's `types` is matched as literal strings against `c.types`/`card.types` in `selectors.matches`, so a mapping entry there is not resolved, and a filter of `subtypes: [{"chosen_type_of": "self"}]` would ask for a creature subtype named Artifact and match nothing. `shares_permanent_type_with` is the only card-type-valued clause in the language and compares one object against **another object's** types (selectors.py:579), not against a type a player named, so it cannot express "the chosen type". Writing a literal `types` list (all six, or just `["Creature"]`) drops the printed choice entirely. The rest of the card is expressible and was not written: `return_from_graveyard` with `destination: "hand"` over `{"zone": "graveyard", "controller": "you", "count": "all"}` covers the return, and `flashback` is a `card_level_cost_keys` field.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Creeping Renaissance** (rank 6999) — `creeping_renaissance`
-  - Choose a permanent type. Return all cards of the chosen type from your graveyard to your hand.
 
 </details>
 
