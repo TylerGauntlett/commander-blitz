@@ -1265,6 +1265,27 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.bestow is not None and stripped.lower().startswith("bestow "):
         return _declares_printed_cost(stripped[len("bestow ") :], card.bestow)
 
+    # "Mutate {1}{G}{G} (If you cast this spell for its mutate cost…)" is bestow's
+    # shape exactly: a card-level alternative way to cast the spell, offered by
+    # `legality` and paid inside `game._cast`, with no AbilityModel that could
+    # honestly carry it -- one is activated, triggered or static, and mutate is
+    # none of the three. Gemrazer is the first mutate card the pipeline tried to
+    # author and it failed gate 3 with its other two lines implemented, which is
+    # where Springheart Nantuko put bestow on this list.
+    #
+    # Declaring the field is not a way to *look* implemented: the loader parses
+    # the cost, refuses it on a non-creature (702.140a) and refuses it beside
+    # bestow, and `legality`/`stack` then offer the mutating cast line with the
+    # rules-supplied `MUTATE_TARGET` and the over-or-under question at
+    # resolution. So the word cannot be written without the mechanic behind it.
+    #
+    # Strict like bestow's claimant and for its reason: the whole line is the
+    # price, so a card declaring `mutate: "{1}{G}"` must not be able to claim a
+    # printed "Mutate {3}{G}{G}". An unparsable or mismatched cost fails closed
+    # and the line stays residual.
+    if card.mutate is not None and stripped.lower().startswith("mutate "):
+        return _declares_printed_cost(stripped[len("mutate ") :], card.mutate)
+
     # "As an additional cost to cast this spell, sacrifice a creature" is the
     # same shape again: a card-level `Cost` charged by `_cast_variant`, with no
     # ability that could honestly claim it. This did not surface while the only

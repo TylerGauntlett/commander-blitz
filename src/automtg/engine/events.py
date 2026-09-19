@@ -103,6 +103,17 @@ class EventType:
     #: CONTROL_CHANGED is: no zone change happens, so nothing else in the log
     #: would say that the card on the board is now a different card.
     TRANSFORMED = "transformed"
+    #: Two cards became one permanent (702.140e). ``source`` and ``data["oid"]``
+    #: are the **host** -- the object that survives the merge and carries the
+    #: union of both cards' abilities -- and ``data["card"]`` is the merged
+    #: card's id.
+    #:
+    #: Fired at the end of `merge_permanents`, after `merged_card` is assigned,
+    #: so the ability printed on the newcomer ("Whenever this creature mutates")
+    #: is already on the permanent when trigger collection looks for it. Fired
+    #: from the merge rather than from the resolution so that every path into a
+    #: mutation goes through it.
+    MUTATED = "mutated"
     BECAME_MONSTROUS = "became_monstrous"
     #: A Class's level **became** a number (716.4). ``source`` and
     #: ``data["oid"]`` are the Class, ``data["level"]`` the level it is now.

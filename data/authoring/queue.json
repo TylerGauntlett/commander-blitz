@@ -105692,12 +105692,12 @@
     },
     "Gemrazer": {
       "edhrec_rank": 3835,
-      "gate": "template",
+      "gate": null,
       "name": "Gemrazer",
-      "reason": "no template for: Mutate {1}{G}{G}",
+      "reason": "",
       "scryfall_id": "3e524a4b-ce4d-43cc-a04f-4f4432746ede",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gemstone Array": {

@@ -1330,16 +1330,36 @@ def merge_permanents(state: GameState, host_oid: int, card_oid: int, *, on_top: 
     arriving = state.card_of(newcomer)
     standing = state.card_of(host)
     top, under = (arriving, standing) if on_top else (standing, arriving)
+    # Renumbered, not merely concatenated. `Ability.index` is a *position* in
+    # the list `abilities_of` returns -- `Action.ability_index`,
+    # `StackItem.ability_index` and `TriggerInstance.ability_index` all address
+    # an ability by it, and resolution reads it back against that list. Both
+    # halves of a merge start numbering at 0, so an ability from underneath
+    # kept its old number and resolution looked up whatever the *top* card has
+    # at that position: a trigger that fires and quietly does something else,
+    # or nothing. The same promise `abilities_of` keeps when it appends a
+    # granted ability.
+    merged = tuple(top.abilities) + tuple(under.abilities)
     host.merged_card = dataclasses.replace(
-        top, abilities=tuple(top.abilities) + tuple(under.abilities)
+        top,
+        abilities=tuple(
+            ability if ability.index == i else dataclasses.replace(ability, index=i)
+            for i, ability in enumerate(merged)
+        ),
     )
     host.merged_under = (*host.merged_under, card_oid)
     newcomer.zone = Zone.BATTLEFIELD
     newcomer.merged_into = host_oid
     newcomer.stack_id = None
     state.bump_chars()
-    state.emit(
-        "mutated",
+    # `fire`, not `emit`: the moment has been in the log since mutation
+    # existed, but `emit` only writes the log -- "the caller is responsible for
+    # handing the event to the trigger bus" -- so "whenever this creature
+    # mutates" had nothing to hear. After `merged_card` is assigned, which is
+    # what puts the newcomer's own trigger on the permanent in time to hear it.
+    fire(
+        state,
+        EventType.MUTATED,
         player=host.controller,
         source=host_oid,
         oid=host_oid,

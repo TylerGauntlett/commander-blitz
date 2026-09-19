@@ -1407,6 +1407,41 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### "Whenever this creature mutates…"
+
+```jsonc
+// Gemrazer
+{ "kind": "triggered",
+  "text": "Whenever this creature mutates, destroy target artifact or enchantment an opponent controls.",
+  "trigger": { "event": "mutates", "source": "self", "controller": "you" },
+  "targets": [ /* … */ ],
+  "effects": [ { "op": "destroy", "objects": { "target": "t1" } } ] }
+```
+
+702.140e. The moment has been in the log since mutation existed —
+`merge_permanents` ended with an `emit` — but `emit` only writes the log ("the
+caller is responsible for handing the event to the trigger bus"), so the printed
+line had nothing to hear it. `fire` instead, plus the `EventType` and the
+`trigger_events` row.
+
+Every near miss is wrong by construction, which is why this is its own event
+rather than a widening of one. A mutating spell never becomes a permanent of its
+own, so neither `self_enters` nor `permanent_enters` ever fires: `_merge_mutation`
+returns before any enter happens. `counter_placed`, `becomes_monstrous` and
+`becomes_level` are the other "this permanent changed state" events and are each
+tied to their own state.
+
+The subject is the **host** — the one object that exists afterwards, and the one
+carrying both cards' abilities — so `source: "self"` on the newcomer's printed
+trigger is answered by the host's oid. That is what lets the trigger be written
+on the card that merges in.
+
+Writing it found a bug in the merge itself: the two ability lists were
+concatenated without renumbering, so an ability from underneath kept its old
+`index` and resolution — which reads `Ability.index` back as a *position* in
+`abilities_of` — looked up whatever the top card had at that number. Fixed in
+the same commit; see `TestTheMergedAbilitiesAreRenumbered`.
+
 ### Mana that doesn't empty as steps and phases end
 
 ```jsonc

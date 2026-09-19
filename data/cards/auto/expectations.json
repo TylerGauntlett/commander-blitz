@@ -3512,6 +3512,10 @@
   "geist_of_the_moors": {
     "zone": "battlefield"
   },
+  "gemrazer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "general_leo_cristophe": {
     "battlefield_count": 34,
     "counters": {

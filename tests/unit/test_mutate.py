@@ -294,6 +294,173 @@ class TestMutatingTwice:
         assert len(game.state.players[0].graveyard) == 3
 
 
+class TestTheMergedAbilitiesAreRenumbered:
+    """One list, one index space -- and the numbers have to say so.
+
+    `Ability.index` is a *position* in the list `abilities_of` returns:
+    `Action.ability_index`, `StackItem.ability_index` and
+    `TriggerInstance.ability_index` all address an ability by it, and
+    resolution reads it back against that list. Both halves of a merge start
+    numbering at 0, so before this a merged permanent had two abilities
+    claiming index 0 and resolution looked up whichever the *top* card had
+    there -- an ability that is offered, paid for, put on the stack, and then
+    does something else.
+
+    Found by the `mutates` trigger below, which is the first printed line to
+    put a **triggered** ability on the card that merges in: with the newcomer
+    underneath it fired and drew nothing, because index 0 on the host is an
+    activated mana-free life gain.
+    """
+
+    def indices(self, game, oid: int) -> list[int]:
+        from automtg.engine.characteristics import abilities_of
+
+        return [a.index for a in abilities_of(game.state, oid)]
+
+    def test_on_top(self, builder):
+        game = position(builder)
+        host = only_oid(game, HOST)
+        mutate(game, host, on_top=True)
+        assert self.indices(game, host) == [0, 1]
+
+    def test_underneath(self, builder):
+        """The half that was wrong: two abilities, both numbered 0."""
+        game = position(builder)
+        host = only_oid(game, HOST)
+        mutate(game, host, on_top=False)
+        assert self.indices(game, host) == [0, 1]
+
+    def test_an_ability_from_underneath_does_its_own_thing(self, builder):
+        """What the numbering is *for*. The Mutator's "{G}: +1/+1" is second in
+        the merged list when it goes under; activating it must pump rather than
+        resolve the Host's "{T}: You gain 1 life" that used to share its
+        number."""
+        game = position(builder)
+        host = only_oid(game, HOST)
+        mutate(game, host, on_top=False)
+        pass_until(
+            game, lambda g: (d := g.pending()) is not None and d.player == 0, limit=200
+        )
+        life = game.state.players[0].life
+        power = chars(game.state, host).power
+
+        pump = next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE
+            and a.source == host
+            and "+1/+1" in (a.base_label or a.label or "")
+        )
+        game.apply(pump)
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+
+        assert chars(game.state, host).power == power + 1
+        assert game.state.players[0].life == life, "and not the other ability"
+
+
+class TestTheMutatesTrigger:
+    """"Whenever this creature mutates…" (702.140e) -- Gemrazer.
+
+    The moment has been in the log since mutation existed: `merge_permanents`
+    ended with `state.emit("mutated", ...)`. But `emit` only writes the log --
+    its own docstring says "the caller is responsible for handing the event to
+    the trigger bus" -- so the printed line had nothing to hear it, and the
+    `trigger_events` table had no name for it either.
+
+    Every near miss is wrong by construction, which is why this is its own
+    event rather than a widening of one. A mutating spell never becomes a
+    permanent of its own, so neither `self_enters` nor `permanent_enters` ever
+    fires: `_merge_mutation` returns before any enter happens. `counter_placed`,
+    `becomes_monstrous` and `becomes_level` are the other "this permanent
+    changed state" events and are each tied to their own state.
+
+    The subject is the **host** -- the one object that exists afterwards, and
+    the one carrying both cards' abilities -- so `source: "self"` on the
+    newcomer's printed trigger is answered by the host's oid. That is the whole
+    reason the trigger can be written on the card that is merging in.
+    """
+
+    WATCHER = "t_mutate_watcher"  # mutate {1}{G}, "whenever this creature mutates, draw"
+    BYSTANDER = "t_mutate_bystander"  # the same trigger, sitting on the battlefield
+
+    def position(self, builder, *, bystander: bool = False):
+        b = (
+            builder(players=2)
+            .battlefield(0, [FOREST] * 8)
+            .battlefield(0, [HOST])
+        )
+        if bystander:
+            b = b.battlefield(0, [self.BYSTANDER])
+        return (
+            b.hand(0, [self.WATCHER])
+            .library(0, [FOREST] * 20)
+            .library(1, [FOREST] * 20)
+            .build()
+        )
+
+    def settle(self, game) -> None:
+        """Drain the triggered ability the merge just queued.
+
+        `mutate` above returns once the stack is empty, and the trigger is not
+        on the stack yet: a triggered ability is put there the next time its
+        controller would receive priority (603.3b), so it sits in
+        `pending_triggers` until somebody passes. Asserting without this reads
+        the board one priority window too early.
+        """
+        pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+
+    def drawn(self, game, before: int, pid: int = 0) -> int:
+        """How many cards left the library since ``before``.
+
+        The library rather than the hand: a hand shrinks by the spell leaving it
+        and grows by the draw, and the two cancel.
+        """
+        return before - len(game.state.players[pid].library)
+
+    def test_the_trigger_fires(self, builder):
+        game = self.position(builder)
+        before = len(game.state.players[0].library)
+        mutate(game, only_oid(game, HOST), on_top=True)
+        self.settle(game)
+        assert self.drawn(game, before) == 1
+
+    def test_it_fires_from_underneath_too(self, builder):
+        """"…plus all abilities from under it." The merged permanent keeps the
+        newcomer's triggered ability whichever way round the two went, and
+        702.140e is about the mutation, not about which card ended up on top."""
+        game = self.position(builder)
+        before = len(game.state.players[0].library)
+        mutate(game, only_oid(game, HOST), on_top=False)
+        self.settle(game)
+        assert self.drawn(game, before) == 1
+
+    def test_it_does_not_fire_for_a_creature_that_did_not_mutate(self, builder):
+        """`source: "self"` scopes it. The bystander prints the same trigger and
+        watches the mutation happen next to it; exactly one card is drawn."""
+        game = self.position(builder, bystander=True)
+        before = len(game.state.players[0].library)
+        mutate(game, only_oid(game, HOST), on_top=True)
+        self.settle(game)
+        assert self.drawn(game, before) == 1
+
+    def test_an_ordinary_mutation_draws_nothing(self, builder):
+        """The control: the Mutator has no such trigger, so the assertions above
+        are about the event and not about mutating."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [FOREST] * 8)
+            .battlefield(0, [HOST])
+            .hand(0, [MUTATOR])
+            .library(0, [FOREST] * 20)
+            .library(1, [FOREST] * 20)
+            .build()
+        )
+        before = len(game.state.players[0].library)
+        mutate(game, only_oid(game, HOST), on_top=True)
+        self.settle(game)
+        assert self.drawn(game, before) == 0
+
+
 class TestTheLoaderGuards:
     def _card(self, **extra) -> CardModel:
         base = {

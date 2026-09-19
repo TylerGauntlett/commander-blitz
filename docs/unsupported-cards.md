@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**34 cards** blocked by **44** capabilities.
+**33 cards** blocked by **43** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -47,7 +47,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [mutate](#mutate) | 1 | 3835 | trigger_event |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
 | [rename-permanent](#rename-permanent) | 1 | 3821 | op |
@@ -545,20 +544,6 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
-
-</details>
-
-## mutate
-
-Blocks **1** card.
-
-- **(trigger_event)** A DSL trigger event -- name it `mutates` -- for 702.140e, "whenever this creature mutates", so a card can write {"kind": "triggered", "trigger": {"event": "mutates", "source": "self"}, "targets": [...], "effects": [{"op": "destroy", ...}]}. The engine already produces the moment: src/automtg/engine/primitives.py:1334, at the end of merge_permanents, calls state.emit("mutated", player=host.controller, source=host_oid, oid=host_oid, card=host.merged_card.id). Three pieces are missing. (1) A name-to-EventType row in TRIGGER_EVENTS (src/automtg/engine/triggers.py:28) plus the EventType member the emit currently sidesteps by passing a bare string. (2) The event must actually be handed to the trigger bus: GameState.emit (src/automtg/engine/state.py:617) only appends to the log -- its own docstring says "The caller is responsible for handing the event to the trigger bus" -- and _merge_mutation (src/automtg/engine/stack.py:~767) never calls triggers.fire/collect for it, so nothing can hear the mutation today. (3) Membership in OBJECT_SUBJECT_TRIGGERS (src/automtg/engine/triggers.py:269) so `source: "self"` means the merged permanent, which is the printed subject: 702.140e fires the ability on the merged creature whether the mutating card went over or under, and it must fire for an ability that came in on the newcomer as well as for one already on the host -- both are in the one synthesised CardDef merge_permanents writes to host.merged_card, so the host oid the emit already carries is the correct subject. Timing: the ability triggers as merge_permanents completes, during _merge_mutation inside spell resolution, so the triggered ability goes on the stack after the mutate spell finishes resolving and chooses its target then.
-  <br>Why the existing vocabulary won't do: No entry in the packet's `trigger_events` reaches a mutation. `self_enters` is the closest and is wrong by construction: a mutating spell never becomes a permanent of its own -- stack.py's resolve comments say so out loud ("the spell does not become a permanent of its own, so it never reaches `_place_after_resolution`") and _merge_mutation returns before any enter happens, so neither the newcomer nor the host enters the battlefield and no enters trigger fires. `permanent_enters` fails for the same reason and would also fire for every unrelated permanent. `counter_placed`, `becomes_monstrous` and `becomes_level` are the other "this permanent changed state" events and are each tied to their own mechanic's counter or level, none of which mutate touches (702.140c is explicit that counters, damage, auras and summoning sickness are unchanged). `ability_activated` and `spell_cast` reach the cast, not the mutation, and would fire on a normal {3}{G} cast too, which is exactly when the printed ability must NOT fire. There is no `condition` in `condition_keys` that asks "was this cast for its mutate cost" either -- `kicked`, `evoked` and `cost_option` each read a different cost node, and StackItem.mutated / CastAction.mutated are engine-internal with no DSL spelling -- so the trigger cannot be faked as a self_enters with an intervening if.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gemrazer** (rank 3835) — `gemrazer`
-  - Whenever this creature mutates, destroy target artifact or enchantment an opponent controls.
 
 </details>
 

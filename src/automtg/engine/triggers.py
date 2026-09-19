@@ -121,6 +121,10 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: "(Damage causes loss of life.)" Infect damage is the exception and fires
     #: nothing, since it costs no life.
     "life_lost": EventType.LIFE_LOST,
+    #: "Whenever this creature mutates…" (702.140e). The subject is the
+    #: **host** permanent, which is the one object that exists afterwards and
+    #: the one carrying the ability, so `source: "self"` means this creature.
+    "mutates": EventType.MUTATED,
     "becomes_monstrous": EventType.BECAME_MONSTROUS,
     #: "When this Class becomes level 2" (716.4). Always `source: "self"` --
     #: the loader supplies it -- and always with the `level` it waits for, which
@@ -306,6 +310,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "deals_combat_damage_to_player",
         "counter_placed",
         "land_played",
+        # The merged permanent, so `source: "self"` scopes the trigger to the
+        # creature that mutated rather than to every mutation on the table.
+        # Both cards' abilities hang off that one object, which is why the
+        # newcomer's printed trigger is answered by the host's oid.
+        "mutates",
         "becomes_monstrous",
         # The Class whose level changed, so the supplied `source: "self"` means
         # *this* Class and not every Class on the table.
