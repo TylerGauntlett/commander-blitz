@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**40 cards** blocked by **50** capabilities.
+**39 cards** blocked by **49** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [first-combat-phase](#first-combat-phase) | 1 | 1173 | value |
 | [grant-static-ability](#grant-static-ability) | 1 | 3821 | op |
 | [historic](#historic) | 1 | 906 | selector |
 | [imprint](#imprint) | 1 | 146 | engine |
@@ -496,20 +495,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## first-combat-phase
-
-Blocks **1** card.
-
-- **(value)** A way for a trigger's intervening `condition` to ask whether the combat phase now in progress is the turn's FIRST one -- either a dedicated condition key (`is_first_combat`) or, better, a value such as `{"combats_this_turn": true}` usable in a `cmp` against `{"const": 1}`. Engine side it needs a per-turn combat counter: `GameState.combat_number` is documented as monotonic for the whole game and deliberately never reset per turn (src/automtg/engine/state.py:95-103, bumped only in combat.start_combat), so nothing currently distinguishes 'combat 1 of this turn' from 'combat 4 of this game'.
-  <br>Why the existing vocabulary won't do: The closest thing in `reference` is the trigger key `max_per_turn: 1` (Aurelia-style 'attacks for the first time each turn'), but that is a cap on how often the ABILITY fires, not a question about the phase: if the equipped creature does not attack in the turn's first combat but does attack in a later combat phase granted by another effect, `max_per_turn: 1` still fires and hands out an extra combat, which the printed intervening if exists precisely to forbid -- the difference is an unbounded combat loop, not a corner case. `has_turn_flag`/`set_turn_flag` could only answer it if some ability wrote the flag at begin_combat, and Genji Glove prints no such line (an unprinted extra ability would fail the residual text gate). `cast_during` reads the step stamped on an object as it was cast, not the phase the game is in now, and no entry in `value_keys` (`attackers_this_turn`, `attacked_this_turn`, `resolutions_this_turn`, ...) counts combat phases.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Genji Glove** (rank 1173) — `genji_glove`
-  - Whenever equipped creature attacks, if it's the first combat phase of the turn, untap it. After this phase, there is an additional combat phase.
 
 </details>
 

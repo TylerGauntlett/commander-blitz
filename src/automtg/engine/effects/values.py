@@ -95,6 +95,11 @@ VALUE_KEYS = frozenset(
         # of the line above; "did it happen" is a `cmp` against 0.
         "life_gained_this_turn",
         "spells_cast_this_turn",
+        # "…if it's the first combat phase of the turn" (Genji Glove). A value
+        # rather than a boolean head, so the ordinary `cmp` says it: the printed
+        # clause is `== 1`, and "the second combat" or "a later combat" fall out
+        # of the same leaf without new vocabulary.
+        "combats_this_turn",
         "cards_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
         "extreme_value",
@@ -476,6 +481,12 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_gained_this_turn" in expr:
         pids = _players(ctx, expr["life_gained_this_turn"])
         return sum(ledger.life_gained.get(p, 0) for p in pids)
+    if "combats_this_turn" in expr:
+        # Counting the combat in progress, so during the first combat this is 1.
+        # `GameState.combat_number` is the near miss and is monotonic for the
+        # whole game by design -- a delayed trigger names its combat by that
+        # integer -- so it can never answer a question about *this turn*.
+        return ctx.state.turn_ledger.combats
     if "spells_cast_this_turn" in expr:
         spec = expr["spells_cast_this_turn"]
         # Either a bare player spec -- storm, and everything written before this

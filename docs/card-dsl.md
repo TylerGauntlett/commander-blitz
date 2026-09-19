@@ -1407,6 +1407,38 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Which combat phase of the turn this is
+
+```jsonc
+// Genji Glove's trigger
+{ "cmp": "==", "left": { "combats_this_turn": true }, "right": { "const": 1 } }
+```
+
+"Whenever equipped creature attacks, **if it's the first combat phase of the
+turn**, untap it. After this phase, there is an additional combat phase."
+
+The intervening if is the whole card. Without it the Glove untaps its creature in
+the extra combat it just granted, which grants another — so a card written
+without the clause is not a weaker Genji Glove, it is an infinite combat engine.
+
+`GameState.combat_number` is the near miss and cannot answer it: that counter is
+monotonic for the **whole game** on purpose, because a delayed trigger names the
+combat it must fire in by that integer, so "at end of combat" would fire in the
+wrong one if it ever reset. `TurnLedger.combats` is a second tally, counting the
+combat in progress and cleared at cleanup with the rest — two counters for two
+questions, one identifying a combat for ever and one counting them within a turn.
+
+It is written by `combat.start_combat` rather than folded in `emit` like every
+other tally there, and deliberately: beginning a combat emits no event, and
+inventing one to carry a counter would put an entry on the trigger bus that no
+card subscribes to.
+
+A value rather than a boolean condition head, so the ordinary `cmp` says it — the
+printed clause is `== 1`, and "the second combat" needs no new vocabulary.
+`max_per_turn: 1` is the other near miss and is a different card: it caps how
+often the ability fires, so a creature that sat out the first combat and attacked
+in a later one would still get its extra combat.
+
 ### Counting different values rather than objects
 
 `{"distinct": …}` is domain, coven and delirium, and they are one leaf rather

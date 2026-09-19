@@ -3514,6 +3514,10 @@
       "0": 2
     }
   },
+  "genji_glove": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "geothermal_bog": {
     "zone": "battlefield"
   },

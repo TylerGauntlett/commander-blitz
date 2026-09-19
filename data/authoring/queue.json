@@ -106062,12 +106062,12 @@
     },
     "Genji Glove": {
       "edhrec_rank": 1173,
-      "gate": "template",
+      "gate": null,
       "name": "Genji Glove",
-      "reason": "no template for: Whenever equipped creature attacks, if it's the first combat phase of the turn, untap it. ",
+      "reason": "",
       "scryfall_id": "f724dde1-84b0-4e3b-a9b8-44cd22bb9f79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Genju of the Cedars": {
