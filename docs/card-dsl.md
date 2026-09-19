@@ -2177,7 +2177,7 @@ batching work.
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
-`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `upkeep` ·
+`becomes_blocked` · `attacks_unblocked` · `becomes_untapped` · `becomes_tapped` · `upkeep` ·
 `draw_step` · `begin_combat` · `precombat_main` · `postcombat_main` ·
 `end_step` · `you_gain_life` ·
 `life_lost` · `you_attack` · `creatures_attack_player` ·
@@ -2535,6 +2535,17 @@ it never reached the trigger bus and named no permanent for `source: "self"` to
 match. The untap step now fires one event per permanent like every other path
 does. A permanent that was already untapped does not *become* untapped, and one
 held down by `skip_untap` never untapped at all.
+
+**`becomes_tapped`** is the other half, and unlike its twin it really was the
+one-line job that one looked like: every route to tapping a permanent already
+goes through `tap_permanent`, which has always fired the event — including
+tapping for mana and being declared as an attacker, which are the two cases the
+printed cards (City of Brass, the painlands, Legolas's Quick Reflexes' granted
+trigger) are played for. All it lacked was a name here.
+
+"Becomes" is already right at the primitive: `tap_permanent` returns early on a
+permanent that is *already* tapped, so re-tapping one is not a second event —
+which is the whole of the distinction between being tapped and becoming tapped.
 
 **`becomes_blocked` and `attacks_unblocked` are told from the attacker's side**,
 and they are a pair rather than two features: both are decided when the block

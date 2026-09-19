@@ -155122,12 +155122,12 @@
     },
     "Legolas's Quick Reflexes": {
       "edhrec_rank": 1482,
-      "gate": "template",
+      "gate": null,
       "name": "Legolas's Quick Reflexes",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "2a5d0ed2-9994-47ff-b453-77e28844ecd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Legolas, Counter of Kills": {

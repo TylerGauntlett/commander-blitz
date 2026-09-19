@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**45 cards** blocked by **52** capabilities.
+**44 cards** blocked by **52** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cant-be-countered](#cant-be-countered) | 3 | 114 | engine, static_effect |
-| [becomes-tapped](#becomes-tapped) | 2 | 97 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [delirium](#delirium) | 2 | 362 | value |
@@ -24,6 +23,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [battle](#battle) | 1 | 686 | engine |
+| [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 3632 | engine |
 | [choose-permanent-type](#choose-permanent-type) | 1 | 6999 | op, selector |
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
@@ -86,24 +86,6 @@ Blocks **3** cards.
   - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## becomes-tapped
-
-Blocks **2** cards.
-
-- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped, for any reason -- paying a tap cost, attacking, or being tapped by another effect -- with the tapped permanent as the source so it can deal the damage
-  <br>Why the existing vocabulary won't do: trigger_events has becomes_untapped but no tapped counterpart, so the exact inverse is simply absent. ability_activated is the nearest reachable substitute and is wrong twice over: it fires on activation of the mana ability rather than on the tap itself, so it would miss every other way the land becomes tapped (attacking, Sunken Ruins-style outside taps) and would still fire on a hypothetical untapped-cost ability that never taps.
-- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped for any reason -- paying a tap cost, being declared as an attacker, or being tapped by another player's effect -- with the newly tapped permanent as the trigger's source, so a granted ability on it can read its power and deal damage from it
-  <br>Why the existing vocabulary won't do: trigger_events carries becomes_untapped but no tapped counterpart, so the exact inverse is simply absent; engine/turn.py's phase_in docstring names a "becomes tapped" trigger only as the thing it is careful not to fire, and nothing emits one. The nearest reachable substitutes are both wrong: ability_activated fires on the activation of a tap-cost ability rather than on the tap, so it misses attacking and every outside tap and fires for untapped-cost abilities that never tap; attacks covers only the combat case and none of the others. This is the same missing event already filed for City of Brass, here needed on a granted ability rather than a printed one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **City of Brass** (rank 97) — `city_of_brass`
-  - Whenever this land becomes tapped, it deals 1 damage to you.
-- **Legolas's Quick Reflexes** (rank 1482) — `legolas_s_quick_reflexes`
-  - Untap target creature. Until end of turn, it gains hexproof, reach, and "Whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature."
 
 </details>
 
@@ -240,6 +222,20 @@ Blocks **1** card.
 - **Bridgeworks Battle // Tanglespan Bridgeworks** (rank 686) — `bridgeworks_battle_tanglespan_bridgeworks`
   - Battle — Siege (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
   - It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)
+
+</details>
+
+## becomes-tapped
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired whenever a permanent becomes tapped, for any reason -- paying a tap cost, attacking, or being tapped by another effect -- with the tapped permanent as the source so it can deal the damage
+  <br>Why the existing vocabulary won't do: trigger_events has becomes_untapped but no tapped counterpart, so the exact inverse is simply absent. ability_activated is the nearest reachable substitute and is wrong twice over: it fires on activation of the mana ability rather than on the tap itself, so it would miss every other way the land becomes tapped (attacking, Sunken Ruins-style outside taps) and would still fire on a hypothetical untapped-cost ability that never taps.
+
+<details><summary>Cards waiting on this</summary>
+
+- **City of Brass** (rank 97) — `city_of_brass`
+  - Whenever this land becomes tapped, it deals 1 damage to you.
 
 </details>
 

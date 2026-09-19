@@ -189,6 +189,17 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: event existed; what did not was the untap *step* saying which permanents
     #: it untapped, which is where inspired fires nearly every time.
     "becomes_untapped": EventType.UNTAPPED,
+    #: "Whenever this creature becomes tapped, …" -- the Legolas's Quick Reflexes
+    #: grant, City of Brass, the whole Kithkin/rogue lineage. `EventType.TAPPED`
+    #: has fired from `primitives.tap_permanent` since tapping existed and simply
+    #: had no name here, so nothing could subscribe.
+    #:
+    #: "Becomes" is already right at the primitive: `tap_permanent` returns early
+    #: on an already-tapped permanent, so re-tapping one is not a second event --
+    #: which is the whole of 701.x's distinction between *being* tapped and
+    #: *becoming* tapped, and it is also why tapping for mana and being declared
+    #: as an attacker both count. They are taps.
+    "becomes_tapped": EventType.TAPPED,
     #: "…until an opponent becomes the monarch" (Palace Jailer). The one monarch
     #: card that must be *woken up* by the designation moving rather than merely
     #: asking about it with `is_monarch`.
@@ -331,8 +342,9 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # scopes them to the creature that was, or was not, blocked.
         "becomes_blocked",
         "attacks_unblocked",
-        # The permanent that untapped.
+        # The permanent that untapped, and the one that tapped.
         "becomes_untapped",
+        "becomes_tapped",
         # The permanent whose ability was activated, so a filter can ask what it
         # was -- "an ability of an artifact, creature, or land **on the
         # battlefield**". The emission passes `source=oid` and no `oid` key, so

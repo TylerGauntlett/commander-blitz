@@ -5052,6 +5052,16 @@
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
+  "legolas_s_quick_reflexes": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof",
+        "reach"
+      ]
+    },
+    "zone": "graveyard"
+  },
   "leonin_scimitar": {
     "zone": "battlefield"
   },
