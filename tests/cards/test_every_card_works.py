@@ -577,9 +577,10 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
     which it satisfies by adding permanents; the same comparison over
     ``life_lost_this_turn``, which it satisfies by taking the life; a per-player
     ``max_count_of``, which it satisfies by stocking one opponent's board;
-    ``power_of`` the source itself, which it satisfies with +1/+1 counters; and
+    ``power_of`` the source itself, which it satisfies with +1/+1 counters;
     ``spells_cast_this_turn``, which it satisfies by emitting the cast events the
-    ledger folds. A helper clever enough to solve an arbitrary condition would be
+    ledger folds; and delirium's ``distinct`` over a graveyard, which it
+    satisfies by putting cards of that many different types into one. A helper clever enough to solve an arbitrary condition would be
     a second implementation of `evaluate` living in the tests, and the first thing
     it would hide is a bug in the first.
     """
@@ -658,6 +659,37 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
             return
         for _ in range(int(right["const"])):
             game.state.emit(EventType.SPELL_CAST, player=0, card=match.id)
+        return
+
+    # Delirium -- "activate only if there are four or more card types among cards
+    # in your graveyard" (Shifting Woodland). Twelfth of the family, and the
+    # first condition that counts *distinct values* rather than objects, so
+    # stocking one graveyard four times over would satisfy nothing: the helper
+    # has to find four cards of four different types.
+    #
+    # Real cards from the registry rather than a synthetic one, for the reason
+    # every other member of the family uses `_fodder_for`: the condition reads
+    # printed types through `state.card_of`, so a card naming the wrong thing
+    # still fails.
+    if "distinct" in left:
+        spec = left["distinct"] or {}
+        if str(spec.get("of", "")) != "card_type":
+            return
+        objects = spec.get("objects") or {}
+        zone = Zone.GRAVEYARD if objects.get("zone") == "graveyard" else None
+        if zone is None:
+            return
+        wanted = int(right["const"])
+        seen: set[str] = set()
+        for card_type in ("Creature", "Instant", "Sorcery", "Artifact", "Enchantment", "Land"):
+            if len(seen) >= wanted:
+                break
+            match = _fodder_for(registry, {"types": [card_type]})
+            if match is None or card_type in seen:
+                continue
+            seen.add(card_type)
+            card = new_object(game.state, match.id, owner=0, zone=zone)
+            game.state.players[0].zone_list(zone).append(card.oid)
         return
 
     if "count" not in left:

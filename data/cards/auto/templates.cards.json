@@ -87917,6 +87917,101 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "distinct": {
+                "objects": {
+                  "controller": "you",
+                  "zone": "graveyard"
+                },
+                "of": "card_type"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "cost": {
+            "mana": "{2}{G}{G}"
+          },
+          "effects": [
+            {
+              "copying": {
+                "target": "t1"
+              },
+              "duration": "end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_copy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "shifting_woodland",
+      "mana_cost": "",
+      "name": "Shifting Woodland",
+      "oracle_text": "This land enters tapped unless you control a Forest.\n{T}: Add {G}.\nDelirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "subtypes": [
+                  "Forest"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],

@@ -1,0 +1,74 @@
+{
+  "card": {
+    "id": "shifting_woodland",
+    "name": "Shifting Woodland",
+    "oracle_text": "This land enters tapped unless you control a Forest.\n{T}: Add {G}.\nDelirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.",
+    "mana_cost": "",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["G"],
+    "replacements": [
+      {
+        "event": "self_enters_tapped",
+        "condition": {
+          "not": {
+            "exists": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": ["Forest"]
+            }
+          }
+        }
+      }
+    ],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{T}: Add {G}.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [{"op": "add_mana", "mana": "{G}"}]
+      },
+      {
+        "kind": "activated",
+        "text": "Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.",
+        "cost": {"mana": "{2}{G}{G}"},
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "distinct": {
+              "of": "card_type",
+              "objects": {"zone": "graveyard", "controller": "you"}
+            }
+          },
+          "right": {"const": 4}
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "zone": "graveyard",
+              "controller": "you",
+              "not_types": ["Instant", "Sorcery"]
+            }
+          }
+        ],
+        "effects": [
+          {
+            "op": "become_copy",
+            "objects": {"self_only": true},
+            "copying": {"target": "t1"},
+            "duration": "end_of_turn"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

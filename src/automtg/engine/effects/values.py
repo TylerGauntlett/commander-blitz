@@ -201,11 +201,11 @@ ROLL_PREDICATES = ("face", "parity")
 #: of what a card asks about the parity of a face.
 ROLL_PARITIES = ("even", "odd")
 
-#: What ``{"distinct": {"of": …}}`` may count. Two entries, and both have a card
-#: behind them: domain counts basic land types, coven counts powers. A third
-#: would be vocabulary with nothing printed asking for it, and a misspelling has
-#: to be a load error rather than a silent zero.
-DISTINCT_OF = ("power", "basic_land_type")
+#: What ``{"distinct": {"of": …}}`` may count. Each has a card behind it: domain
+#: counts basic land types, coven counts powers, delirium counts card types.
+#: A fourth would be vocabulary with nothing printed asking for it, and a
+#: misspelling has to be a load error rather than a silent zero.
+DISTINCT_OF = ("power", "basic_land_type", "card_type")
 
 #: Rule 305.6. The five basic land types, which are the whole of domain.
 BASIC_LAND_TYPES = frozenset({"Plains", "Island", "Swamp", "Mountain", "Forest"})
@@ -339,6 +339,20 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         of = str(spec.get("of", "power"))
         if of == "power":
             return len({chars(ctx.state, oid).power for oid in pool})
+        if of == "card_type":
+            # Delirium: "four or more card types among cards in your graveyard".
+            # The **printed** face, unlike the other two readings, and not an
+            # inconsistency: delirium counts cards in a graveyard, where there
+            # are no continuous effects to apply -- the same reason
+            # `characteristics._count_matching` reads printed faces off the
+            # battlefield. Asking `chars` would be answering a question about a
+            # permanent for something that is not one.
+            types: set[str] = set()
+            for oid in pool:
+                obj = ctx.state.objects.get(oid)
+                if obj is not None:
+                    types |= set(ctx.state.card_of(obj).types)
+            return len(types)
         found: set[str] = set()
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes

@@ -242282,12 +242282,12 @@
     },
     "Shifting Woodland": {
       "edhrec_rank": 362,
-      "gate": "template",
+      "gate": null,
       "name": "Shifting Woodland",
-      "reason": "no template for: Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard ",
+      "reason": "",
       "scryfall_id": "059164e1-894d-4586-9800-e60d6fbd6eb6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Shifty Doppelganger": {

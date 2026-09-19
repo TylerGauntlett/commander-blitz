@@ -1409,18 +1409,30 @@ languages — added to only one, the card would have loaded and read 0.
 
 ### Counting different values rather than objects
 
-`{"distinct": …}` is domain and coven, and they are one leaf rather than two
-because `count` fails them in **opposite** directions:
+`{"distinct": …}` is domain, coven and delirium, and they are one leaf rather
+than three because `count` fails them in **opposite** directions:
 
 | | `count` says | the card means |
 |---|---|---|
 | five Forests, domain | 5 | 1 basic land type |
 | three 2/2s, coven | 3 | 1 power |
+| two creature cards, delirium | 2 | 1 card type |
 
-No selector, however filtered, reaches either number — `count` counts matches,
-and these count the distinct values those matches hold. `of` is `power` or
-`basic_land_type`, and nothing else: both have a printed card behind them, and a
-misspelling is a load error rather than a silent fall back to powers.
+No selector, however filtered, reaches any of those numbers — `count` counts
+matches, and these count the distinct values those matches hold. `of` is `power`,
+`basic_land_type` or `card_type`, and nothing else: each has a printed card
+behind it, and a misspelling is a load error rather than a silent fall back to
+powers.
+
+Domain and coven read **derived** characteristics — an anthem changes who has
+coven, "all lands are Islands" changes what counts for domain — which is also
+why this leaf is absent from the *static* condition language, where reading it
+would make one static depend on another's output. **`card_type` reads the
+printed face**, and that is not an inconsistency: delirium counts cards in a
+*graveyard*, where there are no continuous effects to apply, so asking `chars`
+would be answering a question about a permanent for something that is not one.
+It is the same reading `characteristics._count_matching` already takes off the
+battlefield.
 
 `objects` is required. An empty selector is every permanent in the game, so
 domain would count an opponent's basics and coven their creatures — and both

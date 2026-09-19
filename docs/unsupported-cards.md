@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**41 cards** blocked by **50** capabilities.
+**40 cards** blocked by **50** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [delirium](#delirium) | 2 | 362 | value |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [ability-cost-reduction](#ability-cost-reduction) | 1 | 3190 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -33,6 +32,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-placement-replacement](#counter-placement-replacement) | 1 | 5450 | replacement |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delayed-trigger-object-scope](#delayed-trigger-object-scope) | 1 | 1050 | trigger_event |
+| [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [double-damage](#double-damage) | 1 | 4176 | replacement |
@@ -98,28 +98,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## delirium
-
-Blocks **2** cards.
-
-- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/automtg/cards/loader.py:3169) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
-  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
-- **(value)** a counting leaf for the number of *distinct card types* among the cards in a zone, reachable from an activated ability's `condition` -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool. Unlike Dragon's Rage Channeler's static delirium, this card needs it only in the *effect/condition* value language: an activated ability's `condition` is evaluated through `legality._activation_allowed` -> `effects.conditions.evaluate` -> `evaluate_value`, so a `cmp` of `{"distinct": {"of": "card_type", ...}}` against `{"const": 4}` with `>=` would be the whole restriction, with no `STATIC_VALUE_KEYS` change required. One `DISTINCT_OF` entry therefore closes this card and the many queued `Activate only if there are four or more card types...` / `Whenever this creature attacks, if there are four or more card types...` delirium cards at once; admitting the same leaf to `STATIC_VALUE_KEYS` additionally closes the static half already filed under this slug.
-  <br>Why the existing vocabulary won't do: `count` is the closest leaf and is the wrong measurement: it counts *objects* matching a filter, so four creature cards in the graveyard read 4 and would satisfy a `>= 4` delirium must reject, while an instant, a land, an artifact and a creature also read 4 and pass only by coincidence -- the same distinction `values.py` already spells out for domain. `distinct` is the leaf that counts distinct values, but `DISTINCT_OF` admits only `power` (coven) and `basic_land_type` (domain) and a fourth spelling is a hard load error, so the card-type reading cannot be named at all. `threshold` on an ability is not it either: it is the Station gate (`characteristics.threshold_met`), which reads a *counter* count on the source permanent. Enumerating the clause as `any`-of-`all`-of-`exists` over every 4-subset of the card types is 126 branches, silently wrong when a new type is printed, and an approximation rather than the sentence. The `condition` slot itself is real and unblocked -- `Ability.activation_condition` is honoured by `legality._ability_aims` -- only its magnitude cannot be said.
-
-The rest of the printed line is NOT what blocks this card, and was checked rather than assumed. `become_copy` (src/automtg/engine/effects/ops_removal.py) takes its model from `choose_objects(ctx, spec["copying"])`, and a bare `{"target": "t1"}` selector short-circuits in `selectors.resolve_pool` before any zone default is applied, so a graveyard card *is* a legal copy source; `state.card_of` then reads the model's def id, which a graveyard object carries exactly as a battlefield one does (`copy_permanent` already relies on this for embalm). `card_in_graveyard` is a real target kind (`targeting.py`), and `{"zone": "graveyard", "controller": "you", "not_types": ["Instant", "Sorcery"]}` is how the shipped pool writes "target permanent card in your graveyard" (Sun Titan, data/cards/isperia.cards.json). So the copy half is expressible today and no partial answer was written only because the activation restriction on the same printed line is not.
-
-One adjacent finding for whoever builds this, not filed as a need because the packet's `oracle_text` does not print the clause: the paper card's "…until end of turn, except it's still a land" would need an override key on `become_copy` beyond `except_name`. `become_copy` writes only `obj.copying`, `obj.copying_name` and `obj.copying_until_eot`, and `state.card_of` applies the override to the *name* alone, so a copied creature card would strip the land types and the `{T}: Add {G}` ability with them. `copy_permanent` has the general `except_`/`except` override map, but it makes a new token and cannot alter the land in place.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shifting Woodland** (rank 362) — `shifting_woodland`
-  - Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard.
-- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
-  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
 
 </details>
 
@@ -357,6 +335,20 @@ Blocks **1** card.
 
 - **Hunter's Insight** (rank 1050) — `hunter_s_insight`
   - Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.
+
+</details>
+
+## delirium
+
+Blocks **1** card.
+
+- **(value)** a static-legal counting leaf for the number of *distinct card types* among the cards in a zone -- the natural spelling being `{"distinct": {"of": "card_type", "objects": {"zone": "graveyard", "controller": "you"}}}`, i.e. a third `DISTINCT_OF` entry beside `power` and `basic_land_type` (src/automtg/engine/effects/values.py, DISTINCT_OF) that counts the union of `card.types` over the pool, plus admission of `distinct` into `STATIC_VALUE_KEYS` (src/automtg/cards/loader.py:3169) so a static `condition`'s `cmp` can hold it. That one leaf turns on every delirium card at once -- the printed clause is always "four or more card types among cards in your graveyard" -- and the same leaf reads "the number of card types among cards in your graveyard" on the effect side (Traverse the Ulvenwald, Emrakul's Evangel-style scaling), so it wants to land in `VALUE_KEYS` too.
+  <br>Why the existing vocabulary won't do: `count` is the closest and is the wrong measurement: it counts *objects* matching a filter, so a graveyard of four creature cards reads 4 and satisfies a `>= 4` that delirium must reject, while a graveyard of one instant, one land, one artifact and one creature also reads 4 and passes by coincidence. That is the same distinction `values.py` already spells out for domain -- "five Forests are five and not one". `distinct` is the leaf that does count distinct values, but it is blocked twice over: its `DISTINCT_OF` allows only `power` (coven) and `basic_land_type` (domain), with no card-type entry, and it is absent from `STATIC_VALUE_KEYS` -- which is `{const, count, mana_symbols, counters_on, permanents_entered_this_turn}` plus the life and per-player leaves -- so even with a card-type entry it could not be named inside a static's `condition`. The `zone: graveyard` support in static counting filters that makes Threshold (Nimble Mongoose, `count` >= 7) and Hellbent expressible therefore reaches the graveyard but cannot ask what is in it. The remaining temptation is to enumerate: `any` of `all`-of-`exists` nodes over every 4-subset of the card types, which is 126 branches for nine types, silently wrong the moment a tenth type is printed, and an approximation rather than the sentence. Only this clause is blocked -- the first line, "Whenever you cast a noncreature spell, surveil 1", is a plain `spell_cast` trigger filtered `not_types: ["Creature"]` with the `surveil` op, and the consequences of the delirium clause (`buff` +2/+2, `grant_keyword` flying, `attacks_if_able`) are all present static effects -- so no partial answer was written.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
+  - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
 
 </details>
 
