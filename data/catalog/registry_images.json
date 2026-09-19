@@ -3376,6 +3376,10 @@
     "artist": "Wang Yuqun",
     "scryfall_id": "fae9abc7-ecd3-4042-a5b0-5f2b24491fa6"
   },
+  "forest_dryad_1_1_g_land": {
+    "artist": "Donato Giancola",
+    "scryfall_id": "107be8ee-ee22-4d37-94f1-2a5b438fbe05"
+  },
   "forgotten_cave": {
     "artist": "Wayne Wu",
     "scryfall_id": "bd75c360-931e-4bce-8e25-dd1d361efcc3"
@@ -3587,6 +3591,10 @@
   "geothermal_bog": {
     "artist": "Jonas De Ro",
     "scryfall_id": "d504caa5-e557-4e69-8899-44760b88f076"
+  },
+  "germ_0_0_b": {
+    "artist": "Igor Kieryluk",
+    "scryfall_id": "377d9749-3d78-4a33-93d1-2e673f6e2e28"
   },
   "gerrard_s_irregulars": {
     "artist": "Eric Peterson",
@@ -6430,6 +6438,10 @@
     "artist": "Christopher Moeller",
     "scryfall_id": "75935f0e-9086-485b-b3e6-1a958fd0f2af"
   },
+  "nettlecyst": {
+    "artist": "Vincent Proce",
+    "scryfall_id": "0a7cb0f8-2946-4b00-a192-0b31c8e1ec5c"
+  },
   "neurok_hoversail": {
     "artist": "Alan Pollack",
     "scryfall_id": "0fa5790b-5388-4bf9-9caa-44d8cbb64708"
@@ -9126,6 +9138,10 @@
   "squirrelanoids": {
     "artist": "Eilene Cherie",
     "scryfall_id": "be08d2b0-375b-434f-9e6d-060809e0ed34"
+  },
+  "staff_of_titania": {
+    "artist": "Samuel Perin",
+    "scryfall_id": "a5b765f3-e59e-4af1-bac5-e50797f8629f"
   },
   "stalker_hag": {
     "artist": "Dave Kendall",

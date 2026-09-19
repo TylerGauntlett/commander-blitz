@@ -6106,6 +6106,14 @@
   "nettle_swine": {
     "zone": "battlefield"
   },
+  "nettlecyst": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "germ_0_0_b"
+    },
+    "zone": "battlefield"
+  },
   "neurok_hoversail": {
     "zone": "battlefield"
   },
@@ -8641,6 +8649,10 @@
     "zone": "battlefield"
   },
   "squirrelanoids": {
+    "zone": "battlefield"
+  },
+  "staff_of_titania": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "stalker_hag": {

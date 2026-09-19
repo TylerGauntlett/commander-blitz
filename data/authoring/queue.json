@@ -184152,12 +184152,12 @@
     },
     "Nettlecyst": {
       "edhrec_rank": 1044,
-      "gate": "template",
+      "gate": null,
       "name": "Nettlecyst",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "0a7cb0f8-2946-4b00-a192-0b31c8e1ec5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Nettletooth Djinn": {
@@ -260062,12 +260062,12 @@
     },
     "Staff of Titania": {
       "edhrec_rank": 4309,
-      "gate": "template",
+      "gate": null,
       "name": "Staff of Titania",
-      "reason": "no template for: Equipped creature gets +X/+X, where X is the number of Forests you control",
+      "reason": "",
       "scryfall_id": "a5b765f3-e59e-4af1-bac5-e50797f8629f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Staff of Zegon": {

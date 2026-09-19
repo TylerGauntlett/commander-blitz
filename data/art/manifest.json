@@ -5050,6 +5050,12 @@
     "file": "forest_bear.jpg",
     "scryfall_id": "fae9abc7-ecd3-4042-a5b0-5f2b24491fa6"
   },
+  "forest_dryad_1_1_g_land": {
+    "artist": "Donato Giancola",
+    "bytes": 76955,
+    "file": "forest_dryad_1_1_g_land.jpg",
+    "scryfall_id": "107be8ee-ee22-4d37-94f1-2a5b438fbe05"
+  },
   "forgotten_cave": {
     "artist": "Wayne Wu",
     "bytes": 38195,
@@ -5364,6 +5370,12 @@
     "bytes": 51238,
     "file": "geothermal_bog.jpg",
     "scryfall_id": "d504caa5-e557-4e69-8899-44760b88f076"
+  },
+  "germ_0_0_b": {
+    "artist": "Igor Kieryluk",
+    "bytes": 122394,
+    "file": "germ_0_0_b.jpg",
+    "scryfall_id": "377d9749-3d78-4a33-93d1-2e673f6e2e28"
   },
   "gerrard_s_irregulars": {
     "artist": "Eric Peterson",
@@ -9627,6 +9639,12 @@
     "file": "nettle_swine.jpg",
     "scryfall_id": "75935f0e-9086-485b-b3e6-1a958fd0f2af"
   },
+  "nettlecyst": {
+    "artist": "Vincent Proce",
+    "bytes": 71483,
+    "file": "nettlecyst.jpg",
+    "scryfall_id": "0a7cb0f8-2946-4b00-a192-0b31c8e1ec5c"
+  },
   "neurok_hoversail": {
     "artist": "Alan Pollack",
     "bytes": 73524,
@@ -13674,6 +13692,12 @@
     "bytes": 57159,
     "file": "squirrelanoids.jpg",
     "scryfall_id": "be08d2b0-375b-434f-9e6d-060809e0ed34"
+  },
+  "staff_of_titania": {
+    "artist": "Samuel Perin",
+    "bytes": 76645,
+    "file": "staff_of_titania.jpg",
+    "scryfall_id": "a5b765f3-e59e-4af1-bac5-e50797f8629f"
   },
   "stalker_hag": {
     "artist": "Dave Kendall",

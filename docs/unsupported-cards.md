@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**51 cards** blocked by **58** capabilities.
+**49 cards** blocked by **56** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -47,12 +47,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [first-combat-phase](#first-combat-phase) | 1 | 1173 | value |
-| [forest-dryad-token](#forest-dryad-token) | 1 | 4309 | token |
 | [grant-static-ability](#grant-static-ability) | 1 | 3821 | op |
 | [historic](#historic) | 1 | 906 | selector |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [living-weapon](#living-weapon) | 1 | 1044 | token |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
 | [mana-doesnt-empty](#mana-doesnt-empty) | 1 | 6298 | engine |
@@ -594,20 +592,6 @@ Blocks **1** card.
 
 </details>
 
-## forest-dryad-token
-
-Blocks **1** card.
-
-- **(token)** A Forest Dryad token in the closed `token_ids` pool -- `forest_dryad_1_1_g`, "1/1 green Forest Dryad land creature" -- added to data/cards/tokens.cards.json: `{"id": "forest_dryad_1_1_g", "name": "Forest Dryad Token", "types": ["Land", "Creature"], "subtypes": ["Forest", "Dryad"], "colors": ["G"], "color_identity": ["G"], "power": 1, "toughness": 1, "is_token": true, "abilities": [{"kind": "activated", "text": "{T}: Add {G}.", "is_mana_ability": true, "cost": {"tap": true}, "effects": [{"op": "add_mana", "mana": "{G}"}]}]}`. The characteristics are exactly the shipped card `dryad_arbor` (templates.cards.json: types ["Land", "Creature"], subtypes ["Forest", "Dryad"], 1/1, green) plus `is_token`, so the card model already supports a Land Creature -- only the token entry is missing. The explicit `{T}: Add {G}` ability is needed because the engine does NOT derive a basic land type's mana ability: BASIC_LAND_TYPES in src/automtg/engine/effects/values.py:211 is used only for domain counting, and data/cards/basics.cards.json writes Forest's mana ability out by hand. (Note that `dryad_arbor` itself was imported without one, so it currently taps for nothing; the token should not copy that.) This same token is printed by at least three other queued cards -- data/authoring/queue.json has it for Autumn Willow ("When Autumn Willow enters, create a 1/1 green Forest Dryad land creature token"), a "Create X 1/1 green Forest Dryad land creature tokens" card, and Jyoti -- so the one data entry unblocks four cards. Nothing else about this line needs engine work: the trigger is `{"event": "attacks", "filter": {"attached": true}}` -- `attacks` is in `trigger_events` and Equipment triggers on the equipped creature are already written this way -- and the effect is a plain `create_token`.
-  <br>Why the existing vocabulary won't do: `token_ids` is a CLOSED list of 61 tokens and holds no Dryad, no Forest, and no Land-typed token of any kind (a scan of data/cards/tokens.cards.json for types containing "Land" and for the subtypes "Forest"/"Dryad" returns nothing), so `create_token` cannot name one and an invented id fails to load. The nearest bodies in the pool are `saproling_1_1_g` (1/1 green Saproling creature) and `insect_1_1_g` (1/1 green Insect creature): right size and colour, but both are creature-only tokens with no land types. Substituting either makes a materially different card, and in two directions at once -- the real token is a land, so it enters as a permanent that taps for {G} and, being a Forest, it also raises Staff of Titania's own first line ("+X/+X, where X is the number of Forests you control") by one for every token made. A Saproling raises neither. The brief forbids a nearly-right token, and the closest existing card, `dryad_arbor`, is a real card in the library, not something `create_token` can conjure.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Staff of Titania** (rank 4309) — `staff_of_titania`
-  - Whenever equipped creature attacks, create a 1/1 green Forest Dryad land creature token. (It's affected by summoning sickness.)
-
-</details>
-
 ## grant-static-ability
 
 Blocks **1** card.
@@ -661,20 +645,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## living-weapon
-
-Blocks **1** card.
-
-- **(token)** a Germ token in the closed `token_ids` pool -- `germ_0_0_b`, "0/0 black Phyrexian Germ creature": `{"id": "germ_0_0_b", "name": "Germ Token", "types": ["Creature"], "subtypes": ["Phyrexian", "Germ"], "colors": ["B"], "color_identity": ["B"], "power": 0, "toughness": 0, "is_token": true}` added to data/cards/tokens.cards.json. Every living weapon card (Batterskull, Bonehoard, Flayer Husk, Skinwing, Nettlecyst) prints exactly this token, so the one entry unblocks the whole keyword. The rest of living weapon needs no engine work: docs/keywords.md line 275 already lists it as free -- a `self_enters` trigger whose effects are `create_token` (with `as` binding the new token) followed by `attach` with `attachment: {"self_only": true}` pointing at that binding -- and `create_token` carries `attached_to`, which says the whole line in a single op.
-  <br>Why the existing vocabulary won't do: `token_ids` is a CLOSED list and holds no Germ and no Phyrexian of any kind (grep of data/cards/tokens.cards.json for "germ" and "phyrexian" is empty), so `create_token` cannot name one and any id I invented would fail to load. The nearest bodies in the pool are `construct_0_0_c_artifact_buff` (0/0, but colorless, an artifact creature, a Construct, and it carries a printed buff ability Nettlecyst's Germ does not have) and `plant_0_1_g` (0/1 green Plant). Substituting either changes the token's color, types, subtypes and/or toughness -- a 0/1 green Plant survives with no Equipment on it and a colorless artifact Construct adds a body to Nettlecyst's own "for each artifact you control" count, both strictly different cards -- and the brief forbids a nearly-right token. The other two printed lines are expressible as written: "Equipped creature gets +1/+1 for each artifact and/or enchantment you control" is a `buff` static with `affects: {"attached": true}` whose power and toughness are `{"count": {"controller": "you", "any_types": ["Artifact", "Enchantment"]}}` (`any_types`, `attached` and `controller` are all in `static_filter_keys`, `count` is in `static_value_keys`), and "Equip {2}" is the shipped activated-ability shape used by aeronaut_s_wings. Only the token blocks the card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nettlecyst** (rank 1044) — `nettlecyst`
-  - Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)
 
 </details>
 
