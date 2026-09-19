@@ -4202,15 +4202,22 @@ and never uses the stack (605.4a), so it is read at the mana choke point beside
 read in the same places too: `costs._sources_of` (so legality offers the spell
 the extra mana pays for), `costs.activate_mana_ability` (so the mana really
 arrives) and legality's chip label. `tapped_permanent` takes only `types`,
-`subtypes` and `supertypes`, matched against the tapped permanent's **current**
-characteristics, so a land Urborg made a Swamp counts. `add_mana` is the fixed
+`subtypes`, `supertypes` and `attached`. The first three are matched against the
+tapped permanent's **current** characteristics, so a land Urborg made a Swamp
+counts. `attached` is the odd one out and the only one that names *a* permanent
+rather than a class: it is Wild Growth's "enchanted land", checked against the
+static's own `source.attached_to`, because a fact about the Aura is not a
+description of the land. Spelled with a class key instead, Wild Growth would pay
+out for every Forest its controller taps, which is Vernal Bloom's card and not
+its own. An Aura attached to nothing matches nothing. `add_mana` is the fixed
 mana added. `affects_player` names whose taps count: `"you"` for "whenever you
 tap", `"any"` for Vernal Bloom's "whenever a Forest is tapped for mana, its
 controller adds". The mana always goes to the player who tapped. Each static
 adds its mana separately, tagged with its own source. Only abilities with {T}
 in their cost count (106.12). The loader requires both keys and refuses
-`affects` and `amount`. "Enchanted land" (Wild Growth) and "one mana of any
-color" riders are not expressible yet.
+`affects` and `amount`. "Enchanted land" (Wild Growth, Utopia Sprawl) is
+`{"attached": true}`; the "one mana of the chosen color" rider is not expressible
+yet.
 
 `freeze_opponent_lands` sets a **one-shot** `skip_next_untap`, cleared by the
 untap step it skips. That is deliberately not the `frozen_by` lock used by

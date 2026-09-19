@@ -114531,6 +114531,49 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "add_mana": "{G}",
+          "affects_player": "any",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "attached": true
+          },
+          "text": "Whenever enchanted land is tapped for mana, its controller adds an additional {G}."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "wild_growth",
+      "mana_cost": "{G}",
+      "name": "Wild Growth",
+      "oracle_text": "Enchant land\nWhenever enchanted land is tapped for mana, its controller adds an additional {G}.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "additional_cost": {
         "discard": 1
       },

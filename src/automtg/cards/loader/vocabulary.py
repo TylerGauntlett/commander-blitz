@@ -91,7 +91,13 @@ def normalize_keyword(word: str) -> str:
 #: permanent *is*. Crypt Ghast's "a Swamp", Leyline of Abundance's "a creature",
 #: Vernal Bloom's "a Forest". Read against the permanent's current
 #: characteristics, so a land Urborg makes a Swamp counts.
-TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes"})
+#:
+#: `attached` is the one key that is not a characteristic: it names *the* permanent
+#: this static's source is attached to, rather than a class of permanent. Wild
+#: Growth and Utopia Sprawl print the Vernal Bloom sentence about one enchanted
+#: land, and every other key here is a description that would also match the
+#: thirty other lands on the table.
+TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached"})
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(

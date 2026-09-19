@@ -271,6 +271,15 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
     Swamp. ``affects_player`` names whose taps count -- "you" for Crypt Ghast,
     "any" for "whenever a Forest is tapped for mana, its controller adds"
     (Vernal Bloom). The mana always goes to the player who tapped.
+
+    ``attached`` is the Aura form -- Wild Growth's "whenever enchanted land is
+    tapped for mana". It is checked against ``source.attached_to`` rather than
+    against the tapped permanent's characteristics, because it names *one*
+    permanent and every other key names a class: written as Vernal Bloom's
+    ``{"types": ["Land"]}`` the card would pay out for every land its controller
+    taps, which is a different and far larger card. An Aura attached to nothing
+    matches nothing, which is the same answer a state-based action is about to
+    give by binning it.
     """
     from .mana import parse_mana_production
 
@@ -279,9 +288,11 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
     for source, static in _active_player_statics(state, "add_mana_on_tap"):
         if not _reaches_player(source, static, pid):
             continue
+        wanted = static.get("tapped_permanent") or {}
+        if wanted.get("attached") and source.attached_to != oid:
+            continue
         if tapped is None:
             tapped = chars(state, oid)
-        wanted = static.get("tapped_permanent") or {}
         if not all(t in tapped.types for t in wanted.get("types", [])):
             continue
         if not all(t in tapped.supertypes for t in wanted.get("supertypes", [])):

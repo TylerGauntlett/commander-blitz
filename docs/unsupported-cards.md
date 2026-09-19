@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**53 cards** blocked by **60** capabilities.
+**52 cards** blocked by **60** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cant-be-countered](#cant-be-countered) | 3 | 114 | engine, static_effect |
-| [attached-tapped-for-mana](#attached-tapped-for-mana) | 2 | 210 | static_effect |
 | [attachment-count](#attachment-count) | 2 | 3190 | selector, value |
 | [becomes-tapped](#becomes-tapped) | 2 | 97 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -25,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [ability-cost-reduction](#ability-cost-reduction) | 1 | 3190 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
+| [attached-tapped-for-mana](#attached-tapped-for-mana) | 1 | 345 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [battle](#battle) | 1 | 686 | engine |
 | [cant-sacrifice](#cant-sacrifice) | 1 | 4134 | static_effect |
@@ -94,24 +94,6 @@ Blocks **3** cards.
   - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## attached-tapped-for-mana
-
-Blocks **2** cards.
-
-- **(static_effect)** An `attached: true` key on the `add_mana_on_tap` static's `tapped_permanent`, so the triggered mana ability fires only off the permanent this Aura is attached to rather than off every permanent matching a type line. Concretely: add "attached" to `cards/loader/vocabulary.TAPPED_PERMANENT_KEYS` (currently frozenset({"types", "subtypes", "supertypes"}), src/automtg/cards/loader/vocabulary.py:70), accept and validate it in `_validate_add_mana_on_tap` (src/automtg/cards/loader/__init__.py:2053), and honour it in `engine/player_statics.mana_added_on_tap` (src/automtg/engine/player_statics.py:258) by comparing the tapped oid against the static source's `attached_to` before the type/subtype filters. This unblocks the whole Wild Growth / Fertile Ground / Overgrowth / Utopia Sprawl cycle -- every Aura printing "Whenever enchanted land is tapped for mana, its controller adds an additional ..." -- none of which can be said today.
-  <br>Why the existing vocabulary won't do: `add_mana_on_tap` is otherwise exactly this sentence: it is documented in engine/player_statics.mana_added_on_tap as a 605.1b triggered mana ability resolved at the mana choke point without the stack, and `affects_player: "any"` is already the "its controller adds" seat (the docstring names Vernal Bloom's "whenever a Forest is tapped for mana, its controller adds" as its case). What it cannot say is WHICH Forest: `tapped_permanent` may carry only types/subtypes/supertypes, read against the tapped permanent's own characteristics, with no reference to the static's source at all. Writing `{"subtypes": ["Forest"]}` would print Vernal Bloom -- all six Forests in the sandbox and every Forest an opponent controls -- instead of the one land this {G} Aura is attached to, which is the entire cost/power balance of the card, so it is a softening rather than a spelling. The static's optional `condition` cannot recover it either: `static_condition_keys` has `is_attached`, which asks only whether the source is attached to something, not what was tapped -- the tapped permanent is not in scope for a condition. `affects: {"attached": true}`, the ordinary Aura idiom, is refused outright by `_validate_add_mana_on_tap` ("takes 'affects_player', 'tapped_permanent', 'add_mana' and an optional 'condition', and no 'affects' or 'amount'"), because `affects` names a recipient and this static has none. The nearest non-static route is an `ability_activated` trigger with `mana_ability: true` and a filter, and it is wrong twice: it fires on the ACTIVATION of a mana ability rather than on the land being tapped for mana, and, decisively, an ordinary triggered ability queues on the stack and drains at the next priority (see the comment at src/automtg/engine/game.py:1188), so the extra mana would arrive after the spell being paid for -- the precise failure `add_mana_on_tap` exists to avoid. Unrelated to the existing `becomes-tapped` gap (City of Brass), which asks for a stack-using trigger on a permanent becoming tapped for ANY reason; this asks only that an existing mana-time static be able to name its own host.
-- **(static_effect)** Let the existing `add_mana_on_tap` static scope its `tapped_permanent` to the ONE permanent the source is attached to, rather than only to a class of permanent -- i.e. `{"tapped_permanent": {"attached": true}}`, the spelling every other Aura static already uses for "enchanted permanent". Concretely: `TAPPED_PERMANENT_KEYS` (src/automtg/cards/loader/vocabulary.py:66) gains `attached`; `_validate_add_mana_on_tap` (src/automtg/cards/loader/__init__.py:2053) accepts it beside the existing types/subtypes/supertypes and still requires `add_mana`; and `mana_added_on_tap` (src/automtg/engine/player_statics.py:258) checks the tapped `oid` against the static source's attached-to permanent before it runs the characteristic checks, so the two can be combined ("enchanted Forest"). The mana already goes to the player who tapped, which is exactly "its controller adds", so `affects_player: "any"` plus this key says the whole printed line. This one key unblocks the whole aura-ramp family that prints the same sentence -- Wild Growth, Utopia Sprawl, Fertile Ground, Overgrowth, Market Festival, Weirding Wood, Trace of Abundance. Utopia Sprawl needs one more thing on top of it (its added mana is a colour chosen as the Aura entered, which `add_mana` cannot read off the permanent); Wild Growth's fixed {G} needs nothing but this.
-  <br>Why the existing vocabulary won't do: `add_mana_on_tap` is the right effect and is already in the right place: `mana_added_on_tap` (src/automtg/engine/player_statics.py:258) is consulted at the mana choke point from `costs.py:574`, so its mana joins the pool immediately without using the stack, which is what a triggered mana ability must do (605.1b / 605.4a). What it cannot say is WHICH permanent. `TAPPED_PERMANENT_KEYS` is frozen to `{types, subtypes, supertypes}` and is matched against the tapped permanent's current characteristics as a class, and `_validate_add_mana_on_tap` explicitly REFUSES `affects` on this effect ("takes 'affects_player', 'tapped_permanent', 'add_mana' and an optional 'condition', and no 'affects' or 'amount'") -- so `affects: {"attached": true}`, the exact spelling Alexi's Cloak and Arcane Flight use for "enchanted creature", is a load error here. `affects_player` is not a substitute: it narrows WHOSE taps count ("you" for Crypt Ghast, "any" for Vernal Bloom), never which permanent, and its reach is the whole battlefield. The only approximation available, `{"affects_player": "any", "tapped_permanent": {"types": ["Land"]}}`, is Vernal Bloom's card and not this one: in the sandbox it would make all 30 lands each add an additional {G} off a one-mana Aura enchanting exactly one of them. `static_condition_keys`' `is_attached` only asks whether the Aura is attached to something, not what was tapped. `double_land_mana` (Vorinclex) is the other tap-for-mana static and is wrong twice over -- every land its controller taps, and it copies a type that land produced instead of a fixed {G}. The triggered spelling is worse, not merely uglier: `{"event": "ability_activated", "mana_ability": true, "filter": {"attached": true}}` looks exact, but game.py:1209 documents that only the BY-HAND activation path emits it -- the mana abilities the payment solver taps to pay for a spell go through `costs.pay_mana` -> `activate_mana_ability` and emit nothing at all -- so the trigger would be silent in precisely the case the card is played for; and even when it did fire, a triggered ability queues and drains at the next priority (603.3), so the extra {G} would arrive after the spell had already been paid for. It also asks the wrong question (any activation of a mana ability, tapping or not). The `becomes-tapped` gap already on file is a third, separate event: a land becomes tapped by attacking or by an opponent's Icy Manipulator without being tapped for mana, and the solver's auto-tap fires no activation trigger at all, so neither event is the other's substitute. The rest of the card is expressible -- "Enchant land" is the card-level target `{"id": "enchanted", "kind": "permanent", "selector": {"types": ["Land"], "zone": "battlefield"}}` -- but with the only printed ability blocked there is nothing to write a partial answer around.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wild Growth** (rank 210) — `wild_growth`
-  - Whenever enchanted land is tapped for mana, its controller adds an additional {G}.
-- **Utopia Sprawl** (rank 345) — `utopia_sprawl`
-  - Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.
 
 </details>
 
@@ -276,6 +258,20 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## attached-tapped-for-mana
+
+Blocks **1** card.
+
+- **(static_effect)** An `attached: true` key on the `add_mana_on_tap` static's `tapped_permanent`, so the triggered mana ability fires only off the permanent this Aura is attached to rather than off every permanent matching a type line. Concretely: add "attached" to `cards/loader/vocabulary.TAPPED_PERMANENT_KEYS` (currently frozenset({"types", "subtypes", "supertypes"}), src/automtg/cards/loader/vocabulary.py:70), accept and validate it in `_validate_add_mana_on_tap` (src/automtg/cards/loader/__init__.py:2053), and honour it in `engine/player_statics.mana_added_on_tap` (src/automtg/engine/player_statics.py:258) by comparing the tapped oid against the static source's `attached_to` before the type/subtype filters. This unblocks the whole Wild Growth / Fertile Ground / Overgrowth / Utopia Sprawl cycle -- every Aura printing "Whenever enchanted land is tapped for mana, its controller adds an additional ..." -- none of which can be said today.
+  <br>Why the existing vocabulary won't do: `add_mana_on_tap` is otherwise exactly this sentence: it is documented in engine/player_statics.mana_added_on_tap as a 605.1b triggered mana ability resolved at the mana choke point without the stack, and `affects_player: "any"` is already the "its controller adds" seat (the docstring names Vernal Bloom's "whenever a Forest is tapped for mana, its controller adds" as its case). What it cannot say is WHICH Forest: `tapped_permanent` may carry only types/subtypes/supertypes, read against the tapped permanent's own characteristics, with no reference to the static's source at all. Writing `{"subtypes": ["Forest"]}` would print Vernal Bloom -- all six Forests in the sandbox and every Forest an opponent controls -- instead of the one land this {G} Aura is attached to, which is the entire cost/power balance of the card, so it is a softening rather than a spelling. The static's optional `condition` cannot recover it either: `static_condition_keys` has `is_attached`, which asks only whether the source is attached to something, not what was tapped -- the tapped permanent is not in scope for a condition. `affects: {"attached": true}`, the ordinary Aura idiom, is refused outright by `_validate_add_mana_on_tap` ("takes 'affects_player', 'tapped_permanent', 'add_mana' and an optional 'condition', and no 'affects' or 'amount'"), because `affects` names a recipient and this static has none. The nearest non-static route is an `ability_activated` trigger with `mana_ability: true` and a filter, and it is wrong twice: it fires on the ACTIVATION of a mana ability rather than on the land being tapped for mana, and, decisively, an ordinary triggered ability queues on the stack and drains at the next priority (see the comment at src/automtg/engine/game.py:1188), so the extra mana would arrive after the spell being paid for -- the precise failure `add_mana_on_tap` exists to avoid. Unrelated to the existing `becomes-tapped` gap (City of Brass), which asks for a stack-using trigger on a permanent becoming tapped for ANY reason; this asks only that an existing mana-time static be able to name its own host.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Utopia Sprawl** (rank 345) — `utopia_sprawl`
+  - Whenever enchanted Forest is tapped for mana, its controller adds an additional one mana of the chosen color.
 
 </details>
 

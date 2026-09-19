@@ -403,6 +403,7 @@
    "zone"
   ],
   "TAPPED_PERMANENT_KEYS": [
+   "attached",
    "subtypes",
    "supertypes",
    "types"

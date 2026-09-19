@@ -312412,12 +312412,12 @@
     },
     "Wild Growth": {
       "edhrec_rank": 210,
-      "gate": "template",
+      "gate": null,
       "name": "Wild Growth",
-      "reason": "no template for: Whenever enchanted land is tapped for mana, its controller adds an additional {G}",
+      "reason": "",
       "scryfall_id": "c2a0d555-8ebe-4bce-994f-42e6a123f826",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Wild Guess": {

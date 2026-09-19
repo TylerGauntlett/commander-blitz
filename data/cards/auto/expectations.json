@@ -10449,6 +10449,10 @@
   "wild_griffin": {
     "zone": "battlefield"
   },
+  "wild_growth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wild_guess": {
     "hand_size": {
       "0": 2

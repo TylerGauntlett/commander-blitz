@@ -2087,6 +2087,15 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     subtypes = tapped.get("subtypes", [])
     if not isinstance(subtypes, list) or not all(isinstance(v, str) and v for v in subtypes):
         raise DslError(f"{where}.tapped_permanent.subtypes: a list of subtype names")
+    # A flag about the source, not a description of the tapped permanent, so it is
+    # the one key here that is a bool. `false` is refused rather than read as "any
+    # permanent": an author who writes it means something, and the spelling for
+    # "any permanent" is to leave the key out.
+    if "attached" in tapped and tapped["attached"] is not True:
+        raise DslError(
+            f"{where}.tapped_permanent.attached: must be true if present "
+            f"(omit the key to match a class of permanent instead)"
+        )
     try:
         produced = parse_mana_production(model.add_mana)
     except Exception as exc:
