@@ -2953,9 +2953,27 @@ A filter in a *counting* position — `{"count": …}` in a static value, or
 
 Off the battlefield only the printed face and the owner are readable. A card in
 a graveyard is not tapped, not attacking and attached to nothing, so `tapped`,
-`attacking`, `blocking`, `attached`, `self_only`, `exclude_self`, `is_token` and
-`is_commander` are rejected there at load time rather than loading and matching
-nothing.
+`attacking`, `blocking`, `attached`, `attached_to_host`, `self_only`,
+`exclude_self`, `is_token` and `is_commander` are rejected there at load time
+rather than loading and matching nothing.
+
+`attached` and `attached_to_host` are the two ends of one relationship, and a
+card that prints "attached to it" needs the second. `attached` names the **host**
+— the creature this Aura or Equipment is on — which is what every "equipped
+creature gets…" static reads. `attached_to_host` names that host's **other
+attachments**: "two or more Equipment are attached to it" (Brass Knuckles),
+"+2/+2 for each Aura and Equipment attached to it" (Strong Back). Written with
+`attached` those would ask whether the equipped *creature* is an Equipment and
+count nought on every board.
+
+Unlike `attached` it does **not** short-circuit the rest of the filter, because
+every card printing it also narrows by subtype — short-circuiting would make
+Brass Knuckles turn on from a single Aura. It does suppress the default
+`controller: "you"`, as `attached` does: the equipped creature may be an
+opponent's, and the line asks what is on it rather than who controls what. The
+source counts itself when it qualifies, which is the printed reading. A
+`cost_reduction` refuses it, since `costs._reduction_matches` does not read the
+key and one written there would be priced off a filter nobody honoured.
 
 `affects` and `blockers` do **not** take `zone`, and that asymmetry is the
 point: they pick out the permanents a static applies to, and there are no

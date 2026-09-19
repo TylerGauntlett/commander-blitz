@@ -1111,6 +1111,10 @@
   "brass_infiniscope": {
     "zone": "battlefield"
   },
+  "brass_knuckles": {
+    "battlefield_count": 34,
+    "zone": "battlefield"
+  },
   "brave_the_elements": {
     "battlefield_count": 32,
     "graveyard_size": {

@@ -33032,12 +33032,12 @@
     },
     "Brass Knuckles": {
       "edhrec_rank": 4965,
-      "gate": "template",
+      "gate": null,
       "name": "Brass Knuckles",
-      "reason": "no template for: When you cast this spell, copy it",
+      "reason": "",
       "scryfall_id": "6010f966-c931-4032-a59b-feeb428e0c16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Brass Man": {

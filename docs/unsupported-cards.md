@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**48 cards** blocked by **55** capabilities.
+**47 cards** blocked by **54** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cant-be-countered](#cant-be-countered) | 3 | 114 | engine, static_effect |
-| [attachment-count](#attachment-count) | 2 | 3190 | selector, value |
 | [becomes-tapped](#becomes-tapped) | 2 | 97 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -89,26 +88,6 @@ Blocks **3** cards.
   - {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## attachment-count
-
-Blocks **2** cards.
-
-- **(selector)** a way for a filter to name the permanents attached to a given host -- the Equipment and Auras hanging off the creature this Equipment is itself attached to -- so a static's `condition` can be `{"cmp": ">=", "left": {"count": {"subtypes": ["Equipment"], "attached_to_host": true}}, "right": {"const": 2}}`. Concretely: a `static_filter_keys` entry (and its twin in `selector_keys`) that matches every battlefield object whose `attached_to` equals the SOURCE's `attached_to`, i.e. its fellow attachments, including the source itself so "two or more" counts the printed way. It is board state (`GameObject.attached_to`) like the existing `attached` key, so it is a pipeline input and safe inside a static.
-  <br>Why the existing vocabulary won't do: `attached` is the only attachment word a static filter has and it points the OTHER way: `characteristics._matches` short-circuits `if selector.get("attached"): return obj.oid == source.attached_to`, so it matches exactly one object -- the host this Equipment is stapled to -- which is how "equipped creature has double strike" is written. Combined with `subtypes: ["Equipment"]` it matches the equipped CREATURE and therefore counts 0, never the other Equipment on it. `effects/selectors.py` spells `attached` the same way (`oid not in (source.attached_to, source.last_attached_to)`), so the wider selector language cannot say it either. `is_attached` (in `static_condition_keys`) is a yes/no about the source's own `attached_to`/`attached_to_player` and carries no filter and no count, so it cannot ask how many Equipment share a host; `counters` counts counters, not permanents; and `count`/`exists` in `static_value_keys`/`static_condition_keys` can only be handed a filter built from `static_filter_keys`, which has no key relating one attachment to another. Writing the static with no condition, or with a condition that is merely "this Equipment is attached", would grant double strike off a single Equipment -- a strictly stronger card.
-- **(value)** A static magnitude that counts the Auras and Equipment attached to the permanent the static affects, and scales it (x2 per attachment). Two halves: a static filter key for 'permanents attached to <that object>', and an arithmetic leaf in the static value language so a count can be multiplied
-  <br>Why the existing vocabulary won't do: `static_filter_keys`'s `attached` points the other way -- `characteristics._matches` implements it as `obj.oid == source.attached_to`, i.e. it selects the enchanted creature itself, so a `{"count": {"attached": true, "subtypes": [...]}}` asks how many permanents ARE the enchanted creature (0 or 1), not how many hang off it; there is no `attached_to` key in the static filter list. And `STATIC_VALUE_KEYS` is `const`, `count`, `mana_symbols`, `counters_on`, `permanents_entered_this_turn` plus the per-player life/count leaves -- no `times`, `sum` or `half` (those are effect-side `value_keys` only, and `characteristics._static_value` raises DslError on an unknown leaf), so even a correct count could not become +2/+2 per attachment. Separately, 'Aura and Equipment' is an or-of-subtypes and static `subtypes` is a conjunction, with no `any_subtypes` beside `any_types`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strong Back** (rank 3190) — `strong_back`
-  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
-  - Aura spells you cast that target enchanted creature cost {3} less to cast.
-  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
-- **Brass Knuckles** (rank 4965) — `brass_knuckles`
-  - Equipped creature has double strike as long as two or more Equipment are attached to it.
 
 </details>
 

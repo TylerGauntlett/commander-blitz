@@ -38,6 +38,7 @@
   ],
   "COST_REDUCTION_REFUSED_FILTER_KEYS": [
    "attached",
+   "attached_to_host",
    "paired",
    "paired_with_source"
   ],
@@ -259,6 +260,7 @@
   "STATIC_COUNT_FILTER_KEYS": [
    "any_types",
    "attached",
+   "attached_to_host",
    "attacking",
    "blocking",
    "colors",
@@ -345,6 +347,7 @@
   "STATIC_FILTER_KEYS": [
    "any_types",
    "attached",
+   "attached_to_host",
    "attacking",
    "blocking",
    "colors",

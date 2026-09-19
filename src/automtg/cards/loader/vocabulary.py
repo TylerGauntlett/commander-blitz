@@ -576,6 +576,13 @@ STATIC_FILTER_KEYS = frozenset(
         # state rather than a derived characteristic, so it cannot depend on
         # another static's output and belongs in this list rather than outside it.
         "attached",
+        # The other end of the same relationship: "…as long as two or more
+        # Equipment are **attached to it**" (Brass Knuckles), "+2/+2 for each
+        # Aura and Equipment **attached to it**" (Strong Back). `attached` names
+        # the host; this names the host's *other* attachments. The same board
+        # state read the other way round, so it is safe here for `attached`'s
+        # reason.
+        "attached_to_host",
         # Soulbond: "as long as this creature is paired, **both** creatures
         # have…". `paired: true` matches the source while it has a partner, and
         # `paired_with_source: true` matches the partner. Board state like
@@ -660,7 +667,16 @@ COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
 #: read the rest of the list, and being refused is the safer half of that fix:
 #: a key that means nothing here should say so at load time rather than price
 #: an ability off a filter nobody honoured.
-COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset({"attached", "paired", "paired_with_source"})
+#:
+#: `attached_to_host` joins them for the near reason rather than the same one:
+#: counting a permanent's attachments *is* a number a reduction could price off,
+#: but `costs._reduction_matches` does not read the key, so one written there
+#: would load and be ignored -- the quiet failure this list exists to convert
+#: into a load-time refusal. It belongs here until a printed card asks for it
+#: and `_reduction_matches` is taught the word.
+COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset(
+    {"attached", "attached_to_host", "paired", "paired_with_source"}
+)
 
 #: Condition heads a *cost* reduction may use.
 #:

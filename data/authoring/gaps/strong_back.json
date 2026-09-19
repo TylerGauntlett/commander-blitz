@@ -25,12 +25,6 @@
       "kind": "selector",
       "what": "A cost-reduction filter clause that asks what the spell or ability being priced is TARGETING -- here, 'that target enchanted creature', i.e. a target equal to the object the discounting Aura is attached to",
       "why_existing_wont_do": "`SPELL_FILTER_KEYS` (the `affects_spells` vocabulary) is deliberately the printed face plus `controller`, and its own comment says so: board state a card in hand does not have is excluded. It is matched by `characteristics._matches_printed`, which is handed a CardDef with no chosen targets, because legality prices the spell before it is on the stack. So `{\"subtypes\": [\"Aura\"], \"controller\": \"you\"}` would discount EVERY Aura you cast, not only the ones aimed at the enchanted creature -- a softening, not the printed card. `COST_REDUCTION_REFUSED_FILTER_KEYS` further refuses `attached` in a reduction filter, so the enchanted creature cannot even be named there."
-    },
-    {
-      "capability": "attachment_count",
-      "kind": "value",
-      "what": "A static magnitude that counts the Auras and Equipment attached to the permanent the static affects, and scales it (x2 per attachment). Two halves: a static filter key for 'permanents attached to <that object>', and an arithmetic leaf in the static value language so a count can be multiplied",
-      "why_existing_wont_do": "`static_filter_keys`'s `attached` points the other way -- `characteristics._matches` implements it as `obj.oid == source.attached_to`, i.e. it selects the enchanted creature itself, so a `{\"count\": {\"attached\": true, \"subtypes\": [...]}}` asks how many permanents ARE the enchanted creature (0 or 1), not how many hang off it; there is no `attached_to` key in the static filter list. And `STATIC_VALUE_KEYS` is `const`, `count`, `mana_symbols`, `counters_on`, `permanents_entered_this_turn` plus the per-player life/count leaves -- no `times`, `sum` or `half` (those are effect-side `value_keys` only, and `characteristics._static_value` raises DslError on an unknown leaf), so even a correct count could not become +2/+2 per attachment. Separately, 'Aura and Equipment' is an or-of-subtypes and static `subtypes` is a conjunction, with no `any_subtypes` beside `any_types`."
     }
   ],
   "closest_existing": [

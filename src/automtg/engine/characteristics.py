@@ -1364,6 +1364,26 @@ def _matches(
     # `controller: "you"` would quietly stop it.
     if selector.get("attached"):
         return obj.oid == source.attached_to
+    # "…as long as two or more Equipment are **attached to it**" (Brass
+    # Knuckles); "+2/+2 for each Aura and Equipment **attached to it**" (Strong
+    # Back). `attached` is the host and this is its other attachments -- the two
+    # halves of one relationship, read from opposite ends.
+    #
+    # It does **not** short-circuit, because every card that prints it also
+    # narrows by subtype: matching every attachment would count the Aura that
+    # says so beside the Equipment it is asking about. It does suppress the
+    # default `controller: "you"` the way `attached` does, and for the same
+    # reason: the equipped creature may be an opponent's, and the printed line
+    # asks what is attached to it rather than who controls what.
+    #
+    # The source counts itself when it qualifies, which is the printed reading:
+    # Brass Knuckles is one of the Equipment attached to the creature, so "two
+    # or more" is itself plus one.
+    attached_to_host = bool(selector.get("attached_to_host"))
+    if attached_to_host and (
+        source.attached_to is None or obj.attached_to != source.attached_to
+    ):
+        return False
     # Soulbond. Two keys because the printed line applies to two creatures and
     # the static is written once: `paired` is "this creature, while it has a
     # partner" and `paired_with_source` is "the partner". Both short-circuit
@@ -1394,7 +1414,7 @@ def _matches(
     # `_static_players` already decided the word means on a permanent: a stolen
     # anthem pumps for whoever is holding it.
     owner = selector.get("owner")
-    controller = selector.get("controller", None if owner else "you")
+    controller = selector.get("controller", None if owner or attached_to_host else "you")
     if controller == "you" and obj.controller != source.controller:
         return False
     if controller == "opponent" and obj.controller == source.controller:
