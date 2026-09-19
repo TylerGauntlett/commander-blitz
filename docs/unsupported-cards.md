@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**33 cards** blocked by **43** capabilities.
+**32 cards** blocked by **42** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
 | [cost-reduction-total-mana-value](#cost-reduction-total-mana-value) | 1 | 906 | value |
-| [counter-placement-replacement](#counter-placement-replacement) | 1 | 5450 | replacement |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delayed-trigger-object-scope](#delayed-trigger-object-scope) | 1 | 1050 | trigger_event |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -256,20 +255,6 @@ Blocks **1** card.
 
 - **Excalibur, Sword of Eden** (rank 906) — `excalibur_sword_of_eden`
   - This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)
-
-</details>
-
-## counter-placement-replacement
-
-Blocks **1** card.
-
-- **(replacement)** a `replace_counters` static in `static_effects`, on the same axis as `replace_token_creation`/`replace_draw`: it intercepts a batch of counters about to be put on an object and rewrites the amount, taking a counter-kind filter (`+1/+1` here), an `affects` filter for whose objects it applies to (`{"controller": "you", "types": ["Creature"]}`), and a magnitude spelled as a flat addend (Hardened Scales, High Score: n + 1) as well as a multiplier (Doubling Season, Corpsejack Menace: n * 2). It has to be read inside `primitives.add_counters` (src/automtg/engine/primitives.py:644), which is the single funnel every placement comes through -- `add_counters`, `move_counters`, `proliferate`, the `counters` key on `put_onto_battlefield`, and enters-with-counters -- so the replacement applies once per batch, before the `counter_placed` event fires and before any chapter/Saga comparison reads the new total.
-  <br>Why the existing vocabulary won't do: `static_effects` has replacement statics for tokens, draws, life gain, life loss and milling (`replace_token_creation`, `replace_draw`, `replace_life_gain`, `replace_life_loss`, `replace_mill`) and none at all for counters, and none of their fields (`token_multiplier`, `draw_multiplier`, `gain_multiplier`, `loss_multiplier`) names a counter kind or an addend -- every one of them is a multiplier of 2 or more, which the loader enforces (src/automtg/cards/loader/__init__.py:2294), so even a counter-flavoured clone of them could not say "plus one". `src/automtg/engine/replacements.py` handles only zone-change and enters-the-battlefield replacements and never sees a counter. `primitives.add_counters` applies the amount it is handed verbatim and consults no static, so there is no seam to hook today. The nearest reachable thing is the `counter_placed` trigger event with `counter: "+1/+1"`, and it is the wrong sentence twice over: a trigger uses the stack (so the extra counter arrives later, after state-based actions and after any other trigger that read the count), and its own `add_counters` would fire `counter_placed` again, so it self-retriggers without an unprinted guard. `proliferate` is the other near miss and only adds one of a kind already present, on objects chosen at resolution, not as a replacement.
-
-<details><summary>Cards waiting on this</summary>
-
-- **High Score** (rank 5450) — `high_score`
-  - If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.
 
 </details>
 

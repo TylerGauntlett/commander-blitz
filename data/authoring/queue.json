@@ -126732,12 +126732,12 @@
     },
     "High Score": {
       "edhrec_rank": 5450,
-      "gate": "template",
+      "gate": null,
       "name": "High Score",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, that many plus one +",
+      "reason": "",
       "scryfall_id": "b9077ef5-d19a-4106-950b-bb49b3b37510",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "High Seas": {

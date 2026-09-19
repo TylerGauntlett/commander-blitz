@@ -1407,6 +1407,54 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Counters replaced on the way in
+
+```jsonc
+// High Score, Hardened Scales
+{ "kind": "static",
+  "effect": "replace_counters",
+  "counter": "+1/+1",
+  "counter_addend": 1,                       // "that many plus one"
+  "affects": { "controller": "you", "types": ["Creature"] } }
+
+// Doubling Season, Corpsejack Menace
+{ "effect": "replace_counters", "counter_multiplier": 2,
+  "affects": { "controller": "you" } }       // no `counter`: every kind
+```
+
+The sixth named replacement, and the first about an **object** rather than a
+player — tokens, draws, life gain, life loss and milling all take
+`affects_player`; every printed counter replacement names what the counters
+would be put on, so this one takes `affects` and the filter is **required**.
+Without it the card replaces an opponent's counters too, which is a strictly
+better card than any that has been printed.
+
+Not one of the five could have been borrowed, either: every one of them is a
+*multiplier* refused below 2 by the loader, and "plus one" is not a multiplier
+at any size. Hence two axes — `counter_addend` and `counter_multiplier` — of
+which a card uses exactly one.
+
+Read in `primitives.add_counters`, the single funnel every placement comes
+through — the `add_counters` op, `move_counters`, `proliferate`, the `counters`
+key on `put_onto_battlefield`, entering with counters — so it applies once per
+batch, and *before* `counter_placed` fires or a Saga chapter comparison reads
+the new total. A replacement that fired the event with the pre-replacement
+number would be a card lying to every trigger watching it. Only on the way in:
+"would be **put** on" says nothing about counters coming off.
+
+Not a `counter_placed` trigger, the near miss: a trigger uses the stack, so the
+extra counter would arrive after state-based actions and after anything else
+that read the count, and its own `add_counters` fires `counter_placed` again and
+retriggers itself.
+
+614.5 applies each static once, each seeing the amount as the one before it left
+it, so a doubler never doubles its own output. Several compound, and the order
+is `state.battlefield` order — 616.1 gives that choice to the affected player and
+this engine does not ask. The divergence is invisible between two multipliers and
+visible exactly when an addend and a multiplier are on the table together:
+Hardened Scales plus Doubling Season is (1+1)×2 = 4 here and could be 1×2+1 = 3.
+Recorded in `docs/rules-coverage.md`.
+
 ### "Whenever this creature mutates…"
 
 ```jsonc

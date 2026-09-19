@@ -563,6 +563,19 @@ class AbilityModel(BaseModel):
     #: id could be listed, and listing one would convert every token into it.
     #: Refused below 2 for the reason `loss_multiplier` is.
     token_multiplier: int | None = None
+    #: `replace_counters`: how many counters are put on instead. "Twice that
+    #: many" is ``counter_multiplier: 2``; "that many plus one" is
+    #: ``counter_addend: 1``. A card uses exactly one, and the addend is why
+    #: this is not a counter-flavoured `token_multiplier`: every multiplier in
+    #: that family is refused below 2, and "plus one" is not a multiplier.
+    counter_multiplier: int | None = None
+    counter_addend: int | None = None
+    #: `replace_counters`: which kind of counter the replacement is about --
+    #: "+1/+1" on High Score and Hardened Scales. Omitted is every kind, which
+    #: is Doubling Season's "if one or more counters would be put on". Not the
+    #: `counter` on `TriggerModel`, which is a different model and a different
+    #: question ("whenever a +1/+1 counter is put on this creature").
+    counter: str | None = None
     #: ``replace_life_loss``: what a life loss is multiplied by. Bloodletter of
     #: Aclazotz's "they lose **twice** that much life instead" is ``2``.
     #:

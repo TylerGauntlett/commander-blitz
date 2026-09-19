@@ -318,6 +318,25 @@ STATIC_EFFECTS = frozenset(
         # `docs/rules-coverage.md`, which records that there is no general
         # rule-616 replacement system and that this is not the start of one.
         "replace_token_creation",
+        # High Score, Hardened Scales, Doubling Season, Corpsejack Menace. "If
+        # one or more +1/+1 counters would be put on a creature you control,
+        # that many plus one +1/+1 counters are put on it instead." Read by
+        # `primitives.add_counters`, which is the single funnel every placement
+        # comes through -- the `add_counters` op, `move_counters`, `proliferate`,
+        # the `counters` key on `put_onto_battlefield` and entering with
+        # counters -- so the replacement applies once per batch and before the
+        # `counter_placed` event or any Saga chapter comparison reads the new
+        # total.
+        #
+        # Unlike the five replacements above it, this one is about an *object*
+        # rather than a player, so it takes `affects` and no `affects_player`:
+        # every printed card names what the counters would be put on.
+        #
+        # A `counter_placed` trigger is the wrong sentence twice over: it uses
+        # the stack, so the extra counter arrives after state-based actions and
+        # after anything else that read the count, and its own `add_counters`
+        # fires `counter_placed` again, so it retriggers itself.
+        "replace_counters",
         # Bloodletter of Aclazotz.  "If an opponent would lose life during your
         # turn, they lose twice that much life instead."  The engine's *second*
         # replacement hook and, like the first, a named one rather than the

@@ -2375,6 +2375,58 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
+    if model.effect == "replace_counters":
+        # `affects` names the permanent the counters would be put on, and every
+        # printed card names one -- "on a creature you control", "on an
+        # artifact, creature, enchantment or land you control". Required rather
+        # than defaulted: a replacement with no filter applies to every counter
+        # in the game including an opponent's, which is a strictly better card
+        # than any that has been printed.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: replace_counters needs 'affects' -- the permanents the "
+                f"counters would be put on; without it the replacement reaches "
+                f"every counter on the table, which no printed card says"
+            )
+        if model.counter is not None:
+            _check_counter_kind(model.counter, f"{where}.counter")
+        # Exactly one axis, for `replace_token_creation`'s reason, and neither
+        # is a replacement that says nothing about how many arrive.
+        if model.counter_multiplier is not None and model.counter_addend is not None:
+            raise DslError(
+                f"{where}: replace_counters takes 'counter_multiplier' (\"twice "
+                f"that many\") or 'counter_addend' (\"that many plus one\"), not both"
+            )
+        if model.counter_multiplier is not None:
+            # 1 replaces a placement with itself and 0 is "no counters are put
+            # on it" -- a prevention, a different and much stronger sentence.
+            # The same refusal `token_multiplier` and `replace_life_loss` make.
+            if model.counter_multiplier < 2:
+                raise DslError(
+                    f"{where}.counter_multiplier: must be 2 or more; 1 replaces a "
+                    f"placement with itself and 0 puts none on, which is a "
+                    f"different effect"
+                )
+        elif model.counter_addend is not None:
+            # Below 1 is the same argument once more: 0 changes nothing, and a
+            # negative addend is "that many minus one", which no card prints and
+            # which could take a placement to zero -- a prevention again.
+            if model.counter_addend < 1:
+                raise DslError(
+                    f"{where}.counter_addend: must be 1 or more; 0 changes nothing "
+                    f"and a negative addend is a prevention, a different effect"
+                )
+        else:
+            raise DslError(
+                f"{where}: replace_counters needs 'counter_addend' (\"that many "
+                f"plus one\") or 'counter_multiplier' (\"twice that many\")"
+            )
+    elif model.counter_multiplier is not None or model.counter_addend is not None:
+        raise DslError(
+            f"{where}: 'counter_multiplier'/'counter_addend' only mean anything on "
+            f"a replace_counters static, not on {model.effect!r}"
+        )
+
     if model.effect == "replace_life_loss":
         # A multiplier of 1 replaces a loss with an identical loss, and 0 is a
         # *prevention* -- "they lose no life" -- which is a different printed
@@ -2701,6 +2753,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["create_instead"] = list(model.create_instead)
     if model.token_multiplier is not None:
         static["token_multiplier"] = model.token_multiplier
+    # `replace_counters`' three. Copied explicitly for the whitelist reason
+    # spelled out below: a field the schema accepts and this loop forgets
+    # loads, compiles and applies with the clause absent -- here that would be
+    # a High Score that replaces every counter in the game, or doubles nothing.
+    if model.counter_multiplier is not None:
+        static["counter_multiplier"] = model.counter_multiplier
+    if model.counter_addend is not None:
+        static["counter_addend"] = model.counter_addend
+    if model.counter is not None:
+        static["counter"] = model.counter
     if model.loss_multiplier is not None:
         static["loss_multiplier"] = model.loss_multiplier
     if model.gain_multiplier is not None:

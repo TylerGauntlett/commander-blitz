@@ -1037,6 +1037,43 @@ def token_creation_replacements(state: GameState, pid: int) -> list[Mapping[str,
     ]
 
 
+def counter_placement_replacements(
+    state: GameState, oid: int, kind: str
+) -> list[Mapping[str, Any]]:
+    """The active ``replace_counters`` statics that apply to this placement.
+
+    High Score, Hardened Scales, Doubling Season, Corpsejack Menace. Read by
+    `primitives.add_counters` and by nothing else, the way
+    `token_creation_replacements` is read by `create_token` alone: a
+    replacement is a fact about what *will* happen, not a characteristic of
+    anything, so it cannot be a layer.
+
+    Filtered here rather than in the caller so both halves of "would be put on
+    **a creature you control**" and "**+1/+1** counters" are asked in one place.
+    ``_matches`` refuses anything not on the battlefield, which is what keeps
+    these statics away from the suspend counters on a card in exile.
+
+    Order is `state.battlefield` order, which is arrival order. 616.1 gives the
+    choice to the affected player and this engine does not ask -- see
+    `primitives._replaced_counter_amount`, which owns that divergence together
+    with 614.5.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return []
+    out: list[Mapping[str, Any]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "replace_counters":
+            continue
+        wanted = static.get("counter")
+        if wanted is not None and str(wanted) != kind:
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        out.append(static)
+    return out
+
+
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:
     """Does the token about to be created match this filter?
 

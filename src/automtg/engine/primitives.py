@@ -23,7 +23,7 @@ from .characteristics import (
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
-from .player_statics import mill_multiplier, untap_held
+from .player_statics import counter_placement_replacements, mill_multiplier, untap_held
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -648,12 +648,62 @@ def untap_permanent(state: GameState, oid: int) -> bool:
     return True
 
 
+def _replaced_counter_amount(state: GameState, oid: int, kind: str, amount: int) -> int:
+    """How many counters are actually put on, after every replacement applies.
+
+    "If one or more +1/+1 counters would be put on a creature you control,
+    **that many plus one** +1/+1 counters are put on it instead" -- High Score.
+    Hardened Scales prints the same sentence; Doubling Season and Corpsejack
+    Menace print "twice that many".
+
+    Two axes, and a card uses exactly one:
+
+    - ``counter_addend`` -- "that many **plus one**". A flat number added to the
+      batch, once, however many counters the batch holds. The whole reason this
+      static could not be a counter-flavoured clone of `replace_token_creation`:
+      every multiplier in that family is refused below 2 by the loader, and
+      "plus one" is not a multiplier at any size.
+    - ``counter_multiplier`` -- "**twice** that many".
+
+    Three rules the loop is about, the same three `_token_creation_plan`
+    answers:
+
+    - **614.5, a replacement applies at most once to a given event.** One pass
+      over a fixed list, each static seeing the amount as the ones before it
+      left it -- so a Doubling Season does not double its own output.
+    - **Several compound**, each applied once to the event as the last one
+      modified it. Hardened Scales plus Doubling Season is the famous case, and
+      it is *order-dependent*: (1+1)*2 = 4 but 1*2+1 = 3.
+    - **616.1 gives the order to the affected player**, and this engine does
+      not ask: it applies in `state.battlefield` order, which is arrival order.
+      That divergence is invisible between two multipliers, and visible exactly
+      when an addend and a multiplier are on the table together. Recorded in
+      ``docs/rules-coverage.md`` with the rest of the narrow-replacement story.
+
+    A batch is one event (614.1's "one or more … would be put"), so the addend
+    is added once per *placement*, not once per counter -- which is what the
+    printed "that many plus one" says.
+    """
+    for static in counter_placement_replacements(state, oid, kind):
+        multiplier = int(static.get("counter_multiplier") or 1)
+        addend = int(static.get("counter_addend") or 0)
+        amount = amount * multiplier + addend
+    return amount
+
+
 def add_counters(
     state: GameState, oid: int, kind: str, amount: int, source: int | None = None
 ) -> int:
     obj = state.objects.get(oid)
     if obj is None or amount == 0:
         return 0
+    if amount > 0:
+        # Before the write and before the event, because this is a replacement
+        # and not a second placement: `counter_placed` has to report the number
+        # that really arrived, and a Saga chapter comparison below has to see
+        # the same total the board does. Only on the way up -- "would be put on"
+        # is nothing to do with counters coming off.
+        amount = _replaced_counter_amount(state, oid, kind, amount)
     # Read before the write. A Saga's chapter ability triggers on the count
     # *becoming* its number (714.2c), so the comparison needs both sides and
     # this is the only moment both exist.

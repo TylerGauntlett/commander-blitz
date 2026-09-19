@@ -46116,6 +46116,101 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "counter": "+1/+1",
+          "counter_addend": 1,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "all": [
+                  {
+                    "exists": {
+                      "controller": "you",
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  {
+                    "cmp": ">=",
+                    "left": {
+                      "extreme_value": {
+                        "objects": {
+                          "controller": "you",
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        },
+                        "of": "power",
+                        "pick": "greatest"
+                      }
+                    },
+                    "right": {
+                      "extreme_value": {
+                        "objects": {
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        },
+                        "of": "power",
+                        "pick": "greatest"
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, draw a card if you control a creature with the greatest power among creatures on the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "high_score",
+      "mana_cost": "{2}{G}",
+      "name": "High Score",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.\nAt the beginning of your end step, draw a card if you control a creature with the greatest power among creatures on the battlefield.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
