@@ -10,11 +10,13 @@ the same `importer.import_deck` a pasted link goes through, with **every one of
 its 76 distinct cards resolving `native`** -- the engine's own rules, not a
 proxy.
 
-It started at 52 of 76. The other 24 took seventeen engine capabilities, each
-its own commit, and this file is what stops that quietly rotting: a card
-dropping out of `data/cards/auto/` or an engine change invalidating one turns a
-`native` into a `partial` here, on a list somebody actually plays, rather than
-in a game.
+It started at **17** of 76, with 59 cards proxied and only 41 of the 100 playable
+at all. The rest took one authoring wave and **thirty-four engine
+capabilities**, each its own commit.
+
+This file is what stops that quietly rotting: a card dropping out of
+`data/cards/auto/` or an engine change invalidating one turns a `native` into a
+`partial` here, on a list somebody actually plays, rather than in a game.
 
 The arithmetic is asserted first and deliberately: if a name were dropped from
 the tuple below, every other assertion here would still pass, and the count is
