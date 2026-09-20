@@ -53,7 +53,7 @@ import { motion } from "motion/react";
 import type { CSSProperties } from "react";
 import type { GameView, PlayerView } from "../../api/types";
 import { stopId } from "../../input/stops";
-import { artUrl } from "../../logic/cardArt";
+import { artUrlFor } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import { type Muster, musterOf } from "../../logic/threat";
 import { commandZoneCommanderCount, commandersOf } from "../../logic/zoneGrouping";
@@ -226,6 +226,7 @@ export function OpponentSeat({
   locked = false,
 }: Props) {
   const images = useUiStore((s) => s.images);
+  const seatImages = useUiStore((s) => s.seatImages);
   const muster = musterOf(state, player.pid);
 
   /*
@@ -239,7 +240,7 @@ export function OpponentSeat({
    */
   const commanders = commandersOf(state, player.pid);
   const commander = commanders[0];
-  const art = commander ? artUrl(images, commander.card_id) : undefined;
+  const art = commander ? artUrlFor(images, seatImages, commander) : undefined;
 
   /*
    * Commander damage, as two arrows riding this seat's own life bar.

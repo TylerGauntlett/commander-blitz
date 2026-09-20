@@ -30,7 +30,13 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { CardView, GameView } from "../../api/types";
-import { type ImageMap, artState, artUrlFor, artistOf } from "../../logic/cardArt";
+import {
+  type ImageMap,
+  type SeatImages,
+  artStateFor,
+  artUrlFor,
+  artistFor,
+} from "../../logic/cardArt";
 import { counterBadges, isWounded, keywordLabel, manaPips } from "../../logic/cardStyle";
 import { findCard } from "../../logic/zoneGrouping";
 import { ease } from "../../motion/springs";
@@ -77,8 +83,16 @@ function cardStatus(card: CardView): string {
  * **So is the unplayable reason**, which used to be the last row. See the note
  * on `.reader__rules` below.
  */
-function CompressedBody({ card, images }: { card: CardView; images: ImageMap }) {
-  const art = artUrlFor(images, card);
+function CompressedBody({
+  card,
+  images,
+  seatImages,
+}: {
+  card: CardView;
+  images: ImageMap;
+  seatImages: SeatImages;
+}) {
+  const art = artUrlFor(images, seatImages, card);
   const pips = manaPips(card.mana_cost);
   const pt =
     card.power !== null && card.toughness !== null ? `${card.power}/${card.toughness}` : null;
@@ -110,7 +124,7 @@ function CompressedBody({ card, images }: { card: CardView; images: ImageMap }) 
       {art !== undefined && (
         <div
           className={art === null ? "reader__art reader__art--empty" : "reader__art"}
-          data-art-state={artState(images, card.card_id)}
+          data-art-state={artStateFor(images, seatImages, card)}
         >
           {art !== null && <img className="reader__img" src={art} alt="" aria-hidden="true" />}
           {/*
@@ -247,9 +261,10 @@ function FullBody({
 export function CardPreview({ state }: Props) {
   const hoveredOid = useUiStore((s) => s.hoveredOid);
   const images = useUiStore((s) => s.images);
+  const seatImages = useUiStore((s) => s.seatImages);
   const compressed = useHandheldLayout();
   const card = hoveredOid === null ? null : findCard(state, hoveredOid);
-  const artist = card ? artistOf(images, card.card_id) : null;
+  const artist = card ? artistFor(images, seatImages, card) : null;
 
   /*
    * The panel is a fixed height, whether it is holding a card or not.
@@ -276,7 +291,7 @@ export function CardPreview({ state }: Props) {
             transition={ease}
           >
             {compressed ? (
-              <CompressedBody card={card} images={images} />
+              <CompressedBody card={card} images={images} seatImages={seatImages} />
             ) : (
               <FullBody card={card} state={state} artist={artist} />
             )}

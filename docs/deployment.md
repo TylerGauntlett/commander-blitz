@@ -195,7 +195,10 @@ also rules out horizontal scaling without a shared session store.
 **One Docker volume holds everything durable.** `generated` carries cards and
 decks from deck imports plus the card art lazily fetched from Scryfall
 (`data/generated/art`). It is mounted at `/app/data/generated` and survives
-redeploys. Everything else in `/app/data` — the committed art, the catalog
+redeploys. Art fetched for a *deck's chosen printing* lands there too, named
+`{scryfall_id}.jpg` (or `{scryfall_id}_back.jpg`), so it grows by one file per
+distinct printing an imported deck asks for — shared across decks and seats
+that chose the same illustration. Everything else in `/app/data` — the committed art, the catalog
 index — comes from the image and is replaced wholesale by every deploy.
 
 **A volume must never be mounted over repository content.** There used to be a

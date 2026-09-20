@@ -44,7 +44,7 @@ import { motion, useAnimationControls } from "motion/react";
 import { type CSSProperties, useEffect, useRef } from "react";
 import type { CardView, GameView, PlayerView } from "../../api/types";
 import { stopId } from "../../input/stops";
-import { artUrl } from "../../logic/cardArt";
+import { artUrlFor } from "../../logic/cardArt";
 import { lossReason } from "../../logic/labels";
 import {
   type ManaGroupView,
@@ -272,6 +272,7 @@ export function PlayerOrb({
   const controls = useAnimationControls();
   const previous = useRef(player.life);
   const images = useUiStore((s) => s.images);
+  const seatImages = useUiStore((s) => s.seatImages);
 
   /*
    * The seat's own commander, and with it the seat's own ground.
@@ -286,7 +287,7 @@ export function PlayerOrb({
    * before this direction and is a perfectly good panel. See logic/cardArt.ts.
    */
   const commanders = commandersOf(state, player.pid);
-  const wash = commanders.length > 0 ? artUrl(images, commanders[0].card_id) : undefined;
+  const wash = commanders.length > 0 ? artUrlFor(images, seatImages, commanders[0]) : undefined;
 
   useEffect(() => {
     const before = previous.current;
