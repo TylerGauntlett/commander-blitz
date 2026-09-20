@@ -7,9 +7,16 @@ first place.
 
 The one exception is the *lazy fill*: a card outside ``data/cards/`` (a future
 deck, a catalog search result) has no file yet, so the first request for it
-fetches once, writes it next to the others, and serves it.  From then on it is a
-local file like any other.  That fetch happens server-side, so the browser still
-never talks to a third party.
+fetches once, writes it to the cache, and serves it.  From then on it is a local
+file like any other.  That fetch happens server-side, so the browser still never
+talks to a third party.
+
+Two directories, and which one a file is in decides who may overrule it.
+``art_dir()`` holds the bytes the repository owns -- committed, baked into the
+image, never written at runtime.  ``art_cache_dir()`` holds what the lazy fill
+downloaded, which is per-deployment state living on a Docker volume.  **Owned
+wins**: a cached file is only ever what some earlier boot believed the printing
+to be, and a pin in ``art_pins.json`` can change that belief.
 """
 
 from __future__ import annotations
@@ -21,7 +28,14 @@ import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 
-from automtg.cards.images import ART_CROP, CardArt, CardIndex, art_dir, image_url
+from automtg.cards.images import (
+    ART_CROP,
+    CardArt,
+    CardIndex,
+    art_cache_dir,
+    art_dir,
+    image_url,
+)
 
 #: Card ids are generated from card names by the loader, so this is a tight
 #: whitelist rather than a guess.  It is also the path-traversal guard: the id
@@ -48,13 +62,20 @@ class ArtStore:
     """
 
     images: dict[str, CardArt]
+    #: The owned bytes: committed, in the image, read-only.
     directory: Path
     index: CardIndex | None = None
     allow_fetch: bool = True
+    #: Where a lazy fill writes.  ``None`` means "beside the owned bytes",
+    #: which is what a caller holding a single directory wants -- a test with
+    #: one ``tmp_path``, or any code that has no cache to offer.
+    cache: Path | None = None
 
     def __post_init__(self) -> None:
         self._missing: set[str] = set()
         self._lock = threading.Lock()
+        if self.cache is None:
+            self.cache = self.directory
 
     # -- paths ----------------------------------------------------------
 
@@ -70,12 +91,24 @@ class ArtStore:
             self._missing = set()
 
     def path_for(self, card_id: str) -> Path:
-        return self.directory / f"{card_id}.jpg"
+        """This card's art, or where a fill would put it.
+
+        Owned bytes win outright.  A cached file under the same name is a copy
+        of whatever printing an earlier boot resolved, and the committed answer
+        is the one that was reviewed -- so a file shipped in the image is never
+        overruled by one sitting in the volume.
+        """
+        owned = self.directory / f"{card_id}.jpg"
+        if owned.is_file():
+            return owned
+        return self.cache / f"{card_id}.jpg"
 
     def cached_ids(self) -> set[str]:
-        if not self.directory.exists():
-            return set()
-        return {p.stem for p in self.directory.glob("*.jpg")}
+        ids: set[str] = set()
+        for directory in {self.directory, self.cache}:
+            if directory.exists():
+                ids |= {p.stem for p in directory.glob("*.jpg")}
+        return ids
 
     def url_for(self, card_id: str) -> str | None:
         """What the client should put in ``<img src>``, or ``None`` for a card
@@ -151,6 +184,20 @@ def _resolve_images(registry, index: CardIndex | None) -> dict[str, CardArt]:
     is deliberately a second file rather than an edit to the committed one, so a
     refresh of the catalog can never sweep an imported card into an artifact
     that is under version control.
+
+    **The authored layer wins.**  ``load_game_data`` already drops a generated
+    *card* whose card has since been authored -- a proxy exists only because
+    nobody had written that card yet, and once somebody has, the real one wins.
+    This map has to obey the same rule, and used to do the opposite: the
+    overlay was applied with ``update`` and overrode the committed answer.
+
+    That is not theoretical.  ``pool.images.json`` is append-only -- the
+    importer ``update``s entries in and never re-resolves one -- so a card
+    records whichever printing the catalog chose on the day its deck was
+    imported, and keeps it forever.  When Sheoldred, the Apocalypse was pinned
+    to the Dominaria United art, the committed answer changed and every
+    deployment that had imported her deck before the pin went on serving the
+    Secret Lair printing out of the overlay, with the pin merged and live.
     """
     from automtg.cards.images import (
         build_registry_images,
@@ -161,7 +208,8 @@ def _resolve_images(registry, index: CardIndex | None) -> dict[str, CardArt]:
     images = read_registry_images()
     if not images and index is not None:
         images = build_registry_images(registry, index)
-    images.update(read_registry_images(generated_images_path()))
+    for card_id, art in read_registry_images(generated_images_path()).items():
+        images.setdefault(card_id, art)
     return images
 
 
@@ -175,6 +223,7 @@ def build_store(registry, index: CardIndex | None, *, allow_fetch: bool = True) 
     return ArtStore(
         images=_resolve_images(registry, index),
         directory=art_dir(),
+        cache=art_cache_dir(),
         index=index,
         allow_fetch=allow_fetch,
     )

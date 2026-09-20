@@ -1295,11 +1295,18 @@ def _covered(card: CardDef, line: str) -> bool:
     # skip: `CardDef.any_number_in_deck` returns True only when the name inside
     # the printed sentence is the card's *own* name, so the words cannot be
     # claimed without the rule standing behind them. A card that merely quotes
-    # another card's sentence still fails the gate, and Nazgul's "A deck can
-    # have up to nine cards named Nazgul" -- a different limit, deliberately
-    # unparsed -- is not laundered through here either.
+    # another card's sentence still fails the gate.
     if card.any_number_in_deck and stripped.lower().startswith(
         "a deck can have any number of cards named"
+    ):
+        return True
+    # The same line with a ceiling on it -- Nazgul's "up to nine", Seven
+    # Dwarves' "up to seven". It is the same deck-construction rule and so has
+    # the same claimant, gated on `deck_copy_limit` having actually read a
+    # number off *this* card: a limit it could not parse falls back to 1 and is
+    # left residual rather than waved through on the strength of the words.
+    if card.deck_copy_limit not in (None, 1) and stripped.lower().startswith(
+        "a deck can have up to "
     ):
         return True
     # "12+ | {U}, {T}: Add {U} for each artifact you control." A station
