@@ -1812,6 +1812,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: add_mana needs 'mana' (or 'reflecting', or "
             f"'in_commander_identity', or 'split')"
         )
+    if op == "rename" and not str(effect.get("name") or "").strip():
+        # A rename to nothing would load, run, and leave the permanent answering
+        # to its printed name -- the printed line silently not happening.
+        raise DslError(f"{where}: rename needs a 'name' -- what the permanent becomes called")
+    if "name" in effect and op != "rename":
+        # Every other op that means anything by a name spells it inside a
+        # selector (`objects.name`) or a token id. A bare `name` elsewhere is
+        # read by nobody.
+        raise DslError(
+            f"{where}: a bare 'name' is read only by the rename op, not by {op!r}"
+        )
     if "persists_until_end_of_turn" in effect:
         # "Until end of turn, you don't lose this mana as steps and phases end."
         # Read only by the two ops that put mana in a pool: anywhere else the

@@ -616,6 +616,7 @@
   "reflexive_trigger",
   "regenerate",
   "remove_counters",
+  "rename",
   "repeat",
   "repeat_while",
   "replace_deaths",

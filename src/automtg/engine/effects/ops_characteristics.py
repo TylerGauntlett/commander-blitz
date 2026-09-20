@@ -49,6 +49,43 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
         add_subtypes(ctx.state, oid, subtypes)
 
 
+@register("rename")
+def op_rename(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…become a legendary Equipment artifact **named Everflame, Heroes'
+    Legacy**." The Irencrag.
+
+    Nothing in the engine could change a name. The characteristics pipeline has
+    no name layer at all, and `_matches_printed` says so where it tests
+    `selector.name`: "a name is the most printed characteristic there is and
+    nothing in the pipeline can change one".
+
+    So the name is written onto the **object** and read by `GameState.card_of`,
+    the single funnel that decides a permanent's current face -- which is where
+    a copy effect's 706.2 name override already lives. One place, and every
+    reader gets the new name at once: the characteristics layers, `selector.name`,
+    the legend rule and the serializer.
+
+    The two near misses are both the wrong shape. `change_text` rewrites
+    *creature types* and the loader refuses it anything else; `become_copy`'s
+    `except_name` renames a permanent that is copying something, which The
+    Irencrag is not -- it stays itself and is called something else.
+
+    Permanent for as long as the permanent is: `reset_permanent_state` clears
+    it, so a renamed artifact that dies comes back answering to its printed
+    name (400.7).
+    """
+    name = str(spec.get("name") or "")
+    if not name:
+        return
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Renamed")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.renamed_to = name
+    ctx.state.bump_chars()
+
+
 @register("change_text")
 def op_change_text(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Change the text of that creature by replacing all instances of one

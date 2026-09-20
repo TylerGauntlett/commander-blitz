@@ -141,6 +141,19 @@ class GameObject:
     #: The name the copy keeps, for the "except its name is…" clause. `None`
     #: takes the copied card's own name, which is the ordinary case.
     copying_name: str | None = None
+    #: "…**become a legendary Equipment artifact named Everflame, Heroes'
+    #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
+    #: effect and read by `GameState.card_of`, the one place a permanent's
+    #: current face is decided.
+    #:
+    #: Separate from `copying_name`, which is a *copy* effect's 706.2 override
+    #: and only means anything beside `copying`. This one renames the card the
+    #: permanent already is, with nothing copied at all.
+    #:
+    #: Cleared by `reset_permanent_state`: a permanent that left the
+    #: battlefield is a new object (400.7) and answers to its printed name
+    #: again.
+    renamed_to: str | None = None
     #: Whether the copy above expires at cleanup. Clone copies permanently;
     #: Gogo copies "until end of turn", and only that form is cleared.
     copying_until_eot: bool = False
@@ -901,6 +914,7 @@ class GameObject:
         # is: it is an answer about the arrival this reset is clearing the way
         # for, and `_enter_battlefield` clears it itself once it has been read.
         self.copying_name = None
+        self.renamed_to = None
         self.copying_until_eot = False
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the

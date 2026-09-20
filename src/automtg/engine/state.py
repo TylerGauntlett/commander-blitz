@@ -482,8 +482,22 @@ class GameState:
                 # override individual characteristics (706.2), and the name is
                 # the one this cycle overrides.
                 copied = replace(copied, name=obj.copying_name)
+            if obj.renamed_to is not None:
+                copied = replace(copied, name=obj.renamed_to)
             return copied
         card = self.registry.get(obj.def_id)
+        # "…become a legendary Equipment artifact **named Everflame, Heroes'
+        # Legacy**" (The Irencrag). Here, for the reason the copy above is here:
+        # this method is the single funnel every reader of a permanent's face
+        # goes through, so a rename shows up in the characteristics layers, in
+        # `selector.name`, in the legend rule and in the serializer at once.
+        #
+        # After the copy branch and applied to it as well, because a permanent
+        # that is both copying something and renamed answers to the rename --
+        # 706.2's override and this are the same kind of claim, and the later
+        # effect wins.
+        if obj.renamed_to is not None:
+            card = replace(card, name=obj.renamed_to)
         # A second castable face -- adventure, aftermath, a split half -- is
         # asked first, because it is the face the card is *currently being cast
         # as* and that is a narrower window than being transformed. Nothing

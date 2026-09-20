@@ -1407,6 +1407,33 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Changing a permanent's name
+
+```jsonc
+// The Irencrag
+{ "op": "rename", "name": "Everflame, Heroes' Legacy",
+  "objects": { "zone": "battlefield", "self_only": true } }
+```
+
+Nothing in the engine could change a name. The characteristics pipeline has no
+name layer at all, and `_matches_printed` says so where it tests
+`selector.name`: "a name is the most printed characteristic there is and nothing
+in the pipeline can change one."
+
+Both near misses are the wrong shape. `change_text` rewrites *creature types* and
+the loader refuses it anything else; `become_copy`'s `except_name` renames a
+permanent that is **copying** something (706.2's override), which this is not —
+the permanent stays itself and is called something else.
+
+So the name goes on the object and is read by `GameState.card_of`, the single
+funnel that decides a permanent's current face — where the copy override already
+lives. One place, and every reader gets it at once: the characteristics layers,
+`selector.name`, the legend rule and the serializer. Applied on top of a copy as
+well, since the two are the same kind of claim and the later one wins.
+
+`reset_permanent_state` clears it, so a renamed permanent that leaves the
+battlefield answers to its printed name again (400.7).
+
 ### A discount that asks what the spell or ability is aimed at
 
 ```jsonc
