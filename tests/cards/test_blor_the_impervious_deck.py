@@ -24,12 +24,18 @@ the card were mis-written.
 from __future__ import annotations
 
 from automtg.cards.registry import default_registry
-from automtg.engine.characteristics import abilities_of, chars
+from automtg.engine.characteristics import abilities_of, chars, protection_from
 from automtg.engine.costs import ability_mana, cost_reduction
-from automtg.engine.enums import ActionKind, Step
+from automtg.engine.enums import ActionKind, DecisionKind, Step
 from automtg.engine.mana import SYMBOL_INDEX
-from automtg.engine.primitives import attach, damage_permanent
-from tests.conftest import only_oid, pass_until
+from automtg.engine.player_statics import player_cant_cast_spells
+from automtg.engine.primitives import attach, damage_permanent, damage_player
+from tests.conftest import (
+    _default_answer,
+    count_on_battlefield,
+    only_oid,
+    pass_until,
+)
 
 GREEN = SYMBOL_INDEX["G"]
 
@@ -60,14 +66,90 @@ def board(builder, mine=(), theirs=(), lands=6, hand=(), attachments=()):
     return game
 
 
-def cast(game, card_id: str):
+def cast(game, card_id: str, *, accept: bool = False):
     action = next(
         a
         for a in game.legal_actions()
         if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == card_id
     )
     game.apply(action)
-    pass_until(game, lambda g: not g.state.stack and not g.state.pending_triggers)
+    settle(game, accept=accept)
+
+
+def settle(game, *, accept: bool = False, limit: int = 400) -> None:
+    """Let the stack empty. ``accept`` says yes to the "you may" halves.
+
+    `pass_until`'s default answer is the passive one, which declines every
+    `MAY` -- correct for a test that only wants the board to settle, and the
+    wrong answer for a card whose whole printed sentence is behind the prompt.
+    """
+    for _ in range(limit):
+        decision = game.pending()
+        if decision is None:
+            return
+        if accept and decision.kind is DecisionKind.MAY:
+            game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.YES))
+            continue
+        # Priority with nothing waiting is the end. The emptiness of the stack
+        # is *not* on its own: a triggered ability that asks its question
+        # before resolving leaves the stack and the trigger queue both empty
+        # while its decision is still pending, and a loop that stopped there
+        # would answer nothing and report that the card did nothing.
+        if (
+            decision.kind is DecisionKind.PRIORITY
+            and not game.state.stack
+            and not game.state.pending_triggers
+        ):
+            return
+        game.apply(_default_answer(game, decision))
+    raise AssertionError("the stack did not empty")
+
+
+def equip(game, equipment: str, creature: str, pid: int = 0) -> None:
+    """Attach an Equipment where its own equip ability would put it."""
+    assert attach(game.state, only_oid(game, equipment), only_oid(game, creature, pid=pid))
+    game.state.bump_chars()
+
+
+def swing(game, attacker: str, defender: int = 1, *, accept: bool = False) -> None:
+    """Declare ``attacker`` as an attacker and close the declaration."""
+    pass_until(
+        game,
+        lambda g: g.pending() is not None
+        and g.pending().kind is DecisionKind.DECLARE_ATTACKERS,
+    )
+    oid = only_oid(game, attacker)
+    game.apply(
+        next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ADD_ATTACKER
+            and a.source == oid
+            and any(t.kind == "player" and t.id == defender for t in a.targets)
+        )
+    )
+    game.apply(next(a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION))
+    settle(game, accept=accept)
+
+
+def connect(game, dealer: str, amount: int = 3, defender: int = 1, *, accept: bool = False):
+    """``dealer`` deals combat damage to a player -- the saboteur trigger.
+
+    `damage_player` rather than a real swing, for the reason
+    `test_combat_damage_to_planeswalker.py` gives: the event is what the card
+    listens to, and driving it directly keeps the position to the two permanents
+    the sentence is about.
+    """
+    damage_player(game.state, defender, amount, only_oid(game, dealer, pid=0), is_combat=True)
+    settle(game, accept=accept)
+
+
+def hand_ids(game, pid: int = 0) -> list[str]:
+    return [game.state.objects[o].def_id for o in game.state.players[pid].hand]
+
+
+def library_size(game, pid: int = 0) -> int:
+    return len(game.state.players[pid].library)
 
 
 class TestInquisitorsFlail:
@@ -232,3 +314,317 @@ class TestNaturalize:
             and any(r.id == wanted for r in a.targets)
         ]
         assert not aims
+
+
+class TestAdaptiveOmnitool:
+    """"Equipped creature gets +1/+1 for each artifact you control" and
+    "whenever equipped creature attacks, look at the top six." A count and an
+    attack trigger: the gate casts the Omnitool onto an empty board and nothing
+    it could count is there, and nothing attacks afterwards."""
+
+    def position(self, builder, theirs=()):
+        game = board(
+            builder, mine=["adaptive_omnitool", "sol_ring", "grizzly_bears"], theirs=list(theirs)
+        )
+        equip(game, "adaptive_omnitool", "grizzly_bears")
+        return game
+
+    def test_the_bonus_counts_every_artifact_you_control(self, builder):
+        """The Omnitool counts itself and the Sol Ring, so a 2/2 bear is a 4/4."""
+        game = self.position(builder)
+        assert chars(game.state, only_oid(game, "grizzly_bears", pid=0)).power == 4
+
+    def test_an_opponents_artifact_is_not_yours(self, builder):
+        """The near miss: "you control" is half the sentence, and a count that
+        read the whole battlefield would make this bear a 5/5."""
+        game = board(
+            builder, mine=["adaptive_omnitool", "sol_ring", "grizzly_bears"], theirs=["sol_ring"]
+        )
+        equip(game, "adaptive_omnitool", "grizzly_bears")
+        assert chars(game.state, only_oid(game, "grizzly_bears", pid=0)).power == 4
+
+
+class TestBloodforgedBattleAxe:
+    """"Whenever equipped creature deals combat damage to a player, create a
+    token that's a copy of this Equipment." The gate never reaches combat, so
+    the copy is unobserved there."""
+
+    def position(self, builder):
+        game = board(builder, mine=["bloodforged_battle_axe", "grizzly_bears"])
+        equip(game, "bloodforged_battle_axe", "grizzly_bears")
+        return game
+
+    def test_a_connecting_hit_copies_the_axe(self, builder):
+        game = self.position(builder)
+        connect(game, "grizzly_bears")
+        assert count_on_battlefield(game, "bloodforged_battle_axe", 0) == 2
+
+    def test_noncombat_damage_does_not(self, builder):
+        """The near miss. The card says *combat* damage, and an Axe that copied
+        itself off a drain spell would be a different card."""
+        game = self.position(builder)
+        damage_player(game.state, 1, 3, only_oid(game, "grizzly_bears", pid=0), is_combat=False)
+        settle(game)
+        assert count_on_battlefield(game, "bloodforged_battle_axe", 0) == 1
+
+
+class TestBoneSabres:
+    """"Whenever equipped creature attacks, put four +1/+1 counters on it." An
+    attack trigger, and nothing in the gate's sandbox attacks."""
+
+    def test_attacking_puts_four_counters_on_the_equipped_creature(self, builder):
+        game = board(builder, mine=["bone_sabres", "grizzly_bears"])
+        equip(game, "bone_sabres", "grizzly_bears")
+        swing(game, "grizzly_bears")
+        bear = only_oid(game, "grizzly_bears", pid=0)
+        assert game.state.objects[bear].counters.get("+1/+1") == 4
+        assert chars(game.state, bear).power == 6
+
+    def test_an_unequipped_attacker_gets_nothing(self, builder):
+        """The near miss: the trigger is scoped to the creature the Sabres are
+        on, not to every creature you attack with."""
+        game = board(builder, mine=["bone_sabres", "grizzly_bears", "llanowar_elves"])
+        equip(game, "bone_sabres", "grizzly_bears")
+        swing(game, "llanowar_elves")
+        elves = only_oid(game, "llanowar_elves", pid=0)
+        assert not game.state.objects[elves].counters.get("+1/+1")
+
+
+class TestBusterSword:
+    """"Whenever equipped creature deals combat damage to a player, draw a
+    card, then you may cast a spell from your hand with mana value less than or
+    equal to that damage." A saboteur trigger with a bound read off the damage,
+    and the gate reaches neither half."""
+
+    def position(self, builder, hand=()):
+        game = board(builder, mine=["buster_sword", "grizzly_bears"], hand=list(hand))
+        equip(game, "buster_sword", "grizzly_bears")
+        return game
+
+    def test_the_equipped_creature_gets_plus_three_two(self, builder):
+        game = self.position(builder)
+        stats = chars(game.state, only_oid(game, "grizzly_bears", pid=0))
+        assert (stats.power, stats.toughness) == (5, 4)
+
+    def test_a_connecting_hit_draws(self, builder):
+        game = self.position(builder)
+        before = library_size(game)
+        connect(game, "grizzly_bears")
+        assert library_size(game) == before - 1
+
+    def test_noncombat_damage_draws_nothing(self, builder):
+        """The near miss: the trigger reads "combat damage"."""
+        game = self.position(builder)
+        before = library_size(game)
+        damage_player(game.state, 1, 3, only_oid(game, "grizzly_bears", pid=0), is_combat=False)
+        settle(game)
+        assert library_size(game) == before
+
+
+class TestMaskOfMemory:
+    """"Whenever equipped creature deals combat damage to a player, you may
+    draw two cards. If you do, discard a card." Optional, so the passive answer
+    the gate would give is "no" -- the printed sentence is behind the yes."""
+
+    def position(self, builder):
+        game = board(builder, mine=["mask_of_memory", "grizzly_bears"], hand=["forest"])
+        equip(game, "mask_of_memory", "grizzly_bears")
+        return game
+
+    def test_saying_yes_draws_two_and_discards_one(self, builder):
+        game = self.position(builder)
+        before_library = library_size(game)
+        before_hand = len(game.state.players[0].hand)
+        connect(game, "grizzly_bears", accept=True)
+        assert library_size(game) == before_library - 2
+        assert len(game.state.players[0].hand) == before_hand + 1
+
+    def test_saying_no_draws_nothing(self, builder):
+        """The near miss. "You may" is the whole first clause, and a Mask that
+        drew regardless would be a strictly better card."""
+        game = self.position(builder)
+        before = library_size(game)
+        connect(game, "grizzly_bears")
+        assert library_size(game) == before
+
+
+class TestSwordOfFireAndIce:
+    """"+2/+2 and protection from red and from blue", and a saboteur trigger
+    that deals 2 and draws. The statics the gate can see; the trigger it
+    cannot."""
+
+    def position(self, builder):
+        game = board(
+            builder,
+            mine=["sword_of_fire_and_ice", "grizzly_bears"],
+            theirs=["grizzly_bears"],
+        )
+        equip(game, "sword_of_fire_and_ice", "grizzly_bears")
+        return game
+
+    def test_the_equipped_creature_is_protected_from_red_and_blue(self, builder):
+        game = self.position(builder)
+        assert protection_from(game.state, only_oid(game, "grizzly_bears", pid=0)) >= {"R", "U"}
+
+    def test_it_is_not_protected_from_green(self, builder):
+        """The near miss: two named colours, not all of them -- and this is a
+        mono-green deck, where a Sword that blanked green would read as working."""
+        game = self.position(builder)
+        assert "G" not in protection_from(game.state, only_oid(game, "grizzly_bears", pid=0))
+
+    def test_a_connecting_hit_draws_a_card(self, builder):
+        game = self.position(builder)
+        before = library_size(game)
+        connect(game, "grizzly_bears", accept=True)
+        assert library_size(game) == before - 1
+
+
+class TestHammerOfNazahn:
+    """"Whenever this or another Equipment you control enters, you may attach
+    that Equipment to target creature you control." An enters trigger about a
+    *later* permanent, which the gate's one-card sandbox cannot produce."""
+
+    def test_the_equipped_creature_is_indestructible(self, builder):
+        game = board(builder, mine=["hammer_of_nazahn", "grizzly_bears"])
+        equip(game, "hammer_of_nazahn", "grizzly_bears")
+        bear = only_oid(game, "grizzly_bears", pid=0)
+        assert "indestructible" in chars(game.state, bear).keywords
+        assert chars(game.state, bear).power == 4
+
+    def test_a_later_equipment_attaches_itself_for_free(self, builder):
+        """The sentence the gate cannot reach: the Hammer is already out, and a
+        second Equipment entering finds the creature without its equip cost."""
+        game = board(
+            builder, mine=["hammer_of_nazahn", "grizzly_bears"], hand=["basilisk_collar"]
+        )
+        cast(game, "basilisk_collar", accept=True)
+        collar = only_oid(game, "basilisk_collar", pid=0)
+        assert game.state.objects[collar].attached_to == only_oid(game, "grizzly_bears", pid=0)
+
+
+class TestNettlecyst:
+    """Living weapon, and a count over two types. The germ the gate does see;
+    the "and/or" in the count is the part that could be half-written."""
+
+    def test_living_weapon_brings_its_own_creature(self, builder):
+        game = board(builder, mine=[], hand=["nettlecyst"])
+        cast(game, "nettlecyst")
+        germ = only_oid(game, "germ_0_0_b", pid=0)
+        cyst = only_oid(game, "nettlecyst", pid=0)
+        assert game.state.objects[cyst].attached_to == germ
+        # A 0/0 that lives only because the Equipment that made it is on it:
+        # the count is at least the Nettlecyst itself.
+        assert chars(game.state, germ).power >= 1
+
+    def test_the_count_takes_artifacts_and_enchantments_both(self, builder):
+        """"For each artifact **and/or** enchantment" is a disjunction. A
+        Nettlecyst counting only artifacts is the near miss, and in this deck --
+        full of both -- it would still look like it worked."""
+        game = board(
+            builder,
+            mine=["nettlecyst", "grizzly_bears", "sol_ring", "keen_sense"],
+            attachments=[("keen_sense", "grizzly_bears")],
+        )
+        equip(game, "nettlecyst", "grizzly_bears")
+        # Nettlecyst, Sol Ring, Keen Sense -- two artifacts and one enchantment.
+        assert chars(game.state, only_oid(game, "grizzly_bears", pid=0)).power == 5
+
+
+class TestStaffOfTitania:
+    """"+X/+X where X is the number of Forests you control", and a token on
+    attack. The deck runs 36 lands, so the count is the card."""
+
+    def position(self, builder):
+        game = board(builder, mine=["staff_of_titania", "grizzly_bears"], lands=4)
+        equip(game, "staff_of_titania", "grizzly_bears")
+        return game
+
+    def test_the_bonus_counts_forests(self, builder):
+        game = self.position(builder)
+        assert chars(game.state, only_oid(game, "grizzly_bears", pid=0)).power == 6
+
+    def test_attacking_makes_a_forest_dryad(self, builder):
+        game = self.position(builder)
+        before = count_on_battlefield(game, "forest_dryad_1_1_g_land", 0)
+        swing(game, "grizzly_bears")
+        assert count_on_battlefield(game, "forest_dryad_1_1_g_land", 0) == before + 1
+
+
+class TestPowerFist:
+    """"Equipped creature has trample and 'whenever this creature deals combat
+    damage to a player, put that many +1/+1 counters on it.'" A granted
+    ability, so the trigger has to survive being handed to another permanent."""
+
+    def position(self, builder):
+        game = board(builder, mine=["power_fist", "grizzly_bears"])
+        equip(game, "power_fist", "grizzly_bears")
+        return game
+
+    def test_the_equipped_creature_tramples(self, builder):
+        game = self.position(builder)
+        assert "trample" in chars(game.state, only_oid(game, "grizzly_bears", pid=0)).keywords
+
+    def test_a_connecting_hit_puts_that_many_counters_on_it(self, builder):
+        game = self.position(builder)
+        connect(game, "grizzly_bears", amount=3)
+        bear = only_oid(game, "grizzly_bears", pid=0)
+        assert game.state.objects[bear].counters.get("+1/+1") == 3
+
+    def test_an_unequipped_creature_gets_none(self, builder):
+        """The near miss: the ability is granted to the equipped creature, not
+        printed on the Fist for everything you control."""
+        game = board(builder, mine=["power_fist", "grizzly_bears", "llanowar_elves"])
+        equip(game, "power_fist", "grizzly_bears")
+        connect(game, "llanowar_elves", amount=3)
+        elves = only_oid(game, "llanowar_elves", pid=0)
+        assert not game.state.objects[elves].counters.get("+1/+1")
+
+
+class TestBasiliskCollar:
+    """"Equipped creature has deathtouch and lifelink." Two keywords, and the
+    Collar is the deck's combo piece with every damage trigger in it."""
+
+    def test_it_grants_both_halves(self, builder):
+        game = board(builder, mine=["basilisk_collar", "grizzly_bears"])
+        equip(game, "basilisk_collar", "grizzly_bears")
+        granted = chars(game.state, only_oid(game, "grizzly_bears", pid=0)).keywords
+        assert {"deathtouch", "lifelink"} <= set(granted)
+
+    def test_an_unequipped_creature_has_neither(self, builder):
+        """The near miss: `affects: {attached: true}` is the whole scope, and a
+        Collar that granted them to everything would read as working here."""
+        game = board(builder, mine=["basilisk_collar", "grizzly_bears", "llanowar_elves"])
+        equip(game, "basilisk_collar", "grizzly_bears")
+        granted = chars(game.state, only_oid(game, "llanowar_elves", pid=0)).keywords
+        assert not {"deathtouch", "lifelink"} & set(granted)
+
+
+class TestConquerorsFlail:
+    """"+1/+1 for each color among permanents you control", and "your opponents
+    can't cast spells during your turn". A count over colours and a lock, and
+    the gate casts the Flail onto a board with neither."""
+
+    def test_mono_green_pays_exactly_one(self, builder):
+        """The deck is mono-green: one colour among permanents, so +1/+1. A
+        Flail that counted permanents rather than colours would be enormous."""
+        game = board(
+            builder, mine=["conqueror_s_flail", "grizzly_bears", "llanowar_elves"], lands=6
+        )
+        equip(game, "conqueror_s_flail", "grizzly_bears")
+        assert chars(game.state, only_oid(game, "grizzly_bears", pid=0)).power == 3
+
+    def test_attached_it_locks_the_opponent_out_of_your_turn(self, builder):
+        game = board(builder, mine=["conqueror_s_flail", "grizzly_bears"])
+        equip(game, "conqueror_s_flail", "grizzly_bears")
+        assert player_cant_cast_spells(game.state, 1)
+
+    def test_unattached_it_locks_nobody(self, builder):
+        """The near miss: "as long as this Equipment is attached to a creature"
+        is a condition, not scenery."""
+        game = board(builder, mine=["conqueror_s_flail", "grizzly_bears"])
+        assert not player_cant_cast_spells(game.state, 1)
+
+    def test_it_never_locks_you(self, builder):
+        game = board(builder, mine=["conqueror_s_flail", "grizzly_bears"])
+        equip(game, "conqueror_s_flail", "grizzly_bears")
+        assert not player_cant_cast_spells(game.state, 0)
