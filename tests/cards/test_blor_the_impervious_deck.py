@@ -26,7 +26,12 @@ from __future__ import annotations
 import pytest
 
 from automtg.cards.registry import default_registry
-from automtg.engine.characteristics import abilities_of, chars, protection_from
+from automtg.engine.characteristics import (
+    abilities_of,
+    chars,
+    protection_from,
+    ward_abilities,
+)
 from automtg.engine.costs import (
     ability_mana,
     activate_mana_ability,
@@ -687,6 +692,35 @@ class TestPowerFist:
         connect(game, "llanowar_elves", amount=3)
         elves = only_oid(game, "llanowar_elves", pid=0)
         assert not game.state.objects[elves].counters.get("+1/+1")
+
+
+class TestLavaspurBoots:
+    """"Equipped creature gets +1/+0 and has haste and ward {1}." Three
+    statics on one printed line, and ward is the one that is not a keyword --
+    it carries a cost, so it lives in its own ability list rather than in
+    `chars().keywords`."""
+
+    def test_it_grants_haste_and_the_bonus(self, builder):
+        game = board(builder, mine=["lavaspur_boots", "grizzly_bears"])
+        equip(game, "lavaspur_boots", "grizzly_bears")
+        bear = only_oid(game, "grizzly_bears", pid=0)
+        assert "haste" in chars(game.state, bear).keywords
+        assert chars(game.state, bear).power == 3
+
+    def test_it_grants_ward(self, builder):
+        game = board(builder, mine=["lavaspur_boots", "grizzly_bears"])
+        equip(game, "lavaspur_boots", "grizzly_bears")
+        assert ward_abilities(game.state, only_oid(game, "grizzly_bears", pid=0))
+
+    def test_an_unequipped_creature_gets_none_of_it(self, builder):
+        """The near miss: all three are scoped to the equipped creature, and
+        haste on the team would be a meaningfully better card in a deck that
+        casts its commander early."""
+        game = board(builder, mine=["lavaspur_boots", "grizzly_bears", "llanowar_elves"])
+        equip(game, "lavaspur_boots", "grizzly_bears")
+        elves = only_oid(game, "llanowar_elves", pid=0)
+        assert "haste" not in chars(game.state, elves).keywords
+        assert not ward_abilities(game.state, elves)
 
 
 class TestBasiliskCollar:
