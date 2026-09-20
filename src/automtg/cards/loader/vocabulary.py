@@ -675,7 +675,9 @@ WAS_CAST_TRIGGERS = frozenset({"self_enters"})
 #: commander you own", a **maximum** rather than a sum and so its own key --
 #: written as a `count` or a `total_power` it would add two partners' mana
 #: values together and quietly hand out a bigger discount than the card says.
-COST_REDUCTION_KEYS = frozenset({"count", "total_power", "amount", "greatest_mana_value"})
+COST_REDUCTION_KEYS = frozenset(
+    {"count", "total_power", "amount", "greatest_mana_value", "total_mana_value"}
+)
 
 #: Zones a cost reduction's filter may count.  **Imported** from
 #: `costs.REDUCTION_ZONES`, which is what actually walks them, rather than

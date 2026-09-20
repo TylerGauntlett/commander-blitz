@@ -34,6 +34,7 @@
    "amount",
    "count",
    "greatest_mana_value",
+   "total_mana_value",
    "total_power"
   ],
   "COST_REDUCTION_REFUSED_FILTER_KEYS": [

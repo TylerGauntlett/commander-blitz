@@ -64,6 +64,8 @@ def reduction_amount(
       that.
     - ``{"count": {filter}}`` -- "{1} less for each Vampire you control".
     - ``{"total_power": {filter}}`` -- Ghalta.
+    - ``{"total_mana_value": {filter}}`` -- Excalibur, Sword of Eden, "where X
+      is the total mana value of historic permanents you control".
     - ``{"greatest_mana_value": {filter}}`` -- Visions of Glory, "where X is the
       greatest mana value of a commander you own".  A **maximum**, which is why
       it is a fourth shape rather than a filter on `count`: the other two sum,
@@ -100,6 +102,22 @@ def reduction_amount(
         return sum(
             max(0, chars(state, oid).power)
             for oid in _reduction_matches(state, pid, spec["total_power"], source_oid)
+        )
+    if "total_mana_value" in spec:
+        # "…where X is the **total** mana value of historic permanents you
+        # control" -- Excalibur, Sword of Eden. The mana-value analogue of
+        # `total_power`, and a separate key from `greatest_mana_value` for that
+        # key's own reason read the other way round: a maximum must not sum and
+        # a sum must not take a maximum. Two permanents of mana value 3 and 5
+        # are 8 here and 5 there, and each printed card means exactly one.
+        #
+        # The **printed** mana value, off the card rather than the object -- the
+        # same face `greatest_mana_value` reads, because a mana value is a
+        # property of a card and nothing in the characteristics pipeline writes
+        # one.
+        return sum(
+            state.card(oid).mana_value
+            for oid in _reduction_matches(state, pid, spec["total_mana_value"], source_oid)
         )
     if "greatest_mana_value" in spec:
         # The **printed** mana value, off the card rather than the object, and

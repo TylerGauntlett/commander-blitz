@@ -1407,6 +1407,30 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A reduction that sums mana values
+
+```jsonc
+// Excalibur, Sword of Eden
+"cost_reduction": {
+  "total_mana_value": { "controller": "you", "types": ["Artifact"] }
+}
+```
+
+The fifth reduction shape, beside `count`, `total_power`, `amount` and
+`greatest_mana_value`, and not one of the four says this:
+
+* `greatest_mana_value` reads mana values and takes a **maximum** — its own
+  docstring says it is a separate key precisely so it does not sum. Two
+  permanents of mana value 3 and 5 are 5 there and 8 here.
+* `total_power` sums, but sums *power*, which the board this card is printed for
+  mostly has none of: a Saga and a Signet are power 0 and mana value 3 and 2.
+* `count` gives 1 per permanent, and `amount` is a flat number needing a
+  condition.
+
+So it is the mana-value analogue of `total_power`. It reads the **printed** mana
+value off the card, the same face `greatest_mana_value` reads: a mana value is a
+property of a card and nothing in the characteristics pipeline writes one.
+
 ### A target pool that only exists once X is known
 
 ```jsonc
