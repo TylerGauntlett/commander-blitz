@@ -8,7 +8,7 @@ the layer engine itself stays in ``characteristics``.
 
 from __future__ import annotations
 
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef
@@ -619,7 +619,9 @@ def block_alone_forbidden(state: GameState, oid: int) -> bool:
     return _alone_forbidden(state, oid, "cant_block_alone")
 
 
-def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+def spell_cost_reduction(
+    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 
     "Creature spells with flying you cast cost {1} less to cast." The card-level
@@ -636,6 +638,14 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     Returns a total, clamped and applied by `costs.cost_reduction` -- the one
     function both legality and payment already call, so a spell offered at the
     reduced price is also paid at it.
+
+    ``targeting`` is the clause that reads the **cast** rather than the board --
+    "Aura spells you cast *that target enchanted creature*" (Strong Back) -- and
+    is matched against the refs the cast chose, as an ordinary static filter
+    resolved against this permanent. ``targets`` is ``None`` while the price is
+    a gate asked before any target exists, and the clause is read generously
+    then; see `ability_cost_reduction`, which takes the same shape for the same
+    reason.
     """
     total = 0
     for source_obj, static in _battlefield_statics(state):
@@ -660,12 +670,27 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if not _matches_printed(card, resolved):
             continue
+        if (
+            (aimed := static.get("targeting")) is not None
+            and targets is not None
+            and not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            )
+        ):
+            continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
 
 
 def ability_cost_reduction(
-    state: GameState, pid: int, ability, source_oid: int | None
+    state: GameState,
+    pid: int,
+    ability,
+    source_oid: int | None,
+    targets: Sequence[Any] | None = None,
 ) -> int:
     """How much less ``pid`` pays to activate ``ability`` because of the board.
 
@@ -684,6 +709,21 @@ def ability_cost_reduction(
     otherwise indistinguishable from any other that attaches something.
     ``affects`` says whose permanent prints it, matched as an ordinary static
     filter against the permanent the ability is on.
+
+    ``targeting`` is the third clause and the one that reads the *activation*
+    rather than the board: "equip abilities you activate **that target
+    enchanted creature**". The filter is matched against the refs the activation
+    actually chose, and ``{"attached": true}`` resolves against the static's own
+    source, so it means the creature this Aura enchants.
+
+    ``targets`` is ``None`` when the price is being asked **before** the targets
+    are known -- `legality._ability_aims` gates on payability once, before it
+    enumerates a single target tuple -- and a `targeting` clause is then read
+    **generously**, as though it applied. That is the only reading a gate can
+    take: refusing there would drop an activation that is affordable at the
+    discounted price, and the per-aim check below prices each tuple exactly, so
+    nothing unaffordable survives to be offered. `pay` is handed the action's
+    own targets, so the charge is the number the offer showed.
 
     Returns a total, clamped and applied by `costs.ability_mana` -- the one
     function `can_pay` and `pay` both reach, so an ability offered at the
@@ -710,6 +750,17 @@ def ability_cost_reduction(
             obj = state.objects.get(source_oid) if source_oid is not None else None
             if obj is None or not _matches(state, obj, source_obj, filt):
                 continue
+        if (
+            (aimed := static.get("targeting")) is not None
+            and targets is not None
+            and not any(
+                (obj := state.objects.get(getattr(ref, "id", -1))) is not None
+                and _matches(state, obj, source_obj, aimed)
+                for ref in targets
+                if getattr(ref, "kind", "") == "object"
+            )
+        ):
+            continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
 

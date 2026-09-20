@@ -17,8 +17,16 @@ if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
 
 
-def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
+def cost_reduction(state: GameState, pid: int, card: CardDef, targets=None) -> int:
     """How much less this card costs its controller right now.
+
+    ``targets`` is what the cast actually aimed at, when it is known. A
+    discount whose clause reads them -- "Aura spells you cast **that target
+    enchanted creature** cost {3} less" -- is read generously while it is
+    ``None``, which is the only reading a gate can take: legality asks whether
+    the card is castable at all before it enumerates a target tuple, and
+    refusing there would drop a spell that is affordable at the discounted
+    price. Each offered cast is then priced with its own targets.
 
     Generic only, and never below zero: "costs {X} less" does not touch coloured
     pips, which is both what the rules say and the only thing the payment solver
@@ -31,7 +39,7 @@ def cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     # permanents. The statics are Warden of Evos Isle -- "creature spells with
     # flying YOU CAST cost {1} less", discounting a different card, picked out
     # by that card's own printed face.
-    total = spell_cost_reduction(state, pid, card)
+    total = spell_cost_reduction(state, pid, card, targets)
     return total + reduction_amount(state, pid, card.cost_reduction)
 
 

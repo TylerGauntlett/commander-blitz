@@ -8936,6 +8936,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "strong_back": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stumpsquall_hydra": {
     "battlefield_count": 33,
     "counters": {

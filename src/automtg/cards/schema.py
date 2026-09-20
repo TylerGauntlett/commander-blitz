@@ -447,6 +447,12 @@ class AbilityModel(BaseModel):
     #: **you** activate". The *activating player*, not the permanent's
     #: controller: an opponent equipping your Equipment is their activation.
     activated_by: str | None = None
+    #: `ability_cost_reduction`: what the activation must be **aimed at** --
+    #: "equip abilities you activate **that target enchanted creature**".
+    #: Matched against the refs the activation chose, as an ordinary static
+    #: filter resolved against this permanent, so ``{"attached": true}`` is the
+    #: creature this Aura enchants.
+    targeting: dict[str, Any] | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback

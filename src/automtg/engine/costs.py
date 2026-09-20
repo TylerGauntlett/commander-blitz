@@ -768,6 +768,7 @@ def ability_mana(
     x: int = 0,
     source_oid: int | None = None,
     ability=None,
+    targets=None,
 ) -> Requirement:
     """What this ability's mana half actually costs right now.
 
@@ -806,7 +807,7 @@ def ability_mana(
     # about the same activation, and the printed answer is that both apply.
     from .player_statics import ability_cost_reduction
 
-    less += ability_cost_reduction(state, pid, ability, source_oid)
+    less += ability_cost_reduction(state, pid, ability, source_oid, targets)
     if not less:
         return req
     return req.with_generic(req.generic - less)
@@ -873,6 +874,7 @@ def life_for_mana_range(
     extra_generic: int = 0,
     purpose: SpendPurpose | None = None,
     ability=None,
+    targets=None,
 ) -> tuple[ManaCost, int, int] | None:
     """How many of this cost's Phyrexian pips may be paid with life, or ``None``.
 
@@ -901,7 +903,13 @@ def life_for_mana_range(
     for bought in range(most + 1):
         remaining, _ = mana.paying_phyrexian(bought)
         req = ability_mana(
-            state, pid, replace(cost, mana=remaining), x, source_oid, ability=ability
+            state,
+            pid,
+            replace(cost, mana=remaining),
+            x,
+            source_oid,
+            ability=ability,
+            targets=targets,
         )
         if extra_generic:
             req = req.with_generic(req.generic + extra_generic)
@@ -933,6 +941,7 @@ def can_pay(
     x: int = 0,
     purpose: SpendPurpose | None = None,
     ability=None,
+    targets=None,
 ) -> bool:
     """Can this player pay every part of ``cost`` right now?
 
@@ -1058,14 +1067,23 @@ def can_pay(
             # cost is payable if any number of them leaves a payable remainder.
             if (
                 life_for_mana_range(
-                    state, pid, cost, source_oid, x=x, purpose=purpose, ability=ability
+                    state,
+                    pid,
+                    cost,
+                    source_oid,
+                    x=x,
+                    purpose=purpose,
+                    ability=ability,
+                    targets=targets,
                 )
                 is None
             ):
                 return False
         elif (
             solve_payment(
-                ability_mana(state, pid, cost, x, source_oid, ability=ability),
+                ability_mana(
+                    state, pid, cost, x, source_oid, ability=ability, targets=targets
+                ),
                 player.mana_pool,
                 sources,
             )
@@ -1317,6 +1335,7 @@ def pay(
     bindings: dict[str, Any] | None = None,
     life_for_mana: bool = True,
     ability=None,
+    targets=None,
 ) -> Generator[Any, list[int], bool]:
     """Pay a cost, asking the player for any choices it requires.
 
@@ -1390,7 +1409,7 @@ def pay(
                 bought = fewest + (picked[0] if picked else 0)
             remaining, phyrexian_life = mana.paying_phyrexian(bought)
             cost = replace(cost, mana=remaining)
-    req = ability_mana(state, pid, cost, x, source_oid, ability=ability)
+    req = ability_mana(state, pid, cost, x, source_oid, ability=ability, targets=targets)
     if extra_generic:
         # Clamped at zero: `extra_generic` is negative for a cost *reduction*,
         # and "costs {X} less" never reaches through the generic part into the

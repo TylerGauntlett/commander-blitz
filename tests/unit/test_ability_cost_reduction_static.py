@@ -24,6 +24,14 @@ answer is that both apply.
 `affects_abilities` names the class, which is what `Ability.is_equip` exists
 for -- the reconfigure permanent in the pool is the near miss, an activated,
 sorcery-speed ability whose whole effect is an attach, and it is not discounted.
+
+`targeting` is the third clause, and the one that reads the **activation**
+rather than the board: "equip abilities you activate *that target enchanted
+creature*". That makes the price a question about which creature is being
+equipped, which is why `ability_mana` takes the chosen targets and why legality
+prices each aim separately -- its first `can_pay` is a *gate*, asked before a
+single target tuple exists, and reads the clause generously so an activation
+that is affordable once discounted is not dropped before it can be offered.
 """
 
 from __future__ import annotations
@@ -33,14 +41,16 @@ import pytest
 from automtg.cards.loader import compile_card
 from automtg.cards.schema import CardModel
 from automtg.engine.costs import ability_mana
-from automtg.engine.enums import Step
+from automtg.engine.enums import ActionKind, Step
 from automtg.engine.errors import DslError
 from tests.conftest import only_oid
 
 AURA = "t_acr_aura"  # equip abilities you activate cost {3} less
 BLADE = "t_acr_blade"  # equip {5}
 RECONFIG = "t_acr_reconfig"  # reconfigure {5} -- an attach that is not equip
+AIMED = "t_acr_aimed"  # the same discount, only for equips aimed at what it is on
 BEAR = "t_acr_bear"
+OTHER = "t_acr_other_bear"
 
 
 def board(builder, mine=(), theirs=()):
@@ -99,6 +109,80 @@ class TestWhatItDoesNotDiscount:
     def test_your_aura_does_not_discount_an_opponents_activation(self, builder):
         game = board(builder, mine=[AURA, BLADE])
         assert price(game, BLADE, pid=1) == 5
+
+
+class TestTheTargetingClause:
+    """"equip abilities you activate **that target enchanted creature**".
+
+    The clause reads the *activation* rather than the board, so the price is a
+    question about which creature is being equipped -- and that is why
+    `ability_mana` takes the chosen targets and legality prices each aim
+    separately.
+    """
+
+    def board(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["forest"] * 6)
+            .battlefield(0, [BLADE, BEAR, OTHER])
+            .battlefield(0, [AIMED])
+            .step(Step.PRECOMBAT_MAIN)
+            .build()
+        )
+        # It is attached to the first bear. By hand, because the discount is
+        # about what it is attached *to* and casting it is a different test --
+        # and it is an Equipment rather than the printed Aura because an Aura
+        # attached to nothing is buried by the state-based actions, while
+        # `attached` means the same thing on either.
+        from automtg.engine.primitives import attach
+
+        assert attach(game.state, only_oid(game, AIMED), only_oid(game, BEAR))
+        game.state.bump_chars()
+        return game
+
+    def equip_price(self, game, at: str) -> int:
+        """What equipping ``at`` costs, priced with that target in hand."""
+        oid = only_oid(game, BLADE)
+        ability = game.state.card_of(game.state.objects[oid]).abilities[-1]
+        wanted = only_oid(game, at)
+        action = next(
+            a
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE
+            and a.source == oid
+            and any(r.id == wanted for r in a.targets)
+        )
+        return ability_mana(
+            game.state,
+            0,
+            ability.cost,
+            0,
+            oid,
+            ability=ability,
+            targets=action.targets,
+        ).generic
+
+    def test_equipping_the_attached_creature_is_discounted(self, builder):
+        game = self.board(builder)
+        assert self.equip_price(game, BEAR) == 2
+
+    def test_equipping_anything_else_is_not(self, builder):
+        """The clause, and the whole difference between this card and the one
+        in the class above."""
+        game = self.board(builder)
+        assert self.equip_price(game, OTHER) == 5
+
+    def test_both_aims_are_still_offered(self, builder):
+        """The discount narrows the *price*, not the legality: equipping the
+        other creature is a legal activation at the printed cost."""
+        game = self.board(builder)
+        oid = only_oid(game, BLADE)
+        aimed_at = {
+            game.state.objects[a.targets[0].id].def_id
+            for a in game.legal_actions()
+            if a.kind is ActionKind.ACTIVATE and a.source == oid and a.targets
+        }
+        assert {BEAR, OTHER} <= aimed_at
 
 
 class TestTheLoaderPlacesIt:

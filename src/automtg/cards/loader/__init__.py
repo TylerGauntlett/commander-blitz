@@ -2389,11 +2389,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
             )
+
     elif model.activated_by is not None or model.affects_abilities is not None:
         raise DslError(
             f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
             f"ability_cost_reduction static, not on {model.effect!r}"
         )
+
+    # `targeting` belongs to **both** reductions: Strong Back prints one line of
+    # each, and "that target enchanted creature" is the same clause on either.
+    # `player_statics.spell_cost_reduction` and `ability_cost_reduction` read it
+    # the same way and from the same place.
+    if model.targeting is not None:
+        if model.effect not in ("ability_cost_reduction", "spell_cost_reduction"):
+            raise DslError(
+                f"{where}: 'targeting' asks what a spell or ability being priced "
+                f"is aimed at, so it only means anything on an "
+                f"ability_cost_reduction or spell_cost_reduction static, not on "
+                f"{model.effect!r}"
+            )
+        unknown = set(model.targeting) - STATIC_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.targeting: static filters may only read printed "
+                f"characteristics; unsupported keys {sorted(unknown)}"
+            )
 
     if model.effect == "replace_token_creation":
         # `affects` names permanents on the battlefield; the token this asks
@@ -2893,6 +2913,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects_abilities"] = dict(model.affects_abilities)
     if model.activated_by is not None:
         static["activated_by"] = model.activated_by
+    if model.targeting is not None:
+        static["targeting"] = dict(model.targeting)
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_source is not None:

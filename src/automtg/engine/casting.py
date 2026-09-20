@@ -919,12 +919,21 @@ def _priced_tuples(
     *,
     any_type: bool,
     any_color: bool = False,
+    targeted_discount: bool = False,
+    discount_for=None,
 ) -> list[tuple[tuple, tuple[int, ...]]]:
     """Each target tuple this line may be cast with, and what paying for it taps.
 
     For almost every card that is one payment shared by every tuple, because the
     targets do not change the price -- `req` is solved once and an unpayable
     line offers nothing.
+
+    **A targeted discount is the second exception**, beside strive below.
+    "Aura spells you cast **that target enchanted creature** cost {3} less"
+    (Strong Back) makes the price a question about *which* target was chosen, so
+    when such a static is on the board each tuple is solved on its own. The gate
+    that got this far read the clause generously -- it had no tuple to read --
+    and this is where a tuple that cannot actually be paid for is dropped.
 
     **Strive** is the exception: a tuple's price grows with its length, so the
     same line is affordable with one target and not with three. Each count is
@@ -945,7 +954,7 @@ def _priced_tuples(
     order the rest of targeting keeps.
     """
 
-    def solve(extra: int):
+    def solve(extra: int, aimed_at=None):
         total = cost
         if extra and card.strive is not None:
             surcharge = card.strive.scaled(extra)
@@ -958,7 +967,12 @@ def _priced_tuples(
         # would tap, which is what lets the client show a hovered spell eating
         # into the mana row.
         req = total.with_x(0)
-        payment = solve_payment(req.with_generic(req.generic + net_generic), pool, sources)
+        net = net_generic
+        if targeted_discount and discount_for is not None and aimed_at is not None:
+            # The generous discount the caller already netted out, put back and
+            # replaced by the one *this* tuple earns.
+            net = net_generic + discount_for(None) - discount_for(aimed_at)
+        payment = solve_payment(req.with_generic(req.generic + net), pool, sources)
         if payment is None:
             return None
         # Sources only.  `Payment` does not itemise which floating mana it spent,
@@ -967,6 +981,13 @@ def _priced_tuples(
         return tuple(dict.fromkeys(tap[0] for tap in payment.taps))
 
     if card.strive is None:
+        if targeted_discount:
+            priced_each: list[tuple[tuple, tuple[int, ...]]] = []
+            for targets in tuples:
+                pays = solve(0, targets)
+                if pays is not None:
+                    priced_each.append((targets, pays))
+            return priced_each
         pays = solve(0)
         return [] if pays is None else [(targets, pays) for targets in tuples]
 
@@ -1142,7 +1163,21 @@ def _cast_variant(
             # `branch` rather than `card.additional_cost`, so a modal cost prices
             # the option this line is offering and not some other one.
             cost = cost.plus(branch.mana.scaled(additional_times))
-        discount = cost_reduction(state, pid, card) + variant_less
+        # `targets=None` is the generous reading a *gate* has to take: a
+        # discount that asks what the spell is aiming at has no tuple to read
+        # yet, and refusing here would drop a spell that is affordable once
+        # discounted. `_priced_tuples` re-prices each tuple exactly.
+        def _discount_for(aimed_at):
+            return cost_reduction(state, pid, card, aimed_at) + variant_less
+
+        discount = _discount_for(None)
+        from .characteristics import _battlefield_statics
+
+        targeted_discount = any(
+            static.get("targeting") is not None
+            for _, static in _battlefield_statics(state)
+            if static.get("effect") == "spell_cost_reduction"
+        )
         # Convoke and delve reduce the generic part, exactly as a cost reduction
         # does -- and go through the same clamp, so neither can make a spell free
         # of its coloured pips.
@@ -1178,6 +1213,8 @@ def _cast_variant(
             sources,
             any_type=permission.playable_any_type and permission.playable_live(state.turn),
             any_color=permission.playable_any_color and permission.playable_live(state.turn),
+            targeted_discount=targeted_discount,
+            discount_for=_discount_for,
         )
         if not priced:
             continue

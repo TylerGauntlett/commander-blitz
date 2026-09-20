@@ -1407,6 +1407,40 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A discount that asks what the spell or ability is aimed at
+
+```jsonc
+// Strong Back, both halves
+{ "effect": "ability_cost_reduction", "affects_abilities": { "equip": true },
+  "activated_by": "you", "targeting": { "attached": true },
+  "amount": { "const": 3 } }
+{ "effect": "spell_cost_reduction",
+  "affects_spells": { "subtypes": ["Aura"], "controller": "you" },
+  "targeting": { "attached": true }, "amount": { "const": 3 } }
+```
+
+Every filter a reduction could read described the **board** — `affects_spells`
+is the spell's printed face, `affects` the permanents around it — so "that target
+enchanted creature" could only be softened into "every Aura you cast", which is a
+different and stronger card. `targeting` reads the *activation* instead: it is
+matched against the refs that were actually chosen, as an ordinary static filter
+resolved against this permanent, so `{"attached": true}` is the creature this
+Aura enchants.
+
+That makes the price a question about **which** permanent is being aimed at, and
+the plumbing follows from it: `costs.ability_mana` and `costs.cost_reduction`
+both take the chosen targets, `legality._ability_aims` prices each aim
+separately, and `casting._priced_tuples` — which already existed for strive,
+the other case where the targets change the price — solves each tuple on its own
+when such a static is on the board.
+
+**The gate reads it generously.** Legality asks whether the card or ability is
+payable at all *before* it enumerates a single target tuple, and there is no
+tuple to read there. `targets=None` therefore applies the discount, because
+refusing would drop an activation that is affordable once discounted; the
+per-tuple pass then drops any aim that cannot actually be paid for, so the offer
+and the charge still agree.
+
 ### A static that discounts another permanent's activated ability
 
 ```jsonc

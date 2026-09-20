@@ -787,7 +787,21 @@ def _ability_aims(
                 out_x.extend((value, (), targets) for targets in tuples)
             return out_x or None
         tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
-        return [(0, (), targets) for targets in tuples] if tuples else None
+        if not tuples:
+            return None
+        # Priced again, per tuple, because a discount may read what the
+        # activation is aiming at -- "equip abilities you activate **that target
+        # enchanted creature** cost {3} less". The gate above asked only whether
+        # *any* activation was payable, and read such a clause generously, so
+        # this is where an aim that cannot actually be paid for is dropped.
+        return [
+            (0, (), targets)
+            for targets in tuples
+            if can_pay(
+                state, pid, ability.cost, oid, x=0, purpose=purpose, ability=ability,
+                targets=targets,
+            )
+        ] or None
 
     # A **modal** activated ability whose bullets own their targets -- Phoenix
     # Down. 601.2b picks the mode before 601.2c declares its targets, and the

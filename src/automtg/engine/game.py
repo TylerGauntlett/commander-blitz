@@ -337,7 +337,10 @@ class Game:
         extra = commander_cost(state, oid) if from_command else 0
         # Netted against the tax rather than applied separately, so a commander
         # that also reduces its own cost is charged once. `pay` clamps at zero.
-        extra -= cost_reduction(state, pid, card)
+        # The targets the action actually carries, so a discount that reads
+        # them charges the number legality offered -- `_priced_tuples` priced
+        # this very tuple.
+        extra -= cost_reduction(state, pid, card, action.targets)
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on
@@ -837,8 +840,10 @@ class Game:
             purpose=purpose,
             bindings=bindings,
             # The same ability legality priced, so a discount written on another
-            # permanent is charged at the number it was offered at.
+            # permanent is charged at the number it was offered at -- and the
+            # same targets, for a discount that reads them.
             ability=ability,
+            targets=action.targets,
         )
         if not ok:  # pragma: no cover
             return

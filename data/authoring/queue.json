@@ -265442,12 +265442,12 @@
     },
     "Strong Back": {
       "edhrec_rank": 3190,
-      "gate": "template",
+      "gate": null,
       "name": "Strong Back",
-      "reason": "no template for: Equip abilities you activate that target enchanted creature cost {3} less to activate",
+      "reason": "",
       "scryfall_id": "06833c3e-8447-4900-9196-8a953dab3827",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Strong, the Brutish Thespian": {

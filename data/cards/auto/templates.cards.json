@@ -28,6 +28,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -43,8 +44,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [
@@ -505,6 +505,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -520,8 +521,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -810,8 +810,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -1131,6 +1130,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -1146,8 +1146,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -5604,8 +5603,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -7133,6 +7131,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -7148,8 +7147,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -7602,6 +7600,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -7617,8 +7616,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -8267,6 +8265,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -8282,8 +8281,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [
@@ -9192,8 +9190,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -9257,6 +9254,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -9272,8 +9270,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -9459,6 +9456,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -9474,8 +9472,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -9894,8 +9891,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -10903,8 +10899,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [
@@ -10953,6 +10948,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -10968,8 +10964,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -11034,6 +11029,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -11049,8 +11045,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -11200,6 +11195,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -11215,8 +11211,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [
@@ -12213,8 +12208,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -12399,6 +12393,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -12414,8 +12409,7 @@
               }
             }
           ],
-          "text": "Equip {4}",
-          "is_equip": true
+          "text": "Equip {4}"
         }
       ],
       "color_identity": [],
@@ -12819,6 +12813,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -12834,8 +12829,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -13465,8 +13459,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -15377,6 +15370,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -15392,8 +15386,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -17005,6 +16998,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -17020,8 +17014,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -17268,6 +17261,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -17283,8 +17277,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -18534,6 +18527,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -18549,8 +18543,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -18919,6 +18912,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -18934,8 +18928,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -19387,8 +19380,7 @@
               }
             }
           ],
-          "text": "Equip commander {3}",
-          "is_equip": true
+          "text": "Equip commander {3}"
         },
         {
           "cost": {
@@ -19418,8 +19410,7 @@
               }
             }
           ],
-          "text": "Equip {5}",
-          "is_equip": true
+          "text": "Equip {5}"
         }
       ],
       "color_identity": [],
@@ -20068,8 +20059,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -21536,8 +21526,7 @@
               }
             }
           ],
-          "text": "Equip {4}. This ability costs {3} less to activate if you're the monarch.",
-          "is_equip": true
+          "text": "Equip {4}. This ability costs {3} less to activate if you're the monarch."
         }
       ],
       "color_identity": [],
@@ -22153,6 +22142,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -22168,8 +22158,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [
@@ -22218,6 +22207,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -22233,8 +22223,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -23217,6 +23206,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -23232,8 +23222,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -23424,6 +23413,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -23439,8 +23429,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -30862,8 +30851,7 @@
               }
             }
           ],
-          "text": "Equip legendary creature {2}",
-          "is_equip": true
+          "text": "Equip legendary creature {2}"
         }
       ],
       "color_identity": [],
@@ -31021,6 +31009,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -31036,8 +31025,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -31220,6 +31208,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -31235,8 +31224,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [
@@ -34027,6 +34015,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -34042,8 +34031,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -34645,6 +34633,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -34660,8 +34649,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -38167,8 +38155,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -39782,8 +39769,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -41466,6 +41452,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -41481,8 +41468,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -41524,6 +41510,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -41539,8 +41526,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -42399,6 +42385,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -42414,8 +42401,7 @@
               }
             }
           ],
-          "text": "Equip {5}",
-          "is_equip": true
+          "text": "Equip {5}"
         }
       ],
       "color_identity": [],
@@ -42484,6 +42470,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -42499,8 +42486,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -43889,8 +43875,7 @@
               }
             }
           ],
-          "text": "Equip {4}",
-          "is_equip": true
+          "text": "Equip {4}"
         }
       ],
       "color_identity": [],
@@ -43984,6 +43969,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -43999,8 +43985,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [
@@ -44318,6 +44303,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -44333,8 +44319,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -44986,8 +44971,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -47166,6 +47150,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -47181,8 +47166,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -49554,8 +49538,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -50939,6 +50922,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -50954,8 +50938,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [
@@ -53874,6 +53857,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -53889,8 +53873,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -53946,6 +53929,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -53961,8 +53945,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -54983,6 +54966,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -54998,8 +54982,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [
@@ -55863,8 +55846,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -56294,6 +56276,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -56309,8 +56292,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -56903,6 +56885,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -56918,8 +56901,7 @@
               }
             }
           ],
-          "text": "Equip {0}",
-          "is_equip": true
+          "text": "Equip {0}"
         }
       ],
       "color_identity": [],
@@ -58687,6 +58669,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -58702,8 +58685,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -61067,6 +61049,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -61082,8 +61065,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -61721,6 +61703,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -61736,8 +61719,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -61817,8 +61799,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -67574,8 +67555,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -67617,6 +67597,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -67632,8 +67613,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -68676,6 +68656,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -68691,8 +68672,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -70128,6 +70108,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -70143,8 +70124,7 @@
               }
             }
           ],
-          "text": "Equip {5}",
-          "is_equip": true
+          "text": "Equip {5}"
         }
       ],
       "color_identity": [],
@@ -72528,8 +72508,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -73379,6 +73358,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -73394,8 +73374,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -74483,8 +74462,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -75326,8 +75304,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [
@@ -75631,8 +75608,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [
@@ -78717,6 +78693,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -78732,8 +78709,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [
@@ -81245,6 +81221,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -81260,8 +81237,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -89616,6 +89592,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -89631,8 +89608,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -89677,6 +89653,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -89692,8 +89669,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -90039,6 +90015,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -90054,8 +90031,7 @@
               }
             }
           ],
-          "text": "Equip {0}",
-          "is_equip": true
+          "text": "Equip {0}"
         }
       ],
       "color_identity": [],
@@ -91537,8 +91513,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -92289,6 +92264,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -92304,8 +92280,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -94609,6 +94584,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -94624,8 +94600,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -95717,8 +95692,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -97373,6 +97347,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -97388,8 +97363,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -97672,6 +97646,116 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "activated_by": "you",
+          "affects_abilities": {
+            "equip": true
+          },
+          "amount": {
+            "const": 3
+          },
+          "effect": "ability_cost_reduction",
+          "kind": "static",
+          "targeting": {
+            "attached": true
+          },
+          "text": "Equip abilities you activate that target enchanted creature cost {3} less to activate."
+        },
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Aura"
+            ]
+          },
+          "amount": {
+            "const": 3
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "targeting": {
+            "attached": true
+          },
+          "text": "Aura spells you cast that target enchanted creature cost {3} less to cast."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "attached_to_host": true,
+                  "controller": "any",
+                  "subtypes": [
+                    "Aura",
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "text": "Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.",
+          "toughness": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "attached_to_host": true,
+                  "controller": "any",
+                  "subtypes": [
+                    "Aura",
+                    "Equipment"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "strong_back",
+      "mana_cost": "{2}{G}",
+      "name": "Strong Back",
+      "oracle_text": "Enchant creature\nEquip abilities you activate that target enchanted creature cost {3} less to activate.\nAura spells you cast that target enchanted creature cost {3} less to cast.\nEnchanted creature gets +2/+2 for each Aura and Equipment attached to it.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "aura_target",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -99546,6 +99630,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -99562,8 +99647,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "id": "swiftfoot_boots",
@@ -99768,8 +99852,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -99828,6 +99911,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -99843,8 +99927,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -99953,8 +100036,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -106463,6 +106545,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -106478,8 +106561,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -107031,6 +107113,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -107046,8 +107129,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -108031,6 +108113,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -108046,8 +108129,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -111041,6 +111123,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -111056,8 +111139,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -112191,6 +112273,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -112206,8 +112289,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -112445,6 +112527,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -112460,8 +112543,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -112989,6 +113071,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -113004,8 +113087,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [],
@@ -114206,6 +114288,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -114221,8 +114304,7 @@
               }
             }
           ],
-          "text": "Equip {3}",
-          "is_equip": true
+          "text": "Equip {3}"
         }
       ],
       "color_identity": [],
@@ -114292,6 +114374,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -114307,8 +114390,7 @@
               }
             }
           ],
-          "text": "Equip {2}",
-          "is_equip": true
+          "text": "Equip {2}"
         }
       ],
       "color_identity": [],
@@ -115143,6 +115225,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -115158,8 +115241,7 @@
               }
             }
           ],
-          "text": "Equip {4}",
-          "is_equip": true
+          "text": "Equip {4}"
         }
       ],
       "color_identity": [],
@@ -117824,8 +117906,7 @@
               }
             }
           ],
-          "text": "Equip {1}",
-          "is_equip": true
+          "text": "Equip {1}"
         }
       ],
       "color_identity": [

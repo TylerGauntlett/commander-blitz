@@ -10,27 +10,24 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**27 cards** blocked by **35** capabilities.
+**26 cards** blocked by **32** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
-| [ability-cost-reduction](#ability-cost-reduction) | 1 | 3190 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [battle](#battle) | 1 | 686 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
-| [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
-| [equip](#equip) | 1 | 3190 | engine |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -102,22 +99,6 @@ Blocks **2** cards.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## ability-cost-reduction
-
-Blocks **1** card.
-
-- **(static_effect)** A battlefield static that discounts the activation cost of activated abilities printed on OTHER permanents, filtered by who activates them and by what the ability is attached/aimed at -- the mirror of `spell_cost_reduction`, but for activated abilities instead of spells
-  <br>Why the existing vocabulary won't do: `spell_cost_reduction` is the only cost-lowering static in `static_effects`, and `player_statics.spell_cost_reduction` is called from `cost_reduction`/`costs` with a CardDef being cast, so it prices spells only. The one reduction that touches an activated ability is `mana_reduction` in `cost_keys`, and `schema.CostModel.mana_reduction` says it is applied by `costs.ability_mana` for 'this cost node' -- it lives inside the ability's own `cost`, so only the card printing the equip ability could discount it, never a different permanent's Aura.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strong Back** (rank 3190) — `strong_back`
-  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
-  - Aura spells you cast that target enchanted creature cost {3} less to cast.
-  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
 
 </details>
 
@@ -207,22 +188,6 @@ Blocks **1** card.
 
 </details>
 
-## cost-reduction-by-target
-
-Blocks **1** card.
-
-- **(selector)** A cost-reduction filter clause that asks what the spell or ability being priced is TARGETING -- here, 'that target enchanted creature', i.e. a target equal to the object the discounting Aura is attached to
-  <br>Why the existing vocabulary won't do: `SPELL_FILTER_KEYS` (the `affects_spells` vocabulary) is deliberately the printed face plus `controller`, and its own comment says so: board state a card in hand does not have is excluded. It is matched by `characteristics._matches_printed`, which is handed a CardDef with no chosen targets, because legality prices the spell before it is on the stack. So `{"subtypes": ["Aura"], "controller": "you"}` would discount EVERY Aura you cast, not only the ones aimed at the enchanted creature -- a softening, not the printed card. `COST_REDUCTION_REFUSED_FILTER_KEYS` further refuses `attached` in a reduction filter, so the enchanted creature cannot even be named there.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strong Back** (rank 3190) — `strong_back`
-  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
-  - Aura spells you cast that target enchanted creature cost {3} less to cast.
-  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
-
-</details>
-
 ## counter-to-exile
 
 Blocks **1** card.
@@ -290,22 +255,6 @@ Blocks **1** card.
 
 - **Mox Diamond** (rank 246) — `mox_diamond`
   - If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
-
-</details>
-
-## equip
-
-Blocks **1** card.
-
-- **(engine)** A marker on a compiled ability saying it is an *equip* ability, so a static's filter can name 'equip abilities' as a class
-  <br>Why the existing vocabulary won't do: `cards/authoring/templates.py` compiles 'Equip {2}' into an ordinary activated ability whose cost is mana and whose effect is `attach` -- nothing distinguishes it from any other activated ability that attaches something. `loader/vocabulary.py` states this outright beside `activate_loyalty_as_though_instant`: 'Leonin Shikari's "you may activate equip abilities any time you could cast an instant" wants this seam pointed at equip, and nothing on `Ability` marks an equip ability yet.' Without the marker the discount could not be limited to equip.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strong Back** (rank 3190) — `strong_back`
-  - Equip abilities you activate that target enchanted creature cost {3} less to activate.
-  - Aura spells you cast that target enchanted creature cost {3} less to cast.
-  - Enchanted creature gets +2/+2 for each Aura and Equipment attached to it.
 
 </details>
 
