@@ -84,7 +84,8 @@
             }
           }
         ],
-        "text": "Equip {3}"
+        "text": "Equip {3}",
+        "is_equip": true
       }
     ]
   },

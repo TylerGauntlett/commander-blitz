@@ -83,7 +83,8 @@
               "target": "equip_target"
             }
           }
-        ]
+        ],
+        "is_equip": true
       }
     ]
   },

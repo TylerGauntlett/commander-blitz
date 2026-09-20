@@ -795,6 +795,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -5587,6 +5588,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -9174,6 +9176,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -9876,6 +9879,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -10884,6 +10888,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -12193,6 +12198,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -13511,6 +13517,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -19431,6 +19438,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -19462,6 +19470,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -20111,6 +20120,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -21579,6 +21589,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -30900,6 +30911,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -38208,6 +38220,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -39822,6 +39835,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -43927,6 +43941,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -45023,6 +45038,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -49590,6 +49606,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -55898,6 +55915,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -61851,6 +61869,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -67607,6 +67626,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -72560,6 +72580,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -74515,6 +74536,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -75356,6 +75378,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -75660,6 +75683,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -91565,6 +91589,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -95745,6 +95770,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -99905,6 +99931,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -100089,6 +100116,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [
@@ -118142,6 +118170,7 @@
               "op": "attach"
             }
           ],
+          "is_equip": true,
           "kind": "activated",
           "sorcery_speed_only": true,
           "targets": [

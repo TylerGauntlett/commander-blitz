@@ -4,15 +4,22 @@
     "name": "Swordsman's Steel",
     "oracle_text": "When this Equipment enters, draw a card for each Equipment you control.\nEquipped creature gets +2/+2 for each Equipment you control.\nEquip {3}",
     "mana_cost": "{4}",
-    "types": ["Artifact"],
-    "subtypes": ["Equipment"],
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
     "colors": [],
     "color_identity": [],
     "abilities": [
       {
         "kind": "triggered",
         "text": "When this Equipment enters, draw a card for each Equipment you control.",
-        "trigger": {"event": "self_enters", "source": "self"},
+        "trigger": {
+          "event": "self_enters",
+          "source": "self"
+        },
         "effects": [
           {
             "op": "draw",
@@ -21,7 +28,9 @@
               "count": {
                 "zone": "battlefield",
                 "controller": "you",
-                "subtypes": ["Equipment"]
+                "subtypes": [
+                  "Equipment"
+                ]
               }
             }
           }
@@ -31,17 +40,23 @@
         "kind": "static",
         "text": "Equipped creature gets +2/+2 for each Equipment you control.",
         "effect": "buff",
-        "affects": {"attached": true},
+        "affects": {
+          "attached": true
+        },
         "power": {
           "times": [
             {
               "count": {
                 "zone": "battlefield",
                 "controller": "you",
-                "subtypes": ["Equipment"]
+                "subtypes": [
+                  "Equipment"
+                ]
               }
             },
-            {"const": 2}
+            {
+              "const": 2
+            }
           ]
         },
         "toughness": {
@@ -50,10 +65,14 @@
               "count": {
                 "zone": "battlefield",
                 "controller": "you",
-                "subtypes": ["Equipment"]
+                "subtypes": [
+                  "Equipment"
+                ]
               }
             },
-            {"const": 2}
+            {
+              "const": 2
+            }
           ]
         }
       },
@@ -61,7 +80,9 @@
         "kind": "activated",
         "text": "Equip {3}",
         "sorcery_speed_only": true,
-        "cost": {"mana": "{3}"},
+        "cost": {
+          "mana": "{3}"
+        },
         "targets": [
           {
             "id": "equip_target",
@@ -69,17 +90,29 @@
             "selector": {
               "zone": "battlefield",
               "controller": "you",
-              "types": ["Creature"]
+              "types": [
+                "Creature"
+              ]
             }
           }
         ],
-        "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
       }
     ]
   },
   "expectation": {
     "zone": "battlefield",
     "battlefield_count": 33,
-    "hand_size": {"0": 2}
+    "hand_size": {
+      "0": 2
+    }
   }
 }

@@ -4,8 +4,12 @@
     "name": "Bloodforged Battle-Axe",
     "oracle_text": "Equipped creature gets +2/+0.\nWhenever equipped creature deals combat damage to a player, create a token that's a copy of this Equipment.\nEquip {2}",
     "mana_cost": "{1}",
-    "types": ["Artifact"],
-    "subtypes": ["Equipment"],
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
     "colors": [],
     "color_identity": [],
     "abilities": [
@@ -13,9 +17,15 @@
         "kind": "static",
         "text": "Equipped creature gets +2/+0",
         "effect": "buff",
-        "affects": {"attached": true},
-        "power": {"const": 2},
-        "toughness": {"const": 0}
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 0
+        }
       },
       {
         "kind": "triggered",
@@ -23,12 +33,16 @@
         "trigger": {
           "event": "deals_combat_damage_to_player",
           "controller": "any",
-          "filter": {"attached": true}
+          "filter": {
+            "attached": true
+          }
         },
         "effects": [
           {
             "op": "copy_permanent",
-            "objects": {"self_only": true},
+            "objects": {
+              "self_only": true
+            },
             "controller": "you"
           }
         ]
@@ -37,17 +51,31 @@
         "kind": "activated",
         "text": "Equip {2}",
         "sorcery_speed_only": true,
-        "cost": {"mana": "{2}"},
+        "cost": {
+          "mana": "{2}"
+        },
         "targets": [
           {
             "id": "equip_target",
             "kind": "permanent",
-            "selector": {"controller": "you", "types": ["Creature"], "zone": "battlefield"}
+            "selector": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
           }
         ],
         "effects": [
-          {"op": "attach", "objects": {"target": "equip_target"}}
-        ]
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
       }
     ]
   },

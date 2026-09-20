@@ -4,28 +4,44 @@
     "name": "Power Fist",
     "oracle_text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\"\nEquip {2}",
     "mana_cost": "{1}{G}",
-    "colors": ["G"],
-    "color_identity": ["G"],
-    "types": ["Artifact"],
-    "subtypes": ["Equipment"],
+    "colors": [
+      "G"
+    ],
+    "color_identity": [
+      "G"
+    ],
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
     "abilities": [
       {
         "kind": "static",
         "effect": "grant_keyword",
-        "keywords": ["trample"],
-        "affects": {"attached": true},
+        "keywords": [
+          "trample"
+        ],
+        "affects": {
+          "attached": true
+        },
         "text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\""
       },
       {
         "kind": "static",
         "effect": "grant_ability",
         "ability": 0,
-        "affects": {"attached": true},
+        "affects": {
+          "attached": true
+        },
         "text": "Equipped creature has trample and \"Whenever this creature deals combat damage to a player, put that many +1/+1 counters on it.\""
       },
       {
         "kind": "activated",
-        "cost": {"mana": "{2}"},
+        "cost": {
+          "mana": "{2}"
+        },
         "sorcery_speed_only": true,
         "targets": [
           {
@@ -35,17 +51,22 @@
             "selector": {
               "zone": "battlefield",
               "controller": "you",
-              "types": ["Creature"]
+              "types": [
+                "Creature"
+              ]
             }
           }
         ],
         "effects": [
           {
             "op": "attach",
-            "objects": {"target": "equip_target"}
+            "objects": {
+              "target": "equip_target"
+            }
           }
         ],
-        "text": "Equip {2}"
+        "text": "Equip {2}",
+        "is_equip": true
       }
     ],
     "grantable_abilities": [
@@ -60,8 +81,12 @@
           {
             "op": "add_counters",
             "counter": "+1/+1",
-            "amount": {"binding": "amount"},
-            "objects": {"binding": "subject"}
+            "amount": {
+              "binding": "amount"
+            },
+            "objects": {
+              "binding": "subject"
+            }
           }
         ]
       }

@@ -2028,8 +2028,9 @@
           "kind": "permanent",
           "selector": {
             "zone": "battlefield",
-            "types": [
-              "Artifact"
+            "any_types": [
+              "Artifact",
+              "Enchantment"
             ]
           },
           "count": 1

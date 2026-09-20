@@ -4,8 +4,12 @@
     "name": "Inquisitor's Flail",
     "oracle_text": "If equipped creature would deal combat damage, it deals double that damage instead.\nIf another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.\nEquip {2}",
     "mana_cost": "{2}",
-    "types": ["Artifact"],
-    "subtypes": ["Equipment"],
+    "types": [
+      "Artifact"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
     "colors": [],
     "color_identity": [],
     "abilities": [
@@ -15,7 +19,9 @@
         "effect": "replace_damage",
         "damage_multiplier": 2,
         "combat_only": true,
-        "damage_source": {"attached": true}
+        "damage_source": {
+          "attached": true
+        }
       },
       {
         "kind": "static",
@@ -23,14 +29,23 @@
         "effect": "replace_damage",
         "damage_multiplier": 2,
         "combat_only": true,
-        "damage_source": {"controller": "any", "types": ["Creature"]},
-        "affects": {"attached": true}
+        "damage_source": {
+          "controller": "any",
+          "types": [
+            "Creature"
+          ]
+        },
+        "affects": {
+          "attached": true
+        }
       },
       {
         "kind": "activated",
         "text": "Equip {2}",
         "sorcery_speed_only": true,
-        "cost": {"mana": "{2}"},
+        "cost": {
+          "mana": "{2}"
+        },
         "targets": [
           {
             "id": "equip_target",
@@ -39,13 +54,21 @@
             "selector": {
               "zone": "battlefield",
               "controller": "you",
-              "types": ["Creature"]
+              "types": [
+                "Creature"
+              ]
             }
           }
         ],
         "effects": [
-          {"op": "attach", "objects": {"target": "equip_target"}}
-        ]
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "is_equip": true
       }
     ]
   },

@@ -61,7 +61,8 @@
               "target": "equip_target"
             }
           }
-        ]
+        ],
+        "is_equip": true
       },
       {
         "kind": "activated",
@@ -91,7 +92,8 @@
               "target": "equip_target"
             }
           }
-        ]
+        ],
+        "is_equip": true
       }
     ]
   },

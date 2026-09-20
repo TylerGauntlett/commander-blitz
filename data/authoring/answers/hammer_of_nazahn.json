@@ -4,9 +4,15 @@
     "name": "Hammer of Nazahn",
     "oracle_text": "Whenever Hammer of Nazahn or another Equipment you control enters, you may attach that Equipment to target creature you control.\nEquipped creature gets +2/+0 and has indestructible.\nEquip {4}",
     "mana_cost": "{4}",
-    "types": ["Artifact"],
-    "supertypes": ["Legendary"],
-    "subtypes": ["Equipment"],
+    "types": [
+      "Artifact"
+    ],
+    "supertypes": [
+      "Legendary"
+    ],
+    "subtypes": [
+      "Equipment"
+    ],
     "colors": [],
     "color_identity": [],
     "abilities": [
@@ -16,14 +22,24 @@
         "trigger": {
           "event": "permanent_enters",
           "controller": "you",
-          "filter": {"subtypes": ["Equipment"]}
+          "filter": {
+            "subtypes": [
+              "Equipment"
+            ]
+          }
         },
         "targets": [
           {
             "id": "t1",
             "kind": "permanent",
             "count": 1,
-            "selector": {"controller": "you", "types": ["Creature"], "zone": "battlefield"}
+            "selector": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
           }
         ],
         "effects": [
@@ -33,8 +49,12 @@
             "effects": [
               {
                 "op": "attach",
-                "attachment": {"binding": "subject"},
-                "objects": {"target": "t1"}
+                "attachment": {
+                  "binding": "subject"
+                },
+                "objects": {
+                  "target": "t1"
+                }
               }
             ]
           }
@@ -43,38 +63,69 @@
       {
         "kind": "static",
         "effect": "buff",
-        "affects": {"attached": true},
-        "power": {"const": 2},
-        "toughness": {"const": 0},
+        "affects": {
+          "attached": true
+        },
+        "power": {
+          "const": 2
+        },
+        "toughness": {
+          "const": 0
+        },
         "text": "Equipped creature gets +2/+0 and has indestructible."
       },
       {
         "kind": "static",
         "effect": "grant_keyword",
-        "affects": {"attached": true},
-        "keywords": ["indestructible"],
+        "affects": {
+          "attached": true
+        },
+        "keywords": [
+          "indestructible"
+        ],
         "text": "Equipped creature gets +2/+0 and has indestructible."
       },
       {
         "kind": "activated",
-        "cost": {"mana": "{4}"},
+        "cost": {
+          "mana": "{4}"
+        },
         "sorcery_speed_only": true,
         "targets": [
           {
             "id": "equip_target",
             "kind": "permanent",
             "count": 1,
-            "selector": {"controller": "you", "types": ["Creature"], "zone": "battlefield"}
+            "selector": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
           }
         ],
-        "effects": [{"op": "attach", "objects": {"target": "equip_target"}}],
-        "text": "Equip {4}"
+        "effects": [
+          {
+            "op": "attach",
+            "objects": {
+              "target": "equip_target"
+            }
+          }
+        ],
+        "text": "Equip {4}",
+        "is_equip": true
       }
     ]
   },
   "expectation": {
     "zone": "battlefield",
-    "granted": {"keywords": ["indestructible"], "count": 1},
+    "granted": {
+      "keywords": [
+        "indestructible"
+      ],
+      "count": 1
+    },
     "battlefield_count": 33
   }
 }
