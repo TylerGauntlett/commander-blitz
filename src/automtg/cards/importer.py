@@ -32,10 +32,10 @@ from automtg.engine.errors import DslError
 
 from .images import CardIndex, generated_images_path
 from .loader import compile_card
-from .moxfield import ImportFailed, ParsedDeck
+from .moxfield import ImportFailed, ParsedDeck, Printing
 from .proxy import ProxyResult, build_proxy, facts_from_index
 from .registry import CardRegistry, DeckList, generated_dir, validate_deck
-from .schema import CardModel, DeckModel
+from .schema import CardModel, DeckModel, PrintingModel
 
 Origin = Literal["native", "full", "partial"]
 
@@ -51,6 +51,10 @@ class ResolvedCard:
     card_id: str
     origin: Origin
     notes: tuple[str, ...] = ()
+    #: The printing the source list chose, if it named one.  Set for ``native``
+    #: cards as much as for generated ones: a deck's Forests are the most
+    #: recognisable art it has, and ``forest`` is hand-authored.
+    printing: Printing | None = None
 
 
 @dataclass
@@ -141,9 +145,10 @@ def resolve_cards(
     wanted += list(deck.cards)
 
     for name, qty in wanted:
+        printing = deck.printings.get(name) or deck.printings.get(_front_face(name))
         native = registry.by_name(name) or registry.by_name(_front_face(name))
         if native is not None:
-            resolved.append(ResolvedCard(name, qty, native.id, "native"))
+            resolved.append(ResolvedCard(name, qty, native.id, "native", printing=printing))
             continue
 
         entry = None
@@ -174,7 +179,9 @@ def resolve_cards(
         taken.add(result.card_id)
         generated[result.card_id] = (result.model, result)
         resolved.append(
-            ResolvedCard(name, qty, result.card_id, result.coverage, result.notes)
+            ResolvedCard(
+                name, qty, result.card_id, result.coverage, result.notes, printing=printing
+            )
         )
 
     return resolved, generated, missing
@@ -209,6 +216,21 @@ def build_deck_model(
     for cid in commander_ids:
         identity |= set(registry.get(cid).color_identity)
 
+    # Commanders are walked first, so a commander wins if the same card id turns
+    # up twice with two printings -- it is the card somebody looks at most.
+    printings: dict[str, PrintingModel] = {}
+    for entry in resolved:
+        if entry.printing is not None:
+            printings.setdefault(
+                entry.card_id,
+                PrintingModel(
+                    scryfall_id=entry.printing.scryfall_id,
+                    artist=entry.printing.artist,
+                    set_code=entry.printing.set_code,
+                    collector_number=entry.printing.collector_number,
+                ),
+            )
+
     return DeckModel(
         id=deck_id_for(deck.public_id),
         name=deck.name,
@@ -218,6 +240,7 @@ def build_deck_model(
         notes=f"Imported from Moxfield ({deck.public_id}).",
         source="moxfield",
         owner=owner,
+        printings=printings,
     )
 
 

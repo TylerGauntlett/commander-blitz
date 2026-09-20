@@ -1091,6 +1091,43 @@ class SignatureCardModel(BaseModel):
     why: str
 
 
+class PrintingModel(BaseModel):
+    """Which of a card's many printings this deck's copies use.
+
+    Only ``scryfall_id`` is load-bearing: every image URL is a pure function of
+    it.  The other three are for whoever reads the deck file, exactly as
+    ``data/catalog/art_pins.json`` carries ``printing`` and ``artist`` beside
+    the id it actually uses.
+
+    ``artist`` does double duty -- it is the only credit this printing will ever
+    have.  The catalog holds one row per card name, essentially never the row
+    the deck's author picked, so there is nothing to look the illustrator up in.
+    """
+
+    model_config = Strict
+
+    scryfall_id: str
+    artist: str | None = None
+    set_code: str = ""
+    collector_number: str = ""
+
+    @field_validator("scryfall_id")
+    @classmethod
+    def _real_uuid(cls, value: str) -> str:
+        # This id becomes a URL and a filename.  A hand-edited or corrupted deck
+        # file must fail here, loudly, rather than somewhere downstream with a
+        # path separator in it.
+        #
+        # Imported inside the function on purpose: ``images`` reaches this
+        # module through ``registry``, so importing it at the top would be a
+        # cycle.  One definition of the pattern is worth a deferred import.
+        from .images import SCRYFALL_ID
+
+        if not SCRYFALL_ID.match(value):
+            raise ValueError(f"{value!r} is not a Scryfall id")
+        return value
+
+
 class DeckModel(BaseModel):
     """One 100-card Commander deck list."""
 
@@ -1126,3 +1163,15 @@ class DeckModel(BaseModel):
     ratings: DeckRatingsModel | None = None
     strategy: str = ""
     signature: list[SignatureCardModel] = Field(default_factory=list)
+
+    #: ``card id -> printing``: which illustration this deck's copies use, when
+    #: the source list said.  Overrides the catalog's pick **for this deck's
+    #: seat only** -- it is never merged into the global art map, so a precon
+    #: sitting at the next chair keeps its own Forests.
+    #:
+    #: Deck-level rather than a field on ``DeckEntryModel`` because commanders
+    #: are a bare ``list[str]`` with nowhere to hang one, and because one map
+    #: keyed by card id is already the shape the art layer consumes.  Defaulted
+    #: for ``source``'s reason: every deck file written before this existed
+    #: lacks it, and must still load under ``extra="forbid"``.
+    printings: dict[str, PrintingModel] = Field(default_factory=dict)

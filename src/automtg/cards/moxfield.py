@@ -9,11 +9,20 @@ and it is still true of *that* endpoint; the deck endpoint is open:
 returns 200 to plain ``urllib`` with an ordinary User-Agent, and carries the
 whole list under ``boards.commanders`` and ``boards.mainboard``.
 
-**Only three fields are read from the payload**: a card's ``name``, its
-``quantity``, and which board it was in.  Every characteristic comes from our own
-``cards.sqlite`` instead, so an imported card's id, art and colour identity agree
-with what ``/api/catalog`` already says about it, and switching to a different
-deck site later is an adapter rather than a second card pipeline.
+**Rules text and characteristics are read from the payload not at all**: a card's
+``name``, its ``quantity`` and which board it was in are what identify it, and
+every characteristic comes from our own ``cards.sqlite``, so an imported card's
+id and colour identity agree with what ``/api/catalog`` already says about it,
+and switching to a different deck site later is an adapter rather than a second
+card pipeline.
+
+**Art is the exception, and deliberately so.**  Which of a card's many printings
+the author chose is not a characteristic we can derive -- the catalog keeps one
+printing per name, so asking it gives everybody the same Sol Ring and the same
+Forest.  It is a *choice*, it is the one thing that makes a deck recognisable as
+yours, and only the source list knows it.  So the printing's ``scryfall_id`` is
+carried through (with ``artist``/``set``/``cn`` alongside it for the benefit of
+anyone reading a deck file), and nothing else is.
 """
 
 from __future__ import annotations
@@ -23,6 +32,8 @@ import re
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
+
+from .images import SCRYFALL_ID
 
 MOXFIELD_API = "https://api2.moxfield.com/v3/decks/all/{public_id}"
 HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)", "Accept": "application/json"}
@@ -62,6 +73,24 @@ class ImportFailed(Exception):
 
 
 @dataclass(frozen=True)
+class Printing:
+    """The printing the deck's author chose for one card.
+
+    Only ``scryfall_id`` is load-bearing -- every Scryfall image URL is a pure
+    function of it.  ``artist``, ``set_code`` and ``collector_number`` are
+    carried so a deck file says *which* Lightning Bolt in words, the way
+    ``data/catalog/art_pins.json`` does.  ``artist`` has a second job: it is the
+    only credit we will ever have for this printing, because the catalog keeps
+    one row per card name and almost never the row the author picked.
+    """
+
+    scryfall_id: str
+    artist: str | None = None
+    set_code: str = ""
+    collector_number: str = ""
+
+
+@dataclass(frozen=True)
 class ParsedDeck:
     """A deck list as Moxfield describes it, before we know if we can play it."""
 
@@ -71,6 +100,11 @@ class ParsedDeck:
     commanders: tuple[str, ...] = ()
     cards: tuple[tuple[str, int], ...] = ()
     problems: list[str] = field(default_factory=list)
+    #: Card name -> the printing the author chose.  Defaulted, because a
+    #: ``ParsedDeck`` is built by hand in a dozen tests and by every caller that
+    #: only cares about the list; an absent entry simply means "no preference",
+    #: which is what every deck imported before this existed says.
+    printings: dict[str, Printing] = field(default_factory=dict)
 
     def total(self) -> int:
         return len(self.commanders) + sum(qty for _, qty in self.cards)
@@ -131,13 +165,17 @@ def normalise(payload: dict, public_id: str) -> ParsedDeck:
     commanders: list[str] = []
     cards: list[tuple[str, int]] = []
     problems: list[str] = []
+    printings: dict[str, Printing] = {}
+    seen_ids: dict[str, set[str]] = {}
 
     for board_name in MAIN_BOARDS:
         board = boards.get(board_name) or {}
         entries = (board.get("cards") or {}).values()
         # Sorted by name so a re-import of an unchanged deck writes an identical
-        # file: dict order here is Moxfield's, and it is not stable.
-        for entry in sorted(entries, key=lambda e: (e.get("card") or {}).get("name") or ""):
+        # file: dict order here is Moxfield's, and it is not stable.  The
+        # printing id breaks ties, because a deck may list one name twice in two
+        # illustrations -- and then the name alone leaves the winner to Moxfield.
+        for entry in sorted(entries, key=_sort_key):
             card = entry.get("card") or {}
             name = card.get("name")
             if not name:
@@ -147,6 +185,23 @@ def normalise(payload: dict, public_id: str) -> ParsedDeck:
                 commanders.extend([name] * qty)
             else:
                 cards.append((name, qty))
+            printing = _printing(card)
+            if printing is not None:
+                seen_ids.setdefault(name, set()).add(printing.scryfall_id)
+                # First in the name-sorted walk wins, so a re-import of an
+                # unchanged deck writes the same file.  See the problems line
+                # below for what that costs.
+                printings.setdefault(name, printing)
+
+    for name, ids in sorted(seen_ids.items()):
+        if len(ids) > 1:
+            # A deck can list one name in several printings -- five Forests,
+            # five different illustrations, which is exactly the kind of author
+            # this feature is for.  Our unit of identity is the card id, so all
+            # five copies share one art.  Say so rather than silently choosing.
+            problems.append(
+                f"{name} is listed in {len(ids)} printings; one art was used for every copy"
+            )
 
     for ignored, label in (("companions", "companion"), ("signatureSpells", "signature spell")):
         if (boards.get(ignored) or {}).get("count"):
@@ -160,6 +215,31 @@ def normalise(payload: dict, public_id: str) -> ParsedDeck:
         commanders=tuple(commanders),
         cards=tuple(cards),
         problems=problems,
+        printings=printings,
+    )
+
+
+def _sort_key(entry: dict) -> tuple[str, str]:
+    card = entry.get("card") or {}
+    return (card.get("name") or "", str(card.get("scryfall_id") or ""))
+
+
+def _printing(card: dict) -> Printing | None:
+    """The chosen printing, or ``None`` when the payload does not name one.
+
+    The id is validated here rather than trusted, because it ends up in a URL
+    and in a filename.  An entry without one is not an error: it just means this
+    card falls back to the catalog's pick, which is the old behaviour.
+    """
+    scryfall_id = card.get("scryfall_id")
+    if not isinstance(scryfall_id, str) or not SCRYFALL_ID.match(scryfall_id):
+        return None
+    artist = card.get("artist")
+    return Printing(
+        scryfall_id=scryfall_id,
+        artist=artist if isinstance(artist, str) and artist else None,
+        set_code=str(card.get("set") or ""),
+        collector_number=str(card.get("cn") or ""),
     )
 
 

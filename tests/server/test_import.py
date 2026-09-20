@@ -160,6 +160,78 @@ class TestTheFixtureIsWhatWeThink:
         # Moxfield's own key order is not stable.
         assert moxfield.normalise(payload, "t") == moxfield.normalise(payload, "t")
 
+    def test_every_card_names_the_printing_its_author_chose(self, payload):
+        # The whole feature rests on this field being the *chosen* printing
+        # rather than a canonical default. The fixture proves the shape; the
+        # sets below prove it is a choice: nothing picks The List and Fifth
+        # Edition for you.
+        deck = moxfield.normalise(payload, "test")
+        assert len(deck.printings) == 89
+        shelob = deck.printings["Shelob, Child of Ungoliant"]
+        assert shelob.scryfall_id == "a14c4b29-3363-45ce-9190-0f79e1a0ef7f"
+        assert shelob.artist == "Lorenzo Mastroianni"
+        assert shelob.set_code == "ltr"
+        assert shelob.collector_number == "230"
+        assert len({p.set_code for p in deck.printings.values()}) > 5
+
+
+class TestReadingThePrintingOffTheList:
+    """Parsing, away from the fixture, where the awkward shapes are."""
+
+    def _payload(self, *entries: dict) -> dict:
+        return {
+            "name": "d",
+            "format": "commander",
+            "boards": {
+                "commanders": {"cards": {"c": {"card": {"name": "Shelob"}, "quantity": 1}}},
+                "mainboard": {"cards": {str(i): e for i, e in enumerate(entries)}},
+            },
+        }
+
+    def test_a_card_with_no_printing_simply_has_none(self):
+        deck = moxfield.normalise(
+            self._payload({"card": {"name": "Forest"}, "quantity": 9}), "t"
+        )
+        assert "Forest" not in deck.printings
+        assert ("Forest", 9) in deck.cards, "the card itself is unaffected"
+
+    @pytest.mark.parametrize("junk", ["", "not-a-uuid", "../../etc/passwd", 7])
+    def test_an_id_that_is_not_a_scryfall_id_is_refused(self, junk):
+        # This id becomes a URL and a filename. Refusing it here is cheaper than
+        # every downstream consumer wondering whether it can trust it.
+        deck = moxfield.normalise(
+            self._payload({"card": {"name": "Forest", "scryfall_id": junk}}), "t"
+        )
+        assert deck.printings == {}
+
+    def test_one_name_in_two_printings_picks_one_and_says_so(self):
+        """Five Forests in five illustrations is a real deck, and exactly the
+        kind this feature is for -- but a card id can only carry one art, so the
+        report has to admit what it did rather than quietly choosing."""
+        deck = moxfield.normalise(
+            self._payload(
+                {"card": {"name": "Forest", "scryfall_id": "a" * 8 + "-aaaa-aaaa-aaaa-" + "a" * 12}},
+                {"card": {"name": "Forest", "scryfall_id": "b" * 8 + "-bbbb-bbbb-bbbb-" + "b" * 12}},
+            ),
+            "t",
+        )
+        assert deck.printings["Forest"].scryfall_id.startswith("aaaa")
+        assert deck.problems == [
+            "Forest is listed in 2 printings; one art was used for every copy"
+        ]
+
+    def test_it_stays_stable_across_re_imports(self):
+        # Moxfield's dict order is not stable, so "whichever came first" has to
+        # mean the name-sorted walk, or a re-import rewrites the deck file.
+        one, two = (
+            {"card": {"name": "Forest", "scryfall_id": "a" * 8 + "-aaaa-aaaa-aaaa-" + "a" * 12}},
+            {"card": {"name": "Forest", "scryfall_id": "b" * 8 + "-bbbb-bbbb-bbbb-" + "b" * 12}},
+        )
+        assert (
+            moxfield.normalise(self._payload(one, two), "t").printings
+            == moxfield.normalise(self._payload(two, one), "t").printings
+        )
+
 
 # ----------------------------------------------------------------------
 # failures, which is where this feature spends its life
@@ -358,6 +430,113 @@ class TestTheImportedDeckIsPlayable:
         do_import(client, payload)
         images = client.get("/api/images").text
         assert "cards.scryfall.io" not in images
+
+
+class TestTheDeckKeepsItsOwnArt:
+    """The printing the author chose is the one the board draws.
+
+    Before this, every import asked our catalog which Sol Ring to show, and the
+    catalog keeps one printing per card name -- so everybody's deck looked the
+    same and nobody could recognise their own cards.
+    """
+
+    def _game(self, client, payload, *, second="aesi"):
+        deck_id = do_import(client, payload).json()["deck"]["id"]
+        body = client.post(
+            "/api/games",
+            json={
+                "seats": [
+                    {"deck_id": deck_id, "kind": "human"},
+                    {"deck_id": second, "kind": "ai", "agent": "random"},
+                ],
+                "seed": 7,
+            },
+        ).json()
+        return deck_id, body["game_id"], body["state"]
+
+    def test_the_deck_file_records_the_printings(self, client, payload, sandbox):
+        deck_id = do_import(client, payload).json()["deck"]["id"]
+        written = json.loads(
+            (sandbox / "generated" / "decks" / f"{deck_id}.deck.json").read_text("utf-8")
+        )
+        printings = written["printings"]
+        assert len(printings) == 89
+        assert printings["shelob_child_of_ungoliant"] == {
+            "scryfall_id": "a14c4b29-3363-45ce-9190-0f79e1a0ef7f",
+            "artist": "Lorenzo Mastroianni",
+            "set_code": "ltr",
+            "collector_number": "230",
+        }
+
+    def test_a_precon_has_none_of_it(self, client):
+        """The no-migration guarantee, stated as a property of the files.
+
+        `extra="forbid"` means a required field here would have broken every
+        deck file on disk; a defaulted one means they load untouched and simply
+        keep the catalog's pick.
+        """
+        detail = client.get("/api/decks").json()
+        assert {d["id"] for d in detail} >= {"aesi", "edgar"}
+        body = client.get("/api/images").json()
+        assert body["seats"] == {}, "no game, no seat to override"
+
+    def test_the_board_draws_the_authors_printing(self, client, payload):
+        _, game_id, _state = self._game(client, payload)
+        body = client.get(f"/api/images?game_id={game_id}").json()
+        seat = body["seats"]["0"]
+        ref = seat["shelob_child_of_ungoliant"]
+        assert ref["art"] == (
+            "/art/shelob_child_of_ungoliant.jpg?p=a14c4b29-3363-45ce-9190-0f79e1a0ef7f"
+        )
+        assert ref["artist"] == "Lorenzo Mastroianni"
+
+    def test_it_overrides_hand_authored_cards_too(self, client, payload):
+        """Basics and staples are hand-authored, and they are the most
+        recognisable art a deck has. Excluding them would gut the feature."""
+        _, game_id, _state = self._game(client, payload)
+        seat = client.get(f"/api/images?game_id={game_id}").json()["seats"]["0"]
+        native = [cid for cid in seat if "_" not in cid or cid in ("sol_ring", "forest")]
+        assert "forest" in seat, f"only got {native}"
+        assert seat["forest"]["art"].startswith("/art/forest.jpg?p=")
+
+    def test_the_other_seat_keeps_its_own(self, client, payload):
+        """The reason this is a per-seat layer and not a flat map: both decks
+        play Forests, and only one of them asked for that illustration."""
+        _, game_id, _state = self._game(client, payload)
+        body = client.get(f"/api/images?game_id={game_id}").json()
+        assert "forest" in body["seats"]["0"]
+        assert body["seats"].get("1", {}) == {}
+        # And the global answer is untouched, which is what the precon draws.
+        assert body["images"]["forest"]["art"] == "/art/forest.jpg"
+
+    def test_the_seat_keys_are_the_seats_the_engine_dealt(self, client, payload):
+        # The client looks an override up by `CardView.owner`, so the seat key
+        # has to *be* the pid the engine dealt -- not the order the seats were
+        # posted in, which is only the same thing by construction.
+        deck_id, game_id, state = self._game(client, payload)
+        assert state["players"][0]["deck_id"] == deck_id
+        overridden = set(client.get(f"/api/images?game_id={game_id}").json()["seats"])
+        assert overridden <= {str(p["pid"]) for p in state["players"]}
+        assert "0" in overridden
+
+    def test_no_third_party_url_reaches_the_client(self, client, payload):
+        _, game_id, _state = self._game(client, payload)
+        body = client.get(f"/api/images?game_id={game_id}").json()
+        assert "cards.scryfall.io" not in json.dumps(body)
+        for seat in body["seats"].values():
+            for ref in seat.values():
+                assert ref["art"].startswith("/art/")
+
+    def test_a_card_the_deck_prints_as_the_catalog_does_is_not_repeated(
+        self, client, payload
+    ):
+        """An override that says nothing new is a second URL for one picture --
+        a cache miss and a download, to draw the bytes already on disk."""
+        _, game_id, _state = self._game(client, payload)
+        body = client.get(f"/api/images?game_id={game_id}").json()
+        for card_id, ref in body["seats"]["0"].items():
+            base = body["images"][card_id]
+            assert base is None or ref["art"] != base["art"]
 
 
 class TestDeleting:
