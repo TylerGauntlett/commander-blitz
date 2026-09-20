@@ -41,10 +41,12 @@ class TestDecksAreLegal:
             if qty > 1:
                 card = real_registry.get(card_id)
                 # 903.5b exempts basic lands, and a card whose own text says so
-                # (Persistent Petitioners). Asked with the same predicate
-                # `validate_deck` uses, so the two cannot drift apart.
-                assert card.is_basic or card.any_number_in_deck, (
-                    f"{deck_id}: {card_id} appears {qty} times but is not a basic land"
+                # -- with no limit (Persistent Petitioners) or up to a printed
+                # number (Nazgul). Asked with the same predicate `validate_deck`
+                # uses, so the two cannot drift apart.
+                limit = card.deck_copy_limit
+                assert limit is None or qty <= limit, (
+                    f"{deck_id}: {card_id} appears {qty} times, over its limit of {limit}"
                 )
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)

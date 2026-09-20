@@ -251,8 +251,17 @@ def validate_deck(deck: DeckList, registry: CardRegistry) -> list[str]:
                 f"{card_id!r} identity {sorted(card.color_identity)} "
                 f"is outside {sorted(identity)}"
             )
-        if qty > 1 and not (card.is_basic or card.any_number_in_deck):
-            problems.append(f"{card_id!r} appears {qty} times but is not a basic land")
+        # 903.5b in full: one copy unless the card is a basic land or its own
+        # text says otherwise, and "otherwise" is sometimes a number rather than
+        # a blank cheque.  `deck_copy_limit` is `None` when there is no ceiling.
+        limit = card.deck_copy_limit
+        if limit is not None and qty > limit:
+            allowed = (
+                "is not a basic land"
+                if limit == 1
+                else f"a deck can have up to {limit} of them"
+            )
+            problems.append(f"{card_id!r} appears {qty} times but {allowed}")
         if card.is_token:
             problems.append(f"{card_id!r} is a token and cannot be in a deck")
         if card.front_face is not None:

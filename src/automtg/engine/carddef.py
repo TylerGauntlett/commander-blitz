@@ -28,11 +28,34 @@ LAND_TYPE = CardType.LAND.value
 #: against the card's own name, because the sentence names the card it applies to
 #: and Shadowborn Apostle does not license a playset of Relentless Rats.
 #:
-#: Deliberately *not* matching Nazgûl's "A deck can have up to nine cards named
-#: Nazgûl." -- a different limit needing a different answer.  Unmatched, that card
-#: keeps the one-copy default, which rejects a legal deck rather than admitting an
-#: illegal one; that is the safe direction for a check to be incomplete in.
+#: The sentence is *unbounded*; see :data:`_UP_TO` for the form that names a
+#: number, which needs a different answer.
 _ANY_NUMBER = re.compile(r"A deck can have any number of cards named ([^.\n]+)\.")
+
+#: The same exception with a ceiling on it: "A deck can have up to nine cards
+#: named Nazgûl."  Two cards in the whole catalog print it -- Nazgûl (nine) and
+#: Seven Dwarves (seven) -- and both spell the number out, which is why this
+#: reads a word rather than an integer.
+_UP_TO = re.compile(r"A deck can have up to (\w+) cards named ([^.\n]+)\.")
+
+#: Magic spells its small numbers out in rules text.  A word outside this map
+#: leaves :attr:`CardDef.deck_copy_limit` at the one-copy default rather than
+#: guessing: an unread limit must reject a legal deck, never admit an illegal
+#: one, which is the safe direction for the check to be incomplete in.
+_NUMBER_WORDS = {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+    "four": 4,
+    "five": 5,
+    "six": 6,
+    "seven": 7,
+    "eight": 8,
+    "nine": 9,
+    "ten": 10,
+    "eleven": 11,
+    "twelve": 12,
+}
 
 
 @dataclass(frozen=True)
@@ -1149,9 +1172,35 @@ class CardDef:
         Approach -- are exempt by their own printed sentence.  This reads that
         sentence, so a deck running twenty Petitioners imports as the legal deck
         it is instead of failing construction.
+
+        *Lifts* it, not merely raises it: :attr:`deck_copy_limit` is the number
+        to check a deck against, and this is the case where there is no number.
         """
         match = _ANY_NUMBER.search(self.oracle_text)
         return match is not None and match.group(1).strip() == self.name
+
+    @property
+    def deck_copy_limit(self) -> int | None:
+        """How many copies of this card a deck may hold; ``None`` for no limit.
+
+        903.5b's whole answer in one place: one copy by default, no limit for a
+        basic land or a card whose own text lifts it, and the printed number for
+        the two cards that name one -- "A deck can have up to nine cards named
+        Nazgûl." and Seven Dwarves' "up to seven".
+
+        The number is matched against the card's *own* name for the same reason
+        the unbounded form is: the sentence names the card it applies to, so a
+        card that merely quotes another's text -- a copy effect's oracle, a
+        reminder -- does not inherit its allowance.  A ceiling this cannot read
+        falls back to one copy, which refuses a legal deck rather than admitting
+        an illegal one.
+        """
+        if self.is_basic or self.any_number_in_deck:
+            return None
+        match = _UP_TO.search(self.oracle_text)
+        if match is not None and match.group(2).strip() == self.name:
+            return _NUMBER_WORDS.get(match.group(1).lower(), 1)
+        return 1
 
     @property
     def is_aura(self) -> bool:
