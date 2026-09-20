@@ -1407,6 +1407,33 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Granting a static ability with the one-shot op
+
+```jsonc
+// The Irencrag — "it gains equip {3} and "Equipped creature gets +3/+3""
+{ "op": "grant_ability", "ability": 1, "duration": "permanent",
+  "objects": { "zone": "battlefield", "self_only": true } }
+```
+
+The `grant_ability` op could hand over an activated ability (Urza's Saga) or a
+triggered one (Clavileño), and the loader refused it a **static** outright, with
+its reason written down: the op's grants "are pointers that the characteristics
+pipeline never reads, so granting the static … with it would do nothing".
+
+The premise was true and is no longer. `abilities_of` appends what
+`_op_granted_abilities` returns, and `_battlefield_statics` reads `abilities_of`
+— so a static put on that list joins the pipeline with no new walk. The function
+simply had to stop filtering statics out.
+
+The continuous `grant_ability` **static** is not a substitute, which is why this
+had to be the op: a static on The Irencrag applies from the moment the artifact
+enters, handing out +3/+3 on turn one with no transformation. The printed clause
+happens *once*, when the player says yes, and stays.
+
+An op-granted **triggered** ability is still kept off the derived list — and that
+is a fact about `_op_granted_abilities`, not a refusal at load, because
+`triggers.collect` already yields one off the grant record itself.
+
 ### Losing all abilities because an effect said so
 
 ```jsonc

@@ -1906,6 +1906,12 @@
     "file": "bria_riptide_rogue.jpg",
     "scryfall_id": "390c96b3-68da-4a42-89ab-d9ccc79ce0dd"
   },
+  "bridgeworks_battle_tanglespan_bridgeworks": {
+    "artist": "Ron Spears",
+    "bytes": 73108,
+    "file": "bridgeworks_battle_tanglespan_bridgeworks.jpg",
+    "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63"
+  },
   "brightblade_stoat": {
     "artist": "Lius Lasahido",
     "bytes": 48384,
@@ -14559,6 +14565,12 @@
     "file": "tanglepool_bridge.jpg",
     "scryfall_id": "2adf277c-945e-49b4-88d7-ac720863d0d6"
   },
+  "tanglespan_bridgeworks": {
+    "artist": "Ron Spears",
+    "bytes": 73108,
+    "file": "tanglespan_bridgeworks.jpg",
+    "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63"
+  },
   "tanuki_transplanter": {
     "artist": "Oleksandr Kozachenko",
     "bytes": 83226,
@@ -14859,6 +14871,12 @@
     "artist": "Kekai Kotaki",
     "file": "the_great_work.jpg",
     "scryfall_id": "52173f36-19d2-48be-a8e8-8cbe946759c0"
+  },
+  "the_irencrag": {
+    "artist": "Adam Paquette",
+    "bytes": 46146,
+    "file": "the_irencrag.jpg",
+    "scryfall_id": "8051c5ec-54a6-45a8-8945-fb93c5feaa39"
   },
   "the_lady_of_the_mountain": {
     "artist": "Richard Kane Ferguson",

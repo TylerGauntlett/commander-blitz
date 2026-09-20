@@ -1164,6 +1164,12 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bridgeworks_battle_tanglespan_bridgeworks": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "brightblade_stoat": {
     "zone": "battlefield"
   },
@@ -9388,6 +9394,10 @@
     "zone": "battlefield"
   },
   "the_fabulous_frog_man": {
+    "zone": "battlefield"
+  },
+  "the_irencrag": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_lady_of_the_mountain": {

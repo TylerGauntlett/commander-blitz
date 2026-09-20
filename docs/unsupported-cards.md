@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**26 cards** blocked by **32** capabilities.
+**24 cards** blocked by **28** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 2 | 361 | op |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [battle](#battle) | 1 | 686 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -31,15 +30,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [grant-static-ability](#grant-static-ability) | 1 | 3821 | op |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [lose-all-abilities](#lose-all-abilities) | 1 | 3821 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [opening-hand-ability](#opening-hand-ability) | 1 | 180 | engine |
-| [rename-permanent](#rename-permanent) | 1 | 3821 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
@@ -127,21 +123,6 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
-
-</details>
-
-## battle
-
-Blocks **1** card.
-
-- **(engine)** The Battle card type as a working permanent: a card-level defence number so a battle enters with that many defence counters the way a planeswalker enters with loyalty (614.1c, a loader-written self_enters_with_counters, not a trigger); a protector chosen as it enters, which is an opponent and a third defender kind in the declare-attackers step, so you and the other players may attack the battle; damage dealt to a battle removing defence counters; and the state-based 'defeated' sequence at zero counters — exile the battle, then cast its back face transformed without paying its mana cost. That last step is the only way the printed back half, Tanglespan Bridgeworks, is ever reached, so without it the card is half a card no matter how the front is written.
-  <br>Why the existing vocabulary won't do: The type itself loads — CardType.BATTLE is in engine/enums.py and the 'Siege' subtype maps onto it — and that is precisely the trap, because nothing behind it exists. docs/rules-coverage.md lists 'No loyalty, no defence | Planeswalkers and Battles enter play and then sit there', puts 'battles' under Not implemented with 'Attacking battles' under Combat, and src/automtg/cards/proxy.py:410 records the same ('battles enter play but have no defence or protector here'). No card-level defence field exists anywhere in the reference block; self_enters_with_counters could place counters, but no combat rule removes them and no state-based action watches for zero. The `transform` op is the wrong motion: a defeated Siege is exiled and then *cast* from exile, arriving as a cast spell, where transform turns a permanent over in place — and `back_face` alone gives no event that would ever call it. Writing the front as the packet's starting_point suggests (types: ['Sorcery'], the enters trigger's effect as spell_effects, type_line 'Sorcery // Land') is the approximation to refuse: it silently drops the card type, the defence, the protector, the attackability and the entire back face, since a sorcery has nothing to turn over to and the land becomes unreachable.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Bridgeworks Battle // Tanglespan Bridgeworks** (rank 686) — `bridgeworks_battle_tanglespan_bridgeworks`
-  - Battle — Siege (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
-  - It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)
 
 </details>
 
@@ -304,20 +285,6 @@ Blocks **1** card.
 
 </details>
 
-## grant-static-ability
-
-Blocks **1** card.
-
-- **(op)** a one-shot `grant_ability` that can hand over a STATIC from `grantable_abilities` (here the `buff` "Equipped creature gets +3/+3", an `attached` filter) with `duration: "permanent"`, by recording the grant somewhere `_battlefield_statics` walks rather than only where `triggers`/`abilities_of` do.
-  <br>Why the existing vocabulary won't do: The `grant_ability` op is the closest existing thing and the loader refuses this use outright: `_check_grant_targets` (src/automtg/cards/loader/__init__.py:158-197) raises "the grant_ability *op* hands over a pointer that the characteristics pipeline never reads, so granting the static 'grantable_abilities[n]' with it would do nothing". The `grant_ability` STATIC can grant a static, but a static on this card is always on -- it would give +3/+3 to whatever the artifact is attached to from turn one, with no transformation and no equip, and no `static_condition_keys` clause can switch it on when the trigger resolves (same gap as above). The equip {3} half is fine on its own -- an activated ability with `cost: {"mana": "{3}"}`, an `attach` effect and `sorcery_speed_only`, exactly as data/cards/auto/templates.cards.json:20-46 writes it for +2 Mace -- so only the quoted static is blocked here.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Irencrag** (rank 3821) — `the_irencrag`
-  - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
-
-</details>
-
 ## imprint
 
 Blocks **1** card.
@@ -357,20 +324,6 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
-
-</details>
-
-## lose-all-abilities
-
-Blocks **1** card.
-
-- **(op)** a one-shot, permanent-duration "it loses all other abilities" applied by a resolving effect to a named object (typically `objects: {"self_only": true}`) -- i.e. the `lose_all_abilities` static's effect available as an op, or a `duration: "permanent"` self-applied form, so a trigger can strip the source's printed mana ability and its own trigger at the moment the player says yes.
-  <br>Why the existing vocabulary won't do: `lose_all_abilities` exists only as a STATIC effect (src/automtg/cards/loader/vocabulary.py:91; `ABILITY_STATICS = ("lose_all_abilities", "grant_ability")`, src/automtg/engine/characteristics.py:439) and is not in `ops`, so no trigger can apply it. Written as a static on The Irencrag instead it would be unconditional -- it is gathered off the PRINTED face (characteristics.py:430-441), so it would strip "{T}: Add {C}" from the moment the artifact entered, before any legendary creature ever arrived, which is a different and strictly worse card. `static_condition_keys` cannot gate it on the transformation either: it offers `all`, `any`, `cmp`, `counters`, `exists`, `has_city_s_blessing`, `is_attached`, `is_your_turn`, `not`, `top_of_library` and nothing that reads a flag set by a trigger (`has_flag` is in `condition_keys`, not `static_condition_keys`). Gating it on `counters` would work mechanically but this card prints no counter, so that is an invented cost, not this sentence.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Irencrag** (rank 3821) — `the_irencrag`
-  - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
 
 </details>
 
@@ -418,20 +371,6 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
-
-</details>
-
-## rename-permanent
-
-Blocks **1** card.
-
-- **(op)** a way for a resolving effect to change a permanent's NAME for as long as it stays on the battlefield -- cheapest shape: a `name` key on the existing `add_subtype`/`animate` family (or a `becomes` op carrying `name`, `subtypes`, `supertypes`) written onto the object the way `add_subtypes` writes types (src/automtg/engine/effects/ops_characteristics.py:44-49), plus a name layer in `characteristics` so `selector.name` and the legend rule read the new name. It clears the whole "becomes a ... named X" family -- The Irencrag/Everflame, Kenrith's Transformation-style renames, and the Equipment-transforming artifacts printed alongside it.
-  <br>Why the existing vocabulary won't do: Nothing in the engine can change a name. `characteristics.py:1319-1321` says so in as many words at the `selector.name` test -- "A name is the most printed characteristic there is and nothing in the pipeline can change one, so it is safe here for the same reason `types` is" -- and the characteristics pipeline has no name layer at all. The two near misses are both wrong shapes: `change_text` is creature-type only and the loader refuses anything else (`change_text only implements 'creature_type'`, src/automtg/cards/loader/effects.py:1958), and `become_copy`'s `except_name` (src/automtg/engine/effects/ops_removal.py:103-128) sets `copying_name` only as a rider on copying some OTHER object -- there is no "Everflame, Heroes' Legacy" card in the pool to copy, and copying one would also replace the type line, cost and abilities that this card is supposed to keep choosing for itself. `add_subtype` can give it Equipment and it is already printed Legendary, so the type half of the sentence is the only half that is expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Irencrag** (rank 3821) — `the_irencrag`
-  - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
 
 </details>
 

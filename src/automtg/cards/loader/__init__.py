@@ -170,12 +170,19 @@ def _check_grant_targets(
     * **Out of range.** `characteristics.abilities_of` and the `grant_ability`
       op both index the list and both skip a miss, so an off-by-one is a card
       that prints "gains flying and …" and hands over nothing.
-    * **The op pointing at a static.** The *op* grants for a duration through
-      pointers that only `triggers` and `abilities_of`'s callers read as
-      abilities; a static handed over that way never reaches
-      `_battlefield_statics`, because that walk finds statics on the derived
-      list rather than in the grant record. So the one-shot form is refused
-      where the continuous form is exactly what the card wants.
+    The op pointing at a **static** was refused here too, on the grounds that
+    such a grant never reached `_battlefield_statics`. It does now:
+    `characteristics._op_granted_abilities` puts it on the derived list and that
+    walk reads the derived list, so the premise of the refusal is gone. The
+    Irencrag is the card that needed it -- "it gains equip {3} and "Equipped
+    creature gets +3/+3"" is a static handed over *once*, and the
+    `grant_ability` **static** cannot say it, because a static on The Irencrag
+    applies from the moment it enters.
+
+    What keeps an op-granted *triggered* ability from firing twice is not a
+    refusal here -- Clavileno grants one and has since it shipped -- but
+    `_op_granted_abilities` leaving it off the derived list, since
+    `triggers.collect` already yields it off the grant record itself.
     """
     for i, ability in enumerate(grantable):
         if not ability.is_static:
@@ -183,7 +190,7 @@ def _check_grant_targets(
         if not (ability.static or {}).get("effect"):
             raise DslError(f"{where}.grantable[{i}]: a static needs an 'effect'")
 
-    def check(index: Any, what: str, *, statics_ok: bool) -> None:
+    def check(index: Any, what: str) -> None:
         try:
             pos = int(index)
         except (TypeError, ValueError):
@@ -193,18 +200,12 @@ def _check_grant_targets(
                 f"{where}: {what} names 'grantable_abilities[{pos}]' and this card "
                 f"has {len(grantable)} -- a grant nothing answers hands over nothing"
             )
-        if grantable[pos].is_static and not statics_ok:
-            raise DslError(
-                f"{where}: the grant_ability *op* hands over a pointer that the "
-                f"characteristics pipeline never reads, so granting the static "
-                f"'grantable_abilities[{pos}]' with it would do nothing -- a "
-                f"continuous grant is the `grant_ability` **static**"
-            )
+
 
     for ability in abilities:
         static = ability.static or {}
         if ability.is_static and static.get("effect") == "grant_ability":
-            check(static.get("ability", 0), "grant_ability static", statics_ok=True)
+            check(static.get("ability", 0), "grant_ability static")
 
     trees: list[Any] = [model.spell_effects]
     trees.extend(a.effects for a in abilities)
@@ -214,7 +215,7 @@ def _check_grant_targets(
             if effect.get("op") != "grant_ability":
                 continue
             index = effect.get("ability", effect.get("ability_index"))
-            check(index, "grant_ability op", statics_ok=False)
+            check(index, "grant_ability op")
 
 
 def _compile_emblems(model: CardModel, where: str) -> tuple[CardDef, ...]:

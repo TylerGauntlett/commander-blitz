@@ -33992,12 +33992,12 @@
     },
     "Bridgeworks Battle // Tanglespan Bridgeworks": {
       "edhrec_rank": 686,
-      "gate": "template",
+      "gate": null,
       "name": "Bridgeworks Battle // Tanglespan Bridgeworks",
-      "reason": "no template for: Target creature you control gets +2/+2 until end of turn. It fights up to one target creat",
+      "reason": "",
       "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bridled Bighorn": {
@@ -279042,12 +279042,12 @@
     },
     "The Irencrag": {
       "edhrec_rank": 3821,
-      "gate": "template",
+      "gate": null,
       "name": "The Irencrag",
-      "reason": "no template for: Whenever a legendary creature you control enters, you may have become a legendary Equipmen",
+      "reason": "",
       "scryfall_id": "8051c5ec-54a6-45a8-8945-fb93c5feaa39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Jolly Balloon Man": {

@@ -666,14 +666,14 @@ def _derived_abilities(
         index = int(static.get("ability", 0))
         if 0 <= index < len(granted):
             out.append((granted[index], (source_obj.oid, index)))
-    out.extend(_op_granted_activated(state, obj))
+    out.extend(_op_granted_abilities(state, obj))
     return out
 
 
 def _has_op_grants(obj: GameObject) -> bool:
     """Is anything on this permanent a one-shot ``grant_ability`` record?
 
-    The cheap half of `_op_granted_activated`, asked on `abilities_of`'s fast
+    The cheap half of `_op_granted_abilities`, asked on `abilities_of`'s fast
     path: almost no permanent carries one, and those that do must not be
     answered with the printed list.
     """
@@ -682,10 +682,10 @@ def _has_op_grants(obj: GameObject) -> bool:
     )
 
 
-def _op_granted_activated(
+def _op_granted_abilities(
     state: GameState, obj: GameObject
 ) -> list[tuple[Ability, tuple[int, int]]]:
-    """The **activated** abilities the `grant_ability` *op* has handed this permanent.
+    """The abilities the `grant_ability` *op* has handed this permanent.
 
     Urza's Saga: "I — This Saga gains "{T}: Add {C}."" and "II — This Saga gains
     "{2}, {T}: Create a … Construct …"". A chapter resolves once and the gain
@@ -699,9 +699,19 @@ def _op_granted_activated(
     Appended here with the same provenance a static grant carries, so an
     activation can tell `stack.ability_of` where the definition lives (608.2).
 
-    **Activated only.** An op-granted *triggered* ability is already yielded by
-    `triggers.collect` off the record itself; listing it here too would fire it
-    twice. And the loader refuses an op-granted static.
+    **Activated and static, never triggered.** An op-granted *triggered* ability
+    is already yielded by `triggers.collect` off the record itself; listing it
+    here too would fire it twice.
+
+    A **static** belongs here, and the loader used to refuse one on the grounds
+    that "a static handed over that way never reaches `_battlefield_statics`,
+    because that walk finds statics on the derived list rather than in the grant
+    record". That is exactly the list this function feeds: `abilities_of`
+    appends what comes back here, `_battlefield_statics` reads `abilities_of`,
+    and so a granted static joins the characteristics pipeline with no new walk
+    at all. The Irencrag is the card that wanted it -- "it gains equip {3} and
+    **"Equipped creature gets +3/+3"**" -- and a `grant_ability` *static* cannot
+    say that line, because a static on The Irencrag is on from turn one.
 
     Read off the two live lists and never off ``left_with``: that is a departure
     snapshot for leave-the-battlefield triggers, and the whole point of 400.7 is
@@ -718,7 +728,7 @@ def _op_granted_activated(
         if not 0 <= temp.ability_index < len(pool):
             continue
         ability = pool[temp.ability_index]
-        if not ability.is_activated:
+        if not (ability.is_activated or ability.is_static):
             continue
         out.append((ability, (granter.oid, temp.ability_index)))
     return out

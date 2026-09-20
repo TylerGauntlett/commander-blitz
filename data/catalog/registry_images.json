@@ -1279,6 +1279,10 @@
     "artist": "Borja Pindado",
     "scryfall_id": "390c96b3-68da-4a42-89ab-d9ccc79ce0dd"
   },
+  "bridgeworks_battle_tanglespan_bridgeworks": {
+    "artist": "Ron Spears",
+    "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63"
+  },
   "brightblade_stoat": {
     "artist": "Lius Lasahido",
     "scryfall_id": "df7fea2e-7414-4bc8-adb0-9342e174c009"
@@ -9715,6 +9719,10 @@
     "artist": "Randy Gallegos",
     "scryfall_id": "2adf277c-945e-49b4-88d7-ac720863d0d6"
   },
+  "tanglespan_bridgeworks": {
+    "artist": "Ron Spears",
+    "scryfall_id": "ebef3db0-2b58-4581-a79c-fbca9a059e63"
+  },
   "tanuki_transplanter": {
     "artist": "Oleksandr Kozachenko",
     "scryfall_id": "45ea5ead-9fd8-4909-96aa-d4e970891c93"
@@ -9920,6 +9928,10 @@
     "artist": "Kekai Kotaki",
     "back": true,
     "scryfall_id": "52173f36-19d2-48be-a8e8-8cbe946759c0"
+  },
+  "the_irencrag": {
+    "artist": "Adam Paquette",
+    "scryfall_id": "8051c5ec-54a6-45a8-8945-fb93c5feaa39"
   },
   "the_lady_of_the_mountain": {
     "artist": "Richard Kane Ferguson",

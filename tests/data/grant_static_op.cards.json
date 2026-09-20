@@ -1,0 +1,70 @@
+{
+  "_comment": "Shapes for tests/unit/test_grant_static_op.py. t_gso_crag grants itself a static anthem when it enters -- The Irencrag's \"it gains 'Equipped creature gets +3/+3'\" reduced to the part under test. The anthem pumps creatures you control rather than an attached one so the effect is visible without an attachment. t_gso_bear is what it pumps, and t_gso_plain is the same card that grants nothing.",
+  "cards": [
+    {
+      "id": "t_gso_crag",
+      "name": "Test Granting Crag",
+      "oracle_text": "When this artifact enters, it gains \"Creatures you control get +3/+3\".",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "grantable_abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +3/+3.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "power": {"const": 3},
+          "toughness": {"const": 3}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters, it gains \"Creatures you control get +3/+3\".",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "grant_ability",
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {"zone": "battlefield", "self_only": true}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gso_plain",
+      "name": "Test Ungranting Crag",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "grantable_abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +3/+3.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "power": {"const": 3},
+          "toughness": {"const": 3}
+        }
+      ]
+    },
+    {
+      "id": "t_gso_bear",
+      "name": "Test Granted Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}
