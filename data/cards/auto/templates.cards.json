@@ -61751,6 +61751,32 @@
       ]
     },
     {
+      "color_identity": [],
+      "colors": [],
+      "id": "masterwork_of_ingenuity",
+      "mana_cost": "{1}",
+      "name": "Masterwork of Ingenuity",
+      "oracle_text": "You may have this Equipment enter as a copy of any Equipment on the battlefield.",
+      "replacements": [
+        {
+          "copying": {
+            "subtypes": [
+              "Equipment"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

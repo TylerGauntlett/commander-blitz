@@ -363,7 +363,10 @@ no shipped card prints such a cost. Under K'rrik the `{B}` in a **strive**
 surcharge is paid with mana (no shipped strive card prints `{B}`).
 
 **Effects**
-Copying a permanent as anything but a token ·
+Copying a permanent as anything but a token, **except** as it enters -- 614.1b is
+implemented as the `self_enters_as_copy` replacement (Masterwork of Ingenuity,
+Vesuva, Phyrexian Metamorph); what remains unimplemented is a copy applied to a
+permanent already on the battlefield by anything but `become_copy` ·
 damage *redirection* (prevention is implemented -- see absorb for the
 per-permanent form and the player-shield row for "prevent all damage to you this
 turn"; what is **not** implemented is absorb-N over a player, "prevent the next 3
@@ -372,7 +375,7 @@ at a target that may be a creature instead -- the `prevent_damage` op refuses an
 `amount` rather than approximating it) ·
 granting a *static* or *activated* ability to
 another permanent (triggered ones work) · general replacement effects (the whitelist is
-four enters-the-battlefield forms; the three that *ask* -- dredge, madness,
+five enters-the-battlefield forms; the three that *ask* -- dredge, madness,
 miracle -- are implemented separately in `engine/replacements.py`, and **token
 creation** has a narrow hook of its own, `replace_token_creation`, described in
 the row above). There is still no rule-616 machinery: no event object, no

@@ -1,0 +1,98 @@
+{
+  "_comment": "Shapes for tests/unit/test_enters_as_copy.py. t_eac_masterwork is Masterwork of Ingenuity: a blank Equipment that may enter as a copy of any Equipment on the battlefield. t_eac_blade is an Equipment with a buff and an equip to be copied, t_eac_other a second one so the choice is a real choice, and t_eac_bear a creature to equip. t_eac_plain is the same Equipment with no copy clause, the control.",
+  "cards": [
+    {
+      "id": "t_eac_masterwork",
+      "name": "Test Masterwork",
+      "oracle_text": "You may have this Equipment enter as a copy of any Equipment on the battlefield.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "subtypes": ["Equipment"]}
+        }
+      ]
+    },
+    {
+      "id": "t_eac_blade",
+      "name": "Test Copyable Blade",
+      "oracle_text": "Equipped creature gets +3/+3.\nEquip {2}",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +3/+3.",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"const": 3},
+          "toughness": {"const": 3}
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {2}",
+          "sorcery_speed_only": true,
+          "cost": {"mana": "{2}"},
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+            }
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_eac_other",
+      "name": "Test Other Blade",
+      "oracle_text": "Equipped creature gets +1/+1.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Equipped creature gets +1/+1.",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"const": 1},
+          "toughness": {"const": 1}
+        }
+      ]
+    },
+    {
+      "id": "t_eac_plain",
+      "name": "Test Plain Equipment",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_eac_bear",
+      "name": "Test Copy Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}

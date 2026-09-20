@@ -540,6 +540,24 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}.replacements[{i}]: 'self_enters_prepared' needs a "
                 f"'prepared_face' -- there is no spell to cast a copy of"
             )
+        if replacement.event == "self_enters_as_copy":
+            # The pool, which is the whole clause: "a copy of **any Equipment on
+            # the battlefield**". Required, because a copy replacement with no
+            # pool asks about nothing and the card enters as itself -- a line of
+            # text it never performs, which is what this pass exists to refuse.
+            if replacement.copying is None:
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'self_enters_as_copy' needs "
+                    f"'copying' -- the permanents this one may enter as a copy of"
+                )
+            validate_selector(
+                replacement.copying, f"{where}.replacements[{i}].copying"
+            )
+        elif replacement.copying is not None:
+            raise DslError(
+                f"{where}.replacements[{i}]: 'copying' is read only by "
+                f"'self_enters_as_copy', not by {replacement.event!r}"
+            )
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
             # counter on it." Checked here for the reason the condition below

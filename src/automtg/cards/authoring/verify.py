@@ -1363,4 +1363,14 @@ def _covered(card: CardDef, line: str) -> bool:
             # rules rather than anything the card implements. Claimed by the
             # replacement, the way "enters tapped" above is.
             return True
+        if event == "self_enters_as_copy" and "copy" in lowered and "enter" in lowered:
+            # "You may have this Equipment enter as a copy of any Equipment on
+            # the battlefield." The fourth of this family, claimed the same way
+            # and for the same reason: 614.1b applies as the permanent arrives,
+            # so there is no ability whose `text` could carry the line.
+            #
+            # The words are matched rather than skipped, and the loader will not
+            # let the event be written without a `copying` pool, so the sentence
+            # cannot be claimed by a card that copies nothing.
+            return True
     return False

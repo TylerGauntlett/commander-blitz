@@ -59,9 +59,15 @@
       "cause_filter",
       "chapter",
       "colors",
+      "combat_only",
       "condition",
       "cost",
+      "counter",
+      "counter_addend",
+      "counter_multiplier",
       "create_instead",
+      "damage_multiplier",
+      "damage_source",
       "draw_multiplier",
       "effect",
       "effects",
@@ -81,6 +87,7 @@
       "level",
       "loss_multiplier",
       "mana_restriction",
+      "mana_uncounterable",
       "mill_multiplier",
       "once_each_turn",
       "pay_life_instead",
@@ -355,6 +362,7 @@
         "amount",
         "in_commander_identity",
         "mana",
+        "persists_until_end_of_turn",
         "player",
         "reflecting",
         "split"
@@ -362,6 +370,7 @@
       "add_mana_per": [
         "mana",
         "per",
+        "persists_until_end_of_turn",
         "player"
       ],
       "add_poison": [
@@ -459,6 +468,7 @@
         "prompt"
       ],
       "choose_type": [
+        "of",
         "prompt"
       ],
       "connive": [
@@ -572,6 +582,10 @@
       "extra_turn": [
         "player"
       ],
+      "fight": [
+        "objects",
+        "other"
+      ],
       "for_each": [
         "effects",
         "objects"
@@ -672,6 +686,7 @@
         "as",
         "cast_free",
         "destination",
+        "destination_if",
         "destinations",
         "face_down",
         "objects",
@@ -831,6 +846,7 @@
       "reveal_until": [
         "any_color",
         "destination",
+        "destination_if",
         "face_down",
         "objects",
         "playable",
@@ -863,6 +879,7 @@
         "as",
         "count",
         "destination",
+        "destination_if",
         "face_down",
         "playable",
         "playable_this_turn",
@@ -878,6 +895,7 @@
         "as",
         "count",
         "destination",
+        "destination_if",
         "face_down",
         "playable",
         "playable_this_turn",
@@ -989,6 +1007,7 @@
       "extra_combat",
       "extra_land_drop",
       "extra_turn",
+      "fight",
       "for_each",
       "for_each_player",
       "freeze",
@@ -1101,6 +1120,7 @@
       "created_with",
       "damaged",
       "damaged_by",
+      "drawn_this_turn",
       "encoded_by",
       "exclude_binding",
       "exclude_self",
@@ -1113,6 +1133,7 @@
       "mana_cost",
       "mana_value",
       "min_colors",
+      "modified",
       "name",
       "not_colors",
       "not_keywords",
@@ -1170,6 +1191,7 @@
       "cant_block_alone",
       "cant_cast_spells",
       "cant_gain_life",
+      "cant_sacrifice",
       "cast_as_though_flash",
       "cast_from_graveyard",
       "cast_from_library_top",
@@ -1188,6 +1210,8 @@
       "play_lands_from_library_top",
       "prevent_damage",
       "protection",
+      "replace_counters",
+      "replace_damage",
       "replace_draw",
       "replace_empty_draw",
       "replace_life_gain",
@@ -1209,6 +1233,7 @@
     "static_filter_keys": [
       "any_types",
       "attached",
+      "attached_to_host",
       "attacking",
       "blocking",
       "colors",
@@ -1239,7 +1264,8 @@
       "max_life_of",
       "min_count_of",
       "min_life_of",
-      "permanents_entered_this_turn"
+      "permanents_entered_this_turn",
+      "times"
     ],
     "supertypes": [
       "Basic",
@@ -1281,7 +1307,9 @@
       "faerie_1_1_u_flying": "1/1 blue Faerie creature with flying",
       "fish_1_1_u": "1/1 blue Fish creature",
       "food_token": "colorless Food artifact -- {2}, {T}, Sacrifice this artifact: You gain 3 life.",
+      "forest_dryad_1_1_g_land": "1/1 green Forest Dryad land creature -- {T}: Add {G}.",
       "frog_lizard_3_3_g": "3/3 green Frog Lizard creature",
+      "germ_0_0_b": "0/0 black Phyrexian Germ creature",
       "gnome_1_1_c": "1/1 colorless Gnome artifact creature",
       "goblin_1_1_r": "1/1 red Goblin creature",
       "hero_1_1_c": "1/1 colorless Hero creature",
@@ -1334,6 +1362,7 @@
       "becomes_level",
       "becomes_monarch",
       "becomes_monstrous",
+      "becomes_tapped",
       "becomes_target",
       "becomes_untapped",
       "begin_combat",
@@ -1357,6 +1386,7 @@
       "leaves_battlefield",
       "leaves_graveyard",
       "life_lost",
+      "mutates",
       "permanent_enters",
       "postcombat_main",
       "precombat_main",
@@ -1405,6 +1435,7 @@
       "cards_in_hand",
       "cards_to_graveyard_this_turn",
       "colors_of_mana_spent",
+      "combats_this_turn",
       "commander_color_identity",
       "const",
       "count",

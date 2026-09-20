@@ -129,6 +129,15 @@ class GameObject:
     #: needed changing. `copy_permanent` is a different thing entirely: it makes
     #: a new **token** and never alters the object it points at.
     copying: str | None = None
+    #: The def id this permanent was told to enter as a copy of, recorded by
+    #: `zones.offer_enters_copy` a moment before the move and consumed by
+    #: `_enter_battlefield`, which turns it into `copying` above.
+    #:
+    #: A field of its own rather than writing `copying` directly, for
+    #: `enters_cost_paid`'s reason: `reset_permanent_state` clears `copying` --
+    #: a permanent that leaves the battlefield stops being a copy of anything --
+    #: and it runs during the very move this answer has to survive.
+    enters_copy_of: str | None = None
     #: The name the copy keeps, for the "except its name is…" clause. `None`
     #: takes the copied card's own name, which is the ordinary case.
     copying_name: str | None = None
@@ -888,6 +897,9 @@ class GameObject:
         self.dies_to = None
         self.leaves_to = None
         self.copying = None
+        # `enters_copy_of` is deliberately absent, exactly as `enters_cost_paid`
+        # is: it is an answer about the arrival this reset is clearing the way
+        # for, and `_enter_battlefield` clears it itself once it has been read.
         self.copying_name = None
         self.copying_until_eot = False
         self.monstrous = False

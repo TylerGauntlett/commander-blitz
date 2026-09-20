@@ -5653,6 +5653,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "masterwork_of_ingenuity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mek_leth_berserker": {
     "zone": "battlefield"
   },

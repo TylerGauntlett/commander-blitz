@@ -168032,12 +168032,12 @@
     },
     "Masterwork of Ingenuity": {
       "edhrec_rank": 1649,
-      "gate": "template",
+      "gate": null,
       "name": "Masterwork of Ingenuity",
-      "reason": "no template for: You may have this Equipment enter as a copy of any Equipment on the battlefield",
+      "reason": "",
       "scryfall_id": "8d974ae0-5d39-4b2d-8ca0-2ebed2657e25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mastery of the Unseen": {

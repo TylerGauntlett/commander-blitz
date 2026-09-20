@@ -648,8 +648,22 @@ class ReplacementModel(BaseModel):
         "self_enters_tapped",
         "self_enters_with_counters",
         "self_enters_prepared",
+        #: "You may have this Equipment enter as a copy of any Equipment on the
+        #: battlefield" -- Masterwork of Ingenuity, Vesuva, Phyrexian Metamorph.
+        #: 614.1b: a copy effect applied *as* the permanent arrives, so it is
+        #: never seen as itself.
+        "self_enters_as_copy",
     ]
     modify: dict[str, Any] = Field(default_factory=dict)
+    #: `self_enters_as_copy`: the pool of permanents that may be copied --
+    #: ``{"zone": "battlefield", "subtypes": ["Equipment"]}`` for Masterwork of
+    #: Ingenuity, ``{"zone": "battlefield", "types": ["Land"]}`` for Vesuva.
+    #: Required on that event and meaningless on the other four.
+    #:
+    #: Always offered rather than forced: every printed card in this family says
+    #: "**You may** have this enter as a copy", and a copy nobody was asked
+    #: about would be a strictly different card.
+    copying: dict[str, Any] | None = None
     counter: str | None = None
     #: How many, as a plain integer or a **value expression** -- "enters with a
     #: +1/+1 counter on it for each other Human you control" is

@@ -33,7 +33,7 @@ from .state import GameState, new_object
 from .structs import TargetRef
 from .targeting import selectable_modes
 from .turn import _next_blocker_decision
-from .zones import move_object, offer_enters_costs
+from .zones import move_object, offer_enters_copy, offer_enters_costs
 from .zones import sacrifice as sacrifice_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -280,6 +280,7 @@ class Game:
         # who actually played it, the way `stack.push_spell` sets a spell's.
         state.objects[oid].controller = pid
         yield from offer_enters_costs(state, oid, pid)
+        yield from offer_enters_copy(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,

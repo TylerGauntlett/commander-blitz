@@ -1407,6 +1407,50 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A permanent that enters as a copy
+
+```jsonc
+// Masterwork of Ingenuity
+"replacements": [
+  { "event": "self_enters_as_copy",
+    "copying": { "zone": "battlefield", "subtypes": ["Equipment"] } }
+]
+```
+
+614.1b, and the fifth entry on the enters-the-battlefield replacement whitelist —
+`self_enters`, `self_enters_tapped`, `self_enters_with_counters`,
+`self_enters_prepared` and now this. None of the first four could change the
+arriving object's *identity*.
+
+Neither existing copy is this one. `copy_permanent` calls `create_token`: it
+makes a new permanent and never touches the object it is pointed at, where
+Masterwork has to enter as the real card — it stays a card, it can be equipped
+and returned. `become_copy` is the right mechanism and the wrong timing: applied
+in place, the only way to reach it here is a `self_enters` trigger, which puts
+the Equipment on the battlefield as *itself* first, so everything watching an
+Equipment enter sees the blank and anything answering the trigger answers before
+the copy exists.
+
+The question is asked by `zones.offer_enters_copy` a moment **before** the move,
+beside `offer_enters_costs` and from its two call sites, because `move_object` is
+not a generator and cannot stop for a decision — making it one would put a
+suspend point inside every zone change in the engine. Asking early is not an
+approximation: 614 applies the replacements during the zone change and nobody
+receives priority in between, so there is no window in which the permanent exists
+with the question unanswered.
+
+The answer rides on `GameObject.enters_copy_of`, a field of its own rather than
+`copying` written early, because `reset_permanent_state` clears `copying` — a
+permanent that leaves the battlefield stops being a copy — and it runs during the
+very move the answer has to survive. `_enter_battlefield` turns it into `copying`
+with no end-of-turn duration, since 706.2 gives a copy applied as a permanent
+enters none.
+
+`copying` is required on the event and refused on the other four. Always an
+offer, because every printed card in this family says "you may"; an empty pool
+asks nothing, and the arriving permanent is not on the battlefield yet, so it
+cannot find itself.
+
 ### Damage multiplied on the way out
 
 ```jsonc

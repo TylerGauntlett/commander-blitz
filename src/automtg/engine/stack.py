@@ -919,9 +919,10 @@ def _place_after_resolution(
         # "As this enters, you may pay â€¦" -- the permanent-spell half of the
         # same offer `game._play_land` makes for a land drop, and asked in the
         # same window and for the same reason.
-        from .zones import offer_enters_costs
+        from .zones import offer_enters_copy, offer_enters_costs
 
         yield from offer_enters_costs(state, obj.oid, controller)
+        yield from offer_enters_copy(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
