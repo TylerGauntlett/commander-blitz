@@ -251,6 +251,183 @@ class TestLazyFill:
         assert calls == []
 
 
+#: Sheoldred, the Apocalypse, the card this pair of tests was written for.
+#: `art_pins.json` pins the Dominaria United printing; the Secret Lair is what
+#: the dedupe picked before the pin and what a deck imported before it recorded.
+PINNED_DMU = "d67be074-cdd4-41d9-ac89-0a0456c4e4b2"
+PROXY_SECRET_LAIR = "c68629ff-72b3-40a2-b578-cddb6ddb4ccf"
+
+
+class TestTheAuthoredLayerWins:
+    """`pool.images.json` may fill gaps, never overrule the committed answer.
+
+    `load_game_data` already drops a generated *card* whose card has since been
+    authored. The art map did the opposite: it applied the overlay with
+    `update`, so a proxy's printing beat the authored card's.
+
+    That combination is not hypothetical -- it is the live bug. The overlay is
+    append-only (the importer `update`s entries in and never re-resolves one),
+    so a card keeps whichever printing the catalog chose on the day its deck was
+    imported. Sheoldred was imported as a proxy, then authored, then pinned to
+    the Dominaria United art; every deployment that had imported her deck went
+    on serving the Secret Lair illustration with the pin merged, tested, and
+    deployed.
+    """
+
+    def _resolve(self, tmp_path, monkeypatch, *, committed, generated):
+        monkeypatch.setenv("AUTOMTG_DATA_DIR", str(tmp_path))
+        catalog = tmp_path / "catalog"
+        catalog.mkdir(parents=True)
+        (catalog / "registry_images.json").write_text(
+            json.dumps(committed), encoding="utf-8"
+        )
+        pool = tmp_path / "generated" / "cards"
+        pool.mkdir(parents=True)
+        (pool / "pool.images.json").write_text(json.dumps(generated), encoding="utf-8")
+        from automtg.server.art import _resolve_images
+
+        # `registry` and `index` are only consulted when the committed file is
+        # missing or empty, and here it is neither.
+        return _resolve_images(None, None)
+
+    def test_a_stale_proxy_cannot_overrule_a_pinned_printing(
+        self, tmp_path, monkeypatch
+    ):
+        images = self._resolve(
+            tmp_path,
+            monkeypatch,
+            committed={
+                "sheoldred_the_apocalypse": {
+                    "scryfall_id": PINNED_DMU,
+                    "artist": "Chris Rahn",
+                }
+            },
+            generated={
+                "sheoldred_the_apocalypse": {
+                    "scryfall_id": PROXY_SECRET_LAIR,
+                    "artist": "Nicky Barkla",
+                }
+            },
+        )
+        art = images["sheoldred_the_apocalypse"]
+        assert art.scryfall_id == PINNED_DMU
+        assert art.artist == "Chris Rahn"
+
+    def test_the_overlay_still_supplies_a_card_the_registry_never_had(
+        self, tmp_path, monkeypatch
+    ):
+        # The overlay's actual job. Losing this would leave every imported card
+        # that the engine does not ship drawing a hatched plate.
+        images = self._resolve(
+            tmp_path,
+            monkeypatch,
+            committed={"forest": {"scryfall_id": PINNED_DMU, "artist": "Someone"}},
+            generated={
+                "an_imported_card": {
+                    "scryfall_id": PROXY_SECRET_LAIR,
+                    "artist": "Nicky Barkla",
+                }
+            },
+        )
+        assert images["an_imported_card"].scryfall_id == PROXY_SECRET_LAIR
+        assert images["forest"].scryfall_id == PINNED_DMU
+
+
+class TestOwnedBytesBeatTheCache:
+    """Two directories, and the committed one is authoritative.
+
+    The owned bytes ship in the image and are never written at runtime; the
+    cache holds what the lazy fill downloaded and lives on a Docker volume. A
+    single directory for both is what made the volume shadow the image, so that
+    a corrected illustration could be committed, built and deployed and still
+    never reach the site -- the volume seeds once and no later image re-seeds it.
+    """
+
+    def _dirs(self, tmp_path):
+        owned = tmp_path / "art"
+        cache = tmp_path / "generated" / "art"
+        owned.mkdir(parents=True)
+        cache.mkdir(parents=True)
+        return owned, cache
+
+    def test_a_cached_file_never_shadows_the_committed_one(self, tmp_path):
+        owned, cache = self._dirs(tmp_path)
+        (owned / "forest.jpg").write_bytes(JPEG)
+        (cache / "forest.jpg").write_bytes(b"what an older image shipped")
+        store = ArtStore(images={}, directory=owned, cache=cache, index=None)
+        assert store.resolve("forest").read_bytes() == JPEG
+
+    def test_the_lazy_fill_writes_to_the_cache_only(self, tmp_path, monkeypatch):
+        owned, cache = self._dirs(tmp_path)
+        store = ArtStore(images={}, directory=owned, cache=cache, index=None)
+
+        def fake_download(url: str, path):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(JPEG)
+            return True
+
+        monkeypatch.setattr(store, "_download", fake_download)
+        uuid = "0000419b-0bba-4488-8f7a-6194544ce91e"
+        assert store.resolve(uuid) == cache / f"{uuid}.jpg"
+        # The owned directory is repository content and read-only in the image;
+        # a fill that landed there would be unwritable in production anyway.
+        assert list(owned.iterdir()) == []
+
+    def test_the_cache_still_serves_a_card_the_image_does_not_own(self, tmp_path):
+        owned, cache = self._dirs(tmp_path)
+        uuid = "0000419b-0bba-4488-8f7a-6194544ce91e"
+        (cache / f"{uuid}.jpg").write_bytes(JPEG)
+        store = ArtStore(
+            images={}, directory=owned, cache=cache, index=None, allow_fetch=False
+        )
+        assert store.resolve(uuid) == cache / f"{uuid}.jpg"
+
+    def test_health_counts_both_directories(self, tmp_path):
+        owned, cache = self._dirs(tmp_path)
+        (owned / "forest.jpg").write_bytes(JPEG)
+        (cache / "black_lotus.jpg").write_bytes(JPEG)
+        store = ArtStore(images={}, directory=owned, cache=cache, index=None)
+        assert store.cached_ids() == {"forest", "black_lotus"}
+
+    def test_one_directory_serving_as_both_is_not_double_counted(self, tmp_path):
+        # `cache=None` means "beside the owned bytes" -- what a caller with a
+        # single directory gets, and what every checkout got before the split.
+        owned = tmp_path / "art"
+        owned.mkdir()
+        (owned / "forest.jpg").write_bytes(JPEG)
+        store = ArtStore(images={}, directory=owned, index=None)
+        assert store.cache == owned
+        assert store.cached_ids() == {"forest"}
+
+
+class TestTheDeployedShape:
+    """The two invariants that live outside Python and broke it from there."""
+
+    def test_the_cache_is_inside_the_tree_the_volume_persists(self):
+        from automtg.cards.images import art_cache_dir, art_dir, generated_dir
+
+        assert art_dir() != art_cache_dir()
+        # `generated/` is the one mount point, so the cache has to be under it
+        # to outlive a container -- and the owned bytes have to be outside it.
+        assert generated_dir() in art_cache_dir().parents
+        assert generated_dir() not in art_dir().parents
+
+    def test_no_volume_is_mounted_over_the_committed_art(self):
+        """The regression, stated where it can actually be caught.
+
+        Nothing in Python can observe this: the shadowing happens in the mount
+        namespace, and every test above passes just as well with the volume
+        back. `:/app/data/art` in a volume entry is the whole bug.
+        """
+        from pathlib import Path
+
+        compose = Path(__file__).resolve().parents[2] / "docker-compose.yml"
+        assert ":/app/data/art" not in compose.read_text(encoding="utf-8"), (
+            "a volume mounted over /app/data/art seeds once and is never "
+            "re-seeded, so committed art can never be updated by a deploy"
+        )
+
+
 @pytest.mark.skipif(not catalog_path().exists(), reason="no card index built")
 class TestCatalog:
     def test_search_returns_results_and_an_unclamped_total(self, client):

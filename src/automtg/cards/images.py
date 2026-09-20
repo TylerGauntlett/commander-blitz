@@ -75,7 +75,28 @@ def generated_images_path() -> Path:
 
 
 def art_dir() -> Path:
+    """The art the repository owns: committed bytes, baked into the image.
+
+    Read-only at runtime.  Nothing writes here outside
+    ``scripts/fetch_card_art.py``, and that is the property that makes a
+    changed illustration reach the site it was deployed to.
+    """
     return data_dir() / "art"
+
+
+def art_cache_dir() -> Path:
+    """Where the lazy fill writes -- the only card art written at runtime.
+
+    Under ``generated/`` rather than beside the owned bytes, and for the reason
+    the generated card pool lives there: this is per-deployment state that has
+    to outlive a container, while the owned bytes are repository content that
+    must not.  One directory for both meant a Docker volume mounted over it to
+    persist the first, and that volume then shadowed the second -- an
+    illustration could be committed, built and deployed and still never appear,
+    because a file of the same name from an older image was already in the
+    volume and nothing re-seeds one.  See ``docs/deployment.md``.
+    """
+    return generated_dir() / "art"
 
 
 def image_url(scryfall_id: str, size: str = ART_CROP, *, back: bool = False) -> str:

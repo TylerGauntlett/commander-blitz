@@ -55,12 +55,18 @@ COPY --from=client /build/dist ./frontend/dist
 ENV AUTOMTG_DATA_DIR=/app/data \
     AUTOMTG_CLIENT_DIR=/app/frontend/dist
 
-# Runtime writes: lazily-fetched Scryfall art, and cards/decks from an import.
-# Created before the chown so the volume mount points inherit app ownership --
-# a named volume seeds its contents *and* its permissions from the image.
+# Runtime writes, all of them, and all under one mount point: cards and decks
+# from an import, and the art the store lazily fetches. Created before the chown
+# so the volume mount point inherits app ownership -- a named volume seeds its
+# contents *and* its permissions from the image.
+#
+# `/app/data/art` is deliberately left root-owned and outside the volume. It is
+# the committed art, it ships with this image, and a process that cannot write
+# it cannot let a stale copy outlive the illustration it replaced -- which is
+# exactly what a volume mounted over it used to do.
 RUN useradd --create-home --uid 10001 app \
-    && mkdir -p /app/data/art /app/data/generated \
-    && chown -R app:app /app/data
+    && mkdir -p /app/data/generated/art \
+    && chown -R app:app /app/data/generated
 USER app
 
 EXPOSE 8000

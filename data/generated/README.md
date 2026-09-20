@@ -9,7 +9,23 @@ cards/pool.cards.json      every generated card, one shared pool
 cards/pool.images.json     {card_id: {scryfall_id, artist} | null}
 cards/pool.coverage.json   {card_id: {coverage, notes[]}}
 decks/mox_<publicId>.deck.json
+art/{card_id}.jpg          the lazy fill's cache — see docs/card-catalog.md
 ```
+
+`art/` is here rather than beside `data/art/` because it is the same kind of
+thing as everything else in this directory: per-deployment state, reproducible,
+and the only card art written at runtime. Keeping it apart from the committed
+bytes is what lets one Docker volume persist all of it without a mount sitting
+over repository content — `docs/deployment.md` has the bug that taught us.
+
+## `pool.images.json` fills gaps, it does not overrule
+
+An entry here is written once, at import time, and never re-resolved. It is the
+printing the catalog chose *that day*. So the server's art map applies it with
+`setdefault`: a card the authored layer knows resolves from
+`registry_images.json`, which is the reviewed answer and the one a pin can
+correct. This mirrors `load_game_data`, which drops a generated card outright
+once the real one is authored.
 
 ## Why one pool and not one file per deck
 

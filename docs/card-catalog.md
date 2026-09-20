@@ -37,7 +37,14 @@ data/catalog/
 ├── cards.sqlite                 the built index          (committed, ~14 MB)
 └── registry_images.json         the engine's cards only  (committed, ~104 KB)
 data/art/{card_id}.jpg           owned image bytes        (committed, ~63 MB)
+data/generated/art/{id}.jpg      the lazy fill's cache    (gitignored, per-deployment)
 ```
+
+**The two art directories are not interchangeable.** `data/art/` is what the
+repository owns: committed, baked into the image, never written at runtime.
+`data/generated/art/` is what the lazy fill downloaded, and it is the only card
+art that persists across a deploy. Owned bytes win when both hold the same name
+— see "Serving" below.
 
 **Two index artifacts, and the split matters.** `cards.sqlite` holds all ~32,700
 distinct English cards and is opened lazily, only by `/api/catalog`. Loading
@@ -180,9 +187,17 @@ the face.
 `GET /art/{card_id}.jpg` is a FastAPI route returning `FileResponse`, not a
 `StaticFiles` mount — the route also does a **lazy fill**. A card outside
 `data/cards/` (a catalog search result, a future deck) has no file yet, so the
-first request fetches it once, writes it beside the others, and serves it. The
-app gets more self-owned as it is used, and the browser still only ever talks to
-this server.
+first request fetches it once, writes it to `data/generated/art/`, and serves it.
+The app gets more self-owned as it is used, and the browser still only ever talks
+to this server.
+
+**A committed file always beats a cached one of the same name.** `path_for`
+checks `data/art/` first. A cached file is only ever what some earlier boot
+believed the printing to be, and `art_pins.json` exists precisely to change that
+belief — so the reviewed answer has to be the one that wins. The two directories
+are also what keeps the runtime-writable state on one Docker volume, without a
+mount sitting over repository content; `docs/deployment.md` has the failure that
+taught us to care.
 
 `GET /api/images` hands the client every card's art path in one cacheable
 response. It carries **no `cards.scryfall.io` URL** — `tests/server/test_art_api.py`

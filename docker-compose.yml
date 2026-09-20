@@ -36,14 +36,21 @@ services:
       # Reachable only on the compose network, as web:8000. Caddy is the edge.
       - "8000"
     volumes:
-      # Both are written at runtime and must outlive the container.
+      # One volume, holding exactly what is written at runtime: imported decks
+      # and their cards, plus the art the store lazily fetches from Scryfall
+      # (`data/generated/art`, see automtg.cards.images.art_cache_dir).
       #
-      # A named volume seeds itself from the image the first time it is created,
-      # so `art` starts life holding the ~800 jpgs baked into the image and then
-      # accumulates whatever the art store lazily fetches from Scryfall. Later
-      # images do not re-seed it -- that is fine, since anything missing is
-      # fetched on demand anyway.
-      - art:/app/data/art
+      # There used to be a second volume mounted at `/app/data/art`, over the
+      # ~800 committed jpgs. A named volume seeds itself from the image only
+      # when it is first created and no later image re-seeds it, so every one
+      # of those files was frozen at whatever the first deploy shipped -- a
+      # corrected illustration could be committed, built and deployed and still
+      # never appear on the site. `/app/data/art` now comes from the image and
+      # nothing writes to it.
+      #
+      # The old `automtg_art` volume is left behind as an orphan on any droplet
+      # that predates this; `docker volume rm automtg_art` reclaims its ~63MB
+      # once the new image is up. Nothing reads it.
       - generated:/app/data/generated
     logging:
       # Uncapped json-file logging is the classic way to fill a droplet's disk.
@@ -53,7 +60,6 @@ services:
         max-file: "3"
 
 volumes:
-  art:
   generated:
   caddy_data:
   caddy_config:
