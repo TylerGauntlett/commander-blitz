@@ -342,6 +342,19 @@ class AbilityModel(BaseModel):
     # activated
     cost: CostModel | None = None
     is_mana_ability: bool = False
+    #: "**Equip** {2}" -- 702.6a. Marks this activated ability as the equip
+    #: ability it prints, so a static can name equip abilities as a *class*:
+    #: Strong Back's "equip abilities you activate that target enchanted
+    #: creature cost {3} less", Leonin Shikari's "you may activate equip
+    #: abilities any time you could cast an instant".
+    #:
+    #: Declared rather than inferred. An equip ability compiles to an ordinary
+    #: activated ability whose effect is `attach`, which is exactly what Vault
+    #: 101 and every reconfigure card also compile to -- so guessing from the
+    #: shape would sweep in abilities that are not equip and print no such
+    #: word. The loader checks the declaration against the shape instead, so
+    #: the word cannot be written without the mechanic behind it.
+    is_equip: bool = False
     #: "Spend this mana only to cast a creature spell."  A card type, lowercased.
     #: A *list* is the "and/or" form -- "Spend this mana only to cast Vampire,
     #: Cleric, and/or Demon spells" -- and its entries may be subtypes as well as

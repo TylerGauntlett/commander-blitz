@@ -1614,6 +1614,30 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             f"{where}: 'id' only means anything on a reflexive ability, not on a {kind.value} one"
         )
 
+    if model.is_equip:
+        # "Equip {2}" is 702.6a: an activated ability, sorcery-speed only, whose
+        # whole effect is attaching this permanent to a creature you control.
+        # The declaration is held to that shape rather than inferred from it --
+        # see `schema.AbilityModel.is_equip` -- so the word cannot be written on
+        # an ability that does not do what equip does, and a static naming equip
+        # abilities as a class cannot be pointed at something else.
+        if kind is not AbilityKind.ACTIVATED:
+            raise DslError(
+                f"{where}: 'is_equip' marks an *activated* ability (702.6a), "
+                f"not a {kind.value} one"
+            )
+        if not model.sorcery_speed_only:
+            raise DslError(
+                f"{where}: an equip ability is sorcery-speed only (702.6b) -- "
+                f"set 'sorcery_speed_only'"
+            )
+        ops = [e.get("op") for e in (model.effects or []) if isinstance(e, Mapping)]
+        if ops != ["attach"]:
+            raise DslError(
+                f"{where}: an equip ability attaches this permanent and does "
+                f"nothing else (702.6a); got {ops or 'no effects'}"
+            )
+
     if kind is AbilityKind.STATIC:
         return _compile_static(model, index, where)
 
@@ -2063,6 +2087,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         reflex_id=model.id or "",
         cost=cost,
         is_mana_ability=model.is_mana_ability,
+        is_equip=model.is_equip,
         mana_options=mana_options,
         mana_amount=mana_amount,
         mana_rider=mana_rider,

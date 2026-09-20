@@ -43,7 +43,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -519,7 +520,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -808,7 +810,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -1143,7 +1146,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -5600,7 +5604,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -7143,7 +7148,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -7611,7 +7617,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -8275,7 +8282,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -9184,7 +9192,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -9263,7 +9272,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -9464,7 +9474,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -9883,7 +9894,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -10891,7 +10903,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -10955,7 +10968,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -11035,7 +11049,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -11200,7 +11215,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -12197,7 +12213,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -12397,7 +12414,8 @@
               }
             }
           ],
-          "text": "Equip {4}"
+          "text": "Equip {4}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -12816,7 +12834,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -13446,7 +13465,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -15372,7 +15392,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -16999,7 +17020,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -17261,7 +17283,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -18526,7 +18549,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -18910,7 +18934,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -19362,7 +19387,8 @@
               }
             }
           ],
-          "text": "Equip commander {3}"
+          "text": "Equip commander {3}",
+          "is_equip": true
         },
         {
           "cost": {
@@ -19392,7 +19418,8 @@
               }
             }
           ],
-          "text": "Equip {5}"
+          "text": "Equip {5}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -20041,7 +20068,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -21508,7 +21536,8 @@
               }
             }
           ],
-          "text": "Equip {4}. This ability costs {3} less to activate if you're the monarch."
+          "text": "Equip {4}. This ability costs {3} less to activate if you're the monarch.",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -22139,7 +22168,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -22203,7 +22233,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -23201,7 +23232,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -23407,7 +23439,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -30829,7 +30862,8 @@
               }
             }
           ],
-          "text": "Equip legendary creature {2}"
+          "text": "Equip legendary creature {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -31002,7 +31036,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -31200,7 +31235,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -34006,7 +34042,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -34623,7 +34660,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -38129,7 +38167,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -39743,7 +39782,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -41441,7 +41481,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -41498,7 +41539,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -42372,7 +42414,8 @@
               }
             }
           ],
-          "text": "Equip {5}"
+          "text": "Equip {5}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -42456,7 +42499,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -43845,7 +43889,8 @@
               }
             }
           ],
-          "text": "Equip {4}"
+          "text": "Equip {4}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -43954,7 +43999,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -44287,7 +44333,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -44939,7 +44986,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -47133,7 +47181,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -49505,7 +49554,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -50904,7 +50954,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -53838,7 +53889,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -53909,7 +53961,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -54945,7 +54998,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -55809,7 +55863,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -56254,7 +56309,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -56862,7 +56918,8 @@
               }
             }
           ],
-          "text": "Equip {0}"
+          "text": "Equip {0}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -58645,7 +58702,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -61024,7 +61082,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -61677,7 +61736,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -61757,7 +61817,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -67513,7 +67574,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -67570,7 +67632,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -68628,7 +68691,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -70079,7 +70143,8 @@
               }
             }
           ],
-          "text": "Equip {5}"
+          "text": "Equip {5}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -72463,7 +72528,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -73328,7 +73394,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -74416,7 +74483,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -75258,7 +75326,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -75562,7 +75631,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -78662,7 +78732,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [
@@ -81189,7 +81260,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -89559,7 +89631,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -89619,7 +89692,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -89980,7 +90054,8 @@
               }
             }
           ],
-          "text": "Equip {0}"
+          "text": "Equip {0}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -91462,7 +91537,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -92228,7 +92304,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -94547,7 +94624,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -95639,7 +95717,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -97309,7 +97388,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -99482,7 +99562,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "id": "swiftfoot_boots",
@@ -99687,7 +99768,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -99761,7 +99843,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -99870,7 +99953,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -106394,7 +106478,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -106961,7 +107046,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -107960,7 +108046,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -110969,7 +111056,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -112118,7 +112206,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -112371,7 +112460,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -112914,7 +113004,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -114130,7 +114221,8 @@
               }
             }
           ],
-          "text": "Equip {3}"
+          "text": "Equip {3}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -114215,7 +114307,8 @@
               }
             }
           ],
-          "text": "Equip {2}"
+          "text": "Equip {2}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -115065,7 +115158,8 @@
               }
             }
           ],
-          "text": "Equip {4}"
+          "text": "Equip {4}",
+          "is_equip": true
         }
       ],
       "color_identity": [],
@@ -117730,7 +117824,8 @@
               }
             }
           ],
-          "text": "Equip {1}"
+          "text": "Equip {1}",
+          "is_equip": true
         }
       ],
       "color_identity": [

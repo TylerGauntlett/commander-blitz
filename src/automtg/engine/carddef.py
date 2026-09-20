@@ -602,6 +602,10 @@ class Ability:
     # activated
     cost: Cost | None = None
     is_mana_ability: bool = False
+    #: "Equip {2}" (702.6a), so a static can name equip abilities as a class.
+    #: See `schema.AbilityModel.is_equip` for why it is declared and not
+    #: inferred from the `attach` effect.
+    is_equip: bool = False
     mana_options: tuple[tuple[int, ...], ...] = ()
     #: "Add {G} for each +1/+1 counter on this creature."  A value expression
     #: evaluated **when the ability is activated**, multiplying the single
