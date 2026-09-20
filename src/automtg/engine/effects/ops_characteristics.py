@@ -49,6 +49,39 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
         add_subtypes(ctx.state, oid, subtypes)
 
 
+@register("lose_all_abilities")
+def op_lose_all_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "…and **loses all other abilities**." The Irencrag.
+
+    `lose_all_abilities` existed only as a **static**, and a static is the wrong
+    shape for this line twice over. It is gathered off the printed face, so
+    written on The Irencrag it would strip "{T}: Add {C}" from the moment the
+    artifact entered -- before any legendary creature arrived, and whether or
+    not the player ever said yes. And no `condition` can gate it, because the
+    transformation it waits for is not a fact the engine had a flag for.
+
+    So the fact goes on the **object**, read by `_derived_abilities` beside the
+    static, which is the one place that decides what abilities a permanent has.
+    Both mean the same thing about the printed list; they differ only in who is
+    saying it and for how long.
+
+    Permanent for as long as the permanent is. "Loses all abilities until end of
+    turn" is `temp_effects`' business and a different clause; this one is The
+    Irencrag's, which never changes back.
+
+    **Other** abilities: the grants applied alongside it survive, because
+    `_derived_abilities` drops the *printed* list and appends the granted ones
+    after -- which is exactly what "loses all other abilities and gains …" says.
+    """
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Loses all abilities")
+    for oid in oids:
+        obj = ctx.state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.lost_all_abilities = True
+    ctx.state.bump_chars()
+
+
 @register("rename")
 def op_rename(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "…become a legendary Equipment artifact **named Everflame, Heroes'

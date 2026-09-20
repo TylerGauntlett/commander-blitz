@@ -478,6 +478,8 @@ def _loses_abilities(state: GameState, obj: GameObject) -> bool:
     """Is something stripping every ability from this permanent right now?"""
     if not obj.on_battlefield:
         return False
+    if obj.lost_all_abilities:
+        return True
     return any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
@@ -612,7 +614,7 @@ def abilities_of(state: GameState, oid: int) -> tuple[Ability, ...]:
     if not obj.on_battlefield:
         return printed
     statics = _ability_statics(state)
-    if not statics and not _has_op_grants(obj):
+    if not statics and not _has_op_grants(obj) and not obj.lost_all_abilities:
         return printed
     out = [ability for ability, _origin in _derived_abilities(state, obj, statics)]
     if out == list(printed):
@@ -642,7 +644,14 @@ def _derived_abilities(
     """
     printed = present_printed_abilities(obj, printed_abilities(state, obj))
     out: list[tuple[Ability, tuple[int, int] | None]] = []
-    if not any(
+    # `obj.lost_all_abilities` beside the static, and both mean the same thing
+    # about the printed list: one is somebody else saying it continuously
+    # ("enchanted creature loses all abilities"), the other is a resolving
+    # effect having said it once, to this permanent, for as long as it stays
+    # (The Irencrag). Either way the printed abilities are not here -- and the
+    # grants below still are, which is what "loses all **other** abilities and
+    # gains …" says.
+    if not obj.lost_all_abilities and not any(
         static.get("effect") == "lose_all_abilities"
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in statics

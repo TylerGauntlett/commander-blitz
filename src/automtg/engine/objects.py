@@ -154,6 +154,20 @@ class GameObject:
     #: battlefield is a new object (400.7) and answers to its printed name
     #: again.
     renamed_to: str | None = None
+    #: "…and **loses all other abilities**" -- The Irencrag. Written by a
+    #: resolving effect and read by `characteristics._derived_abilities`, the
+    #: one place that decides which abilities a permanent has.
+    #:
+    #: A field rather than the `lose_all_abilities` **static**, which is the
+    #: only shape that existed and is the wrong one here: a static is gathered
+    #: off the printed face and applies from the moment the permanent enters, so
+    #: written on The Irencrag it would strip "{T}: Add {C}" before any legendary
+    #: creature ever arrived -- a different and strictly worse card, and no
+    #: `condition` can gate it on a transformation the engine has no flag for.
+    #:
+    #: Cleared by `reset_permanent_state`: a permanent that left the battlefield
+    #: is a new object (400.7) with its printed abilities back.
+    lost_all_abilities: bool = False
     #: Whether the copy above expires at cleanup. Clone copies permanently;
     #: Gogo copies "until end of turn", and only that form is cleared.
     copying_until_eot: bool = False
@@ -915,6 +929,7 @@ class GameObject:
         # for, and `_enter_battlefield` clears it itself once it has been read.
         self.copying_name = None
         self.renamed_to = None
+        self.lost_all_abilities = False
         self.copying_until_eot = False
         self.monstrous = False
         # A permanent that left and came back is a new object as far as the

@@ -1407,6 +1407,35 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Losing all abilities because an effect said so
+
+```jsonc
+// The Irencrag
+{ "op": "lose_all_abilities",
+  "objects": { "zone": "battlefield", "self_only": true } }
+```
+
+`lose_all_abilities` existed only as a **static**, and a static is the wrong
+shape for this line twice over. It is gathered off the printed face, so written
+on The Irencrag it would strip "{T}: Add {C}" from the moment the artifact
+entered — before any legendary creature arrived and whether or not the player
+said yes. And no `condition` can gate it, because the transformation it waits for
+was not a fact the engine had a flag for.
+
+So the fact goes on the object and is read by `_derived_abilities` beside the
+static — the one place that decides what abilities a permanent has. The two mean
+the same thing about the printed list and differ only in who is saying it and for
+how long. ("Loses all abilities **until end of turn**" is `temp_effects`' job and
+a different clause.)
+
+Two other readers had to learn it: `abilities_of`'s fast path, which returns the
+printed list outright when no static and no op grant is in sight, and
+`_loses_abilities`, which answers the same question for callers outside the walk.
+
+**Other** abilities: a grant applied in the same breath survives, because
+`_derived_abilities` drops the *printed* list and appends the granted ones after
+— which is what "loses all other abilities and gains …" says.
+
 ### Changing a permanent's name
 
 ```jsonc
