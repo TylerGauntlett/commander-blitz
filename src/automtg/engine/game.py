@@ -829,7 +829,16 @@ class Game:
         # names nothing, which is every cost but `tap_permanents` with `as`.
         bindings: dict[str, Any] = {}
         ok = yield from pay(
-            state, pid, ability.cost, oid, x=x, purpose=purpose, bindings=bindings
+            state,
+            pid,
+            ability.cost,
+            oid,
+            x=x,
+            purpose=purpose,
+            bindings=bindings,
+            # The same ability legality priced, so a discount written on another
+            # permanent is charged at the number it was offered at.
+            ability=ability,
         )
         if not ok:  # pragma: no cover
             return
@@ -1231,7 +1240,7 @@ class Game:
         # the same `can_pay`, and a cost found payable there and refused here
         # would strand the payment.
         ok = yield from pay(
-            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid)
+            state, pid, ability.cost, oid, purpose=ability_purpose(state, oid), ability=ability
         )
         if not ok:  # pragma: no cover - legality already proved payability
             return

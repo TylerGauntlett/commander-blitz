@@ -308,6 +308,17 @@ STATIC_EFFECTS = frozenset(
         # its filter (`affects_spells`) matches a printed face rather than a
         # permanent, and is a different list from `affects`.
         "spell_cost_reduction",
+        # Strong Back. "Equip abilities you activate … cost {3} less to
+        # activate." The mirror of the line above, for activated abilities
+        # instead of spells, and read by `costs.ability_mana` -- the one
+        # function `can_pay` and `pay` both reach, so an ability offered at the
+        # reduced price is charged at it.
+        #
+        # `Cost.mana_reduction` is the near miss and is a different sentence: it
+        # lives inside the ability's own cost node, so only the card printing
+        # the ability could discount it. Strong Back is an Aura discounting
+        # somebody else's Equipment.
+        "ability_cost_reduction",
         # Academy Manufactor, Divine Visitation.  "If you would create a Clue,
         # Food, or Treasure token, instead create one of each."  Read by
         # `primitives.create_token`, which is the only moment a token creation
@@ -892,6 +903,15 @@ STATIC_VALUE_KEYS = (
 #: These six change a number and return. Anything else is refused at load, which
 #: is the difference between a card that will not compile and a game that locks
 #: up the first time somebody taps a Talisman.
+#: The classes of activated ability an `ability_cost_reduction` may name.
+#:
+#: One so far. Each is a question the engine can actually answer about a
+#: compiled `Ability` -- `equip` reads `Ability.is_equip` -- and a class with no
+#: marker behind it would load and match nothing, which is the printed line
+#: silently not happening.
+ABILITY_CLASS_KEYS = frozenset({"equip"})
+
+
 MANA_RIDER_OPS = frozenset(
     {"damage", "lose_life", "gain_life", "add_poison", "add_counters", "remove_counters"}
 )

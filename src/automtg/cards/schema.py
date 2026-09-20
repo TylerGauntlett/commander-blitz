@@ -437,6 +437,16 @@ class AbilityModel(BaseModel):
     #: being cast* by its printed face, which is a different question from
     #: `affects` (which picks out permanents on the battlefield).
     affects_spells: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: which **activated abilities** the discount
+    #: reaches, as a class. ``{"equip": true}`` is Strong Back's "equip
+    #: abilities"; the key is read against `Ability.is_equip`, which is why that
+    #: marker exists -- an equip ability is otherwise indistinguishable from any
+    #: other that attaches something.
+    affects_abilities: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: whose activation is discounted -- "abilities
+    #: **you** activate". The *activating player*, not the permanent's
+    #: controller: an opponent equipping your Equipment is their activation.
+    activated_by: str | None = None
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback

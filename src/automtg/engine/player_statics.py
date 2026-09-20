@@ -664,6 +664,56 @@ def spell_cost_reduction(state: GameState, pid: int, card: CardDef) -> int:
     return total
 
 
+def ability_cost_reduction(
+    state: GameState, pid: int, ability, source_oid: int | None
+) -> int:
+    """How much less ``pid`` pays to activate ``ability`` because of the board.
+
+    "Equip abilities you activate … cost {3} less to activate" -- Strong Back.
+    The mirror of `spell_cost_reduction`: that one discounts a *spell* picked
+    out by its printed face, this one an **activated ability** picked out by
+    what kind of ability it is and whose permanent it is printed on.
+
+    `Cost.mana_reduction` is the near miss and is a different sentence
+    altogether: it lives inside the ability's own cost node, so only the card
+    printing the ability could ever discount it. Strong Back is an Aura
+    discounting somebody else's Equipment.
+
+    ``affects_abilities`` says which abilities. ``equip`` is the only class so
+    far, and it is the reason `Ability.is_equip` exists -- an equip ability is
+    otherwise indistinguishable from any other that attaches something.
+    ``affects`` says whose permanent prints it, matched as an ordinary static
+    filter against the permanent the ability is on.
+
+    Returns a total, clamped and applied by `costs.ability_mana` -- the one
+    function `can_pay` and `pay` both reach, so an ability offered at the
+    reduced price is also charged at it.
+    """
+    if ability is None:
+        return 0
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "ability_cost_reduction":
+            continue
+        classes = static.get("affects_abilities") or {}
+        if classes.get("equip") and not getattr(ability, "is_equip", False):
+            continue
+        # "abilities **you** activate". The activating player, not the
+        # permanent's controller: an opponent equipping your Equipment is their
+        # activation, and the discount is written about yours.
+        who = str(static.get("activated_by", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        if (filt := static.get("affects")) is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, filt):
+                continue
+        total += _static_value(state, static.get("amount"), source_obj)
+    return total
+
+
 def attack_compelled(state: GameState, oid: int) -> bool:
     """Is this creature under a continuous "attacks each combat if able"?
 

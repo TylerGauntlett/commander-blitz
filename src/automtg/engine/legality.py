@@ -750,7 +750,7 @@ def _ability_aims(
     # ``x=0`` is the floor for an announced X and is ignored outright for a
     # defined one -- `costs.ability_mana` is the single place either is priced,
     # so the number legality tests is the number `costs.pay` charges.
-    if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose):
+    if not can_pay(state, pid, ability.cost, oid, x=0, purpose=purpose, ability=ability):
         return None
     # `mode_targets`, not `targets`: the loader lifts a mode-owned spec out of
     # the flat list into the per-mode map, so `ability.targets` holds only the

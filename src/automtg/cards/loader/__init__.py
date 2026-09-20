@@ -102,6 +102,7 @@ from .targets import (  # noqa: F401
 from .vocabulary import (  # noqa: F401
     _CHOSEN_QUALITY_KEYS,
     _FILTER_PLAYERS,
+    ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
     CONTROLLED_TARGET_KINDS,
     COST_CONDITION_HEADS,
@@ -2362,6 +2363,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'affects_spells' only means anything on a "
             f"spell_cost_reduction static, not on {model.effect!r}"
         )
+    if model.effect == "ability_cost_reduction":
+        # Which abilities, and how much less. Both required: a discount that
+        # names no class reaches every activated ability on the table, and one
+        # with no amount loads clean and discounts nothing. Either way the card
+        # prints a line it does not perform.
+        if not model.affects_abilities:
+            raise DslError(
+                f"{where}: ability_cost_reduction needs 'affects_abilities' -- "
+                f"the class of ability it discounts, e.g. {{'equip': true}}"
+            )
+        unknown = set(model.affects_abilities) - ABILITY_CLASS_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_abilities: unknown ability classes "
+                f"{sorted(unknown)} (implemented: {sorted(ABILITY_CLASS_KEYS)})"
+            )
+        if model.amount is None:
+            raise DslError(
+                f"{where}: ability_cost_reduction needs an 'amount' -- how much "
+                f"less the ability costs to activate"
+            )
+        who = model.activated_by or "you"
+        if who not in ("you", "opponent", "any"):
+            raise DslError(
+                f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
+            )
+    elif model.activated_by is not None or model.affects_abilities is not None:
+        raise DslError(
+            f"{where}: 'affects_abilities'/'activated_by' only mean anything on an "
+            f"ability_cost_reduction static, not on {model.effect!r}"
+        )
+
     if model.effect == "replace_token_creation":
         # `affects` names permanents on the battlefield; the token this asks
         # about has not been created and there is nothing on the battlefield for
@@ -2677,6 +2710,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
     elif model.effect in (
         "spell_cost_reduction",
+        # Picks out *activated abilities* through `affects_abilities`, checked
+        # above. `affects` is optional here and names the permanent the ability
+        # is printed on -- Strong Back's "equip abilities you activate" says
+        # nothing about whose Equipment it is, so requiring one would refuse the
+        # printed card.
+        "ability_cost_reduction",
         "replace_token_creation",
         # "Spells can't be countered" names no permanent either -- it is about
         # spells on the stack, and its optional `affects_spells` is the only
@@ -2846,6 +2885,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # `replace_damage`'s three, copied explicitly for the whitelist reason
     # below: forgotten here, the Flail would double every source's damage to
     # everything, or none of it.
+    # `ability_cost_reduction`'s two, copied explicitly for the whitelist reason
+    # below -- and this one bites hardest: without `affects_abilities` the class
+    # filter reads empty, and an empty filter discounts *every* activated
+    # ability on the table rather than none.
+    if model.affects_abilities is not None:
+        static["affects_abilities"] = dict(model.affects_abilities)
+    if model.activated_by is not None:
+        static["activated_by"] = model.activated_by
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
     if model.damage_source is not None:

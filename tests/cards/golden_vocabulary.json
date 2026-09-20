@@ -1,5 +1,8 @@
 {
  "loader": {
+  "ABILITY_CLASS_KEYS": [
+   "equip"
+  ],
   "ATTACKING_OPS": [
    "copy_permanent",
    "create_token",
@@ -65,6 +68,7 @@
    "subject"
   ],
   "GRANTABLE_STATIC_EFFECTS": [
+   "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_subtype",
    "attack_tax",
@@ -299,6 +303,7 @@
    "library"
   ],
   "STATIC_EFFECTS": [
+   "ability_cost_reduction",
    "activate_loyalty_as_though_instant",
    "add_mana_on_tap",
    "add_subtype",

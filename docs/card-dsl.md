@@ -1407,6 +1407,36 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A static that discounts another permanent's activated ability
+
+```jsonc
+// Strong Back
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "equip": true },   // which class of ability
+  "activated_by": "you",                    // whose activation
+  "amount": { "const": 3 } }
+```
+
+`spell_cost_reduction` was the only cost-lowering static, and it prices
+**spells**: it is handed a `CardDef` being cast. The one reduction that reached
+an activated ability was `Cost.mana_reduction`, and it is a different sentence —
+it lives *inside the ability's own cost node*, so only the card printing the
+ability could discount it. Strong Back is an Aura discounting somebody else's
+Equipment.
+
+So this is that static's mirror: one picks a spell out by its printed face, the
+other picks an activated ability out by what class of ability it is
+(`affects_abilities`, read against `Ability.is_equip`) and, optionally, by whose
+permanent prints it (`affects`, an ordinary static filter). `activated_by` is
+"abilities **you** activate" — the *activating player*, not the permanent's
+controller, because an opponent equipping your Equipment is their activation.
+
+Read in `costs.ability_mana`, the one function `can_pay` and `pay` both reach —
+an ability offered at the reduced price and charged the printed one would strand
+the payment. Added to the ability's own `mana_reduction` rather than replacing
+it: two cards may both be talking about one activation, and the printed answer
+is that both apply. Generic only and clamped at zero, like every other reduction.
+
 ### A delayed trigger scoped to one chosen object
 
 ```jsonc
