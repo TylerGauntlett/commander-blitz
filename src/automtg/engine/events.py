@@ -192,6 +192,21 @@ class EventType:
     DAMAGE_DEALT = "damage_dealt"
     DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"
+    #: Combat damage dealt to a **planeswalker** (306.8). ``source`` is the
+    #: dealing permanent, ``data["planeswalker"]`` the walker, ``player`` and
+    #: ``data["defender"]`` its controller, and ``data["amount"]`` the damage --
+    #: the same payload shape COMBAT_DAMAGE_TO_PLAYER carries, so one trigger
+    #: layer reads both.
+    #:
+    #: Its own event rather than a widening of the player one. "Whenever this
+    #: creature deals combat damage to a player" is printed on dozens of cards
+    #: that say nothing about planeswalkers, and firing that event here would
+    #: make every saboteur in the pool trigger off a planeswalker hit -- a
+    #: strictly better card than any of them, and silent. The cards that mean
+    #: both print "a player **or planeswalker**", which is a disjunction, and
+    #: the engine's idiom for a printed disjunction is two abilities claiming
+    #: one line (Winged Boots' "flying and ward {4}", magecraft's cast-or-copy).
+    COMBAT_DAMAGE_TO_PLANESWALKER = "combat_damage_to_planeswalker"
     #: "Whenever one or more creatures **you control** deal combat damage to one
     #: or more players…" One of these per combat-damage step per *damaging
     #: player*, fired beside the per-creature COMBAT_DAMAGE_TO_PLAYER above

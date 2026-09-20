@@ -607,6 +607,36 @@ def damage_permanent(
 
     if "Planeswalker" in _chars(state, oid).types:
         remove_counters(state, oid, "loyalty", amount)
+        if is_combat and source_oid is not None:
+            # "Whenever that creature deals combat damage to a player **or
+            # planeswalker** this turn, draw that many cards" -- Hunter's
+            # Insight. Fired here, beside the loyalty removal, because this is
+            # the one point every damage to a planeswalker passes through.
+            #
+            # After the counters come off, so a trigger that reads the board
+            # sees the damage already done -- the ordering `chapters_reached`
+            # keeps for the same reason.
+            fire(
+                state,
+                EventType.COMBAT_DAMAGE_TO_PLANESWALKER,
+                player=obj.controller,
+                source=source_oid,
+                # `planeswalker`, not `oid`. `_subject_oid` reads `oid` first
+                # and would make the **walker** the trigger's subject, so
+                # `source: "self"` would scope the ability to the permanent
+                # being hit rather than to the creature connecting -- the exact
+                # opposite of every card that prints this line. Left off, the
+                # subject falls through to `event.source`, which is the dealer,
+                # exactly as it does on the player half.
+                planeswalker=oid,
+                amount=amount,
+                controller=(
+                    src.controller
+                    if (src := state.objects.get(source_oid)) is not None
+                    else None
+                ),
+                defender=obj.controller,
+            )
     elif withers:
         add_counters(state, oid, MINUS_ONE, amount, source=source_oid)
     else:

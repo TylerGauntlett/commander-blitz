@@ -1,0 +1,91 @@
+{
+  "_comment": "Shapes for tests/unit/test_combat_damage_to_planeswalker.py. t_cdpw_saboteur prints both halves of \"deals combat damage to a player or planeswalker\" as two triggered abilities claiming one line; t_cdpw_player_only prints the player half alone, which is the control that proves a planeswalker hit does not quietly fire every saboteur in the pool. t_cdpw_bystander carries the planeswalker trigger too so `source: self` can be shown to scope it to the creature that connected.",
+  "cards": [
+    {
+      "id": "t_cdpw_saboteur",
+      "name": "Test Saboteur",
+      "oracle_text": "Whenever this creature deals combat damage to a player or planeswalker, draw a card.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or planeswalker, draw a card.",
+          "trigger": {"event": "deals_combat_damage_to_player", "source": "self", "controller": "you"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or planeswalker, draw a card.",
+          "trigger": {"event": "deals_combat_damage_to_planeswalker", "source": "self", "controller": "you"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_cdpw_player_only",
+      "name": "Test Player Saboteur",
+      "oracle_text": "Whenever this creature deals combat damage to a player, draw a card.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {"event": "deals_combat_damage_to_player", "source": "self", "controller": "you"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_cdpw_bystander",
+      "name": "Test Saboteur Bystander",
+      "oracle_text": "Whenever this creature deals combat damage to a planeswalker, draw a card.",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a planeswalker, draw a card.",
+          "trigger": {"event": "deals_combat_damage_to_planeswalker", "source": "self", "controller": "you"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_cdpw_counter",
+      "name": "Test Damage Counter",
+      "oracle_text": "Whenever this creature deals combat damage to a planeswalker, draw that many cards.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a planeswalker, draw that many cards.",
+          "trigger": {"event": "deals_combat_damage_to_planeswalker", "source": "self", "controller": "you"},
+          "effects": [{"op": "draw", "player": "you", "amount": {"binding": "amount"}}]
+        }
+      ]
+    }
+  ]
+}

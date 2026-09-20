@@ -1407,6 +1407,37 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### "…deals combat damage to a player or planeswalker"
+
+```jsonc
+// Two abilities, one printed line
+{ "kind": "triggered", "text": "…to a player or planeswalker, draw a card.",
+  "trigger": { "event": "deals_combat_damage_to_player",
+               "source": "self", "controller": "you" }, … }
+{ "kind": "triggered", "text": "…to a player or planeswalker, draw a card.",
+  "trigger": { "event": "deals_combat_damage_to_planeswalker",
+               "source": "self", "controller": "you" }, … }
+```
+
+306.8's damage has always worked — `damage_permanent` takes the loyalty counters
+off — and nothing could trigger on it: `deals_combat_damage_to_player` is fired
+from `damage_player`, which a planeswalker hit never reaches, and `dealt_damage`
+is about the permanent *being* hurt rather than the one connecting.
+
+**Its own event, not a widening.** "Whenever this creature deals combat damage to
+a player" is printed on dozens of cards that say nothing about planeswalkers, and
+firing that event here would make every saboteur in the pool trigger off a
+planeswalker hit — strictly better than any of them, and silent. The cards that
+mean both print "a player **or planeswalker**", which is a disjunction, and the
+engine's idiom for a printed disjunction is two abilities claiming one line.
+
+**The subject is the dealer.** The event carries the walker as `planeswalker`
+rather than `oid`: `_subject_oid` reads `oid` first, so the permanent being hit
+would become the trigger's subject and `source: "self"` would scope the ability
+to the planeswalker instead of the creature connecting. Left off, the subject
+falls through to `event.source` — the dealer — exactly as on the player half, and
+`{"binding": "amount"}` carries the damage for "draw that many cards".
+
 ### A reduction that counts an *or* of characteristics
 
 ```jsonc

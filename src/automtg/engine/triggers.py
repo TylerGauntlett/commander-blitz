@@ -53,6 +53,12 @@ TRIGGER_EVENTS: dict[str, str] = {
     "attacks": EventType.ATTACKS,
     "blocks": EventType.BLOCKS,
     "deals_combat_damage_to_player": EventType.COMBAT_DAMAGE_TO_PLAYER,
+    #: "…deals combat damage to a player **or planeswalker**" -- the second half
+    #: of that sentence, written as a second triggered ability claiming the same
+    #: printed line. Its own event rather than a widening of the one above: see
+    #: `EventType.COMBAT_DAMAGE_TO_PLANESWALKER` for why widening would quietly
+    #: improve every saboteur in the pool.
+    "deals_combat_damage_to_planeswalker": EventType.COMBAT_DAMAGE_TO_PLANESWALKER,
     "upkeep": EventType.UPKEEP,
     "draw_step": EventType.DRAW_STEP,
     "begin_combat": EventType.BEGIN_COMBAT,
@@ -308,6 +314,10 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         "attacks",
         "blocks",
         "deals_combat_damage_to_player",
+        # The **dealing** permanent, as on the player half above, so
+        # `source: "self"` means "whenever *this* creature connects" rather
+        # than "whenever anything connects with this planeswalker".
+        "deals_combat_damage_to_planeswalker",
         "counter_placed",
         "land_played",
         # The merged permanent, so `source: "self"` scopes the trigger to the
@@ -1277,7 +1287,15 @@ def _actor(
     # deals damage" mean "…deals damage to you". `damage_player` puts the
     # dealing permanent's controller on the event, which is the answer, and the
     # separate `defending` clause is what asks who was hit.
-    if dsl_event in ("deals_combat_damage_to_player", "deals_damage_to_player"):
+    if dsl_event in (
+        "deals_combat_damage_to_player",
+        "deals_damage_to_player",
+        # The planeswalker half carries the same two keys for the same reason:
+        # its `player` is the walker's controller -- the seat that was hit --
+        # so a `controller` clause compared against it would read "…deals
+        # damage to you" instead of "you deal damage".
+        "deals_combat_damage_to_planeswalker",
+    ):
         controller = event.data.get("controller")
         return int(controller) if controller is not None else None
     if subject_oid is not None:
