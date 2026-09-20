@@ -192,16 +192,30 @@ reason the container runs `--workers 1`: a second worker would serve half the
 requests from a process that has never heard of the game being played. This
 also rules out horizontal scaling without a shared session store.
 
-**Two Docker volumes hold everything durable.** `art` accumulates card images
-lazily fetched from Scryfall, `generated` holds cards and decks from deck
-imports. Both survive redeploys. A named volume seeds itself from the image the
-first time it is created, so `art` starts out holding the ~800 images baked into
-the image; later images do not re-seed it, which is harmless because anything
-missing is fetched on demand.
+**One Docker volume holds everything durable.** `generated` carries cards and
+decks from deck imports plus the card art lazily fetched from Scryfall
+(`data/generated/art`). It is mounted at `/app/data/generated` and survives
+redeploys. Everything else in `/app/data` — the committed art, the catalog
+index — comes from the image and is replaced wholesale by every deploy.
 
-**`terraform destroy` deletes those volumes** along with the droplet. Nothing in
-them is irreplaceable — art re-downloads and decks can be re-imported — but
-imported decks are not recoverable from the repo.
+**A volume must never be mounted over repository content.** There used to be a
+second volume at `/app/data/art`, over the ~800 committed jpgs, on the reasoning
+that anything missing is fetched on demand anyway. That holds for a *missing*
+file and fails for a *changed* one. A named volume seeds itself from the image
+only the first time it is created and no later image re-seeds it, so every one
+of those files stayed frozen at whatever the first deploy shipped. When #36
+pinned Sheoldred, the Apocalypse to her Dominaria United art, the new bytes were
+committed, built into the image, deployed to the droplet — and unreachable,
+because a file of that name was already in the volume and `ArtStore` serves any
+file it finds. `tests/server/test_art_api.py::TestTheDeployedShape` is the guard.
+
+If a droplet predates this, `automtg_art` is still there as an orphan holding
+~63MB of stale images. Nothing reads it; `docker volume rm automtg_art` once the
+new image is up.
+
+**`terraform destroy` deletes the volume** along with the droplet. Nothing in it
+is irreplaceable — art re-downloads — but imported decks are not recoverable
+from the repo.
 
 **Terraform state is local and gitignored.** The `terraform/` directory on your
 machine is the only record of what exists. Losing it means importing the

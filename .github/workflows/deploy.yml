@@ -197,7 +197,24 @@ jobs:
   build:
     name: build and push image
     needs: gate
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # `!cancelled()` and an explicit `needs.gate.result` are load-bearing, not
+    # belt-and-braces. An `if` with no status-check function in it gets the
+    # implicit "every job I depend on succeeded" -- and that is evaluated over the
+    # whole dependency *closure*, not just `needs`. `e2e` is pull-request-only, so
+    # on a push to main it is skipped; `gate` rides that out because it is
+    # `always()`, but the skip is still in `build`'s closure and skipped `build`
+    # with it. Silently: the run went green with nothing deployed, and main sat
+    # undeployed from 4e9e30d4 (2026-09-17) until this, which is how a fix that
+    # was merged and passing could still be broken on the live site.
+    #
+    # Naming `gate` explicitly is what keeps this honest: the closure check is
+    # gone, so the one result that must be green has to be asserted rather than
+    # assumed.
+    if: >-
+      !cancelled()
+      && needs.gate.result == 'success'
+      && github.event_name == 'push'
+      && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -242,7 +259,13 @@ jobs:
   deploy:
     name: deploy to droplet
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Same shape for the same reason: `e2e`'s skip is in this job's closure too,
+    # by way of `build` and `gate`. See the note on `build`.
+    if: >-
+      !cancelled()
+      && needs.build.result == 'success'
+      && github.event_name == 'push'
+      && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -372,3 +395,41 @@ jobs:
           curl -fsS --max-time 10 \
             --retry 30 --retry-delay 5 --retry-connrefused --retry-all-errors \
             "https://commanderblitz.com/health" | tee /dev/stderr | grep -q '"status":"ok"'
+
+  # The invariant the skip above violated in silence: a green gate on main means
+  # the droplet is running that commit. Nothing checked it, so three pushes
+  # reported success while `build` and `deploy` sat skipped, and the live site
+  # served a two-day-old image with a merged bug fix missing from it.
+  #
+  # Asserted from outside the deploy chain rather than inside it, because the
+  # failure being caught is precisely a job *not running*: a step can only speak
+  # when its job does. `!cancelled()` for the reason `build` needs it -- this job
+  # depends on the same skipped `e2e` closure and would skip itself otherwise,
+  # which is the failure mode wearing the check's own clothes.
+  deployed:
+    name: main is deployed
+    needs: [gate, deploy]
+    if: >-
+      !cancelled()
+      && github.event_name == 'push'
+      && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: A green gate on main must have deployed
+        env:
+          GATE: ${{ needs.gate.result }}
+          DEPLOY: ${{ needs.deploy.result }}
+        run: |
+          set -euo pipefail
+          echo "gate=$GATE deploy=$DEPLOY"
+          # A red gate is already a red run and deploy is *meant* to be skipped;
+          # saying so twice would only bury the real failure.
+          if [ "$GATE" != success ]; then
+            echo "gate reported $GATE -- deploy correctly skipped"
+            exit 0
+          fi
+          [ "$DEPLOY" = success ] || {
+            echo "gate passed but deploy reported $DEPLOY: main is NOT live"
+            exit 1
+          }

@@ -13140,21 +13140,19 @@ construction outright and could not be imported at all.
   `devoid`'s reason: gated on `any_number_in_deck`, so the words cannot be
   claimed without the rule standing behind them.
 
-### Not modelled
+### Superseded by
 
-Nazgûl's "A deck can have **up to nine** cards named Nazgûl" — a different limit
-needing a different answer. Unmatched, it keeps the one-copy default, which
-refuses a legal deck rather than admitting an unbounded one; that is the safe
-direction for a construction check to be incomplete in, and the gate does not
-launder the line either.
+`deck_copy_limit`, below, which reads the bounded form of the same sentence.
+Nazgûl's "A deck can have **up to nine** cards named Nazgûl" was left unmatched
+here, keeping the one-copy default — the safe direction for a construction check
+to be incomplete in, and a legal deck refused.
 
 ### Guarded by
 
-`tests/unit/test_any_number_in_deck.py`: twenty Petitioners legal and the same
+`tests/unit/test_deck_copy_limits.py`: twenty Petitioners legal and the same
 deck with an ordinary card still singleton; the sentence matched against the
-card's own name; basic lands exempt by the rule with no sentence to read; Nazgûl
-unmatched in both the rule and the gate; and the claimant scoped to its own
-line. Persistent Petitioners is authored.
+card's own name; basic lands exempt by the rule with no sentence to read; and
+the claimant scoped to its own line. Persistent Petitioners is authored.
 
 ## `skip_untap_step` — "doesn't untap during their controllers' untap steps"
 
@@ -13720,3 +13718,51 @@ directly so clause and payload cannot drift; an uncaused discard recording `None
 and not firing the trigger; the unclaused spelling kept live and firing on your own
 discard where the real card does not; and the load-time guards, including the
 refusal on any event but `discard`.
+
+## `deck_copy_limit` — "A deck can have up to nine cards named …"
+
+### Overview
+
+The bounded half of 903.5b's "unless that card's text says otherwise".
+`any_number_in_deck`, above, read only the unbounded sentence, so the two cards
+that print a *ceiling* instead — Nazgûl's "up to nine" and Seven Dwarves' "up to
+seven" — kept the one-copy default and a legal nine-Nazgûl deck was refused
+outright with `'nazgul' appears 9 times but is not a basic land`. A message that
+was also wrong about why: Nazgûl's problem was never that it is not a basic land.
+
+### The shape
+
+- **`CardDef.deck_copy_limit`** is 903.5b's whole answer in one property:
+  `None` for no limit (a basic land, or a card whose text lifts the limit
+  outright), the printed number for a card that names one, and 1 otherwise. One
+  value means `validate_deck` no longer asks two questions and then reports a
+  third thing.
+- **The number is read as a word**, because both cards spell it out. `_UP_TO`
+  matches the sentence and `_NUMBER_WORDS` maps `one`..`twelve`; the name inside
+  the sentence is matched against the card's **own** name for the reason the
+  unbounded form is, so a card quoting another's allowance inherits nothing.
+- **`validate_deck`** compares `qty` against the limit and names the real one:
+  `appears 10 times but a deck can have up to 9 of them`. The one-copy case
+  keeps its old wording, which is still the accurate thing to say about an
+  ordinary card.
+- **`verify._covered`** grows the matching claimant, gated on `deck_copy_limit`
+  having read a number off *this* card rather than on the words appearing —
+  without it a Nazgûl authored into the pool would fail gate 3 on a
+  deck-construction line no ability can carry, exactly as Petitioners did.
+
+### Not modelled
+
+A ceiling whose number this cannot read falls back to one copy rather than
+guessing. `umpteen` is not a licence to admit an unbounded deck: refusing a legal
+deck is recoverable and the catalog prints no such card, so the fallback is the
+safe direction to be incomplete in — the same choice the unbounded form made
+about "up to nine" before this read it.
+
+### Guarded by
+
+`tests/unit/test_deck_copy_limits.py`: nine Nazgûl legal and the tenth refused
+with the limit named in the message; Seven Dwarves reading its own different
+number, so the word is genuinely parsed rather than one case special-cased;
+a card quoting Nazgûl's sentence still a singleton; an unreadable number falling
+back to 1 in both the rule and the gate; and the bounded line claimed at gate 3
+only when the card really grants it.
