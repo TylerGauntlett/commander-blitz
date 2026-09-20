@@ -1407,6 +1407,59 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### Damage multiplied on the way out
+
+```jsonc
+// Inquisitor's Flail, line 1
+{ "kind": "static", "effect": "replace_damage",
+  "damage_multiplier": 2, "combat_only": true,
+  "damage_source": { "attached": true } }          // "if equipped creature would deal"
+
+// …line 2
+{ "effect": "replace_damage", "damage_multiplier": 2, "combat_only": true,
+  "damage_source": { "controller": "any", "types": ["Creature"] },
+  "affects": { "attached": true } }                // "…to equipped creature"
+
+// Furnace of Rath: neither end named, no combat clause
+{ "effect": "replace_damage", "damage_multiplier": 2 }
+```
+
+No damage-modifying static existed at all. The five multiplier replacements were
+life and card economy — `replace_life_gain`, `replace_life_loss`, `replace_draw`,
+`replace_mill`, `replace_token_creation` — every one **player-wide** and keyed by
+player id, so none could be attached to a permanent or filtered by who was
+dealing to whom; and the only damage-facing statics, `prevent_damage` and
+`protection`, subtract or forbid and have no way to add.
+
+`replace_life_loss` is the near miss and is a different sentence: damage is not
+life loss — it is marked on creatures, feeds deathtouch and infect, and only
+incidentally reduces a life total — so doubling the loss would leave a doubled
+hit on a creature undoubled and would double a Village Rites too.
+
+**Both ends filter.** `damage_source` is the dealer, `affects` is the recipient,
+and both are optional: the Flail prints one line of each and Furnace of Rath
+names neither. `affects` here is the one place in the DSL where it means "what
+this is done *to*" rather than "which permanents this static describes", which is
+why `replace_damage` sits with `spell_cost_reduction` on the list of statics that
+do not require it. A static carrying `affects` never applies to damage dealt to a
+**player**: a player is not a permanent, and "…to equipped creature" is a sentence
+about one.
+
+Read in `primitives.damage_permanent` and `primitives.damage_player`, the two
+points every damage passes through, so deathtouch marks the doubled number,
+lifelink gains it, the ledger and the commander tally record it and
+`DAMAGE_DEALT` carries it. A trigger dealing the extra damage afterwards would be
+a second event — two `DAMAGE_DEALT`s, two lifelink gains, and a creature dying to
+the first half before the second arrived.
+
+After the preventions, which were never dealt, and before the wither, infect and
+planeswalker branches, each of which is a different *place to put* the damage
+rather than a change to how much there is. 616.1's ordering of a prevention
+against a doubling is not asked; doubling last means "prevent the next 3" answers
+3 of the printed damage, the order the damaged object's controller would have
+chosen — the judgement the shield counter already makes. Several compound by
+multiplication, so between two of these the unasked order cannot show.
+
 ### Counters replaced on the way in
 
 ```jsonc

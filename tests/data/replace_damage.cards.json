@@ -1,0 +1,107 @@
+{
+  "_comment": "Shapes for tests/unit/test_replace_damage.py. t_rd_flail is Inquisitor's Flail -- two replace_damage statics, one filtered on the dealer and one on the recipient, both combat-only -- plus its equip. t_rd_furnace is Furnace of Rath: no filter on either end and no combat clause, so it reaches a burn spell and a player alike. t_rd_bear and t_rd_ogre are creatures to hit and be hit, t_rd_lifelinker proves the gain follows the doubled number, and t_rd_bolt is an instant so a non-combat source can be measured.",
+  "cards": [
+    {
+      "id": "t_rd_flail",
+      "name": "Test Inquisitor's Flail",
+      "oracle_text": "If equipped creature would deal combat damage, it deals double that damage instead.\nIf another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.\nEquip {2}",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If equipped creature would deal combat damage, it deals double that damage instead.",
+          "effect": "replace_damage",
+          "damage_multiplier": 2,
+          "combat_only": true,
+          "damage_source": {"attached": true}
+        },
+        {
+          "kind": "static",
+          "text": "If another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.",
+          "effect": "replace_damage",
+          "damage_multiplier": 2,
+          "combat_only": true,
+          "damage_source": {"controller": "any", "types": ["Creature"]},
+          "affects": {"attached": true}
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {2}",
+          "sorcery_speed_only": true,
+          "cost": {"mana": "{2}"},
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"]
+              }
+            }
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_rd_furnace",
+      "name": "Test Furnace of Rath",
+      "oracle_text": "If a source would deal damage to a permanent or player, it deals double that damage instead.",
+      "mana_cost": "{2}{R}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a source would deal damage to a permanent or player, it deals double that damage instead.",
+          "effect": "replace_damage",
+          "damage_multiplier": 2
+        }
+      ]
+    },
+    {
+      "id": "t_rd_bear",
+      "name": "Test Damage Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_rd_ogre",
+      "name": "Test Damage Ogre",
+      "oracle_text": "",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 3,
+      "toughness": 9
+    },
+    {
+      "id": "t_rd_lifelinker",
+      "name": "Test Damage Lifelinker",
+      "oracle_text": "Lifelink",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Cleric"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["lifelink"]
+    }
+  ]
+}

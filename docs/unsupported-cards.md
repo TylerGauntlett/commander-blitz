@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**32 cards** blocked by **42** capabilities.
+**31 cards** blocked by **41** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
-| [double-damage](#double-damage) | 1 | 4176 | replacement |
 | [enters-as-a-copy](#enters-as-a-copy) | 1 | 1649 | replacement |
 | [enters-replacement](#enters-replacement) | 1 | 246 | replacement |
 | [equip](#equip) | 1 | 3190 | engine |
@@ -325,21 +324,6 @@ Blocks **1** card.
 
 - **Pyrokinesis** (rank 5389) — `pyrokinesis`
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-
-</details>
-
-## double-damage
-
-Blocks **1** card.
-
-- **(replacement)** A permanent-level static effect that multiplies damage as a replacement (615/616), in both directions, with a filter on each side. Concretely a `static_effects` entry -- e.g. `replace_damage` -- carrying `damage_multiplier: 2` plus two optional `static_filter_keys` filters: a source filter ("if <this source> would deal damage", here `{"attached": true}` for the equipped creature) and a recipient filter ("...to <this object>", again `{"attached": true}`), and a `combat_only: true` switch because this card doubles combat damage only while Furnace of Rath and Gratuitous Violence double all damage. It has to be read inside `damage_player` and `damage_permanent` in `src/automtg/engine/primitives.py` (the same places `protected_from` and `prevented_damage` are consulted), after prevention and before the damage is marked, so that lifelink, deathtouch, infect, the DAMAGE_DEALT ledger and commander-damage tallies all see the doubled number -- which is what makes it a replacement and not a trigger. The same one capability closes Furnace of Rath, Dictate of the Twin Gods, Gratuitous Violence, Angrath's Marauders and Fiery Emancipation (x3).
-  <br>Why the existing vocabulary won't do: No damage-modifying static exists at all. The multiplier replacements the engine has are life and card economy only -- `replace_life_gain` (`gain_multiplier`), `replace_life_loss` (`loss_multiplier`), `replace_draw` (`draw_multiplier`), `replace_mill` (`mill_multiplier`) and `replace_token_creation` (`token_multiplier`); all five are PLAYER-wide statics resolved in `engine/player_statics.py` keyed by player id, so none of them can be attached to a permanent, filtered by source or recipient, or reach combat damage. `replace_life_loss` is the nearest miss and is genuinely wrong here: damage is not life loss (it is marked on creatures, feeds deathtouch and infect, and only incidentally reduces a player's life), so doubling the loss would leave a doubled hit on a creature undoubled and would also double non-damage life loss. The only damage-facing statics are `prevent_damage` and `protection`, which subtract or forbid and have no way to add; `src/automtg/engine/primitives.py` `damage_player`/`damage_permanent` consult `shielded`, `protected_from` and `prevented_damage` and then mark `amount` unchanged, so there is no hook on the damage path where an increase could be applied. `double_triggers` and `double_land_triggers` double triggered abilities, not damage, and the `damage` op multiplies nothing and would in any case be a one-shot effect rather than a continuous replacement. Nothing in `ops` can approximate this without changing the card: a `dealt_damage` or `deals_combat_damage_to_player` trigger that deals the damage again resolves from the stack after state-based actions, so a doubled lethal hit would kill the creature once and then shoot a dead object, first strike and deathtouch would be scored on the printed number, and the redundant damage would come from the Flail rather than from the creature.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inquisitor's Flail** (rank 4176) — `inquisitor_s_flail`
-  - If equipped creature would deal combat damage, it deals double that damage instead.
-  - If another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.
 
 </details>
 

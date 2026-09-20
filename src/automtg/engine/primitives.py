@@ -23,7 +23,12 @@ from .characteristics import (
 from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
-from .player_statics import counter_placement_replacements, mill_multiplier, untap_held
+from .player_statics import (
+    counter_placement_replacements,
+    damage_multiplier,
+    mill_multiplier,
+    untap_held,
+)
 from .state import new_object
 from .triggers import fire
 from .zones import move_object
@@ -379,6 +384,11 @@ def damage_player(
             reason="protection",
         )
         return 0
+    # The player-side half of the doubling, placed for `damage_permanent`'s
+    # stated reasons: after the two preventions, which were never dealt, and
+    # before the infect branch, which changes where the number lands rather
+    # than how big it is -- so a doubled infect hit is twice the poison.
+    amount *= damage_multiplier(state, source_oid, None, is_combat=is_combat)
     # Infect (702.90c): damage to a *player* is poison counters instead of life
     # loss. Wither is deliberately not here -- 702.90b is about damage to
     # permanents only, so a wither creature that gets through hits for life in
@@ -554,6 +564,25 @@ def damage_permanent(
             reason="shield_counter",
         )
         return 0
+    # "If equipped creature would deal combat damage, it deals **double** that
+    # damage instead" -- Inquisitor's Flail, Furnace of Rath, Fiery
+    # Emancipation. A replacement, so everything below reads the multiplied
+    # number: deathtouch marks on it, lifelink gains it, the ledger records it,
+    # `DAMAGE_DEALT` carries it, and a withering source puts that many -1/-1
+    # counters on. A trigger that dealt the extra damage afterwards would be a
+    # second event -- two DAMAGE_DEALTs, two lifelink gains, and a creature
+    # dying to the first half before the second arrived.
+    #
+    # **After the preventions above and before the branches below**, and both
+    # halves of that placement are deliberate. 616.1 lets the damaged object's
+    # controller order a prevention against a doubling and this engine does not
+    # ask; doubling last means a "prevent the next 3" answers 3 of the printed
+    # damage rather than 3 of the doubled damage, which is the order its
+    # controller would have chosen -- the same judgement the shield counter
+    # makes twenty lines up. And it is before the planeswalker and wither
+    # branches because each of those is a *different place to put the damage*
+    # rather than a change to how much of it there is.
+    amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
     # counters" instead of being marked. Not a `replacements` entry -- that
     # whitelist is about permanents *entering the battlefield* -- but a keyword

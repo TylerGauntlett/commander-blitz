@@ -1074,6 +1074,52 @@ def counter_placement_replacements(
     return out
 
 
+def damage_multiplier(
+    state: GameState,
+    source_oid: int | None,
+    target_oid: int | None,
+    *,
+    is_combat: bool,
+) -> int:
+    """What this damage is multiplied by, after every `replace_damage` applies.
+
+    Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
+    Emancipation. Read by `primitives.damage_permanent` and
+    `primitives.damage_player` and by nothing else, the way
+    `counter_placement_replacements` is read by `add_counters` alone.
+
+    ``target_oid`` is ``None`` when the damage is being dealt to a **player**,
+    and a static carrying an `affects` filter never applies then: a player is
+    not a permanent, and "…to equipped creature" is a sentence about one. A
+    static with no `affects` reaches both, which is Furnace of Rath's "to a
+    permanent or player" and the Flail's first line.
+
+    Returned as a product rather than applied here, because the two call sites
+    have different things to do with the number and only one of them exists at
+    a time. 614.5 is kept by the shape: each static is consulted once, and
+    multiplication commutes, so 616.1's unasked ordering cannot show between
+    two of these.
+    """
+    multiplier = 1
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "replace_damage":
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        dealer = static.get("damage_source")
+        if dealer is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, dealer):
+                continue
+        recipient = static.get("affects")
+        if recipient is not None:
+            obj = state.objects.get(target_oid) if target_oid is not None else None
+            if obj is None or not _matches(state, obj, source_obj, recipient):
+                continue
+        multiplier *= max(1, int(static.get("damage_multiplier") or 1))
+    return multiplier
+
+
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:
     """Does the token about to be created match this filter?
 

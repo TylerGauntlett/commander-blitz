@@ -4534,6 +4534,10 @@
   "inkwell_leviathan": {
     "zone": "battlefield"
   },
+  "inquisitor_s_flail": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "insatiable_harpy": {
     "zone": "battlefield"
   },

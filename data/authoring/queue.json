@@ -136242,12 +136242,12 @@
     },
     "Inquisitor's Flail": {
       "edhrec_rank": 4176,
-      "gate": "template",
+      "gate": null,
       "name": "Inquisitor's Flail",
-      "reason": "no template for: If equipped creature would deal combat damage, it deals double that damage instead",
+      "reason": "",
       "scryfall_id": "3014f59d-9012-473a-8bb1-8085c6e91632",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Inquisitor's Ox": {

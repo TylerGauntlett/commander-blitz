@@ -337,6 +337,23 @@ STATIC_EFFECTS = frozenset(
         # after anything else that read the count, and its own `add_counters`
         # fires `counter_placed` again, so it retriggers itself.
         "replace_counters",
+        # Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
+        # Emancipation. "If equipped creature would deal combat damage, it deals
+        # double that damage instead." Read by `primitives.damage_permanent` and
+        # `primitives.damage_player`, the two points every damage in the game
+        # passes through, after prevention and before the number is marked -- so
+        # deathtouch, lifelink, infect, the damage ledger, the commander tally
+        # and `DAMAGE_DEALT` all see the doubled figure, which is what makes it
+        # a replacement rather than a second helping of damage.
+        #
+        # Filtered on **both ends**, which is why it is not one of the five
+        # player-wide multipliers above: `damage_source` is "if <this> would
+        # deal", `affects` is "…to <this>". The Flail prints one line of each.
+        # `replace_life_loss` is the near miss and is genuinely a different
+        # sentence: damage is not life loss -- it is marked on creatures, feeds
+        # deathtouch and infect, and only incidentally reduces a life total --
+        # so doubling the loss leaves a doubled hit on a creature undoubled.
+        "replace_damage",
         # Bloodletter of Aclazotz.  "If an opponent would lose life during your
         # turn, they lose twice that much life instead."  The engine's *second*
         # replacement hook and, like the first, a named one rather than the

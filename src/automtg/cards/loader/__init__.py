@@ -2375,6 +2375,43 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"anything on a replace_token_creation static, not on {model.effect!r}"
         )
 
+    if model.effect == "replace_damage":
+        # Refused below 2 for `token_multiplier`'s reason: 1 replaces damage
+        # with itself and 0 prevents it, which is `prevent_damage`'s sentence
+        # and a much stronger card. Required, because a replacement that says
+        # nothing about how much damage is dealt is not this effect.
+        if model.damage_multiplier is None:
+            raise DslError(
+                f"{where}: replace_damage needs 'damage_multiplier' -- "
+                f"\"deals double that damage instead\" is 2"
+            )
+        if model.damage_multiplier < 2:
+            raise DslError(
+                f"{where}.damage_multiplier: must be 2 or more; 1 replaces damage "
+                f"with itself and 0 prevents it, which is 'prevent_damage'"
+            )
+        # Both filters are optional and both read printed characteristics, the
+        # same language `affects` reads everywhere else. `affects` here is the
+        # *recipient*, and a static carrying one never applies to damage dealt
+        # to a player -- a player is not a permanent, and "to equipped creature"
+        # is a sentence about one.
+        if model.damage_source is not None:
+            unknown = set(model.damage_source) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.damage_source: static filters may only read printed "
+                    f"characteristics; unsupported keys {sorted(unknown)}"
+                )
+    elif (
+        model.damage_multiplier is not None
+        or model.damage_source is not None
+        or model.combat_only
+    ):
+        raise DslError(
+            f"{where}: 'damage_multiplier'/'damage_source'/'combat_only' only mean "
+            f"anything on a replace_damage static, not on {model.effect!r}"
+        )
+
     if model.effect == "replace_counters":
         # `affects` names the permanent the counters would be put on, and every
         # printed card names one -- "on a creature you control", "on an
@@ -2603,6 +2640,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # filter it can carry. Lier prints no filter at all: every spell, every
         # player, which is the card's whole reputation.
         "spells_cant_be_countered",
+        # Furnace of Rath names neither end -- "if **a source** would deal
+        # damage to **a permanent or player**" -- so both of its filters are
+        # optional and `affects`, when written, is the *recipient* rather than
+        # the usual "which permanents this static describes". Inquisitor's
+        # Flail prints one line with each.
+        "replace_damage",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
@@ -2757,6 +2800,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # spelled out below: a field the schema accepts and this loop forgets
     # loads, compiles and applies with the clause absent -- here that would be
     # a High Score that replaces every counter in the game, or doubles nothing.
+    # `replace_damage`'s three, copied explicitly for the whitelist reason
+    # below: forgotten here, the Flail would double every source's damage to
+    # everything, or none of it.
+    if model.damage_multiplier is not None:
+        static["damage_multiplier"] = model.damage_multiplier
+    if model.damage_source is not None:
+        static["damage_source"] = dict(model.damage_source)
+    if model.combat_only:
+        static["combat_only"] = True
     if model.counter_multiplier is not None:
         static["counter_multiplier"] = model.counter_multiplier
     if model.counter_addend is not None:

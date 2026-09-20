@@ -568,6 +568,18 @@ class AbilityModel(BaseModel):
     #: ``counter_addend: 1``. A card uses exactly one, and the addend is why
     #: this is not a counter-flavoured `token_multiplier`: every multiplier in
     #: that family is refused below 2, and "plus one" is not a multiplier.
+    #: `replace_damage`: what damage is multiplied by. Inquisitor's Flail and
+    #: Furnace of Rath are ``2``, Fiery Emancipation ``3``. Refused below 2 for
+    #: `token_multiplier`'s reason: 1 replaces damage with itself and 0 is a
+    #: prevention, which is `prevent_damage`'s sentence and a different card.
+    damage_multiplier: int | None = None
+    #: `replace_damage`: a filter on the permanent **dealing** the damage --
+    #: "if **equipped creature** would deal combat damage". Omitted is any
+    #: source, which is Furnace of Rath's "if a source would deal damage".
+    damage_source: dict[str, Any] | None = None
+    #: `replace_damage`: only combat damage. The Flail says "combat damage" and
+    #: Furnace of Rath does not, and the difference is a whole card.
+    combat_only: bool = False
     counter_multiplier: int | None = None
     counter_addend: int | None = None
     #: `replace_counters`: which kind of counter the replacement is about --
