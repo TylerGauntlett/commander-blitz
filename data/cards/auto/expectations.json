@@ -9379,6 +9379,10 @@
   "the_lady_of_the_mountain": {
     "zone": "battlefield"
   },
+  "the_mycosynth_gardens": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_one_ring": {
     "battlefield_count": 33,
     "zone": "battlefield"

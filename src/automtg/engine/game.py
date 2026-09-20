@@ -750,7 +750,17 @@ class Game:
         purpose = ability_purpose(state, oid)
 
         x = 0
-        if ability.cost is not None and ability.cost.mana.x_count:
+        from .legality import _targets_read_x
+
+        if _targets_read_x(ability):
+            # The number was announced when the activation was chosen -- legality
+            # offers one per payable X, each carrying the targets legal at that
+            # value, which is the only order that satisfies 601.2b before
+            # 601.2c. Asking again here would ask a question the player has
+            # already answered and could contradict the targets already
+            # declared. The same argument `ability_modes` makes below.
+            x = action.x
+        elif ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has
             # to exclude it -- the same exclusion `costs.can_pay` and
             # `costs.pay` make.

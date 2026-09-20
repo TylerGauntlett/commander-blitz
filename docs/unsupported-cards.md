@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**30 cards** blocked by **40** capabilities.
+**29 cards** blocked by **39** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [variant-dependent-targets](#variant-dependent-targets) | 1 | 716 | engine |
-| [x-dependent-target](#x-dependent-target) | 1 | 864 | engine |
 
 ## cast-as-though-flash
 
@@ -631,29 +630,5 @@ Blocks **1** card.
 
 - **Into the Flood Maw** (rank 716) — `into_the_flood_maw`
   - Return target creature an opponent controls to its owner's hand. If the gift was promised, instead return target nonland permanent an opponent controls to its owner's hand.
-
-</details>
-
-## x-dependent-target
-
-Blocks **1** card.
-
-- **(engine)** An activated ability whose TARGET legality reads the X announced for its own cost -- 601.2b's X is chosen before 601.2c declares targets, so "target nontoken artifact you control with mana value X" is a target pool that only exists once X is known. Concretely: (1) `legality._ability_aims` (src/automtg/engine/legality.py:733-757) must enumerate the payable values of X for an ability whose `cost.mana.x_count` is set and pair each with the targets legal AT that X -- one Action per (x, target) pair, exactly the shape `ability_modes` already took when 601.2b's *mode* had to be fixed before its targets (same function, lines 757-776) -- and set `Action.x` to that value instead of the hard-coded `x = 0` at legality.py:549, with `Game._activate_ability` (src/automtg/engine/game.py:750-775) taking the announced X off the action rather than calling `_ask_x` again; (2) `targeting._spec_options`, `enumerate_target_tuples` and `still_legal` must take an `x` and put it on the `EffectContext` they build (src/automtg/engine/targeting.py:61, 448, 597), and `stack.resolve_top`'s 608.2b re-check must pass `item.x` through `filter_legal` (src/automtg/engine/stack.py:658, 1022) so the target is re-checked against the X that was actually paid. The selector leaf itself then needs nothing new: `selectors._compare` already evaluates `mana_value` through `evaluate_value`, so `{"mana_value": {"op": "=", "value": {"x": true}}}` becomes correct the moment the context carries X. This closes the whole "target ... with mana value X" family, not just this land -- and the same wiring is what any future "{X}: target creature with power X" needs.
-  <br>Why the existing vocabulary won't do: The copy half is NOT the blocker and was checked rather than assumed: `become_copy` (src/automtg/engine/effects/ops_removal.py:86-130) applies a copy in place, takes `duration: "permanent"` (Clone's shape, the one this card wants) and `objects: {"self_only": true}`, so "this land becomes a copy of <that artifact>" is already expressible -- this is the same op the Masterwork of Ingenuity gap filed `enters_as_a_copy` against for being the wrong timing, and here the timing is right. `{X}` in an activated ability's cost is real too: `game._ask_x` asks for it and `costs.pay` charges it. What cannot be said is the link between the two.
-
-The near misses, each of which fails silently rather than loudly:
-
-- `{"mana_value": {"op": "=", "value": {"x": true}}}` on the target's selector LOADS -- `loader.targets._compile_target` runs only `validate_selector`, which has no guard against a value expression here, and `VALUE_KEYS` contains `x` -- and is then read at X = 0 twice over, because every `EffectContext` targeting builds leaves `x` at its dataclass default of 0 (src/automtg/engine/effects/context.py:35): once in `targeting._spec_options` when legality enumerates the candidates, and again in `still_legal` when 608.2b re-checks on resolution. The card would load clean and play as "target nontoken artifact you control with mana value 0", which is a strictly different and mostly empty card. This is why the clause is filed rather than written.
-- `total_mana_value` on the target spec is a flat `int` cap (`loader/targets.py:268-283`, `targeting._within_total`), not a value expression, and it is a `<=` ceiling across several picks rather than "is exactly X", so it can say neither the number nor the comparison.
-- `cost.x_value` is the opposite direction: it is how an ability DEFINES its own X from the board ("X is the mana value of that card", `loader/mana.py:39-55`, `costs.defined_x`) and legality then prices the ability at that fixed number. This card's X is announced by the player (`legality.py:731-744` offers the ability only at the x = 0 floor and `game._activate_ability` asks afterwards), so there is nothing on the board for `x_value` to read, and an `x_value` ability is deliberately never asked for an X at all.
-- `x_in_mana_cost` is a predicate ("has an {X} symbol at all"), and `selectors.py:1246-1256` says in as many words that it is not a number and that `mana_value` is the key for comparisons.
-- Dropping "target" and choosing the artifact on resolution with `choose_permanents` (whose `objects` selector IS evaluated with the resolving ability's X) would make the clause work mechanically, and is exactly the softening the brief forbids: it would let the land copy a hexproof or shroud artifact, skip the 608.2b fizzle when the artifact leaves in response, and stop the ability being offered as an illegal-target activation at all. Not written.
-
-No card in the shipped pool reads X in a target selector -- `data/cards/**` has no `mana_value` clause naming `x`, and the three "mana value X" lines in data/cards/auto/templates.cards.json (:27033, :28763, :31932) are all resolution-time `search_library`/`look_at_top` selectors, where the `EffectContext` does carry the spell's X. So this is a first, and a gate would have caught the silent X = 0 reading only by the target pool being wrong, not by the card failing to load.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Mycosynth Gardens** (rank 864) — `the_mycosynth_gardens`
-  - {X}, {T}: This land becomes a copy of target nontoken artifact you control with mana value X.
 
 </details>

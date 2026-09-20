@@ -1407,6 +1407,52 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A target pool that only exists once X is known
+
+```jsonc
+// The Mycosynth Gardens
+{ "kind": "activated",
+  "cost": { "mana": "{X}", "tap": true },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+                 "selector": { "zone": "battlefield", "controller": "you",
+                               "types": ["Artifact"], "is_token": false,
+                               "mana_value": { "op": "=", "value": { "x": true } } } } ],
+  "effects": [ { "op": "become_copy", "objects": { "self_only": true },
+                 "copying": { "target": "t1" }, "duration": "permanent" } ] }
+```
+
+601.2b announces X **before** 601.2c declares targets, and the engine had that
+order backwards for an activated ability: `_ability_aims` enumerated one
+activation per target tuple with `x = 0`, `_activate_ability` asked for X
+afterwards, and every `EffectContext` targeting built left `x` at its default.
+The selector's `{"x": true}` leaf therefore read zero twice — once listing the
+candidates and again when 608.2b re-checked them on resolution.
+
+It **loads and fails silently**, which is why this needed building rather than
+noticing: `validate_selector` has no guard against a value expression on
+`mana_value`, so the card compiles, offers the artifacts of mana value 0, and
+fizzles.
+
+The fix is the shape `ability_modes` already took, for the same rule. A modal
+ability whose bullets own their targets has the same problem — 601.2b picks the
+mode before 601.2c declares its targets — and it was answered by making the mode
+part of the *action*. X gets the same answer: legality offers **one activation
+per payable X**, each carrying the targets legal at that value, the label says
+`(X=n)`, and `_activate_ability` takes the number off the action rather than
+asking again. `candidates`, `_spec_options`, `enumerate_target_tuples`,
+`still_legal` and `filter_legal` all take an `x` and put it on the context they
+build, and `stack` passes `item.x` so the 608.2b re-check asks about the X that
+was actually paid.
+
+The ceiling is `max_affordable_x` with the tapped source excluded — it cannot
+help pay for itself — so an X the payment would refuse is never offered.
+
+Only for an ability that asks: `_targets_read_x` is gated first on the cost
+having an *announced* `{X}` (a defined one, `cost.x_value`, is filled in by
+`costs.ability_mana` and has nothing to enumerate) and then on a target selector
+actually mentioning it. Every other activation in the pool pays one attribute
+check and keeps its old shape.
+
 ### A permanent that enters as a copy
 
 ```jsonc

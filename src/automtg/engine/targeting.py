@@ -38,6 +38,7 @@ def candidates(
     exclude_sid: int | None = None,
     bindings: Mapping[str, Any] | None = None,
     chosen: Mapping[str, Sequence[TargetRef]] | None = None,
+    x: int = 0,
 ) -> list[TargetRef]:
     """Every legal choice for one target spec, in deterministic order.
 
@@ -57,6 +58,12 @@ def candidates(
     is declared before there is a `StackItem` to read it from (603.3d), so the
     only holder is the `TriggerInstance` legality is enumerating for.  Empty for
     a spell, which binds nothing at all.
+
+    ``x`` is the value announced for the source's own ``{X}``, for "target
+    nontoken artifact you control **with mana value X**" -- The Mycosynth
+    Gardens. 601.2b chooses X before 601.2c declares targets, so the pool only
+    exists once X is known; left at its 0 default, a selector's ``{"x": true}``
+    leaf reads zero and the card offers a pool nobody asked for.
     """
     ctx = EffectContext(
         state=state,
@@ -64,6 +71,7 @@ def candidates(
         source_oid=source_oid,
         bindings=dict(bindings or {}),
         targets={k: tuple(v) for k, v in (chosen or {}).items()},
+        x=x,
     )
 
     if spec.kind == "player":
@@ -371,6 +379,7 @@ def _spec_options(
     bindings: Mapping[str, Any] | None,
     chosen: Mapping[str, Sequence[TargetRef]] | None,
     size_cap: int | None = None,
+    x: int = 0,
 ) -> list[tuple[TargetRef, ...]]:
     """Every choice one spec offers, including declining where that is allowed.
 
@@ -385,6 +394,7 @@ def _spec_options(
         exclude_sid=exclude_sid,
         bindings=bindings,
         chosen=chosen,
+        x=x,
     )
     # Declining comes *last*, and that is load-bearing rather than cosmetic:
     # whatever picks a tuple without asking -- an AI seat, a trigger resolving
@@ -455,6 +465,7 @@ def enumerate_target_tuples(
     limit: int = MAX_TARGET_OPTIONS,
     bindings: Mapping[str, Any] | None = None,
     size_cap: int | None = None,
+    x: int = 0,
 ) -> list[tuple[TargetRef, ...]]:
     """Every legal combination of targets, capped at ``limit``.
 
@@ -514,6 +525,7 @@ def enumerate_target_tuples(
                 bindings=bindings,
                 chosen=None,
                 size_cap=size_cap,
+                x=x,
             )
         )
         grown: list[
@@ -533,6 +545,7 @@ def enumerate_target_tuples(
                     bindings=bindings,
                     chosen=chosen,
                     size_cap=size_cap,
+                    x=x,
                 )
             )
             for option in options:
@@ -585,6 +598,7 @@ def still_legal(
     *,
     bindings: Mapping[str, Any] | None = None,
     chosen: Mapping[str, Sequence[TargetRef]] | None = None,
+    x: int = 0,
 ) -> bool:
     """Re-check a chosen target as the spell or ability resolves.
 
@@ -593,6 +607,11 @@ def still_legal(
     other target. `filter_legal` accumulates the buckets as it goes and hands
     over the ones already settled, which is the same order they were declared
     in.
+
+    ``x`` is the value that was actually **paid**, carried on the `StackItem`.
+    608.2b re-checks the target against the same question 601.2c asked, and for
+    "with mana value X" that question has an X in it -- re-checked at 0 the
+    Mycosynth Gardens would fizzle every time it was paid for.
     """
     ctx = EffectContext(
         state=state,
@@ -600,6 +619,7 @@ def still_legal(
         source_oid=source_oid,
         bindings=dict(bindings or {}),
         targets={k: tuple(v) for k, v in (chosen or {}).items()},
+        x=x,
     )
     if ref.kind == "player":
         return state.is_alive(ref.id) and _player_allowed(ctx, ref.id, spec)
@@ -649,6 +669,7 @@ def filter_legal(
     source_oid: int | None,
     *,
     bindings: Mapping[str, Any] | None = None,
+    x: int = 0,
 ) -> tuple[dict[str, tuple[TargetRef, ...]], bool]:
     """Split stored targets into per-spec buckets, dropping illegal ones.
 
@@ -680,7 +701,14 @@ def filter_legal(
             r
             for r in chunk
             if still_legal(
-                state, controller, spec, r, source_oid, bindings=bindings, chosen=settled
+                state,
+                controller,
+                spec,
+                r,
+                source_oid,
+                bindings=bindings,
+                chosen=settled,
+                x=x,
             )
         ]
         if chunk:

@@ -279612,12 +279612,12 @@
     },
     "The Mycosynth Gardens": {
       "edhrec_rank": 864,
-      "gate": "template",
+      "gate": null,
       "name": "The Mycosynth Gardens",
-      "reason": "no template for: {X}, {T}: This land becomes a copy of target nontoken artifact you control with mana value",
+      "reason": "",
       "scryfall_id": "0a6f0408-6758-495f-9d6c-7686a1542fbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "The Mycotyrant": {

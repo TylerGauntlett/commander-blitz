@@ -7,7 +7,8 @@ the same state always produces the same list in the same order.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
 
 from . import combat as combat_mod
 from . import suspend as suspend_mod
@@ -546,8 +547,9 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                     # solver's own test so the two cannot drift apart.
                     continue
             # A gate, not a value -- see `_cast_variant`. `game._activate` asks
-            # which X the player wants; this only decides whether any is payable.
-            x = 0
+            # which X the player wants, *except* when the targets depend on it:
+            # `_ability_aims` then announces X itself, one activation per value,
+            # and the number below comes off the aim.
             tuples = _ability_aims(state, pid, oid, ability, zone, sorcery_speed)
             if tuples is None:
                 continue
@@ -560,10 +562,12 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
             label_base = f"{card.name}: {ability.text or 'activate'}"
             for mana_option in _mana_option_indices(state, oid, ability):
                 option_label = _mana_option_label(state, oid, ability, mana_option)
-                for ability_modes, targets in aims:
+                for x, ability_modes, targets in aims:
                     label = label_base
                     if option_label:
                         label += f" ({option_label})"
+                    if x:
+                        label += f" (X={x})"
                     if targets:
                         label += " -> " + ", ".join(describe_ref(state, ref) for ref in targets)
                     out.append(
@@ -753,8 +757,37 @@ def _ability_aims(
     # card-level ones and is empty on a card whose every target belongs to a
     # bullet.
     if not ability.mode_targets:
+        if _targets_read_x(ability):
+            # One activation per payable X, each carrying the targets legal at
+            # *that* X. 601.2b's order in the shape of an action: the number is
+            # announced when the activation is chosen, exactly as a modal
+            # ability's bullet is below, because the alternative -- asking for X
+            # afterwards -- would declare the targets before the X they depend
+            # on existed.
+            from .costs import mana_sources, most_life_for_mana
+
+            sources = mana_sources(state, pid, purpose=purpose)
+            if ability.cost.tap:
+                # The tapped source cannot help pay for itself -- the same
+                # exclusion `_ask_x`, `can_pay` and `pay` all make. The gate
+                # above can be generous because it only asks whether *any* X is
+                # payable; these are the numbers actually offered, so an X the
+                # payment would refuse must not be among them.
+                sources = [s for s in sources if s.oid != oid]
+            ceiling = max_affordable_x(
+                most_life_for_mana(state, pid, ability.cost, oid),
+                state.players[pid].mana_pool,
+                sources,
+            )
+            out_x: list[tuple] = []
+            for value in range(max(0, ceiling) + 1):
+                tuples = enumerate_target_tuples(
+                    state, pid, ability.targets, oid, x=value
+                )
+                out_x.extend((value, (), targets) for targets in tuples)
+            return out_x or None
         tuples = enumerate_target_tuples(state, pid, ability.targets, oid)
-        return [((), targets) for targets in tuples] if tuples else None
+        return [(0, (), targets) for targets in tuples] if tuples else None
 
     # A **modal** activated ability whose bullets own their targets -- Phoenix
     # Down. 601.2b picks the mode before 601.2c declares its targets, and the
@@ -776,8 +809,43 @@ def _ability_aims(
         tuples = enumerate_target_tuples(state, pid, specs, oid)
         if not tuples:
             continue
-        out.extend(((mode,), targets) for targets in tuples)
+        out.extend((0, (mode,), targets) for targets in tuples)
     return out or None
+
+
+def _mentions_x(node: Any) -> bool:
+    """Does this selector read the announced ``{X}`` anywhere inside it?
+
+    A cheap structural walk rather than a compiled flag, and it is only ever
+    asked about an ability that already has an ``{X}`` in its cost -- so every
+    other ability in the pool pays one attribute check and nothing else.
+    """
+    if isinstance(node, Mapping):
+        return any(k == "x" or _mentions_x(v) for k, v in node.items())
+    if isinstance(node, (list, tuple)):
+        return any(_mentions_x(v) for v in node)
+    return node == "x"
+
+
+def _targets_read_x(ability) -> bool:
+    """"target nontoken artifact you control **with mana value X**".
+
+    601.2b announces X before 601.2c declares targets, so an ability whose
+    target pool depends on X has to be offered once per payable X -- the same
+    shape `_ability_aims` already uses for a modal ability whose bullets own
+    their targets, and for the same rule.
+
+    Gated on the ability having an announced X at all: a defined one
+    (`cost.x_value`, "X is the mana value of that card") is not announced and
+    `costs.ability_mana` fills it in, so there is nothing to enumerate.
+    """
+    cost = ability.cost
+    if cost is None or not cost.mana.x_count or cost.x_value is not None:
+        return False
+    specs = list(ability.targets) + [
+        spec for specs in (ability.mode_targets or {}).values() for spec in specs
+    ]
+    return any(_mentions_x(spec.selector) for spec in specs)
 
 
 def _activation_allowed(state: GameState, pid: int, oid: int, ability) -> bool:
