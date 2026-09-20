@@ -1407,6 +1407,41 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A reduction that counts an *or* of characteristics
+
+```jsonc
+// Excalibur, Sword of Eden -- "historic" is artifact OR legendary OR Saga
+"cost_reduction": {
+  "total_mana_value": {
+    "controller": "you",
+    "any_of": [
+      { "types": ["Artifact"] },
+      { "supertypes": ["Legendary"] },
+      { "subtypes": ["Saga"] }
+    ]
+  }
+}
+```
+
+A reduction filter **ANDs** every key it reads, which makes historic unsayable:
+`{"types": ["Artifact"], "supertypes": ["Legendary"], "subtypes": ["Saga"]}`
+matches only a permanent that is all three at once, and almost nothing is. The
+card would price itself off an empty board for ever, and nothing on a table
+would say so — a reduction that counts too little just makes a spell dearer.
+`any_types` is the nearest existing key and is an or over **types** alone, so it
+reaches neither a supertype nor a subtype; three of the words on this card are
+out of its range.
+
+Spelled as the effect-side selector language already spells it, so one printed
+word has one spelling wherever it is written. The mechanism is recursion:
+`_object_matches` is split out of `_reduction_matches` so a branch can be the
+same filter language asked about the same object.
+
+A branch is held to the same keys as the filter around it, recursively — and may
+not name a `zone`, because the zones are chosen once for the whole filter and a
+branch's own would be read by nobody. A permanent matching several branches is
+counted **once**: this is a disjunction, not a tally.
+
 ### A reduction that sums mana values
 
 ```jsonc

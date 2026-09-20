@@ -205,6 +205,100 @@ def _reduction_zone_oids(state: GameState, zones: frozenset[str]):
             yield from player.graveyard
 
 
+def _object_matches(
+    state: GameState, pid: int, filt: Any, oid: int, obj: Any, source_oid: int | None
+) -> bool:
+    """Does this one object match this filter?
+
+    Split out of `_reduction_matches` so that it can **recurse**, which is the
+    whole of `any_of`: a branch is the same filter language asked about the same
+    object, exactly as the effect-side selector's `any_of` is.
+    """
+    # "…the total mana value of **historic** permanents you control. (Artifacts,
+    # legendaries, and Sagas are historic.)" -- Excalibur, Sword of Eden.
+    #
+    # Every other key here is ANDed, which is what makes a disjunction
+    # unsayable without this: `{"types": ["Artifact"], "supertypes":
+    # ["Legendary"], "subtypes": ["Saga"]}` matches only a permanent that is all
+    # three at once, which nothing is, and the card would price itself off an
+    # empty board for ever. `any_types` is an or over *types* alone and cannot
+    # reach a supertype or a subtype.
+    #
+    # A branch names no `zone`: the zones are chosen once, outside the loop, and
+    # a branch that named its own would be read by nobody -- so the loader
+    # refuses one rather than accepting it silently.
+    if (branches := filt.get("any_of")) is not None and not any(
+        _object_matches(state, pid, branch, oid, obj, source_oid) for branch in branches
+    ):
+        return False
+    owner = filt.get("owner")
+    # "You control" is the default only while the filter has said nothing
+    # about ownership. A filter that named `owner` and not `controller` is
+    # asking the other question, and a defaulted control check on top of it
+    # would silently re-impose the answer the card went out of its way not
+    # to ask for -- a commander an opponent stole is one you own and *not*
+    # one you control, so the default would drop exactly the case `owner`
+    # was written for.
+    controller = filt.get("controller", None if owner else "you")
+    if controller == "you" and obj.controller != pid:
+        return False
+    if controller == "opponent" and obj.controller == pid:
+        return False
+    if owner == "you" and obj.owner != pid:
+        return False
+    if owner == "opponent" and obj.owner == pid:
+        return False
+    if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
+        return False
+    if filt.get("self_only") and oid != source_oid:
+        return False
+    if filt.get("exclude_self") and oid == source_oid:
+        return False
+    if obj.on_battlefield:
+        c = chars(state, oid)
+        types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
+        keywords, colors = c.keywords, c.colors
+    else:
+        card = state.card_of(obj)
+        types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
+        keywords, colors = card.keywords, card.colors
+    if (want := filt.get("types")) and not set(want).issubset(types):
+        return False
+    if (want := filt.get("not_types")) and set(want) & set(types):
+        return False
+    if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
+        return False
+    if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
+        return False
+    if (want := filt.get("colors")) and not set(want) & set(colors):
+        return False
+    if (want := filt.get("keywords")) and not set(want).issubset(keywords):
+        return False
+    if (want := filt.get("not_keywords")) and set(want) & set(keywords):
+        return False
+    if (want := filt.get("mana_cost")) is not None:
+        from .effects.selectors import has_printed_cost
+
+        if not has_printed_cost(state, oid, want):
+            return False
+    # Board state, and only the three kinds of it a reduction can see. Each
+    # is a pipeline *input* -- nothing in the characteristics layer writes
+    # a tapped flag, a token flag or a combat assignment -- so reading them
+    # while pricing cannot depend on a static that has not run.
+    if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
+        return False
+    if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
+        return False
+    combat = state.combat
+    if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
+        filt["attacking"]
+    ):
+        return False
+    if "blocking" in filt and bool(combat and combat.blocking(oid)) != bool(filt["blocking"]):
+        return False
+    return True
+
+
 def _reduction_matches(state: GameState, pid: int, filt: Any, source_oid: int | None = None):
     """The objects one reduction filter picks out, across the zones it names.
 
@@ -241,72 +335,8 @@ def _reduction_matches(state: GameState, pid: int, filt: Any, source_oid: int | 
         obj = state.objects.get(oid)
         if obj is None:
             continue
-        owner = filt.get("owner")
-        # "You control" is the default only while the filter has said nothing
-        # about ownership. A filter that named `owner` and not `controller` is
-        # asking the other question, and a defaulted control check on top of it
-        # would silently re-impose the answer the card went out of its way not
-        # to ask for -- a commander an opponent stole is one you own and *not*
-        # one you control, so the default would drop exactly the case `owner`
-        # was written for.
-        controller = filt.get("controller", None if owner else "you")
-        if controller == "you" and obj.controller != pid:
-            continue
-        if controller == "opponent" and obj.controller == pid:
-            continue
-        if owner == "you" and obj.owner != pid:
-            continue
-        if owner == "opponent" and obj.owner == pid:
-            continue
-        if "is_commander" in filt and bool(obj.is_commander) != bool(filt["is_commander"]):
-            continue
-        if filt.get("self_only") and oid != source_oid:
-            continue
-        if filt.get("exclude_self") and oid == source_oid:
-            continue
-        if obj.on_battlefield:
-            c = chars(state, oid)
-            types, subtypes, supertypes = c.types, c.subtypes, c.supertypes
-            keywords, colors = c.keywords, c.colors
-        else:
-            card = state.card_of(obj)
-            types, subtypes, supertypes = card.types, card.subtypes, card.supertypes
-            keywords, colors = card.keywords, card.colors
-        if (want := filt.get("types")) and not set(want).issubset(types):
-            continue
-        if (want := filt.get("not_types")) and set(want) & set(types):
-            continue
-        if (want := filt.get("subtypes")) and not set(want) & set(subtypes):
-            continue
-        if (want := filt.get("supertypes")) and not set(want).issubset(supertypes):
-            continue
-        if (want := filt.get("colors")) and not set(want) & set(colors):
-            continue
-        if (want := filt.get("keywords")) and not set(want).issubset(keywords):
-            continue
-        if (want := filt.get("not_keywords")) and set(want) & set(keywords):
-            continue
-        if (want := filt.get("mana_cost")) is not None:
-            from .effects.selectors import has_printed_cost
-
-            if not has_printed_cost(state, oid, want):
-                continue
-        # Board state, and only the three kinds of it a reduction can see. Each
-        # is a pipeline *input* -- nothing in the characteristics layer writes
-        # a tapped flag, a token flag or a combat assignment -- so reading them
-        # while pricing cannot depend on a static that has not run.
-        if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
-            continue
-        if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
-            continue
-        combat = state.combat
-        if "attacking" in filt and bool(combat and combat.attacking(oid)) != bool(
-            filt["attacking"]
-        ):
-            continue
-        if "blocking" in filt and bool(combat and combat.blocking(oid)) != bool(filt["blocking"]):
-            continue
-        yield oid
+        if _object_matches(state, pid, filt, oid, obj, source_oid):
+            yield oid
 
 
 def _filter_zones(filt: Any) -> frozenset[str]:

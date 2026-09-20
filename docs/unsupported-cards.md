@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**29 cards** blocked by **39** capabilities.
+**28 cards** blocked by **37** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,7 +26,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
-| [cost-reduction-total-mana-value](#cost-reduction-total-mana-value) | 1 | 906 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [delayed-trigger-object-scope](#delayed-trigger-object-scope) | 1 | 1050 | trigger_event |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -38,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [grant-static-ability](#grant-static-ability) | 1 | 3821 | op |
-| [historic](#historic) | 1 | 906 | selector |
 | [imprint](#imprint) | 1 | 146 | engine |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -241,20 +239,6 @@ Blocks **1** card.
 
 </details>
 
-## cost-reduction-total-mana-value
-
-Blocks **1** card.
-
-- **(value)** a fifth cost-reduction shape, `total_mana_value: {filter}`, that SUMS the mana values of every permanent its filter matches, alongside the existing `count`, `total_power` and `greatest_mana_value` -- the mana-value analogue of `total_power`, read by `reduction_amount` in src/automtg/engine/cost_reduction.py and admitted to `COST_REDUCTION_KEYS` in src/automtg/cards/loader/vocabulary.py
-  <br>Why the existing vocabulary won't do: `cost_reduction` takes exactly one of `count`, `total_power`, `amount`, `greatest_mana_value`. `greatest_mana_value` reads mana values but takes a MAXIMUM, and its own docstring says it is a separate key precisely because it must not sum -- two permanents of mana value 3 and 5 give 5, not 8. `total_power` sums, but sums power, which an Equipment-and-Saga board mostly has none of (a Saga and a Signet are power 0, yet mana value 3 and 2). `count` gives 1 per permanent, and `amount` is a flat number needing a condition. The effect-value language already sums mana values -- `mana_value_of` with an `objects` ref, used by Phoenix's "total mana value of other permanents you control" -- but that language is `value_keys`, unreachable from a `cost_reduction` spec, which the loader restricts to `COST_REDUCTION_KEYS`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Excalibur, Sword of Eden** (rank 906) — `excalibur_sword_of_eden`
-  - This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)
-
-</details>
-
 ## counter-to-exile
 
 Blocks **1** card.
@@ -412,20 +396,6 @@ Blocks **1** card.
 
 - **The Irencrag** (rank 3821) — `the_irencrag`
   - Whenever a legendary creature you control enters, you may have The Irencrag become a legendary Equipment artifact named Everflame, Heroes' Legacy. If you do, it gains equip {3} and "Equipped creature gets +3/+3" and loses all other abilities.
-
-</details>
-
-## historic
-
-Blocks **1** card.
-
-- **(selector)** an or-of-characteristics filter inside a cost reduction -- `any_of` (as the effect-side selector language already has) or a `historic: true` key -- so a reduction can count permanents that are Artifact OR Legendary OR Saga, i.e. a disjunction across types, supertypes and subtypes at once
-  <br>Why the existing vocabulary won't do: A cost-reduction filter may use `STATIC_FILTER_KEYS` plus `zone` (COST_REDUCTION_FILTER_KEYS), and `_reduction_matches` ANDs every key it reads: `{"types":["Artifact"],"supertypes":["Legendary"],"subtypes":["Saga"]}` matches only a permanent that is all three at once, which nothing is. `any_types` is the closest listed key, but it is an or over TYPES only (`set(any_types) & card.types`) and Legendary is a supertype and Saga a subtype, so it cannot reach either half; it is also not read by `_reduction_matches` at all today. `any_of` is how the shipped pool spells historic -- Lost to Legend's target selector in data/cards/auto/templates.cards.json is exactly `any_of: [{types:[Artifact]}, {supertypes:[Legendary]}, {subtypes:[Saga]}]` -- but `any_of` is a `selector_keys` entry, not a static or reduction filter key, so the loader rejects it here.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Excalibur, Sword of Eden** (rank 906) — `excalibur_sword_of_eden`
-  - This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)
 
 </details>
 

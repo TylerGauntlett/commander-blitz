@@ -87162,12 +87162,12 @@
     },
     "Excalibur, Sword of Eden": {
       "edhrec_rank": 906,
-      "gate": "template",
+      "gate": null,
       "name": "Excalibur, Sword of Eden",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the total mana value of historic permanents ",
+      "reason": "",
       "scryfall_id": "26dbf574-3193-413e-a982-4b9d27dafaf5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Excava, the Risen Past": {

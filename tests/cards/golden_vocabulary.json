@@ -28,6 +28,7 @@
    "zone_is"
   ],
   "COST_REDUCTION_FILTER_KEYS": [
+   "any_of",
    "zone"
   ],
   "COST_REDUCTION_KEYS": [

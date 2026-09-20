@@ -115,6 +115,40 @@ def _check_reduction_type_names(filt: Mapping[str, Any], where: str) -> None:
                 )
 
 
+def _validate_reduction_any_of(filt: Mapping[str, Any], where: str) -> None:
+    """Check the branches of a reduction filter's ``any_of``, if it has one.
+
+    Each branch is the same filter language asked about the same object, so
+    each is held to the same keys -- recursively, because a branch may carry a
+    branch.
+
+    A branch may **not** name a ``zone``. The zones are chosen once, outside
+    the per-object walk, so a branch that named its own would be read by
+    nobody: the filter would load, look like it counted two zones and count
+    one.
+    """
+    branches = filt.get("any_of")
+    if branches is None:
+        return
+    if not isinstance(branches, list) or not branches:
+        raise DslError(f"{where}.any_of: takes a non-empty list of filters")
+    for i, branch in enumerate(branches):
+        if not isinstance(branch, Mapping):
+            raise DslError(f"{where}.any_of[{i}]: must be a filter object")
+        if "zone" in branch:
+            raise DslError(
+                f"{where}.any_of[{i}]: a branch may not name a 'zone' -- the zones "
+                f"are chosen once for the whole filter, so this one would be read "
+                f"by nobody"
+            )
+        unknown = set(branch) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS - {"zone"}
+        if unknown:
+            raise DslError(
+                f"{where}.any_of[{i}]: unsupported filter keys {sorted(unknown)}"
+            )
+        _validate_reduction_any_of(branch, f"{where}.any_of[{i}]")
+
+
 def _validate_cost_reduction(spec: Any, where: str) -> None:
     """One validator for every "costs {N} less", wherever it is written.
 
@@ -161,6 +195,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         unknown = set(filt) - STATIC_FILTER_KEYS - COST_REDUCTION_FILTER_KEYS
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
+        _validate_reduction_any_of(filt, f"{where}.{key}")
         refused = set(filt) & COST_REDUCTION_REFUSED_FILTER_KEYS
         if refused:
             raise DslError(

@@ -30774,6 +30774,106 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 10
+          },
+          "text": "Equipped creature gets +10/+0 and has vigilance.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +10/+0 and has vigilance."
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip legendary creature {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "cost_reduction": {
+        "total_mana_value": {
+          "any_of": [
+            {
+              "types": [
+                "Artifact"
+              ]
+            },
+            {
+              "supertypes": [
+                "Legendary"
+              ]
+            },
+            {
+              "subtypes": [
+                "Saga"
+              ]
+            }
+          ],
+          "controller": "you"
+        }
+      },
+      "id": "excalibur_sword_of_eden",
+      "mana_cost": "{12}",
+      "name": "Excalibur, Sword of Eden",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)\nEquipped creature gets +10/+0 and has vigilance.\nEquip legendary creature {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],

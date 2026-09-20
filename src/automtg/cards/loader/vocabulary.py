@@ -701,7 +701,19 @@ COST_REDUCTION_ZONES = REDUCTION_ZONES
 #: What a reduction kept is the *reason* it wanted the word first: reading the
 #: command zone, where "a commander you own on the battlefield or in the command
 #: zone" still counts the commander an opponent stole from you.
-COST_REDUCTION_FILTER_KEYS = frozenset({"zone"})
+#: ``any_of`` is the second, and it is a *disjunction* rather than a
+#: characteristic: "the total mana value of **historic** permanents you control.
+#: (Artifacts, legendaries, and Sagas are historic.)" -- Excalibur, Sword of
+#: Eden. Every other key in a reduction filter is ANDed, so historic is
+#: unsayable without it -- ``{"types": ["Artifact"], "supertypes":
+#: ["Legendary"], "subtypes": ["Saga"]}`` matches only a permanent that is all
+#: three at once, which nothing is. ``any_types`` is an or over *types* alone
+#: and reaches neither a supertype nor a subtype.
+#:
+#: Spelled as the effect-side selector language already spells it (Lost to
+#: Legend's target line is exactly this shape), so one printed word has one
+#: spelling wherever it is written.
+COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "any_of"})
 
 #: Filter keys a cost reduction *refuses*, though a static ability accepts them.
 #:

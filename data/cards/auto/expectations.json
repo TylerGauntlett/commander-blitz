@@ -2780,6 +2780,10 @@
     },
     "zone": "battlefield"
   },
+  "excalibur_sword_of_eden": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "excavation_technique": {
     "battlefield_count": 33,
     "graveyard_size": {
