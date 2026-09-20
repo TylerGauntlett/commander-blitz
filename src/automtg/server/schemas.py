@@ -353,6 +353,19 @@ class ImagesResponse(BaseModel):
 
     art_base: str = "/art"
     images: dict[str, ImageRefDTO | None] = Field(default_factory=dict)
+    #: ``seat index -> card id -> ref``, for the cards a seat's deck prints
+    #: differently from the catalog's pick.  Empty without ``?game_id=``, and
+    #: empty for a deck that named no printings -- which is every precon.
+    #:
+    #: A second layer rather than an edit to ``images`` because two seats can
+    #: hold the same card id and want different illustrations; a flat map cannot
+    #: say that.  Keyed by seat index because that is what ``CardView.owner``
+    #: already carries, so the client needs nothing it does not have.
+    #:
+    #: Entries are **whole refs, never patches**.  An override whose illustrator
+    #: we do not know carries ``artist: null``; merging field by field would
+    #: credit the catalog printing's artist for somebody else's painting.
+    seats: dict[str, dict[str, ImageRefDTO]] = Field(default_factory=dict)
 
 
 class CatalogCardDTO(BaseModel):
