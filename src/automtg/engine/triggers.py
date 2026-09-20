@@ -572,7 +572,15 @@ def _delayed_matches(
     if not _half_matches(spec.event, event):
         return False
 
-    actor = _actor(state, spec.event, event, _subject_oid(spec.event, event))
+    subject = _subject_oid(spec.event, event)
+    if delayed.subject_oid is not None and subject != delayed.subject_oid:
+        # "Whenever **that creature**…". The scope is the whole difference
+        # between Hunter's Insight and a card that draws off every creature you
+        # control, and it is compared against the event's *subject* -- which for
+        # a damage event is the dealer, the same object `source: "self"` means
+        # on an ordinary trigger.
+        return False
+    actor = _actor(state, spec.event, event, subject)
     if actor is not None:
         if spec.controller == "you" and actor != delayed.controller:
             return False

@@ -428,6 +428,28 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
     controller = str(trigger.get("controller", "you"))
     if controller not in ("you", "opponent", "any"):
         raise DslError(f"{where}.trigger: unknown controller {controller!r}")
+    if (subject := trigger.get("subject")) is not None:
+        # "Whenever **that creature** deals combat damage…" -- Hunter's
+        # Insight. The one object this subscription is about, named the way a
+        # resolving effect names an object it already has in hand.
+        if not isinstance(subject, Mapping) or not (set(subject) & {"target", "binding"}):
+            raise DslError(
+                f"{where}.trigger.subject: names one object the delayed ability "
+                f"already has -- a {{'target': ...}} or a {{'binding': ...}}"
+            )
+        validate_selector(subject, f"{where}.trigger.subject")
+        from automtg.engine.triggers import OBJECT_SUBJECT_TRIGGERS
+
+        if event not in OBJECT_SUBJECT_TRIGGERS:
+            # Scoped to an object against an event that has none, the clause is
+            # compared with nothing and the subscription never fires -- the card
+            # reads as printed and does nothing, which is the failure this whole
+            # pass exists to refuse.
+            raise DslError(
+                f"{where}.trigger: {event!r} has no object subject for a "
+                f"'subject' to scope against (events that do: "
+                f"{sorted(OBJECT_SUBJECT_TRIGGERS)})"
+            )
     validate_condition(trigger.get("condition"), f"{where}.trigger.condition")
     # How long the subscription lasts, and what firing does to it. A misspelled
     # value would fall through to the `this_turn` default and quietly retime the

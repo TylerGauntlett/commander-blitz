@@ -130842,12 +130842,12 @@
     },
     "Hunter's Insight": {
       "edhrec_rank": 1050,
-      "gate": "template",
+      "gate": null,
       "name": "Hunter's Insight",
-      "reason": "no template for: Choose target creature you control. Whenever that creature deals combat damage to a player",
+      "reason": "",
       "scryfall_id": "f68090b1-77f0-49e7-8f2b-e78ce3cf8c86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hunter's Mark": {

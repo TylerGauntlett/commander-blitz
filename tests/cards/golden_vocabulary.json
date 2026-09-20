@@ -61,7 +61,8 @@
   "DELAYED_TRIGGER_KEYS": [
    "condition",
    "controller",
-   "event"
+   "event",
+   "subject"
   ],
   "GRANTABLE_STATIC_EFFECTS": [
    "activate_loyalty_as_though_instant",

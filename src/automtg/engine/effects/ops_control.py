@@ -840,6 +840,24 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
 
     trigger = spec.get("trigger") or {}
     state = ctx.state
+    # "Choose target creature you control. Whenever **that creature** deals
+    # combat damage…" -- resolved now, to an oid, because the spell that is
+    # saying it will be in a graveyard before the first blow lands and there
+    # would be nothing left to resolve it against. `choose_objects` is not
+    # reached: the object is already chosen, as a target or a binding, and this
+    # only reads which.
+    subject_oid = None
+    if (subject := trigger.get("subject")) is not None:
+        from .selectors import resolve_pool
+
+        chosen = resolve_pool(ctx, subject)
+        if not chosen:
+            # The target is gone by resolution (608.2b took it), so there is no
+            # "that creature" to watch and the clause does nothing -- which is
+            # what the printed card says rather than a reason to watch
+            # everything.
+            return
+        subject_oid = chosen[0]
     state.delayed_triggers.append(
         DelayedTrigger(
             step="",
@@ -854,6 +872,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
                 controller=str(trigger.get("controller", "you")),
                 condition=dict(trigger["condition"]) if trigger.get("condition") else None,
             ),
+            subject_oid=subject_oid,
             duration=str(spec.get("duration", "this_turn")),
         )
     )

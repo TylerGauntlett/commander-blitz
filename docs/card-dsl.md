@@ -1407,6 +1407,40 @@ it legal in a `set_pt` **static**: a printed cost is a pipeline input, so no
 layer can change one. Primalcrux is a static, so the leaf lives in both value
 languages — added to only one, the card would have loaded and read 0.
 
+### A delayed trigger scoped to one chosen object
+
+```jsonc
+// Hunter's Insight
+{ "op": "delayed_trigger",
+  "trigger": { "event": "deals_combat_damage_to_player",
+               "controller": "you",
+               "subject": { "target": "t1" } },     // "…whenever THAT creature"
+  "effects": [ { "op": "draw", "amount": { "binding": "amount" } } ] }
+```
+
+`delayed_trigger` could say *when* ("this turn") and *whose* (`controller`), and
+could not say *which*. Forth Eorlingas!, the card it was built for, watches any
+creature you control and needs no scope — so written without one, Hunter's
+Insight is that card with a target line stapled on, and every creature you
+control draws off it.
+
+`subject` names an object the delayed ability **already has in hand** — a
+`target` or a `binding` — and is resolved to an oid as the ability is created,
+for the reason the bindings and the controller are captured there: the instant is
+in a graveyard before the first blow lands, and there is nothing left to resolve
+"that creature" against. `TriggerSpec.source` cannot stand in; it says `"self"`,
+and a delayed ability has no self.
+
+It is compared against the event's **subject**, which for a damage event is the
+dealer — the same object `source: "self"` means on an ordinary trigger — so the
+event must be one with an object subject, and the loader refuses a scope on one
+without: compared with nothing, the subscription never fires and the card reads
+as printed while doing nothing.
+
+A target that is gone by resolution installs no subscription at all. 608.2b took
+it, so there is no "that creature" to watch, and watching everything instead
+would be a strictly better card.
+
 ### "…deals combat damage to a player or planeswalker"
 
 ```jsonc

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**28 cards** blocked by **37** capabilities.
+**27 cards** blocked by **35** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,11 +23,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [battle](#battle) | 1 | 686 | engine |
 | [becomes-tapped](#becomes-tapped) | 1 | 97 | trigger_event |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [combat-damage-to-planeswalker](#combat-damage-to-planeswalker) | 1 | 1050 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [cost-reduction-by-target](#cost-reduction-by-target) | 1 | 3190 | selector |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [delayed-trigger-object-scope](#delayed-trigger-object-scope) | 1 | 1050 | trigger_event |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage](#divided-damage) | 1 | 5389 | decision |
@@ -194,20 +192,6 @@ Blocks **1** card.
 
 </details>
 
-## combat-damage-to-planeswalker
-
-Blocks **1** card.
-
-- **(trigger_event)** a way to trigger on combat damage one named permanent deals to a PLANESWALKER, carrying the damage as the `amount` binding so "draw that many cards" can read it. Cheapest shape: an `or_planeswalker: true` key on a `deals_combat_damage_to_player` trigger, fired from `primitives.damage_permanent` (src/automtg/engine/primitives.py:588) when `is_combat` and the victim is a Planeswalker -- either as a second COMBAT_DAMAGE_TO_PLAYER emission whose `player` is the walker's controller, or as a companion `deals_combat_damage_to_planeswalker` event scoped by `source: "self"` the way `deals_damage_to_player` is (triggers.py:314-324). It clears the whole printed family -- "deals combat damage to a player or planeswalker" on Ragavan-shaped attack payoffs, equipment and the saboteur cycle -- not just this card.
-  <br>Why the existing vocabulary won't do: `deals_combat_damage_to_player` is the near miss and is player-only by construction: COMBAT_DAMAGE_TO_PLAYER is fired inside `primitives.damage_player` (src/automtg/engine/primitives.py:456) and damage to a planeswalker never reaches that function -- it goes through `damage_permanent`, which fires only DAMAGE_DEALT with `to="permanent"` (primitives.py:588). Using it alone would silently drop the planeswalker half of the printed line. `dealt_damage` is the DSL name for that permanent-half event and is scoped the wrong way round: `EVENT_HALVES["dealt_damage"] = "permanent"` and its subject is the permanent that WAS dealt the damage (triggers.py:310-313, enrage), so `source: "self"` on it means "this creature was damaged", and no trigger clause anywhere -- `filter`, `source`, `controller`, `defending` -- can say "damage dealt BY this permanent" on that half. `deals_damage_to_player` reads the dealer but is again the player half of the same event, so it too never sees a planeswalker. `or_planeswalker` already exists as a key but only on the attack-placement ops (`create_token`, `copy_permanent`, `put_onto_battlefield`, loader/effects.py:1390), where it widens which SEAT a token attacks; nothing reads it on a trigger.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hunter's Insight** (rank 1050) — `hunter_s_insight`
-  - Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.
-
-</details>
-
 ## conditional-mana-ability
 
 Blocks **1** card.
@@ -250,20 +234,6 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-
-</details>
-
-## delayed-trigger-object-scope
-
-Blocks **1** card.
-
-- **(trigger_event)** a way to bind a `delayed_trigger` to ONE chosen object -- e.g. `source: {"target": "t1"}` or `source: {"binding": "chosen"}` on the delayed trigger spec, compared in `triggers._delayed_matches` against the event's subject/source oid -- so "Whenever THAT CREATURE deals combat damage ... this turn" fires for the creature the spell targeted and for no other.
-  <br>Why the existing vocabulary won't do: `DELAYED_TRIGGER_KEYS` is `{"event", "controller", "condition"}` (src/automtg/cards/loader/vocabulary.py:841) and the loader rejects every other clause outright (loader/effects.py:421-427), because a delayed ability has no hosting permanent to read `source` or `filter` off. `controller: "you"` is the only narrowing available, which widens the card to "whenever ANY creature you control deals combat damage" -- a strictly different, far stronger card. The `condition` escape does not reach it either: the event folds `subject` and `amount` into the bindings (triggers._delayed_bindings, triggers.py:564-590), but `condition_keys` has no clause that compares two object bindings for identity -- `combat_damage_by` reads the turn ledger's damage TYPES (conditions.py:222-229, prowl), not which object dealt it, and `exists`/`cmp` take selectors and values, not an oid equality test. `grant_ability` with a grantable "Whenever this creature deals combat damage to a player, draw that many cards" (default duration until end of turn) is the closest working workaround and is why this need is second rather than first, but it is a different object in the rules: the ability lives ON the creature, so a `lose_all_abilities` effect strips it and a control change hands the draws to the new controller, where 603.7 keeps the delayed ability with the player who resolved the spell.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hunter's Insight** (rank 1050) — `hunter_s_insight`
-  - Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.
 
 </details>
 

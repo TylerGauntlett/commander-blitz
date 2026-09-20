@@ -47779,6 +47779,78 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hunter_s_insight",
+      "mana_cost": "{2}{G}",
+      "name": "Hunter's Insight",
+      "oracle_text": "Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "subject": {
+              "target": "t1"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_planeswalker",
+            "subject": {
+              "target": "t1"
+            }
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
