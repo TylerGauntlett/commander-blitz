@@ -325,6 +325,7 @@ This is the long tail, and where the build order comes from.
 | Undying | free | the mirror of persist: the same shape reading `+1/+1` instead | — |
 | Unearth | free | activated from the graveyard: `put_onto_battlefield` self, `grant_keyword` haste `permanent`, then a `delay`ed `exile` | — |
 | Unleash | free | `self_enters_with_counters`, plus a `cant_block` static conditioned on `counters` | `cant_block` |
+| Warp | shipped | card-level field — evoke's alternative cost from hand, with both riders supplied by the engine: a `DelayedTrigger` at the next end step exiling *that* object, carrying `playable: "later_turns"` so it may be cast from exile on a later turn. Nothing is written on the card, because the printing says only the price. `grant_warp` is the static that hands the cost to other cards in hand (Tannuk, Steadfast Second) | `warp` |
 | Wither | shipped | `Keyword`, read by `damage_permanent` -- the counters land instead of the damage mark | `wither` |
 
 ## Ability words
@@ -358,7 +359,7 @@ is ordinary, which is why most of this table is `free`.
 
 ## What the census says
 
-**Every row is shipped or free** — 92 shipped, 93 free. `routed`, `blocked` and
+**Every row is shipped or free** — 93 shipped, 93 free. `routed`, `blocked` and
 `refused` are all empty.
 
 The single most useful finding, made over and over, is that **`blocked` was a

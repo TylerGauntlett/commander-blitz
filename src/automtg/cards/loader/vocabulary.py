@@ -180,6 +180,25 @@ STATIC_EFFECTS = frozenset(
         # `cast_from_graveyard` take, is what carries "Dragon"; the permission
         # is optional, so the printed line is still offered beside it.
         "free_cast_permission",
+        # "Artifact cards and red creature cards in your hand have warp
+        # {2}{R}." Tannuk, Steadfast Second. The fourth casting permission, and
+        # the only one that hands over a **price** somebody else's card did not
+        # print: the three above say where a spell may be cast from or that it
+        # costs nothing, and this one adds a second, separate cost beside the
+        # printed one.
+        #
+        # Not `grant_keyword`, which knows only the ability keywords and of
+        # which warp is not one -- and warp is a cost rather than an ability
+        # even if the word existed. Not `grant_ability` either: a cost is not a
+        # triggered, activated or static ability, and a granted ability reaches
+        # the battlefield while this grant must be live on cards sitting in a
+        # hand. `spell_cost_reduction` is the only other static that touches
+        # what a spell costs and it can only discount the printed price.
+        #
+        # `affects_spells` carries the filter and `warp_cost` the price. Read
+        # by `player_statics.granted_warp_cost` at every cast, so a card drawn
+        # after the granter arrived is covered.
+        "grant_warp",
         # "For each {B} in a cost, you may pay 2 life rather than pay that
         # mana." K'rrik, Son of Yawgmoth. Player-wide: it changes how the
         # player *pays*, in every cost, so there is no object to attach it to.
@@ -511,6 +530,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_from_graveyard",
         "cast_from_library_top",
         "free_cast_permission",
+        "grant_warp",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
         "play_lands_from_library_top",
@@ -640,6 +660,24 @@ SPELL_FILTER_KEYS = frozenset(
 #: is, because the command zone its eminence static is gathered from is the very
 #: zone it is cast out of.
 SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
+
+#: `SPELL_FILTER_KEYS` plus the one word a **union of two printed shapes** needs.
+#:
+#: "**Artifact cards and red creature cards** in your hand have warp {2}{R}" --
+#: Tannuk, Steadfast Second. Every other key in a printed-face filter is ANDed,
+#: so the sentence is unsayable without a disjunction: ``{"types":
+#: ["Artifact", "Creature"], "colors": ["R"]}`` matches only a red artifact
+#: creature, and ``any_types`` is an or over *types* alone -- it would let a
+#: blue creature card through, which is exactly the scope this grant must not
+#: have.
+#:
+#: Spelled as the effect-side selector and `COST_REDUCTION_FILTER_KEYS` already
+#: spell it, so one printed word has one spelling wherever it is written; read
+#: by `characteristics._matches_printed`, which recurses into the branches.
+#: Kept off `SPELL_FILTER_KEYS` itself rather than widened into it, because
+#: that set is shared with three statics whose readers were written before the
+#: word existed and would walk past it -- a silent over-grant.
+WARP_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"any_of"}
 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics

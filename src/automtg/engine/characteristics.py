@@ -1530,6 +1530,22 @@ def _matches_printed(
     convert a creature that no Vampire lord could find: the card would look
     implemented and do almost nothing.
     """
+    # "**Artifact cards and red creature cards** in your hand have warp {2}{R}"
+    # -- Tannuk, Steadfast Second. A disjunction, and the only way to say one
+    # here: every other key below is ANDed, so the two printed shapes written
+    # as one filter collapse to "red artifact creature" and the sentence is
+    # unsayable. `any_types` is an or over *types* alone and would let a blue
+    # creature card through.
+    #
+    # A branch is the same filter language asked about the same card, exactly
+    # as `cost_reduction._object_matches` recurses for its own `any_of` and as
+    # the effect-side selector does. Only `grant_warp` may write the word --
+    # `SPELL_FILTER_KEYS` does not carry it -- so no shipped card's filter
+    # changes meaning by this being here.
+    if (branches := selector.get("any_of")) is not None and not any(
+        _matches_printed(card, branch, added_subtypes, text_changes) for branch in branches
+    ):
+        return False
     types = selector.get("types")
     if types and not set(types).issubset(card.types):
         return False

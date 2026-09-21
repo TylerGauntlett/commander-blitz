@@ -380,6 +380,14 @@ class Game:
             extra -= variant_reduction(state, pid, card.flashback, oid)
         elif action.evoked and card.evoke is not None:
             cost = card.evoke
+        elif action.warp is not None:
+            # The price legality offered, read off the **answer** and not
+            # re-derived from the board. `Action.warp` is a string rather than
+            # a flag because a `grant_warp` static may have supplied it, and
+            # the granting permanent can leave between the line being offered
+            # and this charge being made -- at which point a re-derived price
+            # would be `None` and the spell would be charged its printed cost.
+            cost = ManaCost.parse(action.warp)
         elif action.bestowed and card.bestow is not None:
             cost = card.bestow
         elif action.mutated and card.mutate is not None:
@@ -765,6 +773,7 @@ class Game:
             # ordinary effect on the card, and it happens on resolution.
             gift_to=action.gift_to,
             evoked=action.evoked,
+            warped=action.warp is not None,
             flashback=action.flashback,
             overloaded=action.overloaded,
             cost_option=action.additional_choice,

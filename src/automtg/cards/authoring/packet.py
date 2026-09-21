@@ -84,6 +84,12 @@ CARD_LEVEL_COST_KEYS = (
     #: needs exactly one target spec, with count "any".
     "strive",
     "suspend",
+    #: "Warp {1}{R}" -- evoke's slot, with the exile at the next end step and
+    #: the cast from exile on a later turn supplied by the *rule*. Nothing is
+    #: written on the card for those, deliberately: the printed card says only
+    #: the price, so a `delayed_trigger` ability spelling out the riders would
+    #: be a line with no printed sentence to claim.
+    "warp",
 )
 
 #: The card-level fields that join two printed faces into one card entry.

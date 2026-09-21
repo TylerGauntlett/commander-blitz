@@ -740,6 +740,12 @@ class StackItem:
     #: because the card's reward effect has to know *whose* it is.
     gift_to: int | None = None
     evoked: bool = False
+    #: Cast for its **warp** cost. Read on resolution, and it is the only cast
+    #: flag here whose riders are the *rule's* rather than the card's: a warped
+    #: permanent is exiled at the beginning of the next end step and may then be
+    #: cast from exile on a later turn, and no warp card prints a sentence
+    #: saying so. See `_place_after_resolution`.
+    warped: bool = False
     #: Cast for its **bestow** cost, which makes it an Aura spell with enchant
     #: creature. Read on resolution to decide which target list the spell has:
     #: the printed card declares none, and "enchant creature" comes from the

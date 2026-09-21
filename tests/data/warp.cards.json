@@ -1,0 +1,129 @@
+{
+  "_comment": "Cards that exist only for the warp test (tests/unit/test_warp.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_warp_marshal` is Tannuk's second line on a free legend, so the grant can be put on the board without the mana to cast the granter -- the filter is the printed union, artifact cards OR red creature cards. `t_scrap_bauble` is an artifact and `t_ember_lancer` a red creature, the two shapes the union names; `t_tide_scribe` is a blue creature, which is the scope: same cost, same body, one colour apart. `t_warped_hulk` prints its own warp cost, so the card-level half is pinned without a granter on the board at all.",
+  "cards": [
+    {
+      "id": "t_warp_marshal",
+      "name": "Test Warp Marshal",
+      "oracle_text": "Artifact cards and red creature cards in your hand have warp {2}{R}.",
+      "mana_cost": "{0}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Artifact cards and red creature cards in your hand have warp {2}{R}.",
+          "effect": "grant_warp",
+          "affects_player": "you",
+          "warp_cost": "{2}{R}",
+          "affects_spells": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "types": [
+                  "Creature"
+                ],
+                "colors": [
+                  "R"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_scrap_bauble",
+      "name": "Test Scrap Bauble",
+      "oracle_text": "",
+      "mana_cost": "{5}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_ember_lancer",
+      "name": "Test Ember Lancer",
+      "oracle_text": "",
+      "mana_cost": "{4}{R}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    },
+    {
+      "id": "t_tide_scribe",
+      "name": "Test Tide Scribe",
+      "oracle_text": "",
+      "mana_cost": "{4}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ]
+    },
+    {
+      "id": "t_warped_hulk",
+      "name": "Test Warped Hulk",
+      "oracle_text": "Warp {1}{R}",
+      "mana_cost": "{5}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "warp": "{1}{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    }
+  ]
+}

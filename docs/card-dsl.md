@@ -4998,6 +4998,50 @@ no mana at all and reads X as 0, and that the permission is optional and scoped
 — a non-Dragon is untouched, an opponent's Dragon is untouched, and the printed
 line survives beside the free one.
 
+### `grant_warp` — a card-level price handed to somebody else's cards
+
+```jsonc
+{ "kind": "static", "effect": "grant_warp", "affects_player": "you",
+  "warp_cost": "{2}{R}",
+  "affects_spells": { "any_of": [ { "types": ["Artifact"] },
+                                  { "types": ["Creature"], "colors": ["R"] } ] } }
+```
+
+Tannuk, Steadfast Second: *"Artifact cards and red creature cards in your hand
+have warp {2}{R}."* The fourth casting permission beside `cast_from_graveyard`,
+`cast_from_library_top` and `free_cast_permission`, and the only one that hands
+over a **price**: those three say where a spell may be cast from, or that it
+costs nothing, and this adds a second, separate cost beside the printed one.
+
+**Nothing in `card_level_cost_keys` could stand in.** Every entry there is a
+field on the card that prints the word, and Tannuk's artifacts print nothing —
+a card in hand has no abilities for a grant to hang on, which is why this is a
+static on the *granting* permanent, read by `player_statics.granted_warp_cost`
+at the moment `casting._cast_options` builds the lines. Read afresh every time,
+so a card drawn after Tannuk arrived has warp and the grant never spends itself.
+
+**Not `grant_keyword`**, twice over: the loader knows only the ability keywords
+and warp is not one, and warp is a *price* rather than an ability even if the
+word existed. **Not `grant_ability`**, which hands over a triggered, activated
+or static ability — a cost is none of the three, and a granted activated ability
+works on the battlefield while this grant must be live on cards in a hand.
+**Not `spell_cost_reduction`**, the only other static that touches what a spell
+costs: it can only discount the printed price, and a `{2}{R}` discount on every
+artifact in hand is a different card.
+
+`affects_spells` is required — an absent filter is warp on every card in the
+game — and reads the printed face alone, through `_matches_printed`. It is the
+one printed-face filter that may write **`any_of`**, because the printed
+sentence is a union of two shapes: ANDed into one filter it would mean "red
+artifact creature", and `any_types` is an or over *types* alone and would let a
+blue creature card through. `warp_cost` is required beside it, since a grant
+with no price is a free cast the card does not print.
+
+`tests/unit/test_warp.py` pins the grant's scope on exactly that measurement —
+an artifact card has warp, a red creature card has warp, a blue creature card
+with the same body does not — along with the alternative cost, the exile at the
+next end step, and the cast from exile a turn later.
+
 ### Restricted mana
 
 ```jsonc
@@ -5724,6 +5768,8 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cast_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "free_cast_permission", "affects_player": "you",
   "affects_spells": { "subtypes": ["Dragon"] } }
+{ "kind": "static", "effect": "grant_warp", "affects_player": "you",
+  "warp_cost": "{2}{R}", "affects_spells": { "types": ["Artifact"] } }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }
@@ -13502,6 +13548,55 @@ The mana is paid before the sacrifice (rule 601.2g), so a creature that taps for
 mana can help pay for the spell that is about to eat it. A card may not carry
 both `evoke` and `emerge`: no printing does, and legality would have to decide
 which replaces which.
+
+**Warp** is `evoke`'s slot with two riders the **rule** supplies:
+
+```jsonc
+"mana_cost": "{5}{R}",
+"warp": "{1}{R}"
+```
+
+> Warp {1}{R} *(You may cast a card from your hand for its warp cost. Exile that
+> permanent at the beginning of the next end step, then you may cast it from
+> exile on a later turn.)*
+
+An alternative mana cost offered only from hand, exactly as evoke is, and the
+permanent that arrives is an ordinary one — warp buys the cheap cast and nothing
+else about the arrival. Mana value is unchanged, for evoke's reason.
+
+What is different is that **nothing about the riders is written on the card**.
+Evoke buys a sacrifice the card prints as its own `self_enters` trigger; a warp
+card prints only the price, so there is no sentence for a `delayed_trigger`
+ability to claim and the residual gate would reject one written anyway. So the
+engine owes them, in `stack._place_after_resolution`, where the permanent has
+just arrived:
+
+- a `DelayedTrigger` at `end_step`, scoped to **that object** through a binding
+  rather than a selector over the board — "exile *that* permanent" is not a
+  second copy of the same card, and the `battlefield` clause on the branch is
+  the other half of the scope, since a warped creature that died is a card in a
+  graveyard and a new object under 400.7;
+- the exile carries `playable: "later_turns"`, which is plot's duration: the
+  turn the permission was granted on is the one turn the card may **not** be
+  cast, which is exactly "on a later turn". The price out of exile is the
+  printed one, so nothing sets `playable_free`.
+
+The delay is created on the turn the permanent entered and `turn.fire_delayed`
+fires delays as a step is *entered*, so one made during an end step waits for the
+next turn's — which is what "the **next** end step" says.
+
+Warp is hand-only, and that is the loop guard as well as the rule: the card cast
+again out of exile is offered no warp line, so it cannot warp itself for ever and
+never leave. Foretell and suspend are the near misses and are the wrong way
+round — both exile from **hand** first — so warp is the only one of the three
+that gives the card a turn on the battlefield now.
+
+The loader refuses two silent failures: a warp cost equal to the printed one
+(one cast offered twice, evoke's invariant for evoke's reason), and warp on a
+card that is not a permanent, which would print the reminder text, reach neither
+rider and simply cost less. Dearer than printed is **not** refused, unlike evoke
+proper: warp buys a turn on the board now and the card back later, and that is a
+trade a player takes at a premium.
 
 ### "When you cast this spell…"
 

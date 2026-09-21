@@ -16453,3 +16453,143 @@ next one — the boundary that separates it from `this_turn`.
 to one target creature, then airbend all other creatures" is a
 `choose_permanents` binding the target under `spared` followed by an `airbend`
 with `exclude_binding: "spared"` — no new selector needed.
+
+## `warp` and `grant_warp` — a price the card does not print, and a permanent lent for a turn — Tannuk, Steadfast Second — 601.2b / 603.7 / 400.7
+
+> Warp {1}{R} *(You may cast a card from your hand for its warp cost. Exile that
+> permanent at the beginning of the next end step, then you may cast it from
+> exile on a later turn.)*
+
+Two pieces, one mechanic: warp as a card-level alternative cost, and a static
+that hands that cost to a filtered set of cards sitting in somebody's hand.
+
+### The cost half is evoke's slot, and the riders are the rule's
+
+`card.warp` is a `ManaCost` beside `card.evoke`, offered from hand only, priced
+in the same `elif` chain in `casting._cast_variant` and charged from the same
+chain in `Game._cast`. Mana value is unchanged, the permanent that arrives is an
+ordinary one, and the printed line is still offered beside the warp line.
+
+What separates it from evoke is that **nothing about the riders is written on
+the card**. Evoke buys a sacrifice that Mulldrifter prints as its own
+`self_enters` trigger gated on `{"evoked": true}`; a warp printing says only
+"Warp {1}{R}". So an author has no printed sentence for a `delayed_trigger`
+ability to claim, and the residual gate — which asks every ability which line it
+implements — would reject one written anyway. The engine owes them instead, in
+`stack._place_after_resolution`, beside plot's and rebound's riders:
+
+```python
+DelayedTrigger(
+    step="end_step",
+    controller=controller,
+    effects=({"op": "exile",
+              "objects": {"binding": "warped", "zone": "battlefield"},
+              "playable": "later_turns"},),
+    bindings={"warped": [obj.oid]},
+    turn=state.turn,
+)
+```
+
+Three choices in that, each of which is a way to get warp wrong:
+
+- **A binding, not a selector over the board.** "Exile *that* permanent" is the
+  object that entered. A selector matching the card would take a second copy
+  cast normally on the same turn — which `test_the_delay_is_scoped_to_the_object_that_entered`
+  is the measurement of.
+- **`zone: "battlefield"` on the branch**, which is the other half of that
+  scope. A warped creature that died before the end step is a card in a
+  graveyard and a new object under 400.7; exiling it there would hand the
+  caster a recursion the card does not print.
+- **`playable: "later_turns"`, not `this_turn`.** Plot's duration, and the only
+  one with a *start* rather than an end: the turn the permission was granted on
+  is the one turn the card may not be cast. `playable_free` is deliberately not
+  set — "you may cast it from exile" is a permission at the printed price.
+
+Warp is offered **from hand only**, which is the rule and also the loop guard:
+the card cast again out of exile is offered no warp line, so it cannot warp
+itself for ever and never leave. Foretell and suspend are the nearest shipped
+shapes for the exile half and are the wrong way round — both exile from hand
+*first* — so neither gives the card the turn on the battlefield that warp is
+bought for.
+
+Two load-time refusals: a warp cost equal to the printed one (one cast offered
+twice, evoke's invariant for evoke's reason), and warp on a card that is not a
+permanent, which would print the reminder text, reach neither rider and merely
+cost less. Dearer than printed is *not* refused, unlike evoke proper — warp buys
+a turn on the board now and the card back later, a trade a player takes at a
+premium, which is the same distinction `evoke_label` exists for.
+
+### The granting half is the first static to hand over a card-level cost
+
+`grant_warp` is a player-wide static carrying `affects_spells` (which cards) and
+`warp_cost` (what they pay), read by `player_statics.granted_warp_cost` every
+time `casting._cast_options` builds the lines for an object — so a card drawn
+after Tannuk arrived has warp, and the grant never spends itself.
+
+Nothing in `card_level_cost_keys` could stand in, because every entry there is a
+field on the card that prints the word and Tannuk's artifacts print nothing. A
+card in hand has no abilities either, so the grant cannot live on the card it
+affects. The three near misses each fail for a different reason:
+
+| near miss | why not |
+|---|---|
+| `grant_keyword` | the loader knows only the ability keywords, and warp is not one — and warp is a *price* rather than an ability even if the word existed |
+| `grant_ability` | hands over a triggered, activated or static ability, which a cost is none of; a granted activated ability also works on the battlefield, and this grant must be live on cards in a hand |
+| `spell_cost_reduction` | the only other static that touches what a spell costs, and it can only discount the printed price — a `{2}{R}` reduction on every artifact in hand is a different card |
+
+`free_cast_permission` was the closest existing shape and is the one this is
+built on: the same `affects_spells` printed-face filter, the same "read afresh at
+every cast" argument, the same `affects_player` scoping. It changes the price to
+*nothing*; this adds a second, separate price beside the printed one.
+
+### `any_of` on a printed-face filter
+
+"Artifact cards **and** red creature cards" is a union of two printed shapes, and
+`characteristics._matches_printed` ANDs every key it reads. Written as one filter
+the sentence collapses to "red artifact creature", which nothing in a normal
+deck is; written with `any_types` it is an or over *types* alone and lets a blue
+creature card through — exactly the scope the grant must not have.
+
+So `_matches_printed` learned to recurse into `any_of`, the way
+`cost_reduction._object_matches` already does for reduction filters and the
+effect-side selector does for its own. The word is admitted by
+`WARP_GRANT_FILTER_KEYS` alone and stays off `SPELL_FILTER_KEYS`, because that
+set is shared with three statics whose readers were written before it existed
+and would walk past it — a silent over-grant. The loader checks each branch
+recursively for the same reason.
+
+### The price rides on the action, not on a flag
+
+`Action.warp` is the mana **string**, where every other cast variant carries a
+bool. It has to be: under a grant there is no field on the card to re-derive the
+price from, and the granting permanent can leave between the line being offered
+and `Game._cast` charging it — at which point a re-derived price would be `None`
+and the spell would be charged its printed cost. It joins `Action.key()` for
+`cast_free`'s reason: the two lines share source, targets and X, and differ in
+nothing else.
+
+### Cards unblocked
+
+One authored here: **Tannuk, Steadfast Second**, whose other line ("Other
+creatures you control have haste") is a plain `grant_keyword` static with
+`exclude_self`. Gate 5 asserts `battlefield_count` 33 and `granted`
+`{"keywords": ["haste"], "count": 2}` over the position's two other creatures.
+
+### Guarded by
+
+`tests/unit/test_warp.py`, over five new test-pool cards in
+`tests/data/warp.cards.json`. It pins the three steps of the mechanic and the
+grant's scope: the warp price charged instead of the printed one (pips included,
+which a reduction could never reach), a printed `warp` field working with no
+granter on the board at all, the printed line surviving beside the warp one as
+two distinct actions and two rows, the permanent arriving 4/4 and untapped and
+surviving to its own combat, the exile at the **next** end step going to exile
+rather than a graveyard or a hand, the delay spent once and scoped to the object
+that entered rather than a second copy of the same card, a warped permanent that
+already died not being chased, the cast from exile on the following turn at the
+printed price, the same card offering no second warp line out of exile, and —
+the scope — an artifact card and a red creature card having warp under Tannuk
+while a blue creature card with the same body does not. Plus the load-time
+refusals: a grant with no filter, a grant with no price, board state in the
+filter and inside an `any_of` branch, a warp cost equal to the printed one, and
+warp on an instant.

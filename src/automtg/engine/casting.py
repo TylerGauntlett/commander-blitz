@@ -22,6 +22,7 @@ from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
 from .player_statics import (
     free_cast_permission,
+    granted_warp_cost,
     player_casts_as_though_flash,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
@@ -448,6 +449,29 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
     return player_casts_as_though_flash(state, pid)
 
 
+def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
+    """The warp price this player may cast this card for, printed or granted.
+
+    Two sources for one mechanic, and the second is the whole reason this is a
+    function rather than a field read. "Warp {1}{R}" is printed on the card;
+    "artifact cards and red creature cards in your hand have warp {2}{R}" is
+    Tannuk, Steadfast Second saying it about *somebody else's* cards, and a
+    card in a hand has no abilities for a grant to hang on -- so the grant is a
+    static on the granting permanent and is asked here, where the cast lines
+    are built, every time they are built.
+
+    The printed cost wins when a card has both. No printing collides yet, but
+    the card's own price is the one its designer set, and a grant that silently
+    re-priced a warp card would be a strictly different card.
+
+    Read by `_cast_options` and by `Game._cast`, which must agree: a line
+    offered at one price and charged at another strands the cast half-paid.
+    """
+    if card.warp is not None:
+        return card.warp.text
+    return granted_warp_cost(state, pid, card)
+
+
 def _cast_options(
     state: GameState,
     pid: int,
@@ -548,6 +572,18 @@ def _cast_options(
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )
+    # Warp: evoke's shape with the riders supplied by the rule, and the only
+    # alternative cost here that a *different permanent* may hand this card --
+    # "artifact cards and red creature cards in your hand have warp {2}{R}".
+    # So the price is asked for rather than read off the card, and it is asked
+    # afresh at every cast: a card drawn after Tannuk arrived has warp too.
+    #
+    # Hand-only, like evoke and for its reason -- and here it is the loop guard
+    # as well: the warped permanent is exiled at the next end step and cast
+    # again *from exile*, so a warp line offered there would let it warp itself
+    # for ever and never leave.
+    if state.objects[oid].zone is Zone.HAND and (warp := warp_cost(state, pid, card)) is not None:
+        out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, warp=warp)
     # Bestow (702.103a): the same alternative-cost shape as evoke, and the only
     # one that changes what the spell *points at*. "Enchant creature" is fixed
     # by the rule, so the target comes from `BESTOW_TARGET` rather than from the
@@ -1194,6 +1230,10 @@ def _cast_variant(
     kicked: bool = False,
     gift_to: int | None = None,
     evoked: bool = False,
+    # The **price**, not a flag: warp may be handed to this card by a static on
+    # another permanent, so there is nothing on the card to read it back off.
+    # `Action.warp` carries the same string for the same reason.
+    warp: str | None = None,
     emerge_oid: int | None = None,
     flashback: bool = False,
     alternative: bool = False,
@@ -1268,6 +1308,13 @@ def _cast_variant(
         cost = card.emerge
     elif evoked and card.evoke is not None:
         cost = card.evoke
+    elif warp is not None:
+        # Parsed from the string rather than read off the card: the price may
+        # have come from a `grant_warp` static, where there is no `ManaCost`
+        # field to reach for. An **alternative** cost -- it replaces the
+        # printed one outright -- so it sits in this chain beside evoke rather
+        # than being netted into `extra_generic` like a discount.
+        cost = ManaCost.parse(warp)
     elif bestowed and card.bestow is not None:
         cost = card.bestow
     elif mutated and card.mutate is not None:
@@ -1475,6 +1522,11 @@ def _cast_variant(
             # one mechanism, and only the label tells the player which they are
             # buying.
             label_base += f" ({card.evoke_label})"
+        if warp is not None:
+            # The printed word plus the price, because the price is not on the
+            # card: a player looking at an artifact in hand under Tannuk has no
+            # other way to see what this line costs.
+            label_base += f" (warp {warp})"
         if fused:
             label_base += " (fused)"
         if bestowed:
@@ -1533,6 +1585,7 @@ def _cast_variant(
                     kicked=kicked,
                     gift_to=gift_to,
                     evoked=evoked,
+                    warp=warp,
                     alternative=alternative,
                     overloaded=overloaded,
                     additional_times=additional_times,

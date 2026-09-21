@@ -1345,6 +1345,56 @@ def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
     return False
 
 
+def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
+    """The warp cost a static hands this card in ``pid``'s hand, or None.
+
+    "Artifact cards and red creature cards in your hand have warp {2}{R}" --
+    Tannuk, Steadfast Second. `free_cast_permission`'s shape one step further
+    along: that one says a whole class of spell costs *nothing*, and this says a
+    whole class of card has a **second, separate price** beside its printed one.
+
+    Nothing in `card_level_cost_keys` could stand in, because every entry there
+    is a field on the card that prints the word, and Tannuk's artifacts print
+    nothing. `grant_keyword` cannot reach it twice over -- warp is not one of
+    the ability keywords, and it is a price rather than an ability even if it
+    were -- and `grant_ability` hands over a triggered, activated or static
+    ability, which a cost is none of. `spell_cost_reduction` is the only static
+    that touches what a spell costs and it can only discount the printed one; a
+    {2}{R} discount on every artifact in hand is a different card.
+
+    Read afresh by `casting.warp_cost` every time the cast lines for an object
+    are built, for the reason `free_cast_permission` is: a card drawn after
+    Tannuk arrived has warp, and the grant does not spend itself.
+
+    The filter reads the printed face alone -- a card in hand has an owner and a
+    face and no board state -- and may write `any_of`, which is the only way to
+    say the union of two printed shapes the printed sentence actually is.
+
+    **The first grant wins.** Two Tannuks are one warp cost, not two cast lines
+    at the same price, and two *different* prices is a card nobody has printed;
+    taking the first keeps the action list from growing a duplicate row that a
+    player could not tell apart.
+    """
+    for source_obj, static in _active_player_statics(state, "grant_warp"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        price = static.get("warp_cost")
+        if not filt or not price:
+            # The loader requires both. Defaulting either here would hand warp
+            # to every card in the hand, or hand it over free.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return str(price)
+    return None
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 

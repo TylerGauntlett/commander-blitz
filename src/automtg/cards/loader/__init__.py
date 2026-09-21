@@ -140,6 +140,7 @@ from .vocabulary import (  # noqa: F401
     TAPPED_PERMANENT_KEYS,
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
+    WARP_GRANT_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
     normalize_keyword,
 )
@@ -882,6 +883,38 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         if evoke.mana_value() > mana_cost.mana_value() and model.evoke_label == "evoked":
             raise DslError(f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost")
 
+    # Warp: evoke's guards, one fewer and one more.
+    #
+    # Fewer, because nothing on the card reads a `warped` condition -- the
+    # exile and the later cast are the rule's (`stack._place_after_resolution`),
+    # so a warp card prints no sentence for `reads_evoked`'s twin to find, and
+    # requiring one would refuse every real printing.
+    #
+    # More, because warp lands a **permanent** and then exiles it: a card that
+    # never reaches the battlefield reaches neither rider, so it would load,
+    # print the reminder text and do nothing but cost less.
+    warp = ManaCost.parse(model.warp) if model.warp else None
+    if warp is not None:
+        if not set(model.types) & {"Creature", "Artifact", "Enchantment", "Land", "Battle"}:
+            raise DslError(
+                f"{where}: 'warp' is only on a permanent card -- "
+                f"'exile that permanent at the beginning of the next end step' "
+                f"has nothing to exile when the spell goes to a graveyard"
+            )
+        if warp.x_count:
+            raise DslError(f"{where}: a warp cost with X is not implemented")
+        # Evoke's invariant, for evoke's reason: a warp cost equal to the
+        # printed one is one cast offered twice. Dearer than printed is *not*
+        # refused here, unlike evoke proper -- warp buys a turn on the
+        # battlefield now and the card back later, which is a trade a player
+        # takes at a premium, and `evoke_label`'s escape hatch exists because
+        # of exactly that distinction.
+        if warp.mana_value() == mana_cost.mana_value():
+            raise DslError(
+                f"{where}: warp {model.warp!r} costs the same as the printed cost -- "
+                f"the same cast offered twice, and nobody would take the second"
+            )
+
     if model.rebound and set(model.types) & {"Creature", "Land", "Artifact", "Enchantment"}:
         # Rebound replaces the *graveyard* a spell would go to, so a permanent
         # spell never reaches the rider -- it enters the battlefield instead.
@@ -1473,6 +1506,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         retrace=model.retrace,
         flashback=flashback,
         evoke_label=model.evoke_label,
+        warp=warp,
         pay_generic_with=model.pay_generic_with,
         emerge_subtype=model.emerge_subtype,
         alternative_cost=alternative_cost,
@@ -2318,6 +2352,35 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     )
 
 
+def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
+    """Every key of a ``grant_warp`` filter, and of each ``any_of`` branch.
+
+    Recursive for the reason `_validate_reduction_any_of` is: a branch is the
+    same filter language asked about the same card, so a key refused at the top
+    must be refused inside a branch too -- otherwise "artifact cards **or**
+    tapped cards" loads clean, and `_matches_printed` walks past the word it
+    cannot answer and grants warp to everything in the branch.
+    """
+    unknown = set(filt) - WARP_GRANT_FILTER_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: a card in hand has a printed face and an owner and no "
+            f"board state; unsupported keys {sorted(unknown)}"
+        )
+    branches = filt.get("any_of")
+    if branches is None:
+        return
+    if not isinstance(branches, list) or len(branches) < 2:
+        raise DslError(
+            f"{where}.any_of: takes at least two filters -- a disjunction of one "
+            f"is the filter itself, written the long way"
+        )
+    for i, branch in enumerate(branches):
+        if not isinstance(branch, Mapping):
+            raise DslError(f"{where}.any_of[{i}]: must be a filter object")
+        _check_warp_grant_filter(branch, f"{where}.any_of[{i}]")
+
+
 def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     """ "Whenever you tap a Swamp for mana, add an additional {B}." Crypt Ghast.
 
@@ -2596,6 +2659,29 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}.affects_spells: a card in hand has a printed face "
                 f"and a caster and no board state; unsupported keys {sorted(unknown)}"
             )
+    elif model.effect == "grant_warp":
+        # `free_cast_permission`'s two guards, and a third the price needs.
+        # A grant with no filter is warp on every card in every hand rather
+        # than the printed "artifact cards and red creature cards", and it
+        # would load clean and print the narrower line.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_warp filters cards in hand with 'affects_spells', "
+                f"not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: grant_warp needs 'affects_spells' naming which cards in "
+                f"hand gain warp -- without one every card in the game has it"
+            )
+        _check_warp_grant_filter(model.affects_spells, f"{where}.affects_spells")
+        if not model.warp_cost:
+            raise DslError(
+                f"{where}: grant_warp needs a 'warp_cost' -- warp is a price, and a "
+                f"grant with none is a free cast the card does not print"
+            )
+        if ManaCost.parse(model.warp_cost).x_count:
+            raise DslError(f"{where}: a warp cost with X is not implemented")
     elif model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
         # in hand while legality prices it, so it may only read the printed
@@ -3349,6 +3435,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["tapped_permanent"] = dict(model.tapped_permanent)
     if model.add_mana is not None:
         static["add_mana"] = model.add_mana
+    # `grant_warp`'s price. Copied explicitly like every other field here --
+    # this dict is a whitelist, not a dump of the model -- and forgotten it
+    # would be the worst of the omissions on this list: the grant would load
+    # and offer warp for nothing.
+    if model.warp_cost is not None:
+        static["warp_cost"] = model.warp_cost
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static

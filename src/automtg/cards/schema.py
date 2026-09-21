@@ -724,6 +724,12 @@ class AbilityModel(BaseModel):
     #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
     #: chosen color", the same spelling the ``add_mana`` op uses.
     add_mana: str | dict[str, Any] | None = None
+    #: ``grant_warp``: the price the filtered cards in hand gain -- Tannuk's
+    #: ``"{2}{R}"``. Beside `affects_spells` rather than inside it, for
+    #: `static_max_per_turn`'s reason: the filter says *which* cards and may
+    #: read only their printed face, and this says what the grant costs, which
+    #: is a fact about the granting permanent.
+    warp_cost: str | None = None
 
 
 class ReplacementModel(BaseModel):
@@ -1109,6 +1115,20 @@ class CardModel(BaseModel):
     #: Rohan is printed {3}{R}{W} with dash {4}{R}{W}. Equal to the printed cost
     #: stays refused under every label: that is one cast offered twice.
     evoke_label: str = "evoked"
+    #: **Warp {1}{R}**: "You may cast this card from your hand for its warp
+    #: cost. Exile that permanent at the beginning of the next end step, then
+    #: you may cast it from exile on a later turn."
+    #:
+    #: ``evoke``'s slot -- an alternative mana cost offered from hand -- with
+    #: two riders the *rule* supplies rather than the card. Evoke buys a
+    #: sacrifice written on the card's own trigger; warp's exile and its later
+    #: cast are printed nowhere, so they are the engine's and not a
+    #: ``delayed_trigger`` ability an author has to remember. See
+    #: `casting._cast_options` and `stack._place_after_resolution`.
+    #:
+    #: Not a discount: the printed mana value is unchanged, and a warped
+    #: permanent arrives exactly as a normally-cast one does.
+    warp: str | None = None
     #: ``{"mana": "{R}", "condition": {...}}`` -- **prowl** and **spectacle**.
     #: An alternative cost like evoke, and unlike evoke it is only *offered*
     #: when the condition holds: "you may cast this for its spectacle cost if

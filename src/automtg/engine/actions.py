@@ -46,6 +46,16 @@ class Action:
     #: Mulldrifter cast for {2}{U} and one cast for {4}{U} are two different
     #: things to do with the same card, and only one of them dies on arrival.
     evoked: bool = False
+    #: The card's **warp** price, when this cast pays it -- the mana string
+    #: itself rather than a flag, because warp may be *granted* by a static on
+    #: another permanent ("artifact cards and red creature cards in your hand
+    #: have warp {2}{R}") and there is then nothing on the card to read the
+    #: price back off. `Game._cast` charges exactly what legality offered.
+    #:
+    #: Part of the identity for `evoked`'s reason, and more so: a warped
+    #: permanent is exiled at the next end step and the printed cast is not, so
+    #: the two lines are very different things to do with one card.
+    warp: str | None = None
     #: Cast from a graveyard for its flashback cost. Part of the
     #: action's identity like ``kicked`` and ``evoked``: the same card
     #: may be castable from hand and from the graveyard at once, and
@@ -199,6 +209,7 @@ class Action:
             kicked=self.kicked,
             gift_to=self.gift_to,
             evoked=self.evoked,
+            warp=self.warp,
             flashback=self.flashback,
             alternative=self.alternative,
             pay_generic=self.pay_generic,
@@ -223,6 +234,7 @@ class Action:
             self.kicked,
             -1 if self.gift_to is None else self.gift_to,
             self.evoked,
+            "" if self.warp is None else self.warp,
             self.flashback,
             self.alternative,
             self.pay_generic,
@@ -251,6 +263,7 @@ class Action:
             "kicked": self.kicked,
             "gift_to": self.gift_to,
             "evoked": self.evoked,
+            "warp": self.warp,
             "cast_free": self.cast_free,
             "alternative": self.alternative,
             "pay_generic": self.pay_generic,

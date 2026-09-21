@@ -43,6 +43,7 @@ def push_spell(
     kicked: bool = False,
     gift_to: int | None = None,
     evoked: bool = False,
+    warped: bool = False,
     flashback: bool = False,
     graveyard_permission: int | None = None,
     enters_tapped: bool = False,
@@ -121,6 +122,7 @@ def push_spell(
         kicked=kicked,
         gift_to=gift_to,
         evoked=evoked,
+        warped=warped,
         fused=fused,
         bestowed=bestowed,
         mutated=mutated,
@@ -782,7 +784,9 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     if item.mutated:
         yield from _merge_mutation(state, item, targets)
         return
-    yield from _place_after_resolution(state, obj, card, enters_tapped=item.enters_tapped)
+    yield from _place_after_resolution(
+        state, obj, card, enters_tapped=item.enters_tapped, warped=item.warped
+    )
     _attach_aura(state, obj, card, targets, specs)
 
 
@@ -829,7 +833,7 @@ def _merge_mutation(
 
 
 def _place_after_resolution(
-    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False
+    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False, warped: bool = False
 ):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
@@ -989,6 +993,51 @@ def _place_after_resolution(
         obj.playable_free = True
         obj.playable_sorcery_only = True
         state.emit("plotted", player=controller, source=obj.oid, card=obj.def_id)
+    if warped and destination is Zone.BATTLEFIELD:
+        # Warp's two riders, and they are the **rule's**: no warp card prints a
+        # sentence saying the permanent is exiled or that it may be cast again,
+        # so an author has no printed line to hang a `delayed_trigger` ability
+        # on and the residual gate would reject one written anyway. The engine
+        # owes them instead, here, where the permanent has just arrived.
+        #
+        # Scoped to **this object** through a binding rather than a selector
+        # over the board: "exile that permanent" names the one that entered,
+        # and a copy, a second printing or a later re-cast of the same card is
+        # not it. The `battlefield` clause on the branch is the other half of
+        # that scope -- a warped creature that died before the end step is a
+        # card in a graveyard and a new object under 400.7, and exiling it
+        # there would be this trigger reaching past what it was created for.
+        #
+        # `end_step` on `state.turn`: `turn.fire_delayed` fires delays as a step
+        # is *entered*, so one created during an end step is not due until the
+        # next turn's -- which is what "the **next** end step" says, and is the
+        # one case where a delay created now and a delay created a moment later
+        # differ.
+        #
+        # The later-cast permission rides on the same exile, because it is one
+        # printed sentence and the permission is what warp is bought for.
+        # `later_turns` is plot's duration and its "a turn after the one it was
+        # granted on" is exactly warp's "on a later turn"; the price is the
+        # printed one, so `playable_free` is deliberately not set.
+        from .structs import DelayedTrigger
+
+        state.delayed_triggers.append(
+            DelayedTrigger(
+                step="end_step",
+                controller=controller,
+                effects=(
+                    {
+                        "op": "exile",
+                        "objects": {"binding": "warped", "zone": "battlefield"},
+                        "playable": "later_turns",
+                    },
+                ),
+                bindings={"warped": [obj.oid]},
+                source_oid=obj.oid,
+                description=f"Warp ({card.name})",
+                turn=state.turn,
+            )
+        )
     if adventuring and printed.adventure:
         # After the move for `rebound_by`'s reason, and this one really is
         # cleared on the way back: the creature that comes off its adventure

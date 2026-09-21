@@ -1138,6 +1138,14 @@ class CardDef:
     melds_into: str | None = None
     #: What that cost is called on the card -- "evoked", "dash", "blitz".
     evoke_label: str = "evoked"
+    #: **Warp {1}{R}**: ``evoke``'s slot -- an alternative mana cost offered
+    #: only from hand -- with the exile and the later cast supplied by the rule
+    #: rather than by the card. Kept out of ``mana_cost`` for evoke's reason.
+    #:
+    #: ``None`` on every card Tannuk hands the mechanic to, since the grant is a
+    #: static on a *different* permanent: `casting.warp_cost` is what asks both
+    #: questions, and nothing reads this field directly.
+    warp: ManaCost | None = None
     #: Prowl and spectacle: an alternative cost offered from hand, optionally
     #: only *while* ``alternative_condition`` holds.
     #:
