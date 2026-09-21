@@ -2113,6 +2113,18 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
             )
 
+        if model.trigger.or_battle and model.trigger.event != "creatures_deal_combat_damage":
+            # "…or battle" is a disjunction inside one printed sentence, and the
+            # sentence is `creatures_deal_combat_damage`'s. On any other event
+            # the flag has nothing to widen and `_matches` would ignore it, so
+            # the card would load and the printed half about battles would
+            # silently be missing. Refused here for the reason `nth` is refused
+            # on the events that cannot count.
+            raise DslError(
+                f"{where}: 'or_battle' widens 'creatures_deal_combat_damage' to "
+                f"506.2's battle half and means nothing on "
+                f"{model.trigger.event!r}"
+            )
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -2129,6 +2141,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             max_per_turn=model.trigger.max_per_turn,
             batched=model.trigger.batched,
             level=model.trigger.level,
+            or_battle=model.trigger.or_battle,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(

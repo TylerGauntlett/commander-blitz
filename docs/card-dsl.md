@@ -3291,6 +3291,12 @@ batching work.
 `chapter` is a Saga's, and no card writes it — see
 [Sagas](#sagas) below, where the whole trigger is supplied by rule 714.2c.
 
+`or_battle` is the one **widening** key on a trigger and means something on
+`creatures_deal_combat_damage` alone: it adds 506.2's battle half to "deal
+combat damage to a player", which is Zurgo and Ojutai's "or battle". Off by
+default, and refused by the loader on any other event. See
+["One or more Dragons … a player or battle"](#one-or-more-dragons--a-player-or-battle).
+
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·
 `deals_combat_damage_to_player` · `dealt_damage` · `becomes_target` ·
@@ -10295,6 +10301,54 @@ sees the hits one at a time and cannot tell the first from the third.
 The event is an ordinary one, so a **permanent** may print the same clause —
 `{"event": "creatures_deal_combat_damage", "controller": "you"}` in an
 `abilities` entry — and gets the same once-per-batch firing, on the stack.
+
+#### "One or more **Dragons** … a player **or battle**"
+
+```jsonc
+// Zurgo and Ojutai
+{ "kind": "triggered",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "you",
+               "filter": { "subtypes": ["Dragon"] }, "or_battle": true },
+  "effects": [ /* … */
+    { "op": "may", "player": "you",
+      "effects": [ { "op": "return_to_hand",
+                     "objects": { "binding": "damagers",
+                                  "count": { "const": 1 },
+                                  "chooser": "controller" } } ] } ] }
+```
+
+Three clauses, and each one was missing something:
+
+**`filter` on this event has its own branch in `_matches`.** The event's subject
+is deliberately a *player* -- that is what makes `controller: "you"` read
+"creatures **you control**" -- so it is absent from `OBJECT_SUBJECT_TRIGGERS`,
+`_subject_oid` returns `None`, and the generic filter branch refuses every
+firing. A `filter` written here used to be an ability that never fired, silently.
+It is read over the **damagers** instead and satisfied by any one of them,
+because the printed line is "one or more": one Dragon in a swing of five fires
+it once.
+
+**`{"binding": "damagers"}` is "those Dragons".** The same list-of-oids shape as
+`attackers`, and on a *filtered* trigger it is narrowed to the creatures the
+filter named -- the Elf that got through beside them is on the payload and is not
+what the card points at. `{"zone": "battlefield", "subtypes": ["Dragon"],
+"controller": "you"}` is the near miss and is larger still: it includes the
+Dragons that stayed home.
+
+**`or_battle: true` is "…or battle"** (506.2, 310.6). A flag rather than a second
+event, because it is one printed sentence with a disjunction in it and 510.2
+makes the whole of combat damage one event: two events would fire *both* on a
+swing that hit a seat and a battle, paying the ability twice for one combat. It
+is a widening, so it is **off by default** -- "to one or more players" is printed
+on cards that say nothing about battles, and `_fire_damage_batch` now fires for a
+battle-only swing where it used to fire for nothing at all. The loader refuses
+`or_battle` on any other event, since `_matches` would ignore it there and the
+printed half about battles would go missing on a card that looked complete.
+
+`batched: true` is **not** the repair for any of this and is a no-op on every
+combat-damage event: `_queue` keys the batch off `event.data["batch"]`, which
+neither `damage_player` nor `_fire_damage_batch` writes. The batching here is
+structural -- one event per damaging player per step -- and needs no flag.
 
 ## "Choose a creature type"
 

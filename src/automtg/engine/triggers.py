@@ -120,6 +120,19 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: is absent from `OBJECT_SUBJECT_TRIGGERS` and `event_player` is the
     #: damaging seat. That is what makes `controller: "you"` read "creatures
     #: **you control** deal combat damage".
+    #:
+    #: That is also why this event's `filter` is answered by its own branch in
+    #: `_matches` rather than by the generic one: the generic branch asks the
+    #: subject, and with a player subject a `filter` here would refuse every
+    #: firing -- "one or more **Dragons** you control" would be an ability that
+    #: never fires, silently. Read over `damagers` instead, satisfied by any one
+    #: of them ("one or more"), and the same subset becomes the `damagers`
+    #: binding so "those Dragons" names exactly the creatures that qualified.
+    #:
+    #: `or_battle` widens it to "…to a player **or battle**" (Zurgo and Ojutai).
+    #: Without the flag the event keeps meaning what it always meant, even
+    #: though `_fire_damage_batch` now also fires for a swing that hit only a
+    #: battle.
     "creatures_deal_combat_damage": EventType.CREATURES_DEALT_COMBAT_DAMAGE,
     #: "Whenever an opponent loses life, you gain that much life." The amount is
     #: `{"binding": "amount"}`. Fired by `lose_life` *and* by `damage_player`,
@@ -1042,7 +1055,33 @@ def _matches(
     if spec.defending is not None and not _defender_matches(spec.defending, obj, event):
         return False
 
-    if spec.filter is not None:
+    # "Whenever one or more **Dragons you control** deal combat damage to a
+    # player **or battle**" -- Zurgo and Ojutai. Both halves of that clause are
+    # here, and both have to be, because this event's subject is deliberately a
+    # *player* (see `OBJECT_SUBJECT_TRIGGERS`): the generic `filter` branch
+    # below asks `subject_oid`, which is `None` here, so a `filter` on this
+    # event would refuse every firing -- an ability that never fires, silently.
+    if spec.event == "creatures_deal_combat_damage":
+        # "…to a player or battle." Without `or_battle` this event means what it
+        # has always meant, "to one or more players", so a swing that connected
+        # only with a battle is not it. `_fire_damage_batch` fires one event for
+        # the whole batch either way; which sentence it answers is decided here.
+        if not spec.or_battle and not event.data.get("damaged"):
+            return False
+        # "…one or more **Dragons**." Read over the damagers rather than over a
+        # subject, and satisfied by *any* of them: the printed line is "one or
+        # more", so one Dragon in a swing of five creatures fires it once. The
+        # same list is narrowed to the matching creatures for the `damagers`
+        # binding -- see `event_bindings` -- so "those Dragons" and "did a
+        # Dragon connect" cannot come apart.
+        if spec.filter is not None and not _matching_damagers(state, obj, spec, event):
+            return False
+
+    # Every other event's `filter` is about its subject. The one exception is
+    # excluded rather than special-cased inside, so this branch keeps saying one
+    # thing -- and so that a filtered `creatures_deal_combat_damage` still
+    # reaches the `condition` check below, which an early return would skip.
+    if spec.filter is not None and spec.event != "creatures_deal_combat_damage":
         if subject_oid is None:
             return False
         if not matches_card_filter(state, subject_oid, spec.filter, obj):
@@ -1056,7 +1095,7 @@ def _matches(
             spec.condition,
             controller=obj.controller,
             source=obj.oid,
-            bindings=event_bindings(obj, spec, event),
+            bindings=event_bindings(state, obj, spec, event),
         ):
             return False
 
@@ -1129,7 +1168,41 @@ def _spell_ordinal(state: GameState, filt: Mapping[str, Any], pid: int | None, n
     return earlier + 1
 
 
-def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict[str, Any]:
+def _matching_damagers(
+    state: GameState, obj: GameObject, spec: TriggerSpec, event: GameEvent
+) -> list[int]:
+    """The creatures on this combat-damage batch that ``spec.filter`` names.
+
+    "Whenever one or more **Dragons** you control deal combat damage to a player
+    or battle … You may return **one of those Dragons** to its owner's hand."
+    Two questions about the same list, asked from two places -- `_matches` wants
+    to know whether any of them matched, `event_bindings` wants exactly the ones
+    that did -- so they are one function and cannot come apart.
+
+    Narrowing the binding is the whole point rather than a nicety. `damagers`
+    unfiltered is every creature that connected, so "one of those Dragons" would
+    reach the Elf that got through beside them; and
+    `{"zone": "battlefield", "subtypes": ["Dragon"], "controller": "you"}` --
+    the near miss the gap record names -- is strictly larger still, because it
+    includes the Dragons that stayed home.
+
+    `matches_card_filter` reads the **printed** face, which is the right reading
+    here for the reason it is right for `dies`: the creature may have left the
+    battlefield between the damage and the ability resolving, and its printed
+    face is what is left to ask. An unfiltered spec returns the whole list
+    untouched, so this costs nothing on the events that do not ask.
+    """
+    damagers = event.data.get("damagers") or []
+    if spec.filter is None:
+        return [int(oid) for oid in damagers]
+    return [
+        int(oid) for oid in damagers if matches_card_filter(state, int(oid), spec.filter, obj)
+    ]
+
+
+def event_bindings(
+    state: GameState, obj: GameObject, spec: TriggerSpec, event: GameEvent
+) -> dict[str, Any]:
     """What the event carried, for a condition or a queued trigger to read.
 
     Shared by `_matches` and `_queue` so an intervening-if and the ability it
@@ -1138,6 +1211,10 @@ def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict
     against the creature that entered read zero and the ability never fired --
     quietly, and only for the conditions that ask about the event rather than
     about the board.
+
+    ``state`` is taken for the one binding that is not a straight copy off the
+    payload: `damagers` on a filtered `creatures_deal_combat_damage` is narrowed
+    to the creatures the filter names, and deciding that needs the board.
     """
     bindings: dict[str, Any] = {
         "self": obj.oid,
@@ -1151,6 +1228,8 @@ def event_bindings(obj: GameObject, spec: TriggerSpec, event: GameEvent) -> dict
     for key in EVENT_BINDING_KEYS:
         if key in event.data:
             bindings[key] = event.data[key]
+    if spec.event == "creatures_deal_combat_damage" and spec.filter is not None:
+        bindings["damagers"] = _matching_damagers(state, obj, spec, event)
     return bindings
 
 
@@ -1186,6 +1265,18 @@ EVENT_BINDING_KEYS = (
     # whom, so on a split attack it also names the creatures attacking the
     # trigger's own controller.
     "attackers",
+    # "…You may return **one of those Dragons** to its owner's hand" -- Zurgo
+    # and Ojutai. The creatures that connected, on
+    # `creatures_deal_combat_damage`, and the same list-of-oids shape
+    # `attackers` is: `resolve_pool` has accepted a list since devour, so
+    # nothing downstream had to learn anything. `_fire_damage_batch` has put it
+    # on the event since the event existed, and it was being dropped here.
+    #
+    # On a **filtered** trigger this key is overwritten below with the subset
+    # the filter names, because "those Dragons" is not "those creatures": the
+    # Elf that got through beside them is on the payload and is not what the
+    # card points at. See `_matching_damagers`.
+    "damagers",
     # "Whenever you cast an instant or sorcery spell, **if it targets one or
     # more other permanents you control**, create a token that's a copy of one
     # of those permanents" -- Orvar, the All-Form. The object targets of the
@@ -1752,7 +1843,7 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # condition and the ability it gates cannot read "that creature"
     # differently. `x` is carried through so "enters with X counters" can read
     # what was paid.
-    bindings = event_bindings(obj, spec, event)
+    bindings = event_bindings(state, obj, spec, event)
 
     card = state.card_of(obj)
     # `ability_index` is read back against whichever list `granted_by` names, so

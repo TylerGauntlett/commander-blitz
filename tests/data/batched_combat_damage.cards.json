@@ -1,0 +1,139 @@
+{
+  "_comment": "Shapes for tests/unit/test_batched_combat_damage.py. t_bcd_flock is the filtered batch trigger -- 'one or more Wyrms you control' -- and draws once however many connect; t_bcd_perconnection is the near miss written on the per-connection event, kept live as the contrast that fires N times for N creatures. t_bcd_players_only is the unwidened batch trigger, the control that proves a battle-only swing does not fire every existing card using this event; t_bcd_or_battle is the same line with 'or battle'. t_bcd_bounce points a return_to_hand at the damagers binding, which is how 'one of those Wyrms' is shown to name the filtered subset. t_bcd_wyrm and t_bcd_elf are the bodies: one matches the filter, one does not.",
+  "cards": [
+    {
+      "id": "t_bcd_wyrm",
+      "name": "Test Batch Wyrm",
+      "oracle_text": "",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Wyrm"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_bcd_elf",
+      "name": "Test Batch Elf",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elf"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_bcd_flock",
+      "name": "Test Wyrm Flock",
+      "oracle_text": "Whenever one or more Wyrms you control deal combat damage to a player, draw a card.",
+      "mana_cost": "{3}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Wyrms you control deal combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "filter": {"subtypes": ["Wyrm"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_bcd_perconnection",
+      "name": "Test Wyrm Saboteur",
+      "oracle_text": "Whenever a Wyrm you control deals combat damage to a player, draw a card.",
+      "mana_cost": "{3}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a Wyrm you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "controller": "you",
+            "filter": {"subtypes": ["Wyrm"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_bcd_players_only",
+      "name": "Test Batch Toll",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to a player, you gain 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, you gain 1 life.",
+          "trigger": {"event": "creatures_deal_combat_damage", "controller": "you"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_bcd_or_battle",
+      "name": "Test Batch Warcry",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to a player or battle, you gain 1 life.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player or battle, you gain 1 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "or_battle": true
+          },
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_bcd_bounce",
+      "name": "Test Wyrm Recall",
+      "oracle_text": "Whenever one or more Wyrms you control deal combat damage to a player, return one of those Wyrms to its owner's hand.",
+      "mana_cost": "{3}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Wyrms you control deal combat damage to a player, return one of those Wyrms to its owner's hand.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "filter": {"subtypes": ["Wyrm"]}
+          },
+          "effects": [
+            {
+              "op": "return_to_hand",
+              "objects": {
+                "binding": "damagers",
+                "count": {"const": 1},
+                "chooser": "controller"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

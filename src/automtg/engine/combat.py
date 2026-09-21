@@ -1299,8 +1299,26 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
 
     **Creatures**, by derived type, which is the same reading `_monarch_transfer`
     takes one line up: an animated Equipment that got through is a creature and
-    its printed face says otherwise. Damage to a planeswalker or a blocker is
-    not damage to a player and is filtered out with it.
+    its printed face says otherwise. Damage to a blocker is not damage to a
+    player and is filtered out with it.
+
+    **…or battle** (310.6). "Whenever one or more Dragons you control deal
+    combat damage to a player **or battle**" -- Zurgo and Ojutai -- is one
+    printed sentence with two kinds of recipient in it, and it is the same batch
+    on the same step, so the battles ride along on `damaged_battles` beside the
+    seats on `damaged`. The event now fires for a swing that hit **only** a
+    battle, where before there was nothing to fire it for, and that is exactly
+    the thing a widening has to be careful about: `triggers._matches` refuses a
+    battle-only firing unless the trigger says `or_battle`, so every card
+    already written against this event keeps meaning "to one or more players".
+    Firing it and filtering there rather than deciding here is what lets one
+    event serve both sentences -- a second event would double every existing
+    card's trigger on a mixed swing.
+
+    A planeswalker hit is **not** in either list. That half of 506.2 has its own
+    per-connection event (`COMBAT_DAMAGE_TO_PLANESWALKER`) because the cards
+    that name planeswalkers name one creature at a time; no printed card says
+    "one or more creatures … deal combat damage to a planeswalker".
 
     Fired once per **step**, so first strike and regular damage are two batches
     (510.4). A card that connects in both windows triggers twice, which is what
@@ -1308,16 +1326,28 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
     """
     by_player: dict[int, dict[str, list[int]]] = {}
     for assignment in assignments:
-        if assignment.to_player is None or assignment.amount <= 0:
+        if assignment.amount <= 0:
+            continue
+        # A seat, or a battle. Anything else -- a blocker, a planeswalker -- is
+        # not what this sentence is about.
+        hit_battle = assignment.to_object is not None and "Battle" in chars(
+            state, assignment.to_object
+        ).types
+        if assignment.to_player is None and not hit_battle:
             continue
         source = state.objects.get(assignment.source)
         if source is None or "Creature" not in chars(state, source.oid).types:
             continue
-        batch = by_player.setdefault(source.controller, {"damagers": [], "damaged": []})
+        batch = by_player.setdefault(
+            source.controller, {"damagers": [], "damaged": [], "battles": []}
+        )
         if source.oid not in batch["damagers"]:
             batch["damagers"].append(source.oid)
-        if assignment.to_player not in batch["damaged"]:
-            batch["damaged"].append(assignment.to_player)
+        if assignment.to_player is not None:
+            if assignment.to_player not in batch["damaged"]:
+                batch["damaged"].append(assignment.to_player)
+        elif assignment.to_object not in batch["battles"]:
+            batch["battles"].append(assignment.to_object)
     for pid in state.turn_order():
         batch = by_player.get(pid)
         if batch is None:
@@ -1328,6 +1358,7 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
             player=pid,
             damagers=sorted(batch["damagers"]),
             damaged=sorted(batch["damaged"]),
+            damaged_battles=sorted(batch["battles"]),
         )
 
 

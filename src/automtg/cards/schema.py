@@ -317,6 +317,14 @@ class TriggerModel(BaseModel):
     #: "one or more" fires again later the same turn for a second, separate
     #: departure, and a per-turn cap does not.
     batched: bool = False
+    #: "…deal combat damage to a player **or battle**" -- Zurgo and Ojutai.
+    #: Widens `creatures_deal_combat_damage` to 506.2's battle half, and means
+    #: nothing anywhere else: the loader refuses it on any other event.
+    #:
+    #: Off by default because it *is* a widening. The printed sentence on every
+    #: other card using this event is "to one or more players", and a swing that
+    #: connected only with a battle must not fire those.
+    or_battle: bool = False
 
 
 class AbilityModel(BaseModel):

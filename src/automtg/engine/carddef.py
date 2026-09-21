@@ -572,6 +572,26 @@ class TriggerSpec:
     #: Class becomes level 2". On the spec for `chapter`'s reason: it is a filter
     #: on the event, and `triggers._matches` is handed the spec.
     level: int | None = None
+    #: "…deal combat damage to a player **or battle**" -- Zurgo and Ojutai. The
+    #: one widening key on a trigger, and it only means anything on
+    #: ``creatures_deal_combat_damage``; the loader refuses it anywhere else.
+    #:
+    #: A flag rather than a second event name, because it is one printed
+    #: sentence with a disjunction in it and the batch is the same batch:
+    #: `_fire_damage_batch` fires one event per damaging player per step
+    #: carrying `damaged` and `damaged_battles`, and splitting it in two would
+    #: fire *both* on a swing that hit a seat and a battle, paying an ability
+    #: twice for one combat-damage event (510.2).
+    #:
+    #: It is a widening and therefore **off** by default and checked as a
+    #: presence: "whenever one or more creatures you control deal combat damage
+    #: to one or more players" is printed on cards that say nothing about
+    #: battles, and a battle-only swing must not fire them. `_matches` refuses a
+    #: firing with no `damaged` seats unless this is set.
+    #:
+    #: Named for `or_planeswalker`, the effect-side key with the same job on
+    #: `attacking` -- same word, same disjunction, same default.
+    or_battle: bool = False
 
 
 def count_mode_specs(effects: Any) -> int:
