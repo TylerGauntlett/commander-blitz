@@ -64,12 +64,29 @@ class CardRegistry:
 
     def __init__(self, cards: dict[str, CardDef]) -> None:
         self._cards = dict(cards)
-        # Built once rather than scanned per call: importing a 100-card deck
-        # does 100 name lookups, and a linear scan makes that quadratic in the
-        # pool.  `setdefault` is first-wins, and the authored cards are loaded
-        # before any generated ones, so an authored card can never be shadowed.
         self._by_name: dict[str, CardDef] = {}
         for card in self._cards.values():
+            if card.parent_face is not None or card.front_face is not None:
+                # A face is not a card anybody can name. Its printed name is
+                # real -- the spell half of Emeritus of Woe // Demonic Tutor is
+                # called Demonic Tutor, and so is the card 2,600 decks play --
+                # but only one of the two is something a deck list, an import or
+                # a search can mean, and it is never the face.
+                #
+                # `setdefault` alone got the right answer here by accident: both
+                # entries live in one file, and `demonic_tutor` happens to sort
+                # before `demonic_tutor_26156d`. The comment below promises
+                # first-wins protects *authored cards from generated ones*, which
+                # is a different guarantee and says nothing about a face sharing
+                # a file with the card it is named after. `link_faces` has
+                # already run by the time this is built, so the question can be
+                # asked directly instead of being left to sort order.
+                continue
+            # Built once rather than scanned per call: importing a 100-card deck
+            # does 100 name lookups, and a linear scan makes that quadratic in
+            # the pool. `setdefault` is first-wins, and the authored cards are
+            # loaded before any generated ones, so an authored card can never be
+            # shadowed by a proxy of itself.
             self._by_name.setdefault(card.name, card)
         self._creature_types: frozenset[str] | None = None
 
