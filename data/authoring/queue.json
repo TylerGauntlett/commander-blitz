@@ -129882,12 +129882,12 @@
     },
     "Horizon of Progress": {
       "edhrec_rank": 1503,
-      "gate": "template",
+      "gate": null,
       "name": "Horizon of Progress",
-      "reason": "no template for: {T}, Pay 1 life: Add one mana of any type that a land you control could produce",
+      "reason": "",
       "scryfall_id": "5ae3a9c8-194e-421b-b77d-9c8784442651",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Hormagaunt Horde": {
@@ -218902,12 +218902,12 @@
     },
     "Reflecting Pool": {
       "edhrec_rank": 173,
-      "gate": "template",
+      "gate": null,
       "name": "Reflecting Pool",
-      "reason": "proxy simplified it: mana clause read loosely: 'one mana of any type that a land you con'",
+      "reason": "",
       "scryfall_id": "1d503baa-c041-46b6-8589-5369b49dd3a3",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Reflections of Littjara": {
@@ -225962,12 +225962,12 @@
     },
     "Roaming Throne": {
       "edhrec_rank": 133,
-      "gate": "template",
+      "gate": null,
       "name": "Roaming Throne",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "6d3c06a5-a0b2-47a2-a583-d579c24a44c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Roar of Challenge": {

@@ -4442,6 +4442,10 @@
       "0": 44
     }
   },
+  "horizon_of_progress": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "horizon_scholar": {
     "zone": "battlefield"
   },
@@ -7448,6 +7452,10 @@
   "redwood_treefolk": {
     "zone": "battlefield"
   },
+  "reflecting_pool": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "reflexes": {
     "zone": [
       "battlefield",
@@ -7694,6 +7702,10 @@
     "zone": "battlefield"
   },
   "riverwheel_aerialists": {
+    "zone": "battlefield"
+  },
+  "roaming_throne": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "robe_of_mirrors": {
