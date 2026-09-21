@@ -252712,12 +252712,12 @@
     },
     "Smaug, Wicked Worm": {
       "edhrec_rank": 21295,
-      "gate": "template",
+      "gate": null,
       "name": "Smaug, Wicked Worm",
-      "reason": "no template for: Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card a",
+      "reason": "",
       "scryfall_id": "189a7d55-c3ec-4402-a3b3-72817f533e87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Smaug, the Great Calamity // Spew Flame": {

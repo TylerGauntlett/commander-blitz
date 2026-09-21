@@ -8755,6 +8755,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "smaug_wicked_worm": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "smoldering_butcher": {
     "zone": "battlefield"
   },

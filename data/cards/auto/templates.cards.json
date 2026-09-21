@@ -96120,6 +96120,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "opponent",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Smaug enters, create X tapped Treasure tokens, where X is the number of artifacts your opponents control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "paid_by": {
+                "controller": "you",
+                "subtypes": [
+                  "Treasure"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "smaug_wicked_worm",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{R}",
+      "name": "Smaug, Wicked Worm",
+      "oracle_text": "Flying\nWhen Smaug enters, create X tapped Treasure tokens, where X is the number of artifacts your opponents control.\nWhenever you cast a spell, if mana from a Treasure was spent to cast it, you draw a card and lose 1 life.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
