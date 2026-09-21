@@ -29272,12 +29272,12 @@
     },
     "Bloom Tender": {
       "edhrec_rank": 260,
-      "gate": "template",
+      "gate": null,
       "name": "Bloom Tender",
-      "reason": "no template for: Vivid — {T}: For each color among permanents you control, add one mana of that color",
+      "reason": "",
       "scryfall_id": "0b5f1455-8124-408f-9ca5-9b281ec1708f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Bloombrute": {
@@ -149318,7 +149318,7 @@
       "scryfall_id": "e141f975-945e-4e2c-ac04-6083b5bdaf16",
       "source": "",
       "status": "pending",
-      "wanted": false
+      "wanted": true
     },
     "Kinsbaile Aspirant": {
       "edhrec_rank": 19579,

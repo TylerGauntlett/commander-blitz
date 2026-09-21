@@ -988,6 +988,10 @@
     },
     "zone": "battlefield"
   },
+  "bloom_tender": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blooming_marsh": {
     "zone": "battlefield"
   },

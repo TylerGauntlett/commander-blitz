@@ -10482,6 +10482,47 @@
           },
           "effects": [
             {
+              "each_color_among": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Vivid — {T}: For each color among permanents you control, add one mana of that color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bloom_tender",
+      "mana_cost": "{1}{G}",
+      "name": "Bloom Tender",
+      "oracle_text": "Vivid — {T}: For each color among permanents you control, add one mana of that color.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
