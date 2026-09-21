@@ -927,8 +927,16 @@ def _place_after_resolution(
         # "As this enters, you may pay â€¦" -- the permanent-spell half of the
         # same offer `game._play_land` makes for a land drop, and asked in the
         # same window and for the same reason.
-        from .zones import offer_enters_copy, offer_enters_costs
+        from .zones import (
+            offer_enters_copy,
+            offer_enters_costs,
+            offer_enters_replacement,
+        )
 
+        # "If this artifact would enter, you may discard a land card instead."
+        # First, because it decides whether there is an arrival left to decorate
+        # -- see `zones.offer_enters_replacement`.
+        yield from offer_enters_replacement(state, obj.oid, controller)
         yield from offer_enters_costs(state, obj.oid, controller)
         yield from offer_enters_copy(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")

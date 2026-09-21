@@ -15,7 +15,7 @@ from ..primitives import (
     create_token,
     sacrifice_forbidden,
 )
-from ..zones import destroy, exile, move_object, sacrifice
+from ..zones import destroy, exile, move_object, offer_enters_replacement, sacrifice
 from ..zones import snapshot as capture_snapshot
 from . import register
 from .board_helpers import (
@@ -494,6 +494,13 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         controller = ctx.controller if spec.get("controller") == "you" else obj.owner
         obj.controller = controller
+        # "If this artifact **would enter**, you may discard a land card
+        # instead." Mox Diamond, reanimated or blinked rather than cast -- the
+        # printed clause is about any arrival from any zone, so the offer has to
+        # be made here and not only on the cast line. See
+        # `zones.offer_enters_replacement`; `move_object` treats an unasked
+        # arrival as unpaid, so this is what buys the permanent its entry.
+        yield from offer_enters_replacement(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.
@@ -504,6 +511,13 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             tapped=tapped,
             cause=str(spec.get("cause") or "put_onto_battlefield"),
         )
+        if not obj.on_battlefield:
+            # The arrival was replaced -- Mox Diamond whose controller declined
+            # the discard, and the card is in a graveyard rather than on the
+            # battlefield. Everything below is about a permanent that is there:
+            # counters would land on a graveyard card and the combat rider would
+            # put a non-permanent into `combat.attackers`.
+            continue
         # Placed immediately after the move rather than as an enters-with
         # replacement -- the same trade `op_return_from_graveyard` documents,
         # observable only by another trigger ordered between the two.

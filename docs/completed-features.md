@@ -14471,3 +14471,76 @@ Mountains, refused without the Orrery, refused when the Orrery is the
 five shapes plus the `{X}` ceiling and colourless mana paying a white pip; and
 the two things the fold must not swallow — a `{C}` cost, and a printed
 `{G/P}`'s life half.
+
+## A permanent whose arrival is itself replaced — 614.1a
+
+### Overview
+
+Mox Diamond: *"If this artifact **would enter**, you may discard a land card
+instead. If you do, put this artifact onto the battlefield. If you don't, put it
+into its owner's graveyard."*
+
+`ReplacementModel.event` was a closed list of five `self_enters*` events, and
+every one of them only **decorates a permanent that is already arriving** —
+`zones._enter_battlefield` runs with the object on the battlefield and reads
+nothing but `tapped`, `counters`, `prepared` and `copying`. There is no
+destination in that code path at all, and nothing there can charge a price or
+ask a question.
+
+`self_enters_replaced` is the sixth, and the first that can refuse the arrival.
+`instead_cost` is a whole `Cost`, so the land discard is the same
+`discard` + `discard_selector` pair an activated ability prices; `instead_zone`
+says where the card goes when it goes unpaid.
+
+**The near misses, and why each is a different card.** `unless_cost` is the
+closest and is the opposite polarity: paying it avoids a *modification* and the
+permanent arrives either way. `additional_cost` and `additional_optional` are
+cast costs, so they would not apply to a reanimated or blinked Mox at all — and
+neither branch is the printed card, since a mandatory discard makes it
+uncastable on an empty hand and an optional one left unpaid still lets it enter.
+`replace_leaves_battlefield` and `replace_deaths` rewrite destinations on the way
+*out*, so neither can see a permanent that must never arrive. And a `self_enters`
+trigger running `may` + `discard` + `sacrifice` is the approximation the rules
+forbid: the artifact really enters, every enters trigger sees it, an opponent
+holds priority with it on the board, and it dies rather than never having been
+there.
+
+**However it arrives, not only when it is cast.** `move_object` is not a
+generator, so the question is asked a moment before it — `offer_enters_costs`'s
+argument, unchanged: 614 applies the replacements during the zone change and
+nobody receives priority in between. What is new is *where* it is asked from.
+`offer_enters_replacement` is called by every arrival path that can stop for a
+decision — `game._play_land`, `stack._place_after_resolution`,
+`op_put_onto_battlefield`, `op_return_from_graveyard` and `op_return_to_origin` —
+because "if this artifact **would enter**" is any arrival from any zone. Wired
+into the cast line alone it would pass a naive test and be free for every blink
+and reanimation in the format.
+
+`move_object` is the enforcement point and reads `enters_replacement_paid` before
+it decides the destination, so an arrival on a route that cannot stop to ask
+counts as **unpaid** — the printed card's own worst branch rather than a
+permanent that quietly enters for free. The redirect runs before the commander
+replacement, so an unpaid commander Mox goes to a graveyard and then on to the
+command zone, which is 903.9a replacing the new destination. A face-down arrival
+is exempt (707.2 gives it no abilities).
+
+### Cards unblocked
+
+One. **Mox Diamond** is this line plus "{T}: Add one mana of any color", which
+the template tier already worked out — so the capability is the whole of what was
+missing. The template tier still refuses the sentence: it is a replacement of a
+zone change with a price and a destination, and no printed phrasing of it is
+regular enough to read without inventing the two.
+
+### Guarded by
+
+`tests/unit/test_enters_replacement.py`. The non-cast arrivals are the point:
+reanimation out of a graveyard and `put_onto_battlefield` from hand each offer
+the price and each honour a decline, beside the cast line. Also pinned: the land
+really leaves the hand; the arrival's own trigger and a watcher's both fire when
+paid and neither fires when declined; the artifact is never in
+`state.battlefield` on a decline; `instead_zone: "exile"`; an unpayable price is
+never offered, with no land in hand and with a hand of one non-land; the Mox
+cannot discard itself; a control card with no clause is asked nothing; and three
+load-time refusals — a missing `instead_cost`, a misspelled key inside it, and
+the key written on `self_enters_tapped`, where `unless_cost` lives.

@@ -561,6 +561,34 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}.replacements[{i}]: 'copying' is read only by "
                 f"'self_enters_as_copy', not by {replacement.event!r}"
             )
+        if replacement.event == "self_enters_replaced":
+            # The price, which is the whole clause: "you may **discard a land
+            # card** instead". Required, because this replacement's declined
+            # branch sends the card to `instead_zone` -- so with no price to
+            # pay the permanent could never enter, and the card would be a
+            # four-mana way of putting itself in a graveyard.
+            if replacement.instead_cost is None:
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'self_enters_replaced' needs "
+                    f"'instead_cost' -- with no price it could never enter"
+                )
+            # The keys, against the same `CostModel` an activated ability's cost
+            # uses, so a typo is a load error rather than a price silently
+            # dropped into a free arrival. `zones.offer_enters_replacement`
+            # builds the real `Cost` with `Cost.from_spec` at game time.
+            try:
+                CostModel.model_validate(replacement.instead_cost)
+            except Exception as exc:  # pydantic ValidationError
+                raise DslError(f"{where}.replacements[{i}].instead_cost: {exc}") from exc
+        elif replacement.instead_cost is not None:
+            # `unless_cost`'s opposite number, and the two are one typo apart:
+            # paying an `unless_cost` avoids a modification and the permanent
+            # enters regardless, where paying this one is what buys the entry.
+            # Read by the wrong event either key would be silently inert.
+            raise DslError(
+                f"{where}.replacements[{i}]: 'instead_cost' is read only by "
+                f"'self_enters_replaced', not by {replacement.event!r}"
+            )
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
             # counter on it." Checked here for the reason the condition below

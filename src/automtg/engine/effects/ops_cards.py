@@ -10,7 +10,7 @@ from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE, playable_duration_of
 from ..primitives import add_counters, mill_cards, shuffle_library
-from ..zones import move_object
+from ..zones import move_object, offer_enters_replacement
 from . import register
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .selectors import (
@@ -826,6 +826,11 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
         origin = zones.get(obj.exiled_from or "")
         if origin is None or origin is _Zone.EXILE:
             continue
+        if origin is _Zone.BATTLEFIELD:
+            # A blink is an arrival too: what comes back is a new object (400.7)
+            # and "if this would enter" is asked of it afresh. See
+            # `zones.offer_enters_replacement`.
+            yield from offer_enters_replacement(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -901,6 +906,11 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             # Same reason as op_search_library: the battlefield is one global
             # list, so nothing else sets controller. Mirrors put_onto_battlefield.
             obj.controller = ctx.controller if spec.get("controller") == "you" else obj.owner
+            # "If this artifact **would enter**…" -- reanimation is an arrival,
+            # and a replacement wired into the cast line alone would let a
+            # reanimated Mox Diamond enter for free. See
+            # `zones.offer_enters_replacement`.
+            yield from offer_enters_replacement(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,

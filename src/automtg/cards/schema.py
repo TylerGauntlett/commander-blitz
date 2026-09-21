@@ -685,12 +685,15 @@ class AbilityModel(BaseModel):
 
 
 class ReplacementModel(BaseModel):
-    """One of the four whitelisted replacement effects.
+    """One of the whitelisted replacement effects.
 
-    Every one of them modifies the permanent that is *already arriving*, which
-    is why token creation is not here and could not be: there is no object yet.
+    Five of the six modify the permanent that is *already arriving*, which is
+    why token creation is not here and could not be: there is no object yet.
     "If you would create a Clue, Food, or Treasure token" is a
     ``replace_token_creation`` static instead -- see `AbilityModel.create_instead`.
+
+    ``self_enters_replaced`` is the sixth and the exception: it replaces the
+    **arrival itself**, so the permanent may never enter at all.
     """
 
     model_config = Strict
@@ -705,6 +708,14 @@ class ReplacementModel(BaseModel):
         #: 614.1b: a copy effect applied *as* the permanent arrives, so it is
         #: never seen as itself.
         "self_enters_as_copy",
+        #: "If this artifact would enter, you may discard a land card instead.
+        #: If you do, put this artifact onto the battlefield. If you don't, put
+        #: it into its owner's graveyard." -- Mox Diamond. 614.1a applied to the
+        #: zone change itself: paid, the permanent finishes arriving; declined,
+        #: it is sent somewhere else and **never enters**, so no enters trigger
+        #: anywhere sees it and it is never on the battlefield to be responded
+        #: to. See `instead_cost` and `instead_zone`.
+        "self_enters_replaced",
     ]
     modify: dict[str, Any] = Field(default_factory=dict)
     #: `self_enters_as_copy`: the pool of permanents that may be copied --
@@ -751,6 +762,24 @@ class ReplacementModel(BaseModel):
     #: ask, and making it one would put a suspend point inside every zone
     #: change in the engine.
     unless_cost: dict[str, Any] | None = None
+    #: ``self_enters_replaced``: the price that lets the arrival happen at all
+    #: -- Mox Diamond's "you may **discard a land card** instead". A whole
+    #: ``Cost``, so the discard selector, the sacrifice and the life payment the
+    #: rest of the DSL prices things with are all reachable, and required on the
+    #: event: a replaced arrival with no price is a permanent that can never
+    #: enter.
+    #:
+    #: **The opposite polarity to `unless_cost`, and deliberately not that
+    #: field.** There, paying *avoids* a modification and the permanent enters
+    #: either way; here, paying is what buys the entry, and not paying sends the
+    #: card to `instead_zone` instead. The two read alike in a diff and mean
+    #: opposite things, so they are two keys and the loader refuses each on the
+    #: other's event.
+    instead_cost: dict[str, Any] | None = None
+    #: ``self_enters_replaced``: where the permanent goes when the price is not
+    #: paid -- "put it into its **owner's graveyard**". Its owner's copy of the
+    #: zone, which is what every printed card in this family says.
+    instead_zone: Literal["graveyard", "exile", "hand", "library"] = "graveyard"
 
 
 class EmblemModel(BaseModel):

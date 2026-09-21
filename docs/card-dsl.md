@@ -1851,6 +1851,78 @@ offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.
 
+### A permanent whose arrival is itself replaced
+
+```jsonc
+// Mox Diamond
+"replacements": [
+  { "event": "self_enters_replaced",
+    "instead_cost": { "discard": 1, "discard_selector": { "types": ["Land"] } },
+    "instead_zone": "graveyard" }
+]
+```
+
+*"If this artifact **would enter**, you may discard a land card instead. If you
+do, put this artifact onto the battlefield. If you don't, put it into its owner's
+graveyard."*
+
+614.1a, and the sixth entry on the whitelist — and the first that is not a
+decoration. The five before it (`self_enters`, `self_enters_tapped`,
+`self_enters_with_counters`, `self_enters_prepared`, `self_enters_as_copy`) all
+modify a permanent that is **already arriving**, which is why they can live in
+`zones._enter_battlefield`: that function runs with the object on the
+battlefield, and it reads nothing but `tapped`, `counters`, `prepared` and
+`copying`. There is no destination in that code path at all.
+
+**Why not a `self_enters` trigger running `may` + `discard` + `sacrifice`.** Four
+differences, each of them printed the other way: the artifact would really enter,
+so every enters trigger on the table sees it; an opponent would receive priority
+with it on the battlefield and could answer it there; it would reach the
+graveyard *from* the battlefield, so it dies and feeds a death trigger; and it
+would be on the board to be sacrificed, bounced or stolen in response. The card
+says it was never there.
+
+**Why not `unless_cost`.** That key is the opposite polarity: paying it *avoids*
+a modification — "as this land enters, you may pay 3 life; if you don't it enters
+tapped" — and the land arrives on either answer. Here the payment is the only
+thing that buys the arrival. The two read alike in a diff and mean opposite
+things, so they are two keys, and the loader refuses each on the other's event.
+`instead_cost` is required on this event, because a replaced arrival with no
+price is a permanent that can never enter.
+
+**Why not the card-level cast costs.** `additional_cost` and
+`additional_optional` are paid as the spell is *cast*, so neither applies to a
+Mox Diamond returning from a graveyard or blinked back — and neither branch is
+the printed card anyway: a mandatory discard makes the artifact uncastable with
+an empty hand, and an optional one left unpaid still lets it enter.
+
+**Asked wherever the permanent is coming from.** This is the design, and the one
+thing a naive implementation gets wrong. `move_object` is not a generator, so the
+question is asked a moment before it by `zones.offer_enters_replacement` — the
+argument `offer_enters_costs` already makes — but *unlike* those two neighbours
+it is called from every arrival path that can stop to ask, not only from the cast
+line and the land drop: `put_onto_battlefield`, `return_from_graveyard` and the
+exile-and-return blink each offer it too. "If this artifact **would enter**" is
+any arrival from any zone, and a replacement wired into `stack` alone would be
+right for a cast Mox and free for every reanimated one.
+
+The answer rides on `GameObject.enters_replacement_paid`, which survives
+`reset_permanent_state` for `enters_cost_paid`'s reason. It is read by
+`move_object` itself rather than by `_enter_battlefield`, because that runs after
+the object is on the battlefield and an unpaid Mox must never get there — the
+redirect happens *before* the commander replacement, so a commander Mox nobody
+paid for is sent to a graveyard and then on to the command zone, which is 903.9a
+replacing the new destination.
+
+**An arrival nobody was asked about counts as unpaid**, and that is deliberate:
+the routes that cannot stop for a question — a tutor straight onto the
+battlefield, manifest, meld — get the printed card's own worst branch rather than
+a permanent that quietly enters for free. A face-down arrival is exempt, since
+707.2 gives it no abilities to replace anything with.
+
+`instead_zone` is `"graveyard"`, `"exile"`, `"hand"` or `"library"`, and it is the
+card's own owner's copy of that zone.
+
 ### Damage multiplied on the way out
 
 ```jsonc

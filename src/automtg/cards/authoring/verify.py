@@ -1400,4 +1400,17 @@ def _covered(card: CardDef, line: str) -> bool:
             # let the event be written without a `copying` pool, so the sentence
             # cannot be claimed by a card that copies nothing.
             return True
+        if event == "self_enters_replaced" and "would enter" in lowered:
+            # "If this artifact would enter, you may discard a land card
+            # instead. If you do, put this artifact onto the battlefield. If you
+            # don't, put it into its owner's graveyard." -- Mox Diamond. One
+            # printed line holding the whole replacement, claimed the way the
+            # four above are: it replaces the arrival itself, so there is no
+            # ability whose `text` could carry it.
+            #
+            # "would enter" rather than the looser "enter", so the sentence
+            # cannot be claimed by "when this enters" -- that is a trigger, and
+            # writing it as one is exactly the approximation this event exists
+            # to replace.
+            return True
     return False

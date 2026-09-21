@@ -241,6 +241,27 @@ class GameObject:
     #: `reset_permanent_state` -- see the note there -- and is cleared by
     #: `_enter_battlefield` once it has been read.
     enters_cost_paid: bool = False
+    #: "If this artifact would enter, you may discard a land card instead."
+    #: Whether the controller took *that* offer -- Mox Diamond's, and not
+    #: `enters_cost_paid`'s. Two fields because the two answers mean opposite
+    #: things: a paid `unless_cost` cancels a modification and the permanent
+    #: arrives either way, where a paid `instead_cost` is the only thing that
+    #: lets the arrival happen at all.
+    #:
+    #: Recorded by `zones.offer_enters_replacement` just before the move and
+    #: read by `move_object` itself, not by `_enter_battlefield`: by the time
+    #: that runs the permanent is already on the battlefield, and the whole
+    #: point of the clause is that an unpaid arrival never gets there.
+    #:
+    #: ``False`` is therefore the answer for "nobody was asked" as well as for
+    #: "asked and declined", and they are deliberately the same answer -- an
+    #: arrival that reached `move_object` without the offer being made is one
+    #: nobody paid for, which is the printed card's own worst branch rather
+    #: than a permanent that quietly enters for free.
+    #:
+    #: Survives `reset_permanent_state` for `enters_cost_paid`'s reason -- that
+    #: reset runs during the very move this answer has to be read in.
+    enters_replacement_paid: bool = False
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -925,8 +946,9 @@ class GameObject:
         self.leaves_to = None
         self.copying = None
         # `enters_copy_of` is deliberately absent, exactly as `enters_cost_paid`
-        # is: it is an answer about the arrival this reset is clearing the way
-        # for, and `_enter_battlefield` clears it itself once it has been read.
+        # and `enters_replacement_paid` are: each is an answer about the arrival
+        # this reset is clearing the way for, and each is cleared by whichever
+        # of `move_object` and `_enter_battlefield` has read it.
         self.copying_name = None
         self.renamed_to = None
         self.lost_all_abilities = False

@@ -8,6 +8,7 @@ happen in exactly one place.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
@@ -82,6 +83,39 @@ def move_object(
     # the time the event goes out the culprit may itself be out of `objects`.
     # The client needs a card id it can turn into a printed name either way.
     by_card = _card_id_of(state, by)
+
+    # -- "if this artifact would enter … instead" (614.1a) ------------------
+    # Mox Diamond. The only replacement in the DSL that replaces the **arrival
+    # itself** rather than decorating a permanent that is already arriving, so
+    # it is the only one that cannot live in `_enter_battlefield`: by the time
+    # that function runs the object is on the battlefield, every enters trigger
+    # is about to see it, and the card says it was never there.
+    #
+    # The question was asked a moment ago by `offer_enters_replacement`, which
+    # left its answer on the object; this reads it. An arrival that got here
+    # without being asked counts as unpaid -- see the field's note.
+    #
+    # Before the commander replacement below on purpose: 903.9a replaces the
+    # *new* destination, so a commander Mox that was not paid for is redirected
+    # to a graveyard here and then to the command zone there, which is the two
+    # replacements applied in the order the rules apply them.
+    if to_zone is Zone.BATTLEFIELD and from_zone is not Zone.BATTLEFIELD:
+        replaced = _arrival_replacement(card)
+        paid = obj.enters_replacement_paid
+        obj.enters_replacement_paid = False
+        # 707.2: a permanent put onto the battlefield face down has no
+        # abilities at all, so it has no replacement either. `face_down` is
+        # written *after* the move by both routes -- `stack._place_after_resolution`
+        # for a morph and `ops_counters.op_manifest` for a manifest -- so the
+        # flag cannot be read here and the two are named instead.
+        face_down = obj.pending_face_down or cause == "manifest"
+        if replaced is not None and not paid and not face_down:
+            to_zone = Zone(str(replaced.get("instead_zone", "graveyard")))
+            target_player = owner
+            # Overwritten rather than defaulted: "resolved" is how the card got
+            # here and no longer how it is leaving, and the log line a player
+            # needs is the one saying the arrival was replaced.
+            cause = "enters_replaced"
 
     # -- commander zone-change replacement (rule 903.9a) --------------------
     # Simplification: the owner always chooses the command zone.  Documented in
@@ -400,6 +434,77 @@ def _detach_all(state: GameState, oid: int) -> None:
         if other.paired_with == oid:
             other.paired_with = None
 
+
+
+def _arrival_replacement(card: CardDef) -> Mapping[str, Any] | None:
+    """The card's ``self_enters_replaced`` replacement, if it has one.
+
+    One per card: two clauses each replacing the same arrival would have to be
+    applied in some order, and no printed card asks that question. The first
+    written wins, which is the answer the loader's ordering already gives every
+    other replacement.
+    """
+    for replacement in card.replacements:
+        if replacement.get("event") == "self_enters_replaced":
+            return replacement
+    return None
+
+
+def offer_enters_replacement(state: GameState, oid: int, controller: int):
+    """"If this artifact would enter, you may discard a land card instead."
+
+    Mox Diamond. Asked here, beside `offer_enters_costs` and `offer_enters_copy`
+    and for their stated reason -- `move_object` is not a generator and cannot
+    stop for a decision, and making it one would put a suspend point inside
+    every zone change in the engine. Asking a moment early is not an
+    approximation: 614 applies the replacements during the zone change and
+    nobody receives priority in between.
+
+    **Called from every arrival path that can stop to ask**, not only from the
+    cast line, and that is the whole of this function's design. A version wired
+    into `stack._place_after_resolution` alone would be right for a Mox Diamond
+    cast out of hand and wrong for every blink and every reanimation in the
+    format -- the card says "if this artifact **would enter**", which is any
+    arrival from any zone, and a permanent returned by Animate Dead is arriving
+    exactly as hard as one that was cast.
+
+    The answer is left on `obj.enters_replacement_paid`, which
+    `reset_permanent_state` deliberately does not clear and `move_object` reads
+    and clears as it decides where the card is actually going. Unlike its two
+    neighbours this answer is *not* read by `_enter_battlefield`: that runs
+    after the object is on the battlefield, and an unpaid Mox never gets there.
+
+    An unaffordable price is not offered, exactly as `offer_enters_costs` does
+    not offer one: a player with no land in hand is not asked a question whose
+    "yes" cannot be honoured, and the permanent goes to `instead_zone`.
+    """
+    from .carddef import Cost
+    from .costs import can_pay, pay
+    from .effects.context import ask_yes_no
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    replacement = _arrival_replacement(card)
+    if replacement is None:
+        return
+    cost = Cost.from_spec(replacement.get("instead_cost"))
+    # `source_oid` is the arriving card itself, which is what keeps a Mox
+    # Diamond in hand from being its own discard: `costs._discard_pool` drops
+    # the source from the pool for 601.2a's reason, and the same exclusion is
+    # the right one here for 614's -- the object being replaced is the one on
+    # its way to the battlefield, not fodder sitting in a hand.
+    if not can_pay(state, controller, cost, oid):
+        return
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    prompt = f"Pay {card.name}'s cost to have it enter?"
+    if not (yield from ask_yes_no(ctx, prompt, controller)):
+        return
+    if (yield from pay(state, controller, cost, oid)):
+        obj.enters_replacement_paid = True
 
 
 def offer_enters_costs(state: GameState, oid: int, controller: int):
