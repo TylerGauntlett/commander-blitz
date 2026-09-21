@@ -358,12 +358,14 @@ def _has_non_goader_defender(state: GameState, oid: int, goaders: set[int]) -> b
     """Is there anything this creature could attack that no goader controls?
 
     Goad's "if able", asked once per goaded pair. It has to consider **both**
-    attack kinds -- a planeswalker controlled by a third player is somewhere else
-    to swing, and a goaded creature offered only the goader's seat because the
-    engine forgot about walkers would be forced into an attack the rules do not
-    require.
+    attack kinds -- a planeswalker or battle controlled by a third player is
+    somewhere else to swing, and a goaded creature offered only the goader's
+    seat because the engine forgot about them would be forced into an attack the
+    rules do not require.
     (Rule 701.38b: the requirement is discharged by attacking any other player,
-    or by attacking a planeswalker any other player controls.)
+    or by attacking a planeswalker or battle any other player controls -- the
+    defending player is that permanent's controller either way, which is the
+    same reading the clause in `attack_target_forbidden` takes.)
 
     It re-enters `attack_target_forbidden`, and that is not a loop: every
     candidate here is already filtered to a defender **no goader controls**, so
@@ -389,7 +391,7 @@ def _has_non_goader_defender(state: GameState, oid: int, goaders: set[int]) -> b
         pw_obj = state.objects.get(pw)
         if pw_obj is None or pw_obj.controller not in open_seats:
             continue
-        if "Planeswalker" not in chars(state, pw).types:
+        if not any(t in chars(state, pw).types for t in ATTACKABLE_TYPES):
             continue
         if not attack_target_forbidden(
             state, oid, pw_obj.controller, permanent=pw

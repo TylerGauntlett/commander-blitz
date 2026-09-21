@@ -55,7 +55,7 @@ from automtg.engine import sba
 from automtg.engine.characteristics import chars
 from automtg.engine.enums import ActionKind, Step, Zone
 from automtg.engine.errors import DslError
-from automtg.engine.primitives import damage_permanent
+from automtg.engine.primitives import damage_permanent, restrict_attack
 from tests.conftest import only_oid, pass_until
 
 BATTLE = "t_battle_wall"  # Siege, defense 3, no text
@@ -241,6 +241,40 @@ class TestAttackingOne:
 
         targets = {ref.id for a in attacks(game, hitter) for ref in a.targets}
         assert mine not in targets
+
+
+class TestGoadSeesABattleAsSomewhereElseToSwing:
+    """701.38b, and the one place the rename had to reach past declaration.
+
+    `_has_non_goader_defender` answers goad's "…if able", and it walked the
+    battlefield for planeswalkers by name. A goaded creature whose only
+    attackable *seat* is the goader's, with a third player's battle on the
+    board, has somewhere else to go -- the battle's controller is the defending
+    player (506.2), exactly as a walker's is -- and offered only the goader it
+    would be forced into an attack the rules do not require.
+    """
+
+    def test_a_third_players_battle_discharges_the_requirement(self, builder):
+        from automtg.engine import combat as combat_mod
+
+        game = (
+            builder(players=3)
+            .battlefield(0, ["swamp"] * 5 + [HITTER])
+            .battlefield(1, [])
+            .battlefield(2, [BATTLE])
+            .hand(0, [])
+            .library(0, ["swamp"] * 20)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(0)
+            .build()
+        )
+        hitter = only_oid(game, HITTER, 0)
+        # Goaded by player 1, and player 2's seat taken off the table, so the
+        # battle is the only defender left that no goader controls.
+        game.state.objects[hitter].goaded_by = {1}
+        restrict_attack(game.state, 0, 2, "this_turn")
+
+        assert combat_mod._has_non_goader_defender(game.state, hitter, {1})
 
 
 class TestTheLoaderRefusesAnImpossibleBattle:
