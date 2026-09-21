@@ -4325,6 +4325,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "helga_skittish_seer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "helionaut": {
     "zone": "battlefield"
   },

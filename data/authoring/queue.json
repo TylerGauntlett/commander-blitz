@@ -125442,12 +125442,12 @@
     },
     "Helga, Skittish Seer": {
       "edhrec_rank": 4246,
-      "gate": "template",
+      "gate": null,
       "name": "Helga, Skittish Seer",
-      "reason": "no template for: Whenever you cast a creature spell with mana value 4 or greater, you draw a card, gain 1 l",
+      "reason": "",
       "scryfall_id": "40339715-22d0-4f99-822b-a00d9824f27a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Helica Glider": {
