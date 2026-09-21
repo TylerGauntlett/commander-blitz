@@ -109,12 +109,26 @@ def spell_purpose(card: CardDef) -> SpendPurpose:
 
     Tagged :data:`CAST`, which is the half of the purpose that keeps every
     restriction shipped before Secluded Courtyard meaning what it printed.
+
+    The two **numbers** ride along beside the names for the same reason the
+    supertypes had to: Helga, Skittish Seer's "…only to cast creature spells
+    with mana value 4 or greater or creature spells with {X} in their mana
+    costs" names no type for either clause, and a purpose carrying names alone
+    would leave both unaskable -- so the restriction would have to be written as
+    a bare "creature" and fund every creature spell ever printed.
+
+    `mana_cost.x_count` rather than a mana value of X, for rule 107.3's reason:
+    a Fireball cast for X=0 is still "a spell with {X} in its mana cost", and
+    202.3b scores that X as 0 -- so `mana_value` catches Fireball and Shock
+    together or neither, and the symbol question is a different question.
     """
     return SpendPurpose(
         kind=CAST,
         names=frozenset(
             t.lower() for t in (*card.types, *card.subtypes, *card.supertypes)
         ),
+        mana_value=card.mana_value,
+        x_in_mana_cost=card.mana_cost.x_count > 0,
     )
 
 
@@ -144,13 +158,23 @@ def ability_purpose(state: GameState, oid: int) -> SpendPurpose:
     obj = state.objects.get(oid)
     if obj is None:
         return SpendPurpose(kind=ACTIVATE, names=frozenset())
+    card = state.card_of(obj)
     if obj.on_battlefield:
         c = chars(state, oid)
         names = (*c.types, *c.subtypes, *c.supertypes)
     else:
-        card = state.card_of(obj)
         names = (*card.types, *card.subtypes, *card.supertypes)
-    return SpendPurpose(kind=ACTIVATE, names=frozenset(t.lower() for t in names))
+    # The cost predicates are answered here too, off the printed face, rather
+    # than left `None`. A source has a mana value and a printed cost whether or
+    # not any card asks about them, and answering honestly means the day one
+    # prints "or activate an ability of a permanent with mana value 4 or
+    # greater" this is not the place that quietly said no.
+    return SpendPurpose(
+        kind=ACTIVATE,
+        names=frozenset(t.lower() for t in names),
+        mana_value=card.mana_value,
+        x_in_mana_cost=card.mana_cost.x_count > 0,
+    )
 
 
 def resolve_mana_restriction(ability: Ability, obj: Any) -> ManaRestriction | None:
@@ -194,8 +218,15 @@ def _resolve_groups(
             # "spend this only to cast a spell that is *not* the chosen type".
             # Substituting both anyway means the day one does, this is not the
             # place that quietly kept the sentinel.
+            # `replace` rather than a fresh `RestrictionGroup`, so a predicate
+            # the group also carries survives the substitution. Rebuilt from
+            # the two name sets alone, a "creature spell of the chosen type
+            # with mana value 4 or greater" would quietly lose the comparison
+            # the instant a type was chosen -- which is the one moment the
+            # restriction starts being read.
             out.append(
-                RestrictionGroup(
+                replace(
+                    group,
                     required=_swap(group.required, chosen),
                     forbidden=_swap(group.forbidden, chosen),
                 )

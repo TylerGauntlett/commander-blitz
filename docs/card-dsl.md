@@ -3480,12 +3480,12 @@ Ornitier's power." Two things at once, and the engine had each separately:
 
 `split` names the colours the combination may draw on and replaces `mana`;
 `amount` is how much is being divided. One of the family that includes
-`reflecting`, `colors_of`, `each_color_among`, `in_commander_identity` and a
-`mana` mapping — all six are abilities whose options cannot be known at load
-time, so the card records the question and `costs.mana_options_of` answers it at
-activation. `each_color_among` is the odd one: the others hand back a *list* of
-one-mana options and the payer picks, and it hands back a single multi-symbol
-bundle.
+`reflecting`, `colors_of`, `each_color_among`, `in_commander_identity`,
+`any_one_color` and a `mana` mapping — all seven are abilities whose options
+cannot be known at load time, so the card records the question and
+`costs.mana_options_of` answers it at activation. `each_color_among` is the odd
+one: the others hand back a *list* of one-mana options and the payer picks, and
+it hands back a single multi-symbol bundle.
 
 The combination is offered as **one option per composition**: a power-3 source
 offers 3+0, 2+1, 1+2 and 0+3, and the payment picks whichever covers the spell.
@@ -3545,6 +3545,53 @@ five-colour deck.
 `MAX_SPLIT_OPTIONS` caps the enumeration at 64. Two colours and a large X is
 linear; five colours is combinatorial, and the cap is a guard against a
 pathological board rather than a rule.
+
+### A mana ability that makes X of **one** colour
+
+```jsonc
+// Helga, Skittish Seer — "{T}: Add X mana of any one color, where X is
+// Helga's power."
+{ "op": "add_mana", "any_one_color": true,
+  "amount": { "power_of": { "self": true } } }
+```
+
+The sixth member of the family above, and the only one that needs no branch in
+`costs.mana_options_of` at all: the five one-symbol options really *are* what the
+ability offers, and `mana_amount` — which has scaled a single option since Gyre
+Sage — turns whichever one the payer picks into X of that colour. `amount` is
+required; without it the sentence is "add one mana of any color", which is
+already a `choose_mode` of five `add_mana`s, and a second spelling for a line
+that has one is how the untested spelling ships.
+
+The two near misses are opposites, and each is a different card:
+
+- **`split`** is "any **combination**". At X=3 a split may make {W}{U}{G}, which
+  this card cannot — strictly more permissive, so it is an approximation rather
+  than a spelling.
+- **A `choose_mode` of five fixed `add_mana`s** (Gilded Lotus) is how "Add N mana
+  of any one color" is written when N is printed. N has to be a literal at load
+  time, and Helga's N is her power — she starts a 1/1 and grows with every +1/+1
+  counter her own first ability puts on her. Worse, `_mana_amount` only looks for
+  an `amount` on the *top-level* effects, so with a `choose_mode` there it comes
+  back `None` and the ability taps for exactly one mana for ever: it loads, it
+  plays, and it is a quieter card.
+
+The card prints **no mana symbol**, so the five-colour option list contributes no
+colour identity — `_derive_color_identity` skips it exactly as it skips
+`mana_chosen_color`, `mana_colors_of` and `mana_each_color_among`. Rule 903.4 is
+a deck-building rule, and a five-colour Helga would be illegal in the Simic decks
+she is actually played in.
+
+Off an ability that **uses the stack** the same line is asked instead of folded
+into the price, exactly as `split` is:
+
+```jsonc
+{ "op": "add_mana", "any_one_color": true, "amount": { "const": 3 } }
+```
+
+`ops_mana._add_one_color_mana` asks **once** — one `ask_mode` over the five
+colours — where `_add_split_mana` asks once per mana. That single difference is
+the whole distance between "any one color" and "any combination".
 
 ### `double_triggers`, and its two axes
 
@@ -5117,6 +5164,55 @@ creature source of the chosen type**." Three things are load-bearing:
   it would mean a sentinel that only half the substitution path honours. A name
   that is both required and forbidden in one group is refused too — nothing can
   satisfy it, which is the same dead mana a typo makes.
+- **`{"mana_value": …}` and `{"x_in_mana_cost": true}`** are the two entries that
+  are not names at all. See below.
+
+#### A restriction that is not a name — `mana_value`, `x_in_mana_cost`
+
+```jsonc
+// Helga, Skittish Seer — "Spend this mana only to cast creature spells with
+// mana value 4 or greater or creature spells with {X} in their mana costs."
+"mana_restriction": {
+  "cast": [
+    ["creature", { "mana_value": { "op": ">=", "value": 4 } }],
+    ["creature", { "x_in_mana_cost": true }]
+  ]
+}
+```
+
+An any-of of two all-ofs, exactly as the printed "or" reads, and neither all-of
+is expressible in names. A group carries a **predicate** beside its `required`
+and `forbidden` sets, and `costs.SpendPurpose` carries the two numbers to answer
+one with — the spell's mana value and whether its printed cost has an `{X}`.
+
+The spellings are the selector language's, deliberately: `mana_value` takes the
+same `{"op": …, "value": …}` comparison (or a bare integer, or the authoring
+pipeline's `{"const": n}`), and `x_in_mana_cost` is true-or-false, so "mana value
+4 or greater" cannot mean one thing to a trigger filter and another here. A
+comparison mapping written under `x_in_mana_cost` is refused for `selectors`'
+reason: it is truthy, so it would silently read as `true` and widen the clause to
+every cost.
+
+The comparison's value must be a **literal**. A restriction is compiled once at
+load and read during payment, where there is no `EffectContext` to evaluate an
+expression in; a board-reading value is refused rather than read as 0, which
+would permit every spell ever printed.
+
+Both near misses ship a better card than the printed one:
+
+- **A bare `["creature"]`** — Ancient Ziggurat's spelling, and the closest thing
+  the language had — drops both clauses and funds every creature spell there is.
+  `tests/data/any_one_color_mana.cards.json` keeps that card (`t_ziggurat_seer`)
+  beside the real one so the difference is asserted rather than described.
+- **An invented name** such as `"mana-value-4"` is the failure
+  `mana._restriction_name`'s shape check exists for: it names nothing ever
+  printed, so the mana freezes permanently unspendable and the card reads at the
+  table as a creature that taps for nothing. A predicate key written as a bare
+  name (`"mana value"`) is refused by name, pointing at the object spelling.
+
+Rule 107.3 is why the two are separate questions rather than one: a Fireball cast
+for X=0 is still "a spell with {X} in its mana cost", and 202.3b scores that X as
+0 — so `mana_value` catches Fireball and Shock together or neither.
 
 ### Restricted mana an *effect* made
 

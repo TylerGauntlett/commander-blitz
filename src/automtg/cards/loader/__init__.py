@@ -2159,6 +2159,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_each_color_among: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
+    mana_any_one_color = False
     mana_split: tuple[str, ...] = ()
     if model.is_mana_ability:
         if kind is not AbilityKind.ACTIVATED:
@@ -2293,6 +2294,40 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # ability would never be offered whatever the commander's colours.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif any(isinstance(e, Mapping) and e.get("any_one_color") for e in mana_effects):
+            # "{T}: Add X mana of **any one color**, where X is Helga's power."
+            # Sixth of the same family, and the only one whose options really
+            # are the five-colour superset: the payer picks one of them and
+            # `mana_amount` scales it to X, so `costs.mana_options_of` needs no
+            # branch at all. What makes it a family member rather than a plain
+            # `choose_mode` is that X reads the board -- Helga is a 1/1 that
+            # grows with every +1/+1 counter her own first ability puts on her,
+            # so there is no literal size to fold in at load time.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: an any-one-colour mana ability is a single 'add_mana' "
+                    f"-- there is no second thing for the one colour to join"
+                )
+            effect = mana_effects[0]
+            if "amount" not in effect:
+                # Guarded here as well as in `_validate_effect`, because this is
+                # the branch that would silently swallow it: with `mana_amount`
+                # left None the ability taps for exactly one mana for ever,
+                # which is the worst of the failures available -- it loads, it
+                # plays, and it is a different card.
+                raise DslError(
+                    f"{where}: an any-one-colour mana ability needs an 'amount' -- how "
+                    f'many mana of that one colour. "Add one mana of any color" is a '
+                    f"'choose_mode' of five 'add_mana's"
+                )
+            mana_any_one_color = True
+            _validate_mana_amount(effect["amount"], f"{where}.amount")
+            mana_amount = effect["amount"]
+            # The five colours, one symbol each -- and unlike every other member
+            # of the family this is not a placeholder superset to be narrowed at
+            # activation. It is the answer: "any one color" offers all five, and
+            # `mana_amount` turns the chosen one into X of that colour.
+            mana_options = _ANY_COLOR_OPTIONS
         elif any(isinstance(e, Mapping) and e.get("split") for e in mana_effects):
             # "Add X mana in any combination of {U} and/or {R}." Vivi Ornitier.
             # Fourth of the same family: the options depend on X, which reads
@@ -2375,6 +2410,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_each_color_among=mana_each_color_among,
         mana_identity=mana_identity,
         mana_split=mana_split,
+        mana_any_one_color=mana_any_one_color,
         mana_chosen_color=mana_chosen_color,
         mana_restriction=mana_restriction,
         mana_uncounterable=model.mana_uncounterable,

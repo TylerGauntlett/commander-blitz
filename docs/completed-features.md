@@ -16725,3 +16725,116 @@ battles would go missing on a card that looked complete.
   control.
 - `tests/unit/test_zurgo_and_ojutai.py` — the three printed lines on one
   permanent, through a test-pool card with the card's own trigger and effects.
+## "Add X mana of any one color", spendable only on two printed clauses
+
+### Overview
+
+Helga, Skittish Seer: *"{T}: Add X mana of any one color, where X is Helga's
+power. **Spend this mana only to cast creature spells with mana value 4 or
+greater or creature spells with {X} in their mana costs.**"*
+
+One printed line, two independent capabilities, and each had a near miss that
+ships a strictly *better* card than the one printed. The gap record for the card
+had already ruled out the wrong answers by name; this is what was built instead.
+
+### Tier: A -- one new `add_mana` key, one new kind of restriction entry
+
+No new op, decision kind, event or API field. `add_mana` gains a sixth way to
+name its colours, and `RestrictionGroup` gains a third question.
+
+### Half one -- `any_one_color`
+
+```jsonc
+{ "op": "add_mana", "any_one_color": true,
+  "amount": { "power_of": { "self": true } } }
+```
+
+The sixth member of the family that `reflecting`, `colors_of`,
+`each_color_among`, `in_commander_identity` and a `mana` mapping belong to --
+and the only one that needs **no branch in `costs.mana_options_of` at all**. The
+five one-symbol options really are what the ability offers, so the load-time
+superset is the answer rather than a placeholder, and `costs.mana_amount` --
+which has scaled a single option since Gyre Sage -- turns whichever the payer
+picks into X of that colour. Both halves existed; nothing had put them together.
+
+| the near miss | why it is not this |
+|---|---|
+| `split` with an `amount` (Vivi Ornitier) | "any **combination**": at X=3 it may make {W}{U}{G}, which the printed card cannot. Strictly more permissive |
+| a `choose_mode` of five fixed `add_mana`s (Gilded Lotus) | N must be a literal at load time, and Helga's N is her power -- she is a 1/1 who grows with every +1/+1 counter her own first ability puts on her |
+| that `choose_mode` with an `amount` inside it | `_mana_amount` reads an `amount` only off the *top-level* effects, so `mana_amount` comes back `None` and `_sum_mana` quietly reads the printed symbols alone. The card taps for exactly one mana for ever -- it loads, it plays, and it is a different card |
+| `{"chosen_color_of": "self"}`, `reflecting`, `in_commander_identity` | each forces `mana_amount` to `None` in `_build_ability` and produces exactly one mana; the chosen-colour one is also the colour a permanent picked as it *entered*, not one picked each activation |
+
+`amount` is **required**: without it the sentence is "add one mana of any color",
+which already has a spelling, and a second spelling for one sentence is how the
+untested one ships. The loader refuses it beside any of the other five colour
+keys -- two answers to one question, with only one of them read.
+
+The five-colour option list is kept out of `_derive_color_identity`, beside
+`mana_chosen_color`, `mana_colors_of` and `mana_each_color_among`. The line
+prints **no mana symbol**, so by 903.4 Helga's identity is the {G}{W}{U} on her
+face; a five-colour identity is a deck-building error, not a gameplay
+approximation, and would bar her from most decks she is played in.
+
+On an ability that **uses the stack**, `ops_mana._add_one_color_mana` asks
+**once** -- one `ask_mode` over the five colours -- where `_add_split_mana` asks
+once per mana. That single difference is the entire distance between "any one
+color" and "any combination", and it is why the effect half was written rather
+than left to fall through `mana_string` and silently add nothing.
+
+### Half two -- a restriction entry that is not a name
+
+```jsonc
+"mana_restriction": {
+  "cast": [
+    ["creature", { "mana_value": { "op": ">=", "value": 4 } }],
+    ["creature", { "x_in_mana_cost": true }]
+  ]
+}
+```
+
+An any-of of two all-ofs, exactly as the printed "or" reads. `RestrictionGroup`
+carried `required` and `forbidden` **names** and nothing else, and neither
+printed clause has a name to carry.
+
+So a group now carries a predicate as well, and `SpendPurpose` carries the two
+numbers to answer one with -- filled by `costs.spell_purpose` from the card's
+mana value and `mana_cost.x_count`, and by `costs.ability_purpose` off the
+printed face for the same characteristics. `RestrictionGroup.satisfied_by` takes
+the whole purpose instead of its `names`, and an unanswerable predicate fails
+rather than passes: the under-permit direction `_permits` takes everywhere.
+
+The spellings are the selector language's own (`mana_value`, `x_in_mana_cost`),
+compiled to the same shapes, so "mana value 4 or greater" cannot mean one thing
+to a trigger filter and another to a mana restriction. Rule 107.3 is why they
+are two questions and not one: a Fireball cast for X=0 still has {X} in its mana
+cost, and 202.3b scores that X as 0, so one comparison catches Fireball and Shock
+together or neither.
+
+| the near miss | why it is not this |
+|---|---|
+| a bare `["creature"]` (Ancient Ziggurat's spelling) | drops both clauses and funds every creature spell ever printed. Kept **live** in the test pool as `t_ziggurat_seer`, so the difference is asserted rather than described |
+| an invented name, `"mana-value-4"` | names nothing ever printed, so the mana freezes permanently unspendable -- the failure `_restriction_name`'s shape check exists for, and the one "legendary" caused before `spell_purpose` learned supertypes. It reads at the table as a creature that taps for nothing |
+| a value expression for the comparison | a restriction is compiled once at load and read during payment, where there is no `EffectContext`. Refused rather than read as 0, which would permit every spell there is |
+| `{"op": ">=", "value": 1}` under `x_in_mana_cost` | a truthy mapping, so it would silently read as `true` and widen the clause to every cost -- `selectors` refuses the same spelling for the same reason |
+
+The comparison is stored as a normalised `(op, n)` pair rather than the card's
+mapping, so a group stays hashable -- a `Pip` is a `NamedTuple` and carries a
+`ManaRestriction`. `costs._resolve_groups` rebuilds a group through
+`dataclasses.replace` rather than from its two name sets, or "a creature spell of
+the chosen type with mana value 4 or greater" would lose the comparison the
+instant a type was chosen, which is the one moment the restriction starts being
+read.
+
+### Tests
+
+- `tests/unit/test_any_one_color_mana.py` -- the five one-colour options and
+  that no offer ever mixes two; X tracking the source's power as counters land,
+  and zero power offering nothing; the restriction at each of its four corners
+  (a 4-mana creature yes, a 3-mana creature no, an {X} creature yes, a 4-mana
+  artifact no); the bare-`["creature"]` contrast card funding the 3-drop the
+  printed card refuses; the same six claims played out as real casts in a real
+  turn; and the loader's refusals of an invented name, a predicate key written
+  as a name, a comparison where the {X} question belongs, a board-reading value,
+  a missing `amount`, and `any_one_color` beside `mana` or `split`.
+- `tests/data/any_one_color_mana.cards.json` -- the card, the contrast card, and
+  the four spells that are the corners of the restriction.

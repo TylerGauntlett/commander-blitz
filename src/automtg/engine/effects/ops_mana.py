@@ -104,6 +104,10 @@ def op_add_mana(ctx: EffectContext, spec: Mapping[str, Any]):
         # asks nothing. Written as one function with a `yield` in it, *every*
         # add_mana would become a generator.
         return _add_split_mana(ctx, spec)
+    if spec.get("any_one_color"):
+        # A generator for `_add_split_mana`'s reason, and on its own branch for
+        # the same one: the plain `add_mana` must stay a call that asks nothing.
+        return _add_one_color_mana(ctx, spec)
     symbols = mana_string(ctx, spec)
     if not symbols:
         return None
@@ -154,6 +158,39 @@ def _add_split_mana(ctx: EffectContext, spec: Mapping[str, Any]):
             )
             produced[SYMBOL_INDEX[colors[picked[0] if picked else 0]]] += 1
         symbols = "".join(f"{{{SYMBOLS[i]}}}" * produced[i] for i in range(N_SYMBOLS))
+        _give_mana(ctx, spec, pid, produced)
+        ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
+
+
+def _add_one_color_mana(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Add X mana of **any one color**", from an ability that uses the stack.
+
+    Helga, Skittish Seer prints it as a mana ability, where the choice cannot be
+    asked (605.1a) and is folded into the price instead: `costs.mana_options_of`
+    offers the five colours as five options and `costs.mana_amount` scales the
+    one the payer picks. This is the same sentence on an ability that *may*
+    ask -- a trigger, or a spell -- and it asks, once.
+
+    Once is the whole difference from `_add_split_mana` above, which asks per
+    mana and is therefore "any combination": one question here means all X mana
+    come out the same colour, which at X=3 is the difference between {G}{G}{G}
+    and {W}{U}{G}.
+
+    X is read once, before the question, for `_add_split_mana`'s reason: it is a
+    fact about the board at resolution, not a running total.
+    """
+    amount = spec.get("amount")
+    total = max(0, int(evaluate_value(ctx, amount))) if amount is not None else 0
+    if total <= 0:
+        return
+    colors = SYMBOLS[:5]
+    labels = [f"{{{c}}}" for c in colors]
+    for pid in select_players(ctx, spec.get("player", "you")):
+        picked = yield from ask_mode(ctx, f"Add {total} mana of one colour", labels, pid)
+        index = SYMBOL_INDEX[colors[picked[0] if picked else 0]]
+        produced = [0] * N_SYMBOLS
+        produced[index] = total
+        symbols = f"{{{SYMBOLS[index]}}}" * total
         _give_mana(ctx, spec, pid, produced)
         ctx.state.emit(EventType.MANA_ADDED, player=pid, source=ctx.source_oid, mana=symbols)
 

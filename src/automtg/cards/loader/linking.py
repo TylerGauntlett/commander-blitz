@@ -40,8 +40,17 @@ def _derive_color_identity(
         # green body, and its Vivid line names no symbol at all. A five-colour
         # identity would bar it from the mono-green commander decks it is played
         # in, and from every other deck that is not itself five-colour.
+        #
+        # `mana_any_one_color` is the fourth, and the one where the five-colour
+        # tuple is not even a placeholder: "Add X mana of any one color" really
+        # does offer all five. It still prints no mana symbol, so by 903.4
+        # Helga, Skittish Seer's identity is the {2}{G}{U} on her face -- and a
+        # five-colour identity would bar her from every commander deck that is
+        # not itself five-colour, including the mono-green and Simic ones she is
+        # played in.
         skip_superset = (
             ability.mana_chosen_color
+            or ability.mana_any_one_color
             or ability.mana_colors_of is not None
             or ability.mana_each_color_among is not None
         )

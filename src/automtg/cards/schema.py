@@ -400,6 +400,14 @@ class AbilityModel(BaseModel):
     #: ability of a creature source of the chosen type". A bare string or list is
     #: the ``cast`` half alone, which is what every other printing says.
     #:
+    #: An entry may also be a **predicate** rather than a name --
+    #: ``{"mana_value": {"op": ">=", "value": 4}}`` or
+    #: ``{"x_in_mana_cost": true}``, the selector language's own spellings.
+    #: Helga, Skittish Seer's "…only to cast creature spells with mana value 4 or
+    #: greater or creature spells with {X} in their mana costs" is two groups,
+    #: each a type name and a predicate, and neither clause has a name of its
+    #: own. See `engine.mana._restriction_predicate`.
+    #:
     #: Either half of the object may be the word ``"any"`` instead of a list of
     #: groups -- "Spend this mana only to activate abilities" (Cryptic Trilobite,
     #: Omen Hawker), which names no type at all. The loader refuses it on both

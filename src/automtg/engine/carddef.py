@@ -780,6 +780,24 @@ class Ability:
     #: worse card: it offers X of one colour or X of the other and can never
     #: make {U}{U}{R}{R} off a power-4 Vivi.
     mana_split: tuple[str, ...] = ()
+    #: "{T}: Add X mana of **any one color**, where X is Helga's power" --
+    #: Helga, Skittish Seer. The sixth member of the same family, and the one
+    #: that needs no branch in `costs.mana_options_of` at all: the five
+    #: one-symbol options really are what it offers, and `mana_amount` -- which
+    #: has scaled a single option since Gyre Sage -- turns the chosen one into X
+    #: of that colour.
+    #:
+    #: `mana_split` is the near miss and is a strictly *better* card: "any
+    #: combination" at X=3 makes {W}{U}{G}, and "any one color" cannot. The
+    #: other near miss is a `choose_mode` of five fixed `add_mana`s (Gilded
+    #: Lotus), which needs a literal size at load time -- and Helga's size is
+    #: her power, which starts at 1 and grows.
+    #:
+    #: A flag of its own rather than "five options and an amount", because the
+    #: card prints **no mana symbol**: without a marker `_derive_color_identity`
+    #: would read the superset and make a {2}{G}{U} creature five-colour, which
+    #: is a deck-building rule (903.4) and not an approximation.
+    mana_any_one_color: bool = False
     #: "{T}: Add one mana of **the chosen color**." Heraldic Banner. The third
     #: member of the same family as `mana_reflects` and `mana_identity`: the
     #: colour is a question about this permanent's own `chosen_color`, asked

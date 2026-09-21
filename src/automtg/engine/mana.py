@@ -1037,6 +1037,40 @@ class SpendPurpose:
 
     kind: str
     names: frozenset[str]
+    #: The mana value of the spell being cast (or of the source whose ability is
+    #: being activated) -- "…only to cast creature spells **with mana value 4 or
+    #: greater**", Helga, Skittish Seer. A number rather than a name, which is
+    #: the whole reason it is here: `names` is a flat set and there is nowhere in
+    #: it for a comparison to live.
+    mana_value: int | None = None
+    #: Does that card's **printed** cost carry an ``{X}``? -- "…or creature
+    #: spells **with {X} in their mana costs**", the other half of the same line.
+    #: Rule 107.3: a Fireball cast for X=0 still has ``{X}`` in its mana cost, so
+    #: this is a question about the symbols and not about `mana_value`, which
+    #: scores X as 0 and cannot tell Fireball from Shock.
+    x_in_mana_cost: bool | None = None
+
+
+#: The comparison operators a restriction predicate may use, spelled exactly as
+#: `effects.selectors._compare` spells them so one printed phrase cannot mean two
+#: things depending on whether a filter or a mana restriction asks it. ``>=`` is
+#: the default, because "4 or greater" is what the cards print.
+RESTRICTION_OPS: dict[str, Any] = {
+    ">=": lambda a, b: a >= b,
+    "<=": lambda a, b: a <= b,
+    ">": lambda a, b: a > b,
+    "<": lambda a, b: a < b,
+    "=": lambda a, b: a == b,
+    "==": lambda a, b: a == b,
+    "!=": lambda a, b: a != b,
+}
+
+#: The keys a restriction group entry may carry instead of a type name. Closed,
+#: and checked as a set: an unknown key inside the object would otherwise load,
+#: be read by nobody, and leave the group permitting everything its names alone
+#: permit -- which is the strictly-better card this whole grammar exists to
+#: refuse.
+RESTRICTION_PREDICATES = frozenset({"mana_value", "x_in_mana_cost"})
 
 
 @dataclass(frozen=True)
@@ -1054,17 +1088,49 @@ class RestrictionGroup:
     So the group asks both questions. It is the same one-word idea trigger
     filters have had all along as `not_types`, arriving in the one place that
     lacked it.
+
+    The **predicates** are the third question, and they arrived with Helga,
+    Skittish Seer: "spend this mana only to cast creature spells with mana value
+    4 or greater or creature spells with {X} in their mana costs". Neither
+    clause has a name -- `"mana-value-4"` is not a type, so as a literal it is
+    the permanently-unspendable mana `_restriction_name` warns about, and
+    dropping the clause to a bare ``["creature"]`` funds every creature spell
+    ever printed. So a group carries a comparison and a symbol question beside
+    its names, all of them required at once.
     """
 
     required: frozenset[str] = frozenset()
     forbidden: frozenset[str] = frozenset()
+    #: ``(op, n)`` -- "with mana value 4 or greater" is ``(">=", 4)``. A
+    #: normalised pair rather than the card's comparison mapping, so the group
+    #: stays hashable: a `Pip` is a NamedTuple and carries one of these.
+    mana_value: tuple[str, int] | None = None
+    #: "…with {X} in their mana costs", true or false. ``None`` is a group that
+    #: does not ask.
+    x_in_mana_cost: bool | None = None
 
     def names(self) -> frozenset[str]:
         """Every name mentioned, either way round -- for `dynamic`'s scan."""
         return self.required | self.forbidden
 
-    def satisfied_by(self, names: frozenset[str]) -> bool:
-        return self.required <= names and not (self.forbidden & names)
+    def satisfied_by(self, purpose: SpendPurpose) -> bool:
+        """Does this one all-of hold for what is being paid for?
+
+        The whole purpose rather than its `names`, because a predicate asks
+        about something no set of names can hold. An unanswerable predicate --
+        a purpose carrying no mana value at all -- fails rather than passes,
+        which is `_permits`' direction throughout: under-permit rather than
+        hand out a strictly better card.
+        """
+        if not (self.required <= purpose.names) or (self.forbidden & purpose.names):
+            return False
+        if self.mana_value is not None:
+            op, wanted = self.mana_value
+            if purpose.mana_value is None or not RESTRICTION_OPS[op](purpose.mana_value, wanted):
+                return False
+        return not (
+            self.x_in_mana_cost is not None and purpose.x_in_mana_cost is not self.x_in_mana_cost
+        )
 
 
 @dataclass(frozen=True)
@@ -1143,7 +1209,7 @@ def _permits(restriction: ManaRestriction | None, purpose: SpendPurpose | None) 
         return True
     if purpose is None:
         return False
-    return any(group.satisfied_by(purpose.names) for group in restriction.groups(purpose.kind))
+    return any(group.satisfied_by(purpose) for group in restriction.groups(purpose.kind))
 
 
 def compile_restriction(spec: Any, where: str) -> ManaRestriction:
@@ -1180,6 +1246,23 @@ def compile_restriction(spec: Any, where: str) -> ManaRestriction:
     **of** the chosen type" is a conjunction, and flattening it into the any-of
     above would offer the mana for every creature ever printed -- a strictly
     better card than the printed one.
+
+    An entry may also be a **predicate** rather than a name, which is what
+    Helga, Skittish Seer needs -- "…only to cast creature spells with mana value
+    4 or greater **or** creature spells with {X} in their mana costs" is an
+    any-of of two all-ofs, and neither all-of is expressible in names:
+
+    ```jsonc
+    "mana_restriction": {
+      "cast": [
+        ["creature", {"mana_value": {"op": ">=", "value": 4}}],
+        ["creature", {"x_in_mana_cost": true}]
+      ]
+    }
+    ```
+
+    See :func:`_restriction_predicate`. Dropping either predicate leaves
+    ``["creature"]``, which funds every creature spell ever printed.
 
     ``{"chosen_type_of": "self"}`` is the one entry that is not a literal name.
     It compiles to :data:`CHOSEN_TYPE` and is substituted per permanent by
@@ -1265,6 +1348,7 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
             )
         required: set[str] = set()
         forbidden: set[str] = set()
+        predicates: dict[str, Any] = {}
         for entry in entries:
             if isinstance(entry, Mapping) and "not" in entry:
                 if set(entry) != {"not"}:
@@ -1273,9 +1357,21 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
                         f"not {dict(entry)!r}"
                     )
                 forbidden.add(_restriction_name(entry["not"], where, negated=True))
+            elif isinstance(entry, Mapping) and set(entry) & RESTRICTION_PREDICATES:
+                key, value = _restriction_predicate(entry, where)
+                if key in predicates:
+                    # Two comparisons on one characteristic inside one all-of.
+                    # Only one of them would be stored, so the other would load
+                    # clean and be dropped -- and a dropped restriction is the
+                    # better-than-printed card this grammar exists to refuse.
+                    raise DslError(
+                        f"{where}: {key!r} is given twice in one 'mana_restriction' "
+                        f"group; a group asks each question once"
+                    )
+                predicates[key] = value
             else:
                 required.add(_restriction_name(entry, where))
-        if not required and not forbidden:
+        if not required and not forbidden and not predicates:
             raise DslError(
                 f"{where}: an empty group in 'mana_restriction' restricts nothing; "
                 f"omit it for ordinary mana"
@@ -1287,8 +1383,78 @@ def _restriction_groups(spec: Any, where: str) -> tuple[RestrictionGroup, ...]:
                 f"{where}: {sorted(overlap)!r} is both required and forbidden in one "
                 f"'mana_restriction' group, which nothing can satisfy"
             )
-        out.append(RestrictionGroup(frozenset(required), frozenset(forbidden)))
+        out.append(
+            RestrictionGroup(
+                frozenset(required),
+                frozenset(forbidden),
+                mana_value=predicates.get("mana_value"),
+                x_in_mana_cost=predicates.get("x_in_mana_cost"),
+            )
+        )
     return tuple(out)
+
+
+def _restriction_predicate(entry: Mapping[str, Any], where: str) -> tuple[str, Any]:
+    """One non-name entry in a group: a comparison, or the ``{X}`` question.
+
+    "Spend this mana only to cast creature spells **with mana value 4 or
+    greater** or creature spells **with {X} in their mana costs**" -- Helga,
+    Skittish Seer. Two clauses that name no type at all, sitting in a grammar
+    whose every other entry is a type name.
+
+    Spelled with the keys the selector language already uses for the same two
+    questions (`mana_value`, `x_in_mana_cost`), and compiled to the same shapes,
+    so "mana value 4 or greater" cannot mean one thing to a trigger filter and
+    another to a mana restriction.
+
+    One key per entry. Written as ``{"mana_value": …, "x_in_mana_cost": …}`` the
+    two would be an all-of, which is exactly what a group *already* is -- and
+    having two spellings for one meaning is how the second one ends up untested.
+    """
+    if len(entry) != 1:
+        raise DslError(
+            f"{where}: a mana restriction predicate asks one question; write "
+            f"{sorted(entry)} as separate entries in the same group"
+        )
+    key, spec = next(iter(entry.items()))
+    if key == "x_in_mana_cost":
+        # `_compare`'s trap, in the one place `_compare` cannot catch it: a
+        # `{"op": ">=", "value": 1}` here is a truthy mapping and would read as
+        # `true`, quietly turning "with {X} in its cost" into "with any cost".
+        # Refused for the reason `selectors` refuses the same spelling.
+        if not isinstance(spec, bool):
+            raise DslError(
+                f"{where}.x_in_mana_cost: true or false -- whether the printed cost "
+                f"has an {{X}} symbol at all; use 'mana_value' to compare numbers"
+            )
+        return key, spec
+    op, wanted = ">=", spec
+    if isinstance(spec, Mapping):
+        unknown = sorted(set(spec) - {"op", "value"})
+        if unknown:
+            raise DslError(f"{where}.mana_value: unknown keys {unknown}; give 'op' and 'value'")
+        op = str(spec.get("op", ">="))
+        wanted = spec.get("value", 0)
+    if op not in RESTRICTION_OPS:
+        raise DslError(
+            f"{where}.mana_value: unknown comparison operator {op!r} "
+            f"(one of {sorted(RESTRICTION_OPS)})"
+        )
+    # `{"const": 4}` is how the authoring pipeline normalises a literal, and a
+    # bare `4` is how a hand-written card says it. Both are accepted and both
+    # collapse to the same integer; anything *else* is a value expression, and a
+    # restriction is compiled once at load with no board to read -- so it would
+    # have to be evaluated at spend time, where there is no `EffectContext`.
+    # Refused here rather than silently read as 0, which would permit every
+    # spell ever printed.
+    if isinstance(wanted, Mapping) and set(wanted) == {"const"}:
+        wanted = wanted["const"]
+    if isinstance(wanted, bool) or not isinstance(wanted, int):
+        raise DslError(
+            f"{where}.mana_value: a literal number, got {wanted!r} -- a mana "
+            f"restriction is compiled at load time and has no board to read"
+        )
+    return key, (op, int(wanted))
 
 
 def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
@@ -1311,9 +1477,24 @@ def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
         if set(entry) != {"chosen_type_of"} or entry["chosen_type_of"] != "self":
             raise DslError(
                 f"{where}: the only dynamic mana restriction is "
-                f'{{"chosen_type_of": "self"}}, not {dict(entry)!r}'
+                f'{{"chosen_type_of": "self"}}, not {dict(entry)!r} '
+                f"(the predicates are {sorted(RESTRICTION_PREDICATES)})"
             )
         return CHOSEN_TYPE
+    # A predicate written as a *name* -- "mana value", "mana-value", "x in mana
+    # cost". It is the natural typo now that both are real entries, and it is
+    # the failure this whole function's shape check exists for: a word nothing
+    # ever printed freezes the mana permanently unspendable, silently, which
+    # reads at the table as a source that taps for nothing.
+    if (
+        isinstance(entry, str)
+        and entry.replace("-", "_").replace(" ", "_").lower() in RESTRICTION_PREDICATES
+    ):
+        raise DslError(
+            f"{where}: {entry!r} is a predicate, not a type -- write it as an "
+            f"object in the group, e.g. {{\"mana_value\": {{\"op\": \">=\", "
+            f'"value": 4}}}}'
+        )
     # A card type, a supertype, or a subtype. Subtypes are open-ended in Magic
     # and there is no closed list to check one against, so the guard is the
     # weaker "looks like a word": a typo here produces mana that can never be
@@ -1330,7 +1511,8 @@ def _restriction_name(entry: Any, where: str, *, negated: bool = False) -> str:
     ):
         raise DslError(
             f"{where}: unparsable mana restriction {entry!r} "
-            f"(a card type, supertype or subtype, lowercased)"
+            f"(a card type, supertype or subtype, lowercased -- a comparison is "
+            f"an object, one of {sorted(RESTRICTION_PREDICATES)})"
         )
     return entry.lower()
 

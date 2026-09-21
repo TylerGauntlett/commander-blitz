@@ -1891,10 +1891,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         and "each_color_among" not in effect
         and not effect.get("in_commander_identity")
         and not effect.get("split")
+        and not effect.get("any_one_color")
     ):
         raise DslError(
             f"{where}: add_mana needs 'mana' (or 'reflecting', or 'colors_of', or "
-            f"'each_color_among', or 'in_commander_identity', or 'split')"
+            f"'each_color_among', or 'in_commander_identity', or 'split', or "
+            f"'any_one_color')"
         )
     if "colors_of" in effect:
         # "Add one mana of any of **the exiled card's colors**." Chrome Mox.
@@ -2032,6 +2034,45 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: a split add_mana needs an 'amount' -- how much mana is "
                 f"being divided. Without it the split has no size"
+            )
+    if "any_one_color" in effect:
+        # "{T}: Add X mana of **any one color**, where X is Helga's power."
+        # Sixth answer to the one question this family answers -- which symbols
+        # does this ability make -- so beside any of the other five it is two
+        # answers with only one read.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'any_one_color' names the colours an add_mana makes, "
+                f"and is read by nobody on {op!r}"
+            )
+        if effect["any_one_color"] is not True:
+            raise DslError(
+                f'{where}.any_one_color: the only value is true -- "any color" is '
+                f"the default and is spelled by leaving this off"
+            )
+        clash = [
+            key
+            for key in ("mana", "reflecting", "colors_of", "each_color_among", "split")
+            if effect.get(key)
+        ]
+        if effect.get("in_commander_identity"):
+            clash.append("in_commander_identity")
+        if clash:
+            raise DslError(
+                f"{where}: 'any_one_color' already says which colours this adds, so "
+                f"it cannot be written beside {clash[0]!r} -- that is two answers to "
+                f"one question, and only one of them would be read"
+            )
+        if "amount" not in effect:
+            # Without one this is "add **one** mana of any color", which the
+            # engine has always spelled as a `choose_mode` of five `add_mana`s
+            # and which every shipped card uses. A second spelling for a
+            # sentence that already has one is how the untested one ships: the
+            # whole capability here is the *variable* size.
+            raise DslError(
+                f"{where}: an 'any_one_color' add_mana needs an 'amount' -- how many "
+                f"mana of that one colour. \"Add one mana of any color\" is a "
+                f"'choose_mode' of five 'add_mana's"
             )
     if "mana_restriction" in effect:
         # "Spend this mana only to cast spells" on mana an **effect** makes --
