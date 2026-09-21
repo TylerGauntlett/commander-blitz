@@ -38464,6 +38464,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Ganax or another Dragon you control enters, create a Treasure token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ganax_astral_hunter",
+      "keywords": [
+        "flying",
+        "choose_a_background"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Ganax, Astral Hunter",
+      "oracle_text": "Flying\nWhenever Ganax or another Dragon you control enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nChoose a Background (You can have a Background as a second commander.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U"
@@ -61699,6 +61749,56 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "majestic_genesis",
+      "mana_cost": "{6}{G}{G}",
+      "name": "Majestic Genesis",
+      "oracle_text": "Reveal the top X cards of your library, where X is the greatest mana value of a commander you own on the battlefield or in the command zone. You may put any number of permanent cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "extreme_value": {
+              "objects": {
+                "union": [
+                  {
+                    "is_commander": true,
+                    "owner": "you",
+                    "zone": "battlefield"
+                  },
+                  {
+                    "is_commander": true,
+                    "player": "you",
+                    "zone": "command"
+                  }
+                ]
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "destination": "battlefield",
+          "objects": {
+            "count": "any",
+            "not_types": [
+              "Instant",
+              "Sorcery"
+            ]
+          },
+          "op": "look_at_top",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -64857,6 +64957,80 @@
       "source": "auto",
       "subtypes": [
         "Dinosaur"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "except_": {
+                "remove_supertypes": [
+                  "Legendary"
+                ]
+              },
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false,
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "miirym_sentinel_wyrm",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{G}{U}{R}",
+      "name": "Miirym, Sentinel Wyrm",
+      "oracle_text": "Flying, ward {2}\nWhenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 6,
       "types": [

@@ -104892,12 +104892,12 @@
     },
     "Ganax, Astral Hunter": {
       "edhrec_rank": 1548,
-      "gate": "template",
+      "gate": null,
       "name": "Ganax, Astral Hunter",
-      "reason": "no template for: Whenever Ganax or another Dragon you control enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "97fb28cc-67bd-4e1f-933a-3b859f38ea64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Gandalf of the Secret Fire": {
@@ -165392,12 +165392,12 @@
     },
     "Majestic Genesis": {
       "edhrec_rank": 5760,
-      "gate": "template",
+      "gate": null,
       "name": "Majestic Genesis",
-      "reason": "no template for: Reveal the top X cards of your library, where X is the greatest mana value of a commander ",
+      "reason": "",
       "scryfall_id": "528ef70f-4844-48fa-a768-4003c6ee6dae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Majestic Heliopterus": {
@@ -173162,12 +173162,12 @@
     },
     "Miirym, Sentinel Wyrm": {
       "edhrec_rank": 1429,
-      "gate": "template",
+      "gate": null,
       "name": "Miirym, Sentinel Wyrm",
-      "reason": "no template for: Flying, ward {2}",
+      "reason": "",
       "scryfall_id": "99ad63c7-0686-4f20-bc81-7b06df2bcb4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Mijae Djinn": {

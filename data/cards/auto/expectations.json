@@ -3538,6 +3538,14 @@
   "game_trail_changeling": {
     "zone": "battlefield"
   },
+  "ganax_astral_hunter": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "gandalf_s_sanction": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -5547,6 +5555,13 @@
   "mahamoti_djinn": {
     "zone": "battlefield"
   },
+  "majestic_genesis": {
+    "battlefield_count": 32,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "makindi_aeronaut": {
     "zone": "battlefield"
   },
@@ -5911,6 +5926,10 @@
     "life": {
       "0": 44
     }
+  },
+  "miirym_sentinel_wyrm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "mikokoro_center_of_the_sea": {
     "battlefield_count": 33,
