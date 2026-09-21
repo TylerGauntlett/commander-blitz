@@ -508,24 +508,32 @@ class TestThePacketCarriesTheWholeVocabulary:
         +1/+1", one static written once and applied to two creatures. Both are
         board state, so no static can depend on another's output through them.
 
-        `owner` is the exception and is static-only for a duller reason: no card
-        has yet needed an *effect* to say "creatures you own". It arrived for
-        Inspiring Leader's "Commander creatures you own have …", where 903.3
-        makes ownership the rules-relevant relation, and it stays on this side
-        of the line until a one-shot prints the word.
+        `owner` and `attached` both used to be here and are now in *both*
+        lists, and each left for the same kind of reason: a card printed the
+        word on the other side of the line.
 
-        `attached` used to be here and is now in *both* lists. The claim that it
-        was "meaningless to an effect's selector" was simply wrong: Blade of the
-        Bloodchief puts a counter on equipped creature and Skullclamp draws when
-        it dies, and neither is a continuous effect. Being static-only was the
-        reason no `op` could reach the equipped creature at all.
+        `attached`'s claim -- that it was "meaningless to an effect's selector"
+        -- was simply wrong: Blade of the Bloodchief puts a counter on equipped
+        creature and Skullclamp draws when it dies, and neither is a continuous
+        effect. Being static-only was the reason no `op` could reach the
+        equipped creature at all.
+
+        `owner`'s was the duller one, and it held right up until it did not: it
+        arrived for Inspiring Leader's "Commander creatures you own have …",
+        where 903.3 makes ownership the rules-relevant relation, and it was
+        static-only only because no *one-shot* had yet printed the word. Majestic
+        Genesis prints it -- "the greatest mana value of a commander **you own**
+        on the battlefield or in the command zone" -- so it crossed. Both lists
+        mean the same thing by it and neither defaults it the same way: a static
+        filter defaults `controller: "you"` and `owner` suppresses that default,
+        where a selector defaults nothing and `owner` simply filters.
 
         `attached_to_host` -- the host's *other* attachments, Brass Knuckles'
-        "two or more Equipment are attached to it" -- is static-only for
-        `owner`'s duller reason rather than the relationship one: every printed
+        "two or more Equipment are attached to it" -- is the last one holding
+        `owner`'s old position rather than the relationship one: every printed
         card that asks the question asks it continuously, so no one-shot has
-        needed it yet. It moves to both lists the day one does, and `attached`
-        is the precedent for how cheap that is.
+        needed it yet. It moves to both lists the day one does, and the two keys
+        above are the precedent for how cheap that is.
         """
         from automtg.cards.authoring.packet import reference
 
@@ -534,10 +542,10 @@ class TestThePacketCarriesTheWholeVocabulary:
         assert static - selector == {
             "paired",
             "paired_with_source",
-            "owner",
             "attached_to_host",
         }
         assert "attached" in static and "attached" in selector
+        assert "owner" in static and "owner" in selector
         assert len(selector - static) > 10, "the selector language is the larger one"
 
     def test_the_static_condition_vocabulary_is_shown(self):

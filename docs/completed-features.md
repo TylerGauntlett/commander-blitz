@@ -13895,3 +13895,82 @@ misspelled key.
 
 Miirym, Sentinel Wyrm is authored in this change —
 `data/authoring/answers/miirym_sentinel_wyrm.json` — and its gap record retired.
+
+## `owner` — "a commander you own on the battlefield or in the command zone"
+
+### Overview
+
+Majestic Genesis: *"Reveal the top X cards of your library, where X is the
+greatest mana value of a commander **you own** on the battlefield or in the
+command zone."*
+
+Every other clause of that sentence already shipped — `extreme_value` reads one
+greatest mana value off a pool, `union` assembles the pool from two zones, and
+`zone: "command"` with `player: "you"` says the command-zone half exactly. The
+battlefield half could not be written at all: `SELECTOR_KEYS` had no `owner`, so
+writing one was a load error rather than a silent miss.
+
+The word was not new to the engine, only to this language. `STATIC_FILTER_KEYS`
+has carried it since Visions of Glory, and `costs._reduction_matches` has read
+it since — and Visions of Glory spells this *identical printed clause*,
+`{"greatest_mana_value": {"is_commander": true, "owner": "you", "zone":
+["battlefield", "command"]}}`, in a flashback `mana_reduction`. So the gap was
+an asymmetry: the cost side could say the sentence, the effect side could not,
+and two cards in the same deck printing the same words would have had to mean
+two different things.
+
+### Why `controller` is not it
+
+903.3 defines a commander by **ownership**, and this engine implements
+`gain_control`, so the two words name genuinely different sets on a board the
+game can reach. `controller: "you"` is wrong in both directions at once:
+
+- it **misses** your own commander while an opponent holds it — the printed card
+  still counts it;
+- it **counts** an opponent's commander you have taken — the printed card does
+  not.
+
+Either way X comes out a different number, and nothing on screen says so: a look
+six deep and a look four deep read identically. `player` cannot stand in either,
+and `validate_selector` says why — it refuses `player` on the battlefield
+because that zone list is shared, which is also precisely why it *does* say the
+command-zone half correctly.
+
+### The shape
+
+- **`matches`** reads `obj.owner` in the three spellings `controller` already
+  had beside it — `"you"`, `"opponent"`, and a player-spec mapping (plus
+  `enchanted_player`) — so there is one grammar for the two relations rather
+  than two.
+- **It is a filter and never a default.** This is the one place it parts company
+  with the static-side key of the same name: `characteristics._matches` defaults
+  `controller: "you"` and so `owner` there has to *suppress* that default, or a
+  defaulted control clause would silently re-impose the answer the card went out
+  of its way not to ask for. A selector defaults nothing, so the two keys
+  written together are a conjunction — `{"owner": "you", "controller":
+  "opponent"}` is one selector meaning "a permanent you own that an opponent
+  controls", which the static side cannot say at all.
+- **`_zone_owners` reads it too**, when no `controller` was written. In a zone
+  somebody owns the two words name the same seat — 400.3 puts a card in its
+  **owner's** hand, library and graveyard, and exile is kept per owner here for
+  the same reason — so without this the `"you"` default would have quietly
+  re-narrowed a selector that deliberately said `owner: "any"`, and a card
+  asking about every graveyard at the table would have read only its own. That
+  is the silent narrowing `player` is validated to prevent, arriving through the
+  other door.
+- **`validate_selector`** refuses any word it cannot answer, for the reason
+  `controller`'s typos are refused and with higher stakes: an unrecognised word
+  matches *everything*, so "a commander you own" would become "a commander" and
+  X would be read off an opponent's board.
+
+### Guarded by
+
+`tests/unit/test_owner_selector.py`: a stolen commander still one you own and
+the `controller` spelling saying the opposite on the same board; the mirror, a
+commander you stole not being one you own; the two keys composing as a
+conjunction and the unstolen board failing that same conjunction; the number the
+card actually reads — `extreme_value` over the union — coming out 5 rather than
+0 while the commander is stolen, and both spellings agreeing when nothing has
+been stolen; `owner: "any"` walking every graveyard while `owner: "you"` walks
+one, and an explicit `controller` still winning where both are written; and the
+loader refusing four unanswerable words.

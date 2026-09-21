@@ -40,6 +40,28 @@ SELECTOR_KEYS = frozenset(
     {
         "zone",
         "controller",
+        #: "A commander **you own** on the battlefield or in the command zone"
+        #: (Majestic Genesis).  Ownership rather than control, read off
+        #: ``GameObject.owner`` -- written once when the object is made and left
+        #: alone by ``change_control``, so it is the one relation on a permanent
+        #: that a control-changing effect cannot move.
+        #:
+        #: `controller` is the near miss and is a genuinely different set in a
+        #: game this engine can reach, because `gain_control` is implemented:
+        #: 903.3 defines a commander by *ownership*, so `controller: "you"`
+        #: misses your own commander while an opponent holds it and counts an
+        #: opponent's commander you have stolen.  Either way the number a card
+        #: reads off the pool comes out wrong, and silently.
+        #:
+        #: The same word, in the same sense, that `STATIC_FILTER_KEYS` and the
+        #: cost-reduction filter have read since Visions of Glory -- which
+        #: spells this exact printed clause in a `mana_reduction`.  One
+        #: difference, and it is because the two languages default differently:
+        #: a static's filter defaults `controller: "you"` and so `owner` has to
+        #: *suppress* that default, while an effect-side selector defaults
+        #: nothing, so `owner` simply filters and composes with a `controller`
+        #: written beside it.
+        "owner",
         #: Whose hand/graveyard/library/exile to walk, as a full player spec
         #: rather than the three words ``controller`` allows -- so
         #: ``{"target": "t1"}`` scopes a zone to the one player a trigger
@@ -495,7 +517,18 @@ def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
     """
     if "player" in selector:
         return select_players(ctx, selector["player"])
-    controller = selector.get("controller", "you")
+    # `owner` stands in for `controller` when only it was written, because in a
+    # zone somebody owns the two words name the same seat: 400.3 sends a card to
+    # its **owner's** hand, library and graveyard, and exile is kept per owner
+    # here for the same reason. Without this the default below would quietly
+    # re-impose "you" on a selector that deliberately said `owner: "any"`, and a
+    # card asking about every graveyard at the table would read only its own --
+    # the silent narrowing `player` is validated to prevent, arriving through
+    # the other door.
+    if "controller" not in selector and (own := selector.get("owner")) is not None:
+        controller = own
+    else:
+        controller = selector.get("controller", "you")
     if controller == "you":
         return [ctx.controller]
     if controller == "opponent":
@@ -724,6 +757,27 @@ def matches(
     # else built a Signet.
     if (isinstance(controller, Mapping) or controller == "enchanted_player") and (
         obj.controller not in select_players(ctx, controller)
+    ):
+        return False
+
+    # The ownership twin of the three clauses above, spelled the same way and
+    # read off `obj.owner` instead. "A commander **you own** on the battlefield
+    # or in the command zone" -- Majestic Genesis, and every other "you own"
+    # clause with it.
+    #
+    # It is a filter and never a default: nothing is imposed when the key is
+    # absent, so `owner` written beside `controller` is a conjunction ("a
+    # permanent you own that an opponent controls" is sayable) and `owner`
+    # written alone asks about ownership and nothing else. That is the whole
+    # difference from the static side, where `characteristics._matches` has to
+    # switch a defaulted `controller: "you"` off to say the same sentence.
+    owner = selector.get("owner")
+    if owner == "you" and obj.owner != ctx.controller:
+        return False
+    if owner == "opponent" and obj.owner == ctx.controller:
+        return False
+    if (isinstance(owner, Mapping) or owner == "enchanted_player") and (
+        obj.owner not in select_players(ctx, owner)
     ):
         return False
 
@@ -1322,6 +1376,17 @@ def validate_selector(selector: Any, where: str) -> None:
         and controller not in ("you", "opponent", "any", "enchanted_player")
     ):
         raise DslError(f"{where}: unknown controller clause {controller!r}")
+    owner = selector.get("owner")
+    if (
+        owner is not None
+        and not isinstance(owner, Mapping)
+        and owner not in ("you", "opponent", "any", "enchanted_player")
+    ):
+        # Refused for the reason `controller` is, and the stakes are higher: an
+        # unrecognised word here matches *everything*, so a selector meaning "a
+        # commander you own" would quietly mean "a commander", and the number a
+        # card reads off that pool would be an opponent's.
+        raise DslError(f"{where}: unknown owner clause {owner!r}")
     if "player" in selector:
         # Only zones that *belong* to a player have an owner to choose. On the
         # battlefield and the stack the list is shared, so `player` would be

@@ -304,6 +304,7 @@ Every key is optional; all present keys must match.
   "zone": "battlefield",          // library|hand|battlefield|graveyard|exile|stack|command
   "controller": "you",            // you|opponent|any, or a player spec: {"target": "t1"} is
                                   // "…THEY control" / "…THOSE OPPONENTS control" -- every seat t1 chose
+  "owner": "you",                 // "a commander you OWN" -- same words as `controller`, see below
   "types": ["Creature"],          // all must be present
   "any_types": ["Artifact", "Enchantment"],   // any one is enough -- "artifact or enchantment"
   "any_of": [{"self_only": true}, {"is_commander": true}],  // a union of whole selectors
@@ -337,6 +338,38 @@ Every key is optional; all present keys must match.
   "name": "Forest"
 }
 ```
+
+`owner` is `controller`'s ownership twin — the same four words (`you`,
+`opponent`, `any`, `enchanted_player`) and the same player-spec mapping, read
+off `GameObject.owner` instead. Ownership is written once, when the object is
+made, and `change_control` leaves it alone, so it is the one relation on a
+permanent that gaining control cannot move.
+
+```jsonc
+{ "op": "look_at_top",
+  "amount": { "extreme_value": { "of": "mana_value", "pick": "greatest",
+              "objects": { "union": [
+                { "zone": "battlefield", "is_commander": true, "owner": "you" },
+                { "zone": "command", "player": "you", "is_commander": true } ] } } },
+  "objects": { "count": "any", "not_types": ["Instant", "Sorcery"] },
+  "destination": "battlefield", "rest_to_bottom": true }
+```
+
+That is Majestic Genesis — "where X is the greatest mana value of a commander
+**you own** on the battlefield or in the command zone". Rule 903.3 makes
+ownership the relation on a commander, and `controller` is wrong in both
+directions on a board where `gain_control` has been cast: it misses your own
+commander while an opponent holds it and counts an opponent's commander you have
+taken. X then comes out a different number, silently — a look six deep and a
+look four deep look the same on screen.
+
+Unlike the static-ability filter of the same name, this one is **only** a filter:
+a static defaults `controller: "you"` and so `owner` there switches that default
+off, while a selector defaults nothing, so writing both is a conjunction — "a
+permanent you own that an opponent controls" is one selector. In a zone somebody
+owns (hand, library, graveyard, exile) `owner` also says *whose list to walk*,
+because 400.3 puts a card in its owner's, and otherwise `owner: "any"` on a
+graveyard would default back to reading only yours.
 
 `extreme` is bolster's "a creature with the **least toughness** among creatures
 you control", and it is the one clause that is not a test on a candidate. Every
