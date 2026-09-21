@@ -15,7 +15,14 @@ from ..primitives import (
     create_token,
     sacrifice_forbidden,
 )
-from ..zones import destroy, exile, move_object, offer_enters_replacement, sacrifice
+from ..zones import (
+    destroy,
+    exile,
+    move_object,
+    offer_enters_replacement,
+    offer_riot_choice,
+    sacrifice,
+)
 from ..zones import snapshot as capture_snapshot
 from . import register
 from .board_helpers import (
@@ -501,6 +508,10 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # `zones.offer_enters_replacement`; `move_object` treats an unasked
         # arrival as unpaid, so this is what buys the permanent its entry.
         yield from offer_enters_replacement(ctx.state, oid, controller)
+        # And riot, on the generic cheat-into-play route: "nontoken creatures
+        # you control have riot" is about any arrival, not only a cast one --
+        # see `zones.offer_riot_choice`.
+        yield from offer_riot_choice(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.

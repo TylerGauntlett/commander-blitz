@@ -931,6 +931,7 @@ def _place_after_resolution(
             offer_enters_copy,
             offer_enters_costs,
             offer_enters_replacement,
+            offer_riot_choice,
         )
 
         # "If this artifact would enter, you may discard a land card instead."
@@ -939,6 +940,10 @@ def _place_after_resolution(
         yield from offer_enters_replacement(state, obj.oid, controller)
         yield from offer_enters_costs(state, obj.oid, controller)
         yield from offer_enters_copy(state, obj.oid, controller)
+        # "…with your choice of a +1/+1 counter or haste." The cast line, which
+        # is where most riot creatures arrive. Last of the four: the copy offer
+        # above decides what is arriving, and riot asks about a creature.
+        yield from offer_riot_choice(state, obj.oid, controller)
     move_object(state, obj.oid, destination, to_player=obj.owner, cause="resolved")
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:

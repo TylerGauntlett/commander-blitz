@@ -38,6 +38,7 @@ from .zones import (
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
+    offer_riot_choice,
 )
 from .zones import sacrifice as sacrifice_object
 
@@ -291,6 +292,11 @@ class Game:
         yield from offer_enters_replacement(state, oid, pid)
         yield from offer_enters_costs(state, oid, pid)
         yield from offer_enters_copy(state, oid, pid)
+        # Riot, on a land drop: Dryad Arbor is a land *creature*, so a land put
+        # onto the battlefield under a Rhythm of the Wild really does arrive
+        # with the choice. Last of the four, because the copy above decides
+        # what the arriving permanent is and riot asks about a creature.
+        yield from offer_riot_choice(state, oid, pid)
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
         triggers.fire(
             state,

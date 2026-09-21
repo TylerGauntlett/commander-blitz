@@ -4871,6 +4871,24 @@ the battlefield. The `spells_cant_be_countered` static is somebody else saying i
 about a *class* of spell, so it would protect every creature spell of the chosen
 type on the table, whoever cast it and whatever paid for it.
 
+That static takes an optional `affects_spells`, the same printed-face filter
+`spell_cost_reduction` matches a card in hand with, plus the one key that is not
+a printed characteristic:
+
+```jsonc
+// Rhythm of the Wild's first line
+{ "kind": "static", "text": "Creature spells you control can't be countered.",
+  "effect": "spells_cant_be_countered",
+  "affects_spells": { "types": ["Creature"], "controller": "you" } }
+```
+
+`controller` is read against the **static's** controller, exactly as it is on a
+cost reduction. Omitted, it means *any* controller — the opposite default to
+`spell_cost_reduction`'s, and deliberately so: Lier, Disciple of the Drowned
+prints no filter at all and covers the whole table, which is the card's whole
+reputation, so narrowing the type must not silently narrow the seat too. The
+card writes the word when it means it.
+
 The printed sentence is narrower than both: this spell, because of this mana. So
 the rider rides the **pip** — `mana.Pip` carries it, `ManaPool.spend` reports
 whether any consumed pip had it, `costs.pay_mana` writes that onto the spell's
@@ -11448,6 +11466,53 @@ Three of them are worth stating individually, because each is a distinct shape:
 `horsemanship` is the plain one: the blocker must carry the same keyword. It is
 one-directional, unlike shadow — a creature with horsemanship may block
 anything.
+
+### Riot
+
+    Zegana, Utopian Speaker — "Riot."
+    Rhythm of the Wild — "Nontoken creatures you control have riot."
+
+```jsonc
+"keywords": ["riot"]                                   // printed on the creature
+
+{ "kind": "static", "text": "Nontoken creatures you control have riot.",
+  "effect": "grant_keyword", "keywords": ["riot"],
+  "affects": { "types": ["Creature"], "controller": "you", "is_token": false } }
+```
+
+Both spellings, one mechanism. Riot is the first keyword whose whole content is
+a **614.1c replacement**: "this creature enters with your choice of a +1/+1
+counter or haste", applied *as* the permanent arrives.
+
+**Not a `self_enters` trigger running `choose_mode`.** That is the approximation
+the rules forbid, and it is a different card in three ways at once. The creature
+really arrives at its printed size first — so a printed 0/0 is binned by
+state-based actions before the trigger resolves; every other enters trigger reads
+a size riot says was never on the board; and an opponent holds priority with a
+creature that should not have been seen without its counter. No trigger ordering
+fixes any of them.
+
+**Not a `ReplacementModel` event either**, which is the more interesting half.
+Every `self_enters*` event is printed on the permanent it modifies, and the
+printing that matters here is one permanent handing riot to *other* creatures.
+A replacement is not grantable; a keyword is. So riot is a `Keyword`, and
+`grant_keyword` — which already existed — is the whole of the granted form.
+
+The question is asked by `zones.offer_riot_choice`, called from every arrival
+path that can stop for a decision: the cast line, a land drop (Dryad Arbor is a
+land creature), `put_onto_battlefield`, `return_from_graveyard` and the
+exile-and-return blink. Asking a moment before `move_object` is not an
+approximation — 614 applies during the zone change and nobody receives priority
+in between — and it is the same window `offer_enters_costs` and
+`offer_enters_replacement` already use, for the same reason: `move_object` is
+not a generator.
+
+The haste half is `grant_keyword`'s `duration: "permanent"`, stored in
+`granted_keywords`. An until-end-of-turn haste would do the same thing today and
+nothing ever after, leaving the two branches indistinguishable one turn later.
+
+A **token** is asked nothing. `create_token` is not a generator and could not
+stop to ask, and the printed card this unblocks says nontoken anyway.
 
 ## Protection
 

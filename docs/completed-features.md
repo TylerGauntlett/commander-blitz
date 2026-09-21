@@ -15229,3 +15229,102 @@ own read zero too; creatures filtered out before the tally rather than after it;
 `t_gc_mine` showing a `you` filter collapse to a plain `count`; and five
 load-time refusals — no filter, two arithmetic heads at once, an unknown filter
 key, and a misspelled type.
+
+## Riot — a modal replacement one permanent can hand to another — 702.113 / 614.1c
+
+### Overview
+
+Rhythm of the Wild: *"Creature spells you control can't be countered. **Nontoken
+creatures you control have riot.** (They enter with your choice of a +1/+1
+counter or haste.)"*
+
+Riot is the 36th `Keyword`, and the first whose whole content is a replacement
+effect. "This creature enters with your choice of a +1/+1 counter or haste" is
+applied **as** the permanent arrives (614.1c), so the creature is never on the
+battlefield at its printed size.
+
+### Tier: a keyword, plus one offer site the arrival paths already had
+
+No new op, no new decision kind, no new event, and nothing in the server or the
+frontend. `Keyword.RIOT`, `GameObject.riot_choice`,
+`characteristics.keyword_as_it_enters`, `zones.offer_riot_choice` and four lines
+in `_enter_battlefield`. The choice is `ask_mode` over two labels — the existing
+`CHOOSE_MODE` the authoring verifier already answers, so no auto-answer table
+needed a row.
+
+### Why it is not a `self_enters` trigger
+
+The approximation is a trigger running `choose_mode` over `add_counters` and
+`grant_keyword`, and it is a different card three times over, in ways no trigger
+ordering can repair:
+
+* a printed 0/0 with riot arrives as a 0/0 and is binned by state-based actions
+  (704.5f) before the trigger ever resolves;
+* every other enters trigger reads a size riot says was never on the board —
+  a watcher on "gain life equal to its power" answers 2 instead of 3;
+* an opponent holds priority with a creature that should never have been seen
+  without its counter.
+
+### Why it is not a `ReplacementModel` event
+
+The more interesting half, and the reason riot is a **keyword** at all. Every
+one of the six `self_enters*` events is printed on the permanent it modifies,
+and `ReplacementModel` is not modal — `self_enters_with_counters` takes a
+`counter` and an `amount` and asks nobody anything. Riot's commonest printing is
+one permanent handing the replacement to *other* creatures, and a replacement is
+not grantable. A keyword is: `grant_keyword` already existed, `duration:
+"permanent"` was already riot's haste, and writing riot as a keyword is what made
+the granted form sayable without inventing a second mechanism.
+
+### Where it is asked
+
+`zones.offer_riot_choice`, called by every arrival path that can stop for a
+decision — `game._play_land` (Dryad Arbor is a land creature),
+`stack._place_after_resolution`, `op_put_onto_battlefield`,
+`op_return_from_graveyard` and `op_return_to_origin` — which is
+`offer_enters_replacement`'s list and its argument: "creatures you control
+**have riot**" is a fact about the creatures, not about the cast line. Asking a
+moment before `move_object` is not an approximation, because 614 applies during
+the zone change and nobody receives priority in between.
+
+`keyword_as_it_enters` answers "would this arrival have riot?" for an object the
+layer pipeline cannot see yet: the printed keyword off the arriving face, or a
+battlefield `grant_keyword` static whose `affects` describes it, matched through
+`_matches_wherever` — `_matches` minus the battlefield gate. A **token** is asked
+nothing: `create_token` is not a generator, and the printed card says nontoken.
+
+### The other line, which was not as expressible as the gap record thought
+
+`spells_cant_be_countered` has read an optional `affects_spells` since it was
+written, and the loader refused to let any card carry one — so "Creature spells
+you control can't be countered" was unsayable and every printing of the sentence
+looked like Lier's symmetrical version. Two small fixes: the validator now
+accepts the filter on this effect against `SPELL_FILTER_KEYS`, and
+`_shielded_by_a_static` reads its `controller` key against the static's own
+controller, the way `player_statics.cost_reduction` already read the same word.
+
+Omitted, `controller` means **any** controller — the opposite default to
+`spell_cost_reduction`'s, and deliberately: Lier, Disciple of the Drowned prints
+no filter and covers the whole table, so narrowing the type must not silently
+narrow the seat.
+
+### Cards unblocked
+
+One authored here — **Rhythm of the Wild**, six gates green — and the printed
+riot cycle (Zegana, Utopian Speaker; Rhythmic Gnarlid; Gruul Spellbreaker) is now
+a bare `keywords: ["riot"]` for the next `/author-cards` run. No template was
+added: "Riot" prints as a bare keyword line that `lift_keywords` already reads,
+and the granted sentence is one static among many shapes of "creatures you
+control have X".
+
+### Guarded by
+
+`tests/unit/test_riot.py`, over `tests/data/riot.cards.json`. Both branches
+(the counter's size and its lack of haste; the haste's attack the turn it
+arrived, and its surviving cleanup); the 614.1c pair that no trigger passes — a
+printed 0/0 that lives on the counter and dies on the haste, and a watcher
+reading 3 rather than 2; the granted form through a Rhythm-shaped static,
+including an opponent's creature not being asked and a token getting neither
+half; a reanimated arrival on both branches; two arrivals answering differently;
+and the control at every step — a creature with no riot, and the same creature
+with the granter gone.

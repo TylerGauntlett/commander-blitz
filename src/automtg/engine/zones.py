@@ -631,6 +631,72 @@ def offer_enters_copy(state: GameState, oid: int, controller: int):
         return
 
 
+#: Riot's two halves, in the order the reminder text prints them.
+RIOT_COUNTER, RIOT_HASTE = "counter", "haste"
+
+
+def offer_riot_choice(state: GameState, oid: int, controller: int):
+    """Riot (702.113): "with your choice of a +1/+1 counter or haste."
+
+    Rhythm of the Wild's "nontoken creatures you control have riot", and the
+    printed cycle that carries the word itself. Asked here, beside
+    `offer_enters_costs`, `offer_enters_copy` and `offer_enters_replacement`,
+    and for their stated reason: `move_object` is not a generator and cannot
+    stop for a decision, and making it one would put a suspend point inside
+    every zone change in the engine.
+
+    Asking a moment early is not an approximation, and it is the whole of the
+    keyword. 614.1c applies the replacement **during** the zone change and
+    nobody receives priority in between, so there is no window in which the
+    creature exists with the question unanswered -- which is exactly what a
+    `self_enters` trigger running `choose_mode` over `add_counters` and
+    `grant_keyword` could not promise. Written that way the creature arrives at
+    its printed size first: a 0/0 that is only alive because of the counter is
+    binned by state-based actions before the trigger resolves, every other
+    enters trigger reads a size riot says was never on the board, and an
+    opponent holds priority with a creature that should never have been seen
+    without its counter.
+
+    **Per creature, and the controller's.** Two riot creatures entering
+    together are two questions, because the choice is part of each arrival
+    rather than a mode of the effect that made them.
+
+    The answer is left on `obj.riot_choice`, which `reset_permanent_state`
+    deliberately does not clear and `_enter_battlefield` reads and clears as
+    the permanent arrives. An arrival that reached `move_object` without being
+    asked -- a token, whose creation is not a generator -- records no choice and
+    gets neither half, which is the printed card this unblocks anyway: Rhythm of
+    the Wild says **nontoken**.
+    """
+    from .characteristics import keyword_as_it_enters
+    from .effects.context import ask_mode
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    if not keyword_as_it_enters(state, oid, Keyword.RIOT.value):
+        return
+    card = state.card_of(obj)
+    # "…**creatures** you control have riot." Riot on a noncreature permanent is
+    # a keyword with nothing to do: a +1/+1 counter on an enchantment changes no
+    # characteristic anything reads, and haste is a fact about attacking and
+    # tapping a *creature*. Read off the printed face, because the object is not
+    # a permanent yet and the layer pipeline has nothing to say about it -- the
+    # same face `keyword_as_it_enters` matched the granting static against.
+    if "Creature" not in card.types:
+        return
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    chosen = yield from ask_mode(
+        ctx,
+        f"{card.name} enters with a +1/+1 counter, or with haste?",
+        ["A +1/+1 counter", "Haste"],
+        controller,
+    )
+    obj.riot_choice = RIOT_HASTE if chosen and chosen[0] == 1 else RIOT_COUNTER
+
+
 def _enter_battlefield(
     state: GameState,
     obj: GameObject,
@@ -767,6 +833,25 @@ def _enter_battlefield(
                     str(replacement.get("counter", "+1/+1")),
                     evaluate_value(ctx, replacement.get("amount", 1)),
                 )
+
+    # Riot (702.113), applied in the slot enters-with-counters occupies and for
+    # its reason: 614.1c, so the creature is never on the battlefield without
+    # whichever half its controller picked. The question was asked a moment ago,
+    # just before the move, by `offer_riot_choice`.
+    #
+    # `granted_keywords` rather than an `until_eot` entry, which is the whole of
+    # "or with haste": an until-end-of-turn haste on a creature that entered
+    # this turn does the same thing today and nothing ever after, so from the
+    # next turn a riot creature that took haste would be indistinguishable from
+    # one that took the counter. `reset_permanent_state` emptied that set a few
+    # lines ago, on this very move, so the grant is this arrival's and no
+    # earlier one's.
+    riot_choice = obj.riot_choice
+    obj.riot_choice = None
+    if riot_choice == RIOT_HASTE:
+        obj.granted_keywords.add(Keyword.HASTE.value)
+    elif riot_choice == RIOT_COUNTER:
+        obj.add_counter("+1/+1", 1)
 
     state.bump_chars()
     fire(

@@ -10,7 +10,7 @@ from ..enums import Zone
 from ..events import EventType
 from ..objects import PLUS_ONE, playable_duration_of
 from ..primitives import add_counters, mill_cards, shuffle_library
-from ..zones import move_object, offer_enters_replacement
+from ..zones import move_object, offer_enters_replacement, offer_riot_choice
 from . import register
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .selectors import (
@@ -894,6 +894,10 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
             # and "if this would enter" is asked of it afresh. See
             # `zones.offer_enters_replacement`.
             yield from offer_enters_replacement(ctx.state, oid, obj.controller)
+            # And riot is asked afresh too, for the same reason: what comes
+            # back is a new object, so a blinked creature under a Rhythm of the
+            # Wild picks again.
+            yield from offer_riot_choice(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -974,6 +978,10 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             # reanimated Mox Diamond enter for free. See
             # `zones.offer_enters_replacement`.
             yield from offer_enters_replacement(ctx.state, oid, obj.controller)
+            # "Nontoken creatures you control **have riot**" is about any
+            # arrival, so a reanimated creature is asked exactly as a cast one
+            # is -- see `zones.offer_riot_choice`.
+            yield from offer_riot_choice(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,

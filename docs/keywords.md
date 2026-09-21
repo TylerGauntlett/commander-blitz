@@ -1,6 +1,6 @@
 # Keywords, and where each one lands
 
-The engine implements 30 keywords. Every one arrived the same way: a card in the
+The engine implements 36 keywords. Every one arrived the same way: a card in the
 authoring queue could not be expressed, a worker wrote a gap record,
 `/extend-dsl` built it. That loop works, and [card-authoring.md](card-authoring.md)
 is the argument for it.
@@ -302,7 +302,7 @@ This is the long tail, and where the build order comes from.
 | Renown | free | `deals_combat_damage_to_player` trigger, gated on `not has_flag`, then `add_counters` and `set_flag` | `set_flag` |
 | Replicate | shipped | `additional_cost` with both modifiers -- one cast line per number of times paid | `additional_cost` |
 | Retrace | shipped | card-level field; casting from the graveyard, discarding a land | `retrace` |
-| Riot | free | `self_enters` + `choose_mode`; the haste half needs `grant_keyword` with `duration: "permanent"` | — |
+| Riot | shipped | `Keyword`, read by `zones.offer_riot_choice` a moment before the move: a 614.1c replacement, not a `self_enters` trigger, so the creature is never seen at its printed size. A `Keyword` rather than a `ReplacementModel` event because the printing that matters -- "nontoken creatures you control **have riot**" -- grants it, and a replacement is not grantable | `riot` |
 | Ripple | shipped | the `ripple` op -- cascade's shape at a fixed depth, matched on the source's own name | `ripple` |
 | Scavenge | free | activated from the graveyard with an exile cost, then `add_counters` | — |
 | Shadow | shipped | `Keyword`, compared **symmetrically** in `combat.can_block` — it restricts blocking as well as being blocked | `shadow` |

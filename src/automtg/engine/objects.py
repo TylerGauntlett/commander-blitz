@@ -262,6 +262,25 @@ class GameObject:
     #: Survives `reset_permanent_state` for `enters_cost_paid`'s reason -- that
     #: reset runs during the very move this answer has to be read in.
     enters_replacement_paid: bool = False
+    #: Riot (702.113): which half of "a +1/+1 counter or haste" this arrival's
+    #: controller chose, ``"counter"`` or ``"haste"``.  Recorded by
+    #: `zones.offer_riot_choice` just before the move and read -- and cleared --
+    #: by `_enter_battlefield`, beside `enters_cost_paid` and `enters_copy_of`
+    #: and for their reason: the answer belongs to *this* arrival, and a
+    #: permanent that leaves and comes back is a new object (400.7) whose
+    #: controller has not been asked anything.
+    #:
+    #: A field rather than a counter placed at the offer site, because 614.1c is
+    #: the whole point of the keyword: the creature is never on the battlefield
+    #: at its printed size, so the counter has to land inside the arrival, in
+    #: `_enter_battlefield`, before the ENTERS_BATTLEFIELD event goes out.
+    #: ``None`` is "riot never applied here", which is also what an arrival on a
+    #: route that cannot stop to ask records -- a token, whose creation is not a
+    #: generator.
+    #:
+    #: Survives `reset_permanent_state` for `enters_cost_paid`'s reason: that
+    #: reset runs during the very move this answer has to be read in.
+    riot_choice: str | None = None
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.

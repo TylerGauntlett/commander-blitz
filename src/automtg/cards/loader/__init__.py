@@ -2520,6 +2520,30 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"of nothing is not a card"
             )
         _validate_static_value(model.amount, f"{where}.amount")
+    elif model.effect == "spells_cant_be_countered":
+        # "**Creature** spells **you control** can't be countered" -- Rhythm of
+        # the Wild, Vexing Shusher, Cavern of Souls' named half. The narrowed
+        # form of Lier's symmetrical line, and `_shielded_by_a_static` has read
+        # this filter all along; only this validator refused to let a card write
+        # one, which made every narrowed printing of the sentence unsayable and
+        # the whole family look like Lier's.
+        #
+        # Optional, because Lier really does print no filter: "spells can't be
+        # countered", everyone's, which is the card's whole reputation. An
+        # omitted filter is therefore *wider* than any written one, not a
+        # defaulted narrow one.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: spells_cant_be_countered filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is not None:
+            unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.affects_spells: a spell has a printed face and a "
+                    f"caster and no board state; unsupported keys {sorted(unknown)}"
+                )
     elif model.affects_spells is not None:
         raise DslError(
             f"{where}: 'affects_spells' only means anything on a "

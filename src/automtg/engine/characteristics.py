@@ -1577,6 +1577,31 @@ def _matches(
         return False
     if not obj.on_battlefield:
         return False
+    return _matches_wherever(state, obj, source, selector)
+
+
+def _matches_wherever(
+    state: GameState,
+    obj: GameObject,
+    source: GameObject,
+    selector: Mapping[str, Any],
+) -> bool:
+    """`_matches` without the battlefield gate -- for an object that is *arriving*.
+
+    Split off rather than given a flag, because the gate is not a detail of the
+    match: every caller in the layer pipeline walks `state.battlefield` and so
+    could never see anything else, and the one caller that needs this is asking
+    a different question -- "would this static describe the permanent that is
+    about to exist?" -- a moment before the zone change makes it answerable the
+    ordinary way.  `keyword_as_it_enters` is that caller and says why.
+
+    The board-state clauses below (`tapped`, `attacking`, `entered_this_turn`)
+    read a permanent that is not one yet, so they answer with the arrival's
+    blank slate.  That is right for a creature on its way in -- it is untapped,
+    unblocking and has entered nothing -- and it is why this is not a public
+    door onto the filter language: it is exact only for the questions asked
+    *during* an arrival.
+    """
     selector = resolve_chosen_colors(resolve_chosen_subtypes(selector, source), source)
     card = state.card_of(obj)
 
@@ -1728,6 +1753,56 @@ def is_land(state: GameState, oid: int) -> bool:
 
 def has_keyword(state: GameState, oid: int, keyword: str) -> bool:
     return keyword in chars(state, oid).keywords
+
+
+def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
+    """Would the permanent now *arriving* have ``keyword`` once it is there?
+
+    Riot (702.113) is the only caller and the reason this exists. `chars` cannot
+    answer it: the object is still on the stack (or in a graveyard, or in a
+    hand), so the layer pipeline sees a card rather than a permanent and no
+    battlefield static reaches it. Waiting until it *is* a permanent is not an
+    option either -- by then `zones._enter_battlefield` has run, and the whole
+    content of riot is that the choice was made **as** the creature entered.
+
+    So the two halves of "has riot" are asked here, a moment before the move:
+
+    * the **printed** keyword, off the face that is actually arriving --
+      Zegana, Utopian Speaker and the rest of the cycle; and
+    * a `grant_keyword` static on the battlefield whose `affects` describes the
+      arriving object -- Rhythm of the Wild's "nontoken creatures you control
+      have riot", which is riot's commonest printing and the reason it had to
+      be a grantable keyword rather than a replacement.
+
+    The granters are read through `_battlefield_statics`, so a granter that has
+    lost its abilities, or whose own `condition` is unmet, grants nothing --
+    the same walk every layer uses. What is *matched* goes through
+    `_matches_wherever`, which is `_matches` minus the battlefield gate the
+    arriving object cannot pass yet.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    # 707.2: a permanent arriving face down has no abilities at all, so it has
+    # no printed riot -- and nothing on the board can see a keyword on it
+    # either. The same exemption `move_object` makes for Mox Diamond, written
+    # the same way, because `face_down` is only set after the move.
+    if obj.pending_face_down:
+        return False
+    if keyword in state.card_of(obj).keywords:
+        return True
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "grant_keyword":
+            continue
+        if keyword not in static.get("keywords", ()):
+            continue
+        affects = static.get("affects")
+        # `None` matches nothing, exactly as `_matches` decides: the loader
+        # requires `affects` on a `grant_keyword`, so this is the same
+        # fail-closed answer rather than a filter that quietly means "everyone".
+        if affects is not None and _matches_wherever(state, obj, source_obj, affects):
+            return True
+    return False
 
 
 def prevented_damage(state: GameState, oid: int) -> int:

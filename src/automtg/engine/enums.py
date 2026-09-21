@@ -258,6 +258,25 @@ class Keyword(str, Enum):
     #: validated against the wrong rule the moment `validate_deck` grows an
     #: opinion about either.
     CHOOSE_A_BACKGROUND = "choose_a_background"
+    #: Riot (702.113): "this creature enters with your choice of a +1/+1
+    #: counter or haste."  The first keyword whose whole content is a **614.1c
+    #: replacement**, and it is a `Keyword` rather than a `ReplacementModel`
+    #: entry for the one reason that family could not carry it: every
+    #: `self_enters*` event is printed on the permanent it modifies, and riot's
+    #: commonest printing -- Rhythm of the Wild's "nontoken creatures you
+    #: control **have riot**" -- is one permanent handing the replacement to
+    #: other creatures.  A replacement is not grantable; a keyword is, through
+    #: the `grant_keyword` static that already exists, so writing riot as a
+    #: keyword is what makes the granted form sayable at all.
+    #:
+    #: It takes no parameter -- "a +1/+1 counter or haste" is the whole of the
+    #: quality -- which is the routing rule in `docs/keywords.md`, and it is
+    #: read at exactly one point: `zones.offer_riot_choice`, called by every
+    #: arrival path that can stop to ask.  Once the permanent is on the
+    #: battlefield the keyword is spent and reads as a characteristic only,
+    #: which is why it is **not** in `INERT_KEYWORDS`: it does something, and it
+    #: does it during a zone change rather than on the board.
+    RIOT = "riot"
 
 
 LANDWALK_SUBTYPE = {
