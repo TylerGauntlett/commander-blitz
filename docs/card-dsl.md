@@ -4676,6 +4676,69 @@ loosening lives in `costs.spendable_requirement` rather than in
 `costs.payable_mana`, because folding hybrid pips into generic inside the latter
 would hide them from the `phyrexian_count` that offers the life line.
 
+### `free_cast_permission` — Dracogenesis' standing free cast
+
+```jsonc
+{ "kind": "static", "effect": "free_cast_permission", "affects_player": "you",
+  "affects_spells": { "subtypes": ["Dragon"] } }
+```
+
+Dracogenesis: *"You may cast Dragon spells without paying their mana costs."*
+Omniscience with a filter on it. The third casting permission beside
+`cast_from_graveyard` and `cast_from_library_top`, and the only one that is
+about the **price**: those two say where a spell may be cast from and leave the
+cost alone.
+
+**It is not a discount, at any amount.** `spell_cost_reduction` is the nearest
+static and cannot express this sentence: `costs.cost_reduction` clamps every
+reduction to the *generic* part of a cost, so no reduction ever reaches a
+coloured pip. And even an unclamped one would be the wrong card, because 601.2b
+does not reduce anything — it replaces the payment. The difference shows on an
+**X spell**: a cost discounted to nothing still has an X to announce, while a
+spell cast this way has X = 0 (107.3b). So the line is priced on
+`casting.FREE_COST` — the same branch plot has always used — and `_ask_x`
+returns 0 without asking, because the cost it is handed has no X in it.
+
+**It is not `grant_playable` either.** That op's docstring says its cards "are
+paid for at their printed price", and it marks only the objects it can see as
+it resolves — the snapshot problem `grant_graveyard_cast` was added to fix. A
+Dragon drawn after the enchantment arrived would be invisible to it. This is a
+static, read afresh by `player_statics.free_cast_permission` every time
+`casting._cast_options` builds the lines for an object, so a card that reaches
+hand later is covered and the permission never spends itself.
+
+**The "you may" is a second line, not a replacement.** The free line is offered
+*beside* the printed one, the way the kicked line is offered beside the
+unkicked, and the printed one stays first:
+
+```
+Cast Ancient Copper Dragon
+Cast Ancient Copper Dragon (without paying its mana cost)
+```
+
+Which one was taken is recorded on the action — `Action.cast_free`, the one
+price-changing cast flag that had to join `Action.key()`, since the two lines
+share their source, their targets and their X and differ in nothing else. Plot
+did not need it: a plotted card is *only* castable free, so `Game._cast` could
+read `obj.playable_free` off the board and be sure. Here the same board offers
+both lines, so only the answer says which. That matters for anything that cares
+about mana actually spent — an Aetherflux Reservoir, a converge or sunburst
+count, a "spend mana on a creature spell" trigger — and for the player who
+simply wants to leave the Dragon in hand-priced range of a counterspell tax.
+
+`affects_spells` is required and is the same printed-face filter
+`spell_cost_reduction` and `cast_from_graveyard` take, read through
+`_matches_printed`: a card in hand has an owner and a face and no board state.
+Required, because an absent filter reads as *every spell* — the card would load
+clean, print "Dragon spells" and hand over Omniscience. `controller` inside the
+filter is honoured beside `affects_player`; they are two spellings of "whose
+spells", and a key this reader walked past would be a silent over-grant.
+
+`tests/unit/test_free_cast_permission.py` pins both halves: that the cast takes
+no mana at all and reads X as 0, and that the permission is optional and scoped
+— a non-Dragon is untouched, an opponent's Dragon is untouched, and the printed
+line survives beside the free one.
+
 ### Restricted mana
 
 ```jsonc
@@ -5276,7 +5339,7 @@ not. It is **not** interchangeable with a `not_types` complement —
 
 ## Player-wide statics
 
-Twenty-four static effects describe the *player* rather than a characteristic, so
+Twenty-five static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -5290,6 +5353,8 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "cast_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "free_cast_permission", "affects_player": "you",
+  "affects_spells": { "subtypes": ["Dragon"] } }
 { "kind": "static", "effect": "reveal_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "look_at_library_top", "affects_player": "you" }
 { "kind": "static", "effect": "double_land_triggers", "affects_player": "you" }

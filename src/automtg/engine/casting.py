@@ -19,6 +19,7 @@ from .costs import (
 from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
 from .player_statics import (
+    free_cast_permission,
     player_casts_as_though_flash,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
@@ -440,6 +441,26 @@ def _cast_options(
     out = _cast_variant(
         state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=free
     )
+    # "You may cast Dragon spells without paying their mana costs" --
+    # Dracogenesis. A standing board permission rather than a price on this
+    # card, so it is asked here, where every cast line for this object is
+    # built, and asked *afresh* each time: a Dragon drawn after the permanent
+    # arrived is covered, and the permission does not spend itself.
+    #
+    # An **extra line beside the printed one**, which is the whole of "you
+    # may": 601.2b's alternative is a choice, and a player who wants the mana
+    # spent -- for Aetherflux Reservoir, for a "spend mana on a creature spell"
+    # trigger, or to leave a smaller Dragon uncast -- must still be able to pay
+    # normally. A version that replaced the printed line would take that away
+    # silently. Listed second for the reason the unkicked line is listed first:
+    # the printed way to cast a card stays the default one.
+    #
+    # Skipped when the caller already priced this line free -- a plotted Dragon
+    # is offered free once, not twice.
+    if not free and free_cast_permission(state, pid, card):
+        out += _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=True
+        )
     if card.kicker is not None:
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=True
@@ -1236,6 +1257,13 @@ def _cast_variant(
             continue
 
         label_base = f"Cast {card.name}"
+        if free:
+            # The printed words, because this line is now offered *beside* the
+            # paid one -- Dracogenesis. The client groups its rows by
+            # `base_label`, so two identically-labelled lines for one card
+            # would collapse into one row and the player would never see the
+            # choice, which is the choice 601.2b gives them.
+            label_base += " (without paying its mana cost)"
         if kicked:
             # The card's own word: "kicked", "buyback".
             label_base += f" ({card.kicker_label})"
@@ -1305,6 +1333,7 @@ def _cast_variant(
                     overloaded=overloaded,
                     additional_times=additional_times,
                     additional_choice=additional_choice,
+                    cast_free=free,
                     from_library_top=from_library_top,
                     foretold=foretold,
                     face_down=face_down,

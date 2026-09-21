@@ -2473,6 +2473,29 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"'once during each of your turns' is the whole rate limit, and "
                 f"without it the permission is an unbounded engine"
             )
+    elif model.effect == "free_cast_permission":
+        # The same two guards `cast_from_graveyard` makes, and the stakes are
+        # higher here than on any other `affects_spells` static: a permission
+        # with no filter is Omniscience on every spell in the game rather than
+        # the printed "Dragon spells", and it would load clean and print the
+        # narrower line. There is no rate limit to require beside it -- the
+        # printed sentence has none, and the cards in hand are the limit.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: free_cast_permission filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: free_cast_permission needs 'affects_spells' naming which "
+                f"spells it frees -- without one it is Omniscience"
+            )
+        unknown = set(model.affects_spells) - SPELL_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a card in hand has a printed face "
+                f"and a caster and no board state; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "spell_cost_reduction":
         # `affects_spells`, not `affects`: this filter is matched against a card
         # in hand while legality prices it, so it may only read the printed

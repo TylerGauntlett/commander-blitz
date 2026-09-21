@@ -444,6 +444,12 @@ class AbilityModel(BaseModel):
     #: "Creature spells with flying you cast cost {1} less." Filters a *card
     #: being cast* by its printed face, which is a different question from
     #: `affects` (which picks out permanents on the battlefield).
+    #:
+    #: Also `cast_from_graveyard`'s "an **artifact** spell from your graveyard"
+    #: and `free_cast_permission`'s "**Dragon** spells" -- three statics that
+    #: name a card nobody can point at yet, and so may read only its printed
+    #: face. Required on all three: an absent filter reads as "every spell",
+    #: which on the last of them is Omniscience.
     affects_spells: dict[str, Any] | None = None
     #: `ability_cost_reduction`: which **activated abilities** the discount
     #: reaches, as a class. ``{"equip": true}`` is Strong Back's "equip

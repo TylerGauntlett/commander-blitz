@@ -385,6 +385,24 @@ narrower "spend mana as though it were mana of any **type**" (Mycosynth Lattice)
 is not a static -- `as_any_type` exists as a cost reading and as the
 `playable_any_type` permission only.
 
+**"You may cast ... without paying their mana costs"** as a *standing board
+permission* is the `free_cast_permission` player-wide static (Dracogenesis;
+Omniscience with the filter widened), read by
+`player_statics.free_cast_permission` every time `casting._cast_options` builds
+an object's cast lines. It prices the cast on `casting.FREE_COST` -- the branch
+plot has always used -- so no mana is paid at all, coloured pips included, and
+601.2b's X is 0 (107.3b) rather than a reduced cost's X still waiting to be
+announced. `spell_cost_reduction` is not a spelling of it at any amount, since
+every reduction is clamped to the generic part of a cost. The permission is
+**optional**: the free line is offered beside the printed one and which was
+taken is recorded on `Action.cast_free`, so a player who cares about mana
+actually spent can still pay. **Not modelled**: the filter is
+`affects_spells`, which reads a printed face only, so it has no `zone` key --
+Omniscience's "from your hand" would be granted from every zone the spell is
+already castable from, and a card printing that clause is a gap record rather
+than an approximation. And the permission alters no timing: a Dragon sorcery is
+still a sorcery.
+
 **Effects**
 Copying a permanent as anything but a token, **except** as it enters -- 614.1b is
 implemented as the `self_enters_as_copy` replacement (Masterwork of Ingenuity,

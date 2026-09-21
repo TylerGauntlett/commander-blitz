@@ -64,6 +64,18 @@ class Action:
     #: the two branches are two prices for the same spell and the player is
     #: choosing between them. `None` when the card has no modal cost.
     additional_choice: int | None = None
+    #: Cast **without paying its mana cost** (601.2b) -- a plotted card, or a
+    #: spell a `free_cast_permission` static reaches ("You may cast Dragon
+    #: spells without paying their mana costs").
+    #:
+    #: Part of the identity, and more sharply than `kicked` is: the free line
+    #: and the printed one are offered *side by side* for the same card with
+    #: the same targets and the same X, so they differ in this flag and in
+    #: nothing else. `Game._cast` reads it to price the cast, which is why it
+    #: could not stay a fact about the object the way plot's `playable_free`
+    #: is: a permission the player may decline has to be recorded in the
+    #: answer, not in the question.
+    cast_free: bool = False
     #: Which bullet of a **modal activated ability** this activation takes --
     #: Phoenix Down. Part of the action's identity for the reason `kicked` is:
     #: 601.2b chooses the mode before 601.2c declares its targets, so the two
@@ -209,6 +221,11 @@ class Action:
             self.phyrexian,
             -1 if self.emerge_oid is None else self.emerge_oid,
             -1 if self.mana_option is None else self.mana_option,
+            # The one price-changing flag that *must* be here: the free line
+            # and the printed line for one card share every other field, so
+            # without it the two are one key and a lookup answers with
+            # whichever came first.
+            self.cast_free,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -222,6 +239,7 @@ class Action:
             "kicked": self.kicked,
             "gift_to": self.gift_to,
             "evoked": self.evoked,
+            "cast_free": self.cast_free,
             "alternative": self.alternative,
             "pay_generic": self.pay_generic,
             "phyrexian": self.phyrexian,

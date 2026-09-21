@@ -1155,6 +1155,57 @@ def library_top_cast_permission(state: GameState, pid: int):
     return None
 
 
+def free_cast_permission(state: GameState, pid: int, card: CardDef) -> bool:
+    """May ``pid`` cast ``card`` right now **without paying its mana cost**?
+
+    "You may cast Dragon spells without paying their mana costs" --
+    Dracogenesis. Omniscience with a filter on it, and the third casting
+    permission beside `graveyard_cast_permissions` and
+    `library_top_cast_permission`: those two say *where* a spell may be cast
+    from and leave the price alone, and this one says nothing about the zone
+    and replaces the price entirely.
+
+    **Not a discount.** `spell_cost_reduction` is the nearest static and cannot
+    stand in for this at any amount: `costs.cost_reduction` clamps every
+    reduction to the *generic* part of a cost, so no reduction reaches a
+    coloured pip -- and 601.2b's "without paying its mana cost" is not a
+    reduction to zero in any case. The difference shows on an X spell, where a
+    discounted cost still has an X to announce and this one has X = 0 (107.3b).
+    So the caller prices the cast on `casting.FREE_COST` instead.
+
+    **Not a grant either.** `grant_playable`'s cards are "paid for at their
+    printed price", and it marks only the objects it can see as it resolves --
+    the snapshot problem `grant_graveyard_cast` exists to avoid. This is read
+    afresh every time the cast actions are built, so a Dragon drawn after the
+    permanent arrived is covered and the permission is repeatable within a
+    turn, both of which the printed sentence promises.
+
+    The filter reads the printed face and nothing else, for
+    `graveyard_cast_allows`' reason: a card in hand has an owner and a face and
+    no board state. ``controller`` inside it is honoured beside
+    ``affects_player`` rather than ignored -- they are two spellings of "whose
+    spells", and a key this walk read past would be a silent over-grant.
+    """
+    for source_obj, static in _active_player_statics(state, "free_cast_permission"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            # The loader requires one. Defaulting to `{}` here would match
+            # *every* spell, so a compile bug would hand the player Omniscience
+            # rather than nothing.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return True
+    return False
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 

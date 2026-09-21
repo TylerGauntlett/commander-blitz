@@ -405,13 +405,27 @@ class Game:
             # for free and then billed its printed cost, which `pay` refused
             # with no mana on the board: the cast simply did nothing.
             cost = ManaCost.parse("")
-        elif state.objects[oid].playable_free and state.objects[oid].playable_live(state.turn):
-            # Plot: "you may cast it as a sorcery on a later turn **without
-            # paying its mana cost**". Read off the same flag on the same card
-            # that `_cast_variant` priced the line with -- the argument the
-            # `playable_any_type` block below makes, and the bug the
-            # `from_library_top` branch above records: a line offered free and
-            # billed the printed cost is a cast that silently does nothing.
+        elif action.cast_free:
+            # "…without paying its mana cost" (601.2b). Plot's "you may cast it
+            # as a sorcery on a later turn without paying its mana cost", and
+            # Dracogenesis' standing permission over a whole class of spell.
+            # One branch, because 601.2b is one rule and the two cards differ
+            # only in what granted it.
+            #
+            # Read off the **action** rather than off the board, which is what
+            # changed when the permission became something a player may
+            # decline: plot's `obj.playable_free` was safe to re-read because a
+            # plotted card is *only* castable free, while the same board offers
+            # Dracogenesis' free line and the printed line at once. A re-read
+            # here would bill whichever the board happened to say, and a line
+            # offered free and billed the printed cost is a cast that silently
+            # does nothing -- the bug the `from_library_top` branch above
+            # records. `_cast_variant` stamps the flag on the line it priced,
+            # so the line offered is the line charged.
+            #
+            # X is 0 and is never asked, because this cost has no X in it to
+            # announce (107.3b) -- the reason this is `FREE_COST` and not a
+            # reduction to zero.
             cost = ManaCost.parse("")
         else:
             cost = card.mana_cost

@@ -14998,3 +14998,117 @@ price measured in both directions on one board: `chars` says 4 and the static
 says no, for an anthem and for a +1/+1 counter. `_base_pt` called directly
 against `chars` on a bare board, under an anthem, and on a face-down permanent.
 The toughness twin. And the load-time refusals of every near-miss shape.
+
+## `free_cast_permission` — Dracogenesis' "You may cast Dragon spells without paying their mana costs"
+
+Omniscience with a filter on it, and the first standing, board-wide permission
+to cast a *class* of spell for nothing. The third casting permission beside
+`cast_from_graveyard` and `cast_from_library_top`, and the only one that is
+about the **price**: those two widen the zones a spell may be cast from and
+leave the cost exactly as printed.
+
+### What was already there, and why none of it could say this sentence
+
+Three near misses, each wrong in a different direction.
+
+**`spell_cost_reduction`** is the nearest static and cannot be turned into this
+at any amount. `costs.cost_reduction` clamps every reduction to the *generic*
+part of a cost, so no reduction has ever reached a coloured pip — a `{4}{R}{R}`
+Dragon discounted by six still owes `{R}{R}`. And even an unclamped one would be
+the wrong card: 601.2b does not reduce a cost, it replaces the payment, and the
+comment beside the `FREE_COST` branch in `engine/casting.py` has recorded that
+since plot. The difference is visible on an `{X}` spell, where a cost discounted
+to nothing still stops to announce an X and this one does not (107.3b).
+
+**`grant_playable`** is the nearest *grant* and its docstring says the cards it
+marks "are paid for at their printed price". It also marks only the objects it
+can see as it resolves — the snapshot problem `grant_graveyard_cast` was added
+to fix — so a Dragon drawn after the enchantment arrived would be invisible to
+it.
+
+**`cast_from_hand` and `play_exiled`** do cast for free, and both are one-shot
+ops that fire on resolution. Dracogenesis has no trigger and no activation to
+hang one on; the sentence is a continuous permission with no event behind it.
+
+### Tier: B-shaped, but with no new continuous effect
+
+No new op, decision, event or `TempEffect`. One player-wide static effect
+(`free_cast_permission`, `affects_player` + a required `affects_spells`), one
+reader (`player_statics.free_cast_permission`), one extra cast line in
+`casting._cast_options`, one flag on `Action`, and one branch in `Game._cast`.
+
+### The free branch already existed — the permission reaching it did not
+
+`casting.FREE_COST` has priced plot's line since plot shipped, and
+`playable_free` — the only flag that reaches it — is written in exactly one
+place, `stack.py`'s plot resolution. So the whole of the engine work is a second
+road to that branch:
+
+| where | what it does |
+|---|---|
+| `player_statics.free_cast_permission` | reads the battlefield, matches the spell's **printed** face through `_matches_printed` |
+| `casting._cast_options` | appends a second cast line priced `free=True`, beside the printed one |
+| `casting._cast_variant` | labels it "(without paying its mana cost)" and stamps `Action.cast_free` |
+| `game.Game._cast` | reads `action.cast_free` and charges `ManaCost.parse("")` |
+
+It is asked in `_cast_options` rather than at any one zone's loop because that
+is the funnel every object's cast lines pass through — hand, an Adventure's
+exile, and a card some other permission freed from a graveyard all reach it — and
+because it is re-asked **every time legality runs**. That is what makes a Dragon
+drawn later castable, and what makes the permission repeatable within a turn
+without any ledger counting it.
+
+### "You may" is a second line, not a replacement
+
+The single design decision worth the diff. The free line is offered *beside* the
+printed one, the way the kicked line is offered beside the unkicked, and the
+printed one stays first:
+
+```
+Cast Ancient Copper Dragon
+Cast Ancient Copper Dragon (without paying its mana cost)
+```
+
+A version that replaced the printed line reads correctly against the first card
+anybody tests it with and silently takes a real choice away: mana actually spent
+is what an Aetherflux Reservoir counts, what converge and sunburst record, and
+what a "spend mana to cast a creature spell" trigger watches for.
+
+Which line was taken therefore has to live on the **answer**, not on the board —
+`Action.cast_free`. Plot never needed one: a plotted card is *only* castable
+free, so `Game._cast` could re-read `obj.playable_free` and be certain. Here the
+same board offers both lines, and a re-read would make the printed line
+unpayable and the free line billed at whatever the board happened to say. It is
+also the one price-changing cast flag that had to join `Action.key()`: the two
+lines share their source, their targets and their X, and differ in nothing else,
+so without it they are one key and a lookup answers with whichever came first.
+
+### `affects_spells` is required, and why that guard is the sharpest one here
+
+The same printed-face filter `spell_cost_reduction` and `cast_from_graveyard`
+take, read by `_matches_printed`: a card in hand has an owner and a face and no
+board state, so there is nothing else it *could* read. Required, because an
+absent filter reads as "every spell" — and on this static that is not a bug that
+discounts nothing, it is Omniscience, on a card that prints the word "Dragon".
+`controller` inside the filter is honoured beside `affects_player` rather than
+walked past, since the two are spellings of the same "whose spells" and a key
+this reader ignored would be a silent over-grant.
+
+### Cards unblocked
+
+One, hand-authored at the agent tier, six gates green: **Dracogenesis**, whose
+only printed line this is.
+
+### Guarded by
+
+`tests/unit/test_free_cast_permission.py`, over
+`tests/data/free_cast_permission.cards.json`. Two claims, one class each. That
+it is a **permission and not a discount**: a Dragon castable off an empty board,
+nothing tapped and no mana in the pool when it is cast off six Mountains, and
+the `{X}` Dragon that enters with X `+1/+1` counters entering as a 0/0 and dying
+— with the paid line on the same board still stopping to offer X up to 2. And
+that it is **optional and scoped**: both lines offered, distinguishable by
+identity and by label, the paid one actually taking six lands, a non-Dragon with
+the identical mana cost untouched, and an opponent's copy granting you nothing.
+Plus the standing half — a Dragon drawn afterwards covered, two cast free in one
+turn, and the permission gone the moment the enchantment is destroyed.

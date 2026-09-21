@@ -167,6 +167,19 @@ STATIC_EFFECTS = frozenset(
         # the permission without it is every spell in the deck castable off the
         # top at its printed cost, which is a different and much stronger card.
         "cast_from_library_top",
+        # "You may cast Dragon spells without paying their mana costs."
+        # Dracogenesis; Omniscience narrowed by a filter. The third casting
+        # permission beside the two above and the only one that changes the
+        # **price** rather than the zone: those two say where a spell may be
+        # cast from and leave the cost alone, and `spell_cost_reduction` is
+        # clamped to the generic part so it can never reach a coloured pip.
+        # 601.2b's "without paying its mana cost" is not a reduction to zero --
+        # the difference shows on an X spell, where X is 0 (107.3b) -- so this
+        # prices the cast on `casting.FREE_COST` instead. `affects_spells`, the
+        # same printed-face filter `spell_cost_reduction` and
+        # `cast_from_graveyard` take, is what carries "Dragon"; the permission
+        # is optional, so the printed line is still offered beside it.
+        "free_cast_permission",
         # "For each {B} in a cost, you may pay 2 life rather than pay that
         # mana." K'rrik, Son of Yawgmoth. Player-wide: it changes how the
         # player *pays*, in every cost, so there is no object to attach it to.
@@ -478,6 +491,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "play_lands_from_graveyard",
         "cast_from_graveyard",
         "cast_from_library_top",
+        "free_cast_permission",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
         "play_lands_from_library_top",
