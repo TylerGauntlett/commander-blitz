@@ -10061,6 +10061,10 @@
       "graveyard"
     ]
   },
+  "twinflame_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "twinmaw_stormbrood_charring_bite": {
     "life": {
       "0": 45

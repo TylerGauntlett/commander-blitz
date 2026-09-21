@@ -294902,12 +294902,12 @@
     },
     "Twinflame Tyrant": {
       "edhrec_rank": 822,
-      "gate": "template",
+      "gate": null,
       "name": "Twinflame Tyrant",
-      "reason": "no template for: If a source you control would deal damage to an opponent or a permanent an opponent contro",
+      "reason": "",
       "scryfall_id": "04a474e3-e7de-4b4d-ad89-a72571968687",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Twining Twins // Swift Spiral": {

@@ -112393,6 +112393,45 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "opponent"
+          },
+          "affects_player": "opponent",
+          "damage_multiplier": 2,
+          "damage_source": {
+            "controller": "you"
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If a source you control would deal damage to an opponent or a permanent an opponent controls, it deals double that damage instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "twinflame_tyrant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Twinflame Tyrant",
+      "oracle_text": "Flying\nIf a source you control would deal damage to an opponent or a permanent an opponent controls, it deals double that damage instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
