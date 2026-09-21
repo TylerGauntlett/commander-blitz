@@ -1842,13 +1842,46 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         op == "add_mana"
         and "mana" not in effect
         and "reflecting" not in effect
+        and "colors_of" not in effect
         and not effect.get("in_commander_identity")
         and not effect.get("split")
     ):
         raise DslError(
-            f"{where}: add_mana needs 'mana' (or 'reflecting', or "
+            f"{where}: add_mana needs 'mana' (or 'reflecting', or 'colors_of', or "
             f"'in_commander_identity', or 'split')"
         )
+    if "colors_of" in effect:
+        # "Add one mana of any of **the exiled card's colors**." Chrome Mox.
+        # A selector over cards, read for their printed colours -- so it is one
+        # more answer to the question the four keys above answer, and writing it
+        # beside any of them would be two answers to one question with only the
+        # first read. Silently: a Mox carrying `colors_of` under a `reflecting`
+        # would load and tap for whatever the board said instead.
+        if op != "add_mana":
+            raise DslError(
+                f"{where}: 'colors_of' names the colours an add_mana offers, "
+                f"and is read by nobody on {op!r}"
+            )
+        clash = [
+            key
+            for key in ("mana", "reflecting", "in_commander_identity", "split")
+            if effect.get(key)
+        ]
+        if clash:
+            raise DslError(
+                f"{where}: 'colors_of' already says which colours this adds, so it "
+                f"cannot be written beside {clash[0]!r} -- that is two answers to "
+                f"one question, and only one of them would be read"
+            )
+        if "amount" in effect:
+            # The family this joins is all "one mana of…", and the narrowing in
+            # `costs.mana_options_of` hands back one-symbol options. An amount
+            # here would load and be dropped, leaving a card that printed "two
+            # mana" adding one.
+            raise DslError(
+                f"{where}: a 'colors_of' add_mana is one mana of one colour; "
+                f"'amount' would load and never be read"
+            )
     if op == "add_mana" and "any_type" in effect:
         # "Add one mana of any **type** that a land you control could produce."
         # It widens `reflecting`'s answer from five colours to 106.1b's six

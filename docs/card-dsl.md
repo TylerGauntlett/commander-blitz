@@ -3190,10 +3190,10 @@ Ornitier's power." Two things at once, and the engine had each separately:
 ```
 
 `split` names the colours the combination may draw on and replaces `mana`;
-`amount` is how much is being divided. Fourth member of the family that includes
-`reflecting`, `in_commander_identity` and a `mana` mapping — all four are
-abilities whose options cannot be known at load time, so the card records the
-question and `costs.mana_options_of` answers it at activation.
+`amount` is how much is being divided. One of the family that includes
+`reflecting`, `colors_of`, `in_commander_identity` and a `mana` mapping — all
+five are abilities whose options cannot be known at load time, so the card
+records the question and `costs.mana_options_of` answers it at activation.
 
 The combination is offered as **one option per composition**: a power-3 source
 offers 3+0, 2+1, 1+2 and 0+3, and the payment picks whichever covers the spell.
@@ -6745,6 +6745,55 @@ read the word and falls through to the loose any-colour reading, which is
 *noted*; a qualified noun ("a *basic* land", "a *Gate*") is a different set of
 permanents and falls through the same way. Both refusals stand, so the template
 tier declines the card rather than shipping a better one than is printed.
+
+## Imprinted mana — "any of the exiled card's colors"
+
+```jsonc
+{"op": "add_mana",
+ "colors_of": {"zone": "exile", "controller": "any", "exiled_with": "self"}}
+```
+
+Chrome Mox. The fifth way an `add_mana` may name its colours, and the only one
+that reads a **characteristic of a card** rather than what some permanent could
+produce. `mana_options` carries the five-colour superset at load time and
+`costs.mana_options_of` narrows it to the distinct colours printed on whatever
+the selector matched — the same shape as `reflecting`, and for the same reason.
+
+`reflecting` is the near miss and is a **different card**, not a rougher one. It
+asks each matched object's own mana *abilities* what they could produce, and the
+imprinted card is a nonartifact, nonland card lying in exile: it has no abilities
+at all. Written that way the Mox loads clean, reads its own imprint correctly,
+and taps for nothing for ever. `tests/unit/test_colors_of_mana.py` ships that
+card beside the real one so the difference is demonstrated rather than claimed.
+
+The other near miss is a `choose_mode` over five `add_mana`s, and it is the one
+to refuse hardest: it is *strictly better than the printed card*, because it taps
+for any colour with **nothing imprinted at all**.
+
+**Nothing imprinted is nothing added.** An unimprinted Mox matches no card, so
+the narrowing is empty, the solver never plans a colour off it, and
+`activate_mana_ability` refuses to index an option that is not there. The same
+answer `in_commander_identity` gives a colourless commander.
+
+**Colourless is not a colour** (105.1), so an imprinted Eldrazi offers nothing
+either. There is no `any_type` here and the key is refused beside it: "any of the
+card's colors" is colours, and 106.1b's sixth type is not one of them.
+
+Colours are read off `chars` on the battlefield and off the printed card
+everywhere else, matching what a selector's own `colors` filter reads — so the
+same key serves Mox Amber's "any color among legendary creatures and
+planeswalkers you control" with a battlefield selector.
+
+The key carries **no amount** and may not be written beside `mana`, `reflecting`,
+`split` or `in_commander_identity`: each of those is a second answer to the one
+question this asks, and only the first would be read. Both are load-time
+refusals.
+
+The card's other half needs nothing new. "Imprint — When this artifact enters,
+you may exile a nonartifact, nonland card from your hand" is a `self_enters`
+trigger wrapping `may` around an `exile` with `link: "self"`, the shape Isochron
+Scepter and Soul Foundry already ship — see `tests/unit/test_imprint.py` for the
+link itself.
 
 ## "If it would die this turn, exile it instead"
 

@@ -14544,3 +14544,111 @@ never offered, with no land in hand and with a hand of one non-land; the Mox
 cannot discard itself; a control card with no clause is asked nothing; and three
 load-time refusals — a missing `instead_cost`, a misspelled key inside it, and
 the key written on `self_enters_tapped`, where `unless_cost` lives.
+
+## Imprinted mana — "any of **the exiled card's colors**" — 105.1 / 605.1a / 903.4
+
+### Overview
+
+Chrome Mox: *"Imprint — When this artifact enters, you may exile a nonartifact,
+nonland card from your hand. {T}: Add one mana of any of the exiled card's
+colors."*
+
+The exile link had shipped long ago — Isochron Scepter and Soul Foundry both
+write it, and `tests/unit/test_imprint.py` is its test. What was missing is the
+*question the mana ability asks*. `add_mana` knew four ways of naming which
+colours it offers — a literal `mana` string, `reflecting`, `in_commander_identity`
+and `split`, enforced by one guard in `cards/loader/effects.py` — and none of
+them reads the printed colours of a **card**.
+
+`reflecting` is the near miss and it is a **different card**, not a rougher one.
+It asks each matched object's own mana *abilities* what they could produce
+(`mana_options_of` iterates `abilities_of` and skips anything that is not a mana
+ability), and the imprinted card is a nonartifact, nonland card lying in exile:
+it has no abilities at all. Written that way Chrome Mox loads clean, reads its
+own imprint correctly, and taps for nothing for ever.
+
+The other near miss is the one the packet's `starting_point` proposed — a
+`choose_mode` over five `add_mana`s — and it is worth naming because it is
+*strictly better than the printed card*: it taps for any colour with **nothing
+imprinted at all**.
+
+### Tier: A — a fifth spelling on an existing op, narrowed at activation
+
+```jsonc
+{"op": "add_mana",
+ "colors_of": {"zone": "exile", "controller": "any", "exiled_with": "self"}}
+```
+
+Five edits, and the shape is `reflecting`'s throughout:
+
+- `cards/loader/effects.py` — `colors_of` joins the guard listing what an
+  `add_mana` may say, plus three refusals of its own (below).
+- `cards/loader/__init__.py` — a branch in the mana fold beside the reflecting
+  one: it validates the selector, records it, and advertises
+  `_ANY_COLOR_OPTIONS`. The superset is not cosmetic. An empty `mana_options` at
+  load time makes `solver_taps` and `offerable_mana_ability` both decide this is
+  not a mana source at all, so an imprinted Mox would never be offered whatever
+  it exiled.
+- `Ability.mana_colors_of`, and `engine/text_change.py`'s `ABILITY_SPEC_FIELDS`,
+  because the field holds a selector and 612.4 rewrites subtype lists inside one.
+- `costs._colors_of_options` — the narrowing. Colours come off `chars` on the
+  battlefield and off the printed card everywhere else, which is what a
+  selector's own `colors` filter reads, so the same key serves Mox Amber's "any
+  color among legendary creatures and planeswalkers you control" with a
+  battlefield selector. It **only looks**: `resolve_pool` over a zone asks
+  nothing and puts nothing on the stack, so this stays a mana ability (605.1a).
+- `cards/loader/linking.py` — the superset is kept **out** of derived colour
+  identity, exactly as `mana_chosen_color` already is. The card prints no mana
+  symbol; a derived five-colour identity would make Chrome Mox illegal in every
+  commander deck that is not itself five-colour (903.4).
+
+### Where it deliberately answers nothing
+
+**Nothing imprinted is nothing added.** An unimprinted Mox matches no card, so
+the narrowing is empty, the solver never plans a colour off it, and
+`activate_mana_ability` refuses to index an option that is not there rather than
+falling back on the superset. The same real answer `_identity_options` gives a
+colourless commander and `_chosen_color_options` gives a permanent that has not
+chosen yet.
+
+**Colourless is not a colour** (105.1), so an imprinted Eldrazi offers nothing
+either. There is no `any_type` here and the key is refused beside it: 106.1b's
+sixth type of mana is not one of "the card's colors".
+
+**Two answers to one question are refused at load.** `colors_of` beside `mana`,
+`reflecting`, `split` or `in_commander_identity` would load with only the first
+read — a Mox tapping for whatever the other key said. An `amount` is refused for
+the same reason: the narrowing hands back one-symbol options, so it would load
+and leave a card printing "two mana" adding one.
+
+**The template tier still refuses the sentence.** Nothing in `cards/proxy.py`
+reads "the exiled card's colors", so the card is hand-authored at the agent tier
+and a new note in `cards/authoring/packet.py` tells the next worker the key
+exists — the packet is that worker's whole world, and `colors_of` is read by the
+loader rather than by `op_add_mana`, so it never appears in `op_options`.
+
+### Cards unblocked
+
+One: **Chrome Mox**, hand-authored through all six gates. Its first line needed
+nothing new — a `self_enters` trigger wrapping `may` around an `exile` with
+`link: "self"` and `not_types: ["Artifact", "Land"]`, the shape Isochron Scepter
+and Soul Foundry already ship. Mox Amber is the next card of the family and is
+now expressible, waiting on a battlefield selector and the next `/author-cards`.
+
+### Guarded by
+
+`tests/unit/test_colors_of_mana.py`, over `tests/data/colors_of_mana.cards.json`.
+The unimprinted Mox is the test: it offers no colour, the solver can produce
+nothing from it, and tapping it raises rather than reaching for the superset —
+with the blue card it declined to exile still sitting in hand, so it is the
+imprint that is missing and not the colour. Beside that: a mono-blue imprint
+offering blue and only blue; a gold imprint offering both colours as two
+one-mana options rather than two mana; a colourless imprint offering nothing;
+both `mana_options_of` callers agreeing, through `mana_sources` and through
+`activate_mana_ability` landing exactly one blue pip in the pool; the superset
+pinned at five and kept out of colour identity; and five load-time refusals —
+`colors_of` beside a fixed `mana`, beside `reflecting`, with an `amount`, with
+`any_type`, and on an op that is not `add_mana`. The near miss ships as a card of
+its own, `t_chrome_reflect`, written with `reflecting` over the same selector and
+measured in the same position: it taps for nothing while the real card taps for
+the imprinted colour.

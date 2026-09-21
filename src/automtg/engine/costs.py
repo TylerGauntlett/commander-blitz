@@ -416,6 +416,8 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
         return _chosen_color_options(state, oid, ability)
     if ability.mana_identity:
         return _identity_options(state, oid, ability)
+    if ability.mana_colors_of is not None:
+        return _colors_of_options(state, oid, ability)
     if ability.mana_reflects is None:
         return ability.mana_options
 
@@ -458,6 +460,55 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
         if any(amount and i in colors for i, amount in enumerate(option)):
             out.append(option)
     return tuple(out)
+
+
+def _colors_of_options(state: GameState, oid: int, ability: Ability) -> tuple[tuple[int, ...], ...]:
+    """The five-colour superset narrowed to the colours *printed on a card*.
+
+    "{T}: Add one mana of any of the exiled card's colors" -- Chrome Mox. The
+    sibling of `mana_options_of`'s reflecting branch, asking a different
+    question of the same shape: `reflecting` polls each matched object's own
+    mana **abilities**, and the card this one reads is a nonartifact, nonland
+    card lying in exile, which has none. Written as `reflecting` the Mox taps
+    for nothing whatever it imprinted.
+
+    **Nothing imprinted is nothing added.** An unimprinted Mox matches no card,
+    so this is the empty tuple and the solver simply never picks it -- the same
+    real answer `_identity_options` gives a colourless commander and
+    `_chosen_color_options` gives a permanent that has not chosen yet. The near
+    miss is a `choose_mode` over five `add_mana`s, which taps for any colour
+    with nothing imprinted at all: a strictly better card than the printed one.
+
+    Colourless is not a colour (105.1), so an imprinted colourless card offers
+    nothing either -- that is the printed sentence, not an oversight, and it is
+    why there is no `any_type` here.
+
+    Colours come from `chars` on the battlefield and off the card everywhere
+    else, matching what a selector's own `colors` filter reads, so a Mox Amber
+    reading legendary creatures sees a repainted one as it now is.
+
+    It **only looks**: `resolve_pool` over a zone asks nothing and puts nothing
+    on the stack, which is what keeps this a mana ability for 605.1a.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:  # pragma: no cover - callers hold a live permanent
+        return ()
+    ctx = EffectContext(state=state, controller=obj.controller, source_oid=oid)
+    colors: set[int] = set()
+    for other in resolve_pool(ctx, ability.mana_colors_of):
+        found = state.objects.get(other)
+        if found is None:  # pragma: no cover - resolve_pool returns live oids
+            continue
+        printed = chars(state, other).colors if found.on_battlefield else state.card_of(found).colors
+        for symbol in printed:
+            index = SYMBOL_INDEX.get(symbol)
+            if index is not None and index != SYMBOL_INDEX[COLORLESS]:
+                colors.add(index)
+    return tuple(
+        option
+        for option in ability.mana_options
+        if any(amount and i in colors for i, amount in enumerate(option))
+    )
 
 
 def _chosen_color_options(

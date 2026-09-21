@@ -1,0 +1,64 @@
+{
+  "card": {
+    "id": "chrome_mox",
+    "name": "Chrome Mox",
+    "oracle_text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.\n{T}: Add one mana of any of the exiled card's colors.",
+    "mana_cost": "{0}",
+    "types": ["Artifact"],
+    "colors": [],
+    "color_identity": [],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "effects": [
+          {
+            "op": "may",
+            "prompt": "Exile a nonartifact, nonland card from your hand?",
+            "condition": {
+              "exists": {
+                "zone": "hand",
+                "controller": "you",
+                "not_types": ["Artifact", "Land"]
+              }
+            },
+            "effects": [
+              {
+                "op": "exile",
+                "link": "self",
+                "objects": {
+                  "zone": "hand",
+                  "controller": "you",
+                  "count": 1,
+                  "not_types": ["Artifact", "Land"]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{T}: Add one mana of any of the exiled card's colors.",
+        "is_mana_ability": true,
+        "cost": {"tap": true},
+        "effects": [
+          {
+            "op": "add_mana",
+            "colors_of": {
+              "zone": "exile",
+              "controller": "any",
+              "exiled_with": "self"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

@@ -29,7 +29,14 @@ def _derive_color_identity(
         # so the ability is recognisable as a mana source, but the card prints no
         # mana symbol at all -- Heraldic Banner's colour identity is colourless,
         # and reading the superset here would make it five-colour.
-        for option in () if ability.mana_chosen_color else ability.mana_options:
+        #
+        # `mana_colors_of` carries the same superset for the same reason and
+        # prints no symbol either: Chrome Mox's identity is colourless, and a
+        # five-colour one would make it illegal in every commander deck that is
+        # not itself five-colour -- the deck-building rule 903.4, not a
+        # gameplay approximation.
+        skip_superset = ability.mana_chosen_color or ability.mana_colors_of is not None
+        for option in () if skip_superset else ability.mana_options:
             for i, amount in enumerate(option[:5]):
                 if amount:
                     identity.add(("W", "U", "B", "R", "G")[i])

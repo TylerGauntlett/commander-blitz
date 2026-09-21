@@ -692,6 +692,23 @@ class Ability:
     #: and only the answer's vocabulary widens. It is meaningless without
     #: `mana_reflects` and the loader refuses it there.
     mana_reflects_any_type: bool = False
+    #: "{T}: Add one mana of any of **the exiled card's colors**." Chrome Mox.
+    #: A selector over *cards*, whose printed colours decide which colours this
+    #: ability offers -- the fifth member of the same family as `mana_reflects`
+    #: and `mana_identity`, and the one that reads a characteristic rather than
+    #: another ability.
+    #:
+    #: `mana_reflects` is the near miss and is a different card: it asks each
+    #: matched object's own mana *abilities* what they could produce, and an
+    #: imprinted nonartifact, nonland card sitting in exile has none -- so a
+    #: Chrome Mox written that way taps for nothing, always. The other near miss
+    #: is a `choose_mode` over five `add_mana`s, which taps for any colour with
+    #: nothing imprinted at all: strictly better than the printed card.
+    #:
+    #: `mana_options` carries the five-colour superset until activation, for the
+    #: same reason `mana_reflects` needs one, and `costs.mana_options_of` does
+    #: the narrowing -- to nothing at all while the Mox is unimprinted.
+    mana_colors_of: Mapping[str, Any] | None = None
     #: "…any color in your commander's color identity." The colours are a
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.

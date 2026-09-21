@@ -75,6 +75,7 @@ ABILITY_SPEC_FIELDS = (
     "mana_amount",
     "mana_rider",
     "mana_reflects",
+    "mana_colors_of",
     "mana_restriction",
     "activation_condition",
     "trigger",

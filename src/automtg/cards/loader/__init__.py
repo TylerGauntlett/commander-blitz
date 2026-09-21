@@ -1999,6 +1999,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_rider: tuple[Mapping[str, Any], ...] = ()
     mana_reflects: Mapping[str, Any] | None = None
     mana_reflects_any_type = False
+    mana_colors_of: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
     mana_split: tuple[str, ...] = ()
@@ -2053,6 +2054,36 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # all -- so the ability would never be offered or tapped, whatever
             # the opponent's lands did.
             mana_options = _ANY_TYPE_OPTIONS if mana_reflects_any_type else _ANY_COLOR_OPTIONS
+            mana_amount = None
+        elif (
+            colors_of := next(
+                (
+                    e.get("colors_of")
+                    for e in mana_effects
+                    if isinstance(e, Mapping) and e.get("colors_of")
+                ),
+                None,
+            )
+        ) is not None:
+            # "Add one mana of any of the exiled card's colors." Chrome Mox.
+            # The same shape as `reflecting` and for the same reason -- the
+            # colours are a question asked at activation -- but asked of a
+            # *card's* printed colours rather than of another permanent's mana
+            # abilities. That difference is the whole capability: the imprinted
+            # card is a nonartifact, nonland card in exile, so `reflecting`
+            # there polls a card with no mana abilities and answers nothing.
+            if len(mana_effects) != 1:
+                raise DslError(
+                    f"{where}: a colors-of mana ability is a single 'add_mana' -- "
+                    f"there is no second thing for the card's colours to join"
+                )
+            validate_selector(colors_of, f"{where}.colors_of")
+            mana_colors_of = dict(colors_of)
+            # The static superset, for the same reason `reflecting` needs one:
+            # an empty tuple at load time makes `solver_taps` and
+            # `offerable_mana_ability` decide this is not a mana source, so an
+            # imprinted Mox would never be offered whatever it exiled.
+            mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
         elif any(isinstance(e, Mapping) and e.get("in_commander_identity") for e in mana_effects):
             # "Add one mana of any color in your commander's color identity."
@@ -2149,6 +2180,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
         mana_reflects_any_type=mana_reflects_any_type,
+        mana_colors_of=mana_colors_of,
         mana_identity=mana_identity,
         mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,
