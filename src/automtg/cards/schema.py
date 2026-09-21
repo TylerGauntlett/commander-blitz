@@ -521,7 +521,22 @@ class AbilityModel(BaseModel):
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)
-    subtypes: list[str] = Field(default_factory=list)
+    #: The subtypes an ``add_subtype`` static grants. Literal names, with one
+    #: exception: ``{"chosen_type_of": "self"}`` -- "this creature is **the
+    #: chosen type** in addition to its other types" (Roaming Throne, Arcane
+    #: Adaptation, Xenograft).
+    #:
+    #: The same entry a *filter*'s ``subtypes`` has always taken, now on the
+    #: granting side too, and it is `list[str]` no longer for that one word.
+    #: Written as a literal it cannot be written at all: the type is named by a
+    #: player as the permanent enters, so there is nothing to put here at load
+    #: time, and the grant has to be re-read as the game goes on -- a second
+    #: ``choose_type`` or a ``change_text`` moves it.
+    #:
+    #: Accepted on ``add_subtype`` and refused on every other static, which is
+    #: the only effect that reads this field: a mapping quietly ignored is a
+    #: printed line that does nothing.
+    subtypes: list[str | dict[str, str]] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
     #: Two different clauses sharing one field, because the card files read

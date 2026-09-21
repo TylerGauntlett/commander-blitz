@@ -53,13 +53,18 @@ def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """ "…of the chosen type" cannot survive being handed to another permanent.
 
     `characteristics.resolve_chosen_subtypes` and its colour twin substitute the
-    choice made by the filter's **source**, and a granted static's source is its
+    choice made by the **source**, and a granted static's source is its
     *recipient*. So an author writing "of the chosen type" means the granter and
     the engine would read the recipient -- which has chosen nothing, so the
     filter matches nobody and the card loads clean and does nothing.
 
     The two readings differ and no printed card asks for either, so this is
     refused rather than picked between.
+
+    Called on a granted static's **filters** and on the static mapping itself,
+    because `add_subtype` carries the same entry on its *grant* side -- "this
+    creature is the chosen type in addition to its other types" -- outside any
+    filter, and the ambiguity there is the same one word for word.
     """
     if not isinstance(filt, Mapping):
         return
@@ -71,8 +76,8 @@ def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
                 if chosen in entry:
                     raise DslError(
                         f"{where}.{key}: {chosen!r} names the choice made by the "
-                        f"filter's source, and a granted static's source is the "
-                        f"permanent it was granted to -- which has chosen nothing"
+                        f"source, and a granted static's source is the permanent "
+                        f"it was granted to -- which has chosen nothing"
                     )
 
 

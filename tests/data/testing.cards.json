@@ -8393,6 +8393,90 @@
       ]
     },
     {
+      "id": "t_chosen_throne",
+      "name": "Test Chosen Throne",
+      "oracle_text": "As this creature enters, choose a creature type.\nThis creature is the chosen type in addition to its other types.",
+      "mana_cost": "{4}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this creature enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_type",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "This creature is the chosen type in addition to its other types.",
+          "effect": "add_subtype",
+          "affects": {
+            "self_only": true
+          },
+          "subtypes": [
+            {
+              "chosen_type_of": "self"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_chosen_xenograft",
+      "name": "Test Chosen Xenograft",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nEach creature you control is the chosen type in addition to its other types.",
+      "mana_cost": "{4}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_type",
+              "player": "you"
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Each creature you control is the chosen type in addition to its other types.",
+          "effect": "add_subtype",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "subtypes": [
+            {
+              "chosen_type_of": "self"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_clamp",
       "name": "Test Clamp",
       "oracle_text": "Equipped creature gets +1/-1.\nWhenever equipped creature dies, draw two cards.\nEquip {1}",

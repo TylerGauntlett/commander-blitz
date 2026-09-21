@@ -305,11 +305,26 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    on top of it is the ordinary case.
         subtypes.update(obj.added_subtypes)
 
+        #    The grant is resolved per source rather than read off the compiled
+        #    static, because one entry in that list is not a literal name:
+        #    `{"chosen_type_of": "self"}` is "this creature is **the chosen
+        #    type** in addition to its other types" -- Roaming Throne, Arcane
+        #    Adaptation, Xenograft. It reads the type *this static's own source*
+        #    named, which is why the substitution happens here, inside the loop
+        #    that already knows which permanent the static came from, and not at
+        #    load time: the choice does not exist until the permanent arrives,
+        #    and a second `choose_type` or a `change_text` moves it afterwards.
+        #
+        #    A source that has chosen nothing yet grants **nothing** -- not
+        #    every type, and not a literal placeholder. Layer 4 runs on every
+        #    recompute, so the type appears the moment the choice is made.
         for source_obj, static in statics:
             if static.get("effect") != "add_subtype":
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
-                subtypes.update(static.get("subtypes", ()))
+                subtypes.update(
+                    resolve_chosen_subtype_list(static.get("subtypes", ()), source_obj)
+                )
                 types.update(static.get("types", ()))
 
         # 1b. "…and loses all other card types and abilities." A keyword *is*
@@ -1199,6 +1214,35 @@ def _static_players(state: GameState, source: GameObject, spec: Any) -> list[int
     return state.alive()
 
 
+def resolve_chosen_subtype_list(entries: Any, source: GameObject | None) -> list[str]:
+    """Literal subtype names, with ``{"chosen_type_of": "self"}`` substituted.
+
+    The leaf-level half of :func:`resolve_chosen_subtypes`, split out for the
+    reason its colour twin was: one reader wants the plain list and not a
+    selector. That reader is the layer-4 ``add_subtype`` grant -- "this creature
+    is **the chosen type** in addition to its other types" (Roaming Throne,
+    Arcane Adaptation, Xenograft) -- where the entry is the thing being *given*
+    rather than a test something has to pass.
+
+    A source that has chosen nothing yet contributes **nothing** -- the entry is
+    dropped, so the Throne is of no extra type until its controller names one,
+    and becomes that type the moment they do. The selector wrapper turns the
+    same emptiness into a match-nothing sentinel instead, because a filter's
+    ``subtypes`` is an any-of and an empty one would match everything.
+    """
+    out: list[str] = []
+    for entry in entries or ():
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_type_of") != "self":
+            continue
+        chosen = source.chosen_type if source is not None else None
+        if chosen is not None:
+            out.append(chosen)
+    return out
+
+
 def resolve_chosen_subtypes(
     selector: Mapping[str, Any], source: GameObject | None
 ) -> Mapping[str, Any]:
@@ -1212,21 +1256,16 @@ def resolve_chosen_subtypes(
 
     A source that has chosen nothing yet matches **nothing**, which is right: an
     anthem for "the chosen type" before a type is chosen should pump nobody, not
-    everybody.
+    everybody. The sentinel replaces the *whole* list rather than just the
+    unresolved entry, because ``subtypes`` is an any-of: "Goblins and the chosen
+    type" with no choice made yet must not quietly fall back to "Goblins".
     """
     wanted = selector.get("subtypes")
     if not wanted or not any(isinstance(s, Mapping) for s in wanted):
         return selector
-    out: list[str] = []
-    for entry in wanted:
-        if not isinstance(entry, Mapping):
-            out.append(entry)
-            continue
-        if entry.get("chosen_type_of") == "self":
-            chosen = source.chosen_type if source is not None else None
-            if chosen is None:
-                return {**selector, "subtypes": ["\0none"]}
-            out.append(chosen)
+    out = resolve_chosen_subtype_list(wanted, source)
+    if len(out) != len(wanted):
+        return {**selector, "subtypes": ["\0none"]}
     return {**selector, "subtypes": out}
 
 

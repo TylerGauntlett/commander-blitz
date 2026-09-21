@@ -1355,6 +1355,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # and it would load and resolve exactly like one that works.
         if not effect.get("subtypes"):
             raise DslError(f"{where}: add_subtype needs 'subtypes'")
+        for index, entry in enumerate(effect.get("subtypes") or ()):
+            # Literal names only, and `{"chosen_type_of": "self"}` most of all.
+            #
+            # The static of the same name *does* take it -- "this creature is
+            # the chosen type in addition to its other types" -- and the op
+            # cannot, because the op writes a fixed word onto the permanent and
+            # walks away (`primitives.add_subtypes`). A choice re-made, or a
+            # `change_text` moving it, would never reach a type granted this
+            # way, so the same JSON in the two places would mean two different
+            # cards while reading identically.
+            #
+            # This guard is the load-time half of closing a real trap: the op
+            # used to coerce every entry with `str()`, so this spec compiled
+            # clean and the permanent gained the literal subtype
+            # "{'chosen_type_of': 'self'}" -- a card that loads, resolves,
+            # passes a zone assertion and is of no creature type at all.
+            if not isinstance(entry, str):
+                raise DslError(
+                    f"{where}.subtypes[{index}]: the add_subtype *op* takes literal "
+                    f"subtype names, not {entry!r}; a one-shot freezes the word it "
+                    f"writes, so 'of the chosen type' is the add_subtype static"
+                )
         if "objects" not in effect:
             raise DslError(f"{where}: add_subtype needs 'objects' -- there is nothing to change")
         if "types" in effect:

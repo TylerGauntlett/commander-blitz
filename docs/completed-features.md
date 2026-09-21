@@ -13974,3 +13974,111 @@ card actually reads — `extreme_value` over the union — coming out 5 rather t
 been stolen; `owner: "any"` walking every graveyard while `owner: "you"` walks
 one, and an explicit `controller` still winning where both are written; and the
 loader refusing four unanswerable words.
+
+## `chosen_type_of` as a **grant** — "is the chosen type in addition to its other types" — 205.1b / 613.1d
+
+### Overview
+
+Roaming Throne: *"As this creature enters, choose a creature type. **This
+creature is the chosen type in addition to its other types.**"* The same
+sentence is Arcane Adaptation's and Xenograft's whole text.
+
+`{"chosen_type_of": "self"}` already existed and was a **read**. Every shipped
+user of it — Vanquisher's Banner's anthem, Cavern of Souls' mana restriction,
+Urza's Incubator's discount — asks "is that *other* object of the chosen type",
+and `characteristics.resolve_chosen_subtypes` rewrites a *selector* on its way
+to a matcher. None of them makes its own source **be** the type, which is the
+other half of the family and the whole of this card's blocked line.
+
+The near misses each lose the sentence. `animate` and the `set_types` static
+*replace* the type line where the printed words say "in addition to", and both
+take a literal `list[str]` on the same model. `change_text` rewrites a printed
+name rather than adding one. `grant_ability` grants abilities. And the
+`add_subtype` **op** is a one-shot: it writes a word onto the permanent and
+walks away, so a second `choose_type` or a `change_text` never reaches it.
+
+### Tier: B — an existing continuous effect learning a dynamic leaf
+
+No new op, static effect, decision or event. Three places had to change
+together, and any two of them alone is a card that loads and does nothing:
+
+- `AbilityModel.subtypes` is `list[str | dict[str, str]]`, so the entry survives
+  schema validation on the *granting* side the way it always has inside a
+  filter. It is refused on any static but `add_subtype` — the only reader of the
+  field — because a mapping nobody reads is a printed line with no effect.
+- `characteristics.resolve_chosen_subtype_list` is the leaf-level resolver, the
+  exact shape `resolve_chosen_color_list` already had, and the selector wrapper
+  is now written in terms of it.
+- The layer-4 grant loop in `_derived_characteristics` calls it with
+  `source_obj` — the permanent the static came from, which the loop already had
+  in hand.
+
+### Whose choice it reads
+
+**The static's own source**, not the permanent being computed. On Roaming
+Throne's `{"self_only": true}` they are the same object and every wrong
+implementation looks right; Xenograft — "each creature you control is the chosen
+type" — is the form that can tell them apart, and it is why the test pool grew
+`t_chosen_xenograft` beside `t_chosen_throne`.
+
+A source that has chosen nothing grants **nothing**: not every type, and not a
+placeholder. That is the grant-side answer to the same question the filter side
+settled the other way — a filter's `subtypes` is an any-of, so an empty one
+would match everything and the unresolved entry becomes a match-nothing sentinel
+instead.
+
+Because it is layer 4 and not a one-shot, choosing again moves the type and a
+`change_text` re-points it, which is the property the printed sentence needs and
+the reason the op is not an alternative spelling.
+
+### The trap that was open, and how it was closed
+
+The same spec inside a `self_enters` trigger **compiled clean** before this
+change, and `op_add_subtype` did `[str(t) for t in spec.get("subtypes", ())]` —
+so the permanent gained the literal subtype `"{'chosen_type_of': 'self'}"`. A
+card that loads, resolves, passes a zone assertion, shows a plausible type line
+in a JSON dump and is of no creature type at all.
+
+It is **refused at load time** rather than taught the substitution. The op
+cannot honour a choice that moves, so the same JSON in the two places would read
+identically in English and play as two different cards, and the repository has
+settled that ambiguity this way before: `walk._refuse_granted_chosen_qualities`
+refuses the entry inside a granted filter rather than picking a reading. That
+same guard now also runs over a granted static's own `subtypes`, because a grant
+moves the source to the recipient, which chose nothing.
+
+The `str()` is gone as well, replaced by an assertion. Unreachable through
+`compile_card`, and loud rather than silent for a spec built in code.
+
+### Not modelled
+
+A granted type is **not** visible to another static's filter. `_matches` reads
+printed characteristics plus the object's own `added_subtypes`, on purpose, so
+that no static can depend on another's output — layers-lite's founding trade. So
+a Xenograft naming Goblin does not put a board of Bears under a Goblin lord's
+anthem, though `chars()` reports every one of them as a Goblin and everything
+that reads `chars` — selectors, effect filters, the type line — agrees.
+
+### Cards unblocked
+
+One: **Roaming Throne**, whose other three lines were already expressible and
+are written exactly as the gap record found them — `ward` as a
+`{"self_only": true}` static with a `{"mana": "{2}"}` cost, the choice as a
+`self_enters` trigger holding `choose_type`, and the doubler as a
+`double_triggers` whose `affects` is
+`{"controller": "you", "types": ["Creature"], "exclude_self": true, "subtypes": [{"chosen_type_of": "self"}]}`
+— the filter-side reading of the very entry this change added to the grant side,
+on the same card.
+
+### Guarded by
+
+`tests/unit/test_chosen_type_grant.py`: nothing granted before a type is chosen;
+the type added to the printed line rather than replacing it; no subtype that is
+not a name, which is the bug as a shape; choosing again moving the grant and
+taking it back leaving the printed line; a second permanent gaining the
+*granter's* type while having chosen nothing itself; two Thrones choosing
+independently; the layers-lite divergence in both directions; the whole path end
+to end, casting the Throne and answering its trigger; and five load-time
+refusals — the near-miss spelling, the entry on a static that does not read
+`subtypes`, the op through `compile_card`, the op called directly, and a granted
+static carrying it.

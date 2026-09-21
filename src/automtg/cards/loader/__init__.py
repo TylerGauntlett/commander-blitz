@@ -684,6 +684,13 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 _refuse_granted_chosen_qualities(
                     ability.static.get(key), f"{where}.grantable[{ability.index}].{key}"
                 )
+            # And the static's own `subtypes`, which is the *grant* side of an
+            # `add_subtype` rather than a filter -- "this creature is the chosen
+            # type in addition to its other types". The same word moved to the
+            # same wrong permanent, so it is refused in the same place.
+            _refuse_granted_chosen_qualities(
+                ability.static, f"{where}.grantable[{ability.index}]"
+            )
             continue
         # A chapter, which is all that is left: its trigger compares the lore
         # counters on its own source, so granted to anything else it would wait
@@ -2185,6 +2192,41 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
         raise DslError(f"{where}.add_mana: {model.add_mana!r} adds no mana")
 
 
+def _validate_static_subtypes(model: AbilityModel, where: str) -> None:
+    """A static's ``subtypes`` list: literal names, plus the one dynamic leaf.
+
+    ``{"chosen_type_of": "self"}`` is "this creature is **the chosen type** in
+    addition to its other types" -- Roaming Throne, Arcane Adaptation,
+    Xenograft. It is substituted where the grant is applied
+    (`characteristics._derived_characteristics`) rather than at load time, for
+    the same reason a filter's copy of it is: the choice does not exist until
+    the permanent is on the battlefield, and it can move afterwards.
+
+    Two guards, because both near misses load clean and play as a card nobody
+    printed:
+
+    * a **near-miss spelling** (``{"chosen_type_of": "source"}``, say) would
+      resolve to nothing and grant no type at all, for ever;
+    * the entry on **any static but** ``add_subtype``. `subtypes` is read by
+      exactly one static -- an `animate` or a `set_types` carries its own type
+      line elsewhere -- so a mapping written on another effect is a printed
+      sentence with no reader, which is the quietest way a card can be wrong.
+    """
+    for index, entry in enumerate(model.subtypes):
+        if not isinstance(entry, Mapping):
+            continue
+        if model.effect != "add_subtype":
+            raise DslError(
+                f"{where}.subtypes[{index}]: {dict(entry)!r} is read only by the "
+                f"'add_subtype' static, not by {model.effect!r}"
+            )
+        if set(entry) != {"chosen_type_of"} or entry["chosen_type_of"] != "self":
+            raise DslError(
+                f"{where}.subtypes[{index}]: the only subtype that is not a literal "
+                f'name is {{"chosen_type_of": "self"}}, not {dict(entry)!r}'
+            )
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -2207,6 +2249,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effects:
         raise DslError(f"{where}: static abilities cannot have 'effects'")
+    _validate_static_subtypes(model, where)
 
     for key in ("affects", "blockers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")

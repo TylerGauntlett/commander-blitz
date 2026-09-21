@@ -3440,7 +3440,8 @@ characteristics — the loader rejects anything else. See
   "power": { "const": 1 }, "toughness": { "const": 1 } }
 ```
 
-Effects: `buff` · `grant_keyword` · `set_pt` · `add_subtype` · `set_types` ·
+Effects: `buff` · `grant_keyword` · `set_pt` ·
+[`add_subtype`](#is-the-chosen-type-in-addition-to-its-other-types) · `set_types` ·
 `block_restriction` · `prevent_damage` · [`crew_power_bonus`](#crews-vehicles-as-though-its-power-were-n-greater) ·
 [`ward`](#ward-with-a-cost) ·
 [`replace_token_creation`](#if-you-would-create-a--token-instead-) ·
@@ -8227,6 +8228,16 @@ Subtypes only. `types` is refused rather than dropped — "becomes an artifact i
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.
 
+**Literal names only**, which is the other half of the split above.
+`{"chosen_type_of": "self"}` is a load error *here* and legal on the static —
+see ["…is the chosen type in addition to its other
+types"](#is-the-chosen-type-in-addition-to-its-other-types). A one-shot freezes
+the word it writes, so it cannot honour a choice that moves, and the two
+spellings would read identically and play as two different cards. It used to be
+accepted and coerced with `str()`, which put the subtype
+`"{'chosen_type_of': 'self'}"` on the permanent — a card that loaded, resolved,
+passed a zone assertion and was of no creature type at all.
+
 ## `change_text` — "replacing all instances of one creature type"
 
 ```jsonc
@@ -9105,6 +9116,56 @@ unusable without making any card play differently.
 that cannot be responded to. `zones._enter_battlefield` applies enter-
 replacements synchronously and cannot stop to ask, so this is a `self_enters`
 trigger and the choice happens a moment after the permanent arrives.
+
+### "…is the chosen type in addition to its other types"
+
+The other half of the family, and it took a change to say it: everything above
+**reads** the choice — "is that other object of the chosen type" — and Roaming
+Throne, Arcane Adaptation and Xenograft **grant** it.
+
+```jsonc
+// Roaming Throne — "This creature is the chosen type in addition to its
+// other types."
+{ "kind": "static", "effect": "add_subtype",
+  "affects":  { "self_only": true },
+  "subtypes": [ { "chosen_type_of": "self" } ] },
+
+// Xenograft — the same static pointed outward.
+{ "kind": "static", "effect": "add_subtype",
+  "affects":  { "controller": "you", "types": ["Creature"] },
+  "subtypes": [ { "chosen_type_of": "self" } ] }
+```
+
+So `{"chosen_type_of": "self"}` now stands on the **granting** side of an
+`add_subtype` static as well as inside a filter, and `AbilityModel.subtypes` is
+`list[str]` no longer for that one entry. It is substituted in layer 4
+(`characteristics._derived_characteristics`), inside the loop that already knows
+which permanent each static came from — so it reads **the static's own source**,
+which is what makes the Xenograft form mean anything. A source that has chosen
+nothing grants nothing, and choosing again moves the type, because layer 4
+re-reads the source on every recompute.
+
+Only `add_subtype` reads a static's `subtypes`, so the entry on any other
+effect is a load error rather than a line with no reader. A **granted** static
+may not carry it, for the reason a granted filter already could not: a grant
+moves the source to the recipient, which chose nothing.
+
+**The `add_subtype` op refuses it**, and that refusal is the point of this
+section. The op is a one-shot: it writes a word onto the permanent
+(`primitives.add_subtypes`) and walks away, so a second `choose_type` or a
+`change_text` would never reach it. The same JSON in the two places would read
+identically in English and play as two different cards. Before the refusal
+existed it was worse than that — the op coerced the entry with `str()` and the
+permanent gained the literal subtype `"{'chosen_type_of': 'self'}"`: a card that
+loaded, resolved, passed a zone assertion and was of no creature type at all.
+
+*Simplification, and it is the layers-lite one*: a granted type is **not**
+visible to another static's filter. `_matches` reads printed characteristics
+plus the object's own `added_subtypes`, on purpose, so that no static can depend
+on another's output — which means a Xenograft naming Goblin does not turn a
+board of Bears into targets for a Goblin lord's anthem. `chars()` reports the
+type, and everything that reads `chars` — selectors, effect filters, the UI type
+line — sees it.
 
 ## "Choose a color"
 
