@@ -150302,12 +150302,12 @@
     },
     "Klauth, Unrivaled Ancient": {
       "edhrec_rank": 2200,
-      "gate": "template",
+      "gate": null,
       "name": "Klauth, Unrivaled Ancient",
-      "reason": "no template for: Whenever Klauth attacks, add X mana in any combination of colors, where X is the total pow",
+      "reason": "",
       "scryfall_id": "46f66347-a9b5-4f5d-986f-3fb43413f899",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Klaw, Master of Sound": {

@@ -5088,6 +5088,10 @@
   "kjeldoran_warrior": {
     "zone": "battlefield"
   },
+  "klauth_unrivaled_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "knight_errant": {
     "zone": "battlefield"
   },
