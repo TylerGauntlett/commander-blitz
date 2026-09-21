@@ -6501,13 +6501,44 @@ mana ability already had — the solver picks an option index while planning, an
 manual mana offers one chip per option — so nothing new is ever asked of a
 player, which is what rule 605.1a requires.
 
+### "any **type**" — the sixth type of mana
+
+```jsonc
+{"op": "add_mana",
+ "reflecting": {"zone": "battlefield", "controller": "you", "types": ["Land"]},
+ "any_type": true}
+```
+
+Reflecting Pool, Horizon of Progress. One printed word apart, and 106.1b is why
+it is a key rather than a spelling: there are **six** types of mana, and
+colorless is one of them. So "any type" is "any color" plus `{C}` — and plain
+`reflecting` drops `{C}` twice on purpose, once in its five-tuple superset
+(`_ANY_COLOR_OPTIONS`) and once in `costs._reflect_options`, which skips the
+colorless index while polling the board. `any_type` swaps the superset for
+`_ANY_TYPE_OPTIONS` (six tuples) and keeps that index.
+
+**Only the vocabulary widens.** Same selector, same one-level recursion, same
+skip of other reflecting abilities, so a Pool still offers nothing the board
+cannot make: beside a lone Forest it taps for `{G}` and not for `{C}`. The near
+miss is a `choose_mode` over six `add_mana`s, and it is wrong in both directions
+at once — it offers colours no land you control produces, and it is not the
+printed sentence.
+
+Written as plain `reflecting`, Reflecting Pool loads clean and is an Exotic
+Orchard pointed at your own side: it cannot tap off a Wastes, an Ancient Tomb or
+an Eldrazi Temple. The key is refused anywhere else on an `add_mana` — a fixed
+`mana` string, `split`, `in_commander_identity` — because nothing there reads it,
+so it would load, be ignored, and leave the printed word doing nothing. `false`
+is refused too: "any color" is the default and is spelled by leaving the key off.
+
 Read exactly by the template tier, and only exactly: `proxy._REFLECTED_COLOR`
 matches "any **color** that a land an opponent controls / you control could
-produce" and nothing else. "Any **type**" (Reflecting Pool, Naga Vitalist)
-includes `{C}`, which this narrows away by design; a qualified noun ("a *basic*
-land", "a *Gate*") is a different set of permanents. Both fall through to the
-loose any-colour reading, which is *noted*, so the template tier refuses the card
-rather than shipping a better one than is printed.
+produce" and nothing else. "Any **type**" (Reflecting Pool, Naga Vitalist) is
+expressible by hand with `any_type` above, but the template tier does not yet
+read the word and falls through to the loose any-colour reading, which is
+*noted*; a qualified noun ("a *basic* land", "a *Gate*") is a different set of
+permanents and falls through the same way. Both refusals stand, so the template
+tier declines the card rather than shipping a better one than is printed.
 
 ## "If it would die this turn, exile it instead"
 

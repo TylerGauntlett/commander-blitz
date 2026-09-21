@@ -14082,3 +14082,98 @@ to end, casting the Throne and answering its trigger; and five load-time
 refusals — the near-miss spelling, the entry on a static that does not read
 `subtypes`, the op through `compile_card`, the op called directly, and a granted
 static carrying it.
+
+
+## Reflecting mana of any **type** — "that a land you control could produce" — 106.1b / 605.1a
+
+### Overview
+
+Reflecting Pool: *"{T}: Add one mana of any **type** that a land you control
+could produce."* Horizon of Progress prints the same clause as the first of its
+three lines. Also Naga Vitalist and Incubation Druid, which are still in the
+queue.
+
+One printed word apart from `reflecting` — Exotic Orchard, Fellwar Stone,
+Harvester Druid — and that word was worth a whole capability, because 106.1b
+names **six** types of mana and colorless is one of them. "Any type" is "any
+color" plus `{C}`.
+
+`reflecting` dropped `{C}` twice, on purpose and in writing. Its load-time
+superset is `_ANY_COLOR_OPTIONS`, five single-symbol tuples, and
+`costs._reflect_options` skipped the colorless index while polling the board:
+`if amount and index != SYMBOL_INDEX[COLORLESS]`. The template tier refused the
+match for the same reason and said so by name — `proxy._REFLECTED_COLOR`'s
+comment reads "would print a Reflecting Pool that cannot tap off a Wastes". This
+is the widening of a narrowness that was a decision, so it is a **key on the
+card** rather than a relaxation of the family: Exotic Orchard's line has not
+moved, and an Orchard beside a Wastes still taps for nothing.
+
+### The shape
+
+```jsonc
+{"op": "add_mana",
+ "reflecting": {"zone": "battlefield", "controller": "you", "types": ["Land"]},
+ "any_type": true}
+```
+
+A flag beside `reflecting`, not a family of its own, because the *question* is
+identical — "what could these permanents produce" — and only the answer's
+vocabulary widens. Three edits carry it:
+
+- `_ANY_TYPE_OPTIONS` in `cards/loader/mana.py`, the five colours plus `{C}`.
+  The superset is not cosmetic: an empty `mana_options` at load time makes
+  `solver_taps` and `offerable_mana_ability` both decide the ability is not a
+  mana source at all, so a Pool carrying the five-colour one could never be
+  *offered* on `{C}` however many Wastes were out.
+- `Ability.mana_reflects_any_type`, written by the same loader branch that
+  already builds `mana_reflects`, which now keeps the whole effect rather than
+  only its `reflecting` value.
+- One `continue` in `costs._reflect_options`, guarded on that flag. That single
+  index is the entire difference between the two printed words.
+
+### What is not swept in with it
+
+**The board still decides.** Same selector, same one-level recursion, same skip
+of other reflecting abilities (two Pools facing each other terminate), so a Pool
+beside a lone Forest taps for `{G}` and not for `{C}`. The near miss is a
+`choose_mode` over six `add_mana`s, and it is wrong in both directions at once:
+it offers colours no land you control produces, *and* it is not the printed
+sentence. That is the same approximation the reflecting family was built to
+refuse, and widening the type list does not open a door to it.
+
+**The key means nothing anywhere else on an `add_mana`,** so it is refused
+there: on a fixed `mana` string, on `split`, on `in_commander_identity`, nothing
+reads it, and it would load, be ignored, and leave a card printing "any type"
+and tapping for whatever the other key said. `false` is refused too — "any
+color" is the default and is spelled by leaving the key off, so a `false` is an
+author meaning something this cannot tell.
+
+**The template tier still refuses the sentence.** `proxy._REFLECTED_COLOR`
+anchors on the printed word "color" and is unchanged, along with its two other
+narrownesses — a qualified noun ("a *basic* land", "a *Gate*") is a different set
+of permanents, and Benthic Explorers' "that land could produce" is a different
+question. Reflecting Pool and Horizon of Progress are hand-authored at the agent
+tier instead; Naga Vitalist and Incubation Druid stay in the queue for the next
+`/author-cards`, now expressible.
+
+### Cards unblocked
+
+Two. **Reflecting Pool** is a single printed line, so the capability is the whole
+card. **Horizon of Progress** carries two more lines that were already
+expressible and are written as the gap record found them — `{3}, {T}` for a
+`may` + `put_onto_battlefield` from hand `tapped`, Burgeoning's shape, and
+`{1}, {T}`, sacrifice this land, `draw`.
+
+### Guarded by
+
+`tests/unit/test_reflecting_any_type.py`. The colorless case is the test: a Pool
+beside a Wastes offers `{C}`, and an Exotic Orchard beside the same Wastes still
+offers nothing. Beside that: `{C}{C}` off an Ancient Tomb counted as the type
+rather than the amount; colour and colorless together; a lone Forest offering
+green and *only* green, which is the regression an un-narrowed six-tuple superset
+would produce; the Pool's own ability skipped so an otherwise empty board is
+empty; two Pools not asking each other; an opponent's Wastes not counting, since
+the selector is unchanged; both `mana_sources` callers agreeing on `{C}`; the
+superset pinned at six symbols with `any_type` and five without; and three
+load-time refusals — the key on a fixed `mana`, on `in_commander_identity`, and
+spelled `false`.

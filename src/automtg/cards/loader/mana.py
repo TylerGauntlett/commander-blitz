@@ -177,6 +177,17 @@ _ANY_COLOR_OPTIONS: tuple[tuple[int, ...], ...] = tuple(
     parse_mana_production(f"{{{sym}}}") for sym in ("W", "U", "B", "R", "G")
 )
 
+#: The five colours **and colorless** -- the superset a reflecting ability that
+#: prints "any **type**" advertises instead. Reflecting Pool, Horizon of
+#: Progress, Naga Vitalist. 106.1b names six types of mana and colorless is one
+#: of them, so "any type" is the five-colour list plus ``{C}`` and nothing else:
+#: it is a wider *type* list, not a wider *question*, and the board still
+#: decides which of the six survive.
+_ANY_TYPE_OPTIONS: tuple[tuple[int, ...], ...] = (
+    *_ANY_COLOR_OPTIONS,
+    parse_mana_production("{C}"),
+)
+
 
 def _split_mana_rider(
     effects: list[dict[str, Any]], where: str

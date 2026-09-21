@@ -440,8 +440,18 @@ def mana_options_of(state: GameState, oid: int, ability: Ability) -> tuple[tuple
             # `mana_reflects`, and it never gets here.
             for option in mana_options_of(state, other, other_ability):
                 for index, amount in enumerate(option):
-                    if amount and index != SYMBOL_INDEX[COLORLESS]:
-                        colors.add(index)
+                    if not amount:
+                        continue
+                    # "any **color**" drops the sixth type of mana here;
+                    # "any **type**" keeps it. That one index is the entire
+                    # difference between Exotic Orchard and Reflecting Pool: a
+                    # Pool beside a Wastes taps for {C}, an Orchard beside one
+                    # taps for nothing. Only the *type list* widens -- the
+                    # question, the recursion and the skip above are the same,
+                    # so a Pool still offers nothing the board cannot make.
+                    if index == SYMBOL_INDEX[COLORLESS] and not ability.mana_reflects_any_type:
+                        continue
+                    colors.add(index)
 
     out: list[tuple[int, ...]] = []
     for option in ability.mana_options:

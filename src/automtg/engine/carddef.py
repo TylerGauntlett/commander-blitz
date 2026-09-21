@@ -659,6 +659,18 @@ class Ability:
     #: what the board actually offers happens in `costs.mana_options_of`, which
     #: both the payment solver and the activation read.
     mana_reflects: Mapping[str, Any] | None = None
+    #: "Add one mana of any **type** that a land you control could produce."
+    #: Reflecting Pool, Horizon of Progress. The same question as
+    #: `mana_reflects` asked over 106.1b's six types of mana rather than over
+    #: five colours, so `mana_options` carries `_ANY_TYPE_OPTIONS` at load time
+    #: and `costs.mana_options_of` keeps the colorless index while polling the
+    #: board instead of dropping it.
+    #:
+    #: A flag beside `mana_reflects` rather than a family of its own, because
+    #: the *question* is identical -- "what could these permanents produce" --
+    #: and only the answer's vocabulary widens. It is meaningless without
+    #: `mana_reflects` and the loader refuses it there.
+    mana_reflects_any_type: bool = False
     #: "…any color in your commander's color identity." The colours are a
     #: question about the command zone, asked when the ability is activated;
     #: `mana_options` holds the five-colour superset until then.

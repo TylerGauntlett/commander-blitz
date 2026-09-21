@@ -1849,6 +1849,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: add_mana needs 'mana' (or 'reflecting', or "
             f"'in_commander_identity', or 'split')"
         )
+    if op == "add_mana" and "any_type" in effect:
+        # "Add one mana of any **type** that a land you control could produce."
+        # It widens `reflecting`'s answer from five colours to 106.1b's six
+        # types of mana, and it is read nowhere else on an add_mana: written
+        # without `reflecting` -- on a fixed `mana` string, on `split`, on
+        # `in_commander_identity` -- it would load, be ignored, and leave a card
+        # that prints "any type" tapping for whatever the other key said.
+        if not effect.get("reflecting"):
+            raise DslError(
+                f"{where}: 'any_type' widens 'reflecting' from five colours to the "
+                f"six types of mana, so it needs one -- a mana ability that is not "
+                f"a question about the board already names the types it makes"
+            )
+        if effect["any_type"] is not True:
+            raise DslError(
+                f"{where}.any_type: the only value is true -- \"any color\" is the "
+                f"default and is spelled by leaving this off"
+            )
     if op == "rename" and not str(effect.get("name") or "").strip():
         # A rename to nothing would load, run, and leave the permanent answering
         # to its printed name -- the printed line silently not happening.

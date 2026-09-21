@@ -8770,6 +8770,37 @@
       ]
     },
     {
+      "id": "t_pool",
+      "name": "Test Pool",
+      "oracle_text": "{T}: Add one mana of any type that a land you control could produce.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any type that a land you control could produce.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              },
+              "any_type": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_orchard",
       "name": "Test Orchard",
       "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",

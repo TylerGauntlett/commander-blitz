@@ -821,6 +821,15 @@ def reference() -> dict:
             " note used to say a mana ability may contain only `add_mana`, and"
             " a worker filed a gap against a rider the loader has always"
             " accepted.",
+            "\"Add one mana of any **type** that a land you control could"
+            " produce\" (Reflecting Pool, Horizon of Progress, Naga Vitalist) is"
+            " `reflecting` plus `any_type: true` on the same `add_mana`. 106.1b"
+            " names six types of mana, so \"any type\" is \"any color\" plus"
+            " `{C}`, and plain `reflecting` drops `{C}` on purpose -- a Pool"
+            " written without the flag cannot tap off a Wastes. The flag is read"
+            " by the LOADER rather than by `op_add_mana`, so until a card using"
+            " it ships it is not in `op_options`; it is refused on any `add_mana`"
+            " that has no `reflecting`, because nothing else reads it.",
             "\"It can't be regenerated.\" is `no_regeneration: true` on the"
             " `destroy` op -- 701.15c, the victim's regeneration shields are"
             " not applied to that destruction (and not spent either)."

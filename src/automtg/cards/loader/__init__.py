@@ -69,6 +69,7 @@ from .linking import (  # noqa: F401
 )
 from .mana import (  # noqa: F401
     _ANY_COLOR_OPTIONS,
+    _ANY_TYPE_OPTIONS,
     _compile_cost,
     _mana_amount,
     _mana_options,
@@ -1958,6 +1959,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_amount: Mapping[str, Any] | None = None
     mana_rider: tuple[Mapping[str, Any], ...] = ()
     mana_reflects: Mapping[str, Any] | None = None
+    mana_reflects_any_type = False
     mana_identity = False
     mana_chosen_color = False
     mana_split: tuple[str, ...] = ()
@@ -1984,14 +1986,15 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         # "Add one mana of any color that a land an opponent controls could
         # produce." The colours are a question about the board, so the card
         # names the permanents to ask rather than the colours to make.
-        reflect = next(
+        reflect_effect = next(
             (
-                e.get("reflecting")
+                e
                 for e in mana_effects
                 if isinstance(e, Mapping) and e.get("reflecting")
             ),
             None,
         )
+        reflect = reflect_effect.get("reflecting") if reflect_effect is not None else None
         if reflect is not None:
             if len(mana_effects) != 1:
                 raise DslError(
@@ -2000,12 +2003,17 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 )
             validate_selector(reflect, f"{where}.reflecting")
             mana_reflects = dict(reflect)
+            # "any **type**" rather than "any color": Reflecting Pool, Horizon of
+            # Progress. Same question, one more answer -- 106.1b's sixth type of
+            # mana. Without it the Pool loads as an Exotic Orchard and quietly
+            # cannot tap off a Wastes, which is half of what it is played for.
+            mana_reflects_any_type = bool(reflect_effect.get("any_type"))
             # The static superset. Load time cannot know which colours the board
             # will offer, and an empty tuple here would make `solver_taps` and
             # `offerable_mana_ability` both decide this is not a mana source at
             # all -- so the ability would never be offered or tapped, whatever
             # the opponent's lands did.
-            mana_options = _ANY_COLOR_OPTIONS
+            mana_options = _ANY_TYPE_OPTIONS if mana_reflects_any_type else _ANY_COLOR_OPTIONS
             mana_amount = None
         elif any(isinstance(e, Mapping) and e.get("in_commander_identity") for e in mana_effects):
             # "Add one mana of any color in your commander's color identity."
@@ -2101,6 +2109,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_amount=mana_amount,
         mana_rider=mana_rider,
         mana_reflects=mana_reflects,
+        mana_reflects_any_type=mana_reflects_any_type,
         mana_identity=mana_identity,
         mana_split=mana_split,
         mana_chosen_color=mana_chosen_color,
