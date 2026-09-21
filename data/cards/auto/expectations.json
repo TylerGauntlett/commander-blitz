@@ -11339,5 +11339,15 @@
       "0": 2
     },
     "zone": "graveyard"
+  },
+  "zurgo_and_ojutai": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
   }
 }

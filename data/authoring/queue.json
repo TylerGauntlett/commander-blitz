@@ -323572,12 +323572,12 @@
     },
     "Zurgo and Ojutai": {
       "edhrec_rank": 8746,
-      "gate": "template",
+      "gate": null,
       "name": "Zurgo and Ojutai",
-      "reason": "no template for: has hexproof as long as it entered this turn",
+      "reason": "",
       "scryfall_id": "e26911a0-447a-41d6-96e5-c93353778a2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Zurgo's Vanguard": {

@@ -125801,6 +125801,97 @@
       "types": [
         "Sorcery"
       ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "entered_this_turn": true,
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Zurgo and Ojutai has hexproof as long as it entered this turn."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "damagers",
+                    "chooser": "controller",
+                    "count": {
+                      "const": 1
+                    }
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Return one of those Dragons to its owner's hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Dragons you control deal combat damage to a player or battle, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order. You may return one of those Dragons to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            },
+            "or_battle": true
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "zurgo_and_ojutai",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{2}{U}{R}{W}",
+      "name": "Zurgo and Ojutai",
+      "oracle_text": "Flying, haste\nZurgo and Ojutai has hexproof as long as it entered this turn.\nWhenever one or more Dragons you control deal combat damage to a player or battle, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order. You may return one of those Dragons to its owner's hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
     }
   ]
 }
