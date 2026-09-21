@@ -223332,12 +223332,12 @@
     },
     "Rhythm of the Wild": {
       "edhrec_rank": 212,
-      "gate": "template",
+      "gate": null,
       "name": "Rhythm of the Wild",
-      "reason": "no template for: Creature spells you control can't be countered",
+      "reason": "",
       "scryfall_id": "e7843a8a-a8d8-4236-a05d-287fad0a74b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": true
     },
     "Rhythmic Water Vortex": {

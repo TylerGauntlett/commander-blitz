@@ -7648,6 +7648,16 @@
   "rhystic_study": {
     "zone": "battlefield"
   },
+  "rhythm_of_the_wild": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "riot"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "rib_cage_spider": {
     "zone": "battlefield"
   },

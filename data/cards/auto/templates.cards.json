@@ -83880,6 +83880,52 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "spells_cant_be_countered",
+          "kind": "static",
+          "text": "Creature spells you control can't be countered."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": false,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "riot"
+          ],
+          "kind": "static",
+          "text": "Nontoken creatures you control have riot. (They enter with your choice of a +1/+1 counter or haste.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "rhythm_of_the_wild",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Rhythm of the Wild",
+      "oracle_text": "Creature spells you control can't be countered.\nNontoken creatures you control have riot. (They enter with your choice of a +1/+1 counter or haste.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
