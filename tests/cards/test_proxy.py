@@ -781,17 +781,25 @@ class TestPartiallyModelledCards:
         assert "Planeswalker" in card.types
         assert any("loyalty" in n for n in result.notes)
 
-    def test_a_battle_enters_play_but_says_it_does_nothing(self):
-        result, card = built(
-            name="Invasion of Ravnica",
-            type_line="Battle — Siege",
-            mana_cost="{3}{G}{U}",
-            oracle_text="When this Siege enters, destroy target artifact.",
-            colors="GU",
-            color_identity="GU",
+    def test_a_battle_is_refused_rather_than_generated(self):
+        """It used to enter play inert and say so in a note. Now that battles
+        are real (310), the note would be the lie: 310.3's printed defense is
+        not a column in the catalog, and a battle entering with no defense
+        counters is defeated by 704.5x as it resolves. A card that vanishes
+        from the battlefield is not a weaker card, so it is refused by name and
+        goes in the import report to be hand-written."""
+        result = build_proxy(
+            facts(
+                name="Invasion of Ravnica",
+                type_line="Battle — Siege",
+                mana_cost="{3}{G}{U}",
+                oracle_text="When this Siege enters, destroy target artifact.",
+                colors="GU",
+                color_identity="GU",
+            )
         )
-        assert "Battle" in card.types
-        assert any("defence" in n for n in result.notes)
+        assert result.model is None
+        assert "defense" in (result.error or "")
 
     def test_a_kindred_card_drops_the_noise_type(self):
         result, card = built(

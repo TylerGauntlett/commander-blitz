@@ -16593,3 +16593,135 @@ while a blue creature card with the same body does not. Plus the load-time
 refusals: a grant with no filter, a grant with no price, board state in the
 filter and inside an `any_of` branch, a warp cost equal to the printed one, and
 warp on an instant.
+
+## Battles, and a batched combat-damage trigger that can name them — Zurgo and Ojutai — 310 / 506.2 / 510.2
+
+### Overview
+
+Zurgo and Ojutai: *"Flying, haste / Zurgo and Ojutai has hexproof as long as it
+entered this turn. / **Whenever one or more Dragons you control deal combat
+damage to a player or battle**, look at the top three cards of your library. Put
+one of them into your hand and the rest on the bottom of your library in any
+order. **You may return one of those Dragons to its owner's hand.**"*
+
+The middle line was built by an earlier lane (`entered_this_turn` in
+`STATIC_FILTER_KEYS`). The third needed two things the engine did not have, and
+one of them is a rules subsystem `docs/rules-coverage.md` listed as a deliberate
+non-feature. `/extend-dsl`'s rule 4 says to stop and report at that boundary;
+`/import-moxfield`'s rule 2 overrides it for a deck deliverable, and says to
+build it as its own sequence of one-capability commits. That is what this is.
+
+### Battles (310), in three commits' worth of nothing new
+
+`CardType.BATTLE` existed and did nothing: a battle entered play inert, nothing
+in `combat.py` would let a creature be declared as attacking one, and
+`_attacker_assignments` had no branch that could put damage on one.
+
+Almost none of the fix is new machinery, because **506.2 already had a third
+defender kind and the engine already modelled it**:
+
+| already there | what it becomes |
+|---|---|
+| counters are free-form strings | `"defense"` is a counter like any other |
+| `self_enters_with_counters` | starting defense, with nothing new at ETB |
+| `attacking_planeswalker` | `attacking_permanent`: 506.2's non-seat defenders |
+| `_planeswalker_deaths` | a sibling pass for 704.5x |
+
+The rules-supplied behaviour lives in `engine/battles.py`, the shape
+`engine/sagas.py` set for a card type whose whole behaviour comes from the rules
+rather than from any card: nothing a battle does is printed on it.
+
+- **Defense is counters** (310.4), so printed `defense` compiles into a
+  `self_enters_with_counters` replacement exactly as a planeswalker's loyalty
+  does, and proliferate, `counters_on`, `move_counters` and the client's badge
+  read a battle for free.
+- **Damage removes defense** (310.6), read in `damage_permanent` beside the
+  loyalty branch and for its reason: `obj.damage` on a battle is invisible,
+  because nothing compares a battle's damage to anything, so it would take
+  damage for ever and never die.
+- **Zero defense is 704.5x**, a sibling pass to the zero-loyalty one and not
+  destruction, so indestructible does not save it.
+- The **declaration** widened by renaming rather than by adding: a planeswalker
+  and a battle are the same slot, and the only thing that differs is which
+  counter the damage comes off. `attackers[oid]` still means the defending
+  player, so its fifteen existing reads stay true.
+
+A `defense` the card did not print is a **load error**, not a default. That is
+the one place the loader is stricter than it is about `loyalty`, and the reason
+is sharper: 704.5x defeats such a battle as it resolves, so it is not a weaker
+card but a card that never reaches the battlefield — silently. The proxy tier
+refuses battles for the same reason, because 310.3's printed defense is not a
+column in the card catalog and there is no number to generate one from.
+
+| the near miss | why it is not this |
+|---|---|
+| a second `attacking_battle` map | two maps that must agree exactly, which is the failure mode `attack_target_forbidden`'s docstring already exists to avoid |
+| `obj.damage` on a battle | nothing compares it to anything, so a battle would take damage for ever |
+| a `defense` field the engine reads | defense **is** counters (310.4); a field would need a new reader for proliferate, the badge and `counters_on`, and each is a place to forget |
+| defaulting a missing `defense` to 1 | invents a number that is not on the card, which is the one thing a card file must never do |
+
+**Not implemented, and said out loud in `engine/battles.py`,
+`docs/rules-coverage.md` and `docs/card-dsl.md`:**
+
+- **Protectors** (310.7, 506.2b). A battle here is attackable by the people who
+  could attack **its controller**, the planeswalker rule applied unchanged,
+  where a real Siege is attacked by its controller because its protector is an
+  opponent. Loudly the wrong way round rather than quietly:
+  `test_your_own_battle_is_not_a_legal_defender` pins it.
+- **The back face** a defeated Siege lets its controller cast. Every battle in
+  print is a Siege, so a battle here is an honest permanent with a life total
+  combat can chew through and **not** a playable Siege.
+- **The client.** `laneFor` and `typeTone` do not know the type, so a battle is
+  drawn in the global artifacts row and cannot be a drag target for an attack.
+  The engine offers the `ADD_ATTACKER` and the API carries it.
+- 704.5x's exemption for a battle that is the source of a trigger on the stack.
+  Nothing an engine battle does triggers on anything yet.
+
+### The batch trigger: a filter, a binding, and "or battle"
+
+`creatures_deal_combat_damage` has fired once per damaging player per damage
+step since Forth Eorlingas!. Three things it could not do, all silent:
+
+**A `filter` on it matched nothing, for ever.** The event's subject is
+deliberately a *player* — that is what makes `controller: "you"` read "creatures
+**you control**" — so it is absent from `OBJECT_SUBJECT_TRIGGERS`,
+`_subject_oid` returns `None`, and the generic filter branch short-circuits to
+`False`. "One or more **Dragons** you control" written against it was an ability
+that never fired. It now has its own branch, read over the damagers and
+satisfied by any one of them, because the printed line is "one or more".
+
+**"Those Dragons" had no name to be reached by.** `damagers` joins
+`EVENT_BINDING_KEYS` — `_fire_damage_batch` has put it on the event since the
+event existed and the list dropped it — and on a *filtered* trigger the binding
+is the matching subset, not the whole batch. `_matches` and `event_bindings` ask
+one function, so "did a Dragon connect" and "which Dragons" cannot come apart.
+
+**"…or battle" could not be said.** `or_battle` widens the event to 506.2's
+battle half, and `_fire_damage_batch` now collects battle hits beside seats.
+
+| the near miss | why it is not this |
+|---|---|
+| `deals_combat_damage_to_player` | per *connection*: a three-Dragon swing looks at nine cards and puts three in hand |
+| `max_per_turn: 1` on that | `extra_combat` gives a turn a second combat the printed line triggers in again |
+| `{"zone": "battlefield", "subtypes": ["Dragon"]}` for "those Dragons" | strictly larger — it includes the Dragons that stayed home |
+| `batched: true` | a no-op on every combat-damage event: `_queue` keys the batch off `event.data["batch"]` and nothing writes it. The batching here is structural |
+| a second event for the battle half | 510.2 makes combat damage one event, so both would fire on a swing that hit a seat and a battle — one ability paid twice for one combat |
+
+`or_battle` is a **widening**, so it is off by default and `_matches` refuses a
+firing with no damaged seats without it. The event now fires for a battle-only
+swing where it used to fire for nothing at all, and every card already written
+against it still means "to one or more players". The loader refuses `or_battle`
+on any other event, where `_matches` would ignore it and the printed half about
+battles would go missing on a card that looked complete.
+
+### Tests
+
+- `tests/unit/test_battles.py` — arrival with counters, damage onto them, the
+  boundary at zero, attacking one not being attacking its controller, the
+  loader's two refusals, the RL action index, and the protector divergence.
+- `tests/unit/test_batched_combat_damage.py` — one firing for a multi-creature
+  swing with the per-connection near miss kept **live** beside it firing three
+  times, the narrowed `damagers` binding, and `or_battle` against its unwidened
+  control.
+- `tests/unit/test_zurgo_and_ojutai.py` — the three printed lines on one
+  permanent, through a test-pool card with the card's own trigger and effects.
