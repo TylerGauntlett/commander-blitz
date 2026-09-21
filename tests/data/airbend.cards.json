@@ -1,0 +1,92 @@
+{
+  "_comment": "Cards that exist only for the airbend test (tests/unit/test_airbend.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_gale_reversal` is airbend's one line on a free sorcery, so a board can be set without spending the mana the {2} assertions then count. `t_gale_scatter` is the same sorcery written with plain `exile` + `playable` -- the near miss the gap record named -- and it is what measures both halves: it grants to the caster rather than each owner, and it charges the printed price. `t_stone_yak` costs a single GREEN pip, so a seat holding only Plains can pay {2} and could never pay {G}; `t_thunder_drake` costs {4}{U}{U}, six mana of which two are pips no reduction can reach, so {2} off two lands is a replacement and not a discount at any amount.",
+  "cards": [
+    {
+      "id": "t_gale_reversal",
+      "name": "Test Gale Reversal",
+      "oracle_text": "Airbend all creatures. (Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.)",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "airbend",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_gale_scatter",
+      "name": "Test Gale Scatter",
+      "oracle_text": "Exile all creatures. While each one is exiled, you may cast it.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "playable": "while_exiled",
+          "objects": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ],
+            "count": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_stone_yak",
+      "name": "Test Stone Yak",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Yak"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ]
+    },
+    {
+      "id": "t_thunder_drake",
+      "name": "Test Thunder Drake",
+      "oracle_text": "",
+      "mana_cost": "{4}{U}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ]
+    }
+  ]
+}

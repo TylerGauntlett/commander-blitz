@@ -16344,3 +16344,112 @@ that skip the first still running, the counterfactual that an unbought mode does
 not fire, the subset being part of the action's identity and of `key()`, seven
 distinct `base_label`s so the client cannot collapse the rows, and every loader
 refusal.
+
+## `airbend` and `cant_cast_spells_from_zones` — Avatar's Wrath
+
+One card, two capabilities, because its first two lines are two different
+things the engine had no way to say. Gap record:
+`data/authoring/gaps/avatar_s_wrath.json` (now retired).
+
+    Choose up to one target creature, then airbend all other creatures.
+    (Exile them. While each one is exiled, its owner may cast it for {2}
+    rather than its mana cost.)
+    Until your next turn, your opponents can't cast spells from anywhere
+    other than their hands.
+    Exile Avatar's Wrath.
+
+The third line was already the `exiles_itself` rider.
+
+### Tier: A, twice — two new ops, no new decision, event or API field
+
+`airbend` needed one new field on `ObjectState` and one new branch in each of
+the two places a cast is priced; `cant_cast_spells_from_zones` needed a new
+timed table beside `LifeLock`. Neither touches the frontend or the server.
+
+### airbend — what was already there, and why none of it could say it
+
+The reminder text is the whole op, and it makes two claims at once.
+
+**The permission goes to each card's owner.** `exile` with a `playable`
+permission is the near miss and writes `obj.playable_by = ctx.controller` —
+one seat, the resolving spell's. That is right for the impulse-draw family it
+was built for and exactly wrong here: airbend sweeps the *whole board*, so most
+of what it exiles belongs to somebody else and the caster would get to cast it.
+
+**The price is a flat {2} replacing the printed cost.** Nothing anywhere set a
+price on a permission. `ObjectState` had `playable_free`, `playable_any_color`
+and `playable_any_type`; `casting._cast_options` could pass `extra_generic` or
+`free` — the printed price or no price, never "{2} instead".
+`cost_reduction`/`mana_reduction` are clamped to the *generic* part of a cost
+by `costs.cost_reduction`, so no subtraction reaches a coloured pip and no
+single number is right for two creatures of different mana values.
+`alternative_cost` and `evoke` are the right shape but live on the card being
+cast, set by its own author; airbend imposes the price from outside.
+
+### What was built (airbend)
+
+| piece | what it does |
+|---|---|
+| `ObjectState.playable_alt_cost` | the flat price as a printed mana string, `None` for an ordinary permission. Cleared by `reset_permanent_state` and by `turn._expire_permissions` |
+| `effects/ops_removal.op_airbend` | exiles the pool and writes `playable_by = obj.owner`, `playable_duration = "while_exiled"`, `playable_alt_cost = "{2}"`. `cost` overrides, `as` binds the pool |
+| `casting._cast_options` / `_cast_variant` | a new `alt_cost` argument, passed from the permission block beside `free=obj.playable_free`, and a cost branch directly under the free one. Handed to the **plain** line alone — every variant below it already chose its own price |
+| `Game._cast` | the paying half, read off the same field. Safe to re-read off the board (unlike `free_cast_permission`) because an airbent card has no printed-cost line beside it |
+| loader guard | `objects` required; `playable` refused beside it; `cost` must parse |
+
+### cant_cast_spells_from_zones — what was already there
+
+`cant_cast_spells`, the player-wide static, is total **by construction**: the
+loader raises a `DslError` if `affects` or `amount` appears beside it, so a
+narrower printed line cannot load as a strictly stronger lock. Written bare here
+it would shut the opponents' hands too — a far harsher card, silently.
+`player_cant_cast_spells` takes only `affects_player` and `condition`, and
+`static_condition_keys` has no zone vocabulary and no "until your next turn"
+clock. It is also a `static_effect`, which only a permanent can carry, and
+Avatar's Wrath is a sorcery that exiles itself. `set_turn_flag` is inert (no
+legality path reads `has_turn_flag`) and expires a turn too soon; `detain` and
+`lock_abilities` aim at objects; `delay`/`delayed_trigger` schedule a future
+effect rather than hold a restriction open across the turns in between.
+
+### What was built (cant_cast_spells_from_zones)
+
+| piece | what it does |
+|---|---|
+| `structs.CastLock` + `CAST_LOCK_DURATIONS` | the row: `player` (whose next turn ends it), `affects` (who is locked), `zones`, `duration`, `source`. The **first** timed table where the clock seat and the affected seat differ — which is what "until *your* next turn, *your opponents* can't cast" says |
+| `GameState.cast_locks` | the table, beside `life_locks` and `player_protections` |
+| `temp_effects.lock_casting_zones` / `clear_cast_locks` | installer and wearing-off; an empty `affects` or `zones` records nothing |
+| `primitives.cast_locked_zones` | the reader — the union over every lock reaching a seat, because "can't" beats "can" (101.2) |
+| `effects/ops_player.op_cant_cast_spells_from_zones` | exactly one of `zones` or `except_zones`; `player` defaults to `each_opponent`; the clock is always the resolving controller |
+| `casting._cast_actions` | one filter on `costs.zone_of` over the **finished** list, so all eight of its walks close at once and so does the ninth somebody adds next |
+| `suspend.cast_for_free`, `replacements._offer_cast` | the resolution-time roads — cascade, madness, suspend, rebound — checked beside `player_cant_cast_spells` |
+| `turn._untap_step` / `_cleanup_step`, `sba` | the two clocks, and the elimination hygiene every table beside it already had |
+
+`ops_stack.op_cast_copy` is deliberately left open: a copy created on the stack
+was never in a zone to be cast from (707.12).
+
+### Tests
+
+`tests/unit/test_airbend.py` over `tests/data/airbend.cards.json` — fifteen
+tests in three classes. The board has two seats owning one creature each,
+because a permission written to `ctx.controller` passes every test a one-sided
+board can ask; a `t_gale_scatter` written as plain `exile` + `playable` sits
+beside the airbend sorcery and measures both halves of the difference. The
+{G} creature is castable by a seat holding only Plains (replacement, not
+discount), the {4}{U}{U} one off two lands, one land is not enough, casting
+spends exactly two, a stolen creature goes back to its owner, and the grant
+survives the turn it was made on and dies when the card leaves exile.
+
+`tests/unit/test_cant_cast_spells_from_zones.py` over
+`tests/data/cant_cast_spells_from_zones.cards.json` — nine tests in two
+classes, built on one flashback instant that is a hand cast and a graveyard cast
+at once, so nothing about the card separates the two lines except where it is.
+The hand stays open while the graveyard and the command zone shut; the caster is
+not locked; the positive `zones` spelling shuts only what it names; and the lock
+holds through the locked player's **whole turn** and is gone by the caster's
+next one — the boundary that separates it from `this_turn`.
+
+### The card
+
+`data/authoring/answers/avatar_s_wrath.json`, passing all six gates. "Choose up
+to one target creature, then airbend all other creatures" is a
+`choose_permanents` binding the target under `spared` followed by an `airbend`
+with `exclude_binding: "spared"` — no new selector needed.

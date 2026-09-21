@@ -16,6 +16,7 @@ from .characteristics import chars, player_cant_cast_spells
 from .costs import (
     can_pay,
     commander_cost,
+    zone_of,
 )
 from .enums import ActionKind, Keyword, Step, Zone
 from .mana import ManaCost, max_affordable_x, solve_payment
@@ -27,7 +28,7 @@ from .player_statics import (
     spell_life_tax,
     spell_life_tax_on_board,
 )
-from .primitives import life_locked, sacrifice_forbidden
+from .primitives import cast_locked_zones, life_locked, sacrifice_forbidden
 from .targeting import describe_ref, enumerate_target_tuples
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -155,7 +156,20 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if card.is_land or not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(
-            _cast_options(state, pid, oid, card, extra_generic=0, free=obj.playable_free)
+            _cast_options(
+                state,
+                pid,
+                oid,
+                card,
+                extra_generic=0,
+                free=obj.playable_free,
+                # "…its owner may cast it **for {2} rather than its mana
+                # cost**" -- airbend. Read off the same permission that made
+                # the card castable at all, beside `playable_free`, because it
+                # is the same kind of fact: what this line costs. `Game._cast`
+                # reads the identical field off the identical card.
+                alt_cost=obj.playable_alt_cost,
+            )
         )
 
     # Foretold cards are cast from **exile**, at the foretell price, and only on
@@ -268,6 +282,19 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(_cast_options(state, pid, oid, card, extra_generic=commander_cost(state, oid)))
+    # "…can't cast spells from anywhere other than their hands." (Avatar's
+    # Wrath.) Applied to the finished list rather than written into each block
+    # above, and that is the whole point of doing it here: this function offers
+    # casts out of the hand, the top of the library, exile, both graveyards,
+    # the command zone and the battlefield, in eight separate walks, and a gate
+    # written into one of them would leave the other seven open. One filter on
+    # `zone_of` closes all of them, and closes the ninth the next lane adds.
+    #
+    # Distinct from `player_cant_cast_spells` at the top, which returns early
+    # and needs no zone: that one is a claim about the player, and this one is
+    # a claim about where a card is.
+    if shut := cast_locked_zones(state, pid):
+        out = [a for a in out if zone_of(state, a.source) not in shut]
     return out
 
 
@@ -422,7 +449,14 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
 
 
 def _cast_options(
-    state: GameState, pid: int, oid: int, card: CardDef, *, extra_generic: int, free: bool = False
+    state: GameState,
+    pid: int,
+    oid: int,
+    card: CardDef,
+    *,
+    extra_generic: int,
+    free: bool = False,
+    alt_cost: str | None = None,
 ) -> list[Action]:
     """Every distinct way to cast this card right now.
 
@@ -442,7 +476,21 @@ def _cast_options(
         return []
 
     out = _cast_variant(
-        state, pid, oid, card, tuples, extra_generic=extra_generic, kicked=False, free=free
+        state,
+        pid,
+        oid,
+        card,
+        tuples,
+        extra_generic=extra_generic,
+        kicked=False,
+        free=free,
+        # The airbend price rides on **this** line alone and is deliberately
+        # not handed to the variants below. Each of those already chose its own
+        # price -- evoke, bestow, the alternative cost -- and a flat {2} laid
+        # over one of them would be a third price nobody printed. The plain
+        # line is the one the permission is offering, and `Game._cast` charges
+        # {2} on exactly the branch that has no other flag set.
+        alt_cost=alt_cost,
     )
     # "You may cast Dragon spells without paying their mana costs" --
     # Dracogenesis. A standing board permission rather than a price on this
@@ -1163,6 +1211,7 @@ def _cast_variant(
     bestowed: bool = False,
     mutated: bool = False,
     pay_generic: int = 0,
+    alt_cost: str | None = None,
 ) -> list[Action]:
     from .costs import cost_reduction, mana_sources, spell_purpose, variant_reduction
     from .stack import modal_cast_ok
@@ -1203,6 +1252,15 @@ def _cast_variant(
         # shows on an X spell, where a discount leaves X payable and this does
         # not.
         cost = FREE_COST
+    elif alt_cost is not None:
+        # "…its owner may cast it **for {2} rather than its mana cost**" --
+        # airbend. Second in the chain, directly under the free line, because
+        # it is the same shape: a price that *replaces* the printed one rather
+        # than adjusting it. The discounts below still apply to it, which is
+        # right -- a cost reduction reduces whatever cost is actually being
+        # paid (601.2f) -- and they reach only its generic part, which is all
+        # of it.
+        cost = ManaCost.parse(alt_cost)
     elif flashback and card.flashback is not None:
         cost = card.flashback.mana
         variant_less = variant_reduction(state, pid, card.flashback, oid)
@@ -1396,6 +1454,12 @@ def _cast_variant(
             # would collapse into one row and the player would never see the
             # choice, which is the choice 601.2b gives them.
             label_base += " (without paying its mana cost)"
+        if alt_cost is not None:
+            # The price, in the label, for the reason the free line carries its
+            # printed words: a card airbent out of a graveyard could also be
+            # offered a flashback line, and two rows labelled "Cast Foo" would
+            # collapse into one in the client and hide the choice.
+            label_base += f" (for {alt_cost})"
         if kicked:
             # The card's own word: "kicked", "buyback".
             label_base += f" ({card.kicker_label})"

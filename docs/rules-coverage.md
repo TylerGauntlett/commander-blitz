@@ -413,6 +413,38 @@ already castable from, and a card printing that clause is a gap record rather
 than an approximation. And the permission alters no timing: a Dragon sorcery is
 still a sorcery.
 
+**"Its owner may cast it for {2} rather than its mana cost"** -- airbend
+(Avatar's Wrath) -- is the `airbend` op, and it is the only place a **price**
+rides on a casting permission. `ObjectState.playable_alt_cost` holds the flat
+cost as a printed mana string; `casting._cast_options` passes it beside
+`playable_free`, `_cast_variant` prices the line on it directly under the free
+branch, and `Game._cast` charges it off the same field. It **replaces** the
+printed cost rather than reducing it, which no reduction could do at any amount
+(`costs.cost_reduction` clamps every reduction to the generic part of a cost).
+The permission names each card's **owner** (108.3), not the resolving
+controller, so a creature you had stolen goes back to the player who brought
+it, and it lives on the `"while_exiled"` clock -- ended by
+`reset_permanent_state` as the card leaves exile, which is 400.7 anyway.
+**Not modelled**: the price is a flat cost with no {X} and no additional cost
+of its own, and it rides only the plain cast line -- a kicked or bestowed
+airbent card is charged from its printed cost, which no printed card asks
+about.
+
+**"Can't cast spells from anywhere other than their hands"** -- Avatar's Wrath
+-- is the `cant_cast_spells_from_zones` op, which installs a `structs.CastLock`:
+a row in a timed table naming the locked seats, the shut zones, and the seat
+whose next turn ends it. The zone filter is what the `cant_cast_spells` static
+cannot carry (the loader refuses an `affects` beside it on purpose, so a
+narrower printed line cannot load as a strictly stronger lock), and the clock is
+what no static on a permanent could hold for a sorcery. `primitives.cast_locked_zones`
+is read by `casting._cast_actions`, `suspend.cast_for_free` and
+`replacements._offer_cast`; the lock is cleared in the caster's untap step and
+swept off an eliminated caster by `sba`, the way every other
+``until_your_next_turn`` table is. **Not modelled**: `ops_stack.op_cast_copy` is
+deliberately outside it -- a copy created on the stack was never in a zone to be
+cast from (707.12) -- and the lock says nothing about *which* spells, only
+about where they are.
+
 **Effects**
 Copying a permanent as anything but a token, **except** as it enters -- 614.1b is
 implemented as the `self_enters_as_copy` replacement (Masterwork of Ingenuity,

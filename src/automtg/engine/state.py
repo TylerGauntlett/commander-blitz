@@ -15,6 +15,7 @@ from .rng import Rng
 from .structs import (
     AttackRestriction,
     BlockProhibition,
+    CastLock,
     CombatState,
     DamageShield,
     DelayedTrigger,
@@ -347,6 +348,15 @@ class GameState:
     #: three life-changing sites short-circuit on the empty list, which is what
     #: it is in every game that plays none of these cards.
     life_locks: list[LifeLock] = field(default_factory=list)
+    #: "Until your next turn, your opponents can't cast spells from anywhere
+    #: other than their hands" -- see :class:`structs.CastLock`.
+    #:
+    #: The timed table beside `life_locks`, on the same clock and cleared in
+    #: the same untap step. A list rather than a per-player field because two
+    #: locks over one seat are two effects, and every reader short-circuits on
+    #: the empty list -- which is what it is in every game that plays none of
+    #: these cards, and this one is read on every legality build.
+    cast_locks: list[CastLock] = field(default_factory=list)
     #: "You can't sacrifice those creatures this turn" -- see
     #: :class:`structs.SacrificeRestriction`.
     #:

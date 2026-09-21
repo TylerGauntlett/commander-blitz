@@ -566,6 +566,77 @@ class LifeLock:
         }
 
 
+#: The durations a :class:`CastLock` can carry.  Both, for the reason
+#: :data:`LIFE_LOCK_DURATIONS` carries both: the printed sentence says "until
+#: your next turn", and a timed table the cleanup step could not sweep on
+#: ``this_turn`` would be the one exception among them.
+CAST_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class CastLock:
+    """"Until your next turn, your opponents can't cast spells from anywhere
+    other than their hands." -- Avatar's Wrath.
+
+    A prohibition on casting **from named zones**, over named seats, with a
+    clock. Three things at once, and the engine had none of them together.
+
+    **Not the `cant_cast_spells` static.** That one is player-wide and total:
+    the loader refuses an `affects` or an `amount` beside it (see
+    `loader.__init__`) precisely so a narrower printed line cannot load as a
+    strictly stronger lock, and written bare here it would forbid the
+    opponents' **hand** casts too -- a far harsher card than the one printed.
+    It is also a `static_effect`, so only a permanent can carry one, and
+    Avatar's Wrath is a sorcery that exiles itself.
+
+    **Not a `set_turn_flag`.** A turn flag is read by `has_turn_flag`
+    conditions and by nothing in the legality path, so a player "flagged"
+    locked would go on casting; and it expires at the turn boundary rather than
+    at the locking player's next turn, which is one turn too soon at a
+    four-player table.
+
+    Lives on the table (:attr:`GameState.cast_locks`) beside `life_locks` and
+    `player_protections`, for their reason, and shares their clock: cleared in
+    :attr:`player`'s untap step, keyed by a seat and never by a turn number,
+    because eliminating a player moves everybody else's "next turn".
+
+    :attr:`player` is the seat whose next turn **ends** it -- the `_expired`
+    contract every timed table here shares -- and :attr:`affects` is who is
+    *locked*. The first table where the two differ, and they have to: the
+    printed sentence is "until **your** next turn, **your opponents** can't
+    cast", one clock and several other seats. `DamageShield` overloads
+    ``player`` the other way and is the reason `clear_damage_shields` cannot
+    use `_expired`; splitting the two fields here keeps this table on the
+    shared helper.
+    """
+
+    #: Whose next turn ends this. Never a turn number.
+    player: int
+    #: The seats that can't cast. A tuple rather than a set so the record stays
+    #: hashable and `==` deduplicates two copies of one sentence.
+    affects: tuple[int, ...] = ()
+    #: The zones a locked player can't cast from, as `Zone` values. Named
+    #: positively rather than as "everywhere except the hand", because the
+    #: reader compares against `costs.zone_of` and a positive list needs no
+    #: inversion at the point of use -- and because a card that locks exactly
+    #: one zone ("can't cast spells from graveyards") is then the same record
+    #: with a shorter list.
+    zones: tuple[str, ...] = ()
+    duration: str = "until_your_next_turn"
+    #: The spell that installed it, for the log. Not part of the lifetime:
+    #: Avatar's Wrath exiles itself on resolution and the lock stands anyway.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "affects": list(self.affects),
+            "zones": list(self.zones),
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 #: The durations a :class:`SacrificeRestriction` can carry.  One word, and only
 #: one, is printed: "you can't sacrifice those creatures **this turn**" (Call for
 #: Aid).  A tuple of one for the reason :data:`DAMAGE_SHIELD_DURATIONS` is one --

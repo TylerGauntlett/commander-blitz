@@ -228,13 +228,23 @@ def _offer_cast(
     simplification `suspend.cast_for_free` documents.
     """
     from . import stack, triggers
-    from .costs import can_pay, pay
+    from .costs import can_pay, pay, zone_of
     from .effects.context import EffectContext, ask_yes_no
     from .player_statics import player_cant_cast_spells
+    from .primitives import cast_locked_zones
     from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
+        return False
+    if zone_of(state, oid) in cast_locked_zones(state, pid):
+        # "…can't cast spells from anywhere other than their hands."
+        # (Avatar's Wrath.) Madness casts from **exile** and the impulse family
+        # from a graveyard, both of which this lock shuts, and both of them
+        # reach the stack without passing through `casting._cast_actions`.
+        # Checked before the question, for the reason the total prohibition
+        # below is: a prompt the player cannot act on is an offer the engine
+        # does not honour.
         return False
     if player_cant_cast_spells(state, pid):
         # Voice of Victory (101.2): the "can't" beats the "may", and it is

@@ -734,6 +734,23 @@ class GameObject:
     #: colourless mana), and kept beside it for the same reason: it rides on the
     #: permission and expires with it.
     playable_any_color: bool = False
+    #: "…its owner may cast it **for {2} rather than its mana cost**" -- airbend
+    #: (Avatar's Wrath). The flat price the permission carries, as a printed
+    #: mana string, or None for the ordinary permission that charges whatever
+    #: the card says.
+    #:
+    #: A *replacement*, not a discount, and that is the whole reason it is a
+    #: field rather than a number folded into the existing reductions:
+    #: `costs.cost_reduction` clamps every reduction to the **generic** part of
+    #: a cost, so no subtraction reaches a coloured pip and no single number is
+    #: right for two airbent creatures of different mana values. {2} is {2}
+    #: whether the card printed {G} or {7}{U}{U}.
+    #:
+    #: Distinct from `playable_free`, which is 601.2b's "without paying its
+    #: mana cost" and leaves nothing to pay at all -- this one has a price, it
+    #: is simply not the card's. Rides on the permission and dies with it, the
+    #: way `playable_any_color` does.
+    playable_alt_cost: str | None = None
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -1051,6 +1068,7 @@ class GameObject:
         self.playable_group = None
         self.playable_any_type = False
         self.playable_any_color = False
+        self.playable_alt_cost = None
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()

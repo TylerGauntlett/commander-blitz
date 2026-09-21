@@ -11,7 +11,7 @@ flowchart LR
     constraints --> carddef["CardDef<br/>immutable"]
     carddef --> ability["Ability"]
     ability --> ctx["EffectContext<br/>targets, bindings, x"]
-    ctx --> ops["op registry<br/>93 ops"]
+    ctx --> ops["op registry<br/>125 ops"]
     ops --> events["GameEvent log"]
 
     style vocab fill:#2d5a8c,color:#fff
@@ -303,10 +303,10 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
-| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` |
+| Board | `destroy` `exile` `sacrifice` `put_onto_battlefield` `create_token` `add_counters` `remove_counters` `tap` `untap` `attach` `unattach` `lock_abilities` `monstrosity` `freeze` `copy_permanent` `grant_ability` `skip_untap` `must_attack` `must_block` `cant_attack_player` `goad` `cant_block` `unblockable` `cant_sacrifice` `move_counters` `set_flag` `proliferate` `detain` `gain_control` `haunt` `pair` `aura_swap` `encode` `cast_copy` `manifest` `meld` `phase_out` `regenerate` `replace_deaths` `set_turn_flag` `replace_leaves_battlefield` `become_copy` `exile_and_return` `become_prepared` `phase_in` `airbend` |
 | Modify | `pump` `grant_keyword` `grant_protection` `set_pt` `animate` `add_subtype` `change_text` `transform` `become_level` `lose_all_abilities` `rename` |
 | Life & damage | `gain_life` `lose_life` `damage` `fight` `add_poison` `prevent_damage` `lock_life_total` |
-| Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` |
+| Players | `become_monarch` `win_game` `no_maximum_hand_size` `emblem` `cant_cast_spells_from_zones` |
 | Mana | `add_mana` `add_mana_per` `extra_land_drop` |
 | Stack | `counter` `copy_spell` `grant_plot` `grant_rebound` `return_spell_to_hand` `reflexive_trigger` |
 | Turn structure | `extra_combat` `extra_turn` |
@@ -6534,6 +6534,82 @@ it back.
 `state.stack` by the time its effects run, so `{"zone": "stack", "self_only":
 true}` reaches nothing and the printed line would load cleanly and do nothing.
 `exile_self` is a **cost** key and is a different sentence again.
+
+## Airbend — "exile them, and their owners may cast them for {2}"
+
+```jsonc
+{ "op": "airbend",
+  "objects": { "zone": "battlefield", "types": ["Creature"], "count": "all",
+               "exclude_binding": "spared" } }
+```
+
+Avatar's Wrath. The reminder text is the whole op — "Exile them. While each one
+is exiled, **its owner** may cast it **for {2} rather than its mana cost**" —
+and both bolded halves are ones `exile` with a `playable` permission cannot
+say:
+
+| near miss | why it is not this |
+|---|---|
+| `exile` + `playable` | writes `obj.playable_by = ctx.controller`, one seat: airbend sweeps the whole board, so most of what it exiles is somebody else's and the caster would get to cast it. Its only cost riders are `any_color` / `any_type`, which relax what may be *spent* rather than how much |
+| `grant_playable` | same permission at the **printed** price, and over a snapshot of what it could see |
+| `cost_reduction` / `mana_reduction` | `costs.cost_reduction` clamps every reduction to the **generic** part of a cost, so no subtraction reaches a coloured pip — and no single number is right for two creatures of different mana values. {2} is {2} whether the card printed {G} or {7}{U}{U} |
+| `alternative_cost`, `evoke` | the right shape, but they live on the card being cast and are set by its own author. Airbend imposes the price on *other* cards from outside |
+
+The permission is written from each object (`obj.owner`, the one identity a
+card never loses — 108.3), so a creature you had stolen with `gain_control`
+goes back to the player who brought it. The price lands on the new
+`ObjectState.playable_alt_cost` and is read by `casting._cast_options` beside
+`playable_free`, and by `Game._cast` off the same field: a card in exile under
+this permission has no printed-cost line beside it, so re-reading the board is
+safe here in a way it is not for `free_cast_permission`.
+
+`cost` overrides the {2}, and `as` binds the pool the way `exile`'s does.
+Duration is not spellable: "while each one is exiled" is the
+`"while_exiled"` clock, which nothing winds — `reset_permanent_state` clears
+every `playable_*` field as the card leaves exile, which is both what the
+sentence says and what 400.7 says anyway.
+
+Pinned in `tests/unit/test_airbend.py` over `tests/data/airbend.cards.json`,
+which measures both halves against a plain `exile` + `playable` written on the
+same board.
+
+## "Can't cast spells from anywhere other than their hands"
+
+```jsonc
+{ "op": "cant_cast_spells_from_zones", "player": "each_opponent",
+  "except_zones": ["hand"] }
+{ "op": "cant_cast_spells_from_zones", "player": "each_opponent",
+  "zones": ["graveyard"], "duration": "this_turn" }
+```
+
+Avatar's Wrath's second line. A casting prohibition with a **zone filter** and a
+**clock**, installed by a one-shot:
+
+| near miss | why it is not this |
+|---|---|
+| `cant_cast_spells` (static) | total by construction — the loader refuses an `affects` or an `amount` beside it, so a narrower printed line cannot load as a strictly stronger lock. Written bare it shuts the opponents' *hands* too, which is a far harsher card. It is also a `static_effect`, and a sorcery leaves no permanent to carry one |
+| `set_turn_flag` | inert: no legality path reads `has_turn_flag`, so a "flagged" player goes on casting — and it dies at the turn boundary, a turn too soon |
+| `detain`, `lock_abilities` | aimed at objects, not seats |
+| `delay`, `delayed_trigger` | schedule a future effect rather than hold a restriction open across the turns in between |
+
+Exactly one of `zones` (the shut ones) or `except_zones` (the open ones, which
+are subtracted from every zone there is) — both is two answers to one question,
+neither is a prohibition that prohibits nothing. `player` names **who is
+locked** and defaults to `"each_opponent"`; the *clock* is always the resolving
+controller, because "until **your** next turn" is what every printed sentence of
+this shape says. `duration` is `"until_your_next_turn"` (default, cleared in the
+caster's untap step) or `"this_turn"`.
+
+It installs a `structs.CastLock` and modifies nothing else, the way
+`lock_life_total` installs a `LifeLock`. `primitives.cast_locked_zones` reads it
+back on **three** roads — `casting._cast_actions` (which filters its finished
+list on `zone_of`, so every one of its eight walks is closed at once),
+`suspend.cast_for_free`, and `replacements._offer_cast`. `ops_stack.op_cast_copy`
+is deliberately left open: a copy created on the stack was never in a zone to be
+cast from (707.12).
+
+Pinned in `tests/unit/test_cant_cast_spells_from_zones.py`, where one flashback
+instant is a hand cast and a graveyard cast at once.
 
 ## "Your life total can't change"
 

@@ -187,6 +187,17 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
         for lock in state.life_locks
         if not (lock.duration == "until_your_next_turn" and lock.player == pid)
     ]
+    # And the same hole in the cast lock, which is the worst of them: "until
+    # your next turn, your opponents can't cast spells from anywhere other than
+    # their hands" is cleared in the *caster's* untap step, so killing the
+    # caster would leave every other seat locked out of every zone but their
+    # hand for the rest of the game. `player` is the clock here, not the locked
+    # seat, which is why this reads it and not `affects`.
+    state.cast_locks = [
+        lock
+        for lock in state.cast_locks
+        if not (lock.duration == "until_your_next_turn" and lock.player == pid)
+    ]
     # And the same hole in goad's mark. It is *more* than a stale flag here:
     # a goad nobody can clear compels every combat for the rest of the game, and
     # its target restriction would keep pointing at an empty seat -- which, with

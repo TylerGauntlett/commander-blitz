@@ -1,0 +1,92 @@
+{
+  "_comment": "Cards that exist only for the cast-lock test (tests/unit/test_cant_cast_spells_from_zones.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_hand_only_decree` is Avatar's Wrath's second line on a free sorcery, so the lock can be installed without spending the mana the blocked lines are then measured against. `t_ember_recall` is an instant with flashback, so one card id is a HAND cast and a GRAVEYARD cast at once -- which is exactly the line the bare `cant_cast_spells` static could not draw. `t_ashen_warden` is a commander-shaped creature, the third zone. `t_total_silence_decree` writes the same lock with no `except_zones`, which is what the total prohibition looks like when it is written on purpose.",
+  "cards": [
+    {
+      "id": "t_hand_only_decree",
+      "name": "Test Hand Only Decree",
+      "oracle_text": "Until your next turn, your opponents can't cast spells from anywhere other than their hands.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "cant_cast_spells_from_zones",
+          "player": "each_opponent",
+          "except_zones": [
+            "hand"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_total_silence_decree",
+      "name": "Test Total Silence Decree",
+      "oracle_text": "Until your next turn, your opponents can't cast spells from their graveyards.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "cant_cast_spells_from_zones",
+          "player": "each_opponent",
+          "zones": [
+            "graveyard"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ember_recall",
+      "name": "Test Ember Recall",
+      "oracle_text": "Test Ember Recall deals 1 damage to each opponent.\nFlashback {R}",
+      "mana_cost": "{R}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "spell_effects": [
+        {
+          "op": "damage",
+          "player": "each_opponent",
+          "amount": {
+            "const": 1
+          }
+        }
+      ],
+      "flashback": {
+        "mana": "{R}"
+      }
+    },
+    {
+      "id": "t_ashen_warden",
+      "name": "Test Ashen Warden",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Warden"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ]
+    }
+  ]
+}

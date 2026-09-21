@@ -190,11 +190,23 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     really cast and not the ones that were merely offered.
     """
     from . import stack, triggers
+    from .costs import zone_of
     from .player_statics import player_cant_cast_spells
+    from .primitives import cast_locked_zones
     from .targeting import enumerate_target_tuples
 
     obj = state.objects.get(oid)
     if obj is None:
+        return False
+    if zone_of(state, oid) in cast_locked_zones(state, pid):
+        # "…can't cast spells from anywhere other than their hands."
+        # (Avatar's Wrath.) A free cast is still a cast (601.2b), and this is
+        # the road cascade, suspend and rebound take -- every one of them out
+        # of **exile**, which is exactly a zone this lock shuts. Asked beside
+        # `player_cant_cast_spells` and for its reason: the floor under every
+        # free cast, so an op that forgets to ask first still cannot cast
+        # through the lock. The card stays where it is, the same outcome the
+        # total prohibition below produces.
         return False
     if player_cant_cast_spells(state, pid):
         # Voice of Victory (101.2): a "may cast" meets a "can't cast" and the

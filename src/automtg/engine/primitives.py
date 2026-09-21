@@ -40,6 +40,7 @@ from .temp_effects import (  # noqa: F401
     _expired,
     clear_attack_restrictions,
     clear_block_prohibitions,
+    clear_cast_locks,
     clear_damage_shields,
     clear_goad,
     clear_life_locks,
@@ -50,6 +51,7 @@ from .temp_effects import (  # noqa: F401
     forbid_sacrifice,
     goad_creature,
     grant_player_protection,
+    lock_casting_zones,
     lock_life_total,
     make_unblockable,
     restrict_attack,
@@ -254,6 +256,41 @@ def life_locked(state: GameState, pid: int) -> bool:
     if not state.life_locks:
         return False
     return any(lock.player == pid for lock in state.life_locks)
+
+
+def cast_locked_zones(state: GameState, pid: int) -> frozenset[str]:
+    """The zones ``pid`` can't cast a spell out of right now.  Usually empty.
+
+    "Until your next turn, your opponents can't cast spells from anywhere other
+    than their hands" (Avatar's Wrath).  The union over every
+    :class:`structs.CastLock` reaching this seat, because two locks are two
+    effects and "can't" beats "can" (101.2): a zone one of them names stays
+    shut however permissive the other is.
+
+    Three readers, not one, for `life_locked`'s reason -- there is no single
+    choke point for a cast.  `casting._cast_actions` builds the ordinary
+    priority-window offers; `suspend.cast_for_free` and
+    `replacements._offer_cast` each put a spell on the stack at *resolution*
+    time without passing through it, which is how cascade, madness, suspend and
+    rebound work.  A lock installed in the first alone would be a prohibition
+    that cascade walks straight past -- and cascade casts from exile, which is
+    precisely one of the zones this card shuts.
+
+    `ops_stack.op_cast_copy` is the fourth road and is deliberately **not**
+    gated: a copy created on the stack was never in a zone to be cast from
+    (707.12), so there is no zone for this to compare against.
+
+    Returns strings rather than `Zone` members because `Zone` is a `str` enum
+    and the rows come from JSON: comparing `costs.zone_of(...)` against this set
+    works either way, and the loader is the thing that validated the spelling.
+    """
+    if not state.cast_locks:
+        return frozenset()
+    shut: set[str] = set()
+    for lock in state.cast_locks:
+        if pid in lock.affects:
+            shut.update(lock.zones)
+    return frozenset(shut)
 
 
 def gain_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:

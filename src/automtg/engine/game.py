@@ -433,6 +433,26 @@ class Game:
             # announce (107.3b) -- the reason this is `FREE_COST` and not a
             # reduction to zero.
             cost = ManaCost.parse("")
+        elif (
+            (airbent := state.objects[oid]).playable_alt_cost is not None
+            and airbent.playable_by == pid
+            and airbent.playable_live(state.turn)
+        ):
+            # "…its owner may cast it **for {2} rather than its mana cost**" --
+            # airbend. The paying half of the line `_cast_variant` priced, and
+            # read off the **board** rather than off the action, which is safe
+            # here for the reason it was safe for plot and is not for
+            # Dracogenesis: an airbent card is castable *only* under this
+            # permission, so there is no printed-cost line beside it for a
+            # re-read to confuse this one with. It is the same read
+            # `playable_any_type` and `playable_any_color` make three lines
+            # below, off the same card, at the same moment.
+            #
+            # Last in the chain, immediately above the printed cost, because
+            # `_cast_variant` hands `alt_cost` to the plain line alone: every
+            # branch above this one chose a price of its own, and a line
+            # offered at that price has to be charged at it.
+            cost = ManaCost.parse(airbent.playable_alt_cost)
         else:
             cost = card.mana_cost
 

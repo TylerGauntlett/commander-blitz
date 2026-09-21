@@ -12,6 +12,7 @@ from typing import Any
 from automtg.engine.effects import RECORDING_OPS, known_ops
 from automtg.engine.effects.conditions import validate_condition
 from automtg.engine.effects.ops_cards import DESTINATIONS, SEARCHABLE
+from automtg.engine.effects.ops_player import CASTABLE_ZONES
 from automtg.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from automtg.engine.effects.values import (
     validate_value,
@@ -24,6 +25,7 @@ from automtg.engine.objects import PLAYABLE_DURATIONS
 from automtg.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
+    CAST_LOCK_DURATIONS,
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
@@ -2116,6 +2118,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: unknown protection duration {duration!r} "
                     f"(implemented: {sorted(PLAYER_PROTECTION_DURATIONS)})"
                 )
+    if op == "airbend":
+        if "objects" not in effect:
+            # "Airbend all other creatures" is a pool, and an airbend with no
+            # pool would exile nothing while still printing its sentence.
+            raise DslError(f"{where}: airbend needs 'objects' -- there is nothing to exile")
+        if "playable" in effect or "playable_this_turn" in effect:
+            # The permission *is* airbend. A duration written beside it would
+            # read as overriding "while each one is exiled" and would be
+            # ignored, which is the silent-wrong-card shape.
+            raise DslError(
+                f"{where}: airbend grants its own permission ('while each one is "
+                f"exiled') -- 'playable' belongs on 'exile', not here"
+            )
+        if (alt := effect.get("cost")) is not None:
+            try:
+                ManaCost.parse(str(alt))
+            except Exception as exc:  # pragma: no cover - defensive
+                raise DslError(f"{where}: airbend cost {alt!r} is not a mana cost") from exc
+    if op == "cant_cast_spells_from_zones":
+        if effect.get("player") is not None:
+            _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        named = effect.get("zones")
+        opened = effect.get("except_zones")
+        if (named is None) == (opened is None):
+            # Both, or neither. Neither locks nothing while printing a
+            # prohibition; both are two answers to one question, and the
+            # positive list would silently win.
+            raise DslError(
+                f"{where}: cant_cast_spells_from_zones needs exactly one of "
+                f"'zones' (the shut ones) or 'except_zones' (the open ones)"
+            )
+        for zone in named if named is not None else opened:
+            if str(zone) not in CASTABLE_ZONES:
+                # A misspelled zone in `zones` locks one door fewer than the
+                # card says, and in `except_zones` locks one *more*. Both are
+                # the wrong card, silently.
+                raise DslError(
+                    f"{where}: unknown zone {zone!r} "
+                    f"(implemented: {sorted(CASTABLE_ZONES)})"
+                )
+        duration = str(effect.get("duration", "until_your_next_turn"))
+        if duration not in CAST_LOCK_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_cast_spells_from_zones duration {duration!r} "
+                f"(implemented: {sorted(CAST_LOCK_DURATIONS)})"
+            )
     if op == "lock_life_total":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)

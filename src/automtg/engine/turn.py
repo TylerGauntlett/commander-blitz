@@ -25,6 +25,7 @@ from .player import MAX_HAND_SIZE
 from .primitives import (
     clear_attack_restrictions,
     clear_block_prohibitions,
+    clear_cast_locks,
     clear_damage_shields,
     clear_goad,
     clear_life_locks,
@@ -63,6 +64,10 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         obj.playable_any_type = False
         obj.playable_any_color = False
         obj.playable_exiles = False
+        # The airbend price rides on the permission, so it goes when the
+        # permission does -- a card left in exile carrying a {2} nobody may
+        # spend would be a live-looking field on a dead grant.
+        obj.playable_alt_cost = None
 
 
 def begin_step(state: GameState) -> Generator[Any, list[int]]:
@@ -349,6 +354,13 @@ def _untap_step(state: GameState) -> None:
     clear_player_protections(state, "until_your_next_turn", player.pid)
     # The other half of the same printed sentence, on the same clock.
     clear_life_locks(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, your opponents can't cast spells from anywhere
+    # other than their hands." (Avatar's Wrath.) The same clock again, and the
+    # seat it is keyed by is the *caster's* -- the player whose untap step this
+    # is -- not the locked opponents', which is what "until **your** next turn"
+    # says. Cleared here, at the top of that turn, so the opponents' last
+    # chance to cast out of a graveyard was the turn cycle in between.
+    clear_cast_locks(state, "until_your_next_turn", player.pid)
     # Phasing (702.26b) happens **before** untapping and it is a turn-based
     # action, not an ability -- which is why it lives here beside the untap
     # rather than in a card's effect list.
@@ -681,6 +693,10 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_unblockables(state, "this_turn")
     clear_player_protections(state, "this_turn")
     clear_life_locks(state, "this_turn")
+    # The `this_turn` half of the cast lock, swept here for the reason every
+    # timed table above it is: a table the cleanup step could not sweep on
+    # that word would be the one exception among them.
+    clear_cast_locks(state, "this_turn")
     # "**Until end of turn**, you may cast … from any graveyard." Beside the
     # rest and owned by no permanent for their reason, and more literally than
     # most: the Saga chapter that grants it exiles the Saga on the same line, so

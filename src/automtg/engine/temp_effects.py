@@ -255,6 +255,64 @@ def lock_life_total(
     return True
 
 
+def lock_casting_zones(
+    state: GameState,
+    player: int,
+    affects: Iterable[int],
+    zones: Iterable[str],
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Forbid ``affects`` from casting out of ``zones`` for ``duration``.
+
+    "Until your next turn, your opponents can't cast spells from anywhere other
+    than their hands" (Avatar's Wrath). One rules-relevant thing: it writes the
+    row. *Reading* it back is `primitives.cast_locked_zones`' job, and the four
+    roads a cast can take all ask that.
+
+    ``player`` is the clock -- whose next turn ends it -- and ``affects`` is
+    who is locked; see :class:`structs.CastLock` on why this is the one timed
+    table where those differ.
+
+    An empty ``affects`` or an empty ``zones`` records nothing and returns
+    False. Neither is a prohibition: a lock over nobody stops nothing, and a
+    lock over no zone is a sentence with its object missing. Writing either
+    would leave a row that no reader can act on and that the untap step still
+    has to sweep.
+
+    Deduplicated on the whole entry, the way `lock_life_total` is: two copies
+    of one sentence say nothing a single one does not.
+    """
+    from .structs import CAST_LOCK_DURATIONS, CastLock
+
+    if duration not in CAST_LOCK_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown cast lock duration {duration!r}")
+    seats = tuple(dict.fromkeys(affects))
+    named = tuple(dict.fromkeys(zones))
+    if not seats or not named:
+        return False
+    entry = CastLock(
+        player=player, affects=seats, zones=named, duration=duration, source=source
+    )
+    if entry in state.cast_locks:
+        return False
+    state.cast_locks.append(entry)
+    return True
+
+
+def clear_cast_locks(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the cast locks of one duration -- their wearing-off.
+
+    The two hooks and two clocks every timed table beside it uses:
+    `turn._cleanup_step` for ``this_turn``, `turn._untap_step` for the
+    ``until_your_next_turn`` entries belonging to whoever is untapping. The
+    second is the one Avatar's Wrath needs, and it is the *caster's* untap step
+    -- the row's ``player`` -- not the locked opponents', which is exactly what
+    "until **your** next turn" says and why `_expired` is given that field.
+    """
+    state.cast_locks = _expired(state.cast_locks, duration, player)
+
+
 def clear_life_locks(state: GameState, duration: str, player: int | None = None) -> None:
     """Drop the life locks of one duration -- their wearing-off.
 

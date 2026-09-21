@@ -35,6 +35,10 @@ RECORDING_OPS = frozenset(
         #: player spec rather than as a pool of objects. It is also the only
         #: one for which `as` is *required* -- the answer is unreachable
         #: otherwise. See `ops_control.op_choose_player`.
+        #: Airbend's pool, recorded for `exile`'s reason and with `exile`'s
+        #: accumulating semantics -- "airbend all other creatures" is one pool
+        #: a later line may need to name.
+        "airbend",
         "choose_player",
         #: The one recorder that does **nothing** to what it picked. Tragic
         #: Arrogance marks the survivors before the mass sacrifice; every other
