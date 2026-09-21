@@ -463,6 +463,7 @@ SUBTYPE_CLASS: dict[str, str] = {
     "Greensleeves": "Planeswalker",
     "Grist": "Planeswalker",
     "Guff": "Planeswalker",
+    "Heartwood": "Artifact",
     "Huatli": "Planeswalker",
     "Incubator": "Artifact",
     "Infinity": "Artifact",
